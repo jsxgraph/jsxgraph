@@ -778,7 +778,7 @@ JXG.Options = {
         lines: {
             withLabel: false,
             strokeColor: 'none',
-		    strokeWidth: 0,
+		    strokeWidth: 2,
 		    highlightStrokeWidth: 2,
             // Polygon layer + 1
             layer: 5

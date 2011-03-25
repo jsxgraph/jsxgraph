@@ -24,6 +24,47 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+
+    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
+
+brd.suspendUpdate();
+A = brd.create('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+B = brd.create('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+C = brd.create('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
+pol = brd.create('polygon',[A,B,C], {fillColor:'#FFFF00',lines:{strokeWidth:2,strokeColor:'#009256'}});
+for(i=0;i<=2;i++) {
+    pol.borders[i].setProperty('strokeColor:#009256','strokeWidth:2');
+}
+
+pABC = brd.create('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
+pBCA = brd.create('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
+pCAB = brd.create('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
+pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
+i1 = brd.create('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
+pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+
+mAB = brd.create('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
+mBC = brd.create('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
+mCA = brd.create('midpoint',[C,A],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_b'});
+ma = brd.create('line',[mBC,A],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mb = brd.create('line',[mCA,B],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+mc = brd.create('line',[mAB,C],{straightFirst:false,straightLast:false,strokeWidth:1,strokeColor:'#333333',dash:2});
+i2 = brd.create('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'S'});
+
+i3 = brd.create('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
+c = brd.create('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
+c[0].setProperty('visible:false');
+c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+
+euler = brd.create('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
+brd.unsuspendUpdate();
+
+return;
+
     function zoomAll () {
         brd.zoomElements([li]);//JXG.keys(brd.objects));
     }
