@@ -288,7 +288,7 @@ JXG.JSXGraph.registerElement('arc', JXG.createArc);
  * var p1 = board.create('point', [4.5, 2.0]);
  * var p2 = board.create('point', [1.0, 0.5]);
  *
- * var a = board.create('semicircle', [p1, p2, p3]);
+ * var a = board.create('semicircle', [p1, p2]);
  * </pre><div id="5385d349-75d7-4078-b732-9ae808db1b0e" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  * (function () {

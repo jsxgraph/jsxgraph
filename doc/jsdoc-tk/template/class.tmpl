@@ -53,6 +53,29 @@
 				{+classType+}{+data.alias+}
 			</h1>
 
+<!-- ============================== Inheritance tree ========================== -->
+
+<if test="data.inheritsFrom.length"><p>
+{!
+    var borrowedMembers = data.methods.filter(function($) {return $.memberOf != data.alias});
+    var contributers = [];
+    borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+    for (var i = contributers.length; i > 0; i--) {
+        for (var j = 0; j < contributers.length - i; j++) {
+            output += '&nbsp;&nbsp;&nbsp;';
+        }
+        output += i < contributers.length ? '&#x21b3; ' : ' ';
+        output += '<strong>' + new Link().toSymbol(contributers[i-1]) + '</strong><br />';
+    }
+    for (var k = 0; k < contributers.length+1; k++) {
+        output += '&nbsp;&nbsp;&nbsp;';
+    }
+    output += '&#x21b3; ';
+    output += '<strong>' + data.alias + '</strong><br /><br />';
+
+!}</p>
+</if>
+
 <!-- ============================== class summary ========================== -->
 			<p class="description">
 				{+resolveLinks(data.classDesc)+}
@@ -303,7 +326,7 @@
 				</div>
 				
 				
-					<if test="data.params.length">
+					<if test="data.params.length && !data.isNamespace">
 						<dl class="detailList">
                         <if test="data.isPseudo">
                             This element has no direct constructor. To create an instance of this element you have to call {+(new Link().toSymbol("JXG.Board#create"))+}
