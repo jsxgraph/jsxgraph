@@ -785,9 +785,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Dimensions of the smallest rectangle enclosing the element.
      * @returns {Array} The coordinates of the enclosing rectangle in a format like the bounding box in {@link JXG.Board#setBoundingBox}.
      */
-    bounds: function () {
-        return [0, 0, 0, 0];
-    },
+    bounds: function () { },
 
     /**
      * Normalize the element's standard form.

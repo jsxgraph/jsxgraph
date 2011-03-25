@@ -616,6 +616,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return 1.0;
     },
 
+    // documented in geometry element
+    bounds: function () {
+        var p1c = this.point1.coords.usrCoords,
+            p2c = this.point2.coords.usrCoords;
+
+        return [Math.min(p1c[1], p2c[1]), Math.max(p1c[2], p2c[2]), Math.max(p1c[1], p2c[1]), Math.min(p1c[2], p2c[2])];
+    },
+
     /**
      * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
      * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).

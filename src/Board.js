@@ -1392,26 +1392,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             newBBox = [0, 0, 0, 0],
             dir = [1, -1, -1, 1];
 
-        if (elements.length > 0) {
-            newBBox = JXG.getRef(this, elements[0]).bounds();
+        if (!JXG.isArray(elements) || elements.length === 0) {
+            return this;
         }
-        for (i = 1; i < elements.length; i++) {
+
+        for (i = 0; i < elements.length; i++) {
             e = JXG.getRef(this, elements[i]);
 
             box = e.bounds();
-            for (j = 0; j < 4; j++) {
-                if (dir[j]*box[j] < dir[j]*newBBox[j]) {
-                    newBBox[j] = box[j];
+            if (JXG.isArray(box)) {
+                if (JXG.isArray(newBBox)) {
+                    for (j = 0; j < 4; j++) {
+                        if (dir[j]*box[j] < dir[j]*newBBox[j]) {
+                            newBBox[j] = box[j];
+                        }
+                    }
+                } else {
+                    newBBox = box;
                 }
             }
         }
 
-        for (j = 0; j < 4; j++) {
-            newBBox[j] -= dir[j];
-        }
+        if (JXG.isArray(newBBox)) {
+            for (j = 0; j < 4; j++) {
+                newBBox[j] -= dir[j];
+            }
 
-        this.zoom100();
-        this.setBoundingBox(newBBox, true);
+            this.zoom100();
+            this.setBoundingBox(newBBox, true);
+        }
+        
         return this;
     },
 
