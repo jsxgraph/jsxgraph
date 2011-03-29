@@ -28,8 +28,9 @@
         var c2 = board.createElement('circle',[p2,p4]);
         var c3 = board.createElement('circle',[p5,p6]);  
         
-        var i11 = board.createElement('point',[board.intersectionFunc(c1,c3,0)], {style:8,name:"G"});
-        var i12 = board.createElement('point',[board['intersectionFunc'](c1,c3,1)], {style:8,name:"H"});      
+        //var i11 = board.createElement('point',[board.intersectionFunc(c1,c3,0)], {style:8,name:"G"});
+        var i11 = board.createElement('intersection',[c1,c3,0], {style:8,name:"G"});
+        var i12 = board.createElement('intersection',[c1,c3,1], {style:8,name:"H"});      
         var i21 = board.createElement('point',[board.intersectionFunc(c2,c3,0)], {style:8,name:"I"});
         var i22 = board.createElement('point',[board['intersectionFunc'](c2,c3,1)], {style:8,name:"J"});
         

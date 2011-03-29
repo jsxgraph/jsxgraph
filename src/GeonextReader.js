@@ -518,7 +518,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl.fixed = gxtReader.gEBTN(Data, 'fix');
+                        gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'animate', 'animate');
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
@@ -563,16 +563,18 @@ JXG.GeonextReader = {
 
                         if ((board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_ARROW)
                          && (board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_ARROW)) {
-
+                            /*
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, '',
                                     gxtEl.outFirst.name, '');
+                            inter.p.setProperty(gxtEl.outFirst);
+                            */
+                            inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
 
                             /* offensichtlich braucht man dieses if doch */
                             if (gxtEl.outFirst.visible == "false") {
                                 inter.hideElement();
                             }
-                            inter.p.setProperty(gxtEl.outFirst);
                         } else {
                             xmlNode = Data.getElementsByTagName('last')[1];
                             gxtEl.outLast = {};
@@ -581,12 +583,15 @@ JXG.GeonextReader = {
                             gxtEl.outLast = gxtReader.firstLevelProperties(gxtEl.outLast, xmlNode);
                             gxtEl.outLast.fixed = xmlNode.getElementsByTagName('fix')[0].firstChild.data;
                             gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
-
+                            /*
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, gxtEl.outLast.id,
                                     gxtEl.outFirst.name, gxtEl.outLast.name);
                             inter.p1.setProperty(gxtEl.outFirst);
                             inter.p2.setProperty(gxtEl.outLast);
+                            */
+                            inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
+                            inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 1], gxtEl.outLast);
                         }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
@@ -750,13 +755,13 @@ JXG.GeonextReader = {
                             gxtEl.border[i].id = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                             gxtEl.lines.ids.push(gxtEl.border[i].id);
                             gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
-                            gxtEl.border[i].straightFirst = xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data;
-                            gxtEl.border[i].straightLast = xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data;
+                            gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
+                            gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
                             gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
-                            gxtEl.border[i].dash = xmlNode.getElementsByTagName('dash')[0].firstChild.data;
-                            gxtEl.border[i].visible = xmlNode.getElementsByTagName('visible')[0].firstChild.data;
-                            gxtEl.border[i].draft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
-                            gxtEl.border[i].trace = xmlNode.getElementsByTagName('trace')[0].firstChild.data;
+                            gxtEl.border[i].dash = JXG.str2Bool(xmlNode.getElementsByTagName('dash')[0].firstChild.data);
+                            gxtEl.border[i].visible = JXG.str2Bool(xmlNode.getElementsByTagName('visible')[0].firstChild.data);
+                            gxtEl.border[i].draft = JXG.str2Bool(xmlNode.getElementsByTagName('draft')[0].firstChild.data);
+                            gxtEl.border[i].trace = JXG.str2Bool(xmlNode.getElementsByTagName('trace')[0].firstChild.data);
 
                             xmlNode = Data.getElementsByTagName('border')[i].getElementsByTagName('color')[0];
                             rgbo = JXG.rgba2rgbo(xmlNode.getElementsByTagName('stroke')[0].firstChild.data);
@@ -832,8 +837,8 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
 
-                        gxtEl.firstArrow = Data.getElementsByTagName('firstarrow')[0].firstChild.data;
-                        gxtEl.lastArrow = Data.getElementsByTagName('lastarrow')[0].firstChild.data;
+                        gxtEl.firstArrow = JXG.str2Bool(Data.getElementsByTagName('firstarrow')[0].firstChild.data);
+                        gxtEl.lastArrow = JXG.str2Bool(Data.getElementsByTagName('lastarrow')[0].firstChild.data);
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
 

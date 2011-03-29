@@ -726,7 +726,6 @@ JXG.Math.Geometry = {
      */
     meet: function(el1, el2, i, board) {
         var eps = JXG.Math.eps; //    var eps = 0.000001;
-
         if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) < eps) { // line line
             return this.meetLineLine(el1, el2, i, board);
         } else if (Math.abs(el1[3]) >= eps && Math.abs(el2[3]) < eps) { // circle line

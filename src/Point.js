@@ -486,6 +486,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         this.needsUpdate = true;
         this.update();
+        console.log(this.visProp);
         return this;
     },
 
