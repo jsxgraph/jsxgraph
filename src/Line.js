@@ -109,7 +109,10 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.point1.addChild(this);
     this.point2.addChild(this);
 
-    //this.prepareUpdate().update().updateRenderer();   // Do we need this?
+    this.updateStdform(); // This is needed in the following situation: 
+                          // * the line is defined by three coordinates
+                          // * and it will have a glider 
+                          // * and board.suspendUpdate() has been called.
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -787,6 +790,11 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}], attr);
 
+        // If the line and will have a glider 
+        // and board.suspendUpdate() has been called, we
+        // need to compute the initial position of the two points p1 and p2.
+        p1.prepareUpdate().update();
+        p2.prepareUpdate().update();
         attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
     }

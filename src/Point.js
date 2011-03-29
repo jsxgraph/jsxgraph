@@ -160,7 +160,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 }
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
-
                 var p1coords = this.slideObject.point1.coords;
                 var p2coords = this.slideObject.point2.coords;
                 if (fromParent) {
