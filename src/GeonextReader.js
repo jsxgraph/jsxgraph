@@ -180,6 +180,7 @@ JXG.GeonextReader = {
         gxtEl.draft = JXG.str2Bool(gxtEl.draft);
         gxtEl.trace = JXG.str2Bool(gxtEl.trace);
 
+        delete gxtEl.color;
         return gxtEl;
     },
 
