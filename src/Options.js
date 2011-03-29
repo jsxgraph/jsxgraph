@@ -402,6 +402,7 @@ JXG.Options = {
         needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
         strokeWidth: 1,
         strokeColor : '#666666',
+        highlightStrokeWidth: 1,
         highlightStrokeColor : '#888888',
         withTicks: true,
         straightFirst : true,
@@ -778,9 +779,8 @@ JXG.Options = {
 
         lines: {
             withLabel: false,
-            strokeColor: 'none',
-		    strokeWidth: 2,
-		    highlightStrokeWidth: 2,
+		    strokeWidth: 1,
+		    highlightStrokeWidth: 1,
             // Polygon layer + 1
             layer: 5
         },
