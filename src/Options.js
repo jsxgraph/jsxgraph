@@ -271,8 +271,10 @@ JXG.Options = {
              * @default {@link JXG.Options.elements.draft#draft}
              */
             draft : false,
-            color : '#565656',
-            opacity : 0.8,
+            strokeColor : '#565656',
+            fillColor : '#565656',
+            strokeOpacity : 0.8,
+            fillOpacity : 0.8,
             strokeWidth : '1px'
         }
     },
@@ -329,7 +331,7 @@ JXG.Options = {
          */
         minorTicks: 4,
         defaultDistance: 1,
-        opacity: 1,
+        strokeOpacity: 1,
         strokeWidth: 1,
         strokeColor: 'black',
         highlightStrokeColor: '#888888'
@@ -661,7 +663,7 @@ JXG.Options = {
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             defaultDistance : 1,
-            opacity : 0.3
+            strokeOpacity : 0.3
         },
         /* absolute label offset from anchor */
         labelOffsets: [10,10]
@@ -862,7 +864,7 @@ JXG.Options = {
             majorHeight : 10,        // if <0: full width and height
             minorTicks : 0,
             defaultDistance : 1,
-            opacity : 1,
+            strokeOpacity : 1,
             strokeWidth: 1,
             strokeColor : '#000000'
         }, 
@@ -887,7 +889,22 @@ JXG.Options = {
         useMathJax : false,
         display : 'html',                    //'html' or 'internal'
         withLabel: false
+    },
+    
+    /**
+      * Abbreviations of properties.
+      * It is used in JXG.GeometryElement#setProperty and in
+      * the constructor JXG.GeometryElement.
+      * Attention: In Options.js abbreviations are not allowed.
+      */
+    shortcuts : {
+        color: ['strokeColor', 'fillColor'],
+        opacity: ['strokeOpacity', 'fillOpacity'],
+        highlightColor: ['highlightStrokeColor', 'highlightFillColor'],
+        highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
+        strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
     }
+    
 };
 
 /**

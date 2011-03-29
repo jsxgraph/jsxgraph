@@ -228,6 +228,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         this.visProp = {};
         JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
+        attributes = this.resolveShortcuts(attributes);
         for (key in attributes) {
             this._set(key, attributes[key]);
         }
@@ -434,6 +435,21 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 this.visProp[property] = value;
             }
     },
+           
+    resolveShortcuts: function(properties) {
+        var key, i;
+        
+        for (key in JXG.Options.shortcuts) {
+            if (JXG.exists(properties[key])) {
+                for (i = 0; i < JXG.Options.shortcuts[key].length; i++) {
+                    if (!JXG.exists(properties[JXG.Options.shortcuts[key][i]])) {
+                        properties[JXG.Options.shortcuts[key][i]] = properties[key];
+                    }
+                }
+            }
+        }
+        return properties;
+    },
 
     /**
      * Sets an arbitrary number of properties.
@@ -451,14 +467,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * p.hideElement();
      */
     setProperty: function () {
-        var i, key, value, arg, opacity, pair, properties = {},
-            shortcuts = {
-                color: ['strokeColor', 'fillColor'],
-                opacity: ['strokeOpacity', 'fillOpacity'],
-                highlightColor: ['highlightStrokeColor', 'highlightFillColor'],
-                highlightOpacity: ['highlightStrokeOpacity', 'highlightFillOpacity'],
-                strokeWidth: ['strokeWidth', 'highlightStrokeWidth']
-            };
+        var i, key, value, arg, opacity, pair, properties = {};
 
         // normalize the user input
         for (i = 0; i < arguments.length; i++) {
@@ -477,16 +486,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
 
         // handle shortcuts
-        for (key in shortcuts) {
-            if (JXG.exists(properties[key])) {
-                for (i = 0; i < shortcuts[key].length; i++) {
-                    if (!JXG.exists(properties[shortcuts[key][i]])) {
-                        properties[shortcuts[key][i]] = properties[key];
-                    }
-                }
-            }
-        }
-
+        properties = this.resolveShortcuts(properties);
+        
         for (i in properties) {
             key = i.replace(/\s+/g, '').toLowerCase();
             value = properties[i];
