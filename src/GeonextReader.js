@@ -149,6 +149,7 @@ JXG.GeonextReader = {
     visualProperties: function (gxtEl, Data) {
         gxtEl.visible = JXG.str2Bool(this.gEBTN(Data, 'visible'));
         gxtEl.trace = JXG.str2Bool(this.gEBTN(Data, 'trace'));
+        
         return gxtEl;
     },
 
@@ -525,7 +526,6 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'animate', 'animate');
-
                         gxtEl = gxtReader.transformProperties(gxtEl);
                         try {
                             gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
