@@ -132,6 +132,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Updates the position of the point.
      */
     update: function (fromParent) {
+        var i, p1coords, p2coords, factor, distP1S, distP1P2, distP2S, v,
+            p1Scr, p2Scr, y, p1, p2, poly;
+            
         if (!this.needsUpdate) { return this; }
 
         if(typeof fromParent == 'undefined') {
@@ -160,8 +163,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 }
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
-                var p1coords = this.slideObject.point1.coords;
-                var p2coords = this.slideObject.point2.coords;
+                p1coords = this.slideObject.point1.coords;
+                p2coords = this.slideObject.point2.coords;
                 if (fromParent) {
                     if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
                         this.coords.setCoordinates(JXG.COORDS_BY_USER, 
@@ -169,12 +172,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                                                 p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
                     }
                 } else {
-                    var factor = 1;
-                    var distP1S = p1coords.distance(JXG.COORDS_BY_USER, this.coords);
-                    var distP1P2 = p1coords.distance(JXG.COORDS_BY_USER, p2coords);
-                    var distP2S = p2coords.distance(JXG.COORDS_BY_USER, this.coords);
+                    factor = 1;
+                    distP1S = p1coords.distance(JXG.COORDS_BY_USER, this.coords);
+                    distP1P2 = p1coords.distance(JXG.COORDS_BY_USER, p2coords);
+                    distP2S = p2coords.distance(JXG.COORDS_BY_USER, this.coords);
                     
-                    if( ((distP1S > distP1P2) || (distP2S > distP1P2)) && (distP1S < distP2S)) { // Glider not between P1 & P2 and beyond P1
+                    if ( ((distP1S > distP1P2) || (distP2S > distP1P2)) && (distP1S < distP2S)) { // Glider not between P1 & P2 and beyond P1
                         factor = -1;
                     }
                     this.position = factor*distP1S/distP1P2;
@@ -186,24 +189,23 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         if (this.position<0.0) this.position = 0.0;
                         if (this.position>1.0) this.position = 1.0;
                         
-                        var v = this.position*(this._smax-this._smin)+this._smin;
-                            v = Math.round(v/this.visProp.snapwidth)*this.visProp.snapwidth;
+                        v = this.position*(this._smax-this._smin)+this._smin;
+                        v = Math.round(v/this.visProp.snapwidth)*this.visProp.snapwidth;
                         this.position = (v-this._smin)/(this._smax-this._smin);
                         this.update(true);
                     }
                 }
-                var p1Scr = this.slideObject.point1.coords.scrCoords;
-                var p2Scr = this.slideObject.point2.coords.scrCoords;
+                p1Scr = this.slideObject.point1.coords.scrCoords;
+                p2Scr = this.slideObject.point2.coords.scrCoords;
 
-                var i;
                 if(this.slideObject.getSlope() == 0) {
                     i = 1;
                 } else {
                     i = 2;
                 }
 
-                var y = this.coords.scrCoords[i];
-                if(!this.slideObject.visProp.straightfirst) {
+                y = this.coords.scrCoords[i];
+                if (!this.slideObject.visProp.straightfirst) {
                     if(p1Scr[i] < p2Scr[i]) {
                         if(y < p1Scr[i]) {
                            this.coords = this.slideObject.point1.coords;
@@ -217,36 +219,38 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         }
                     }
                 }
-                if(!this.slideObject.visProp.straightlast) {
+                if (!this.slideObject.visProp.straightlast) {
                     if(p1Scr[i] < p2Scr[i]) {
-                        if(y > p2Scr[i]) {
+                        if (y > p2Scr[i]) {
                            this.coords = this.slideObject.point2.coords;
                            this.position = 1;
                         }
                     }
                     else if(p1Scr[i] > p2Scr[i]) {
-                        if(y < p2Scr[i]) {
+                        if (y < p2Scr[i]) {
                            this.coords = this.slideObject.point2.coords;
                            this.position = 1;
                         }
                     }
                 }  
 
-                if(this.onPolygon) {
-                    var p1 = this.slideObject.point1.coords;
-                    var p2 = this.slideObject.point2.coords;
-                    if(Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
-                        var poly = this.slideObject.parentPolygon;
-                        for(var i=0; i<poly.borders.length; i++) {
-                            if(this.slideObject == poly.borders[i]) {
+                if (this.onPolygon) {
+                    p1 = this.slideObject.point1.coords;
+                    p2 = this.slideObject.point2.coords;
+                    if (Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && 
+                        Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
+                        poly = this.slideObject.parentPolygon;
+                        for (i=0; i<poly.borders.length; i++) {
+                            if (this.slideObject == poly.borders[i]) {
                                 this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
                                 break;
                             }
                         }
                     }
-                    else if(Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
-                        var poly = this.slideObject.parentPolygon;
-                        for(var i=0; i<poly.borders.length; i++) {
+                    else if (Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && 
+                             Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
+                        poly = this.slideObject.parentPolygon;
+                        for (i=0; i<poly.borders.length; i++) {
                             if(this.slideObject == poly.borders[i]) {
                                 this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
                                 break;                        
@@ -486,7 +490,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         this.needsUpdate = true;
         this.update();
-        console.log(this.visProp);
         return this;
     },
 

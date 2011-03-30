@@ -96,6 +96,11 @@ JXG.GeonextReader = {
         gxtEl.labelColor = JXG.rgba2rgbo(this.gEBTN(color, 'label'))[0];
         gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, 'draft'))[0];
 
+        // GEONExT hides labels by setting opacity to 0.
+        if (JXG.rgba2rgbo(this.gEBTN(color, 'label'))[1]==0) {
+            gxtEl.withLabel = false;
+        }
+        
         // backwards compatibility
         gxtEl.colorStroke = gxtEl.strokeColor;
         gxtEl.colorFill = gxtEl.fillColor;
@@ -176,7 +181,7 @@ JXG.GeonextReader = {
         gxtEl.straightLast = JXG.str2Bool(gxtEl.straightLast);
 
         gxtEl.visible = JXG.str2Bool(gxtEl.visible);
-        gxtEl.withLabel = gxtEl.visible;
+        //gxtEl.withLabel = gxtEl.visible;           // withLabel is set in colorProperties()
         gxtEl.draft = JXG.str2Bool(gxtEl.draft);
         gxtEl.trace = JXG.str2Bool(gxtEl.trace);
 
@@ -526,7 +531,7 @@ JXG.GeonextReader = {
                             gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
 
                             p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
-                            p.onPolygon = JXG.str2Bool(gxtEl.onpolygon);
+                            p.onPolygon = JXG.exists(gxtEl.onpolygon) && JXG.str2Bool(gxtEl.onpolygon);
 
                             gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                             gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');

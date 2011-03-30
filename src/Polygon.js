@@ -69,7 +69,7 @@ JXG.Polygon = function (board, vertices, attributes) {
      * @type Array
      */  
     this.borders = [];
-    if(this.withLines) {
+    if (this.withLines) {
         for(i = 0; i < this.vertices.length - 1; i++) {
             attr_line.id = attr_line.ids && attr_line.ids[i];
             attr_line.strokecolor = JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length] || attr_line.strokecolor;
