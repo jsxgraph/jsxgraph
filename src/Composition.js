@@ -852,11 +852,13 @@ JXG.createNormal = function(board, parents, attributes) {
  * var bi1 = board.create('bisector', [p1, p2, p3]);
  * </pre><div id="0d58cea8-b06a-407c-b27c-0908f508f5a4" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var biex1_board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
- *   var biex1_p1 = biex1_board.create('point', [6.0, 4.0]);
- *   var biex1_p2 = biex1_board.create('point', [3.0, 2.0]);
- *   var biex1_p3 = biex1_board.create('point', [1.0, 7.0]);
- *   var biex1_bi1 = biex1_board.create('bisector', [biex1_p1, biex1_p2, biex1_p3]);
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('0d58cea8-b06a-407c-b27c-0908f508f5a4', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [6.0, 4.0]);
+ *   var p2 = board.create('point', [3.0, 2.0]);
+ *   var p3 = board.create('point', [1.0, 7.0]);
+ *   var bi1 = board.create('bisector', [p1, p2, p3]);
+ * })();
  * </script><pre>
  */
 JXG.createBisector = function(board, parentArr, attributes) {

@@ -49,9 +49,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.withLines = attributes.withlines;
 
     /**
-     * References to the points defining the polygon.
-     * Last vertex is the same as first vertex.
-     * 
+     * References to the points defining the polygon. The last vertex is the same as the first vertex.
      * @type Array
      */    
     this.vertices = [];    
@@ -65,7 +63,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     }
     
     /**
-     * References to the borderlines of the polygon.
+     * References to the border lines of the polygon.
      * @type Array
      */  
     this.borders = [];
@@ -80,14 +78,13 @@ JXG.Polygon = function (board, vertices, attributes) {
         }
     }
     
-    /* Add polygon as child to defining points */
+    // Add polygon as child to defining points
     for(i=0; i<this.vertices.length-1; i++) { // last vertex is first vertex
         vertex = JXG.getReference(this.board, this.vertices[i]);
         vertex.addChild(this);
     }
     
-    //this.createGradient();
-    // create label 
+    // create label
     this.createLabel([0, 0]);
     
     /* Register polygon at board */
@@ -101,9 +98,9 @@ JXG.Polygon.prototype = new JXG.GeometryElement;
 JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
     /**
      * Checks whether (x,y) is near the polygon.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
-     * @return {bool} Always false, because the polygons interior shall not be highlighted
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @return {Boolean} Always false, because the polygons interior shall not be highlighted
      */
     hasPoint: function (x,y) {
         return false;
@@ -228,9 +225,36 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 });
 
 
-/*
-documentation missing
-*/
+/**
+ * @class A polygon is an area enclosed by a set of border lines which are determined by a list of points. Each two
+ * consecutive points of the list define a line.
+ * @pseudo
+ * @constructor
+ * @name Polygon
+ * @type Polygon
+ * @augments JXG.Polygon
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {Array} vertices The polygon's vertices. If the first and the last vertex don't match the first one will be
+ * added to the array by the creator.
+ * @example
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var p3 = board.create('point', [4.0, 6.0]);
+ * var p4 = board.create('point', [1.0, 3.0]);
+ *
+ * var pol = board.create('polygon', [p1, p2, p3, p4]);
+ * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *  (function () {
+ *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [0.0, 2.0]),
+ *       p2 = board.create('point', [2.0, 1.0]),
+ *       p3 = board.create('point', [4.0, 6.0]),
+ *       p4 = board.create('point', [1.0, 3.0]),
+ *       cc1 = board.create('polygon', [p1, p2, p3, p4]);
+ *  })();
+ * </script><pre>
+ */
 JXG.createPolygon = function(board, parents, attributes) {
     var el, i, attr = JXG.copyAttributes(attributes, board.options, 'polygon');
 
@@ -253,8 +277,8 @@ JXG.createPolygon = function(board, parents, attributes) {
  * @description Constructs a regular polygon. It needs two points which define the base line and the number of vertices, or a set of points.
  * @constructor
  * @name RegularPolygon
- * @type JXG.Polygon
- * @augments JXG.Polygon
+ * @type Polygon
+ * @augments Polygon
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_Number} p1,p2,n The constructed regular polygon has n vertices and the base line defined by p1 and p2.
  * @example
@@ -309,7 +333,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
         pointsExist = false;
     }
     
-    // The first two parent elements have to be points? 
+    // The first two parent elements have to be points
     for(i=0; i<len; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
         if(!JXG.isPoint(parents[i]))
