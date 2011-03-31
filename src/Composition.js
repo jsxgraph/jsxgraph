@@ -833,16 +833,16 @@ JXG.createNormal = function(board, parents, attributes) {
 };
 
 /**
- * @class Provides a constructor for an angle bisector.
+ * @class A bisector is a line which divides an angle into two equal angles. It is given by three points A, B, and
+ * C and divides the angle ABC into two equal sized parts.
  * @pseudo
- * @description A bisector is a line which divides an angle into two equal angles. It is given by three points A, B, and C and divides the angle ABC into two
- * equal sized parts.
  * @constructor
  * @name Bisector
  * @type JXG.Line
  * @augments JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by p3 will be divided into two equal angles.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
+ * be divided into two equal angles.
  * @example
  * // Create a normal to a circle.
  * var p1 = board.create('point', [6.0, 4.0]);
