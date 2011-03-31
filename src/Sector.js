@@ -241,12 +241,35 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
 
 
 /**
- * Creates a new circumcircle sector through three defining points.
- * @param {JXG.Board} board The board the sector is put on.
- * @param {Array} parents Array of three points defining the circumcircle sector.
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
- * @type JXG.Sector
- * @return Reference to the created arc object.
+ * @class A circumcircle sector is different from a {@link Sector} mostly in the way the parent elements are interpreted.
+ * At first, the circum centre is determined from the three given points. Then the sector is drawn from <tt>p1</tt> through
+ * <tt>p2</tt> to <tt>p3</tt>.
+ * @pseudo
+ * @name Circumcirclesector
+ * @augments Sector
+ * @constructor
+ * @type Sector
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 A circumcircle sector is defined by the circumcircle which is determined
+ * by these three given points. The circumcircle sector is always drawn from <tt>p1</tt> through <tt>p2</tt> to <tt>p3</tt>.
+ * @example
+ * // Create an arc out of three free points
+ * var p1 = board.create('point', [1.5, 5.0]),
+ *     p2 = board.create('point', [1.0, 0.5]),
+ *     p3 = board.create('point', [5.0, 3.0]),
+ *
+ *     a = board.create('circumcirclesector', [p1, p2, p3]);
+ * </pre><div id="695cf0d6-6d7a-4d4d-bfc9-34c6aa28cd04" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('695cf0d6-6d7a-4d4d-bfc9-34c6aa28cd04', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *     p1 = board.create('point', [1.5, 5.0]),
+ *     p2 = board.create('point', [1.0, 0.5]),
+ *     p3 = board.create('point', [5.0, 3.0]),
+ *
+ *     a = board.create('circumcirclesector', [p1, p2, p3]);
+ * })();
+ * </script><pre>
  */
  JXG.createCircumcircleSector = function(board, parents, attributes) {
     var el, mp, attr;
@@ -269,12 +292,35 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
 
 
 /**
- * Creates a new angle.
- * @param {JXG.Board} board The board the angle is put on.
- * @param {Array} parents Array of three points defining the angle.
- * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. @see JXG.GeometryElement#setProperty
- * @type JXG.Angle
- * @return Reference to the created angle object.
+ * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
+ * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
+ * an angle has two angle points and no radius point.
+ * @pseudo
+ * @name Angle
+ * @augments Sector
+ * @constructor
+ * @type Sector
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
+ * <tt>p3</tt> around <tt>p2</tt>.
+ * @example
+ * // Create an arc out of three free points
+ * var p1 = board.create('point', [5.0, 3.0]),
+ *     p2 = board.create('point', [1.0, 0.5]),
+ *     p3 = board.create('point', [1.5, 5.0]),
+ *
+ *     a = board.create('angle', [p1, p2, p3]);
+ * </pre><div id="a34151f9-bb26-480a-8d6e-9b8cbf789ae5" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('a34151f9-bb26-480a-8d6e-9b8cbf789ae5', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *     p1 = board.create('point', [5.0, 3.0]),
+ *     p2 = board.create('point', [1.0, 0.5]),
+ *     p3 = board.create('point', [1.5, 5.0]),
+ *
+ *     a = board.create('angle', [p1, p2, p3]);
+ * })();
+ * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
     var el, p, text, attr,
@@ -346,6 +392,14 @@ JXG.createAngle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
         el = board.create('sector', [parents[1], p, parents[2]], attr);
 
+        /**
+         * The point defining the radius of the angle element.
+         * @type JXG.Point
+         * @name radiuspoint
+         * @memberOf Angle.prototype
+         */
+        el.radiuspoint = p;
+
         el.type = JXG.OBJECT_TYPE_ANGLE;
         
         if (el.visProp.withlabel) {
@@ -353,10 +407,8 @@ JXG.createAngle = function(board, parents, attributes) {
             el.label.content.setProperty({fontSize:el.visProp.fontsize, strokeColor:el.visProp.textcolor});
         }
         JXG.getRef(board,parents[0]).addChild(el);
-        
-        /**
-        * return LabelAnchor
-        */
+
+        // documented in GeometryElement
         el.getLabelAnchor = function() {
             var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
                 dx = 10/(this.board.stretchX),
