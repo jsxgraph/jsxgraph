@@ -466,7 +466,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      *     visible: true
      * });
      */
-    setAttribute: JXG.shortcut(JXG.GeometryElement.prototype, setProperty),
+    setAttribute: JXG.shortcut(JXG.GeometryElement.prototype, 'setProperty'),
 
     /**
      * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
@@ -604,7 +604,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @param {String} key The name of the property you are looking for
      * @returns The value of the property
      */
-    getAttribute: JXG.shortcut(JXG.GeometryElement.prototype, setProperty),
+    getAttribute: JXG.shortcut(JXG.GeometryElement.prototype, 'getProperty'),
 
     /**
      * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
