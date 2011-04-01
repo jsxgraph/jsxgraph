@@ -843,7 +843,7 @@
                     borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
                     for (var i = 0, l = contributers.length; i < l; i++) {
                         output +=
-                            "<dt>Elements borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+                            "<dt>Attributes borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
                             +
                             "<dd>" +
                             borrowedMembers
@@ -877,7 +877,7 @@
 					borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
 					for (var i = 0, l = contributers.length; i < l; i++) {
 						output +=
-							"<dt>Properties borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+							"<dt>Fields borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
 							+
 							"<dd>" +
 							borrowedMembers
