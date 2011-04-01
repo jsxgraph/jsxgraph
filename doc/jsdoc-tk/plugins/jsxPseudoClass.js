@@ -8,6 +8,12 @@ JSDOC.PluginManager.registerPlugin(
                 classCreator.isPseudo = true;
             }
 
+			// Interpret elements
+            classCreator.isSubelement = false;
+            if(classCreator.comment.toString().indexOf("@subelement") != -1) {
+                classCreator.isSubelement = true;
+            }
+
             // Ignore symbols with neither a description nor a class description
             if((classCreator.desc.toString() == "") && (classCreator.classDesc.toString() == "") && !JSDOC.opt.p) {
             	classCreator.isIgnored = true;

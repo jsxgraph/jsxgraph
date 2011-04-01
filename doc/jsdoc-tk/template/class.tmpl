@@ -123,9 +123,72 @@
 			</table>
 			</if>
 
+<!-- ============================== subelements summary ===================== -->
+			<if test="data.properties.length">
+				{! var ownSubelements = data.properties.filter(function($){return $.memberOf == data.alias && $.isSubelement && !$.isNamespace}).sort(makeSortby("name")); !}
+				<if test="ownSubelements.length">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the sub elements documented in the class {+data.alias+}.">
+					<caption>Sub Elements Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					<for each="member" in="ownSubelements">
+						<tr>
+							<td class="attributes">{!
+								if (member.isPrivate) output += "&lt;private&gt; ";
+								if (member.isInner) output += "&lt;inner&gt; ";
+								if (member.isStatic) output += "&lt;static&gt; ";
+								if (member.isConstant) output += "&lt;constant&gt; ";
+                                if (member.deprecated) output += "&lt;deprecated&gt; ";
+							!}&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<if test="member.isStatic && member.memberOf != '_global_'">{+member.memberOf+}.</if><b>{+new Link().toSymbol(member.alias).withText(member.name)+}</b>
+								</div>
+								<div class="description">{+resolveLinks(summarize(member.desc))+}</div>
+							</td>
+						</tr>
+					</for>
+					</tbody>
+				</table>
+				</if>
+
+				<if test="data.inheritsFrom.length && !data.isPseudo">
+				<dl class="inheritsList">
+				{!
+					var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias});
+
+					var contributers = [];
+					borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+					for (var i = 0, l = contributers.length; i < l; i++) {
+						output +=
+							"<dt>Fields borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+							+
+							"<dd>" +
+							borrowedMembers
+							.filter(
+								function($) { return $.memberOf == contributers[i] }
+							)
+							.sort(makeSortby("name"))
+							.map(
+								function($) { return new Link().toSymbol($.alias).withText($.name) }
+							)
+							.join(", ")
+							+
+							"</dd>";
+					}
+				!}
+				</dl>
+				</if>
+			</if>
+
 <!-- ============================== properties summary ===================== -->
 			<if test="data.properties.length">
-				{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
+				{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isSubelement && !$.isNamespace}).sort(makeSortby("name")); !}
 				<if test="ownProperties.length">
 				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class {+data.alias+}.">
 					<caption>Field Summary</caption>
@@ -427,10 +490,84 @@
 			</div>
 			</if>
 
-<!-- ============================== field details ========================== -->		
+<!-- ============================== sub elements details ========================== -->
+			<if test="defined(ownSubelements) && ownSubelements.length">
+				<div class="sectionTitle">
+    				 Sub Element Detail
+				</div>
+				<for each="member" in="ownSubelements">
+					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
+					<div class="fixedFont">{!
+						if (member.isPrivate) output += "&lt;private&gt; ";
+						if (member.isInner) output += "&lt;inner&gt; ";
+						if (member.isStatic) output += "&lt;static&gt; ";
+						if (member.isConstant) output += "&lt;constant&gt; ";
+					!}
+
+					<if test="member.type"><span class="light">{{+new Link().toSymbol(member.type)+}}</span></if>
+					<if test="member.isStatic && member.memberOf != '_global_'"><span class="light">{+member.memberOf+}.</span></if><b>{+member.name+}</b>
+
+					</div>
+					<div class="description">
+						{+resolveLinks(member.desc)+}
+						<if test="member.srcFile != data.srcFile">
+							<br />
+							<i>Defined in: </i> {+new Link().toSrc(member.srcFile)+}.
+						</if>
+						<if test="member.author"><br /><i>Author: </i>{+member.author+}.</if>
+					</div>
+
+					<if test="member.example.length">
+					<for each="example" in="member.example">
+					<pre class="code">{+example+}</pre>
+					</for>
+					</if>
+
+						<if test="member.deprecated">
+							<dl class="detailList">
+							<dt class="heading">Deprecated:</dt>
+							<dt>
+								{+ resolveLinks(member.deprecated) +}
+							</dt>
+							</dl>
+						</if>
+						<if test="member.since">
+							<dl class="detailList">
+							<dt class="heading">Since:</dt>
+								<dd>{+ member.since +}</dd>
+							</dl>
+						</if>
+						<if test="member.see.length">
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							<for each="item" in="member.see">
+							<dd>{+ new Link().toSymbol(item) +}</dd>
+							</for>
+							</dl>
+						</if>
+						<if test="member.defaultValue">
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								{+resolveLinks(member.defaultValue)+}
+							</dd>
+							</dl>
+						</if>
+
+					<if test="!$member_last"><hr /></if>
+				</for>
+			</if>
+
+<!-- ============================== field details ========================== -->
 			<if test="defined(ownProperties) && ownProperties.length">
 				<div class="sectionTitle">
-					Field Detail
+                     <if test="data.isPseudo">
+                        Property
+                     </if>
+                     <if test="!data.isPseudo">
+                        Field
+                     </if>
+    				 Detail
 				</div>
 				<for each="member" in="ownProperties">
 					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
@@ -699,20 +836,54 @@
 			<hr />
 			
 			<if test="data.isPseudo">
+                <if test="data.inheritsFrom.length">
+                <div class="sectionTitle">
+                    Sub elements borrowed from other Elements
+                </div>
+
+                <dl class="inheritsList">
+                {!
+                    var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && $.isSubelement});
+
+                    var contributers = [];
+                    borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+                    for (var i = 0, l = contributers.length; i < l; i++) {
+                        output +=
+                            "<dt>Elements borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+                            +
+                            "<dd>" +
+                            borrowedMembers
+                            .filter(
+                                function($) { return $.memberOf == contributers[i] }
+                            )
+                            .sort(makeSortby("name"))
+                            .map(
+                                function($) { return new Link().toSymbol($.alias).withText($.name) }
+                            )
+                            .join(", ")
+                            +
+                            "</dd>";
+                    }
+                !}
+                </dl>
+                </if>
+
+                <hr />
+
 				<if test="data.inheritsFrom.length">
 				<div class="sectionTitle">
-					Fields borrowed from other Elements
+					Properties borrowed from other Elements
 				</div>
 
 				<dl class="inheritsList">
 				{!
-					var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias});
+					var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && !$.isSubelement});
 					
 					var contributers = [];
 					borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
 					for (var i = 0, l = contributers.length; i < l; i++) {
 						output +=
-							"<dt>Fields borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+							"<dt>Properties borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
 							+
 							"<dd>" +
 							borrowedMembers

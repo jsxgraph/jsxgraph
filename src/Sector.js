@@ -74,6 +74,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @memberOf Sector.prototype
      * @name point1
      * @type JXG.Point
+     * @subelement
      */
     el.point1 = JXG.getReference(board, parents[0]);
 
@@ -82,6 +83,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @memberOf Sector.prototype
      * @name point2
      * @type JXG.Point
+     * @subelement
      */
     el.point2 = JXG.getReference(board, parents[1]);
 
@@ -90,6 +92,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @memberOf Sector.prototype
      * @name point3
      * @type JXG.Point
+     * @subelement
      */
     el.point3 = JXG.getReference(board, parents[2]);
     
@@ -397,6 +400,7 @@ JXG.createAngle = function(board, parents, attributes) {
          * @type JXG.Point
          * @name radiuspoint
          * @memberOf Angle.prototype
+         * @subelement
          */
         el.radiuspoint = p;
 

@@ -87,6 +87,7 @@ JXG.createArc = function(board, parents, attributes) {
      * @memberOf Arc.prototype
      * @name midpoint
      * @type JXG.Point
+     * @subelement
      */
     el.midpoint = JXG.getReference(board, parents[0]);
 
@@ -95,6 +96,7 @@ JXG.createArc = function(board, parents, attributes) {
      * @memberOf Arc.prototype
      * @name radiuspoint
      * @type JXG.Point
+     * @subelement
      */
     el.radiuspoint = JXG.getReference(board, parents[1]);
     el.point2 = el.radiuspoint;
@@ -104,6 +106,7 @@ JXG.createArc = function(board, parents, attributes) {
      * @memberOf Arc.prototype
      * @name anglepoint
      * @type JXG.Point
+     * @subelement
      */
     el.anglepoint = JXG.getReference(board, parents[2]);
     el.point3 = el.anglepoint;
@@ -313,6 +316,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @memberOf Semicircle.prototype
          * @name midpoint
          * @type Midpoint
+         * @subelement
          */
         mp = board.create('midpoint', [parents[0], parents[1]], attr);
 
@@ -322,6 +326,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @memberOf Semicircle.prototype
          * @name arc
          * @type Arc
+         * @subelement
          */
         el = board.create('arc',[mp, parents[1], parents[0]], attr);
     } else
@@ -379,6 +384,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          * @memberOf CircumcircleArc.prototype
          * @name midpoint
          * @type Midpoint
+         * @subelement
          */
         mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
 
@@ -389,6 +395,7 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          * @memberOf CircumcircleArc.prototype
          * @name arc
          * @type Arc
+         * @subelement
          */
         el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attr);
     } else
