@@ -452,19 +452,25 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Sets an arbitrary number of properties.
-     * @param % Arbitrary number of strings, containing "key:value" pairs.
-     * The possible key values are the element and class fields in this documentation.
+     * Sets an arbitrary number of attributes.
+     * @param {Object} attributes An object with attributes.
+     * @function
      * @example
      * // Set property directly on creation of an element using the attributes object parameter
      * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, 1]};
      * var p = board.create('point', [2, 2], {visible: false});
      *
      * // Now make this point visible and fixed:
-     * p.setProperty('fixed:true', 'visible:true');
-     *
-     * // Alternatively you can use #hideElement resp. #showElement:
-     * p.hideElement();
+     * p.setProperty({
+     *     fixed: true,
+     *     visible: true
+     * });
+     */
+    setAttribute: JXG.shortcut(JXG.GeometryElement.prototype, setProperty),
+
+    /**
+     * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
+     * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
      */
     setProperty: function () {
         var i, key, value, arg, opacity, pair, properties = {};
@@ -597,6 +603,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Get the value of the property <tt>key</tt>.
      * @param {String} key The name of the property you are looking for
      * @returns The value of the property
+     */
+    getAttribute: JXG.shortcut(JXG.GeometryElement.prototype, setProperty),
+
+    /**
+     * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
+     * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
      */
     getProperty: function (key) {
         var result;

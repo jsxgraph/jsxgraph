@@ -58,6 +58,12 @@ JXG.Options = {
     
     /* geometry element options */
     elements : {
+        // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
+
+        /**#@+
+         * @visprop
+         */
+
         /**
          * The stroke color of the given geometry element.
          * @type String
@@ -261,7 +267,7 @@ JXG.Options = {
          * @name JXG.GeometryElement#needsRegularUpdate
          */
         needsRegularUpdate: true,
-        
+
         /*draft options */
         draft : {
             /**
@@ -277,9 +283,15 @@ JXG.Options = {
             fillOpacity : 0.8,
             strokeWidth : '1px'
         }
+        // close the meta tag
+        /**#@-*/
     },
 
     ticks : {
+        /**#@+
+         * @visprop
+         */
+
         /**
          * Draw labels yes/no
          * @type Boolean
@@ -335,6 +347,8 @@ JXG.Options = {
         strokeWidth: 1,
         strokeColor: 'black',
         highlightStrokeColor: '#888888'
+        // close the meta tag
+        /**#@-*/
     },
 
     /* precision options */
@@ -535,19 +549,20 @@ JXG.Options = {
         strokeColor : '#0000ff',
         fillColor: 'none',
 
+        /**#@+
+         * @visprop
+         */
+
         /**
-         * The curveType is set in @see generateTerm and used in
-         * {@link JXG.Curve#updateCurve}
-         * Possible values are:
-         * 'none'
-         * 'plot': Data plot
-         * 'parameter': we can not distinguish function graphs and parameter curves
-         * 'functiongraph': function graph
-         * 'polar'
-         * 'implicit' (not yet)
-         *
-         * Only parameter and plot are set directly.
-         * polar is set with setProperties only.
+         * The curveType is set in @see generateTerm and used in {@link JXG.Curve#updateCurve}.
+         * Possible values are <ul>
+         * <li>'none'</li>
+         * <li>'plot': Data plot</li>
+         * <li>'parameter': we can not distinguish function graphs and parameter curves</li>
+         * <li>'functiongraph': function graph</li>
+         * <li>'polar'</li>
+         * <li>'implicit' (not yet)</li></ul>
+         * Only parameter and plot are set directly. Polar is set with setProperties only.
          * @name JXG.Curve#curveType
          */
         curveType: null,
@@ -556,10 +571,16 @@ JXG.Options = {
         numberPointsLow : 400,    // Number of points on curves after mousemove
         doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
+
+        /**#@-*/
     },
 
     /* special grid options */
     grid : {
+        /**#@+
+         * @visprop
+         */
+
         /* grid styles */
         needsRegularUpdate : false,
         hasGrid : false,
@@ -573,6 +594,8 @@ JXG.Options = {
         snapToGrid : false,
         snapSizeX : 2,
         snapSizeY : 2
+
+        /**#@-*/
     },
 
     /* special grid options */
@@ -625,6 +648,9 @@ JXG.Options = {
 
     /* special legend options */
     legend: {
+        /**
+         * @visprop
+         */
         style: 'vertical',
         labels: ['1','2','3','4','5','6','7','8'],
         colors: ['#B02B2C','#3F4C6B','#C79810','#D15600','#FFFF88','#C3D9FF','#4096EE','#008C00']
@@ -632,6 +658,10 @@ JXG.Options = {
 
     /* special line options */
     line : {
+        /**#@+
+         * @visprop
+         */
+
         firstArrow : false,
         lastArrow : false,
         straightFirst : true,
@@ -641,6 +671,9 @@ JXG.Options = {
         strokeColor : '#0000ff',
         highlightStrokeColor : '#888888',
         withTicks: false,
+
+        /**#@-*/
+
         point1 : {                  // Default values for point1 if created by line
             visible: false, 
             withLabel: false, 
@@ -671,11 +704,17 @@ JXG.Options = {
 
     /* special options for locus curves */
     locus : {
+        /**#@+
+         * @visprop
+         */
+
         translateToOrigin: false,
         translateTo10: false,
         stretch: false,
         toOrigin: null,
         to10: null
+
+        /**#@-*/
     },
     
     /* special options for parallel lines */
@@ -702,6 +741,10 @@ JXG.Options = {
 
     /* special point options */
     point : {
+        /**#@+
+         * @visprop
+         */
+
     	withLabel: true,
 
         /**
@@ -762,10 +805,16 @@ JXG.Options = {
         showInfobox: true,
 
         draft: false
+
+        /**#@-*/
     },
 
     /* special polygon options */
     polygon : {
+        /**#@+
+         * @visprop
+         */
+
         fillColor : '#00FF00',
         highlightFillColor : '#00FF00',
         fillOpacity : 0.3,
@@ -778,6 +827,8 @@ JXG.Options = {
          * @default true
          */
         withLines: true,
+
+        /**#@-*/
 
         lines: {
             withLabel: false,
@@ -815,11 +866,18 @@ JXG.Options = {
 
     /* special slider options */
     slider : {
+        /**#@+
+         * @visprop
+         */
+
         snapWidth: -1,      // -1 = deactivated
         firstArrow : false,
         lastArrow : false,
         withTicks: true,
         withLabel: true,
+
+        /**#@-*/
+            
         point1: {
             needsRegularUpdate : false,
             showInfobox: false,
@@ -881,6 +939,10 @@ JXG.Options = {
     
     /* special text options */
     text : {
+        /**#@+
+         * @visprop
+         */
+
         fontSize : 12,
         digits: 2,
         isLabel: false,
@@ -889,6 +951,8 @@ JXG.Options = {
         useMathJax : false,
         display : 'html',                    //'html' or 'internal'
         withLabel: false
+
+        /**#@-*/
     },
     
     /**

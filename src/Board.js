@@ -1844,7 +1844,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * points to construct a line. This highly depends on the elementType that is constructed. See the corresponding JXG.create*
      * methods for a list of possible parameters.
      * @param {Object} attributes An object containing the attributes to be set. This also depends on the elementType.
-     * Common attributes are name, visible, strokeColor. See {@link JXG.GeometryElement#setProperty}.
+     * Common attributes are name, visible, strokeColor.
      * @returns {Object} Reference to the created element. This is usually a GeometryElement, but can be an array containing
      * two or more elements.
      */

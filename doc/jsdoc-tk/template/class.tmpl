@@ -123,12 +123,12 @@
 			</table>
 			</if>
 
-<!-- ============================== subelements summary ===================== -->
+<!-- ============================== attributes summary ===================== -->
 			<if test="data.properties.length">
-				{! var ownSubelements = data.properties.filter(function($){return $.memberOf == data.alias && $.isSubelement && !$.isNamespace}).sort(makeSortby("name")); !}
-				<if test="ownSubelements.length">
-				<table class="summaryTable" cellspacing="0" summary="A summary of the sub elements documented in the class {+data.alias+}.">
-					<caption>Sub Elements Summary</caption>
+				{! var ownAttributes = data.properties.filter(function($){return $.memberOf == data.alias && $.isAttribute && !$.isNamespace}).sort(makeSortby("name")); !}
+				<if test="ownAttributes.length">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the attributes documented in the class {+data.alias+}.">
+					<caption>Attributes Summary</caption>
 					<thead>
 						<tr>
 							<th scope="col">Field Attributes</th>
@@ -136,7 +136,7 @@
 						</tr>
 					</thead>
 					<tbody>
-					<for each="member" in="ownSubelements">
+					<for each="member" in="ownAttributes">
 						<tr>
 							<td class="attributes">{!
 								if (member.isPrivate) output += "&lt;private&gt; ";
@@ -188,7 +188,7 @@
 
 <!-- ============================== properties summary ===================== -->
 			<if test="data.properties.length">
-				{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isSubelement && !$.isNamespace}).sort(makeSortby("name")); !}
+				{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isAttribute && !$.isNamespace}).sort(makeSortby("name")); !}
 				<if test="ownProperties.length">
 				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class {+data.alias+}.">
 					<caption>Field Summary</caption>
@@ -490,12 +490,12 @@
 			</div>
 			</if>
 
-<!-- ============================== sub elements details ========================== -->
-			<if test="defined(ownSubelements) && ownSubelements.length">
+<!-- ============================== attributes details ========================== -->
+			<if test="defined(ownAttributes) && ownAttributes.length">
 				<div class="sectionTitle">
-    				 Sub Element Detail
+    				 Attribute Detail
 				</div>
-				<for each="member" in="ownSubelements">
+				<for each="member" in="ownAttributes">
 					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
 					<div class="fixedFont">{!
 						if (member.isPrivate) output += "&lt;private&gt; ";
@@ -561,13 +561,7 @@
 <!-- ============================== field details ========================== -->
 			<if test="defined(ownProperties) && ownProperties.length">
 				<div class="sectionTitle">
-                     <if test="data.isPseudo">
-                        Property
-                     </if>
-                     <if test="!data.isPseudo">
-                        Field
-                     </if>
-    				 Detail
+                     Field Detail
 				</div>
 				<for each="member" in="ownProperties">
 					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
@@ -838,12 +832,12 @@
 			<if test="data.isPseudo">
                 <if test="data.inheritsFrom.length">
                 <div class="sectionTitle">
-                    Sub elements borrowed from other Elements
+                    Attributes borrowed from other Elements
                 </div>
 
                 <dl class="inheritsList">
                 {!
-                    var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && $.isSubelement});
+                    var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && $.isAttribute});
 
                     var contributers = [];
                     borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
@@ -872,12 +866,12 @@
 
 				<if test="data.inheritsFrom.length">
 				<div class="sectionTitle">
-					Properties borrowed from other Elements
+					Fields borrowed from other Elements
 				</div>
 
 				<dl class="inheritsList">
 				{!
-					var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && !$.isSubelement});
+					var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias && !$.isAttribute});
 					
 					var contributers = [];
 					borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});

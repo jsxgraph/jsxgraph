@@ -9,9 +9,9 @@ JSDOC.PluginManager.registerPlugin(
             }
 
 			// Interpret elements
-            classCreator.isSubelement = false;
-            if(classCreator.comment.toString().indexOf("@subelement") != -1) {
-                classCreator.isSubelement = true;
+            classCreator.isAttribute = false;
+            if(classCreator.comment.toString().indexOf("@visprop") != -1) {
+                classCreator.isAttribute = true;
             }
 
             // Ignore symbols with neither a description nor a class description
