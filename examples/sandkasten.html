@@ -24,7 +24,26 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    (function () {
+    var tyrus = (function () {
+        //JXG.Options.renderer = 'canvas';
+        var board = JXG.JSXGraph.initBoard('jxgbox');
+
+        var line1 = board.create('line', [[0, 0], [1, 0]], {strokeWidth: 1});
+        var line2 = board.create('line', [[0, 0], [1, 1]], {strokeWidth: 1});
+
+        var ticks = board.create('ticks', [line1, 1], {
+            minTicksDistance: 10,
+            insertTicks: true,
+            drawLabels: true
+        });
+
+        //var graph1 = board.create('functiongraph', [function(x){ return 0}, -2, 4] ,{strokeWidth:1});
+        //var graph2 = board.create('functiongraph', [function(x){ return 1/2*x}, -2, 4] ,{strokeWidth:1});
+        //var graph3 = board.create('functiongraph', [function(x){ return x}, -2, 4] ,{strokeWidth:1});
+        //var graph4 = board.create('functiongraph', [function(x){ return 2*x}, -2, 4] ,{strokeWidth:1});
+    })();
+
+    var eulerline = (function () {
 
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
     
@@ -106,7 +125,7 @@
             strokeWidth: 2,
             strokeColor:'#901B77'
         });
-    })();
+    });
 
 
     old = (function () {

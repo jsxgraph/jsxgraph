@@ -97,6 +97,7 @@ JXG.Ticks = function (line, ticks, attributes) {
      * is set to true.
      * @type int
      * @see #insertTicks
+     * @deprecated This value will be ignored.
      */
     this.maxTicksDistance = attributes.maxticksdistance;
 
