@@ -926,8 +926,8 @@ JXG.createAxis = function(board, parents, attributes) {
         el = board.create('line', parents, attr);
 
         attr = JXG.copyAttributes(attributes, board.options, 'axis', 'ticks');
-        if(attr.ticksDistance != 'undefined' && attr.ticksDistance != null) {
-            dist = attr.ticksDistance;
+        if (JXG.exists(attr.ticksdistance)) {
+            dist = attr.ticksdistance;
         } else if(JXG.isArray(attr.ticks)) {
             dist = attr.ticks;
         } else {

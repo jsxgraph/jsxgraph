@@ -3,6 +3,7 @@
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
@@ -24,6 +25,34 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var radaxes = (function () {
+        JXG.Options.renderer = 'svg';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 2, 2, -1]}),
+            /*ct1 = board.create('point', [0, 3]),
+            c1 = board.create('circle', [ct1, 4]),
+            ct2 = board.create('point', [-4, -2]),
+            c2 = board.create('circle', [ct2, 5]),
+            ct3 = board.create('point', [4, -1]),
+            c3 = board.create('circle', [ct3, 6]),
+            i121 = board.create('intersection', [c1, c2, 0]),
+            i122 = board.create('intersection', [c1, c2, 1]),
+            i131 = board.create('intersection', [c1, c3, 0]),
+            i132 = board.create('intersection', [c1, c3, 1]),
+            i231 = board.create('intersection', [c2, c3, 0]),
+            i232 = board.create('intersection', [c2, c3, 1]),
+            l12 = board.create('line', [i121, i122]),
+            l13 = board.create('line', [i131, i132]),
+            l23 = board.create('line', [i231, i232]),*/
+            ptest = board.create('point', [0, 0]),
+            xaxis = board.create('axis', [[0, 0], [1, 0]], {
+                ticks: {
+//                    minTicksDistance: 0,
+                    ticksDistance: 2,
+                    insertTicks: false
+                }
+            });
+    })();
+
     var tyrus = (function () {
         //JXG.Options.renderer = 'canvas';
         var board = JXG.JSXGraph.initBoard('jxgbox');
@@ -41,7 +70,7 @@
         //var graph2 = board.create('functiongraph', [function(x){ return 1/2*x}, -2, 4] ,{strokeWidth:1});
         //var graph3 = board.create('functiongraph', [function(x){ return x}, -2, 4] ,{strokeWidth:1});
         //var graph4 = board.create('functiongraph', [function(x){ return 2*x}, -2, 4] ,{strokeWidth:1});
-    })();
+    });
 
     var eulerline = (function () {
 

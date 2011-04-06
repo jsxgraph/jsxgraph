@@ -81,7 +81,7 @@ JXG.Ticks = function (line, ticks, attributes) {
         this.fixedTicks = ticks;
     } else {
         if(Math.abs(ticks) < JXG.Math.eps)
-            ticks = this.board.options.line.ticks.defaultDistance;
+            ticks = attributes.defaultdistance;
         this.ticksFunction = function (i) { return ticks; };
         this.equidistant = true;
     }
@@ -146,6 +146,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             distP1P2 = p1.coords.distance(JXG.COORDS_BY_USER, p2.coords),
             // Distance of X coordinates of two major ticks
             // Initialized with the distance of Point 1 to a point between Point 1 and Point 2 on the line and with distance 1
+            // this equals always 1 for lines parallel to x = 0 or y = 0. It's only important for lines other than that.
             deltaX = (p2.coords.usrCoords[1] - p1.coords.usrCoords[1])/distP1P2,
             // The same thing for Y coordinates
             deltaY = (p2.coords.usrCoords[2] - p1.coords.usrCoords[2])/distP1P2,
@@ -197,7 +198,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             },
             
             respDelta = function(val) {
-                return Math.floor(val) - (Math.floor(val) % ticksDelta);
+                return Math.ceil(val/ticksDelta)*ticksDelta;
+                //return Math.floor(val) - (Math.floor(val) % ticksDelta);
             },
             
             // the following variables are used to define ticks height and slope
@@ -305,27 +307,29 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             this.dyMaj = dyMaj;
             this.dxMin = dxMin;
             this.dyMin = dyMin;
-            //this.board.renderer.updateTicks(this, dxMaj, dyMaj, dxMin, dyMin);
+
             return;
         } // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
-        
+
         // adjust distances
-        while(this.visProp.insertticks && distScr > 4*this.minTicksDistance) {
-            ticksDelta /= 10;
-            deltaX /= 10;
-            deltaY /= 10;
+        if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
+            while (distScr > 4*this.minTicksDistance) {
+                ticksDelta /= 10;
+                deltaX /= 10;
+                deltaY /= 10;
 
-            distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
-        }
+                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+            }
 
-        // If necessary, enlarge ticksDelta
-        while(this.visProp.insertticks && distScr < this.minTicksDistance) {
-            ticksDelta *= factor;
-            deltaX *= factor;
-            deltaY *= factor;
+            // If necessary, enlarge ticksDelta
+            while (distScr < this.minTicksDistance) {
+                ticksDelta *= factor;
+                deltaX *= factor;
+                deltaY *= factor;
 
-            factor = (factor == 5 ? 2 : 5);
-            distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+                factor = (factor == 5 ? 2 : 5);
+                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+            }
         }
 
         /*
@@ -338,7 +342,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // calculate start and end points
             begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
             end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
-            
+
             if(JXG.Math.Geometry.isSameDirection(p1.coords, p2.coords, e1)) {
                 if(this.line.visProp.straightfirst)
                     begin -=  2*ticksDelta;
@@ -359,7 +363,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             if(!this.line.visProp.straightfirst) {
                 begin = 0; 
             } else {
-                begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1)) - 2*ticksDelta;
+                begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));// - 2*ticksDelta;
             }
             
             if(!this.line.visProp.straightlast) {
@@ -369,8 +373,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             }
         }
 
-        startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
-        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX/ticksDelta, p1.coords.usrCoords[2] + begin*deltaY/ticksDelta], this.board);
+        startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX, p1.coords.usrCoords[2] + begin*deltaY], this.board);
+        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX, p1.coords.usrCoords[2] + begin*deltaY], this.board);
         
         deltaX /= this.visProp.minorticks+1;
         deltaY /= this.visProp.minorticks+1;
@@ -390,12 +394,12 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             i++;
 
             this.ticks.push(tickCoords);
-            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
+            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX*ticksDelta, tickCoords.usrCoords[2] + deltaY*ticksDelta], this.board);
             if(!this.visProp.drawzero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
                 // zero point is always a major tick. hence, we have to set i = 0;
                 i++;
                 tickPosition += ticksDelta;
-                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX, tickCoords.usrCoords[2] + deltaY], this.board);
+                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX*ticksDelta, tickCoords.usrCoords[2] + deltaY*ticksDelta], this.board);
             }
         }
 
@@ -453,12 +457,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 /**
  * Creates new ticks.
  * @param {JXG.Board} board The board the ticks are put on.
- * @param {Array} parents Array containing a line and an array of positions, where ticks should be put on that line or
- *   a function that calculates the distance based on the ticks number that is given as a parameter. E.g.:<br />
- *   <tt>var ticksFunc = function(i) {</tt><br />
- *   <tt>    return 2;</tt><br />
- *   <tt>}</tt><br />
- *   for ticks with distance 2 between each tick.
+ * @param {Array} parents Array containing a line and an array of positions, where ticks should be put on that line.
  * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
  * @type JXG.Ticks
  * @return Reference to the created ticks object.
