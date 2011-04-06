@@ -31,6 +31,7 @@
 
 /**
  * Math.Geometry namespace definition
+ * @namespace
  */
 JXG.Math.Geometry = {
 
