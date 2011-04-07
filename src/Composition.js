@@ -205,7 +205,7 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
  * @name Perpendicularpoint
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} p,l The constructed point is the orthogonal projection of p onto l.
  * @example
  * var p1 = board.create('point', [0.0, 4.0]);
@@ -314,7 +314,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
  * @return An array containing two elements: A {@link JXG.Line} object in the first component and a
  * {@link JXG.Point} element in the second component. The line is orthogonal to the given line and meets it
  * in the returned point.
- * @throws {Exception} If the elements cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
  * will contain p. The perpendicular point is the intersection point of the two lines.
  * @example
@@ -375,7 +375,7 @@ JXG.createPerpendicular = function(board, parents, attributes) {
  * @name Midpoint
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point} p1,p2 The constructed point will be in the middle of p1 and p2.
  * @param {JXG.Line} l The midpoint will be in the middle of {@link JXG.Line#point1} and {@link JXG.Line#point2} of
  * the given line l.
@@ -474,7 +474,7 @@ JXG.createMidpoint = function(board, parents, attributes) {
  * @name Parallelpoint
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 Taking the euclidean vector <tt>v=p2-p1</tt> the parallel point is determined by
  * <tt>p4 = p3+v</tt>
  * @param {JXG.Line_JXG.Point} l,p The resulting point will together with p specify a line which is parallel to l.
@@ -581,15 +581,15 @@ JXG.createParallelPoint = function(board, parentArr, attributes) {
     return p;
 };
 
+
 /**
- * @class Constructor for a parallel line.
+ * @class A parallel is a line through a given point with the same slope as a given line.
  * @pseudo
- * @description A parallel is a line through a given point with the same slope as a given line.
- * @constructor
  * @name Parallel
- * @type JXG.Line
  * @augments JXG.Line
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @constructor
+ * @type JXG.Line
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} l,p The constructed line contains p and has the same slope as l.
  * @example
  * // Create a parallel
@@ -638,19 +638,14 @@ JXG.createParallel = function(board, parents, attributes) {
 };
 
 /**
- * TODO is this really required? it is the same as 'parallel', except that it doesn't touch the first/lastarrow properties and it returns
- * the parallel point. for now it is set to private. please review the docs-comment before making it public. especially the example section
- * isn't done by now. --michael
- * @private
- * @class Constructs two elements: an arrow and a point.
+ * @class An arrow parallel is a parallel segment with an arrow attached.
  * @pseudo
- * @description An arrow parallel is an arrow through a given point with the same slope as another given arrow.
  * @constructor
  * @name Arrowparallel
- * @type JXG.Line
- * @augments JXG.Line
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {Arrow_JXG.Point} a,p The constructed arrow contains p and has the same slope as a.
+ * @type Parallel
+ * @augments Parallel
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line_JXG.Point} l,p The constructed arrow contains p and has the same slope as l.
  * @example
  * // Create a parallel
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -658,15 +653,17 @@ JXG.createParallel = function(board, parents, attributes) {
  * var l1 = board.create('line', [p1, p2]);
  *
  * var p3 = board.create('point', [3.0, 3.0]);
- * var pl1 = board.create('parallel', [l1, p3]);
- * </pre><div id="qwe" style="width: 400px; height: 400px;"></div>
+ * var pl1 = board.create('arrowparallel', [l1, p3]);
+ * </pre><div id="eeacdf99-036f-4e83-aeb6-f7388423e369" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *   var plex1_board = JXG.JSXGraph.initBoard('asd', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ * (function () {
+ *   var plex1_board = JXG.JSXGraph.initBoard('eeacdf99-036f-4e83-aeb6-f7388423e369', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
  *   var plex1_p1 = plex1_board.create('point', [0.0, 2.0]);
  *   var plex1_p2 = plex1_board.create('point', [2.0, 1.0]);
  *   var plex1_l1 = plex1_board.create('line', [plex1_p1, plex1_p2]);
  *   var plex1_p3 = plex1_board.create('point', [3.0, 3.0]);
- *   var plex1_pl1 = plex1_board.create('parallel', [plex1_l1, plex1_p3]);
+ *   var plex1_pl1 = plex1_board.create('arrowparallel', [plex1_l1, plex1_p3]);
+ * })();
  * </script><pre>
  */
 JXG.createArrowParallel = function(board, parents, attributes) {
@@ -688,7 +685,7 @@ JXG.createArrowParallel = function(board, parents, attributes) {
  * @name Normal
  * @type JXG.Line
  * @augments JXG.Line
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line,JXG.Circle,JXG.Curve,JXG.Turtle_JXG.Point} o,p The constructed line contains p which lies on the object and is orthogonal
  * to the tangent to the object in the given point.
  * @param {Glider} p Works like above, however the object is given by {@link Glider#slideObject}.
@@ -840,7 +837,7 @@ JXG.createNormal = function(board, parents, attributes) {
  * @name Bisector
  * @type JXG.Line
  * @augments JXG.Line
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
  * be divided into two equal angles.
  * @example
@@ -960,7 +957,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
  * @name Circumcenter
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the circle determined
  * by p1, p2, and p3.
  * @example
@@ -1031,7 +1028,7 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
  * @name Incenter
  * @type JXG.Point
  * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the incenter of the triangle described
  * by p1, p2, and p3.
  * @example
@@ -1085,7 +1082,7 @@ JXG.createIncenter = function(board, parents, attributes) {
  * @name Circumcircle
  * @type array
  * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed element is the circle determined by p1, p2, and p3.
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -1136,7 +1133,7 @@ JXG.createCircumcircle = function(board, parentArr, attributes) {
  * @name Incircle
  * @type array
  * @returns An array containing the midpoint in the first component and the incircle in the second component.
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the incircle of
  * p1, p2, and p3.
  * @example
@@ -1195,7 +1192,7 @@ JXG.createIncircle = function(board, parents, attributes) {
  * @name Reflection
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Line} p,l The reflection point is the reflection of p against l.
  * @example
  * var p1 = board.create('point', [0.0, 4.0]);
@@ -1275,7 +1272,7 @@ JXG.createReflection = function(board, parentArr, attributes) {
  * @name Mirrorpoint
  * @type JXG.Point
  * @augments JXG.Point
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point} p1,p2 The constructed point is the reflection of p2 against p1.
  * @example
  * var p1 = board.create('point', [3.0, 3.0]);
@@ -1321,7 +1318,7 @@ JXG.createMirrorPoint = function(board, parentArr, attributes) {
  * @name Integral
  * @type JXG.Polygon
  * @augments JXG.Polygon
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {array_JXG.Curve} p,l The constructed point is the orthogonal projection of p onto l.
  * @example
  * var c1 = board.create('functiongraph', [function (t) { return t*t*t; }]);
@@ -1462,7 +1459,7 @@ JXG.createIntegral = function(board, parents, attributes) {
  * @name Locus
  * @type JXG.Curve
  * @augments JXG.Curve
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point} p The constructed curve is the geometric locus of the given point.
  * @example
  *  // This examples needs JXG.Server up and running, otherwise it won't work.
@@ -1551,7 +1548,7 @@ JXG.createLocus = function(board, parents, attributes) {
  * @name Locus
  * @type JXG.Curve
  * @augments JXG.Curve
- * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @example
  * TODO
  * </pre><div id="8ef0f148-3811-44a9-b5c0-ed50c01aa5c0" style="width: 400px; height: 400px;"></div>

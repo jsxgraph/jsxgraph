@@ -55,19 +55,16 @@
 
 <!-- ============================== Inheritance tree ========================== -->
 
-<if test="data.inheritsFrom.length"><p>
+<if test="data.bloodline.length"><p>
 {!
-    var borrowedMembers = data.methods.filter(function($) {return $.memberOf != data.alias});
-    var contributers = [];
-    borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
-    for (var i = contributers.length; i > 0; i--) {
-        for (var j = 0; j < contributers.length - i; j++) {
+    for (var i = data.bloodline.length; i > 0; i--) {
+        for (var j = 0; j < data.bloodline.length - i; j++) {
             output += '&nbsp;&nbsp;&nbsp;';
         }
-        output += i < contributers.length ? '&#x21b3; ' : ' ';
-        output += '<strong>' + new Link().toSymbol(contributers[i-1]) + '</strong><br />';
+        output += i < data.bloodline.length ? '&#x21b3; ' : ' ';
+        output += '<strong>' + new Link().toSymbol(data.bloodline[i-1]) + '</strong><br />';
     }
-    for (var k = 0; k < contributers.length+1; k++) {
+    for (var k = 0; k < data.bloodline.length+1; k++) {
         output += '&nbsp;&nbsp;&nbsp;';
     }
     output += '&#x21b3; ';

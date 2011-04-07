@@ -75,10 +75,27 @@ function publish(symbolSet) {
 	
 	// create each of the class pages
 	for (var i = 0, l = classes.length; i < l; i++) {
-		var symbol = classes[i];
+		var symbol = classes[i],
+            tmp;
 		
 		symbol.events = symbol.getEvents();   // 1 order matters
 		symbol.methods = symbol.getMethods(); // 2
+        symbol.bloodline = [];
+
+        if (symbol && symbol.augments) {
+            tmp = symbol;
+
+            while (true) {
+
+                symbol.bloodline.push(tmp.augments);
+                tmp = symbolSet.getSymbol(tmp.augments);
+
+                if (!tmp || symbol.bloodline.indexOf(tmp.augments) > -1 || tmp.inheritsFrom.length === 0) {
+                    break;
+                }
+            }
+        }
+
 		
 		var output = "";
 		output = classTemplate.process(symbol);
