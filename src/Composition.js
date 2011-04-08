@@ -1017,15 +1017,15 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
 
         p.generatePolynomial = function() {
                 /*
-                     *  CircumcircleMidpoint takes three points A, B and C  and creates point M, which is the circumcenter of A, B, and C.
-                     *
-                     *
-                     * So we have two conditions:
-                     *
-                     *   (a)   CT  ==  AT           (distance condition I)
-                     *   (b)   BT  ==  AT           (distance condition II)
-                     *
-                     */
+                 *  CircumcircleMidpoint takes three points A, B and C  and creates point M, which is the circumcenter of A, B, and C.
+                 *
+                 *
+                 * So we have two conditions:
+                 *
+                 *   (a)   CT  ==  AT           (distance condition I)
+                 *   (b)   BT  ==  AT           (distance condition II)
+                 *
+                 */
 
             var a1 = a.symbolic.x;
             var a2 = a.symbolic.y;
@@ -1052,13 +1052,12 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
 };
 
 /**
- * @class Constructs the incenter of the triangle described by the three given points.
+ * @class Constructs the incenter of the triangle described by the three given points.{@link http://mathworld.wolfram.com/Incenter.html}
  * @pseudo
- * @description http://mathworld.wolfram.com/Incenter.html
  * @constructor
  * @name Incenter
  * @type JXG.Point
- * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
+ * @augments JXG.Point
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the incenter of the triangle described
  * by p1, p2, and p3.
@@ -1105,16 +1104,14 @@ JXG.createIncenter = function(board, parents, attributes) {
 };
 
 /**
- * @class Constructs two elements: a point and a circle. The circle is given by three points which lie on the circle,
- * the point is the midpoint of the circle.
+ * @class A circumcircle is given by three points which are all lying on the circle.
  * @pseudo
- * @description A circumcircle is given by three points which are all lying on the circle.
  * @constructor
  * @name Circumcircle
- * @type array
- * @returns An array containing the midpoint in the first component and the circumcircle in the second component.
+ * @type JXG.Circle
+ * @augments JXG.Circle
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed element is the circle determined by p1, p2, and p3.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed element is the circle determined by <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt>.
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1145,28 +1142,21 @@ JXG.createCircumcircle = function(board, parentArr, attributes) {
                         "\nPossible parent types: [point,point,point]");
     }
 
-    ret = [p, c];
+    // p is already stored as midpoint in c so there's no need to store it explicitly.
 
-    ret.point = p;
-    ret.circle = c;
-
-    ret.multipleElements = true;
-
-    return ret;
+    return c;
 };
 
 /**
- * @class Constructs two elements: a point and a circle. The circle is given by three points,
- * the point is the midpoint of the circle.
+ * @class An incircle is given by three points.
  * @pseudo
- * @description A incircle is given by three points.
  * @constructor
  * @name Incircle
- * @type array
- * @returns An array containing the midpoint in the first component and the incircle in the second component.
+ * @type JXG.Circle
+ * @augments JXG.Circle
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The constructed point is the midpoint of the incircle of
- * p1, p2, and p3.
+ * <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt>.
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
  * var p2 = board.create('point', [2.0, 1.0]);
@@ -1204,14 +1194,9 @@ JXG.createIncircle = function(board, parents, attributes) {
                         "\nPossible parent types: [point,point,point]");
     }
 
-    ret = [p, c];
+    // p is already stored as midpoint in c so there's no need to store it explicitly.
 
-    ret.point = p;
-    ret.circle = c;
-
-    ret.multipleElements = true;
-
-    return ret;
+    return c;
 };
 
 /**
@@ -1347,17 +1332,18 @@ JXG.createMirrorPoint = function(board, parentArr, attributes) {
  * the gliders are used to change the interval dynamically.
  * @constructor
  * @name Integral
- * @type JXG.Polygon
- * @augments JXG.Polygon
+ * @type JXG.Curve
+ * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {array_JXG.Curve} p,l The constructed point is the orthogonal projection of p onto l.
+ * @param {Array_JXG.Curve} i,c The constructed element covers the area between the curve <tt>c</tt> and the x-axis
+ * within the interval <tt>i</tt>.
  * @example
  * var c1 = board.create('functiongraph', [function (t) { return t*t*t; }]);
  * var i1 = board.create('integral', [[-1.0, 4.0], c1]);
  * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var intex1_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
- *   var intex1_c1 = intex1_board.create('functiongraph', [function (t) { return t*t*t; }]);
+ *   var intex1_c1 = intex1_board.create('functiongraph', [function (t) { return Math.cos(t)*t; }]);
  *   var intex1_i1 = intex1_board.create('integral', [[-2.0, 2.0], intex1_c1]);
  * </script><pre>
  */
@@ -1443,6 +1429,11 @@ JXG.createIntegral = function(board, parents, attributes) {
 
     attr = JXG.copyAttributes(attributes, board.options, 'integral');
     p = board.create('curve', [[0],[0]], attr);
+
+    /**
+     * documented in JXG.Curve
+     * @ignore
+     */
     p.updateDataArray = function() {
         var x, y,
             i, left, right;
@@ -1478,8 +1469,47 @@ JXG.createIntegral = function(board, parents, attributes) {
     pa_on_curve.addChild(p);
     pb_on_curve.addChild(p);
 
-    return p;//[pa_on_axis, pb_on_axis, p, t];
+    /**
+     * The point on the axis initially corresponding to the lower value of the interval.
+     * @memberOf Integral.prototype
+     * @name baseLeft
+     * @type JXG.Point
+     */
+    p.baseLeft = pa_on_axis;
 
+    /**
+     * The point on the axis initially corresponding to the higher value of the interval.
+     * @memberOf Integral.prototype
+     * @name baseRight
+     * @type JXG.Point
+     */
+    p.baseRight = pb_on_axis;
+
+    /**
+     * The glider on the curve corresponding to the lower value of the interval.
+     * @memberOf Integral.prototype
+     * @name curveLeft
+     * @type Glider
+     */
+    p.curveLeft = pa_on_curve;
+
+    /**
+     * The glider on the axis corresponding to the higher value of the interval.
+     * @memberOf Integral.prototype
+     * @name curveRight
+     * @type Glider
+     */
+    p.curveRight = pb_on_curve;
+
+    /**
+     * documented in GeometryElement
+     * @ignore
+     */
+    p.label = {
+        content: t
+    };
+
+    return p;
 };
 
 /**
@@ -1530,6 +1560,10 @@ JXG.createLocus = function(board, parents, attributes) {
     c = board.create('curve', [[null], [null]], attributes);
     c.dontCallServer = false;
 
+    /**
+     * should be documented in JXG.Curve
+     * @ignore
+     */
     c.updateDataArray = function () {
         if(c.board.mode > 0)
             return;

@@ -277,9 +277,9 @@ JXG.JSXGraph.registerElement('arc', JXG.createArc);
  * @class A semicircle is a special arc defined by two points. The arc hits both points.
  * @pseudo
  * @name Semicircle
- * @augments JXG.Composition
+ * @augments Arc
  * @constructor
- * @type JXG.Composition
+ * @type Arc
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point} p1,p2 The result will be a composition of an arc drawn clockwise from <tt>p1</tt> and
  * <tt>p2</tt> and the midpoint of <tt>p1</tt> and <tt>p2</tt>.
@@ -308,12 +308,6 @@ JXG.createSemicircle = function(board, parents, attributes) {
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) ) {
 
         attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
-        /**
-         * The midpoint of the two defining points.
-         * @memberOf Semicircle.prototype
-         * @name midpoint
-         * @type Midpoint
-         */
         mp = board.create('midpoint', [parents[0], parents[1]], attr);
 
         attr = JXG.copyAttributes(attributes, board.options, 'circle');
@@ -324,15 +318,20 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @type Arc
          */
         el = board.create('arc',[mp, parents[1], parents[0]], attr);
+
+        /**
+         * The midpoint of the two defining points.
+         * @memberOf Semicircle.prototype
+         * @name midpoint
+         * @type Midpoint
+         */
+        el.midpoint = mp;
     } else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point]");
 
-    return new JXG.Composition({
-        midpoint: mp,
-        arc: el
-    });
+    return el;
 };
 
 JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
@@ -341,9 +340,9 @@ JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
  * @class A circumcircle arc is an {@link Arc} defined by three points. All three points lie on the arc.
  * @pseudo
  * @name CircumcircleArc
- * @augments JXG.Composition
+ * @augments Arc
  * @constructor
- * @type JXG.Composition
+ * @type Arc
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The result will be a composition of an arc of the circumcircle of
  * <tt>p1</tt>, <tt>p2</tt>, and <tt>p3</tt> and the midpoint of the circumcircle of the three points. The arc is drawn
@@ -374,16 +373,10 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
 
         attr = JXG.copyAttributes(attributes, board.options, 'arc', 'center');
-        /**
-         * The midpoint of the circumcircle of the three points defining the circumcircle arc.
-         * @memberOf CircumcircleArc.prototype
-         * @name midpoint
-         * @type Midpoint
-         */
         mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
 
         attr = JXG.copyAttributes(attributes, board.options, 'arc');
-        attr['useDirection'] = true;
+        attr.usedirection = true;
         /**
          * The actual arc.
          * @memberOf CircumcircleArc.prototype
@@ -391,15 +384,21 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          * @type Arc
          */
         el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attr);
+
+
+        /**
+         * The midpoint of the circumcircle of the three points defining the circumcircle arc.
+         * @memberOf CircumcircleArc.prototype
+         * @name midpoint
+         * @type CircumcircleMidpoint
+         */
+        el.midpoint = mp;
     } else
         throw new Error("JSXGraph: create Circumcircle Arc with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
 
-    return new JXG.Composition({
-        midpoint: mp,
-        arc: el
-    });
+    return el;
 };
 
 JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);
