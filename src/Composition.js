@@ -841,7 +841,6 @@ JXG.createNormal = function(board, parents, attributes) {
  * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 The angle described by <tt>p1</tt>, <tt>p2</tt> and <tt>p3</tt> will
  * be divided into two equal angles.
  * @example
- * // Create a normal to a circle.
  * var p1 = board.create('point', [6.0, 4.0]);
  * var p2 = board.create('point', [3.0, 2.0]);
  * var p3 = board.create('point', [1.0, 7.0]);
@@ -882,12 +881,44 @@ JXG.createBisector = function(board, parentArr, attributes) {
 };
 
 /**
- * TODO Is it possible to merge this with createBisector? --michael
- * The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
- * (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
- * @private
+ * @class Bisector lines are similar to {@link Bisector} but takes two lines as parent elements. The resulting element is
+ * a composition of two lines.
+ * @pseudo
+ * @constructor
+ * @name Bisectorlines
+ * @type JXG.Line
+ * @augments JXG.Line
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line_JXG.Line} l1,l2 The four angles described by the lines <tt>l1</tt> and <tt>l2</tt> will each
+ * be divided into two equal angles.
+ * @example
+ * var p1 = board.create('point', [6.0, 4.0]);
+ * var p2 = board.create('point', [3.0, 2.0]);
+ * var p3 = board.create('point', [1.0, 7.0]);
+ * var p4 = board.create('point', [3.0, 0.0]);
+ * var l1 = board.create('line', [p1, p2]);
+ * var l2 = board.create('line', [p3, p4]);
+ *
+ * var bi1 = board.create('bisectorlines', [l1, l2]);
+ * </pre><div id="3121ff67-44f0-4dda-bb10-9cda0b80bf18" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('3121ff67-44f0-4dda-bb10-9cda0b80bf18', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [6.0, 4.0]);
+ *   var p2 = board.create('point', [3.0, 2.0]);
+ *   var p3 = board.create('point', [1.0, 7.0]);
+ *   var p4 = board.create('point', [3.0, 0.0]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var l2 = board.create('line', [p3, p4]);
+ *   var bi1 = board.create('bisectorlines', [l1, l2]);
+ * })();
+ * </script><pre>
  */
 JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
+    //
+    // The angular bisectors of two line [c1,a1,b1] and [c2,a2,b2] are determined by the equation:
+    // (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
+
     var l1 = JXG.getReference(board,parents[0]),
         l2 = JXG.getReference(board,parents[1]),
         g1, g2, attr,
@@ -900,7 +931,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     }
 
     attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line1');
-    var g1 = board.create('line',[
+    g1 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
@@ -919,7 +950,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
     ], attr);
     
     attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
-    var g2 = board.create('line',[
+    g2 = board.create('line',[
         function(){
             var d1 = Math.sqrt(l1.stdform[1]*l1.stdform[1]+l1.stdform[2]*l1.stdform[2]);
             var d2 = Math.sqrt(l2.stdform[1]*l2.stdform[1]+l2.stdform[2]*l2.stdform[2]);
@@ -1537,28 +1568,34 @@ JXG.createLocus = function(board, parents, attributes) {
 };
 
 
+JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
+
 /**
- * @class Creates a grid to help the user with element placements.
+ * @class Creates a grid to support the user with element placement.
  * @pseudo
  * @description A grid is a set of vertical and horizontal lines to support the user with element placement. This method
  * draws such a grid on the given board. It uses options given in {@link JXG.Options#grid}. This method does not
  * take any parent elements. It is usually instantiated on the board's creation via the attribute <tt>grid</tt> set
  * to true.
+ * @parameter None.
  * @constructor
- * @name Locus
+ * @name Grid
  * @type JXG.Curve
  * @augments JXG.Curve
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @example
- * TODO
- * </pre><div id="8ef0f148-3811-44a9-b5c0-ed50c01aa5c0" style="width: 400px; height: 400px;"></div>
+ * grid = board.create('grid', []);
+ * </pre><div id="a9a0671f-7a51-4fa2-8697-241142c00940" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
- *  gridex_board = JXG.JSXGraph.initBoard('8ef0f148-3811-44a9-b5c0-ed50c01aa5c0', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
+ * (function () {
+ *  board = JXG.JSXGraph.initBoard('a9a0671f-7a51-4fa2-8697-241142c00940', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true});
+ *  grid = board.create('grid', []);
+ * })();
  * </script><pre>
  */
 JXG.createGrid = function (board, parents, attributes) {
     var c, attr;
-    
+
     attr = JXG.copyAttributes(attributes, board.options, 'grid');
     c = board.create('curve', [[null], [null]], attr);
 
@@ -1573,7 +1610,7 @@ JXG.createGrid = function (board, parents, attributes) {
             topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
             bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
             i;
-            //horizontal = [[], []], vertical = [[], []];
+        //horizontal = [[], []], vertical = [[], []];
 
         //
         //      |         |         |
@@ -1632,8 +1669,6 @@ JXG.createGrid = function (board, parents, attributes) {
 
     return c;
 };
-
-JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);

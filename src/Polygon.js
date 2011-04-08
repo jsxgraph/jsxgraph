@@ -293,7 +293,7 @@ JXG.createPolygon = function(board, parents, attributes) {
  * </script><pre>
  * @example
  * var p1 = board.create('point', [0.0, 2.0]);
- * var p2 = board.create('point', [0.0,-2.0]);
+ * var p2 = board.create('point', [4.0,4.0]);
  * var p3 = board.create('point', [2.0,0.0]);
  *
  * var pol = board.create('regularpolygon', [p1, p2, p3]);
@@ -302,7 +302,7 @@ JXG.createPolygon = function(board, parents, attributes) {
  * (function () {
  *   var board = JXG.JSXGraph.initBoard('096a78b3-bd50-4bac-b958-3be5e7df17ed', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
  *       p1 = board.create('point', [0.0, 2.0]),
- *       p2 = board.create('point', [0.0, -2.0]),
+ *       p2 = board.create('point', [4.0, 4.0]),
  *       p3 = board.create('point', [2.0,0.0]),
  *       cc1 = board.create('regularpolygon', [p1, p2, p3]);
  * })();
