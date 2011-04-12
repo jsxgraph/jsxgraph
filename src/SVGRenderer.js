@@ -240,7 +240,6 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 tickStr += "M " + (c[1] + dxMin) + " " + (c[2] - dyMin) + " L " + (c[1] - dxMin) + " " + (c[2] + dyMin) + " ";
             }
         }
-
         node = this.getElementById(axis.id);
         if (!JXG.exists(node)) {
             node = this.createPrim('path', axis.id);

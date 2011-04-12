@@ -252,7 +252,7 @@ JXG.GeonextParser.replaceSup = function(te) {
 JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board */ board) /** string */ {
     var pos = 0, end, elName, el, i,
         funcs = ['X','Y','L','V'];
-    
+
     for (i=0;i<funcs.length;i++) {
         pos = term.indexOf(funcs[i]+'(');
         while (pos>=0) {
