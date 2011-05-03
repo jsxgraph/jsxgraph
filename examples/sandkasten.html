@@ -27,14 +27,23 @@
 
     var radaxes = (function () {
         JXG.Options.renderer = 'svg';
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 2, 2, -1]}),
-            /*ct1 = board.create('point', [0, 3]),
-            c1 = board.create('circle', [ct1, 4]),
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
+            ct1 = board.create('point', [0, 3]),
+            //c1 = board.create('circle', [ct1, 4]),
             ct2 = board.create('point', [-4, -2]),
-            c2 = board.create('circle', [ct2, 5]),
+            //c2 = board.create('circle', [ct2, 5]),
             ct3 = board.create('point', [4, -1]),
-            c3 = board.create('circle', [ct3, 6]),
-            i121 = board.create('intersection', [c1, c2, 0]),
+            cc = board.create('circumcircle', [ct1, ct2, ct3], {
+    strokeColor: 'red',
+    point: {
+        face: 'x',
+        visible: true,
+        name: null,
+        withLabel: true
+    }
+}),
+            //c3 = board.create('circle', [ct3, 6]),
+            /*i121 = board.create('intersection', [c1, c2, 0]),
             i122 = board.create('intersection', [c1, c2, 1]),
             i131 = board.create('intersection', [c1, c3, 0]),
             i132 = board.create('intersection', [c1, c3, 1]),
@@ -48,7 +57,9 @@
                 ticks: {
 //                    minTicksDistance: 0,
                     ticksDistance: 2,
-                    insertTicks: false
+                    insertTicks: true,
+                    minorTicks: 3,
+                    minorHeight: 10
                 }
             });
     })();

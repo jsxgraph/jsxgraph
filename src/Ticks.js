@@ -315,22 +315,18 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
             while (distScr > 4*this.minTicksDistance) {
                 ticksDelta /= 10;
-                deltaX /= 10;
-                deltaY /= 10;
-
-                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX*ticksDelta, p1.coords.usrCoords[2] + deltaY*ticksDelta], this.board));
             }
 
             // If necessary, enlarge ticksDelta
             while (distScr < this.minTicksDistance) {
                 ticksDelta *= factor;
-                deltaX *= factor;
-                deltaY *= factor;
-
                 factor = (factor == 5 ? 2 : 5);
-                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board));
+                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX*ticksDelta, p1.coords.usrCoords[2] + deltaY*ticksDelta], this.board));
             }
         }
+
+        console.log(ticksDelta, deltaX, deltaY);
 
         /*
          * In the following code comments are sometimes talking about "respect ticksDelta". this could be done
@@ -339,6 +335,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         // p1 is outside the visible area or the line is a segment
         if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
+            console.log('this case');
             // calculate start and end points
             begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
             end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
@@ -357,6 +354,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // close to the viewport there may be drawn some ticks without a line visible.
             
         } else {
+            console.log('no, this case');
             // p1 is inside the visible area and direction is PLUS
 
             // now we have to calculate the index of the first tick
