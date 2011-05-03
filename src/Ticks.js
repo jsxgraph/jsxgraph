@@ -199,7 +199,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             
             respDelta = function(val) {
                 return Math.ceil(val/ticksDelta)*ticksDelta;
-                //return Math.floor(val) - (Math.floor(val) % ticksDelta);
             },
             
             // the following variables are used to define ticks height and slope
@@ -273,19 +272,18 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             
         if(!this.equidistant) {
             // we have an array of fixed ticks we have to draw
-            var dx_minus = p1.coords.usrCoords[1]-e1.usrCoords[1];
-            var dy_minus = p1.coords.usrCoords[2]-e1.usrCoords[2];
-            var length_minus = Math.sqrt(dx_minus*dx_minus + dy_minus*dy_minus);
+            var dx_minus = p1.coords.usrCoords[1]-e1.usrCoords[1],
+                dy_minus = p1.coords.usrCoords[2]-e1.usrCoords[2],
+                length_minus = Math.sqrt(dx_minus*dx_minus + dy_minus*dy_minus),
+                dx_plus = p1.coords.usrCoords[1]-e2.usrCoords[1],
+                dy_plus = p1.coords.usrCoords[2]-e2.usrCoords[2],
+                length_plus = Math.sqrt(dx_plus*dx_plus + dy_plus*dy_plus),
 
-            var dx_plus = p1.coords.usrCoords[1]-e2.usrCoords[1];
-            var dy_plus = p1.coords.usrCoords[2]-e2.usrCoords[2];
-            var length_plus = Math.sqrt(dx_plus*dx_plus + dy_plus*dy_plus);
+                // new ticks coordinates
+                nx = 0,
+                ny = 0;
 
-            // new ticks coordinates
-            var nx = 0;
-            var ny = 0;
-
-            for(i=0; i<this.fixedTicks.length; i++) {
+            for(i = 0; i < this.fixedTicks.length; i++) {
                 // is this tick visible?
                 if((-length_minus <= this.fixedTicks[i]) && (this.fixedTicks[i] <= length_plus)) {
                     if(this.fixedTicks[i] < 0) {
@@ -326,8 +324,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             }
         }
 
-        console.log(ticksDelta, deltaX, deltaY);
-
         /*
          * In the following code comments are sometimes talking about "respect ticksDelta". this could be done
          * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
@@ -335,7 +331,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         // p1 is outside the visible area or the line is a segment
         if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
-            console.log('this case');
             // calculate start and end points
             begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
             end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
@@ -354,14 +349,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // close to the viewport there may be drawn some ticks without a line visible.
             
         } else {
-            console.log('no, this case');
             // p1 is inside the visible area and direction is PLUS
 
             // now we have to calculate the index of the first tick
             if(!this.line.visProp.straightfirst) {
                 begin = 0; 
             } else {
-                begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));// - 2*ticksDelta;
+                begin = -respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
             }
             
             if(!this.line.visProp.straightlast) {
@@ -381,7 +375,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         i = 0;
         tickPosition = begin;
         while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
-            if(i % (this.visProp.minorticks+1) == 0) {
+            if(i % (this.visProp.minorticks+1) === 0) {
                 tickCoords.major = true;
                 this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id));
                 tickPosition += ticksDelta;
