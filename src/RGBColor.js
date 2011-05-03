@@ -508,3 +508,104 @@ JXG.rgba2rgbo = function (rgba) {
 
     return [rgba, opacity];
 };
+
+/**
+ * Decolorizes the given color.
+ * @param {String} color HTML string containing the HTML color code.
+ * @type String
+ * @return Returns a HTML color string
+ */
+JXG.rgb2bw = function(color) {
+    if(color == 'none') {
+        return color;
+    }
+    var x, HexChars="0123456789ABCDEF", tmp, arr;
+    arr = JXG.rgbParser(color);
+    x = 0.3*arr[0] + 0.59*arr[1] + 0.11*arr[2];
+    tmp = HexChars.charAt((x>>4)&0xf)+HexChars.charAt(x&0xf);
+    color = "#" + tmp + "" + tmp + "" + tmp;
+    return color;
+};
+
+/**
+ * Converts a color into how a colorblind human approximately would see it.
+ * @param {String} color HTML string containing the HTML color code.
+ * @param {String} deficiency The type of color blindness. Possible
+ * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
+ * @type String
+ * @return Returns a HTML color string
+ */
+JXG.rgb2cb = function(color, deficiency) {
+    if(color == 'none') {
+        return color;
+    }
+
+    var rgb, l, m, s, lms, tmp,
+        a1, b1, c1, a2, b2, c2,
+        inflection;
+
+    lms = JXG.rgb2LMS(color);
+    l = lms.l; m = lms.m; s = lms.s;
+
+    deficiency = deficiency.toLowerCase();
+
+    switch(deficiency) {
+        case "protanopia":
+            a1 = -0.06150039994295001;
+            b1 = 0.08277001656812001;
+            c1 = -0.013200141220000003;
+            a2 = 0.05858939668799999;
+            b2 = -0.07934519995360001;
+            c2 = 0.013289415272000003;
+            inflection = 0.6903216543277437;
+
+            tmp = s/m;
+            if (tmp < inflection)
+                l = -(b1 * m + c1 * s) / a1;
+            else
+                l = -(b2 * m + c2 * s) / a2;
+            break;
+        case "tritanopia":
+            a1 = -0.00058973116217;
+            b1 = 0.007690316482;
+            c1 = -0.01011703519052;
+            a2 = 0.025495080838999994;
+            b2 = -0.0422740347;
+            c2 = 0.017005316784;
+            inflection = 0.8349489908460004;
+
+            tmp = m / l;
+            if (tmp < inflection)
+              s = -(a1 * l + b1 * m) / c1;
+            else
+              s = -(a2 * l + b2 * m) / c2;
+            break;
+        default:
+            a1 = -0.06150039994295001;
+            b1 = 0.08277001656812001;
+            c1 = -0.013200141220000003;
+            a2 = 0.05858939668799999;
+            b2 = -0.07934519995360001;
+            c2 = 0.013289415272000003;
+            inflection = 0.5763833686400911;
+
+            tmp = s/l;
+            if(tmp < inflection)
+                m = -(a1 * l + c1 * s) / b1;
+            else
+                m = -(a2 * l + c2 * s) / b2;
+            break;
+    }
+
+    rgb = JXG.LMS2rgb(l, m, s);
+
+    var HexChars="0123456789ABCDEF";
+    tmp = HexChars.charAt((rgb.r>>4)&0xf)+HexChars.charAt(rgb.r&0xf);
+    color = "#" + tmp;
+    tmp = HexChars.charAt((rgb.g>>4)&0xf)+HexChars.charAt(rgb.g&0xf);
+    color += tmp;
+    tmp = HexChars.charAt((rgb.b>>4)&0xf)+HexChars.charAt(rgb.b&0xf);
+    color += tmp;
+
+    return color;
+};

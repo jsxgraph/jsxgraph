@@ -47,8 +47,8 @@ i2 = brd.createElement('intersection',[ma,mc,0],{strokeColor:'#009256',fillColor
  
 i3 = brd.createElement('circumcirclemidpoint',[A,B,C],{strokeColor:'#009256',fillColor:'#65B72E',name:'U'});
 c = brd.createElement('circumcircle',[A,B,C],{strokeColor:'#000000',dash:3,strokeWidth:1});
-c[0].setProperty('visible:false');
-c[1].setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
+c.midpoint.setProperty('visible:false');
+c.setProperty({strokeColor:'#000000',dash:3,strokeWidth:1});
  
 euler = brd.createElement('line',[i1,i3],{strokeWidth:2,strokeColor:'#901B77'});
 brd.unsuspendUpdate();
