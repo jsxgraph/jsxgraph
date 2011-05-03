@@ -425,7 +425,7 @@ JXG.GeonextReader = {
         }
         tmp = this.gEBTN(xmlNode,  'y');
         if (tmp) {
-            board.options.grid.gridX = 1 / parseFloat(tmp);
+            board.options.grid.gridY = 1 / parseFloat(tmp);
         }
         board.calculateSnapSizes();
 
@@ -441,6 +441,8 @@ JXG.GeonextReader = {
         }
 
         if (this.gEBTN(xmlNode, 'coord') == strTrue) {
+            board.options.axis.ticks.majorHeight = 10;        // Hard coded default option
+            board.options.axis.ticks.minorHeight = 4;         // Hard coded default option
             board.create('axis', [[0, 0], [1, 0]]);
             board.create('axis', [[0, 0], [0, 1]]);
         }
