@@ -48,7 +48,6 @@ JXG.GeonextReader = {
             fc = true;
         }
         idx = idx || 0;
-
         tmp = node.getElementsByTagName(tag);
         if (tmp.length > 0) {
             tmp = tmp[idx];
@@ -471,7 +470,6 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
-
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
                         try {
@@ -543,7 +541,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.visualProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
+                        gxtEl.fixed = JXG.str2Bool(Data.getElementsByTagName('fix')[0].firstChild.data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
@@ -559,10 +557,9 @@ JXG.GeonextReader = {
                         gxtEl.outFirst = {};
                         gxtEl.outFirst = gxtReader.colorProperties(gxtEl.outFirst, xmlNode);
                         gxtEl.outFirst = gxtReader.visualProperties(gxtEl.outFirst, xmlNode);
-                        gxtEl.outFirst = gxtReader.firstLevelProperties(gxtEl.outFirst, xmlNode);
-                        gxtEl.outFirst.fixed = xmlNode.getElementsByTagName('fix')[0].firstChild.data;
+                        gxtEl.outFirst = gxtReader.firstLevelProperties(gxtEl.outFirst, xmlNode); 
+                        gxtEl.outFirst.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
                         gxtEl.outFirst = gxtReader.transformProperties(gxtEl.outFirst);
-
                         gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
                         gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
@@ -586,7 +583,7 @@ JXG.GeonextReader = {
                             gxtEl.outLast = gxtReader.colorProperties(gxtEl.outLast, xmlNode);
                             gxtEl.outLast = gxtReader.visualProperties(gxtEl.outLast, xmlNode);
                             gxtEl.outLast = gxtReader.firstLevelProperties(gxtEl.outLast, xmlNode);
-                            gxtEl.outLast.fixed = xmlNode.getElementsByTagName('fix')[0].firstChild.data;
+                            gxtEl.outLast.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
                             gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
                             /*
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
@@ -643,6 +640,7 @@ JXG.GeonextReader = {
 
                             // BISECTOR
                             case "210080":
+                                gxtEl.out.straightFirst = false;
                                 board.create('bisector', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], gxtEl.out);
                                 break;
 
@@ -888,12 +886,35 @@ JXG.GeonextReader = {
                             }
                         } catch (e) {
                         }
+                        gxtEl.parent = null;   // It seems that the parent tag is ignored in GEONExT
+                        
                         gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
                         gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
                         // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
+                        
+                        // Handle parent elements of texts
+                        // TODO: Polygons
+                        if (JXG.exists(gxtEl.parent)) {
+                            if (JXG.isPoint(gxtEl.parent)) {
+                                gxtEl.x = (function (x, y, p) { return function() { return x + p.X(); }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                                gxtEl.y = (function (x, y, p) { return function() { return y + p.Y(); }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_CIRCLE) {  
+                                gxtEl.x = (function (x, y, p) { return function() { return x + p.midpoint.X(); }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                                gxtEl.y = (function (x, y, p) { return function() { return y + p.midpoint.Y(); }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_LINE) {  
+                                gxtEl.x = (function (x, y, p) { return function() { return x + (p.point1.X()+p.point2.X())*0.5; }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                                gxtEl.y = (function (x, y, p) { return function() { return y + (p.point1.Y()+p.point2.Y())*0.5; }; })
+                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
+                            }
+                        }
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
                                 anchor: gxtEl.parent,
                                 id: gxtEl.id,
