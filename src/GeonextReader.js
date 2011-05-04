@@ -158,7 +158,7 @@ JXG.GeonextReader = {
         return gxtEl;
     },
 
-    transformProperties: function (gxtEl) {
+    transformProperties: function (gxtEl, type) {
         var facemap = [
                 // 0-2
                 'cross', 'cross', 'cross',
@@ -190,6 +190,14 @@ JXG.GeonextReader = {
         //gxtEl.withLabel = gxtEl.visible;           // withLabel is set in colorProperties()
         gxtEl.draft = JXG.str2Bool(gxtEl.draft);
         gxtEl.trace = JXG.str2Bool(gxtEl.trace);
+        
+        if (type==='point') {
+            // Fill properties are ignored by GEONExT
+            gxtEl.fillColor = gxtEl.strokeColor;
+            gxtEl.highlightFillColor = gxtEl.highlightStrokeColor;
+            gxtEl.fillOpacity = gxtEl.strokeOpacity;
+            gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
+        }
 
         delete gxtEl.color;
         return gxtEl;
@@ -423,6 +431,12 @@ JXG.GeonextReader = {
         this.parseImage(board, this.gEBTN(boardData, 'file', 0, false), board.options.layer['image']);
 
         board.options.grid.snapToGrid = (this.gEBTN(this.gEBTN(boardData, 'coordinates', 0, false), 'snap') == strTrue);
+        //
+        // TODO: Missing jsxgraph feature snapToPoint
+        // If snapToGrid and snapToPoint are both true, point snapping is enabled
+        if (board.options.grid.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
+            board.options.grid.snapToGrid = false;
+        }
 
         xmlNode = this.gEBTN(boardData, 'grid', 1, false);
         tmp = this.gEBTN(xmlNode,  'x');
@@ -478,8 +492,8 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
-                        gxtEl = gxtReader.transformProperties(gxtEl);
-
+                        gxtEl = gxtReader.transformProperties(gxtEl, 'point');
+                        
                         try {
                             p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
 
@@ -532,7 +546,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'animate', 'animate');
-                        gxtEl = gxtReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl, 'point');
                         try {
                             gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
 
@@ -551,7 +565,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.fixed = JXG.str2Bool(Data.getElementsByTagName('fix')[0].firstChild.data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl = gxtReader.transformProperties(gxtEl);
+                        gxtEl = gxtReader.transformProperties(gxtEl, 'point');
 
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
@@ -567,7 +581,7 @@ JXG.GeonextReader = {
                         gxtEl.outFirst = gxtReader.visualProperties(gxtEl.outFirst, xmlNode);
                         gxtEl.outFirst = gxtReader.firstLevelProperties(gxtEl.outFirst, xmlNode); 
                         gxtEl.outFirst.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
-                        gxtEl.outFirst = gxtReader.transformProperties(gxtEl.outFirst);
+                        gxtEl.outFirst = gxtReader.transformProperties(gxtEl.outFirst, 'point');
                         gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
                         gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
@@ -593,7 +607,7 @@ JXG.GeonextReader = {
                                 gxtEl.outLast = gxtReader.visualProperties(gxtEl.outLast, xmlNode);
                                 gxtEl.outLast = gxtReader.firstLevelProperties(gxtEl.outLast, xmlNode);
                                 gxtEl.outLast.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
-                                gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
+                                gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast, 'point');
                             /*
                                 inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, gxtEl.outLast.id,
