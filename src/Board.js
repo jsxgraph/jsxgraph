@@ -1166,11 +1166,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 case 'x':
                     plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
-                    plaintext += 'el.update();\n';
+                    plaintext += 'el.prepareUpdate().update();\n';
+                    plaintext += 'console.log("X", el.X());\n';
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
-                    plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
+                    //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
+                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,x,'+(right) +');\n';
+                    plaintext += 'el.prepareUpdate().update();\n';
+                    plaintext += 'console.log("Y", el.Y());\n';
                     break;
                 case 'visible':
                     plaintext += 'var c='+(right)+';\n';
@@ -1204,8 +1208,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             i = str.indexOf('<data>');
             j = str.indexOf('<'+'/data>');
         }
-        plaintext += 'this.prepareUpdate();\n';
-        plaintext += 'this.updateElements();\n';
+        plaintext += 'this.prepareUpdate().updateElements();\n';
         plaintext += 'return true;\n';
 
         this.updateConditions = new Function(plaintext);

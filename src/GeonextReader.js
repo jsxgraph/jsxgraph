@@ -198,6 +198,12 @@ JXG.GeonextReader = {
             gxtEl.fillOpacity = gxtEl.strokeOpacity;
             gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
         }
+/*
+// For tests        
+gxtEl.visible = true;
+gxtEl.withLabel = true;
+gxtEl.strokeOpacity = 1;
+*/
 
         delete gxtEl.color;
         return gxtEl;
@@ -437,6 +443,7 @@ JXG.GeonextReader = {
         if (board.options.grid.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
             board.options.grid.snapToGrid = false;
         }
+board.options.grid.snapToGrid = false;
 
         xmlNode = this.gEBTN(boardData, 'grid', 1, false);
         tmp = this.gEBTN(xmlNode,  'x');
@@ -550,10 +557,14 @@ JXG.GeonextReader = {
                         try {
                             gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
 
+                            if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                             p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
                             p.onPolygon = JXG.exists(gxtEl.onpolygon) && JXG.str2Bool(gxtEl.onpolygon);
-
+                            
                             gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
+                            
+                            //if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
+                            
                             gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         } catch(e) {
                             JXG.debug("* <b>Err:</b>  Slider " + gxtEl.name + " " + gxtEl.id + ': '+ gxtEl.parent +"<br>\n");
@@ -594,7 +605,6 @@ JXG.GeonextReader = {
                             inter.p.setProperty(gxtEl.outFirst);
                             */
                             inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
-
                             /* offensichtlich braucht man dieses if doch */
                             if (gxtEl.outFirst.visible == "false") {
                                 inter.hideElement();
@@ -616,7 +626,9 @@ JXG.GeonextReader = {
                                 inter.p2.setProperty(gxtEl.outLast);
                             */
                                 inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
+//console.log("i0", inter.name, inter.X());
                                 inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 1], gxtEl.outLast);
+//console.log("i1", inter.name, inter.X());
                             }
                         }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
@@ -645,6 +657,7 @@ JXG.GeonextReader = {
                         gxtEl.defEl[1] = gxtReader.changeOriginIds(board, gxtEl.defEl[1]);
                         gxtEl.defEl[2] = gxtReader.changeOriginIds(board, gxtEl.defEl[2]);
 
+                        if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                         switch (gxtEl.type) {
                             // ARROW_PARALLEL
                             case "210070":
@@ -759,16 +772,15 @@ JXG.GeonextReader = {
                                 break;
                         }
 
-                        if (board.isSuspendedUpdate) {
-                            board.unsuspendUpdate().suspendUpdate();
-                        }
+                        if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "polygon":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.dataVertex = [];
-                        for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('vertex').length; i++) {
+                        // In Geonext file format the first vertex is equal to the last vertex:
+                        for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('vertex').length-1; i++) {
                             gxtEl.dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
                             gxtEl.dataVertex[i] = gxtReader.changeOriginIds(board, gxtEl.dataVertex[i]);
                         }
