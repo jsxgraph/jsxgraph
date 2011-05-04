@@ -43,6 +43,9 @@ JXG.GeonextReader = {
     gEBTN: function (node, tag, idx, fc) {
         var tmp;
 
+        if (!JXG.exists(node) || !JXG.exists(node.getElementsByTagName)) {
+            return '';
+        }
         // Default values for optional parameters idx and fc
         if (!JXG.exists(fc)) {
             fc = true;
@@ -109,6 +112,9 @@ JXG.GeonextReader = {
     },
 
     firstLevelProperties: function (gxtEl, Data) {
+        if (!JXG.exists(Data) || !JXG.exists(Data.childNodes))
+            return gxtEl;
+        
         var arr = Data.childNodes, n, key;
 
         for (n = 0; n < arr.length; n++) {
@@ -581,21 +587,23 @@ JXG.GeonextReader = {
                             }
                         } else {
                             xmlNode = Data.getElementsByTagName('last')[1];
-                            gxtEl.outLast = {};
-                            gxtEl.outLast = gxtReader.colorProperties(gxtEl.outLast, xmlNode);
-                            gxtEl.outLast = gxtReader.visualProperties(gxtEl.outLast, xmlNode);
-                            gxtEl.outLast = gxtReader.firstLevelProperties(gxtEl.outLast, xmlNode);
-                            gxtEl.outLast.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
-                            gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
+                            if (JXG.exists(xmlNode)) {
+                                gxtEl.outLast = {};
+                                gxtEl.outLast = gxtReader.colorProperties(gxtEl.outLast, xmlNode);
+                                gxtEl.outLast = gxtReader.visualProperties(gxtEl.outLast, xmlNode);
+                                gxtEl.outLast = gxtReader.firstLevelProperties(gxtEl.outLast, xmlNode);
+                                gxtEl.outLast.fixed = JXG.str2Bool(xmlNode.getElementsByTagName('fix')[0].firstChild.data);
+                                gxtEl.outLast = gxtReader.transformProperties(gxtEl.outLast);
                             /*
-                            inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
+                                inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, gxtEl.outLast.id,
                                     gxtEl.outFirst.name, gxtEl.outLast.name);
-                            inter.p1.setProperty(gxtEl.outFirst);
-                            inter.p2.setProperty(gxtEl.outLast);
+                                inter.p1.setProperty(gxtEl.outFirst);
+                                inter.p2.setProperty(gxtEl.outLast);
                             */
-                            inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
-                            inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 1], gxtEl.outLast);
+                                inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
+                                inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 1], gxtEl.outLast);
+                            }
                         }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
@@ -917,6 +925,7 @@ JXG.GeonextReader = {
                                         (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
                             }
                         }
+
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
                                 anchor: gxtEl.parent,
                                 id: gxtEl.id,

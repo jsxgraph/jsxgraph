@@ -1852,6 +1852,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el, i, s;
 
         elementType = elementType.toLowerCase();
+        console.log(elementType);
 
         if (!JXG.exists(parents)) {
             parents = [];
@@ -1862,7 +1863,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         for (i = 0; i < parents.length; i++) {
-            parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
+            if (elementType != 'text' || i!=2) {
+                parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
+            }
         }
 
         if (JXG.JSXGraph.elements[elementType] != null) {
