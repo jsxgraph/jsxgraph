@@ -1852,7 +1852,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el, i, s;
 
         elementType = elementType.toLowerCase();
-        console.log(elementType);
 
         if (!JXG.exists(parents)) {
             parents = [];

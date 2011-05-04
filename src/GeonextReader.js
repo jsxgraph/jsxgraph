@@ -896,7 +896,6 @@ JXG.GeonextReader = {
                             }
                         } catch (e) {
                         }
-                        gxtEl.parent = null;   // It seems that the parent tag is ignored in GEONExT
                         
                         gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
