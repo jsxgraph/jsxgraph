@@ -443,6 +443,8 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
         this.options.text.useASCIIMathML = false;
     }
 
+    // WARNING: If you change this, please check JXG.JSXGraph.freeBoard, too!
+
     // Introduce our event handlers to the browser
     JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
     JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);

@@ -25,33 +25,70 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var drei = (function () {
+        JXG.Options.renderer = 'svg';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50]}),
+            cs = [
+                [-10, -5, -1], [-10, 1, -1], [-10, -5, 1], [-10, 1, 1],
+                [1, -5, -1], [1, 1, -1], [1, -5, 1], [1, 1, 1]
+            ],
+            ps = [],
+            pr = function (a) {
+                var c = [0, -50, 50],
+                    look_at = [0, 0, 0],
+                    theta = [0, 0, 0],
+                    //theta = [0, Math.PI/8, Math.PI/8],
+                    dx, dy, dz;
+
+                dx = Math.cos(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0]))-Math.sin(theta[1])*(a[2]-c[2]);
+                dy = Math.sin(theta[0])*(Math.cos(theta[1])*(a[2]-c[2])+Math.sin(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0])))+Math.cos(theta[0])*(Math.cos(theta[2])*(a[1]-c[1])-Math.sin(theta[2])*(a[0]-c[0]));
+                dz = Math.cos(theta[0])*(Math.cos(theta[1])*(a[2]-c[2])+Math.sin(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0])))-Math.sin(theta[0])*(Math.cos(theta[2])*(a[1]-c[1])-Math.sin(theta[2])*(a[0]-c[0]));
+
+                return [dx, dy];
+            },
+            i, co;
+
+        for (i = 0; i < cs.length; i++) {
+            co = pr(cs[i]);
+            ps.push(board.create('point', co));
+        }
+
+        // back
+        board.create('segment', [ps[0], ps[1]]);
+        board.create('segment', [ps[2], ps[3]]);
+        board.create('segment', [ps[0], ps[2]]);
+        board.create('segment', [ps[1], ps[3]]);
+
+        // front
+        board.create('segment', [ps[4], ps[5]]);
+        board.create('segment', [ps[6], ps[7]]);
+        board.create('segment', [ps[4], ps[6]]);
+        board.create('segment', [ps[5], ps[7]]);
+
+        // left
+        board.create('segment', [ps[0], ps[4]]);
+        board.create('segment', [ps[2], ps[6]]);
+
+        // right
+        board.create('segment', [ps[1], ps[5]]);
+        board.create('segment', [ps[3], ps[7]]);
+    });
+
     var radaxes = (function () {
         JXG.Options.renderer = 'svg';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
             ct1 = board.create('point', [0, 3]),
-            //c1 = board.create('circle', [ct1, 4]),
             ct2 = board.create('point', [-4, -2]),
-            //c2 = board.create('circle', [ct2, 5]),
             ct3 = board.create('point', [4, -1]),
             cc = board.create('circumcircle', [ct1, ct2, ct3], {
-    strokeColor: 'red',
-    point: {
-        face: 'x',
-        visible: true,
-        name: null,
-        withLabel: true
-    }
-}),
-            //c3 = board.create('circle', [ct3, 6]),
-            /*i121 = board.create('intersection', [c1, c2, 0]),
-            i122 = board.create('intersection', [c1, c2, 1]),
-            i131 = board.create('intersection', [c1, c3, 0]),
-            i132 = board.create('intersection', [c1, c3, 1]),
-            i231 = board.create('intersection', [c2, c3, 0]),
-            i232 = board.create('intersection', [c2, c3, 1]),
-            l12 = board.create('line', [i121, i122]),
-            l13 = board.create('line', [i131, i132]),
-            l23 = board.create('line', [i231, i232]),*/
+                strokeColor: 'red',
+                point: {
+                    face: 'x',
+                    visible: true,
+                    name: null,
+                    withLabel: true
+                }
+            }),
             ptest = board.create('point', [0, 0]),
             xaxis = board.create('axis', [[0, 0], [1, 0]], {
                 ticks: {
@@ -86,7 +123,7 @@
     var eulerline = (function () {
 
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
-    
+
         var cerise = {
                 strokeColor: '#901B77',
                 fillColor: '#CA147A'
