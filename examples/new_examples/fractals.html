@@ -40,7 +40,7 @@
     <div id="construction">
         <div id="control" style="width: 300px; height: 300px; float: left; text-align: left;">
             <div id="controlroom" class="jxgbox" style="width: 300px; height: 300px; float: left;"></div>
-            <button id="add" onclick="alert('add');">Add</button>
+            <button id="add">Add</button>
             <button id="rm" onclick="alert('remove');">Remove</button>
             <button id="draw">Draw</button></div>
         </div>
@@ -63,13 +63,12 @@
             },
             cp = [],
 
-            csegment = {
-                withLabel: false
-            },
+            colors = [JXG.Options.line.strokeColor, JXG.Options.curve.strokeColor, 'yellow'],
             cs = [],
+            states = [0],
 
             // fractal view
-            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-275, 275, 275, -275], axis: false, grid: false}),
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-275, 275, 275, -275], axis: false, grid: false, showNavigation: true}),
             t = board.create('turtle'),
 
             draw = function (lvl) {
@@ -82,37 +81,42 @@
                 t.rt(90);
 
                 // calculate each segments length and the angles
-
-                angles.push(Math.atan(cs[0].getSlope())*57.295779513082323);
+                angles.push((cs[0].getAngle() - cs[cs.length-1].getAngle())*57.295779513082323);
 
                 for (i = 0; i < cp.length - 1; i++) {
                     lengths.push(cp[i].Dist(cp[i+1]));
 
                     if (i !== cp.length - 2) {
                         angles.push(JXG.Math.Geometry.trueAngle(cp[i], cp[i+1], cp[i+2]) - 180);
-                    } else {
-                        angles.push(Math.atan(cs[0].getSlope())*57.295779513082323);
                     }
                 }
-                //tlength = JXG.Math.Statistics.sum(lengths);
+                
                 tlength = cp[0].Dist(cp[cp.length-1]);
+                angles.push((2*Math.PI - cs[cs.length-2].getAngle() + cs[cs.length-1].getAngle())*57.295779513082323);
 
                 JXG.debug(angles, lengths);
 
                 // compile control room configuration
                 fun = function (x, lvl) {
                     var i;
+
                     if (lvl < 1) {
                         t.fd(x);
                     } else {
-                        t.lt(angles[0]);
                         for (i = 0; i < cp.length - 1; i++) {
-                            fun(lengths[i]/tlength*x, lvl-1);
+                            t.lt(angles[i]);
 
-//                            if (i !== cp.length - 2) {
-                                t.lt(angles[i+1]);
-//                            }
+                            if (cs[i].state === 0) {
+                                fun(lengths[i]/tlength*x, lvl-1);
+                            } else {
+                                if (cs[i].state === 2) {
+                                    t.pu();
+                                }
+                                t.fd(lengths[i]/tlength*x);
+                                t.pd();
+                            }
                         }
+                        t.lt(angles[angles.length-1]);
                     }
                 };
 
@@ -120,14 +124,26 @@
             };
 
         // initialize control room, example: koch curve
-        /* koch curve*/
+        /* koch curve
         cp.push(control.create('point', [-6, 0], cpoint));
         cp.push(control.create('point', [-2, 0], cpoint));
         cp.push(control.create('point', [ 0, Math.sqrt(12)], cpoint));
         cp.push(control.create('point', [ 2, 0], cpoint));
-        cp.push(control.create('point', [ 6, 0], cpoint));
+        cp.push(control.create('point', [ 6, -2], cpoint));
+        */
         
         
+        /* fern */
+        cp.push(control.create('point', [ 0,-6], cpoint));
+        cp.push(control.create('point', [ 0,-3], cpoint));
+        cp.push(control.create('point', [ 1, 5], cpoint));
+        cp.push(control.create('point', [ 0,-4], cpoint));
+        cp.push(control.create('point', [-3, 0], cpoint));
+        cp.push(control.create('point', [ 0,-5], cpoint));
+        cp.push(control.create('point', [ 2,0.5], cpoint));
+        cp.push(control.create('point', [ 0, 6], cpoint));
+        states = [1, 0, 2, 0, 2, 0, 0];
+
         /* something
         cp.push(control.create('point', [-6, 0], cpoint));
         cp.push(control.create('point', [-3, 2], cpoint));
@@ -142,26 +158,53 @@
         cp.push(control.create('point', [ 3, 4.5], cpoint));
         cp.push(control.create('point', [ 0, 0], cpoint));
         cp.push(control.create('point', [ 6, 0], cpoint));
+        states = [0, 2, 0, 2, 0];
         */
 
+        control.options.grid.snapToGrid = true;
 
         for (i = 0; i < cp.length - 1; i++) {
-            cs.push(control.create('segment', [cp[i], cp[i+1]], csegment));
+            cs.push(control.create('segment', [cp[i], cp[i+1]], {strokeColor: colors[states[i % states.length]]}));
+            cs[i].state = states[i % states.length];
         }
+        cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false, strokeColor: colors[states[i % states.length]]}));
+        cs[cs.length - 1].state = states[(cs.length - 1) % states.length];
 
         // initialize turtle
         t.cs();
         t.hideTurtle();
-        t.setPos(-250, 0 + cp[0]/6*500);
+        t.setPos(-250, cp[0].coords.usrCoords[1]/6*500);
         t.rt(90);
 
         // initialize ui
+        control.addHook(function (e) {
+            var cPos = this.getRelativeMouseCoordinates(e),
+                absPos = JXG.getPosition(e),
+                dx = absPos[0] - cPos[0],
+                dy = absPos[1] - cPos[1],
+                i;
+
+            for (i = 0; i < cs.length; i++) {
+                if (cs[i].hasPoint(dx, dy)) {
+                    cs[i].state = (cs[i].state + 1) % 3;
+                    cs[i].setProperty({strokeColor: colors[cs[i].state]});
+                    console.log(cs[i], cs[i].state);
+                    break;
+                }
+            }
+        }, 'mousedown');
+
         $('#draw').click(function () {
             board.suspendUpdate();
-            draw(4);
+            draw(6);
             board.unsuspendUpdate();
         });
 
+        $('#add').click(function () {
+            board.suspendUpdate();
+            draw(1);
+            board.unsuspendUpdate();
+        });
     })();
 </script>
 </div>

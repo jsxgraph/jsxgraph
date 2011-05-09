@@ -321,6 +321,15 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
+     * Determines the angle between the positive x axis and the line.
+     * @returns {Number}
+     */
+    getAngle: function () {
+        var phi = Math.atan2(this.point2.Y() - this.point1.Y(), this.point2.X() - this.point1.X());
+        return phi;
+    },
+
+    /**
      * Determines whether the line is drawn beyond {@link #point1} and {@link #point2} and updates the line.
      * @param {boolean} straightFirst True if the Line shall be drawn beyond {@link #point1}, false otherwise.
      * @param {boolean} straightLast True if the Line shall be drawn beyond {@link #point2}, false otherwise.
