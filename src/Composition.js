@@ -310,7 +310,8 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
  * to a given line and contains a given point and meets the given line in the perpendicular point.
  * @name Perpendicular
  * @constructor
- * @type Array
+ * @type JXG.Line
+ * @augments Segment
  * @return An array containing two elements: A {@link JXG.Line} object in the first component and a
  * {@link JXG.Point} element in the second component. The line is orthogonal to the given line and meets it
  * in the returned point.
@@ -336,7 +337,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createPerpendicular = function(board, parents, attributes) {
-    var p, l, pd, t, ret, attr;
+    var p, l, pd, t, attr;
 
     parents[0] = JXG.getReference(board, parents[0]);
     parents[1] = JXG.getReference(board, parents[1]);
@@ -359,11 +360,15 @@ JXG.createPerpendicular = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
     pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
-    ret = [pd, t];
-    ret.line = pd;
-    ret.point = t;
+    /**
+     * Helper point created to create the perpendicular segment.
+     * @memberOf Perpendicular.prototype
+     * @name perpendicularpoint
+     * @type Perpendicularpoint
+     */
+    pd.perpendicularpoint = t;
 
-    return ret;
+    return pd;
 };
 
 /**
@@ -493,25 +498,25 @@ JXG.createMidpoint = function(board, parents, attributes) {
  *   var ppex1_pp1 = ppex1_board.create('parallelpoint', [ppex1_p1, ppex1_p2, ppex1_p3]);
  * </script><pre>
  */
-JXG.createParallelPoint = function(board, parentArr, attributes) {
+JXG.createParallelPoint = function(board, parents, attributes) {
     var a, b, c, p;
 
-    if(parentArr.length == 3 && parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
-        a = parentArr[0];
-        b = parentArr[1];
-        c = parentArr[2];
-    } else if (parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
-        c = parentArr[0];
-        a = parentArr[1].point1;
-        b = parentArr[1].point2;
-    } else if (parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
-        c = parentArr[1];
-        a = parentArr[0].point1;
-        b = parentArr[0].point2;
+    if(parents.length == 3 && parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+        a = parents[0];
+        b = parents[1];
+        c = parents[2];
+    } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        c = parents[0];
+        a = parents[1].point1;
+        b = parents[1].point2;
+    } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        c = parents[1];
+        a = parents[0].point1;
+        b = parents[0].point2;
     }
     else {
         throw new Error("JSXGraph: Can't create parallel point with parent types '" +
-                        (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
+                        (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
 
@@ -586,7 +591,7 @@ JXG.createParallelPoint = function(board, parentArr, attributes) {
  * @class A parallel is a line through a given point with the same slope as a given line.
  * @pseudo
  * @name Parallel
- * @augments JXG.Line
+ * @augments Line
  * @constructor
  * @type JXG.Line
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -633,6 +638,14 @@ JXG.createParallel = function(board, parents, attributes) {
 
     attr = JXG.copyAttributes(attributes, board.options, 'parallel');
     pl = board.create('line', [p, pp], attr);
+
+    /**
+     * Helper point used to create the parallel line.
+     * @memberOf Parallel.prototype
+     * @name parallelpoint
+     * @type Parallelpoint
+     */
+    pl.parallelpoint = pp;
 
     return pl;
 };
@@ -733,9 +746,6 @@ JXG.createNormal = function(board, parents, attributes) {
     }
 
     if(c.elementClass==JXG.OBJECT_CLASS_LINE) {
-        // return board.addNormal(c,p, attributes['id'], attributes['name']); // GEONExT-Style: problems with ideal point
-        // If not needed, then board.addNormal and maybe JXG.Math.Geometry.perpendicular can be removed.
-
         // Homogeneous version:
         // orthogonal(l,p) = (F^\delta\cdot l)\times p
         return board.create('line', [
@@ -745,15 +755,6 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
     }
     else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        /*
-        var Dg = function(t){ return -c.Radius()*Math.sin(t); };
-        var Df = function(t){ return c.Radius()*Math.cos(t); };
-        return board.create('line', [
-                    function(){ return -p.X()*Dg(p.position)-p.Y()*Df(p.position);},
-                    function(){ return Dg(p.position);},
-                    function(){ return Df(p.position);}
-                    ], attributes );
-        */
         return board.create('line', [c.midpoint,p], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.visProp.curvetype!='plot') {
@@ -857,25 +858,26 @@ JXG.createNormal = function(board, parents, attributes) {
  * })();
  * </script><pre>
  */
-JXG.createBisector = function(board, parentArr, attributes) {
+JXG.createBisector = function(board, parents, attributes) {
     var p, l, i, attr;
     
     /* TODO bisector polynomials */
-    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+    if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         // hidden and fixed helper
         attr = JXG.copyAttributes(attributes, board.options, 'bisector', 'point');
-        p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parentArr[0], parentArr[1], parentArr[2], board); }], attr);
+        p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parents[0], parents[1], parents[2], board); }], attr);
 
         for(i=0; i<3; i++)
-            parentArr[i].addChild(p); // required for algorithm requiring dependencies between elements
+            parents[i].addChild(p); // required for algorithm requiring dependencies between elements
 
         attr = JXG.copyAttributes(attributes, board.options, 'bisector');
-        l = JXG.createLine(board, [parentArr[1], p], attr);
+        l = JXG.createLine(board, [parents[1], p], attr);
+
         return l;
     }
     else {
         throw new Error("JSXGraph: Can't create angle bisector with parent types '" +
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
 };
@@ -886,8 +888,8 @@ JXG.createBisector = function(board, parentArr, attributes) {
  * @pseudo
  * @constructor
  * @name Bisectorlines
- * @type JXG.Line
- * @augments JXG.Line
+ * @type JXG.Composition
+ * @augments JXG.Composition
  * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Line} l1,l2 The four angles described by the lines <tt>l1</tt> and <tt>l2</tt> will each
  * be divided into two equal angles.
@@ -968,12 +970,22 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         }
     ], attr);
 
-    ret = [g1, g2];
-    ret.lines = [g1, g2];
-    ret.line1 = g1;
-    ret.line2 = g2;
+    // documentation
+    /**
+     * First line.
+     * @memberOf Bisectorlines.prototype
+     * @name line1
+     * @type Line
+     */
 
-    ret.multipleElements = true;
+    /**
+     * Second line.
+     * @memberOf Bisectorlines.prototype
+     * @name line2
+     * @type Line
+     */
+
+    ret = new JXG.Composition({line1: g1, line2: g2});
 
     return ret;
 };
@@ -1127,18 +1139,18 @@ JXG.createIncenter = function(board, parents, attributes) {
  *   var ccex1_cc1 = ccex1_board.create('circumcircle', [ccex1_p1, ccex1_p2, ccex1_p3]);
  * </script><pre>
  */
-JXG.createCircumcircle = function(board, parentArr, attributes) {
+JXG.createCircumcircle = function(board, parents, attributes) {
     var p, c, attr, ret;
 
     try {
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');
-        p = JXG.createCircumcircleMidpoint(board, parentArr, attr);
+        p = JXG.createCircumcircleMidpoint(board, parents, attr);
         
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
-        c = JXG.createCircle(board, [p, parentArr[0]], attr);
+        c = JXG.createCircle(board, [p, parents[0]], attr);
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
-                        (typeof parentArr[0]) + "', '" + (typeof parentArr[1]) + "' and '" + (typeof parentArr[2]) + "'." +
+                        (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                         "\nPossible parent types: [point,point,point]");
     }
 
@@ -1227,20 +1239,20 @@ JXG.createIncircle = function(board, parents, attributes) {
  *   var rpex1_rp1 = rpex1_board.create('reflection', [rpex1_p3, rpex1_l1]);
  * </script><pre>
  */
-JXG.createReflection = function(board, parentArr, attributes) {
+JXG.createReflection = function(board, parents, attributes) {
     var l, p, r;
 
-    if(parentArr[0].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[1].elementClass == JXG.OBJECT_CLASS_LINE) {
-        p = parentArr[0];
-        l = parentArr[1];
+    if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parents[0];
+        l = parents[1];
     }
-    else if(parentArr[1].elementClass == JXG.OBJECT_CLASS_POINT && parentArr[0].elementClass == JXG.OBJECT_CLASS_LINE) {
-        p = parentArr[1];
-        l = parentArr[0];
+    else if(parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parents[1];
+        l = parents[0];
     }
     else {
         throw new Error("JSXGraph: Can't create reflection point with parent types '" +
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
 
@@ -1577,7 +1589,21 @@ JXG.createLocus = function(board, parents, attributes) {
         var cb = function(x, y, eq, t) {
                 c.dataX = x;
                 c.dataY = y;
+
+                /**
+                 * The implicit definition of the locus.
+                 * @memberOf Locus.prototype
+                 * @name eq
+                 * @type String
+                 */
                 c.eq = eq;
+
+                /**
+                 * The time it took to calculate the locus
+                 * @memberOf Locus.prototype
+                 * @name ctime
+                 * @type Number
+                 */
                 c.ctime = t;
 
                 // convert equation and use it to build a generatePolynomial-method
@@ -1601,8 +1627,6 @@ JXG.createLocus = function(board, parents, attributes) {
     return c;
 };
 
-
-JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 
 /**
  * @class Creates a grid to support the user with element placement.
@@ -1673,9 +1697,6 @@ JXG.createGrid = function (board, parents, attributes) {
         topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
         bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
 
-        //horizontal.push(topLeft.usrCoords.slice(1));
-        //vertical.push(topLeft.usrCoords.slice(1));
-
         c.dataX = [];
         c.dataY = [];
 
@@ -1693,8 +1714,8 @@ JXG.createGrid = function (board, parents, attributes) {
 
     };
 
-    // we don't care about highlighting so we turn it off completely to save
-    // time on mouse move
+    // we don't care about highlighting so we turn it off completely to save a lot of
+    // time on every mouse move
     c.hasPoint = function () {
         return false;
     };
@@ -1703,6 +1724,9 @@ JXG.createGrid = function (board, parents, attributes) {
 
     return c;
 };
+
+
+JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
 JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
 JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
 JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);

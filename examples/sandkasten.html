@@ -25,6 +25,23 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var hron = (function () {
+        JXG.Options.layer.polygon = 4;
+        JXG.Options.layer.image = 4;
+        JXG.Options.layer.line = 4;
+        JXG.Options.renderer = 'canvas';
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10]}),
+            p1 = board.create('point', [-3, -5]),
+            p2 = board.create('point', [2, -2]),
+            p3 = board.create('point', [7, 6]),
+            poly = board.create('polygon', [p1, p2 , p3]),
+            img = board.create('image', ['http://www.webresourcesdepot.com/wp-content/uploads/image/jsxgraph.gif', [0, 0], [3, 3]]),
+            p4 = board.create('point', [-3, 2]),
+            p5 = board.create('point', [4, 5]),
+            l = board.create('line', [p4, p5], {strokeWidth: 10});
+    })();
+
     var drei = (function () {
         JXG.Options.renderer = 'svg';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50]}),
@@ -99,7 +116,7 @@
                     minorHeight: 10
                 }
             });
-    })();
+    });
 
     var tyrus = (function () {
         //JXG.Options.renderer = 'canvas';
