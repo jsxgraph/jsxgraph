@@ -226,12 +226,20 @@
         });
 
         $('#add').click(function () {
+            if (cp.length > 9) {
+                return;
+            }
+            
             cp.push(control.create('point', [Math.random()*12-6, Math.random()*12-6], cpoint));
             cs[cs.length-1] = control.create('segment', [cp[cp.length-2], cp[cp.length-1]], {strokeColor: colors[0]});
             cs[cs.length-1].state = 0;
             cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
         });
         $('#rm').click(function () {
+            if (cp.length < 3) {
+                return;
+            }
+            
             board.removeObject(cp.pop());
             board.removeObject(cs.pop());
             board.removeObject(cs.pop());
