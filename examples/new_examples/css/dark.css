@@ -151,3 +151,20 @@ a {
     background-color: white;
     color: black;
 }*/
+
+button {
+    background-color: black;
+    border: 0px white solid;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    color: black;
+    background-color: white;
+}
+
+ul.list-2c {
+    list-style-type: none;
+    margin-top: -20px;
+}

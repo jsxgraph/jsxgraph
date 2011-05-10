@@ -41,8 +41,13 @@
         <div id="control" style="width: 300px; height: 300px; float: left; text-align: left;">
             <div id="controlroom" class="jxgbox" style="width: 300px; height: 300px; float: left;"></div>
             <button id="add">Add</button>
-            <button id="rm" onclick="alert('remove');">Remove</button>
-            <button id="draw">Draw</button></div>
+            <button id="rm">Remove</button>
+            <button id="draw">Draw</button>
+            <br />
+            <h4>Examples</h4>
+            <ul id="examples" class="list-2c">
+            </ul>
+        </div>
         </div>
         <div id="jxgbox" class="jxgbox" style="width: 550px; height: 550px;"></div>
     </div>
@@ -57,7 +62,7 @@
         var i,
 
             // control room
-            control = JXG.JSXGraph.initBoard('controlroom', {boundingbox: [-7, 7, 7, -7], axis: false, grid: false}),
+            control,// = JXG.JSXGraph.initBoard('controlroom', {boundingbox: [-7, 7, 7, -7], axis: false, grid: false}),
             cpoint = {
                 withLabel: false
             },
@@ -80,6 +85,8 @@
                 t.setPos(-250,0);
                 t.rt(90);
 
+                board.setBoundingBox([-275, 275, 275, -275]);
+
                 // calculate each segments length and the angles
                 angles.push((cs[0].getAngle() - cs[cs.length-1].getAngle())*57.295779513082323);
 
@@ -93,8 +100,6 @@
                 
                 tlength = cp[0].Dist(cp[cp.length-1]);
                 angles.push((2*Math.PI - cs[cs.length-2].getAngle() + cs[cs.length-1].getAngle())*57.295779513082323);
-
-                JXG.debug(angles, lengths);
 
                 // compile control room configuration
                 fun = function (x, lvl) {
@@ -121,62 +126,76 @@
                 };
 
                 fun(500, lvl);
+            },
+
+            examples = {
+                "Straight Line": {
+                    points: [[-6, 0], [-2, 0], [2, 0], [6, 0]],
+                    states: [0]
+                },
+                "Koch Curve": {
+                    points: [[-6, 0], [-2, 0], [0, Math.sqrt(12)], [2, 0], [6, 0]],
+                    states: [0]
+                },
+                Fern: {
+                    points: [[0, -6], [0, -3], [1, 5], [0, -4], [-3, 0], [0, -5], [2, 0.5], [0, 6]],
+                    states: [1, 0, 2, 0, 2, 0, 0]
+                },
+                Something: {
+                    points: [[-6, 0], [-3, 2], [0, 0], [3, 2], [6, 0]],
+                    states: [0]
+                },
+                "Sierpinski Triangle": {
+                    points: [[-6, 0], [0, 0], [-3, 4.5], [3, 4.5], [0, 0], [6, 0]],
+                    states: [0, 2, 0, 2, 0]
+                }
+            },
+
+            reinit_controls = function (what, nodelete) {
+                var example = examples[what],
+                    states = example.states;
+
+                if (!nodelete) {
+                    JXG.JSXGraph.freeBoard(control);
+                }
+
+                control = JXG.JSXGraph.initBoard('controlroom', {boundingbox: [-7, 7, 7, -7], axis: false, grid: false});
+                control.options.grid.snapToGrid = true;
+
+                cp = [];
+                for (i = 0; i < example.points.length; i++) {
+                    cp.push(control.create('point', example.points[i], cpoint));
+                }
+
+                cs = [];
+                for (i = 0; i < cp.length - 1; i++) {
+                    cs.push(control.create('segment', [cp[i], cp[i+1]], {strokeColor: colors[states[i % states.length]]}));
+                    cs[i].state = states[i % states.length];
+                }
+                cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
+                //cs[cs.length - 1].state = states[(cs.length - 1) % states.length];
+
             };
 
-        // initialize control room, example: koch curve
-        /* koch curve
-        cp.push(control.create('point', [-6, 0], cpoint));
-        cp.push(control.create('point', [-2, 0], cpoint));
-        cp.push(control.create('point', [ 0, Math.sqrt(12)], cpoint));
-        cp.push(control.create('point', [ 2, 0], cpoint));
-        cp.push(control.create('point', [ 6, -2], cpoint));
-        */
-        
-        
-        /* fern */
-        cp.push(control.create('point', [ 0,-6], cpoint));
-        cp.push(control.create('point', [ 0,-3], cpoint));
-        cp.push(control.create('point', [ 1, 5], cpoint));
-        cp.push(control.create('point', [ 0,-4], cpoint));
-        cp.push(control.create('point', [-3, 0], cpoint));
-        cp.push(control.create('point', [ 0,-5], cpoint));
-        cp.push(control.create('point', [ 2,0.5], cpoint));
-        cp.push(control.create('point', [ 0, 6], cpoint));
-        states = [1, 0, 2, 0, 2, 0, 0];
-
-        /* something
-        cp.push(control.create('point', [-6, 0], cpoint));
-        cp.push(control.create('point', [-3, 2], cpoint));
-        cp.push(control.create('point', [ 0, 0], cpoint));
-        cp.push(control.create('point', [ 3, 2], cpoint));
-        cp.push(control.create('point', [ 6, 0], cpoint));
-        */
-        /* sierpinski
-        cp.push(control.create('point', [-6, 0], cpoint));
-        cp.push(control.create('point', [ 0, 0], cpoint));
-        cp.push(control.create('point', [-3, 4.5], cpoint));
-        cp.push(control.create('point', [ 3, 4.5], cpoint));
-        cp.push(control.create('point', [ 0, 0], cpoint));
-        cp.push(control.create('point', [ 6, 0], cpoint));
-        states = [0, 2, 0, 2, 0];
-        */
-
-        control.options.grid.snapToGrid = true;
-
-        for (i = 0; i < cp.length - 1; i++) {
-            cs.push(control.create('segment', [cp[i], cp[i+1]], {strokeColor: colors[states[i % states.length]]}));
-            cs[i].state = states[i % states.length];
-        }
-        cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false, strokeColor: colors[states[i % states.length]]}));
-        cs[cs.length - 1].state = states[(cs.length - 1) % states.length];
+        reinit_controls("Straight Line", true);
 
         // initialize turtle
         t.cs();
         t.hideTurtle();
         t.setPos(-250, cp[0].coords.usrCoords[1]/6*500);
         t.rt(90);
+        t.setPenColor('white');
 
         // initialize ui
+        for (i in examples) {
+            $('#examples').append('<li><button id="example__'+ i.replace(/\s+/g, '_') +'__">'+i+'</button></li>');
+            $('#example__' + i.replace(/\s+/g, '_') + '__').click((function (_i) {
+                return function () {
+                    reinit_controls(_i);
+                }
+            })(i));
+        }
+
         control.addHook(function (e) {
             var cPos = this.getRelativeMouseCoordinates(e),
                 absPos = JXG.getPosition(e),
@@ -202,14 +221,21 @@
 
         $('#draw').click(function () {
             board.suspendUpdate();
-            draw(6);
+            draw(13 - cp.length);
             board.unsuspendUpdate();
         });
 
         $('#add').click(function () {
-            board.suspendUpdate();
-            draw(1);
-            board.unsuspendUpdate();
+            cp.push(control.create('point', [Math.random()*12-6, Math.random()*12-6], cpoint));
+            cs[cs.length-1] = control.create('segment', [cp[cp.length-2], cp[cp.length-1]], {strokeColor: colors[0]});
+            cs[cs.length-1].state = 0;
+            cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
+        });
+        $('#rm').click(function () {
+            board.removeObject(cp.pop());
+            board.removeObject(cs.pop());
+            board.removeObject(cs.pop());
+            cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
         });
     })();
 </script>
