@@ -130,7 +130,7 @@
                 fun = function (x, lvl) {
                     var i;
 
-                    if (counter % 100 === 0) {
+                    if (counter % Math.floor(parts/360) === 0) {
                         t.setPenColor(JXG.hsv2rgb(counter/parts*360, 0.6, 0.9));
                     }
 
