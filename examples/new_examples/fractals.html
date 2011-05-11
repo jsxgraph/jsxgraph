@@ -78,7 +78,9 @@
             draw = function (lvl) {
                 var lengths = [], tlength, angles = [], fun,
                     mix = 0, max = 0, miy = 0, may = 0,
+                    counter = 0, parts, it = 0, nonit = 0,
                     check_boundaries = function () {
+                        counter++;
                         if (t.X() < mix) {
                             mix = t.X();
                         }
@@ -108,17 +110,29 @@
                 for (i = 0; i < cp.length - 1; i++) {
                     lengths.push(cp[i].Dist(cp[i+1]));
 
+                    if (cs[i].state === 0) {
+                        it++;
+                    } else if (cs[i].state === 1) {
+                        nonit++;
+                    }
+
                     if (i !== cp.length - 2) {
                         angles.push(JXG.Math.Geometry.trueAngle(cp[i], cp[i+1], cp[i+2]) - 180);
                     }
                 }
-                
+
+                parts = Math.pow(it, lvl-1)*(nonit + it);
+
                 tlength = cp[0].Dist(cp[cp.length-1]);
                 angles.push((2*Math.PI - cs[cs.length-2].getAngle() + cs[cs.length-1].getAngle())*57.295779513082323);
 
                 // compile control room configuration
                 fun = function (x, lvl) {
                     var i;
+
+                    if (counter % 100 === 0) {
+                        t.setPenColor(JXG.hsv2rgb(counter/parts*360, 0.6, 0.9));
+                    }
 
                     if (lvl < 1) {
                         t.fd(x);
@@ -173,8 +187,12 @@
                     points: [[0, -6], [0, -3], [1, 5], [0, -4], [-3, 0], [0, -5], [2, 0.5], [0, 6]],
                     states: [1, 0, 2, 0, 2, 0, 0]
                 },
+                Bird: {
+                    points: [[0, -6], [0, -3], [1, 5], [0, -4], [-3, 0], [0, -5], [2, 0.5], [0, 6]],
+                    states: [0]
+                },
                 Something: {
-                    points: [[-6, 0], [-3, 2], [0, 0], [3, 2], [6, 0]],
+                    points: [[-6, 0], [-3, 2], [0, -5], [3, 2], [6, 0]],
                     states: [0]
                 },
                 "Sierpinski Triangle": {
@@ -205,7 +223,6 @@
                     cs[i].state = states[i % states.length];
                 }
                 cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
-                //cs[cs.length - 1].state = states[(cs.length - 1) % states.length];
 
                 control.addHook(function (e) {
                     var cPos = this.getRelativeMouseCoordinates(e),
