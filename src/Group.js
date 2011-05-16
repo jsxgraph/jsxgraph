@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -25,8 +25,6 @@
 /** 
  * @fileoverview In this file the class Group is defined, a class for
  * managing grouping of points.
- * @author graphjs
- * @version 0.1
  */
  
 /**
@@ -53,7 +51,8 @@ JXG.Group = function(board, id, name) {
     } else {
         this.id = id;
     }
-    
+    this.board.groups[this.id] = this;
+ 
     this.type = JXG.OBJECT_TYPE_POINT;
     this.elementClass = JXG.OBJECT_CLASS_POINT;                
 
@@ -104,6 +103,8 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
             }
             delete(this.objects[el]);
         }
+        // Unregister the group from board
+        // delete(this.board.groups[this.id]);  // Not sure if we should delete the group
     },
 
     /**
@@ -143,7 +144,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     },
 
     /**
-     * Adds an multiple points to this group.
+     * Adds multiple points to this group.
      * @param {Array} objects An array of points to add to the group.
      */
     addPoints: function(objects) {
@@ -153,7 +154,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     },
 
     /**
-     * Adds an Pint to this group.
+     * Adds an Point to this group.
      * @param {JXG.Point} object The object added to the group.
      */
     addGroup: function(group) {

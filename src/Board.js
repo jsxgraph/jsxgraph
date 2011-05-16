@@ -284,6 +284,12 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.objects = {};
 
     /**
+     * An associative array containing all groups belonging to the board. Key is the id of the group and value is a reference to the object.
+     * @type Object
+     */
+    this.groups = {};
+
+    /**
      * Stores all the objects that are currently running an animation.
      * @type Object
      */

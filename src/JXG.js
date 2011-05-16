@@ -1,11 +1,11 @@
 /*
     Copyright 2008-2011
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+         Matthias Ehmann,
+         Michael Gerhaeuser,
+         Carsten Miller,
+         Bianca Valentin,
+         Alfred Wassermann,
+         Peter Wilfahrt
 
     This file is part of JSXGraph.
 
@@ -113,6 +113,8 @@ JXG.extend(JXG, /** @lends JXG */ {
                 s = board.objects[s];
             } else if (JXG.exists(board.elementsByName[s])) { // Search by name
                 s = board.elementsByName[s];
+            } else if (JXG.exists(board.groups[s])) { // Search by group ID 
+                s = board.groups[s];
             }
         }
 
