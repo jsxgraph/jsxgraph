@@ -626,9 +626,7 @@ board.options.grid.snapToGrid = false;
                                 inter.p2.setProperty(gxtEl.outLast);
                             */
                                 inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 0], gxtEl.outFirst);
-//console.log("i0", inter.name, inter.X());
                                 inter = board.create('intersection', [board.objects[gxtEl.first], board.objects[gxtEl.last], 1], gxtEl.outLast);
-//console.log("i1", inter.name, inter.X());
                             }
                         }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');

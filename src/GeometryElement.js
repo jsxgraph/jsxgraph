@@ -241,7 +241,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         this.visProp.gradientpositionx = 0.5;
         this.visProp.gradientpositiony = 0.5;
 
-        this.needsUpdate = true;
+        //this.needsUpdate = true;
     }
 };
 

@@ -390,8 +390,10 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateLinePrim: function (node, p1x, p1y, p2x, p2y, board) {
         var s, r = this.resolution;
 
-        s = ['m ', parseInt(r * p1x), ', ', parseInt(r * p1y), ' l ', parseInt(r * p2x), ', ', parseInt(r * p2y)];
-        this.updatePathPrim(node, s, board);
+        if (!isNaN(p1x+p1y+p2x+p2y)) {
+            s = ['m ', parseInt(r * p1x), ', ', parseInt(r * p1y), ' l ', parseInt(r * p2x), ', ', parseInt(r * p2y)];
+            this.updatePathPrim(node, s, board);
+        }
     },
 
     // already documented in JXG.AbstractRenderer
@@ -543,7 +545,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             }
         }
         pStr.push(" x e");
-        this.updatePathPrim(node, pStr, el.board);
+        if (pStr.indexOf('NaN')==-1) 
+            this.updatePathPrim(node, pStr, el.board);
     },
 
     // already documented in JXG.AbstractRenderer

@@ -768,9 +768,8 @@ JXG.Math.Geometry = {
      */
     meetLineCircle: function(lin, circ, i, board) {
         var a,b,c,d,n, A,B,C, k,t;
-
         if (circ[4] < JXG.Math.eps) { // Radius is zero, return center of circle
-            return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(1, 3), board);
+            return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
         }
         c = circ[0];
         b = circ.slice(1, 3);
@@ -802,7 +801,7 @@ JXG.Math.Geometry = {
              new JXG.Coords(JXG.COORDS_BY_USER, [-t[1]*(-n[1])-d*n[0]/nn,-t[1]*n[0]-d*n[1]/nn], this.board)
              */
         } else {
-            return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+            return new JXG.Coords(JXG.COORDS_BY_USER, [0,0,0], board);
         }
         // Returns do not work with homogeneous coordinates, yet
     },
@@ -820,17 +819,17 @@ JXG.Math.Geometry = {
     meetCircleCircle: function(circ1, circ2, i, board) {
         var radicalAxis;
         if (circ1[4] < JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
-            if (this.distance(circ1.slice(1, 3), circ2.slice(1, 3)) == circ2[4]) {
-                return new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(1, 3), board);
+            if (Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) < JXG.Math.eps) {
+                return new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(6, 8), board);
             } else {
-                return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+                return new JXG.Coords(JXG.COORDS_BY_USER, [0,0,0], board);
             }
         }
         if (circ2[4] < JXG.Math.eps) { // Radius are zero, return center of circle, if on other circle
-            if (this.distance(circ2.slice(1, 3), circ1.slice(1, 3)) == circ1[4]) {
-                return new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(1, 3), board);
+            if (Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) < JXG.Math.eps) {
+                return new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(6, 8), board);
             } else {
-                return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+                return new JXG.Coords(JXG.COORDS_BY_USER, [0,0,0], board);
             }
         }
         radicalAxis = [circ2[3] * circ1[0] - circ1[3] * circ2[0],

@@ -418,10 +418,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
-        node.setAttributeNS(null, 'x1', p1x);
-        node.setAttributeNS(null, 'y1', p1y);
-        node.setAttributeNS(null, 'x2', p2x);
-        node.setAttributeNS(null, 'y2', p2y);
+        if (!isNaN(p1x+p1y+p2x+p2y)) {
+            node.setAttributeNS(null, 'x1', p1x);
+            node.setAttributeNS(null, 'y1', p1y);
+            node.setAttributeNS(null, 'x2', p2x);
+            node.setAttributeNS(null, 'y2', p2y);
+        }
     },
 
     // already documented in JXG.AbstractRenderer
@@ -500,7 +502,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
                 nextSymb = symbm;
             } else {
-                // Chrome has problems with values  being too far away.
+                // Chrome has problems with values being too far away.
                 if (scr[1] > maxSize) {
                     scr[1] = maxSize;
                 } else if (scr[1] < -maxSize) {
@@ -535,7 +537,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 pStr += " ";
             }
         }
-        node.setAttributeNS(null, 'points', pStr);
+        if (pStr.indexOf('NaN')==-1) 
+            node.setAttributeNS(null, 'points', pStr);
     },
 
     // already documented in JXG.AbstractRenderer

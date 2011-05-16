@@ -1894,7 +1894,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         if (el.prepareUpdate) {
-            el.prepareUpdate().update(); //.updateRenderer();
+            el.prepareUpdate().update().updateRenderer();
         } else {
             el.update();
         }
