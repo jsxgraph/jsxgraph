@@ -520,8 +520,6 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} owner The scope in which the event trigger is called.
      */
     removeEvent: function ( obj, type, fn, owner ) {
-        if (!JXG.exists(obj)) return;
-           
         try {
             if (JXG.exists(obj.addEventListener)) { // Non-IE browser
                 obj.removeEventListener(type, owner['x_internal'+type], false);
