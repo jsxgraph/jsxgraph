@@ -144,7 +144,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if(this.visProp.trace) {
             this.cloneToBackground(true);
         }
-     /*
+        /*
          * We need to calculate the new coordinates no matter of the points visibility because
          * a child could be visible and depend on the coordinates of the point (e.g. perpendicular).
          * 
@@ -488,8 +488,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             return this.slideObject.generatePolynomial(this);
         };
 
-        this.needsUpdate = true;
-        this.update();
+        //this.needsUpdate = true;
+        //this.update();
         return this;
     },
 
@@ -549,7 +549,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.updateConstraint = new Function('',fs);
         }
 
-        if (!this.board.isSuspendedUpdate) { this.update(); }
+        // if (!this.board.isSuspendedUpdate) { this.update(); }
         return this;
     },
 

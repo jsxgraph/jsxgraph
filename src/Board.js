@@ -1893,7 +1893,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return el;
         }
 
-        this.update(el); // We start updating at the newly created element. AW
+        el.prepareUpdate().update(); //.updateRenderer();
         return el;
     },
 
