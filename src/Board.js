@@ -1893,7 +1893,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return el;
         }
 
-        el.prepareUpdate().update(); //.updateRenderer();
+        if (el.prepareUpdate) {
+            el.prepareUpdate().update(); //.updateRenderer();
+        } else {
+            el.update();
+        }
         return el;
     },
 
