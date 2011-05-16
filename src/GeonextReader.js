@@ -557,7 +557,7 @@ board.options.grid.snapToGrid = false;
                         try {
                             gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
 
-                            if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
+                            // if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                             p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
                             p.onPolygon = JXG.exists(gxtEl.onpolygon) && JXG.str2Bool(gxtEl.onpolygon);
                             
@@ -657,7 +657,7 @@ board.options.grid.snapToGrid = false;
                         gxtEl.defEl[1] = gxtReader.changeOriginIds(board, gxtEl.defEl[1]);
                         gxtEl.defEl[2] = gxtReader.changeOriginIds(board, gxtEl.defEl[2]);
 
-                        if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
+                        // if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                         switch (gxtEl.type) {
                             // ARROW_PARALLEL
                             case "210070":
@@ -772,7 +772,7 @@ board.options.grid.snapToGrid = false;
                                 break;
                         }
 
-                        if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
+                        // if (board.isSuspendedUpdate) { board.unsuspendUpdate().suspendUpdate(); }
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "polygon":
