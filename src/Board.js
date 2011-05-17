@@ -1175,22 +1175,24 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
-                    plaintext += 'console.log("X", el.X());\n';
+                    //plaintext += 'console.log("set X ", el.name);\n';
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
                     //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,x,'+(right) +');\n';
                     plaintext += 'el.prepareUpdate().update();\n';
-                    plaintext += 'console.log("Y", el.Y());\n';
+                    //plaintext += 'console.log("Y", el.Y());\n';
                     break;
                 case 'visible':
                     plaintext += 'var c='+(right)+';\n';
+                    plaintext += 'el.visProp.visible = c;\n';
                     plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
+                    //plaintext += 'console.log(el.name, c, el.visProp.visible);\n';
                     break;
                 case 'position':
                     plaintext += 'el.position = ' + (right) +';\n';
-                    plaintext += 'el.update();\n';
+                    plaintext += 'el.prepareUpdate().update();\n';
                     break;
                 case 'stroke':
                     plaintext += 'el.strokeColor = ' + (right) +';\n';

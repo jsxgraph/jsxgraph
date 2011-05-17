@@ -57,7 +57,9 @@ b.create('point',[5,0], {name:'5'});
 b.create('point',[1,0], {name:'1'});
 
 f = b.create('functiongraph',["X(S_1)*x^2"]);
+t = b.create('text',[2,3, 'test'], {name:'1', visible:false});
 
+t.setProperty({visible:true});
 b.unsuspendUpdate();
 
 

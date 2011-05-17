@@ -153,7 +153,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
          * the defining elements of the line or circle have been changed.
          */
         if(this.type == JXG.OBJECT_TYPE_GLIDER) {
-            if(this.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+            if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
                 if (fromParent) {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
@@ -161,7 +161,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
                     this.position = JXG.Math.Geometry.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
                 }
-            } else if(this.slideObject.type == JXG.OBJECT_TYPE_LINE) {
+            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
                 p1coords = this.slideObject.point1.coords;
                 p2coords = this.slideObject.point2.coords;

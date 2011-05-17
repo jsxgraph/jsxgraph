@@ -826,13 +826,15 @@ board.options.grid.snapToGrid = false;
                         p = board.create('polygon', gxtEl.dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons
+                        // A.W.: Why do we need this?
+/*                        
                         if (!gxtEl.visible) {
                             p.setProperty({
                                 fillColor: 'none',
                                 highlightFillColor: 'none'
                             });
                         }
-
+*/
                         for (i = 0; i < p.borders.length; i++) {
                             p.borders[i].setProperty(gxtEl.border[i]);
                         }
