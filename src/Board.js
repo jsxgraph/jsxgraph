@@ -759,7 +759,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.drag_dy = dy - this.origin.scrCoords[2];
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
             //Event.observe(this.container, 'mouseup', this.mouseUpListener.bind(this));
-            JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
+            //JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
             return;
         }
         if (this.mode==this.BOARD_MODE_CONSTRUCT) return;
