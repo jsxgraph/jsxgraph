@@ -732,10 +732,10 @@ JXG.createLine = function(board, parents, attributes) {
      */
     if (parents.length == 2) { 
         // point 1 given by coordinates
-        if (parents[0].length>1) { 
+        if (JXG.isArray(parents[0]) && parents[0].length>1) { 
             attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
             p1 = board.create('point', parents[0], attr);
-        } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
+        } else if (JXG.isString(parents[0]) || parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
             p1 =  JXG.getReference(board,parents[0]);
         } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p1 = parents[0]();
@@ -746,11 +746,11 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         // point 2 given by coordinates
-        if (parents[1].length>1) { 
+        if (JXG.isArray(parents[1]) && parents[1].length>1) { 
             attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
             p2 = board.create('point', parents[1], attr);
-        } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
-            p2 =  JXG.getReference(board,parents[1]);
+        } else if (JXG.isString(parents[1]) || parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
+            p2 =  JXG.getReference(board, parents[1]);
         } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p2 = parents[1]();
             constrained = true;
