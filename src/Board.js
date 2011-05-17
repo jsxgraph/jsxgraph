@@ -1874,7 +1874,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (i = 0; i < parents.length; i++) {
             if (elementType != 'text' || i!=2) {
-                parents[i] = JXG.getReference(this, parents[i]); // TODO: should not be done for content-parameter of JXG.Text
+                parents[i] = JXG.getReference(this, parents[i]);
             }
         }
 
@@ -1893,10 +1893,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return el;
         }
 
-        if (el.prepareUpdate) {
+        if (el.prepareUpdate && el.update && el.updateRenderer) {
             el.prepareUpdate().update().updateRenderer();
-        } else {
-            el.update();
         }
         return el;
     },

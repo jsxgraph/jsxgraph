@@ -45,8 +45,9 @@
  * All angles are in degrees.
   */
 JXG.Turtle = function (board, parents, attributes) {
+    this.constructor(board, attributes, JXG.OBJECT_TYPE_TURTLE, JXG.OBJECT_CLASS_OTHER);
+
     var x,y,dir;
-    this.type = JXG.OBJECT_TYPE_TURTLE;
     this.turtleIsHidden = false;
     this.board = board;
     this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:null});
