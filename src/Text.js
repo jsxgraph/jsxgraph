@@ -47,11 +47,13 @@ JXG.Text = function (board, content, coords, attributes) {
         var anchor;
         if (this.visProp.islabel) {
             anchor = this.element.getLabelAnchor();
+            this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
         } else {
             anchor = this.element.getTextAnchor();
+            this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
         }
         this.element.addChild(this);
-        this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
+
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
             [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
              this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
@@ -190,13 +192,15 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             if (this.relativeCoords) {
                 if (this.visProp.islabel) {
                     anchor = this.element.getLabelAnchor();
+                    this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                        [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                         this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
                 } else {
                     anchor = this.element.getTextAnchor();
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER,
+                        [this.relativeCoords.usrCoords[1] + anchor.usrCoords[1],
+                         this.relativeCoords.usrCoords[2] + anchor.usrCoords[2]]);
                 }
-
-                this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                        [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                            this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
             } else {
                 this.updateCoords();
             }

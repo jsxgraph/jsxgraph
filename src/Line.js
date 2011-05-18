@@ -367,7 +367,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     getTextAnchor: function() {
-        return new JXG.Coords(JXG.COORDS_BY_USER, [this.point1.X()+0.5*(this.point2.X() - this.point1.X()),this.point1.Y() +0.5*(this.point2.Y() - this.point1.Y())],this.board);
+        return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() + this.point1.X()), 0.5*(this.point2.Y() + this.point1.Y())],this.board);
     },
 
     /**

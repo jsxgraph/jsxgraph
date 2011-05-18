@@ -47,7 +47,7 @@ c = b.create('incircle',[A,D,B], {});
 */
 
 
-b.suspendUpdate();
+//b.suspendUpdate();
 l = b.create('line',[1,1,1], {withLabel:true, color:'yellow'});
 //l.setProperty({color:'cyan', strokeWidth:6});
 b.create('glider',[-1,-1, l], {fillColor:'yellow', fillOpacity:0.9, trace:false, name:'S_1'});
@@ -59,8 +59,9 @@ b.create('point',[1,0], {name:'1'});
 f = b.create('functiongraph',["X(S_1)*x^2"]);
 t = b.create('text',[2,3, 'test'], {name:'1', visible:false});
 
-t.setProperty({visible:true});
-b.unsuspendUpdate();
+t.visProp.visible = true;
+if (true) {t.showElement();} else {t.hideElement();}
+//b.unsuspendUpdate();
 
 
 //b.create('circle',[[0,1],3], {fillColor:'blue', fillOpacity:0.2, trace:false, center: {visible:true}});

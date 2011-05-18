@@ -1182,13 +1182,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,x,'+(right) +');\n';
                     plaintext += 'el.prepareUpdate().update();\n';
-                    //plaintext += 'console.log("Y", el.Y());\n';
                     break;
                 case 'visible':
                     plaintext += 'var c='+(right)+';\n';
                     plaintext += 'el.visProp.visible = c;\n';
                     plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
-                    //plaintext += 'console.log(el.name, c, el.visProp.visible);\n';
                     break;
                 case 'position':
                     plaintext += 'el.position = ' + (right) +';\n';

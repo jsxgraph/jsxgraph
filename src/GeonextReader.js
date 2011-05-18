@@ -932,8 +932,10 @@ board.options.grid.snapToGrid = false;
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         
-                        // Handle parent elements of texts
+                        /*
+                         * Not necessary: is handled by getTextAnchor() in parent element
                         // TODO: Polygons
+                        // Handle parent elements of texts
                         if (JXG.exists(gxtEl.parent)) {
                             if (JXG.isPoint(gxtEl.parent)) {
                                 gxtEl.x = (function (x, y, p) { return function() { return x + p.X(); }; })
@@ -952,7 +954,7 @@ board.options.grid.snapToGrid = false;
                                         (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
                             }
                         }
-
+                        */
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
                                 anchor: gxtEl.parent,
                                 id: gxtEl.id,
