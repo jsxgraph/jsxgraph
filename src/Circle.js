@@ -309,10 +309,10 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
             else if(this.method == 'pointRadius') {
                 this.radius = this.updateRadius();
             }
-            if (true||!this.board.geonextCompatibilityMode) {
-                this.updateStdform();
-                this.updateQuadraticform();
-            }
+            //if (true||!this.board.geonextCompatibilityMode) {
+            this.updateStdform();
+            this.updateQuadraticform();
+            //}
         }
         return this;
     },

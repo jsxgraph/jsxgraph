@@ -478,7 +478,18 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         // Generate the methods X() and Y()
         if (JXG.isArray(xterm)) {
             this.dataX = xterm;
-            this.X = function(i) { return this.dataX[i]; };
+            this.X = function(t) { 
+                var i = parseInt(Math.floor(t)), f1, f2;
+                if (t<0) i = 0;
+                else if (t>this.dataX.length-2) i = this.dataX.length-2;
+                if (i==t) {
+                    return this.dataX[i]; 
+                } else {
+                    f1 = this.dataX[i]; 
+                    f2 = this.dataX[i+1]; 
+                    return f1+(f2-f1)*(t-i);
+                }
+            };
             this.visProp.curvetype = 'plot';
             this.numberPoints = this.dataX.length;
         } else {
@@ -492,11 +503,28 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         if (JXG.isArray(yterm)) {
             this.dataY = yterm;
-            this.Y = function(i) {
-                if (JXG.isFunction(this.dataY[i])) {
-                    return this.dataY[i]();
+            this.Y = function(t) {
+                var i = parseInt(Math.floor(t)), f1, f2;
+                if (t<0) i = 0;
+                else if (t>this.dataY.length-2) i = this.dataY.length-2;
+                if (i==t) {
+                    if (JXG.isFunction(this.dataY[i])) {
+                        return this.dataY[i]();
+                    } else {
+                        return this.dataY[i];
+                    }
                 } else {
-                    return this.dataY[i];
+                    if (JXG.isFunction(this.dataY[i])) {
+                        f1 = this.dataY[i]();
+                    } else {
+                        f1 = this.dataY[i];
+                    }
+                    if (JXG.isFunction(this.dataY[i+1])) {
+                        f2 = this.dataY[i+1]();
+                    } else {
+                        f2 = this.dataY[i+1];
+                    }
+                    return f1+(f2-f1)*(t-i);
                 }
             };
         } else {

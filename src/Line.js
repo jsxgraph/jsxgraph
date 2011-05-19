@@ -198,9 +198,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 }
             }
 
-            if (true || !this.board.geonextCompatibilityMode) {
-                this.updateStdform();
-            }
+            this.updateStdform();
             if(this.visProp.trace) {
                 this.cloneToBackground(true);
             }

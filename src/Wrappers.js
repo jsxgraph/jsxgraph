@@ -69,11 +69,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     intersection: function(el1,el2,i,j){ 
         el1 = JXG.getReference(this,el1);
         el2 = JXG.getReference(this,el2);
-        if (el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
+        // curve - curve
+        if (el1.elementClass==JXG.OBJECT_CLASS_CURVE && 
+            el2.elementClass==JXG.OBJECT_CLASS_CURVE) {
             return function(){return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); };
+        // arc - line   (arcs are of class curve, but are intersected like circles)
+        } else if ((el1.type==JXG.OBJECT_TYPE_ARC && el2.elementClass==JXG.OBJECT_CLASS_LINE) ||
+                   (el2.type==JXG.OBJECT_TYPE_ARC && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
+            return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };
+        // curve - line (this includes intersections between conic sections and lines
         } else if ((el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_LINE)||
                    (el2.elementClass==JXG.OBJECT_CLASS_CURVE && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
             return function(){return JXG.Math.Geometry.meetCurveLine(el1,el2,i,el1.board); };
+        // All other combinations of circles and lines
         } else {
             return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };
         }

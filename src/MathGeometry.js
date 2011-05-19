@@ -951,7 +951,6 @@ JXG.Math.Geometry = {
         if (!JXG.exists(board))
             board = el1.board;
 
-
         //for (i=0;i<arguments.length-1;i++) {
         for (i = 0; i <= 1; i++) {
             if (arguments[i].elementClass == JXG.OBJECT_CLASS_CURVE) {

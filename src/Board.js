@@ -435,8 +435,9 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.currentCBDef = 'none';
 
     /**
-     * If GEONExT constructions are displayed, then this property should be set to true. Then no stdform updates
-     * and no dragging of lines, circles and curves is possible. This is set in {@link JXG.GeonextReader#readGeonext}.
+     * If GEONExT constructions are displayed, then this property should be set to true. 
+     * At the moment there should be no difference. But this may change.
+     * This is set in {@link JXG.GeonextReader#readGeonext}.
      * @type Boolean
      * @default false
      * @see JXG.GeonextReader#readGeonext

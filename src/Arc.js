@@ -160,6 +160,9 @@ JXG.createArc = function(board, parents, attributes) {
             this.dataX.push(v[1]/v[0]);
             this.dataY.push(v[2]/v[0]);
         }
+        
+        this.updateStdform();
+        this.updateQuadraticform();
     };
 
     /**
@@ -265,6 +268,31 @@ JXG.createArc = function(board, parents, attributes) {
         vecy = vecy*(len+dy)/len;
 
         return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy], this.board);
+    };
+    
+    /**
+     * TODO description
+     * @private
+     */
+    el.updateQuadraticform = function () {
+        var m = this.midpoint,
+            mX = m.X(), mY = m.Y(), r = this.Radius();
+        this.quadraticform = [[mX*mX+mY*mY-r*r,-mX,-mY],
+            [-mX,1,0],
+            [-mY,0,1]
+        ];
+    };
+
+    /**
+     * TODO description
+     * @private
+     */
+    el.updateStdform = function () {
+        this.stdform[3] = 0.5;
+        this.stdform[4] = this.Radius();
+        this.stdform[1] = -this.midpoint.coords.usrCoords[1];
+        this.stdform[2] = -this.midpoint.coords.usrCoords[2];
+        this.normalize();
     };
 
     el.prepareUpdate().update();
