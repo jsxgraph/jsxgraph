@@ -888,7 +888,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
             drag = this.drag_obj[i].obj;
 
-            if (drag.type == JXG.OBJECT_TYPE_POINT || drag.type == JXG.OBJECT_TYPE_LINE
+            if (drag.type == JXG.OBJECT_TYPE_POINT || drag.elementClass == JXG.OBJECT_CLASS_LINE
                 || drag.type == JXG.OBJECT_TYPE_CIRCLE || drag.elementClass == JXG.OBJECT_CLASS_CURVE) {
 
                 drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords[1], newPos.usrCoords[2]);
@@ -901,7 +901,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 // Then, from this position we compute the projection to the object the glider on which the glider lives.
                 if (drag.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
                     drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
-                } else if (drag.slideObject.type == JXG.OBJECT_TYPE_LINE) {
+                } else if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
                     drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
                 }
                 // Now, we have to adjust the other group elements again.
@@ -1204,7 +1204,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     break;
                 case 'fill':
                     plaintext += 'var f='+(right)+';\n';
-                    plaintext += 'el.setProperty({fillColor:f})\n';
+                    plaintext += 'el.visProp.fillcolor = f;\n';
+                    //plaintext += 'el.setProperty({fillColor:f})\n';
                     break;
                 case 'label':
                     break;
