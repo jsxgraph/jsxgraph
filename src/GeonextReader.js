@@ -198,12 +198,6 @@ JXG.GeonextReader = {
             gxtEl.fillOpacity = gxtEl.strokeOpacity;
             gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
         }
-/*
-// For tests        
-gxtEl.visible = true;
-gxtEl.withLabel = true;
-gxtEl.strokeOpacity = 1;
-*/
 
         delete gxtEl.color;
         return gxtEl;
@@ -962,21 +956,35 @@ board.options.grid.snapToGrid = false;
                                 digits: gxtEl.autodigits,
                                 isLabel: false,
                                 strokeColor: gxtEl.colorLabel,
-                                visible: gxtEl.visible
+                                visible: JXG.str2Bool(gxtEl.visible)
                             });
                         break;
                     case 'parametercurve':
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
+                        gxtEl = gxtReader.visualProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
+                        gxtEl = gxtReader.transformProperties(gxtEl);                        
                         gxtEl.functionx = Data.getElementsByTagName('functionx')[0].firstChild.data;
                         gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                         gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                         gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
+
+                        gxtEl.fillColor = 'none';
+                        gxtEl.highlightFillColor = 'none';
+                        
+                        board.create('curve', 
+                                    [ new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functionx, board) + ';' ),
+                                      new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functiony, board) + ';' ),
+                                      new Function('return ' + JXG.GeonextParser.geonext2JS(gxtEl.min, board) + ';' ),
+                                      new Function('return ' + JXG.GeonextParser.geonext2JS(gxtEl.max, board) + ';' )
+                                    ], gxtEl); 
+                        /*
                         c = new JXG.Curve(board, [
                             't',gxtEl.functionx,gxtEl.functiony,gxtEl.min,gxtEl.max
                         ], gxtEl.id, gxtEl.name);
                         c.setProperty('strokeColor:' + gxtEl.colorStroke, 'strokeWidth:' + gxtEl.strokewidth, 'fillColor:none',
                                 'highlightStrokeColor:' + gxtEl.highlightStrokeColor);
+                        */
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case 'tracecurve':
