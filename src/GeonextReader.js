@@ -846,7 +846,9 @@ board.options.grid.snapToGrid = false;
                                 strokeColor: gxtEl.strokeColor,
                                 strokeWidth: gxtEl.strokeWidth,
                                 fillColor: 'none',
-                                highlightStrokeColor: gxtEl.highlightStrokeColor
+                                highlightFillColor: 'none',
+                                highlightStrokeColor: gxtEl.highlightStrokeColor,
+                                visible: JXG.str2Bool(gxtEl.visible)
                             });
 
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
