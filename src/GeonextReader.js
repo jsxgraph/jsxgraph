@@ -874,8 +874,8 @@ board.options.grid.snapToGrid = false;
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
 
-                        gxtEl.firstArrow = JXG.str2Bool(Data.getElementsByTagName('firstarrow')[0].firstChild.data);
-                        gxtEl.lastArrow = JXG.str2Bool(Data.getElementsByTagName('lastarrow')[0].firstChild.data);
+                        gxtEl.firstArrow = JXG.str2Bool(Data.getElementsByTagName('lastarrow')[0].firstChild.data);   // It seems that JSXGraph and GEONExT
+                        gxtEl.lastArrow = JXG.str2Bool(Data.getElementsByTagName('firstarrow')[0].firstChild.data);   // use opposite directions.
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
 

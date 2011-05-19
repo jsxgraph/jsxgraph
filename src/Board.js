@@ -1191,7 +1191,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     break;
                 case 'position':
                     plaintext += 'el.position = ' + (right) +';\n';
-                    plaintext += 'el.prepareUpdate().update();\n';
+                    plaintext += 'el.prepareUpdate().update(true);\n';
                     break;
                 case 'stroke':
                     plaintext += 'el.strokeColor = ' + (right) +';\n';
