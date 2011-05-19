@@ -175,7 +175,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
         node2.setAttributeNS(null, 'refY', '3');
-        node2.setAttributeNS(null, 'markerUnits', 'strokeWidth');
+        node2.setAttributeNS(null, 'markerUnits', 'userSpaceOnUse'); //'strokeWidth');
         node2.setAttributeNS(null, 'markerHeight', '12');
         node2.setAttributeNS(null, 'markerWidth', '10');
         node2.setAttributeNS(null, 'orient', 'auto');
