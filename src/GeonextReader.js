@@ -43,7 +43,7 @@ JXG.GeonextReader = {
     gEBTN: function (node, tag, idx, fc) {
         var tmp;
 
-        if (!JXG.exists(node) || !JXG.exists(node.getElementsByTagName)) {
+        if (!JXG.exists(node)/* || !JXG.exists(node.getElementsByTagName)*/) {
             return '';
         }
         // Default values for optional parameters idx and fc
