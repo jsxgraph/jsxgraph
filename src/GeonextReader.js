@@ -46,21 +46,24 @@ JXG.GeonextReader = {
         if (!JXG.exists(node)/* || !JXG.exists(node.getElementsByTagName)*/) {
             return '';
         }
-        // Default values for optional parameters idx and fc
-        if (!JXG.exists(fc)) {
-            fc = true;
-        }
-        idx = idx || 0;
-        tmp = node.getElementsByTagName(tag);
-        if (tmp.length > 0) {
-            tmp = tmp[idx];
-
-            if (fc && tmp.firstChild) {
-                tmp = tmp.firstChild.data;
+        try {           // We may need this because of weird IE behaviour when testing "!JXG.exists(node.getElementsByTagName"
+            // Default values for optional parameters idx and fc
+            if (!JXG.exists(fc)) {
+                fc = true;
             }
-        }
+            idx = idx || 0;
+            tmp = node.getElementsByTagName(tag);
+            if (tmp.length > 0) {
+                tmp = tmp[idx];
 
-        return tmp;
+                if (fc && tmp.firstChild) {
+                    tmp = tmp.firstChild.data;
+                }
+            }
+            return tmp;
+        } catch (e) {
+            return '';
+        }
     },
 
     /**
