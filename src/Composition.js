@@ -354,17 +354,12 @@ JXG.createPerpendicular = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
-console.log("PERP", l.id, p.id, l.name, p.name);
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular', 'point');
-attr.visible =true;    
-console.log("START");
     t = JXG.createPerpendicularPoint(board, [l, p], attr);
-console.log("DONE 1");
 
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
-attr.visible =true;    
     pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
-console.log("DONE 2");
+
     /**
      * Helper point created to create the perpendicular segment.
      * @memberOf Perpendicular.prototype

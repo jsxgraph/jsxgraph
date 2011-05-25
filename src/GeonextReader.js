@@ -43,27 +43,22 @@ JXG.GeonextReader = {
     gEBTN: function (node, tag, idx, fc) {
         var tmp;
 
-        if (!JXG.exists(node)/* || !JXG.exists(node.getElementsByTagName)*/) {
+        if (!JXG.exists(node || !node.getElementsByTagName )/* || !JXG.exists(node.getElementsByTagName)*/) {
             return '';
         }
-        try {           // We may need this because of weird IE behaviour when testing "!JXG.exists(node.getElementsByTagName"
-            // Default values for optional parameters idx and fc
-            if (!JXG.exists(fc)) {
-                fc = true;
-            }
-            idx = idx || 0;
-            tmp = node.getElementsByTagName(tag);
-            if (tmp.length > 0) {
-                tmp = tmp[idx];
-
-                if (fc && tmp.firstChild) {
-                    tmp = tmp.firstChild.data;
-                }
-            }
-            return tmp;
-        } catch (e) {
-            return '';
+        // Default values for optional parameters idx and fc
+        if (!JXG.exists(fc)) {
+            fc = true;
         }
+        idx = idx || 0;
+        tmp = node.getElementsByTagName(tag);
+        if (tmp.length > 0) {
+            tmp = tmp[idx];
+            if (fc && tmp.firstChild) {
+                tmp = tmp.firstChild.data;
+            }
+        }
+        return tmp;
     },
 
     /**
@@ -365,7 +360,7 @@ JXG.GeonextReader = {
     },
 
     printDebugMessage: function(outputEl,gxtEl,nodetyp,success) {
-        JXG.debug("* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n");
+        //JXG.debug("* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n");
     },
 
     /**
