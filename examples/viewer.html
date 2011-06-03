@@ -152,7 +152,7 @@
         <option> 02_Wohlfahrt_Importland.gxt </option>
         <option> 02 - Wohlfahrtseffekte.gxt </option>
         <option> 01_aussenhandel.gxt </option>
-        <option> 01 - erhebung.gxt </option>
+        <option> 01 - erhebung.gxt        <option> 
         <option> 00.wahlmoeglichkeiten.nc.gxt </option>
         <option> 01.budgetgerade.nc.gxt </option>
         <option> 02.indifferenzkurve3.nc.gxt </option>
@@ -168,6 +168,25 @@
         <option> steuern_nachfrage.nc.gxt </option>
     </select>
 </td>
+<td>
+    <select id="beispiele_carsten">
+        <option> achensymmetrie_achtecke_diagonal.gxt        </option> 
+        <option> balkendiagramm.gxt        </option> 
+        <option> bushaltestelle.gxt        </option> 
+        <option> einschiebekonstruktion.gxt        </option> 
+        <option> gaertner_ludwig.gxt        </option> 
+        <option> kreisdiagramm.gxt        </option> 
+        <option> kreisverkehr.gxt        </option> 
+        <option> parallelogramm_eigenschaften.gxt        </option> 
+        <option> potenzreihe.gxt        </option> 
+        <option> prozent-anteile-L-vierfarbig.gxt        </option> 
+        <option> prozent-anteile-quadrat-windrad.gxt        </option> 
+        <option> pythagoras_allgemein.gxt        </option> 
+        <option> sinus_einheitskreis.gxt        </option> 
+        <option> sinus_asinbx_c.gxt        </option> 
+        <option> symmetrische_figuren_vertikal.gxt        </option> 
+    </select>
+</td>
 </tr>
 <tr>
 <td>
@@ -179,6 +198,9 @@
 </td>
 <td>
     <input type='button' value='Read Geonext VWL examples' onclick="loadFile('beispiele_vwl','Geonext')" /> 
+</td>
+<td>
+    <input type='button' value='Read Geonext II' onclick="loadFile('beispiele_carsten','Geonext')" /> 
 </td>
 </tr>
 </table>
@@ -297,8 +319,11 @@
         if (value=='') {
             value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
         }
-        board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format);
-        ;
+        if (bspname=='beispiele_carsten') {
+            board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/Carsten/'+value, format);
+        } else {
+            board = JXG.JSXGraph.loadBoardFromFile('box','bspnc'+value, format);
+        }
    }
 
    function loadString(bspname, format) {

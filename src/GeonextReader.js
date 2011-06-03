@@ -360,7 +360,7 @@ JXG.GeonextReader = {
     },
 
     printDebugMessage: function(outputEl,gxtEl,nodetyp,success) {
-        //JXG.debug("* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n");
+        JXG.debug("* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n");
     },
 
     /**
