@@ -435,19 +435,20 @@ JXG.GeonextReader = {
         if (board.options.grid.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
             board.options.grid.snapToGrid = false;
         }
-board.options.grid.snapToGrid = false;
+//board.options.grid.snapToGrid = false;
 
         xmlNode = this.gEBTN(boardData, 'grid', 1, false);
         tmp = this.gEBTN(xmlNode,  'x');
         if (tmp) {
             board.options.grid.gridX = 1 / parseFloat(tmp);
+            board.options.grid.snapSizeX = parseFloat(tmp);
         }
         tmp = this.gEBTN(xmlNode,  'y');
         if (tmp) {
             board.options.grid.gridY = 1 / parseFloat(tmp);
+            board.options.grid.snapSizeY = parseFloat(tmp);
         }
-        board.calculateSnapSizes();
-
+        //board.calculateSnapSizes();             // Seems not to be correct
         board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, 'dash'));
 
         tmp = JXG.rgba2rgbo(this.gEBTN(xmlNode, 'color'));
@@ -814,7 +815,6 @@ board.options.grid.snapToGrid = false;
                             gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
-
                         p = board.create('polygon', gxtEl.dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons

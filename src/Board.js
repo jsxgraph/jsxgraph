@@ -1143,7 +1143,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {String} str String containing coniditional update in geonext syntax
      */
     addConditions: function (str) {
-        var plaintext = 'var el,x,y,c;\n',
+        var plaintext = 'var el, x, y, c, rgbo;\n',
             i = str.indexOf('<data>'),
             j = str.indexOf('<'+'/data>'),
             term, m, left, right, name, el;
@@ -1153,11 +1153,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         while (i>=0) {
-            term = str.slice(i+6,j); // throw away <data>
+            term = str.slice(i+6,j);   // throw away <data>
             m = term.indexOf('=');
             left = term.slice(0,m);
             right = term.slice(m+1);
-            m = left.indexOf('.'); // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
+            m = left.indexOf('.');     // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
             name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
             el = this.elementsByName[JXG.unescapeHTML(name)];
 
@@ -1194,7 +1194,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     plaintext += 'el.prepareUpdate().update(true);\n';
                     break;
                 case 'stroke':
-                    plaintext += 'el.strokeColor = ' + (right) +';\n';
+                    plaintext += 'rgbo = JXG.rgba2rgbo('+(right)+');\n';
+                    plaintext += 'el.visProp.strokecolor = rgbo[0];\n';
+                    plaintext += 'el.visProp.strokeopacity = rgbo[1];\n';
+                    // plaintext += 'el.strokeColor = ' + (right) +';\n';
                     break;
                 case 'style':
                     plaintext += 'el.setStyle(' + (right) +');\n';
@@ -1203,9 +1206,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
                     break;
                 case 'fill':
-                    plaintext += 'var f='+(right)+';\n';
-                    plaintext += 'el.visProp.fillcolor = f;\n';
-                    //plaintext += 'el.setProperty({fillColor:f})\n';
+                    plaintext += 'var rgbo = JXG.rgba2rgbo('+(right)+');\n';
+                    plaintext += 'el.visProp.fillcolor = rgbo[0];\n';
+                    plaintext += 'el.visProp.fillopacity = rgbo[1];\n';
                     break;
                 case 'label':
                     break;
@@ -1257,6 +1260,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.options.grid.snapSizeY *= 2;
             y /= 2;
         }
+        
         return this;
     },
 

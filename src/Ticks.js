@@ -208,10 +208,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             distMin = this.visProp.minorheight/2,
             dxMaj = 0, dyMaj = 0,
             dxMin = 0, dyMin = 0;
-            
         // END OF variable declaration
             
-
         // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
         // and has been moved in here to clean up the renderers code.
         //
