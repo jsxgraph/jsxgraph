@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009, 2010
+    Copyright 2008 - 2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -265,7 +265,9 @@ JXG.GeonextReader = {
                 y = this.gEBTN(fileNode, 'y');
                 w = this.gEBTN(fileNode, 'width');
                 h = this.gEBTN(fileNode, 'height');
-                im = board.create('image', [picStr,[x, y],[w, h]], {anchor: el, layer: level});
+                im = board.create('image', [picStr,[x, y],[w, h]], {
+                        anchor: el, layer: level
+                        });
                 return im;
             } else {
                 // Image bound to an element
@@ -301,6 +303,7 @@ JXG.GeonextReader = {
                                 type:'rotate'
                             });
                         tRot.bindTo(im);
+                        el.image = im;
                     } else if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
                         wf = function(){ return wOrg / board.stretchX; };
                         hf = function(){ return hOrg / board.stretchY; };
@@ -308,17 +311,12 @@ JXG.GeonextReader = {
                         yf = function(){ return el.Y() - hf() * 0.5; };
 
                         im = board.create('image', [picStr, [xf,yf], [wf,hf]], {
-                                size: (0.5*Math.min(wOrg, hOrg)),
-                                fillOpacity: 0,
-                                strokeOpacity: 0,
-                                highlightFillOpacity: 0,
-                                highlightStrokeOpacity: 0,
-                                withLabel: false,
                                 layer: level,
                                 id: id,
                                 anchor: el
                             });
                         board.renderer.hide(el.label.content);
+                        el.image = im;
                     } else if (el.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
                         // A circle containing an image
                         wf = function(){ return 2.0 * el.Radius(); };
@@ -330,6 +328,7 @@ JXG.GeonextReader = {
                             id: id,
                             anchor: el
                         });
+                        el.image = im;
                     } else {
                         im = board.create('image', [picStr, [x, y], [w, h]], {
                             layer: level,
@@ -494,14 +493,22 @@ JXG.GeonextReader = {
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
                         
-                        try {
+                        //try {
                             p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
 
-                            gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, p);
+                            var v = function(){ return p.visProp.visible; };
+                            el = gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, p);
                             gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
-                        } catch(e) {
-                            JXG.debug(e);
+                        /*
+                        if (JXG.exists(el)) {
+                            el.visProp.visible = function() { return p.visProp.visible; };
+                            alert(p.visProp.visible);
+                            if (el.visProp.visible()) {el.showElement();} else {el.hideElement();}
                         }
+                        */
+                        //} catch(e) {
+                        //    JXG.debug(e);
+                        //}
                         break;
                     case "line":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
@@ -589,10 +596,11 @@ JXG.GeonextReader = {
                         gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
                         gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
+                        console.log("XXX", JXG.getReference(board, gxtEl.first));
                         //if ((board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_ARROW)
                         // && (board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_ARROW)) {
-                        if ((board.objects[gxtEl.first].elementClass == JXG.OBJECT_CLASS_LINE)
-                         && (board.objects[gxtEl.last].elementClass == JXG.OBJECT_CLASS_LINE)) {
+                        if ((JXG.getReference(board, gxtEl.first).elementClass == JXG.OBJECT_CLASS_LINE)
+                         && (JXG.getReference(board, gxtEl.last).elementClass == JXG.OBJECT_CLASS_LINE)) {
                             /*
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, '',

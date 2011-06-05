@@ -265,8 +265,14 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 res = JXG.GeonextParser.geonext2JS(term, this.board);
                 res = res.replace(/\\"/g,'"');
                 res = res.replace(/\\'/g,"'");
+
                 if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
-                    plaintext += '+('+ res + ').toFixed('+(this.visProp.digits)+')';
+                    if (JXG.isNumber( (new Function('return '+res+';'))() )) {          // output of a value tag
+                                                                                        // may also be a string
+                        plaintext += '+('+ res + ').toFixed('+(this.visProp.digits)+')';
+                    } else {
+                        plaintext += '+('+ res + ')';   
+                    }
                 } else {
                     plaintext += '+('+ res + ')';
                 }

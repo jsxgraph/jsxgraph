@@ -603,6 +603,15 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             return 0.0;
         }
     },
+    
+    /*
+     * This is needed for GEONExT compatibility
+     * @type float
+     * @return the distance between the two points defining the line
+     */
+    L: function() {
+        return this.point1.Dist(this.point2);
+    },
 
     /**
      * TODO circle?!? --michael

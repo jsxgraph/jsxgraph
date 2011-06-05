@@ -363,8 +363,8 @@ JXG.GeonextParser.replaceIdByObj = function(/** string */ term) /** string */ {
  */
 JXG.GeonextParser.geonext2JS = function(term, board) {
     var expr, newterm, i,
-        from = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc'], 
-        to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
+        from = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc'], 
+        to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'JXG.Math.factorial','Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
     // removed: 'Pow'  -> Math.pow
     
     //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &. But it is to strict. 
