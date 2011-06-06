@@ -761,12 +761,41 @@ JXG.GeonextReader = {
                             case "210190":
                                 // sectors usually provide more than one output element but JSXGraph is not fully compatible
                                 // to GEONExT sector elements. GEONExT sectors consist of two lines, a point, and a sector,
-                                // JSXGraph uses a curve to display the sector incl. the borders.
+                                // JSXGraph uses a curve to display the sector incl. the borders, and
+                                // a point and two lines. 
+                                // Gliders on sectors also run through the borders.
                                 gxtEl.out = gxtReader.defProperties(gxtEl.out, xmlNode);
                                 gxtEl.out.firstArrow = JXG.str2Bool(gxtReader.gEBTN(xmlNode, 'firstarrow'));
                                 gxtEl.out.lastArrow = JXG.str2Bool(gxtReader.gEBTN(xmlNode, 'lastarrow'));
 
-                                el = board.create('sector', gxtEl.defEl, gxtEl.out);
+                                // el = board.create('sector', gxtEl.defEl, gxtEl.out);
+                                for (i=0; i<4;i++) {
+                                    xmlNode = Data.getElementsByTagName('output')[i];
+                                    gxtEl.out = gxtReader.defProperties(gxtEl.out, xmlNode);
+                                    gxtEl.out = gxtReader.colorProperties(gxtEl.out, xmlNode);
+                                    gxtEl.out = gxtReader.visualProperties(gxtEl.out, xmlNode);
+                                    gxtEl.out = gxtReader.firstLevelProperties(gxtEl.out, xmlNode);
+                                    gxtEl.out = gxtReader.transformProperties(gxtEl.out);
+                                    
+                                    if (i==0) {
+                                        el = board.create('sector', gxtEl.defEl, gxtEl.out);
+                                    } else if (i==1) {
+                                        p = board.create('point', [
+                                            function(){ 
+                                                var p1 = JXG.getRef(board,gxtEl.defEl[1]), p2 = JXG.getRef(board,gxtEl.defEl[2]);
+                                                return p1.X() + (p2.X()-p1.X())*el.Radius/p1.Dist(p2);
+                                            },
+                                            function(){ 
+                                                var p1 = JXG.getRef(board,gxtEl.defEl[1]), p2 = JXG.getRef(board,gxtEl.defEl[2]);
+                                                return p1.Y() + (p2.Y()-p1.Y())*el.Radius/p1.Dist(p2);
+                                            }], gxtEl.out);
+                                        //p = JXG.getReference(board,gxtEl.defEl[2]);
+                                    } else if (i==2) {
+                                        el = board.create('segment', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                    } else if (i==3) {
+                                        el = board.create('segment', [gxtEl.defEl[1], p], gxtEl.out);
+                                    }
+                                }
                                 break;
                             default:
                                 throw new Error("JSXGraph: GEONExT-Element " + gxtEl.type + ' not implemented.');
