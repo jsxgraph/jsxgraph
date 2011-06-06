@@ -362,14 +362,14 @@ JXG.Options = {
     layer : {
         numlayers: 20, // only important in SVG
         text  : 9,
-        point : 9,
+        point : 9,   
         arc   : 8,
         line  : 7,
-        circle: 6,
+        circle: 6, 
         curve : 5,
         polygon: 4,
         sector: 3,
-        angle : 3,
+        angle : 3, 
         integral : 3,
         grid  : 1,
         image : 0

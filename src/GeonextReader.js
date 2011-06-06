@@ -282,6 +282,7 @@ JXG.GeonextReader = {
                     var wOrg = this.width,
                         hOrg = this.height,
                         xf, yf, wf, hf, im, tRot;
+                        
                     if (el.elementClass == JXG.OBJECT_CLASS_LINE) {
                         // A line containing an image, runs through the horizontal middle
                         // of the image.
