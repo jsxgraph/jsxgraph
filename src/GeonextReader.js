@@ -597,7 +597,6 @@ JXG.GeonextReader = {
                         gxtEl.first = gxtReader.changeOriginIds(board, gxtEl.first);
                         gxtEl.last = gxtReader.changeOriginIds(board, gxtEl.last);
 
-                        console.log("XXX", JXG.getReference(board, gxtEl.first));
                         //if ((board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_ARROW)
                         // && (board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_ARROW)) {
                         if ((JXG.getReference(board, gxtEl.first).elementClass == JXG.OBJECT_CLASS_LINE)

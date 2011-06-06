@@ -499,6 +499,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             value = properties[i];
 
             switch(key) {
+                case 'name':
+                    delete this.board.elementsByName[this.name];
+                    this.name = value;
+                    this.board.elementsByName[this.name] = this;
+                    break;
                 case 'needsregularupdate':
                     this.needsRegularUpdate = !(value == 'false' || value == false);
                     this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
