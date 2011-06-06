@@ -367,7 +367,7 @@ JXG.Options = {
         line  : 7,
         circle: 6, 
         curve : 5,
-        polygon: 4,
+        polygon: 3,
         sector: 3,
         angle : 3, 
         integral : 3,
