@@ -33,5 +33,5 @@ cp jsxgraph_refcard.pdf ../distrib
 #########################################
 cd ..
 #
-rm -f tools/jsxgraph0.83.zip
-zip tools/jsxgraph0.83.zip src/*.js src/COPYING src/COPYING.LESSER distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/prototype.js distrib/*Reader.js tools/makeDistrib.py distrib/jsxgraph_refcard.pdf
+rm -f tools/jsxgraph0.90.zip
+zip tools/jsxgraph0.90.zip src/*.js src/COPYING src/COPYING.LESSER distrib/jsxgraphcore.js distrib/jsxgraph.css distrib/prototype.js distrib/*Reader.js tools/makeDistrib.py distrib/jsxgraph_refcard.pdf

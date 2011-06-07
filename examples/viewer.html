@@ -188,6 +188,13 @@
         <option> symmetrische_figuren_vertikal.gxt        </option> 
     </select>
 </td>
+<td>
+    <select id="beispiele_matthias">
+    <option>stet2.nc.gxt</option>
+    <option>stet3.nc.gxt</option>
+    <option>zero_poles.gxt</option>
+    </select>
+</td>
 </tr>
 <tr>
 <td>
@@ -202,6 +209,9 @@
 </td>
 <td>
     <input type='button' value='Read Geonext II' onclick="loadFile('beispiele_carsten','Geonext')" /> 
+</td>
+<td>
+    <input type='button' value='Read Geonext III' onclick="loadFile('beispiele_matthias','Geonext')" /> 
 </td>
 </tr>
 </table>
@@ -322,6 +332,8 @@
         }
         if (bspname=='beispiele_carsten') {
             board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/Carsten/'+value, format);
+        } else if (bspname=='beispiele_matthias') {
+            board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/Probleme/'+value, format);
         } else {
             board = JXG.JSXGraph.loadBoardFromFile('box','bspnc/'+value, format);
         }
