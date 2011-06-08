@@ -141,6 +141,56 @@ JXG.Math = (function(JXG, Math, undefined) {
         },
 
         /**
+         * Generates a 4x4 matrix for 3D to 2D projections.
+         * @param {Number} l Left
+         * @param {Number} r Right
+         * @param {Number} t Top
+         * @param {Number} b Bottom
+         * @param {Number} n Near
+         * @param {Number} f Far
+         * @returns {Array} 4x4 Matrix
+         */
+        frustum: function (l, r, t, b, n, f) {
+            var ret = JXG.Math.matrix(4, 4);
+
+            ret[0][0] = (n*2) / (r - l);
+            ret[0][1] = 0;
+            ret[0][2] = (r + l) / (r - l);
+            ret[0][3] = 0;
+
+            ret[1][0] = 0;
+            ret[1][1] = (n*2) / (t - b);
+            ret[1][2] = (t + b) / (t - b);
+            ret[1][3] = 0;
+
+            ret[2][0] = 0;
+            ret[2][1] = 0;
+            ret[2][2] = -(f + n) / (f - n);
+            ret[2][3] = -(f*n*2) / (f - n);
+
+            ret[3][0] = 0;
+            ret[3][1] = 0;
+            ret[3][2] = -1;
+            ret[3][3] = 0;
+            
+            return ret;
+        },
+
+        /**
+         * Generates a 4x4 matrix for 3D to 2D projections.
+         * @param {Number} fov Field of view in vertical direction, given in rad.
+         * @param {Number} ratio Aspect ratio of the projection plane.
+         * @param {Number} n Near
+         * @param {Number} f Far
+         */
+        projection: function (fov, ratio, n, f) {
+            var t = n*Math.tan(fov/2),
+                r = t*ratio;
+
+            return this.frustum(-r, r, -t, t, n, f);
+        },
+
+        /**
          * Multiplies a vector vec to a matrix mat: mat * vec. The matrix is interpreted by this function as an array of rows. Please note: This
          * function does not check if the dimensions match.
          * @param {Array} mat Two dimensional array of numbers. The inner arrays describe the columns, the outer ones the matrix' rows.

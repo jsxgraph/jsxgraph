@@ -12,9 +12,9 @@
 
 <h2>Playground to test things temporarily. May change very often.</h2>
 
-<a href="javascript:zoomPoints();">Zoom all points (new)</a><br />
+<!--a href="javascript:zoomPoints();">Zoom all points (new)</a><br />
 <a href="javascript:brd.zoomAllPoints();">Zoom all points (old)</a><br />
-<a href="javascript:zoomAll();">Zoom all elements (new)</a>
+<a href="javascript:zoomAll();">Zoom all elements (new)</a-->
 
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
@@ -40,56 +40,157 @@
             p4 = board.create('point', [-3, 2]),
             p5 = board.create('point', [4, 5]),
             l = board.create('line', [p4, p5], {strokeWidth: 10});
-    })();
+    });
 
     var drei = (function () {
         JXG.Options.renderer = 'svg';
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-50, 50, 50, -50]}),
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
             cs = [
-                [-10, -5, -1], [-10, 1, -1], [-10, -5, 1], [-10, 1, 1],
-                [1, -5, -1], [1, 1, -1], [1, -5, 1], [1, 1, 1]
+                [-2, 2, 2, 1], [2, 2, 2, 1], [-2, 2, -2, 1], [2, 2, -2, 1],
+                //[0, -2, 0, 1], [0, -2, 0, 1], [0, -2, 0, 1], [0, -2, 0, 1]
+                [-2, -2, 2, 1], [2, -2, 2, 1], [-2, -2, -2, 1], [2, -2, -2, 1]
             ],
             ps = [],
-            pr = function (a) {
-                var c = [0, -50, 50],
-                    look_at = [0, 0, 0],
-                    theta = [0, 0, 0],
-                    //theta = [0, Math.PI/8, Math.PI/8],
-                    dx, dy, dz;
+            init = function () {
+                for (i = 0; i < cs.length; i++) {
+                    //co = render(cs[i]);
+                    ps[i] = board.create('point', [0, 0], {withLabel: false, trace: false});
+                    ps[i].threeD = JXG.Math.Statistics.add(cs[i], [3, 0, 0]);
+                }
 
-                dx = Math.cos(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0]))-Math.sin(theta[1])*(a[2]-c[2]);
-                dy = Math.sin(theta[0])*(Math.cos(theta[1])*(a[2]-c[2])+Math.sin(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0])))+Math.cos(theta[0])*(Math.cos(theta[2])*(a[1]-c[1])-Math.sin(theta[2])*(a[0]-c[0]));
-                dz = Math.cos(theta[0])*(Math.cos(theta[1])*(a[2]-c[2])+Math.sin(theta[1])*(Math.sin(theta[2])*(a[1]-c[1])+Math.cos(theta[2])*(a[0]-c[0])))-Math.sin(theta[0])*(Math.cos(theta[2])*(a[1]-c[1])-Math.sin(theta[2])*(a[0]-c[0]));
+                // back
+                board.create('segment', [ps[0], ps[1]]);
+                board.create('segment', [ps[2], ps[3]]);
+                board.create('segment', [ps[0], ps[2]]);
+                board.create('segment', [ps[1], ps[3]]);
 
-                return [dx, dy];
+                // front
+                board.create('segment', [ps[4], ps[5]]);
+                board.create('segment', [ps[6], ps[7]]);
+                board.create('segment', [ps[4], ps[6]]);
+                board.create('segment', [ps[5], ps[7]]);
+
+                // left
+                board.create('segment', [ps[0], ps[4]]);
+                board.create('segment', [ps[2], ps[6]]);
+
+                // right
+                board.create('segment', [ps[1], ps[5]]);
+                board.create('segment', [ps[3], ps[7]]);
             },
-            i, co;
+            render = function (camera, points) {
+                var c = camera.position,//[6, 0, 6],
+                    n = camera.normal,//[-2, 0, -2],
+                    i, b, nt,
+                    nl = Math.sqrt(JXG.Math.innerProduct(n, n)),
+                    sgny = Math.abs(n[1]) < JXG.Math.eps ? 0 : (n[1] > 0 ? 1 : -1),
+                    phi, theta,
+                    rotx, roty, transform;
 
-        for (i = 0; i < cs.length; i++) {
-            co = pr(cs[i]);
-            ps.push(board.create('point', co));
+                theta = -Math.atan(n[1]/n[2]);
+                phi = -Math.atan(n[0]/n[2]);
+
+                /*if (n[0] > 0) {
+                    phi = Math.atan2(n[1], n[0]);
+                } else if (Math.abs(n[0]) < JXG.Math.eps) {
+                    phi = sgny*Math.PI/2;
+                } else {
+                    phi = Math.atan2(n[1], n[0]) + sgny*Math.PI;
+                }
+                theta = Math.acos(n[2]/nl);*/
+
+                rotx = [
+                    [1, 0, 0, 0],
+                    [0, Math.cos(theta), -Math.sin(theta), 0],
+                    [0, Math.sin(theta), Math.cos(theta), 0],
+                    [0, 0, 0, 1]
+                ];
+
+                roty = [
+                    [Math.cos(phi), 0, Math.sin(phi), 0],
+                    [0, 1, 0, 0],
+                    [-Math.sin(phi), 0, Math.cos(phi), 0],
+                    [0, 0, 0, 1]
+                ];
+
+                //transform = JXG.Math.matMatMult(JXG.Math.projection(Math.PI/4, 1, 0.1, 100), JXG.Math.matMatMult(rotx, roty));
+                transform = JXG.Math.matMatMult(rotx, roty);
+                nt = JXG.Math.matVecMult(transform, JXG.Math.Statistics.subtract(n, c));
+                console.log(nt);
+                for (i = 0; i < points.length; i++) {
+                    b = JXG.Math.matVecMult(transform, JXG.Math.Statistics.subtract(points[i].threeD, c));
+
+                    //points[i].moveTo(b[0], b[1]);
+
+                    points[i].moveTo([Math.abs(nt[2])*b[0]/b[2], Math.abs(nt[2])*b[1]/b[2]]);
+                    //points[i].moveTo([nl*b[0]/b[2], nl*b[1]/b[2]]);
+                }
+
+                //return ;
+            },
+            animate = function () {
+                render({
+                    position: [12*Math.sin(t), 3, 12*Math.cos(t)],
+                    normal: [-1*Math.sin(t), 0, -1*Math.cos(t)]
+                    //normal: [-1*Math.sin(t)*(2+Math.sin(t)), 0, -1*Math.cos(t)*(2+Math.sin(t))]
+                }, ps);
+                t += 0.1;
+                //if (t > 2*Math.PI) {
+//                    t = 0;
+//                }
+                setTimeout(animate, 100);
+                //document.getElementById('debug').innerHTML = t/Math.PI;
+            },
+            i, co, t = 0;
+
+        init();
+        /*render({
+            position: [6, 0, 6],
+            normal: [-2, 0, -2]
+        }, ps);*/
+
+        setTimeout(animate, 100);
+
+        var pmat = JXG.Math.transpose(JXG.Math.projection(Math.PI/4, 1, 0.1, 100));
+        var d = document.getElementById("debug");
+
+
+        d.innerHTML = '';
+        for (i = 0; i < pmat.length; i++) {
+            for (var j = 0; j < pmat[i].length; j++) {
+                d.innerHTML += pmat[i][j];
+                d.innerHTML += ', ';
+            }
+            d.innerHTML += '<br />';
         }
 
-        // back
-        board.create('segment', [ps[0], ps[1]]);
-        board.create('segment', [ps[2], ps[3]]);
-        board.create('segment', [ps[0], ps[2]]);
-        board.create('segment', [ps[1], ps[3]]);
+        //board.options.axis.majorHeight = 5;
 
-        // front
-        board.create('segment', [ps[4], ps[5]]);
-        board.create('segment', [ps[6], ps[7]]);
-        board.create('segment', [ps[4], ps[6]]);
-        board.create('segment', [ps[5], ps[7]]);
+        //console.log(project([0, 0, 0]), project([1, 0, 0]), project([0, 1, 0]), project([0, 0, 1]));
 
-        // left
-        board.create('segment', [ps[0], ps[4]]);
-        board.create('segment', [ps[2], ps[6]]);
-
-        // right
-        board.create('segment', [ps[1], ps[5]]);
-        board.create('segment', [ps[3], ps[7]]);
-    });
+        // axes
+        /*var axp = {
+                visible: true,
+                withLabel: true,
+                face: 'x',
+                size: 5,
+                strokeWidth: 2,
+                strokeColor: 'green'
+            },
+            axl = {
+                withLabel: false,
+                strokeColor: 'black',
+                strokeWidth: 1,
+                lastArrow: true
+            },
+            o = board.create('point', render([0, 0, 0]), axp),
+            p100 = board.create('point', render([2, 0, 0]), axp),
+            p010 = board.create('point', render([0, 2, 0]), axp),
+            p001 = board.create('point', render([0, 0, 2]), axp),
+            xax = board.create('line', [o, p100], axl),
+            yax = board.create('line', [o, p010], axl),
+            zax = board.create('line', [o, p001], axl);*/
+    })();
 
     var radaxes = (function () {
         JXG.Options.renderer = 'svg';
