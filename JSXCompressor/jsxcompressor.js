@@ -1,5 +1,6 @@
+/* Version 0.90 */
 /*
-    Copyright 2008,2009
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
