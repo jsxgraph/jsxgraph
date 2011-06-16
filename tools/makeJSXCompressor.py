@@ -27,6 +27,26 @@ license = """/*
 */
     """
 
+duallicense = """/*
+    Copyright 2008-2011
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    
+    Dual licensed under the Apache License Version 2.0, or LGPL Version 3 licenses.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXCompressor.  If not, see <http://www.gnu.org/licenses/>.
+    
+    You should have received a copy of the Apache License along with JSXCompressor.  
+    If not, see <http://www.apache.org/licenses/>.
+*/
+    """
+
 import os
 import re
 import tempfile
@@ -35,7 +55,7 @@ import sys
 compressor = 'yuicompressor-2.4.2'
 
 if __name__ == '__main__':
-    jstxt = 'JXG = {};\n'
+    jstxt = 'JXG = {exists: (function(undefined){return function(v){return !(v===undefined || v===null);}})()};\n'
     jstxt += 'JXG.decompress = function(str) {return unescape((new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip()[0][0]);};\n'
 
     # Take the source files and write them into jstxt
@@ -54,7 +74,7 @@ if __name__ == '__main__':
     # Prepend license text
     coreFilename = '../distrib/jsxcompressor.js'
     fout = open(coreFilename,'w')
-    fout.write(license)
+    fout.write(duallicense)
     fout.close()
 
     # Minify 

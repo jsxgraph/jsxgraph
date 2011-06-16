@@ -1,2 +1,2 @@
-alert("Hello JSX Compressor");
+alert("Hello Wörld, JSX Compressor");
 
