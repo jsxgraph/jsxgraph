@@ -30,7 +30,6 @@
       <input type="button" onclick="extend2();" value="Extend the construction" />
       <input type="button" onclick="extendedLocus2();" value="Calculate extended locus" />
       <input type="button" onclick="showLocusTime(loc3)" value="Show locus time" />
-      <input type="button" onclick="generatePolynomials2()" value="Equations 2" />
       <br />
       <input type="text" value="0.2" id="dim" size="3" />
       <input type="button" onclick="dimConstruction();" value="Dim construction" />
@@ -49,27 +48,20 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false,
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-11, 11, 11, -11], axis: true, grid: false,
                                    keepaspectratio: true, showcopyright: false});
 
 //    board.suspendUpdate();
-    p3 = board.createElement('point', [8, 3]);
-    p4 = board.createElement('point', [8, 8]);
-    c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
-
-    board.options.locus.toOrigin = p3;
-    board.options.locus.to10 = p4;
-
-    p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
-    g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
-
-    c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
-
-    p14_1 = board.createElement('intersection', [c2,g,0], {name: "T", color:'green'});
-
-q=board.create('point', [20, 15]);
-w=board.create('point', [22,13]);
-board.create('midpoint', [q, w]);
+    a = board.createElement('point', [8, -1]);
+    c = board.createElement('functiongraph', [function (x) { return x*x*x; }]);
+    c.generatePolynomial = function (p) {
+    	return ['(' + p.symbolic.x + ')^3 - (' + p.symbolic.y + ')'];
+    };
+	b = board.create('glider', [c]);
+    d = board.createElement('circle', [a, 4]);
+    e = board.createElement('circle', [b, 5]);
+    f = board.create('intersection', [d, e, 0]);
+    z = board.create('midpoint', [b, f]);
 
     loc = null;
 
@@ -87,16 +79,18 @@ board.create('midpoint', [q, w]);
     opt = false;
     
     //board.options.locus.translateToOrigin = true;
-    board.options.locus.toOrigin = p3;
+//    board.options.locus.toOrigin = ;
     //board.options.locus.translateTo10 = true;
-    board.options.locus.to10 = p4;
-//    p14_2 = board.createElement('intersection', [c2,g,1]);
+//    board.options.locus.to10 = p4;
 
-//    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
-
-//    board.unsuspendUpdate();
-
-//    tl = board.create('locus', [tm], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
+    tl = board.create('locus', [z], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
+    
+    i = board.create('glider', [tl]);
+    j = board.create('circle', [i, 4]);
+    k = board.create('intersection', [j, e, 0]);
+    l = board.create('midpoint', [k, a]);
+    tl2 = board.create('locus', [l]);
+    
 
     function chooseCoordinateSystem() {
         var k, o;
@@ -128,8 +122,6 @@ board.create('midpoint', [q, w]);
     }
 
     function calculateLocus() {
-	    board.options.locus.toOrigin = p3;
-	    board.options.locus.to10 = p4;
         loc = board.create('locus', [p14_1], {strokeColor: 'black', strokeWidth: '2px'});
     }
 
@@ -260,18 +252,6 @@ board.create('midpoint', [q, w]);
             opt = true;
             document.getElementById('opt').value = "Optimization is on";
         }
-    }
-
-    function generatePolynomials2() {
-        var res = JXG.Math.Symbolic.generatePolynomials(board, tm2, true),
-            i, out = document.getElementById('polynomials');
-
-        out.innerHTML = '<ul>';
-        for(i=0; i<res.length; i++)
-            out.innerHTML += '<li>' + res[i] + ' = 0</li>';
-        out.innerHTML += '</ul>';
-        out.style.display = 'block';
-        document.getElementById('jxgbox').style.display = 'none';
     }
 
     function runComparison() {

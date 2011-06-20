@@ -296,6 +296,8 @@ JXG.JSXGraph = {
         JXG.removeEvent(board.containerObj, 'touchstart', board.touchStartListener, board);
         JXG.removeEvent(board.containerObj, 'touchmove', board.touchMoveListener, board);
         JXG.removeEvent(board.containerObj, 'touchend', board.touchEndListener, board);
+        JXG.removeEvent(board.containerObj, 'mousewheel', board.mouseWheelListener, board);
+        JXG.removeEvent(board.containerObj, 'DOMMouseScroll', board.mouseWheelListener, board);
 
         // Remove all objects from the board.
         for(el in board.objects) {

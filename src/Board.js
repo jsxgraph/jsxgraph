@@ -462,6 +462,12 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
     JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 
+    // EXPERIMENTAL: mouse wheel for zoom
+    JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+    // special treatment for firefox
+    JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
+
     // This one produces errors on IE
     //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
     // this one works on IE, Firefox and Chromium with default configurations
@@ -929,6 +935,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
         this.updateQuality = this.BOARD_QUALITY_HIGH;
+    },
+    
+    mouseWheelListener: function (Event) {
+        Event = Event ? Event : window.event;
+        var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40;
+        
+        if (wd > 0) {
+            this.zoomIn();
+        } else {
+            this.zoomOut();
+        }
+        
+        Event.preventDefault();
+        return false;
     },
 
 /**********************************************************
