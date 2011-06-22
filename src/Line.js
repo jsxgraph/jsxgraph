@@ -475,6 +475,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         copy.board = this.board;
 
         copy.visProp = this.visProp;
+        copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
         s = this.getSlope();

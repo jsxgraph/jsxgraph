@@ -946,6 +946,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         copy.coords = this.coords;
         copy.visProp = this.visProp;
+        copy.visProp.layer = this.board.options.layer.trace;
         copy.elementClass = JXG.OBJECT_CLASS_POINT;
         copy.board = this.board;
         JXG.clearVisPropOld(copy);

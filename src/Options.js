@@ -226,6 +226,7 @@ JXG.Options = {
          * <ul><li>0 for a solid line</li>
          * <li>1 for a dotted line</li>
          * <li>2 for a line with small dashes</li>
+
          * <li>3 for a line with medium dashes</li>
          * <li>4 for a line with big dashes</li>
          * <li>5 for a line with alternating medium and big dashes and large gaps</li>
@@ -372,7 +373,8 @@ JXG.Options = {
         angle : 3, 
         integral : 3,
         grid  : 1,
-        image : 0
+        image : 0,
+        trace: 0
     },
 
     /**
@@ -954,7 +956,8 @@ JXG.Options = {
     },
     
     /**
-      * Abbreviations of properties.
+      * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
+      * to the same value.
       * It is used in JXG.GeometryElement#setProperty and in
       * the constructor JXG.GeometryElement.
       * Attention: In Options.js abbreviations are not allowed.

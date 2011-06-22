@@ -582,6 +582,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.numberPoints = this.numberPoints;
         copy.board = this.board;
         copy.visProp = this.visProp;
+        copy.visProp.layer = this.board.options.layer.trace;
         copy.visProp.curvetype = this.visProp.curvetype;
 
         JXG.clearVisPropOld(copy);

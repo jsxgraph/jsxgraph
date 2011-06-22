@@ -471,6 +471,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         copy.board = this.board;
 
         copy.visProp = this.visProp;
+        copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
         er = this.board.renderer.enhancedRendering;

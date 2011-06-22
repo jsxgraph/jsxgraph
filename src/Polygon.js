@@ -154,6 +154,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.numTraces++;
         copy.vertices = this.vertices;
         copy.visProp = this.visProp;
+        copy.visProp.layer = this.board.options.layer.trace;
         copy.board = this.board;
         JXG.clearVisPropOld(copy);
         

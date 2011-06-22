@@ -25,11 +25,31 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var normalperp = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
+        
+        var p1 = board.create('point', [0, 0]),
+            p2 = board.create('point', [2, 1]),
+            p3 = board.create('point', [2, 3]),
+            p = board.create('polygon', [p1, p2, p3]),
+            l = board.create('line', [p1, p2], {trace: true, color: '#FFFF88'});
+    })();
+
+    var normalperp = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
+        
+        var l = board.create('line', [[0, 0], [2, 1]]),
+            p = board.create('point', [2, 3]);
+            
+        board.create('perpendicular', [l, p]);
+        board.create('normal', [l, p]);
+    });
+    
     var scroll = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
         
         JXG.addEvent(document.getElementById('jxgbox'), 'mousewheel', function (e) { console.log(e) }, board);
-    })();
+    });
     
     var hron = (function () {
         JXG.Options.layer.polygon = 4;
@@ -48,7 +68,7 @@
             l = board.create('line', [p4, p5], {strokeWidth: 10});
     });
 
-    var drei = function () {
+    var drei = (function () {
         JXG.Options.renderer = 'svg';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
             cs = [
@@ -93,8 +113,8 @@
                     phi, theta,
                     rotx, roty, transform;
 
-                theta = -Math.atan(n[1]/n[2]);
-                phi = -Math.atan(n[0]/n[2]);
+                theta = 0;//-Math.atan2(n[1], n[2]);
+                phi = 0;//-Math.atan2(n[0], n[2]);
 
                 /*if (n[0] > 0) {
                     phi = Math.atan2(n[1], n[0]);
@@ -196,7 +216,7 @@
             xax = board.create('line', [o, p100], axl),
             yax = board.create('line', [o, p010], axl),
             zax = board.create('line', [o, p001], axl);*/
-    };
+    });
 
     var radaxes = (function () {
         JXG.Options.renderer = 'svg';
