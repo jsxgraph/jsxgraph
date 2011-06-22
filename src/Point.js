@@ -1035,7 +1035,7 @@ JXG.createPoint = function(board, parents, attributes) {
                             "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
         }
     } else {
-        el = new JXG.Point(board, [0, 0], attr);
+        el = new JXG.Point(board, [NaN, NaN], attr);
         el.addConstraint(parents);
     }
 

@@ -25,14 +25,17 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    var normalperp = (function () {
+    var carstensmail = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
-        
-        var p1 = board.create('point', [0, 0]),
+        board.suspendUpdate();
+        var p1 = board.create('point', [1, 0]),
             p2 = board.create('point', [2, 1]),
             p3 = board.create('point', [2, 3]),
-            p = board.create('polygon', [p1, p2, p3]),
-            l = board.create('line', [p1, p2], {trace: true, color: '#FFFF88'});
+            p4 = board.create('point', [-2, 0]),
+            l1 = board.create('line', [p1, p2]),
+            l2 = board.create('line', [p3, p4]);
+        board.create('intersection', [l1, l2, 0], {trace: true});
+        board.unsuspendUpdate();
     })();
 
     var normalperp = (function () {
