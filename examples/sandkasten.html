@@ -25,6 +25,24 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var carsten1 = (function () {
+		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 4, 5, -2], axis:false, grid: false});
+		board.suspendUpdate();
+		var p1 = board.create('point',[-2.5, -1.25],{name: 'A', size: 4, strokeWidth: 2, strokeColor: '#770000', fillColor: '#ff0000'});
+		var p2 = board.create('point',[2.5, -1.25],{name: 'B', size: 4, strokeWidth: 2, strokeColor: '#770000', fillColor: '#ff0000'});
+		var p3 = board.create('point',[0, Math.sqrt(25-2.5*2.5)-1.25],{name: 'C', size: 4, strokeWidth: 2, strokeColor: '#770000', fillColor: '#ff0000'});
+		var pol = board.create('polygon',[p1, p2, p3],{name: 'P', size: 4, strokeWidth: 2, strokeColor: '#ee7700', fillColor: '#ffaa55', withLines: false});
+		var l1 = board.create('line',[p2, p1],{name: 'a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightLast: false, straightFirst: false});		
+		var l2 = board.create('line',[p3, p2],{name: 'a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightLast: false, straightFirst: false});		
+		var l3 = board.create('line',[p1, p3],{name: 'a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightLast: false, straightFirst: false});		
+		var l4 = board.create('bisector',[p2, p1, p3],{name: 'w_a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000'});
+		var l5 = board.create('bisector',[p3, p2, p1],{name: 'w_a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000'});
+		var l6 = board.create('bisector',[p1, p3, p2],{name: 'w_a', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000'});
+		//var a1 = board.create('angle',[p1, p2, p3],{name: '', size: 4, strokeWidth: 2, strokeColor: '#999999', fillColor: '#dddddd'});
+		board.unsuspendUpdate();
+		return board;
+    })();
+
     var carstensmail = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
         board.suspendUpdate();
@@ -36,7 +54,7 @@
             l2 = board.create('line', [p3, p4]);
         board.create('intersection', [l1, l2, 0], {trace: true});
         board.unsuspendUpdate();
-    })();
+    });
 
     var normalperp = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});

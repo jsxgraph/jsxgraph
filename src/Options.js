@@ -218,7 +218,7 @@ JXG.Options = {
          * @see JXG.Options#layer
          * @default See {@link JXG.Options#layer}
          */
-        layer: 9,
+        layer: 0,
 
         /**
          * Determines the elements border-style.
@@ -226,6 +226,7 @@ JXG.Options = {
          * <ul><li>0 for a solid line</li>
          * <li>1 for a dotted line</li>
          * <li>2 for a line with small dashes</li>
+
 
          * <li>3 for a line with medium dashes</li>
          * <li>4 for a line with big dashes</li>
