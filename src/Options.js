@@ -201,6 +201,12 @@ JXG.Options = {
          */
         frozen: false,
 
+        /**
+         * If true a label will display the element's name.
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#withLabel
+         */
         withLabel: false,
 
         /**
