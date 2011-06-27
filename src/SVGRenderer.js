@@ -428,7 +428,9 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
     // already documented in JXG.AbstractRenderer
     updatePathPrim: function (node, pointString) {
-        node.setAttributeNS(null, 'd', pointString);
+        if (pointString!='') {
+            node.setAttributeNS(null, 'd', pointString);
+        }
     },
 
     // already documented in JXG.AbstractRenderer
