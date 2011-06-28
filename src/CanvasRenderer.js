@@ -822,7 +822,6 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     suspendRedraw: function (board) {
         this.context.save();
         this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
-        
         if (board && board.displayCopyright) {
             this.displayCopyright(JXG.JSXGraph.licenseText, 12);
         }
