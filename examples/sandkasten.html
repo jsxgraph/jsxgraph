@@ -25,6 +25,66 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var yikes = (function () {
+   var brd, p0, p1, p2, p3, r, seg, angleVal, a; 
+   JXG.Options.text.useMathJax = true;
+   brd = JXG.JSXGraph.initBoard("jxgbox" 
+            ,{boundingbox:[-11,11,11,-11] 
+               ,showNavigation:false 
+               ,showCopyright:false 
+               ,keepaspectratio:true 
+               ,grid:false 
+               ,axis:true 
+         }); 
+   p0 = brd.create('point',   [0,0],  {name:'', face:'+', strokeColor:'grey',fixed:true}); 
+
+   p1 = brd.create('point',   [3,4],  {name:'', face:'+', size:4, showInfobox:false}); 
+
+   p2 = brd.create('point',   [1,0],  {name:'', face:'+', size:4, visible:false}); 
+   
+   p3 = brd.create('midpoint',[p0,p1],{name:'', face:'+', size:1, visible:false}); 
+
+   brd.create('text',[ 
+      function() { 
+         angleVal = brd.angle(p2,p0,p1); 
+         var op = ((angleVal < 0)? -1:1); 
+         return op*2*Math.cos(0.5*brd.angle(p2,p0,p1)); 
+      }, 
+      function() { 
+         angleVal = brd.angle(p2,p0,p1); 
+         var op = ((angleVal < 0)? -1:1); 
+         return op*2*Math.sin(0.5*brd.angle(p2,p0,p1)); 
+      }, 
+      function() { 
+         angleVal = brd.angle(p2,p0,p1); 
+         if (angleVal < 0) { angleVal += 2*Math.PI}; 
+         angleVal *= (180/Math.PI); 
+         return '\\(\\theta = '+(angleVal).toFixed(2)+'^o\\)'; 
+      } 
+   ]); 
+   
+   brd.create('text',[ 
+      function() {return p1.X()+0.2;},function() {return p1.Y()+0.2;}, 
+      function() { 
+         r = (Math.sqrt(p1.X()*p1.X()+p1.Y()*p1.Y())).toFixed(2); 
+         angleVal = brd.angle(p2,p0,p1)*180/Math.PI; 
+         if (angleVal <0) { angleVal += 360}; 
+         return 'A('+p1.X().toFixed(2)+','+p1.Y().toFixed(2)+')'; 
+      } 
+   ]); 
+   
+   brd.create('text',[-10,-10,function() { 
+      var op = ((p1.Y() < 0)? '-': '+'); 
+      return '\\(' + p1.X().toFixed(2) + op + 
+Math.abs(p1.Y()).toFixed(2) + 'i=' + 
+         r + '\\quad cis (' + angleVal.toFixed(2) + '^o) \\)'; 
+   }]); 
+   brd.create('text',[0,0, function() { 
+      MathJax.Hub.Queue(['Typeset',MathJax.Hub,'content']); 
+      return ''; 
+   }]);
+   })();
+
     var carstensbeispiel = (function () {
 		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 3, 5, -3], axis:false});
 		board.suspendUpdate();
@@ -41,7 +101,7 @@
 		board.unsuspendUpdate();
 
 		return board;
-    })();
+    });
 
     var carstensmail = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});

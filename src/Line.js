@@ -865,7 +865,9 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * </script><pre>
  */
 JXG.createSegment = function(board, parents, attributes) {
-    return board.create('line', parents, attributes).setStraight(false, false);
+    attributes.straightFirst = false;
+    attributes.straightLast = false;
+    return board.create('line', parents, attributes);
 };
 
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);

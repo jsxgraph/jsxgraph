@@ -256,7 +256,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             stroke05 = parseFloat(el.visProp.strokewidth) / 2.0,
             context = this.context;
 
-        if (size <= 0) {
+        if (size <= 0 || !el.visProp.visible) {
             return;
         }
 
