@@ -328,7 +328,7 @@ JXG.createAngle = function(board, parents, attributes) {
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
         i = 0,
-        j, x, pre, post, found;
+        j, x, pre, post, found, dot;
 
 
     // Alles 3 Punkte?
@@ -383,11 +383,8 @@ JXG.createAngle = function(board, parents, attributes) {
                 var A = parents[0], B = parents[1],
                     r = attr.radius,
                     d = B.Dist(A);
-                    return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
+                return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
             }], attr);
-        for (i=0;i<3;i++) {
-            JXG.getRef(board,parents[i]).addChild(p);
-        }
 
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
         el = board.create('sector', [parents[1], p, parents[2]], attr);
@@ -399,6 +396,37 @@ JXG.createAngle = function(board, parents, attributes) {
          * @memberOf Angle.prototype
          */
         el.radiuspoint = p;
+
+        dot = JXG.copyAttributes(attributes, board.options, 'angle', 'dot');
+        /**
+         * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
+         * Though this dot indicates a right angle, it can be visible even if the angle is not a right
+         * one.
+         * @type JXG.Point
+         * @name dot
+         * @memberOf Angle.prototype
+         */
+        el.dot = board.create('point', [function () {
+            if (JXG.exists(el.dot) && el.dot.visProp.visible === false) {
+                return [0, 0];
+            }
+            
+            var c = p.coords.usrCoords,
+                transform = board.create('transform', [-parents[1].X(), -parents[1].Y()], {type: 'translate'});
+            
+            transform.melt(board.create('transform', [0.5, 0.5], {type: 'scale'}));
+            transform.melt(board.create('transform', [JXG.Math.Geometry.rad(parents[0], parents[1], parents[2])/2, 0, 0], {type:'rotate'}));
+            transform.melt(board.create('transform', [parents[1].X(), parents[1].Y()], {type: 'translate'}));
+            transform.update();
+
+            return JXG.Math.matVecMult(transform.matrix, c);
+        }], dot);
+
+
+        for (i = 0; i < 3; i++) {
+            JXG.getRef(board,parents[i]).addChild(p);
+            JXG.getRef(board,parents[i]).addChild(el.dot);
+        }
 
         el.type = JXG.OBJECT_TYPE_ANGLE;
         

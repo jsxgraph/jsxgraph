@@ -401,6 +401,15 @@ JXG.Options = {
             withLabel: false,
             visible: false,
             name: ''
+        },
+        dot: {
+            visible: false,
+            strokeColor: 'none',
+            fillColor: 'black',
+            size: 2,
+            face: 'o',
+            withLabel: false,
+            name: ''
         }
     },
 

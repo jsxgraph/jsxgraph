@@ -245,6 +245,9 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         var res,
             plaintext = '""',
             term;
+
+        contentStr = contentStr || '';
+
         contentStr = contentStr.replace(/\r/g,''); 
         contentStr = contentStr.replace(/\n/g,''); 
         contentStr = contentStr.replace(/\"/g,'\\"'); 
