@@ -182,6 +182,7 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} ratio Aspect ratio of the projection plane.
          * @param {Number} n Near
          * @param {Number} f Far
+         * @returns {Array} 4x4 Projection Matrix
          */
         projection: function (fov, ratio, n, f) {
             var t = n*Math.tan(fov/2),
@@ -334,7 +335,7 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} a Vector
          * @param {Array} b Vector
          * @param {Number} [n] Length of the Vectors. If not given the length of the first vector is taken.
-         * @return The inner product of a and b.
+         * @returns {Number} The inner product of a and b.
          */
         innerProduct: function(a, b, n) {
             var i, s = 0;
