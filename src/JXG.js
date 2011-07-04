@@ -216,6 +216,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
      * values is of type string.
      * @param {Array} param An array containing strings, numbers, or functions.
+     * @param {Number} n Length of <tt>param</tt>.
      * @returns {Function} A function taking one parameter k which specifies the index of the param element
      * to evaluate.
      */
