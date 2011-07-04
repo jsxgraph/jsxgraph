@@ -59,10 +59,6 @@
             var i;
             ax.hideElement();
             ax.defaultTicks.hideElement();
-            for (i=0; i<ax.defaultTicks.labels.length; i++) {
-                if (JXG.exists(ax.defaultTicks.labels[i]))
-                    ax.defaultTicks.labels[i].hideElement();
-            }
         };
 
         JXG.addEvent(document.getElementById('hideaxis'), 'click', hideAxis, board);

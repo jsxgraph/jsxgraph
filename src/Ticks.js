@@ -441,6 +441,34 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             this.needsUpdate = false;
         }
         return this;
+    },
+
+    hideElement: function () {
+        var i;
+
+        this.visProp.visible = false;
+        this.board.renderer.hide(this);
+
+        for (i=0; i<this.labels.length; i++) {
+            if (JXG.exists(this.labels[i]))
+                this.labels[i].hideElement();
+        }
+
+        return this;
+    },
+
+    showElement: function () {
+        var i;
+
+        this.visProp.visible = true;
+        this.board.renderer.show(this);
+
+        for (i=0; i<this.labels.length; i++) {
+            if (JXG.exists(this.labels[i]))
+                this.labels[i].showElement();
+        }
+
+        return this;
     }
 });
 
