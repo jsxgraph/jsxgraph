@@ -29,10 +29,10 @@
  * @author graphjs
  */
 
- /**
-  * Math namespace.
-  * @namespace
-  */
+/**
+ * Math namespace.
+ * @namespace
+ */
 JXG.Math = (function(JXG, Math, undefined) {
 
     /*
@@ -58,8 +58,8 @@ JXG.Math = (function(JXG, Math, undefined) {
             var key = join.call(arguments);
 
             return (cache[key] !== undefined) // Seems to be a bit faster than "if (a in b)"
-                    ? cache[key]
-                    : cache[key] = f.apply(this, arguments);
+                ? cache[key]
+                : cache[key] = f.apply(this, arguments);
         });
     };
 
@@ -150,7 +150,7 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} f Far
          * @returns {Array} 4x4 Matrix
          */
-        frustum: function (l, r, t, b, n, f) {
+        frustum: function (l, r, b, t, n, f) {
             var ret = JXG.Math.matrix(4, 4);
 
             ret[0][0] = (n*2) / (r - l);
@@ -172,7 +172,7 @@ JXG.Math = (function(JXG, Math, undefined) {
             ret[3][1] = 0;
             ret[3][2] = -1;
             ret[3][3] = 0;
-            
+
             return ret;
         },
 
@@ -187,7 +187,6 @@ JXG.Math = (function(JXG, Math, undefined) {
         projection: function (fov, ratio, n, f) {
             var t = n*Math.tan(fov/2),
                 r = t*ratio;
-
             return this.frustum(-r, r, -t, t, n, f);
         },
 
@@ -207,9 +206,9 @@ JXG.Math = (function(JXG, Math, undefined) {
          */
         matVecMult: function(mat, vec) {
             var m = mat.length,
-                    n = vec.length,
-                    res = [],
-                    i, s, k;
+                n = vec.length,
+                res = [],
+                i, s, k;
 
             if (n===3) {
                 for (i=0;i<m;i++) {
@@ -233,11 +232,11 @@ JXG.Math = (function(JXG, Math, undefined) {
          */
         matMatMult: function(mat1, mat2) {
             var m = mat1.length,
-                    n = m>0 ? mat2[0].length : 0,
-                    m2 = mat2.length,
-                    res = this.matrix(m,n),
-                    i, j, s, k;
-  
+                n = m>0 ? mat2[0].length : 0,
+                m2 = mat2.length,
+                res = this.matrix(m,n),
+                i, j, s, k;
+
             for (i=0;i<m;i++) {
                 for (j=0;j<n;j++) {
                     s = 0;
@@ -257,7 +256,7 @@ JXG.Math = (function(JXG, Math, undefined) {
          */
         transpose: function(M) {
             var MT, i, j,
-                    m, n;
+                m, n;
 
             m = M.length;                     // number of rows of M
             n = M.length>0 ? M[0].length : 0; // number of columns of M
@@ -488,8 +487,8 @@ JXG.Math = (function(JXG, Math, undefined) {
          */
         normalize: function(stdform) {
             var a2 = 2*stdform[3],
-                    r = stdform[4]/(a2),  // k/(2a)
-                    n, signr;
+                r = stdform[4]/(a2),  // k/(2a)
+                n, signr;
             stdform[5] = r;
             stdform[6] = -stdform[1]/a2;
             stdform[7] = -stdform[2]/a2;
@@ -515,7 +514,36 @@ JXG.Math = (function(JXG, Math, undefined) {
                 stdform[4] = signr*r;
             }
             return stdform;
+        },
+
+        /**
+         * Converts a two dimensional array to a one dimensional Float32Array that can be processed by WebGL.
+         * @param {Array} m A matrix in a two dimensional array.
+         * @returns {Float32Array} A one dimensional array containing the matrix in column wise notation. Provides a fall
+         * back to the default JavaScript Array if Float32Array is not available.
+         */
+        toGL: function (m) {
+
+            var v, i, j;
+
+            if(typeof Float32Array !== 'undefined') {
+                v = new Float32Array(16);
+            } else {
+                v = new Array(16);
+            }
+
+            if (m.length !== 4 && m[0].length !== 4) {
+                return v;
+            }
+
+            for (i = 0; i < 4; i++) {
+                for (j = 0; j < 4; j++) {
+                    v[i + 4*j] = m[i][j];
+                }
+            }
+
+            return v;
         }
 
-    }; // JXG.Math
+    };
 })(JXG, Math);

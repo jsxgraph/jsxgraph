@@ -7,6 +7,27 @@
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+
+        void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        void main(void) {
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+    </script>
 </head>
 <body>
 
@@ -21,17 +42,30 @@
 </div>
 
 <div id="debug" style="display:block;"></div>
-
+<a href="javascript:void(0);" id="hideaxis">Hide Axis</a>
 <script type="text/javascript">
     /* <![CDATA[ */
 
     var dot = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
             p1 = board.create('point', [2, 2]),
             p2 = board.create('point', [0, 2]),
             p3 = board.create('point', [0, 4]);
 
         board.create('angle', [p1, p2, p3], {dot: {visible: true}});
+
+        var hideAxis = function() {
+            var ax = board.defaultAxes.x;
+            var i;
+            ax.hideElement();
+            ax.defaultTicks.hideElement();
+            for (i=0; i<ax.defaultTicks.labels.length; i++) {
+                if (JXG.exists(ax.defaultTicks.labels[i]))
+                    ax.defaultTicks.labels[i].hideElement();
+            }
+        };
+
+        JXG.addEvent(document.getElementById('hideaxis'), 'click', hideAxis, board);
     })();
 
     var drei = (function () {
