@@ -886,6 +886,13 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * The slider only returns multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
+         * continuous results set this to <tt>-1</tt>.
+         * @memberOf Slider.prototype
+         * @name snapWidth
+         * @type Number
+         */
         snapWidth: -1,      // -1 = deactivated
         firstArrow : false,
         lastArrow : false,
