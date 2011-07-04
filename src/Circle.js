@@ -609,7 +609,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
  * </script><pre>
  */
 JXG.createCircle = function (board, parents, attributes) {
-    var el, p, i, arr, attr;
+    var el, p, i, attr;
 
     p = [];
     for (i=0;i<parents.length;i++) {
@@ -647,9 +647,8 @@ JXG.createCircle = function (board, parents, attributes) {
         el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
     } else if( parents.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
-        arr = JXG.createCircumcircle(board, p, attributes); // returns [center, circle]
-        arr[0].setProperty({visible:false});
-        return arr[1];
+        el = JXG.createCircumcircle(board, p, attributes);
+        el.midpoint.setProperty({visible:false});
     } else
         throw new Error("JSXGraph: Can't create circle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
