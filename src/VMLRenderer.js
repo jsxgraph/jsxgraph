@@ -400,8 +400,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updatePathPrim: function (node, pointString, board) {
         var x = board.canvasWidth,
             y = board.canvasHeight;
-        if (pointString=='') {
-            return;
+        if (pointString.length <= 0) {
+            pointString = ['m 0,0'];
         }
         node.style.width = x;
         node.style.height = y;
