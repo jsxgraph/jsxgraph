@@ -747,7 +747,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.updateHooks('mousedown', Evt);
 
         // prevent accidental selection of text
-        if (document.selection) {
+        if (document.selection && typeof document.selection.empty == 'function') {
             document.selection.empty();
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
