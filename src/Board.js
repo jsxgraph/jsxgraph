@@ -1582,6 +1582,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.canvasHeight = parseFloat(canvasHeight);
         this.containerObj.style.width = (this.canvasWidth) + 'px';
         this.containerObj.style.height = (this.canvasHeight) + 'px';
+
+        this.renderer.resize(this.canvasWidth, this.canvasHeight);
+
         return this;
     },
 
