@@ -830,6 +830,12 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     unsuspendRedraw: function () {
         this.context.restore();
+    },
+
+    // document in AbstractRenderer
+    resize: function (w, h) {
+        this.canvasRoot.style.width = parseFloat(w) + 'px';
+        this.canvasRoot.style.height = parseFloat(h) + 'px';
     }
 
 });

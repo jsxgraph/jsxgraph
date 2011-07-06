@@ -802,6 +802,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     unsuspendRedraw: function () {
         this.svgRoot.unsuspendRedraw(this.suspendHandle);
         this.svgRoot.forceRedraw();
+    },
+
+    // document in AbstractRenderer
+    resize: function (w, h) {
+        this.svgRoot.style.width = parseFloat(w) + 'px';
+        this.svgRoot.style.height = parseFloat(h) + 'px';
     }
 
 });

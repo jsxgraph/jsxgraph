@@ -1014,6 +1014,13 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     getElementById: function (id) {
         return document.getElementById(this.container.id + '_' + id);
-    }
+    },
+
+    /**
+     * Resizes the rendering element
+     * @param {Number} w New width
+     * @param {Number} h New height
+     */
+    resize: function (w, h) { /* stub */}
 
 });
