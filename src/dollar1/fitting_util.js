@@ -145,8 +145,10 @@ function fitPoly(poly,reference,sensitive_area,board){
 		if (min<sensitive_area*sensitive_area && min > 0){
 			var remove = poly.vertices[i];
 			poly.vertices[i]=replace;
+
 			if (!isElementIn(remove, reference))
 				board.removeObject(remove);
+
 			remove = poly;
 			poly = board.create('polygon',poly.vertices);
 			board.removeObject(remove);

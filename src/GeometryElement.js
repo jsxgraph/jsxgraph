@@ -22,26 +22,26 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-JXG.OBJECT_TYPE_ARC  = 0x4F544143;                 // Hex fuer OTAC = Object Type ArC
-JXG.OBJECT_TYPE_ARROW  = 0x4F544157;                 // Hex fuer OTAW = Object Type ArroW
-JXG.OBJECT_TYPE_AXIS  = 0x4F544158;                 // Hex fuer OTAX = Object Type AXis
-JXG.OBJECT_TYPE_TICKS  = 0x4F545458;                 // Hex fuer OTTX = Object Type TiX
-JXG.OBJECT_TYPE_CIRCLE  = 0x4F54434C;                 // Hex fuer OTCC = Object Type CirCle
-JXG.OBJECT_TYPE_CONIC  = 0x4F54434F;                 // Hex fuer OTCC = Object Type COnic
-JXG.OBJECT_TYPE_CURVE  = 0x4F544750;                 // Hex fuer OTGP = Object Type GraphPlot
-JXG.OBJECT_TYPE_GLIDER  = 0x4F54474C;                 // Hex fuer OTGL = Object Type GLider
-JXG.OBJECT_TYPE_IMAGE  = 0x4F54524D;                 // Hex fuer OTIM = Object Type IMage
-JXG.OBJECT_TYPE_LINE  = 0x4F544C4E;                 // Hex fuer OTLN = Object Type LiNe
-JXG.OBJECT_TYPE_POINT  = 0x4F545054;                 // Hex fuer OTPT = Object Type PoinT
-JXG.OBJECT_TYPE_SLIDER = 0x4F545344;                 // Hex fuer OTSD = Object Type SliDer
-JXG.OBJECT_TYPE_CAS    = 0x4F544350;                 // Hex fuer OTCP = Object Type CasPoint
-JXG.OBJECT_TYPE_POLYGON  = 0x4F545059;                 // Hex fuer OTPY = Object Type PolYgon
-JXG.OBJECT_TYPE_SECTOR  = 0x4F545343;                 // Hex fuer OTSC = Object Type SeCtor
-JXG.OBJECT_TYPE_TEXT  = 0x4F545445;                 // Hex fuer OTTE = Object Type TextElement
-JXG.OBJECT_TYPE_ANGLE = 0x4F544147;                 // Hex fuer OTAG = Object Type AnGle
-JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;          // Hex fuer OTIN = Object Type INtersection
-JXG.OBJECT_TYPE_TURTLE = 0x4F5455;                 // Hex fuer OTTU = Object Type TUrtle
-JXG.OBJECT_TYPE_VECTOR = 0x4F545654; 				//Hex fuer OTVT 0 Object Type VecTor
+JXG.OBJECT_TYPE_ARC = 0x4F544143;               // Hex fuer OTAC = Object Type ArC
+JXG.OBJECT_TYPE_ARROW = 0x4F544157;             // Hex fuer OTAW = Object Type ArroW
+JXG.OBJECT_TYPE_AXIS = 0x4F544158;              // Hex fuer OTAX = Object Type AXis
+JXG.OBJECT_TYPE_TICKS = 0x4F545458;             // Hex fuer OTTX = Object Type TiX
+JXG.OBJECT_TYPE_CIRCLE = 0x4F54434C;            // Hex fuer OTCC = Object Type CirCle
+JXG.OBJECT_TYPE_CONIC = 0x4F54434F;             // Hex fuer OTCC = Object Type COnic
+JXG.OBJECT_TYPE_CURVE = 0x4F544750;             // Hex fuer OTGP = Object Type GraphPlot
+JXG.OBJECT_TYPE_GLIDER = 0x4F54474C;            // Hex fuer OTGL = Object Type GLider
+JXG.OBJECT_TYPE_IMAGE = 0x4F54524D;             // Hex fuer OTIM = Object Type IMage
+JXG.OBJECT_TYPE_LINE = 0x4F544C4E;              // Hex fuer OTLN = Object Type LiNe
+JXG.OBJECT_TYPE_POINT = 0x4F545054;             // Hex fuer OTPT = Object Type PoinT
+JXG.OBJECT_TYPE_SLIDER = 0x4F545344;            // Hex fuer OTSD = Object Type SliDer
+JXG.OBJECT_TYPE_CAS = 0x4F544350;               // Hex fuer OTCP = Object Type CasPoint
+JXG.OBJECT_TYPE_POLYGON = 0x4F545059;           // Hex fuer OTPY = Object Type PolYgon
+JXG.OBJECT_TYPE_SECTOR = 0x4F545343;            // Hex fuer OTSC = Object Type SeCtor
+JXG.OBJECT_TYPE_TEXT = 0x4F545445;              // Hex fuer OTTE = Object Type TextElement
+JXG.OBJECT_TYPE_ANGLE = 0x4F544147;             // Hex fuer OTAG = Object Type AnGle
+JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;      // Hex fuer OTIN = Object Type INtersection
+JXG.OBJECT_TYPE_TURTLE = 0x4F5455;              // Hex fuer OTTU = Object Type TUrtle
+JXG.OBJECT_TYPE_VECTOR = 0x4F545654;            // Hex fuer OTVT = Object Type VecTor
 
 JXG.OBJECT_CLASS_POINT = 1;
 JXG.OBJECT_CLASS_LINE = 2;
