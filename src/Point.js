@@ -714,7 +714,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     	for(i=steps; i>=0; i--) {
     		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
     	}
-        console.log(coords);
+
     	this.animationPath = coords;
         this.animationCallback = callback;
         this.board.addAnimation(this);
