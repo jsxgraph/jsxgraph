@@ -747,6 +747,8 @@ JXG.Options = {
     /* special perpendicular options */
     perpendicular : {
         strokeColor: '#000000', // Perpendicular segment
+        straightFirst: false,
+        straightLast: false,
         point : {               // Perpendicular point
             visible: false,
             fixed: true,

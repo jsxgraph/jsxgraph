@@ -358,7 +358,7 @@ JXG.createPerpendicular = function(board, parents, attributes) {
     t = JXG.createPerpendicularPoint(board, [l, p], attr);
 
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
-    pd = JXG.createSegment(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
+    pd = JXG.createLine(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
     /**
      * Helper point created to create the perpendicular segment.

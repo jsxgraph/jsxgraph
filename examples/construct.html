@@ -48,16 +48,18 @@ c = b.create('incircle',[A,D,B], {});
 
 
 //b.suspendUpdate();
-l = b.create('line',[1,1,1], {withLabel:true, color:'yellow'});
+l = b.create('line',[1,1,1], {withLabel:true, color:'yellow', straightFirst:true, straightLast:true});
 //l.setProperty({color:'cyan', strokeWidth:6});
 b.create('glider',[-1,-1, l], {fillColor:'yellow', fillOpacity:0.9, trace:false, name:'S_1'});
 b.create('glider',[5,0, l], {fillColor:'yellow', fillOpacity:0.9, trace:false});
 
 b.create('point',[5,0], {name:'5'});
-b.create('point',[1,0], {name:'1'});
+p = b.create('point',[1,0], {name:'1'});
 
-f = b.create('functiongraph',["X(S_1)*x^2"]);
-t = b.create('text',[2,3, 'test'], {name:'1', visible:false});
+b.create('perpendicular', [p,l], {straightFirst:false, straightLast:false});
+
+//f = b.create('functiongraph',["X(S_1)*x^2"]);
+//t = b.create('text',[2,3, 'test'], {name:'1', visible:false});
 
 //if (true) {t.showElement();} else {t.hideElement();}
 //b.unsuspendUpdate();
