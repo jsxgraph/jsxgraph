@@ -2065,7 +2065,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     animate: function () {
         var count = 0,
             el, o, newCoords, r, p, c,
-            obj=null;
+            obj=null, cbtmp;
 
         for (el in this.animationObjects) {
             if (this.animationObjects[el] === null)
@@ -2110,6 +2110,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (!JXG.exists(o.animationData) && !JXG.exists(o.animationPath)) {
                 this.animationObjects[el] = null;
                 delete(this.animationObjects[el]);
+                if (JXG.exists(o.animationCallback)) {
+                    cbtmp = o.animationCallback;
+                    o.animationCallback = null;
+                    cbtmp();
+                }
             }
         }
 

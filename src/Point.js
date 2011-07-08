@@ -634,6 +634,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * the path, or  function taking the amount of elapsed time since the animation has started and returns an array containing a x and a y value or NaN.
      * In case of NaN the animation stops.
      * @param {Number} time The time in milliseconds in which to finish the animation
+     * @param {function} [callback] A callback function which is called once the animation is finished.
+     * @returns {JXG.Point} Reference to the point.
      */
     moveAlong: function(path, time) {
         var interpath = [],
@@ -677,6 +679,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.animationPath = path;
             this.animationStart = new Date().getTime();
         }
+        this.animationCallback = callback;
 
         this.board.addAnimation(this);
         return this;
@@ -684,12 +687,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
-     * @param {Array} where Array containing the x and y coordinate of the target location.
-     * @param {int} time Number of milliseconds the animation should last.
      * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
+     * @param {Array} where Array containing the x and y coordinate of the target location.
+     * @param {Number} [time] Number of milliseconds the animation should last.
+     * @param {function} [callback] A function that is invoked once the animation is completed.
+     * @returns {JXG.Point} Reference to itself.
      * @see #animate
      */
-    moveTo: function(where, time) {
+    moveTo: function(where, time, callback) {
         if (typeof time == 'undefined' || time == 0) {
             this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
             return this.board.update(this);
@@ -702,14 +707,16 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     		dX = (where[0] - X),
     		dY = (where[1] - Y),
     	    i;
-        
+
         if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
             return this;
     	
     	for(i=steps; i>=0; i--) {
     		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
     	}
+        console.log(coords);
     	this.animationPath = coords;
+        this.animationCallback = callback;
         this.board.addAnimation(this);
         return this;
     },
@@ -718,11 +725,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at <tt>where</tt> the point moves back to where it started.
      * The animation is done after <tt>time</tt> milliseconds.
      * @param {Array} where Array containing the x and y coordinate of the target location.
-     * @param {int} time Number of milliseconds the animation should last.
-     * @param {int} repeat Optional: How often the animation should be repeated. The time value is then taken for one repeat.
+     * @param {Number} time Number of milliseconds the animation should last.
+     * @param {Number} [repeat] How often the animation should be repeated. The time value is then taken for one repeat.
+     * @param {function} [callback] A function that is invoked once the animation is completed.
+     * @returns {JXG.Point} Reference to itself.
      * @see #animate
      */
-    visit: function(where, time, repeat) {
+    visit: function(where, time, repeat, callback) {
         if(arguments.length == 2)
             repeat = 1;
 
@@ -742,6 +751,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
         }
         this.animationPath = coords;
+        this.animationCallback = callback;
         this.board.addAnimation(this);
         return this;
     },
