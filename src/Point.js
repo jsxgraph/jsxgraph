@@ -637,7 +637,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {function} [callback] A callback function which is called once the animation is finished.
      * @returns {JXG.Point} Reference to the point.
      */
-    moveAlong: function(path, time) {
+    moveAlong: function(path, time, callback) {
         var interpath = [],
             delay = 35,
             makeFakeFunction = function (i, j) {
