@@ -755,6 +755,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         cPos = this.getRelativeMouseCoordinates(Evt);
 
+        // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
         if (JXG.isWebkitAndroid()) {
             cPos[0] -= document.body.scrollLeft;
             cPos[1] -= document.body.scrollTop;
