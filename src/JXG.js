@@ -101,6 +101,22 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Detects if the user is using an Android powered device.
+     * @returns {Boolean}
+     */
+    isAndroid: function () {
+        return navigator.userAgent.toLowerCase().search("android") > -1;
+    },
+
+    /**
+     * Detects if the user is using the default Webkit browser on an Android powered device.
+     * @returns {Boolean}
+     */
+    isWebkitAndroid: function () {
+        return this.isAndroid() &&  navigator.userAgent.search(" AppleWebKit/") > -1;
+    },
+
+    /**
      * s may be a string containing the name or id of an element or even a reference
      * to the element itself. This function returns a reference to the element. Search order: id, name.
      * @param {JXG.Board} board Reference to the board the element belongs to.

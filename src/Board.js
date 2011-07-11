@@ -754,6 +754,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         cPos = this.getRelativeMouseCoordinates(Evt);
+
+        if (JXG.isWebkitAndroid()) {
+            cPos[0] -= document.body.scrollLeft;
+            cPos[1] -= document.body.scrollTop;
+        }
+        
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(Evt);
         dx = absPos[0]-cPos[0]; //Event.pointerX(Evt) - cPos[0];
