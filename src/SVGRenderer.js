@@ -231,9 +231,6 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
-            if (isNaN(c[0]) || isNaN(c[1])) {
-                continue;
-            }
             if (axis.ticks[i].major) {
                 if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
                     this.updateText(axis.labels[i]);
