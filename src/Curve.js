@@ -334,6 +334,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             divisors = [],
             distOK = false,
             j = 0;
+            //stime = new Date(),
+            //etime;
 
 
         if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
@@ -341,7 +343,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             MAX_XDIST = 12;
             MAX_YDIST = 12;
         } else {
-            MAX_DEPTH = 20;
+            MAX_DEPTH = 18; // 20
             MAX_XDIST = 2;
             MAX_YDIST = 2;
         }
@@ -407,6 +409,9 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         } while (top != 0);
         this.numberPoints = this.points.length;
+        
+        //etime = new Date();
+        //console.log(etime.getTime()-stime.getTime());
 
         return this;
 
