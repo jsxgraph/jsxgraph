@@ -304,10 +304,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * even more later.
      * @param {Object} hash Object containing propiertes with target values for the animation.
      * @param {number} time Number of milliseconds to complete the animation.
+     * @param {function} [callback] A function that is called after the animation is finished.
      * @return A reference to the object
      * @type JXG.GeometryElement
      */
-    animate: function (hash, time) {
+    animate: function (hash, time, callback) {
         var r, p,
             delay = 35,
             steps = Math.ceil(time/(delay * 1.0)),
@@ -316,19 +317,18 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.animationData = {};
 
         var animateColor = function (startRGB, endRGB, property) {
-            var hsv1, hsv2, sh, ss, sv;
-            hsv1 = JXG.rgb2hsv(startRGB);
-            hsv2 = JXG.rgb2hsv(endRGB);
+                var hsv1, hsv2, sh, ss, sv;
+                hsv1 = JXG.rgb2hsv(startRGB);
+                hsv2 = JXG.rgb2hsv(endRGB);
 
-            sh = (hsv2[0]-hsv1[0])/(1.*steps);
-            ss = (hsv2[1]-hsv1[1])/(1.*steps);
-            sv = (hsv2[2]-hsv1[2])/(1.*steps);
-            self.animationData[property] = new Array(steps);
-            for (i=0; i<steps; i++) {
-                self.animationData[property][steps-i-1] = JXG.hsv2rgb(hsv1[0]+(i+1)*sh, hsv1[1]+(i+1)*ss, hsv1[2]+(i+1)*sv);
-            }
-        },
-
+                sh = (hsv2[0]-hsv1[0])/(1.*steps);
+                ss = (hsv2[1]-hsv1[1])/(1.*steps);
+                sv = (hsv2[2]-hsv1[2])/(1.*steps);
+                self.animationData[property] = new Array(steps);
+                for (i=0; i<steps; i++) {
+                    self.animationData[property][steps-i-1] = JXG.hsv2rgb(hsv1[0]+(i+1)*sh, hsv1[1]+(i+1)*ss, hsv1[2]+(i+1)*sv);
+                }
+            },
             animateFloat = function (start, end, property) {
                 start = parseFloat(start);
                 end = parseFloat(end);
@@ -351,16 +351,18 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             switch(p) {
                 case 'strokecolor':
                 case 'fillcolor':
-                    animateColor(this.visProp.p, hash[r], p);
+                    console.log(hash[r]);
+                    animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'strokeopacity':
                 case 'strokewidth':
                 case 'fillopacity':
-                    animateFloat(this.visProp.p, hash[r], p);
+                    animateFloat(this.visProp[p], hash[r], p);
                     break;
             }
         }
 
+        this.animationCallback = callback;
         this.board.addAnimation(this);
         return this;
     },
