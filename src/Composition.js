@@ -241,8 +241,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
                         "\nPossible parent types: [point,line]");
     }
 
-    // no need to call create, the properties will be set through the create('perpendicular') call
-    t = JXG.createPoint(board, [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
+    t = board.create('point', [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
     p.addChild(t); // notwendig, um auch den Punkt upzudaten
     l.addChild(t);
 

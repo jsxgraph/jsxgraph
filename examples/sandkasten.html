@@ -46,6 +46,44 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var poincare = (function () {
+        var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5]});
+        var c = brd.create('circle',[[0,0],3],{strokeColor:'black'});  // outer circle
+
+        var p = brd.create('point',[0,-4],{withLabel:false});
+        var t = brd.create('polar', [c,p], {strokeColor:'gray', dash:2, visible:false});
+        var s1 = brd.create('intersection', [c,t,0], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var s2 = brd.create('intersection', [c,t,1], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var arc = brd.create('arc',[p,s1,s2],{name:'g', withLabel:true});
+
+        var pp = brd.create('point',[1,2],{withLabel:true,name:'P'});
+        var t = brd.create('polar', [c,pp], {visible:false});
+        var l = brd.create('line', [[0,0],pp], {visible:false});
+        var A = brd.create('intersection', [l,t,0], {withLabel:true,visible:false});
+        var M = brd.create('midpoint',[pp,A], {withLabel:true,visible:false});
+        var perp = brd.create('perpendicular', [l,M], {name:'', withLabel:false, strokeColor:'gray', dash:1, straightFirst:true, straightLast:true, point: {visible:true}});
+        var test = brd.create('point', [function () { return new JXG.Coords(JXG.COORDS_BY_USER, [2, 1], brd)}]);
+
+/*        var x = brd.create('glider',[3, 3, perp], {name:'drag me'});
+
+        var t2 = brd.create('polar', [c, x], {strokeColor:'gray', dash:2, visible:false});
+        var ss1 = brd.create('intersection', [c,t2,0], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var ss2 = brd.create('intersection', [c,t2,1], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var arc = brd.create('circumcirclearc',[ss1,pp,ss2], {strokeWidth:1, trace:true, dash:3});*/
+
+        return brd;
+    })();
+
+    var perp = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
+            p1 = board.create('point', [2, 2]),
+            p2 = board.create('point', [0, 2]),
+            p3 = board.create('point', [0, 4]),
+            l = board.create('line', [p1, p2]),
+            pp = board.create('perpendicular', [p3, l]);
+
+    });
+
     var dot = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
             p1 = board.create('point', [2, 2]),
@@ -70,7 +108,7 @@
         };
 
         board.addHook(foo.bar, 'update', console);
-    })();
+    });
 
     var drei = (function () {
         JXG.Options.renderer = 'svg';
