@@ -1744,17 +1744,25 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     /**
      * Adds a hook to this board. A hook is a function which will be called on every board update.
      * @param {Function} hook A function to be called by the board after an update occured.
-     * @param {String} m When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+     * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
+     * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
+     * board object the hook is attached to.
      * @returns {Number} Id of the hook, required to remove the hook from the board.
      */
-    addHook: function (hook, m) {
+    addHook: function (hook, m, context) {
         if (!JXG.exists(m))
             m = 'update';
 
-        this.hooks.push({fn: hook, mode: m});
+        context = context || this;
+        this.hooks.push({
+            fn: hook,
+            mode: m,
+            context: context
+        });
 
-        if (m=='update')
-            hook(this);
+        if (m=='update') {
+            hook.apply(context, [this]);
+        }
 
         return (this.hooks.length-1);
     },
@@ -1781,7 +1789,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (i=0; i<this.hooks.length; i++) {
             if ((this.hooks[i] != null) && (this.hooks[i].mode == m)) {
-                this.hooks[i].fn.apply(this, args);
+                this.hooks[i].fn.apply(this.hooks[i].context, args);
             }
         }
         return this;

@@ -62,6 +62,14 @@
         };
 
         JXG.addEvent(document.getElementById('hideaxis'), 'click', hideAxis, board);
+
+        var foo = {
+            bar: function () {
+                console.log(this);
+            }
+        };
+
+        board.addHook(foo.bar, 'update', console);
     })();
 
     var drei = (function () {
