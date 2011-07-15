@@ -721,7 +721,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  *   var glex1_l1 = glex1_board.create('line', [glex1_p1, [1.0, 1.0]]);
  * </script><pre>
  * @example
- * // Create a point using three coordinates
+ * // Create a line using three coordinates
  * var l1 = board.create('line', [1.0, -2.0, 3.0]);
  * </pre><div id="cf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">

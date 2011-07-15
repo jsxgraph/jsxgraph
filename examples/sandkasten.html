@@ -46,6 +46,14 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var line = (function () {
+        var glex2_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+        var glex2_l1 = glex2_board.create('line', [1.0, 1.0, 1.0]);
+        var glex2_l2 = glex2_board.create('line', [1.0, 0.0, 2.0], {strokeColor: 'green'});
+        var glex2_l3 = glex2_board.create('line', [2.0, 2.0, 6.0], {strokeColor: 'pink'});
+        var glex2_l3 = glex2_board.create('line', [2.0, 2.0, 3.0], {strokeColor: 'red'});
+    })();
+
     var poincare = (function () {
         var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5]});
         var c = brd.create('circle',[[0,0],3],{strokeColor:'black'});  // outer circle
@@ -72,7 +80,7 @@
         var arc = brd.create('circumcirclearc',[ss1,pp,ss2], {strokeWidth:1, trace:true, dash:3});*/
 
         return brd;
-    })();
+    });
 
     var perp = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),

@@ -802,6 +802,7 @@ JXG.createFunctiongraph = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
+JXG.JSXGraph.registerElement('plot', JXG.createFunctiongraph);
 
 
 /**
