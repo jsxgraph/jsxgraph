@@ -167,7 +167,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @type Object
      */
     this.containerObj = document.getElementById(this.container);
-    if (this.containerObj==null) {
+    if (this.containerObj == null) {
         throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
     }
 
@@ -450,29 +450,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
         this.options.text.useASCIIMathML = false;
     }
 
-    // WARNING: If you change this, please check JXG.JSXGraph.freeBoard, too!
-
-    // Introduce our event handlers to the browser
-    JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-    JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-    JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
-    
-    // To run JSXGraph on mobile touch devices we need these event listeners.
-    JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-    JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-    JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
-
-    // EXPERIMENTAL: mouse wheel for zoom
-    JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-    // special treatment for firefox
-    JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
-
-
-    // This one produces errors on IE
-    //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
-    // this one works on IE, Firefox and Chromium with default configurations
-    // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
-    this.containerObj.oncontextmenu = function (e) {if (JXG.exists(e)) e.preventDefault(); return false; };
+    this.addEventHandlers();
 };
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
@@ -649,6 +627,49 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
  * Event Handler
  *
  **********************************************************/
+
+    /**
+     *  Add all possible event handlers to the board object
+     */
+    addEventHandlers: function () {
+
+        JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+        JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+        JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+
+        // To run JSXGraph on mobile touch devices we need these event listeners.
+        JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+        JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+        JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
+
+        // EXPERIMENTAL: mouse wheel for zoom
+        JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+        // special treatment for firefox
+        JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
+        // This one produces errors on IE
+        //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+        // this one works on IE, Firefox and Chromium with default configurations
+        // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
+        this.containerObj.oncontextmenu = function (e) {if (JXG.exists(e)) e.preventDefault(); return false; };
+    },
+
+    /**
+     *  Remove all event handlers from the board object
+     */
+    removeEventHandlers: function () {
+        
+        JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+        JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+        JXG.removeEvent(document, 'mouseup', this.mouseUpListener,this);
+
+        JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+        JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+        JXG.removeEvent(this.containerObj, 'touchend', this.touchEndListener, this);
+
+        JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+        JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+    },
 
     /**
      * Handler for click on left arrow in the navigation bar
