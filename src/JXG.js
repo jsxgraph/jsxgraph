@@ -561,17 +561,20 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
-     * Cross browser mouse coordinates retrieval relative to the board's top left corner.
+     * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
      * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
      * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
      */
-    getPosition: function (e) {
+    getPosition: function (e, index) {
         var posx = 0,
             posy = 0;
 
         if (!e) {
             e = window.event;
         }
+
+        if (index != undefined)
+            e = e.targetTouches[index];
 
         if (e.pageX || e.pageY) {
             posx = e.pageX;
