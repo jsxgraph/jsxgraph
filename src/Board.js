@@ -594,6 +594,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Calculates mouse coordinates relative to the boards container.
+     * FIXME: The name of the function should be refactored to "getRelativeCoordinates", because no mouse event is used in here ...
      * @returns {Array} Array of coordinates relative the boards container top left corner.
      */
     getRelativeMouseCoordinates: function () {
