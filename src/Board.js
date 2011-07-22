@@ -1352,12 +1352,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomIn: function () {
-        var oX, oY;
+        var oX = this.origin.usrCoords[1], 
+            oY = this.origin.usrCoords[2],
+            bb = this.getBoundingBox(),
+            midX = (bb[2]+bb[0])*0.5,
+            midY = (bb[3]+bb[1])*0.5;
+            
         this.zoomX *= this.options.zoom.factor;
         this.zoomY *= this.options.zoom.factor;
-        oX = this.origin.scrCoords[1]*this.options.zoom.factor;
-        oY = this.origin.scrCoords[2]*this.options.zoom.factor;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+
+        oX = midX + (oX-midX)*this.options.zoom.factor;
+        oY = midY + (oY-midY)*this.options.zoom.factor;
+        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
         this.updateStretch();
         this.applyZoom();
         return this;
@@ -1368,12 +1374,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomOut: function () {
-        var oX, oY;
+        var oX = this.origin.usrCoords[1], 
+            oY = this.origin.usrCoords[2],
+            bb = this.getBoundingBox(),
+            midX = (bb[2]+bb[0])*0.5,
+            midY = (bb[3]+bb[1])*0.5;
+            
         this.zoomX /= this.options.zoom.factor;
         this.zoomY /= this.options.zoom.factor;
-        oX = this.origin.scrCoords[1]/this.options.zoom.factor;
-        oY = this.origin.scrCoords[2]/this.options.zoom.factor;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+
+        oX = midX + (oX-midX)/this.options.zoom.factor;
+        oY = midY + (oY-midY)/this.options.zoom.factor;
+        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
         this.updateStretch();
         this.applyZoom();
         return this;
@@ -1384,16 +1396,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoom100: function () {
-        var oX, oY, zX, zY;
-
-        zX = this.zoomX;
-        zY = this.zoomY;
+        var oX = this.origin.usrCoords[1], 
+            oY = this.origin.usrCoords[2],
+            zX = this.zoomX,
+            zY = this.zoomY,
+            bb = this.getBoundingBox(),
+            midX = (bb[2]+bb[0])*0.5,
+            midY = (bb[3]+bb[1])*0.5;
+            
         this.zoomX = 1.0;
         this.zoomY = 1.0;
 
-        oX = this.origin.scrCoords[1]/zX;
-        oY = this.origin.scrCoords[2]/zY;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
+        oX = midX + (oX-midX)/zX;
+        oY = midY + (oY-midY)/zY;
+        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
         this.updateStretch();
         this.applyZoom();
         return this;
