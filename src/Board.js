@@ -594,10 +594,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Calculates mouse coordinates relative to the boards container.
-     * FIXME: The name of the function should be refactored to "getRelativeCoordinates", because no mouse event is used in here ...
      * @returns {Array} Array of coordinates relative the boards container top left corner.
      */
     getRelativeMouseCoordinates: function () {
+        // * FIXME: The name of the function should be refactored to "getRelativeCoordinates", because no mouse event is used in here ...
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
@@ -2208,6 +2208,28 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.update();
 
         return this;
+    },
+
+    /**
+     * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.
+     * <tt>filters</tt> are objects which's properties are compared to every element found in the dependency tree.
+     * @param {JXG.GeometryElement} root Dependency tree root element
+     * @param {Object} filters An arbitrary amount of objects which define filters for the elements to return. Only elements
+     * that fulfill at least one filter are returned. The comparison is a direct comparison, i.e. nested objects won't be
+     * compared.
+     * @example
+     * // This will return only points
+     * var partPoints = board.getPartialConstruction(p, {elementClass: JXG.OBJECT_CLASS_POINT});
+     *
+     * // This will return only points and lines
+     * var partPointsLines = board.getPartialConstruction(p, {elementClass: JXG.OBJECT_CLASS_POINT}, {elementClass: JXG.OBJECT_CLASS_LINE});
+     */
+    getPartialConstruction: function (root) {
+        var filters, i;
+
+        for (i = 1; i < arguments.length; i++) {
+            filters.push(arguments[i]);
+        }
     },
 
     /**
