@@ -896,6 +896,14 @@ JXG.Options = {
          * @type Number
          */
         snapWidth: -1,      // -1 = deactivated
+
+        /**
+         * The precision of the slider value displayed in the optional text.
+         * @memberOf Slider.prototype
+         * @name precision
+         * @type Number
+         */
+        precision: 2,
         firstArrow : false,
         lastArrow : false,
         withTicks: true,

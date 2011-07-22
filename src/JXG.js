@@ -574,7 +574,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             e = window.event;
         }
 
-        if (!JXG.exists(index)) {
+        if (JXG.exists(index)) {
             e = e.targetTouches[index];
         }
 

@@ -79,6 +79,7 @@ JXG.createSlider = function(board, parents, attributes) {
     withTicks = attr['withticks'];
     withText = attr['withlabel'];
     snapWidth = attr['snapwidth'];
+    precision = attr['precision'];
     
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
@@ -136,7 +137,7 @@ JXG.createSlider = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'slider', 'text');
         t = board.create('text', [function(){return (p2.X()-p1.X())*0.05+p2.X();},
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
-                                  function(){return n+(p3.Value()).toFixed(2);}],
+                                  function(){return n+(p3.Value()).toFixed(precision);}],
                          attr); 
         /**
          * The text element to the right of the slider, indicating its current value.
