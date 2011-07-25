@@ -194,6 +194,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                                 newTick.usrCoords[2] + label.distanceY / (board.stretchY));
                 
                 label.visProp.visible = drawLabels;
+                label.prepareUpdate().update().updateRenderer();
                 return label;
             },
             

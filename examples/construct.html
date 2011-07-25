@@ -18,11 +18,19 @@
 <div id="debug" style='width:600px; height:200px;'></div>
 
 <script type='text/javascript'>
+JXG.Options.axis.ticks.majorHeight = 10;
+JXG.Options.grid.gridX = 2;
+JXG.Options.grid.gridY = 3;
+JXG.Options.grid.dash = 0;
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true, grid:true});
+brd.create('axis', [[0, 0], [1, 0]]);
+//brd.create('axis', [[0, 0], [0, 1]]);
+
 //alert(navigator.appVersion);
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.text.display = 'internal';
 //JXG.Options.text.fontSize = 20;
-var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, grid:false});
+//var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, grid:false});
 //var axisx = b.create('axis', [[0,0], [1,0]] );
 
 //b.create('text', [0, 0, 'Hallo'], { strokeColor:'blue', fontSize: 32}) ; 
@@ -35,7 +43,7 @@ b.create('slider', [[0,0.5], [4,0.5], [0,2,10]],
         text: {strokeColor: 'red'} });
 */
 //b.unsuspendUpdate();
-A = b.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
+//A = b.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
 //B = b.create('point',[2,1], {name:'B'});
 /*
 l = b.create('line',[A,B], {withLabel:true, visible:true});
@@ -71,7 +79,7 @@ b.create('perpendicular', [p,l], {straightFirst:false, straightLast:false});
 
 
 //b.create('circle',[[0,1],3], {fillColor:'blue', fillOpacity:0.2, trace:false, center: {visible:true}});
-h = b.create('functiongraph',[function(x){return A.Y()*Math.sin(x)*(1.0+(1-Math.random())*0.3);}], {name:'f',strokeColor:'green', strokeWidth:8, strokeOpacity:0.3});
+//h = b.create('functiongraph',[function(x){return A.Y()*Math.sin(x)*(1.0+(1-Math.random())*0.3);}], {name:'f',strokeColor:'green', strokeWidth:8, strokeOpacity:0.3});
 //b.create('integral',[[-2,2],h], {strokeColor:'green', strokeWidth:1});
 //h = b.create('spline',[A,D,B], {name:'f',strokeColor:'green', strokeWidth:8});
 /*
