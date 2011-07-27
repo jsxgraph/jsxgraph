@@ -408,8 +408,8 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.showCopyright = false;
     if ((showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright)) {
-        this.renderer.displayCopyright(JXG.JSXGraph.licenseText, this.options.text.fontSize);
         this.showCopyright = true;
+        this.renderer.displayCopyright(JXG.JSXGraph.licenseText, this.options.text.fontSize);
     }
 
     /**
