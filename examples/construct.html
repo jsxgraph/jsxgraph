@@ -18,11 +18,11 @@
 <div id="debug" style='width:600px; height:200px;'></div>
 
 <script type='text/javascript'>
-JXG.Options.axis.ticks.majorHeight = 10;
+JXG.Options.axis.ticks.majorHeight = -1;
 JXG.Options.grid.gridX = 2;
 JXG.Options.grid.gridY = 3;
 JXG.Options.grid.dash = 0;
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true, grid:true});
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true, grid:false});
 brd.create('axis', [[0, 0], [1, 0]]);
 //brd.create('axis', [[0, 0], [0, 1]]);
 
