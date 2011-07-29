@@ -9,11 +9,9 @@
 <tr><td>
   <div id="box" class="jxgbox" style="width:400px; height:400px;"></div>
 </td></tr></table>
-<input type="button" value=" Animate On/Off" onClick="animate(flipper,
-1,56);"/>
+<input type="button" value=" Animate On/Off" onClick="animate(flipper,1,56);"/>
 
 <script language="JavaScript">
-(function(){
 //JXG.Options.renderer = 'canvas';
 var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40, showCopyright:true, showNavigation:true});
 
@@ -44,7 +42,6 @@ function animate(point, direction, count) {
        animated = true;
     }
  }
-})();
 
 </script>
 </body>

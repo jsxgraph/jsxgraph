@@ -118,14 +118,14 @@ JXG.GraphReader = new function() {
         for(i=0; i<n; i++) {
             //console.log(nodes[i].name,[nodes[i].coords[0],nodes[i].coords[1]]);
             if(nodes[i].coords[0] == null) {
-                x = Math.random()*board.canvasWidth/(board.stretchX*1.1)-board.origin.scrCoords[1]/(board.stretchX*1.1);
+                x = Math.random()*board.canvasWidth/(board.unitX*1.1)-board.origin.scrCoords[1]/(board.unitX*1.1);
                 //console.log(x);
             }
             else {
                 x = nodes[i].coords[0];
             }
             if(nodes[i].coords[1] == null) {
-                y = Math.random()*board.canvasHeight/(board.stretchY*1.1)-(board.canvasHeight-board.origin.scrCoords[2])/(board.stretchY*1.1);
+                y = Math.random()*board.canvasHeight/(board.unitY*1.1)-(board.canvasHeight-board.origin.scrCoords[2])/(board.unitY*1.1);
             }
             else {
                 y = nodes[i].coords[1];

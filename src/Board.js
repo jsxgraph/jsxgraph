@@ -221,27 +221,13 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * The number of pixels which represent one unit in user-coordinates in x direction.
      * @type Number
      */
-    this.unitX = unitX;
-    this.unitX100 = unitX;
+    this.unitX = unitX*this.zoomX;
 
     /**
      * The number of pixels which represent one unit in user-coordinates in y direction.
      * @type Number
      */
-    this.unitY = unitY;
-    this.unitY100 = unitY;
-
-    /**
-     * stretchX is the product of zoomX and unitX. This is basically to save some multiplications.
-     * @type Number
-     */
-    this.stretchX = this.zoomX*this.unitX;
-
-    /**
-     * stretchY is the product of zoomY and unitY. This is basically to save some multiplications.
-     * @type Number
-     */
-    this.stretchY = this.zoomY*this.unitY;
+    this.unitY = unitY*this.zoomY;
 
     /**
      * Canvas width.
@@ -1003,8 +989,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             xc = el.coords.usrCoords[1];
             yc = el.coords.usrCoords[2];
 
-            this.infobox.setCoords(xc+this.infobox.distanceX/(this.stretchX),
-                yc+this.infobox.distanceY/(this.stretchY));
+            this.infobox.setCoords(xc+this.infobox.distanceX/(this.unitX),
+                yc+this.infobox.distanceY/(this.unitY));
             if (typeof(el.infoboxText)!="string") {
                 x = Math.abs(xc);
                 if (x>0.1) {
@@ -1339,72 +1325,37 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Recalculate stretch factors.
-     * Required after zooming or setting the bounding box.
-     * @returns {JXG.Board} Reference to the board
-     */
-    updateStretch: function () {
-        //this.stretchX = this.zoomX*this.unitX;
-        //this.stretchY = this.zoomY*this.unitY;
-        this.stretchX = this.unitX;
-        this.stretchY = this.unitY;
-        return this;
-    },
-
-    /**
-     * Zooms into the board by the factor board.options.zoom.factor and applies the zoom.
+     * Zooms into the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
      * @returns {JXG.Board} Reference to the board
      */
     zoomIn: function () {
-        var //oX = this.origin.usrCoords[1], 
-            //oY = this.origin.usrCoords[2],
-            bb = this.getBoundingBox(),
-            //midX = (bb[2]+bb[0])*0.5,
-            //midY = (bb[3]+bb[1])*0.5,
-            zX = this.options.zoom.factor,
-            zY = this.options.zoom.factor,
+        var bb = this.getBoundingBox(),
+            zX = this.options.zoom.factorX,
+            zY = this.options.zoom.factorY,
             dX = (bb[2]-bb[0])*(1.0-1.0/zX)*0.5,
             dY = (bb[1]-bb[3])*(1.0-1.0/zY)*0.5;
             
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
         this.zoomX *= zX;
         this.zoomY *= zY;
-/*
-        oX = midX + (oX-midX)*this.options.zoom.factor;
-        oY = midY + (oY-midY)*this.options.zoom.factor;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
-*/
-        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
-        // this.updateStretch();
         this.applyZoom();
         return this;
     },
 
     /**
-     * Zooms out of the board by the factor board.options.zoom.factor and applies the zoom.
+     * Zooms out of the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
      * @returns {JXG.Board} Reference to the board
      */
     zoomOut: function () {
-        var //oX = this.origin.usrCoords[1], 
-            //oY = this.origin.usrCoords[2],
-            bb = this.getBoundingBox(),
-            //midX = (bb[2]+bb[0])*0.5,
-            //midY = (bb[3]+bb[1])*0.5,
-            zX = this.options.zoom.factor,
-            zY = this.options.zoom.factor,
+        var bb = this.getBoundingBox(),
+            zX = this.options.zoom.factorX,
+            zY = this.options.zoom.factorY,
             dX = (bb[2]-bb[0])*(1.0-zX)*0.5,
             dY = (bb[1]-bb[3])*(1.0-zY)*0.5;
         
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
         this.zoomX /= zX;
         this.zoomY /= zY;
-
-/*            
-        oX = midX + (oX-midX)/this.options.zoom.factor;
-        oY = midY + (oY-midY)/this.options.zoom.factor;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
-*/
-        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
-
-        //this.updateStretch();
         this.applyZoom();
         return this;
     },
@@ -1414,25 +1365,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoom100: function () {
-        var oX = this.origin.usrCoords[1], 
-            oY = this.origin.usrCoords[2],
-            zX = this.zoomX,
-            zY = this.zoomY,
-            bb = this.getBoundingBox(),
-            midX = (bb[2]+bb[0])*0.5,
-            midY = (bb[3]+bb[1])*0.5,
-            dX = (bb[2]-bb[0])*(1.0-zX)*0.5,
-            dY = (bb[1]-bb[3])*(1.0-zY)*0.5;
+        var bb = this.getBoundingBox(),
+            dX = (bb[2]-bb[0])*(1.0-this.zoomX)*0.5,
+            dY = (bb[1]-bb[3])*(1.0-this.zoomY)*0.5;
 
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
         this.zoomX = 1.0;
         this.zoomY = 1.0;
-        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
-/*
-        oX = midX + (oX-midX)/zX;
-        oY = midY + (oY-midY)/zY;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
-        this.updateStretch();
-*/
         this.applyZoom();
         return this;
     },
@@ -1466,8 +1405,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
         border = 50;
-        borderX = border/(this.unitX*this.zoomX);
-        borderY = border/(this.unitY*this.zoomY);
+        borderX = border/(this.unitX);
+        borderY = border/(this.unitY);
 
         distX = maxX - minX + 2*borderX;
         distY = maxY - minY + 2*borderY;
@@ -1481,7 +1420,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
         this.zoomX = newZoomX;
         this.zoomY = newZoomY;
-        this.updateStretch();
         this.applyZoom();
         return this;
     },
@@ -2076,11 +2014,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.unitY = h/(bbox[1]-bbox[3]);
         }
 
-        oX = -this.unitX*bbox[0]; //*this.zoomX;
-        oY = this.unitY*bbox[1]; //*this.zoomY;
+        oX = -this.unitX*bbox[0];
+        oY = this.unitY*bbox[1];
         this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
 
-        this.updateStretch();
         this.moveOrigin();
         return this;
     },

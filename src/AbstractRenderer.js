@@ -405,9 +405,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
         // Radius umrechnen:
         var radius = element.Radius();
-        if (radius > 0.0 && !isNaN(radius + element.midpoint.coords.scrCoords[1] + element.midpoint.coords.scrCoords[2]) && radius * element.board.stretchX < 20000) {
+        if (radius > 0.0 && !isNaN(radius + element.midpoint.coords.scrCoords[1] + element.midpoint.coords.scrCoords[2]) && radius * element.board.unitX < 20000) {
             this.updateEllipsePrim(element.rendNode, element.midpoint.coords.scrCoords[1], element.midpoint.coords.scrCoords[2],
-                    (radius * element.board.stretchX), (radius * element.board.stretchY));
+                    (radius * element.board.unitX), (radius * element.board.unitY));
         }
     },
 
@@ -618,8 +618,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     joinTransforms: function (element, transformations) {
         var m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
             mpre1 =  [[1, 0, 0], [-element.board.origin.scrCoords[1], 1, 0], [-element.board.origin.scrCoords[2], 0, 1]],
-            mpre2 =  [[1, 0, 0], [0, 1 / element.board.stretchX, 0], [0, 0, -1 / element.board.stretchY]],
-            mpost2 = [[1, 0, 0], [0, element.board.stretchX, 0], [0, 0, -element.board.stretchY]],
+            mpre2 =  [[1, 0, 0], [0, 1 / element.board.unitX, 0], [0, 0, -1 / element.board.unitY]],
+            mpost2 = [[1, 0, 0], [0, element.board.unitX, 0], [0, 0, -element.board.unitY]],
             mpost1 = [[1, 0, 0], [element.board.origin.scrCoords[1], 1, 0], [element.board.origin.scrCoords[2], 0, 1]],
             i, len = transformations.length;
 

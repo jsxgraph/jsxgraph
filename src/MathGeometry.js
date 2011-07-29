@@ -412,10 +412,10 @@ JXG.Math.Geometry = {
         // Compute the stdform of the line in screen coordinates.
         c = [];
         c[0] = el.stdform[0] -
-                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.stretchX +
-                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.stretchY;
-        c[1] = el.stdform[1] / el.board.stretchX;
-        c[2] = el.stdform[2] / (-el.board.stretchY);
+                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.unitX +
+                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.unitY;
+        c[1] = el.stdform[1] / el.board.unitX;
+        c[2] = el.stdform[2] / (-el.board.unitY);
 
         if (isNaN(c[0] + c[1] + c[2])) return; // p1=p2
 

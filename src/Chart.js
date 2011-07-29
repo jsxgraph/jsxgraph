@@ -190,13 +190,13 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
                 if ( JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i]) ) {
                     strwidth = attributes.labels[i].toString().length;
-                    strwidth = 2.0*strwidth*fs/board.stretchX;
+                    strwidth = 2.0*strwidth*fs/board.unitX;
                     if (yp>=0) {
-                        yp += fs*0.5/board.stretchX;   // Static offset for label
+                        yp += fs*0.5/board.unitX;   // Static offset for label
                     } else {
-                        yp -= fs*strwidth/board.stretchX;   // Static offset for label
+                        yp -= fs*strwidth/board.unitX;   // Static offset for label
                     }
-                    xp1 -= fs*0.2/board.stretchY;
+                    xp1 -= fs*0.2/board.unitY;
                     text = board.create('text',[yp,xp1,attributes.labels[i]],attributes);
                 }
             } else { // vertical bars
@@ -206,11 +206,11 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 p[3] = board.create('point',[xp2,0], hiddenPoint);
                 if ( JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i]) ) {
                     strwidth = attributes.labels[i].toString().length;
-                    strwidth = 0.6*strwidth*fs/board.stretchX;
+                    strwidth = 0.6*strwidth*fs/board.unitX;
                     if (yp>=0) {
-                        yp += fs*0.5/board.stretchY;   // Static offset for label
+                        yp += fs*0.5/board.unitY;   // Static offset for label
                     } else {
-                        yp -= fs*1.0/board.stretchY;   // Static offset for label
+                        yp -= fs*1.0/board.unitY;   // Static offset for label
                     }
                     text = board.create('text',[xp1-strwidth*0.5, yp, attributes['labels'][i]],attributes);
                 }
@@ -790,7 +790,7 @@ JXG.Legend.prototype = new JXG.GeometryElement;
 
 JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
     var line_length = attributes['linelength'] || 1,
-        offy = (attributes['rowheight'] || 20)/this.board.stretchY,
+        offy = (attributes['rowheight'] || 20)/this.board.unitY,
         i;
 
     for(i=0;i<this.label_array.length;i++) {

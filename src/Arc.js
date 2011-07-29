@@ -192,7 +192,7 @@ JXG.createArc = function(board, parents, attributes) {
      * @ignore
      */
     el.hasPoint = function (x, y) {
-        var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
+        var prec = this.board.options.precision.hasPoint/(this.board.unitX),
             checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
             r = this.Radius(),
             dist = this.midpoint.coords.distance(JXG.COORDS_BY_USER,checkPoint),
@@ -243,8 +243,8 @@ JXG.createArc = function(board, parents, attributes) {
      */
     el.getLabelAnchor = function() {
         var angle = JXG.Math.Geometry.rad(this.radiuspoint, this.midpoint, this.anglepoint),
-            dx = 10/(this.board.stretchX),
-            dy = 10/(this.board.stretchY),
+            dx = 10/(this.board.unitX),
+            dy = 10/(this.board.unitY),
             p2c = this.point2.coords.usrCoords,
             pmc = this.midpoint.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],

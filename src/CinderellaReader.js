@@ -470,12 +470,12 @@ JXG.CinderellaReader = new function() {
                //setScale(25.0);
           
         }
+        
         board.zoomX *= scale/2.4;
         board.zoomY *= scale/2.4;
-        oX = board.origin.scrCoords[1]*board.options.zoom.factor;
-        oY = board.origin.scrCoords[2]*board.options.zoom.factor;
+        oX = board.origin.scrCoords[1]*board.options.zoom.factorX;
+        oY = board.origin.scrCoords[2]*board.options.zoom.factorY;
         board.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX-150, oY+50],board);
-        board.updateStretch();
         board.applyZoom();
         return board;
     };

@@ -173,7 +173,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     hasPoint: function (x, y) {
         /*
          var genauigkeit = this.board.options.precision.hasPoint;
-         genauigkeit = genauigkeit/(this.board.stretchX);
+         genauigkeit = genauigkeit/(this.board.unitX);
 
          var checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
          var r = this.Radius();
@@ -183,7 +183,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
          return (Math.abs(dist-r) < genauigkeit);
          */
-        var prec = this.board.options.precision.hasPoint/(this.board.stretchX),
+        var prec = this.board.options.precision.hasPoint/(this.board.unitX),
             mp = this.midpoint.coords.usrCoords,
             p = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
             r = this.Radius();

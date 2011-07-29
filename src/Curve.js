@@ -141,7 +141,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             lbda, x0, y0, x1, y1, xy, den,
             steps = this.numberPointsLow,
             d = (this.maxX()-this.minX())/steps,
-            prec = this.board.options.precision.hasPoint/(this.board.unitX*this.board.zoomX),
+            prec = this.board.options.precision.hasPoint/this.board.unitX,
             checkPoint, len,
             suspendUpdate = true;
 

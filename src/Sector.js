@@ -205,8 +205,8 @@ JXG.createSector = function(board, parents, attributes) {
      */
     el.getLabelAnchor = function() {
         var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-            dx = 10/(this.board.stretchX),
-            dy = 10/(this.board.stretchY),
+            dx = 10/(this.board.unitX),
+            dy = 10/(this.board.unitY),
             p2c = this.point2.coords.usrCoords,
             pmc = this.point1.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
@@ -439,8 +439,8 @@ JXG.createAngle = function(board, parents, attributes) {
         // documented in GeometryElement
         el.getLabelAnchor = function() {
             var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-                dx = 10/(this.board.stretchX),
-                dy = 10/(this.board.stretchY),
+                dx = 10/(this.board.unitX),
+                dy = 10/(this.board.unitY),
                 p2c = this.point2.coords.usrCoords,
                 pmc = this.point1.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],

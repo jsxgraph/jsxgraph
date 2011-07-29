@@ -46,7 +46,6 @@ JXG.IntergeoReader = new function() {
         this.board.origin.scrCoords = [1, 400, 300];
         this.board.unitX = 30;
         this.board.unitY = 30;
-        this.board.updateStretch();
 
         this.readElements(tree.getElementsByTagName("elements"));
         this.readConstraints(tree.getElementsByTagName("constraints"));
@@ -892,6 +891,10 @@ JXG.IntergeoReader = new function() {
      */
     this.readDisplay = function(tree) {
         var s, j;
+        
+        if (!JXG.exists(tree) || !JXG.isArray(tree)) {
+            return;
+        }
         
         for (s=0;s<tree[0].childNodes.length;s++) (function(s) {
             var node, el, prop = {}, key, val;

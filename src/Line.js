@@ -133,10 +133,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
 
         c[0] = this.stdform[0] -
-                    this.stdform[1]*this.board.origin.scrCoords[1]/this.board.stretchX+
-                    this.stdform[2]*this.board.origin.scrCoords[2]/this.board.stretchY;
-        c[1] = this.stdform[1]/this.board.stretchX;
-        c[2] = this.stdform[2]/(-this.board.stretchY);
+                    this.stdform[1]*this.board.origin.scrCoords[1]/this.board.unitX+
+                    this.stdform[2]*this.board.origin.scrCoords[2]/this.board.unitY;
+        c[1] = this.stdform[1]/this.board.unitX;
+        c[2] = this.stdform[2]/(-this.board.unitY);
 
         // Project the point orthogonally onto the line 
         var vnew = [0,c[1],c[2]];

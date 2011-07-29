@@ -133,7 +133,7 @@ JXG.PsTricks = {
             result += "+, dotsize=" + sizemap[size];
         }
         result += "]("+el.coords.usrCoords.slice(1).join(',')+")\n";
-        result += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.stretchY)+","+(el.coords.usrCoords[2]+15/ el.board.stretchY)+"){\\small $"+el.name+"$}\n";
+        result += "\\rput("+(el.coords.usrCoords[1]+15/ el.board.unitY)+","+(el.coords.usrCoords[2]+15/ el.board.unitY)+"){\\small $"+el.name+"$}\n";
 
         return result;
     },
@@ -180,7 +180,7 @@ JXG.PsTricks = {
     addArc: function (el) {
         var radius = el.Radius(),
             p = {
-                coords: new JXG.Coords(JXG.COORDS_BY_USER,[el.board.canvasWidth/(el.board.stretchY), el.midpoint.coords.usrCoords[2]], el.board)
+                coords: new JXG.Coords(JXG.COORDS_BY_USER,[el.board.canvasWidth/(el.board.unitY), el.midpoint.coords.usrCoords[2]], el.board)
             },
             angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4),
             angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4),
@@ -195,7 +195,7 @@ JXG.PsTricks = {
     addSector: function (el) {
         var radius = el.Radius(),
             p = {
-                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth / (el.board.stretchY), el.midpoint.coords.usrCoords[2]], el.board)
+                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth / (el.board.unitY), el.midpoint.coords.usrCoords[2]], el.board)
             },
             angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4),
             angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
@@ -206,7 +206,7 @@ JXG.PsTricks = {
     addAngle: function (el) {
         var radius = el.radius,
             p = {
-                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth/(el.board.stretchY), el.point2.coords.usrCoords[2]], el.board)
+                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth/(el.board.unitY), el.point2.coords.usrCoords[2]], el.board)
             },
             angle2 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point1).toFixed(4),
             angle1 = JXG.Math.Geometry.trueAngle(p, el.point2, el.point3).toFixed(4),

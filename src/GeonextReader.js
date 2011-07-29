@@ -306,8 +306,8 @@ JXG.GeonextReader = {
                         tRot.bindTo(im);
                         el.image = im;
                     } else if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
-                        wf = function(){ return wOrg / board.stretchX; };
-                        hf = function(){ return hOrg / board.stretchY; };
+                        wf = function(){ return wOrg / board.unitX; };
+                        hf = function(){ return hOrg / board.unitY; };
                         xf = function(){ return el.X() - wf() * 0.5; };
                         yf = function(){ return el.Y() - hf() * 0.5; };
 
@@ -398,7 +398,6 @@ JXG.GeonextReader = {
         tmp = this.gEBTN(xmlNode, 'unit', 0, false);
         board.unitX = parseFloat(this.gEBTN(tmp, 'x'));
         board.unitY = parseFloat(this.gEBTN(tmp, 'y'));
-        board.updateStretch();
 
         // resize board
         if (board.options.takeSizeFromFile) {

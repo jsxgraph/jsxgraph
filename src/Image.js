@@ -49,7 +49,7 @@ JXG.Image = function (board, url, coordinates, size, attributes) {
     this.updateCoords = new Function('','this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);');
     this.updateSize = new Function('','this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.W(),this.H()]);');
     this.usrSize = [this.W(), this.H()];
-    this.size = [this.usrSize[0]*board.stretchX,this.usrSize[1]*board.stretchY];
+    this.size = [this.usrSize[0]*board.unitX,this.usrSize[1]*board.unitY];
     this.url = url;
 
     this.parent = JXG.getRef(attributes.anchor);
@@ -84,7 +84,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         if (this.needsUpdate) {
             this.updateCoords();
             this.usrSize = [this.W(), this.H()];
-            this.size = [this.usrSize[0]*this.board.stretchX,this.usrSize[1]*this.board.stretchY];
+            this.size = [this.usrSize[0]*this.board.unitX,this.usrSize[1]*this.board.unitY];
             this.updateTransform();
         }
         return this;

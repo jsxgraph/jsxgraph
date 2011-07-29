@@ -1255,8 +1255,8 @@ this.coordinates = function(gxtEl, Data) {
   if(Data.getElementsByTagName('labelOffset')[0]) {
     // tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [,
     //                                             parseFloat(Data.getElementsByTagName("labelOffset")[0].attributes["y"].value)], JXG.GeogebraReader.board);
-    labelOffset.x = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("x"))/JXG.GeogebraReader.board.stretchX;
-    labelOffset.y = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("y"))/JXG.GeogebraReader.board.stretchY;
+    labelOffset.x = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("x"))/JXG.GeogebraReader.board.unitX;
+    labelOffset.y = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("y"))/JXG.GeogebraReader.board.unitY;
   }
 
   if(Data.getElementsByTagName("coords")[0]) {
@@ -1539,7 +1539,6 @@ this.writeBoard = function(board) {
   board.origin.scrCoords = [1, 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("xZero"), 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("yZero")];
   board.unitX = (boardData.getElementsByTagName("coordSystem")[0].getAttribute("scale")) ? 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("scale") : 1;
   board.unitY = (boardData.getElementsByTagName("coordSystem")[0].getAttribute("yscale")) ? 1*boardData.getElementsByTagName("coordSystem")[0].getAttribute("yscale") : board.unitX;
-  board.updateStretch();
 
   board.fontSize = (JXG.GeogebraReader.tree.getElementsByTagName("gui")[0] && JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0]) ? 1*JXG.GeogebraReader.tree.getElementsByTagName("gui")[0].getElementsByTagName("font")[0].getAttribute("size") : '12px';
 
@@ -2369,12 +2368,12 @@ this.writeElement = function(board, output, input, cmd) {
 
         if(element.getElementsByTagName('slider')[0].getAttribute('horizontal') == 'true') {
           if(element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') && element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') == 'true')
-          length /= (board.unitX*board.zoomX);
+          length /= (board.unitX); //*board.zoomX);
           ex = sx + length;
           ey = sy;
         } else {
           if(element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') && element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') == 'true')
-          length /= (board.unitY*board.zoomY);
+          length /= (board.unitY); //*board.zoomY);
           ex = sx;
           ey = sy + length;
         }

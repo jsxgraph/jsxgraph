@@ -36,7 +36,8 @@ JXG.Options = {
 
     /* zoom options */
     zoom : {
-        factor : 1.25
+        factorX : 1.25,
+        factorY : 1.25
     },
 
     /* navbar options */

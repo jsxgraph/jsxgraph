@@ -90,12 +90,12 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
 
         if (doRound === null || doRound) {
             this.scrCoords[0] = mround(uc[0]);
-            this.scrCoords[1] = mround(uc[0]*oc[1] + uc[1]*b.stretchX);
-            this.scrCoords[2] = mround(uc[0]*oc[2] - uc[2]*b.stretchY);
+            this.scrCoords[1] = mround(uc[0]*oc[1] + uc[1]*b.unitX);
+            this.scrCoords[2] = mround(uc[0]*oc[2] - uc[2]*b.unitY);
         } else {
             this.scrCoords[0] = uc[0];
-            this.scrCoords[1] = uc[0]*oc[1] + uc[1]*b.stretchX;
-            this.scrCoords[2] = uc[0]*oc[2] - uc[2]*b.stretchY;
+            this.scrCoords[1] = uc[0]*oc[1] + uc[1]*b.unitX;
+            this.scrCoords[2] = uc[0]*oc[2] - uc[2]*b.unitY;
         }
     },
 
@@ -108,8 +108,8 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             sc = this.scrCoords,
             b = this.board;
         this.usrCoords[0] =  1.0;
-        this.usrCoords[1] = (sc[1] - o[1])/b.stretchX;
-        this.usrCoords[2] = (o[2] - sc[2])/b.stretchY;
+        this.usrCoords[1] = (sc[1] - o[1])/b.unitX;
+        this.usrCoords[2] = (o[2] - sc[2])/b.unitY;
     },
 
     /**

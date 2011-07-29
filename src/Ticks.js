@@ -196,8 +196,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 });
                 label.distanceX = 4;
                 label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
-                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.stretchX),
-                                newTick.usrCoords[2] + label.distanceY / (board.stretchY));
+                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
+                                newTick.usrCoords[2] + label.distanceY / (board.unitY));
                 
                 label.visProp.visible = drawLabels;
                 label.prepareUpdate().update().updateRenderer();
