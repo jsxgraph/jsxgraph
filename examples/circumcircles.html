@@ -32,8 +32,7 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
     var b3 = board.createElement('line',['C','B'],{name:'',straightFirst:false,straightLast:false});
     
     var c1 = board.createElement('circumcircle',['A','B','C'],{name:''});
-    c1[1].setProperty('strokeColor:#AAAAAA');
-    c1[0].hideElement();
+    c1.setProperty('strokeColor:#AAAAAA');
     
     var l1 = board.createElement('bisector',['B','A','C'],{name:'',visible:false}); // alpha
     var l2 = board.createElement('bisector',['C','B','A'],{name:'',visible:false}); // beta
@@ -44,22 +43,21 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
     var pp3 = board.createElement('perpendicularpoint',[i1,b3],{name:"A'",fillColor:'blue'});
     
     var c2 = board.createElement('circumcircle',[pp1,pp2,pp3],{name:''});
-    c2[1].setProperty('strokeColor:#3CB371');
-    c2[0].hideElement();
+    c2.setProperty('strokeColor:#3CB371');
     
     var c3 = board.createElement('circumcircle',[p3,pp2,pp3],{name:''});
-    c3[1].setProperty('strokeColor:#FF8C00');
-    c3[0].hideElement();
+    c3.setProperty('strokeColor:#FF8C00');
+
     var c4 = board.createElement('circumcircle',[p2,pp1,pp3],{name:''});
-    c4[1].setProperty('strokeColor:#FF8C00');
-    c4[0].hideElement();
+    c4.setProperty('strokeColor:#FF8C00');
+
     var c5 = board.createElement('circumcircle',[p1,pp2,pp1],{name:''});
-    c5[1].setProperty('strokeColor:#FF8C00');
-    c5[0].hideElement();
-    
-    var i2 = board.createElement('otherintersection',[c3[1],c1[1],p3],{name:"C''",fillColor:'blue'});
-    var i3 = board.createElement('otherintersection',[c4[1],c1[1],p2],{name:"B''",fillColor:'blue'});
-    var i4 = board.createElement('otherintersection',[c5[1],c1[1],p1],{name:"A''",fillColor:'blue'}); 
+    c5.setProperty('strokeColor:#FF8C00');
+
+    var i2 = board.createElement('otherintersection',[c3,c1,p3],{name:"C''",fillColor:'blue'});
+    var i3 = board.createElement('otherintersection',[c4,c1,p2],{name:"B''",fillColor:'blue'});
+    var i4 = board.createElement('otherintersection',[c5,c1,p1],{name:"A''",fillColor:'blue'}); 
+
 /*
     var i2 = board.createElement('intersection',[c3[1],c1[1],0],{name:"C''",fillColor:'blue'});
     if(i2.coords.distance(JXG.COORDS_BY_USER, p3.coords) < 0.01) {

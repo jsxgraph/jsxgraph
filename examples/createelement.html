@@ -27,7 +27,7 @@
         p2 = board.createElement('point', [2, 0], {fixed: true});
         p3 = board.createElement('point', [1, 2],{name:'XXX'});
         p0 = board.createElement('point', [0,0],{visible:false});
-         
+/*         
         l1 = board.createElement('line', [p1, p2]);
         
         c1 = board.createElement('circle', [p1, 3.0]);
@@ -39,13 +39,13 @@
         
         a1 = board.createElement('arc', [p1, p2, p3], {'firstArrow':true,'lastArrow':true});
         a2 = board.createElement('arrow', [[0,0], 'XXX']);
-        
-        p4 = board.createElement('point', [-4, 2.2]);
+*/        
+        p4 = board.createElement('point', [-1, 3], {text:{fontSize:'40px'}});
         p5 = board.createElement('point', [-3, 2]);
         p6 = board.createElement('point', [-1, -1]);
         p7 = board.createElement('point', [-3, -2]);
         p8 = board.createElement('point', [-3.5, 0.5]);
-        
+/*        
         p9 = board.createElement('point', [5, 3]);
         p10 = board.createElement('point', [7, 2.9]);
         tr = board.createElement('triangle', [p7, p9, p10]);
@@ -55,14 +55,16 @@
         pol.borders[1].hideElement();
         pol.borders[2].hideElement();
         pol.borders[3].hideElement();
+*/
+        sec = board.createElement('sector', [p4, p5, p6], {name:"test", withLabel:true, label:{color:'green', fontSize:'32px'}});
 
-        sec = board.createElement('sector', [p4, p5, p6]);
-
+/*
         board.options.grid.hasGrid = true;
         board.options.grid.gridColor = '#FF0000';
         board.options.sector.fillColor = 'red';
         board.options.polygon.fillColor = 'blue';
-        JXG.useStandardOptions(board);  
+        //JXG.useStandardOptions(board);  
+*/
         
   /* ]]> */
   </script>

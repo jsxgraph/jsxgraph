@@ -249,7 +249,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
     drawPie: function(board, y, attributes) {
         var i,
             p = [],
-            arc = [],
+            sector = [],
             s = JXG.Math.Statistics.sum(y),
             colorArray = attributes.colors,
             highlightColorArray = attributes.highlightcolors,
@@ -333,34 +333,33 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             attributes.labelcolor = colorArray && colorArray[i%colorArray.length];
             attributes.highlightfillcolor = highlightColorArray && highlightColorArray[i%highlightColorArray.length];
 
-            arc[i] = board.create('sector',[center,p[i],p[i+1]], attributes);
+            sector[i] = board.create('sector',[center,p[i],p[i+1]], attributes);
 
             if(attributes.highlightonsector) {
-                arc[i].hasPoint = arc[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
+                sector[i].hasPoint = sector[i].hasPointSector; // overwrite hasPoint so that the whole sector is used for highlighting
             }
             if(attributes.highlightbysize) {
-                arc[i].highlight = function() {
+                sector[i].highlight = function() {
                     this.board.renderer.highlight(this);
-
-                    var dx = - this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
-                        dy = - this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                    var dx = - this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
+                        dy = - this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
                     if(this.label.content != null) {
                         this.label.content.rendNode.style.fontSize = (2*this.board.options.text.fontSize) + 'px';
                     }
 
                     this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
-                            this.midpoint.coords.usrCoords[1]+dx*1.1,
-                            this.midpoint.coords.usrCoords[2]+dy*1.1
+                            this.point1.coords.usrCoords[1]+dx*1.1,
+                            this.point1.coords.usrCoords[2]+dy*1.1
                         ], this.board);
                     this.prepareUpdate().update().updateRenderer();
                 };
 
-                arc[i].noHighlight = function() {
+                sector[i].noHighlight = function() {
                     this.board.renderer.noHighlight(this);
 
-                    var dx = -this.midpoint.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
-                        dy = -this.midpoint.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                    var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
+                        dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
                     if(this.label.content != null) {
                         this.label.content.rendNode.style.fontSize = (this.board.options.text.fontSize) + 'px';
@@ -368,15 +367,15 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
 
                     this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
-                            this.midpoint.coords.usrCoords[1]+dx/1.1,
-                            this.midpoint.coords.usrCoords[2]+dy/1.1
+                            this.point1.coords.usrCoords[1]+dx/1.1,
+                            this.point1.coords.usrCoords[2]+dy/1.1
                         ], this.board);
                     this.prepareUpdate().update().updateRenderer();
                 };
             }
 
         }
-        return {arcs:arc, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+        return {sectors:sector, points:p, midpoint:center}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
     },
 
     /*
