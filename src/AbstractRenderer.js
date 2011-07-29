@@ -152,6 +152,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
             if (!element.visProp.draft) {
                 if (!not.stroke) {
+                    this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
                 }
 

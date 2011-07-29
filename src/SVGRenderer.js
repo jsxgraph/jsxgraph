@@ -767,6 +767,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         node = el.rendNode;
         this.setPropertyPrim(node, 'stroked', 'true');
         if (JXG.exists(w)) {
+
             this.setPropertyPrim(node, 'stroke-width', w + 'px');
         }
         el.visPropOld.strokewidth = w;
