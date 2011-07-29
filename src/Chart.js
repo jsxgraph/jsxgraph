@@ -665,8 +665,8 @@ JXG.createChart = function(board, parents, attributes) {
 
             table = (new JXG.DataSource()).loadFromTable(parents[0], attr.withheaders, attr.withheaders);
             data = table.data;
-            col = table.columnHeader;
-            row = table.rowHeader;
+            col = table.columnHeaders;
+            row = table.rowHeaders;
 
             originalWidth = attr.width;
             name = attr.name;
