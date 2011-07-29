@@ -21,16 +21,16 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
 <script type="text/javascript">
 /* <![CDATA[ */
 //    var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 50, unitY: 50});
-    var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,10,-4], keepaspectratio:true,axis:true});
+    var board = JXG.JSXGraph.initBoard('box', {boundingbox:[-4,4,10,-4], keepaspectratio:true, axis:true});
     
-    var p1 = board.createElement('point', [0.5,-1.5] , {name:'A',fillColor:'red',strokeColor:'red'});
+    var p1 = board.createElement('point', [0.5,-1.5] , {name:'A',fillColor:'red',strokeColor:'red', withLabel:false});
+
     var p2 = board.createElement('point', [7.5,0.5] , {name:'B',fillColor:'red',strokeColor:'red'});
     var p3 = board.createElement('point', [2,3] , {name:'C',fillColor:'red',strokeColor:'red'});
     
     var b1 = board.createElement('line',['A','B'],{name:'',straightFirst:false,straightLast:false});
     var b2 = board.createElement('line',['A','C'],{name:'',straightFirst:false,straightLast:false});
     var b3 = board.createElement('line',['C','B'],{name:'',straightFirst:false,straightLast:false});
-    
     var c1 = board.createElement('circumcircle',['A','B','C'],{name:''});
     c1.setProperty('strokeColor:#AAAAAA');
     
@@ -58,28 +58,12 @@ Then A'A'', B'B'', and C'C'' meet in one point, P.
     var i3 = board.createElement('otherintersection',[c4,c1,p2],{name:"B''",fillColor:'blue'});
     var i4 = board.createElement('otherintersection',[c5,c1,p1],{name:"A''",fillColor:'blue'}); 
 
-/*
-    var i2 = board.createElement('intersection',[c3[1],c1[1],0],{name:"C''",fillColor:'blue'});
-    if(i2.coords.distance(JXG.COORDS_BY_USER, p3.coords) < 0.01) {
-        i2.hideElement();
-        i2 = board.createElement('intersection',[c3[1],c1[1],1],{name:"C''",fillColor:'blue'});
-    } 
-    var i3 = board.createElement('intersection',[c4[1],c1[1],0],{name:"B''",fillColor:'blue'});
-    if(i3.coords.distance(JXG.COORDS_BY_USER, p2.coords) < 0.01) {
-        i3.hideElement();
-        i3 = board.createElement('intersection',[c4[1],c1[1],1],{name:"B''",fillColor:'blue'});
-    }      
-    var i4 = board.createElement('intersection',[c5[1],c1[1],0],{name:"A''",fillColor:'blue'}); 
-    if(i4.coords.distance(JXG.COORDS_BY_USER, p1.coords) < 0.01) {
-        i4.hideElement();
-        i4 = board.createElement('intersection',[c5[1],c1[1],1],{name:"A''",fillColor:'blue'});
-    }  
- */   
     var ll1 = board.createElement('line',[i2,pp1],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
     var ll2 = board.createElement('line',[i3,pp2],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
     var ll3 = board.createElement('line',[i4,pp3],{name:'',straightFirst:false,straightLast:false,strokeColor:'#FF6347'});
     
     var i5 = board.createElement('intersection',[ll1,ll2,0],{name:"P",fillColor:'#9932CC',strokeColor:'#9932CC'});
+
 /* ]]> */
 </script>
 </body>

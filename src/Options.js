@@ -290,7 +290,7 @@ JXG.Options = {
             fillColor : '#565656',
             strokeOpacity : 0.8,
             fillOpacity : 0.8,
-            strokeWidth : '1px'
+            strokeWidth : 1
         }
         // close the meta tag
         /**#@-*/
@@ -572,7 +572,7 @@ JXG.Options = {
 
     /* special curve options */
     curve : {
-        strokeWidth : '1px',
+        strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
 
@@ -821,7 +821,7 @@ JXG.Options = {
         size : 3,
         fillColor : '#ff0000',
         highlightFillColor : '#EEEEEE',
-        strokeWidth: '2px',
+        strokeWidth: 2,
         strokeColor : '#ff0000',
         highlightStrokeColor : '#C3D9FF',
         zoom: false,             // Change the point size on zoom
