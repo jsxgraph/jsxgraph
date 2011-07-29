@@ -181,6 +181,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 }
                 
                 labelText = pos.toString();
+                if (Math.abs(pos) < JXG.Math.eps) {
+                    labelText = '0';
+                }
+
                 if(labelText.length > 5 || labelText.indexOf('e') != -1) {
                     labelText = pos.toPrecision(3).toString();
                 }
