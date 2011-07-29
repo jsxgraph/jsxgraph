@@ -617,10 +617,22 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     joinTransforms: function (element, transformations) {
         var m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-            mpre1 =  [[1, 0, 0], [-element.board.origin.scrCoords[1], 1, 0], [-element.board.origin.scrCoords[2], 0, 1]],
-            mpre2 =  [[1, 0, 0], [0, 1 / element.board.unitX, 0], [0, 0, -1 / element.board.unitY]],
-            mpost2 = [[1, 0, 0], [0, element.board.unitX, 0], [0, 0, -element.board.unitY]],
-            mpost1 = [[1, 0, 0], [element.board.origin.scrCoords[1], 1, 0], [element.board.origin.scrCoords[2], 0, 1]],
+            ox = element.board.origin.scrCoords[1],
+            oy = element.board.origin.scrCoords[2],
+            ux = element.board.unitX,
+            uy = element.board.unitY,
+            mpre1 =  [[1,   0, 0],      // Translate to 0,0 in screen coords
+                      [-ox, 1, 0], 
+                      [-oy, 0, 1]],  
+            mpre2 =  [[1, 0,     0],    // Scale
+                      [0, 1/ux,  0], 
+                      [0, 0, -1/uy]],
+            mpost2 = [[1, 0,   0],      // Scale back
+                      [0, ux,  0], 
+                      [0, 0, -uy]],
+            mpost1 = [[1,  0, 0],       // Translate back
+                      [ox, 1, 0], 
+                      [oy, 0, 1]],
             i, len = transformations.length;
 
         for (i = 0; i < len; i++) {

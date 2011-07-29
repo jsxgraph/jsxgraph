@@ -14,31 +14,78 @@
     var brd, k, txt, txt2, p0, p1;
     //JXG.Options.text.useMathJax = true;
     //JXG.Options.renderer = 'canvas';
-    JXG.Options.text.defaultDisplay = 'internal';
+    JXG.Options.text.display = 'internal';
     
-    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, showNavigation:true, showCopyright:true});
+    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,25,5,-25], axis:true, showNavigation:true, showCopyright:true});
     //k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n'});
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
-    txt = brd.create('text',[0,0, JXG.JSXGraph.rendererType], {fontSize:'40'});
+    p2 = brd.create('point', [0,4], {color:'blue', trace:true}); 
+    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], {fontSize:'64'});
+    im = brd.create('image',["uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
 
-    txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
+    //txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
 
+    var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
     var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
-    tOff.bindTo(txt);
+    var tScale = brd.create('transform', [function(){return p1.Dist(p0)/3;},
+                                        function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
+    //tOff.bindTo(txt);
     tOff.bindTo(p1);
+    tOff.bindTo(im);
+
+    // This is a rotation in screen coordinates.
+    // ratio is the the ratio between (maxY-minY)/(maxX-minX) in user coordinates
+    ratio = 5;
+    var tRot = brd.create('transform', 
+        [1, 0, 0,
+          function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 x = p0.X(), y = p0.Y(),
+                 co = Math.cos(beta), si = Math.sin(beta);
+             return x*(1-co)+y*si/ratio;
+           }, 
+           function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 co = Math.cos(beta);
+             return co;
+           }, 
+           function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 si = Math.sin(beta);
+             return -si/ratio;
+           },
+          function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 x = p0.X(), y = p0.Y(),
+                 co = Math.cos(beta), si = Math.sin(beta);
+             return y*(1-co)-x*si*ratio;
+           }, 
+           function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 si = Math.sin(beta);
+             return si*ratio;
+           }, 
+           function(){ 
+             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
+                 co = Math.cos(beta);
+             return co;
+           }
+        ], 
+        {type:'generic'}); 
+    
     // Rotate text around point "offset" by dragging point "rot+scale"
-    var tRot = brd.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'}); 
-    tRot.bindTo(txt);
+    tRot.bindTo(txt); 
+    tRot.bindTo(im);
+    tRot.bindTo(p2);
         
     // Scale text by dragging point "rot+scale"
     // We do this by moving the text back to the origin (inverse of transformation tOff),
     // then scale the text (because scaling "starts from (0,0))
     // Finally, we move the text back to point "Offset"
-    var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
-    var tScale = brd.create('transform', [function(){return p1.Dist(p0)/3;},
-                                        function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
     tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
+    tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
+    
     brd.update();
     
     //alert(txt.rendNode.getBBox().width);

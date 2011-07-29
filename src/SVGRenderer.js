@@ -273,7 +273,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         var node = this.createPrim('text', el.id);
 
         node.setAttributeNS(null, "class", "JXGtext");
-        node.setAttributeNS(null, "style", "alignment-baseline:middle;");
+        //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, 9);
