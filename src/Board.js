@@ -1381,15 +1381,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomAllPoints: function () {
-        var ratio, minX, maxX, minY, maxY, el,
-            border, borderX, borderY, distX, distY, newZoom, newZoomX, newZoomY,
-            newOriginX, newOriginY;
+        var minX = 0, // (0,0) shall be visible, too
+            maxX = 0, 
+            minY = 0, 
+            maxY = 0, 
+            el, border, borderX, borderY;
 
-        ratio = this.zoomX / this.zoomY;
-        minX = 0; // (0,0) soll auch sichtbar bleiben
-        maxX = 0;
-        minY = 0;
-        maxY = 0;
         for (el in this.objects) {
             if (JXG.isPoint(this.objects[el]) && this.objects[el].visProp.visible) {
                 if (this.objects[el].coords.usrCoords[1] < minX) {
@@ -1408,18 +1405,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         borderX = border/(this.unitX);
         borderY = border/(this.unitY);
 
-        distX = maxX - minX + 2*borderX;
-        distY = maxY - minY + 2*borderY;
+        this.zoomX = 1.0;
+        this.zoomY = 1.0;
+        this.setBoundingBox([minX-borderX, maxY+borderY, maxX+borderX, minY-borderY], true);
 
-        newZoom = Math.min(this.canvasWidth/(this.unitX*distX), this.canvasHeight/(this.unitY*distY));
-        newZoomY = newZoom;
-        newZoomX = newZoom*ratio;
-
-        newOriginX = -(minX-borderX)*this.unitX*newZoomX;
-        newOriginY = (maxY+borderY)*this.unitY*newZoomY;
-        this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [newOriginX, newOriginY], this);
-        this.zoomX = newZoomX;
-        this.zoomY = newZoomY;
         this.applyZoom();
         return this;
     },
@@ -1460,7 +1449,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 newBBox[j] -= dir[j];
             }
 
-            this.zoom100();
+            this.zoomX = 1.0;
+            this.zoomY = 1.0;
             this.setBoundingBox(newBBox, true);
         }
         
