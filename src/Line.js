@@ -937,7 +937,7 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
 JXG.createAxis = function(board, parents, attributes) {
     var attr,
         el, 
-        dist, c1, c2, len;
+        dist;
 
     // Arrays oder Punkte, mehr brauchen wir nicht.
     if ( (JXG.isArray(parents[0]) || JXG.isPoint(parents[0]) ) && (JXG.isArray(parents[1]) || JXG.isPoint(parents[1])) ) {
@@ -950,13 +950,15 @@ JXG.createAxis = function(board, parents, attributes) {
         } else if(JXG.isArray(attr.ticks)) {
             dist = attr.ticks;
         } else {
-            c1 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point1.coords.usrCoords.slice(1)],board);
-            c2 = new JXG.Coords(JXG.COORDS_BY_USER, [el.point2.coords.usrCoords.slice(1)],board);
-            JXG.Math.Geometry.calcStraight(el, c1, c2);
-            len = c1.distance(JXG.COORDS_BY_USER,c2);
-            dist = 1.0; //len;
+            dist = 1.0;
         }
-        
+
+        /**
+         * The ticks attached to the axis.
+         * @memberOf Axis.prototype
+         * @name defaultTicks
+         * @type JXG.Ticks
+         */
         el.defaultTicks = board.create('ticks', [el, dist], attr);
     }
     else

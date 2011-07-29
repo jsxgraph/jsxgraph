@@ -474,21 +474,47 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 });
 
 /**
- * Creates new ticks.
- * @param {JXG.Board} board The board the ticks are put on.
- * @param {Array} parents Array containing a line and an array of positions, where ticks should be put on that line.
- * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See @see JXG.GeometryElement#setProperty
+ * @class Ticks are used as distance markers on a line.
+ * @pseudo
+ * @description
+ * @name Ticks
+ * @augments JXG.Ticks
+ * @constructor
  * @type JXG.Ticks
- * @return Reference to the created ticks object.
+ * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line,Number} line,_distance The parents consist of the line the ticks are going to be attached to and optional the
+ * distance between two major ticks. If no distance is given the attribute {@link JXG.Ticks#ticksDistance} is used.
+ * @example
+ * // Create an axis providing two coord pairs.
+ *   var p1 = board.create('point', [0, 3]);
+ *   var p2 = board.create('point', [1, 3]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var t = board.create('ticks', [l1], {ticksDistance: 2});
+ * </pre><div id="ee7f2d68-75fc-4ec0-9931-c76918427e63" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('ee7f2d68-75fc-4ec0-9931-c76918427e63', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
+ *   var p1 = board.create('point', [0, 3]);
+ *   var p2 = board.create('point', [1, 3]);
+ *   var l1 = board.create('line', [p1, p2]);
+ *   var t = board.create('ticks', [l1], {ticksDistance: 2});
+ * })();
+ * </script><pre>
  */
 JXG.createTicks = function(board, parents, attributes) {
-    var el,
+    var el, dist,
         attr = JXG.copyAttributes(attributes, board.options, 'ticks');
 
+    if (parents.length < 2) {
+        dist = attributes.ticksDistance;
+    } else {
+        dist = parents[1];
+    }
+
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
-        el = new JXG.Ticks(parents[0], parents[1], attr);
+        el = new JXG.Ticks(parents[0], dist, attr);
     } else
-        throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+        throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
 
     return el;
 };

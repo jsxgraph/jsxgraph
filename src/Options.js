@@ -349,7 +349,17 @@ JXG.Options = {
          * @name JXG.Ticks#minorTicks
          */
         minorTicks: 4,
-        defaultDistance: 1,
+
+        /**
+         * The default distance between two ticks. Please be aware that this value does not have
+         * to be used if {@link JXG.Ticks#insertTicks} is set to true.
+         * @type Boolean
+         * @name JXG.Ticks#ticksDistance
+         * @see JXG.Ticks#equidistant
+         * @see JXG.Ticks#insertTicks
+         * @default 1
+         */
+        ticksDistance: 1,
         strokeOpacity: 1,
         strokeWidth: 1,
         strokeColor: 'black',
@@ -455,7 +465,6 @@ JXG.Options = {
             minorHeight : 4,          // if <0: full width and height
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
-            defaultDistance : 3.14,   // deprecated
             ticksDistance: 1,         // TODO doc
             strokeOpacity : 0.25
         },

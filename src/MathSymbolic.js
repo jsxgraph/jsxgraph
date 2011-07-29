@@ -160,7 +160,7 @@ JXG.Math.Symbolic = function(JXG, undefined) {
 
         /**
          * Calculate geometric locus of a point given on a board. Invokes python script on server.
-         * @param {JXG.Board} board The board on that the point lies.
+         * @param {JXG.Board} board The board on which the point lies.
          * @param {JXG.Point} point The point that will be traced.
          * @returns {Array} An array of points.
          */
