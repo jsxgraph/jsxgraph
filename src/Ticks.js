@@ -181,8 +181,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 }
                 
                 labelText = pos.toString();
-                if(labelText.length > 5)
+                if(labelText.length > 5 || labelText.indexOf('e') != -1) {
                     labelText = pos.toPrecision(3).toString();
+                }
+                
                 label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
                     id: id + i + 'Label',
                     isLabel: true,

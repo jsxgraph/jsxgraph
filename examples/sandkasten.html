@@ -46,6 +46,12 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var ticks = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: false, showcopyright: false, shownavigation: false});
+
+        var axis = board.create('axis', [[0, 0], [1, 0]], {ticks: {ticksDistance: 3.14}});
+    })();
+
     var e = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false}),
             c = board.create('slider', [[1, 3], [3, 3], [0, 3, 6]], {precision: 5}),
@@ -59,7 +65,7 @@
             p = board.create('point', [0, function () { return f(JXG.Math.eps*2); }], {fillColor: 'none', strokeColor: 'navy', strokeWidth: 2, face: 'o', size: 3}),
             plot = board.create('functiongraph', [f]);
 
-    })();
+    });
 
     var line = (function () {
         var glex2_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
