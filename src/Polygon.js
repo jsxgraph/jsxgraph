@@ -218,7 +218,16 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         }
         area /= 2.0;
         return Math.abs(area);
-    }    
+    },
+
+    remove: function () {
+        var i;
+
+        for (i = 0; i < this.borders.length; i++) {
+            this.borders[i].remove();
+        }
+        this.board.renderer.remove(this.rendNode);
+    }
 });
 
 

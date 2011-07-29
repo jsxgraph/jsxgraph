@@ -49,7 +49,14 @@
     var ticks = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: false, showcopyright: false, shownavigation: false});
 
-        var axis = board.create('axis', [[0, 0], [1, 0]], {ticks: {ticksDistance: 3.14}});
+        var points = [];
+        points.push(board.create('point', [1, 1]));
+        points.push(board.create('point', [2, 3]));
+        points.push(board.create('point', [4, 1]));
+        points.push(board.create('point', [3, 3]));
+
+        var py = board.create('polygon', points);
+        board.removeObject(py);
     })();
 
     var e = (function () {
