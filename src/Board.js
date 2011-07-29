@@ -222,12 +222,14 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @type Number
      */
     this.unitX = unitX;
+    this.unitX100 = unitX;
 
     /**
      * The number of pixels which represent one unit in user-coordinates in y direction.
      * @type Number
      */
     this.unitY = unitY;
+    this.unitY100 = unitY;
 
     /**
      * stretchX is the product of zoomX and unitX. This is basically to save some multiplications.
@@ -1342,8 +1344,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateStretch: function () {
-        this.stretchX = this.zoomX*this.unitX;
-        this.stretchY = this.zoomY*this.unitY;
+        //this.stretchX = this.zoomX*this.unitX;
+        //this.stretchY = this.zoomY*this.unitY;
+        this.stretchX = this.unitX;
+        this.stretchY = this.unitY;
         return this;
     },
 
@@ -1352,19 +1356,25 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomIn: function () {
-        var oX = this.origin.usrCoords[1], 
-            oY = this.origin.usrCoords[2],
+        var //oX = this.origin.usrCoords[1], 
+            //oY = this.origin.usrCoords[2],
             bb = this.getBoundingBox(),
-            midX = (bb[2]+bb[0])*0.5,
-            midY = (bb[3]+bb[1])*0.5;
+            //midX = (bb[2]+bb[0])*0.5,
+            //midY = (bb[3]+bb[1])*0.5,
+            zX = this.options.zoom.factor,
+            zY = this.options.zoom.factor,
+            dX = (bb[2]-bb[0])*(1.0-1.0/zX)*0.5,
+            dY = (bb[1]-bb[3])*(1.0-1.0/zY)*0.5;
             
-        this.zoomX *= this.options.zoom.factor;
-        this.zoomY *= this.options.zoom.factor;
-
+        this.zoomX *= zX;
+        this.zoomY *= zY;
+/*
         oX = midX + (oX-midX)*this.options.zoom.factor;
         oY = midY + (oY-midY)*this.options.zoom.factor;
         this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
-        this.updateStretch();
+*/
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
+        // this.updateStretch();
         this.applyZoom();
         return this;
     },
@@ -1374,19 +1384,27 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomOut: function () {
-        var oX = this.origin.usrCoords[1], 
-            oY = this.origin.usrCoords[2],
+        var //oX = this.origin.usrCoords[1], 
+            //oY = this.origin.usrCoords[2],
             bb = this.getBoundingBox(),
-            midX = (bb[2]+bb[0])*0.5,
-            midY = (bb[3]+bb[1])*0.5;
-            
-        this.zoomX /= this.options.zoom.factor;
-        this.zoomY /= this.options.zoom.factor;
+            //midX = (bb[2]+bb[0])*0.5,
+            //midY = (bb[3]+bb[1])*0.5,
+            zX = this.options.zoom.factor,
+            zY = this.options.zoom.factor,
+            dX = (bb[2]-bb[0])*(1.0-zX)*0.5,
+            dY = (bb[1]-bb[3])*(1.0-zY)*0.5;
+        
+        this.zoomX /= zX;
+        this.zoomY /= zY;
 
+/*            
         oX = midX + (oX-midX)/this.options.zoom.factor;
         oY = midY + (oY-midY)/this.options.zoom.factor;
         this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
-        this.updateStretch();
+*/
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
+
+        //this.updateStretch();
         this.applyZoom();
         return this;
     },
@@ -1402,15 +1420,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             zY = this.zoomY,
             bb = this.getBoundingBox(),
             midX = (bb[2]+bb[0])*0.5,
-            midY = (bb[3]+bb[1])*0.5;
-            
+            midY = (bb[3]+bb[1])*0.5,
+            dX = (bb[2]-bb[0])*(1.0-zX)*0.5,
+            dY = (bb[1]-bb[3])*(1.0-zY)*0.5;
+
         this.zoomX = 1.0;
         this.zoomY = 1.0;
-
+        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
+/*
         oX = midX + (oX-midX)/zX;
         oY = midY + (oY-midY)/zY;
         this.origin = new JXG.Coords(JXG.COORDS_BY_USER, [oX, oY], this);
         this.updateStretch();
+*/
         this.applyZoom();
         return this;
     },
@@ -2043,7 +2065,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         h = this.canvasHeight;
         if (keepaspectratio) {
             this.unitX = w/(bbox[2]-bbox[0]);
-            this.unitY = h/(-bbox[3]+bbox[1]);
+            this.unitY = h/(bbox[1]-bbox[3]);
             if (this.unitX<this.unitY) {
                 this.unitY = this.unitX;
             } else {
@@ -2051,11 +2073,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         } else {
             this.unitX = w/(bbox[2]-bbox[0]);
-            this.unitY = h/(-bbox[3]+bbox[1]);
+            this.unitY = h/(bbox[1]-bbox[3]);
         }
 
-        oX = -this.unitX*bbox[0]*this.zoomX;
-        oY = this.unitY*bbox[1]*this.zoomY;
+        oX = -this.unitX*bbox[0]; //*this.zoomX;
+        oY = this.unitY*bbox[1]; //*this.zoomY;
         this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
 
         this.updateStretch();

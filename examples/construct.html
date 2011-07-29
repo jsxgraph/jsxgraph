@@ -22,7 +22,7 @@ JXG.Options.axis.ticks.majorHeight = -1;
 JXG.Options.grid.gridX = 2;
 JXG.Options.grid.gridY = 3;
 JXG.Options.grid.dash = 0;
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true, grid:false});
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,10,-5], keepaspectratio:false, grid:false});
 brd.create('axis', [[0, 0], [1, 0]]);
 //brd.create('axis', [[0, 0], [0, 1]]);
 
@@ -43,10 +43,10 @@ b.create('slider', [[0,0.5], [4,0.5], [0,2,10]],
         text: {strokeColor: 'red'} });
 */
 //b.unsuspendUpdate();
-//A = b.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
-//B = b.create('point',[2,1], {name:'B'});
+A = brd.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
+B = brd.create('point',[2,1], {name:'B'});
+l = brd.create('circle',[A,B], {withLabel:true, visible:true});
 /*
-l = b.create('line',[A,B], {withLabel:true, visible:true});
 */
 //h = b.create('regularpolygon',[A,B, 6], {withLabel:true});
 /*

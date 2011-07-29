@@ -146,6 +146,7 @@ JXG.JSXGraph = {
             unitX = ( (typeof attributes["unitX"]) == 'undefined' ? 50 : attributes["unitX"]);
             unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
         }
+
         zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
@@ -164,7 +165,7 @@ JXG.JSXGraph = {
         }
 
         // create the board
-        board = new JXG.Board(box, renderer, '', [originX, originY], 1.0, 1.0, unitX, unitY, dimensions.width, dimensions.height, showCopyright);
+        board = new JXG.Board(box, renderer, '', [originX, originY], zoomX, zoomY, unitX, unitY, dimensions.width, dimensions.height, showCopyright);
         this.boards[board.id] = board;
 
         board.keepaspectratio = attributes.keepaspectratio;
