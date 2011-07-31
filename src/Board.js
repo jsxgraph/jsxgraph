@@ -206,13 +206,15 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.origin.scrCoords = [1, origin[0], origin[1]];
 
     /**
-     * Zoom factor in X direction
+     * Zoom factor in X direction. It only stores the zoom factor to be able
+     * to get back to 100% in zoom100().
      * @type Number
      */
     this.zoomX = zoomX;
 
     /**
-     * Zoom factor in Y direction.
+     * Zoom factor in Y direction. It only stores the zoom factor to be able
+     * to get back to 100% in zoom100().
      * @type Number
      */
     this.zoomY = zoomY;
