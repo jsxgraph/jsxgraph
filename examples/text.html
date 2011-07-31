@@ -11,13 +11,11 @@
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <div id="debug" style="display:block;"></div>
 <script type='text/javascript'>
-    var brd, k, txt, txt2, p0, p1;
-    //JXG.Options.text.useMathJax = true;
+    var brd, txt, p0, p1, p2, im;
     //JXG.Options.renderer = 'canvas';
     JXG.Options.text.display = 'internal';
     
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,25,5,-25], axis:true, showNavigation:true, showCopyright:true});
-    //k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n'});
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
     p2 = brd.create('point', [0,4], {color:'blue', trace:true}); 
@@ -28,64 +26,23 @@
 
     var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
     var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
-    var tScale = brd.create('transform', [function(){return p1.Dist(p0)/3;},
-                                        function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
-    //tOff.bindTo(txt);
+
     tOff.bindTo(p1);
     tOff.bindTo(im);
 
     // This is a rotation in screen coordinates.
-    // ratio is the the ratio between (maxY-minY)/(maxX-minX) in user coordinates
+    // ratio is the the ratio between the board dimensions (maxY-minY)/(maxX-minX) in user coordinates
     ratio = 5;
-    var tRot = brd.create('transform', 
-        [1, 0, 0,
-          function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 x = p0.X(), y = p0.Y(),
-                 co = Math.cos(beta), si = Math.sin(beta);
-             return x*(1-co)+y*si/ratio;
-           }, 
-           function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 co = Math.cos(beta);
-             return co;
-           }, 
-           function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 si = Math.sin(beta);
-             return -si/ratio;
-           },
-          function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 x = p0.X(), y = p0.Y(),
-                 co = Math.cos(beta), si = Math.sin(beta);
-             return y*(1-co)-x*si*ratio;
-           }, 
-           function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 si = Math.sin(beta);
-             return si*ratio;
-           }, 
-           function(){ 
-             var beta = Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X()),
-                 co = Math.cos(beta);
-             return co;
-           }
-        ], 
-        {type:'generic'}); 
-    
+    var ts1 = brd.create('transform', [function(){return ratio;}, function(){return 1;}], {type:'scale'}); 
+    var ts2 = brd.create('transform', [function(){return 1/ratio;}, function(){return 1;}], {type:'scale'}); 
+    var tRot = brd.create('transform', [function(){return Math.atan2((p1.Y()-p0.Y())/ratio, p1.X()-p0.X());}], {type:'rotate'}); 
+
     // Rotate text around point "offset" by dragging point "rot+scale"
-    tRot.bindTo(txt); 
-    tRot.bindTo(im);
-    tRot.bindTo(p2);
+    tOffInv.bindTo(txt); ts1.bindTo(txt); tRot.bindTo(txt); ts2.bindTo(txt); tOff.bindTo(txt);
+    tOffInv.bindTo(im); ts1.bindTo(im); tRot.bindTo(im); ts2.bindTo(im); tOff.bindTo(im);
+
+    tRot.bindTo(p2);  // For comparison, a rotation in user coordinates.
         
-    // Scale text by dragging point "rot+scale"
-    // We do this by moving the text back to the origin (inverse of transformation tOff),
-    // then scale the text (because scaling "starts from (0,0))
-    // Finally, we move the text back to point "Offset"
-    tOffInv.bindTo(txt); tScale.bindTo(txt); tOff.bindTo(txt);
-    tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
-    
     brd.update();
     
     //alert(txt.rendNode.getBBox().width);

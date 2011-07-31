@@ -408,7 +408,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
-            oldCoords = this.coords;
+            oldCoords = this.coords,
+            newCoords;
             
         this.coords = new JXG.Coords(method, [x, y], this.board);
 
@@ -433,9 +434,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
             for (i=this.transformations.length-1;i>=0;i--) {
-                this.initialCoords = new JXG.Coords(method, 
-                    JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix),[1,x,y]), 
-                    this.board);      
+                if (method == JXG.COORDS_BY_SCREEN) {
+                    newCoords = (new JXG.Coords(method, [x, y], this.board)).usrCoords;                
+                } else {
+                    newCoords = [1,x,y];
+                }
+                this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                        JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords), 
+                        this.board);      
             }
             this.update();
         }
@@ -1041,7 +1047,7 @@ JXG.createPoint = function(board, parents, attributes) {
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
             el = new JXG.Point(board, [0,0], attr);
             el.addTransform(parents[0],parents[1]);
-            el.isDragable = true;
+            el.isDragable = false;
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + 

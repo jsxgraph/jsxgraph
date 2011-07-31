@@ -803,7 +803,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             nr = 0;
             for (el in this.objects) {
                 pEl = this.objects[el];
-                if ( pEl.isDragable
+                if (pEl.isDragable
                     && pEl.visProp.visible
                     && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
                     && JXG.exists(pEl.hasPoint) 
