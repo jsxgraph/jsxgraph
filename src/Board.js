@@ -803,20 +803,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             nr = 0;
             for (el in this.objects) {
                 pEl = this.objects[el];
-                if ( JXG.exists(pEl.hasPoint)
-                    && ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)
-                    /*|| (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_LINE)  // not yet
-                     || (!this.geonextCompatibilityMode && pEl.type == JXG.OBJECT_TYPE_CIRCLE)
-                     || (!this.geonextCompatibilityMode && pEl.elementClass == JXG.OBJECT_CLASS_CURVE)*/ )
-                    && (pEl.visProp.visible)
+                if ( pEl.isDragable
+                    && pEl.visProp.visible
                     && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
-                    && (pEl.hasPoint(dx, dy))
+                    && JXG.exists(pEl.hasPoint) 
+                    && pEl.hasPoint(dx, dy)
                     ) {
                     // Points are preferred:
-                    if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
+                    //if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
                         this.drag_obj.push({obj:this.objects[el],pos:nr}); // add the element and its number in this.object
                         if (this.options.takeFirst) break;
-                    }
+                    //}
                 }
                 nr++;
             }
@@ -838,9 +835,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // New mouse position in screen coordinates.
+        // This is needed by all objects where the new position is determined 
+        // as a transformation: lines, circles, ...
         this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx,dy], this);
+        
         //JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
-
         return false;
     },
 
@@ -913,10 +912,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(dx,dy), this);
             drag = this.drag_obj[i].obj;
 
-            if (drag.type == JXG.OBJECT_TYPE_POINT || drag.elementClass == JXG.OBJECT_CLASS_LINE
-                || drag.type == JXG.OBJECT_TYPE_CIRCLE || drag.elementClass == JXG.OBJECT_CLASS_CURVE) {
-
-                drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords[1], newPos.usrCoords[2]);
+            if (
+                /*drag.type == JXG.OBJECT_TYPE_POINT || drag.elementClass == JXG.OBJECT_CLASS_LINE
+                || drag.type == JXG.OBJECT_TYPE_CIRCLE || drag.elementClass == JXG.OBJECT_CLASS_CURVE) */
+                drag.type != JXG.OBJECT_TYPE_GLIDER) {
+                drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], 
+                                         this.dragObjCoords.scrCoords[1], this.dragObjCoords.scrCoords[2]);
+                this.dragObjCoords = newPos;
                 this.update(drag);
             } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
                 oldCoords = drag.coords;

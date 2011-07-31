@@ -483,7 +483,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.type = JXG.OBJECT_TYPE_GLIDER;
         this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
         this.slideObject.addChild(this);
-
+        this.isDragable = true;
+        
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
         };
@@ -513,6 +514,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         var newfuncs = [];
         var fs;
         
+        this.isDragable = false;
         for (var i=0;i<terms.length;i++) {
             var v = terms[i];
             if (typeof v=='string') {
@@ -1035,9 +1037,11 @@ JXG.createPoint = function(board, parents, attributes) {
             } else {
                 el.baseElement = el; // Free point
             }
+            el.isDragable = true;
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
             el = new JXG.Point(board, [0,0], attr);
             el.addTransform(parents[0],parents[1]);
+            el.isDragable = true;
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + 

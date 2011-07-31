@@ -67,6 +67,14 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.needsUpdate = true;
 
     /**
+     * Controls if this element can be dragged. In GEONExT only
+     * free points and gliders can be dragged.
+     * @type Boolean
+     * @default false
+     */
+    this.isDragable = false;
+    
+    /**
      * If element is in two dimensional real space this is true, else false.
      * @type Boolean
      * @default true
