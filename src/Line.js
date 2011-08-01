@@ -541,7 +541,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         var dx = x - oldx, 
             dy = y - oldy,
             newx, newy, pc;
-
+//console.log(this.point1.draggable(), this.point2.draggable());
         if (!this.point1.draggable() || !this.point2.draggable()) 
             return this;
 
@@ -840,17 +840,26 @@ JXG.createLine = function(board, parents, attributes) {
         }
         // point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
         attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
-        p1 = board.create('point',[
+        if (isDraggable) {
+            p1 = board.create('point',[c[2]()*c[2]()+c[1]()*c[1](), c[2]()-c[1]()*c[0]()+c[2](), -c[1]()-c[2]()*c[0]()-c[1]()], attr);
+        } else {
+            p1 = board.create('point',[
                 function() { return (0.0 + c[2]()*c[2]()+c[1]()*c[1]())*0.5;},
                 function() { return (c[2]() - c[1]()*c[0]()+c[2]())*0.5;},
                 function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], attr);
-
+        }
+        /*
+        */
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
-        p2 = board.create('point',[
+        if (isDraggable) {
+            p2 = board.create('point',[c[2]()*c[2]()+c[1]()*c[1](), -c[1]()*c[0]()+c[2](), -c[2]()*c[0]()-c[1]()], attr);
+        } else {
+            p2 = board.create('point',[
                 function() { return c[2]()*c[2]()+c[1]()*c[1]();},
                 function() { return -c[1]()*c[0]()+c[2]();},
                 function() { return -c[2]()*c[0]()-c[1]();}], attr);
+        }
 
         // If the line and will have a glider 
         // and board.suspendUpdate() has been called, we

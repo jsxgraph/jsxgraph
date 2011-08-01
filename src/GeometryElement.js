@@ -326,8 +326,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @return {boolean}
      */
     draggable: function() {
+//console.log("drable:", this.isDraggable,this.visProp.fixed, this.countChildren());
         if (this.isDraggable &&
-            !this.visProp.fixed &&
+            //!this.visProp.fixed &&
             this.type != JXG.OBJECT_TYPE_GLIDER &&
             this.countChildren()<=1) {
             return true;
