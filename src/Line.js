@@ -530,6 +530,46 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
+     * Sets x and y coordinate and calls the circle's update() method.
+     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {number} x x coordinate in screen/user units
+     * @param {number} y y coordinate in screen/user units
+     * @param {number} x previous x coordinate in screen/user units
+     * @param {number} y previous y coordinate in screen/user units
+     */
+    setPositionDirectly: function (method, x, y, oldx, oldy) {
+        var dx = x - oldx, 
+            dy = y - oldy,
+            newx, newy, pc;
+
+        if (!this.point1.draggable() || !this.point2.draggable()) 
+            return this;
+
+        pc = this.point1.coords;
+        if (method == JXG.COORDS_BY_SCREEN) {
+            newx = pc.scrCoords[1]+dx;
+            newy = pc.scrCoords[2]+dy;
+        } else {
+            newx = pc.usrCoords[1]+dx;
+            newy = pc.usrCoords[2]+dy;
+        }
+        this.point1.setPositionDirectly(method, newx, newy);
+
+        
+        pc = this.point2.coords;
+        if (method == JXG.COORDS_BY_SCREEN) {
+            newx = pc.scrCoords[1]+dx;
+            newy = pc.scrCoords[2]+dy;
+        } else {
+            newx = pc.usrCoords[1]+dx;
+            newy = pc.usrCoords[2]+dy;
+        }
+        this.point2.setPositionDirectly(method, newx, newy);
+        this.update();
+        return this;
+    },
+
+    /**
      * Treat the line as parametric curve in homogeneuous coordinates.
      * <pre>x = 1 * sin(theta)*cos(phi)
      * y = 1 * sin(theta)*sin(phi)
@@ -770,10 +810,12 @@ JXG.createLine = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'line');
 
         el = new JXG.Line(board, p1, p2, attr);
-        if(constrained) {
+        if (constrained) {
         	el.constrained = true;
         	el.funp1 = parents[0];
         	el.funp2 = parents[1];
+        } else {
+            el.isDraggable = true;
         }
     }
     /**

@@ -317,6 +317,25 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return s; 
     },
 
+    
+    /**
+     * Decides whether an element can be dragged. This is used in setPositionDirectly methods
+     * where all parent elements are checked if they may be dragged, too.
+     * 
+     * @private
+     * @return {boolean}
+     */
+    draggable: function() {
+        if (this.isDraggable &&
+            !this.visProp.fixed &&
+            this.type != JXG.OBJECT_TYPE_GLIDER &&
+            this.countChildren()<=1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    
     /**
      * Array of strings containing the polynomials defining the element.
      * Used for determining geometric loci the groebner way.

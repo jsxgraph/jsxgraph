@@ -405,6 +405,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {number} x x coordinate in screen/user units
      * @param {number} y y coordinate in screen/user units
+     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
      */
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,

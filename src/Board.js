@@ -636,7 +636,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} A list of geometric elements.
      */
     initMoveObject: function (x, y) {
-        var pEl, el, collect = [];
+        var pEl, el, collect = [], 
+            len, i, ancestorHasPoint;
 
         this.mode = this.BOARD_MODE_DRAG;
         for (el in this.objects) {
@@ -647,8 +648,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 && JXG.exists(pEl.hasPoint)
                 && pEl.hasPoint(x, y)
                 ) {
-
-                collect.push(this.objects[el]);
+                
+                ancestorHasPoint = false;
+                // In case, a non-point gets the focus,
+                // it is tested if a defining ancestor (usually a point)
+                // has the focus too. In this case, we drag the ancestor.
+                if (!JXG.isPoint(pEl)) {
+                    len = collect.length;
+                    for (i=0;i<len;i++) {
+                        if (JXG.exists(pEl.ancestors[collect[i].id])) {
+                            ancestorHasPoint = true;
+                            break;
+                        }
+                    }
+                }
+                if (!ancestorHasPoint) collect.push(pEl);
             }
         }
 
