@@ -408,7 +408,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @type Boolean
      */
     this.needsFullUpdate = false;
-
+// 
     /**
      * If reducedUpdate is set to true then only the dragged element and few (e.g. 2) following
      * elements are updated during mouse move. On mouse up the whole construction is
@@ -803,7 +803,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             nr = 0;
             for (el in this.objects) {
                 pEl = this.objects[el];
-                if (pEl.isDragable
+                if (pEl.isDraggable
                     && pEl.visProp.visible
                     && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
                     && JXG.exists(pEl.hasPoint) 

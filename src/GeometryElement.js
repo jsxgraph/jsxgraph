@@ -72,7 +72,7 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @type Boolean
      * @default false
      */
-    this.isDragable = false;
+    this.isDraggable = false;
     
     /**
      * If element is in two dimensional real space this is true, else false.
@@ -294,6 +294,27 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.addDescendants(obj.childElements[el]);
         }
         return this;
+    },
+
+    /**
+     * Adds the given object to the descendants list of this object and all its child objects.
+     * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
+     * @private
+     * @return
+     */
+    countDescendants: function () {
+        var prop, s=0, d;
+
+        //console.log(this.name+':');
+        d = this.descendants;
+        for (prop in d) {
+            if (d.hasOwnProperty(prop) && prop.indexOf('Label')<0) {
+                s++;
+                //console.log(prop);
+            }
+        }
+        //console.log("");
+        return s; // Subtract two labels, 
     },
 
     /**

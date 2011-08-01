@@ -91,7 +91,6 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
      * @type JXG.Point
      */    
     this.midpoint = JXG.getReference(this.board, par1); 
-    this.midpoint.addChild(this);
     
     /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
      * @type JXG.Point
@@ -151,13 +150,17 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.createGradient();
     this.createLabel();
 
+    this.midpoint.addChild(this);
     if(method == 'pointRadius') {
         this.notifyParents(par2);
     } else if(method == 'pointLine') {
         this.line.addChild(this);
     } else if(method == 'pointCircle') {
         this.circle.addChild(this);
-    }    
+    }  else if(method == 'twoPoints') {
+        this.point2.addChild(this);
+    }
+   
 };
 JXG.Circle.prototype = new JXG.GeometryElement;
 
@@ -530,10 +533,11 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
             dy = y - oldy,
             newx, newy;
 
-//document.getElementById('debug').innerHTML += "Do it"+'<br>';
-        
-        if (this.midpoint.visProp.fixed) return this;
-        if (this.method == "twoPoints" && this.point2.visProp.fixed) return this;
+//document.getElementById('debug').innerHTML += this.midpoint.countDescendants()+'<br>';
+//console.log(this.midpoint.countDescendants());
+
+        if (this.midpoint.visProp.fixed || this.midpoint.countDescendants()>1) return this;
+        if (this.method == "twoPoints" && (this.point2.visProp.fixed || this.point2.countDescendants()>1) ) return this;
 
         if (method == JXG.COORDS_BY_SCREEN) {
             newx = this.midpoint.coords.scrCoords[1]+dx;
@@ -680,51 +684,51 @@ JXG.createCircle = function (board, parents, attributes) {
         el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
         
         // Decide if the circle can be dragged
-        if (p[0].isDragable && p[0].type != JXG.OBJECT_TYPE_GLIDER &&
-             p[1].isDragable && p[1].type != JXG.OBJECT_TYPE_GLIDER) {
-            el.isDragable = true;
+        if (p[0].isDraggable && p[0].type != JXG.OBJECT_TYPE_GLIDER &&
+             p[1].isDraggable && p[1].type != JXG.OBJECT_TYPE_GLIDER) {
+            el.isDraggable = true;
         }
     } else if( ( JXG.isNumber(p[0]) || JXG.isFunction(p[0]) || JXG.isString(p[0])) && JXG.isPoint(p[1]) ) {
         // Number/Point
         el = new JXG.Circle(board, 'pointRadius', p[1], p[0], attr);
-        if (p[1].isDragable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[1].isDraggable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( ( JXG.isNumber(p[1]) || JXG.isFunction(p[1]) || JXG.isString(p[1])) && JXG.isPoint(p[0]) ) {
         // Point/Number
         el = new JXG.Circle(board, 'pointRadius', p[0], p[1], attr);
-        if (p[0].isDragable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[0].isDraggable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( (p[0].elementClass == JXG.OBJECT_CLASS_CIRCLE) && JXG.isPoint(p[1]) ) {
         // Circle/Point
         el = new JXG.Circle(board, 'pointCircle', p[1], p[0], attr);
-        if (p[1].isDragable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[1].isDraggable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( (p[1].elementClass == JXG.OBJECT_CLASS_CIRCLE) && JXG.isPoint(p[0])) {
         // Point/Circle
         el = new JXG.Circle(board, 'pointCircle', p[0], p[1], attr);
-        if (p[0].isDragable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[0].isDraggable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( (p[0].elementClass == JXG.OBJECT_CLASS_LINE) && JXG.isPoint(p[1])) {
         // Line/Point
         el = new JXG.Circle(board, 'pointLine', p[1], p[0], attr);
-        if (p[1].isDragable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[1].isDraggable && p[1].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( (p[1].elementClass == JXG.OBJECT_CLASS_LINE) && JXG.isPoint(p[0])) {
         // Point/Line
         el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
-        if (p[0].isDragable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
-            el.isDragable = true;
+        if (p[0].isDraggable && p[0].type != JXG.OBJECT_TYPE_GLIDER) { // Decide if the circle can be dragged
+            el.isDraggable = true;
         }
     } else if( parents.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         el = JXG.createCircumcircle(board, p, attributes);
         el.midpoint.setProperty({visible:false});
-        el.isDragable = false;
+        el.isDraggable = false;
     } else
         throw new Error("JSXGraph: Can't create circle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
