@@ -49,6 +49,7 @@ l = brd.create('line',[D,C], {withLabel:true});
 //c = brd.create('circle',[A,l], {withLabel:true, visible:true,name:'kreis'});
 c1 = brd.create('circle',[l,B], {withLabel:true, visible:true,name:'kreis'});
 c2 = brd.create('circle',[A,1], {withLabel:false, visible:true,name:'kreis'});
+g = brd.create('glider', [0,0,c1]);
 /*
 */
 //h = b.create('regularpolygon',[A,B, 6], {withLabel:true});

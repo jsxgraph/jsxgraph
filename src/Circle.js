@@ -536,8 +536,8 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 //document.getElementById('debug').innerHTML += this.midpoint.countDescendants()+'<br>';
 //console.log(this.midpoint.countDescendants());
 
-        if (this.midpoint.visProp.fixed || this.midpoint.countDescendants()>1) return this;
-        if (this.method == "twoPoints" && (this.point2.visProp.fixed || this.point2.countDescendants()>1) ) return this;
+        if (this.midpoint.visProp.fixed || this.midpoint.countChildren()>1) return this;
+        if (this.method == "twoPoints" && (this.point2.visProp.fixed || this.point2.countChildren()>1) ) return this;
 
         if (method == JXG.COORDS_BY_SCREEN) {
             newx = this.midpoint.coords.scrCoords[1]+dx;

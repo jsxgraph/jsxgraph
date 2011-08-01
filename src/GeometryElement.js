@@ -297,16 +297,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Adds the given object to the descendants list of this object and all its child objects.
-     * @param {JXG.GeometryElement} obj The element that is to be added to the descendants list.
+     * Counts the direct children of an object without counting labels.
+     * 
      * @private
-     * @return
+     * @return {number} Number of children
      */
-    countDescendants: function () {
+    countChildren: function () {
         var prop, s=0, d;
 
         //console.log(this.name+':');
-        d = this.descendants;
+        d = this.childElements;
         for (prop in d) {
             if (d.hasOwnProperty(prop) && prop.indexOf('Label')<0) {
                 s++;
@@ -314,7 +314,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
         //console.log("");
-        return s; // Subtract two labels, 
+        return s; 
     },
 
     /**
