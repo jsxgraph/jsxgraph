@@ -47,7 +47,7 @@
     /* <![CDATA[ */
 
     var ticks = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: false, showcopyright: false, shownavigation: false});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: true});
 
         var points = [];
         points.push(board.create('point', [1, 1]));
@@ -57,6 +57,7 @@
 
         var py = board.create('polygon', points);
         board.removeObject(py);
+//        window.setTimeout(function () {board.setBoundingBox([-3, 3, 3, -3], false);}, 5000);
     })();
 
     var e = (function () {

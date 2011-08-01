@@ -361,16 +361,6 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.drag_obj = [];
 
     /**
-     * This property is used to store the last time the user clicked on the board and the position he clicked.
-     * @type Object
-     */
-    this.last_click = {
-        time: 0,
-        posX: 0,
-        posY: 0
-    };
-
-    /**
      * A string containing the XML text of the construction. This is set in {@link JXG.FileReader#parseString}.
      * Only useful if a construction is read from a GEONExT-, Intergeo-, Geogebra-, or Cinderella-File.
      * @type String
@@ -568,6 +558,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
     },
 
+/**********************************************************
+ *
+ * Event Handler helpers
+ *
+ **********************************************************/
+
     /**
      * Calculates mouse coordinates relative to the boards container.
      * @returns {Array} Array of coordinates relative the boards container top left corner.
@@ -619,6 +615,103 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         absPos = JXG.getPosition(e);
 
         return [absPos[0]-cPos[0], absPos[1]-cPos[1]];
+    },
+
+    /**
+     * Initiate moving the origin. This is used in mouseDown and touchStart listeners.
+     * @param {Number} x Current mouse/touch coordinates
+     * @param {Number} y Current mouse/touch coordinates
+     */
+    initMoveOrigin: function (x, y) {
+        this.drag_dx = x - this.origin.scrCoords[1];
+        this.drag_dy = y - this.origin.scrCoords[2];
+        this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+    },
+
+    /**
+     * Collects all elements below the current mouse pointer and fulfilling the following constraints:
+     * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
+     * @param {Number} x Current mouse/touch coordinates
+     * @param {Number} y current mouse/touch coordinates
+     * @returns {Array} A list of geometric elements.
+     */
+    initMoveObject: function (x, y) {
+        var pEl, el, collect = [];
+
+        this.mode = this.BOARD_MODE_DRAG;
+        for (el in this.objects) {
+            pEl = this.objects[el];
+            if (pEl.isDraggable
+                && pEl.visProp.visible
+                && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
+                && JXG.exists(pEl.hasPoint)
+                && pEl.hasPoint(x, y)
+                ) {
+
+                collect.push(this.objects[el]);
+            }
+        }
+
+        return collect;
+    },
+
+    /**
+     * Moves an object.
+     * @param {Number} x Coordinate
+     * @param {Number} y Coordinate
+     * @param {Number} i The number of the object corresponding to the number of the finger on touch devices. <tt>0</tt>
+     * always corresponds to the mouse.
+     */
+    moveObject: function (x, y, i) {
+        var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
+            drag = this.drag_obj[i],
+            oldCoords;
+
+        if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
+            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2],
+                                     this.dragObjCoords.scrCoords[1], this.dragObjCoords.scrCoords[2]);
+            this.dragObjCoords = newPos;
+            this.update(drag);
+        } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
+            oldCoords = drag.coords;
+
+            // First the new position of the glider is set to the new mouse position
+            drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords[1], newPos.usrCoords[2]);
+
+            // Then, from this position we compute the projection to the object the glider on which the glider lives.
+            if (drag.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
+                drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
+            } else if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+                drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
+            }
+
+            // Now, we have to adjust the other group elements again.
+            if (drag.group.length != 0) {
+                drag.group[drag.group.length-1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
+                drag.group[drag.group.length-1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
+                drag.group[drag.group.length-1].update(this);
+            } else {
+                this.update(drag);
+            }
+        }
+        this.updateInfobox(drag);
+    },
+
+    highlightElements: function (x, y) {
+        var el, pEl;
+
+        // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
+        for (el in this.objects) {
+            pEl = this.objects[el];
+            if (JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+                // this is required in any case because otherwise the box won't be shown until the point is dragged
+                this.updateInfobox(pEl);
+                if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
+                    this.highlightedObjects[el] = pEl;
+                    pEl.highlight();
+                }
+            }
+        }
     },
 
 /**********************************************************
@@ -675,8 +768,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickLeftArrow: function () {
-        this.origin.scrCoords[1] += this.canvasWidth*0.1;
-        this.moveOrigin();
+        this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth*0.1, this.origin.scrCoords[2]);
         return this;
     },
 
@@ -685,8 +777,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickRightArrow: function () {
-        this.origin.scrCoords[1] -= this.canvasWidth*0.1;
-        this.moveOrigin();
+        this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth*0.1, this.origin.scrCoords[2]);
         return this;
     },
 
@@ -695,8 +786,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickUpArrow: function () {
-        this.origin.scrCoords[2] += this.canvasHeight*0.1;
-        this.moveOrigin();
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
         return this;
     },
 
@@ -705,8 +795,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickDownArrow: function () {
-        this.origin.scrCoords[2] -= this.canvasHeight*0.1;
-        this.moveOrigin();
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight*0.1);
         return this;
     },
 
@@ -762,7 +851,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
     mouseDownListener: function (Evt) {
-        var el, pEl, pos, nr;
+        var pos, elements;
 
         this.updateHooks('mousedown', Evt);
 
@@ -776,53 +865,28 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         pos = this.getMousePosition(Evt);
 
         if (Evt.shiftKey) {
-            this.drag_dx = pos[0] - this.origin.scrCoords[1];
-            this.drag_dy = pos[1] - this.origin.scrCoords[2];
-            this.mode = this.BOARD_MODE_MOVE_ORIGIN;
-
-            return false;
-        }
-        
-        if (this.mode==this.BOARD_MODE_CONSTRUCT) {
+            this.initMoveOrigin(pos[0], pos[1]);
             return false;
         }
 
-        this.last_click.time = (new Date()).getTime();
-        this.last_click.posX = pos[0];
-        this.last_click.posY = pos[1];
-
-        this.mode = this.BOARD_MODE_DRAG;
-        if (this.mode==this.BOARD_MODE_DRAG) {
-            nr = 0;
-            for (el in this.objects) {
-                pEl = this.objects[el];
-                if (pEl.isDraggable
-                    && pEl.visProp.visible
-                    && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
-                    && JXG.exists(pEl.hasPoint) 
-                    && pEl.hasPoint(pos[0], pos[1])
-                    ) {
-                    // Points are preferred:
-                    if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
-                        this.drag_obj.push({         // add the element and its number in this.object
-                            obj: this.objects[el],
-                            pos: nr
-                        });
-
-                        if (this.options.takeFirst) {
-                            break;
-                        }
-                    }
-                }
-                nr++;
-            }
+        // this mode is deprecated and has to be implemented by the GUI itself
+        if (this.mode == this.BOARD_MODE_CONSTRUCT) {
+            return false;
         }
+
+        elements = this.initMoveObject(pos[0], pos[1]);
 
         // if no draggable object can be found, get out here immediately
-        if (this.drag_obj.length == 0) {
+        if (elements.length == 0) {
             this.mode = this.BOARD_MODE_NONE;
             return true;
         } else {
+            if(this.options.takeFirst) {
+                this.drag_obj[0] = elements[0];
+            } else {
+                this.drag_obj[0] = elements[elements.length-1];
+            }
+
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
             // on the board doesn't work anymore.
@@ -849,21 +913,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        // release mouseup listener
-        //JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
-
         this.mode = this.BOARD_MODE_NONE;
 
         // if origin was moved update everything
-        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-            this.moveOrigin();
-        } else {
-            //this.fullUpdate(); // Full update only needed on moveOrigin? (AW)
+        if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
             this.update();
         }
 
-        // release dragged object
-        this.drag_obj = [];
+        // release dragged mouse object
+        this.drag_obj[0] = null;
     },
 
     /**
@@ -877,7 +935,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.updateHooks('mousemove', Event, this.mode);
 
         // if not called from touch events, i is undefined
-        i = i || 0;
+        i = 0;
 
         pos = this.getMousePosition(Event);
 
@@ -894,55 +952,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //   * user just moves the mouse, here highlight all elements at
         //     the current mouse position
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-            this.origin.scrCoords[1] = pos[0] - this.drag_dx;
-            this.origin.scrCoords[2] = pos[1] - this.drag_dy;
-            this.moveOrigin();
+            this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(pos[0], pos[1]), this);
-            drag = this.drag_obj[i].obj;
-
-            if (
-                /*drag.type == JXG.OBJECT_TYPE_POINT || drag.elementClass == JXG.OBJECT_CLASS_LINE
-                || drag.type == JXG.OBJECT_TYPE_CIRCLE || drag.elementClass == JXG.OBJECT_CLASS_CURVE) */
-                drag.type != JXG.OBJECT_TYPE_GLIDER) {
-                drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], 
-                                         this.dragObjCoords.scrCoords[1], this.dragObjCoords.scrCoords[2]);
-                this.dragObjCoords = newPos;
-                this.update(drag);
-            } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
-                oldCoords = drag.coords;
-
-                // First the new position of the glider is set to the new mouse position
-                drag.setPositionDirectly(JXG.COORDS_BY_USER,newPos.usrCoords[1],newPos.usrCoords[2]);
-                // Then, from this position we compute the projection to the object the glider on which the glider lives.
-                if (drag.slideObject.type == JXG.OBJECT_TYPE_CIRCLE) {
-                    drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
-                } else if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
-                    drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
-                }
-                // Now, we have to adjust the other group elements again.
-                if (drag.group.length != 0) {
-                    drag.group[drag.group.length-1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
-                    drag.group[drag.group.length-1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
-                    drag.group[drag.group.length-1].update(this);
-                } else {
-                    this.update(drag);
-                }
-            }
-            this.updateInfobox(drag);
+            this.moveObject(pos[0], pos[1], 0);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-            // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
-            for (el in this.objects) {
-                pEl = this.objects[el];
-                if (JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(pos[0], pos[1])) {
-                    // this is required in any case because otherwise the box won't be shown until the point is dragged
-                    this.updateInfobox(pEl);
-                    if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
-                        this.highlightedObjects[el] = pEl;
-                        pEl.highlight();
-                    }
-                }
-            }
+            this.highlightElements(pos[0], pos[1]);
         }
         this.updateQuality = this.BOARD_QUALITY_HIGH;
     },
@@ -1143,13 +1157,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return elList;
     },
 
-
     /**
      * Moves the origin and initializes an update of all elements.
+     * @params {Number} x
+     * @params {Number} y
      * @returns {JXG.Board} Reference to this board.
      */
-    moveOrigin: function () {
+    moveOrigin: function (x, y) {
         var el, ob;
+
+        // This is not required, but to be downwards compatible, we should keep it for a while.
+        // changed in version 0.91a
+        if (JXG.exists(x) && JXG.exists(y)) {
+            this.origin.scrCoords[1] = x - this.drag_dx;
+            this.origin.scrCoords[2] = y - this.drag_dy;
+        }
 
         for (ob in this.objects) {
             el = this.objects[ob];
@@ -1977,7 +1999,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return this;
         }
 
-        var h, w, oX, oY,
+        var h, w, 
             dim = JXG.getDimensions(this.container);
 
         this.canvasWidth = parseInt(dim.width);
@@ -1997,11 +2019,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.unitY = h/(bbox[1]-bbox[3]);
         }
 
-        oX = -this.unitX*bbox[0];
-        oY = this.unitY*bbox[1];
-        this.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX, oY], this);
-
-        this.moveOrigin();
+        this.moveOrigin(-this.unitX*bbox[0], this.unitY*bbox[1]);
         return this;
     },
 
