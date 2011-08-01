@@ -405,7 +405,6 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         }
         node.style.width = x;
         node.style.height = y;
-
         this._setAttr(node, 'coordsize', [parseInt(this.resolution * x), parseInt(this.resolution * y)].join(','));
         this._setAttr(node, 'path', pointString.join(""));
     },
@@ -537,18 +536,19 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         this._setAttr(node, 'stroked', 'false');
 
         scr = el.vertices[0].coords.scrCoords;
+        if (isNaN(scr[1]+scr[2])) return;
         pStr.push(["m ", parseInt(r * scr[1]), ",", parseInt(r * scr[2]), " l "].join(''));
 
         for (i = 1; i < len - 1; i++) {
             scr = el.vertices[i].coords.scrCoords;
+            if (isNaN(scr[1]+scr[2])) return;
             pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
             if (i < len - 2) {
                 pStr.push(", ");
             }
         }
         pStr.push(" x e");
-        if (pStr.indexOf('NaN')==-1) 
-            this.updatePathPrim(node, pStr, el.board);
+        this.updatePathPrim(node, pStr, el.board);
     },
 
     // already documented in JXG.AbstractRenderer

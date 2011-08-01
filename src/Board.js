@@ -810,10 +810,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     && pEl.hasPoint(dx, dy)
                     ) {
                     // Points are preferred:
-                    //if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
+                    if ((pEl.type == JXG.OBJECT_TYPE_POINT) || (pEl.type == JXG.OBJECT_TYPE_GLIDER)) {
                         this.drag_obj.push({obj:this.objects[el],pos:nr}); // add the element and its number in this.object
                         if (this.options.takeFirst) break;
-                    //}
+                    }
                 }
                 nr++;
             }
