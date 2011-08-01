@@ -772,7 +772,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 JXG.createLine = function(board, parents, attributes) {
     var el, p1, p2, i, attr,
         c = [],
-        constrained = false;
+        constrained = false,
+        isDraggable;
 
     /**
      * The line is defined by two points or coordinates of two points.
@@ -824,11 +825,13 @@ JXG.createLine = function(board, parents, attributes) {
      */
     else if (parents.length==3) {  
         // free line
+        isDraggable = true;
         for (i=0;i<3;i++) {
             if (typeof parents[i]=='number') {
                 c[i] = function(z){ return function() { return z; }; }(parents[i]);
             } else if (typeof parents[i]=='function') {
                 c[i] = parents[i];
+                isDraggable = false;
             } else {
                 throw new Error("JSXGraph: Can't create line with parent types '" + 
                                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'." +
@@ -856,6 +859,7 @@ JXG.createLine = function(board, parents, attributes) {
         p2.prepareUpdate().update();
         attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
+        el.isDraggable = isDraggable;             // Not yet working, because the points are not draggable.
     }
     /**
      * The parent array contains a function which returns two points.
