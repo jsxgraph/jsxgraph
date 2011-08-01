@@ -598,9 +598,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     /**
      * Get the position of the mouse in screen coordinates.
      * @param {Event} e Event object given by the browser.
+     * @param {Number} [i] Only use in case of touch events. This determines which finger to use and should not be set
+     * for mouseevents.
      * @returns {Array} Contains the mouse coordinates in user coordinates, ready  for {@link JXG.Coords}
      */
-    getMousePosition: function (e) {
+    getMousePosition: function (e, i) {
         var cPos, absPos;
 
         cPos = this.getRelativeMouseCoordinates(e);
@@ -612,7 +614,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // position of mouse cursor relative to containers position of container
-        absPos = JXG.getPosition(e);
+        absPos = JXG.getPosition(e, i);
 
         return [absPos[0]-cPos[0], absPos[1]-cPos[1]];
     },
@@ -682,9 +684,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             oldCoords;
 
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2],
-                                     this.dragObjCoords.scrCoords[1], this.dragObjCoords.scrCoords[2]);
-            this.dragObjCoords = newPos;
+            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2]);
             this.update(drag);
         } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
             oldCoords = drag.coords;
@@ -814,49 +814,105 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * iPhone-Events
+     * Touch-Events
      */
     touchStartListener: function (evt) {
+        var i, pos, elements, nested = false;
+
         evt.preventDefault();
+        this.updateHooks('mousedown', evt);
+console.log('start: ' + evt.targetTouches.length);
+        // move origin
+        if ((evt.targetTouches.length == 2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
+            pos = this.getMousePosition(evt, 0);
+            this.initMoveOrigin(pos[0], pos[1]);
 
-        // variable initialization
-        var e = document.createEvent("MouseEvents"), i, shift = false;
-        this.drag_obj = [];
-
-        // special gestures
-        if ((evt.targetTouches.length==2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
-            evt.targetTouches.length = 1;
-            shift = true;
+            return;
         }
 
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
-        for (i=0; i<evt.targetTouches.length; i++) {
-            e.initMouseEvent('mousedown', true, false, this.containerObj, 0, evt.targetTouches[i].screenX, evt.targetTouches[i].screenY, evt.targetTouches[i].clientX, evt.targetTouches[i].clientY, false, false, shift, false, 0, null);
-            e.fromTouch = true;
-            this.mouseDownListener(e);
+
+        if (this.drag_obj.length > 1) {
+            nested = true;
         }
+
+        for (i = 0; i < evt.targetTouches.length; i++) {
+            pos = this.getMousePosition(evt, i);
+            elements = this.initMoveObject(pos[0], pos[1]);
+
+            if (elements.length == 0) {
+                this.mode = this.BOARD_MODE_NONE;
+                return true;
+            } else {
+                if (this.options.takeFirst) {
+                    this.drag_obj[i+1] = elements[0];
+                } else {
+                    this.drag_obj[i+1] = elements[elements.length-1];
+                }
+            }
+        }
+        this.options.precision.hasPoint = this.options.precision.mouse;
+console.log('start2: ' + this.drag_obj.length);
     },
 
     touchMoveListener: function (evt) {
-        evt.preventDefault();
-        var i, myEvent;
+        var i, pos;
 
-        for (i=0; i<evt.targetTouches.length; i++) {
-            myEvent = {pageX: evt.targetTouches[i].pageX, pageY: evt.targetTouches[i].pageY, clientX: evt.targetTouches[i].clientX, clientY: evt.targetTouches[i].clientY};
-            myEvent.fromTouch = true;
-            this.mouseMoveListener(myEvent, i);
+        evt.preventDefault();
+        this.updateHooks('mousemove', evt, this.mode);
+
+        this.dehighlightAll();
+        if (this.mode != this.BOARD_MODE_DRAG) {
+            this.renderer.hide(this.infobox);
         }
+
+        this.options.precision.hasPoint = this.options.precision.touch;
+        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+            pos = this.getMousePosition(evt, 0);
+            this.moveOrigin(pos[0], pos[1]);
+        } else if (this.mode == this.BOARD_MODE_DRAG) {
+            for (i = 0; i < evt.targetTouches.length; i++) {
+                pos = this.getMousePosition(evt, i);
+                this.moveObject(pos[0], pos[1], i+1);
+            }
+        } else {
+            for (i = 0; i < evt.targetTouches.length; i++) {
+                pos = this.getMousePosition(evt, i);
+                this.highlightElements(pos[0], pos[1]);
+            }
+        }
+
+        this.options.precision.hasPoint = this.options.precision.mouse;
     },
 
     touchEndListener: function (evt) {
-        var e = document.createEvent("MouseEvents"), i;
+        var i, keep, pos;
+console.log('end: ' + evt.targetTouches.length);
+        this.updateHooks('mouseup', evt);
 
-        e.initMouseEvent('mouseup', true, false, this.containerObj, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        e.fromTouch = true;
-        this.mouseUpListener(e);
+        if (evt.targetTouches.length > 0) {
+            keep = [];
+            for (i = 0; i < evt.targetTouches.length; i++) {
+                pos = this.getMousePosition(evt, i);
+                if (this.drag_obj[i+1].hasPoint(pos[0], pos[1])) {
+                    keep.push(this.drag_obj[i+1]);
+                }
+            }
 
-        this.options.precision.hasPoint = this.options.precision.mouse;
+            this.drag_obj.length = 1;
+            this.drag_obj = this.drag_obj.concat(keep);
+        } else {
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            this.mode = this.BOARD_MODE_NONE;
+
+            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+                this.update();
+            }
+
+            this.drag_obj.length = 1;
+        }
+console.log('end2: ' + this.drag_obj.length);
     },
 
     /**
@@ -911,9 +967,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        // New mouse position in screen coordinates.
-        this.dragObjCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [pos[0], pos[1]], this);
-
         return false;
     },
 
@@ -926,10 +979,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
-
         this.mode = this.BOARD_MODE_NONE;
 
-        // if origin was moved update everything
         if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
             this.update();
         }
@@ -944,7 +995,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     mouseMoveListener: function (Event, i) {
-        var el, pEl, pos, newPos, drag, oldCoords;
+        var pos;
 
         this.updateHooks('mousemove', Event, this.mode);
 
