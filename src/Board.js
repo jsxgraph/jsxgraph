@@ -644,7 +644,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} y current mouse/touch coordinates
      * @returns {Array} A list of geometric elements.
      */
-    initMovePoint: function (x, y) {
+    initMoveObject: function (x, y) {
         var pEl, el, collect = [], 
             len, i, ancestorHasPoint;
 
@@ -684,13 +684,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} y Coordinate
      * @param {JXG.GeometryElement} o The object that is dragged.
      */
-    movePoint: function (x, y, o) {
+    moveObject: function (x, y, o) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
-            drag = o,
+            drag = o.obj,
             oldCoords;
 
+        // Remember the actual position for the next move event. Then we are able to 
+        // compute the difference vector.
+        o.targets[0].Xprev = o.targets[0].X;
+        o.targets[0].Yprev = o.targets[0].Y;
+        o.targets[0].X = x;
+        o.targets[0].Y = y;
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2]);
+            oldCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this);
+            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
             this.update(drag);
         } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
             oldCoords = drag.coords;
@@ -867,7 +874,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         targets: [{
                             num: i,
                             X: evt.targetTouches[i].screenX,
-                            Y: evt.targetTouches[i].screenY
+                            Y: evt.targetTouches[i].screenY,
+                            Xprev: NaN,
+                            Yprev: NaN
                         }]
                     });
                     found = true;
@@ -877,7 +886,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             if (!found) {
                 pos = this.getMousePosition(evt, i);
-                elements = this.initMovePoint(pos[0], pos[1]);
+                elements = this.initMoveObject(pos[0], pos[1]);
 
                 if (elements.length != 0) {
                     if (this.options.takeFirst) {
@@ -892,7 +901,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             {
                                 num: i,
                                 X: evt.targetTouches[i].screenX,
-                                Y: evt.targetTouches[i].screenY
+                                Y: evt.targetTouches[i].screenY,
+                                Xprev: NaN,
+                                Yprev: NaN
                             }
                         ]
                     });
@@ -924,11 +935,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
                 // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
-                // use the corresponding move-method (e.g. movePoint, moveLine [todo], ...)
+                // use the move-method moveObject
                 this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
                 this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
                 pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                this.movePoint(pos[0], pos[1], this.touches[i].obj);
+                this.moveObject(pos[0], pos[1], this.touches[i]);
             }
         } else {
             for (i = 0; i < evt.targetTouches.length; i++) {
@@ -964,7 +975,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             targets: [{
                                 num: i,
                                 X: evt.targetTouches[i].screenX,
-                                Y: evt.targetTouches[i].screenY
+                                Y: evt.targetTouches[i].screenY,
+                                Xprev: NaN,
+                                Yprev: NaN
                             }]
                         });
                         break;
@@ -1012,7 +1025,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return false;
         }
 
-        elements = this.initMovePoint(pos[0], pos[1]);
+        elements = this.initMoveObject(pos[0], pos[1]);
 
         // if no draggable object can be found, get out here immediately
         if (elements.length == 0) {
@@ -1025,6 +1038,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.drag_obj = elements[elements.length-1];
             }
 
+            this.touches.length = 0;
+            this.touches.push({
+                obj: this.drag_obj,
+                targets: [
+                    {
+                        num: 0,
+                        X: pos[0],
+                        Y: pos[1],
+                        Xprev: NaN,
+                        Yprev: NaN
+                    }
+                ]
+            });
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
             // on the board doesn't work anymore.
@@ -1087,7 +1113,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            this.movePoint(pos[0], pos[1], this.drag_obj);
+            this.moveObject(pos[0], pos[1], this.touches[0]);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
             this.highlightElements(pos[0], pos[1]);
         }
