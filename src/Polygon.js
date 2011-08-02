@@ -96,10 +96,23 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * Checks whether (x,y) is near the polygon.
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @return {Boolean} Always false, because the polygons interior shall not be highlighted
+     * @return {Boolean} Returns true, if (x,y) is inside the polygon, otherwise false.
      */
     hasPoint: function (x,y) {
-        return false;
+        
+        // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html for a reference
+
+        var i, j, c = false;
+
+        for (i=0, j=this.vertices.length-2; i<this.vertices.length-1; j=i++) { // last vertex is first vertex
+            if (((this.vertices[i].coords.scrCoords[2] > y) != (this.vertices[j].coords.scrCoords[2] > y))
+                && (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2])
+                    / (this.vertices[j].coords.scrCoords[2] - this.vertices[i].coords.scrCoords[2]) + this.vertices[i].coords.scrCoords[1]))
+
+                c = !c;
+        }
+
+        return c;
     },
 
     /**
