@@ -58,6 +58,9 @@ JXG.Text = function (board, content, coords, attributes) {
             [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
              this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
     } else {
+        if (!JXG.isFunction(coords[0]) && !JXG.isFunction(coords[1])) {
+            this.isDraggable = true;
+        }
         this.X = JXG.createFunction(coords[0],this.board,'');
         this.Y = JXG.createFunction(coords[1],this.board,'');
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
@@ -101,13 +104,23 @@ JXG.Text.prototype = new JXG.GeometryElement();
 JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     /**
      * @private
-     * Empty function.
+     * Test if the distance between th screen coordinates (x,y) 
+     * and the lower left corner of the text is smaller than
+     * this.board.options.precision.hasPoint in maximum norm.
      * @param {Number} x
-     * @param {Number} y Find closest point on the text to (xy)
-     * @return {Boolean} Always returns false
+     * @param {Number} y 
+     * @return {Boolean} 
      */
     hasPoint: function (x, y) {
-        return false;
+        var dx = x-this.coords.scrCoords[1],
+            dy = this.coords.scrCoords[2]-y,
+            r = this.board.options.precision.hasPoint;
+            
+        if (dx>=-r && dy>=-r && dx<=r && dy<=r) {
+            return true;
+        } else {
+            return false;
+        }
     },
 
     /**
@@ -320,7 +333,46 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         var c = this.coords.usrCoords;
 
         return this.visProp.islabel ? [0, 0, 0, 0] : [c[1], c[2]+this.size[1], c[1]+this.size[0], c[2]];
-    }
+    },
+    
+    /**
+     * Sets x and y coordinate and calls the text's update() method.
+     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {number} x x coordinate in screen/user units
+     * @param {number} y y coordinate in screen/user units
+     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     */
+    setPositionDirectly: function (method, x, y) {
+        var i, dx, dy, el, p,
+            newCoords;
+        
+        if (method == JXG.COORDS_BY_SCREEN) {
+            newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+            x = newCoords.usrCoords[1];
+            y = newCoords.usrCoords[2];
+        }
+        this.X = JXG.createFunction(x,this.board,'');
+        this.Y = JXG.createFunction(y,this.board,'');
+
+        /*
+         // Update the initial coordinates. This is needed for free points
+        // that have a transformation bound to it.
+            for (i=this.transformations.length-1;i>=0;i--) {
+                if (method == JXG.COORDS_BY_SCREEN) {
+                    newCoords = (new JXG.Coords(method, [x, y], this.board)).usrCoords;                
+                } else {
+                    newCoords = [1,x,y];
+                }
+                this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
+                        JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords), 
+                        this.board);      
+            }
+        */
+        //this.prepareUpdate().update().updateRenderer();
+        return this;
+    },
+    
 });
 
 /**
