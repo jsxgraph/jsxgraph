@@ -821,7 +821,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         evt.preventDefault();
         this.updateHooks('mousedown', evt);
-console.log('start: ' + evt.targetTouches.length);
+//console.log('start: ' + evt.targetTouches.length);
         // move origin
         if ((evt.targetTouches.length == 2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
             pos = this.getMousePosition(evt, 0);
@@ -853,7 +853,7 @@ console.log('start: ' + evt.targetTouches.length);
             }
         }
         this.options.precision.hasPoint = this.options.precision.mouse;
-console.log('start2: ' + this.drag_obj.length);
+//console.log('start2: ' + this.drag_obj.length);
     },
 
     touchMoveListener: function (evt) {
@@ -888,7 +888,7 @@ console.log('start2: ' + this.drag_obj.length);
 
     touchEndListener: function (evt) {
         var i, keep, pos;
-console.log('end: ' + evt.targetTouches.length);
+//console.log('end: ' + evt.targetTouches.length);
         this.updateHooks('mouseup', evt);
 
         if (evt.targetTouches.length > 0) {
@@ -912,7 +912,7 @@ console.log('end: ' + evt.targetTouches.length);
 
             this.drag_obj.length = 1;
         }
-console.log('end2: ' + this.drag_obj.length);
+//console.log('end2: ' + this.drag_obj.length);
     },
 
     /**
