@@ -354,11 +354,18 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.drag_dy = 0;
 
     /**
-     * An array of references to the objects that are dragged on the board. Usually these are an object of
-     * type {@link JXG.Point}.
-     * @type Array
+     * References to the object that is dragged with the mouse on the board.
+     * @type {@link JXG.GeometryElement}.
+     * @see {JXG.Board#touches}
      */
-    this.drag_obj = [];
+    this.drag_obj = null;
+
+    /**
+     * Keeps track on touched elements, like {@link JXG.Board#drag_obj} does for mouse events.
+     * @type Array
+     * @see {JXG.Board#drag_obj}
+     */
+    this.touches = [];
 
     /**
      * A string containing the XML text of the construction. This is set in {@link JXG.FileReader#parseString}.
@@ -675,12 +682,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Moves an object.
      * @param {Number} x Coordinate
      * @param {Number} y Coordinate
-     * @param {Number} i The number of the object corresponding to the number of the finger on touch devices. <tt>0</tt>
-     * always corresponds to the mouse.
+     * @param {JXG.GeometryElement} o The object that is dragged.
      */
-    moveObject: function (x, y, i) {
+    moveObject: function (x, y, o) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
-            drag = this.drag_obj[i],
+            drag = o,
             oldCoords;
 
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
@@ -817,13 +823,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Touch-Events
      */
     touchStartListener: function (evt) {
-        var i, pos, elements, nested = false;
+        var i, pos, elements, j,
+            eps = this.options.precision.touch,
+            found = false,
+            tmpTouches = [], obj;
 
         evt.preventDefault();
         this.updateHooks('mousedown', evt);
-//console.log('start: ' + evt.targetTouches.length);
-        // move origin
-        if ((evt.targetTouches.length == 2) && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY])<80)) {
+
+        // move origin - but only if we're not in drag mode
+        if ( (this.mode === this.BOARD_MODE_NONE)
+             && (evt.targetTouches.length == 2)
+             && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80)) {
+
             pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
 
@@ -833,27 +845,48 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
 
-        if (this.drag_obj.length > 1) {
-            nested = true;
+        for (i = 0; i < this.touches.length; i++) {
+            tmpTouches[i] = this.touches[i];
         }
+        this.touches.length = 0;
 
         for (i = 0; i < evt.targetTouches.length; i++) {
-            pos = this.getMousePosition(evt, i);
-            elements = this.initMoveObject(pos[0], pos[1]);
-
-            if (elements.length == 0) {
-                this.mode = this.BOARD_MODE_NONE;
-                return true;
-            } else {
-                if (this.options.takeFirst) {
-                    this.drag_obj[i+1] = elements[0];
-                } else {
-                    this.drag_obj[i+1] = elements[elements.length-1];
+            for (j = 0; j < tmpTouches.length; j++) {
+                if (Math.abs(Math.pow(evt.targetTouches[i].screenX, 2) + Math.pow(evt.targetTouches[i].screenY, 2) - Math.pow(tmpTouches[j].X, 2) - Math.pow(tmpTouches[j].Y, 2)) < eps*eps) {
+                    this.touches[i] = {
+                        X: evt.targetTouches[i].screenX,
+                        Y: evt.targetTouches[i].screenY,
+                        obj: tmpTouches[j].obj
+                    };
+                    found = true;
+                    break;
                 }
             }
+
+            if (!found) {
+                pos = this.getMousePosition(evt, i);
+                elements = this.initMoveObject(pos[0], pos[1]);
+
+                if (elements.length == 0) {
+                    obj = null;
+                } else {
+                    if (this.options.takeFirst) {
+                        obj = elements[0];
+                    } else {
+                        obj = elements[elements.length-1];
+                    }
+                }
+
+                this.touches[i] = {
+                    X: evt.targetTouches[i].screenX,
+                    Y: evt.targetTouches[i].screenY,
+                    obj: obj
+                };
+            }
+            found = false;
         }
+
         this.options.precision.hasPoint = this.options.precision.mouse;
-//console.log('start2: ' + this.drag_obj.length);
     },
 
     touchMoveListener: function (evt) {
@@ -873,8 +906,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             for (i = 0; i < evt.targetTouches.length; i++) {
-                pos = this.getMousePosition(evt, i);
-                this.moveObject(pos[0], pos[1], i+1);
+                this.touches[i].X = evt.targetTouches[i].screenX;
+                this.touches[i].Y = evt.targetTouches[i].screenY;
+                if (this.touches[i].obj !== null) {
+                    pos = this.getMousePosition(evt, i);
+                    this.moveObject(pos[0], pos[1], this.touches[i].obj);
+                }
             }
         } else {
             for (i = 0; i < evt.targetTouches.length; i++) {
@@ -887,21 +924,38 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchEndListener: function (evt) {
-        var i, keep, pos;
-//console.log('end: ' + evt.targetTouches.length);
+        var i, j,
+            eps = this.options.precision.touch,
+            found = false, tmpTouches = [];
         this.updateHooks('mouseup', evt);
 
         if (evt.targetTouches.length > 0) {
-            keep = [];
-            for (i = 0; i < evt.targetTouches.length; i++) {
-                pos = this.getMousePosition(evt, i);
-                if (this.drag_obj[i+1].hasPoint(pos[0], pos[1])) {
-                    keep.push(this.drag_obj[i+1]);
-                }
+            for (i = 0; i < this.touches.length; i++) {
+                tmpTouches[i] = this.touches[i];
             }
+            this.touches.length = 0;
+            for (i = 0; i < evt.targetTouches.length; i++) {
+                for (j = 0; j < tmpTouches.length; j++) {
+                    if (Math.abs(Math.pow(evt.targetTouches[i].screenX, 2) + Math.pow(evt.targetTouches[i].screenY, 2) - Math.pow(tmpTouches[j].X, 2) - Math.pow(tmpTouches[j].Y, 2)) < eps*eps) {
+                        this.touches[i] = {
+                            X: evt.targetTouches[i].screenX,
+                            Y: evt.targetTouches[i].screenY,
+                            obj: tmpTouches[j].obj
+                        };
+                        found = true;
+                        break;
+                    }
+                }
 
-            this.drag_obj.length = 1;
-            this.drag_obj = this.drag_obj.concat(keep);
+                if (!found) {
+                    this.touches[i] = {
+                        X: evt.targetTouches[i].screenX,
+                        Y: evt.targetTouches[i].screenY,
+                        obj: null
+                    };
+                }
+                found = false;
+            }
         } else {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
@@ -910,9 +964,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.update();
             }
 
-            this.drag_obj.length = 1;
+            this.touches.length = 0;
         }
-//console.log('end2: ' + this.drag_obj.length);
     },
 
     /**
@@ -952,9 +1005,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return true;
         } else {
             if(this.options.takeFirst) {
-                this.drag_obj[0] = elements[0];
+                this.drag_obj = elements[0];
             } else {
-                this.drag_obj[0] = elements[elements.length-1];
+                this.drag_obj = elements[elements.length-1];
             }
 
             // prevent accidental text selection
@@ -986,7 +1039,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // release dragged mouse object
-        this.drag_obj[0] = null;
+        this.drag_obj = null;
     },
 
     /**
@@ -1019,7 +1072,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            this.moveObject(pos[0], pos[1], 0);
+            this.moveObject(pos[0], pos[1], this.drag_obj);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
             this.highlightElements(pos[0], pos[1]);
         }
@@ -1956,6 +2009,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < this.grids.length; i++) {
             this.removeObject(this.grids[i]);
         }
+
+        this.grids.length = 0;
 
         return this;
     },
