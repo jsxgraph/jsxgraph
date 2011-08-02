@@ -644,7 +644,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} y current mouse/touch coordinates
      * @returns {Array} A list of geometric elements.
      */
-    initMoveObject: function (x, y) {
+    initMovePoint: function (x, y) {
         var pEl, el, collect = [], 
             len, i, ancestorHasPoint;
 
@@ -684,7 +684,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} y Coordinate
      * @param {JXG.GeometryElement} o The object that is dragged.
      */
-    moveObject: function (x, y, o) {
+    movePoint: function (x, y, o) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
             drag = o,
             oldCoords;
@@ -850,14 +850,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
         this.touches.length = 0;
 
+        // assuming only points are getting dragged
+        // todo: this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
+        // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
+        // touches, e.g. we translate (parallel translation) a line with one finger, now a second finger is over this line. this should change the operation to
+        // a rotational translation. or one finger moves a circle, a second finger can be attached to the circle: this now changes the operation from translation to
+        // stretching. as a last step we're going through the rest of the targettouches and initiate new move operations:
+        //  * points have higher priority over other elements.
+        //  * if we find a targettouch over an element that could be transformed with more than one finger, we search the rest of the targettouches, if they are over
+        //    this element and add them.
         for (i = 0; i < evt.targetTouches.length; i++) {
             for (j = 0; j < tmpTouches.length; j++) {
-                if (Math.abs(Math.pow(evt.targetTouches[i].screenX, 2) + Math.pow(evt.targetTouches[i].screenY, 2) - Math.pow(tmpTouches[j].X, 2) - Math.pow(tmpTouches[j].Y, 2)) < eps*eps) {
-                    this.touches[i] = {
-                        X: evt.targetTouches[i].screenX,
-                        Y: evt.targetTouches[i].screenY,
-                        obj: tmpTouches[j].obj
-                    };
+                if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
+                    this.touches.push({
+                        obj: tmpTouches[j].obj,
+                        targets: [{
+                            num: i,
+                            X: evt.targetTouches[i].screenX,
+                            Y: evt.targetTouches[i].screenY
+                        }]
+                    });
                     found = true;
                     break;
                 }
@@ -865,23 +877,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             if (!found) {
                 pos = this.getMousePosition(evt, i);
-                elements = this.initMoveObject(pos[0], pos[1]);
+                elements = this.initMovePoint(pos[0], pos[1]);
 
-                if (elements.length == 0) {
-                    obj = null;
-                } else {
+                if (elements.length != 0) {
                     if (this.options.takeFirst) {
                         obj = elements[0];
                     } else {
-                        obj = elements[elements.length-1];
+                        obj = elements[elements.length - 1];
                     }
-                }
 
-                this.touches[i] = {
-                    X: evt.targetTouches[i].screenX,
-                    Y: evt.targetTouches[i].screenY,
-                    obj: obj
-                };
+                    this.touches.push({
+                        obj: obj,
+                        targets: [
+                            {
+                                num: i,
+                                X: evt.targetTouches[i].screenX,
+                                Y: evt.targetTouches[i].screenY
+                            }
+                        ]
+                    });
+                }
             }
             found = false;
         }
@@ -890,7 +905,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchMoveListener: function (evt) {
-        var i, pos;
+        var i, j, pos;
 
         evt.preventDefault();
         this.updateHooks('mousemove', evt, this.mode);
@@ -905,13 +920,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            for (i = 0; i < evt.targetTouches.length; i++) {
-                this.touches[i].X = evt.targetTouches[i].screenX;
-                this.touches[i].Y = evt.targetTouches[i].screenY;
-                if (this.touches[i].obj !== null) {
-                    pos = this.getMousePosition(evt, i);
-                    this.moveObject(pos[0], pos[1], this.touches[i].obj);
-                }
+            for (i = 0; i < this.touches.length; i++) {
+                // assuming we're only dragging points now
+                // todo: check which operation is done here. the operation should be uniquely identified by the
+                // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
+                // use the corresponding move-method (e.g. movePoint, moveLine [todo], ...)
+                this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
+                this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
+                pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                this.movePoint(pos[0], pos[1], this.touches[i].obj);
             }
         } else {
             for (i = 0; i < evt.targetTouches.length; i++) {
@@ -934,27 +951,25 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 tmpTouches[i] = this.touches[i];
             }
             this.touches.length = 0;
+
+            // assuming only points can be moved
+            // todo: don't run through the targettouches but through the touches and check if all touches.targets are still available
+            // if not, try to convert the operation, e.g. if a lines is rotated and translated with two fingers and one finger is lifted,
+            // convert the operation to a simple one-finger-translation.
             for (i = 0; i < evt.targetTouches.length; i++) {
                 for (j = 0; j < tmpTouches.length; j++) {
-                    if (Math.abs(Math.pow(evt.targetTouches[i].screenX, 2) + Math.pow(evt.targetTouches[i].screenY, 2) - Math.pow(tmpTouches[j].X, 2) - Math.pow(tmpTouches[j].Y, 2)) < eps*eps) {
-                        this.touches[i] = {
-                            X: evt.targetTouches[i].screenX,
-                            Y: evt.targetTouches[i].screenY,
-                            obj: tmpTouches[j].obj
-                        };
-                        found = true;
+                    if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
+                        this.touches.push({
+                            obj: tmpTouches[j].obj,
+                            targets: [{
+                                num: i,
+                                X: evt.targetTouches[i].screenX,
+                                Y: evt.targetTouches[i].screenY
+                            }]
+                        });
                         break;
                     }
                 }
-
-                if (!found) {
-                    this.touches[i] = {
-                        X: evt.targetTouches[i].screenX,
-                        Y: evt.targetTouches[i].screenY,
-                        obj: null
-                    };
-                }
-                found = false;
             }
         } else {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -997,7 +1012,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return false;
         }
 
-        elements = this.initMoveObject(pos[0], pos[1]);
+        elements = this.initMovePoint(pos[0], pos[1]);
 
         // if no draggable object can be found, get out here immediately
         if (elements.length == 0) {
@@ -1072,7 +1087,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            this.moveObject(pos[0], pos[1], this.drag_obj);
+            this.movePoint(pos[0], pos[1], this.drag_obj);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
             this.highlightElements(pos[0], pos[1]);
         }
