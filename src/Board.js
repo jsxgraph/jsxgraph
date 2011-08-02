@@ -1081,6 +1081,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // release dragged mouse object
         this.drag_obj = null;
+        this.touches.length = 0;
     },
 
     /**
