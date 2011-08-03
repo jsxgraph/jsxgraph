@@ -352,11 +352,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * even more later.
      * @param {Object} hash Object containing propiertes with target values for the animation.
      * @param {number} time Number of milliseconds to complete the animation.
-     * @param {function} [callback] A function that is called after the animation is finished.
+     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
      * @return A reference to the object
      * @type JXG.GeometryElement
      */
-    animate: function (hash, time, callback) {
+    animate: function (hash, time, options) {
+        options = options || {};
         var r, p,
             delay = 35,
             steps = Math.ceil(time/(delay * 1.0)),
@@ -410,7 +411,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
 
-        this.animationCallback = callback;
+        this.animationCallback = options.callback;
         this.board.addAnimation(this);
         return this;
     },

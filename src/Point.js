@@ -644,10 +644,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * the path, or  function taking the amount of elapsed time since the animation has started and returns an array containing a x and a y value or NaN.
      * In case of NaN the animation stops.
      * @param {Number} time The time in milliseconds in which to finish the animation
-     * @param {function} [callback] A callback function which is called once the animation is finished.
+     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
      * @returns {JXG.Point} Reference to the point.
      */
-    moveAlong: function(path, time, callback) {
+    moveAlong: function(path, time, options) {
+        options = options || {};
         var interpath = [],
             delay = 35,
             makeFakeFunction = function (i, j) {
@@ -689,7 +690,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.animationPath = path;
             this.animationStart = new Date().getTime();
         }
-        this.animationCallback = callback;
+        this.animationCallback = options.callback;
 
         this.board.addAnimation(this);
         return this;
@@ -700,15 +701,20 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
      * @param {Array} where Array containing the x and y coordinate of the target location.
      * @param {Number} [time] Number of milliseconds the animation should last.
-     * @param {function} [callback] A function that is invoked once the animation is completed.
+     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li>
+     * <li>effect: animation effects like speed fade in and out. possible values are '<>' for speed increase on start and slow down at the end (default)
+     * and '--' for constant speed during the whole animation.</li></ul>
      * @returns {JXG.Point} Reference to itself.
      * @see #animate
      */
-    moveTo: function(where, time, callback) {
+    moveTo: function(where, time, options) {
         if (typeof time == 'undefined' || time == 0) {
             this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
             return this.board.update(this);
         }
+
+        options = options || {};
+        
     	var delay = 35,
     	    steps = Math.ceil(time/(delay * 1.0)),
     		coords = new Array(steps+1),
@@ -716,17 +722,23 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     		Y = this.coords.usrCoords[2],
     		dX = (where[0] - X),
     		dY = (where[1] - Y),
-    	    i;
+    	    i,
+            stepFun = function (i) {
+                if (options.effect && options.effect == '<>') {
+                    return Math.pow(Math.sin((i/(steps*1.0))*Math.PI/2.), 2);
+                }
+                return i/steps;
+            };
 
         if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
             return this;
     	
     	for(i=steps; i>=0; i--) {
-    		coords[steps-i] = [X + dX * Math.sin((i/(steps*1.0))*Math.PI/2.), Y+ dY * Math.sin((i/(steps*1.0))*Math.PI/2.)];
+    		coords[steps-i] = [X + dX * stepFun(i), Y+ dY * stepFun(i)];
     	}
 
     	this.animationPath = coords;
-        this.animationCallback = callback;
+        this.animationCallback = options.callback;
         this.board.addAnimation(this);
         return this;
     },
@@ -736,14 +748,21 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * The animation is done after <tt>time</tt> milliseconds.
      * @param {Array} where Array containing the x and y coordinate of the target location.
      * @param {Number} time Number of milliseconds the animation should last.
-     * @param {Number} [repeat] How often the animation should be repeated. The time value is then taken for one repeat.
-     * @param {function} [callback] A function that is invoked once the animation is completed.
+     * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li>
+     * <li>effect: animation effects like speed fade in and out. possible values are '<>' for speed increase on start and slow down at the end (default)
+     * and '--' for constant speed during the whole animation.</li><li>repeat: How often this animation should be repeated (default: 1)</li></ul>
      * @returns {JXG.Point} Reference to itself.
      * @see #animate
      */
-    visit: function(where, time, repeat, callback) {
-        if(arguments.length == 2)
-            repeat = 1;
+    visit: function(where, time, options) {
+        // support legacy interface where the third parameter was the number of repeats
+        if (typeof options == 'number') {
+            options = {repeat: options};
+        } else {
+            options = options || {};
+            if(typeof options.repeat == 'undefined')
+                options.repeat = 1;
+        }
 
         var delay = 35,
             steps = Math.ceil(time/(delay * 1.0)),
@@ -752,16 +771,22 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             Y = this.coords.usrCoords[2],
             dX = (where[0] - X),
             dY = (where[1] - Y),
-            i, j;
+            i, j,
+            stepFun = function (i) {
+                if (options.effect && options.effect == '<>') {
+                    return Math.pow(Math.sin((i/(steps*1.0))*Math.PI/2.), 2);
+                }
+                return i/steps;
+            };
         
-        for(j=0; j<repeat; j++) {
+        for(j = 0; j < options.repeat; j++) {
             for(i=steps; i>=0; i--) {
-                coords[j*(steps+1) + steps-i] = [X + dX * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.), 
-                                                 Y+ dY * Math.pow(Math.sin((i/(steps*1.0))*Math.PI), 2.)];
+                coords[j*(steps+1) + steps-i] = [X + dX * stepFun(i),
+                                                 Y+ dY * stepFun(i)];
             }
         }
         this.animationPath = coords;
-        this.animationCallback = callback;
+        this.animationCallback = options.callback;
         this.board.addAnimation(this);
         return this;
     },
