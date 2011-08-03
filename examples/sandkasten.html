@@ -46,6 +46,21 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var alyssa = (function () {
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, 4, 1, -4], axis:false, showCopyright:false, showNavigation:false});
+        var xaxis, yaxis, curve;
+        brd.suspendUpdate();
+        yaxis = brd.create('axis', [[0,0],[0,1]]);
+        xaxis = brd.create('axis', [[0, 0], [1, 0]], {
+            ticks: {
+                ticksDistance: .1,
+                insertTicks: false
+            }
+        });
+        curve = brd.create('functiongraph', [function(x){return Math.sin(x);} ]);
+        brd.unsuspendUpdate();
+    })();
+
     var ticks = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: true});
 
@@ -58,7 +73,7 @@
         var py = board.create('polygon', points);
         board.removeObject(py);
 //        window.setTimeout(function () {board.setBoundingBox([-3, 3, 3, -3], false);}, 5000);
-    })();
+    });
 
     var e = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false}),

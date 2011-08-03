@@ -188,12 +188,20 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 if(labelText.length > 5 || labelText.indexOf('e') != -1) {
                     labelText = pos.toPrecision(3).toString();
                 }
+                // trim trailing zeros
+                labelText = labelText.replace(/0+$/, '');
+                // trim trailing .
+                labelText = labelText.replace(/\.$/, '');
                 
                 label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
                     id: id + i + 'Label',
                     isLabel: true,
-                    layer: board.options.layer.line
+                    layer: board.options.layer.line,
+                    highlightStrokeColor: board.options.text.strokeColor,
+                    highlightStrokeWidth: board.options.text.strokeWidth,
+                    highlightStrokeOpacity: board.options.text.strokeOpacity
                 });
+                label.isDraggable = false;
                 label.distanceX = 4;
                 label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
                 label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
@@ -337,19 +345,31 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // p1 is outside the visible area or the line is a segment
         if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
             // calculate start and end points
-            begin = respDelta(p1.coords.distance(JXG.COORDS_BY_USER, e1));
+            begin = p1.coords.distance(JXG.COORDS_BY_USER, e1);
             end = p1.coords.distance(JXG.COORDS_BY_USER, e2);
 
             if(JXG.Math.Geometry.isSameDirection(p1.coords, p2.coords, e1)) {
-                if(this.line.visProp.straightfirst)
+                if(this.line.visProp.straightfirst) {
                     begin -=  2*ticksDelta;
+                }
             } else {
                 end = -1*end;
                 begin = -1*begin;
                 if(this.line.visProp.straightfirst)
                     begin -= 2*ticksDelta
             }
-            
+
+            if (begin > end) {
+                i = begin;
+                begin = end;
+                end = i;
+            }
+
+            begin = respDelta(begin);
+            if (this.line.visProp.straightlast) {
+                end += 2*ticksDelta;
+            }
+
             // TODO: We should check here if the line is visible at all. If it's not visible but
             // close to the viewport there may be drawn some ticks without a line visible.
             
