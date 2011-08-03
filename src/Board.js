@@ -59,7 +59,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
 
     /**
      * Board is in drag mode, objects aren't highlighted on mouse over and the object referenced in
-     * drag_obj is updated on mouse movement.
+     * {JXG.Board#mouse} is updated on mouse movement.
      * @type Number
      * @constant
      * @see JXG.Board#drag_obj
@@ -358,12 +358,12 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @type {@link JXG.GeometryElement}.
      * @see {JXG.Board#touches}
      */
-    this.drag_obj = null;
+    this.mouse = null;
 
     /**
-     * Keeps track on touched elements, like {@link JXG.Board#drag_obj} does for mouse events.
+     * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
      * @type Array
-     * @see {JXG.Board#drag_obj}
+     * @see {JXG.Board#mouse}
      */
     this.touches = [];
 
@@ -682,7 +682,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Moves an object.
      * @param {Number} x Coordinate
      * @param {Number} y Coordinate
-     * @param {JXG.GeometryElement} o The object that is dragged.
+     * @param {JXG.GeometryElement} o The object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
      */
     moveObject: function (x, y, o) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
@@ -1032,25 +1032,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.mode = this.BOARD_MODE_NONE;
             return true;
         } else {
-            if(this.options.takeFirst) {
-                this.drag_obj = elements[0];
-            } else {
-                this.drag_obj = elements[elements.length-1];
-            }
-
-            this.touches.length = 0;
-            this.touches.push({
-                obj: this.drag_obj,
+            this.mouse = {
+                obj: null,
                 targets: [
                     {
-                        num: 0,
                         X: pos[0],
                         Y: pos[1],
                         Xprev: NaN,
                         Yprev: NaN
                     }
                 ]
-            });
+            };
+            if(this.options.takeFirst) {
+                this.mouse.obj = elements[0];
+            } else {
+                this.mouse.obj = elements[elements.length-1];
+            }
+
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
             // on the board doesn't work anymore.
@@ -1080,8 +1078,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // release dragged mouse object
-        this.drag_obj = null;
-        this.touches.length = 0;
+        this.mouse = null;
     },
 
     /**
@@ -1114,7 +1111,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            this.moveObject(pos[0], pos[1], this.touches[0]);
+            this.moveObject(pos[0], pos[1], this.mouse);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
             this.highlightElements(pos[0], pos[1]);
         }
