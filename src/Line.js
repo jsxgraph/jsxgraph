@@ -229,7 +229,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         if (this.needsUpdate && this.visProp.visible) {
             wasReal = this.isReal;
-            this.isReal = (isNaN(this.point1.coords.usrCoords[1]+this.point1.coords.usrCoords[2]+this.point2.coords.usrCoords[1]+this.point2.coords.usrCoords[2]))?false:true;
+            this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]));
             if (this.isReal) {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.show(this);
@@ -391,60 +391,59 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         if(!this.visProp.straightfirst && !this.visProp.straightlast) {
             this.setLabelRelativeCoords(this.labelOffsets);
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
-        }
-        else {
+        } else {
             screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
             screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
             JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
 
-            if(this.visProp.straightfirst) {
+            if (!this.visProp.straightfirst || this.type == JXG.OBJECT_TYPE_AXIS) {
+                coords = screenCoords2;
+            } else {
                 coords = screenCoords1;
             }
-            else {
-                coords = screenCoords2;
-            }
+
             // Hack
-            if(this.label.content != null) {
+            if (this.label.content != null) {
                 relCoords = [0,0];
                 slope = this.getSlope();
-                if(coords.scrCoords[2]==0) {
-                    if(slope == Infinity) {
+                if (coords.scrCoords[2] == 0) {
+                    if (slope == Infinity) {
                         relCoords = [xoffset,-yoffset];
                     }
-                    else if(slope >= 0) {
+                    else if (slope >= 0) {
                         relCoords = [xoffset,-yoffset];
                     }
                     else {
                         relCoords = [-xoffset,-yoffset];
                     }
                 }
-                else if(coords.scrCoords[2]==this.board.canvasHeight) {
-                    if(slope == Infinity) {
+                else if (coords.scrCoords[2] == this.board.canvasHeight) {
+                    if (slope == Infinity) {
                         relCoords = [xoffset,yoffset];
                     }
-                    else if(slope >= 0) {
+                    else if (slope >= 0) {
                         relCoords = [-xoffset,yoffset];
                     }
                     else {
                         relCoords = [xoffset,yoffset];
                     }
                 }
-                if(coords.scrCoords[1]==0) {
-                    if(slope == Infinity) {
+                if (coords.scrCoords[1] == 0) {
+                    if (slope == Infinity) {
                         relCoords = [xoffset,yoffset]; // ??
                     }
-                    else if(slope >= 0) {
+                    else if (slope >= 0) {
                         relCoords = [xoffset,-yoffset];
                     }
                     else {
                         relCoords = [xoffset,yoffset];
                     }
                 }
-                else if(coords.scrCoords[1]==this.board.canvasWidth) {
-                    if(slope == Infinity) {
+                else if (coords.scrCoords[1] == this.board.canvasWidth) {
+                    if (slope == Infinity) {
                         relCoords = [-xoffset,yoffset]; // ??
                     }
-                    else if(slope >= 0) {
+                    else if (slope >= 0) {
                         relCoords = [-xoffset,yoffset];
                     }
                     else {
@@ -998,6 +997,7 @@ JXG.createAxis = function(board, parents, attributes) {
     if ( (JXG.isArray(parents[0]) || JXG.isPoint(parents[0]) ) && (JXG.isArray(parents[1]) || JXG.isPoint(parents[1])) ) {
         attr = JXG.copyAttributes(attributes, board.options, 'axis');
         el = board.create('line', parents, attr);
+        el.type = JXG.OBJECT_TYPE_AXIS;
 
         attr = JXG.copyAttributes(attributes, board.options, 'axis', 'ticks');
         if (JXG.exists(attr.ticksdistance)) {
