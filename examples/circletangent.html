@@ -39,8 +39,6 @@ var t2 = board.createElement('tangent', [c,p2], {dash:2});
 var infobox = document.getElementById('myinfobox');
 JXG.Line.prototype.highlight = function(){
     infobox.innerHTML = this.name;
-    infobox.style.left = this.board.mousePosAbs[0]+20;
-    infobox.style.top = this.board.mousePosAbs[1]-20;
     infobox.style.display = 'block';
 }
 JXG.Line.prototype.noHighlight = function(){
@@ -48,8 +46,6 @@ JXG.Line.prototype.noHighlight = function(){
 }
 c.highlight = function(){
     infobox.innerHTML = 'circle '+this.name;
-    infobox.style.left = this.board.mousePosAbs[0]+20;
-    infobox.style.top = this.board.mousePosAbs[1]-20;
     infobox.style.display = 'block';
 }
 c.noHighlight = function(){

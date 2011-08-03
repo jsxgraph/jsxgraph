@@ -124,7 +124,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
 
     if(method == 'twoPoints') {
         this.point2 = JXG.getReference(board,par2);
-        this.point2.addChild(this);
+        // this.point2.addChild(this); // See below. Here, the id of this is not determined.
         this.radius = this.Radius(); 
     }
     else if(method == 'pointRadius') {
@@ -151,6 +151,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.createLabel();
 
     this.midpoint.addChild(this);
+    
     if(method == 'pointRadius') {
         this.notifyParents(par2);
     } else if(method == 'pointLine') {

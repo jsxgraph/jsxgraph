@@ -41,12 +41,13 @@ b.create('slider', [[0,0.5], [4,0.5], [0,2,10]],
 */
 //b.unsuspendUpdate();
 A = brd.create('point',[1,2], {name:'A', face:'a', size:10, fillColor:'blue', strokeColor:'red', visible:true, trace:false});
-c2 = brd.create('circle',[A,1], {withLabel:false, visible:true,name:'kreis'});
 B = brd.create('point',[2,1], {name:'B'});
+c2 = brd.create('circle',[A,B], {withLabel:false, visible:true, name:'kreis'});
 C = brd.create('point',[4,1], {name:'C'});
 D = brd.create('point',[4,-1], {name:'D'});
 E = brd.create('point',[0,0], {name:'E'});
 l = brd.create('line',[D,C], {withLabel:true});
+/*
 //c = brd.create('circle',[A,l], {withLabel:true, visible:true,name:'kreis'});
 c1 = brd.create('circle',[l,B], {withLabel:true, visible:true,name:'kreis'});
 g = brd.create('glider', [0,0,c1]);
@@ -55,7 +56,7 @@ l = brd.create('line',[1,2,0], {withLabel:true});
 
 t = brd.create('text',[-3,-3, "test text"], {});
 t = brd.create('text',[1,1, "text with anchor"], {parent:E});
-
+*/
 /*
 */
 //h = b.create('regularpolygon',[A,B, 6], {withLabel:true});
