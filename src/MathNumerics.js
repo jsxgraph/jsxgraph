@@ -1307,7 +1307,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 tol_act = 2*eps*Math.abs(b) + tol*0.5;
                 new_step = (c-b)*0.5;
 
-                if ( Math.abs(new_step) <= tol_act || Math.abs(fb) <= eps ) {
+                if ( Math.abs(new_step) <= tol_act && Math.abs(fb) <= eps ) {
                     //JXG.debug("nfev="+nfev);
                     return b;                           //  Acceptable approx. is found 
                 }
