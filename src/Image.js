@@ -26,8 +26,6 @@
 
 /**
  * @fileoverview In this file the geometry element Image is defined.
- * @author graphjs
- * @version 0.1
  */
 
 /**
@@ -36,13 +34,16 @@
  * It inherits from @see GeometryElement.
  * @constructor
  */
-JXG.Image = function (board, url, coordinates, size, attributes) {
+JXG.Image = function (board, url, coords, size, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_IMAGE, JXG.OBJECT_CLASS_OTHER);
 
-    this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);  // Still needed?
+    this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);  // Still needed?
 
-    this.X = JXG.createFunction(coordinates[0],this.board,'');
-    this.Y = JXG.createFunction(coordinates[1],this.board,'');
+    if (!JXG.isFunction(coords[0]) && !JXG.isFunction(coords[1])) {
+        this.isDraggable = true;
+    }
+    this.X = JXG.createFunction(coords[0],this.board,'');
+    this.Y = JXG.createFunction(coords[1],this.board,'');
     this.W = JXG.createFunction(size[0],this.board,'');
     this.H = JXG.createFunction(size[1],this.board,'');
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
@@ -67,13 +68,22 @@ JXG.Image.prototype = new JXG.GeometryElement;
 JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 
     /**
-     * Empty function (for the moment). It is needed for highlighting, a feature not used for images right now.
+     * Checks whether (x,y) is over or near the image;
      * @param {int} x Coordinate in x direction, screen coordinates.
      * @param {int} y Coordinate in y direction, screen coordinates.
      * @return Always returns false
      */
     hasPoint: function (x,y) {
-        return false;
+        var dx = x-this.coords.scrCoords[1],
+            dy = this.coords.scrCoords[2]-y,
+            r = this.board.options.precision.hasPoint;
+
+        if (dx>=-r && dx/*-this.size[0]*/<=2*r && 
+            dy>=-r && dy/*-this.size[1]*/<=r) {
+            return true;
+        } else {
+            return false;
+        }
     },
 
     /**
@@ -118,7 +128,35 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         } else {
             this.transformations.push(transform);
         }
+    },
+    
+    /**
+     * Sets x and y coordinate of the image.
+     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {number} x x coordinate in screen/user units
+     * @param {number} y y coordinate in screen/user units
+     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     */
+    setPositionDirectly: function (method, x, y, oldx, oldy) {
+        var newCoords, dx, dy;
+            
+        if (method == JXG.COORDS_BY_SCREEN) {
+            newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+            x = newCoords.usrCoords[1];
+            y = newCoords.usrCoords[2];
+        }
+        //dx = x-this.coords.usrCoords[1];
+        //dy = x-this.coords.usrCoords[2];
+
+        this.X = JXG.createFunction(x,this.board,'');
+        this.Y = JXG.createFunction(y,this.board,'');
+        //this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
+        //this.prepareUpdate().update();
+
+        return this;
     }
+    
 });
 
 /**

@@ -338,12 +338,12 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
     
     /**
-     * Sets x and y coordinate and calls the text's update() method.
+     * Sets x and y coordinate of the text.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {number} x x coordinate in screen/user units
      * @param {number} y y coordinate in screen/user units
-     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     * @param {number} oldx previous x coordinate in screen/user units
+     * @param {number} oldy previous y coordinate in screen/user units
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var i, 
@@ -400,7 +400,6 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                         this.board);      
             }
         */
-        //this.prepareUpdate().update().updateRenderer();
         return this;
     },
     

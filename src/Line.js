@@ -534,8 +534,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {number} x x coordinate in screen/user units
      * @param {number} y y coordinate in screen/user units
-     * @param {number} x previous x coordinate in screen/user units
-     * @param {number} y previous y coordinate in screen/user units
+     * @param {number} oldx previous x coordinate in screen/user units
+     * @param {number} oldy previous y coordinate in screen/user units
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
