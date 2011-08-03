@@ -1109,7 +1109,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //   * user just moves the mouse, here highlight all elements at
         //     the current mouse position
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-            this.moveOrigin(pos[0], pos[1]);
+            this.moveOrigin(pos[0] - this.drag_dx, pos[1] - this.drag_dy);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             this.moveObject(pos[0], pos[1], this.mouse);
         } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
@@ -1120,14 +1120,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     
     mouseWheelListener: function (Event) {
         Event = Event ? Event : window.event;
-        var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40;
-        
+        var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40,
+            pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(Event), this);
+
         if (wd > 0) {
-            this.zoomIn();
+            this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
         } else {
-            this.zoomOut();
+            this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
         }
-        
+
         Event.preventDefault();
         return false;
     },
@@ -1326,8 +1327,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // This is not required, but to be downwards compatible, we should keep it for a while.
         // changed in version 0.91a
         if (JXG.exists(x) && JXG.exists(y)) {
-            this.origin.scrCoords[1] = x - this.drag_dx;
-            this.origin.scrCoords[2] = y - this.drag_dy;
+            this.origin.scrCoords[1] = x;
+            this.origin.scrCoords[2] = y;
         }
 
         for (ob in this.objects) {
@@ -1500,14 +1501,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Zooms into the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
      * @returns {JXG.Board} Reference to the board
      */
-    zoomIn: function () {
+    zoomIn: function (x, y) {
         var bb = this.getBoundingBox(),
             zX = this.options.zoom.factorX,
             zY = this.options.zoom.factorY,
-            dX = (bb[2]-bb[0])*(1.0-1.0/zX)*0.5,
-            dY = (bb[1]-bb[3])*(1.0-1.0/zY)*0.5;
-            
-        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
+            dX = (bb[2]-bb[0])*(1.0-1.0/zX),
+            dY = (bb[1]-bb[3])*(1.0-1.0/zY),
+            lr = 0.5, tr = 0.5;
+
+        if (typeof x === 'number' && typeof y === 'number') {
+            lr = (x - bb[0])/(bb[2] - bb[0]);
+            tr = (bb[1] - y)/(bb[1] - bb[3]);
+        }
+
+        this.setBoundingBox([bb[0]+dX*lr, bb[1]-dY*tr, bb[2]-dX*(1-lr), bb[3]+dY*(1-tr)], false);
         this.zoomX *= zX;
         this.zoomY *= zY;
         this.applyZoom();
@@ -1518,14 +1525,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Zooms out of the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
      * @returns {JXG.Board} Reference to the board
      */
-    zoomOut: function () {
+    zoomOut: function (x, y) {
         var bb = this.getBoundingBox(),
             zX = this.options.zoom.factorX,
             zY = this.options.zoom.factorY,
-            dX = (bb[2]-bb[0])*(1.0-zX)*0.5,
-            dY = (bb[1]-bb[3])*(1.0-zY)*0.5;
+            dX = (bb[2]-bb[0])*(1.0-zX),
+            dY = (bb[1]-bb[3])*(1.0-zY),
+            lr = 0.5, tr = 0.5;
+
+        if (typeof x === 'number' && typeof y === 'number') {
+            lr = (x - bb[0])/(bb[2] - bb[0]);
+            tr = (bb[1] - y)/(bb[1] - bb[3]);
+        }
         
-        this.setBoundingBox([bb[0]+dX, bb[1]-dY, bb[2]-dX, bb[3]+dY], false);
+        this.setBoundingBox([bb[0]+dX*lr, bb[1]-dY*tr, bb[2]-dX*(1-lr), bb[3]+dY*(1-tr)], false);
         this.zoomX /= zX;
         this.zoomY /= zY;
         this.applyZoom();
