@@ -800,10 +800,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 anchor: this,
                 id: this.id + 'Label',
                 isLabel: true,
-                visible: this.visProp.visible
+                visible: this.visProp.visible,
+                strokeColor: this.visProp.labelcolor || this.board.options.text.strokeColor
             });
 
-            this.label.color = '#000000';
+            this.label.color = this.label.content.visProp.strokecolor;
 
             if (!this.visProp.visible) {
                 this.label.hiddenByParent = true;

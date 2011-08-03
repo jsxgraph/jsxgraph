@@ -57,6 +57,7 @@
                 insertTicks: false
             }
         });
+        brd.create('point', [0.5, 3], {labelColor: 'red'});
         curve = brd.create('functiongraph', [function(x){return Math.sin(x);} ]);
         brd.unsuspendUpdate();
     })();
