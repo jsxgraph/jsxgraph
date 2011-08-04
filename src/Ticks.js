@@ -188,10 +188,12 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 if(labelText.length > 5 || labelText.indexOf('e') != -1) {
                     labelText = pos.toPrecision(3).toString();
                 }
-                // trim trailing zeros
-                labelText = labelText.replace(/0+$/, '');
-                // trim trailing .
-                labelText = labelText.replace(/\.$/, '');
+                if (labelText.indexOf('.') > -1) {
+                    // trim trailing zeros
+                    labelText = labelText.replace(/0+$/, '');
+                    // trim trailing .
+                    labelText = labelText.replace(/\.$/, '');
+                }
                 
                 label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
                     id: id + i + 'Label',
