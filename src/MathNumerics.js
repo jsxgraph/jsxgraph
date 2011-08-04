@@ -1364,6 +1364,11 @@ JXG.Math.Numerics = (function(JXG, Math) {
             return b;
         },
 
+        /*
+         * Maximum number of iterations in @see #fminbr
+         */
+        maxIterationsMininimize: 500, 
+        
         /**
          *
          * Find minimum of an univariate function f.
@@ -1376,14 +1381,14 @@ JXG.Math.Numerics = (function(JXG, Math) {
          *  computations. M., Mir, 1980, p.180 of the Russian edition
          * x0 
          **/
-
         fminbr: function(f, x0, object) {              // An estimate to the min location
             var a, b, x, v, w,
                 fx, fv, fw,
                 r = (3.-Math.sqrt(5.0))*0.5,            // Golden section ratio   
                 tol = JXG.Math.eps,
                 sqrteps = Math.sqrt(JXG.Math.eps),
-                maxiter = 50, niter = 0,
+                maxiter = this.maxIterationsMinimize, 
+                niter = 0,
                 range, middle_range, tol_act, new_step,
                 p, q, t, ft,
                 nfev = 0;
@@ -1391,7 +1396,6 @@ JXG.Math.Numerics = (function(JXG, Math) {
             if (!JXG.isArray(x0) || x0.length<2) {
                 throw new Error("JXG.Math.Numerics.fminbr: length of array x0 has to be at least two.");
             }
-            
             a = x0[0];
             b = x0[1];
             v = a + r*(b-a);  
@@ -1472,7 +1476,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 }
                 niter++;
             } 
-            JXG.debug("fminbr: maxiter="+maxiter+" reached.");
+            //JXG.debug("fminbr: maxiter="+maxiter+" reached.");
             return x;
         },
 

@@ -72,7 +72,11 @@
         	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"
             graph.Y = graph.yterm;
     		graph.updateCurve();
-            document.getElementById("debug").innerHTML += ", "+JXG.Math.Numerics.root(f, [-1,5]);
+ 
+            document.getElementById("debug").innerHTML += ",<br>";
+            JXG.Math.Numerics.maxIterationsMinimize = 1000;
+            JXG.Math.Numerics.fminbr(f, [-1,5]);
+            document.getElementById("debug").innerHTML += JXG.Math.Numerics.fminbr(f, [-1,5]);;
 
     		board.update();
         } 
