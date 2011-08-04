@@ -483,6 +483,15 @@ JXG.Math.Geometry = {
         intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
         intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
 
+        /**
+         * At this point we have four points:
+         * point1 and point2 are the first and the second defining point on the line,
+         * intersect1, intersect2 are the intersections of the line with border around the board.
+         */
+        
+        /*
+         * Here we handle rays where both defining points are outside of the board.
+         */
         if (!takePoint1 && !takePoint2) {              // If both points are outside and the complete ray is outside we do nothing
             if (!straightFirst && straightLast && // Ray starting at point 1
                     !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
@@ -493,8 +502,25 @@ JXG.Math.Geometry = {
             }
         }
 
+        /*
+         * If at least one of the definng points is outside of the board
+         * we take intersect1 or intersect2 as one of the end points
+         * The order is also important for arrows of axes
+         */
         if (!takePoint1) {
-            if (!takePoint2) {                // Two border intersection points are used
+            if (!takePoint2) {                                   
+                /*
+                 * Two border intersection points are used
+                 */
+                if (this.isSameDir(point1, point2, intersect1, intersect2)) {
+                    p1 = intersect1;
+                    p2 = intersect2;
+                } else {
+                    p2 = intersect1;
+                    p1 = intersect2;
+                }
+                    
+                /*
                 if (this.isSameDirection(point1, point2, intersect1)) {
                     if (!this.isSameDirection(point1, point2, intersect2)) {
                         p2 = intersect1;
@@ -522,20 +548,40 @@ JXG.Math.Geometry = {
                         }
                     }
                 }
-            } else {                          // Instead of point1 the border intersection is taken
-                if (this.isSameDirection(point2, point1, intersect1)) {
+                */
+            } else {
+                /*
+                * One border intersection points is used 
+                */
+                if (this.isSameDir(point1, point2, intersect1, intersect2)) {
                     p1 = intersect1;
                 } else {
                     p1 = intersect2;
                 }
+                /*
+                if (this.isSameDirection(point2, point1, intersect1)) { // Instead of point1 the border intersection is taken
+                    p1 = intersect1;
+                } else {
+                    p1 = intersect2;
+                }
+                */
             }
         } else {
-            if (!takePoint2) {                // Instead of point2 the border intersection is taken
-                if (this.isSameDirection(point1, point2, intersect1)) {
+            if (!takePoint2) {
+                /*
+                * One border intersection points is used 
+                */
+                if (this.isSameDir(point1, point2, intersect1, intersect2)) {
+                    p2 = intersect2;
+                } else {
+                    p2 = intersect1;
+                } /*
+                if (this.isSameDirection(point1, point2, intersect1)) { // Instead of point2 the border intersection is taken
                     p2 = intersect1;
                 } else {
                     p2 = intersect2;
                 }
+                */
             }
         }
 
@@ -543,6 +589,29 @@ JXG.Math.Geometry = {
         if (p2) point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
     },
 
+    /**
+     * The vectors p2-p1 and i2-i1 are supposed collinear.
+     * If their cosine is positive they point into the same direction
+     * otherwise they point in opposite direction
+     * @param {JXG.Coords} p1 
+     * @param {JXG.Coords} p2 
+     * @param {JXG.Coords} i1 
+     * @param {JXG.Coords} i2 
+     * @returns {Boolean} True, if p2-p1 and i2-i1 point into the same direction
+     */
+    isSameDir: function(p1, p2, i1, i2) {
+        var dpx = p2.usrCoords[1] - p1.usrCoords[1],
+            dpy = p2.usrCoords[2] - p1.usrCoords[2],
+            dix = i2.usrCoords[1] - i1.usrCoords[1],
+            diy = i2.usrCoords[2] - i1.usrCoords[2];
+            
+        if (dpx*dix+dpy*diy>=0) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    
     /**
      * If you're looking from point "start" towards point "s" and can see the point "p", true is returned. Otherwise false.
      * @param {JXG.Coords} start The point you're standing on.
