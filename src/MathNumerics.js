@@ -1217,6 +1217,16 @@ JXG.Math.Numerics = (function(JXG, Math) {
         },
 
 
+        /*
+         * Maximum number of iterations in @see #fzero
+         */
+        maxIterationsRoot: 500, 
+
+        /*
+         * Maximum number of iterations in @see #fminbr
+         */
+        maxIterationsMininimize: 500, 
+        
         /**
          *
          * Find zero of an univariate function f.
@@ -1236,7 +1246,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
          **/
         fzero: function(f, x0, object) {
             var tol = JXG.Math.eps,
-                maxiter = 50, niter = 0,
+                maxiter = maxIterationsRoot, niter = 0,
                 nfev = 0,
                 eps = tol,
                 a,b,c, 
@@ -1360,15 +1370,11 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 niter++;
             }                                           // End while
             
-            JXG.debug("fzero: maxiter="+maxiter+" reached.");
+            //JXG.debug("fzero: maxiter="+maxiter+" reached.");
             return b;
         },
 
-        /*
-         * Maximum number of iterations in @see #fminbr
-         */
-        maxIterationsMininimize: 500, 
-        
+     
         /**
          *
          * Find minimum of an univariate function f.
