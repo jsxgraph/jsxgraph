@@ -115,10 +115,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     hasPoint: function (x,y) {
         var coordsScr = this.coords.scrCoords, r;
-        r = this.visProp.size;
+        r = parseFloat(this.visProp.size);
         if(r < this.board.options.precision.hasPoint) {
             r = this.board.options.precision.hasPoint;
         }
+
         return ((Math.abs(coordsScr[1]-x) < r+2) && (Math.abs(coordsScr[2]-y)) < r+2);
     },
 
