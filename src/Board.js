@@ -651,10 +651,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.mode = this.BOARD_MODE_DRAG;
         for (el in this.objects) {
             pEl = this.objects[el];
-            if (pEl.isDraggable
+            if (
+                (
+                    (this.geonextCompatibilityMode&&(pEl.elementClass==JXG.OBJECT_CLASS_POINT||pEl.type==JXG.OBJECT_TYPE_TEXT) ) 
+                    ||
+                    (!this.geonextCompatibilityMode&&pEl.isDraggable)
+                )
                 && pEl.visProp.visible
                 && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
-                && JXG.exists(pEl.hasPoint)
+                && JXG.exists(pEl.hasPoint) 
                 && pEl.hasPoint(x, y)
                 ) {
                 
@@ -1390,7 +1395,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
-                    //plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
+                    plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,x,'+(right) +');\n';
                     plaintext += 'el.prepareUpdate().update();\n';
                     break;

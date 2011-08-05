@@ -73,7 +73,8 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JXG.Options.elements.color#strokeColor}
+         * @default {@link JX        polygon: 3,
+G.Options.elements.color#strokeColor}
          */
         strokeColor: '#0000ff',
 
@@ -390,6 +391,7 @@ JXG.Options = {
         sector: 3,
         angle : 3, 
         integral : 3,
+        axis : 2,
         grid  : 1,
         image : 0,
         trace: 0

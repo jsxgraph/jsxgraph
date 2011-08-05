@@ -356,6 +356,7 @@ JXG.createPerpendicular = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular', 'point');
     t = JXG.createPerpendicularPoint(board, [l, p], attr);
 
+    if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
     pd = JXG.createLine(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
@@ -635,6 +636,7 @@ JXG.createParallel = function(board, parents, attributes) {
     else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)
         p = parents[1];
 
+    if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'parallel');
     pl = board.create('line', [p, pp], attr);
 
@@ -869,6 +871,7 @@ JXG.createBisector = function(board, parents, attributes) {
         for(i=0; i<3; i++)
             parents[i].addChild(p); // required for algorithm requiring dependencies between elements
 
+        if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
         attr = JXG.copyAttributes(attributes, board.options, 'bisector');
         l = JXG.createLine(board, [parents[1], p], attr);
 
@@ -931,6 +934,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
                         "\nPossible parent types: [line,line]");
     }
 
+    if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line1');
     g1 = board.create('line',[
         function(){
@@ -950,6 +954,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
         }
     ], attr);
     
+    if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
     g2 = board.create('line',[
         function(){
@@ -1145,6 +1150,7 @@ JXG.createCircumcircle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');
         p = JXG.createCircumcircleMidpoint(board, parents, attr);
         
+        if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.circle;
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
         c = JXG.createCircle(board, [p, parents[0]], attr);
     } catch(e) {
@@ -1190,6 +1196,7 @@ JXG.createIncircle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'point');
         p = JXG.createIncenter(board, parents, attr);
 
+        if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.circle;
         attr = JXG.copyAttributes(attributes, board.options, 'incircle');
         c = JXG.createCircle(board, [p, function() {
             var a = Math.sqrt((parents[1].X() - parents[2].X())*(parents[1].X() - parents[2].X()) + (parents[1].Y() - parents[2].Y())*(parents[1].Y() - parents[2].Y())),
