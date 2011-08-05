@@ -740,6 +740,7 @@ JXG.GeonextReader = {
                                 gxtEl.outLine = gxtReader.colorProperties(gxtEl.outLine, xmlNode);
                                 gxtEl.outLine = gxtReader.visualProperties(gxtEl.outLine, xmlNode);
                                 gxtEl.outLine = gxtReader.firstLevelProperties(gxtEl.outLine, xmlNode);
+                                gxtEl.outLine = gxtReader.readNodes(gxtEl.outLine, xmlNode, 'straight', 'straight');
                                 gxtEl.outLine = gxtReader.transformProperties(gxtEl.outLine);
                                 gxtEl.outLine.point = gxtEl.out;
 
