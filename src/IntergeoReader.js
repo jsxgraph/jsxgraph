@@ -556,10 +556,11 @@ JXG.IntergeoReader = new function() {
         el1 = this.addPoint(this.objects[param[1]]);
         el2 = this.addPoint(this.objects[param[2]]);
         el = this.board.create('perpendicular',[el1.id,el2.id],
-                                {name:[param[0],param[0]+'foot'],id:[param[0],param[0]+'foot'],withLabel:true});
-        el[0].setProperty("straightFirst:true","straightLast:true"); // line
-        el[1].setProperty("visible:false");                          // point
-        this.objects[param[0]] = el[0];
+                                {name:param[0], id:param[0], 
+                                 straightFirst:true, straightLast:true,
+                                 point: {name:param[0]+'foot',id:param[0]+'foot'},
+                                 withLabel:true});
+        this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
 
@@ -646,9 +647,10 @@ JXG.IntergeoReader = new function() {
         el2 = this.addPoint(this.objects[param[2]]);
         el3 = this.addPoint(this.objects[param[3]]);
         el = this.board.create('bisector',[el1.id,el2.id,el3.id],
-                                {name:param[0], id:param[0], withLabel:true});
+                                {name:param[0], id:param[0], withLabel:true,
+                                 straightFirst:isLine, straightLast:true, strokeColor:'#000000'
+                                });
                                 //{name:[param[0]+'_1',param[0]+'_2'], id:[param[0]+'_1',param[0]+'_2'], withLabel:false});
-        el.setProperty({straightFirst:isLine,straightLast:true,strokeColor:'#000000'});
         this.objects[param[0]] = el;
         this.objects[param[0]].exists = true;
     };
@@ -678,9 +680,10 @@ JXG.IntergeoReader = new function() {
         for (i=0;i<3;i++) {
           p[i] = this.addPoint(this.objects[param[i+1]]); //JXG.getReference(this.board,param[i+1]);
         }
-        ar = this.board.create('circumcircle',p, {name:[param[0]+'c',param[0]], id:[param[0]+'c',param[0]],withLabel:true});
-        ar[0].setProperty({visible:false}); // center should be invisible
-        ar[1].setProperty({withLabel:true}); // label of circle does not work yet
+        ar = this.board.create('circumcircle',p, 
+            {name: param[0], id:param[0],
+             point: {name: param[0]+'c', id: param[0]+'c'},
+             withLabel:true});
         this.objects[param[0]].exists = true;
     };
 
@@ -794,8 +797,11 @@ JXG.IntergeoReader = new function() {
 
         ar = this.board.create('bisectorlines',
             [l1,l2],
-            {name:[param[0],param[1]], id:[param[0],param[1]],
-            straightFirst:true, straightLast:true, strokeColor:'#ff0000', withLabel:true});
+            { 
+             line1:{name:param[0], id:param[0], straightFirst:true, straightLast:true},
+             line2:{name:param[1], id:param[1], straightFirst:true, straightLast:true},
+             withLabel:true
+            });
         this.objects[param[0]].exists = true;
         this.objects[param[1]].exists = true;
     };
