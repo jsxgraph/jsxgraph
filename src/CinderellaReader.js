@@ -172,10 +172,10 @@ JXG.CinderellaReader = new function() {
                 i = erg[3]; 
                 circle = board.create('circumcircle',
                         [JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1]),JXG.getReference(board,defName[2])],
-                        {name:['',objName]});
-                circle[0].setProperty({visible:false});
-                circle[1].setProperty({strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
-                                     strokeWidth:erg[0][2]});
+                        {name:objName, strokeColor:erg[0][0], fillColor:erg[1], fillOpacity:erg[2],
+                         strokeWidth:erg[0][2],
+                         point:{name:'', visible:false}
+                        });
             }
             else if(dataLines[i].search(/Parallel\(.+/) != -1) { // Parallele
                 defPoints = dataLines[i].slice(dataLines[i].search(/Parallel.+/)+9);
@@ -372,7 +372,9 @@ JXG.CinderellaReader = new function() {
                     i = erg[2];
                 }
                 lines = board.create('bisectorlines',[JXG.getReference(board,defName[0]),JXG.getReference(board,defName[1])],
-                                           {name:[objName2,objName], withLabel:true});
+                                           {line1: {name:objName2},
+                                            line2: {name:objName}, 
+                                            withLabel:true});
                 if(objName == '') {
                     lines.line2.setProperty({visible:false});
                     lines.line1.setProperty({strokeColor:erg[0][0], strokeWidth:erg[0][2], dash:erg[1]});
