@@ -1220,12 +1220,12 @@ JXG.Math.Numerics = (function(JXG, Math) {
         /*
          * Maximum number of iterations in @see #fzero
          */
-        maxIterationsRoot: 500, 
+        maxIterationsRoot: 80, 
 
         /*
          * Maximum number of iterations in @see #fminbr
          */
-        maxIterationsMininimize: 500, 
+        maxIterationsMinimize: 500, 
         
         /**
          *
@@ -1246,7 +1246,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
          **/
         fzero: function(f, x0, object) {
             var tol = JXG.Math.eps,
-                maxiter = maxIterationsRoot, niter = 0,
+                maxiter = this.maxIterationsRoot, niter = 0,
                 nfev = 0,
                 eps = tol,
                 a,b,c, 
