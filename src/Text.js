@@ -284,7 +284,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 res = res.replace(/\\'/g,"'");
 
                 if (res.indexOf('toFixed')<0) {  // GEONExT-Hack: apply rounding once only.  
-                    if (JXG.isNumber( (new Function('return '+res+';'))() )) {          // output of a value tag
+                    if (JXG.isNumber( (JXG.bind(new Function('return '+res+';'), this))() )) {          // output of a value tag
                                                                                         // may also be a string
                         plaintext += '+('+ res + ').toFixed('+(this.visProp.digits)+')';
                     } else {
