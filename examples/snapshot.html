@@ -31,16 +31,26 @@
             snapshot = function () {
                 var img = document.getElementById('snapshot'),
                     renderer = board.renderer,
+                    i, j,
                     rendererType = board.options.renderer;
 
+                for (j in {x: null, y: null}) {
+                    for (i = 0; i < board.defaultAxes[j].defaultTicks.labels.length; i++) {
+                        if (board.defaultAxes[j].defaultTicks.labels[i] !== null) {
+                            board.removeObject(board.defaultAxes[j].defaultTicks.labels[i]);
+                        }
+                    }
+                }
+
+
+                board.removeEventHandlers();
                 board.container = 'debug';
                 board.containerObj = document.getElementById('debug');
                 board.containerObj.innerHTML = '';
                 board.containerObj.style.width = board.canvasWidth + 'px';
                 board.containerObj.style.height = board.canvasHeight + 'px';
                 board.renderer = new JXG.CanvasRenderer(board.containerObj),
-                    board.options.renderer = 'canvas';
-                board.removeEventHandlers();
+                board.options.renderer = 'canvas';
 
                 board.fullUpdate();
 
@@ -54,6 +64,8 @@
                 board.containerObj = document.getElementById('jxgbox');
                 board.options.renderer = rendererType;
                 board.renderer = renderer;
+                //board.defaultAxes.x.defaultTicks.removeAllTicks();
+                //board.defaultAxes.x.defaultTicks.labels = labels;
                 board.addEventHandlers();
                 board.fullUpdate();
             };
