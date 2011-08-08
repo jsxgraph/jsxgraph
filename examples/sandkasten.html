@@ -41,10 +41,47 @@
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 </div>
 
-<div id="debug" style="display:block;"></div>
+<div id="debug" style="display:none;"></div>
 <a href="javascript:void(0);" id="hideaxis">Hide Axis</a>
+<img id="snapshot" />
 <script type="text/javascript">
     /* <![CDATA[ */
+
+    var david = (function () {
+        JXG.Options.text.display = 'internal';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            p1 = board.create('point', [1, 1]),
+
+            img = document.getElementById('snapshot'),
+            renderer = board.renderer,
+            rendererType = board.options.renderer;
+
+        board.container = 'debug';
+        board.containerObj = document.getElementById('debug');
+        board.containerObj.innerHTML = '';
+        board.containerObj.style.width = board.canvasWidth + 'px';
+        board.containerObj.style.height = board.canvasHeight + 'px';
+        board.renderer = new JXG.CanvasRenderer(board.containerObj),
+        board.options.renderer = 'canvas';
+        board.removeEventHandlers();
+
+        board.fullUpdate();
+
+
+        img.style.width = board.canvasWidth + 'px';
+        img.style.height = board.canvasHeight + 'px';
+        img.src = board.renderer.canvasRoot.toDataURL();
+        board.containerObj.innerHTML = '';
+        delete board.renderer;
+        board.container = 'jxgbox';
+        board.containerObj = document.getElementById('jxgbox');
+        board.options.renderer = rendererType;
+        board.renderer = renderer;
+        board.addEventHandlers();
+        board.fullUpdate();
+
+        return board;
+    })();
 
     var angle = (function () {
         var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
@@ -52,7 +89,7 @@
             p2 = brd.create('point', [0, 0]),
             p3 = brd.create('point', [1, 1.5]),
             yaxis = brd.create('angle', [p1, p2, p3], {radius: 0.5});
-    })();
+    });
 
     var alyssa = (function () {
         var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, 4, 1, -4], axis:false, showCopyright:false, showNavigation:true});
