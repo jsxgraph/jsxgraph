@@ -82,7 +82,7 @@ p = b.create('point',[1,0], {name:'1'});
 
 b.create('perpendicular', [p,l], {straightFirst:false, straightLast:false});
 */
-//f = b.create('functiongraph',["X(S_1)*x^2"]);
+f = brd.create('functiongraph',["(x-X(E))^2+Y(E)"], {name:'f', withLabel:true});
 //t = b.create('text',[2,3, 'test'], {name:'1', visible:false});
 
 //if (true) {t.showElement();} else {t.hideElement();}

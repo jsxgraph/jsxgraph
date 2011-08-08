@@ -302,7 +302,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 this.updateParametricCurveNaive(mi,ma,len);
             }
         }
-        this.getLabelAnchor();
+        //this.getLabelAnchor();  // not used
         return this;
     },
 
