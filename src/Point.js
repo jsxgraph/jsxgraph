@@ -946,7 +946,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Remove the point from the drawing.
+     * Remove the point from the drawing. This only removes the SVG or VML node of the point and its label from the renderer, to remove
+     * the object completely you should use {@link JXG.Board#removeObject}.
      */
     remove: function() {    
         if (this.hasLabel) {

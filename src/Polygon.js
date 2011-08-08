@@ -233,6 +233,10 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         return Math.abs(area);
     },
 
+    /**
+     * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
+     * the object completely you should use {@link JXG.Board#removeObject}.
+     */
     remove: function () {
         var i;
 

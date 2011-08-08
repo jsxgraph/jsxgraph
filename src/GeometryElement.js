@@ -712,7 +712,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Removes the element from the construction.
+     * Removes the element from the construction.  This only removes the SVG or VML node of the element and its label (if available) from
+     * the renderer, to remove the element completely you should use {@link JXG.Board#removeObject}.
      */
     remove: function () {
         this.board.renderer.remove(this.board.renderer.getElementById(this.id));
