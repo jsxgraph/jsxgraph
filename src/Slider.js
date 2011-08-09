@@ -187,6 +187,26 @@ JXG.createSlider = function(board, parents, attributes) {
          */
         p3.ticks = ti;
     }
+
+    // override the point's remove method to ensure the removal of all elements
+    p3.remove = function () {
+        if (withText) {
+            board.removeObject(t);
+        }
+        
+        board.removeObject(l2);
+
+        if (withTicks) {
+            l1.removeTicks(ti);
+        }
+
+        board.removeObject(l1);
+        board.removeObject(p2);
+        board.removeObject(p1);
+
+
+        JXG.Point.prototype.remove.call(p3);
+    };
     
     return p3;
 };    

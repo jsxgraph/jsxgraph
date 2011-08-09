@@ -723,6 +723,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         for(t=this.ticks.length; t>0; t--) {
             if(this.ticks[t-1] == tick) {
                 this.board.renderer.remove(this.ticks[t-1].rendNode);
+                delete this.board.objects[this.ticks[t-1].id];
 
                 for(j=0; j<this.ticks[t-1].ticks.length; j++) {
                     if(this.ticks[t-1].labels[j] != null)

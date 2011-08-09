@@ -25,6 +25,7 @@
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
             p = board.create('point', [1, 1]),
             l = board.create('line', [1, -1, 3]),
+            slider = board.create('slider', [[-2, 2], [0, 2], [0, 2.5, 5]]),
             pol = board.create('polygon', [board.defaultAxes.x.point2, board.defaultAxes.y.point2, p]),
             sine = board.create('functiongraph', [Math.sin]),
 
@@ -71,6 +72,8 @@
             };
 
         snapshot();
+
+        board.removeObject(slider);
 
         JXG.addEvent(document.getElementById('release'), 'click', snapshot, this);
 
