@@ -4,12 +4,12 @@
     <title>JSXGraph example</title>
 
     <!-- JSXGraph -->
-    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
     <link rel="stylesheet" type="text/css" href="css/dark.css" />
-    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
 
     <!-- jQuery -->
-    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jquery.min.js"></script>
 
     <!-- Syntax Highlighting -->
     <link rel="stylesheet" type="text/css" href="css/shCore.css" />
@@ -28,7 +28,7 @@
 
 <div id="title">
     <ul id="menu">
-        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Lindenmayer</a></h2></li>
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Lindenmayer systems</a></h2></li>
         <li id="menu-info"><h2><a href="javascript:void(0);" id="head-explanation">Info</a></h2></li>
         <li id="menu-source"><h2><a href="javascript:void(0);" id="head-source">Source</a></h2></li>
     </ul>
@@ -60,6 +60,7 @@ F:F+F--F+F
             <option value="9"> 9
             <option value="10"> 10
         </select>
+		  <input type="hidden" id="maxlevel" value="8">
         <button id="startplot" style="float: right">Draw</button>
 
         <h4>Examples</h4>
@@ -87,7 +88,7 @@ F:F+F--F+F
             }), 
             
 
-        angle = 60*Math.PI/180.0,
+		  angle = 60*Math.PI/180.0,
         control = JXG.JSXGraph.initBoard('controlroom', {axis: false, boundingbox: [-1.5, 1.5, 1.5, -1.5], keepaspectratio: true}),
         ctrlc = control.create('circle', [[0, 0], 1], {strokeColor: '#F9F7ED', highlightStrokeColor: '#F9F7ED', strokeOpacity: 0.7, highlightStrokeOpacity: 0.7}),
         ctrlp2 = control.create('point', [1, 0], {withLabel: false, fixed: true}),
@@ -101,67 +102,80 @@ F:F+F--F+F
                 "Sierpinski": {
                     r: "A:B-A-B,\nB:A+B+A",
                     s: 'A',
-                    a: 60
+						  a: 60,
+						  maxlevel:10
                 },
                 "Koch Curve": {
                     r: "F:F+F--F+F",
                     s: 'F',
-                    a: 60
+						  a: 60,
+						  maxlevel:7
                 },
                 "Koch Snowflake": {
                     r: "F:F+F--F+F",
                     s: 'F--F--F',
-                    a: 60
+                    a: 60,
+						  maxlevel:7
                 },
                 "Peano": {
                     r: "X:XFYFX+F+YFXFY-F-XFYFX,\nY:YFXFY-F-XFYFX+F+YFXFY",
                     s: 'X',
-                    a: 90
+                    a: 90,
+						  maxlevel:5
                 },
                 "Hilbert": {
                     r: "L:+RF-LFL-FR+,\nR:-LF+RFR+FL-",
                     s: 'L',
-                    a: 90
+                    a: 90,
+						  maxlevel:7
                 },
                 "Gosper": {
                     r: "X:X+YF++YF-FX--FXFX-YF+,\nY:-FX+YFYF++YF+FX--FX-Y",
                     s: 'XF',
-                    a: 60
+                    a: 60,
+						  maxlevel:7
                 },
                 "Dragon": {
                     r: "X:X+YF+,\nY:-FX-Y",
                     s: 'FX',
-                    a: 90
+                    a: 90,
+						  maxlevel:10
                 },
                 "Plant I": {
                     r: "F:F[+F]F[-F]F",
                     s: 'F',
-                    a: 25.7
+                    a: 25.7,
+						  maxlevel:5
                 },
                 "Plant II": {
                     r: "F:FF,\nX:F-[[X]+X]+F[+FX]-X",
                     s: 'X',
-                    a: 22.5
+                    a: 22.5,
+						  maxlevel:5
                 },
                 "Plant III": {
                     r: "A:F[+A][-A]FA,\nF:FF",
                     s: 'A',
-                    a: 22.5
+                    a: 22.5,
+						  maxlevel:6
                 },
                 "Plant IV": {
                     r: "A:FF[+B]F[-A]FA,\nB:FF[-A]F[+A]FB,\nF:FF",
                     s: 'A',
-                    a: 28
+                    a: 28,
+						  maxlevel:7
                 },
                 "Islands": {
                     r: "F:F-f+FF-F-FF-Ff-FF+f-FF+F+FF+Ff+FFF,\nf:ffffff",
                     s: 'F-F-F-F',
-                    a: 90
+                    a: 90,
+						  maxlevel:2
                 },
                 "Penrose Tiling": {
                     r: "6:81++91----71[-81----61]++,\n7:+81--91[---61--71]+,\n8:-61++71[+++81++91]-,\n9:--81++++61[+91++++71]--71,\n1:",
                     s: '[7]++[7]++[7]++[7]++[7]',
-                    a: 36.0
+                    a: 36.0,
+						  maxlevel:4
                 }
             },
 
@@ -275,11 +289,11 @@ F:F+F--F+F
             var i, 
                 rules, lines, el,
                 level = parseInt(document.getElementById('level').value),
+                maxlevel = parseInt(document.getElementById('maxlevel').value),
                 str,
                 angle = JXG.Math.Geometry.trueAngle(ctrla.point2, ctrla.point1, ctrla.point3),
                 alphabet;
 
-            //angle = 60;
             lines = document.getElementById('inp').value.replace(/[ \n\t]/g,'').split(',');
             rules = {};
             for (i=0; i<lines.length; i++) {
@@ -302,7 +316,11 @@ F:F+F--F+F
             start.moveTo([-250,-250], 0); 
             turtle.hideTurtle(); 
             // turtle.rt(90*Math.pow(-1,level)); 
-
+            
+				if (level>maxlevel) {
+					level=maxlevel;
+					document.getElementById('level').value = level;
+			   }
             for (i=0;i<level;i++) {
                 if (str.length<40000) {
                     str = mreplace(str, rules, alphabet);
@@ -323,7 +341,8 @@ F:F+F--F+F
                     document.getElementById('inp').value = examples[_i].r;
                     document.getElementById('axiom').value = examples[_i].s;
                     ctrlg.moveTo([Math.cos(a),Math.sin(a)],200);
-                    document.getElementById('out').value = "";
+						  //document.getElementById('out').value = "";
+						  document.getElementById('maxlevel').value = examples[_i].maxlevel;
                 }
             })(i));
         }
