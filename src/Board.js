@@ -652,11 +652,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (el in this.objects) {
             pEl = this.objects[el];
             if (
-                (
-                    (this.geonextCompatibilityMode&&(pEl.elementClass==JXG.OBJECT_CLASS_POINT||pEl.type==JXG.OBJECT_TYPE_TEXT) ) 
-                    ||
-                    (!this.geonextCompatibilityMode&&pEl.isDraggable)
-                )
+                (this.geonextCompatibilityMode&&(pEl.elementClass==JXG.OBJECT_CLASS_POINT||pEl.type==JXG.OBJECT_TYPE_TEXT)) 
+                && pEl.isDraggable
                 && pEl.visProp.visible
                 && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
                 && JXG.exists(pEl.hasPoint) 
