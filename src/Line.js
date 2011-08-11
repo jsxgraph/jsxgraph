@@ -703,11 +703,15 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * Removes all ticks from a line.
      */
     removeAllTicks: function() {
-        var t;
+        var i, t;
         for(t=this.ticks.length; t>0; t--) {
-            this.board.renderer.remove(this.ticks[t-1].rendNode);
+            for (i in this.ticks[t-1].labels) 
+                this.board.removeObject(this.ticks[t-1].labels[i]);
+      //      this.board.renderer.remove(this.ticks[t-1].rendNode);
+            this.board.removeObject(this.ticks[t-1]);
         }
         this.ticks = new Array();
+        this.board.update(); // needed for canvas renderer
     },
 
     /**

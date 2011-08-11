@@ -2067,6 +2067,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.grids.length = 0;
+	this.update(); // needed for canvas renderer
 
         return this;
     },

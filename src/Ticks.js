@@ -437,12 +437,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         // remove existing tick labels
         if(this.ticks != null) {
-            if ((this.board.needsFullUpdate||this.needsRegularUpdate) && 
+            if ((this.board.needsFullUpdate||this.needsRegularUpdate) &&
                 !(this.board.options.renderer=='canvas'&&this.board.options.text.display=='internal')
                ) {
                 for(j=0; j<this.ticks.length; j++) {
                     if(this.labels[j]!=null && this.labels[j].visProp.visible) {
-                        this.board.renderer.remove(this.labels[j].rendNode);
+//                        this.board.renderer.remove(this.labels[j].rendNode);
+                        this.board.removeObject(this.labels[j]);
                     }
                 }
             }
