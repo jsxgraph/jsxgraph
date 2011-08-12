@@ -704,14 +704,13 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
     removeAllTicks: function() {
         var i, t;
-        for(t=this.ticks.length; t>0; t--) {
-            for (i in this.ticks[t-1].labels) 
-                this.board.removeObject(this.ticks[t-1].labels[i]);
-      //      this.board.renderer.remove(this.ticks[t-1].rendNode);
-            this.board.removeObject(this.ticks[t-1]);
+
+        for(t = this.ticks.length; t > 0; t--) {
+            this.removeTicks(this.ticks[t-1]);
         }
+
         this.ticks = new Array();
-        this.board.update(); // needed for canvas renderer
+        this.board.update();
     },
 
     /**
@@ -724,16 +723,16 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             this.defaultTicks = null;
         }
 
-        for(t=this.ticks.length; t>0; t--) {
+        for(t = this.ticks.length; t > 0; t--) {
             if(this.ticks[t-1] == tick) {
-                this.board.renderer.remove(this.ticks[t-1].rendNode);
-                delete this.board.objects[this.ticks[t-1].id];
+                this.board.removeObject(this.ticks[t-1]);
 
                 for(j=0; j<this.ticks[t-1].ticks.length; j++) {
                     if(this.ticks[t-1].labels[j] != null)
-                        if (this.ticks[t-1].labels[j].show) this.board.renderer.remove(this.ticks[t-1].labels[j].rendNode);
+                        this.board.removeObject(this.ticks[t-1].labels[j]);
                 }
                 delete(this.ticks[t-1]);
+                break;
             }
         }
     }
