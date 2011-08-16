@@ -693,15 +693,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             drag = o.obj,
             oldCoords;
 
-        // Remember the actual position for the next move event. Then we are able to 
-        // compute the difference vector.
-        o.targets[0].Xprev = o.targets[0].X;
-        o.targets[0].Yprev = o.targets[0].Y;
-        o.targets[0].X = x;
-        o.targets[0].Y = y;
+        //o.targets[0].X = x;
+        //o.targets[0].Y = y;
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-            oldCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this);
-            drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
+			if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) 
+                 drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
+
+            // Remember the actual position for the next move event. Then we are able to 
+            // compute the difference vector.
+            o.targets[0].Xprev = newPos.scrCoords[1];
+            o.targets[0].Yprev = newPos.scrCoords[2];
+
             this.update(drag);
         } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
             oldCoords = drag.coords;
@@ -841,7 +843,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         evt.preventDefault();
         this.updateHooks('mousedown', evt);
-
         // move origin - but only if we're not in drag mode
         if ( (this.mode === this.BOARD_MODE_NONE)
              && (evt.targetTouches.length == 2)
@@ -908,7 +909,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN
-                            }
+							}
                         ]
                     });
                 }
@@ -1016,7 +1017,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
         }
-
         pos = this.getMousePosition(Evt);
 
         if (Evt.shiftKey) {

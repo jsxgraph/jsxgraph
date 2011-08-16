@@ -540,7 +540,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         var dx = x - oldx, 
             dy = y - oldy,
             newx, newy, pc;
-//console.log(this.point1.draggable(), this.point2.draggable());
+
         if (!this.point1.draggable() || !this.point2.draggable()) 
             return this;
 
@@ -553,7 +553,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             newy = pc.usrCoords[2]+dy;
         }
         this.point1.setPositionDirectly(method, newx, newy);
-
         
         pc = this.point2.coords;
         if (method == JXG.COORDS_BY_SCREEN) {
