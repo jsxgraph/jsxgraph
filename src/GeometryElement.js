@@ -25,6 +25,7 @@
 JXG.OBJECT_TYPE_ARC = 0x4F544143;               // Hex fuer OTAC = Object Type ArC
 JXG.OBJECT_TYPE_ARROW = 0x4F544157;             // Hex fuer OTAW = Object Type ArroW
 JXG.OBJECT_TYPE_AXIS = 0x4F544158;              // Hex fuer OTAX = Object Type AXis
+JXG.OBJECT_TYPE_AXISPOINT = 0x4F54150;          // Hex fuer OTAP = Object Type AxisPoint
 JXG.OBJECT_TYPE_TICKS = 0x4F545458;             // Hex fuer OTTX = Object Type TiX
 JXG.OBJECT_TYPE_CIRCLE = 0x4F54434C;            // Hex fuer OTCC = Object Type CirCle
 JXG.OBJECT_TYPE_CONIC = 0x4F54434F;             // Hex fuer OTCC = Object Type COnic
@@ -42,6 +43,7 @@ JXG.OBJECT_TYPE_ANGLE = 0x4F544147;             // Hex fuer OTAG = Object Type A
 JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;      // Hex fuer OTIN = Object Type INtersection
 JXG.OBJECT_TYPE_TURTLE = 0x4F5455;              // Hex fuer OTTU = Object Type TUrtle
 JXG.OBJECT_TYPE_VECTOR = 0x4F545654;            // Hex fuer OTVT = Object Type VecTor
+
 
 JXG.OBJECT_CLASS_POINT = 1;
 JXG.OBJECT_CLASS_LINE = 2;
