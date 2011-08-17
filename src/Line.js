@@ -1002,6 +1002,9 @@ JXG.createAxis = function(board, parents, attributes) {
         el = board.create('line', parents, attr);
         el.type = JXG.OBJECT_TYPE_AXIS;
 
+        for (var els in el.ancestors)
+            el.ancestors[els].type = JXG.OBJECT_TYPE_AXISPOINT;
+
         attr = JXG.copyAttributes(attributes, board.options, 'axis', 'ticks');
         if (JXG.exists(attr.ticksdistance)) {
             dist = attr.ticksdistance;
