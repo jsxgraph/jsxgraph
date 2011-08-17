@@ -1689,6 +1689,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return this;
     },
 
+
+    /**
+     * Removes the ancestors of an object an the object itself from board and renderer.
+     * @param {JXG.GeometryElement} object The object to remove.
+     * @returns {JXG.Board} Reference to the board
+     */
+    removeAncestors: function (object) {
+        for (var anc in object.ancestors)
+            this.removeAncestors(object.ancestors[anc]);
+        this.removeObject(object);
+
+        return this;
+    },
+
     /**
      * Initialize some objects which are contained in every GEONExT construction by default,
      * but are not contained in the gxt files.
