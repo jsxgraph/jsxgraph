@@ -2190,7 +2190,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return this;
         }
 
-        var h, w, 
+        var h, w,
             dim = JXG.getDimensions(this.container);
 
         this.canvasWidth = parseInt(dim.width);
