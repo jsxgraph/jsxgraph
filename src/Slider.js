@@ -104,6 +104,13 @@ JXG.createSlider = function(board, parents, attributes) {
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
+    /*
+     * Special naming convention for sliders:
+     * p3 (which is the glider) receives the sliders name
+     */
+    if (attributes['name'] && attributes['name']!='') {
+        attr['name'] = attributes['name'];
+    }    
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
     

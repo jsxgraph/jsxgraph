@@ -253,6 +253,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
     var pos = 0, end, elName, el, i,
         funcs = ['X','Y','L','V'];
 
+    //    
+    // Find X(el), Y(el), ... 
+    // All functions declared in funcs
     for (i=0;i<funcs.length;i++) {
         pos = term.indexOf(funcs[i]+'(');
         while (pos>=0) {
