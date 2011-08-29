@@ -519,7 +519,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // as long as we don't have an unique id generate a new one
         while (JXG.JSXGraph.boards['jxgBoard' + r] != null) {
-            r = Math.round(Math.random()*33);
+            r = Math.round(Math.random()*65535);
         }
 
         return ('jxgBoard' + r);
