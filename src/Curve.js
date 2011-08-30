@@ -333,19 +333,45 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             pointStack = [],
             divisors = [],
             distOK = false,
-            j = 0;
+            j = 0,
+            d, count = 0,
+            distFromLine = function(p1, p2, p0) {
+                var x0 = p0[0] - p1[0],
+                    y0 = p0[1] - p1[1],
+                    x1 = p2[0] - p1[0],
+                    y1 = p2[1] - p1[1],
+                    den = x1 * x1 + y1 * y1,
+                    lbda, d;
+//console.log(x0, y0, x1, y1, den);                    
+                if (den >= JXG.Math.eps) {
+                    lbda = (x0 * x1 + y0 * y1) / den;
+                    d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
+                } else {
+                    lbda = 0.0;
+                    d = x0 * x0 + y0 * y0;
+                }
+                if (lbda < 0.0) {
+                    d = x0 * x0 + y0 * y0;
+                } else if (lbda > 1.0) {
+                    x0 = p0[0] - p2[0];
+                    y0 = p0[1] - p2[1];
+                    d = x0 * x0 + y0 * y0;
+                }
+                return Math.sqrt(d);
+            };
+            // str = '';
             //stime = new Date(),
             //etime;
 
 
         if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
-            MAX_DEPTH = 12;
-            MAX_XDIST = 10; //12;
-            MAX_YDIST = 10; //12;
+            MAX_DEPTH = 15;
+            MAX_XDIST = 12;
+            MAX_YDIST = 12;
         } else {
-            MAX_DEPTH = 18; // 20
-            MAX_XDIST = 2;
-            MAX_YDIST = 2;
+            MAX_DEPTH = 23; // 20
+            MAX_XDIST = 0.8;
+            MAX_YDIST = 0.8;
         }
 
         divisors[0] = ma-mi;
@@ -393,16 +419,32 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 top++;
 
                 i = 2*i-1;
-                depth++;
-                t = mi+i*divisors[depth];
+                depth++;                   // Here, depth is increased and may reach MAX_DEPTH
+                t = mi+i*divisors[depth];  // In that case, t is undefined and we will see a jump
+                                           // in the curve.
                 po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
                 x = po.scrCoords[1];
                 y = po.scrCoords[2];
                 distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
             }
-
+            /*
+            if (j>1) {
+                //po.setCoordinates(JXG.COORDS_BY_USER, [x, y], false);
+                d = distFromLine(this.points[j-2].scrCoords.slice(1),
+                                 this.points[j-1].scrCoords.slice(1),
+                                 [x,y]);
+                //console.log(this.points[j-2].scrCoords.slice(1), this.points[j-1].scrCoords.slice(1),  [x,y]);
+                //console.log("D:", d);
+                if (d<0.5) {
+                    j--;
+                    count++;
+                }
+            }
+            */
             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
             this.updateTransform(this.points[j]);
+            //str += this.points[j].usrCoords[1]+' '+this.points[j].usrCoords[2]+'; ';
+            //str += t+','+x+' '+y+'; ';
             j++;
 
             x0 = x;
@@ -415,10 +457,11 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             depth = depthStack[top]+1;
             i = dyadicStack[top]*2;
 
-        } while (top != 0);
+        } while (top > 0);
         this.numberPoints = this.points.length;
-        
-        //console.log(this.numberPoints);
+
+        //console.log(str);
+        //console.log(this.numberPoints, count);
         //etime = new Date();
         //console.log(etime.getTime()-stime.getTime());
 
