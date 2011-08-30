@@ -352,6 +352,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 }
                 if (lbda < 0.0) {
                     d = x0 * x0 + y0 * y0;
+                    return 100000;
                 } else if (lbda > 1.0) {
                     x0 = p0[0] - p2[0];
                     y0 = p0[1] - p2[1];
@@ -370,8 +371,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             MAX_YDIST = 12;
         } else {
             MAX_DEPTH = 23; // 20
-            MAX_XDIST = 0.8;
-            MAX_YDIST = 0.8;
+            MAX_XDIST = 0.5;
+            MAX_YDIST = 0.5;
         }
 
         divisors[0] = ma-mi;
@@ -427,7 +428,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 y = po.scrCoords[2];
                 distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
             }
-            /*
             if (j>1) {
                 //po.setCoordinates(JXG.COORDS_BY_USER, [x, y], false);
                 d = distFromLine(this.points[j-2].scrCoords.slice(1),
@@ -435,12 +435,11 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                                  [x,y]);
                 //console.log(this.points[j-2].scrCoords.slice(1), this.points[j-1].scrCoords.slice(1),  [x,y]);
                 //console.log("D:", d);
-                if (d<0.5) {
+                if (d<0.3) {
                     j--;
                     count++;
                 }
             }
-            */
             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
             this.updateTransform(this.points[j]);
             //str += this.points[j].usrCoords[1]+' '+this.points[j].usrCoords[2]+'; ';
