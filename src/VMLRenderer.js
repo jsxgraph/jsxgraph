@@ -495,7 +495,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             return '';
         }
         if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamenDouglasPeuker(el.points, 1.0);
+            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 1.0);
         }
         len = Math.min(len, el.points.length);
 

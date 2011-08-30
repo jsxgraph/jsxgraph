@@ -1540,7 +1540,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
         },
 
         /**
-         * Implements the Ramen-Douglas-Peuker algorithm.
+         * Implements the Ramer-Douglas-Peuker algorithm.
          * It discards points which are not necessary from the polygonal line defined by the point array
          * pts. The computation is done in screen coordinates.
          * Average runtime is O(nlog(n)), worst case runtime is O(n^2), where n is the number of points.
@@ -1548,10 +1548,10 @@ JXG.Math.Numerics = (function(JXG, Math) {
          * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
          * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
          */
-        RamenDouglasPeuker: function(pts, eps) {
+        RamerDouglasPeuker: function(pts, eps) {
             var newPts = [], i, k, len,
                 /**
-                 * RDP() is a private subroutine of {@link JXG.Math.Numerics#RamenDouglasPeuker}.
+                 * RDP() is a private subroutine of {@link JXG.Math.Numerics#RamerDouglasPeuker}.
                  * It runs recursively through the point set and searches the
                  * point which has the largest distance from the line between the first point and
                  * the last point. If the distance from the line is greater than eps, this point is
@@ -1576,7 +1576,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                     }
                 },
                 /**
-                 * findSplit() is a subroutine of {@link JXG.Math.Numerics#RamenDouglasPeuker}.
+                 * findSplit() is a subroutine of {@link JXG.Math.Numerics#RamerDouglasPeuker}.
                  * It searches for the point between index i and j which
                  * has the largest distance from the line between the points i and j.
                  * @param {Array} pts Array of {@link JXG.Coords}
