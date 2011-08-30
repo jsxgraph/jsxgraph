@@ -135,6 +135,10 @@ this.parseString = function(fileStr, board, format, isString) {
         board.xmlString = fileStr;
         return;
     }
+    if (format.toLowerCase()=='tracenpoche') {
+        board.xmlString = JXG.TracenpocheReader.readTracenpoche(fileStr, board);
+        return;
+    }
     if (format.toLowerCase()=='graph') {
         //if(isString)
         fileStr = JXG.GraphReader.readGraph(fileStr, board, false);

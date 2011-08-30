@@ -340,8 +340,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
             MAX_DEPTH = 12;
-            MAX_XDIST = 12;
-            MAX_YDIST = 12;
+            MAX_XDIST = 10; //12;
+            MAX_YDIST = 10; //12;
         } else {
             MAX_DEPTH = 18; // 20
             MAX_XDIST = 2;
@@ -356,9 +356,14 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         i = 1;
         dyadicStack[0] = 1;
         depthStack[0] = 0;
+        
         t = mi;
         po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
-        suspendUpdate = true;
+        // Now, there was a first call to the functions defining the curve.
+        // Defining elements like sliders have been evaluated.
+        // Therefore, we can set suspendUpdate to false, so that these defining elements
+        // need not be evaluated anymore for the rest of the plotting.
+        suspendUpdate = true; 
         x0 = po.scrCoords[1];
         y0 = po.scrCoords[2];
         t0 = t;
@@ -378,7 +383,10 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         do {
             distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
-            while (depth < MAX_DEPTH && (!distOK || depth < 3) && !(!this.isSegmentDefined(x0, y0, x, y) && depth > 8)) {
+            while (depth < MAX_DEPTH 
+                   && (!distOK || depth < 3) 
+                   && (this.isSegmentDefined(x0, y0, x, y) || depth <= 7) ) {
+                   // && !(!this.isSegmentDefined(x0, y0, x, y) && depth > 8) ) {
                 dyadicStack[top] = i;
                 depthStack[top] = depth;
                 pointStack[top] = [x,y];
@@ -410,6 +418,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         } while (top != 0);
         this.numberPoints = this.points.length;
         
+        //console.log(this.numberPoints);
         //etime = new Date();
         //console.log(etime.getTime()-stime.getTime());
 
