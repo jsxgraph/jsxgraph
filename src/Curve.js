@@ -370,7 +370,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             MAX_XDIST = 10;
             MAX_YDIST = 10;
         } else {
-            MAX_DEPTH = 23; // 20
+            MAX_DEPTH = 20; // 20
             MAX_XDIST = 0.7;
             MAX_YDIST = 0.7;
         }
