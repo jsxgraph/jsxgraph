@@ -608,8 +608,8 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
             o2 = o2.parentNode;
             while (o2!=o) {
-                l -= o2.scrollLeft;
-                t -= o2.scrollTop;
+                l += o2.clientLeft-o2.scrollLeft;
+                t += o2.clientTop-o2.scrollTop;
                 o2 = o2.parentNode;
             }
         }
