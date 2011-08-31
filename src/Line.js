@@ -185,7 +185,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var i, funps;
+        var i, funps, nrm;
         if (this.needsUpdate) {
             if(this.constrained) {
                 if(typeof this.funps != 'undefined') {
@@ -199,6 +199,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             }
 
             this.updateStdform();
+            
             if(this.visProp.trace) {
                 this.cloneToBackground(true);
             }
@@ -212,7 +213,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
     updateStdform: function() {
         var v = JXG.Math.crossProduct(this.point1.coords.usrCoords, this.point2.coords.usrCoords);
-
         this.stdform[0] = v[0];
         this.stdform[1] = v[1];
         this.stdform[2] = v[2];
@@ -229,7 +229,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         if (this.needsUpdate && this.visProp.visible) {
             wasReal = this.isReal;
-            this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]));
+            this.isReal = (
+                    !isNaN(this.point1.coords.usrCoords[1] + 
+                           this.point1.coords.usrCoords[2] + 
+                           this.point2.coords.usrCoords[1] + 
+                           this.point2.coords.usrCoords[2]
+                          ) 
+                    && (JXG.Math.innerProduct(this.stdform,this.stdform,3)>=JXG.Math.eps*JXG.Math.eps) 
+                    );
             if (this.isReal) {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.show(this);
