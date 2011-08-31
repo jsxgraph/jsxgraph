@@ -614,7 +614,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             absPos;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
-        if (JXG.isWebkitAndroid()) {
+		// Seems to be obsolete now
+        if (false &&JXG.isWebkitAndroid()) {
             cPos[0] -= document.body.scrollLeft;
             cPos[1] -= document.body.scrollTop;
         }
@@ -924,7 +925,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         evt.preventDefault();
         this.updateHooks('mousemove', evt, this.mode);
 
-        this.dehighlightAll();
+        //this.dehighlightAll();   // As long as we do not highlight we need not dehighlight
         if (this.mode != this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
@@ -934,6 +935,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
+			// Reduce update frequency for Android devices
+            if (JXG.isWebkitAndroid()) {
+   	            if (typeof this.touchMoveCounter =='undefined') this.touchMoveCounter=0;
+                //document.getElementById('debug').innerHTML = this.touchMoveCounter;
+                this.touchMoveCounter++;
+                if (this.touchMoveCounter>10 && this.touchMoveCounter%8!=0) {
+                    this.updateQuality = this.BOARD_QUALITY_HIGH;
+                    return;
+                }
+		    }
+
             for (i = 0; i < this.touches.length; i++) {
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
@@ -2017,7 +2029,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     update: function (drag) {
         var i, len, boardId, b;
-
+		
         if (this.isSuspendedUpdate) { return this; }
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
         this.renderer.suspendRedraw(this);
