@@ -595,7 +595,7 @@ G.Options.elements.color#strokeColor}
          * @name JXG.Curve#curveType
          */
         curveType: null,
-        RDPsmoothing : true,     // Apply the Ramer-Douglas-Peuker algorithm
+        RDPsmoothing : false,     // Apply the Ramer-Douglas-Peuker algorithm
         numberPointsHigh : 1600,  // Number of points on curves after mouseUp
         numberPointsLow : 400,    // Number of points on curves after mousemove
         doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
