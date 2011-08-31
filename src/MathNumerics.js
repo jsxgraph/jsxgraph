@@ -1603,7 +1603,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                         x1 = cj[1] - ci[1];
                         y1 = cj[2] - ci[2];
                         den = x1 * x1 + y1 * y1;
-                        
+                        /*
                         if (den >= JXG.Math.eps) {
                             lbda = (x0 * x1 + y0 * y1) / den;
                             d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
@@ -1616,6 +1616,22 @@ JXG.Math.Numerics = (function(JXG, Math) {
                         } else if (lbda > 1.0) {
                             x0 = ck[1] - cj[1];
                             y0 = ck[2] - cj[2];
+                            d = x0 * x0 + y0 * y0;
+                        }
+                        */
+                        if (den >= JXG.Math.eps) {
+                            lbda = (x0 * x1 + y0 * y1) / den;
+                            //d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
+                            if (lbda<0.0) {
+                                lbda = 0.0;
+                            } else if (lbda>1.0) {
+                                lbda = 1.0;
+                            }
+                            x0 = x0-lbda*x1;
+                            y0 = y0-lbda*y1;
+                            d = x0*x0+y0*y0;
+                        } else {
+                            lbda = 0.0;
                             d = x0 * x0 + y0 * y0;
                         }
                         
