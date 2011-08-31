@@ -14,31 +14,31 @@
 body { 
   padding:0;
   overflow:hidden;
-  font-family : Georgia,  sans-serif; 
+  font-family : Georgia, sans-serif; 
   font-size:14px;
   background-color:#19469E;
 }
 
 #b {
- /*position:absolute;*/
+  position:absolute;
   margin:0;
-  padding:1%;
+  padding:2%;
   border:2px solid #5978B6;
 }
 
-#b * { 
-  margin-left:10px;
+#b { 
+  margin-left:100px;
   /*margin-right:10px;*/
 }
 
 </style>    
 </head>
-<body>
+<body id="body">
 <h1 id="x1">Playground</h1>
 <div id="b" style="background-color:blue; width:500px; height:300px; overflow:scroll;">
 <div id='jxgbox' class='jxgbox' style='width:400px; height:400px;'></div>
-<div id="debug" style='width:600px; height:200px;'></div>
 </div>
+<div id="debug" style='width:600px; height:200px; background-color:yellow'></div>
 
 <script type='text/javascript'>
 /*

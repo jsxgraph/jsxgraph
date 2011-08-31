@@ -594,22 +594,29 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Array} An array with the elements left and top offset.
      */
     getOffset: function (obj) {
-        var o=obj,
-            o2 = o,
-            l=o.offsetLeft - o.scrollLeft,
-            t=o.offsetTop - o.scrollTop;
-       
+        var o = obj,
+            o2 = obj,
+            l =o.offsetLeft - o.scrollLeft,
+            t =o.offsetTop - o.scrollTop;
+        
+        /*
+         * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
+         * if not to the body. In IE and if we are in an position:absolute environment 
+         * offsetParent walks up the DOM hierarchy.
+         * In order to walk up the DOM hierarchy also in Mozilla and Webkit
+         * we need the parentNode steps.
+         */
         while (o=o.offsetParent) {
             l+=o.offsetLeft;
             t+=o.offsetTop;
             if (o.offsetParent) {
-                l+=o.clientLeft;
-                t+=o.clientTop;
+                l+=o.clientLeft - o.scrollLeft;
+                t+=o.clientTop - o.scrollTop;
             }
             o2 = o2.parentNode;
             while (o2!=o) {
-                l += o2.clientLeft-o2.scrollLeft;
-                t += o2.clientTop-o2.scrollTop;
+                l += o2.clientLeft - o2.scrollLeft;
+                t += o2.clientTop - o2.scrollTop;
                 o2 = o2.parentNode;
             }
         }

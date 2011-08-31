@@ -575,8 +575,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Calculates mouse coordinates relative to the boards container.
      * @returns {Array} Array of coordinates relative the boards container top left corner.
      */
-    getRelativeMouseCoordinates: function () {
-        // * FIXME: The name of the function should be refactored to "getRelativeCoordinates", because no mouse event is used in here ...
+    getCoordsUpperLeftCorner: function () {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
@@ -603,16 +602,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Get the position of the mouse in screen coordinates.
+     * Get the position of the mouse in screen coordinates, relative to the upper left corner
+     * of the host tag.
      * @param {Event} e Event object given by the browser.
      * @param {Number} [i] Only use in case of touch events. This determines which finger to use and should not be set
      * for mouseevents.
      * @returns {Array} Contains the mouse coordinates in user coordinates, ready  for {@link JXG.Coords}
      */
     getMousePosition: function (e, i) {
-        var cPos, absPos;
-
-        cPos = this.getRelativeMouseCoordinates(e);
+        var cPos = this.getCoordsUpperLeftCorner(),
+            absPos;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
         if (JXG.isWebkitAndroid()) {
@@ -622,7 +621,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(e, i);
-
         return [absPos[0]-cPos[0], absPos[1]-cPos[1]];
     },
 
@@ -1266,12 +1264,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * In case of snapToGrid activated this method caclulates the user coords of mouse "snapped to grid".
+     * In case of snapToGrid activated this method calculates the user coords of mouse "snapped to grid".
      * @param {Event} Evt Event object containing the mouse coordinates.
      * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
      */
     getUsrCoordsOfMouse: function (Evt) {
-        var cPos = this.getRelativeMouseCoordinates(Evt),
+        var cPos = this.getCoordsUpperLeftCorner(),
             absPos = JXG.getPosition(Evt),
             x = absPos[0]-cPos[0],
             y = absPos[1]-cPos[1],
@@ -1292,7 +1290,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
      */
     getAllUnderMouse: function (Evt) {
-        var elList = this.getAllObjectsUnderMouse(Evt);
+        var elList = this.getAllObjectsUnderMouse();
 
         elList.push(this.getUsrCoordsOfMouse(Evt));
 
@@ -1304,7 +1302,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Array of elements at the current mouse position.
      */
     getAllObjectsUnderMouse: function (Evt) {
-        var cPos = this.getRelativeMouseCoordinates(Evt),
+        var cPos = this.getCoordsUpperLeftCorner(),
             absPos = JXG.getPosition(Evt),
             dx = absPos[0]-cPos[0],
             dy = absPos[1]-cPos[1],
