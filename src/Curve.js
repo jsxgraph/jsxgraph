@@ -364,7 +364,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             //stime = new Date(),
             //etime;
 
-
         if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
             MAX_DEPTH = 15;
             MAX_XDIST = 10;
@@ -374,7 +373,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             MAX_XDIST = 0.7;
             MAX_YDIST = 0.7;
         }
-
+        
         divisors[0] = ma-mi;
         for (i=1;i<MAX_DEPTH;i++) {
             divisors[i] = divisors[i-1]*0.5;

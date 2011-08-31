@@ -580,7 +580,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
-
+            
         // add border width
         n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
         if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly

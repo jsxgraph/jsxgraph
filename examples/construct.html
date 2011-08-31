@@ -11,12 +11,34 @@
     html { margin-top: 28px; }
     * html body { margin-top: 28px !important; }
 */
+body { 
+  padding:0;
+  overflow:hidden;
+  font-family : Georgia,  sans-serif; 
+  font-size:14px;
+  background-color:#19469E;
+}
+
+#b {
+ /*position:absolute;*/
+  margin:0;
+  padding:1%;
+  border:2px solid #5978B6;
+}
+
+#b * { 
+  margin-left:20px;
+  /*margin-right:10px;*/
+}
+
 </style>    
 </head>
 <body>
-<h1 onclick="b.clearTraces();" id="x1">Playground</h1>
-<div id='jxgbox' class='jxgbox' style='width:600px; height:600px; float:left;'></div>
+<h1 id="x1">Playground</h1>
+<div id="b" style="background-color:blue; width:500px; height:300px; overflow:scroll;">
+<div id='jxgbox' class='jxgbox' style='width:400px; height:400px;'></div>
 <div id="debug" style='width:600px; height:200px;'></div>
+</div>
 
 <script type='text/javascript'>
 /*
@@ -44,6 +66,7 @@ var p3 = brd.create('intersection',[c1, c2, 0]);
 var p4 = brd.create('intersection',[c1, c2, 1]);
 var l2 = brd.create('line',[p2, p3]);
 var l3 = brd.create('line',[p2, p4]);
+
 //JXG.Options.text.display = 'internal';
 //JXG.Options.text.fontSize = 20;
 //var b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, grid:false});

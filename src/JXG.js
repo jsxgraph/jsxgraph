@@ -595,14 +595,22 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     getOffset: function (obj) {
         var o=obj,
-            l=o.offsetLeft,
-            t=o.offsetTop;
+            o2 = o,
+            l=o.offsetLeft - o.scrollLeft,
+            t=o.offsetTop - o.scrollTop;
+       
         while (o=o.offsetParent) {
             l+=o.offsetLeft;
             t+=o.offsetTop;
             if (o.offsetParent) {
                 l+=o.clientLeft;
                 t+=o.clientTop;
+            }
+            o2 = o2.parentNode;
+            while (o2!=o) {
+                l -= o2.scrollLeft;
+                t -= o2.scrollTop;
+                o2 = o2.parentNode;
             }
         }
         return [l,t];

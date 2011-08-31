@@ -400,7 +400,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             }
         */
         return this;
-    },
+    }
     
 });
 
