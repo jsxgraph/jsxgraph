@@ -23,6 +23,7 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 JXG.TracenpocheReader = new function() {
+    
     this.parseData = function(board) {
         var script, len, i, code;
         
@@ -33,9 +34,6 @@ JXG.TracenpocheReader = new function() {
             script[i] = script[i].replace(/^\s+|\s+$/g, '').replace(/\/\/.*$/g, '');
         }
         
-        board.setBoundingBox([-10,10,10,-10]);
-        board.create('axis', [[0, 0], [1, 0]]);
-        board.create('axis', [[0, 0], [0, 1]]);
         for (i=0; i<len; i++) {
             code = script[i];
             
@@ -51,6 +49,11 @@ JXG.TracenpocheReader = new function() {
     this.parseOptions = function(board, script, start) {
         var code, i, len = script.length;
        
+        // Just for testing.
+        board.setBoundingBox([-10,10,10,-10]);
+        board.create('axis', [[0, 0], [1, 0]]);
+        board.create('axis', [[0, 0], [0, 1]]);
+        
         for (i=start+1; i<len; i++) {
             code = script[i];
             if (code=='') continue;
@@ -134,6 +137,9 @@ JXG.TracenpocheReader = new function() {
         }
     };
     
+    // 
+    //--------------------------------------------------------------------- 
+    //
     this.prepareString = function(fileStr) {
         //fileStr = JXG.Util.utf8Decode(fileStr);
         //fileStr = JXG.GeogebraReader.utf8replace(fileStr);
