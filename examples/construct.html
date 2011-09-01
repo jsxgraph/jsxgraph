@@ -35,8 +35,8 @@ body {
 </head>
 <body id="body">
 <h1 id="x1">Playground</h1>
-<div id="b" style="background-color:blue; width:500px; height:300px; overflow:scroll;">
-<div id='jxgbox' class='jxgbox' style='width:400px; height:400px;'></div>
+<div id="b" style="background-color:blue; width:700px; height:500px; overflow:scroll;">
+<div id='jxgbox' class='jxgbox' style='width:700px; height:500px;'></div>
 </div>
 <div id="debug" style='width:600px; height:200px; background-color:yellow'></div>
 
@@ -55,7 +55,7 @@ var brd = JXG.JSXGraph.loadBoardFromString('jxgbox', "eNrtXPlv2zYU/jn+KwgEGFYgtS
 //brd.create('axis', [[0, 0], [1, 0]]);
 //brd.create('axis', [[0, 0], [0, 1]]);
 var brd = JXG.JSXGraph.initBoard('jxgbox');
-var p1 = brd.create('point',[0, 0]);
+var p1 = brd.create('point',[0, 0], {withLabel:false});
 var c1 = brd.create('circle',[p1, [2, 0]]);
 var p2 = brd.create('point',[-3, 1]);
 var l1 = brd.create('line',[p1, p2]);

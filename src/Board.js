@@ -381,11 +381,14 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.cPos = [];
 
     /**
-     * Counts the move events on Android-Devices to omit some of the move events because Android's Webkit browser
-     * spams a lot of them.
+     * //Counts the move events on Android-Devices to omit some of the move events because Android's Webkit browser
+     * //spams a lot of them.
+     * Contains the last time (epoch, msec) since the last touchMove event which was not thrown away or since 
+     * touchStart because Android's Webkit browser fires too much of them. 
      * @type Number
      */
-    this.touchMoveCounter = 0;
+    //this.touchMoveCounter = 0;
+    this.touchMoveLast = 0;
 
     /**
      * Display the licence text.
@@ -721,7 +724,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // compute the difference vector.
             o.targets[0].Xprev = newPos.scrCoords[1];
             o.targets[0].Yprev = newPos.scrCoords[2];
-
             this.update(drag);
         } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
             oldCoords = drag.coords;
@@ -935,11 +937,32 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             found = false;
         }
 
+        var ti = new Date();
+        //this.touchMoveCounter = 0;
+        this.touchMoveLast = ti.getTime();
+
         this.options.precision.hasPoint = this.options.precision.mouse;
     },
 
     touchMoveListener: function (evt) {
         var i, j, pos;
+
+		// Reduce update frequency for Android devices
+        if (true||JXG.isWebkitAndroid()) {
+            var ti = new Date();
+            ti = ti.getTime();
+            //this.touchMoveCounter++;
+            //if (this.touchMoveCounter>0 && this.touchMoveCounter%32!=0) {
+            if (ti-this.touchMoveLast<120) {
+                this.updateQuality = this.BOARD_QUALITY_HIGH;
+                return;
+            } else {
+                //document.getElementById('debug').innerHTML = this.touchMoveCounter;
+                //this.touchMoveCounter=0;
+                this.touchMoveLast = ti;
+            }		    
+        }
+
 
         evt.preventDefault();
         this.updateHooks('mousemove', evt, this.mode);
@@ -954,15 +977,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-			// Reduce update frequency for Android devices
-            if (JXG.isWebkitAndroid()) {
-                this.touchMoveCounter++;
-                if (this.touchMoveCounter>10 && this.touchMoveCounter%8!=0) {
-                    this.updateQuality = this.BOARD_QUALITY_HIGH;
-                    return;
-                }
-		    }
-
             for (i = 0; i < this.touches.length; i++) {
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
@@ -1880,7 +1894,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         drag = JXG.getRef(this, drag);
         // if (drag==null) { isBeforeDrag = false; }
-
         for (el in this.objects) {
             pEl = this.objects[el];
             //if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
@@ -2108,7 +2121,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.grids.length = 0;
-	this.update(); // needed for canvas renderer
+	    this.update(); // needed for canvas renderer
 
         return this;
     },

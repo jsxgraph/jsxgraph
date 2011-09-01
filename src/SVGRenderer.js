@@ -51,7 +51,7 @@ JXG.SVGRenderer = function (container) {
     /**
      * @private
      */
-    this.suspendHandle = null;
+    //this.suspendHandle = null;
 
     /**
      * The SVG Namespace used in JSXGraph.
@@ -802,6 +802,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     // documented in JXG.AbstractRenderer
     unsuspendRedraw: function () {
         //this.svgRoot.unsuspendRedraw(this.suspendHandle);
+        //this.svgRoot.unsuspendRedrawAll();
         //this.svgRoot.forceRedraw();
     },
 

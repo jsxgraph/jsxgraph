@@ -188,7 +188,7 @@ JXG.GeonextParser.replaceIf = function(te) {
 
 /**
  * Replace _{} by &lt;sub&gt;
- * @param {String} te String containing _{}.
+ * @param {String} the String containing _{}.
  * @type String
  * @return Given string with _{} replaced by &lt;sub&gt;.
  */
@@ -216,7 +216,7 @@ JXG.GeonextParser.replaceSub = function(te) {
 
 /**
  * Replace ^{} by &lt;sup&gt;
- * @param {String} te String containing ^{}.
+ * @param {String} the String containing ^{}.
  * @type String
  * @return Given string with ^{} replaced by &lt;sup&gt;.
  */
