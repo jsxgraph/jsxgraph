@@ -575,7 +575,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Calculates mouse coordinates relative to the boards container.
      * @returns {Array} Array of coordinates relative the boards container top left corner.
      */
-    getCoordsUpperLeftCorner: function () {
+    getCoordsTopLeftCorner: function () {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
@@ -610,7 +610,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Contains the mouse coordinates in user coordinates, ready  for {@link JXG.Coords}
      */
     getMousePosition: function (e, i) {
-        var cPos = this.getCoordsUpperLeftCorner(),
+        var cPos = this.getCoordsTopLeftCorner(),
             absPos;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
@@ -1281,7 +1281,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
      */
     getUsrCoordsOfMouse: function (Evt) {
-        var cPos = this.getCoordsUpperLeftCorner(),
+        var cPos = this.getCoordsTopLeftCorner(),
             absPos = JXG.getPosition(Evt),
             x = absPos[0]-cPos[0],
             y = absPos[1]-cPos[1],
@@ -1314,7 +1314,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Array of elements at the current mouse position.
      */
     getAllObjectsUnderMouse: function (Evt) {
-        var cPos = this.getCoordsUpperLeftCorner(),
+        var cPos = this.getCoordsTopLeftCorner(),
             absPos = JXG.getPosition(Evt),
             dx = absPos[0]-cPos[0],
             dy = absPos[1]-cPos[1],
