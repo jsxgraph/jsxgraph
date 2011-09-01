@@ -381,6 +381,13 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.cPos = [];
 
     /**
+     * Counts the move events on Android-Devices to omit some of the move events because Android's Webkit browser
+     * spams a lot of them.
+     * @type Number
+     */
+    this.touchMoveCounter = 0;
+
+    /**
      * Display the licence text.
      * @see JXG.JSXGraph#licenseText
      * @see JXG.JSXGraph#initBoard
@@ -949,8 +956,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (this.mode == this.BOARD_MODE_DRAG) {
 			// Reduce update frequency for Android devices
             if (JXG.isWebkitAndroid()) {
-   	            if (typeof this.touchMoveCounter =='undefined') this.touchMoveCounter=0;
-                //document.getElementById('debug').innerHTML = this.touchMoveCounter;
                 this.touchMoveCounter++;
                 if (this.touchMoveCounter>10 && this.touchMoveCounter%8!=0) {
                     this.updateQuality = this.BOARD_QUALITY_HIGH;
