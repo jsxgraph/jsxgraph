@@ -375,6 +375,12 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.xmlString = '';
 
     /**
+     * Cached ressult of getCoordsTopLeftCorner for touch/mouseMove-Events to save some DOM operations.
+     * @type Array
+     */
+    this.cPos = [];
+
+    /**
      * Display the licence text.
      * @see JXG.JSXGraph#licenseText
      * @see JXG.JSXGraph#initBoard
@@ -579,7 +585,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             n;
-            
+
+        if (this.mode === JXG.BOARD_MODE_DRAG || this.mode === JXG.BOARD_MODE_MOVE_ORIGIN) {
+            return this.cPos;
+        }
+
         // add border width
         n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
         if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
@@ -598,6 +608,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 
+        this.cPos = cPos;
+
         return cPos;
     },
 
@@ -615,10 +627,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
 		// Seems to be obsolete now
-        if (false &&JXG.isWebkitAndroid()) {
-            cPos[0] -= document.body.scrollLeft;
-            cPos[1] -= document.body.scrollTop;
-        }
+        //if (JXG.isWebkitAndroid()) {
+        //    cPos[0] -= document.body.scrollLeft;
+        //    cPos[1] -= document.body.scrollTop;
+        //}
 
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(e, i);
