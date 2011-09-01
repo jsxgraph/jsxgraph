@@ -937,9 +937,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             found = false;
         }
 
-        var ti = new Date();
-        //this.touchMoveCounter = 0;
-        this.touchMoveLast = ti.getTime();
+        if (JXG.isWebkitAndroid()) {
+            var ti = new Date();
+            //this.touchMoveCounter = 0;
+            this.touchMoveLast = ti.getTime()-200;
+		}
 
         this.options.precision.hasPoint = this.options.precision.mouse;
     },
@@ -947,8 +949,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     touchMoveListener: function (evt) {
         var i, j, pos;
 
+        evt.preventDefault();
 		// Reduce update frequency for Android devices
-        if (true||JXG.isWebkitAndroid()) {
+        if (JXG.isWebkitAndroid()) {
             var ti = new Date();
             ti = ti.getTime();
             //this.touchMoveCounter++;
@@ -963,8 +966,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }		    
         }
 
-
-        evt.preventDefault();
         this.updateHooks('mousemove', evt, this.mode);
 
         //this.dehighlightAll();   // As long as we do not highlight we need not dehighlight
