@@ -42,7 +42,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.91 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.92a Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.
@@ -297,7 +297,8 @@ JXG.JSXGraph = {
         }
 
         // Remove all the other things, left on the board
-        board.containerObj.innerHTML = '';
+        board.containerObj.removeChild(board.containerObj.childNodes[0]);  // XHTML save
+        // board.containerObj.innerHTML = '';
 
         // Tell the browser the objects aren't needed anymore
         for(el in board.objects) {

@@ -990,7 +990,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
                 button = doc.createElement('span');
                 node.appendChild(button);
-                button.innerHTML = label;
+                label = label.replace(/&nbsp;/g, "\u00A0");
+                label = label.replace(/&ndash;/g, "\u2013");
+                label = label.replace(/&larr;/g, "\u2190");
+                label = label.replace(/&darr;/g, "\u2191");
+                label = label.replace(/&rarr;/g, "\u2192");
+                label = label.replace(/&uarr;/g, "\u2193");
+                button.appendChild(document.createTextNode(label));
+                /* button.innerHTML = label; */ // Does not work in XHTML
                 JXG.addEvent(button, 'click', handler, board);
             };
 
@@ -1010,7 +1017,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         node.style.right = board.options.navbar.right;
         node.style.bottom = board.options.navbar.bottom;
 
-        createButton('&nbsp;&ndash;&nbsp', board.zoomOut);
+        createButton('&nbsp;&ndash;&nbsp;', board.zoomOut);
         createButton('&nbsp;o&nbsp;', board.zoom100);
         createButton('&nbsp;+&nbsp;', board.zoomIn);
         createButton('&nbsp;&larr;&nbsp;', board.clickLeftArrow);
