@@ -150,7 +150,9 @@ def makeCore():
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
 
-    tmpfilename = tempfile.mktemp()
+    # tmpfilename = tempfile.mktemp()
+    tmpfilename = 'distrib/jsxgraphsrc.js'
+
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
     fout.close()
@@ -165,7 +167,7 @@ def makeCore():
     s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
     print s
     os.system(s)
-    os.remove(tmpfilename)
+    # os.remove(tmpfilename)
 
 '''
     Generate slim jsxplotcore.js and place it in <output>
