@@ -954,14 +954,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
             ti = ti.getTime();
-            //this.touchMoveCounter++;
-            //if (this.touchMoveCounter>0 && this.touchMoveCounter%32!=0) {
             if (ti-this.touchMoveLast<120) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
                 return;
             } else {
-                //document.getElementById('debug').innerHTML = this.touchMoveCounter;
-                //this.touchMoveCounter=0;
                 this.touchMoveLast = ti;
             }		    
         }
