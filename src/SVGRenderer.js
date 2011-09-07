@@ -285,9 +285,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
-        el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
-        el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
-
+        if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
+            el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
+            el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
+        }
         if (el.htmlStr !== content) {
             el.rendNodeText.data = content;
             el.htmlStr = content;
@@ -699,6 +700,11 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
         if (c !== false) {
+            if (c.length==9) {
+                c = JXG.rgba2rgbo(c);
+                o = c[1];
+                c = c[0];
+            }
             node = el.rendNode;
             node.setAttributeNS(null, 'fill', c);
             if (el.type === JXG.OBJECT_TYPE_IMAGE) {
@@ -727,6 +733,11 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
 
         if (c !== false) {
+            if (c.length==9) {
+                c = JXG.rgba2rgbo(c);
+                o = c[1];
+                c = c[0];
+            }
             node = el.rendNode;
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
@@ -738,16 +749,16 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 node.setAttributeNS(null, 'stroke', c);
                 node.setAttributeNS(null, 'stroke-opacity', o);
             }
-        }
 
-        if (el.type === JXG.OBJECT_TYPE_ARROW) {
-            this._setArrowAtts(el.rendNodeTriangle, c, o);
-        } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
-            if (el.visProp.firstarrow) {
-                this._setArrowAtts(el.rendNodeTriangleStart, c, o);
-            }
-            if (el.visProp.lastarrow) {
-                this._setArrowAtts(el.rendNodeTriangleEnd, c, o);
+            if (el.type === JXG.OBJECT_TYPE_ARROW) {
+                this._setArrowAtts(el.rendNodeTriangle, c, o);
+            } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
+                if (el.visProp.firstarrow) {
+                    this._setArrowAtts(el.rendNodeTriangleStart, c, o);
+                }
+                if (el.visProp.lastarrow) {
+                    this._setArrowAtts(el.rendNodeTriangleEnd, c, o);
+                }
             }
         }
 

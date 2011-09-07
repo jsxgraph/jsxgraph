@@ -147,6 +147,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @private
      */
     _updateVisual: function (element, not, enhanced) {
+        var rgbo;
+        
         if (enhanced || this.enhancedRendering) {
             not = not || {};
 
@@ -560,18 +562,30 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateInternalText
      */
     updateTextStyle: function (element) {
-        var fs = JXG.evaluate(element.visProp.fontsize);
+        var fs = JXG.evaluate(element.visProp.fontsize),
+           rgbo, rgba, c, o;
 
-            try {
-                element.rendNode.style.fontSize = fs + 'px';
-            } catch (e) {
-                // IE needs special treatment.
-                element.rendNode.style.fontSize = fs;
-            }
+        try {
+            element.rendNode.style.fontSize = fs + 'px';
+        } catch (e) {
+            // IE needs special treatment.
+            element.rendNode.style.fontSize = fs;
+        }
+
         if (element.visProp.display === 'html') {
-            element.rendNode.style.color = JXG.evaluate(element.visProp.strokecolor);
+            rgba = JXG.evaluate(element.visProp.strokecolor);
+            if (rgba.length==9) {
+                rgbo = JXG.rgba2rgbo(rgba);
+                c = rgbo[0];
+                o = rgbo[1];
+            } else {
+                c = rgba;
+                o = element.visProp.strokeopacity;
+            }
+            element.rendNode.style.color = c;
+            element.rendNode.style.opacity = o;
         } else {
-            this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
+            this.setObjectStrokeColor(element, element.visProp.strokeopacity, element.visProp.strokeopacity);        
         }
     },
 

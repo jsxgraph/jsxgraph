@@ -483,7 +483,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
                 value = JXG.rgba2rgbo(value);
                 this.visProp[property] = value[0];
-                this.visProp[property.replace('color', 'opacity')] *= value[1];
+                this.visProp[property.replace('color', 'opacity')] = value[1]; // Previously: *=. But then, we can only decrease opacity.
             } else {
                 this.visProp[property] = value;
             }
@@ -562,22 +562,21 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
                     break;
                 case 'labelcolor':
-                    opacity = 'FF';
-                    if (value.length=='9' && value.substr(0,1)=='#') {
-                        value = value.substr(0,7);
-                        opacity = value.substr(7,2);
-                        if (opacity == '00') {
-                            if (this.label!=null && this.hasLabel) {
-                                this.label.content.hideElement();
-                            }
+                    value = JXG.rgba2rgbo(value); 
+                    opacity = value[1];
+                    value = value[0];
+                    if (opacity == 0) {
+                        if (this.label!=null && this.hasLabel) {
+                            this.label.content.hideElement();
                         }
                     }
                     if (this.label!=null && this.hasLabel) {
                         this.label.color = value;
-                        this.board.renderer.setObjectStrokeColor(this.label.content, value, parseInt(opacity.toUpperCase(),16)/255);
+                        this.board.renderer.setObjectStrokeColor(this.label.content, value, opacity);
                     }
                     if (this.type == JXG.OBJECT_TYPE_TEXT) {
                         this.visProp.strokecolor = value;
+                        this.visProp.strokeopacity = opacity;
                         this.board.renderer.setObjectStrokeColor(this, this.visProp.strokecolor, this.visProp.strokeopacity);
                     }
                     break;
@@ -609,15 +608,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.board.renderer.setGradient(this);
                     break;
                 case 'gradientsecondcolor':
-                    if (value.length=='9' && value.substr(0,1)=='#') {
-                        opacity = value.substr(7,2);
-                        value = value.substr(0,7);
-                    }
-                    else {
-                        opacity = 'FF';
-                    }
-                    this.visProp.gradientsecondcolor = value;
-                    this.visProp.gradientsecondopacity = parseInt(opacity.toUpperCase(),16)/255;
+                    value = JXG.rgba2rgbo(value); 
+                    this.visProp.gradientsecondcolor = value[1];
+                    this.visProp.gradientsecondopacity = value[0];
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'gradientsecondopacity':

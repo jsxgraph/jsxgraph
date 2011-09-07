@@ -646,6 +646,11 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             return;
         }
 
+        if (c.length==9) {
+            c = JXG.rgba2rgbo(c);
+            o = c[1];
+            c = c[0];
+        }
         if (c === 'none' || c === false) {
             this._setAttr(el.rendNode, 'filled', 'false');
         } else {
@@ -680,8 +685,14 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             return;
         }
 
+        if (c.length==9) {
+            c = JXG.rgba2rgbo(c);
+            o = c[1];
+            c = c[0];
+        }
         if (el.type === JXG.OBJECT_TYPE_TEXT) {
             el.rendNode.style.color = c;
+            el.rendNode.style.filter += ' alpha(opacity = ' + (o * 100) +')';
         } else {
             node = el.rendNode;
             if (c !== false) {
