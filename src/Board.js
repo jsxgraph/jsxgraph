@@ -636,7 +636,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             absPos;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
-		// Seems to be obsolete now
+        // Seems to be obsolete now
         //if (JXG.isWebkitAndroid()) {
         //    cPos[0] -= document.body.scrollLeft;
         //    cPos[1] -= document.body.scrollTop;
@@ -717,7 +717,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //o.targets[0].X = x;
         //o.targets[0].Y = y;
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-			if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) 
+            if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) 
                  drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
 
             // Remember the actual position for the next move event. Then we are able to 
@@ -929,7 +929,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN
-							}
+                            }
                         ]
                     });
                 }
@@ -941,7 +941,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             var ti = new Date();
             //this.touchMoveCounter = 0;
             this.touchMoveLast = ti.getTime()-200;
-		}
+        }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
     },
@@ -950,7 +950,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, j, pos;
 
         evt.preventDefault();
-		// Reduce update frequency for Android devices
+        // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
             ti = ti.getTime();
@@ -959,7 +959,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 return;
             } else {
                 this.touchMoveLast = ti;
-            }		    
+            }            
         }
 
         this.updateHooks('mousemove', evt, this.mode);
@@ -2056,7 +2056,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     update: function (drag) {
         var i, len, boardId, b;
-		
+        
         if (this.isSuspendedUpdate) { return this; }
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
         this.renderer.suspendRedraw(this);
@@ -2118,7 +2118,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.grids.length = 0;
-	    this.update(); // needed for canvas renderer
+        this.update(); // needed for canvas renderer
 
         return this;
     },

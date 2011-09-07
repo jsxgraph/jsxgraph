@@ -97,12 +97,12 @@ JXG.AbstractRenderer = function () {
     //     i.a;
     //     > false
 
-	/**
-	 * The vertical offset for {@link Text} elements. Every {@link Text} element will
-	 * be placed this amount of pixels below the user given coordinates.
-	 * @type number
-	 * @default 8
-	 */
+    /**
+     * The vertical offset for {@link Text} elements. Every {@link Text} element will
+     * be placed this amount of pixels below the user given coordinates.
+     * @type number
+     * @default 8
+     */
     this.vOffsetText = 3;
 
     /**
