@@ -336,28 +336,28 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             j = 0,
             d, //count = 0,
             distFromLine = function(p1, p2, p0) {
-                var x0 = p0[0] - p1[0],
-                    y0 = p0[1] - p1[1],
-                    x1 = p2[0] - p1[0],
-                    y1 = p2[1] - p1[1],
+                var x0 = p0[1] - p1[1],
+                    y0 = p0[2] - p1[2],
+                    x1 = p2[0] - p1[1],
+                    y1 = p2[1] - p1[2],
                     den = x1 * x1 + y1 * y1,
                     lbda, d;
 
                 if (den >= JXG.Math.eps) {
                     lbda = (x0 * x1 + y0 * y1) / den;
                     //d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
-                    if (lbda<0.0) {
-                        lbda = 0.0;
-                    } else if (lbda>1.0) {
-                        lbda = 1.0;
+                    if (lbda>0.0) {
+                        if (lbda<=1.0) {
+                            x0 -= lbda*x1;
+                            y0 -= lbda*y1;
+                            
+                        } else { // lbda = 1.0;
+                            x0 -= x1;
+                            y0 -= y1;
+                        }
                     }
-                    x0 = x0-lbda*x1;
-                    y0 = y0-lbda*y1;
-                    d = x0*x0+y0*y0;
-                } else {
-                    lbda = 0.0;
-                    d = x0 * x0 + y0 * y0;
                 }
+                d = x0*x0 + y0*y0;
                 return Math.sqrt(d);
             };
             // str = '';
@@ -408,7 +408,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
 
         do {
-            distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+            distOK = this.isDistOK(x-x0, y-y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0,y0,x,y);
             while (depth < MAX_DEPTH 
                    && (!distOK || depth < 3) 
                    && (this.isSegmentDefined(x0, y0, x, y) || depth <= 7) ) {
@@ -425,12 +425,10 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
                 x = po.scrCoords[1];
                 y = po.scrCoords[2];
-                distOK = this.isDistOK(x0,y0,x,y,MAX_XDIST,MAX_YDIST)||this.isSegmentOutside(x0,y0,x,y);
+                distOK = this.isDistOK(x-x0, y-y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0,y0,x,y);
             }
             if (j>1) {
-                d = distFromLine(this.points[j-2].scrCoords.slice(1),
-                                 [x,y],
-                                 this.points[j-1].scrCoords.slice(1));
+                d = distFromLine(this.points[j-2].scrCoords, [x,y], this.points[j-1].scrCoords);
                 if (d<0.015) {
                     j--;
                     //count++;
@@ -468,9 +466,9 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return false;
     },
 
-    isDistOK: function (x0,y0,x1,y1,MAXX,MAXY) {
-        if (isNaN(x0+y0+x1+y1)) { return false; }
-        return (Math.abs(x1-x0)<MAXY && Math.abs(y1-y0)<MAXY);
+    isDistOK: function (dx, dy, MAXX,MAXY) {
+        if (isNaN(dx+dy)) { return false; }
+        return (Math.abs(dx)<MAXY && Math.abs(dy)<MAXY);
     },
 
     isSegmentDefined: function (x0,y0,x1,y1) {

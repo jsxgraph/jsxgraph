@@ -598,7 +598,7 @@ G.Options.elements.color#strokeColor}
         RDPsmoothing : false,     // Apply the Ramer-Douglas-Peuker algorithm
         numberPointsHigh : 1600,  // Number of points on curves after mouseUp
         numberPointsLow : 400,    // Number of points on curves after mousemove
-        doAdvancedPlot : true       // Use the algorithm by Gillam and Hohenwarter
+        doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
 
         /**#@-*/
