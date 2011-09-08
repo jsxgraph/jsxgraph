@@ -146,53 +146,54 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     },
 
     /**
-     * Sets color and opacity for filling and stroking
+     * Sets color and opacity for filling and stroking.
+     * type is the attribute from visProp and targetType the context[targetTypeStyle].
+     * This is necessary, because the fill style of a text is set by the stroke attributes of the text element.
      * @param {JXG.GeometryElement} element Any JSXGraph element.
      * @param {String} [type='stroke'] Either <em>fill</em> or <em>stroke</em>.
+     * @param {String} [targetType=type] (optional) Either <em>fill</em> or <em>stroke</em>.
      * @returns {Boolean} If the color could be set, <tt>true</tt> is returned.
      * @private
      */
-    _setColor: function (element, type) {
-        var hasColor = true, isTrace = false;
+    _setColor: function (element, type, targetType) {
+        var hasColor = true, isTrace = false, 
+            ev = element.visProp, hl,
+            rgba, rgbo, c, o, oo;
+        
+        type = type || 'stroke';
+        targetType = targetType || type;
         if (!JXG.exists(element.board) || !JXG.exists(element.board.highlightedObjects)) {
             // This case handles trace elements.
             // To make them work, we simply neglect highlighting.
             isTrace = true;
         }
 
-        if (type === 'fill') {
-            if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightfillcolor !== 'none' && element.visProp.highlightfillcolor !== false ) {
-                    this.context.globalAlpha = element.visProp.highlightfillopacity;
-                    this.context.fillStyle = element.visProp.highlightfillcolor;
-                } else {
-                    hasColor = false;
-                }
-            } else {
-                if (element.visProp.fillcolor !== 'none' && element.visProp.fillcolor !== false) {
-                    this.context.globalAlpha = element.visProp.fillopacity;
-                    this.context.fillStyle = element.visProp.fillcolor;
-                } else {
-                    hasColor = false;
-                }
-            }
+        if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
+            hl = 'highlight';
         } else {
-            if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
-                if (element.visProp.highlightstrokecolor !== 'none' && element.visProp.highlightstrokecolor !== false) {
-                    this.context.globalAlpha = element.visProp.highlightstrokeopacity;
-                    this.context.strokeStyle = element.visProp.highlightstrokecolor;
-                } else {
-                    hasColor = false;
-                }
-            } else {
-                if (element.visProp.strokecolor !== 'none' && element.visProp.strokecolor !== false) {
-                    this.context.globalAlpha = element.visProp.strokeopacity;
-                    this.context.strokeStyle = element.visProp.strokecolor;
-                } else {
-                    hasColor = false;
-                }
+            hl = '';
+        }
+        
+        // type is equal to 'fill' or 'stroke'
+        rgba = JXG.evaluate(ev[hl+type+'color']);
+        if (rgba !== 'none' && rgba !== false ) {
+            o = JXG.evaluate(ev[hl+type+'opacity']);
+            o = (o > 0) ? o : 0;
+            if (rgba.length!=9) {          // RGB, not RGBA
+                c = rgba;
+                oo = o;
+            } else {                       // True RGBA, not RGB
+                rgbo = JXG.rgba2rgbo(rgba);
+                c = rgbo[0];
+                oo = o*rgbo[1];
             }
-            this.context.lineWidth = parseFloat(element.visProp.strokewidth);
+            this.context.globalAlpha = oo;
+            this.context[targetType+'Style'] = c;
+        } else {
+            hasColor = false;
+        }
+        if (type === 'stroke') {
+            this.context.lineWidth = parseFloat(ev.strokewidth);
         }
         return hasColor;
     },
@@ -286,12 +287,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
                 }
 
                 context.save();
-                if (this._setColor(el, 'stroke')) {
-                    if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                        context.fillStyle = el.visProp.highlightstrokecolor;
-                    } else {
-                        context.fillStyle = el.visProp.strokecolor;
-                    }
+                if (this._setColor(el, 'stroke', 'fill')) {
                     context.fillRect(scr[1] - size - stroke05, scr[2] - size - stroke05, size * 2 + 3 * stroke05, size * 2 + 3 * stroke05);
                 }
                 context.restore();
@@ -509,12 +505,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         var fs, context = this.context;
 
         context.save();
-        if (this._setColor(el, 'stroke')) {
-            if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                context.fillStyle = el.visProp.highlightstrokecolor;
-            } else {
-                context.fillStyle = el.visProp.strokecolor;
-            }
+        if (this._setColor(el, 'stroke', 'fill') && !isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2]) ) {
             if (el.visProp.fontsize) {
                 if (typeof el.visProp.fontsize === 'function') {
                     fs = el.visProp.fontsize();
@@ -537,7 +528,41 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         this.drawInternalText(element);
     },
 
+    // documented in JXG.AbstractRenderer
+    // Only necessary for texts
+    setObjectStrokeColor: function (el, color, opacity) {
+        var rgba = JXG.evaluate(color), c, rgbo,
+            o = JXG.evaluate(opacity), oo,
+            node;
+
+        o = (o > 0) ? o : 0;
+
+        if (el.visPropOld.strokecolor === rgba && el.visPropOld.strokeopacity === o) {
+            return;
+        }
+
+        if (rgba !== false) {
+            if (rgba.length!=9) {          // RGB, not RGBA
+                c = rgba;
+                oo = o;
+            } else {                       // True RGBA, not RGB
+                rgbo = JXG.rgba2rgbo(rgba);
+                c = rgbo[0];
+                oo = o*rgbo[1];
+            }
+            node = el.rendNode;
+            if (el.type === JXG.OBJECT_TYPE_TEXT && el.visProp.display === 'html') {
+                node.style.color = c;     
+                node.style.opacity = oo;
+            }
+        }
+
+        el.visPropOld.strokecolor = rgba;
+        el.visPropOld.strokeopacity = o;
+    },
+    
     // already documented in JXG.AbstractRenderer
+/*    
     updateTextStyle: function (element) { 
         var fs = JXG.evaluate(element.visProp.fontsize);
 
@@ -545,7 +570,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             element.rendNode.style.fontSize = fs + 'px';
         }
     },
-
+*/
     /* **************************
      *    Image related stuff
      * **************************/
@@ -660,12 +685,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             }
 
             context.save();
-            if (this._setColor(el, 'stroke')) {
-                if (JXG.exists(el.board.highlightedObjects[el.id])) {
-                    context.fillStyle = el.visProp.highlightstrokecolor;
-                } else {
-                    context.fillStyle = el.visProp.strokecolor;
-                }
+            if (this._setColor(el, 'stroke', 'fill')) {
                 ang = Math.atan2(y2 - y1, x2 - x1);
                 if (el.visProp.lastarrow) {
                     this._drawFilledPolygon(this._translateShape(this._rotateShape(arrowHead, ang), x2, y2));

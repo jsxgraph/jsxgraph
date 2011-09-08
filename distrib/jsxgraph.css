@@ -16,10 +16,10 @@
 }
 
 .JXGtext {
-    background-color:transparent;
+    background-color: transparent; /* May produce artefacts in IE. Solution: setting a color explicitly. */
     font-family: Arial, Helvetica, Geneva;
-    padding:0px;
-    margin:0px;
+    padding: 0px;
+    margin: 0px;
     /*line-height:100%;*/ /* This has to be commented out. Otherwise subscripts are not visible in IE */
     /*border-style:dotted;*/
     /*border-width:0.4px;*/

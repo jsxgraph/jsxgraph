@@ -15,14 +15,17 @@
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
-JXG.Options.text.display = 'internal';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true});
+//JXG.Options.text.display = 'internal';
+JXG.Options.renderer = 'canvas';
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
 
-var p1 = brd.create('point',[0, 0], {withLabel:false});
-var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044'});
+
+var p1 = brd.create('point',[0, 0], {face:'[]', withLabel:false});
+var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1});
 var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
 var l1 = brd.create('line',[p1, p2]);
 var p3 = brd.create('midpoint',[p2, p1], {size:2});
+
 /*
 var c2 = brd.create('circle',[p3, p2], {fillColor:'#ff000011'});
 var p3 = brd.create('intersection',[c1, c2, 0]);
@@ -30,7 +33,7 @@ var p4 = brd.create('intersection',[c1, c2, 1]);
 var l2 = brd.create('line',[p2, p3]);
 var l3 = brd.create('line',[p2, p4]);
 */
-var t = brd.create('text',[0,0,'HALLO'], {fontSize:30, strokeColor:'#ff000022'});
+var t = brd.create('text',[0,-3,'HALLO'], {fontSize:60, strokeColor:'#ff000022', strokeOpacity:1});
 
 
 //p2.setProperty({labelColor:'#00000000'});

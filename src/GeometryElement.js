@@ -307,15 +307,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     countChildren: function () {
         var prop, s=0, d;
 
-        //console.log(this.name+':');
         d = this.childElements;
         for (prop in d) {
             if (d.hasOwnProperty(prop) && prop.indexOf('Label')<0) {
                 s++;
-                //console.log(prop);
             }
         }
-        //console.log("");
         return s; 
     },
 
@@ -402,7 +399,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             switch(p) {
                 case 'strokecolor':
                 case 'fillcolor':
-                    console.log(hash[r]);
+                    //console.log(hash[r]);
                     animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'strokeopacity':
@@ -978,7 +975,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 });
 
 /**
-  * Setting visPropOld is done in an none object oriented version
+  * Setting visPropOld is done in an non object oriented version
   * since otherwise there would be problems in cloneToBackground
   */
 JXG.clearVisPropOld = function (el) {

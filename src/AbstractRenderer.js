@@ -562,31 +562,17 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateInternalText
      */
     updateTextStyle: function (element) {
-        var fs = JXG.evaluate(element.visProp.fontsize),
-           rgbo, rgba, c, o;
+        var fs = JXG.evaluate(element.visProp.fontsize);
 
-        try {
-            element.rendNode.style.fontSize = fs + 'px';
-        } catch (e) {
-            // IE needs special treatment.
-            element.rendNode.style.fontSize = fs;
-        }
-
-        if (element.visProp.display === 'html') {
-            rgba = JXG.evaluate(element.visProp.strokecolor);
-            if (rgba.length==9) {
-                rgbo = JXG.rgba2rgbo(rgba);
-                c = rgbo[0];
-                o = rgbo[1];
-            } else {
-                c = rgba;
-                o = element.visProp.strokeopacity;
+        if (element.visProp.display === 'html' || this.type != 'canvas') {
+            try {
+                element.rendNode.style.fontSize = fs + 'px';
+            } catch (e) {
+                // IE needs special treatment.
+                element.rendNode.style.fontSize = fs;
             }
-            element.rendNode.style.color = c;
-            element.rendNode.style.opacity = o;
-        } else {
-            this.setObjectStrokeColor(element, element.visProp.strokeopacity, element.visProp.strokeopacity);        
         }
+        this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
     },
 
     /* **************************
@@ -923,23 +909,23 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @returns {JXG.AbstractRenderer} Reference to the renderer
      */
     highlight: function (element) {
-        var i;
+        var i, ev = element.visProp;
 
-        if (!element.visProp.draft) {
+        if (!ev.draft) {
             if (element.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
-                this.setObjectFillColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
+                this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+                this.setObjectFillColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
             } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(element, element.visProp.highlightfillcolor, element.visProp.highlightfillopacity);
+                this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                 for (i = 0; i < element.borders.length; i++) {
-                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
+                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.borders[i].visProp.highlightstrokeopacity);
                 }
             } else {
-                this.setObjectStrokeColor(element, element.visProp.highlightstrokecolor, element.visProp.highlightstrokeopacity);
-                this.setObjectFillColor(element, element.visProp.highlightfillcolor, element.visProp.highlightfillopacity);
+                this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+                this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
             }
-            if (element.visProp.highlightstrokewidth) {
-                this.setObjectStrokeWidth(element, element.visProp.highlightstrokewidth);
+            if (ev.highlightstrokewidth) {
+                this.setObjectStrokeWidth(element, ev.highlightstrokewidth);
             }
         }
 
@@ -952,22 +938,22 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @returns {JXG.AbstractRenderer} Reference to the renderer
      */
     noHighlight: function (element) {
-        var i;
+        var i, ev = element.visProp;
 
         if (!element.visProp.draft) {
             if (element.type === JXG.OBJECT_CLASS_POINT) {
-                this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
-                this.setObjectFillColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
+                this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
+                this.setObjectFillColor(element, ev.strokecolor, ev.strokeopacity);
             } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
+                this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                 for (i = 0; i < element.borders.length; i++) {
-                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.visProp.strokeopacity);
+                    this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.borders[i].visProp.strokeopacity);
                 }
             } else {
-                this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
-                this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
+                this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
+                this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
             }
-            this.setObjectStrokeWidth(element, element.visProp.strokewidth);
+            this.setObjectStrokeWidth(element, ev.strokewidth);
         }
 
         return this;

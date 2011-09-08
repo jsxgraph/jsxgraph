@@ -173,7 +173,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (document.documentMode === 8) {
             node.setAttribute('class', 'JXGtext');
         } else {
-            node.setAttribute('className', 9);
+            node.setAttribute(document.all ? 'className' : 'class', 'JXGtext');
         }
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
@@ -185,8 +185,10 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
-        el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
-        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+        if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
+            el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+            el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+        }
         
         if (el.htmlStr !== content) {
             el.rendNodeText.data = content;
@@ -637,19 +639,24 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
     // already documented in JXG.AbstractRenderer
     setObjectFillColor: function (el, color, opacity) {
-        var c = JXG.evaluate(color),
-            o = JXG.evaluate(opacity), t;
+        var rgba = JXG.evaluate(color), c, rgbo,
+            o = JXG.evaluate(opacity), oo,
+            node = el.rendNode, 
+            t;
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
+        if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
             return;
         }
 
-        if (c.length==9) {
-            c = JXG.rgba2rgbo(c);
-            o = c[1];
-            c = c[0];
+        if (rgba.length!=9) {          // RGB, not RGBA
+            c = rgba;
+            oo = o;
+        } else {                       // True RGBA, not RGB
+            rgbo = JXG.rgba2rgbo(rgba);
+            c = rgbo[0];
+            oo = o*rgbo[1];
         }
         if (c === 'none' || c === false) {
             this._setAttr(el.rendNode, 'filled', 'false');
@@ -657,55 +664,59 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             this._setAttr(el.rendNode, 'filled', 'true');
             this._setAttr(el.rendNode, 'fillcolor', c);
 
-            if (JXG.exists(o) && el.rendNodeFill) {
-                this._setAttr(el.rendNodeFill, 'opacity', (o * 100) + '%');
+            if (JXG.exists(oo) && el.rendNodeFill) {
+                this._setAttr(el.rendNodeFill, 'opacity', (oo * 100) + '%');
             }
         }
         if (el.type === JXG.OBJECT_TYPE_IMAGE) {
             t = el.rendNode.style.filter.toString();
             if (t.match(/alpha/)) {
-                el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + (o * 100) + ')');
+                el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + (oo * 100) + ')');
             } else {
-                el.rendNode.style.filter += ' alpha(opacity = ' + (o * 100) +')';
+                el.rendNode.style.filter += ' alpha(opacity = ' + (oo * 100) +')';
             }
         }
-        el.visPropOld.fillcolor = c;
+        el.visPropOld.fillcolor = rgba;
         el.visPropOld.fillopacity = o;
     },
 
     // already documented in JXG.AbstractRenderer
     setObjectStrokeColor: function (el, color, opacity) {
-        var c = JXG.evaluate(color),
-            o = JXG.evaluate(opacity),
-            node, nodeStroke;
+        var rgba = JXG.evaluate(color), c, rgbo,
+            o = JXG.evaluate(opacity), oo,
+            node = el.rendNode, nodeStroke;
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.strokecolor === c && el.visPropOld.strokeopacity === o) {
+        if (el.visPropOld.strokecolor === rgba && el.visPropOld.strokeopacity === o) {
             return;
         }
 
-        if (c.length==9) {
-            c = JXG.rgba2rgbo(c);
-            o = c[1];
-            c = c[0];
+        if (rgba.length!=9) {          // RGB, not RGBA
+            c = rgba;
+            oo = o;
+        } else {                       // True RGBA, not RGB
+            rgbo = JXG.rgba2rgbo(rgba);
+            c = rgbo[0];
+            oo = o*rgbo[1];
         }
         if (el.type === JXG.OBJECT_TYPE_TEXT) {
-            el.rendNode.style.color = c;
-            el.rendNode.style.filter += ' alpha(opacity = ' + (o * 100) +')';
+            oo = Math.round(oo*100);
+            node.style.filter = ' alpha(opacity = ' + oo +')';
+            //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Alpha(Opacity="+oo+")";
+            node.style.color = c;
         } else {
-            node = el.rendNode;
             if (c !== false) {
                 this._setAttr(node, 'stroked', 'true');
                 this._setAttr(node, 'strokecolor', c);
             }
 
             nodeStroke = el.rendNodeStroke;
-            if (JXG.exists(o)) {
-                this._setAttr(nodeStroke, 'opacity', (o * 100) + '%');
+            if (JXG.exists(oo)) {
+                this._setAttr(nodeStroke, 'opacity', (oo * 100) + '%');
             }
         }
-        el.visPropOld.strokecolor = c;
+        el.visPropOld.strokecolor = rgba;
         el.visPropOld.strokeopacity = o;
     },
 

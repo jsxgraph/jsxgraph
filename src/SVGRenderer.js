@@ -691,78 +691,85 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
     // documented in JXG.AbstractRenderer
     setObjectFillColor: function (el, color, opacity) {
-        var node, c = JXG.evaluate(color),
-            o = JXG.evaluate(opacity);
+        var node, rgba = JXG.evaluate(color), c, rgbo,
+            o = JXG.evaluate(opacity), oo;
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.fillcolor === c && el.visPropOld.fillopacity === o) {
+        if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
             return;
         }
-        if (c !== false) {
-            if (c.length==9) {
-                c = JXG.rgba2rgbo(c);
-                o = c[1];
-                c = c[0];
+        if (rgba !== false) {
+            if (rgba.length!=9) {          // RGB, not RGBA
+                c = rgba;
+                oo = o;
+            } else {                       // True RGBA, not RGB
+                rgbo = JXG.rgba2rgbo(rgba);
+                c = rgbo[0];
+                oo = o*rgbo[1];
             }
             node = el.rendNode;
             node.setAttributeNS(null, 'fill', c);
             if (el.type === JXG.OBJECT_TYPE_IMAGE) {
-                node.setAttributeNS(null, 'opacity', o);
+                node.setAttributeNS(null, 'opacity', oo);
             } else {
-                node.setAttributeNS(null, 'fill-opacity', o);
+                node.setAttributeNS(null, 'fill-opacity', oo);
             }
             if (JXG.exists(el.visProp.gradient)) {
                 this.updateGradient(el);
             }
         }
-        el.visPropOld.fillcolor = c;
+        el.visPropOld.fillcolor = rgba;
         el.visPropOld.fillopacity = o;
     },
 
     // documented in JXG.AbstractRenderer
     setObjectStrokeColor: function (el, color, opacity) {
-        var c = JXG.evaluate(color),
-            o = JXG.evaluate(opacity),
+        var rgba = JXG.evaluate(color), c, rgbo,
+            o = JXG.evaluate(opacity), oo,
             node;
 
         o = (o > 0) ? o : 0;
 
-        if (el.visPropOld.strokecolor === c && el.visPropOld.strokeopacity === o) {
+        if (el.visPropOld.strokecolor === rgba && el.visPropOld.strokeopacity === o) {
             return;
         }
 
-        if (c !== false) {
-            if (c.length==9) {
-                c = JXG.rgba2rgbo(c);
-                o = c[1];
-                c = c[0];
+        if (rgba !== false) {
+            if (rgba.length!=9) {          // RGB, not RGBA
+                c = rgba;
+                oo = o;
+            } else {                       // True RGBA, not RGB
+                rgbo = JXG.rgba2rgbo(rgba);
+                c = rgbo[0];
+                oo = o*rgbo[1];
             }
             node = el.rendNode;
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
-                    node.style.color = c; // Schriftfarbe
+                    node.style.color = c;     
                 } else {
                     node.setAttributeNS(null, "style", "fill:" + c);
+                    //node.setAttributeNS(null, "style", "fill-opacity:" + oo);
                 }
+                node.style.opacity = oo;
             } else {
                 node.setAttributeNS(null, 'stroke', c);
-                node.setAttributeNS(null, 'stroke-opacity', o);
+                node.setAttributeNS(null, 'stroke-opacity', oo);
             }
-
             if (el.type === JXG.OBJECT_TYPE_ARROW) {
-                this._setArrowAtts(el.rendNodeTriangle, c, o);
+                this._setArrowAtts(el.rendNodeTriangle, c, oo);
             } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
                 if (el.visProp.firstarrow) {
-                    this._setArrowAtts(el.rendNodeTriangleStart, c, o);
+                    this._setArrowAtts(el.rendNodeTriangleStart, c, oo);
                 }
                 if (el.visProp.lastarrow) {
-                    this._setArrowAtts(el.rendNodeTriangleEnd, c, o);
+                    this._setArrowAtts(el.rendNodeTriangleEnd, c, oo);
                 }
             }
         }
 
-        el.visPropOld.strokecolor = c;
+        el.visPropOld.strokecolor = rgba;
         el.visPropOld.strokeopacity = o;
     },
 

@@ -610,9 +610,6 @@ JXG.createConic = function(board, parents, attributes) {
                 }
             }
             rotationMatrix = eigen[1];
-            //console.log(rotationMatrix);
-            //console.log(eigen[0]);
-            //console.log(c+' '+a+' '+b);
             c = Math.sqrt(Math.abs(eigen[0][0][0]));
             a = Math.sqrt(Math.abs(eigen[0][1][1]));
             b = Math.sqrt(Math.abs(eigen[0][2][2]));
