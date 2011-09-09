@@ -894,7 +894,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         for(i = 0; i < arguments.length; i++) {
             s = arguments[i];
-            if (console && console.log) {
+            if (window.console && console.log) {
                 if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
                 console.log(s);
             } else if (document.getElementById('debug')) {
