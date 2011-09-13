@@ -283,9 +283,9 @@ JXG.JSXGraph = {
      * @param {String} board HTML-ID to the DOM-element in which the board is drawn.
      */
     freeBoard: function (board) {
-        var el;
+        var el, i;
 
-        if(typeof(board) == 'string') {
+        if (typeof(board) == 'string') {
             board = this.boards[board];
         }
 
@@ -297,7 +297,9 @@ JXG.JSXGraph = {
         }
 
         // Remove all the other things, left on the board
-        board.containerObj.removeChild(board.containerObj.childNodes[0]);  // XHTML save
+        for (i = 0; i < board.containerObj.childNodes.length; i++) {
+            board.containerObj.removeChild(board.containerObj.childNodes[i]);  // XHTML save
+        }
         // board.containerObj.innerHTML = '';
 
         // Tell the browser the objects aren't needed anymore
