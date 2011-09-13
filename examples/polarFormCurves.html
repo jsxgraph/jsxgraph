@@ -1,0 +1,37 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Kegelschnitte in Polardarstellung</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+    <h3>Polar form of a conic section: r = p/(1-eps*cos(phi))</h3>
+    <h3 id="ausgabe"></h3>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40});
+        b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
+
+        var p = board.createElement('point', [1,-2], {style:6,name:'p'}); 
+        var eps = board.createElement('point', [0,-3], {style:6,name:'eps'}); 
+        var len = board.createElement('point', [2,-4], {style:6,name:'length'}); 
+        var rho = board.createElement('slider', [[1,-5],[5,-5],[0,0,2*Math.PI]], {style:6,name:'rho'}); 
+        var f = board.createElement('curve', 
+            [function(phi) { return p.X()/(1-eps.X()*Math.cos(phi+rho.Value())); }, [1,0], 0,function(){return len.X()*Math.PI}],      
+            {curveType:'polar', strokewidth:2}
+        );        
+
+        board.addHook(function(){$('ausgabe').innerHTML = p.X() + "/(1 - (" + eps.X() + ")*cos(&phi;))";});
+ 
+        var q = board.createElement('glider', [f], {style:6,name:'G'}); 
+        board.createElement('tangent', [q], {dash:3}); 
+  /* ]]> */
+  </script>
+</body>
+</html>

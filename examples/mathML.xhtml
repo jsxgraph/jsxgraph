@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"
+               "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" [
+  <!ENTITY mathml "http://www.w3.org/1998/Math/MathML">
+]>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../distrib/loadjsxgraphXML.js"></script>
+   <script type="text/javascript" src="../distrib/jxg.js"></script>
+   <script type="text/javascript" src="../distrib/SVGRendererMinify.js"></script>
+</head>
+<body>
+  <h2>MathML example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="position:relative; display:none; width:600px; height:100px; border:1px dashed black; background-color:white;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
+        // Slider-Makro
+        function createSlider(board,parents,atts) {
+        	var sx = parents[0];
+        	var sy = parents[1];
+        	var sw = parents[2];
+        	var smin = parents[3];
+            var smax = parents[4];
+            var p1 = board.createElement('point', [sx, sy], {visible:false, fixed:true}); 
+            var p2 = board.createElement('point', [sx + sw, sy],{visible:false,fixed:true}); 
+            var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1});
+            //
+            var ticks  = 10;
+            for(i = 0; i < ticks+1; i++) {
+	            var t1 = board.createElement('point', [sx + i*sw/ticks, sy - 0.25 + i%2*0.1], {visible:false, fixed:true}); 
+	            var t2 = board.createElement('point', [sx + i*sw/ticks, sy + 0.25 - i%2*0.1], {visible:false, fixed:true}); 
+	            var tt = board.createElement('line', [t1,t2], {straightFirst:false,straightLast:false,strokewidth:2-i%2});
+	        } 
+            var p3 = board.createElement('point', [sx + sw/2, sy], {slideObject:l1,style:6,strokeColor:'#0080c0',fillColor:'#0080c0',name:' '});
+            var p4 = board.createElement('point', [function() {return ((p3.X() - sx)/sw * (smax - smin) -smax);}, function() {return (sy  + 1);}], {visible:false, name:'xxx'});
+            var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:3,strokeColor:'#0080c0'}); 
+            var t = board.createElement('text', [sx+sw+0.25, sy], {text:"<value>X("+p4.name+")</value>"}); 
+            return p4;
+        }
+        
+        var s  = createSlider(board,[8,-5,5,-10,1],{name:'S'});
+        var t1 = board.createElement('text', [0,0], {text:'Test: <p><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><msqrt><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow></msqrt><mn>27</mn></msup></math></p>'}); 
+        var t2 = board.createElement('text', [0,-1], {text:'Test'}); 
+                        
+  /* ]]> */
+  </script>
+<p><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><msqrt><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow></msqrt><mn>27</mn></msup></math></p>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+<script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+</head>
+<body>
+<table border="0">
+<tr><td>
+  <div id="box" class="jxgbox" style="width:400px; height:400px;"></div>
+</td></tr></table>
+<input type="button" value=" Animate On/Off" onClick="animate(flipper,1,56);"/>
+
+<script language="JavaScript">
+//JXG.Options.renderer = 'canvas';
+var board = JXG.JSXGraph.initBoard('box', {originX: 200, originY: 200, unitX: 40, unitY: 40, showCopyright:true, showNavigation:true});
+
+var pic=["http://www.serdaraytekin.com/docs/os/grub/images/debian-gnu.jpg", "http://yves.gnu-darwin.org/art/gnu-darwin_1.png"];
+
+var flipper = board.create('slider',[[-4.5,-4],[-1,-4],[1,35,56]],{snapWidth:1});
+
+var p = board.create('point',[-4,-3]);
+var q = board.create('point',[3,3]);
+
+var im = board.create('image',[
+        function(){
+            var num;
+            if (flipper.Value()<28) {num = 0; } else {num = 1;}
+            return pic[num];
+        },[function(){ return p.X();},function(){ return p.Y();}],
+          [function(){ return q.X();},function(){ return q.Y();}]
+        ], {fillOpacity:function(){return q.X()/3;}});
+
+
+var animated = false;
+function animate(point, direction, count) {
+    if(animated) {
+       point.stopAnimation();
+       animated = false;
+    } else {
+       point.startAnimation(direction, count);
+       animated = true;
+    }
+ }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Oscillator</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false}),
+            line = board.create('line', [[0,8], [0,-10]], {visible: false, straightFirst: false, straightLast: false}),
+            point = board.create('glider', [-8, -7, line], {name: 'Weight'}),
+            isInDragMode = false,
+            springHangup = board.create('point', [0, 9], {color: 'black', name: 'Spring', fixed: true}),
+            i, numberOfSpringRings = 10, springRings = [];
+
+        for(i=0; i<numberOfSpringRings; i++) {
+            springRings[i] = board.create('point', [0.5-i%2, function(i) { return function() { return springHangup.Y()-(i+1)*Math.abs((springHangup.Y() - point.Y())/(numberOfSpringRings+1))}; }(i)], {withLabel: false, color: 'black', size: 1});
+            if(i>0)
+                board.create('segment', [springRings[i-1], springRings[i]], {color: 'black', strokeWidth: 1});
+        }
+        board.create('segment', [springHangup, springRings[0]], {color: 'black', strokeWidth: 1});
+        board.create('segment', [springRings[numberOfSpringRings-1], point], {color: 'black', strokeWidth: 1});
+
+        function startAnimation(startY) {
+            point.moveAlong(function() {
+                var f = function(t, x) {
+                        var c = 0.1, k = 0.5, m = 1;
+                        return [x[1], -c / m * x[1] - k / m * x[0]];
+                    },
+                    area = [0, 200],
+                    numberOfEvaluations = (area[1] - area[0]) * 100,
+                    data = JXG.Math.Numerics.rungeKutta('heun', [startY, 0], area, numberOfEvaluations, f),
+                    duration = 20 * 1e3;
+
+                return function(t) {
+                    if (t >= duration)
+                        return NaN;
+
+                    return [0, data[Math.floor(t / duration * numberOfEvaluations)][0]];
+                }
+            }());
+        }
+
+        function hook() {
+            if(!isInDragMode && board.mode === board.BOARD_MODE_DRAG) {
+                board.stopAllAnimation();
+                isInDragMode = true;
+            }
+
+            if(isInDragMode && board.mode !== board.BOARD_MODE_DRAG) {
+                isInDragMode = false;
+                startAnimation(point.Y());
+            }
+        }
+        board.addHook(hook);
+        startAnimation(-5);
+    })();
+
+
+  /* ]]> */
+  </script>
+</body>
+</html>

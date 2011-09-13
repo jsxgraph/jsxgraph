@@ -1,0 +1,81 @@
+<html>
+<head>
+   <title>Wattkurve | JSXGraph | Beispiel f&uuml;r einen geometrischen Ort</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>/ <a href="index.html">root</a> / <a href="loci.html">Beispiele f&uuml;r geometrische Orte</a> / Wattkurve</h2>
+<div style="text-align: center">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; text-align: left; margin: auto;"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: true, grid: false,
+                                   keepaspectratio: true, showcopyright: false});
+
+    board.suspendUpdate();
+    p1 = board.createElement('point', [0, 0]);
+    p3 = board.createElement('point', [0, 2]);
+    c1 = board.createElement('circle', [p1, p3]);
+
+    p2 = board.createElement('point', [6, -1]);
+    p4 = board.createElement('point', [6, 0.5]);
+    c2 = board.createElement('circle', [p2, p4]);
+    
+    g1 = board.createElement('glider', [6, 3, c1], {name:"D"});
+    
+    lt1 = board.create('line', [p1, g1], {opacity: 0.3});
+    ct1 = board.create('circle', [g1, p1], {opacity: 0.3});
+    it1 = board.create('intersection', [lt1, ct1, 0], {opacity: 0.3});
+    ct2 = board.create('circle', [it1, g1], {opacity: 0.3});
+    it2 = board.create('intersection', [lt1, ct2, 0], {opacity: 0.3});
+    
+    c3 = board.createElement('circle', [g1, it2]);
+    g2 = board.createElement('intersection', [c2,c3,0], {name: "I"});
+    
+    lt2 = board.create('line', [g1, g2], {opacity: 0.3});
+    ct3 = board.create('circle', [g1, g2], {opacity: 0.3});
+    ct4 = board.create('circle', [g2, g1], {opacity: 0.3});
+    it3 = board.create('intersection', [ct3, ct4, 0], {opacity: 0.3});
+    it4 = board.create('intersection', [ct3, ct4, 1], {opacity: 0.3});
+    lt3 = board.create('line', [it3, it4], {opacity: 0.3});
+    
+    m1 = board.create('intersection', [lt2, lt3, 0], {name:"T",trace:false});
+
+    board.unsuspendUpdate();
+    loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '3px'});
+
+    function chooseCoordinateSystem() {
+        var k, o;
+
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, m1, 'u', 'brace');
+
+        for(k in board.objects) {
+            o = board.objects[k];
+            if(o.elementClass == JXG.OBJECT_CLASS_POINT) {
+                o.label.content.setText(o.name + ' (' + o.symbolic.x + ', ' + o.symbolic.y + ')');
+            }
+        }
+
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+    
+        function generatePolynomials() {
+        var res = JXG.Math.Symbolic.generatePolynomials(board, m1, true),
+            i, out = document.getElementsByTagName('body')[0];
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<res.length; i++)
+            out.innerHTML += '<li>' + res[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+    }
+
+  /* ]]> */
+  </script>
+<a href="javascript:chooseCoordinateSystem();">GenCor</a><br />
+<a href="javascript:generatePolynomials();">GenPol</a>
+</body>
+</html>

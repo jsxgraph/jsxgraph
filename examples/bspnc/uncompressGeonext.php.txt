@@ -1,0 +1,95 @@
+<?php
+function destrip($stripped)
+//addes line-breakes according to Base64 standard
+{
+ $stripped = str_replace(" ","",$stripped);
+ $lines = array();
+ $lineno = strlen($stripped) / 76;
+ for ($i = 0; $i < $lineno; $i++)
+ $lines[$i]=substr($stripped,$i * 76, 76);
+ if ($lineno != strlen($stripped) / 76)
+ $lines[count($lines)]=substr($stripped,$lineno * 76, strlen($stripped)-($lineno * 76));
+ $destripped = "";
+ for ($i = 0; $i < count($lines); $i++)
+ $destripped.= $lines[$i]."\n";
+ return $destripped;
+}
+
+function strip($str)
+//removes blanks, line-breakes, line feeds and carriage-returns
+{
+ $str = str_replace(" ","",$str);
+ $str = str_replace("\n","",$str);
+ $str = str_replace(chr(13),"",$str);
+ $str = str_replace(chr(10),"",$str);
+ return $str;
+
+}
+
+function unz64($str)
+//extracts xml from compressd GEONExT input
+{
+ return gzuncompress(base64_decode(destrip($str)));
+}
+
+function z64($str)
+//compresses GEONExT xml input
+{
+ return strip(base64_encode(gzcompress($str,9)));
+ 
+}
+
+function test_case()
+//test case for unz64, z64
+{
+ $gxt="eNrtWG1v2zYQ/hz/CgL5H L34rQkmCFjaZBg2tECbFe0wdJBt2uYiiwZFJXaK/vfdC0nRXdKu27B1QBIg4T088si7546kiu8uXjy/eHNVDorXFy9fff/ieZkn06xIvTQoZroyi3JwVDTVRpY/SzVfy2ZZ/9JlmRxDW+RFSl2gopqlNpvKKt2URRpL0Fl1dq0N4K4B0FxvNrKxgPkWgEvd2FbdyTKfFGkQcPZFCbYULcZhR8Wm2qkNCIvSmk4WaS9j767MEtjNjoQ9C3sSbtXCrsvRhCAWEF5LtVrbcpQR7iSwl7JBIcCiXnRtOcyzITqKJdqLNgvVVFaCKI4cUC6rupW4PxQIXxkVYGoT2jbV1qPUxtVoo1YKnUdbGWb9ZnA3Tub9pF4XJ7vTeuNH5Qdj8mgEa6F+1yjr9SeHRiaxDdbDEVaaYCHSDprcj5p1NZO1V91Fuvug7FRQe9PVVj08MfhprW93wVEkBHwf425uNyEHpLGq6TTFiww49WDFyW5orC+cidhTnx7da+NYYGWwykQNw1h0o1gPR+y03vsRqzc/yjgoq7ckuzGsiWNulLzdauNWaPW2HGP0sEFILZe2PCGMmgTOtLVAhJN8mozGRepE6jKcDKNkNC1S43IBLPZ2xJHjds/8oic1cJZWLZivtGKKhNFtG1KDBBehGgrD8dMMfy8vcWoEqG9RtWvnK2oSuNUK6kOUOj2ASetXUsyq+fXK6K7hsuDsXLqfYAe6lqqWjlFmDrTDvy4Kh4nR54UvJoelJNSSw0oCq/ImCrWpVrJMkgSqGjWhvggBIYhWKwgCKi4UFtLWI2kEIYC7lLXEItr6FN25CIMTdL14LU0L6lzfqYqSV21FLU4PLMHv3r97f7VWrQCgBYfP0Yi4rQAwEoK8ELfKrgWdHLsrgfMlHz5wunAJx9k2W3DeZhukHYk7J+/Kk1Fy6r2J7jzJJ8l06j0Kka0MnwyuQatNw3KLCpZ1Ix0hnMAdsMgSTg767/YIdMk8bQgxFbDfUYYFdhScWO7gYuBGtWpWezNe4uwy1Vz6OVhg2lijryXTABgfi4OjwL1ItTzO4OfyMsu8tktWZIxqVtiPLMX+gJEGEKkuj8/Pnp0/eTYdE7FcpeWKeoyDMkqkqArzfo+fnuIvDosckMargwJGnoiKau+ZfkKMJnG4DyaJLjdi04Gz/bHoAe5vy6ara8BdsfytXUI88K/bsK+e2OLdwKkHjAdPuxaToLPayc5ShLgDirPjb6XJW90J4JkwXdNAVETVCJhBGnHDkwi99HnyD6XI2WOKPKbIv5sieNrQsUrHinsHfOsv/cJlziqXE84X0SeMcHsfJeNTfxFgKg+Tqb8NBM6Kz5P27Osg7eiTpO1Z25MrYu3HtHXsi2nrecvdo2HE20DcLPsjcf9T5uIUB2+eHgjMdD2BmnztCdcf9t0eQpGjy/bunpQG+t3LRQhS09ZwM/n1Chib38PM6YPMPEuejA+ZmdMt+JGaj9T8cmrWqpExM6t7uPjkAS4ulWmtK6Pcdh11xfgUt+ThLyDm/+Kg//ik/wwxWeEvEpNuCV8JMcFZ/mEYOOCPb+JATwGGmQI0z8HgQsItoerjE0R6C6aemdDRPxLxsU8f9+iBCd6GVdE3Aqt1Pavw4S0Ku9/K8qdXFy8hsthEjEh9LpvO3kmzkEvVKGmsFD/wi/GanqW1VK2VIQNEsZDt3Kgt3WWqa9vJupZi9idniQcP+PNFWGXRwqbm8DKNUbwq3gMPBsWsA6mhD3pD/ODRi4MCSoKEsd/g9zRsDfjSzq5J/dfS3wFSsANw";
+ echo unz64($gxt)."\n";
+ //echo z64(unz64($gxt))."\n";
+}
+//runs test_case()
+//test_case();
+
+function decode_file() {
+    if (isset($_FILES["inputfile"])) {
+        $gxt = file_get_contents($_FILES['inputfile']['tmp_name']);
+        echo unz64($gxt)."\n";
+    }
+}
+
+function decode_geonext($filename) {
+	$gxt = file_get_contents($filename);
+	return unz64($gxt)."\n";
+}
+
+?>
+<body>
+<!--
+   <h2>Decode a compressed GEONExT file</h2>
+   <form action="<?$_SERVER['PHP_SELF']?>" enctype="multipart/form-data" method="POST">
+      <table>
+        <tr><td>Input file:</td><td><input type='file' name="inputfile" /></td></tr> 
+        <tr><td>&nbsp;</td><td>
+           <input type="submit" name="send" value="Send file"" /></td></tr>
+        <tr><td>GEONExT:</td><td>      
+            <textarea id="output" cols="60" rows="24">
+<?php decode_file(); ?>
+            </textarea>
+        </td></tr>
+   </form>
+-->
+<?php
+if ($handle = opendir('bsp')) {
+    while (false !== ($filename = readdir($handle))) {
+		if ($filename!="." && $filename!="..") {
+			$filename = "bsp/".$filename;
+			echo "$filename<br>\n";
+			$gxt = decode_geonext($filename);
+			file_put_contents("bspnc/".basename($filename,".gxt").".nc.gxt",$gxt);
+		}
+    }
+    closedir($handle);
+}
+
+?>
+
+</body>

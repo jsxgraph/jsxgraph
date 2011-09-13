@@ -1,0 +1,88 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Function graphs: the function term can be changed</h2>
+<div style="width:960px">
+<div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
+<p style="float:right">
+  Input in GEONExT-Syntax:<br> 
+  <input type="text" id="eingabe" size=50 value="sin(x * V(S_1))*V(S_2)"><br />
+  <input type="button" value="set" onClick="doIt()" style='margin:1em'> <br />
+  <input type='button' value='Zoom In' onclick='board.zoomIn()' style='margin:1em'><br />
+  <input type='button' value='Zoom Out' onclick='board.zoomOut()' style='margin:1em'><br />
+  <input type='button' value='Zoom 100%' onclick='board.zoom100()' style='margin:1em'> 
+</p>
+</div>
+<br clear=all>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 50, unitY: 25, axis:true});
+		// Axes
+        //b1axisx = board.create('axis', [[0,0], [1,0]], {});
+        //b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+        s1 = board.create('slider', [[0,-2],[5,-2],[-2,1.05,2]], {style:6, name:'S_1'});
+        s2 = board.create('slider', [[0,-3],[5,-3],[0,5,40]], {style:6, name:'S_2'});
+        
+        // Tagaki-Landsberg
+        var s = function(x){ return Math.abs(x-Math.round(x)); };
+        var generateF = function() {
+            var s1v = 0.0,
+                s2v = 0.0;
+                
+            return function (x,suspend){
+                var n, su, wval;
+                su = 0.0;
+                if (!suspend) {
+                    s1v = s1.Value();
+                    s2v = s2.Value();
+                }
+                wval = s1v;
+                for (n=0;n<s2v;n++) {
+                    su += Math.pow(wval,n)*s(Math.pow(2,n)*x);
+                }
+                return su;
+            };
+        };
+
+        //eval("function f(x){ return "+document.getElementById("eingabe").value+";}");
+        graph = board.create('functiongraph', [generateF(), -10, 10],{strokecolor:'red'});
+    
+
+        /*
+        p2 = board.create('glider', [graph], {style:6, name:'P'});
+        g = board.D(f);
+        g2 = board.create('functiongraph', [g, -10, 10],{dash:4});
+        p3 = board.create('point', [function() { return p2.X()+1;}, function() {return p2.Y()+board.D(graph.Y)(p2.X());}], {style:1, name:''});
+        l1 = board.create('line', [p2,p3],{});
+        p4 = board.create('point', [function() { return p3.X();}, function() {return p2.Y();}],{style:1, name:''});
+        pol = board.create('polygon', [p2,p3,p4], {});
+        t = board.create('text', [function(){return p2.X()+1.1;},function(){return p2.Y()+(p3.Y()-p4.Y())/2;},function(){ return "m="+(board.round(p3.Y()-p4.Y(),2));}]); 
+        */
+        function doIt(){
+            var s = JXG.GeonextParser.geonext2JS(document.getElementById("eingabe").value, board);
+            document.getElementById("debug").innerHTML = s;
+        	eval("function f(x){ return "+s+";}");
+        	graph.yterm = function(x){ return f(x); };  // usually: e.g. "x^2"
+            graph.Y = graph.yterm;
+    		graph.updateCurve();
+ 
+            document.getElementById("debug").innerHTML += ",<br>";
+            JXG.Math.Numerics.maxIterationsMinimize = 1000;
+            JXG.Math.Numerics.fminbr(f, [-1,5]);
+            document.getElementById("debug").innerHTML += JXG.Math.Numerics.fminbr(f, [-1,5]);;
+
+    		board.update();
+        } 
+        
+        //doIt();
+  /* ]]> */
+  </script>
+</body>
+</html>

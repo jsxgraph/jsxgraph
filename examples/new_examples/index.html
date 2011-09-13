@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/dark.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDark.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+
+<body>
+
+<img src="img/logo-darker.png" id="watermark" />
+
+<div id="header">
+    <span id="jsxgraph-head"><a href="http://jsxgraph.org/"><img src="img/logo-grayscale.png" alt="JSXGraph" /></a></span>
+</div>
+
+<div id="title">
+    <ul id="menu">
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">JSXGraph Showcase</a></h2></li>
+    </ul>
+</div>
+
+<div id="container" class="content-block">
+</div>
+
+<script id="jxg" type="text/javascript">
+
+    (function() {
+        var examples = {
+                kaleidoscope: {
+                    img: 'img/kaleidoscope.png',
+                    url: 'kaleidoscope.html',
+                    title: 'Kaleidoscope'
+                },
+                infinity: {
+                    img: 'img/infinity.png',
+                    url: 'infinity.html',
+                    title: 'Infinity'
+                },
+                bundestag: {
+                    img: 'img/bundestag.png',
+                    url: 'bundestag.html',
+                    title: 'Bundestag'
+                },
+                moonwalk: {
+                    img: 'img/moonwalk.png',
+                    url: 'moonwalk.html',
+                    title: 'Moonwalk'
+                },
+                fractals: {
+                    img: 'img/fractals.png',
+                    url: 'fractals.html',
+                    title: 'Fractals'
+                },
+                carpsandpikes: {
+                    img: 'img/carpsandpikes.png',
+                    url: 'carpsandpikes.html',
+                    title: 'Carps &amp; Pikes'
+                },
+                lindenmayer: {
+                    img: 'img/lindenmayer.png',
+                    url: 'lindenmayer.html',
+                    title: 'Lindenmayer'
+                }
+            },
+            example, i,
+            content = $('#container');
+
+        for(i in examples) {
+            example= examples[i];
+            content.append('<a href="' + example.url + '"><div class="index-item">' + '<img src="' + example.img + '" /><br />' + example.title + '</div></a>');
+        }
+    })();
+</script>
+
+<div id="footer">
+    JSXGraph is licensed under <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2011 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div>
+
+</body>
+</html>

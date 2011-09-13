@@ -1,0 +1,55 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Chart examples</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:600px;"></div>
+  <br clear=all>
+  <div id="debug" style="display:block;"></div>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 450,
+unitX: 50, unitY: 50, axis:true});
+    board.suspendUpdate();
+
+    var s = board.createElement('slider', [[8,7],[11,7],[1,1,1.5]],{name:'S',strokeColor:'black',fillColor:'white'});
+    var r = board.createElement('slider', [[8,6],[11,6],[1,4,7]],{name:'r',strokeColor:'black',fillColor:'white'});
+
+
+    var f = [function(){return (s.Value()*2).toFixed(2);},
+           function(){return (3).toFixed(2);},
+           function(){return (4).toFixed(2);},
+           function(){return (s.Value()*s.Value()*2).toFixed(2);},
+           function(){return (s.Value()*2).toFixed(2);}
+          ];
+
+    var a = board.createElement('chart', [f],
+            {chartStyle:'pie',
+             colorArray: ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE','#CA147A'],
+             fillOpacity:0.8,
+             highlightColorArray:['#E46F6A','#F9DF82','#F7FA7B','#B0D990','#69BF8E','#BDDDE4','#92C2DF','#637CB0','#AB91BC','#EB8EBF','#B0D990'],
+             // highlightColorArray not active if higlightBySize==true
+             labelArray: [function(){return f[0]();},
+                          function(){return f[1]();},
+                          function(){return f[2]();},
+                          function(){return f[3]();},
+                          function(){return f[4]();}],
+             center:[5,2], 
+             radius:function(){return r.Value();},
+             strokeColor:'white', 
+             highlightStrokeColor:'black',
+             strokeWidth:4,
+             highlightOnSector:true, 
+             highlightBySize:true
+             }
+        );
+
+    board.unsuspendUpdate();
+  </script>
+</body>
+</html>

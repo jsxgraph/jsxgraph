@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+  <title>FT-Grundlagen</title>
+
+	<style type="text/css">
+
+		.breadcrumbs1 {
+		width: 981px;
+		height: 38px;
+		}
+
+		#Platzhalter1 {
+		width: 680px;
+		height: 5px;
+		}
+
+		.breadcrumbs-link {
+		padding: 10px;
+		}
+
+		.bild-first {
+		width: 25px;
+		height: 25px;
+		}
+
+		h1 {
+		color:#0000CC;
+		font-size:28pt;
+		font-family:arial;
+		background-color:#CCCCFF;
+		border-color:#000000;
+		border-width:5px;
+		border-style:solid;
+		padding: 10px;
+		margin-top: 0px;
+		margin-bottom: 30px;
+		}
+
+		a img{
+		border-width: 0;
+		}
+
+		.Textfluss {
+		vertical-align: bottom;
+		}
+
+		h2 {
+		color:#0066FF;
+		}
+
+		#KFT {
+		vertical-align: middle;
+		}
+
+		#Einfassung {
+		border: solid;
+		}
+
+		#Abstand {
+		width:80px;
+		height:5px;
+		}
+
+
+	</style>
+
+
+</head>
+
+<body>
+
+<div class="breadcrumbs1">
+	<table class="Tabelle">
+		<tr>
+			<th>
+				<a href="index.html" class="breadcrumbs-link">
+				<img src="Icons/go-first.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="index.html" class="breadcrumbs-link">
+				Startseite
+				</a>
+			</th><th>
+				<div id="Platzhalter1">
+				</div>
+			</th><th>
+				<a href="FT-Abkuerzungen.html" class="breadcrumbs-link">
+				ABK&Uuml;RZUNGEN
+				</a>
+			</th>
+		</tr>
+	</table>
+</div>
+
+<h1>2 Grundlagen</h1>
+
+
+<ol>
+	<li>
+		<h2>Was ist die FT/ IFT?</h2>
+		Die Fourier-Transformation (FT) ist eine Integraltransformation, die einer
+		geeigneten Originalfunktion f(t) ihre Bildfunktion oder Fourier-Transformierte F(&nu;)
+		zuordnet.<br />
+		Die Originalfunktion f(t) ist eine st&uuml;ckweise stetige, absolut integrierbare Zeitfunktion.
+		<br />
+		Die Bildfunktion F(&nu;) ist eine Funktion in Abh&auml;ngigkeit von der Frequenz &nu;.
+		<br />
+		<br />
+		Die Inverse Fourier-Transformation (IFT) ist die Umkehrfunktion zur FT. <br />
+		Sie ordnet einer Fourier-Transformierten F(&nu;) ihre Originalfunktion f(t) zu.
+		Mit Hilfe der IFT kann aus einem Frequenzspektrum die dazugeh&ouml;rige Funktion
+		in Abh&auml;ngigkeit von der Zeit generiert werden. <br />
+		<br />
+	</li>
+
+	<li>
+		<h2>Was leistet die FT?</h2>
+		Die FT untersucht, ob eine Funktion etwas Periodisches in sich hat. Dazu wird die zu
+		untersuchende Funktion f(t) mit dem komplexen Drehzeiger
+		<img src="Formeln/KomplDrehzeiger-Dateien/image001.gif" class="Textfluss"/> verglichen.
+		Dieser ist definiert als: <p align="center" >
+		<img src="Formeln/KomplDrehzeigerFormel-Dateien/image001.gif" />
+		</p>
+		Das Produkt 2&pi;&nu; stellt die Kreisfrequenz &omega; dar. j ist die imagin&auml;re Einheit.<br />
+		Die Kontinuierliche Fourier-Transformation (KFT) ist demnach f&uuml;r alle &nu; Element der reellen Zahlen
+		definiert als:<p align="center" >
+		<img src="Formeln/KFT-Dateien/image001.gif" />
+		</p>
+		Mit dem komplexen Drehzeiger kann eine Funktion sowohl auf die
+		&Auml;hnlichkeit mit einem Sinus (Imagin&auml;rteil) als auch auf die &Auml;hnlichkeit mit einem Kosinus
+		(Realteil) untersucht werden.<br />
+		<br />
+	</li>
+
+	<li>
+		<h2>Wie wird die FT in der Signalverarbeitung eingesetzt?<br />
+			DFT/ IDFT und FFT/ IFFT
+		</h2>
+		Zur Analyse von diskreten Signalen, wie es in der Signalverarbeitung der Fall ist,
+		wird die Diskrete Fourier-Transformation (DFT) eingesetzt.<br />
+		Sie ordnet einer endlichen Zahlenfolge f<sub>n</sub> mit n = 0, 1, 2, ..., m die Bildfolge
+		F<sub>k</sub> mit k = 0, 1, 2, ..., m zu:<p align="center" >
+		<img src="Formeln/DFT-Dateien/image001.gif" />
+		</p>
+		Bei der DFT ist <img src="Formeln/KomplDrehzeigerFolge-Dateien/image001.gif" class="Textfluss"/>
+		der auf eine Folge abgestimmte komplexe Drehzeiger.<br />
+		<br />
+		Die Inverse Diskrete Fourier-Transformation (IDFT) ist die Umkehrfunktion zur DFT. <br />
+		Man erh&auml;lt die Originalfolge f<sub>n</sub> aus der Bildfolge F<sub>k</sub>:
+		<p align="center" >
+		<img src="Formeln/IDFT-Dateien/image001.gif" />
+		</p>
+		In der Praxis werden die Audiosignale mit einem Abtastkamm (Delta-Impulsfolge) in
+		&auml;quidistanten Zeitabst&auml;nden t<sub>n</sub> = n&Delta;t mit n = 0, 1, 2, ..., m und der
+		Abtastzeit &Delta;t &gt; 0 abgetastet, sodass ein diskretes Signal entsteht.
+		Die Funktion liegt dann in Form von Messpunkten vor und wird als Folge f<sub>n</sub>,
+		deren Folgenglieder die aufeinanderfolgenden Messpunkte bilden, dargestellt.<br />
+		Zu beachten ist hierbei, dass die Abtastzeiten &Delta;t gen&uuml;gend klein gew&auml;hlt werden,
+		damit die abgetastete Folge f<sub>n</sub> das Signal ausreichend widerspiegelt und dieses aus
+		den Messpunkten zur&uuml;ck gewonnen werden kann.<br />
+		<br />
+		In der modernen Rechentechnik wird ein schneller, sehr effektiver Algorithmus, die Schnelle
+		Fourier-Transformation (Fast Fourier Transformation, FFT), zur Berechnung von diskreten
+		Fourier-Transformierten mit gro&szlig;em m eingesetzt. Die Anzahl der zu realisierenden Rechenoperationen
+		ist bei der FFT proportional zu N&middot;log<sub>2</sub>(N) und ist damit wesentlich geringer,
+		als es bei der DFT mit &prop;N&sup2; Operationen der Fall w&auml;re.<br />
+		Die Umkehrfunktion zur FFT ist die Inverse Schnelle Fast Fourier-Transformation (IFFT).<br />
+		<br />
+		<b>Prinzip des FFT-Algorithmus</b><br />
+		Der Algorithmus der FFT spaltet die DFT so lange in je eine Fourier-Transformierte mit geraden
+		"c<sub>2k</sub>" und ungeraden "c<sub>2k+1</sub>" Fourier-Koeffizienten auf:<br />
+		<p align="center" > DFT </p>
+		<p align="center" >
+		<img src="Formeln/FFTAlgorithmusDFT-Dateien/image001.gif" />
+		</p>
+		<p align="center" >
+		<img src="Bilder-HTML/PfeilFFTSkaliert.jpg" />
+		</p>
+		<p align="center" > FFT </p>
+
+<table border="0" align="center" >
+	<tbody>
+		<tr>
+			<td> <img src="Formeln/FFTAlgorithmusgerade-Dateien/image001.gif" /> </td>
+			<td><div id="Abstand" > </div></td>
+			<td><img src="Formeln/FFTAlgorithmusungerade-Dateien/image001.gif" /> </td>
+		</tr>
+	</tbody>
+</table>
+
+		mit <img src="Formeln/FFTAlgorithmusW-Dateien/image001.gif" class="Textfluss"/>,
+		bis nur noch ein gerader und ein ungerader Fourier-Koeffizient "c" &uuml;brig sind.<br />
+		<br />
+	</li>
+
+	<li>
+		<h2>Besonderheiten bei der Anwendung der FFT in der Signalverarbeitung
+		</h2>
+		In der Signalverarbeitung werden die Audiosignale mit Hilfe eines Abtastkammes (Delta-Impulsfolge)
+		abgetastet, sodass ein diskretes Signal entsteht. Dabei werden in der Regel pro Sekunde 44100 Messwerte
+		abgetastet. Bei der Abtastung kommt es stets zu einer Spiegelung zu 0.5 &middot; Abtastrate, <br />
+		also zu 0.5 &middot; 44100 Hz = 22050 Hz,
+		was in etwa dem maximal h&ouml;rbaren Frequenzbereich des menschlichen Ohres entspricht. <br />
+		<br />
+		Der Grund f&uuml;r die Spiegelung wird in folgender Abbildung verdeutlicht:
+		<p align="center" >
+		<img src="Bilder-HTML/BegruendungSpiegelungSkaliert.png" />
+		</p>
+		In obiger Graphik sind zwei unterschiedliche Schwingungen, eine mit 0.3 &middot; Abtastrate
+		und eine mit 0.7 &middot; Abtastrate, abgebildet. Die roten Linien stellen die Messwerte dar,
+		die bei der Abtastung gespeichert werden. Man erkennt, dass sich f&uuml;r beide Schwingungen dieselben
+		Abtastwerte ergeben. Folglich sind die abgetasteten Signale sowie die Frequenzspektren dieser nach
+		der FFT stets symmetrisch zu 0.5 &middot; Abtastrate, weshalb nur die erste H&auml;lfte des
+		Frequenzspektrums der Fourier-Transformierten nach der FFT relevant ist.<br />
+		<br />
+		Die folgenden Abbildungen zeigen ein Frequenzspektrum mit und eines ohne die Spiegelung: <br />
+
+<table border="0" >
+	<tbody>
+		<tr>
+			<td> <img src="Bilder-HTML/DarstellungFFTmitSpiegelungSkaliert.png" /> </td>
+			<td><img src="Bilder-HTML/ReellwertigeDarstellungFFTSkaliert.png" /> </td>
+		</tr>
+		<tr>
+			<td align="center" >Spektrum mit Spiegelung</td>
+			<td align="center" >Spektrum ohne Spiegelung</td>
+		</tr>
+	</tbody>
+</table>
+		<br />
+		<br />
+		Desweiteren spielen nur die verschiedenen in einem Signal enthaltenen Frequenzen eine Rolle. Auf die
+		Phasenverschiebung, also ob es sich um einen Sinus oder um einen Kosinus handelt, wird dabei nicht geachtet,
+		da das menschliche Ohr diese nicht wahrnehmen kann.<br />
+		Zur besseren &Uuml;bersichtlichkeit bei der graphischen Darstellung des Frequenzspektrums wird der Betrag der
+		Fourier-Transformierten nach der FFT (&quot;abs(FFT)&quot;) berechnet und abgebildet. Hierbei wird aus der
+		komplexen eine reellwertige Darstellung, bei der die x-Achse die Frequenz und die y-Achse den Betrag der
+		Fourier-Transformierten angibt. Die komplexe Darstellung ist zur Bearbeitung des Frequenzspektrums nicht geeignet,
+		da man die Frequenzen darin nicht so einfach identifizieren kann.<br />
+		<br />
+		Nachstehende Abbildungen machen diesen Sachverhalt nochmals verst&auml;ndlich:
+
+
+<table border="0" >
+	<tbody>
+		<tr>
+			<td> <img src="Bilder-HTML/KomplexeDarstellungFFTSkaliert.png" /> </td>
+			<td><img src="Bilder-HTML/ReellwertigeDarstellungFFTSkaliert.png" /> </td>
+		</tr>
+		<tr>
+			<td align="center" >Komplexe Darstellung</td>
+			<td align="center" >Reellwertige Darstellung</td>
+		</tr>
+	</tbody>
+</table>
+
+
+	</li>
+</ol>
+
+
+
+
+
+</body>
+</html>

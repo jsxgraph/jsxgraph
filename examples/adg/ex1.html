@@ -1,0 +1,56 @@
+<html>
+<head>
+   <title>Watt | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../src/CinderellaReader.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 600px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="computeLocus();" value="Calculate locus" />
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 5, 10, -3], axis: true, grid: false,
+                                  keepaspectratio: true, showcopyright: false});
+
+  A = board.create('point', [0,0]);
+  B = board.create('point', [2,0]);
+  C = board.create('point', [3, -3]);
+
+//  k = board.create('circle', [A, B]);
+
+  g = board.create('line', [A, B]);
+  h = board.create('line', [A, C]);
+  D = board.create('glider', [4, 5, g], {name: "D"});
+
+  R = board.create('reflection', [D, h]);
+
+  k = board.create('circle', [R, 4]);
+  i = board.create('intersection', [k, g, 0]);
+
+  m = board.create('midpoint', [i, C]);
+
+  
+
+  function computeLocus() {
+    board.create('locus', [m]);
+  }
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

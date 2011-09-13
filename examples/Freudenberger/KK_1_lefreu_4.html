@@ -1,0 +1,52 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+  
+board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 16,16, -2], axis: true, grid: true,
+                                 keepaspectratio: true, showcopyright: false});
+<!-- Anfangslayout-->
+
+<!--Berechnung der Koordinaten + Speichern in v -->
+
+var n = 11; // Anzahl der Knoten	
+var v = [];
+for (var i=0;i<n;i++) { v[i] = [] };
+
+v[0][0] = 7 ;
+v[0][1] = 15;
+
+
+for (var j=1; j<n; j++){v[j][0] = ((Math.sin((j/n)*(2*Math.PI))*8)+7)};
+for (var k=1; k<n; k++){v[k][1] = ((Math.cos((k/n)*(2*Math.PI))*8)+7)};
+
+
+
+<!--Zeichnung der Knoten-->
+
+p = [];
+for (var l=1; l<n+1; l++) {
+    p[l] = board.create('point', [v[l-1][0],v[l-1][1]], {name:'v'+ l})};
+
+
+<!-- Weiter geht's bei KK_2_lefreu_2.html-->
+
+
+
+
+
+ 
+
+  /* ]]> */
+  </script>
+
+</body>
+</html>

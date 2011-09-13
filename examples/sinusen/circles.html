@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+
+		<link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+		<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Neu</title>
+	</head>
+
+	<body>
+		<h1>Lineare Funktion</h1>
+
+
+		<div id="box" class="jxgbox" style="width:600px; height:450px;"></div>
+
+		<script type="text/javascript">
+
+		brd = JXG.JSXGraph.initBoard('box', {boundingbox: [-5, 5, 5, -1], keepaspectratio: true});
+
+		var p1 = brd.create('point',[0,3],{fixed:true,visible:false});
+		var p2 = brd.create('point',[-1,0],{fixed:true,visible:false});
+		var p3 = brd.create('point',[0,0],{fixed:true,visible:false});
+
+		var l1 = brd.create('line', [p1,[0,0]],{straightLast:false,visible:false});
+		var l2 = brd.create('line', [p2,[0,0]],{straightLast:false,visible:false});
+
+		var Aslid = brd.create('glider',[0,3,l1],{name:' '});
+		var Bslid = brd.create('glider',[-1,0,l2],{name:' '});
+		var Cdep = brd.create('point',[function(){return -Bslid.X();},0],{fixed:true,visible:false});
+
+		var l3 = brd.create('line', [Aslid,Bslid],{straightFirst:false,straightLast:false});
+		var l4 = brd.create('line', [Aslid,Cdep],{straightFirst:false,straightLast:false});
+		var l5 = brd.create('line', [Bslid,Cdep],{straightFirst:false,straightLast:false});
+
+		var l6 = brd.create('line', [Aslid,[0,0]],{straightFirst:false,straightLast:false});
+
+		//Circle 1
+		var bis1 = brd.create('bisector', [Cdep,Bslid,Aslid],{visible:false});
+		var bis11 = brd.create('bisector', [Aslid,Cdep,Bslid],{visible:false});
+		var A1 = brd.create('intersection', [bis1,bis11,1],{visible:false});
+//        var A1 = new JXG.Intersection(brd, null, bis1, bis11);
+//        A1 = A1.p;
+		var B1 = brd.create('perpendicularpoint', [l3,A1],{visible:false});
+		var c1 = brd.create('circle',[A1,B1]);
+
+		//Circle 2
+		var A2 = brd.create('intersection', [l6,c1,1],{visible:false});
+		var prl2 = brd.create('parallel',[l5,A2],{visible:false});
+		var B2 = brd.create('intersection',[l3,prl2,1],{visible:false});
+		var bis2 = brd.create('bisector', [A2,B2,Aslid],{visible:false});
+		var C2 = brd.create('intersection',[bis2,l6,1],{visible:false});
+		var D2 = brd.create('perpendicularpoint', [l3,C2],{visible:false});
+		var c2 = brd.create('circle',[C2,D2]);
+
+		//Circle 3
+		var A3 = brd.create('intersection', [l6,c2,1],{visible:false});
+		var prl3 = brd.create('parallel',[l5,A3],{visible:false});
+		var B3 = brd.create('intersection',[l3,prl3,1],{visible:false});
+		var bis3 = brd.create('bisector', [A3,B3,Aslid],{visible:false});
+		var C3 = brd.create('intersection',[bis3,l6,1],{visible:false});
+		var D3 = brd.create('perpendicularpoint', [l3,C3],{visible:false});
+		var c3 = brd.create('circle',[C3,D3]);
+
+		//Circle 4
+		var A4 = brd.create('intersection', [l6,c3,1],{visible:false});
+		var prl4 = brd.create('parallel',[l5,A4],{visible:false});
+		var B4 = brd.create('intersection',[l3,prl4,1],{visible:false});
+		var bis4 = brd.create('bisector', [A4,B4,Aslid],{visible:false});
+		var C4 = brd.create('intersection',[bis4,l6,1],{visible:true, face:'<>'});
+		var D4 = brd.create('perpendicularpoint', [l3,C4],{visible:true, face:'x'});
+		var c4 = brd.create('circle',[C4,D4]);
+
+
+
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,48 @@
+<div align="center">{+new Link().toFile("index.html").withText("Class Index")+}
+| {+new Link().toFile("files.html").withText("File Index")+}</div>
+<hr />
+<h2 onclick="switchList('myElList');" style="cursor: pointer"><img src="static/expandable.gif"/> Elements</h2>
+<ul class="classList" id="myElList" style="display: block;">
+	<for each="thisClass" in="data">
+	<li>{!
+		if(thisClass.isPseudo)
+			output += new Link().toClass(thisClass.alias);
+	!}</li>
+	</for>
+</ul>
+<h2 onclick="switchList('myClList');" style="cursor: pointer"><img src="static/expandable.gif"/> Classes</h2>
+<ul class="classList" id="myClList" style="display: block;">
+	<for each="thisClass" in="data">
+	<li>{!
+		if (thisClass.alias == "_global_") {
+			output += "<i>"+new Link().toClass(thisClass.alias)+"</i>";
+		}
+		else {
+			if(!thisClass.isPseudo)
+				output += new Link().toClass(thisClass.alias);
+		}
+	!}</li>
+	</for>
+</ul>
+<hr />
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+   	function switchList(id) {
+      document.getElementById(id).style.display = ( document.getElementById(id).style.display == 'block' ? 'none' : 'block' );
+      document.cookie = id.toLowerCase() + 'status=' + document.getElementById(id).style.display + ';';
+  	};
+  	
+	function initList(id) {
+      var cookieList = document.cookie.split(';');
+      for(var c=0; c<cookieList.length; c++) {
+        if(cookieList[c].indexOf(id.toLowerCase() + 'status') != -1) {
+          document.getElementById(id).style.display = cookieList[c].split('=')[1];
+        }
+      }
+  	};
+  	
+  	initList('myElList');
+    initList('myClList');
+  /* ]]> */
+</script>

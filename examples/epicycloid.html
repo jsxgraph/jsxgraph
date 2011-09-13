@@ -1,0 +1,157 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+  <ul>
+
+   <!-- Beispiel 1 - Sinus und Cosinus am Einheitskreis inkl. Tabelle -->
+   
+    <li>Beispiel 1<br />
+      <h1>Epizykloide</h1>
+      
+      <!-- Die beiden Zeichenflaechen, schoen nebeneinander angeordnet in einer Tabelle -->
+      <table border="0">
+        <tr><td>
+          <div id="box" class="jxgbox" style="width:500px; height:500px;"></div>
+        </td><td>
+          <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
+        </td><td>
+			<table border="1">
+				<tr>
+					<td>a</td>
+					<td>r</td>
+					<td>R</td>
+				</tr>
+				<tr>
+					<td><span id='print_a'>...</span></td>
+					<td><span id='print_r'>...</span></td>
+					<td><span id='print_R'>...</span></td>
+				</tr>
+			</table>	
+		</td>
+	</tr>
+      </table>	
+
+   <div id="debug" style="display:none;"></div>
+      <script type="text/javascript">
+        /* <![CDATA[ */
+
+        // Das Objekt geonext ist global und wird in Geonext.js initialisiert
+        // board links oben initialisieren
+        board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+        var R;
+		var r;
+		var a;
+
+		// Achsen erzeugen
+        b1axisx = board.createElement('axis', [[0,0], [0,1]], {});
+        b1axisy = board.createElement('axis', [[0,0], [1,0]], {});
+		
+        board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 50});
+        board2.addChild(board);
+        
+		b2p01 = board2.createElement('point', [0,0] , {visible:false});
+		b2p02 = board2.createElement('point', [4,0] , {visible:false});
+		b2p03 = board2.createElement('point', [0,2] , {visible:false});
+		b2p04 = board2.createElement('point', [4,2] , {visible:false});
+		b2p05 = board2.createElement('point', [0,-2] , {visible:false});
+		b2p06 = board2.createElement('point', [4,-2] , {visible:false});
+		b2l01 = board2.createElement('line', [b2p01,b2p02] , {strokeColor:'#0000ff',straightFirst:false,straightLast:false});
+		b2l02 = board2.createElement('line', [b2p03,b2p04] , {strokeColor:'#ff0000',straightFirst:false,straightLast:false});
+		b2l03 = board2.createElement('line', [b2p05,b2p06] , {strokeColor:'#00ff00',straightFirst:false,straightLast:false});
+		
+		
+        b2p1 = board2.createElement('point', [1,2] , {strokeColor: '#ff0000', style: 6, name: 'r', slideObject:b2l02});
+        b2p2 = board2.createElement('point', [1,-2] , {strokeColor: '#00ff00', style: 6, name: 'R', slideObject:b2l03});
+		b2p3 = board2.createElement('point', [1,0] , {strokeColor: '#0000ff', style: 6, name: 'a' , slideObject:b2l01});		
+		board2.snapToGrid = true;
+
+        c1 = board.createElement('curve', [
+            function(t){ return (b2p2.X()+b2p1.X())*Math.cos(t)-b2p3.X()*Math.cos(t*(b2p2.X()+b2p1.X())/b2p1.X()); },
+            function(t){ return (b2p2.X()+b2p1.X())*Math.sin(t)-b2p3.X()*Math.sin(t*(b2p2.X()+b2p1.X())/b2p1.X()); },
+            0,function(){ return Math.PI*4*b2p1.X();}]);		
+		
+		// Die Abhaengigkeiten speichern. Mittlerweile nur noch wichtig, falls b1p1 geloescht werden sollte.
+        b2p1.addChild(c1);
+        b2p2.addChild(c1);
+		b2p3.addChild(c1);
+		
+        function print_table(board) {
+        	$('print_a').innerHTML = b2p3.X();
+        	$('print_r').innerHTML = b2p1.X();
+        	$('print_R').innerHTML = b2p2.X();
+        }
+        
+        // und beim board registrieren.
+        print_table_id = board2.addHook(print_table);		
+        
+        /* ]]> */
+      </script>
+    </li>
+  </ul>
+
+
+
+   <!-- Unwichtiges Debug-Zeug -->
+
+ <a href="javascript:void(0);" id="adv_b" onclick="if($('adv').style.display == 'block') { $('adv').style.display = 'none'; $('adv_b').innerHTML = '+'; } else { $('adv').style.display = 'block'; $('adv_b').innerHTML = '-'; }">+</a>
+ <div id="adv" style="display: none;">
+   <form>
+      <input type='button' value='Grid ein' onclick="board.renderer.drawGrid(board);" />
+      <input type='button' value='Grid aus' onclick="board.renderer.removeGrid(board);" />
+      <input type='button' value='(De-)Aktiviere SnapToGrid' id='snap' onclick="board.snapToGrid = !board.snapToGrid;" />
+      <br>
+      <input type='button' value='Entferne A' onclick="board.removeObject('A');">
+      <input type='button' value='Zoom In' onclick='board.zoomIn()'>
+      <input type='button' value='Zoom Out' onclick='board.zoomOut()'>
+      <input type='button' value='Zoom 100%' onclick='board.zoom100()'>
+      <input type='button' value='Zoom alle Punkte' onclick='board.zoomAllPoints()'>
+      <br>
+	  <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+$('blubb_gxt').options[$('blubb_gxt').selectedIndex].value+'.nc.gxt');" />
+	  	<select id="blubb_gxt">
+
+		
+		<option value='blubb11'>Schnitte Kreis-Gerade</option>	
+		<option value='blubb0'>Schnitte Kreis-Gerade</option>		
+        <option value='blubb37'>Schnitte mit Arcs</option>			
+        <option value='blubb46'>Schnitte mit Arrows</option>
+        <option value='blubb47'>Schnitt Kreis-senkrechte Gerade: Schnittpunktreihenfolge</option>
+		<option value='blubb39'>voneinander abh�ngige Schnitte</option>		
+        <option value='blubb49'>Slider auf Strecke</option>
+		<option value='blubb34'>Arrow mit Trace-Eigenschaft</option>
+		<option value='blubb55'>Lines mit Trace-Eigenschaft</option>
+		<option value='blubb56'>Circles mit Trace-Eigenschaft</option>
+		<option value='blubb57'>Polygon mit Trace-Eigenschaft</option>
+		<option value='blubb54'>Draft-Modus</option>
+        <option value='blubb45'>Opacity</option>
+		<option value='blubb44'>Compositions mit Farbeigenschaften</option>
+        <option value='blubb40'>Dash-styles</option>		
+		<option value='blubb32'>bunte Arcs mit Pfeilspitzen</option>	
+        <option value='blubb31'>Arc und Sector mit Farbeigenschaften</option>
+        <option value='blubb27'>Polygon mit Farbeigenschaften</option>		
+        <option value='blubb26'>Linien mit Farbeigenschaften</option>		
+		<option value='blubb22'>Punkt-styles</option>
+        <option value='blubb48'>ARROW_PARALLEL</option>	
+		<option value='blubb52'>Verschiedenste Objekte</option>			
+		<option value='blubb6'>Polygon, Circumcenter, Arrows, Curve</option>
+		<option value='blubb18'>Arc und Sector</option>		
+		<option value='blubb1'>Punkte mit Achse</option>		
+		<option value='blubb2'>Linien</option>
+		<option value='blubb3'>Linien und Kreise</option>		
+		<option value='blubb4'>Linien und Kreise</option>	
+		</select>
+      <br>
+      <input type='button' value='Show Elements of board' onclick='$("debug").innerHTML = ""; for(var Elements in board.objects) $("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
+      <input type='button' value='Clear All Traces' onclick='board.clearTraces();'>
+   </form>
+ </div>
+ 
+   <!-- ENDE -->
+ 
+</body>
+</html>

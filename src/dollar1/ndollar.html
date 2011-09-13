@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+	<title>JavaScript $N Multistroke Recognizer</title>
+	<!--[if IE]><script src="excanvas.js"></script><![endif]-->
+	<script type="text/javascript" src="canvas.js"></script>
+	<script type="text/javascript" src="gentilis-normal-normal.js"></script>
+	<script type="text/javascript" src="ndollar.js"></script>
+	<script type="text/javascript"> // This is for mouse and button events
+		//
+		// Startup
+		//
+		var _isDown, _points, _strokes, _r, _g, _rc; // global variables
+		function onLoadEvent()
+		{
+			document.onselectstart = function() { return false; }
+			document.onmousedown = function() { return false; }
+			_points = new Array(); // point array for current stroke
+			_strokes = new Array(); // array of point arrays
+			_r = new NDollarRecognizer(document.getElementById('useLimitedRotationInvariance').checked);
+
+			var canvas = document.getElementById('myCanvas');
+			_g = canvas.getContext('2d');
+			_g.lineWidth = 3;
+			_g.font = "16px Gentilis";
+			_rc = getCanvasRect(canvas); // canvas rect on page
+			_g.fillStyle = "rgb(255,255,136)";
+			_g.fillRect(0, 0, _rc.width, 20);
+
+			_isDown = false;
+		}
+		function getCanvasRect(canvas)
+		{
+			var w = canvas.width;
+			var h = canvas.height;
+
+			var cx = canvas.offsetLeft;
+			var cy = canvas.offsetTop;
+			while (canvas.offsetParent != null)
+			{
+				canvas = canvas.offsetParent;
+				cx += canvas.offsetLeft;
+				cy += canvas.offsetTop;
+			}
+			return {x: cx, y: cy, width: w, height: h};
+		}
+		function getScrollY()
+		{
+			var scrollY = 0;
+			if (typeof(document.body.parentElement) != 'undefined')
+			{
+				scrollY = document.body.parentElement.scrollTop; // IE
+			}
+			else if (typeof(window.pageYOffset) != 'undefined')
+			{
+				scrollY = window.pageYOffset; // FF
+			}
+			return scrollY;
+		}
+		//
+		// Checkbox option for using limited rotation invariance requires rebuilding the recognizer.
+		//
+		function confirmRebuild()
+		{
+			if (confirm("Changing this option will discard any user-defined multistrokes you may have made."))
+			{
+				_r = new NDollarRecognizer(document.getElementById('useLimitedRotationInvariance').checked);
+			}
+			else
+			{
+				var chk = document.getElementById('useLimitedRotationInvariance');
+				chk.checked = !chk.checked; // undo click
+			}
+		}
+		//
+		// Mouse Events
+		//
+		function mouseDownEvent(x, y, button)
+		{
+			if (button <= 1)
+			{
+				x -= _rc.x;
+				y -= _rc.y - getScrollY();
+				if (_points.length == 0)
+				{
+					_strokes.length = 0;
+					_g.clearRect(0, 0, _rc.width, _rc.height);
+				}
+				_points.length = 1; // clear
+				_points[0] = new Point(x, y);
+				drawText("Recording stroke #" + (_strokes.length + 1) + "...");
+				var clr = "rgb(" + rand(0,200) + "," + rand(0,200) + "," + rand(0,200) + ")";
+				_g.strokeStyle = clr;
+				_g.fillStyle = clr;
+				_g.fillRect(x - 4, y - 3, 9, 9);
+				_isDown = true;
+			}
+			else if (button == 2)
+			{
+				drawText("Recognizing gesture...");
+			}
+		}
+		function mouseMoveEvent(x, y, button)
+		{
+			if (_isDown)
+			{
+				x -= _rc.x;
+				y -= _rc.y - getScrollY();
+				_points[_points.length] = new Point(x, y); // append
+				drawConnectedPoint(_points.length - 2, _points.length - 1);
+			}
+		}
+		function mouseUpEvent(x, y, button)
+		{
+			if (button <= 1)
+			{
+				if (_isDown)
+				{
+					_isDown = false;
+					_strokes[_strokes.length] = _points.slice(); // add new copy to set
+					drawText("Stroke #" + _strokes.length + " recorded.");
+				}
+			}
+			else if (button == 2) // segmentation with right-click
+			{
+				if (_strokes.length > 1 || (_strokes.length == 1 && _strokes[0].length >= 10))
+				{
+					var result = _r.Recognize(_strokes, document.getElementById('matchOnlyIfSameNumberOfStrokes').checked, document.getElementById('useLimitedRotationInvariance').checked);
+					drawText("Result: " + result.Name + " (" + round(result.Score,2) + ").");
+				}
+				else
+				{
+					drawText("Too little input made. Please try again.");
+				}
+				_points.length = 0; // clear and signal to clear strokes on next mousedown
+			}
+		}
+		function drawConnectedPoint(from, to)
+		{
+			_g.beginPath();
+			_g.moveTo(_points[from].X, _points[from].Y);
+			_g.lineTo(_points[to].X, _points[to].Y);
+			_g.closePath();
+			_g.stroke();
+		}
+		function drawText(str)
+		{
+			_g.fillStyle = "rgb(255,255,136)";
+			_g.fillRect(0, 0, _rc.width, 20);
+			_g.fillStyle = "rgb(0,0,255)";
+			_g.fillText(str, 1, 14);
+		}
+		function rand(low, high)
+		{
+			return Math.floor((high - low + 1) * Math.random()) + low;
+		}
+		function round(n, d) // round 'n' to 'd' decimals
+		{
+			d = Math.pow(10, d);
+			return Math.round(n * d) / d
+		}
+		//
+		// Multistroke Adding and Clearing
+		//
+		function onClickAddExisting()
+		{
+			if (_strokes.length > 0)
+			{
+				if (_strokes.length < 5 || confirm("With " + _strokes.length + " component strokes, it will take a few moments to add this gesture. Proceed?"))
+				{
+					var multistrokes = document.getElementById('multistrokes');
+					var name = multistrokes[multistrokes.selectedIndex].value;
+					//drawText("Adding \"" + name + "\" gesture and re-recognizing...");
+					//drawText("Adding \"" + name + "\" gesture...");
+					var num = _r.AddMultistroke(name, document.getElementById('useLimitedRotationInvariance').checked, _strokes);
+					//alert("Gesture added as new \"" + name + "\" multistroke. There are now " + num + " \"" + name + "\" multistroke gestures defined.");
+					//var result = _r.Recognize(_strokes, document.getElementById('matchOnlyIfSameNumberOfStrokes').checked, document.getElementById('useLimitedRotationInvariance').checked);
+					//drawText("Result: " + result.Name + " (" + round(result.Score,2) + ").");
+					drawText("\"" + name + "\" added. Number of \"" + name + "\"s defined: " + num + ".");
+					_points.length = 0; // clear and signal to clear strokes on next mousedown
+				}
+			}
+		}
+		function onClickAddCustom()
+		{
+			var name = document.getElementById('custom').value;
+			if (_strokes.length > 0 && name.length > 0)
+			{
+				if (_strokes.length < 5 || confirm("With " + _strokes.length + " component strokes, it will take a few moments to add this gesture. Proceed?"))
+				{
+					//drawText("Adding \"" + name + "\" gesture and re-recognizing...");
+					//drawText("Adding \"" + name + "\" gesture...");
+					var num = _r.AddMultistroke(name, document.getElementById('useLimitedRotationInvariance').checked, _strokes);
+					//alert("Gesture added as new \"" + name + "\" multistroke. There are now " + num + " \"" + name + "\" multistroke gestures defined.");
+					//drawText("Re-recognizing gesture...");
+					//var result = _r.Recognize(_strokes, document.getElementById('matchOnlyIfSameNumberOfStrokes').checked, document.getElementById('useLimitedRotationInvariance').checked);
+					//drawText("Result: " + result.Name + " (" + round(result.Score,2) + ").");
+					drawText("\"" + name + "\" added. Number of \"" + name + "\"s defined: " + num + ".");
+					_points.length = 0; // clear and signal to clear strokes on next mousedown
+				}
+			}
+		}
+		function onClickCustom()
+		{
+			document.onselectstart = function() { return true; }
+			document.onmousedown = function() { return true; }
+			document.getElementById('custom').select();
+			document.onselectstart = function() { return false; }
+			document.onmousedown = function() { return false; }
+		}
+		function onClickDelete()
+		{
+			var num = _r.DeleteUserMultistrokes(); // deletes any user-defined templates
+			alert("All user-defined multistrokes have been deleted. Only the 1 predefined multistroke gesture remains for each of the " + num + " gesture types.");
+			_points.length = 0; // clear and signal to clear strokes on next mousedown
+		}
+		function onClickClearStrokes()
+		{
+			_points.length = 0;
+			_strokes.length = 0;
+			_g.clearRect(0, 0, _rc.width, _rc.height);
+			drawText("Canvas cleared.");
+		}
+	</script>
+</head><body onload="onLoadEvent()">
+
+<!-- Title and affiliation -->
+<p><span style="font-size: 18pt; font-weight: bold;">$N Multistroke Recognizer in JavaScript</span><br>
+<span style="font-size: 10pt;"><i>Lisa Anthony</i><sup>1</sup> and <i>Jacob O. Wobbrock</i><sup>2</sup><br>
+<sup>1</sup><i>Lockheed Martin Advanced Technology Laboratories</i> &nbsp; and &nbsp; <sup>2</sup><i>University of Washington</i></span></p>
+
+<!-- Short description -->
+<p style="margin: -10pt 2em 0pt; font-size: 10pt;">
+	This page implements the "$N Multistroke Recognizer" that is based upon the
+	<a href="http://depts.washington.edu/aimgroup/proj/dollar/index.html" target="_top">$1 Unistroke Recognizer</a>.
+	Upon loading this page, only <u>one</u> multistroke is defined for each gesture below, but $N
+	automatically generalizes each example to encompass all possible stroke orderings and directions.
+	This means that you can make and define multistrokes using any stroke
+	order and direction you wish, provided you begin at either endpoint of each component stroke.
+	By default, multistrokes are regarded as fully rotation, scale, and position invariant, but a checkbox option
+	allows you to limit rotation invariance (see below). Also, you can define your own multistrokes using the
+	buttons beneath the canvas. See our
+	<a href="http://faculty.washington.edu/wobbrock/pubs/gi-10.2.pdf" target="_blank"><i>Graphics Interface 2010</i> paper (PDF)</a>,
+	<a href="http://depts.washington.edu/aimgroup/proj/dollar/limits/index.html" target="_top">limitations of this recognizer</a> or a
+	<a href="http://depts.washington.edu/aimgroup/proj/dollar/ndollar.pdf" target="_top">detailed pseudocode listing</a>.
+</p>
+
+<!-- Gesture image and canvas -->
+<table border="0" cellspacing="10" width="100%">
+	<tbody><tr>
+		<td style="font-size: 10pt;" valign="top">
+			<p><img src="ndollar-Dateien/multistrokes.gif"></p>
+			<p>
+				<input id="useLimitedRotationInvariance" onclick="confirmRebuild()" type="checkbox">
+					<span style="background-color: rgb(255, 255, 136); font-weight: bold; font-style: italic;">Use bounded rotation invariance.</span> Do not use full rotation invariance, but instead require gestures to be
+					drawn within +/- 45 degrees of the orientation of the template. This can be used to disambiguate, e.g., the "H" and "I"
+					gestures, or the line and exclamation gestures, since they differ mainly by orientation.
+				 <br>
+				<input checked="checked" id="matchOnlyIfSameNumberOfStrokes" type="checkbox">
+					<span style="background-color: rgb(255, 255, 136); font-weight: bold; font-style: italic;">Require same no. of strokes.</span> Require the candidate and template to have the same number of strokes for a match.
+					This speeds recognition but reduces articulation flexibility. Example: The "N" template above was made
+					with 3 strokes. If this option is selected, a 1- or 2-stroke "N" will not be allowed to match it. If
+					this option is not selected, however, these may be allowed to match. If you want to have this option selected
+					but still allow this kind of flexibility, you can simply define your own templates named "N" with 1 and
+					2 strokes.
+				 
+			 </p>
+		</td>
+		<td valign="top" width="50%">
+			<table border="0" width="100%">
+				<tbody><tr>
+					<td style="font-size: 10pt; margin-top: 0pt; margin-bottom: 6pt; padding-right: 4px;" align="left">
+						<em>Make strokes on this canvas. <b>Recognition happens when you <u>right-click</u> the canvas.</b>
+						If a misrecognition occurs, simply add the misrecognized multistroke as an example
+						of the intended type, or try different checkbox options.</em>
+					</td>
+					<td align="right"><input value=" Clear  " onclick="onClickClearStrokes()" type="button"></td>
+				</tr>
+			</tbody></table>
+
+			<canvas id="myCanvas" width="600" height="400" style="background-color: rgb(221, 221, 221);" onmousedown="mouseDownEvent(event.clientX, event.clientY, event.button)" onmousemove="mouseMoveEvent(event.clientX, event.clientY, event.button)" onmouseup="mouseUpEvent(event.clientX, event.clientY, event.button)" oncontextmenu="return false;">
+
+				<span style="background-color: rgb(255, 255, 136);">The &lt;canvas&gt; element is not supported by this browser.</span>
+
+			</canvas>
+
+			<!-- Editing area below stroking canvas area -->
+			<table border="0" width="100%">
+				<tbody><tr>
+					<td>Add last multistroke as example of existing type:</td>
+					<td align="right">
+						<select id="multistrokes" style="width: 156px;" onkeypress="if (event.keyCode == 13) onClickAddExisting()">
+							<option selected="selected" value="T">T</option>
+							<option value="N">N</option>
+							<option value="D">D</option>
+							<option value="P">P</option>
+							<option value="X">X</option>
+							<option value="H">H</option>
+							<option value="I">I</option>
+							<option value="exclamation">exclamation</option>
+							<option value="line">line</option>
+							<option value="five-point star">five-point star</option>
+							<option value="null">null</option>
+							<option value="arrowhead">arrowhead</option>
+							<option value="pitchfork">pitchfork</option>
+							<option value="six-point star">six-point star</option>
+							<option value="asterisk">asterisk</option>
+							<option value="half-note">half-note</option>
+						</select>
+					</td>
+					<td><input value="  Add   " onclick="onClickAddExisting()" type="button"></td>
+				</tr>
+				<tr>
+					<td>Add last multistroke as example of custom type:</td>
+					<td align="right"><input id="custom" style="width: 150px;" value="line2" onclick="onClickCustom()" onkeypress="if (event.keyCode == 13) onClickAddCustom()" type="text"></td>
+					<td><input value="  Add   " onclick="onClickAddCustom()" type="button"></td>
+				</tr>
+				<tr>
+					<td>Delete all user-defined examples:</td>
+					<td align="right">&nbsp;</td>
+					<td><input value="Delete" onclick="onClickDelete()" type="button"></td>
+				</tr>
+			</tbody></table>
+			<!-- End of editing area below stroking canvas area -->
+
+		</td>
+	</tr>
+</tbody></table>
+
+
+
+<table border="0" width="100%">
+	<tbody><tr>
+		<td valign="top" width="50%"><!-- Links and downloads -->
+			<h3>$N Links and Downloads</h3>
+			<ul>
+				<li><a href="http://faculty.washington.edu/wobbrock/pubs/gi-10.2.pdf" target="_top">Our GI 2010 paper (PDF)</a></li>
+				<li><a href="http://depts.washington.edu/aimgroup/proj/dollar/ndollar.js" target="_top">The $N Recognizer used on this page (JavaScript)</a></li>
+				<li><a href="http://depts.washington.edu/aimgroup/proj/dollar/ndollar.pdf" target="_top">Detailed pseudocode listing of $N</a></li>
+				<li><a href="http://depts.washington.edu/aimgroup/proj/dollar/ndollar.zip" target="_top">The $N Recognizer (C#)</a></li>
+				<li><a href="http://depts.washington.edu/aimgroup/proj/dollar/limits/index.html" target="_top">Limitations of $N</a></li>
+				<li><a href="http://depts.washington.edu/aimgroup/proj/dollar/ndollar.mp4" target="_top">Video explanation of $N</a></li>
+				<li><a href="mailto:Jacob%20O.%20Wobbrock%20%3Cwobbrock@u.washington.edu%3E?subject=From%20the%20$N%20recognizer%20page">Questions? Contact Prof. Jacob O. Wobbrock</a>
+			</li></ul>
+			<h3>Reference:</h3>
+				<span style="font-size: 10pt; padding-right: 8em;">
+				Anthony, L. and Wobbrock, J.O. (2010). <b>A lightweight multistroke recognizer for user interface prototypes.</b>
+ Proceedings of Graphics Interface (GI '10). Ottawa, Ontario, Canada 
+(May 31-June 2, 2010). Toronto, Ontario: Canadian Information Processing
+ Society, pp. 245-252.
+				</span>
+		</td>
+		<td valign="top">
+			<h3>$N Implementations by Others</h3>
+			<ul>
+				<li><a href="http://alphacount.wordpress.com/" target="_blank">AlphaCount iPhone app</a> by Olivier Brand
+			</li></ul>
+		</td>
+	</tr>
+</tbody></table>
+
+</body></html>

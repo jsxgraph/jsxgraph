@@ -1,0 +1,307 @@
+<html>
+<head>
+   <title>Lima&ccedil;on | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:500px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 500px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="chooseCoordinateSystem();" value="Choose coordinate system" />
+      <input type="button" onclick="generatePolynomials();" value="Generate system of polynomial equations" />
+      <br />
+      <input type="button" onclick="calculateLocus();" value="Calculate locus of T" />
+      <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
+      <input type="button" onclick="showBoard();" value="Show board" />
+      <input type="button" onclick="showLocusTime(loc)" value="Show locus time" />
+      <br />
+      <input type="button" onclick="extend();" value="Extend the construction (with glider)" />
+      <input type="button" onclick="extendedLocus();" value="Calculate extended locus (based on glider C)" />
+      <input type="button" onclick="showLocusTime(loc2)" value="Show locus time" />
+      <br />
+      <input type="button" onclick="extend2();" value="Extend the construction" />
+      <input type="button" onclick="extendedLocus2();" value="Calculate extended locus" />
+      <input type="button" onclick="showLocusTime(loc3)" value="Show locus time" />
+      <br />
+      <input type="text" value="0.2" id="dim" size="3" />
+      <input type="button" onclick="dimConstruction();" value="Dim construction" />
+      <input type="button" onclick="dimLocus();" value="Dim locus" />
+      <input type="button" onclick="dimExtension();" value="Dim extension" />
+      <input type="button" onclick="dimExtension2();" value="Dim extension 2" />
+      <input type="button" onclick="dimLocus2();" value="Dim extended loci" />
+      <br />
+      <input type="button" onclick="runComparison();" value="Run comparison">
+      <input type="button" onclick="window.location.href=window.location.href.split('?')[0]" value="Reload" />
+      <input type="button" onclick="toggleOptimize();" id="opt" value="Optimization is off">
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-11, 11, 11, -11], axis: true, grid: false,
+                                   keepaspectratio: true, showcopyright: false});
+
+//    board.suspendUpdate();
+    a = board.createElement('point', [8, -1]);
+    c = board.createElement('functiongraph', [function (x) { return x*x*x; }]);
+    c.generatePolynomial = function (p) {
+    	return ['(' + p.symbolic.x + ')^3 - (' + p.symbolic.y + ')'];
+    };
+	b = board.create('glider', [c]);
+    d = board.createElement('circle', [a, 4]);
+    e = board.createElement('circle', [b, 5]);
+    f = board.create('intersection', [d, e, 0]);
+    z = board.create('midpoint', [b, f]);
+
+    loc = null;
+
+    tg=null;
+    tc=null;
+    ti=null;
+    tm=null;
+    loc2 = null;
+
+    tc2=null;
+    ti2=null;
+    tm2=null;
+    loc3 = null;
+
+    opt = false;
+    
+    //board.options.locus.translateToOrigin = true;
+//    board.options.locus.toOrigin = ;
+    //board.options.locus.translateTo10 = true;
+//    board.options.locus.to10 = p4;
+
+    tl = board.create('locus', [z], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
+    
+    i = board.create('glider', [tl]);
+    j = board.create('circle', [i, 4]);
+    k = board.create('intersection', [j, e, 0]);
+    l = board.create('midpoint', [k, a]);
+    tl2 = board.create('locus', [l]);
+    
+
+    function chooseCoordinateSystem() {
+        var k, o;
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p14_1, 'u', 'brace');
+
+        for(k in board.objects) {
+            o = board.objects[k];
+            if(o.elementClass == JXG.OBJECT_CLASS_POINT) {
+                o.label.content.setText(o.name + ' (' + o.symbolic.x + ', ' + o.symbolic.y + ')');
+            }
+        }
+
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function generatePolynomials() {
+        var res = JXG.Math.Symbolic.generatePolynomials(board, p14_1, true),
+            i, out = document.getElementById('polynomials');
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<res.length; i++)
+            out.innerHTML += '<li>' + res[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+    function calculateLocus() {
+        loc = board.create('locus', [p14_1], {strokeColor: 'black', strokeWidth: '2px'});
+    }
+
+    function showLocusEquation() {
+        var out = document.getElementById('polynomials');
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<loc.eq.length; i++)
+            out.innerHTML += '<li>' + loc.eq[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+    function showBoard() {
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+    }
+
+    function dimConstruction() {
+        var c = [p3, p4, c1, g, p6, c2, p14_1], i, o = getDim();
+
+        if(p3.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function dimLocus() {
+        var o = getDim();
+
+        if(loc != null) {
+            if(loc.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc.setProperty({strokeOpacity: o});
+        }
+    }
+
+    function dimLocus2() {
+        var o = getDim();
+
+        if(loc2 != null) {
+            if(loc2.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc2.setProperty({strokeOpacity: o});
+        }
+    }
+
+    function extend() {
+        if(loc==null)
+            return;
+
+        board.suspendUpdate();
+        tg = board.create('glider', [loc]);
+
+        tc = board.create('circle', [tg, 3]);
+        ti = board.create('intersection', [tc, c1, 0], {color: 'blue'});
+        tm = board.create('midpoint', [tg, ti], {color: 'green'});
+        board.unsuspendUpdate();
+    }
+
+    function dimExtension() {
+        if(tg == null)
+            return;
+
+        var c = [tg, tc, ti, tm], i, o = getDim();
+
+        if(tg.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function getDim() {
+        return parseFloat(document.getElementById('dim').value);
+    }
+
+    function extendedLocus() {
+        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '4px'});
+    }
+
+    function extend2() {
+        board.suspendUpdate();
+        tc2 = board.create('circle', [p14_1, 3]);
+        ti2 = board.create('intersection', [tc2, c1, 0], {color: 'blue'});
+        tm2 = board.create('midpoint', [p14_1, ti2], {color: 'green'});
+        board.unsuspendUpdate();
+    }
+
+    function dimExtension2() {
+        if(tg == null)
+            return;
+
+        var c = [tc2, ti2, tm2], i, o = getDim();
+
+        if(tc2.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function extendedLocus2() {
+        loc3 = board.create('locus', [tm2], {strokeColor: 'green', strokeWidth: '2px'});
+    }
+
+    function showLocusTime(l) {
+        document.getElementById('polynomials').style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+
+        document.getElementById('polynomials').innerHTML = l.ctime;
+    }
+
+    function toggleOptimize() {
+        if(opt) {
+            board.options.locus.translateToOrigin = false;
+            board.options.locus.translateTo10 = false;
+            opt = false;
+            document.getElementById('opt').value = "Optimization is off";
+        } else {
+            board.options.locus.translateToOrigin = true;
+            board.options.locus.translateTo10 = true;
+            opt = true;
+            document.getElementById('opt').value = "Optimization is on";
+        }
+    }
+
+    function runComparison() {
+        calculateLocus();
+        extend();
+        extendedLocus();
+
+        window.location.href = window.location.href+'?time0='+loc.ctime+'&time1='+loc2.ctime;
+    }
+
+    function runComparison2() {
+        extend2();
+        extendedLocus2();
+
+        window.location.href = window.location.href+'&time2='+loc3.ctime;
+    }
+
+(function(window, document, undefined) {
+    var r, time0, time1, time2, i;
+    if(window.location.href.indexOf('time1')>-1) {
+        r = window.location.href.split('?')[1].split('&');
+        for(i=0; i<r.length; i++) {
+            if(r[i].split('=')[0] == 'time0')
+                time0 = r[i].split('=')[1];
+
+            if(r[i].split('=')[0] == 'time1')
+                time1 = r[i].split('=')[1];
+
+            if(r[i].split('=')[0] == 'time2')
+                time2 = r[i].split('=')[1];
+        }
+
+        if(time1 === undefined)
+            return;
+
+        if(time2 === undefined) {
+            runComparison2();
+            return;
+        }
+
+        document.getElementById('polynomials').style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+
+        document.getElementById('polynomials').innerHTML = 'chaining: ' + (parseFloat(time1)+parseFloat(time0)) + '<br />direct: ' + time2;
+    }
+})(window, document);
+
+    
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<free_point>
+			<point out="true">P</point> 
+		</free_point>
+	</constraints>
+</construction>

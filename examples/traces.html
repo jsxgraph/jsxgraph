@@ -1,0 +1,42 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Lines and arrows with traces</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50});
+        board.snapToGrid = true;
+        
+        p1 = board.create('point', [1, 4.5], {style:5,name:"A",fillColor:'blue'}); 
+        p2 = board.create('point', [5, 4.5], {style:5,name:"B",fillColor:'blue'}); 
+        p7 = board.create('point', [1, 0], {style:5,name:"G",fillColor:'blue'}); 
+        p8 = board.create('point', [5, 0], {style:5,name:"H",fillColor:'blue'});        
+
+        l2 = board.create('line', [p7, p8], {straightFirst: false, straightLast:false, strokeWidth:'2', strokeColor:'green', trace:true});
+        c1 = board.create('circle', [p1,p2], {strokeColor:'#00FFFF', strokeWidth:'2', trace:true}); 
+        
+		l4 = board.create('line', [p7, p8], {straightFirst: true, straightLast:true, strokeWidth:'2',firstArrow:true,lastArrow:true,trace:true});		
+
+		// explicit usage of the 'arrow'-wrapper 
+		p9 = board.create('point', [1, -1.5], {style:5,name:"I",fillColor:'blue'}); 
+        p10 = board.create('point', [5, -1.5], {style:5,name:"J",fillColor:'blue'}); 		
+		l5 = board.create('arrow', [p9,p10], {strokeColor:'#00FFFF', strokeWidth:'2',trace:true}); 
+        
+  /* ]]> */
+  </script>
+  <form>
+  <input type="button" onClick="board.clearTraces()" value="Reset board">
+  </form>
+  
+</body>
+</html>

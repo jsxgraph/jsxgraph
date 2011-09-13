@@ -1,0 +1,74 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 16, 16, -2], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+
+ var n = 6;
+ 
+ 
+ var v1 = board.create('point', [7, 15], {name:'v1'}); 
+ var v2 = board.create('point', [0.0718, 11], {name:'v2'}); 
+ var v3 = board.create('point', [0.0718, 3], {name:'v3'}); 
+ var v4 = board.create('point', [7, -1], {name:'v4'}); 
+ var v5 = board.create('point', [13.93, 3], {name:'v5'});
+ var v6 = board.create('point', [13.93, 11], {name:'v6'});
+
+ 
+ // TO-DO: Automatisches Einlesen der Adjazenzmatrix
+var l1 = board.create('segment',[v1,v2]);
+var l2 = board.create('segment',[v1,v5]);
+var l3 = board.create('segment',[v2,v4]);
+var l4 = board.create('segment',[v2,v5]);
+var l5 = board.create('segment',[v3,v4]);
+var l6 = board.create('segment',[v3,v6]);
+var l7 = board.create('segment',[v4,v6]);
+
+
+<!-- Definiere Adjazenzmatrix für diesen Spezialfall-->
+var a = [[1,1,0,0,1,0],
+		 [1,1,0,1,1,0],
+		 [0,0,1,1,0,1],
+		 [0,1,1,1,0,1],
+		 [1,1,0,0,1,0],
+		 [0,0,1,1,0,1]];
+		 
+		 
+<!-- Benutze Floyd-Algorithmus um kürzeste Wege zwischen allen Knoten zu berechnen; vgl. R. Sedgewick "Algorithmen" (1992), Seite 541-->
+// Verwandle Adjazenzmatrix a in Distanzmatrix:
+
+for(var x= 0; x<=n-1;x++){ 				//laufe durch Zeilen der Distanzmatrix
+	{for (var y=0; y<=n-1; y++){			//laufe durch Spalten der Distanzmatrix
+		if(a[x][y] > 0){	  				// falls Verbindung zwischen Punkt x und y besteht
+			 for(var j=0; j<=n-1; j++){			//gehe alle möglichen Zwischenknoten j durch
+				if(a[y][j] >0){				//falls Verbindung zwischen Zwischenknoten j und Endpunkt x existiert
+					if(a[x][j]==0 || a[x][y]+a[y][j]< a[x][j]){  //falls keine Verbindung zwischen x und j existiert ODER falls Summe der Verbindungen kleiner ist als bereits gegebene Verbindung
+					a[x][j] = a[x][y]+a[y][j]}				//übernehme neu gefundenen kürzesten Weg in Matrix
+					}	}	}	}	}};
+		
+
+	
+	
+	var i=0        // Ausgabe der Zeile i
+	alert(a[i]);			
+
+board.unsuspendUpdate();		
+
+
+
+
+
+ /* ]]> */
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>JSXGraph example</title>
+  <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/distrib/jsxgraph.css" />
+  <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/distrib/prototype.js"></script>
+  <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/distrib/jsxgraphcore.js"></script>
+  <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/distrib/IntergeoReader.js"></script>
+</head>
+<body id="body">
+<div id="box" class='jxgbox' style="width:600px; height:400px;"></div>
+<form>
+	<input type="text" id="filein" value="file.i2g" />
+    <p>
+    <input type='button' value='Read file' onclick="loadFile($('filein').value,'intergeo')" />
+</form>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+  var board;
+  function loadFile(bspname, format) {
+    document.getElementById('box').innerHTML = '';
+    var value = $('filein').value;
+    document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
+
+    if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
+    board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
+  }
+</script>
+</body>
+</html>

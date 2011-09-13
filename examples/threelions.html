@@ -1,0 +1,26 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Example to demonstrate and test color blindness simulations.</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
+ 
+A = brd.createElement('point',[1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
+C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
+ 
+  /* ]]> */
+  </script>
+</body>
+</html>

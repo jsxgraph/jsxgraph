@@ -1,0 +1,54 @@
+<html>
+<head>
+   <title>Watt | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 600px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="computeLocus();" value="Calculate locus" />
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-12, 12, 12, -12], axis: true, grid: false, keepaspectratio: true});
+
+  A = board.create('point', [2,0]);
+
+  k1 = board.create('circle', [A, 5]);
+  
+  c = board.create('functiongraph', [function (x) { return x*x*x;}]);
+
+  c.generatePolynomial = function(p) {
+    return [['(',p.symbolic.x,')^3 - ',p.symbolic.y].join('')];
+  };
+
+  D = board.create('glider', [0,0, c], {name: 'D'});
+
+  k2 = board.create('circle', [D, 4]);
+
+  I = board.create('intersection', [k1, k2, 0], {color: 'blue'});
+
+  m = board.create('midpoint', [I, D], {color: 'green'});
+
+
+  function computeLocus() {
+    board.create('locus', [m], {strokeColor: 'black', strokeWidth: '3px'});
+  }
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

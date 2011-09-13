@@ -1,0 +1,139 @@
+
+/* ::::: http://jsxgraph.uni-bayreuth.de/wiki/skins/common/shared.css?164 ::::: */
+
+.mw-plusminus-null { color: rgb(170, 170, 170); }
+.texvc { direction: ltr; unicode-bidi: embed; }
+img.tex { vertical-align: middle; }
+span.texhtml { font-family: serif; }
+#toolbar, #wpTextbox1 { clear: both; }
+div#mw-js-message { border: 1px solid rgb(221, 221, 221); margin: 1em 5%; padding: 0.5em 2.5%; background-color: rgb(252, 252, 252); }
+.editsection { float: right; margin-left: 5px; }
+table.filehistory { border: 1px solid rgb(204, 204, 204); border-collapse: collapse; }
+table.filehistory th, table.filehistory td { border: 1px solid rgb(204, 204, 204); padding: 0pt 0.2em; vertical-align: top; }
+table.filehistory th { text-align: left; }
+table.filehistory td.mw-imagepage-filesize, table.filehistory th.mw-imagepage-filesize { white-space: nowrap; }
+table.filehistory td.filehistory-selected { font-weight: bold; }
+li span.deleted, span.history-deleted { text-decoration: line-through; color: rgb(136, 136, 136); font-style: italic; }
+body.ltr td.mw-label { text-align: right; }
+body.ltr td.mw-input { text-align: left; }
+body.ltr td.mw-submit { text-align: left; }
+body.rtl td.mw-label { text-align: left; }
+body.rtl td.mw-input { text-align: right; }
+body.rtl td.mw-submit { text-align: right; }
+td.mw-label { vertical-align: top; }
+td.mw-submit { white-space: nowrap; }
+body.rtl .thumbcaption { text-align: right; }
+body.rtl .magnify { float: left; }
+body.ltr .thumbcaption { text-align: left; }
+body.ltr .magnify { float: right; }
+.mw-hidden-cats-hidden { display: none; }
+.catlinks-allhidden { display: none; }
+p.mw-ipb-conveniencelinks, p.mw-filedelete-editreasons, p.mw-delete-editreasons { font-size: 90%; float: right; }
+div.searchresult { font-size: 95%; width: 38em; }
+.mw-search-results li { padding-bottom: 1em; }
+.mw-search-result-data { color: green; font-size: 97%; }
+div#mw-search-interwiki { border: 1px solid rgb(170, 170, 170); float: right; width: 18em; margin-top: 2ex; }
+div#mw-search-interwiki li { font-size: 95%; }
+.mw-search-interwiki-more { float: right; font-size: 90%; }
+span.searchalttitle { font-size: 95%; }
+div.searchdidyoumean { font-size: 127%; padding-bottom: 1ex; padding-top: 1ex; }
+.mw-userrights-disabled { color: rgb(136, 136, 136); }
+table.mw-userrights-groups * td, table.mw-userrights-groups * th { padding-right: 1.5em; }
+.os-suggest { border: 1px solid rgb(170, 170, 170); overflow-y: auto; overflow-x: hidden; position: absolute; top: 0px; left: 0px; width: 0px; background-color: white; z-index: 99; visibility: hidden; font-size: 95%; }
+table.os-suggest-results { border: 0pt none ; font-size: 95%; cursor: pointer; border-collapse: collapse; width: 100%; }
+td.os-suggest-result, td.os-suggest-result-hl { padding: 2px; white-space: nowrap; background-color: window; color: windowtext; }
+td.os-suggest-result-hl, td.os-suggest-result-hl-webkit { background-color: rgb(76, 89, 166); color: white; }
+td.os-suggest-result-hl { background-color: highlight; color: highlighttext; }
+.os-suggest-toggle { position: relative; left: 1ex; font-size: 65%; }
+.os-suggest-toggle-def { position: absolute; top: 0px; left: 0px; font-size: 65%; visibility: hidden; }
+.autocomment { color: gray; }
+#pagehistory .history-user { margin-left: 0.4em; margin-right: 0.2em; }
+#pagehistory span.minor { font-weight: bold; }
+#pagehistory li { border: 1px solid white; }
+#pagehistory li.selected { border: 1px dashed rgb(170, 170, 170); background-color: rgb(249, 249, 249); }
+table.mw-listgrouprights-table { border: 1px solid rgb(204, 204, 204); border-collapse: collapse; }
+table.mw-listgrouprights-table tr { vertical-align: top; }
+table.mw-listgrouprights-table td, table.mw-listgrouprights-table th { border: 1px solid rgb(204, 204, 204); padding: 0.5em 0.2em; }
+h4.mw-specialpagesgroup { margin: 0.3em 0em 0em; padding: 2px; background-color: rgb(220, 220, 220); }
+.mw-specialpagerestricted { font-weight: bold; }
+#shared-image-dup, #shared-image-conflict { font-style: italic; }
+
+/* ::::: http://jsxgraph.uni-bayreuth.de/wiki/skins/monobook/main.css?164 ::::: */
+
+#column-content { margin: 0pt 0pt 0.6em -10.2em; padding: 0pt; width: 100%; float: left; }
+#content { margin: 2.8em 0pt 0pt 12.2em; padding: 0pt 1em 1em; position: relative; z-index: 5; }
+#column-one { padding-top: 16px; }
+#content { border-style: solid none solid solid; border-color: rgb(170, 170, 170) -moz-use-text-color rgb(170, 170, 170) rgb(170, 170, 170); border-width: 1px medium 1px 1px; background: white none repeat scroll 0% 0%; color: black; line-height: 1.5em; }
+body { margin: 0pt; padding: 0pt; background: rgb(249, 249, 249) url('headbg.jpg') no-repeat scroll 0pt 0pt; font-family: sans-serif; font-style: normal; font-variant: normal; font-weight: normal; font-size: x-small; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: red; }
+#globalWrapper { margin: 0pt; padding: 0pt; font-size: 127%; width: 100%; }
+.visualClear { clear: both; }
+table { font-size: 100%; color: black; background-color: white; }
+fieldset table { background: transparent none repeat scroll 0% 0%; }
+a { background: transparent none repeat scroll 0% 0%; text-decoration: none; color: rgb(0, 43, 184); }
+a:visited { color: rgb(90, 54, 150); }
+a:active { color: rgb(250, 167, 0); }
+a:hover { text-decoration: underline; }
+a.stub { color: rgb(119, 34, 51); }
+a.new, #p-personal a.new { color: rgb(186, 0, 0); }
+a.new:visited, #p-personal a.new:visited { color: rgb(165, 88, 88); }
+img { border: medium none ; vertical-align: middle; }
+p { margin: 0.4em 0pt 0.5em; line-height: 1.5em; }
+p img { margin: 0pt; }
+hr { border: 0pt none ; margin: 0.2em 0pt; height: 1px; color: rgb(170, 170, 170); background-color: rgb(170, 170, 170); }
+h1, h2, h3, h4, h5, h6 { border-bottom: 1px solid rgb(170, 170, 170); margin: 0pt; background: transparent none repeat scroll 0% 0%; color: black; font-weight: normal; padding-top: 0.5em; padding-bottom: 0.17em; }
+h1 { font-size: 188%; }
+h1 .editsection { font-size: 53%; }
+h2 { font-size: 150%; }
+h2 .editsection { font-size: 67%; }
+h3, h4, h5, h6 { border-bottom: medium none; font-weight: bold; }
+h3 { font-size: 132%; }
+h3 .editsection { font-size: 76%; font-weight: normal; }
+h4 { font-size: 116%; }
+h4 .editsection { font-size: 86%; font-weight: normal; }
+h5 { font-size: 100%; }
+h5 .editsection { font-weight: normal; }
+h6 { font-size: 80%; }
+h6 .editsection { font-size: 125%; font-weight: normal; }
+ul { margin: 0.3em 0pt 0pt 1.5em; padding: 0pt; line-height: 1.5em; list-style-type: square; list-style-image: url('bullet.gif'); }
+ol { margin: 0.3em 0pt 0pt 3.2em; padding: 0pt; line-height: 1.5em; list-style-image: none; }
+li { margin-bottom: 0.1em; }
+dt { font-weight: bold; margin-bottom: 0.1em; }
+dl { margin-top: 0.2em; margin-bottom: 0.5em; }
+dd { line-height: 1.5em; margin-left: 2em; margin-bottom: 0.1em; }
+fieldset { border: 1px solid rgb(47, 111, 171); margin: 1em 0pt; padding: 0pt 1em 1em; line-height: 1.5em; }
+fieldset.nested { margin: 0pt 0pt 0.5em; padding: 0pt 0.5em 0.5em; }
+legend { padding: 0.5em; font-size: 150%; }
+form { border: medium none ; margin: 0pt; }
+textarea { padding: 0.1em; width: 100%; }
+input.historysubmit { padding: 0pt 0.3em 0.3em ! important; font-size: 94%; cursor: pointer; height: 1.7em ! important; margin-left: 1.6em; }
+select { vertical-align: top; }
+abbr, acronym, .explain { border-bottom: 1px dotted black; background: transparent none repeat scroll 0% 0%; color: black; cursor: help; }
+q { font-family: Times,"Times New Roman",serif; font-style: italic; }
+code { background-color: rgb(249, 249, 249); }
+pre { border: 1px dashed rgb(47, 111, 171); padding: 1em; color: black; background-color: rgb(249, 249, 249); line-height: 1.1em; }
+#siteSub { display: none; }
+#bodyContent a.external, #bodyContent a[href^="gopher://"] { background: transparent url('external.png') no-repeat scroll right center; padding-right: 13px; }
+#bodyContent a[href^="https://"], .link-https { background: transparent url('lock_icon.gif') no-repeat scroll right center; padding-right: 16px; }
+#bodyContent a[href^="mailto:"], .link-mailto { background: transparent url('mail_icon.gif') no-repeat scroll right center; padding-right: 18px; }
+#bodyContent a[href^="news://"] { background: transparent url('news_icon.png') no-repeat scroll right center; padding-right: 18px; }
+#bodyContent a[href^="ftp://"], .link-ftp { background: transparent url('file_icon.gif') no-repeat scroll right center; padding-right: 18px; }
+#bodyContent a[href^="irc://"], #bodyContent a.extiw[href^="irc://"], .link-irc { background: transparent url('discussionitem_icon.gif') no-repeat scroll right center; padding-right: 18px; }
+#bodyContent a.external[href$=".ogg"], #bodyContent a.external[href$=".OGG"], #bodyContent a.external[href$=".mid"], #bodyContent a.external[href$=".MID"], #bodyContent a.external[href$=".midi"], #bodyContent a.external[href$=".MIDI"], #bodyContent a.external[href$=".mp3"], #bodyContent a.external[href$=".MP3"], #bodyContent a.external[href$=".wav"], #bodyContent a.external[href$=".WAV"], #bodyContent a.external[href$=".wma"], #bodyContent a.external[href$=".WMA"], .link-audio { background: transparent url('audio.png') no-repeat scroll right center; padding-right: 13px; }
+#bodyContent a.external[href$=".ogm"], #bodyContent a.external[href$=".OGM"], #bodyContent a.external[href$=".avi"], #bodyContent a.external[href$=".AVI"], #bodyContent a.external[href$=".mpeg"], #bodyContent a.external[href$=".MPEG"], #bodyContent a.external[href$=".mpg"], #bodyContent a.external[href$=".MPG"], .link-video { background: transparent url('video.png') no-repeat scroll right center; padding-right: 13px; }
+#bodyContent a.external[href$=".pdf"], #bodyContent a.external[href$=".PDF"], #bodyContent a.external[href*=".pdf#"], #bodyContent a.external[href*=".PDF#"], #bodyContent a.external[href*=".pdf?"], #bodyContent a.external[href*=".PDF?"], .link-document { background: transparent url('document.png') no-repeat scroll right center; padding-right: 12px; }
+#bodyContent a.extiw, #bodyContent a.extiw:active { padding: 0pt; background: transparent none repeat scroll 0% 0%; color: rgb(51, 102, 187); }
+#bodyContent a.external { color: rgb(51, 102, 187); }
+#bodyContent .plainlinks a { padding: 0pt ! important; background: transparent none repeat scroll 0% 0% ! important; }
+* > html #bodyContent, * > html #bodyContent pre { overflow-x: auto; width: 100%; padding-bottom: 25px; }
+* html #column-content { display: inline; margin-bottom: 0pt; }
+* > html #column-content { float: none; }
+* > html #column-one { position: absolute; left: 0pt; top: 0pt; }
+
+/* ::::: http://jsxgraph.uni-bayreuth.de/wiki/index.php?title=-&action=raw&gen=css&maxage=18000 ::::: */
+
+a.new, #quickbar a.new { color: rgb(204, 34, 0); }
+
+/* ::::: http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css ::::: */
+
+.jxgbox { border: 1px solid rgb(53, 106, 160); overflow: hidden; position: relative; background-color: rgb(255, 255, 255); -moz-border-radius-topleft: 10px; -moz-border-radius-topright: 10px; -moz-border-radius-bottomright: 10px; -moz-border-radius-bottomleft: 10px; }
+.JXGtext { margin: 0px; padding: 0px; background-color: transparent; font-family: Arial,Helvetica,Geneva }

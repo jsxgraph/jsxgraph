@@ -1,0 +1,38 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Dynamic splines</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+</div>
+<br clear=all>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 400, unitX: 25, unitY: 25});
+        //board.options.curve.doAdvancedPlot = false;
+        var xax = board.createElement('axis', [[0,0],[1,0]]);
+        var yax = board.createElement('axis', [[0,0],[0,1]]);
+
+        var p = [];
+        p.push(board.createElement('point', [9, 5], {style:4,name:"P_{1}"})); // Angabe fester Koordinaten
+        p.push(board.createElement('point', [12, 5], {style:4,name:"P_{2}"})); // Angabe fester Koordinaten
+        p.push(board.createElement('point', [11, 8], {style:4,name:"P_{3}"}));
+        p.push(board.createElement('point', [13, 7], {style:4, name:"P_{4}"}));
+        p.push(board.createElement('point', [1, -1], {style:4, name:"P_{5}"}));
+        p.push(board.createElement('point', [6, 10], {style:4, name:"P_{6}"}));
+        p.push(board.createElement('point', [3, 2], {style:4, name:"P_{7}"}));
+
+        //var dataArr = [p1, p2, p3, p4, p5, p6, p7];
+        var s = board.createElement('spline', p);
+               
+  /* ]]> */
+  </script>
+</body>
+</html>

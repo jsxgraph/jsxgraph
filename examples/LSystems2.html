@@ -1,0 +1,396 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1>L-Systems</h1>
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; "></div>
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
+var t = brd.createElement('turtle');
+
+/* Sierpinski curve */
+if (true) {
+var level = 6;
+var axiom = 'A';
+var rules = {
+    'A':'B-A-B', 
+    'B':'A+B+A',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'A':'F', 
+                'B':'F', 
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+var angle = 60;
+var len = 300/Math.pow(2,level);
+var shrink = 1;
+}
+/* quadratic Koch island */
+if (false) {
+var level = 3;
+var axiom = 'F+F+F+F';
+var rules = {
+    'F':'F+F-F-FF+F+F-F', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F', 
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 90;
+var len = 200/Math.pow(4,level);
+var shrink = 1;
+}
+/* quadratic snowflake variation */
+if (false) {
+var level = 5;
+var axiom = '+F';
+var rules = {
+    'F':'F-F+F+F-F', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F', 
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+var angle = 90;
+var len = 500/Math.pow(3,level);
+var shrink = 1;
+}
+/* dragon curve */
+if (false) {
+var level = 8;
+var axiom = 'Fl';
+var rules = {
+    'F' : 'F',
+    'l' : 'l+rF+', 
+    'r' : '-Fl-r', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'l':' ',
+                'r':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 90;
+var len = 500/(level*level);
+var shrink = 1;
+}
+/* islands and lakes */
+if (false) {
+var level = 2;
+var axiom = 'F-F-F-F';
+var rules = {
+    'F' : 'F-f+FF-F-FF-Ff-FF+f-FF+F+FF+Ff+FFF',
+    'f' : 'ffffff', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'f':'f',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 90;
+var len = 20/Math.pow(2,level);
+var shrink = 1;
+}
+/* peano curve */
+if (false) {
+var level = 4;
+var axiom = 'X';
+var rules = {
+    'F' : 'F',
+    'X' : 'XFYFX+F+YFXFY-F-XFYFX', 
+    'Y' : 'YFXFY-F-XFYFX+F+YFXFY', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'X':' ',
+                'Y':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 90;
+var len = 300/Math.pow(3,level);
+var shrink = 1;
+}
+
+/* hexagonal gosper curve */
+if (false) {
+var level = 5;
+var axiom = 'XF';
+var rules = {
+    'F' : 'F',
+    'X' : 'X+YF++YF-FX--FXFX-YF+', 
+    'Y' : '-FX+YFYF++YF+FX--FX-Y', 
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'X':' ',
+                'Y':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 60;
+var len = 300/Math.pow(3,level);
+var shrink = 1;
+}
+
+/* plant 1*/
+if (false) {
+var level = 4;
+var axiom = 'F';
+var rules = {
+    'F' : 'F[+F]F[-F]F',
+    '[' : '[',
+    ']' : ']',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 25.7;
+var len = 200/Math.pow(3,level);
+var shrink = 1;
+}
+
+/* plant 2*/
+if (false) {
+var level = 4;
+var axiom = 'X';
+var rules = {
+    'F' : 'FF',
+    'X' : 'F-[[X]+X]+F[+FX]-X',
+    '[' : '[',
+    ']' : ']',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'X':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 22.5;
+var len = 300/Math.pow(3,level);
+var shrink = 1;
+}
+
+/* hex kolam*/
+if (false) {
+var level = 12;
+var axiom = 'X';
+var rules = {
+    'F' : 'F',
+    'X' : '[-F+F[Y]+F][+F-F[X]-F]',
+    'Y' : '[-F+F[Y]+F][+F-F-F]',
+    '[' : '[',
+    ']' : ']',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'X':' ',
+                'Y':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 60;
+var len = 100/(level);
+var shrink = 1;
+}
+
+/* mango kolam*/
+if (false) {
+var level = 5;
+var axiom = 'A---A';
+var rules = {
+    'F' : 'F',
+    'f' : 'f',
+    'A' : 'f-F+Z+F-fA',
+    'Z' : 'F-FF-F--[--Z]F-FF-F--F-FF-F--',
+    '[' : '[',
+    ']' : ']',
+    '+' : '+',
+    '-' : '-'
+};
+var symbols = { 'F':'F',
+                'f':'f',
+                'A':' ',
+                'Z':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+              } ;
+              
+var angle = 60;
+var len = 100/(level);
+var shrink = 1;
+}
+
+
+
+/* Penrose tilings */
+if (false) {
+var level = 2;
+var axiom = '[7]++[7]++[7]++[7]++[7]';
+var rules = {
+    '6' : '81++91----71[-81----61]++',
+    '7' : '+81--91[---61--71]+',
+    '8' : '-61++71[+++81++91]-',
+    '9' : '--81++++61[+91++++71]--71',
+    '1' : '',
+    '+' : '+',
+    '-' : '-',
+    '[' : '[',
+    ']' : ']'
+  };
+var symbols = { 
+                '1':'F',
+                '6':' ',
+                '7':' ',
+                '8':' ',
+                '9':' ',
+                '+':'+',
+                '-':'-',
+                '[':'[',
+                ']':']'
+               };
+var angle = 36.0;
+var len = 100/(level);
+}
+
+function expander(level,axiom,rules) {
+    this.axiom = axiom;
+    this.rules = rules;
+    this.source = (level>1) ? new expander(level-1,axiom,rules) : (new function() {
+        // Axiom:
+        this.code = axiom;
+        this.pos = 0;
+        this.next = function() {
+            if (this.pos>=this.code.length) return null;
+            return this.code.charAt(this.pos++);
+        }
+    });
+    
+    this.code = '';
+    this.pos = 0;
+    this.next = function() {
+        while (this.pos>=this.code.length) { // produce new symbols from source
+            this.pos = 0;
+            var pattern = this.source.next();
+            if (!pattern) return null // Finished
+            this.code = this.rules[pattern];
+        }
+        return this.code.charAt(this.pos++);
+    }
+}
+
+
+var generator = new expander(level,axiom,rules);
+function step() {
+    for (var c; c=generator.next(); c) {
+        switch(symbols[c]) {
+            case 'F':
+                t.fd(len);
+                break;
+            case 'f':
+                t.penUp();
+                t.fd(len);
+                t.penDown();
+                break;
+            case '+':
+                t.lt(angle);
+                break;
+            case '-':
+                t.rt(angle);
+                break;
+            case '[':
+                t.pushTurtle();
+                len *= shrink;
+                break;
+            case ']':
+                t.popTurtle();
+                len /= shrink;
+                break;
+            default:
+                ;
+        }
+    }
+    return null;
+}
+brd.suspendUpdate();
+t.cs();
+t.hideTurtle();
+t.setPos(-250,-250);
+//t.setPos(0,0);
+t.rt(90);
+
+//t.setProperty({strokeColor:'#0000ff',fillColor:'yellow'});
+step();
+
+brd.unsuspendUpdate();
+
+function run() {
+  brd.suspendUpdate();
+  var code = $('inputtext').value;
+  if (code=='') { return; }
+  eval(code);
+  brd.unsuspendUpdate();
+}
+function clearturtle() {
+  t.cs();
+}
+
+     
+/* ]]> */
+</script>
+</body>
+</html>

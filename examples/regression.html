@@ -1,0 +1,75 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Polynomial regression</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    data = "406.60 428.50 429.30 426.30 434.70 415.90 419.00 408.80 410.10 408.30 420.40 415.20 409.70 408.90 411.00 410.60 409.60 409.50 409.80 413.00 417.90 415.80 415.50 421.30 423.50 426.80 426.60 427.20 433.30 435.00 442.50 447.00 450.60 448.90 446.20 443.60 446.30 448.20 452.40 451.30 451.80 459.90 464.70 467.30 463.50 466.60 461.10 464.90 467.30 458.40 458.80 463.20 462.40 461.10 465.50 461.50 458.20 460.80 459.30 445.70 425.10 437.60 438.00 436.60 437.60 437.60 438.60 443.10 446.40 445.90 450.80 451.60 457.30 456.70 455.60 454.75 453.90 451.20 450.70 446.80 443.40 448.40 451.80 449.80 449.10 447.60 448.40 450.00 443.00 440.60 437.40 435.40 432.00 430.80 429.60 437.10 440.00 438.30 435.20 436.60 435.25 433.90 436.50 436.30 437.40 441.00 445.40 450.10 449.20 450.50 455.60 452.00 451.80 456.80 455.30 457.40 457.40 461.10 459.60 462.40 463.40 464.60 469.00 472.20 471.80 470.10 465.20 470.40 468.50 468.70 469.70 472.50 474.70 472.40 475.00 476.10 473.20 471.50 472.20 471.10 472.80 470.40 470.50 472.10 471.10 468.50 465.50 465.70 465.40 466.90 468.85 470.80 474.00 478.10 480.50 481.00 479.10 476.40 469.80 471.60 470.60 467.20 473.10 471.70 474.80 477.20 474.60 475.10 475.90 475.80 472.00 470.80 469.10 464.30 463.70 467.20 467.30 467.10 465.60 462.70 449.45 436.20 466.00 467.40 467.00 471.50 469.80 474.20 476.10 477.10 480.30 478.70 478.80 479.30 479.30 478.30 477.20 480.20 484.10 488.70 492.70 492.60 491.90 491.90 495.10 494.50 494.50 496.90 496.20 498.40 498.00 496.00 497.90 495.40 497.30 495.20 499.20 500.60 497.90 499.60 497.00 498.10 496.70 491.40 487.60 486.70 487.40 489.30 485.30 501.80 485.40 491.30 495.50 501.80 504.50 502.50 505.80 510.30 511.90 509.90 508.70 510.70 512.90 512.90 513.80 516.10 512.10 511.10 505.30 505.10 505.20 508.40 510.70 511.30 514.90 517.30 519.70 521.80 524.40 526.80";
+    data = data.split(' ');
+    datax = [];
+    for (i = 0; i < data.length; i++) {
+        data[i] = (parseFloat(data[i]) - 450.0);
+        datax[i] = i;
+    }
+
+
+    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 100, data.length + 2, -70], grid: false, axis:true});
+    s = brd.createElement('slider', [
+        [10,70],
+        [100,70],
+        [0,1,1]
+    ]);
+    deg = brd.createElement('slider', [
+        [10,90],
+        [100,90],
+        [1,2,10]
+    ], {name:'degree',snapWidth:1});
+    curve = brd.createElement('curve', [datax,[]], {strokeColor:'gray',dash:2});
+    curve.updateDataArray = function() {
+        var i, len = data.length;
+        for (i = 0; i < len; i++) {
+            this.dataY[i] = s.Value() * data[i];
+        }
+    };
+    
+dd = new function(){
+    this.d = 3;
+    this.f = function(){ return this.d;  }
+};
+    // If "this" is used
+    regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(dd.f.apply(dd), datax, curve.dataY);  // generateFunction();
+    regressionPolynomial = JXG.Math.Numerics.regressionPolynomial(deg, datax, curve.dataY);  // generateFunction();
+
+    reg = brd.createElement('functiongraph', [regressionPolynomial], {strokeColor:'black'});
+
+    //brd.createElement('glider',[100,30,reg],{strokeColor:'black'});
+    //regD = brd.createElement('functiongraph',[brd.D(regressionPolynomial)],{strokeColor:'red'});
+     t = brd.createElement('text',[20,40,
+        function(){ return "r(x) = " + regressionPolynomial.getTerm();}
+     ],
+     {strokeColor:'black',fontSize:'14px'});
+    /*
+     // random coordinates after each update
+     brd.suspendUpdate();
+     pointlist = [];
+     for (i=0; i<30;i++) {
+     pointlist.push(brd.createElement('point', [function() { return 200*Math.random(); }, function() { return -30*Math.random()-20;}], { style:4, strokecolor:"#0000a0", name:" "}));
+     }
+
+     regression2 = JXG.Math.Numerics.regressionPolynomial(deg,pointlist);
+     reg2 = brd.createElement('functiongraph',[regression2],{strokeColor:'green'});
+
+     brd.unsuspendUpdate();
+     */
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+{
+	"fontSize"	:	12,
+	"grid"		:	{
+		"hasGrid"		:	false,
+		"gridX"			:	2,
+		"gridY"			:	2,
+		"gridColor"		:	"#C0C0C0",
+		"gridOpacity"	:	"1",
+		"gridDash"		:	true,
+		"snapToGrid"	:	false, 
+		"snapSizeX"		:	2,
+		"snapSizeY"		:	2
+	},
+
+	"zoom"		:	{
+		"factor"		:	1.25
+	},
+
+	"elements"	:	{
+		"color"			:	{
+			"strokeOpacity"				:	1,
+			"highlightStrokeOpacity"	:	1,
+			"fillOpacity"				:	1,    
+			"highlightFillOpacity"		:	1,
+
+			"strokeColor"				:	"#0000ff",
+			"highlightStrokeColor"		:	"#C3D9FF",
+			"fillColor"					:	"none",
+			"highlightFillColor"		:	"none"
+		},
+
+	    "strokeWidth"	:	"2px",
+    
+	    "draft"			:	{
+		    "draft"			:	false,
+		    "color"			:	"#565656",
+		    "opacity"		:	0.8,
+		    "strokeWidth"	:	"1px"
+		}
+	},
+    
+    /* special point options */
+    "point"		:	{
+    	"style"					:	5,
+    	"fillColor"				:	"#00ff00",
+    	"highlightFillColor"	:	"#EEEEEE",
+	   	"strokeColor"			:	"#00ff00",
+    	"highlightStrokeColor"	:	"#C3D9FF"
+	},
+    
+    /* special line options */
+    "line"		:	{
+		"firstArrow"			:	false,
+    	"lastArrow"				:	false,
+		"straightFirst"			:	true,
+		"straightLast"			:	true,
+		"strokeColor"			:	"#00ff00",
+		"highlightStrokeColor"	:	"#C3D9FF",
+		"fillColor"				:	"none",
+		"highlightFillColor"	:	"none",
+
+		/* line ticks options */
+		"ticks"		:	{
+			"withTicks"		:	false,
+			"ticksDelta"	:	1
+		}
+	},
+    
+    /*special circle options */
+    "circle"	:	{
+		"strokeColor"			:	"#00ff00",
+		"highlightStrokeColor"	:	"#C3D9FF",
+		"fillColor"				:	"none",
+		"highlightFillColor"	:	"none"
+	},
+    
+    /* special angle options */
+    "angle"		:	{
+		"radius"				:	1.0,
+    	"fillColor"				:	"#FF7F00",
+    	"highlightFillColor"	:	"#FF7F00",
+    	"strokeColor"			:	"#FF7F00",
+    	"fillOpacity"			:	0.3,
+    	"highlightFillOpacity"	:	0.3
+	},
+    
+    /* special arc options */
+    "arc"	:	{
+    	"firstArrow"			:	false,
+    	"lastArrow"				:	false,
+		"strokeColor"			:	"#0000ff",
+		"highlightStrokeColor"	:	"#C3D9FF",
+		"fillColor"				:	"none",
+		"highlightFillColor"	:	"none"
+	},
+    
+    /* special polygon options */
+    "polygon"		:	{
+    	"fillColor"				:	"#00FF00",
+    	"highlightFillColor"	:	"#00FF00", 
+    	"fillOpacity"			:	0.3,    
+    	"highlightFillOpacity"	:	0.3
+	},
+
+    /* special sector options */
+    "sector"		:	{
+		"fillColor"				:	"#00FF00",
+    	"highlightFillColor"	:	"#00FF00", 
+    	"fillOpacity"			:	0.3,    
+    	"highlightFillOpacity"	:	0.3
+	},
+
+    /* special text options */
+    "text"			:	{
+    	"strokeColor"		:	"#000000"
+	},
+    
+    /* special curve options */
+    "curve"			:	{
+	    "strokeWidth"			:	"1px",   
+		"strokeColor"			:	"#0000ff"
+	},
+    
+    /* precision options */
+    "precision"		:	{
+    	"hasPoint"				:	4,
+	    "epsilon"				:	0.0001
+	},
+}

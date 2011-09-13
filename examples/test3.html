@@ -1,0 +1,49 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Test</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+
+   <script type="text/javascript">
+    /* <![CDATA[ */
+// A simple construction, consisting of three points , two lines, one circle.
+JXG.Line.prototype.highlight = function(){
+    document.getElementById("mydiv").innerHTML+=this.name;
+    this.board.renderer.highlight(this); // highlight the line
+}
+
+JXG.Line.prototype.noHighlight = function(){
+    document.getElementById("mydiv").innerHTML+='';
+    this.board.renderer.noHighlight(this); // dehighlight the line
+}
+
+JXG.Point.prototype.highlight = function(){
+    document.getElementById("mydiv").innerHTML+=this.name;
+    this.board.renderer.highlight(this); // highlight the line
+}
+
+JXG.Point.prototype.noHighlight = function(){
+    document.getElementById("mydiv").innerHTML+='';
+    this.board.renderer.noHighlight(this); // dehighlight the line
+}
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-0.2,1.2,1.2,-0.5]});
+var p = [];
+len = 2;
+for (i=0;i<len;i++) {
+    p[i] = brd.createElement('point',[i,i],
+            {name:"p"+i,face:'o', size:10, strokeColor:'red', fillColor:'red', fillOpacity:0.4, strokeOpacity:0.4, withLabel:false});
+}
+for (i=0;i<len;i++) {
+    brd.createElement('segment', [p[0],p[i]], {name:'line'});
+}
+/* ]]> */
+</script>
+<div id='mydiv'></div>
+
+</body>
+</html>

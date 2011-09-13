@@ -1,0 +1,204 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../../distrib/prototype.js"></script>
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <style type="text/css">
+        .square {
+            width: 500px;
+            height: 500px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<h2>JXGServer modul Test-Areal</h2>
+
+<div style="width: 390px">
+    <table width="390px">
+        <tr>
+            <td style="width: 380px;">Clear sine<br /><div id="box_clearsine" class="jxgbox square"></div><br /><audio id="audioclear" controls="controls" loop="loop" src=""></audio></td>
+        </tr><tr>
+            <td style="width: 380px;">Disturbed sine<button id="calcfft">Calculate FFT</button><br /><div id="box_disturbedsignal" class="jxgbox square"></div><br /><audio id="audiodist" controls="controls" loop="loop" src=""></audio></td>
+        </tr><!--tr>
+            <td style="width: 380px;">FFT<br /><div id="box_signalfft" class="jxgbox square"></div></td>
+        </tr--><tr>
+            <td style="width: 380px;">Filter<button id="calcifft">Calculate iFFT</button><br /><div id="box_signalfftfilter" class="jxgbox square"></div></td>
+        </tr><tr>
+            <td style="width: 380px;">iFFT<br /><div id="box_signalcleared" class="jxgbox square"></div><br /><audio id="audiofilter" controls="controls" loop="loop" src=""></audio></td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+    (function() {
+        // Variablen deklarieren
+        var
+            // "konstanten"
+            // nur die ersten "extract" Werte in JSXGraph anzeigen lassen
+            extract = 1000, samplerate = 2000, samples = 4000, frequency = 440, disturb = 0.6,
+            // ausmasse der boards
+            sizes = {
+                    'clearsine':         [-extract*0.02/samplerate,                2, extract*1.1/samplerate, -2],
+                    'disturbedsignal':   [-extract*0.02/samplerate,                2, extract*1.1/samplerate, -2],
+                    //'signalfft':         [-extract*0.02/samplerate, samplerate*1.1/2, extract*1.1/samplerate, -2],
+                    'signalfftfilter':   [-extract*0.02/samplerate, samplerate*1.1/2, 1.1, -samplerate*0.01],
+                    'signalcleared':     [-extract*0.02/samplerate,                2, extract*1.1/samplerate, -2]
+            },
+            // boards
+            boards = {},
+            // signale
+            signals = {},
+            signalsplot = {},
+            // laufvariable
+            i,
+            // zeit, ist eigl. immer gleich
+            x = [], xplot = [],
+            // hilfsfunktionen
+            // die callback funktion, wird benutzt um die ergebnisse
+            // der berechnungen auf dem webserver abzuholen
+            cb = function(data, signal) {
+                var l = data.y.length;
+
+                signals[signal] = data.y.slice(0, l);
+                signalsplot[signal] = data.y.slice(0, Math.min(extract, l));
+            },
+            cb_audio = function(data, what) {
+                var a = document.getElementById('audio'+what);
+                a.src = data.audioB64;
+            },
+            prepare_cb = function(f, signal) {
+                return function(data) {
+                    return f.apply(this, [data, signal]);
+                };
+            };
+
+        // Als erstes das Servermodul laden
+        JXG.Server.load('fft');
+        if(!JXG.Server.modules.fft) {
+            alert('Unable to load fft module, aborting!');
+            return;
+        }
+
+        if(extract > samples) {
+            alert('Extract can\'t be greater than samples! Aborting');
+            return;
+        }
+
+        // Boards initialisieren
+        for(i in sizes) {
+            boards[i] = JXG.JSXGraph.initBoard('box_'+i, {boundingbox: sizes[i], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false});
+            signals[i] = [];
+            signalsplot[i] = [];
+        }
+        boards.signalcleared.create('text', [0, 0, "symbolisiert Schalldruck"], {strokeColor:"#6E6E6E"});
+        boards.signalcleared.create('text', [0, -1, "t in s"], {strokeColor:"#6E6E6E"});
+        sliderBeschriftung = boards.clearsine.create('text', [0.04,-1.6,"Frequenz-Einstellung"], {strokeColor:'#FF0000'});
+
+         var s = boards.clearsine.create('slider', [
+             [0,-1.5],
+             [0.4,-1.5],
+             [0,440,1000]
+         ], {snapWidth:5, strokeColor:"#0000FF",fillColor:"#FF0000", name:"Hz"});
+
+        boards.clearsine.create('curve', [x, signalsplot.clearsine]).updateDataArray = function() {
+            this.dataX = x;
+            this.dataY = signalsplot.clearsine;
+        };
+
+        boards.disturbedsignal.create('curve', [x, signalsplot.disturbedsignal]).updateDataArray = function() {
+            this.dataX = x;
+            this.dataY = signalsplot.disturbedsignal;
+        };
+
+        function Frequenzeinstellung() {
+            for (i = 0; i < samples; i++) {
+                x[i] = i / samplerate;
+
+                signals.clearsine[i] = Math.sin(s.Value() * 2 * Math.PI * i / samplerate);
+                signals.disturbedsignal[i] = signals.clearsine[i] * (Math.random() * disturb * 2 + 1 - disturb);
+            }
+
+            xplot = x.slice(0, extract);
+            signalsplot.clearsine = signals.clearsine.slice(0, extract);
+            signalsplot.disturbedsignal = signals.disturbedsignal.slice(0, extract);
+
+            boards.disturbedsignal.update();
+        }
+        boards.clearsine.addHook(Frequenzeinstellung);
+        boards.clearsine.update();
+
+        document.getElementById('calcfft').onclick = function() {
+            var c3;
+            
+            if(boards.signalfftfilter)
+                JXG.JSXGraph.freeBoard(boards.signalfftfilter);
+
+            boards.signalfftfilter = JXG.JSXGraph.initBoard('box_signalfftfilter', {boundingbox: sizes.signalfftfilter, keepaspectratio:false, axis: true, grid: false, showNavigation: false});
+
+            JXG.Server.modules.fft.fft(signals.disturbedsignal, prepare_cb(cb, 'signalfft'), true);
+            
+            var c2 = boards.signalfftfilter.create('curve', [x,  signals.signalfft], {strokeWidth: "2px"});
+
+            boards.signalfftfilter.create('text', [0.2, -1.7, "Intensit&auml;t der Filterung"], {strokeColor:'#FF0000'});
+
+            var l1 = boards.signalfftfilter.create('line', [[0,0],[1,0]],{visible:false,straightFirst:false,straightLast:false}),
+                g1 = boards.signalfftfilter.create('glider', [0.1,0,l1],{name:"Tiefenfilter"}),
+                p1 = boards.signalfftfilter.create('point', [function(){return g1.X();},2],{visible:false}),
+                l2 = boards.signalfftfilter.create('line', [g1,p1],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+                g2 = boards.signalfftfilter.create('glider', [0.9,0,l1],{name:"H&ouml;henfilter"}),
+                p2 = boards.signalfftfilter.create('point', [function(){return g2.X();},2],{visible:false}),
+                l3 = boards.signalfftfilter.create('line', [g2,p2],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+                s1 = boards.signalfftfilter.create('slider', [[0.05,0],[0.05,500],[0,0,1]],{strokeColor:"#0000FF",fillColor:"#FF0000"}),
+                hoch = [];
+
+            c2.updateDataArray = function() {
+                this.dataX = x;
+                this.dataY = hoch;
+            };
+
+            function Schnitt() {
+                var i;
+
+                hoch = [];
+                for (i = 0; i < Math.floor(g1.X() * samplerate); i++) {
+                    hoch[i] = signals.signalfft[i] * s1.Value();
+                }
+
+                for (i = Math.floor(g1.X() * samplerate); i < Math.floor(g2.X() * samplerate); i++) {
+                    hoch[i] = signals.signalfft[i];
+                }
+
+                for (i = Math.floor(g2.X() * samplerate); i < samples; i++) {
+                    hoch[i] = signals.signalfft[i] * s1.Value();
+                }
+            }
+
+            boards.signalfftfilter.addHook(Schnitt);
+            boards.signalfftfilter.update();
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.clearsine, prepare_cb(cb_audio, 'clear'), true);
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.disturbedsignal, prepare_cb(cb_audio, 'dist'), true);
+            
+            document.getElementById('calcifft').onclick = function() {
+                if(c3)
+                    boards.signalcleared.remove(c3);
+
+                JXG.Server.modules.fft.cutoutrange(signals.signalfft, Math.floor(g1.X() * samplerate), Math.floor(g2.X() * samplerate), s1.Value(), prepare_cb(cb, 'signalfftfilter'), true);
+                JXG.Server.modules.fft.ifft(signals.signalfftfilter, prepare_cb(cb, 'signalcleared'), true);
+                c3 = boards.signalcleared.create('curve', [x,  signalsplot.signalcleared], {strokeWidth: "2px"});
+                JXG.Server.modules.fft.makeAudio('ogg', samplerate, signals.signalcleared, prepare_cb(cb_audio, 'filter'), true);
+            };
+        };
+
+   })();
+
+ /* ]]> */
+  </script>
+
+</body>
+</html>

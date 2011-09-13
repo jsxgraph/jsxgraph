@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>Exploring Change - Plotting Average Rates of Change</title>
+    <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h1>Durchschnittliche &Auml;nderungsrate</h1>
+
+<p><strong>Eine kleine Einf&uuml;hrung.</strong></p>
+
+<h2>Entdecke</h2>
+
+<div style="width:800px">
+    <div id="step" class="jxgbox" style="width:600px; height:600px;"></div>
+
+    <script type="text/javascript">
+    JXG.Options.text.useMathJax = true;
+    JXG.Options.point.showInfobox = false;
+    
+    var board = JXG.JSXGraph.initBoard('step', {boundingbox: [-6, 6, 4, -4], keepaspectratio: false, axis:true, showNavigation: true}),
+        parabola = board.create('functiongraph', [function(x) { return 1.5*x+2; }]),
+        A = board.create('glider', [-2, 0, parabola], {name: function() { return A ? 'A = (' + A.X().toFixed(2) + ', ' + A.Y().toFixed(2) + ')' : 'A';}}),
+        B = board.create('glider', [0, 2, parabola], {withLabel: false}),
+        Btext = board.create('text', [function () { return B.X() -1;}, function () { return B.Y() - 0.2;}, function() { return B ? 'B = (' + B.X().toFixed(2) + ', ' + B.Y().toFixed(2) + ')' : 'B';}]),
+        line = board.create('segment', [A,B]),
+        ratio = board.create('text', [-5, 3, function() { return '\\[\\frac{y_B-y_A}{x_B-x_A} = ' + ((B.Y() - A.Y())/(B.X() - A.X())).toFixed(4) + '\\]';}]);
+    
+    board.update();
+    </script>
+
+    <div style="width: 800px;">
+        <p>
+            Die beiden Punkte A und B sind jetzt an den Graphen der Funktion \(1,5x+2\) gebunden. Sie k&ouml;nnen immer
+            noch gezogen werden, sind aber in der Auswahl ihrer Positionen auf diese Funktion beschr&auml;nkt.
+        </p>
+        <p>Aufgaben:</p>
+        <ol>
+            <li>
+                F&uuml;hre mehrere Messungen der &Auml;nderungsrate durch, indem Du beide Punkte verschiebst. Wieso bleibt
+                die &Auml;nderungsrate immer gleich, egal wohin die Punkte A und B gezogen werden?
+            </li>
+        </ol>
+    </div>
+</div>
+
+</body>
+</html>

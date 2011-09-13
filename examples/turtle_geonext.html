@@ -1,0 +1,57 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/GeonextReader.js"></script>
+</head>
+<body>
+<form>
+<textarea rows=3 cols=30 id="input">t.fd(3);</textarea><br>
+<input type="button" value="los" onclick="eval(document.getElementById('input').value)">
+</form>
+<h2>convert a free GOENExT point to a glider on a turtle</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:400px;"></div>
+  <div id="debug" style="display:block;"></div>
+  <script type="text/javascript">
+    /* <![CDATA[ */
+    //brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 200, axis:false, unitX: 25, unitY: 25});
+    brd = JXG.JSXGraph.loadBoardFromFile('jxgbox', "bspnc/quad.gxt", "Geonext");
+    
+    var t, ta, no;
+    t = brd.createElement('turtle');
+    alert("Weiter");  //Bremse, weil GEONExT asynchron geladen wird
+
+    for (i=0;i<10;i++) {
+        t.fd((i+1)*0.20);
+        t.left(60);
+    }
+    
+    
+    /*
+    brd.createElement('point',[3,3],{name:'A'});
+    brd.createElement('point',[3,4],{name:'B'});
+    
+    // Convert free point to glider
+    p = JXG.getReference(brd,'A');
+    p.makeGlider(t);
+
+    // Bind free point to turtle
+    p2 = JXG.getReference(brd,'B');
+    p2.addConstraint([ function() { return t.X();}, function() { return t.Y();} ]) ;
+    brd.update();
+
+    ta = brd.createElement('tangent',[p],{dash:1});
+    no = brd.createElement('normal',[p],{dash:1,strokeColor:'red'});
+    */
+    
+    var p = JXG.getReference(brd,'A');
+    
+    p.makeGlider(t);
+    //p.addConstraint([ function() { return t.X();}, function() { return t.Y();} ]) ;
+    brd.update();
+    
+  /* ]]> */
+  </script>
+</body>
+</html>
