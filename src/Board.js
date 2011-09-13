@@ -797,6 +797,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // this one works on IE, Firefox and Chromium with default configurations
         // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
         this.containerObj.oncontextmenu = function (e) {if (JXG.exists(e)) e.preventDefault(); return false; };
+
     },
 
     /**
@@ -862,6 +863,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             tmpTouches = [], obj;
 
         evt.preventDefault();
+        evt.stopPropagation();
         this.updateHooks('mousedown', evt);
         // move origin - but only if we're not in drag mode
         if ( (this.mode === this.BOARD_MODE_NONE)
@@ -950,11 +952,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, j, pos;
 
         evt.preventDefault();
+        evt.stopPropagation();
         // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
             ti = ti.getTime();
-            if (ti-this.touchMoveLast<120) {
+            if (ti-this.touchMoveLast<80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
                 return;
             } else {
