@@ -8,11 +8,12 @@
 <body>
   <h2>Tracenpoche test cases in JSXGraph</h2>
   <form><input type='button' value='Show script' onclick='board.showXML()'></form>
-  <div id="jxgbox" class="jxgbox" style="width:800px; height:500px;"></div>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:700px;"></div>
   <div id="debug" style="display:block; margin-top:20px"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
         fname = 'polygon.txt';
+        //fname = 'point.txt';
 
         $('debug').innerHTML = fname+'<br>';
         board = JXG.JSXGraph.loadBoardFromFile('jxgbox', fname , 'Tracenpoche');
