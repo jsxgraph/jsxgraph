@@ -1,0 +1,12 @@
+﻿@options;
+
+@figure;
+  A = point( -6 , 0 );
+  B = point( 1 , 0 );
+  sAB = segment( A , B );
+  C = point( 5 , 5 );
+  D = point( 5 , -1.03 );
+  sCD = segment( C , D );
+
+@analyse;
+position(AB,CD) = perpendiculaires;

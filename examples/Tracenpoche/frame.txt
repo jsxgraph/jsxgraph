@@ -1,0 +1,5 @@
+﻿@options;
+  repereortho(313,263,30,1,1){ 0 , moyen , grisfonce , num1 };
+
+@figure;
+  A = point( 2.9 , 2.2 );

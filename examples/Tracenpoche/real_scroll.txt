@@ -1,0 +1,8 @@
+﻿@options;
+
+@figure;
+  r = reel( 0.6 , 0.4 , 2.6 , 0.2 )  { noir , (7.77,-7.87) };
+  A = point( -6.9 , 2.47 );
+  B = point( -3.23 , 2.47 );
+  dAB = droite( A , B );
+  P = pointsur( A , B , r );
