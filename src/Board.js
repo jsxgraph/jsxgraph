@@ -1634,15 +1634,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
         }
+
         border = 50;
         borderX = border/(this.unitX);
         borderY = border/(this.unitY);
 
         this.zoomX = 1.0;
         this.zoomY = 1.0;
+
         this.setBoundingBox([minX-borderX, maxY+borderY, maxX+borderX, minY-borderY], true);
 
         this.applyZoom();
+
         return this;
     },
 
