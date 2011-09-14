@@ -1,0 +1,154 @@
+<html>
+<head>
+   <title>Simson Steiner | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../src/Triangle.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 600px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="calculateLocus();" value="Calculate locus of X" />
+      <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
+      <input type="button" onclick="showBoard();" value="Show board" />
+      <input type="button" onclick="showLocusTime(loc)" value="Show locus time" />
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: true});
+  p1 = board.create('point', [0, 0], {name: 'A'});
+  p2 = board.create('point', [6, 0], {name: 'B'});
+  p3 = board.create('point', [4, 4], {name: 'C'});
+
+  t1 = board.create('triangle', [p1, p2, p3], {strokeWidth: '1px', withLabel: true});
+
+  m1 = board.create('point', [4, 1.5], {name:"X", color:'green'});
+
+  l1 = board.createElement('perpendicularpoint', [m1, t1.c], {name: 'L', color: 'blue'});
+  l2 = board.createElement('perpendicularpoint', [m1, t1.a], {name: 'M', color: 'blue'});
+  l3 = board.createElement('perpendicularpoint', [m1, t1.b], {name: 'N', color: 'blue'});
+
+  t2 = board.createElement('triangle', [l1, l2, l3], {strokeWidth: '1px', withLabel: true});
+
+    t1.a.setProperty({withLabel: false});
+    t1.b.setProperty({withLabel: false});
+    t1.c.setProperty({withLabel: false});
+    t2.a.setProperty({withLabel: false});
+    t2.b.setProperty({withLabel: false});
+    t2.c.setProperty({withLabel: false});
+
+  // Get area of triangle given by the three points A, B, C
+  getTriangleArea = function(A, B, C, square) {
+    var a = B.coords.distance(JXG.COORDS_BY_USER, C.coords),
+        b = A.coords.distance(JXG.COORDS_BY_USER, C.coords),
+        c = B.coords.distance(JXG.COORDS_BY_USER, A.coords),
+        s = (typeof square == 'undefined' ? true : square);
+
+    if (s)
+      return (4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b));
+    else
+      return Math.sqrt((4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b))/16.);
+  };
+
+  te = board.createElement('text', [-3.8, 5.5, function () { return ("Fl&auml;che des Dreiecks EDF: " + getTriangleArea(l1, l2, l3, false)); }]);
+
+  // dependency and polynomial generation hacking
+  m1.ancestors[l1.id] = l1;
+  m1.ancestors[l2.id] = l2;
+  m1.ancestors[l3.id] = l3;
+  m1.ancestors[p1.id] = p1;
+  m1.ancestors[p2.id] = p2;
+  m1.ancestors[p3.id] = p3;
+
+  m1.generatePolynomial = function () {
+    var as16 = getTriangleArea(l1, l2, l3),
+        as = '((('+l2.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+        bs = '((('+l1.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l1.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+        cs = '((('+l2.symbolic.x+')-('+l1.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l1.symbolic.y+'))^2)',
+        poly = '4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')';
+
+    return ['4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')'];
+  };
+
+  loc = null;
+
+  createControlElements = function () {
+    glider = board.createElement('glider', [0, 5, loc]);
+    lg1 = board.createElement('perpendicularpoint', [glider, t1.a]);
+    lg2 = board.createElement('perpendicularpoint', [glider, t1.b]);
+    lg3 = board.createElement('perpendicularpoint', [glider, t1.c]);
+
+    tecontrol = board.createElement('text', [-3.8, 5, function () { return ("Fl&auml;che des Dreiecks HIJ: " + getTriangleArea(lg1, lg2, lg3, false)); }]);
+  };
+
+
+    function calculateLocus() {
+        loc = board.create('locus', [m1], {strokeColor: 'black', strokeWidth: '2px'});
+    }
+
+    function showLocusEquation() {
+        var out = document.getElementById('polynomials');
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<loc.eq.length; i++)
+            out.innerHTML += '<li>' + loc.eq[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+    function showBoard() {
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+    }
+
+    function dimConstruction() {
+        var c = [p3, p4, c1, g, p6, c2, p14_1], i, o = getDim();
+
+        if(p3.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function showLocusTime(l) {
+        document.getElementById('polynomials').style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+
+        document.getElementById('polynomials').innerHTML = l.ctime;
+    }
+
+    function toggleOptimize() {
+        if(opt) {
+            board.options.locus.translateToOrigin = false;
+            board.options.locus.translateTo10 = false;
+            opt = false;
+            document.getElementById('opt').value = "Optimization is off";
+        } else {
+            board.options.locus.translateToOrigin = true;
+            board.options.locus.translateTo10 = true;
+            opt = true;
+            document.getElementById('opt').value = "Optimization is on";
+        }
+    }
+
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

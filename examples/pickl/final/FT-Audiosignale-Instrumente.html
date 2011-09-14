@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+  <title>FT-Audiosignale-Instrumente</title>
+
+    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+    <script type="text/javascript" src="js/jsxgraphcore.js"></script>
+    <style type="text/css">
+
+		.breadcrumbs1 {
+		width: 981px;
+		height: 38px;
+		}
+
+		#Platzhalter1 {
+		width: 45px;
+		height: 5px;
+		}
+
+		#Platzhalter2 {
+		width: 250px;
+		height: 5px;
+		}
+
+		.breadcrumbs-link {
+		padding: 10px;
+		}
+
+		.bild-first {
+		width: 25px;
+		height: 25px;
+		}
+
+		h1 {
+		color:#0000CC;
+		font-size:28pt;
+		font-family:arial;
+		background-color:#CCCCFF;
+		border-color:#000000;
+		border-width:5px;
+		border-style:solid;
+		padding: 15px;
+		margin-top: 0px;
+		margin-bottom: 30px;
+		}
+
+		a img{
+		border-width: 0;
+		}
+
+		#Beschreibung {
+		margin-bottom: 50px;
+		margin-left: 30px;
+		margin-right: 30px;
+		}
+
+		.links {
+		width: 400px;
+		height: 400px;
+		border: 1px solid black;
+		margin-left: 30px;
+		float: left;
+		}
+
+		.rechts {
+		width: 400px;
+		height: 400px;
+		border: 1px solid white;
+		margin-left: 500px;
+		margin-bottom: 50px;
+		}
+
+		.klein {
+		width: 400px;
+		height: 180px;
+		margin-top: 110px;
+		padding: 10px;
+		}
+
+	</style>
+
+    <script type="text/javascript">
+        // <![CDATA[
+
+        // general variables
+        var samplerate = 4000, xSignal = [], xFFT = [], i, samples = 0, seconds = 0, cursample = '';
+
+        JXG.Server.load('fft');
+        if(!JXG.Server.modules.fft) {
+            alert('Error: Unable to load fft module, aborting!');
+        }
+
+        function clearFFT() {
+            // check if the fft board has already been initialized
+            if(typeof fftSignal !== 'undefined') {
+                fftSignal = [];
+                fftBoard.update();
+            }
+            clearCleaned();
+        }
+
+        function clearCleaned() {
+            // check if the cleaned board has already been initialized
+            if(typeof cleanedSignal !== 'undefined') {
+                cleanedSignal = [];
+                cleanedBoard.update();
+            }
+        }
+
+        function changesample() {
+            cursample = document.getElementById('audioselect').value;
+            JXG.Server.modules.fft.loadAudio('ogg', cursample, function(data) {
+                var a = document.getElementById('clearaudio');
+                a.src = data.audioB64;
+                if(data.audioData) {
+                    clearSignal = [];
+                    samples = data.audioData.length;
+                    samplerate = data.samplerate;
+                    seconds = data.seconds;
+
+                    for(var i=0; i<samples; i++) {
+                        xSignal[i] = data.seconds*i/samples;
+                        xFFT[i] = 2*i/samples;
+                        clearSignal[i] = data.audioData[i];
+                    }
+                    clearBoard.setBoundingBox([-0.1, 2, Math.ceil(data.seconds+1), -2], false);
+                    //fftBoard.setBoundingBox([-0.01, samplerate*1.1/2, 1.1, -samplerate*0.05], false);
+                    //fftBoard.setBoundingBox([-0.01, 1100, 1.1, -50], false);
+                    cleanedBoard.setBoundingBox([-0.1, 2, Math.ceil(data.seconds+1), -2], false);
+                    clearBoard.update();
+                }
+            }, true);
+        }
+
+        function loadCleanedAudio() {
+        	if(cleanedSignal.length ===0) {
+        		alert('Fehler: Kein bereinigtes Signal vorhanden.');
+        		return;
+        	}
+
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, cleanedSignal, function(data) {
+                var a = document.getElementById('cleanedaudio');
+                a.src = data.audioB64;
+                a.style.display = 'block';
+            }, true);
+        }
+
+        // ]]>
+    </script>
+</head>
+
+<body>
+
+<div class="breadcrumbs1">
+	<table class="Tabelle">
+		<tr>
+			<th>
+				<a href="index.html" class="breadcrumbs-link">
+				<img src="Icons/go-first.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="index.html" class="breadcrumbs-link">
+				Startseite
+				</a>
+			</th><th>
+				<div id="Platzhalter1">
+				</div>
+			</th><th>
+				<a href="FT-Anwendungsbeispiele.html" class="breadcrumbs-link">
+				<img src="Icons/go-previous.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="FT-Anwendungsbeispiele.html" class="breadcrumbs-link">
+				2 Anwendungsbeispiele - Signalverarbeitung
+				</a>
+			</th><th>
+				<div id="Platzhalter2">
+				</div>
+			</th><th>
+				<a href="FT-Abkuerzungen.html" class="breadcrumbs-link">
+				ABK&Uuml;RZUNGEN
+				</a>
+			</th>
+		</tr>
+	</table>
+</div>
+
+<h1>
+	2.3 Audiosignale - Instrumente
+</h1>
+
+<div id="Beschreibung">
+	Hier steht Ihnen eine Auswahl von Audiosignalen verschiedener Instrumente zu
+	Verf&uuml;gung, die Sie visualisieren und durch Anwenden der FFT deren Frequenzspektrum
+	anzeigen lassen k&ouml;nnen. Nach Arbeiten mit Filtern k&ouml;nnen Sie durch anschlie&szlig;ende
+	IFFT das entsprechende Audiosignal generieren lassen.<br />
+	Die FFT- und die IFFT-Berechnungen werden durch NumPy, einer freien Software 
+	zur Berechnung numerischer Probleme, auf einem Server ausgef&uuml;hrt.
+	Diese Berechnung kann etwas Zeit in Anspruch nehmen.
+
+</div>
+
+<div id="box_clearsample" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    // initialize clearsine board
+    var clearBoard = JXG.JSXGraph.initBoard('box_clearsample', {boundingbox:[-0.1, 2, 6, -2], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        clearSignal = [],
+        clearPlot = clearBoard.create('curve', [[], []]);
+
+    clearPlot.updateDataArray = function() {
+        this.dataX = xSignal;
+        this.dataY = clearSignal;
+    };
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div class="klein">
+	<select id="audioselect">
+	    <option value="acoustic">Acoustic Guitar</option>
+	    <option value="bassdrum">Bass drum</option>
+    	<option value="bass">Bass</option>
+	    <option value="chello">Cello</option>
+    	<option value="eguitar1">E-Guitar 1</option>
+	    <option value="eguitar2">E-Guitar 2</option>
+    	<option value="flute">Flute</option>
+	    <option value="sitar">Sitar</option>
+    	<option value="synth">Synthesizer</option>
+	</select>
+	<p>
+	Nach Ausw&auml;hlen eines Instruments wird dessen Audiosignal graphisch dargestellt.<br />
+	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.
+	</p>
+	<audio id="clearaudio" src="" controls="controls"></audio>
+	</div>
+</div>
+
+<div id="box_fftsine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    var fftBoard = JXG.JSXGraph.initBoard('box_fftsine', {boundingbox:[-0.01, 1100, 1.1, -50], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        fftSignal = [], filterSignal = [],
+        fftPlot = fftBoard.create('curve', [[], []]),
+        l1 = fftBoard.create('line', [[0,0],[1,0]],{visible:false,straightFirst:false,straightLast:false}),
+        g1 = fftBoard.create('glider', [0.1,0,l1],{name:"Tiefenfilter"}),
+        p1 = fftBoard.create('point', [function(){return g1.X();},2],{visible:false}),
+        l2 = fftBoard.create('line', [g1,p1],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+        g2 = fftBoard.create('glider', [0.9,0,l1],{name:"H&ouml;henfilter"}),
+        p2 = fftBoard.create('point', [function(){return g2.X();},2],{visible:false}),
+        l3 = fftBoard.create('line', [g2,p2],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+        s1 = fftBoard.create('slider', [[0.05,100],[0.05,600],[0,0,2]],{strokeColor:"#0000FF",fillColor:"#FF0000"});
+
+    function loadFFT() {
+        JXG.Server.modules.fft.fft(clearSignal, function(data) {
+            fftSignal = data.y;
+            cut();
+            fftBoard.update();
+        }, true);
+    }
+
+    fftPlot.updateDataArray = function() {
+        this.dataX = xFFT;
+        this.dataY = filterSignal;
+    };
+
+    function cut() {
+        var i;
+
+        clearCleaned();
+
+        if(fftSignal.length === 0) {
+            filterSignal = [];
+            return;
+        }
+
+
+        for (i = 0; i < Math.floor(g1.X() * samples/2); i++) {
+            filterSignal[i] = fftSignal[i] * s1.Value();
+        }
+
+        for (i = Math.floor(g1.X() * samples/2); i < Math.floor(g2.X() * samples/2); i++) {
+            filterSignal[i] = fftSignal[i];
+        }
+
+        for (i = Math.floor(g2.X() * samples/2); i < samples/2; i++) {
+            filterSignal[i] = fftSignal[i] * s1.Value();
+        }
+    }
+
+    fftBoard.addHook(cut);
+    fftBoard.update();
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div class="klein">
+	<button onclick="loadFFT();">FFT-Berechnung</button><br />
+	Nach Anklicken des Buttons &quot;FFT-Berechnung&quot; wird das Frequenzspektrum des Sinussignals
+	angezeigt.<br />
+	So ist aus der Zeitfunktion eine Funktion in Abh&auml;ngigkeit von der Frequenz
+	entwickelt worden. Man kann nun die im Signal enthaltenen Frequenzen mit ihren
+	Betr&auml;gen der Fourier-Transformierten ablesen.
+	<p>
+		Durch Bewegen der entsprechenden Regler (rot) k&ouml;nnen die zu filternden
+		Frequenzbereiche (horizontale Regler: Tiefen- bzw. H&ouml;henfilter) und die Intensit&auml;t der 
+		Filterung (vertikaler Regler) bestimmt werden.
+	</p>
+	</div>
+</div>
+
+<div id="box_cleanedsine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    var cleanedBoard = JXG.JSXGraph.initBoard('box_cleanedsine', {boundingbox:[-0.1, 2, 6, -2], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        cleanedSignal = [],
+        cleanedPlot = cleanedBoard.create('curve', [[], []]);
+
+    function loadIFFT() {
+        var tmp;
+
+        JXG.Server.modules.fft.sampleifft(cursample, Math.floor(g1.X() *  samples/2), Math.floor(g2.X() *  samples/2), s1.Value(), function(data) {
+            cleanedSignal = data.y;
+            cleanedBoard.update();
+            document.getElementById('cleanedaudio').src = data.audioB64;
+        }, true);
+    }
+
+    cleanedPlot.updateDataArray = function() {
+        this.dataX = xSignal;
+        this.dataY = cleanedSignal;
+    };
+
+    // ]]>
+</script>
+
+
+<script type="text/javascript">
+    // Everything has been set up, let's load our first example
+    document.getElementById('audioselect').onchange = changesample;
+    changesample();
+</script>
+
+<div class="rechts">
+	<div class="klein">
+	<button onclick="loadIFFT();">IFFT-Berechnung</button><br />
+	Durch Bet&auml;tigen des Buttons &quot;IFFT-Berechnung&quot;, wird aus dem gefilterten
+	Frequenzspektrum das entsprechende Audiosignal generiert und angezeigt.<br />
+	Der Graph ist in Abh&auml;ngigkeit von der Zeit dargestellt.<br />
+	<br />
+	<audio src="" id="cleanedaudio" controls="controls"></audio>
+	</div>
+</div>
+
+
+</body>
+</html>

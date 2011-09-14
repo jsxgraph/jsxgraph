@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">	
+		<!--
+			JS/CC: A LALR(1) Compiler-Compiler written in JavaScript
+			Copyright (C) 2007, 2008 by J.M.K S.F. Software Technologies, Jan Max Meyer
+			http://www.jmksf.com ++ jscc<-AT->jmksf.com
+			
+			File:	jscc.html
+			Author:	Jan Max Meyer
+			Usage:	Web Environment Module
+			
+			You may use, modify and distribute this software under the terms and conditions
+			of the Artistic License. Please see ARTISTIC for more information.
+		-->
+		<title>JS/CC Web Environment</title>
+		
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		
+		<link rel="stylesheet" href="jscc/jscc.css" type="text/css">
+		<script type="text/javascript" src="jscc/jscc.js"></script>
+		<script type="text/javascript" src="jscc/driver.js"></script>
+
+		<script type="text/javascript">
+		var html_output = new String();
+		var error_output = new String();
+		var	dfa_table;
+		
+		function _error( msg )
+		{
+			if( show_errors )
+				error_output += "Error: " + msg + "\n";
+
+			errors++;
+		}
+		
+		function _warning( msg )
+		{
+			if( show_warnings )
+				error_output += "Warning: " + msg + "\n";
+
+			warnings++;
+		}
+		
+		function _print( txt )
+		{
+			html_output += txt;
+		}
+		
+		function check_editor_content()
+		{
+			if( document.source.code.value != "" )
+				if( confirm( "Delete current editor content?" ) )
+				{
+					document.source.code.value = "";
+					document.source.code.focus();
+					document.source.run.disabled = true;
+					return true;
+				}
+				else
+					return false;
+
+			return true;
+		}
+		
+		function run_parser()
+		{
+			var driver = new String( driver_t );
+			
+			//driver is for output
+			driver = driver.replace( /##PREFIX##/gi, "" );
+			driver = driver.replace( /##HEADER##/gi, code_head );
+			driver = driver.replace( /##TABLES##/gi, print_parse_tables( MODE_GEN_JS ) );
+			driver = driver.replace( /##DFA##/gi, print_dfa_table( dfa_table ) );
+			driver = driver.replace( /##TERMINAL_ACTIONS##/gi, print_term_actions() );
+			driver = driver.replace( /##LABELS##/gi, print_symbol_labels() );
+			driver = driver.replace( /##ACTIONS##/gi, print_actions() );
+			driver = driver.replace( /##FOOTER##/gi, code_foot );
+			driver = driver.replace( /##ERROR##/gi, get_error_symbol_id() );
+			driver = driver.replace( /##EOF##/gi, get_eof_symbol_id() );
+			driver = driver.replace( /##WHITESPACE##/gi, get_whitespace_symbol_id() );
+
+			//output the code
+			document.getElementById( "js_code" ).innerHTML = driver; //.replace( /\n/g, "<br />" ).replace( /\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;" );
+		}
+		
+		function build()
+		{
+			var pure_code, out_code, i;
+			
+			html_output = new String();
+			error_output = new String();
+			reset_all( EXEC_WEB );
+			
+			show_warnings = document.source.with_warnings.checked;
+
+			var src = new String( document.source.code.value );
+			parse_grammar( src );
+			
+			if( errors == 0 )
+			{
+				undef();
+				unreachable();
+				
+				if( errors == 0 )
+				{
+					first();
+					print_symbols();
+					print_grammar( MODE_GEN_HTML );
+					
+					html_output += "<hr />";
+					
+					dfa_table = create_subset( nfa_states );
+					dfa_table = minimize_dfa( dfa_table );
+
+					lalr1_parse_table( true );
+				}
+			}
+
+			if( errors > 0 || warnings > 0 && error_output != "" )
+				alert( error_output );
+			
+			if( errors == 0 )
+				// document.source.run.disabled = false;
+				run_parser();
+		}
+		</script>
+	</head><body>
+		<table border="0" cellpadding="0" cellspacing="2" width="100%">
+			<tbody><tr>
+				<td colspan="2" id="copyrightinfo">
+					<div id="progname">
+						JS/CC
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="elem_title">
+					Grammar Editor
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<form action="" name="source">
+
+						
+						<textarea id="code" name="code" rows="10" cols="255" style="width: 100%;" onchange="document.source.run.disabled = true;"></textarea>
+						<table width="100%">
+						<tbody><tr>
+							<td>
+								<input value="Compile Parser" style="width: 100%;" onclick="build()" type="button">
+							</td>
+						</tr>
+						</tbody></table>
+
+						<input name="with_warnings" type="checkbox">Show warnings
+					</form>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<textarea id="js_code">Run your parser to obtain the source code!</textarea>
+				</td>
+			</tr>			
+		</tbody></table>
+		<div id="popupcontent"></div>
+	</body></html>

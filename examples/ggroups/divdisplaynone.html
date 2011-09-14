@@ -1,0 +1,52 @@
+<html>
+<head>
+   <title>JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<div id="jxgbox" class="jxgbox" style="width:500px; height:500px; text-align: left; float: left; display: none;"></div>
+
+    <div style="width: 800px; margin-top: 10px;">
+        <form>
+            <input type="button" onclick="showBoard(true);" value="Show board" />
+            <input type="button" onclick="showBoard(false);" value="Hide board" />
+        </form>
+    </div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function() {
+        var board, p3, p4, c1, p6, g, c2, p14_1, f;
+        
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false, keepaspectratio: true, showcopyright: false});
+
+        p3 = board.createElement('point', [8, 3]);
+        p4 = board.createElement('point', [8, 8]);
+        c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
+
+        p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
+        g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
+
+        c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
+
+        p14_1 = board.createElement('intersection', [c2,g,0], {name: "T", color:'green'});
+
+        f = board.create('functiongraph', [function(x) {return Math.sin(x); }]);
+    })();
+
+    function showBoard(visible) {
+        if(visible) {
+            document.getElementById('jxgbox').style.display = 'block';
+        } else {
+            document.getElementById('jxgbox').style.display = 'none';
+        }
+    };
+
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Lines with arrows</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p1, p2, l1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 300, unitX: 50, unitY: 50});
+        board.snapToGrid = true;
+        
+        p1 = board.createElement('point', [1, 4.5], {style:5,name:"A",fillColor:'blue'}); 
+        p2 = board.createElement('point', [5, 4.5], {style:5,name:"B",fillColor:'blue'}); 
+        p3 = board.createElement('point', [1, 3], {style:5,name:"C",fillColor:'blue'}); 
+        p4 = board.createElement('point', [5, 3], {style:5,name:"D",fillColor:'blue'}); 
+		p5 = board.createElement('point', [1, 1.5], {style:5,name:"E",fillColor:'blue'}); 
+        p6 = board.createElement('point', [5, 1.5], {style:5,name:"F",fillColor:'blue'}); 
+		p7 = board.createElement('point', [1, 0], {style:5,name:"G",fillColor:'blue'}); 
+        p8 = board.createElement('point', [5, 0], {style:5,name:"H",fillColor:'blue'}); 		
+        
+        l1 = board.createElement('line', [p1, p2], {straightFirst: false, straightLast:false, strokeWidth:'2px',strokeColor:'green',firstArrow:true,lastArrow:true});
+		l2 = board.createElement('line', [p3, p4], {straightFirst: true, straightLast:false, strokeWidth:'2px',strokeColor:'red',firstArrow:true,lastArrow:true});
+		l3 = board.createElement('line', [p5, p6], {straightFirst: false, straightLast:true, strokeWidth:'2px', strokeColor:'black',firstArrow:true,lastArrow:true});
+		l4 = board.createElement('line', [p7, p8], {straightFirst: true, straightLast:true, strokeWidth:'2px',firstArrow:true,lastArrow:true});		
+
+		/* explicit usage of the 'arrow'-wrapper */
+		p9 = board.createElement('point', [1, -1.5], {style:5,name:"I",fillColor:'blue'}); 
+        p10 = board.createElement('point', [5, -1.5], {style:5,name:"J",fillColor:'blue'}); 		
+		l5 = board.createElement('arrow', [p9,p10], {strokeColor:'#00FFFF', strokeWidth:'2px'}); 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>B-splines</h2>
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+  <div id="debug" style="display:block;"></div>
+  <form><input type="button" value="add point" 
+               onclick="p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4]));board.update();"></form>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    var board, p;
+    (function(){
+        var i, col;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        //board.options.curve.doAdvancedPlot = false;
+        p = [];
+        for (i=0;i<8;i++) {
+            if (i%1==0) {
+                col = 'red';
+            } else {
+                col = 'blue';
+            }
+            p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{/*id:'p'+i,*/strokeColor:col,fillColor:col}));
+        }
+    
+        var c = board.createElement('curve', JXG.Math.Numerics.bspline(p,4), {strokecolor:'blue', strokeWidth:2}); 
+        return p;
+    })();
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

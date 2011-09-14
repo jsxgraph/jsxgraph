@@ -1,0 +1,96 @@
+<!-- This file is to illustrate the use of the constraint symmetry_by_point.
+     It still has not been run on any DGS, so it may contain bugs. -->
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<point id="C">
+			<homogeneous_coordinates>
+				<double>0.0</double>
+				<double>0.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>2.0</double>
+				<double>1.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="P2">
+			<homogeneous_coordinates>
+				<double>-2.0</double>
+				<double>-1.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="Q">
+			<homogeneous_coordinates>
+				<double>3.0</double>
+				<double>4.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="Q2">
+			<homogeneous_coordinates>
+				<double>-3.0</double>
+				<double>-4.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</point>
+		<line_segment id="s">
+			<homogeneous_coordinates>
+				<double>2.0</double>
+				<double>1.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+			<homogeneous_coordinates>
+				<double>3.0</double>
+				<double>4.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</line_segment>
+		<line_segment id="s2">
+			<homogeneous_coordinates>
+				<double>-2.0</double>
+				<double>-1.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+			<homogeneous_coordinates>
+				<double>-3.0</double>
+				<double>-4.0</double>
+				<double>1.0</double>
+			</homogeneous_coordinates>
+		</line_segment>
+	</elements>
+	<constraints>
+		<free_point>
+			<point out="true">C</point>
+		</free_point>
+		<free_point>
+			<point out="true">P</point>
+		</free_point>
+		<free_point>
+			<point out="true">Q</point>
+		</free_point>
+		<line_segment_by_points>
+			<line_segment out="true">s</line_segment>
+			<point>P</point>
+			<point>Q</point>
+		</line_segment_by_points>
+		<symmetry_by_point>
+			<point out="true">P2</point>
+			<point>P</point>
+			<point>C</point>
+		</symmetry_by_point>
+		<symmetry_by_point>
+			<point out="true">Q2</point>
+			<point>Q</point>
+			<point>C</point>
+		</symmetry_by_point>
+		<symmetry_by_point>
+			<point out="true">s2</point>
+			<point>s</point>
+			<point>C</point>
+		</symmetry_by_point>
+	</constraints>
+</construction>

@@ -1,0 +1,183 @@
+<html>
+<head>
+   <title>Spirograph | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:500px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 500px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="chooseCoordinateSystem();" value="Choose coordinate system" />
+      <input type="button" onclick="generatePolynomials();" value="Generate system of polynomial equations" />
+      <br />
+      <input type="button" onclick="calculateLocus();" value="Calculate locus" />
+      <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
+      <input type="button" onclick="showBoard();" value="Show board" />
+      <!--br />
+      <input type="button" onclick="extend();" value="Extend the construction" />
+      <input type="button" onclick="extendedLocus();" value="Calculate extended locus" /-->
+      <br />
+      <input type="text" value="0.2" id="dim" size="3" />
+      <input type="button" onclick="dimConstruction();" value="Dim construction" />
+      <input type="button" onclick="dimLocus();" value="Dim locus" />
+      <!--input type="button" onclick="dimExtension();" value="Dim extension" />
+      <input type="button" onclick="dimLocus2();" value="Dim extended locus" /-->
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5], keepaspectratio:true});
+var board = brd;
+
+var O = brd.create('point',[0,0],{name:'O',fixed:true, fillColor:'blue', strokeColor:'blue'});
+var A = brd.create('point',[2,0],{name:'A'});
+var k = brd.create('circle',[O,A],{name:'k'});
+
+var B = brd.create('glider',[0.7,1,k],{name:'B drag me'});
+
+var g1 = brd.create('line',[O,B], {strokeColor:'lightgray'});
+//var C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'});
+
+var k2 = brd.create('circle',[O,O.Dist(A)+1], {strokeColor: 'lightgray'});
+
+var M = brd.create('intersection',[k2,g1,0], {name:'M', fillColor:'blue', strokeColor:'blue'});
+var k3 = brd.create('circle',[M,B],{name:'k'});
+
+var gpar = brd.create('parallel',[O,A,M], {name:"g", strokeColor:'lightgray'});
+var Cprime = brd.create('intersection',[gpar,k3,0], {name:"C'", trace: false, fillColor:'green', strokeColor:'green'});
+
+var p14_1 = Cprime;
+
+var loc = null;
+
+
+    function chooseCoordinateSystem() {
+        var k, o;
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p14_1, 'u', 'brace');
+
+        for(k in board.objects) {
+            o = board.objects[k];
+            if(o.elementClass == JXG.OBJECT_CLASS_POINT) {
+                o.label.content.setText(o.name + ' (' + o.symbolic.x + ', ' + o.symbolic.y + ')');
+            }
+        }
+
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function generatePolynomials() {
+        var res = JXG.Math.Symbolic.generatePolynomials(board, p14_1, true),
+            i, out = document.getElementById('polynomials');
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<res.length; i++)
+            out.innerHTML += '<li>' + res[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+    function calculateLocus() {
+        loc = board.create('locus', [p14_1], {strokeColor: 'black', strokeWidth: '2px'});
+    }
+
+    function showLocusEquation() {
+        var out = document.getElementById('polynomials');
+
+        out.innerHTML = '<ul>';
+        for(i=0; i<loc.eq.length; i++)
+            out.innerHTML += '<li>' + loc.eq[i] + ' = 0</li>';
+        out.innerHTML += '</ul>';
+        out.style.display = 'block';
+        document.getElementById('jxgbox').style.display = 'none';
+    }
+
+    function showBoard() {
+        document.getElementById('polynomials').style.display = 'none';
+        document.getElementById('jxgbox').style.display = 'block';
+    }
+
+    function dimConstruction() {
+        var c = [O, A, k, B, g1, k2, M, k3, gpar, Cprime/*, C*/], i, o = getDim();
+
+        if(O.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function dimLocus() {
+        var o = getDim();
+
+        if(loc != null) {
+            if(loc.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc.setProperty({strokeOpacity: o});
+        }
+    }
+
+    function dimLocus2() {
+        var o = getDim();
+
+        if(loc2 != null) {
+            if(loc2.visProp['strokeOpacity'] == o)
+                o = 1.0;
+            loc2.setProperty({strokeOpacity: o});
+        }
+    }
+
+    function extend() {
+        if(loc==null)
+            return;
+
+        board.suspendUpdate();
+        tg = board.create('glider', [loc]);
+
+        tc = board.create('circle', [tg, 3]);
+        ti = board.create('intersection', [tc, c1, 0]);
+        tm = board.create('midpoint', [tg, ti]);
+        board.unsuspendUpdate();
+    }
+
+    function dimExtension() {
+        if(tg == null)
+            return;
+
+        var c = [tg, tc, ti, tm], i, o = getDim();
+
+        if(tg.visProp['strokeOpacity'] == o)
+            o = 1.0;
+
+        for(i=0; i<c.length; i++) {
+            c[i].setProperty({strokeOpacity: o, fillOpacity: o});
+        }
+    }
+
+    function getDim() {
+        return parseFloat(document.getElementById('dim').value);
+    }
+
+    function extendedLocus() {
+        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '2px'});
+    }
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

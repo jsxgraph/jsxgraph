@@ -1,0 +1,209 @@
+\documentclass[10pt]{article}
+\usepackage{a4wide}
+\usepackage[latin1]{inputenc}
+\usepackage[ngerman]{babel,varioref}
+\usepackage[T1] {fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{verbatim}
+\usepackage{pst-all}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{listings}
+
+\usepackage{geometry}
+\geometry{a4paper,left=30mm,right=30mm, top=2cm, bottom=2cm}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PC}{\mathcal{P}}
+\newcommand{\ZC}{\mathcal{Z}}
+\newcommand{\Sum}{\sum\limits}
+\newcommand{\Prod}{\prod\limits}
+\newcommand{\Lim}{\lim\limits}
+\newcommand{\Int}{\int\limits}
+\renewcommand{\Im}{\text{Im}}
+\renewcommand{\Re}{\text{Re}}
+\newcommand{\eps}{\varepsilon}
+\parindent 0pt
+\pagestyle{empty}
+
+
+\newcommand{\luecke}[1]{\raisebox{-6pt}{\makebox[#1]{\dotfill}}}
+
+\def\versionnumber{0.81}  % Version of this reference card
+\def\year{2010}
+\def\month{Juni}
+\def\version{\month\ \year\ v\versionnumber}
+
+\begin{document}
+\title{JessieScript Referenz (Version \version)}
+\begin{center} {\LARGE\textbf {JessieScript Referenz (Version
+\version)}}
+\end{center}
+\section{Konstruieren}
+Einfache mathematische JSXGraph-Konstruktionen k\"onnen
+mit dem Befehl
+\begin{verbatim}
+     board.construct(...);
+\end{verbatim}
+erzeugt werden. Dabei k\"onnen verschiedene Elemente, durch
+Semikolon getrennt als String \"ubergeben werden. Leerzeichen spielen keine Rolle. \\\\
+M\"ogliche
+Elemente sind: \\ \begin{tabular}{|l|l|} \hline \\[-0.75em] {\large
+\textbf{Beispiel}} & {\large \textbf{Beschreibung}} \\
+\hline\hline \verb+A(1,1)+ & Punkt an der Stelle (1,1) mit dem
+Namen \verb'A'
+\\ \hline \verb+BB(-2|0.5)+ & Punkt
+an der Stelle (-2,0.5) mit dem Namen \verb'BB' \\
+\hline\verb+]AB[+ & Gerade durch die Punkte \verb'A' und \verb'B' \\
+\hline\verb+[AB[+ &
+Halbgerade durch die Punkte \verb'A' und \verb'B', \"uber \verb'B' hinaus \\
+\hline\verb+]A BB]+ & Halbgerade durch die Punkte A
+und BB, \"uber A hinaus \\ \hline\verb+[AB]+ & Strecke zwischen \verb'A' und \verb'B' \\
+\hline \verb+g=[AB]+ & Strecke zwischen \verb'A' und \verb'B' mit dem Namen \verb'g' \\
+\hline\verb+k(A,4)+ & Kreis um \verb'A' mit Radius 4 \\
+\hline\verb+k(A,[BC])+ & Kreis um \verb'A', dessen Radius durch
+die L\"ange der (nicht notwendigerweise
+\\ & existierenden) Strecke \verb'[BC]' \\ \hline\verb+k(A,B)+ & Kreis um \verb'A',
+dessen Kreislinie durch den Punkt \verb'B' geht \\
+\hline\verb+k1=k(A,3)+ & Kreis um \verb'A' mit Radius 3 mit dem
+Namen \verb'k1'
+\\ \hline\verb+P(g)+ & Gleiter \verb'P' auf dem Objekt \verb'g' \\
+\hline\verb+Q(k1,0,1)+ & Gleiter \verb'Q' auf dem Objekt \verb'k1'
+mit den Koordinaten (0,1) \\ \hline \verb+g&k1+ & Schnittpunkt(e)
+der Objekte \verb'g' und \verb'k1' \\ \hline \verb+S=g&k1+ &
+Schnittpunkt(e) der Objekte \verb'g' und \verb'k1'.  \\ & Mehrere
+Schnittpunkte
+werden mit \verb'S'$_1$ und \verb'S'$_2$ bezeichnet, einzelne mit \verb'S'. \\
+\hline\verb+||(A,g)+ & Parallele zur Geraden \verb'g' durch den
+Punkt \verb'A'
+\\  \hline\verb+|_(A,g)+ & Senkrechte zur Geraden \verb'g' durch den Punkt
+A \\ \hline\verb+<(A,B,C)+ & Winkel, definiert durch die Punkte
+\verb'A', \verb'B', \verb'C' \\ \hline\verb+alpha=<(A,B,C)+ &
+Winkel, definiert durch die Punkte \verb'A', \verb'B', \verb'C',
+mit dem Namen $\alpha$
+\\  & M\"ogliche griechische Bezeichner sind \verb'alpha',
+\verb'beta', \verb'gamma', \verb'delta', \verb'epsilon', \\ &
+\verb'zeta', \verb'eta', \verb'theta', \verb'iota', \verb'kappa',
+\verb'lambda', \verb'mu', \verb'nu', \verb'xi', \verb'omicron',
+\verb'pi', \verb'rho', \verb'sigmaf', \\ & \verb'sigma',
+\verb'tau', \verb'upsilon', \verb'phi', \verb'chi', \verb'psi' und
+\verb'omega'. \\ \hline\verb+1/2(A,B)+ & Mittelpunkt von \verb'A'
+und \verb'B' \\ \hline\verb+3/4(A,B)+ & Punkt, der die Strecke von
+\verb'A' nach \verb'B' im Verh\"altnis 3:7 innen teilt, \\ & d.h.
+$\frac{3}{4}$ der Strecke \verb'[AB]' liegen zwischen \verb'A' und
+dem Teilpunkt \\ & Dabei ist jedes Verh\"altnis nat\"urlicher Zahlen m\"oglich. \\
+\hline\verb+P[A,B,C,D]+ & Polygon durch die Punkte \verb'A',
+\verb'B', \verb'C', \verb'D' mit dem Namen 'P' \\
+\hline\verb'f:x^2+2*x' & Funktionsgraph, $f:x\mapsto x^2+2\cdot x$ \\
+\hline\verb'f:sin(x)' & Funktionsgraph, $g:x\mapsto \sin(x)$ \\
+\hline\verb'#Hallo Welt(0,3)' & Text \verb'Hallo Welt' an den
+Koordinaten (0,3) \\ \hline
+\end{tabular} \vspace*{0.5cm} \\
+Es ist f\"ur jedes der Elemente (außer Punkte, Graphen und Polygone)
+m\"oglich, mit
+\begin{verbatim}
+    objname = ...
+\end{verbatim}
+direkt einen Namen zu vergeben. \\ Die Funktion gibt ein Objekt
+mit allen erzeugten Elementen zur\"uck, sodass danach noch
+Eigenschaften ver\"andert werden k\"onnen.
+
+\section{Schnelles Ver\"andern von Eigenschaften}
+Zum Setzen der drei wichtigsten Eigenschaften gibt es eine
+schnelle M\"oglichkeit, alle anderen m\"ussen im Nachhinein durch
+Zugriff auf die entsprechenden Objekte und Aufruf der
+entsprechenden Methode gesetzt werden. \\ Diese sind \\
+\begin{tabular}{|l|l|} \hline \\[-0.75em] {\large
+\textbf{Eigenschaft}} & {\large \textbf{Beschreibung}} \\
+\hline\hline\verb+invisible+ & das entsprechende Objekt ist unsichtbar \\
+\hline\verb+draft+ & das entsprechende Objekt wird im
+Entwurfsmodus
+dargestellt \\
+\hline\verb+nolabel+ & das entsprechende Objekt erh\"alt kein Label
+\\ \hline
+\end{tabular} \vspace*{0.5cm} \\
+Gesetzt werden diese Eigenschaften direkt beim Anlegen des
+Objekts, indem das jeweilige Schl\"usselwort (bzw. die jeweiligen
+Schl\"usselworte, auch eine Kombination davon ist m\"oglich), durch
+Leerzeichen getrennt, hinter dem Konstruktionsbefehl noch vor dem
+zugeh\"origen Semikolon, geschrieben wird, d.h.
+\begin{verbatim}
+     P(1,1) nolabel; Q(2,3) draft nolabel; [PQ] invisible;
+\end{verbatim}
+
+\section{Zugriff auf Elemente}
+Der Zugriff auf die Elemente nach dem Konstruieren ist m\"oglich
+\"uber: \\
+\begin{tabular}
+{|l|l|} \hline \\[-0.75em] {\large
+\textbf{Element}} & {\large \textbf{Beschreibung}} \\ \hline\hline
+\verb+constr.points[i]+ & liefert den $i$-ten Punkt oder Gleiter
+der Konstruktion \verb+constr+, \\ & dabei sind auch
+Mittel- bzw. Teilpunkte unter den Punkten\\
+\hline\verb+constr.lines[i]+ & liefert die $i$-te Gerade,
+Halbgerade oder Strecke der Konstruktion \verb+constr+, \\ & dabei
+sind auch Parallelen und Senkrechten unter den Geraden
+\\
+\hline\verb+constr.circles[i]+ & liefert den $i$-ten Kreis der
+Konstruktion \verb+constr+
+\\
+\hline\verb+constr.intersections[i]+ & liefert den $i$-ten
+Schnittpunkt der Konstruktion \verb+constr+
+\\
+\hline\verb+constr.angles[i]+ & liefert den $i$-ten Winkel der
+Konstruktion \verb+constr+
+\\
+\hline\verb+constr.functions[i]+ & liefert die $i$-te Funktion der
+Konstruktion \verb+constr+
+\\
+\hline\verb+constr.texts[i]+ & liefert das $i$-te Textelement der
+Konstruktion \verb+constr+
+\\
+\hline\verb+constr.polygons[i]+ & liefert das $i$-te Polygon der
+Konstruktion \verb+constr+
+\\
+\hline\verb+constr.A+ & liefert das Element mit dem Namen \verb'A'
+der Konstruktion \verb+constr+ \\ \hline
+\end{tabular}
+
+\section{Makros}
+Zus\"atzlich k\"onnen Makros definiert werden. Schl\"usselwort ist
+\verb+Macro+, die Parameter werden, durch Komma getrennt, in
+runden Klammern \"ubergeben, der Inhalt innerhalb von geschweiften
+Klammern. Links vom Zuweisungsoperator kann ein beliebiger Name
+f\"ur das Makro \"ubergeben werden. \\ Die entsprechende Syntax ist
+also
+\begin{verbatim}
+     macroName = Macro(param1, param2, param3, ...) { Befehl1; Befehl2; Befehl3; ... };
+\end{verbatim}
+Aufgerufen wird das Makro dann mit
+\begin{verbatim}
+     ergebnis = macroName(x1,x2,x3,...);
+\end{verbatim}
+
+\section{Beispiel}
+Ein Beispiel soll zur Veranschaulichung der Anwendung dienen.
+\begin{verbatim}
+    board = JXG.JSXGraph.initBoard("box", {originX: 50, originY: 300, unitX: 50,
+                                           unitY: 50, axis:true});
+
+    cons1 = board.construct("A(1,1);BC(1,3);k(A,[A BC]);X(2,4)");
+    cons2 = board.construct("J(7,4);l_2=[BC A]");
+
+    cons1.points[0].face(">");
+    cons1.BC.strokeColor("black");
+    cons2.l_2.strokeWidth(4);
+    cons1.X.size(8);
+
+    cons3 = board.construct("test = Macro(D,E,F) { g=[DE] nolabel; k1=k(D,[EF]);};
+                                 ttt=test(A,X,J);");
+    cons3.ttt.g.strokeColor("red");
+\end{verbatim}
+
+\end{document}

@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Move a point along a given path</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true, axis: true, grid: false}),
+            path = [[-8, -7], [-6, 3], [-2, -1], [4, -4], [9, 0]],
+            point = board.create('point', [-8, -7]),
+            points = [], i;
+
+        for(i=0; i<path.length; i++)
+            points[i] = board.create('point', path[i], {size: 2});
+        point.moveAlong(path, 4000);
+    })();
+
+
+  /* ]]> */
+  </script>
+</body>
+</html>

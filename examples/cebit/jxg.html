@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>JSXGraph CeBIT Tests</title>
+    <style type="text/css">
+        .box {
+            width: 200px;
+            height: 80px;
+        }
+    </style>
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" style="width: 300px; height: 300px; border: 3px solid black;"></div>
+<div id="debug"></div>
+<a href="jxg.html"><div class="box" style="float: left; background-color: #ccc;">Next</div></a>
+
+<script type="text/javascript">
+    JXG.debug = function(s) {
+        document.getElementById('debug').innerHTML += s + "<br/>";
+    };
+
+    try {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {grid: false, axis: true, boundingbox: [-5, 5, 5, -5]}).suspendUpdate(),
+            p1 = board.create('point', [-2, -1]),
+            c = board.create('circle', [p1, 2]),
+            p2 = board.create('point', [2, 1]),
+            p3 = board.create('point', [3, -2]),
+            poly = board.create('polygon', [p1, p2, p3]),
+            fun = board.create('functiongraph', [function(x) { return p3.X() * Math.sin(x); }, -5, 5]);
+
+        board.unsuspendUpdate();
+    } catch (e) {
+        JXG.debug('Error: ' + e);
+    }
+
+</script>
+
+</body>
+</html>

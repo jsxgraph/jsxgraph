@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- Adjust the paths -->
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+</head>
+<body>
+
+<h2>Enter title here.</h2>
+
+<div style="width:800px">
+    <div id="jxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
+    <br />
+    <div id="debug" style="display:block;">
+        Debug information:<br />
+    </div>
+</div>
+
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function() {
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-5, 5, 5, -5],
+                keepaspectreatio: true,
+                axis:true,
+                grid: true
+            });
+
+        // construction
+
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>

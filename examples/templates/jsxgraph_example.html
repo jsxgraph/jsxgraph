@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- Adjust the paths -->
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/jsxexamples.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDefault.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+<body>
+
+<!-- powered by <a href="http://jsxgraph.org/">JSXGraph</a>.-->
+
+<div id="container">
+
+<span id="jsxgraph-head">powered by <a href="http://jsxgraph.org/"><img src="img/jsxgraph_badge_39.png" alt="JSXGraph" /></a></span>
+
+<h1>Enter title here</h1>
+
+
+<a name="construction"></a>
+<h2><a href="#construction" id="head-construction">Construction</a></h2>
+
+<div id="construction">
+    <div id="jxgbox" class="jxgbox" style="width: 600px; height: 600px;"></div>
+</div>
+
+<script id="jxg" type="text/javascript">
+    (function() {
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-5, 5, 5, -5],
+                keepaspectreatio: true,
+                axis:true,
+                grid: true
+            });
+
+        // construction
+
+    })();
+</script>
+
+
+<a name="explanation"></a>
+<h2><a href="#explanation" id="head-explanation">Explanation</a></h2>
+
+<div id="explanation">
+    Explanation goes here.
+</div>
+
+
+<a name="source"></a>
+<h2><a href="#source" id="head-source">Source code</a></h2>
+
+<div id="source">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    <span style="float: left"><img src="img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
+    JSXGraph is licensed under the <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    $('#'+_part).slideToggle(500);
+                }
+            }(part));
+        }
+    });
+    
+    // ]]>
+</script>
+</body>
+</html>

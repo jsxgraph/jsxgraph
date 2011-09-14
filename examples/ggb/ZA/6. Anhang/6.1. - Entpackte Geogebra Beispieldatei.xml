@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<geogebra format="2.4">
+<gui>
+	<show algebraView="false"/>
+	<splitDivider loc="250"/>
+	<font  size="14"/>
+</gui>
+<euclidianView>
+	<coordSystem xZero="21.0" yZero="323.33333333333326" scale="40.0"/>
+	<evSettings axes="true" grid="true" pointCapturing="true"/>
+</euclidianView>
+<kernel>
+	<decimals val="2"/>
+	<angleUnit val="degree"/>
+</kernel>
+<construction title="funktion1" author="" date="">
+<expression label ="f" exp="f(x) = x^2 / 6 - 2 x + 8"/>
+<element type="function" label="f">
+	<show object="true" label="true"/>
+	<objColor r="0" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="14" y="12"/>
+	<labelMode val="1"/>
+	<fixed val="true"/>
+	<lineStyle thickness="5" type="0"/>
+</element><command name="Point">
+	<input a0="f"/>
+	<output a0="T"/>
+</command>
+<element type="point" label="T">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="255" alpha="0.0"/>
+	<labelOffset x="-21" y="8"/>
+	<animation step="0.1"/>
+	<coords x="9.0" y="3.5" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<command name="Tangent">
+	<input a0="T" a1="f"/>
+	<output a0="t"/>
+</command>
+<element type="line" label="t">
+	<show object="true" label="true"/>
+	<objColor r="102" g="102" b="102" alpha="0.0"/>
+	<labelOffset x="34" y="0"/>
+	<coords x="-1.0" y="1.0" z="5.5"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="explicit"/>
+</element>
+<command name="Slope">
+	<input a0="t"/>
+	<output a0="k"/>
+</command>
+<element type="numeric" label="k">
+	<value val="1.0"/>
+	<show object="true" label="true"/>
+	<objColor r="153" g="0" b="0" alpha="0.15"/>
+	<labelMode val="1"/>
+	<lineStyle thickness="5" type="0"/>
+</element>
+<expression label="N" exp="(x(T), 0)"/>
+<element type="point" label="N">
+	<show object="false" label="true"/>
+	<objColor r="64" g="64" b="64" alpha="0.0"/>
+	<coords x="9.0" y="0.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="3"/>
+</element>
+<expression label="Q" exp="N + (0, k)"/>
+<element type="point" label="Q">
+	<show object="true" label="false"/>
+	<objColor r="0" g="0" b="204" alpha="0.0"/>
+	<trace val="true"/>
+	<coords x="9.0" y="1.0" z="1.0"/>
+	<coordStyle style="cartesian"/>
+	<pointSize val="2"/>
+</element>
+<command name="Segment">
+	<input a0="N" a1="Q"/>
+	<output a0="k."/>
+</command>
+<element type="segment" label="k.">
+	<show object="true" label="false"/>
+	<objColor r="153" g="0" b="0" alpha="0.0"/>
+	<labelOffset x="-5" y="7"/>
+	<coords x="-1.0" y="0.0" z="9.0"/>
+	<lineStyle thickness="5" type="0"/>
+	<eqnStyle style="implicit"/>
+</element>
+<expression label="T1" exp="&quot;k = &quot; + k"/>
+<element type="text" label="T1">
+	<objColor r="153" g="0" b="0" alpha="0.0"/>
+	<startPoint exp="Q"/>
+	<labelOffset x="11" y="6"/>
+</element>
+</construction>
+</geogebra>

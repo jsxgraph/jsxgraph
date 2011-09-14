@@ -1,0 +1,36 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Macro example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 20});
+
+        // Slider-Makro
+        function createSlider(board,parents,atts) {
+            var p1 = board.createElement('point', [parents[0], parents[1]], {visible:false, fixed:true}); 
+            var p2 = board.createElement('point', [parents[0]+parents[2], parents[1]],{visible:false,fixed:true}); 
+            var l1 = board.createElement('line', [p1,p2], {straightFirst:false,straightLast:false,strokewidth:1}); 
+            var p3 = board.createElement('point', [parents[0]+parents[2], parents[1]], {slideObject:l1,style:6,name:atts['name']}); 
+            var l2 = board.createElement('line', [p1,p3], {straightFirst:false,straightLast:false,strokewidth:4}); 
+            var t = board.createElement('text', [parents[0]+parents[2], parents[1]-1,"<value>X("+atts['name']+")</value>"]); 
+            return p3;
+        }
+        
+        // Einsatz des Makros
+        var s = createSlider(board,[0,-1,5],{name:'S'});
+        //var p1 = board.createElement('point', [function(){return s.X();},function(){return Math.log(s.X()+0.2)*s.X();}], {trace:true, strokecolor:'red'}); 
+        var p1 = board.createElement('point', [function(){return s.X();},function(){return Math.log(s.X()+0.2)*s.X();}],{trace:true,strokecolor:'red'});                 
+        //var s2 = createSlider(board,[0,-3,6],{name:'T'});    
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

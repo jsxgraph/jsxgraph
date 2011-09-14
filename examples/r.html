@@ -1,0 +1,125 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Analyze data with R</h2>
+<div style='width:950px'>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:400px; float:left" onmouseup="doIt()"></div>
+  <p style="float:right">
+    <input type="button" value="Analyze" onClick="doIt()"> 
+  </p>
+  <p id='output' style="float:right; height:200px; width:10em;">Output:<br>
+  </p>
+</div>
+  <br clear=all>
+  <div id="debug" style="display:block;"></div>
+    <script type="text/javascript">
+    /* <![CDATA[ */
+
+        brd = JXG.JSXGraph.initBoard('jxgbox', {originX: 20, originY: 300, unitX: 60, unitY: 10});
+        b1axisx = brd.createElement('axis', [[0,0], [1,0]], {ticksDelta:5, strokeColor:'#000000'});
+        b1axisy = brd.createElement('axis', [[0,0], [0,1]], {ticksDelta:5, strokeColor:'#000000'});
+        b1axisx.ticksDelta = 5;
+        b1axisy.ticksDelta = 5;
+        brd.fullUpdate();
+        
+        var graph1,graph2,graph3,graph4,graph5;
+
+        var x = [];
+        var y = [];
+        var p = [];
+        for (var i=0;i<11;i++) {
+            x[i] = i;
+            y[i] = 10+(Math.random()-0.5)*10;
+            p[i] = brd.createElement('point', [x[i],y[i]],{name:' ',fixed:true,style:7}); 
+        }
+        var q = [];
+        var hlow = [];
+        var hup = [];
+        var l = [];
+        hlow[0] = brd.createElement('point', [x[0],0],{name:' ',visible:false}); 
+        hlow[1] = brd.createElement('point', [x[10],0],{name:' ',visible:false}); 
+        hlow[2] = brd.createElement('point', [x[8],0],{name:' ',visible:false}); 
+        hlow[3] = brd.createElement('point', [x[9],0],{name:' ',visible:false}); 
+        hup[0] = brd.createElement('point', [x[0],20],{name:' ',visible:false}); 
+        hup[1] = brd.createElement('point', [x[10],20],{name:' ',visible:false}); 
+        hup[2] = brd.createElement('point', [x[8],20],{name:' ',visible:false}); 
+        hup[3] = brd.createElement('point', [x[9],20],{name:' ',visible:false}); 
+        l[0] = brd.createElement('line', [hlow[0],hup[0]],{visible:false}); 
+        l[1] = brd.createElement('line', [hlow[1],hup[1]],{visible:false}); 
+        l[2] = brd.createElement('line', [hlow[2],hup[2]],{visible:false}); 
+        l[3] = brd.createElement('line', [hlow[3],hup[3]],{visible:false}); 
+
+        brd.removeObject(p[0]);
+        brd.removeObject(p[10]);
+        brd.removeObject(p[8]);
+        brd.removeObject(p[9]);
+        
+        p[0] = brd.createElement('glider', [x[0],y[0],l[0]],{name:' ',style:6}); 
+        p[10] = brd.createElement('glider', [x[10],y[10],l[1]],{name:' ',style:6}); 
+        p[8] = brd.createElement('glider', [x[8],y[8],l[2]],{name:' ',style:6}); 
+        p[9] = brd.createElement('glider', [x[9],y[9],l[3]],{name:' ',style:6}); 
+
+        var graph1,graph2,graph3,graph4,graph5;
+
+        doIt();
+        
+        function doIt() {
+            brd.update();
+            // Generate a ";"-separated list
+            var t = '';
+            for (var i=0;i<p.length;i++) {
+                t += p[i].Y() + ';';
+            }
+            new Ajax.Request('rserv.php', {
+                method:'post',
+                parameters:'input='+escape(t),
+                onComplete: function(transport) {
+                    if (200 == transport.status) {
+                        var t = transport.responseText;
+                        var res = t.match(/"(.*)"/gi);
+                        res = RegExp.$1;
+                        var a = res.split(";");
+                        var m = a[0]*1.0;
+                        var sd = a[1]*1.0;
+                        var med = a[2]*1.0;
+                        var mad = a[3]*1.0;
+                        var mad = a[3]*1.0;
+                        var estimator1 = a[4]*1.0;
+                        var estimator2 = a[5]*1.0;
+                        if (!graph2) { 
+                            graph2 = brd.createElement('curve', [[x[0],x[x.length-1]],[m,m]], {strokecolor:'red'}); 
+                            graph3 = brd.createElement('curve', [[x[0],x[x.length-1]],[m+sd,m+sd]], {strokecolor:'red',dash:2}); 
+                            graph4 = brd.createElement('curve', [[x[0],x[x.length-1]],[m-sd,m-sd]], {strokecolor:'red',dash:2}); 
+                            graph5 = brd.createElement('curve', [[x[0],x[x.length-1]],[med,med]], {strokecolor:'gray'}); 
+                            graph1 = brd.createElement('curve', [[x[0],x[x.length-1]],[med-mad,med-mad]], {strokecolor:'gray',dash:3}); 
+                            graph6 = brd.createElement('curve', [[x[0],x[x.length-1]],[med+mad,med+mad]], {strokecolor:'gray',dash:3}); 
+                        } else {
+                            graph2.dataY = [m,m];
+                            graph3.dataY = [m+sd,m+sd];
+                            graph4.dataY = [m-sd,m-sd];
+                            graph5.dataY = [med,med];
+                            graph1.dataY = [med-mad,med-mad];
+                            graph6.dataY = [med+mad,med+mad];
+                        }
+
+                        $('output').innerHTML = 'Statistics:<br>'+ 
+                                'Mean value=' + brd.round(m,2) + '<br />' +
+                                'sd=' + brd.round(sd,2) + '<br />' +
+                                'median=' + brd.round(med,2) + '<br />' +
+                                'MAD=' + brd.round(mad,2) + '<br />' + 
+                                'optimal-robust radius-minimax estimator for location=' + brd.round(estimator1,2) + '<br />' +
+                                'optimal-robust radius-minimax estimator for scala=' + brd.round(estimator2,2) + '<br />';
+                        brd.update();
+                    };
+                }});
+        }
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<html>
+<head>
+   <title>Watt | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../src/CinderellaReader.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 600px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="computeLocus();" value="Calculate locus" />
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+  board = JXG.JSXGraph.loadBoardFromFile('jxgbox', 'watt.cdy', 'cinderella');
+
+  function computeLocus() {
+    board.create('locus', [JXG.getRef(board, 'E')]);
+  }
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

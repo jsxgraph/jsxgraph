@@ -1,0 +1,50 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>HSV Color Scheme II</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4]});
+        var H = brd.createElement('slider',[[-3,3.5],[2,3.5],[0,1,360]], {name:'H', glider:{fillColor:'black', strokeColor:'black'} });
+        var S = brd.createElement('slider',[[-3,3],[2,3],[0,1,1]], {name:'S', glider:{fillColor:'black', strokeColor:'black'} });
+        var V = brd.createElement('slider',[[-3,2.5],[2,2.5],[0,1,1]], {name:'V', glider:{fillColor:'black', strokeColor:'black'} });
+        
+        var r1 = 2;
+        var r2 = 1/4.75;
+        var lambda = 8;
+        var phi = 0;
+        
+        var c = brd.createElement('curve',
+            [
+                function(t){return r1*Math.sin(t)+r2*Math.sin(lambda*t+phi);},
+                function(t){return r1*Math.cos(t)+r2*Math.cos(lambda*t+phi)-0.5;},
+                0, 2*Math.PI
+            ],
+            {
+                fillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
+                highlightFillcolor:function(){ return JXG.hsv2rgb(H.Value(),S.Value(),V.Value()); },
+                strokeColor:'black',strokeWidth:3, 
+                gradient:'radial',gradientSecondColor:'white'
+            });
+          
+        var p = brd.createElement('point', [0,-0.5], {visible:false});
+        var ci = brd.createElement('circle',[p,1], 
+                {fillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
+                 highlightFillcolor:function(){ return JXG.hsv2rgb(180+H.Value(),S.Value(),V.Value()); },
+                 strokewidth:3,
+                 strokeColor:'black', gradient:'linear',gradientsecondcolor:'white',gradientSecondOpacity:'0'
+                });  
+     
+  
+          /* ]]> */
+  </script>
+</body>
+</html>

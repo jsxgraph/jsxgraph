@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+</head>
+<body>
+
+<h2>How to take a snapshot of an SVG rendered JSXGraph Board.</h2>
+
+<a href="javascript:void(0);" id="release">Make a snapshot.</a>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+</div>
+
+<div id="debug" style="display:none;"></div>
+<img id="snapshot" />
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var david = (function () {
+        JXG.Options.text.display = 'internal';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            p = board.create('point', [1, 1]),
+            l = board.create('line', [1, -1, 3]),
+            slider = board.create('slider', [[-2, 2], [0, 2], [0, 2.5, 5]]),
+            pol = board.create('polygon', [board.defaultAxes.x.point2, board.defaultAxes.y.point2, p]),
+            sine = board.create('functiongraph', [Math.sin]),
+
+            snapshot = function () {
+                var img = document.getElementById('snapshot'),
+                    renderer = board.renderer,
+                    i, j,
+                    rendererType = board.options.renderer;
+
+                for (j in {x: null, y: null}) {
+                    for (i = 0; i < board.defaultAxes[j].defaultTicks.labels.length; i++) {
+                        if (board.defaultAxes[j].defaultTicks.labels[i] !== null) {
+                            board.removeObject(board.defaultAxes[j].defaultTicks.labels[i]);
+                        }
+                    }
+                }
+
+
+                board.removeEventHandlers();
+                board.container = 'debug';
+                board.containerObj = document.getElementById('debug');
+                board.containerObj.innerHTML = '';
+                board.containerObj.style.width = board.canvasWidth + 'px';
+                board.containerObj.style.height = board.canvasHeight + 'px';
+                board.renderer = new JXG.CanvasRenderer(board.containerObj),
+                board.options.renderer = 'canvas';
+
+                board.fullUpdate();
+
+
+                img.style.width = board.canvasWidth + 'px';
+                img.style.height = board.canvasHeight + 'px';
+                img.src = board.renderer.canvasRoot.toDataURL();
+                board.containerObj.innerHTML = '';
+                delete board.renderer;
+                board.container = 'jxgbox';
+                board.containerObj = document.getElementById('jxgbox');
+                board.options.renderer = rendererType;
+                board.renderer = renderer;
+                //board.defaultAxes.x.defaultTicks.removeAllTicks();
+                //board.defaultAxes.x.defaultTicks.labels = labels;
+                board.addEventHandlers();
+                board.fullUpdate();
+            };
+
+        snapshot();
+
+        board.removeObject(slider);
+
+        JXG.addEvent(document.getElementById('release'), 'click', snapshot, this);
+
+        return board;
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>

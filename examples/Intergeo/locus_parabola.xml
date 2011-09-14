@@ -1,0 +1,121 @@
+<!-- This example ilustrates the construction of a locus; concretely, the parabola y=1+x^2
+
+	d = line(y=0)         # directrix
+	V = point(0,1)        # vertex
+
+	point_on_line(P,l)    # (not yet implemented in WIRIS)
+
+	l = line(V,P)
+	v = perpendicular(d,P)
+	m = perpendicular(l,V)
+	X = intersect(m,v)
+
+	plot(X)               # (x=f(P) not implemented in WIRIS)
+-->
+
+
+<construction>
+	<elements>
+		<line id="d">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+			</homogeneous_coordinates>
+		</line>
+		<point id="A">
+			<homogeneous_coordinates>
+				<double>-10</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="B">
+			<homogeneous_coordinates>
+				<double>8</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="V">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>0</double>
+				<double>0</double>
+			</homogeneous_coordinates>
+		</line>
+		<line id="v">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>0</double>
+				<double>0</double>
+			</homogeneous_coordinates>
+		</line>
+		<line id="m">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>-1</double>
+			</homogeneous_coordinates>
+		</line>
+		<point id="X">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>1</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<locus id="L">
+		</locus>
+	</elements>
+	<constraints>
+		<line_through_two_points>
+			<line out="true">d</line>
+			<point>A</point>
+			<point>B</point>
+		</line_through_two_points>
+		<point_on_line>
+			<point out="true">P</point>
+			<line>d</line>
+		</point_on_line>
+        <line_through_two_points>
+            <line out="true">l</line>
+            <point>V</point>
+            <point>P</point>
+        </line_through_two_points>
+		<line_perpendicular_to_line_through_point>
+			<line out="true">v</line>
+			<point>P</point>
+			<line>d</line>
+		</line_perpendicular_to_line_through_point>
+		<line_perpendicular_to_line_through_point>
+			<line out="true">m</line>
+			<point>V</point>
+			<line>l</line>
+		</line_perpendicular_to_line_through_point>
+		<point_intersection_of_two_lines>
+			<point out="true">X</point>
+			<line>v</line>
+			<line>m</line>
+		</point_intersection_of_two_lines>
+		<locus_defined_by_point>
+			<locus out="true">L</locus>
+			<point out="true">X</point>
+			<point>P</point>
+		</locus_defined_by_point>
+	</constraints>
+</construction>

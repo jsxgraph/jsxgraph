@@ -1,0 +1,35 @@
+<!-- This example illustrates the midpoint_by_two_points constraint -->
+
+
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<point id="A">
+			<homogeneous_coordinates>
+				<double>-3</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="B">
+			<homogeneous_coordinates>
+				<double>3</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="C">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<midpoint_of_two_points>
+			<point out="true">C</point>
+			<point>A</point>
+			<point>B</point>
+		</midpoint_of_two_points>
+	</constraints>
+</construction>

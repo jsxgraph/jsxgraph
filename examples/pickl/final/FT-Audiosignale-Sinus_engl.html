@@ -1,0 +1,449 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+  <title>FT-Audio Signals-Sine</title>
+
+  <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+  <script type="text/javascript" src="js/jsxgraphcore.js"></script>
+  <style type="text/css">
+
+		.breadcrumbs1 {
+		width: 981px;
+		height: 38px;
+		}
+
+		#Platzhalter1 {
+		width: 45px;
+		height: 5px;
+		}
+
+		#Platzhalter2 {
+		width: 250px;
+		height: 5px;
+		}
+
+		.breadcrumbs-link {
+		padding: 10px;
+		}
+
+		.bild-first {
+		width: 25px;
+		height: 25px;
+		}
+
+		h1 {
+		color:#0000CC;
+		font-size:28pt;
+		font-family:arial;
+		background-color:#CCCCFF;
+		border-color:#000000;
+		border-width:5px;
+		border-style:solid;
+		padding: 15px;
+		margin-top: 0px;
+		margin-bottom: 30px;
+		}
+
+		a img{
+		border-width: 0;
+		}
+
+		#Beschreibung {
+		margin-bottom: 50px;
+		margin-left: 30px;
+		margin-right: 30px;
+		}
+
+		.links {
+		width: 400px;
+		height: 400px;
+		border: 1px solid black;
+		margin-left: 30px;
+		float: left;
+		}
+
+		.rechts {
+		width: 400px;
+		height: 400px;
+		border: 1px solid white;
+		margin-left: 500px;
+		margin-bottom: 50px;
+		}
+		
+		#Sonderling {
+		width: 400px;
+		height: 180px;
+		margin-top: 20px;
+		padding: 10px;
+		}
+
+		.klein {
+		width: 400px;
+		height: 180px;
+		margin-top: 110px;
+		padding: 10px;
+		}
+
+	</style>
+    <script type="text/javascript">
+        // <![CDATA[
+
+        // general variables
+        var extract = 1000, samplerate = 2000, samples = 4000,
+            defaultFrequency = 440, disturb = 0.6,
+            xSignal = [], xFFT = [], i;
+
+        for(i = 0; i<samples; i++) {
+            xSignal[i] = i/samplerate;
+            xFFT[i] = i;
+        }
+
+        JXG.Server.load('fft');
+        if(!JXG.Server.modules.fft) {
+            alert('Error: Unable to load fft module, aborting!');
+        }
+
+        if(extract > samples) {
+            alert('Warning: Extract can\'t be greater than samples!');
+        }
+
+        function clearFFT() {
+            // check if the fft board has already been initialized
+            if(typeof fftSignal !== 'undefined') {
+                fftSignal = [];
+                fftBoard.update();
+            }
+            clearCleaned();
+        }
+
+        function clearCleaned() {
+            // check if the cleaned board has already been initialized
+            if(typeof cleanedSignal !== 'undefined') {
+                cleanedSignal = [];
+                cleanedBoard.update();
+                document.getElementById('cleanedaudio').style.display = 'none';
+            }
+        }
+
+        function loadClearAudio() {
+        	if(clearSignal.length ===0) {
+        		alert('Error: No clear signal available.');
+        		return;
+        	}
+
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, clearSignal, function(data) {
+                var a = document.getElementById('clearaudio');
+                a.src = data.audioB64;
+                a.style.display = 'block';
+            }, true);
+        }
+
+        function loadJitterAudio() {
+        	if(jitterSignal.length ===0) {
+        		alert('Error: No disturbed signal available.');
+        		return;
+        	}
+
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, jitterSignal, function(data) {
+                var a = document.getElementById('jitteraudio');
+                a.src = data.audioB64;
+                a.style.display = 'block';
+            }, true);
+        }
+
+        function loadCleanedAudio() {
+        	if(cleanedSignal.length ===0) {
+        		alert('Error: No cleaned signal available.');
+        		return;
+        	}
+
+            JXG.Server.modules.fft.makeAudio('ogg', samplerate, cleanedSignal, function(data) {
+                var a = document.getElementById('cleanedaudio');
+                a.src = data.audioB64;
+                a.style.display = 'block';
+            }, true);
+        }
+
+        // ]]>
+    </script>
+
+</head>
+
+<body>
+
+
+
+<div class="breadcrumbs1">
+	<table class="Tabelle">
+		<tr>
+			<th>
+				<a href="index.html" class="breadcrumbs-link">
+				<img src="Icons/go-first.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="index_engl.html" class="breadcrumbs-link">
+				Home
+				</a>
+			</th><th>
+				<div id="Platzhalter1">
+				</div>
+			</th><th>
+				<a href="FT-Anwendungsbeispiele.html" class="breadcrumbs-link">
+				<img src="Icons/go-previous.png" class="bild-first" />
+				</a>
+			</th><th>
+				<a href="FT-Anwendungsbeispiele_engl.html" class="breadcrumbs-link">
+				2 Examples for Application - Signal Processing
+				</a>
+			</th><th>
+				<div id="Platzhalter2">
+				</div>
+			</th><th>
+				<a href="FT-Abkuerzungen_engl.html" class="breadcrumbs-link">
+				ABBREVIATIONS
+				</a>
+			</th>
+		</tr>
+	</table>
+</div>
+
+<h1>
+	2.2 Audio Signals - Sine
+</h1>
+
+<div id="Beschreibung">
+	On this site you can generate a sine signal, overlay it with a noise and watch, 
+	how the function changes. By using the FFT the frequency spectrum is produced. 
+	Now you can work with filters to reconstruct the strating signal after IFFT 
+	calculation.
+	<br />
+	The FFT and IFFT calculations are carried out by NumPy, a free software for 
+	computating numerical problems, on a server. This calculation might take a few 
+	minutes.
+
+</div>
+
+<div id="box_clearsine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    // initialize clearsine board
+    var clearBoard = JXG.JSXGraph.initBoard('box_clearsine', {boundingbox:[-extract*0.02/samplerate, 2, extract*1.1/samplerate, -2], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        clearFrequency = clearBoard.create('slider', [
+             [0,-1.5],
+             [0.4,-1.5],
+             [0,440,1000]
+         ], {snapWidth:5, strokeColor:"#0000FF",fillColor:"#FF0000", name:"Hz"}),
+        clearFrequencyText = clearBoard.create('text', [0.04,-1.6,"frequency"], {strokeColor:'#FF0000'}),
+        clearSignal = [], rawSignal = [],
+        clearPlot = clearBoard.create('curve', [[], []]);
+
+    clearPlot.updateDataArray = function() {
+        this.dataX = xSignal.slice(0, extract);
+        this.dataY = clearSignal.slice(0, extract);
+    };
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div id="Sonderling">
+		This image shows a sine function.<br />
+		By moving the frequency controller (red) an appropriate sine signal can be generated 
+		and heard. <br />
+		Now the standard pitch a’ is given with the frequency<br />
+		&nu; = 440 Hz.<br />
+		The graph is a function of time.<br />
+		<button onclick="loadClearAudio();">Listen</button>
+		<audio id="clearaudio" src="" controls="controls" style="display: none;"></audio>
+		<p>
+			Note:
+			<br />
+			 The audio signal lasts two seconds. For better clarity only a part of 0.5 seconds 
+			 is shown.<br />
+			 The sine oscillation looks unregular for some frequencies erroneously, because only 
+			 shown a selection of certain values is presented for reasons of speed.
+		</p>
+	</div>
+</div>
+
+<div id="box_jittersine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    // initialize clearsine board
+    var jitterBoard = JXG.JSXGraph.initBoard('box_jittersine', {boundingbox:[-extract*0.02/samplerate, 2, extract*1.1/samplerate, -2], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        jitterSignal = [],
+        jitterPlot = jitterBoard.create('curve', [[], []]);
+
+    jitterPlot.updateDataArray = function() {
+        this.dataX = xSignal.slice(0, extract);
+        this.dataY = jitterSignal.slice(0, extract);
+   };
+
+    // ]]>
+</script>
+
+<!-- Connect the two first two boards -->
+<script type="text/javascript">
+    // <![CDATA[
+
+    function setFrequency() {
+        for (i = 0; i < samples; i++) {
+            clearSignal[i] = Math.sin(clearFrequency.Value() * 2 * Math.PI * i / samplerate);
+            jitterSignal[i] = clearSignal[i] * (Math.random() * disturb * 2 + 1 - disturb);
+        }
+        if(document.getElementById('jitteraudio')) {
+	        document.getElementById('clearaudio').style.display = 'none';
+    	    document.getElementById('jitteraudio').style.display = 'none';
+    	}
+        clearFFT();
+        jitterBoard.update();
+    }
+    clearBoard.addHook(setFrequency);
+
+    // run the first update
+    clearBoard.update();
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div class="klein">
+		Multiplicating this sine with an accident function (Math.random function) results 
+		in a disturbance of the audio signal, which is audible as a noise.
+		<br />
+		You can also see, that the sine is not regular any more.<br />
+		The graph is still a function of time.<br />
+		<br />
+		<button onclick="loadJitterAudio();">Listen</button>
+		<audio id="jitteraudio" src="" controls="controls" style="display: none;"></audio>
+	</div>
+</div>
+
+<div id="box_fftsine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    var fftBoard = JXG.JSXGraph.initBoard('box_fftsine', {boundingbox:[-extract*0.02/samplerate, samplerate*1.1/2, 1.1, -samplerate*0.01], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        fftSignal = [], filterSignal = [],
+        fftPlot = fftBoard.create('curve', [[], []]),
+        l1 = fftBoard.create('line', [[0,0],[1,0]],{visible:false,straightFirst:false,straightLast:false}),
+        g1 = fftBoard.create('glider', [0.1,0,l1],{name:"bass filter"}),
+        p1 = fftBoard.create('point', [function(){return g1.X();},2],{visible:false}),
+        l2 = fftBoard.create('line', [g1,p1],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+        g2 = fftBoard.create('glider', [0.9,0,l1],{name:"treble filter"}),
+        p2 = fftBoard.create('point', [function(){return g2.X();},2],{visible:false}),
+        l3 = fftBoard.create('line', [g2,p2],{strokeColor:"#FF0000", straightFirst:false, straightLast:false}),
+        s1 = fftBoard.create('slider', [[0.05,100],[0.05,600],[0,0,1]],{strokeColor:"#0000FF",fillColor:"#FF0000"});
+
+    function loadFFT() {
+        JXG.Server.modules.fft.fft(jitterSignal, function(data) {
+            fftSignal = data.y;
+            cut();
+            fftBoard.update();
+        }, true);
+    }
+
+    fftPlot.updateDataArray = function() {
+        this.dataX = xSignal;
+        this.dataY = filterSignal;
+    };
+
+    function cut() {
+        var i;
+
+        clearCleaned();
+
+        if(fftSignal.length === 0) {
+            filterSignal = [];
+            return;
+        }
+
+
+        for (i = 0; i < Math.floor(g1.X() * samplerate); i++) {
+            filterSignal[i] = fftSignal[i] * s1.Value();
+        }
+
+        for (i = Math.floor(g1.X() * samplerate); i < Math.floor(g2.X() * samplerate); i++) {
+            filterSignal[i] = fftSignal[i];
+        }
+
+        for (i = Math.floor(g2.X() * samplerate); i < samples; i++) {
+            filterSignal[i] = fftSignal[i] * s1.Value();
+        }
+    }
+
+    fftBoard.addHook(cut);
+    fftBoard.update();
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div class="klein">
+		<button onclick="loadFFT();">FFT Calculation</button><br />
+		After clicking on the button &quot;FFT calculation&quot; the frequency spectrum of the 
+		sine signal is shown. <br />
+		So a function of frequency has been produced out of the function of time. Now you 
+		can see the signal&prime;s frequencies with the absolute values of the Fourier transformed.
+		<p>
+			By moving the appropriate controllers (red) the frequencies, that shall be filtered, 
+			(horizontal controllers: bass and treble filter) as well as the intensity of filtration 
+			(vertical controller) can be varied.
+		</p>
+	</div>
+</div>
+
+<div id="box_cleanedsine" class="jxgbox links"></div>
+<script type="text/javascript">
+    // <![CDATA[
+
+    var cleanedBoard = JXG.JSXGraph.initBoard('box_cleanedsine', {boundingbox:[-extract*0.02/samplerate, 2, extract*1.1/samplerate, -2], keepaspectratio:false, axis: true, grid: false, showNavigation: false, showCopyright: false}),
+        cleanedSignal = [],
+        cleanedPlot = cleanedBoard.create('curve', [[], []]);
+
+    function loadIFFT() {
+        var tmp;
+
+        JXG.Server.modules.fft.cutoutrange(fftSignal, Math.floor(g1.X() * samplerate), Math.floor(g2.X() * samplerate), s1.Value(), function(data) {
+            tmp = data.y;
+        }, true);
+        JXG.Server.modules.fft.ifft(tmp, function(data) {
+            cleanedSignal = data.y;
+            cleanedBoard.update();
+        }, true);
+    }
+
+    cleanedPlot.updateDataArray = function() {
+        this.dataX = xSignal;
+        this.dataY = cleanedSignal.slice(0, extract);
+    };
+
+    // ]]>
+</script>
+
+<div class="rechts">
+	<div class="klein">
+		<button onclick="loadIFFT();">IFFT Calculation</button><br />
+		By clicking on the button &quot;IFFT calculation&quot; the appropriate sine 
+		signal is generated out of the filtered frequency spectrum and can be viewed.<br />
+		The graph is a function of time.
+		<p>
+			The aim should be to remove the noise so the starting signal is reconstructed 
+			as well as possible.
+		</p>
+		<button onclick="loadCleanedAudio();">Listen</button>
+		<audio id="cleanedaudio" controls="controls" src="" style="display: none"></audio>
+
+	</div>
+</div>
+
+
+
+
+</body>
+</html>

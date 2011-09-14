@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/dark.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDark.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+
+<body>
+
+<img src="img/logo-darker.png" id="watermark" />
+
+<div id="header">
+    <!--powered by<br /-->
+    <span id="jsxgraph-head"><a href="http://jsxgraph.org/"><img src="img/logo-grayscale.png" alt="JSXGraph" /></a></span>
+</div>
+
+<div id="title">
+    <ul id="menu">
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Kaleidoscope</a></h2></li>
+        <li id="menu-info"><h2><a href="javascript:void(0);" id="head-explanation">Info</a></h2></li>
+        <li id="menu-source"><h2><a href="javascript:void(0);" id="head-source">Source</a></h2></li>
+    </ul>
+</div>
+
+<div id="container" class="content-block">
+    <center>
+    <div id="construction">
+        <div id="jxgbox" class="jxgbox" style="width: 500px; height: 500px;"></div>
+    </div>
+    </center>
+
+<script type="text/javascript" src="js/jsxgraph-dark.js"></script>
+
+<script id="jxg" type="text/javascript">
+
+    (function() {
+
+        // Configure board
+        JXG.Options.showCopyright = false;
+        JXG.Options.polygon.fillOpacity = 1;
+        JXG.Options.polygon.fillColor = '#7690c9';
+        JXG.Options.line.strokeColor = '#008dd2';
+        JXG.Options.text.fontSize = 9;
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-10, 10.5, 10, -9.5],
+                keepaspectreatio: true,
+                axis:false,
+                grid: false
+            }),
+
+        // functions
+        mirror_polygon = function(polygons, axes, level) {
+            var vertices,
+                new_vertices,
+                new_polygons = [],
+                i, j, k;
+            
+            board.suspendUpdate();
+            board.options.polygon.fillOpacity = (levels-level)/levels;
+            for(k = 0; k < axes.length; k++) {
+
+                // mirror the polygons
+                for(i = 0; i < polygons.length; i++) {
+                    // split horizon
+                    if(polygons[i].builtaxisid !== axes[k].id) {
+                        vertices = polygons[i].vertices;
+                        new_vertices = [];
+
+                        for(j = 0; j < vertices.length-1; j++) {
+                            new_vertices.push(
+                                board.create('reflection',
+                                    function(_j, _k) {
+                                        return [vertices[_j], axes[_k]];
+                                    }(j, k), {
+                                        size: 1,
+                                        strokeColor: 'none',
+                                        withLabel: false,
+                                        visible: false
+                                    }
+                                )
+                            );
+                        }
+
+                        board.options.polygon.fillColor = polygons[i].visProp.fillcolor;
+                        new_polygons.push(board.create('polygon', new_vertices, {
+                            withLines: false
+                        }));
+                        new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
+                    }
+                }
+            }
+            board.unsuspendUpdate();
+
+            return new_polygons;
+        },
+
+        coordinates_to_points = function(coordinates, attributes) {
+            var points = [], i;
+
+            for(i = 0; i < coordinates.length; i++) {
+                points.push(board.create('point', coordinates[i], attributes));
+            }
+
+            return points;
+        },
+
+        //data
+        points = [
+            [[-0.41, 0.5], [-1, 0.35], [0.721, 0.2], [1, 0.75]],
+            [[-1, 0.75], [0, 2.25], [0, 0.75], [-0.5, 0.25]],
+            [[1, 0.885], [0, 1.25], [-0.3, 0.5], [0.2, 0.57]],
+            [[1, 1], [0, 1.25], [-0.3, 2.5]]
+        ],
+        colors = ['#afdcf0', '#7690c9', '#507da0', 'white'],
+        // kaleidoscope
+        axes = [
+            [[-2, 0], [0, 2*Math.sqrt(3)]],
+            [[-2, 0], [2, 0]],
+            [[0, 2*Math.sqrt(3)], [2, 0]]
+        ],
+        axeslines = [],
+        levels = 6,
+
+        // variables
+        polygon = [],
+        i, l = 0;
+
+        // main program
+        for(i = 0; i < points.length; i++) {
+            points[i] = coordinates_to_points(function(_i) { return points[_i] }(i), {
+                size: 1,
+                withLabel: false
+            });
+            board.options.polygon.fillColor = colors[i];
+            polygon.push(board.create('polygon', function(_i) { return points[_i] }(i), {
+                withLines: false
+            }));
+        }
+
+        for(i = 0; i < axes.length; i++) {
+            axeslines[i] = board.create('segment', coordinates_to_points(axes[i], {
+                size: 1,
+                withLabel: false
+            }));
+        }
+
+
+        board.create('text', [7, 10, '<a id="levelchange" href="javascript:">Next level</a>']);
+        $('#levelchange').click(function(e) {
+            polygon = mirror_polygon(polygon, axeslines, l);
+            l++;
+        });
+
+        $('#jxgbox').dblclick(function() {
+            var i;
+            for (i = 0; i < axes.length; i++) {
+                axeslines[i].point1.moveTo(axes[i][0], 4000);
+                axeslines[i].point2.moveTo(axes[i][1], 4000);
+            }
+        });
+        
+    })();
+</script>
+</div>
+
+<div id="explanation" class="content-block">
+    <p align="justify">
+        A <strong>kaleidoscope</strong> is a circle of mirrors containing loose, colored objects such beads or
+        pebbles and bits of glass. As the viewer looks into one end, light entering the other end creates a
+        colorful pattern, due to the reflection off the mirrors. Coined in 1817 by Scottish inventor Sir Eoin Cussen,
+        the word "kaleidoscope" is derived from the Ancient Greek &kappa;&alpha;&lambda;(&omicron;&sigma;) (beauty,
+        beautiful), &epsilon;&iota;&delta;&omicron;(&sigma;) (form, shape) and -&sigma;&kappa;&omicron;&pi;&iota;&omicron;
+        (tool for examination) - hence "observer of beautiful forms."
+    </p>
+
+    <p align="justify">
+        Kaleidoscopes operate on the principle of multiple reflection, where several mirrors are attached together.
+        Typically there are three rectangular lengthwise mirrors. Setting the mirrors at a 45-degree angle creates eight
+        duplicate images of the objects, six at 60&deg;, and four at 90&deg;. As the tube is rotated, the tumbling of the
+        coloured objects presents the viewer with varying colours and patterns. Any arbitrary pattern of objects shows
+        up as a beautiful symmetrical pattern created by the reflections in the mirrors. A two-mirror model yields a
+        pattern or patterns isolated against a solid black background, while a three-mirror (closed triangle) model
+        yields a pattern that fills the entire field.
+    </p>
+    
+    <p align="justify">
+        For a 2D-symmetry group, a kaleidoscopic point is a point of intersection of two or more lines of reflection
+        symmetry. In a discrete group, the angle between consecutive lines is 180&deg;/n for an integer n&ge;2. At this
+        point there are n lines of reflection symmetry, and the point is a center of n-fold rotational symmetry. See
+        also symmetry combinations. Modern kaleidoscopes are made of brass tubes, stained glass, wood, steel, gourds and
+        almost any other material an artist can sculpt or manipulate. The part of the kaleidoscope containing objects to
+        be viewed is the 'object chamber' or 'object cell'. Object cells may contain almost any material. Sometimes the
+        object cell is filled with liquid so the items float and move through the object cell with slight movement from
+        the person viewing.
+    </p>
+
+    <hr />
+    
+    <p>
+        from <a href="http://en.wikipedia.org/wiki/Kaleidoscope">http://en.wikipedia.org/wiki/Kaleidoscope</a>
+    </p>
+</div>
+
+
+<div id="source" class="content-block">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    JSXGraph is licensed under <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2011 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    var p;
+                    for(p in parts) {
+                        $('#' + p).hide();
+                    }
+
+                    $('#'+_part).show();
+                }
+            }(part));
+        }
+    });
+    
+    // ]]>
+</script>
+</body>
+</html>

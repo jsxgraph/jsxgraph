@@ -1,0 +1,65 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+  <!--<script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>-->
+</head>
+<body>
+  <h2>Speed test with Bezier curves</h2>
+  
+  <form><input type="button" onClick="speedtest()" value="Start speed test"></form>
+  <h2 id="output">fps: -</h2>
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var board, i, p, col;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        p = [];
+        for (i=0;i<2*3+1;i++) {
+            if (i%3==0) {
+                col = 'red';
+            } else {
+                col = 'blue';
+            }
+            if (i==0) {
+                p.push(board.createElement('point',[-3,3],{strokeColor:col,fillColor:col}));
+            } else {
+                p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
+            }
+        }
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', name:"curve", strokeWidth:5, lastArrow:true}); 
+
+    count = 0;
+    maxcount = 1000;
+    sgn = 1;
+    startTime = 0;
+
+    unit = function() {
+        var len = p.length,
+            j = Math.floor(len*Math.random()),
+            now;
+        p[j].setPosition(JXG.COORDS_BY_USER, sgn*3*Math.random(), -sgn*3*Math.random());
+        board.update();
+        sgn *= -1;
+        count++;
+        if (count%100==0) {
+            now = new Date();
+            document.getElementById('output').innerHTML = "fps: " + (1000*count/(now.getTime()-startTime.getTime()));
+        }
+        if (count<maxcount)
+            setTimeout(unit,0);
+    }
+
+    speedtest = function() {
+        count = 0;
+        startTime = new Date();
+        var ti = setTimeout(unit,0);
+    };
+
+  /* ]]> */
+  </script>
+</body>
+</html>
