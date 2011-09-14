@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010
+    Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -992,6 +992,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 pos = this.getMousePosition(evt, i);
                 this.highlightElements(pos[0], pos[1]);
             }
+        }
+        if (this.mode != this.BOARD_MODE_DRAG) {
+            this.renderer.hide(this.infobox);
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
