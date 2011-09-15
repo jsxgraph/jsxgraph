@@ -903,7 +903,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             X: evt.targetTouches[i].screenX,
                             Y: evt.targetTouches[i].screenY,
                             Xprev: NaN,
-                            Yprev: NaN
+                            Yprev: NaN,
+                            Xstart: tmpTouches[j].targets[0].Xstart,
+                            Ystart: tmpTouches[j].targets[0].Ystart
                         }]
                     });
                     found = true;
@@ -930,7 +932,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 X: evt.targetTouches[i].screenX,
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
-                                Yprev: NaN
+                                Yprev: NaN,
+                                Xstart: evt.targetTouches[i].screenX,
+                                Ystart: evt.targetTouches[i].screenY
                             }
                         ]
                     });
@@ -1026,7 +1030,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 X: evt.targetTouches[i].screenX,
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
-                                Yprev: NaN
+                                Yprev: NaN,
+                                Xstart: tmpTouches[j].targets[0].Xstart,
+                                Ystart: tmpTouches[j].targets[0].Ystart
                             }]
                         });
                         break;
@@ -1087,7 +1093,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         X: pos[0],
                         Y: pos[1],
                         Xprev: NaN,
-                        Yprev: NaN
+                        Yprev: NaN,
+                        Xstart: pos[0],
+                        Ystart: pos[1]
                     }
                 ]
             };
