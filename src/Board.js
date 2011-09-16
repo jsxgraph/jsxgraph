@@ -860,7 +860,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, pos, elements, j,
             eps = this.options.precision.touch,
             found = false,
-            tmpTouches = [], obj;
+            tmpTouches = [], obj, x, y;
 
         evt.preventDefault();
         evt.stopPropagation();
@@ -896,6 +896,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < evt.targetTouches.length; i++) {
             for (j = 0; j < tmpTouches.length; j++) {
                 if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
+
+                    if (tmpTouches[j].obj.type == JXG.OBJECT_TYPE_CIRCLE) {
+                        x = tmpTouches[j].obj.midpoint.coords.usrCoords[1];
+                        y = tmpTouches[j].obj.midpoint.coords.usrCoords[2];
+                    } else {
+                        x = tmpTouches[j].obj.coords.usrCoords[1];
+                        y = tmpTouches[j].obj.coords.usrCoords[2];
+                    }
+
                     this.touches.push({
                         obj: tmpTouches[j].obj,
                         targets: [{
@@ -904,8 +913,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             Y: evt.targetTouches[i].screenY,
                             Xprev: NaN,
                             Yprev: NaN,
-                            Xstart: tmpTouches[j].obj.coords.scrCoords[1],
-                            Ystart: tmpTouches[j].obj.coords.scrCoords[2]
+                            Xstart: x,
+                            Ystart: y
                         }]
                     });
                     found = true;
@@ -924,6 +933,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         obj = elements[elements.length - 1];
                     }
 
+                    if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
+                        x = obj.midpoint.coords.usrCoords[1];
+                        y = obj.midpoint.coords.usrCoords[2];
+                    } else {
+                        x = obj.coords.usrCoords[1];
+                        y = obj.coords.usrCoords[2];
+                    }
+
                     this.touches.push({
                         obj: obj,
                         targets: [
@@ -933,8 +950,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: obj.coords.scrCoords[1],
-                                Ystart: obj.coords.scrCoords[2]
+                                Xstart: x,
+                                Ystart: y
                             }
                         ]
                     });
@@ -1008,6 +1025,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, j,
             eps = this.options.precision.touch,
             found = false, tmpTouches = [];
+
         this.updateHooks('mouseup', evt);
 
         if (evt.targetTouches.length > 0) {
@@ -1031,8 +1049,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: tmpTouches[j].obj.coords.scrCoords[1],
-                                Ystart: tmpTouches[j].obj.coords.scrCoords[2]
+                                Xstart: tmpTouches[j].targets[0].Xstart,
+                                Ystart: tmpTouches[j].targets[0].Ystart
                             }]
                         });
                         break;
@@ -1104,8 +1122,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.mouse.obj = elements[elements.length-1];
             }
 
-            this.mouse.targets[0].Xstart = this.mouse.obj.coords.scrCoords[1];
-            this.mouse.targets[0].Ystart = this.mouse.obj.coords.scrCoords[2]; 
+            if (this.mouse.obj.type == JXG.OBJECT_TYPE_CIRCLE) {
+                this.mouse.targets[0].Xstart = this.mouse.obj.midpoint.coords.usrCoords[1];
+                this.mouse.targets[0].Ystart = this.mouse.obj.midpoint.coords.usrCoords[2];
+            } else {
+                this.mouse.targets[0].Xstart = this.mouse.obj.coords.usrCoords[1];
+                this.mouse.targets[0].Ystart = this.mouse.obj.coords.usrCoords[2];
+            }
 
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
