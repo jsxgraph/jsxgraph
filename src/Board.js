@@ -767,6 +767,33 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
     },
 
+    /**
+     * Helper function which returns a reasonable starting point for the object being dragged
+     * @private
+     * @param {JXG.GeometryElement} obj The object to be dragged
+     * @returns {Array} The starting point in usr coords
+     */
+   initXYstart: function (obj) {
+
+        var xy = [];
+
+        if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
+            xy[0] = obj.midpoint.coords.usrCoords[1];
+            xy[1] = obj.midpoint.coords.usrCoords[2];
+        } else if (obj.type == JXG.OBJECT_TYPE_LINE || obj.type == JXG.OBJECT_TYPE_AXIS) {
+
+           ; // to be implemented
+
+        } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
+            xy[0] = xy[1] = obj.position;
+        } else {
+            xy[0] = obj.coords.usrCoords[1];
+            xy[1] = obj.coords.usrCoords[2];
+        }
+
+        return xy;
+    },
+
 /**********************************************************
  *
  * Event Handler
@@ -860,7 +887,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, pos, elements, j,
             eps = this.options.precision.touch,
             found = false,
-            tmpTouches = [], obj, x, y;
+            tmpTouches = [], obj, xy = [];
 
         evt.preventDefault();
         evt.stopPropagation();
@@ -897,13 +924,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             for (j = 0; j < tmpTouches.length; j++) {
                 if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
 
-                    if (tmpTouches[j].obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-                        x = tmpTouches[j].obj.midpoint.coords.usrCoords[1];
-                        y = tmpTouches[j].obj.midpoint.coords.usrCoords[2];
-                    } else {
-                        x = tmpTouches[j].obj.coords.usrCoords[1];
-                        y = tmpTouches[j].obj.coords.usrCoords[2];
-                    }
+                    xy = this.initXYstart(tmpTouches[j].obj);
 
                     this.touches.push({
                         obj: tmpTouches[j].obj,
@@ -913,8 +934,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             Y: evt.targetTouches[i].screenY,
                             Xprev: NaN,
                             Yprev: NaN,
-                            Xstart: x,
-                            Ystart: y
+                            Xstart: xy[0],
+                            Ystart: xy[1]
                         }]
                     });
                     found = true;
@@ -927,19 +948,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 elements = this.initMoveObject(pos[0], pos[1]);
 
                 if (elements.length != 0) {
+
                     if (this.options.takeFirst) {
                         obj = elements[0];
                     } else {
                         obj = elements[elements.length - 1];
                     }
 
-                    if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-                        x = obj.midpoint.coords.usrCoords[1];
-                        y = obj.midpoint.coords.usrCoords[2];
-                    } else {
-                        x = obj.coords.usrCoords[1];
-                        y = obj.coords.usrCoords[2];
-                    }
+                    xy = this.initXYstart(obj);
 
                     this.touches.push({
                         obj: obj,
@@ -950,8 +966,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: x,
-                                Ystart: y
+                                Xstart: xy[0],
+                                Ystart: xy[1]
                             }
                         ]
                     });
@@ -1075,7 +1091,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
     mouseDownListener: function (Evt) {
-        var pos, elements;
+        var pos, elements, xy = [];
 
         this.updateHooks('mousedown', Evt);
 
@@ -1122,13 +1138,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.mouse.obj = elements[elements.length-1];
             }
 
-            if (this.mouse.obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-                this.mouse.targets[0].Xstart = this.mouse.obj.midpoint.coords.usrCoords[1];
-                this.mouse.targets[0].Ystart = this.mouse.obj.midpoint.coords.usrCoords[2];
-            } else {
-                this.mouse.targets[0].Xstart = this.mouse.obj.coords.usrCoords[1];
-                this.mouse.targets[0].Ystart = this.mouse.obj.coords.usrCoords[2];
-            }
+            xy = this.initXYstart(this.mouse.obj);
+
+            this.mouse.targets[0].Xstart = xy[0];
+            this.mouse.targets[0].Ystart = xy[1];
 
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
