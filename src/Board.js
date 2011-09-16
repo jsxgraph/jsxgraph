@@ -904,8 +904,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             Y: evt.targetTouches[i].screenY,
                             Xprev: NaN,
                             Yprev: NaN,
-                            Xstart: tmpTouches[j].targets[0].Xstart,
-                            Ystart: tmpTouches[j].targets[0].Ystart
+                            Xstart: tmpTouches[j].obj.coords.scrCoords[1],
+                            Ystart: tmpTouches[j].obj.coords.scrCoords[2]
                         }]
                     });
                     found = true;
@@ -933,8 +933,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: evt.targetTouches[i].screenX,
-                                Ystart: evt.targetTouches[i].screenY
+                                Xstart: obj.coords.scrCoords[1],
+                                Ystart: obj.coords.scrCoords[2]
                             }
                         ]
                     });
@@ -1031,8 +1031,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: tmpTouches[j].targets[0].Xstart,
-                                Ystart: tmpTouches[j].targets[0].Ystart
+                                Xstart: tmpTouches[j].obj.coords.scrCoords[1],
+                                Ystart: tmpTouches[j].obj.coords.scrCoords[2]
                             }]
                         });
                         break;
@@ -1093,17 +1093,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         X: pos[0],
                         Y: pos[1],
                         Xprev: NaN,
-                        Yprev: NaN,
-                        Xstart: pos[0],
-                        Ystart: pos[1]
+                        Yprev: NaN
                     }
                 ]
             };
+
             if(this.options.takeFirst) {
                 this.mouse.obj = elements[0];
             } else {
                 this.mouse.obj = elements[elements.length-1];
             }
+
+            this.mouse.targets[0].Xstart = this.mouse.obj.coords.scrCoords[1];
+            this.mouse.targets[0].Ystart = this.mouse.obj.coords.scrCoords[2]; 
 
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
