@@ -41,9 +41,9 @@
 % Thanks:
 %  (reference card macros due to Stephen Gildea)
 
-\def\versionnumber{0.81}  % Version of this reference card
-\def\year{2010}
-\def\month{May}
+\def\versionnumber{0.92}  % Version of this reference card
+\def\year{2011}
+\def\month{September}
 \def\version{\month\ \year\ v\versionnumber}
 
 \def\shortcopyrightnotice{\vskip .5ex plus 2 fill
@@ -263,11 +263,11 @@ Two files have to be included:
 {\bf JavaScript code:}
 
 \metax{$<$script type="text/javascript"$>$}{}
-\metax{\phantom{xxx}{\tt var brd = JXG.JSXGraph.initBoard(\'box\',$\{$axis:true$\}$);}}{}
+\metax{\phantom{xxx}{\tt var b = JXG.JSXGraph.initBoard(\'box\',$\{$axis:true$\}$);}}{}
 \metax{$<$script$>$}{}
 
 \section{Initializing the board}
-\metax{var brd = JXG.JSXGraph.initBoard(\'box\',$\{$attributes$\}$);}{}
+\metax{var b = JXG.JSXGraph.initBoard(\'box\',$\{$attributes$\}$);}{}
 
 {\sl -- Attributes of the board}\par
 \metax{boundingbox:}{$[x_1,y_1,x_2,y_2]$ user coordinates of the}
@@ -282,17 +282,17 @@ Two files have to be included:
 \metax{}{show axis, grid, zoom/navigation buttons, display copyright}
 
 {\sl Properties and methods of the board:}\par
-\metax{brd.snapToGrid:true/false:}{grid mode}
-\metax{brd.suspendUpdate()}{stop updating (if speed is needed)}
-\metax{brd.unsuspendUpdate()}{restart updating}
-\metax{brd.addChild(brd2)}{Connect board {\tt brd2} to board {\tt brd}}
+\metax{b.snapToGrid:true/false:}{grid mode}
+\metax{b.suspendUpdate()}{stop updating (if speed is needed)}
+\metax{b.unsuspendUpdate()}{restart updating}
+\metax{b.addChild(b2)}{Connect board {\tt b2} to board {\tt b}}
 
 \section{Basic commands}
-\metax{var el = brd.create(\'type\',[parents],$\{$attributes$\}$);}{}
+\metax{var el = b.create(\'type\',[parents],$\{$attributes$\}$);}{}
 \metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
 
 \section{Point}
-\metax{brd.create(\'point\',[parents],$\{$attributes$\}$);}{}
+\metax{b.create(\'point\',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -317,7 +317,7 @@ Two files have to be included:
 \section{Glider}
 Point on circle, line, curve, or turtle.
 
-\metax{brd.create(\'glider\',[parents],$\{$attributes$\}$);}{}
+\metax{b.create(\'glider\',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -327,7 +327,7 @@ Point on circle, line, curve, or turtle.
 Coordinates may also be defined by functions, see Point.
 
 \section{Line}
-\metax{brd.create(\'line\',[parents],$\{$attributes$\}$);}{}
+\metax{b.create(\'line\',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -339,7 +339,7 @@ In case of coordinates as parents, the line is the set of solutions
 of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 
 \section{Circle}
-\metax{brd.create(\'circle\',[parents],$\{$attributes$\}$);}{}
+\metax{b.create(\'circle\',[parents],$\{$atts$\}$);}{}
 
 {\bf Parent elements:}
 
@@ -351,14 +351,14 @@ of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
 Points may also be specified as array of coordinates.
 
 \section{Polygon}
-\metax{brd.create(\'polygon\',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{b.create(\'polygon\',[p1,p2,...],$\{$atts$\}$);}{}
 \metax{[p1,p2,...]}{The array of points}
 is connected by line segments and the inner area is filled.
 
-\metax{brd.create(\'regularpolygon\',[p1,p2,n],$\{$attributes$\}$);}{}
+\metax{b.create(\'regularpolygon\',[p1,p2,n],$\{$atts$\}$);}{}
 
 \section{Slider}
-\metax{var s = brd.create(\'slider\',[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
+\metax{var s = b.create(\'slider\',[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
 \metax{[a,b],[c,d]:}{visual start and end position of the slider}
 \metax{[e,f,g]:}{the slider returns values between $e$ and $g$,}
 \metax{}{the initial position is at value $f$}
@@ -366,13 +366,13 @@ is connected by line segments and the inner area is filled.
 \metax{s.Value():}{returns the position of the slider $\in[e,g]$}
 
 \section{Group}
-\metax{brd.create(\'group\',[p1,p2,...],$\{$attributes$\}$);}{}
+\metax{b.create(\'group\',[p1,p2,...],$\{$atts$\}$);}{}
 \metax{[p1,p2,...]}{array of points}
 Invisible grouping of points. If one point is moved, the others are
 transformed accordingly.
 
 \section{Curve}
--- \metax{brd.create(\'functiongraph\',[parents],$\{$atts$\}$);}{}
+-- \metax{b.create(\'functiongraph\',[parents],$\{$atts$\}$);}{}
 \metax{}{\sl Function graph, $x\mapsto f(x)$}
 
 \metax{[function(x)$\{$return x*x;$\}$,-1,1]}{function term}
@@ -380,7 +380,7 @@ transformed accordingly.
 
 %The other types of curves are defined through:
 
--- \metax{brd.create(\'curve\',[parents],$\{$attributes$\}$);}{}
+-- \metax{b.create(\'curve\',[parents],$\{$atts$\}$);}{}
 {\sl $\cdot$ Parameter curve, $t\mapsto(f(t),g(t))$:}
 
 \metax{[function(t)$\{$return 5*t;$\}$,function(t)$\{$return t*t;$\}$,0,2]}{}
@@ -397,30 +397,30 @@ Defined by the equation $r=f(\phi)$.
 \metax{[[1,2,3],function(x)$\{$return x*x;$\}$]}{}
 \metax{}{array of $x$-coordinates, function term}
 
--- \metax{brd.create(\'spline\',[p1,p2,...],$\{$attributes$\}$);}{}
+-- \metax{b.create(\'spline\',[p1,p2,...],$\{$atts$\}$);}{}
 \metax{[p1,p2,...]}{{\sl Cubic spline:} array of points}
 
--- \metax{brd.create(\'riemannsum\',[f,n,type],$\{$atts$\}$);}{}
+-- \metax{b.create(\'riemannsum\',[f,n,type],$\{$atts$\}$);}{}
 {\sl Riemann sum} of type 'left', 'right', 'middle', 'trapezodial', 'upper', or 'lower'
 
--- \metax{brd.create(\'integral',[[a,b],f],$\{$atts$\}$);}{}
+-- \metax{b.create(\'integral',[[a,b],f],$\{$atts$\}$);}{}
 Display the area $\int_a^b f(x)dx$. 
 
 
 \section{Tangent, normal}
-\metax{var el = brd.create(\'tangent\',[g],$\{$attributes$\}$);}{}
-\metax{var el = brd.create(\'normal\',[g],$\{$attributes$\}$);}{}
+\metax{var el = b.create(\'tangent\',[g],$\{$atts$\}$);}{}
+\metax{var el = b.create(\'normal\',[g],$\{$atts$\}$);}{}
 \metax{g}{glider on circle, line, polygon, curve, or turtle}
 
 \section{Conic sections}
 \par{\sl -- ellipse, hyperbola:}\hfill defined by the two foci points
 and a point on the conic section or the length of the major axis.
-\metax{brd.create(\'ellipse\',[p1,p2,p3],$\{$attributes$\}$);}{}
-\metax{brd.create(\'ellipse\',[p1,p2,a],$\{$attributes$\}$);}{}
-\metax{brd.create(\'hyperbola\',[p1,p2,p3],$\{$attributes$\}$);}{}
-\metax{brd.create(\'hyperbola\',[p1,p2,a],$\{$attributes$\}$);}{}
+\metax{b.create(\'ellipse\',[p1,p2,p3],$\{$atts$\}$);}{}
+\metax{b.create(\'ellipse\',[p1,p2,a],$\{$atts$\}$);}{}
+\metax{b.create(\'hyperbola\',[p1,p2,p3],$\{$atts$\}$);}{}
+\metax{b.create(\'hyperbola\',[p1,p2,a],$\{$atts$\}$);}{}
 \par{\sl -- parabola:}\hfill defined by the focus and the directrix (line). 
-\metax{brd.create(\'parabola\',[p1,line],$\{$attributes$\}$);}{}
+\metax{b.create(\'parabola\',[p1,line],$\{$atts$\}$);}{}
 \par{\sl -- conic section:}\hfill defined by $5$ points or
 by the (symmetric) quadratic form
 $$
@@ -430,13 +430,13 @@ a_{01}&a_{11}&a_{12}\cr
 a_{02}&a_{12}&a_{22}\cr}
 (x,y,z)^\top
 $$
-\metax{brd.create(\'conic\',[p1,$\ldots$,p5],$\{$atts$\}$);}{}
-\metax{brd.create(\'conic\',[$a_{00}$,$a_{11}$,$a_{22}$,$a_{01}$,$a_{02}$,$a_{12}$],$\{$atts$\}$);}{}
+\metax{b.create(\'conic\',[p1,$\ldots$,p5],$\{$atts$\}$);}{}
+\metax{b.create(\'conic\',[$a_{00}$,$a_{11}$,$a_{22}$,$a_{01}$,$a_{02}$,$a_{12}$],$\{$atts$\}$);}{}
 
 \section{Turtle}
-%\metax{var t = brd.create(\'turtle\');}{}
-%\metax{var t = brd.create(\'turtle\',[],$\{$attributes$\}$);}{}
-\metax{var t = brd.create(\'turtle\',[parents],$\{$atts$\}$);}{}
+%\metax{var t = b.create(\'turtle\');}{}
+%\metax{var t = b.create(\'turtle\',[],$\{$atts$\}$);}{}
+\metax{var t = b.create(\'turtle\',[parents],$\{$atts$\}$);}{}
 
 \metax{t.X(), t.Y(), t.dir}{position, direction (degrees)}. 
 %All angles have to be supplied in degrees.
@@ -472,79 +472,78 @@ $$
 
 \section{Text}
 Display static or dynamic texts.\par
-\metax{el = brd.create(\'text\',[x,y,"Hello"]);}{}
-\metax{el = brd.create(\'text\',[x,y,f]);}{where}
+\metax{el = b.create(\'text\',[x,y,"Hello"]);}{}
+\metax{el = b.create(\'text\',[x,y,f]);}{where}
 \metax{f = function()$\{$ return p.X(); $\}$}{}
 Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
 
 \section{Image}
 Display bitmap image (also as data uri).\par
-\metax{el = brd.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
+\metax{el = b.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
 \metax{}{{\tt [x,y]:} position of lower left corner, {\tt [w,h]:} width, height}
 
 \section{Other geometric elements}
 {\sl -- angle:} \hfill filled area defined by 3 points
-\metax{el = brd.create(\'angle\',[M,B,C],$\{$attributes$\}$);}{}
+\metax{el = b.create(\'angle\',[M,B,C],$\{$atts$\}$);}{}
 \par{\sl -- arc:} \hfill circular arc defined by 3 points
-\metax{el = brd.create(\'arc\',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = b.create(\'arc\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- arrow:} \hfill line through 2 points with arrow head
-\metax{el = brd.create(\'arrow\',[A,B],$\{$attributes$\}$);}{}
+\metax{el = b.create(\'arrow\',[A,B],$\{$atts$\}$);}{}
 \par{\sl -- arrowparallel:} \hfill arrow parallel to arrow $a$ starting at point $P$
-\metax{el = brd.create(\'arrowparallel\',[a,P],$\{$atts$\}$); or [P,a]}{}
-%\metax{el = brd.create(\'arrowparallel\',[P,a],$\{$atts$\}$);}{}
+\metax{el = b.create(\'arrowparallel\',[a,P],$\{$atts$\}$); or [P,a]}{}
+%\metax{el = b.create(\'arrowparallel\',[P,a],$\{$atts$\}$);}{}
 \par{\sl -- bisector:} \hfill angular bisector defined by 3 points, returns line
-\metax{el = brd.create(\'bisector\',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = b.create(\'bisector\',[A,B,C],$\{$atts$\}$);}{}
 \par{} \hfill angular bisector defined by 2 lines, returns 2 lines
-\metax{el = brd.create(\'bisectorlines\',[l1,l2],$\{$atts$\}$);}{}
+\metax{el = b.create(\'bisectorlines\',[l1,l2],$\{$atts$\}$);}{}
 \par{\sl -- incircle:} \hfill incircle of triangle defined by 3 points
-\metax{el = brd.create(\'incircle\',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = b.create(\'incircle\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- circumcircle:} \hfill circle through 3 points (deprecated)
-\metax{el = brd.create(\'circumcircle\',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = b.create(\'circumcircle\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- circumcirclemidpoint:} \hfill center of circle through 3 points
-\metax{el = brd.create(\'circumcirclemidpoint\',[A,B,C]);}{}
+\metax{el = b.create(\'circumcirclemidpoint\',[A,B,C]);}{}
 \par{\sl -- circumcircle arc:} \hfill circular arc defined by 3 points
-\metax{el = brd.create(\'circumcirclearc\',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = b.create(\'circumcirclearc\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- midpoint:} midpoint between 2 points or the 2 points defined by a line
 \par{\sl -- circumcircle sector:} \hfill circular sector defined by 3 points
-\metax{el = brd.create(\'circumcirclesector\',[A,B,C],$\{$attributes$\}$);}{}
+\metax{el = b.create(\'circumcirclesector\',[A,B,C],$\{$atts$\}$);}{}
 
-\metax{el = brd.create(\'midpoint\',[A,B],$\{$atts$\}$); or [line]}{}
-%\metax{el = brd.create(\'midpoint\',[line],$\{$atts$\}$);}{}
+\metax{el = b.create(\'midpoint\',[A,B],$\{$atts$\}$); or [line]}{}
+%\metax{el = b.create(\'midpoint\',[line],$\{$atts$\}$);}{}
 \par{\sl -- mirrorpoint:} \hfill rotate point $B$ around point $A$ by $180^\circ$
-\metax{el = brd.create(\'mirrorpoint\',[A,B],$\{$atts$\}$);}{}
+\metax{el = b.create(\'mirrorpoint\',[A,B],$\{$atts$\}$);}{}
 \par{\sl -- parallel:} \hfill line parallel to line $l$ through point $P$
-\metax{el = brd.create(\'parallel\',[l,P],$\{$atts$\}$); or [P,l]}{}
-%\metax{el = brd.create(\'parallel\',[P,l],$\{$atts$\}$);}{}
+\metax{el = b.create(\'parallel\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'parallel\',[P,l],$\{$atts$\}$);}{}
 \par{\sl -- parallelpoint:} \hfill point D such that $ABCD$ from a parallelogram
-\metax{el = brd.create(\'parallelpoint\',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = b.create(\'parallelpoint\',[A,B,C],$\{$atts$\}$);}{}
 \par{\sl -- perpendicular:} \hfill line perpendicular to line $l$ through point $P$
-\metax{el = brd.create(\'perpendicular\',[l,P],$\{$atts$\}$); or [P,l]}{}
-%\metax{el = brd.create(\'perpendicular\',[P,l],$\{$atts$\}$);}{}
-\par{\sl -- perpendicularpoint:} \hfill  point defining a perpendicular line to line $l$ through point $P$
-
-\metax{el = brd.create(\'perpendicularpoint\',[l,P],$\{$$\}$); or [P,l]}{}
-%\metax{el = brd.create(\'perpendicularpoint\',[P,l],$\{$$\}$);}{}
+\metax{el = b.create(\'perpendicular\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'perpendicular\',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- perpendicularpoint:} \hfill  orthogonal projection of $P$ onto $l$
+\metax{el = b.create(\'orthogonalprojection\',[l,P],$\{$$\}$); or [P,l]}{}
+%\metax{el = b.create(\'perpendicularpoint\',[P,l],$\{$$\}$);}{}
 
 \par{\sl -- reflection:} \hfill reflection of point $P$ over the line $l$. 
 Superseded by transformations
 
-\metax{el = brd.create(\'reflection\',[l,P],$\{$atts$\}$); or [P,l]}{}
-%\metax{el = brd.create(\'reflection\',[P,l],$\{$atts$\}$);}{}
+\metax{el = b.create(\'reflection\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'reflection\',[P,l],$\{$atts$\}$);}{}
 \par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
-\metax{el = brd.create(\'sector\',[A,B,C],$\{$atts$\}$);}{}
+\metax{el = b.create(\'sector\',[A,B,C],$\{$atts$\}$);}{}
 
 \par{\sl -- semi circle:} \hfill defined by 2 points $p_1$ and $p_2$.
-\metax{brd.create(\'semicircle\',[p1,p2],$\{atts\}$);}{}
+\metax{b.create(\'semicircle\',[p1,p2],$\{atts\}$);}{}
 
 \par{\sl -- intersection:} \hfill of 2 objects (lines or circles). 
 
 Returns array of length 2 with first and second intersection point (also for line/line intersection).
 
-\metax{brd.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
+\metax{b.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
 
 \section{Transform}
 Affine transformation of points, images and texts.\par
-\metax{t = brd.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
+\metax{t = b.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
 {\tt base}: the transformation is applied to the coordinates of this object.\par
 Possible types:\par
 -- translate: {\tt data}$=${\tt [x,y]}\par
@@ -557,7 +556,7 @@ Possible types:\par
 \metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
 \metax{t.applyOnce(p)}{apply the transformation once}
 \metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
-\metax{p2 = brd.create('point',[p1,t],$\{$fixed:true$\}$);}{}
+\metax{p2 = b.create('point',[p1,t],$\{$fixed:true$\}$);}{}
 \metax{}{Point $p_2$: apply $t$ on point $p_1$}
 
 \section{Attributes of geometric elements}
@@ -603,29 +602,29 @@ Functions of the intrinsic JavaScript object {\sl Math}:\par
 \metax{(number).toFixed(3):}{Rounding a number to fixed precision}
 
 Additional mathematical functions are methods of {\tt JXG.Board}.
-\metax{brd.angle(A,B,C)}{angle $ABC$}
-\metax{brd.cosh(x), board.sinh(x)}{}
-\metax{brd.pow(a,b)}{$a^b$}
-\metax{brd.D(f,x)}{compute ${d\over dx}f$ numerically}
-\metax{brd.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
-\metax{brd.root(f,x)}{root of the function $f$.}
+\metax{b.angle(A,B,C)}{angle $ABC$}
+\metax{b.cosh(x), board.sinh(x)}{}
+\metax{b.pow(a,b)}{$a^b$}
+\metax{b.D(f,x)}{compute ${d\over dx}f$ numerically}
+\metax{b.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
+\metax{b.root(f,x)}{root of the function $f$.}
 \metax{}{Uses Newton method with start value $x$}
-\metax{brd.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
-\metax{brd.binomial(n,k)}{computes ${n\choose k}$}
-\metax{brd.distance(arr1,arr2)}{Euclidean distance}
-\metax{brd.lagrangePolynomial([p1,p2,...])}{}
+\metax{b.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
+\metax{b.binomial(n,k)}{computes ${n\choose k}$}
+\metax{b.distance(arr1,arr2)}{Euclidean distance}
+\metax{b.lagrangePolynomial([p1,p2,...])}{}
 \metax{}{returns a polynomial through the given points}
-\metax{brd.neville([p1,p2,...])}{polynomial curve interpolation}
+\metax{b.neville([p1,p2,...])}{polynomial curve interpolation}
 \metax{c = JXG.Math.Numerics.bezier([p1,p2,...])}{\hfill Bezier curve}
-\metax{}{$p_2,p_3,p_5,p_6,\ldots$ are control points. \kbd{brd.create('curve',c);}}
+\metax{}{$p_2,p_3,p_5,p_6,\ldots$ are control points. \kbd{b.create('curve',c);}}
 \metax{c = JXG.Math.Numerics.bspline([p1,p2,...],order)}{\hfill B-spline curve}
 \metax{f = JXG.Math.Numerics.regressionPolynomial(n,xArr,yArr)}{}
-\metax{}{Regression pol. of deg. $n$: \kbd{brd.create('functiongraph',f);}}
-\metax{brd.riemannsum(f,n,type,start,end)}{Area of Riemann}
+\metax{}{Regression pol. of deg. $n$: \kbd{b.create('functiongraph',f);}}
+\metax{b.riemannsum(f,n,type,start,end)}{Area of Riemann}
 \metax{}{sum, see {\sl Curves}}
 
 {-- Intersection of objects:}\par
-\metax{brd.intersection(el1,el2,i,j)}{intersection of the elements}
+\metax{b.intersection(el1,el2,i,j)}{intersection of the elements}
 \metax{}{$el_1$ and $el_2$ which can be lines, circles or curves}\par
 In case of circle and line intersection, $i\in\{0,1\}$ denotes 
 the first or second intersection. In case of an intersection with a curve, $i$ and $j$ are floats

@@ -127,7 +127,7 @@
         var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, 4, 1, -4], axis:false, showCopyright:false, showNavigation:true});
         var xaxis, yaxis, curve;
         brd.suspendUpdate();
-        yaxis = brd.create('axis', [[0,0],[0,1]], {withLabel: true});
+        //yaxis = brd.create('axis', [[0,0],[0,1]], {withLabel: true});
         xaxis = brd.create('axis', [[0, 0], [1, 0]], {
             ticks: {
                 ticksDistance: .1,
@@ -135,8 +135,8 @@
             },
             withLabel: true
         });
-        brd.create('line', [1, 1, 0], {labelColor: 'red'});
-        curve = brd.create('functiongraph', [function(x){return Math.sin(x);} ]);
+        //brd.create('line', [1, 1, 0], {labelColor: 'red'});
+        //curve = brd.create('functiongraph', [function(x){return Math.sin(x);} ]);
         brd.unsuspendUpdate();
     });
 

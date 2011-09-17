@@ -25,6 +25,16 @@ var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1
 var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
 var l1 = brd.create('line',[p1, p2]);
 var p3 = brd.create('midpoint',[p2, p1], {size:2});
+var p4 = brd.create('point',[2, 3], {withLabel:false});
+var p5 = brd.create('orthogonalprojection',[p4, l1], {withLabel:false});
+var p5 = brd.create('perpendicular',[p4, l1], {withLabel:false});
+
+var l2 = brd.create('line', [
+            function(){ return l1.stdform[2]*p3.X()-l1.stdform[1]*p3.Y();}, 
+            function(){ return -l1.stdform[2]*p3.Z();}, 
+            function(){ return l1.stdform[1]*p3.Z();}
+        ]
+        );
 
 /*
 var c2 = brd.create('circle',[p3, p2], {fillColor:'#ff000011'});

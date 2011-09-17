@@ -744,7 +744,7 @@ JXG.GeonextReader = {
                                 gxtEl.outLine = gxtReader.transformProperties(gxtEl.outLine);
                                 gxtEl.outLine.point = gxtEl.out;
 
-                                board.create('perpendicular', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.outLine);
+                                board.create('perpendicularsegment', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.outLine);
                                 break;
 
                             // PERPENDICULAR_POINT

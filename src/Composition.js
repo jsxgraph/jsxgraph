@@ -36,9 +36,11 @@
  *   <li>{@link Midpoint}</li>
  *   <li>{@link Mirrorpoint}</li>
  *   <li>{@link Normal}</li>
+ *   <li>{@link Orthogonalprojection}</li>
  *   <li>{@link Parallel}</li>
  *   <li>{@link Perpendicular}</li>
  *   <li>{@link Perpendicularpoint}</li>
+ *   <li>{@link Perpendicularsegment}</li>
  *   <li>{@link Reflection}</li></ul>
  */
 
@@ -195,12 +197,181 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
     }
 });
 
+/**
+ * @class This is used to construct a point that is the orthogonal projection of a point to a line.
+ * @pseudo
+ * @description An orthogonal projection is given by a point and a line. It is determined by projecting the given point
+ * orthogonal onto the given line.
+ * @constructor
+ * @name Orthogonalprojection
+ * @type JXG.Point
+ * @augments JXG.Point
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line_JXG.Point} p,l The constructed point is the orthogonal projection of p onto l.
+ * @example
+ * var p1 = board.create('point', [0.0, 4.0]);
+ * var p2 = board.create('point', [6.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
+ * var p3 = board.create('point', [3.0, 3.0]);
+ *
+ * var pp1 = board.create('orthogonalprojection', [p3, l1]);
+ * </pre><div id="7708b215-39fa-41b6-b972-19d73d77d791" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var ppex1_board = JXG.JSXGraph.initBoard('7708b215-39fa-41b6-b972-19d73d77d791', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var ppex1_p1 = ppex1_board.create('point', [0.0, 4.0]);
+ *   var ppex1_p2 = ppex1_board.create('point', [6.0, 1.0]);
+ *   var ppex1_l1 = ppex1_board.create('line', [ppex1_p1, ppex1_p2]);
+ *   var ppex1_p3 = ppex1_board.create('point', [3.0, 3.0]);
+ *   var ppex1_pp1 = ppex1_board.create('orthogonalprojection', [ppex1_p3, ppex1_l1]);
+ * </script><pre>
+ */
+JXG.createOrthogonalProjection = function(board, parents, attributes) {
+    var l, p, t;
+
+    if(JXG.isPoint(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parents[0];
+        l = parents[1];
+    }
+    else if(JXG.isPoint(parents[1]) && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        p = parents[1];
+        l = parents[0];
+    }
+    else {
+        throw new Error("JSXGraph: Can't create perpendicular point with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [point,line]");
+    }
+
+    t = board.create('point', [function () { return JXG.Math.Geometry.projectPointToLine(p, l, board); }], attributes);
+    p.addChild(t); 
+    l.addChild(t);
+
+    t.update();
+
+    t.generatePolynomial = function() {
+        /*
+         *  Perpendicular takes point P and line L and creates point T and line M:
+         *
+         *                          | M
+         *                          |
+         *                          x P (p1,p2)
+         *                          |
+         *                          |
+         *  L                       |
+         *  ----------x-------------x------------------------x--------
+         *            A (a1,a2)     |T (t1,t2)               B (b1,b2)
+         *                          |
+         *                          |
+         *
+         * So we have two conditions:
+         *
+         *   (a)  AT  || TB          (collinearity condition)
+         *   (b)  PT _|_ AB          (orthogonality condition)
+         *
+         *      a2-t2       t2-b2
+         *     -------  =  -------           (1)
+         *      a1-t1       t1-b1
+         *
+         *      p2-t2         a1-b1
+         *     -------  =  - -------         (2)
+         *      p1-t1         a2-b2
+         *
+         * Multiplying (1) and (2) with denominators and simplifying gives
+         *
+         *    a2t1 - a2b1 + t2b1 - a1t2 + a1b2 - t1b2 = 0                  (1')
+         *
+         *    p2a2 - p2b2 - t2a2 + t2b2 + p1a1 - p1b1 - t1a1 + t1b1 = 0    (2')
+         *
+         */
+
+        var a1 = l.point1.symbolic.x;
+        var a2 = l.point1.symbolic.y;
+        var b1 = l.point2.symbolic.x;
+        var b2 = l.point2.symbolic.y;
+
+        var p1 = p.symbolic.x;
+        var p2 = p.symbolic.y;
+        var t1 = t.symbolic.x;
+        var t2 = t.symbolic.y;
+
+        var poly1 = '('+a2+')*('+t1+')-('+a2+')*('+b1+')+('+t2+')*('+b1+')-('+a1+')*('+t2+')+('+a1+')*('+b2+')-('+t1+')*('+b2+')';
+        var poly2 = '('+p2+')*('+a2+')-('+p2+')*('+b2+')-('+t2+')*('+a2+')+('+t2+')*('+b2+')+('+p1+')*('+a1+')-('+p1+')*('+b1+')-('+t1+')*('+a1+')+('+t1+')*('+b1+')';
+
+        return [poly1, poly2];
+    };
+
+    return t;
+};
+
+
+/**
+
+ * @class This element is used to provide a constructor for a perpendicular.
+ * @pseudo
+ * @description  A perpendicular is a composition of two elements: a line and a point. The line is orthogonal
+ * to a given line and contains a given point and meets the given line in the perpendicular point.
+ * @name Perpendicular
+ * @constructor
+ * @type JXG.Line
+ * @augments Segment
+ * @return A {@link JXG.Line} object trhough the given point that is orthogonal to the given line.
+ * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
+ * will contain p. 
+ * @example
+ * // Create a perpendicular
+ * var p1 = board.create('point', [0.0, 2.0]);
+ * var p2 = board.create('point', [2.0, 1.0]);
+ * var l1 = board.create('line', [p1, p2]);
+ *
+ * var p3 = board.create('point', [3.0, 3.0]);
+ * var perp1 = board.create('perpendicular', [l1, p3]);
+ * </pre><div id="d5b78842-7b27-4d37-b608-d02519e6cd03" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ *   var pex1_board = JXG.JSXGraph.initBoard('d5b78842-7b27-4d37-b608-d02519e6cd03', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var pex1_p1 = pex1_board.create('point', [0.0, 2.0]);
+ *   var pex1_p2 = pex1_board.create('point', [2.0, 1.0]);
+ *   var pex1_l1 = pex1_board.create('line', [pex1_p1, pex1_p2]);
+ *   var pex1_p3 = pex1_board.create('point', [3.0, 3.0]);
+ *   var pex1_perp1 = pex1_board.create('perpendicular', [pex1_l1, pex1_p3]);
+ * </script><pre>
+ */
+JXG.createPerpendicular = function(board, parents, attributes) {
+    var p, l, pd, attr;
+
+    parents[0] = JXG.getReference(board, parents[0]);
+    parents[1] = JXG.getReference(board, parents[1]);
+
+    if(JXG.isPoint(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
+        l = parents[1];
+        p = parents[0];
+    }
+    else if(JXG.isPoint(parents[1]) && parents[0].elementClass == JXG.OBJECT_CLASS_LINE) {
+        l = parents[0];
+        p = parents[1];
+    } else {
+        throw new Error("JSXGraph: Can't create perpendicular with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [line,point]");
+    }
+
+    attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
+    pd = JXG.createLine(board, [
+                    function(){ return  l.stdform[2]*p.X()-l.stdform[1]*p.Y();}, 
+                    function(){ return -l.stdform[2]*p.Z();}, 
+                    function(){ return  l.stdform[1]*p.Z();}
+                ], 
+                attr);
+
+    return pd;
+};
 
 /**
  * @class This is used to construct a perpendicular point.
  * @pseudo
  * @description A perpendicular point is given by a point and a line. It is determined by projecting the given point
- * orthogonal onto the given line.
+ * orthogonal onto the given line. This used in GEONExTReader only. All other applications should use
+ * orthogonal projection.
  * @constructor
  * @name Perpendicularpoint
  * @type JXG.Point
@@ -242,7 +413,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
     }
 
     t = board.create('point', [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
-    p.addChild(t); // notwendig, um auch den Punkt upzudaten
+    p.addChild(t); 
     l.addChild(t);
 
     t.update();
@@ -303,16 +474,16 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
 
 
 /**
- * @class This element is used to provide a constructor for a perpendicular.
+ * @class This element is used to provide a constructor for a perpendicular segment.
  * @pseudo
- * @description  A perpendicular is a composition of two elements: a line and a point. The line is orthogonal
+ * @description  A perpendicular is a composition of two elements: a line segment and a point. The line segment is orthogonal
  * to a given line and contains a given point and meets the given line in the perpendicular point.
  * @name Perpendicular
  * @constructor
  * @type JXG.Line
  * @augments Segment
  * @return An array containing two elements: A {@link JXG.Line} object in the first component and a
- * {@link JXG.Point} element in the second component. The line is orthogonal to the given line and meets it
+ * {@link JXG.Point} element in the second component. The line segment is orthogonal to the given line and meets it
  * in the returned point.
  * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
@@ -324,7 +495,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
  * var l1 = board.create('line', [p1, p2]);
  *
  * var p3 = board.create('point', [3.0, 3.0]);
- * var perp1 = board.create('perpendicular', [l1, p3]);
+ * var perp1 = board.create('perpendicularsegment', [l1, p3]);
  * </pre><div id="037a6eb2-781d-4b71-b286-763619a63f22" style="width: 400px; height: 400px;"></div>
  * <script type="text/javascript">
  *   var pex1_board = JXG.JSXGraph.initBoard('037a6eb2-781d-4b71-b286-763619a63f22', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
@@ -332,10 +503,10 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
  *   var pex1_p2 = pex1_board.create('point', [2.0, 1.0]);
  *   var pex1_l1 = pex1_board.create('line', [pex1_p1, pex1_p2]);
  *   var pex1_p3 = pex1_board.create('point', [3.0, 3.0]);
- *   var pex1_perp1 = pex1_board.create('perpendicular', [pex1_l1, pex1_p3]);
+ *   var pex1_perp1 = pex1_board.create('perpendicularsegment', [pex1_l1, pex1_p3]);
  * </script><pre>
  */
-JXG.createPerpendicular = function(board, parents, attributes) {
+JXG.createPerpendicularSegment = function(board, parents, attributes) {
     var p, l, pd, t, attr;
 
     parents[0] = JXG.getReference(board, parents[0]);
@@ -353,11 +524,11 @@ JXG.createPerpendicular = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point]");
     }
-    attr = JXG.copyAttributes(attributes, board.options, 'perpendicular', 'point');
+    attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment', 'point');
     t = JXG.createPerpendicularPoint(board, [l, p], attr);
 
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
-    attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
+    attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment');
     pd = JXG.createLine(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
     /**
@@ -1744,10 +1915,12 @@ JXG.JSXGraph.registerElement('integral', JXG.createIntegral);
 JXG.JSXGraph.registerElement('midpoint', JXG.createMidpoint);
 JXG.JSXGraph.registerElement('mirrorpoint', JXG.createMirrorPoint);
 JXG.JSXGraph.registerElement('normal', JXG.createNormal);
+JXG.JSXGraph.registerElement('orthogonalprojection', JXG.createOrthogonalProjection);
 JXG.JSXGraph.registerElement('parallel', JXG.createParallel);
 JXG.JSXGraph.registerElement('parallelpoint', JXG.createParallelPoint);
 JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
 JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
+JXG.JSXGraph.registerElement('perpendicularsegment', JXG.createPerpendicularSegment);
 JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
 JXG.JSXGraph.registerElement('locus', JXG.createLocus);
 JXG.JSXGraph.registerElement('grid', JXG.createGrid);

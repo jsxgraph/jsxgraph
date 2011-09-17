@@ -526,7 +526,7 @@ JXG.Math.Geometry = {
                         p2 = intersect1;
                         p1 = intersect2;
                     } else {
-                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) < JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
+                        if (JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect1.usrCoords) <= JXG.Math.Geometry.affineDistance(point2.usrCoords, intersect2.usrCoords)) {
                             p1 = intersect1;
                             p2 = intersect2;
                         } else {
@@ -1111,7 +1111,7 @@ JXG.Math.Geometry = {
     },
 
     /**
-     * Calculates the coordinates of the projection of a given point on a given line. I.o.w. the
+     * Calculates the coordinates of the orthogonal projection of a given point on a given line. I.o.w. the
      * intersection point of the given line and its perpendicular through the given point.
      * @param {JXG.Point} point Point to project.
      * @param {JXG.Line} line Line on that the point is projected.

@@ -228,6 +228,7 @@ G.Options.elements.color#strokeColor}
          */
         layer: 0,
 
+
         /**
          * Determines the elements border-style.
          * Possible values are:
@@ -759,6 +760,13 @@ G.Options.elements.color#strokeColor}
 
     /* special perpendicular options */
     perpendicular : {
+        strokeColor: '#000000', // Perpendicular line
+        straightFirst: true,
+        straightLast: true,
+    },
+
+    /* special perpendicular options */
+    perpendicularsegment : {
         strokeColor: '#000000', // Perpendicular segment
         straightFirst: false,
         straightLast: false,
