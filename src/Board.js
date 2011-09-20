@@ -777,15 +777,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         var xy = [];
 
-        if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
+        if (obj.type == JXG.OBJECT_TYPE_AXIS) {
+            ; // do_nothing
+
+        } else if (obj.type == JXG.OBJECT_TYPE_LINE) {
+            xy[0] = obj.point1.coords.usrCoords[1];
+            xy[1] = obj.point1.coords.usrCoords[2];
+
+        } else if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
             xy[0] = obj.midpoint.coords.usrCoords[1];
             xy[1] = obj.midpoint.coords.usrCoords[2];
-        } else if (obj.type == JXG.OBJECT_TYPE_LINE || obj.type == JXG.OBJECT_TYPE_AXIS) {
-
-           ; // to be implemented
 
         } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
             xy[0] = xy[1] = obj.position;
+
         } else {
             xy[0] = obj.coords.usrCoords[1];
             xy[1] = obj.coords.usrCoords[2];
