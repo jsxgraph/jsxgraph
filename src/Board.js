@@ -1048,6 +1048,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             found = false, tmpTouches = [];
 
         this.updateHooks('mouseup', evt);
+        this.renderer.hide(this.infobox);
 
         if (evt.targetTouches.length > 0) {
             for (i = 0; i < this.touches.length; i++) {
