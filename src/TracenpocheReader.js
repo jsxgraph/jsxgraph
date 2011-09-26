@@ -520,9 +520,8 @@ JXG.TracenpocheReader = new function() {
         /*
          * Predefined functions
          */
-        arr = ["point", "pointsur", "segment", "polygone", "cercle"];
-        for (i=0; i<arr.length; i++) {
-            predefined(arr[i], "that." + arr[i]);
+        for (i=0; i<this.tepElements.length; i++) {
+            predefined(this.tepElements[i], "that." + this.tepElements[i]);
         }
         
         predefined("pi", "Math.PI");
@@ -636,7 +635,7 @@ JXG.TracenpocheReader = new function() {
         
         stmt("var", function () {
             var a, n, t;
-            n = token;
+            //n = token;
             // scope.define(n);
             a = statement();
             return /*"VAR " + */ a;
@@ -704,7 +703,6 @@ JXG.TracenpocheReader = new function() {
         
         i += 8;                 // skip string "@figure;"
         var tokens = this.tokenize(this.data.slice(i), '=<>!+-*&|/%^#', '=<>&|');
-        //console.log(tokens);
         this.board = board;
         var s = this.parse(tokens, 'tep');
         var tep = {};
@@ -747,6 +745,11 @@ JXG.TracenpocheReader = new function() {
     /*
      * Now, the constructions of TeP elements follow
      */
+    this.tepElements = ["point", "pointsur", "intersection",
+                         "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice",
+                         "cercle", "cerclerayon",
+                         "polygone"
+                       ];
     /*
      * Points 
      */
@@ -783,22 +786,30 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.droiteEQR = function(parents, attributes) {
-        return this.board.create('line', [parents[2],parents[0],parents[1]], this.handleAtts(attributes));
+        return this.board.create('line', [parents[2], parents[0], parents[1]], this.handleAtts(attributes));
     };
     
     this.droiteEQ = function(parents, attributes) {
-        return this.board.create('line', [1.0,parents[0],parents[1]], this.handleAtts(attributes));
+        return this.board.create('line', [1.0, parents[0], parents[1]], this.handleAtts(attributes));
     };
 
+    this.mediatrice = function(parents, attributes) {
+        return null;
+    };
+    
     /* 
      * Circles
      */
     this.cercle = function(parents, attributes) {
-        return this.board.create('circle', parents/*, this.handleAtts(attributes)*/);
+        return this.board.create('circle', parents, this.handleAtts(attributes));
+    };
+
+    this.cerclerayon = function(parents, attributes) {
+        return this.board.create('circle', parents, this.handleAtts(attributes));
     };
     
     /*
-     * Polygones
+     * Polygons
      */
     this.polygone = function(parents, attributes) {
         return this.board.create('polygon', parents, this.handleAtts(attributes));

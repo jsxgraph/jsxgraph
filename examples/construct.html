@@ -4,6 +4,8 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.91/jsxgraphcore.js"></script>-->
+    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore-0.82.js"></script>-->
     <script type="text/javascript" src="../src/GeonextReader.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 <style type="text/css">
@@ -35,7 +37,6 @@ var l2 = brd.create('line', [
             function(){ return l1.stdform[1]*p3.Z();}
         ]
         );
-
 /*
 var c2 = brd.create('circle',[p3, p2], {fillColor:'#ff000011'});
 var p3 = brd.create('intersection',[c1, c2, 0]);
@@ -45,9 +46,6 @@ var l3 = brd.create('line',[p2, p4]);
 */
 var t = brd.create('text',[0,-3,'HALLO'], {fontSize:60, strokeColor:'#ff000022', strokeOpacity:1});
 
-
-//p2.setProperty({labelColor:'#00000000'});
-//c2.setProperty({fillColor:'#0000ffA8'});
 </script> 
 </body>
 </html>

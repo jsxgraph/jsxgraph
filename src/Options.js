@@ -403,7 +403,7 @@ G.Options.elements.color#strokeColor}
      */ 
     /* special angle options */
     angle : {
-        withLabel:true,
+        withLabel: true,
         radius : 1.0,
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',

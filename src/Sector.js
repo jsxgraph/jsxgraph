@@ -331,7 +331,7 @@ JXG.createAngle = function(board, parents, attributes) {
         j, x, pre, post, found, dot;
 
 
-    // Alles 3 Punkte?
+    // Test if three points are given
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         //  If empty, create a new name
         text = attributes.text;
