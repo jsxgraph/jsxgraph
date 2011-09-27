@@ -1025,8 +1025,11 @@ JXG.GeonextReader = {
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case 'tracecurve':
+                        //try {
                         gxtEl.tracepoint = Data.getElementsByTagName('tracepoint')[0].firstChild.data;
                         gxtEl.traceslider = Data.getElementsByTagName('traceslider')[0].firstChild.data;
+                        JXG.getRef(board, gxtEl.tracepoint).setProperty({trace:true});
+                        //} catch(e) {}
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, '<b>ERR</b>');
                         break;
                     case 'group':
@@ -1077,7 +1080,7 @@ JXG.GeonextReader = {
     },
 
     fixXML: function(str) {
-        var arr = ["active", "angle", "animate", "animated", "arc", "area", "arrow", "author", "autodigits", "axis", "back", "background", "board", "border", "bottom", "buttonsize", "cas", "circle", "color", "comment", "composition", "condition", "conditions", "content", "continuous", "control", "coord", "coordinates", "cross", "cs", "dash", "data", "description", "digits", "direction", "draft", "editable", "elements", "event", "file", "fill", "first", "firstarrow", "fix", "fontsize", "free", "full", "function", "functionx", "functiony", "GEONEXT", "graph", "grid", "group", "height", "id", "image", "info", "information", "input", "intersection", "item", "jsf", "label", "last", "lastarrow", "left", "lefttoolbar", "lighting", "line", "loop", "max", "maximized", "member", "middle", "midpoint", "min", "modifier", "modus", "mp", "mpx", "multi", "name", "onpolygon", "order", "origin", "output", "overline", "parametercurve", "parent", "point", "pointsnap", "polygon", "position", "radius", "radiusnum", "radiusvalue", "right", "section", "selectedlefttoolbar", "showconstruction", "showcoord", "showinfo", "showunit", "showx", "showy", "size", "slider", "snap", "speed", "src", "start", "stop", "straight", "stroke", "strokewidth", "style", "term", "text", "top", "trace", "tracecurve", "type", "unit", "value", "VERSION", "vertex", "viewport", "visible", "width", "wot", "x", "xooy", "xval", "y", "yval", "zoom"],
+        var arr = ["active", "angle", "animate", "animated", "arc", "area", "arrow", "author", "autodigits", "axis", "back", "background", "board", "border", "bottom", "buttonsize", "cas", "circle", "color", "comment", "composition", "condition", "conditions", "content", "continuous", "control", "coord", "coordinates", "cross", "cs", "dash", "data", "description", "digits", "direction", "draft", "editable", "elements", "event", "file", "fill", "first", "firstarrow", "fix", "fontsize", "free", "full", "function", "functionx", "functiony", "GEONEXT", "graph", "grid", "group", "height", "id", "image", "info", "information", "input", "intersection", "item", "jsf", "label", "last", "lastarrow", "left", "lefttoolbar", "lighting", "line", "loop", "max", "maximized", "member", "middle", "midpoint", "min", "modifier", "modus", "mp", "mpx", "multi", "name", "onpolygon", "order", "origin", "output", "overline", "parametercurve", "parent", "point", "pointsnap", "polygon", "position", "radius", "radiusnum", "radiusvalue", "right", "section", "selectedlefttoolbar", "showconstruction", "showcoord", "showinfo", "showunit", "showx", "showy", "size", "slider", "snap", "speed", "src", "start", "stop", "straight", "stroke", "strokewidth", "style", "term", "text", "top", "trace", "tracecurve", "tracepoint", "traceslider", "type", "unit", "value", "VERSION", "vertex", "viewport", "visible", "width", "wot", "x", "xooy", "xval", "y", "yval", "zoom"],
                 list = arr.join('|'),
                 regex = '\&lt;(/?('+list+'))\&gt;',
                 expr = new RegExp(regex,'g');
