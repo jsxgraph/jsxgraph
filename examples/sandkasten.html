@@ -37,16 +37,71 @@
 <a href="javascript:brd.zoomAllPoints();">Zoom all points (old)</a><br />
 <a href="javascript:zoomAll();">Zoom all elements (new)</a-->
 
+<input type="text" id="input" value="sin(x)*x">
+<input type="button" value="plot" onClick="plotter()">
+<input type="button" value="clear all" onClick="clearAll()">
+
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
   <div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 </div>
 
-<div id="debug" style="display:none;"></div>
+<div id="debug" style="display:block;">DEBUG</div>
 <a href="javascript:void(0);" id="hideaxis">Hide Axis</a>
 <img id="snapshot" />
 <script type="text/javascript">
     /* <![CDATA[ */
+
+    var plotter, clearAll;
+
+    var clear = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+        var f, curve; // global objects
+
+        plotter = function () {
+            var txtraw = document.getElementById('input').value;
+            var txt = JXG.GeonextParser.geonext2JS(txtraw);
+            f = new Function('x','var y = '+txt+'; return y;');
+            curve = board.create('functiongraph',[f,
+                function(){
+                    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+                    return c.usrCoords[1];
+                },
+                function(){
+                    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+                    return c.usrCoords[1];
+                }
+            ],{name:txtraw, withLabel:true});
+        };
+
+        clearAll = function () {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+            f = null;
+            curve = null;
+        };
+
+    })();
+
+    var android = (function () {
+        JXG.Options.renderer = 'canvas';
+        var board, i, p, col;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        p = [];
+        for (i=0;i<2*3+1;i++) {
+            if (i%3==0) {
+                col = 'red';
+            } else {
+                col = 'blue';
+            }
+            if (i==0) {
+                p.push(board.createElement('point',[-3,3],{strokeColor:col,fillColor:col}));
+            } else {
+                p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
+            }
+        }
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', name:"curve", strokeWidth:5, lastArrow:true});
+    });
 
     var arcadi = (function () {
         var b1 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
@@ -77,7 +132,7 @@
 
         b1.addHook(hook, "update", b1);
         b2.addHook(hook, "update", b2);
-    })();
+    });
 
     var david = (function () {
         JXG.Options.text.display = 'internal';

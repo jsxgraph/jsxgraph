@@ -296,9 +296,9 @@ JXG.JSXGraph = {
             board.removeObject(board.objects[el]);
         }
 
-        // Remove all the other things, left on the board
-        for (i = 0; i < board.containerObj.childNodes.length; i++) {
-            board.containerObj.removeChild(board.containerObj.childNodes[i]);  // XHTML save
+        // Remove all the other things, left on the board, XHTML save
+        while (board.containerObj.firstChild) {
+            board.containerObj.removeChild(board.containerObj.firstChild);
         }
         // board.containerObj.innerHTML = '';
 
