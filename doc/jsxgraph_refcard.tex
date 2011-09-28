@@ -253,7 +253,9 @@ Two files have to be included:
           src="domain/jsxgraphcore.js"$>$$<$/script$>$}
 
 {\tt domain} is the location of the files. This can be a local directory or
+{\tt http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js}
 {\tt http://jsxgraph.uni-bayreuth.de/distrib/}
+%{\tt http://jsxgraph.uni-bayreuth.de/distrib/}
 
 {\bf HTML element containing the construction:}
 
@@ -278,8 +280,8 @@ Two files have to be included:
 %\metax{originX, originY:}{pixel position of the origin}
 \metax{zoomX,zoomY:}{zoom factor in $x$/$y$-axis direction}
 \metax{zoomfactor:}{overall zoom factor in both directions}
-\metax{axis,grid,showNavigation,showCopyright,zoom,pan:}{\hfill true/false}
-\metax{}{show axis, grid, zoom/navigation buttons, display copyright, mouse wheel zoom, shift+mouse panning}
+\metax{axis,grid,showNavigation,showCopyright,zoom,pan:}{}\par%{\hfill true/false}
+show axis, grid, zoom/navigation buttons, copyright text; enable mouse wheel zoom, shift$+$mouse panning
 
 {\sl Properties and methods of the board:}\par
 \metax{b.snapToGrid:true/false:}{grid mode}
