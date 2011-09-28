@@ -621,7 +621,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                             this.label.content.hideElement();
                         }
                     } else {
-                        if (this.label!=null && this.hasLabel) {
+                        if (this.label != null) {
                             if (this.visProp.visible) {
                                 this.label.content.showElement();
                             }
