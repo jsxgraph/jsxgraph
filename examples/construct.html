@@ -27,12 +27,12 @@ var p1 = brd.create('point',[0, 0], {face:'[]', withLabel:false});
 var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1});
 var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
 var l1 = brd.create('line',[p1, p2]);
+var l2 = brd.create('line',[-3,1,1]);
 
-var g1 = brd.create('glider',[2,2,c1]);
+var g1 = brd.create('glider',[3,1,c1]);
 var s1 = brd.create('segment',[g1, p2]);
 var p3 = brd.create('midpoint',[s1], {trace:false});
 */
-
     p1 = brd.createElement('point', [0, 0]);
     p2 = brd.createElement('point', [6, -1]);
     c1 = brd.createElement('circle', [p1, 2]);
@@ -44,17 +44,22 @@ var p3 = brd.create('midpoint',[s1], {trace:false});
 
 var cu = brd.create('curve',[[0],[0]]);
 cu.updateDataArray = function(){
-    var i, le = 50, step = 2*Math.PI/le,
-        savePos = g1.position, el, pEl, from=false;
+    var i, le = 300, 
+        step = 2*Math.PI/le,
+        from = false,
+        glider = g1, tracepoint = p3,
+        savePos = glider.position, el, pEl, 
+        slideObject;
 
+    //step = 1.0/le;
     this.dataX = [];
     this.dataY = [];
     for (i=0; i<=le; i++) {
-        g1.position = savePos + i*step;
+        glider.position = savePos + i*step;
         from = false;
         for (el in this.board.objects) {
             pEl = this.board.objects[el];
-            if (pEl==g1) { 
+            if (pEl==glider) { 
                 from = true;
             }
             if (!from) {
@@ -63,15 +68,20 @@ cu.updateDataArray = function(){
             if (!pEl.needsRegularUpdate) { continue; }
             pEl.needsUpdate = true;
             pEl.update(true);
-            if (pEl==p3) { 
+            if (pEl==tracepoint) { 
                 break;
             }
         }
-        this.dataX[i] = p3.X();
-        this.dataY[i] = p3.Y();
+        this.dataX[i] = tracepoint.X();
+        this.dataY[i] = tracepoint.Y();
 //        console.log(i, p3.X(), p3.Y());
     }
-    g1.position = savePos;
+    glider.position = savePos;
+    /*
+    glider.needsUpdate = true;
+    glider.update(true);
+    glider.needsUpdate = false;
+    */
 };
 brd.update();
 
