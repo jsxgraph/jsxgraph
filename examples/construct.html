@@ -22,6 +22,7 @@
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
 
 
+/*
 var p1 = brd.create('point',[0, 0], {face:'[]', withLabel:false});
 var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1});
 var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
@@ -30,6 +31,16 @@ var l1 = brd.create('line',[p1, p2]);
 var g1 = brd.create('glider',[2,2,c1]);
 var s1 = brd.create('segment',[g1, p2]);
 var p3 = brd.create('midpoint',[s1], {trace:false});
+*/
+
+    p1 = brd.createElement('point', [0, 0]);
+    p2 = brd.createElement('point', [6, -1]);
+    c1 = brd.createElement('circle', [p1, 2]);
+    c2 = brd.createElement('circle', [p2, 1.5]);
+    g1 = brd.createElement('glider', [6, 3, c1], {name:"D"});
+    c3 = brd.createElement('circle', [g1, 4]);
+    g2 = brd.createElement('intersection', [c2,c3,0], {name: "I"});
+    p3 = brd.createElement('midpoint', [g1,g2], {name:"T",trace:false});
 
 var cu = brd.create('curve',[[0],[0]]);
 cu.updateDataArray = function(){
