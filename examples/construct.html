@@ -26,25 +26,43 @@ var p1 = brd.create('point',[0, 0], {face:'[]', withLabel:false});
 var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1});
 var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
 var l1 = brd.create('line',[p1, p2]);
-var p3 = brd.create('midpoint',[p2, p1], {size:2});
-var p4 = brd.create('point',[2, 3], {withLabel:false});
-var p5 = brd.create('orthogonalprojection',[p4, l1], {withLabel:false});
-var p5 = brd.create('perpendicular',[p4, l1], {withLabel:false});
 
-var l2 = brd.create('line', [
-            function(){ return l1.stdform[2]*p3.X()-l1.stdform[1]*p3.Y();}, 
-            function(){ return -l1.stdform[2]*p3.Z();}, 
-            function(){ return l1.stdform[1]*p3.Z();}
-        ]
-        );
-/*
-var c2 = brd.create('circle',[p3, p2], {fillColor:'#ff000011'});
-var p3 = brd.create('intersection',[c1, c2, 0]);
-var p4 = brd.create('intersection',[c1, c2, 1]);
-var l2 = brd.create('line',[p2, p3]);
-var l3 = brd.create('line',[p2, p4]);
-*/
-var t = brd.create('text',[0,-3,'HALLO'], {fontSize:60, strokeColor:'#ff000022', strokeOpacity:1});
+var g1 = brd.create('glider',[2,2,c1]);
+var s1 = brd.create('segment',[g1, p2]);
+var p3 = brd.create('midpoint',[s1], {trace:false});
+
+var cu = brd.create('curve',[[0],[0]]);
+cu.updateDataArray = function(){
+    var i, le = 50, step = 2*Math.PI/le,
+        savePos = g1.position, el, pEl, from=false;
+
+    this.dataX = [];
+    this.dataY = [];
+    for (i=0; i<=le; i++) {
+        g1.position = savePos + i*step;
+        from = false;
+        for (el in this.board.objects) {
+            pEl = this.board.objects[el];
+            if (pEl==g1) { 
+                from = true;
+            }
+            if (!from) {
+                continue;
+            }
+            if (!pEl.needsRegularUpdate) { continue; }
+            pEl.needsUpdate = true;
+            pEl.update(true);
+            if (pEl==p3) { 
+                break;
+            }
+        }
+        this.dataX[i] = p3.X();
+        this.dataY[i] = p3.Y();
+//        console.log(i, p3.X(), p3.Y());
+    }
+    g1.position = savePos;
+};
+brd.update();
 
 </script> 
 </body>
