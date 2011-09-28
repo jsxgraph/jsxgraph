@@ -1765,7 +1765,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return this;
         }
 
-        try{
+        try {
             // remove all children.
             for (el in object.childElements) {
                 object.childElements[el].board.removeObject(object.childElements[el]);
@@ -1785,6 +1785,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } catch(e) {
             JXG.debug(object.id + ': Could not be removed, JS says:\n\n' + e);
         }
+
         return this;
     },
 

@@ -768,7 +768,7 @@ G.Options.elements.color#strokeColor}
     perpendicular : {
         strokeColor: '#000000', // Perpendicular line
         straightFirst: true,
-        straightLast: true,
+        straightLast: true
     },
 
     /* special perpendicular options */

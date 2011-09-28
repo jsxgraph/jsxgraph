@@ -857,6 +857,9 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     resize: function (w, h) {
         this.canvasRoot.style.width = parseFloat(w) + 'px';
         this.canvasRoot.style.height = parseFloat(h) + 'px';
+
+        this.canvasRoot.setAttribute('width', parseFloat(w) + 'px');
+        this.canvasRoot.setAttribute('height', parseFloat(h) + 'px');
     }
 
 });
