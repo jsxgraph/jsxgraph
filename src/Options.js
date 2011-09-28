@@ -33,11 +33,13 @@ JXG.Options = {
     takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
     takeFirst : false, // if true the first element with hasPoint==true is taken.
+    pan: true,
 
     /* zoom options */
     zoom : {
         factorX : 1.25,
-        factorY : 1.25
+        factorY : 1.25,
+        wheel: false
     },
 
     /* navbar options */

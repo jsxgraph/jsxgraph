@@ -1109,7 +1109,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
         pos = this.getMousePosition(Evt);
 
-        if (Evt.shiftKey) {
+        if (this.options.pan && Evt.shiftKey) {
             this.initMoveOrigin(pos[0], pos[1]);
             return false;
         }
@@ -1219,6 +1219,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
     
     mouseWheelListener: function (Event) {
+        if (!this.options.zoom.wheel) {
+            return true;
+        }
+                
         Event = Event ? Event : window.event;
         var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40,
             pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(Event), this);

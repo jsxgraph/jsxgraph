@@ -107,7 +107,8 @@ JXG.JSXGraph = {
             bbox,
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
-            board;
+            board,
+            wheelzoom, shiftpan;
 
         dimensions = JXG.getDimensions(box);
 
@@ -153,6 +154,9 @@ JXG.JSXGraph = {
 
         showCopyright = ( (typeof attributes["showCopyright"]) == 'undefined' ? JXG.Options.showCopyright : attributes["showCopyright"]);
 
+        wheelzoom = ( (typeof attributes["zoom"]) == 'undefined' ? JXG.Options.zoom.wheel : attributes["zoom"]);
+        shiftpan = ( (typeof attributes["pan"]) == 'undefined' ? JXG.Options.pan : attributes["pan"]);
+
         // create the renderer
         if(JXG.Options.renderer == 'svg') {
             renderer = new JXG.SVGRenderer(document.getElementById(box));
@@ -169,6 +173,9 @@ JXG.JSXGraph = {
         this.boards[board.id] = board;
 
         board.keepaspectratio = attributes.keepaspectratio;
+        board.options.zoom.wheel = wheelzoom;
+        board.options.pan = shiftpan;
+
 
         // create elements like axes, grid, navigation, ...
         board.suspendUpdate();
