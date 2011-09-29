@@ -1025,12 +1025,11 @@ JXG.GeonextReader = {
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case 'tracecurve':
-                        //try {
                         gxtEl.tracepoint = Data.getElementsByTagName('tracepoint')[0].firstChild.data;
                         gxtEl.traceslider = Data.getElementsByTagName('traceslider')[0].firstChild.data;
-                        JXG.getRef(board, gxtEl.tracepoint).setProperty({trace:true});
-                        //} catch(e) {}
-                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, '<b>ERR</b>');
+                        board.create('tracecurve', [gxtEl.traceslider, gxtEl.tracepoint], gxtEl);
+                        // JXG.getRef(board, gxtEl.tracepoint).setProperty({trace:true});
+                        gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case 'group':
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);

@@ -1037,13 +1037,19 @@ JXG.JSXGraph.registerElement('riemannsum', JXG.createRiemannsum);
  */
 JXG.createTracecurve = function(board, parents, attributes) {
     var c, glider, tracepoint;
+    
+    glider = JXG.getRef(this.board, parents[0]);
+    tracepoint = JXG.getRef(this.board, parents[1]);
+
+    if (glider.type != JXG.OBJECT_TYPE_GLIDER || !JXG.isPoint(tracepoint)) {
+        throw new Error("JSXGraph: Can't create trace curve with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                        "\nPossible parent types: [glider, point]");
+    }
 
     attr = JXG.copyAttributes(attributes, board.options, 'tracecurve');
     attr['curvetype'] = 'plot';
-
-    glider = parents[0];
-    tracepoint = parents[1];
-    
+  
     c = board.create('curve',[[0],[0]], attr);
     
     c.updateDataArray = function(){
