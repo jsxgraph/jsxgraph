@@ -600,27 +600,6 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
-     * Evaluate the turtle curve in position t.
-     * @param {float} t parameter 
-     * @return {Array} homogeneous coordinates of the turtle at position t.
-     */
-    evalCoords: function(/** float */ t) /** float */ {
-        var i, j, el, tc, 
-            len = this.objects.length;
-        for (i=0, j=0; i<len; i++) {
-            el = this.objects[i]; 
-            if (el.elementClass == JXG.OBJECT_CLASS_CURVE) {
-                if (j<=t && t<j+el.numberPoints) {
-                    tc = (t-j);
-                    return [el.Z(tc), el.X(tc), el.Y(tc)];
-                }
-                j += el.numberPoints;
-            }
-        }
-        return [1.0, this.X(), this.Y()];
-    },
-
-    /**
      * Checks whether (x,y) is near the curve.
      * @param {int} x Coordinate in x direction, screen coordinates.
      * @param {int} y Coordinate in y direction, screen coordinates.
