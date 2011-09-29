@@ -42,9 +42,13 @@ var p3 = brd.create('midpoint',[s1], {trace:false});
     g2 = brd.createElement('intersection', [c2,c3,0], {name: "I"});
     p3 = brd.createElement('midpoint', [g1,g2], {name:"T",trace:false});
 
+    g3 = brd.createElement('otherintersection', [c2,c3,g2], {name: "I_2"});
+    p4 = brd.createElement('midpoint', [g1,g3], {name:"T_2",trace:true});
+
+
 var cu = brd.create('curve',[[0],[0]]);
 cu.updateDataArray = function(){
-    var i, le = 300, 
+    var i, le = 100, 
         step = 2*Math.PI/le,
         from = false,
         glider = g1, tracepoint = p3,
@@ -74,15 +78,18 @@ cu.updateDataArray = function(){
         }
         this.dataX[i] = tracepoint.X();
         this.dataY[i] = tracepoint.Y();
-//        console.log(i, p3.X(), p3.Y());
+        //console.log(i, p3.X(), p3.Y());
     }
     glider.position = savePos;
-    /*
-    glider.needsUpdate = true;
-    glider.update(true);
-    glider.needsUpdate = false;
-    */
+    
+    //glider.needsUpdate = true;
+    //glider.update(true);
+    //glider.needsUpdate = false;
+    
+//    console.log(p3.X(), p3.Y());
 };
+
+
 brd.update();
 
 </script> 

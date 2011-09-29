@@ -589,8 +589,23 @@ JXG.createMidpoint = function(board, parents, attributes) {
                         "\nPossible parent types: [point,point], [line]");
     }
 
-    t = board.create('point', [function () { return (a.coords.usrCoords[1] + b.coords.usrCoords[1])/2.; },
-                               function () { return (a.coords.usrCoords[2] + b.coords.usrCoords[2])/2.; }], attributes);
+    t = board.create('point', [
+                               function () {
+                                var x = a.coords.usrCoords[1] + b.coords.usrCoords[1]; 
+                                if (isNaN(x) || Math.abs(a.coords.usrCoords[0])<JXG.Math.eps || Math.abs(b.coords.usrCoords[0])<JXG.Math.eps) {
+                                    return NaN;
+                                } else {
+                                    return x*0.5; 
+                                }
+                               },
+                               function () { 
+                                var y = a.coords.usrCoords[2] + b.coords.usrCoords[2]; 
+                                if (isNaN(y) || Math.abs(a.coords.usrCoords[0])<JXG.Math.eps || Math.abs(b.coords.usrCoords[0])<JXG.Math.eps) {
+                                    return NaN;
+                                } else {
+                                    return y*0.5; 
+                                }
+                              }], attributes);
     a.addChild(t);
     b.addChild(t);
 
