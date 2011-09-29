@@ -929,7 +929,7 @@ JXG.createSpline = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 
 /**
- * @class This element is used to provide a constructor for Riemann sums, which is relaized as a special curve. 
+ * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve. 
  * @pseudo
  * @description
  * @name Riemannsum
@@ -1003,3 +1003,106 @@ JXG.createRiemannsum = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('riemannsum', JXG.createRiemannsum);
+
+/**
+ * @class This element is used to provide a constructor for travce curve (simple locus curve), which is realized as a special curve. 
+ * @pseudo
+ * @description
+ * @name Tracecurve
+ * @augments JXG.Curve
+ * @constructor
+ * @type JXG.Curve
+ * @param {Point,Point} Parent elements of Tracecurve are a 
+ *         glider point and a point whose locus is traced.
+ * @see JXG.Curve
+ * @example
+ * // Create trace curve.
+    var c1 = board.create('circle',[[0, 0], [2, 0]]),
+        p1 = board.create('point',[-3, 1]),
+        g1 = board.create('glider',[2, 1, c1]),
+        s1 = board.create('segment',[g1, p1]),
+        p2 = board.create('midpoint',[s1]),
+        curve = board.create('tracecurve', [g1, p2]);
+    
+ * </pre><div id="5749fb7d-04fc-44d2-973e-45c1951e29ad" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var tc1_board = JXG.JSXGraph.initBoard('5749fb7d-04fc-44d2-973e-45c1951e29ad', {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false});
+ *   var c1 = tc1_board.create('circle',[[0, 0], [2, 0]]),
+ *       p1 = tc1_board.create('point',[-3, 1]),
+ *       g1 = tc1_board.create('glider',[2, 1, c1]),
+ *       s1 = tc1_board.create('segment',[g1, p1]),
+ *       p2 = tc1_board.create('midpoint',[s1]),
+ *       curve = tc1_board.create('tracecurve', [g1, p2]);
+ * </script><pre>
+ */
+JXG.createTracecurve = function(board, parents, attributes) {
+    var c, glider, tracepoint;
+
+    attr = JXG.copyAttributes(attributes, board.options, 'tracecurve');
+    attr['curvetype'] = 'plot';
+
+    glider = parents[0];
+    tracepoint = parents[1];
+    
+    c = board.create('curve',[[0],[0]], attr);
+    
+    c.updateDataArray = function(){
+        var i, step, t, el, pEl, x, y, v,
+            le = attr.numberpoints, 
+            from = false,
+            savePos = glider.position, 
+            slideObj = glider.slideObject,
+            mi = slideObj.minX(),
+            ma = slideObj.maxX();
+
+        step = (ma-mi)/le;
+        this.dataX = [];
+        this.dataY = [];
+        if (slideObj.elementClass!=JXG.OBJECT_CLASS_CURVE) {   // closed path
+            le++;
+        }
+        for (i=0; i<le; i++) {
+            t = mi + i*step;
+            x = slideObj.X(t)/slideObj.Z(t);
+            y = slideObj.Y(t)/slideObj.Z(t);
+            glider.setPositionDirectly(JXG.COORDS_BY_USER, x, y);
+            from = false;
+            for (el in this.board.objects) {
+                pEl = this.board.objects[el];
+                if (pEl==glider) { 
+                    from = true;
+                }
+                if (!from) {
+                    continue;
+                }
+                if (!pEl.needsRegularUpdate) { continue; }
+                pEl.needsUpdate = true;
+                pEl.update(true);
+                if (pEl==tracepoint) { break; }
+            }
+            this.dataX[i] = tracepoint.X();
+            this.dataY[i] = tracepoint.Y();
+        }
+        glider.position = savePos;
+        for (el in this.board.objects) {
+            pEl = this.board.objects[el];
+            if (pEl==glider) { 
+                from = true;
+            }
+            if (!from) {
+                continue;
+            }
+            if (!pEl.needsRegularUpdate) { continue; }
+            pEl.needsUpdate = true;
+            pEl.update(true).updateRenderer();
+            if (pEl==tracepoint) { 
+                break;
+            }
+        }
+    };
+
+    return c;
+};
+
+JXG.JSXGraph.registerElement('tracecurve', JXG.createTracecurve);
+

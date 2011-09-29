@@ -521,26 +521,59 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     pop: function() { return this.popTurtle(); },
 
     /**
-    * @return x-coordinate of the turtle position
-    * @type {float}
-    */
-    X: function(target) { 
-        return this.pos[0]; //this.turtle.X();
+     * the "co"-coordinate of the turtle curve at position t is returned.
+     * @param {float} t parameter 
+     * @param {string} coordinate. Either 'X' or 'Y'.
+     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     */
+    evalAt: function(/** float */ t, /** string */ co) /** float */ { 
+        var i, j, el, tc, len = this.objects.length;
+        for (i=0, j=0; i<len; i++) {
+            el = this.objects[i]; 
+            if (el.elementClass == JXG.OBJECT_CLASS_CURVE) {
+                if (j<=t && t<j+el.numberPoints) {
+                    tc = (t-j);
+                    return el[co](tc);
+                }
+                j += el.numberPoints;
+            }
+        }
+        return this[co]();
     },
 
     /**
-    * @return y-coordinate of the turtle position
-    * @type {float}
-    */
-    Y: function(target) { 
-        return this.pos[1]; //this.turtle.Y();
+     * if t is not supplied the x-coordinate of the turtle is returned. Otherwise
+     * the x-coordinate of the turtle curve at position t is returned.
+     * @param {float} t parameter 
+     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     */
+    X: function(/** float */ t) /** float */ { 
+        if (typeof t == 'undefined' ) {
+            return this.pos[0]; //this.turtle.X();
+        } else {
+            return this.evalAt(t, 'X');
+        }
+    },
+
+    /**
+     * if t is not supplied the y-coordinate of the turtle is returned. Otherwise
+     * the y-coordinate of the turtle curve at position t is returned.
+     * @param {float} t parameter 
+     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     */
+    Y: function(/** float */ t) /** float */ { 
+        if (typeof t == 'undefined' ) {
+            return this.pos[1]; //this.turtle.Y();
+        } else {
+            return this.evalAt(t, 'Y');
+        }
     },
 
     /**
     * @return z-coordinate of the turtle position
     * @type {float}
     */
-    Z: function(target) { 
+    Z: function(/** float */ t) /** float */ { 
         return 1.0; 
     },
 

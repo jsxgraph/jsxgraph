@@ -1017,6 +1017,18 @@ G.Options.elements.color#strokeColor}
         /**#@-*/
     },
     
+    /* special options for trace curves */
+    tracecurve : {
+        /**#@+
+         * @visprop
+         */
+        strokeColor: '#000000',
+        fillColor: 'none',
+        numberPoints: 100
+
+        /**#@-*/
+    },
+
     /**
       * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
       * to the same value.

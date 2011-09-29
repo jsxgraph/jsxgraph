@@ -261,7 +261,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 }
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
                 if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, this.slideObject.evalCoords(this.position));
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
                     //this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);
                 } else {
                     this.updateConstraint(); // In case, the point is a constrained glider.

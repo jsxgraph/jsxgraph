@@ -20,21 +20,15 @@
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
-
 if (true) {
-    var plot = brd.create('functiongraph',["sin(x)"]);
-    var plot2 = brd.create('curve', [function(phi) { return phi*0.9; }, [0,0]], {curveType:'polar'});
-    var p1 = brd.create('point',[0, 0], {face:'[]', withLabel:false});
-    var c1 = brd.create('circle',[p1, [2, 0]], {fillColor:'#ff000044', fillOpacity:1});
-    var p2 = brd.create('point',[-3, 1], {withLabel:false, name:'x2', labelColor:'#00000010'});
-    var l1 = brd.create('line',[p1, p2]);
-    var l2 = brd.create('line',[-3,1,1]);
-    var tu = brd.create('turtle', [0,0]);
-    tu.fd(3).rt(90).fd(5).rt(90).fd(3).rt(90).fd(5);
+    var board = brd;
+    var c1 = board.create('circle',[[0, 0], [2, 0]]),
+        p1 = board.create('point',[-3, 1]),
+        g1 = board.create('glider',[2, 1, c1]),
+        s1 = board.create('segment',[g1, p1]),
+        p2 = board.create('midpoint',[s1]),
+        curve = board.create('tracecurve', [g1, p2]);
 
-    var g1 = brd.create('glider',[2,1, tu]);
-    var s1 = brd.create('segment',[g1, p2]);
-    var p3 = brd.create('midpoint',[s1], {trace:false});
 } else {
     p1 = brd.createElement('point', [0, 0]);
     p2 = brd.createElement('point', [6, -1]);
@@ -47,74 +41,10 @@ if (true) {
 
     g3 = brd.createElement('otherintersection', [c2,c3,g2], {name: "I_2"});
     p4 = brd.createElement('midpoint', [g1,g3], {name:"T_2",trace:true});
+    curve = board.create('tracecurve', [g1, p3]);
 }
 
-if (true) {
-var cu = brd.create('curve',[[0],[0]], {strokeColor:'black', strokeWidth:3});
-cu.updateDataArray = function(){
-    var i, step, t, el, pEl, x, y, v,
-        le = 100, 
-        from = false,
-        glider = g1, tracepoint = p3,
-        savePos = glider.position, 
-        slideObj = glider.slideObject,
-        mi = slideObj.minX(),
-        ma = slideObj.maxX();
 
-    step = (ma-mi)/le;
-    this.dataX = [];
-    this.dataY = [];
-    if (slideObj.elementClass!=JXG.OBJECT_CLASS_CURVE) {   // closed path
-        le++;
-    }
-    for (i=0; i<le; i++) {
-        t = mi + i*step;
-        if (slideObj.type==JXG.OBJECT_TYPE_TURTLE) {
-            v = slideObj.evalCoords(t);
-            x = v[1];
-            y = v[2];
-        } else {
-            x = slideObj.X(t)/slideObj.Z(t);
-            y = slideObj.Y(t)/slideObj.Z(t);
-        }
-        glider.setPositionDirectly(JXG.COORDS_BY_USER, x, y);
-        from = false;
-        for (el in this.board.objects) {
-            pEl = this.board.objects[el];
-            if (pEl==glider) { 
-                from = true;
-            }
-            if (!from) {
-                continue;
-            }
-            if (!pEl.needsRegularUpdate) { continue; }
-            pEl.needsUpdate = true;
-            pEl.update(true);
-            if (pEl==tracepoint) { 
-                break;
-            }
-        }
-        this.dataX[i] = tracepoint.X();
-        this.dataY[i] = tracepoint.Y();
-    }
-    glider.position = savePos;
-    for (el in this.board.objects) {
-        pEl = this.board.objects[el];
-        if (pEl==glider) { 
-            from = true;
-        }
-        if (!from) {
-            continue;
-        }
-        if (!pEl.needsRegularUpdate) { continue; }
-        pEl.needsUpdate = true;
-        pEl.update(true).updateRenderer();
-        if (pEl==tracepoint) { 
-            break;
-        }
-    }
-};
-}
 
 brd.update();
 
