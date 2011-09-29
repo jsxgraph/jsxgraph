@@ -29,7 +29,6 @@
       <script type="text/javascript">
         /* <![CDATA[ */
 
-        // Das Objekt geonext ist global und wird in Geonext.js initialisiert
         // board links oben initialisieren
         board = JXG.JSXGraph.initBoard('box', {originX: 250, originY: 250, unitX: 150, unitY: 150});
         
@@ -43,9 +42,9 @@
         b1axisy = board.create('axis', [[0,0], [1,0]], {});
 		
 		// Sekrechten vom Gleiter auf die Achsen zeichnen
-		perp = board.create('perpendicular', [b1axisx,b1p1]); //,{strokeColor:['#ff0000',null],visible:[true,false]});
+		perp = board.create('perpendicularsegment', [b1axisx,b1p1]); //,{strokeColor:['#ff0000',null],visible:[true,false]});
 //		perp = board.create('perpendicular', ['X-Achse',b1p1], [{strokeColor: '#ff0000', visible: true}, {visible: false}]);
-		perp2 = board.create('perpendicular',[b1axisy,b1p1]); //,{strokeColor:['#0000ff',null],visible:[true,false]});
+		perp2 = board.create('perpendicularsegment',[b1axisy,b1p1]); //,{strokeColor:['#0000ff',null],visible:[true,false]});
         
         // das zweite board oben rechts initialisieren, Y-Achse ist skaliert
         board2 = JXG.JSXGraph.initBoard('box2', {originX: 100, originY: 250, unitX: 50, unitY: 150, axis:true});
@@ -78,7 +77,7 @@
         }
         
         // Hook-Funktion definieren
-        function print_table(board) {
+        function print_table() {
 			var rad = JXG.Math.Geometry.rad([1,0], [0,0], b1p1);
         	$('print_rad').innerHTML = board.round(rad,2);
         	$('print_kpi').innerHTML = board.round(rad*Math.PI,2) + ' * pi';

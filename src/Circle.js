@@ -601,6 +601,17 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     /**
      * Treat the circle as parametric curve:
+     * Return <tt>Z(t)= 1.0</tt>
+     * t runs from 0 to 1
+     * @param t TODO description
+     * @return TODO description
+     */
+    Z: function (/** float */ t) /** float */ {
+        return 1.0;
+    },
+
+    /**
+     * Treat the circle as parametric curve:
      * t runs from 0 to 1
      * TODO description
      * @private

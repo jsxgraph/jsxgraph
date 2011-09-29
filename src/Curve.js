@@ -129,6 +129,17 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
+     * Treat the curve as curve with homogeneous coordinates:
+     * Return <tt>Z(t)= 1.0</tt>
+     * t runs from 0 to 1
+     * @param t TODO description
+     * @return TODO description
+     */
+    Z: function (/** float */ t) /** float */ {
+        return 1.0;
+    },
+
+    /**
      * Checks whether (x,y) is near the curve.
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.

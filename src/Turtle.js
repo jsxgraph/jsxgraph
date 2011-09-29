@@ -537,6 +537,57 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
+    * @return z-coordinate of the turtle position
+    * @type {float}
+    */
+    Z: function(target) { 
+        return 1.0; 
+    },
+
+    /**
+     * Gives the lower bound of the parameter if the the turtle is treated as parametric curve.
+     */
+    minX: function () {
+        return 0;
+    },
+
+    /**
+     * Gives the upper bound of the parameter if the the turtle is treated as parametric curve.
+     * May be overwritten in @see generateTerm.
+     */
+    maxX: function () {
+        var np = 0, i, len = this.objects.length, el;
+        for (i=0; i <len; i++) {
+            el = this.objects[i];
+            if (el.elementClass == JXG.OBJECT_CLASS_CURVE) {
+                np += this.objects[i].numberPoints; 
+            }
+        }
+        return np;
+    },
+
+    /**
+     * Evaluate the turtle curve in position t.
+     * @param {float} t parameter 
+     * @return {Array} homogeneous coordinates of the turtle at position t.
+     */
+    evalCoords: function(/** float */ t) /** float */ {
+        var i, j, el, tc, 
+            len = this.objects.length;
+        for (i=0, j=0; i<len; i++) {
+            el = this.objects[i]; 
+            if (el.elementClass == JXG.OBJECT_CLASS_CURVE) {
+                if (j<=t && t<j+el.numberPoints) {
+                    tc = (t-j);
+                    return [el.Z(tc), el.X(tc), el.Y(tc)];
+                }
+                j += el.numberPoints;
+            }
+        }
+        return [1.0, this.X(), this.Y()];
+    },
+
+    /**
      * Checks whether (x,y) is near the curve.
      * @param {int} x Coordinate in x direction, screen coordinates.
      * @param {int} y Coordinate in y direction, screen coordinates.

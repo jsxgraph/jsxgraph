@@ -1246,7 +1246,7 @@ JXG.Math.Geometry = {
             y = curve.Y(t);
             newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board);
         }
-        return [curve.updateTransform(newCoords),t];
+        return [curve.updateTransform(newCoords), t];
     },
 
     /**
