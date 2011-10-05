@@ -1036,7 +1036,12 @@ JXG.JSXGraph.registerElement('riemannsum', JXG.createRiemannsum);
  * </script><pre>
  */
 JXG.createTracecurve = function(board, parents, attributes) {
-    var c, glider, tracepoint;
+    var c, glider, tracepoint, attr;
+    
+    if (parents.length!=2) {
+        throw new Error("JSXGraph: Can't create trace curve with given parent'" +
+                        "\nPossible parent types: [glider, point]");
+    }
     
     glider = JXG.getRef(this.board, parents[0]);
     tracepoint = JXG.getRef(this.board, parents[1]);
@@ -1055,11 +1060,11 @@ JXG.createTracecurve = function(board, parents, attributes) {
     c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
-            from = false,
+            from,
             savePos = glider.position, 
             slideObj = glider.slideObject,
             mi = slideObj.minX(),
-            ma = slideObj.maxX();
+            ma = slideObj.maxX(), savetrace;
 
         step = (ma-mi)/le;
         this.dataX = [];
@@ -1082,14 +1087,19 @@ JXG.createTracecurve = function(board, parents, attributes) {
                     continue;
                 }
                 if (!pEl.needsRegularUpdate) { continue; }
+                savetrace = pEl.visProp.trace;
+                pEl.visProp.trace = false;
                 pEl.needsUpdate = true;
                 pEl.update(true);
+                pEl.visProp.trace = savetrace;
                 if (pEl==tracepoint) { break; }
             }
             this.dataX[i] = tracepoint.X();
             this.dataY[i] = tracepoint.Y();
+//if (i==0) { console.log(this.dataX[i], this.dataY[i]);}
         }
         glider.position = savePos;
+        from = false;
         for (el in this.board.objects) {
             pEl = this.board.objects[el];
             if (pEl==glider) { 
@@ -1099,8 +1109,11 @@ JXG.createTracecurve = function(board, parents, attributes) {
                 continue;
             }
             if (!pEl.needsRegularUpdate) { continue; }
+            savetrace = pEl.visProp.trace;
+            pEl.visProp.trace = false;
             pEl.needsUpdate = true;
-            pEl.update(true).updateRenderer();
+            pEl.update(true); //.updateRenderer();
+            pEl.visProp.trace = savetrace;
             if (pEl==tracepoint) { 
                 break;
             }

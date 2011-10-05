@@ -20,7 +20,7 @@
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
-if (true) {
+if (false) {
     var board = brd;
     var c1 = board.create('circle',[[0, 0], [2, 0]]),
         p1 = board.create('point',[-3, 1]),
@@ -28,8 +28,7 @@ if (true) {
         s1 = board.create('segment',[g1, p1]),
         p2 = board.create('midpoint',[s1]),
         curve = board.create('tracecurve', [g1, p2]);
-
-} else {
+} else if (false) {
     p1 = brd.createElement('point', [0, 0]);
     p2 = brd.createElement('point', [6, -1]);
     c1 = brd.createElement('circle', [p1, 2]);
@@ -41,7 +40,28 @@ if (true) {
 
     g3 = brd.createElement('otherintersection', [c2,c3,g2], {name: "I_2"});
     p4 = brd.createElement('midpoint', [g1,g3], {name:"T_2",trace:true});
-    curve = board.create('tracecurve', [g1, p3]);
+    curve = brd.create('tracecurve', [g1, p3]);
+} else {
+    var O = brd.create('point',[0,0],{name:'O',fixed:true, fillColor:'blue', strokeColor:'blue'}),
+        A = brd.create('point',[1.2,0],{name:'A'}),
+        k = brd.create('circle',[O, A],{name:'k'}),
+        B = brd.create('glider',[0.7,1,k],{name:'B drag me'}),
+        g1 = brd.create('line',[O,B], {strokeColor:'lightgray'}),
+        C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'}),
+        g1a = brd.create('line',[O,C], {strokeColor:'lightgray'}),
+        C2 = brd.create('reflection',[g1a,A],{name:'C_2', fillColor:'blue', strokeColor:'blue'}),
+ 
+        M = brd.create('glider',[2,2,g1], {name:'M', trace:false, fillColor:'red', strokeColor:'red'}),
+        k2 = brd.create('circle',[M,B],{name:'k'}),
+ 
+        gpar = brd.create('parallel',[O,C2,M], {name:"g", strokeColor:'lightgray'}),
+        Cprime = brd.create('intersection',[gpar,k2,0], {name:"C'", trace:false, fillColor:'blue', strokeColor:'blue'}),
+ 
+        g2 = brd.create('line',[M, Cprime], {strokeColor:'lightgray'}),
+        Cstern = brd.create('glider',[3,3,g2], {name:"C*", trace:false, fillColor:'green', strokeColor:'green'});
+    brd.create('tracecurve', [B, Cprime], {strokeColor:'blue'});
+    brd.create('tracecurve', [B, M], {strokeColor:'yellow'});
+    brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
 }
 
 
