@@ -605,11 +605,7 @@ JXG.Math.Geometry = {
             dix = i2.usrCoords[1] - i1.usrCoords[1],
             diy = i2.usrCoords[2] - i1.usrCoords[2];
             
-        if (dpx*dix+dpy*diy>=0) {
-            return true;
-        } else {
-            return false;
-        }
+        return dpx * dix + dpy * diy >= 0;
     },
     
     /**
