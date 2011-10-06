@@ -1057,6 +1057,9 @@ JXG.createTracecurve = function(board, parents, attributes) {
   
     c = board.create('curve',[[0],[0]], attr);
     
+    /**
+     * Compute the points of the trace curve
+     */
     c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
@@ -1066,19 +1069,23 @@ JXG.createTracecurve = function(board, parents, attributes) {
             mi = slideObj.minX(),
             ma = slideObj.maxX(), savetrace;
 
-        step = (ma-mi)/le;
+        step = (ma-mi)/le;                    // set step width
         this.dataX = [];
         this.dataY = [];
-        if (slideObj.elementClass!=JXG.OBJECT_CLASS_CURVE) {   // closed path
+        /*
+         * For gliders on circles and lines a closed curve is computed.
+         * For gliders on curves the curve is not closed.
+         */
+        if (slideObj.elementClass!=JXG.OBJECT_CLASS_CURVE) {   
             le++;
         }
-        for (i=0; i<le; i++) {
+        for (i=0; i<le; i++) {                    // Loop over all steps
             t = mi + i*step;
             x = slideObj.X(t)/slideObj.Z(t);
             y = slideObj.Y(t)/slideObj.Z(t);
-            glider.setPositionDirectly(JXG.COORDS_BY_USER, x, y);
+            glider.setPositionDirectly(JXG.COORDS_BY_USER, x, y);    // Position the glider
             from = false;
-            for (el in this.board.objects) {
+            for (el in this.board.objects) {                         // Update all elements from the glider up to the trace element
                 pEl = this.board.objects[el];
                 if (pEl==glider) { 
                     from = true;
@@ -1087,20 +1094,19 @@ JXG.createTracecurve = function(board, parents, attributes) {
                     continue;
                 }
                 if (!pEl.needsRegularUpdate) { continue; }
-                savetrace = pEl.visProp.trace;
+                savetrace = pEl.visProp.trace;                       // Save the trace mode of the element
                 pEl.visProp.trace = false;
                 pEl.needsUpdate = true;
                 pEl.update(true);
-                pEl.visProp.trace = savetrace;
+                pEl.visProp.trace = savetrace;                       // Restore the trace mode
                 if (pEl==tracepoint) { break; }
             }
-            this.dataX[i] = tracepoint.X();
+            this.dataX[i] = tracepoint.X();                          // Store the position of the trace point
             this.dataY[i] = tracepoint.Y();
-//if (i==0) { console.log(this.dataX[i], this.dataY[i]);}
         }
-        glider.position = savePos;
+        glider.position = savePos;                                   // Restore the original position of the glider
         from = false;
-        for (el in this.board.objects) {
+        for (el in this.board.objects) {                             // Update all elements from the glider to the trace point
             pEl = this.board.objects[el];
             if (pEl==glider) { 
                 from = true;
