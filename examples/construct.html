@@ -20,6 +20,42 @@
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
+// x axis
+var pX0 = brd.create('point', 
+    [0, function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[3]+(bb[1]-bb[3])*0.1;
+        }
+    ], {visible:false, withLabel:false}); 
+var pX1 = brd.create('point', 
+    [1, function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[3]+(bb[1]-bb[3])*0.1;
+        }
+    ], {visible:false, withLabel:false}); 
+
+var xaxis = brd.create('axis', [pX0, pX1]);
+pX0.type = JXG.OBJECT_TYPE_CAS;   
+pX1.type = JXG.OBJECT_TYPE_CAS;    
+
+// y axis
+var pX2 = brd.create('point', 
+    [function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[0]+(bb[2]-bb[0])*0.1;
+        }, 0
+    ], {visible:false, withLabel:false}); 
+var pX3 = brd.create('point', 
+    [function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[0]+(bb[2]-bb[0])*0.1;
+        }, 1
+    ], {visible:false, withLabel:false}); 
+
+var xaxis = brd.create('axis', [pX2, pX3]);
+pX2.type = JXG.OBJECT_TYPE_CAS;   
+pX3.type = JXG.OBJECT_TYPE_CAS;    
+
 if (false) {
     var board = brd;
     var c1 = board.create('circle',[[0, 0], [2, 0]]),
@@ -63,8 +99,6 @@ if (false) {
     brd.create('tracecurve', [B, M], {strokeColor:'yellow'});
     brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
 }
-
-
 
 brd.update();
 

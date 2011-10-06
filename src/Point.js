@@ -278,8 +278,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
         }
         
-        /* If point is a calculated point, call updateConstraint() to calculate new coords. */
-        if (this.type == JXG.OBJECT_TYPE_CAS) {
+        /**
+        * If point is a calculated point, call updateConstraint() to calculate new coords. 
+        * The second test is for dynamic axes.
+        */
+        if (this.type == JXG.OBJECT_TYPE_CAS || this.type == JXG.OBJECT_TYPE_AXISPOINT) {
             this.updateConstraint();
         }
 
