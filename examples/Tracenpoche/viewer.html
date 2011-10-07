@@ -21,6 +21,7 @@ textarea {
 <body>
 <body id="body">
 <form>
+<!--
     <p>
     TracenPoche examples: <br>
     <select id="tep">
@@ -35,22 +36,32 @@ textarea {
         <option value='triangle_innercircle.txt'>[ ] triangle_innercircle.txt</option>
         <option value='triangle_orthocenter.txt'>[ ] triangle_orthocenter.txt</option>
     </select>
-    <input type='button' value='Read TracenPoche file' onclick="loadFile('tep','Tracenpoche')" />
+-->
+    <input type='button' value="Read TracenPoche string" onclick="loadFile('tep','Tracenpoche')" />
+<!--
     <input type='button' value='Show script' onclick="showFile('tep')">
+-->
 </form>
-<div id="box" class='jxgbox' style="width:700px; height:600px;"></div>
+<div id="box" class='jxgbox' style="width:700px; height:600px; float:left"></div>
+<textarea cols=30 rows=10 id="inputtext">@options;
+
+@figure;
+</textarea>
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
     var board;
     function loadFile(bspname, format) {
         document.getElementById('box').innerHTML = '';
+        /*
         var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
         //document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
-
+        */
+        var str = document.getElementById('inputtext').value;
         if (typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
 
-        document.title = "Tracenpoche example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
-        board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
+        //document.title = "Tracenpoche example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
+        //board = JXG.JSXGraph.loadBoardFromFile('box', value, format);
+        board = JXG.JSXGraph.loadBoardFromString('box', str, format);
     };
 
     function showFile(bspname) {

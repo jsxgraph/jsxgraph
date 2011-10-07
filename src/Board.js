@@ -714,8 +714,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             drag = o.obj,
             oldCoords;
 
-        //o.targets[0].X = x;
-        //o.targets[0].Y = y;
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
             if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) 
                  drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);

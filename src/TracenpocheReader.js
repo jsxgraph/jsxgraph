@@ -3,9 +3,7 @@
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+        Alfred Wassermann
 
     This file is part of JSXGraph.
 
@@ -74,14 +72,14 @@ JXG.TracenpocheReader = new function() {
                     c = inputStr.charAt(i);
                     if (isSmallName) {
                         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-                            (c >= '0' && c <= '9') /*|| c === '_' */) {
+                            (c >= '0' && c <= '9') || (c === "'") /*|| c === '_' */) {
                             str += c;
                             i++;
                         } else {
                             break;
                         }
                     } else { 
-                        if (c >= '0' && c <= '9') {
+                        if ((c >= '0' && c <= '9') || (c === "'") ) {
                             str += c;
                             i++;
                         } else {
@@ -261,7 +259,7 @@ JXG.TracenpocheReader = new function() {
         var i, arr;
         
         var error = function(tok, msg) {
-            throw new Error("GeonextParser: syntax error at char " + tok.from + ': ' + tok.value+ ' - ' + msg);
+            throw new Error("TraceEnPocheReader: syntax error at char " + tok.from + ': ' + tok.value+ ' - ' + msg);
         };
 
         var createObject = function (o) {
@@ -666,6 +664,7 @@ JXG.TracenpocheReader = new function() {
         new_scope();
         advance();
         var s = statements().join('\n');
+//console.log(s);        
         return s;
     };
     
@@ -702,7 +701,10 @@ JXG.TracenpocheReader = new function() {
         }
         
         i += 8;                 // skip string "@figure;"
-        var tokens = this.tokenize(this.data.slice(i), '=<>!+-*&|/%^#', '=<>&|');
+        var i2 = this.data.indexOf('@',i+1);
+        if (i2<0) { i2 = this.data.length; }
+        
+        var tokens = this.tokenize(this.data.slice(i, i2), '=<>!+-*&|/%^#', '=<>&|');
         this.board = board;
         var s = this.parse(tokens, 'tep');
         var tep = {};
@@ -745,34 +747,93 @@ JXG.TracenpocheReader = new function() {
     /*
      * Now, the constructions of TeP elements follow
      */
-    this.tepElements = ["point", "pointsur", "intersection",
-                         "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice",
+    this.tepElements = ["point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
+                         "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire",
                          "cercle", "cerclerayon",
-                         "polygone"
+                         "polygone",
+                         "texte", "symetrie"
                        ];
     /*
      * Points 
      */
     this.point = function(parents, attributes) {
-        return this.board.create('point', parents, this.handleAtts(attributes));
+        if (parents.length==0) {
+            return this.board.create('point', [Math.random(),Math.random()], this.handleAtts(attributes));
+        } else {
+            return this.board.create('point', parents, this.handleAtts(attributes));
+        }
     };
 
     this.pointsur = function(parents, attributes) {
-        return this.board.create('point', [
-                function(){ return parents[0].X()+(parents[1].X()-parents[0].X())*parents[2]; },
-                function(){ return parents[0].Y()+(parents[1].Y()-parents[0].Y())*parents[2]; }
-            ],
-            this.handleAtts(attributes)
-        );
+        var p1, p2, lambda;
+        if (parents.length==3) {        // point between two points
+            p1 = parents[0];
+            p2 = parents[1];
+            lambda = parents[2];
+            return this.board.create('point', [
+                    function(){ return p1.X()+(p2.X()-p1.X())*lambda; },
+                    function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda; }
+                ],
+                this.handleAtts(attributes)
+            );
+        } else if (parents.length==2) {   // Glider on line
+            // p1 = parents[0].point1;
+            // p2 = parents[0].point2;
+            lambda = parents[1];
+            var el = this.board.create('glider', [0, 0, parents[0]], this.handleAtts(attributes));
+            el.position = lambda;
+            el.needsUpdate = true; el.update(true).updateRenderer;
+            return el;
+        }
+            
     };
 
     this.intersection = function(parents, attributes) {
-        if (JXG.isNumber(parents[2])) {
-            return this.board.create('intersection', parents, this.handleAtts(attributes));
-        } else {
-            return this.board.create('otherintersection', parents, this.handleAtts(attributes));
+        if (parents.length==2) {  // line line
+            return this.board.create('intersection', [parents[0],parents[1],0], this.handleAtts(attributes));
+        } else if (parents.length==3) {
+            if (JXG.isNumber(parents[2])) {  // line circle
+                parents[2] -= 1;
+                return this.board.create('intersection', parents, this.handleAtts(attributes));
+            } else {
+                return this.board.create('otherintersection', parents, this.handleAtts(attributes));
+            }
         }
     }
+    
+    this.projete = function(parents, attributes) {
+        return this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
+    }
+
+    this.barycentre = function(parents, attributes) {
+        return this.board.create('point', [
+            function() {
+                var i, s = 0, le = parents.length, x = 0.0;
+                for (i=0; i<le; i+=2) {
+                    x += parents[i].X()*parents[i+1];
+                    s += parents[i+1];
+                }
+                return x/s;
+            },
+            function() {
+                var i, s = 0, le = parents.length, y = 0.0;
+                for (i=0; i<le; i+=2) {
+                    y += parents[i].Y()*parents[i+1];
+                    s += parents[i+1];
+                }
+                return y/s;
+            }
+        ], this.handleAtts(attributes));
+    }
+    
+    this.image = function(parents, attributes) {
+        return this.board.create('point', [parents[1], parents[0]], this.handleAtts(attributes));
+    }
+    
+    this.milieu = function(parents, attributes) {
+        return this.board.create('midpoint', parents, this.handleAtts(attributes));
+    }
+
     
     /*
      * Lines
@@ -793,9 +854,27 @@ JXG.TracenpocheReader = new function() {
         return this.board.create('line', [1.0, parents[0], parents[1]], this.handleAtts(attributes));
     };
 
-    this.mediatrice = function(parents, attributes) {
-        return null;
+    this.parallele = function(parents, attributes) {
+        return this.board.create('parallel', [parents[1], parents[0]], this.handleAtts(attributes));
     };
+
+    this.mediatrice = function(parents, attributes) {
+        var el; 
+        if (parents.length==1) {
+            el = this.board.create('midpoint', [parents[0]], {visible:false, withLabel:false});
+            el = this.board.create('perpendicular', [parents[0], el], this.handleAtts(attributes));
+        }
+        return el;
+    };
+
+    this.perpendiculaire = function(parents, attributes) {
+        return this.board.create('perpendicular', [parents[1], parents[0]], this.handleAtts(attributes));
+    };
+
+    this.bissectrice = function(parents, attributes) {
+        return this.board.create('bisector', parents, this.handleAtts(attributes));
+    };
+
     
     /* 
      * Circles
@@ -814,6 +893,18 @@ JXG.TracenpocheReader = new function() {
     this.polygone = function(parents, attributes) {
         return this.board.create('polygon', parents, this.handleAtts(attributes));
     };
+
+    /*
+     * Other
+     */
+    this.texte = function(parents, attributes) {
+        return this.board.create('text', parents, this.handleAtts(attributes));
+    };
     
+    this.symetrie = function(parents, attributes) {
+        if (parents.length==1 && JXG.isPoint(parents[0])) {
+            return this.board.create('transform', [Math.PI, parents[0]], {type:'rotate'});
+        }
+    };
     
 };
