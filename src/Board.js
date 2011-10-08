@@ -1018,7 +1018,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             for (i = 0; i < this.touches.length; i++) {
-                if (evt.targetTouches.length==2 && this.touches[i].obj.elementClass == JXG.OBJECT_CLASS_LINE) {
+                if (evt.targetTouches.length==2 && 
+                    this.touches[i].obj.elementClass == JXG.OBJECT_CLASS_LINE &&
+                    this.touches[i].obj.elementClass.isDraggable) {
                     pos = this.getMousePosition(evt, 0);
                     this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
                     pos = this.getMousePosition(evt, 1);
