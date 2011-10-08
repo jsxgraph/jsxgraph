@@ -1018,14 +1018,22 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             for (i = 0; i < this.touches.length; i++) {
+                if (evt.targetTouches.length==2 && this.touches[i].obj.elementClass == JXG.OBJECT_CLASS_LINE) {
+                    pos = this.getMousePosition(evt, 0);
+                    this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
+                    pos = this.getMousePosition(evt, 1);
+                    this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
+					this.update(this.touches[i].obj.point1);
+                } else {				
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
                 // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
                 // use the move-method moveObject
-                this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
-                this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
-                pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                this.moveObject(pos[0], pos[1], this.touches[i]);
+                    this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
+                    this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
+                    pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                    this.moveObject(pos[0], pos[1], this.touches[i]);
+                }
             }
         } else {
             for (i = 0; i < evt.targetTouches.length; i++) {
