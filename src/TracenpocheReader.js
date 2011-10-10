@@ -522,14 +522,14 @@ JXG.TracenpocheReader = new function() {
             predefined(this.tepElements[i], "that." + this.tepElements[i]);
         }
         
-        predefined("x", "'x'");
+        constant("x", "x");
         predefined("pi", "Math.PI");
-        predefined("sin", "that.sin");
-        //predefined("sin", "Math.sin");
+        predefined("sin", "Math.sin");
         predefined("cos", "Math.cos");
         predefined("tan", "Math.tan");
-        predefined("exp", "Math.exp");
         predefined("abs", "Math.abs");
+        predefined("racine", "Math.sqrt");
+        predefined("carre", "JXG.Math.carre");
 
         assignment("="); 
         
@@ -590,6 +590,14 @@ JXG.TracenpocheReader = new function() {
             var e = expression(0);
             advance(")");
             return e;
+        });    
+
+        prefix("fonction", function () {
+            advance("(");
+            var e = expression(0);
+            advance(")");
+            e = e.replace(/,\[\]/g,"").replace(/[\[\]]/g,"");
+            return "that.fonction([" + "'" + e + "'" + "],{})";
         });    
 
         // Attributes
@@ -725,7 +733,12 @@ JXG.TracenpocheReader = new function() {
         }
         return obj;
     };
-    
+
+
+    JXG.Math.carre = function(x) {
+        return x*x;
+    };
+        
     /*
      * Now, the constructions of TeP elements follow
      */
@@ -898,13 +911,12 @@ JXG.TracenpocheReader = new function() {
     this.entier = function(parents, attributes) {
         return this.reel(parents, attributes);
     };
-    
+ 
     this.fonction = function(parents, attributes) {
-console.log(parents[0]);
-        return this.board.create('functiongraph', [parents[0]], this.handleAtts(attributes));
+//console.log("in fonction:", parents[0]);
+        var f = new Function("x", "return " + parents[0]);
+        return this.board.create('functiongraph', [f], this.handleAtts(attributes));
     };
-    
-
     
     /*
      * Transformations
@@ -916,10 +928,4 @@ console.log(parents[0]);
         }
     };
 
-    this.sin = function(parents, attributes) {
-console.log(parents[0]);    
-        return "sin(" + (parents[0]) + ")";
-    }
-
-    
 };
