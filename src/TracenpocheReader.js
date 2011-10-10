@@ -742,13 +742,21 @@ JXG.TracenpocheReader = new function() {
     /*
      * Now, the constructions of TeP elements follow
      */
-    this.tepElements = ["point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
-                         "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
-                         "cercle", "cerclerayon",
-                         "polygone",
-                         "texte", "reel", "entier", "fonction", 
-                         "symetrie"
-                       ];
+    this.tepElements = [
+            // points
+            "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
+            // lines
+            "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
+            // circles
+            "cercle", "cerclerayon",
+            // polygons
+            "polygone",
+            // other
+            "texte", "reel", "entier", "fonction", 
+            //transformations
+            "symetrie"
+            ];
+            
     /*
      * Points 
      */
@@ -913,7 +921,6 @@ JXG.TracenpocheReader = new function() {
     };
  
     this.fonction = function(parents, attributes) {
-//console.log("in fonction:", parents[0]);
         var f = new Function("x", "return " + parents[0]);
         return this.board.create('functiongraph', [f], this.handleAtts(attributes));
     };
