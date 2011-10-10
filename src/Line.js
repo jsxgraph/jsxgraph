@@ -1008,6 +1008,9 @@ JXG.createAxis = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'axis');
         el = board.create('line', parents, attr);
         el.type = JXG.OBJECT_TYPE_AXIS;
+        el.isDraggable = false;
+        el.point1.isDraggable = false;
+        el.point2.isDraggable = false;
 
         for (var els in el.ancestors)
             el.ancestors[els].type = JXG.OBJECT_TYPE_AXISPOINT;
