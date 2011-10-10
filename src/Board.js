@@ -1025,8 +1025,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
                     pos = this.getMousePosition(evt, 1);
                     this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
-					this.update(this.touches[i].obj.point1);
-                } else {				
+                    this.update(this.touches[i].obj.point1);
+                } else {
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
                 // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
