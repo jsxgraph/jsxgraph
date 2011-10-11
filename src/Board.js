@@ -777,31 +777,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Helper function which returns a reasonable starting point for the object being dragged
-     * @private
      * @param {JXG.GeometryElement} obj The object to be dragged
      * @returns {Array} The starting point in usr coords
      */
    initXYstart: function (obj) {
+        var xy;
 
-        var xy = [];
-
-        if (obj.type == JXG.OBJECT_TYPE_AXIS) {
-            ; // do_nothing
-
-        } else if (obj.type == JXG.OBJECT_TYPE_LINE) {
-            xy[0] = obj.point1.coords.usrCoords[1];
-            xy[1] = obj.point1.coords.usrCoords[2];
-
+        if (obj.type == JXG.OBJECT_TYPE_LINE) {
+            xy = obj.point1.coords.usrCoords.slice(1);
         } else if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-            xy[0] = obj.midpoint.coords.usrCoords[1];
-            xy[1] = obj.midpoint.coords.usrCoords[2];
-
+            xy = obj.midpoint.coords.usrCoords.slice(1);
         } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
-            xy[0] = xy[1] = obj.position;
-
+            xy = [obj.position, obj.position];
         } else {
-            xy[0] = obj.coords.usrCoords[1];
-            xy[1] = obj.coords.usrCoords[2];
+            xy = obj.coords.usrCoords.slice(1);
         }
 
         return xy;
@@ -897,10 +886,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Touch-Events
      */
     touchStartListener: function (evt) {
-        var i, pos, elements, j,
+        var i, pos, elements, j, k,
             eps = this.options.precision.touch,
-            found = false,
-            tmpTouches = [], obj, xy = [];
+            obj, xy = [], found;
 
         evt.preventDefault();
         evt.stopPropagation();
@@ -919,11 +907,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
 
-        for (i = 0; i < this.touches.length; i++) {
-            tmpTouches[i] = this.touches[i];
-        }
-        this.touches.length = 0;
-
         // assuming only points are getting dragged
         // todo: this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
         // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
@@ -933,41 +916,65 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //  * points have higher priority over other elements.
         //  * if we find a targettouch over an element that could be transformed with more than one finger, we search the rest of the targettouches, if they are over
         //    this element and add them.
+        // ADDENDUM 11/10/11:
+        // to allow the user to drag lines and circles with multitouch we have to change this here. some notes for me before implementation:
+        //  (1) run through the touches control object,
+        //  (2) try to find the targetTouches for every touch. on touchstart only new touches are added, hence we can find a targettouch
+        //      for every target in our touches objects
+        //  (3) if one of the targettouches was bound to a touches targets array, mark it
+        //  (4) run through the targettouches. if the targettouch is marked, continue. otherwise check for elements below the targettouch:
+        //      (a) if no element could be found: mark the target touches and continue
+        //      --- in the following cases, "init" means:
+        //           (i) check if the element is already used in another touches element, if so, mark the targettouch and continue
+        //          (ii) if not, init a new touches element, add the targettouch to the touches property and mark it
+        //      (b) if the element is a point, init
+        //      (c) if the element is a line, init and try to find a second targettouch on that line. if a second one is found, add and mark it
+        //      (d) if the element is a circle, init and try to find TWO other targettouches on that circle. if only one is found, mark it and continue. otherwise
+        //          add both to the touches array and mark them.
         for (i = 0; i < evt.targetTouches.length; i++) {
-            for (j = 0; j < tmpTouches.length; j++) {
-                if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
+            evt.targetTouches[i].jxg_isused = false;
+        }
 
-                    xy = this.initXYstart(tmpTouches[j].obj);
+        for (i = 0; i < this.touches.length; i++) {
+            for (j = 0; j < this.touches[i].targets.length; j++) {
+                this.touches[i].targets[j].num = -1;
 
-                    this.touches.push({
-                        obj: tmpTouches[j].obj,
-                        targets: [{
-                            num: i,
-                            X: evt.targetTouches[i].screenX,
-                            Y: evt.targetTouches[i].screenY,
-                            Xprev: NaN,
-                            Yprev: NaN,
-                            Xstart: xy[0],
-                            Ystart: xy[1]
-                        }]
-                    });
-                    found = true;
-                    break;
+                for (k = 0; k < evt.targetTouches.length; k++) {
+                    // find the new targettouches
+                    if (Math.abs(Math.pow(evt.targetTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
+                        this.touches[i].targets[j].num = k;
+
+                        this.touches[i].targets[j].X = evt.targetTouches[k].screenX;
+                        this.touches[i].targets[j].Y = evt.targetTouches[k].screenY;
+
+                        evt.targetTouches[k].jxg_isused = true;
+                        break;
+                    }
+                }
+
+                if (this.touches[i].targets[j].num === -1) {
+                    JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + ')');
                 }
             }
+        }
 
-            if (!found) {
+        // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
+        for (i = 0; i < evt.targetTouches.length; i++) {
+            if (!evt.targetTouches[i].jxg_isused) {
                 pos = this.getMousePosition(evt, i);
                 elements = this.initMoveObject(pos[0], pos[1]);
 
                 if (elements.length != 0) {
                     obj = elements[0];
-                    xy = this.initXYstart(obj);
 
-                    this.touches.push({
-                        obj: obj,
-                        targets: [
-                            {
+                    if (JXG.isPoint(obj)) {
+                        // it's a point, so it's single touch, so we just push it to our touches
+
+                        // TODO: this might need some review bei heiko (for the undo/redo stuff i guess)
+                        xy = this.initXYstart(obj);
+                        this.touches.push({
+                            obj: obj,
+                            targets: [{
                                 num: i,
                                 X: evt.targetTouches[i].screenX,
                                 Y: evt.targetTouches[i].screenY,
@@ -975,17 +982,62 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Yprev: NaN,
                                 Xstart: xy[0],
                                 Ystart: xy[1]
+                            }]
+                        });
+                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
+                        found = false;
+                        // first check if this line is already capture in this.touches
+                        for (j = 0; j < this.touches.length; j++) {
+                            if (obj.id === this.touches[j].obj.id) {
+                                found = true;
+                                // only add it, if we don't have two targets in there already
+                                if (this.touches[j].targets.length === 1) {
+                                    xy = this.initXYstart(obj);
+                                    this.touches[j].targets.push({
+                                        num: i,
+                                        X: evt.targetTouches[i].screenX,
+                                        Y: evt.targetTouches[i].screenY,
+                                        Xprev: NaN,
+                                        Yprev: NaN,
+                                        Xstart: xy[0],
+                                        Ystart: xy[1]
+                                    });
+                                }
+
+                                evt.targetTouches[i].jxg_isused = true;
                             }
-                        ]
-                    });
+                        }
+
+                        // we couldn't find it in touches, so we just init a new touches
+                        // IF there is a second touch targetting this line, we will find it later on, and then add it to
+                        // the touches control object.
+                        if (!found) {
+                            xy = this.initXYstart(obj);
+
+                            this.touches.push({
+                                obj: obj,
+                                targets: [{
+                                    num: i,
+                                    X: evt.targetTouches[i].screenX,
+                                    Y: evt.targetTouches[i].screenY,
+                                    Xprev: NaN,
+                                    Yprev: NaN,
+                                    Xstart: xy[0],
+                                    Ystart: xy[1]
+                                }]
+                            });
+                        }
+                    } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                        // TODO
+                    }
                 }
+                
+                evt.targetTouches[i].jxg_isused = true;
             }
-            found = false;
         }
 
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
-            //this.touchMoveCounter = 0;
             this.touchMoveLast = ti.getTime()-200;
         }
 
@@ -1022,7 +1074,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             for (i = 0; i < this.touches.length; i++) {
-                if (evt.targetTouches.length==2 && 
+                /*if (evt.targetTouches.length==2 &&
                     this.touches[i].obj.elementClass == JXG.OBJECT_CLASS_LINE &&
                     this.touches[i].obj.isDraggable) {
                     pos = this.getMousePosition(evt, 0);
@@ -1030,11 +1082,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     pos = this.getMousePosition(evt, 1);
                     this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
                     this.update(this.touches[i].obj.point1);
-                } else {
+                } else {*/
                 // assuming we're only dragging points now
                 // todo: check which operation is done here. the operation should be uniquely identified by the
                 // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
                 // use the move-method moveObject
+                if (this.touches[i].targets.length === 1) {
                     this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
                     this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
                     pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
@@ -1055,9 +1108,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchEndListener: function (evt) {
-        var i, j,
+        var i, j, k,
             eps = this.options.precision.touch,
-            found = false, tmpTouches = [];
+            tmpTouches = [], found, foundNumber;
 
         this.updateHooks('mouseup', evt);
         this.renderer.hide(this.infobox);
@@ -1072,22 +1125,69 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // todo: don't run through the targettouches but through the touches and check if all touches.targets are still available
             // if not, try to convert the operation, e.g. if a lines is rotated and translated with two fingers and one finger is lifted,
             // convert the operation to a simple one-finger-translation.
+            // ADDENDUM 11/10/11:
+            // see addendum to touchStartListener from 11/10/11
+            // (1) run through the tmptouches
+            // (2) check the touches.obj, if it is a
+            //     (a) point, try to find the targettouch, if found keep it and mark the targettouch, else drop the touch.
+            //     (b) line with
+            //          (i) one target: try to find it, if found keep it mark the targettouch, else drop the touch.
+            //         (ii) two targets: if none can be found, drop the touch. if one can be found, remove the other target. mark all found targettouches
+            //     (c) circle with [proceed like in line]
+
+            // init the targettouches marker
             for (i = 0; i < evt.targetTouches.length; i++) {
-                for (j = 0; j < tmpTouches.length; j++) {
-                    if (Math.abs(Math.pow(evt.targetTouches[i].screenX - tmpTouches[j].targets[0].X, 2) + Math.pow(evt.targetTouches[i].screenY - tmpTouches[j].targets[0].Y, 2)) < eps*eps) {
-                        this.touches.push({
-                            obj: tmpTouches[j].obj,
-                            targets: [{
-                                num: i,
-                                X: evt.targetTouches[i].screenX,
-                                Y: evt.targetTouches[i].screenY,
+                evt.targetTouches[i].jxg_isused = false;
+
+            }
+
+            for (i = 0; i < tmpTouches.length; i++) {
+                // could all targets of the current this.touches.obj be assigned to targettouches?
+                found = false;
+                foundNumber = 0;
+                
+                for (j = 0; j < tmpTouches[i].targets.length; j++) {
+                    tmpTouches[i].targets[j].found = false;
+
+                    for (k = 0; k < evt.targetTouches.length; k++) {
+                        if (Math.abs(Math.pow(evt.targetTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
+                            tmpTouches[i].targets[j].found = true;
+                            tmpTouches[i].targets[j].num = k;
+                            tmpTouches[i].targets[j].X = evt.targetTouches[k].screenX;
+                            tmpTouches[i].targets[j].Y = evt.targetTouches[k].screenY;
+                            foundNumber++;
+                            break;
+                        }
+                    }
+                }
+
+                if (JXG.isPoint(tmpTouches[i].obj)) {
+                    found = tmpTouches[i].targets[0].found;
+                } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_LINE) {
+                    found = tmpTouches[i].targets[0].found || tmpTouches[i].targets[1].found;
+                } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                    found = foundNumber === 1 || foundNumber === 3;
+                }
+
+                // if we found this object to be still dragged by the user, add it back to this.touches
+                if (found) {
+                    this.touches.push({
+                        obj: tmpTouches[i].obj,
+                        targets: []
+                    });
+
+                    for (j = 0; j < tmpTouches[i].targets.length; j++) {
+                        if (tmpTouches[i].targets[j].found) {
+                            this.touches[this.touches.length-1].targets.push({
+                                num: tmpTouches[i].targets[j].num,
+                                X: tmpTouches[i].targets[j].screenX,
+                                Y: tmpTouches[i].targets[j].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: tmpTouches[j].targets[0].Xstart,
-                                Ystart: tmpTouches[j].targets[0].Ystart
-                            }]
-                        });
-                        break;
+                                Xstart: tmpTouches[i].targets[j].Xstart,
+                                Ystart: tmpTouches[i].targets[j].Ystart
+                            });
+                        }
                     }
                 }
             }
