@@ -1073,25 +1073,22 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
         } else if (this.mode == this.BOARD_MODE_DRAG) {
-            for (i = 0; i < this.touches.length; i++) {
-                /*if (evt.targetTouches.length==2 &&
-                    this.touches[i].obj.elementClass == JXG.OBJECT_CLASS_LINE &&
-                    this.touches[i].obj.isDraggable) {
-                    pos = this.getMousePosition(evt, 0);
-                    this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
-                    pos = this.getMousePosition(evt, 1);
-                    this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
-                    this.update(this.touches[i].obj.point1);
-                } else {*/
-                // assuming we're only dragging points now
-                // todo: check which operation is done here. the operation should be uniquely identified by the
-                // drag object (touches.obj) and the number of fingers attached to this operation (this.touches.targets)
-                // use the move-method moveObject
+            // Runs over through all elements which are touched
+            // by at least one finger.
+            for (i = 0; i < this.touches.length; i++) {  
+                // Touch by one finger:  this is possible for all elements that can be dragged
                 if (this.touches[i].targets.length === 1) {
                     this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
                     this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
                     pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                     this.moveObject(pos[0], pos[1], this.touches[i]);
+                // Touch by two fingers: moving lines
+                } else if (this.touches[i].targets.length === 2) {  
+                    pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                    this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
+                    pos = this.getMousePosition(evt, this.touches[i].targets[1].num);
+                    this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
+                    this.update(this.touches[i].obj.point1);
                 }
             }
         } else {

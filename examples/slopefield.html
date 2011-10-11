@@ -2,7 +2,7 @@
 <head>
 <title>Slope fields and the Runge-Kutta method</title> 
 <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
 
@@ -74,7 +74,7 @@ function slopefield(f) {
 }
 
 function plotFunction() {
-    var g = brd.create('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2px'});
+    var g = brd.create('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2'});
     g.updateDataArray = function() {
         var data = ode();
         var h = N/200;
@@ -112,7 +112,7 @@ doIt();
 //document.write(eval(txt.replace(/x/g,5).replace(/y/g,3)));
 
 
-
+/*
 function parser(dydx) {
 
    dydx = dydx.replace(/cos/g,"Math.cos");
@@ -137,7 +137,7 @@ function parser(dydx) {
    dydx = dydx.replace(/\}/g,")");
    return dydx;
 }
-
+*/
 
 //Sequence[Sequence[Segment[(X - 0.5 length cos(atan(Y (2 - Y))), Y - 0.5 length sin(atan(Y (2 - Y)))), (X + 0.5 length cos(atan(Y (2 - Y))), Y + 0.5 length sin(atan(Y (2 - Y))))], X, xmin, xmax, xsep], Y, ymin, ymax, ysep]
 
