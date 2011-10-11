@@ -238,7 +238,7 @@
                 cs.push(control.create('segment', [cp[0], cp[cp.length-1]], {visible: false}));
 
                 control.addHook(function (e) {
-                    var cPos = this.getRelativeMouseCoordinates(e),
+                    var cPos = this.getCoordsTopLeftCorner(e),
                         absPos = JXG.getPosition(e),
                         dx = absPos[0] - cPos[0],
                         dy = absPos[1] - cPos[1],
