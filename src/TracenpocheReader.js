@@ -769,27 +769,45 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.pointsur = function(parents, attributes) {
-        var p1, p2, lambda, par3;
-        if (parents.length==3) {        // point between two points
-            p1 = parents[0];
-            p2 = parents[1];
-            par3 = parents[2];
-        } else if (parents.length==2) {   // point on segment
-            p1 = parents[0].point1;
-            p2 = parents[0].point2;
-            par3 = parents[1];
-        }
+        var p1, p2, c, lambda, par3;
+
+        par3 = parents[parents.length-1];
         if (JXG.isNumber(par3)) {
             lambda = function(){ return par3; };
         } else {
             lambda = function(){ return par3.Value(); };
         }
-        return this.board.create('point', [
+        
+        if (parents.length==3) {        // point between two points
+            p1 = parents[0];
+            p2 = parents[1];
+            return this.board.create('point', [
                 function(){ return p1.X()+(p2.X()-p1.X())*lambda(); },
                 function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda(); }
-            ],
-            this.handleAtts(attributes)
-        );
+                ],
+                this.handleAtts(attributes)
+            );
+        } else if (parents.length==2) {   // point on segment
+            if (parents[0].elementClass==JXG.OBJECT_CLASS_LINE) {
+                p1 = parents[0].point1;
+                p2 = parents[0].point2;
+                return this.board.create('point', [
+                    function(){ return p1.X()+(p2.X()-p1.X())*lambda(); },
+                    function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda(); }
+                    ],
+                    this.handleAtts(attributes)
+                );
+            } else {                      // point on circle
+                c = parents[0];
+                return this.board.create('point', [
+                    function(){ return c.midpoint.X()+c.Radius()*Math.cos(lambda()); },
+                    function(){ return c.midpoint.Y()+c.Radius()*Math.sin(lambda()); }
+                    ],
+                    this.handleAtts(attributes)
+                );
+            }
+            
+        }
         return el;
     };
 

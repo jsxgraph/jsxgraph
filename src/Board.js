@@ -667,7 +667,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     initMoveObject: function (x, y) {
         var pEl, el, collect = [], 
-            len, i, ancestorHasPoint;
+            len, i, ancestorHasPoint,
+            dragEl = {visProp:{layer:-10000}};
 
         this.mode = this.BOARD_MODE_DRAG;
         for (el in this.objects) {
@@ -682,7 +683,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 && JXG.exists(pEl.hasPoint) 
                 && pEl.hasPoint(x, y)
                 ) {
-                
+                    // Elements in the highest layer get priority.
+                    if (pEl.visProp.layer >= dragEl.visProp.layer) {
+                        dragEl = pEl;
+                        collect[0] = dragEl;
+                        if (this.options.takeFirst) {
+                            return collect;
+                        }
+                    } 
+                /*
                 ancestorHasPoint = false;
                 // In case, a non-point gets the focus,
                 // it is tested if a defining ancestor (usually a point)
@@ -697,6 +706,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 }
                 if (!ancestorHasPoint) collect.push(pEl);
+                */
             }
         }
 
@@ -951,13 +961,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 elements = this.initMoveObject(pos[0], pos[1]);
 
                 if (elements.length != 0) {
-
-                    if (this.options.takeFirst) {
-                        obj = elements[0];
-                    } else {
-                        obj = elements[elements.length - 1];
-                    }
-
+                    obj = elements[0];
                     xy = this.initXYstart(obj);
 
                     this.touches.push({
@@ -1145,12 +1149,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 ]
             };
-
-            if(this.options.takeFirst) {
-                this.mouse.obj = elements[0];
-            } else {
-                this.mouse.obj = elements[elements.length-1];
-            }
+            this.mouse.obj = elements[0];
 
             xy = this.initXYstart(this.mouse.obj);
 
