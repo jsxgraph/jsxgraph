@@ -957,6 +957,7 @@ G.Options.elements.color#strokeColor}
             name: ''
         },
         glider: {
+            layer: 9,
             showInfobox: false,
             name : '',
             withLabel: false,
