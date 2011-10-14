@@ -12,7 +12,7 @@
 </style>    
 </head>
 <body id="body">
-<h1 id="x1"  onClick="JXG.JSXGraph.freeBoard(brd)">Playground</h1>
+<h1 id="x1"  onClick="alert(txt.getSize())">Playground</h1>
 <div id='jxgbox' class='jxgbox' style='width:700px; height:500px;'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
@@ -20,7 +20,9 @@
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
-brd.create('line',[1,1,1]);
+txt = brd.create('text',[2, 1, "Hallo, dies ist ein längerer Text"]);
+
+
 /*
 // x axis
 var pX0 = brd.create('point', 
