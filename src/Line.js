@@ -193,8 +193,13 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     this.point1 = funps[0];
                     this.point2 = funps[1];
                 } else {
-                    this.point1 = this.funp1();
-                    this.point2 = this.funp2();
+                    // TODO
+                    if (typeof this.funp1 === 'function') {
+                        this.point1 = this.funp1();
+                    }
+                    if (typeof this.funp2 === 'function') {
+                        this.point2 = this.funp2();
+                    }
                 }
             }
 

@@ -52,12 +52,32 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var jan = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
+        
+        var p1, p2, p3, p4, p5, p6, l;
+        
+        p1 = board.create('point', [1, 1]);
+        p2 = board.create('point', [3, 1]);
+        p3 = board.create('point', [2, 2]);
+        p4 = board.create('point', [4, 5]);
+
+        p5 = board.create('point', [-1, -2]);
+        p6 = board.create('point', [-3, -4]);
+
+        
+        p = board.create('polygon', [p1, p2, p3, p4]);
+
+        p.addPoints(p5, p6);
+        return p;
+    })();
+
     var normal = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
 
 
         var l = board.create('line', [1, 2, 3], {point1: {id: 'wrzlpfrmpf'}, point2: {id: 'bf3 rules!!111elf'}});
-    })();
+    });
 
     var plotter, clearAll;
 

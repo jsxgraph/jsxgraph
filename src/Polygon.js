@@ -43,6 +43,7 @@ JXG.Polygon = function (board, vertices, attributes) {
         attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'lines');
     
     this.withLines = attributes.withlines;
+    this.attr_line = attr_line;
 
     /**
      * References to the points defining the polygon. The last vertex is the same as the first vertex.
@@ -244,6 +245,42 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
             this.borders[i].remove();
         }
         this.board.renderer.remove(this.rendNode);
+    },
+
+    /**
+     * Add more points to the polygon. The new points will be inserted at the end.
+     * @param {%} p Arbitrary number of points
+     */
+    addPoints: function () {
+        var nb = this.borders.length,
+            nv = this.vertices.length,
+            i;
+
+        this.vertices = this.vertices.slice(0, nv-1);
+        for (i = 0; i < arguments.length; i++) {
+            if (JXG.isPoint(arguments[i])) {
+                this.vertices.push(arguments[i]);
+            }
+        }
+
+        if (this.vertices[this.vertices.length-1].id !== this.vertices[0].id) {
+            this.vertices.push(this.vertices[0]);
+        }
+
+        if (this.withLines) {
+            this.board.removeObject(this.borders[nb-1]);
+            for (i = nv-2; i < this.vertices.length-1; i++) {
+                this.borders[i-1] = JXG.createSegment(this.board, [this.vertices[i], this.vertices[i+1]], this.attr_line);
+            }
+        }
+
+        this.board.update();
+
+
+    },
+
+    removePoints: function () {
+
     }
 });
 

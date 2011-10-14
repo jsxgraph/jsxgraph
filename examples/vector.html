@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>JSXGraph vector element</title>
+    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script>
+
+    <script type="text/javascript">
+    /* <![CDATA[ */
+
+        JXG.Options.vector = {
+            strokeColor: 'black',
+            strokeWidth: 3,
+            point: {
+                visible: false,
+                name: '',
+                withLabel: false
+            }
+        };
+        
+        JXG.createVector = function (board, parents, attributes) {
+            var attr_vector = JXG.copyAttributes(attributes, board.options, 'vector'),
+                attr_point = JXG.copyAttributes(attributes, board.options, 'vector', 'point'),
+                attach = parents[0],
+                direction = parents[1],
+                len = parents[2],
+                distance = JXG.Math.Geometry.distance(direction, [0, 0]),
+                lbyd = len/distance,
+                
+                end = board.create('point', [function () {
+                                                 return attach.X() + lbyd*direction[0];
+                                             },
+                                             function () {
+                                                return attach.Y() + lbyd*direction[1];
+                                             }], attr_point),
+                vector = board.create('arrow', [attach, end], attr_vector);
+                
+            return vector;
+        };
+        
+        JXG.JSXGraph.registerElement('vector', JXG.createVector);
+
+    /* ]]> */
+    </script>
+</head>
+<body>
+
+<h2>Vector</h2>
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var example = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: true, grid: false, keepaspectratio: true, showcopyright: false});
+
+        var p = board.create('point', [1, 2]);
+        var v = board.create('vector', [p, [2, 3], 2]);
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>
