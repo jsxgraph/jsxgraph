@@ -37,7 +37,6 @@ textarea {
         <option value='triangle_orthocenter.txt'>[ ] triangle_orthocenter.txt</option>
     </select>
 -->
-    <input type='button' value="Read TracenPoche string" onclick="loadFile('tep','Tracenpoche')" />
 <!--
     <input type='button' value='Show script' onclick="showFile('tep')">
 -->
@@ -46,7 +45,13 @@ textarea {
 <textarea cols=30 rows=10 id="inputtext">@options;
 
 @figure;
-</textarea>
+A = point(-1,0) ;
+B = point(1,1) ;
+C = point(0,-1) ;
+d =droite(A,B) ;
+para =parallele(C,d) ; 
+</textarea><br />
+<input type='button' value="Read TracenPoche string" onclick="loadFile('tep','Tracenpoche')" />
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
     var board;

@@ -354,6 +354,7 @@ JXG.TracenpocheReader = new function() {
             if (n.std) {
                 advance();
                 //scope.reserve(n);
+        
                 return n.std();
             }
             v = expression(0) + ';';
@@ -697,11 +698,30 @@ JXG.TracenpocheReader = new function() {
         this.board = board;
         var s = this.parse(tokens, 'tep');
         var tep = {};
+        
+        
+        // Set the default options
+        board.options.point.face = 'x';
+        board.options.point.strokeColor = '#0000ff';
+        board.options.point.strokeWidth = 1;
+        board.options.line.strokeWidth = 1;
+        
 //console.log(s);        
         var fun = new Function("that", "tep", s);
         //console.log(fun.toString());
         fun(this, tep);
-        //console.log(tep);
+//console.log(tep);
+        
+        // Set the correct labels and names 
+        var el;
+        for (el in tep) {
+            if (JXG.exists(tep[el].setProperty)) {
+                tep[el].setProperty({name:el});
+                if (JXG.exists(tep[el].label) && JXG.exists(tep[el].label.content)) {
+                    tep[el].label.content.setText(el);
+                }
+            }
+        }
     };
 
     // 
@@ -726,6 +746,8 @@ JXG.TracenpocheReader = new function() {
     //
     this.handleAtts = function(attsArr) {
         var obj = {}, i, le = attsArr.length;
+        
+        obj["withLabel"] = true;
         for (i=0; i<le; i++) {
             switch (attsArr[i]) {
                 case 'sansnom': obj["withLabel"] = false; break;
@@ -747,14 +769,15 @@ JXG.TracenpocheReader = new function() {
             "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
             // lines
             "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
+            "vecteur",
             // circles
             "cercle", "cerclerayon",
             // polygons
             "polygone",
             // other
             "texte", "reel", "entier", "fonction", 
-            //transformations
-            "symetrie"
+            // transformations
+            "homothetie", "reflexion", "rotation", "symetrie", "translation"
             ];
             
     /*
@@ -857,7 +880,6 @@ JXG.TracenpocheReader = new function() {
         return this.board.create('midpoint', parents, this.handleAtts(attributes));
     }
 
-    
     /*
      * Lines
      */
@@ -882,10 +904,14 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.mediatrice = function(parents, attributes) {
-        var el; 
+        var m, li, el; 
         if (parents.length==1) {
-            el = this.board.create('midpoint', [parents[0]], {visible:false, withLabel:false});
-            el = this.board.create('perpendicular', [parents[0], el], this.handleAtts(attributes));
+            m = this.board.create('midpoint', [parents[0]], {visible:false, withLabel:false});
+            el = this.board.create('perpendicular', [parents[0], m], this.handleAtts(attributes));
+        } else {
+            li = this.board.create('line', parents, {visible:false, withLabel:false});
+            m = this.board.create('midpoint', parents, {visible:false, withLabel:false});
+            el = this.board.create('perpendicular', [li, m], this.handleAtts(attributes));
         }
         return el;
     };
@@ -902,6 +928,11 @@ JXG.TracenpocheReader = new function() {
         
         //return this.board.create('tangent', parents, this.handleAtts(attributes));
     };
+
+    this.vecteur = function(parents, attributes) {
+        return this.board.create('arrow', parents, this.handleAtts(attributes));
+    };
+
     
     /* 
      * Circles
@@ -947,10 +978,56 @@ JXG.TracenpocheReader = new function() {
      * Transformations
      */
     
+    this.homothetie = function(parents, attributes) {
+        var c = parents[0], a = parents[1];
+        if (JXG.isNumber(a)) {
+            return this.board.create('transform', 
+                [1, 0, 0, 
+                 function(){ return (-a+1)*c.X(); }, a, 0,
+                 function(){ return (-a+1)*c.Y(); }, 0, a], 
+                 {type:'generic'});
+        } else {  // Slider
+            return this.board.create('transform', 
+                [1, 0, 0, 
+                 function(){ return (-a.Value()+1)*c.X(); }, function(){ return a.Value();}, 0,
+                 function(){ return (-a.Value()+1)*c.Y(); }, 0, function(){ return a.Value();}], 
+                 {type:'generic'});
+        }
+    };
+
     this.symetrie = function(parents, attributes) {
         if (parents.length==1 && JXG.isPoint(parents[0])) {
             return this.board.create('transform', [Math.PI, parents[0]], {type:'rotate'});
         }
     };
+
+    this.reflexion = function(parents, attributes) {
+        return this.board.create('transform', [parents[0]], {type:'reflect'});
+    };
+
+    this.rotation = function(parents, attributes) {
+        var a = parents[1];
+        if (JXG.isNumber(a)) {  
+            a = (Math.PI*a)/180.0;
+            return this.board.create('transform', [a, parents[0]], {type:'rotate'});
+        } else {  // slider
+            return this.board.create('transform', [function(){ return (Math.PI*a.Value())/180.0;}, parents[0]], {type:'rotate'});
+        }
+    };
+
+    this.translation = function(parents, attributes) {
+        if (parents.length==1) {
+            return this.board.create('transform', [
+                function(){ return parents[0].point2.X()-parents[0].point1.X(); }, 
+                function(){ return parents[0].point2.Y()-parents[0].point1.Y(); }
+                ], {type:'translate'});
+        } else {
+            return this.board.create('transform', [                
+                function(){ return parents[1].X()-parents[0].X(); }, 
+                function(){ return parents[1].Y()-parents[0].Y(); }
+                ], {type:'translate'});
+        }
+    };
+
 
 };

@@ -172,7 +172,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         } else if (this.board.renderer.type=='vml' || (this.visProp.display=='internal' && this.board.renderer.type=='canvas')) { 
             this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45, parseFloat(this.visProp.fontsize)*0.9]
         }
-	return this;
+        return this;
     },
 
     /**
