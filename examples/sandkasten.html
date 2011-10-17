@@ -57,18 +57,21 @@
         
         var p1, p2, p3, p4, p5, p6, l;
         
-        p1 = board.create('point', [1, 1]);
-        p2 = board.create('point', [3, 1]);
-        p3 = board.create('point', [2, 2]);
-        p4 = board.create('point', [4, 5]);
+        p1 = board.create('point', [-3, 3]);
+        p2 = board.create('point', [-1, 5]);
+        p3 = board.create('point', [1, 5]);
+        p4 = board.create('point', [3, 3]);
 
-        p5 = board.create('point', [-1, -2]);
-        p6 = board.create('point', [-3, -4]);
+        p5 = board.create('point', [1, 1]);
+        p6 = board.create('point', [-1, 1]);
 
         
         p = board.create('polygon', [p1, p2, p3, p4]);
 
         p.addPoints(p5, p6);
+        
+        p.removePoints(p2, p6).removePoints(p1);
+        
         return p;
     })();
 

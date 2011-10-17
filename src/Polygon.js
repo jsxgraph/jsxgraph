@@ -248,8 +248,29 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
     },
 
     /**
+     * Finds the index to a given point reference.
+     * @param {JXG.Point} p Reference to an element of type {@link JXG.Point}
+     */
+    findPoint: function (p) {
+        var i;
+        
+        if (!JXG.isPoint(p)) {
+            return -1;
+        }
+        
+        for (i = 0; i < this.vertices.length; i++) {
+            if (this.vertices[i].id === p.id) {
+                return i;
+            }
+        }
+        
+        return -1;
+    },
+
+    /**
      * Add more points to the polygon. The new points will be inserted at the end.
-     * @param {%} p Arbitrary number of points
+     * @param {%} % Arbitrary number of points
+     * @returns {JXG.Polygon} Reference to the polygon
      */
     addPoints: function () {
         var nb = this.borders.length,
@@ -270,17 +291,125 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         if (this.withLines) {
             this.board.removeObject(this.borders[nb-1]);
             for (i = nv-2; i < this.vertices.length-1; i++) {
-                this.borders[i-1] = JXG.createSegment(this.board, [this.vertices[i], this.vertices[i+1]], this.attr_line);
+                this.borders[i] = JXG.createSegment(this.board, [this.vertices[i], this.vertices[i+1]], this.attr_line);
             }
         }
 
         this.board.update();
 
-
+        return this;
     },
-
+    
+    /**
+     * Removes given set of vertices from the polygon
+     * @param {%} % Arbitrary number of vertices as {@link JXG.Point} elements or index numbers
+     * @returns {JXG.Polygon} Reference to the polygon
+     */
     removePoints: function () {
+        var i, j, idx, nvertices = [], nborders = [],
+            nidx = [], partition = [];
+            
+        // partition:
+        // in order to keep the borders which could be recycled, we have to partition
+        // the set of removed points. I.e. if the points 1, 2, 5, 6, 7, 10 are removed,
+        // the partition is
+        //       1-2, 5-7, 10-10
+        // this gives us the borders, that can be removed and the borders we have to create.
+        
+        
+        // remove the last vertex which is identical to the first        
+        this.vertices = this.vertices.slice(0, this.vertices.length-1);
+        
+        // collect all valid parameters as indices in nidx
+        for (i = 0; i < arguments.length; i++) {
+            if (JXG.isPoint(arguments[i])) {
+                idx = this.findPoint(arguments[i]);
+            }
+            
+            if (JXG.isNumber(idx) && idx > -1 && idx < this.vertices.length && nidx.indexOf(idx) === -1) {
+                nidx.push(idx);
+            }
+        }
+        
+        // sort the elements to be eliminated
+        nidx = nidx.sort();
+        nvertices = this.vertices.slice();
+        nborders = this.borders.slice();
+        
+        // initialize the partition
+        if (this.withLines) {
+            partition.push([nidx[nidx.length-1]]);
+        }
+        
+        // run through all existing vertices and copy all remaining ones to nvertices
+        // compute the partition
+        for (i = nidx.length-1; i > -1; i--) {
+            nvertices[nidx[i]] = -1;
+            
+            if (this.withLines && (nidx[i] - 1 > nidx[i-1])) {
+                partition[partition.length-1][1] = nidx[i];
+                partition.push([nidx[i-1]]);
+            }
+        }
+        
+        // finalize the partition computation
+        if (this.withLines) {
+            partition[partition.length-1][1] = nidx[0];
+        }
+        
+        // update vertices
+        this.vertices = [];
+        for (i = 0; i < nvertices.length; i++) {
+            if (JXG.isPoint(nvertices[i])) {
+                this.vertices.push(nvertices[i]);
+            }
+        }
+        if (this.vertices[this.vertices.length-1].id !== this.vertices[0].id) {
+            this.vertices.push(this.vertices[0]);
+        }
 
+        // delete obsolete and create missing borders
+        if (this.withLines) {
+            for (i = 0; i < partition.length; i++) {
+                for (j = partition[i][1] - 1; j < partition[i][0] + 1; j++) {
+                    // special cases
+                    if (j < 0) {
+                        // first vertex is removed, so the last border has to be removed, too
+                        j = 0;
+                        this.board.removeObject(this.borders[nborders.length-1]);
+                        nborders[nborders.length-1] = -1;
+                    } else if (j > nborders.length-1) {
+                        j = nborders.length-1;
+                    }
+
+                    this.board.removeObject(this.borders[j]);
+                    nborders[j] = -1;
+                }
+                
+                // only create the new segment if it's not the closing border. the closing border is getting a special treatment at the end
+                // the if clause is newer than the min/max calls inside createSegment; i'm sure this makes the min/max calls obsolete, but
+                // just to be sure...
+                if (partition[i][1] !== 0 && partition[i][0] !== nvertices.length-1) {
+                    nborders[partition[i][0] - 1] = JXG.createSegment(this.board, [nvertices[Math.max(partition[i][1]-1, 0)], nvertices[Math.min(partition[i][0]+1, this.vertices.length-1)]], this.attr_line);
+                }
+            }
+            
+            this.borders = [];
+            for (i = 0; i < nborders.length; i++) {
+                if (nborders[i] !== -1) {
+                    this.borders.push(nborders[i]);
+                }
+            }
+
+            // if the first and/or the last vertex is removed, the closing border is created at the end.
+            if (partition[0][1] === 5 || partition[partition.length-1][1] === 0) {
+                this.borders.push(JXG.createSegment(this.board, [this.vertices[0], this.vertices[this.vertices.length-2]], this.attr_line));
+            }
+        }
+        
+        this.board.update();
+
+        return this;
     }
 });
 

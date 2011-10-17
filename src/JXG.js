@@ -875,6 +875,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * If <tt>val</tt> is a function, it will be evaluated without giving any parameters, else the input value
      * is just returned.
      * @param val Could be anything. Preferably a number or a function.
+     * @returns If <tt>val</tt> is a function, it is evaluated and the result is returned. Otherwise <tt>val</tt> is returned.
      */
     evaluate: function (val) {
         if (JXG.isFunction(val)) {
@@ -883,7 +884,30 @@ JXG.extend(JXG, /** @lends JXG */ {
             return val;
         }
     },
+    
+    /**
+     * Eliminates duplicate entries in an array.
+     * @param {Array} a An array
+     * @returns {Array} The array with duplicate entries eliminated.
+     */
+    eliminateDuplicates: function (a) {
+        var i, len = a.length,
+            result = [],
+            obj = {};
 
+        for (i = 0; i < len; i++) {
+            obj[a[i]] = 0;
+        }
+        
+        for (i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                result.push(i);
+            }
+        }
+        
+        return result;
+    },
+    
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
      * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
