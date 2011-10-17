@@ -55,7 +55,7 @@
     var jan = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
         
-        var p1, p2, p3, p4, p5, p6, l;
+        var p1, p2, p3, p4, p5, p6, l, p;
         
         p1 = board.create('point', [-3, 3]);
         p2 = board.create('point', [-1, 5]);
@@ -70,7 +70,7 @@
 
         p.addPoints(p5, p6);
         
-        p.removePoints(p2, p6).removePoints(p1);
+        //p.removePoints(p2, p6).removePoints(p1);
         
         return p;
     })();

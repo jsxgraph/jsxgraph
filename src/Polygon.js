@@ -273,26 +273,49 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * @returns {JXG.Polygon} Reference to the polygon
      */
     addPoints: function () {
-        var nb = this.borders.length,
-            nv = this.vertices.length,
-            i;
+        var args = Array.prototype.slice.call(arguments);
 
-        this.vertices = this.vertices.slice(0, nv-1);
-        for (i = 0; i < arguments.length; i++) {
+        return this.insertPoints.apply(this, [this.vertices.length-2].concat(args));
+    },
+
+    /**
+     * Adds more points to the vertex list of the polygon, starting with index <tt><i</tt>
+     * @param {Number} i The position where the new vertices are inserted, starting with 0.
+     * @param {%} % Arbitrary number of points to insert.
+     * @returns {JXG.Polygon} Reference to the polygon object
+     */
+    insertPoints: function () {
+        var idx, i, npoints = [], tmp;
+
+        if (arguments.length === 0) {
+            return this;
+        }
+
+        idx = arguments[0];
+
+        if (idx < 0 || idx > this.vertices.length-2) {
+            return this;
+        }
+
+        for (i = 1; i < arguments.length; i++) {
             if (JXG.isPoint(arguments[i])) {
-                this.vertices.push(arguments[i]);
+                npoints.push(arguments[i]);
             }
         }
 
-        if (this.vertices[this.vertices.length-1].id !== this.vertices[0].id) {
-            this.vertices.push(this.vertices[0]);
-        }
+        tmp = this.vertices.slice(0, idx+1).concat(npoints);
+        this.vertices = tmp.concat(this.vertices.slice(idx+1));
 
         if (this.withLines) {
-            this.board.removeObject(this.borders[nb-1]);
-            for (i = nv-2; i < this.vertices.length-1; i++) {
-                this.borders[i] = JXG.createSegment(this.board, [this.vertices[i], this.vertices[i+1]], this.attr_line);
+            tmp = this.borders.slice(0, idx);
+            this.board.removeObject(this.borders[idx]);
+
+            for (i = 0; i < npoints.length; i++) {
+                tmp.push(JXG.createSegment(this.board, [this.vertices[idx+i], this.vertices[idx+i+1]], this.attr_line));
             }
+            tmp.push(JXG.createSegment(this.board, [this.vertices[idx+npoints.length], this.vertices[idx+npoints.length+1]], this.attr_line));
+
+            this.borders = tmp.concat(this.borders.slice(idx));
         }
 
         this.board.update();
