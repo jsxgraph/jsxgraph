@@ -687,6 +687,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (pEl.visProp.layer >= dragEl.visProp.layer) {
                         dragEl = pEl;
                         collect[0] = dragEl;
+
                         if (this.options.takeFirst) {
                             return collect;
                         }
@@ -967,7 +968,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (elements.length != 0) {
                     obj = elements[0];
 
-                    if (JXG.isPoint(obj)) {
+                    if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
                         // TODO: this might need some review bei heiko (for the undo/redo stuff i guess)
