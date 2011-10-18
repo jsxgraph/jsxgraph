@@ -674,7 +674,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (el in this.objects) {
             pEl = this.objects[el];
             if (
-                (this.geonextCompatibilityMode&&(pEl.elementClass==JXG.OBJECT_CLASS_POINT||pEl.type==JXG.OBJECT_TYPE_TEXT)||
+                ((this.geonextCompatibilityMode 
+                  &&(pEl.elementClass==JXG.OBJECT_CLASS_POINT
+                     || pEl.type==JXG.OBJECT_TYPE_TEXT)
+                 )
+                 ||
                  !this.geonextCompatibilityMode   
                 ) 
                 && pEl.isDraggable
@@ -685,6 +689,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 ) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer >= dragEl.visProp.layer) {
+                        // If we an element and its label have the focus
+                        // simultaneously, the element is taken
+                        if (JXG.exists(dragEl.label) && pEl==dragEl.label.content) {
+                            continue;
+                        }
+                        
                         dragEl = pEl;
                         collect[0] = dragEl;
 
@@ -692,22 +702,22 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             return collect;
                         }
                     } 
-                /*
-                ancestorHasPoint = false;
-                // In case, a non-point gets the focus,
-                // it is tested if a defining ancestor (usually a point)
-                // has the focus too. In this case, we drag the ancestor.
-                if (!JXG.isPoint(pEl)) {
-                    len = collect.length;
-                    for (i=0;i<len;i++) {
-                        if (JXG.exists(pEl.ancestors[collect[i].id])) {
-                            ancestorHasPoint = true;
-                            break;
+                    /*
+                    ancestorHasPoint = false;
+                    // In case, a non-point gets the focus,
+                    // it is tested if a defining ancestor (usually a point)
+                    // has the focus too. In this case, we drag the ancestor.
+                    if (!JXG.isPoint(pEl)) {
+                        len = collect.length;
+                        for (i=0;i<len;i++) {
+                            if (JXG.exists(pEl.ancestors[collect[i].id])) {
+                                ancestorHasPoint = true;
+                                break;
+                            }
                         }
                     }
-                }
-                if (!ancestorHasPoint) collect.push(pEl);
-                */
+                    if (!ancestorHasPoint) collect[0] = pEl;
+                    */
             }
         }
 
