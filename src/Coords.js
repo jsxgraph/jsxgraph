@@ -116,6 +116,7 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
      * Calculate distance of one point to another.
      * @param {Number} coord_type The type of coordinates used here. Possible values are <b>JXG.COORDS_BY_USER</b> and <b>JXG.COORDS_BY_SCREEN</b>.
      * @param {JXG.Coords} coordinates The Coords object to which the distance is calculated.
+     * @returns {Number} The distance
      */
     distance: function (coord_type, coordinates) {
         var sum = 0,
@@ -134,8 +135,8 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             sum += f*f;
         } else {
             c = coordinates.scrCoords;
-            f = scr[0]-c[0];
-            sum = f*f;
+            //f = scr[0]-c[0];
+            //sum = f*f;
             f = scr[1]-c[1];
             sum += f*f;
             f = scr[2]-c[2];
@@ -151,6 +152,7 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
      * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
      * @param {Boolean} [doRound=true] flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
      * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
+     * @returns {JXG.Coords} Reference to the coords object.
      */
     setCoordinates: function (coord_type, coordinates, doRound) {
         var uc = this.usrCoords,
@@ -173,5 +175,7 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             sc[2] = coordinates[1];
             this.screen2usr();
         }
+
+        return this;
     }
 });
