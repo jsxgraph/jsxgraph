@@ -1,8 +1,6 @@
 /*
     Copyright 2011
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
+        Emmanuel Ostenne
         Alfred Wassermann
 
     This file is part of JSXGraph.
@@ -848,7 +846,13 @@ JXG.TracenpocheReader = new function() {
     }
     
     this.projete = function(parents, attributes) {
-        return this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
+        var lpar;
+        if (parents.length == 2) {          // orthogonal projection
+            return this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
+        } else {                             // parallel projection along parents[2]
+            lpar = this.board.create('parallel', [parents[2], parents[0]], {visible:false, withLabel:false});
+            return this.board.create('intersection', [parents[1], lpar, 0], this.handleAtts(attributes));
+        }
     }
 
     this.barycentre = function(parents, attributes) {
@@ -925,8 +929,29 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.tangente = function(parents, attributes) {
-        
-        //return this.board.create('tangent', parents, this.handleAtts(attributes));
+        var gli,
+            f = parents[0],
+            x = parents[1];
+            
+        if (JXG.isNumber(parents[1])) {
+            x = parents[1];
+            gli = this.board.create('glider', [x, f.Y(x), f], {fixed:true, visible:false, withLabel:false});
+            return this.board.create('tangent', [f, gli], this.handleAtts(attributes));
+        } else if (JXG.exists(parents[1].Value)) {
+            // Fake glider: it needs the properties "position" and "slideObject".
+            gli = this.board.create('point', 
+                [function(){ this.position = x.Value(); return x.Value(); }, function(){ return f.Y(x.Value()); }], 
+                {visible:false, withLabel:false});
+            gli.slideObject = f;
+            return this.board.create('tangent', [f, gli], this.handleAtts(attributes));
+        } else {
+            // Fake glider: it needs the properties "position" and "slideObject".
+            gli = this.board.create('point', 
+                [function(){ this.position = x.X(); return x.X(); }, function(){ return f.Y(x.X()); }], 
+                {visible:false, withLabel:false});
+            gli.slideObject = f;
+            return this.board.create('tangent', [f, gli], this.handleAtts(attributes));
+        }
     };
 
     this.vecteur = function(parents, attributes) {
