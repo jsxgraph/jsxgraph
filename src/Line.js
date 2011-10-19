@@ -780,10 +780,12 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
+ * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
+ * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
+ * @param {number,function_number,function_number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+ * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
+ * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
  * @example
  * // Create a line using point and coordinates/
  * // The second point will be fixed and invisible.
