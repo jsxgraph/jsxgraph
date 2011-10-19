@@ -532,16 +532,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     addConstraint: function (terms) {
         this.type = JXG.OBJECT_TYPE_CAS;
-        var elements = this.board.elementsByName;
-        var newfuncs = [];
-        var fs;
+        var newfuncs = [],
+            fs, i, v, t;
         
         this.isDraggable = false;
-        for (var i=0;i<terms.length;i++) {
-            var v = terms[i];
+        for (i=0;i<terms.length;i++) {
+            v = terms[i];
             if (typeof v=='string') {
                 // Convert GEONExT syntax into  JavaScript syntax
-                var t  = JXG.GeonextParser.geonext2JS(v, this.board);
+                t  = JXG.GeonextParser.geonext2JS(v, this.board);
                 newfuncs[i] = new Function('','return ' + t + ';');
             } else if (typeof v=='function') {
                 newfuncs[i] = v;
@@ -1068,7 +1067,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
  * </script><pre>
  */
 JXG.createPoint = function(board, parents, attributes) {
-    var el, isConstrained = false, i, show, attr;
+    var el, isConstrained = false, i, attr;
 
     attr = JXG.copyAttributes(attributes, board.options, 'point');
 

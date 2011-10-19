@@ -191,8 +191,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if(this.constrained) {
                 if(typeof this.funps != 'undefined') {
                     funps = this.funps();
-                    this.point1 = funps[0];
-                    this.point2 = funps[1];
+                    if (funps && funps.length && funps.length === 2) {
+                        this.point1 = funps[0];
+                        this.point2 = funps[1];
+                    }
                 } else {
                     if (typeof this.funp1 === 'function') {
                         funps = this.funp1();
@@ -874,9 +876,9 @@ JXG.createLine = function(board, parents, attributes) {
                 c[i] = parents[i];
                 isDraggable = false;
             } else {
-                throw new Error("JSXGraph: Can't create line with parent types '" + 
-                                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'." +
-                                "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
+                throw new Error("JSXGraph: Can't create line with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2])+ "'." +
+                    "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
             }
         }
         // point 1 is the midpoint between (0,c,-b) and point 2. => point1 is finite.
@@ -890,7 +892,7 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return (-c[1]() - c[2]()*c[0]()-c[1]())*0.5;}], attr);
         }
         /*
-        */
+         */
         // point 2: (b^2+c^2,-ba+c,-ca-b)
         attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
         if (isDraggable) {
@@ -902,7 +904,7 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return -c[2]()*c[0]()-c[1]();}], attr);
         }
 
-        // If the line and will have a glider 
+        // If the line and will have a glider
         // and board.suspendUpdate() has been called, we
         // need to compute the initial position of the two points p1 and p2.
         p1.prepareUpdate().update();
@@ -919,6 +921,37 @@ JXG.createLine = function(board, parents, attributes) {
     	var ps = parents[0]();
         attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, ps[0], ps[1], attr);
+        el.constrained = true;
+        el.funps = parents[0];
+    } else if ((parents.length==1) && (typeof parents[0] == 'function') && (parents[0]().length == 3) &&
+    		 (typeof parents[0]()[0] === 'number') && (typeof parents[0]()[1] === 'number') && (typeof parents[0]()[2] === 'number')) {
+        ps = parents[0];
+
+        attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
+        p1 = board.create('point',[
+            function () {
+                var c = ps();
+                return [
+                    (0.0 + c[2]*c[2]+c[1]*c[1])*0.5,
+                    (c[2] - c[1]*c[0]+c[2])*0.5,
+                    (-c[1] - c[2]*c[0]-c[1])*0.5
+                    ];
+            }], attr);
+
+        attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
+        p2 = board.create('point',[
+            function () {
+                var c = ps();
+                return [
+                    c[2]*c[2]+c[1]*c[1],
+                    -c[1]*c[0]+c[2],
+                    -c[2]*c[0]-c[1]
+                    ];
+            }], attr);
+
+        attr = JXG.copyAttributes(attributes, board.options, 'line');
+        el = new JXG.Line(board, p1, p2, attr);
+
         el.constrained = true;
         el.funps = parents[0];
     } else {
