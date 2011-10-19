@@ -75,8 +75,7 @@ JXG.Options = {
          * @see JXG.GeometryElement#strokeWidth
          * @see JXG.GeometryElement#strokeOpacity
          * @see JXG.GeometryElement#highlightStrokeOpacity
-         * @default {@link JX        polygon: 3,
-G.Options.elements.color#strokeColor}
+         * @default {@link JXG.Options.elements.color#strokeColor}
          */
         strokeColor: '#0000ff',
 
@@ -269,6 +268,13 @@ G.Options.elements.color#strokeColor}
          */
         trace: false,
 
+        /**
+         * Extra visual properties for traces of an element
+         * @see JXG.GeometryElement#trace
+         * @name JXG.GeometryElement#traces
+         */
+        traces: {},
+        
         /**
          * If this is set to true, the element is updated in every update
          * call of the board. If set to false, the element is updated only after

@@ -158,16 +158,14 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
     getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, 'getTextAnchor'),
 
-    /**
-     * Copy the element to the background.
-     */
+    // documented in geometry element
     cloneToBackground: function() {
         var copy = {}, er;
 
         copy.id = this.id + 'T' + this.numTraces;
         this.numTraces++;
         copy.vertices = this.vertices;
-        copy.visProp = this.visProp;
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.board = this.board;
         JXG.clearVisPropOld(copy);
@@ -177,6 +175,8 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.board.renderer.drawPolygon(copy);
         this.board.renderer.enhancedRendering = er;
         this.traces[copy.id] = copy.rendNode;
+
+        return this;
     },
 
     /**

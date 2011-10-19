@@ -624,10 +624,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return c;
     },
 
-    /**
-     * Clone curve to the background.
-     * @param addToTrace Not used yet. Always true.
-     */
+    // documented in geometry element
     cloneToBackground: function () {
         var copy = {}, er;
 
@@ -638,7 +635,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
         copy.board = this.board;
-        copy.visProp = this.visProp;
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.visProp.curvetype = this.visProp.curvetype;
 
@@ -649,6 +646,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         this.board.renderer.drawCurve(copy);
         this.board.renderer.enhancedRendering = er;
         this.traces[copy.id] = copy.rendNode;
+
+        return this;
     },
 
     bounds: function () {

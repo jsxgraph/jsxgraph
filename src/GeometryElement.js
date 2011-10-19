@@ -839,6 +839,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
     /**
      * Copy the element to background. This is used for tracing elements.
+     * @returns {JXG.GeometryElement} A reference to the element
      */
     cloneToBackground: function () {
         return this;

@@ -457,11 +457,8 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     },
 
 
-    /**
-     * Clone the circle to the background.
-     * @param addToTrace Not used yet. Always true.
-     */
-    cloneToBackground: function (/** boolean */ addToTrace) {
+    // documented in geometry element
+    cloneToBackground: function () {
         var copy = {}, r, er;
         copy.id = this.id + 'T' + this.numTraces;
         copy.elementClass = JXG.OBJECT_CLASS_CIRCLE;
@@ -474,7 +471,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
         copy.board = this.board;
 
-        copy.visProp = this.visProp;
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
         copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
@@ -483,6 +480,8 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         this.board.renderer.drawEllipse(copy);
         this.board.renderer.enhancedRendering = er;
         this.traces[copy.id] = copy.rendNode;
+
+        return this;
     },
 
     /**

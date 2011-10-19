@@ -481,11 +481,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         }
     },
 
-    /**
-     * Clone the element to the background to leave a trail of it on the board.
-     * @param {boolean} addToTrace Not used.
-     */
-    cloneToBackground: function(addToTrace) {
+    // documented in geometry element
+    cloneToBackground: function() {
         var copy = {}, r, s, er;
 
         copy.id = this.id + 'T' + this.numTraces;
@@ -498,7 +495,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         copy.board = this.board;
 
-        copy.visProp = this.visProp;
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
         copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
@@ -514,6 +511,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         this.traces[copy.id] = copy.rendNode;
 
         delete copy;
+
+        return this;
     },
 
     /**
