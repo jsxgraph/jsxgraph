@@ -128,20 +128,20 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     hasPoint: function (x, y) {
         // Compute the stdform of the line in screen coordinates.
         var c = [], s,
-            v = [1,x,y],
-            vnew = [],
-            mu, i, coords, p1Scr, p2Scr, distP1P, distP2P, distP1P2;
+            v = [1, x, y],
+            vnew,
+            p1Scr, p2Scr, distP1P, distP2P, distP1P2;
 
         c[0] = this.stdform[0] -
-                    this.stdform[1]*this.board.origin.scrCoords[1]/this.board.unitX+
-                    this.stdform[2]*this.board.origin.scrCoords[2]/this.board.unitY;
+               this.stdform[1]*this.board.origin.scrCoords[1]/this.board.unitX+
+               this.stdform[2]*this.board.origin.scrCoords[2]/this.board.unitY;
         c[1] = this.stdform[1]/this.board.unitX;
         c[2] = this.stdform[2]/(-this.board.unitY);
 
         // Project the point orthogonally onto the line 
-        var vnew = [0,c[1],c[2]];
-        vnew = JXG.Math.crossProduct(vnew,v); // Orthogonal line to c through v
-        vnew = JXG.Math.crossProduct(vnew,c); // Intersect orthogonal line with line
+        vnew = [0, c[1], c[2]];
+        vnew = JXG.Math.crossProduct(vnew, v); // Orthogonal line to c through v
+        vnew = JXG.Math.crossProduct(vnew, c); // Intersect orthogonal line with line
 
         // Normalize the projected point
         vnew[1] /= vnew[0];
@@ -185,7 +185,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var i, funps, nrm;
+        var funps;
+
         if (this.needsUpdate) {
             if(this.constrained) {
                 if(typeof this.funps != 'undefined') {
@@ -193,12 +194,23 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     this.point1 = funps[0];
                     this.point2 = funps[1];
                 } else {
-                    // TODO
                     if (typeof this.funp1 === 'function') {
-                        this.point1 = this.funp1();
+                        funps = this.funp1();
+
+                        if (JXG.isPoint(funps)) {
+                            this.point1 = funps;
+                        } else if (funps && funps.length && funps.length === 2) {
+                            this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
+                        }
                     }
                     if (typeof this.funp2 === 'function') {
-                        this.point2 = this.funp2();
+                        funps = this.funp2();
+
+                        if (JXG.isPoint(funps)) {
+                            this.point2 = funps;
+                        } else if (funps && funps.length && funps.length === 2) {
+                            this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
+                        }
                     }
                 }
             }
@@ -230,7 +242,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
      updateRenderer: function () {
-        var wasReal, i;
+        var wasReal;
 
         if (this.needsUpdate && this.visProp.visible) {
             wasReal = this.isReal;
@@ -335,8 +347,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @returns {Number}
      */
     getAngle: function () {
-        var phi = Math.atan2(this.point2.Y() - this.point1.Y(), this.point2.X() - this.point1.X());
-        return phi;
+        return Math.atan2(this.point2.Y() - this.point1.Y(), this.point2.X() - this.point1.X());
     },
 
     /**
@@ -505,16 +516,17 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     /**
      * DESCRIPTION
-     * @param transform A {@link #JXG.Transformation} object or an array of it.
+     * @param {JXG.Transformation|Array} transform A {@link JXG.Transformation} object or an array of {@link JXG.Transformation} objects.
      */
-    addTransform: function (/** JXG.Transformation,array */ transform) {
+    addTransform: function (transform) {
         var list, i;
+
         if (JXG.isArray(transform)) {
             list = transform;
         } else {
             list = [transform];
         }
-        for (i=0;i<list.length;i++) {
+        for (i = 0; i < list.length; i++) {
             this.point1.transformations.push(list[i]);
             this.point2.transformations.push(list[i]);
         }
@@ -595,48 +607,58 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * sin(theta) = -B/sqrt(A*A+B*B)</pre>
      * and <tt>X(phi) = x</tt> from above.
      * phi runs from 0 to 1
-     * @type float
-     * @return X(phi) TODO description
+     * @param {Number} phi
+     * @returns {Number} X(phi) TODO description
      */
     X: function (phi) {
         var a = this.stdform[1],
             b = this.stdform[2],
             c = this.stdform[0],
             A, B, sq, sinTheta, cosTheta;
+
         phi *= Math.PI;
         A = a*Math.cos(phi)+b*Math.sin(phi);
         B = c;
         sq = Math.sqrt(A*A+B*B);
         sinTheta = -B/sq;
         cosTheta = A/sq;
-        if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
+
+        if (Math.abs(cosTheta) < JXG.Math.eps) {
+            cosTheta = 1.0;
+        }
+
         return sinTheta*Math.cos(phi)/cosTheta;
     },
 
     /**
      * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
-     * @type float
-     * @return Y(phi) TODO description
+     * @param {Number} phi
+     * @returns {Number} Y(phi) TODO description
      */
     Y: function (phi) {
         var a = this.stdform[1],
             b = this.stdform[2],
             c = this.stdform[0],
             A, B, sq, sinTheta, cosTheta;
+
         phi *= Math.PI;
         A = a*Math.cos(phi)+b*Math.sin(phi);
         B = c;
         sq = Math.sqrt(A*A+B*B);
         sinTheta = -B/sq;
         cosTheta = A/sq;
-        if (Math.abs(cosTheta)<JXG.Math.eps) { cosTheta = 1.0; }
+
+        if (Math.abs(cosTheta) < JXG.Math.eps) {
+            cosTheta = 1.0;
+        }
+
         return sinTheta*Math.sin(phi)/cosTheta;
     },
 
     /**
      * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
-     * @type float
-     * @return Z(phi) TODO description
+     * @param {Number} phi
+     * @returns {Number} Z(phi) TODO description
      */
     Z: function (phi) {
         var a = this.stdform[1],
@@ -648,11 +670,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         B = c;
         sq = Math.sqrt(A*A+B*B);
         cosTheta = A/sq;
-        if (Math.abs(cosTheta)>=JXG.Math.eps) {
-            return 1.0;
-        } else {
-            return 0.0;
-        }
+
+        return Math.abs(cosTheta) >= JXG.Math.eps ? 1.0 : 0.0;
     },
     
     /*
@@ -803,6 +822,10 @@ JXG.createLine = function(board, parents, attributes) {
         } else if ((typeof parents[0] == 'function') && (parents[0]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p1 = parents[0]();
             constrained = true;
+        } else if ((typeof parents[0] == 'function') && (parents[0]().length && parents[0]().length === 2)) {
+            attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
+            p1 = JXG.createPoint(board, parents[0](), attr);
+            constrained = true;
         } else
             throw new Error("JSXGraph: Can't create line with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -816,6 +839,10 @@ JXG.createLine = function(board, parents, attributes) {
             p2 =  JXG.getReference(board, parents[1]);
         } else if ((typeof parents[1] == 'function') && (parents[1]().elementClass == JXG.OBJECT_CLASS_POINT)) {
             p2 = parents[1]();
+            constrained = true;
+        } else if ((typeof parents[1] == 'function') && (parents[1]().length && parents[1]().length === 2)) {
+            attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
+            p2 = JXG.createPoint(board, parents[1](), attr);
             constrained = true;
         } else
             throw new Error("JSXGraph: Can't create line with parent types '" + 
@@ -837,7 +864,7 @@ JXG.createLine = function(board, parents, attributes) {
      * Line is defined by three homogeneous coordinates.
      * Also in this case points are created.
      */
-    else if (parents.length==3) {  
+    else if (parents.length==3) {
         // free line
         isDraggable = true;
         for (i=0;i<3;i++) {
@@ -1149,7 +1176,7 @@ JXG.createTangent = function(board, parents, attributes) {
                                     el = c.objects[j];
                                     if (el.type==JXG.OBJECT_TYPE_CURVE) {
                                         if (i<el.numberPoints) break;
-                                        i-=el.numberPoints;
+                                        i-=el.numberPoints;moveTo(funps);
                                     }
                                 }
                                 if (i==el.numberPoints-1) i--;
