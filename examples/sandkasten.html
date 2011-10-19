@@ -2,11 +2,21 @@
 <head>
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+
+    <style type="text/css">
+        html {
+            margin-top: 28px;
+            border: 1px solid black;
+        }
+    </style>
+    
     <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
 
     <script id="shader-fs" type="x-shader/x-fragment">
         #ifdef GL_ES
@@ -57,12 +67,12 @@
 
         var s = board.create('slider', [[-1, 1], [1, 1], [0, 1, 3]]);
 
-        var p1 = board.create('point', [2, 3], {trace: true, size: 6, traces: {size: 2, fillColor: 'blue', strokeColor: 'blue'}});
+        var p1 = board.create('point', [2, 3], {trace: false, size: 6, traces: {size: 2, fillColor: 'blue', strokeColor: 'blue'}});
         var p2 = board.create('point', [4, 5]);
 
         board.create('line', [p1, p2]);
 
-        board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traces: {strokeColor: 'green', strokeWidth: 1}, trace: true});
+        board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traces: {strokeColor: 'green', strokeWidth: 1}, trace: false});
         board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
     })();
 

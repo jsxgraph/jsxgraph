@@ -594,11 +594,38 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     getCoordsTopLeftCorner: function () {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
-            n;
+            n, cStyle = document.documentElement.ownerDocument.defaultView.getComputedStyle(document.documentElement, null);
 
         if (this.mode === JXG.BOARD_MODE_DRAG || this.mode === JXG.BOARD_MODE_MOVE_ORIGIN) {
             return this.cPos;
         }
+
+        // this is for hacks like this one used in wordpress for the admin bar:
+        // html { margin-top: 28px }
+
+        n = parseInt(cStyle.getPropertyValue('margin-left'));
+        if (isNaN(n)) n = 0;
+        cPos[0] += n;
+
+        n = parseInt(cStyle.getPropertyValue('margin-top'));
+        if (isNaN(n)) n = 0;
+        cPos[1] += n;
+
+        n = parseInt(cStyle.getPropertyValue('border-left-width'));
+        if (isNaN(n)) n = 0;
+        cPos[0] += n;
+
+        n = parseInt(cStyle.getPropertyValue('border-top-width'));
+        if (isNaN(n)) n = 0;
+        cPos[1] += n;
+
+        n = parseInt(cStyle.getPropertyValue('padding-left'));
+        if (isNaN(n)) n = 0;
+        cPos[0] += n;
+
+        n = parseInt(cStyle.getPropertyValue('padding-top'));
+        if (isNaN(n)) n = 0;
+        cPos[1] += n;
 
         // add border width
         n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
