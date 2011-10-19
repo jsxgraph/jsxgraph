@@ -594,7 +594,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     getCoordsTopLeftCorner: function () {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
-            n, cStyle = document.documentElement.ownerDocument.defaultView.getComputedStyle(document.documentElement, null);
+            n, 
+            doc = document.documentElement.ownerDocument,
+            cStyle, getProp;
+        
+        if (JXG.exists(doc.defaultView)) {     // Non IE
+            cStyle = doc.defaultView.getComputedStyle(document.documentElement, null);
+            getProp = function(css) { return cStyle.getPropertyValue(css); };
+        } else {                               // IE
+            getProp = function(css) { return pCont.currentStyle[css]; };
+        }
 
         if (this.mode === JXG.BOARD_MODE_DRAG || this.mode === JXG.BOARD_MODE_MOVE_ORIGIN) {
             return this.cPos;
@@ -603,45 +612,45 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // this is for hacks like this one used in wordpress for the admin bar:
         // html { margin-top: 28px }
 
-        n = parseInt(cStyle.getPropertyValue('margin-left'));
+        n = parseInt(getProp('margin-left'));
         if (isNaN(n)) n = 0;
         cPos[0] += n;
 
-        n = parseInt(cStyle.getPropertyValue('margin-top'));
+        n = parseInt(getProp('margin-top'));
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 
-        n = parseInt(cStyle.getPropertyValue('border-left-width'));
+        n = parseInt(getProp('border-left-width'));
         if (isNaN(n)) n = 0;
         cPos[0] += n;
 
-        n = parseInt(cStyle.getPropertyValue('border-top-width'));
+        n = parseInt(getProp('border-top-width'));
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 
-        n = parseInt(cStyle.getPropertyValue('padding-left'));
+        n = parseInt(getProp('padding-left'));
         if (isNaN(n)) n = 0;
         cPos[0] += n;
 
-        n = parseInt(cStyle.getPropertyValue('padding-top'));
+        n = parseInt(getProp('padding-top'));
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 
         // add border width
-        n = parseInt(JXG.getStyle(pCont,'borderLeftWidth'));
+        n = parseInt(getProp('borderLeftWidth'));
         if (isNaN(n)) n = 0; // IE problem if border-width not set explicitly
         cPos[0] += n;
 
-        n = parseInt(JXG.getStyle(pCont,'borderTopWidth'));
+        n = parseInt(getProp('borderTopWidth'));
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 
         // add padding
-        n = parseInt(JXG.getStyle(pCont,'paddingLeft'));
+        n = parseInt(getProp('paddingLeft'));
         if (isNaN(n)) n = 0;
         cPos[0] += n;
 
-        n = parseInt(JXG.getStyle(pCont,'paddingTop'));
+        n = parseInt(getProp('paddingTop'));
         if (isNaN(n)) n = 0;
         cPos[1] += n;
 

@@ -20,6 +20,10 @@
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
     p2 = brd.create('point', [0,4], {color:'blue', trace:true}); 
     txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], {fontSize:'64'});
+    txt.rendNode.style.fill = "#ff00ff";
+    txt.rendNode.style.stroke = "#000000";
+    txt.rendNode.style.strokeWidth = "3px";
+    
     im = brd.create('image',["uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
 
     //txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
@@ -44,7 +48,7 @@
     tRot.bindTo(p2);  // For comparison, a rotation in user coordinates.
         
     brd.update();
-    
+   
     //alert(txt.rendNode.getBBox().width);
 </script> 
 </body>
