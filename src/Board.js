@@ -520,7 +520,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     indices[i-1] = 1;
                     indices[i]++;
                 }
-            } lanes
+            }
         }
 
         return '';
@@ -553,7 +553,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var num = this.numObjects++,
             elId = obj.id;
 
-        // Falls Id nicht vorgegeben, eine Neue g lanesenerieren:
+        // Falls Id nicht vorgegeben, eine Neue generieren:
         if (elId == '' || !JXG.exists(elId)) {
             elId = this.id + type + num;
         }
