@@ -617,15 +617,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 case 'withlabel':
                     this.visProp.withlabel = value;
                     if (!value) {
-                        if (JXG.exists(this.label) && this.hasLabel) {
+                        if (this.label && this.label.content && this.hasLabel) {
                             this.label.content.hideElement();
                         }
                     } else {
-                        if (this.label != null) {
+                        if (this.label && this.label.content) {
                             if (this.visProp.visible) {
                                 this.label.content.showElement();
                             }
-
                         } else {
                             this.createLabel();
                             if (!this.visProp.visible) {

@@ -52,7 +52,7 @@
 <input type="button" value="clear all" onClick="clearAll()">
 
 <div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left; padding-left: 20px; border-left-width: 20px;"></div>
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left;"></div>
   <div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 </div>
 
@@ -73,10 +73,12 @@
         board.create('line', [p1, p2]);
 
         board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traces: {strokeColor: 'green', strokeWidth: 1}, trace: false});
-        board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
+        var l = board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
 
         var p = board.create('point', [-2, 3], {size: 9, fillColor: 'blue', face: '[]'});
         p.setProperty({gradient: 'linear', gradientSecondColor: 'green', gradientsecondopacity: 1.0});
+
+        l.setProperty({withLabel: true});
     })();
 
     var jan = (function () {
@@ -97,8 +99,8 @@
 
         p.addPoints(p5, p6);
         
-        //p.removePoints(p2, p6).removePoints(p1);
-        
+        p.removePoints(p2, p6).removePoints(p1);
+
         return p;
     });
 
