@@ -604,7 +604,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return this.cPos;
         }
 
-        if (JXG.exists(doc.defaultView)) {     // Non IE
+        if (!pCont.currentStyle && doc.defaultView) {     // Non IE
             pCont = document.documentElement;
 
             // this is for hacks like this one used in wordpress for the admin bar:
@@ -623,14 +623,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pCont = this.containerObj;
         }
 
-
         // add border width
         cPos[0] += getProp('border-left-width');
         cPos[1] += getProp('border-top-width');
 
-        // add padding
-        cPos[0] += getProp('padding-left');
-        cPos[1] += getProp('padding-top');
+        // vml seems to ignore paddings
+        if (this.renderer.type !== 'vml') {
+            // add padding
+            cPos[0] += getProp('padding-left');
+            cPos[1] += getProp('padding-top');
+        }
 
         this.cPos = cPos;
 

@@ -116,6 +116,22 @@ JXG.extend(JXG, /** @lends JXG */ {
         return this.isAndroid() &&  navigator.userAgent.search(" AppleWebKit/") > -1;
     },
 
+    ieVersion: (function(){
+
+        var undef,
+            v = 3,
+            div = document.createElement('div'),
+            all = div.getElementsByTagName('i');
+
+        while (
+            div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i><' + '/i><![endif]-->',
+                all[0]
+            );
+
+        return v > 4 ? v : undef;
+
+    }()),
+
     /**
      * s may be a string containing the name or id of an element or even a reference
      * to the element itself. This function returns a reference to the element. Search order: id, name.
@@ -632,14 +648,20 @@ JXG.extend(JXG, /** @lends JXG */ {
     getStyle: function (obj, stylename) {
         var r;
 
-        if (obj.currentStyle) {
-            // IE
-		    r = obj.currentStyle[stylename];
-        } else if (window.getComputedStyle) {
+        if (window.getComputedStyle) {
             // Non-IE
-		    r = document.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
-        } else if (obj.style) {
-            r = obj.style[stylename]
+            r = document.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
+        } else if (obj.currentStyle && JXG.ieVersion >= 9) {
+            // IE
+            r = obj.currentStyle[stylename];
+        } else {
+            if (obj.style) {
+                // make stylename lower camelcase
+                stylename = stylename.replace(/-([a-z]|[0-9])/ig, function (all, letter) {
+                    return ( letter + "" ).toUpperCase();
+                });
+                r = obj.style[stylename]
+            }
         }
 
         return r;
