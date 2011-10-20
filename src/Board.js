@@ -458,7 +458,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (object.type == JXG.OBJECT_TYPE_TICKS) {
             return '';
         }
-
+ lanes
         var possibleNames,
             maxNameLength = 3,
             pre = '',
@@ -520,7 +520,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     indices[i-1] = 1;
                     indices[i]++;
                 }
-            }
+            } lanes
         }
 
         return '';
@@ -553,7 +553,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var num = this.numObjects++,
             elId = obj.id;
 
-        // Falls Id nicht vorgegeben, eine Neue generieren:
+        // Falls Id nicht vorgegeben, eine Neue g lanesenerieren:
         if (elId == '' || !JXG.exists(elId)) {
             elId = this.id + type + num;
         }
@@ -718,22 +718,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             return collect;
                         }
                     } 
-                    /*
-                    ancestorHasPoint = false;
-                    // In case, a non-point gets the focus,
-                    // it is tested if a defining ancestor (usually a point)
-                    // has the focus too. In this case, we drag the ancestor.
-                    if (!JXG.isPoint(pEl)) {
-                        len = collect.length;
-                        for (i=0;i<len;i++) {
-                            if (JXG.exists(pEl.ancestors[collect[i].id])) {
-                                ancestorHasPoint = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!ancestorHasPoint) collect[0] = pEl;
-                    */
             }
         }
 
@@ -1055,7 +1039,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             });
                         }
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
-                        // TODO
+                        found = false;
+                        // first check if this line is already capture in this.touches
+                        for (j = 0; j < this.touches.length; j++) {
+                            if (obj.id === this.touches[j].obj.id) {
+                                // TODO: for now we only support single touch circle movement
+                                found = true;
+                                evt.targetTouches[i].jxg_isused = true;
+                                break;
+                            }
+                        }
+
+                        // we couldn't find it in touches, so we just init a new touches
+                        // IF there is a second touch targetting this line, we will find it later on, and then add it to
+                        // the touches control object.
+                        if (!found) {
+                            xy = this.initXYstart(obj);
+
+                            this.touches.push({
+                                obj: obj,
+                                targets: [{
+                                    num: i,
+                                    X: evt.targetTouches[i].screenX,
+                                    Y: evt.targetTouches[i].screenY,
+                                    Xprev: NaN,
+                                    Yprev: NaN,
+                                    Xstart: xy[0],
+                                    Ystart: xy[1]
+                                }]
+                            });
+                        }
                     }
                 }
                 
