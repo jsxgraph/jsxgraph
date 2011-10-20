@@ -458,7 +458,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (object.type == JXG.OBJECT_TYPE_TICKS) {
             return '';
         }
- lanes
+
         var possibleNames,
             maxNameLength = 3,
             pre = '',
