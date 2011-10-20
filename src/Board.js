@@ -825,7 +825,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // To run JSXGraph on mobile touch devices we need these event listeners.
         JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
         JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-        JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
+        JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
         // EXPERIMENTAL: mouse wheel for zoom
         JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -851,7 +851,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
         JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-        JXG.removeEvent(this.containerObj, 'touchend', this.touchEndListener, this);
+        JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
 
         JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
         JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
