@@ -630,7 +630,19 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
      */
     getStyle: function (obj, stylename) {
-        return obj.style[stylename];
+        var r;
+
+        if (obj.currentStyle) {
+            // IE
+		    r = obj.currentStyle[stylename];
+        } else if (window.getComputedStyle) {
+            // Non-IE
+		    r = document.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
+        } else if (obj.style) {
+            r = obj.style[stylename]
+        }
+
+        return r;
     },
 
     /**
