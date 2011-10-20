@@ -605,9 +605,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.board.renderer.setGradient(this);
                     break;
                 case 'gradientsecondcolor':
-                    value = JXG.rgba2rgbo(value); 
-                    this.visProp.gradientsecondcolor = value[1];
-                    this.visProp.gradientsecondopacity = value[0];
+                    value = JXG.rgba2rgbo(value);
+                    this.visProp.gradientsecondcolor = value[0];
+                    this.visProp.gradientsecondopacity = value[1];
                     this.board.renderer.updateGradient(this);
                     break;
                 case 'gradientsecondopacity':
