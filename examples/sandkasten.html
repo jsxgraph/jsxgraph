@@ -3,13 +3,6 @@
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 
-    <style type="text/css">
-        html {
-            margin-top: 28px;
-            border: 1px solid black;
-        }
-    </style>
-    
     <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
@@ -61,6 +54,27 @@
 <img id="snapshot" />
 <script type="text/javascript">
     /* <![CDATA[ */
+
+    var gesture = (function () {
+        JXG.addEvent(document.getElementById('jxgbox'), 'gesturestart', function (e) {
+            e.preventDefault();
+            console.log('gesture start');
+            return false;
+        }, this);
+        JXG.addEvent(document.getElementById('jxgbox'), 'gesturechange', function (e) {
+            e.preventDefault();
+            console.log('gesture change');
+            console.log("Scale: " + e.scale + ", Rotation: " + e.rotation);
+
+            //document.getElementById('jxgbox').style.webkitTransform = 'scale(' + e.scale + ') rotate(' + e.rotation + 'deg)';
+            return false;
+        }, this);
+        JXG.addEvent(document.getElementById('jxgbox'), 'gestureend', function (e) {
+            e.preventDefault();
+            console.log('gesture end');
+            return false;
+        }, this);
+    });
 
     var lineconstr = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});

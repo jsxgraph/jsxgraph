@@ -89,6 +89,14 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.BOARD_QUALITY_HIGH = 0x2;
 
+    /**
+     * Update is made with high quality, e.g. graphs are evaluated at much more points.
+     * @type Number
+     * @constant
+     * @see JXG.Board#updateQuality
+     */
+    this.BOARD_MODE_ZOOM = 0x0011;
+
     // TODO: Do we still need the CONSTRUCTIOIN_TYPE_* properties?!?
     // BEGIN CONSTRUCTION_TYPE_* stuff
 
@@ -686,7 +694,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             len, i, ancestorHasPoint,
             dragEl = {visProp:{layer:-10000}};
 
-        this.mode = this.BOARD_MODE_DRAG;
         for (el in this.objects) {
             pEl = this.objects[el];
             if (
@@ -719,6 +726,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         }
                     } 
             }
+        }
+
+        if (collect.length > 0) {
+            this.mode = this.BOARD_MODE_DRAG;
         }
 
         return collect;
@@ -817,7 +828,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      *  Add all possible event handlers to the board object
      */
     addEventHandlers: function () {
-
         JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
         JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
         JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
@@ -832,6 +842,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // special treatment for firefox
         JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
+        // special events for iOS devices to enable gesture based zooming
+        JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+
+
         // This one produces errors on IE
         //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
         // this one works on IE, Firefox and Chromium with default configurations
@@ -844,7 +858,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      *  Remove all event handlers from the board object
      */
     removeEventHandlers: function () {
-        
         JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
         JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
         JXG.removeEvent(document, 'mouseup', this.mouseUpListener,this);
@@ -855,6 +868,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
         JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
+        JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+        JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+        JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
     },
 
     /**
@@ -891,6 +908,50 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     clickDownArrow: function () {
         this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight*0.1);
         return this;
+    },
+
+    gestureStartListener: function (evt) {
+        evt.preventDefault();
+
+        if (this.mode === this.BOARD_MODE_NONE) {
+            this.mode = this.BOARD_MODE_ZOOM;
+            this.prevScale = evt.scale;
+
+            this.oldZoomX = this.zoomX;
+            this.oldZoomY = this.zoomY;
+        }
+
+        return false;
+    },
+
+    gestureChangeListener: function (evt) {
+        var c;
+
+        evt.preventDefault();
+
+        if (this.mode === this.BOARD_MODE_NONE) {
+            c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+
+            if (this.prevScale < evt.scale) {
+                this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
+            } else {
+                this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
+            }
+            this.prevScale = evt.scale;
+        }
+
+
+        return false;
+    },
+
+    gestureEndListener: function (evt) {
+        evt.preventDefault();
+
+        if (this.mode === this.BOARD_MODE_ZOOM) {
+            this.mode = this.BOARD_MODE_NONE;
+        }
+
+        return false;
     },
 
     /**
