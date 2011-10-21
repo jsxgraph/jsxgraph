@@ -129,6 +129,9 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             c = coordinates.usrCoords;
             f = ucr[0]-c[0];
             sum = f*f;
+            if (sum>JXG.Math.eps) {
+                return Number.POSITIVE_INFINITY;
+            }
             f = ucr[1]-c[1];
             sum += f*f;
             f = ucr[2]-c[2];

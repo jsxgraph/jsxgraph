@@ -12,7 +12,8 @@
 </style>    
 </head>
 <body id="body">
-<h1 id="x1"  onClick="alert(txt.getSize())">Playground</h1>
+<h1 id="x1">Playground</h1>
+<input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
 <div id='jxgbox' class='jxgbox' style='width:700px; height:500px;'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
@@ -56,6 +57,19 @@ var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
 
+var li1 = brd.create('circle',[[1,2],3]);
+var gl = brd.create('glider',[1,1,li1]);
+//var gl = brd.create('point',[1,1]);
+var p = brd.create('point',[5,2]);
+var li2 = brd.create('line',[p, gl]);
+
+///brd.update();
+//gl.setPositionDirectly(JXG.COORDS_BY_USER, -3, 2);
+//gl.moveTo([-3, 2]);
+//brd.update(gl);
+
+//console.log(li2.isDraggable, p.isDraggable, gl.isDraggable);
+/*
 if (false) {
     var board = brd;
     var c1 = board.create('circle',[[0, 0], [2, 0]]),
@@ -90,18 +104,18 @@ if (false) {
         M = brd.create('glider',[2,2,g1], {name:'M', trace:false, fillColor:'red', strokeColor:'red'}),
         k2 = brd.create('circle',[M,B],{name:'k'}),
  
-        gpar = brd.create('parallel',[O,C2,M], {name:"g", strokeColor:'lightgray'}),
+        gpar = brd.create('parallel',[O,C2,M], {name:"g", strokeColor:'red'}),
         Cprime = brd.create('intersection',[gpar,k2,0], {name:"C'", trace:false, fillColor:'blue', strokeColor:'blue'}),
  
-        g2 = brd.create('line',[M, Cprime], {strokeColor:'lightgray'}),
+        g2 = brd.create('line',[M, Cprime], {strokeColor:'black'}),
         Cstern = brd.create('glider',[3,3,g2], {name:"C*", trace:false, fillColor:'green', strokeColor:'green'});
     brd.create('tracecurve', [B, Cprime], {strokeColor:'blue'});
     brd.create('tracecurve', [B, M], {strokeColor:'yellow'});
-    brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
+    curve = brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
 }
 
 brd.update();
-
+*/
 </script> 
 </body>
 </html>

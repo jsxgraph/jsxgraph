@@ -588,7 +588,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             newy = pc.usrCoords[2]+dy;
         }
         this.point2.setPositionDirectly(method, newx, newy);
-        this.update();
+        
+        this.point1.prepareUpdate().update();    // Update needed if line depends on glider
+        this.point2.prepareUpdate().update();
+        this.prepareUpdate().update();
         return this;
     },
 
@@ -905,7 +908,7 @@ JXG.createLine = function(board, parents, attributes) {
                 function() { return -c[2]()*c[0]()-c[1]();}], attr);
         }
 
-        // If the line and will have a glider
+        // If the line will have a glider
         // and board.suspendUpdate() has been called, we
         // need to compute the initial position of the two points p1 and p2.
         p1.prepareUpdate().update();
