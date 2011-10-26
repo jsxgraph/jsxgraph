@@ -829,7 +829,6 @@ JXG.TracenpocheReader = new function() {
             }
             
         }
-        return el;
     };
 
     this.intersection = function(parents, attributes) {
