@@ -802,34 +802,34 @@ JXG.TracenpocheReader = new function() {
         if (parents.length==3) {        // point between two points
             p1 = parents[0];
             p2 = parents[1];
-            return this.board.create('point', [
-                function(){ return p1.X()+(p2.X()-p1.X())*lambda(); },
-                function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda(); }
-                ],
-                this.handleAtts(attributes)
-            );
+			var slideObj = this.board.create('line', [p1,p2], {visible:false, withLabel:false});
+			return this.board.create('glider', [
+					p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), slideObj
+					],
+                    this.handleAtts(attributes) 
+			);
         } else if (parents.length==2) {   // point on segment
             if (parents[0].elementClass==JXG.OBJECT_CLASS_LINE) {
                 p1 = parents[0].point1;
                 p2 = parents[0].point2;
-                return this.board.create('point', [
-                    function(){ return p1.X()+(p2.X()-p1.X())*lambda(); },
-                    function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda(); }
+                return this.board.create('glider', [
+                    p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), parents[0]
                     ],
                     this.handleAtts(attributes)
                 );
             } else {                      // point on circle
                 c = parents[0];
-                return this.board.create('point', [
-                    function(){ return c.midpoint.X()+c.Radius()*Math.cos(lambda()); },
-                    function(){ return c.midpoint.Y()+c.Radius()*Math.sin(lambda()); }
+                return this.board.create('glider', [
+                    c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
                     ],
                     this.handleAtts(attributes)
-                );
+                );				
             }
             
         }
+        return el;
     };
+
 
     this.intersection = function(parents, attributes) {
         if (parents.length==2) {  // line line
