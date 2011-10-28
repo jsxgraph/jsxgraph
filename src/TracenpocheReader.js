@@ -759,7 +759,7 @@ JXG.TracenpocheReader = new function() {
         
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
-            switch (attsArr[i]) {
+			switch (attsArr[i]) {
                 case 'sansnom' : obj["withLabel"] = false; break;
 				case 'blinde' : obj["fixed"] = true; break;
 				case 'fixe' : obj["fixed"] = true; break;
@@ -768,14 +768,14 @@ JXG.TracenpocheReader = new function() {
 				case 'invisible' : obj["visible"] = false; break;
 				case 'v' : obj["visible"] = true; break;
 				case 'visible' : obj["visible"] = true; break;
-				case 'croix0' : obj["face"] = 'cross'; obj["size"] = 0; break;
-				case 'croix1' : obj["face"] = 'cross'; obj["size"] = 2; break;
-				case 'croix2' : obj["face"] = 'cross'; obj["size"] = 3; break;
-				case 'croix3' : obj["face"] = 'cross'; obj["size"] = 4; break;
-				case 'rond0' : obj["face"] = 'circle'; obj["size"] = 0; break;
-				case 'rond1' : obj["face"] = 'circle'; obj["size"] = 2; break;
-				case 'rond2' : obj["face"] = 'circle'; obj["size"] = 3; break;
-				case 'rond3' : obj["face"] = 'circle'; obj["size"] = 4; break;
+				case 'croix0' : obj["face"] ='cross'; obj["size"] = 0; break;
+				case 'croix1' : obj["face"] ='cross'; obj["size"] = 2; break;
+				case 'croix2' : obj["face"] ='cross'; obj["size"] = 3; break;
+				case 'croix3' : obj["face"] ='cross'; obj["size"] = 4; break;
+				case 'rond0' : obj["face"] ='circle'; obj["size"] = 0; break;
+				case 'rond1' : obj["face"] ='circle'; obj["size"] = 2; break;
+				case 'rond2' : obj["face"] ='circle'; obj["size"] = 3; break;
+				case 'rond3' : obj["face"] ='circle'; obj["size"] = 4; break;
 				case '0' : obj["strokeWidth"] = 1; break;
 				case '1' : obj["strokeWidth"] = 1; break;
 				case '2' : obj["strokeWidth"] = 2; break;
@@ -798,6 +798,36 @@ JXG.TracenpocheReader = new function() {
 				case 'plein80' : obj["fillOpacity"] = 0.8; break;
 				case 'plein90' : obj["fillOpacity"] = 0.9; break;
 				case 'plein100' : obj["fillOpacity"] = 1; break;
+				case 'blanc' : obj['color'] ='white'; break;
+				case 'jaune' : obj['color'] ='yellow'; break;
+				case 'jauneclair' : obj['color'] ='lightyellow'; break;
+				case 'kakiclair' : obj['color'] ='yellowgreen'; break;
+				case 'jaunepaille' : obj['color'] ='darkkhaki'; break;
+				case 'rose' : obj['color'] ='pink'; break;
+				case 'saumon' : obj['color'] ='salmon'; break;
+				case 'orange' : obj['color'] ='orange'; break;
+				case 'rougeclair' : obj['color'] ='palevioletred'; break;
+				case 'rouge' : obj['color'] ='red'; break;
+				case 'vertclair' : obj['color'] ='lime'; break;
+				case 'vert' : obj['color'] ='green'; break;
+				case 'vertfonce' : obj['color'] ='darkgreen'; break;
+				case 'kaki' : obj['color'] ='olive'; break;
+				case 'sapin' : obj['color'] ='springgreen'; break;
+				case 'marron' : obj['color'] ='maroon'; break;
+				case 'brique' : obj['color'] ='firebrick'; break;
+				case 'marronfonce' : obj['color'] ='saddlebrown'; break;
+				case 'violetfonce' : obj['color'] ='darkviolet'; break;
+				case 'rougefonce' : obj['color'] ='darkred'; break;
+				case 'cyan' : obj['color'] ='cyan'; break;
+				case 'bleuciel' : obj['color'] ='skyblue'; break;
+				case 'bleuocean' : obj['color'] ='aqua'; break;
+				case 'bleu' : obj['color'] ='blue'; break;
+				case 'bleufonce' : obj['color'] ='darkblue'; break;
+				case 'violet' : obj['color'] ='blueviolet'; break;
+				case 'gris' : obj['color'] ='gray'; break;
+				case 'grisclair' : obj['color'] ='darkgray'; break;
+				case 'vertpale' : obj['color'] ='palegreen'; break;
+				case 'noir' : obj['color'] ='black'; break;
 				
 /*
 not supported : 
@@ -809,7 +839,7 @@ stop  to see construction step by step from stop tag to stop tag
 static to avoid locus calculus when useless
 
 to be implementedd / found for JSXGraph:
-colors : name or 0xRRGGBB
+colors : 0xRRGGBB
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
 /, //, ///, \, \\, \\\, x, o : to code length or middle
 q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none
