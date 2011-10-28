@@ -760,8 +760,68 @@ JXG.TracenpocheReader = new function() {
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
             switch (attsArr[i]) {
-                case 'sansnom': obj["withLabel"] = false; break;
-            }
+                case 'sansnom' : obj["withLabel"] = false; break;
+				case 'blinde' : obj["fixed"] = true; break;
+				case 'fixe' : obj["fixed"] = true; break;
+				case 'trace' : obj["trace"] = true; break;
+				case 'i' : obj["visible"] = false; break;
+				case 'invisible' : obj["visible"] = false; break;
+				case 'v' : obj["visible"] = true; break;
+				case 'visible' : obj["visible"] = true; break;
+				case 'croix0' : obj["face"] = 'cross'; obj["size"] = 0; break;
+				case 'croix1' : obj["face"] = 'cross'; obj["size"] = 2; break;
+				case 'croix2' : obj["face"] = 'cross'; obj["size"] = 3; break;
+				case 'croix3' : obj["face"] = 'cross'; obj["size"] = 4; break;
+				case 'rond0' : obj["face"] = 'circle'; obj["size"] = 0; break;
+				case 'rond1' : obj["face"] = 'circle'; obj["size"] = 2; break;
+				case 'rond2' : obj["face"] = 'circle'; obj["size"] = 3; break;
+				case 'rond3' : obj["face"] = 'circle'; obj["size"] = 4; break;
+				case '0' : obj["strokeWidth"] = 1; break;
+				case '1' : obj["strokeWidth"] = 1; break;
+				case '2' : obj["strokeWidth"] = 2; break;
+				case '3' : obj["strokeWidth"] = 3; break;
+				case '4' : obj["strokeWidth"] = 4; break;
+				case '5' : obj["dash"] = 0; break;
+				case '6' : obj["dash"] = 1; break;
+				case '7' : obj["dash"] = 2; break;
+				case '8' : obj["dash"] = 3; break;
+				case '9' : obj["dash"] = 4; break;
+				case 'plein' : obj["fillOpacity"] = 0.5; break;
+				case 'plein0' : obj["fillOpacity"] = 0; break;
+				case 'plein10' : obj["fillOpacity"] = 0.1; break;
+				case 'plein20' : obj["fillOpacity"] = 0.2; break;
+				case 'plein30' : obj["fillOpacity"] = 0.3; break;
+				case 'plein40' : obj["fillOpacity"] = 0.4; break;
+				case 'plein50' : obj["fillOpacity"] = 0.5; break;
+				case 'plein60' : obj["fillOpacity"] = 0.6; break;
+				case 'plein70' : obj["fillOpacity"] = 0.7; break;
+				case 'plein80' : obj["fillOpacity"] = 0.8; break;
+				case 'plein90' : obj["fillOpacity"] = 0.9; break;
+				case 'plein100' : obj["fillOpacity"] = 1; break;
+				
+/*
+not supported : 
+car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
+gras, italique  for bold / italic
+dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
+blinde to avoid deletion with mouse -> set to fixe here 
+stop  to see construction step by step from stop tag to stop tag
+static to avoid locus calculus when useless
+
+to be implementedd / found for JSXGraph:
+colors : name or 0xRRGGBB
+(x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
+/, //, ///, \, \\, \\\, x, o : to code length or middle
+q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none
+aimantage aimante le point sur la grille du repère (même invisible)
+aimantage5 aimante le point sur les coordonnées multiples de 0.2 (1/5)
+aimantage10 aimante le point sur les coordonnées multiples de 0.1 (1/10)
+p1 to show dash to localizepour coordinates of a point in the frame
+coord, coordx, coordy to show coordinates values near axis
+animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
+r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct or not.
+*/
+			}
         }
         return obj;
     };
@@ -997,7 +1057,6 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.reel = function(parents, attributes) {
-		//how to set the name to have : v=... near slider ?
         var atts = this.handleAtts(attributes);
         atts["snapWidth"] = parents[3];
 		this.reelPosition.x-=5;
