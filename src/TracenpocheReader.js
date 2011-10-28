@@ -696,7 +696,9 @@ JXG.TracenpocheReader = new function() {
         this.board = board;
         var s = this.parse(tokens, 'tep');
         var tep = {};
-        
+		//to store last render position of "reel"/"entier" tep object
+		//initial position to get from board BoundingBox ...
+        this.reelPosition = {x:12,y:-9};
         
         // Set the default options
         board.options.point.face = 'x';
@@ -782,6 +784,7 @@ JXG.TracenpocheReader = new function() {
      * Points 
      */
     this.point = function(parents, attributes) {
+		//console.log('point :',parents," @ ",attributes);
         if (parents.length==0) {
             return this.board.create('point', [Math.random(),Math.random()], this.handleAtts(attributes));
         } else {
@@ -984,9 +987,19 @@ JXG.TracenpocheReader = new function() {
     };
 
     this.reel = function(parents, attributes) {
+		//how to set the name to have : v=... near slider ?
         var atts = this.handleAtts(attributes);
         atts["snapWidth"] = parents[3];
-        return this.board.create('slider', [[0,-2],[3,-2], [parents[1], parents[0], parents[2]]], atts);
+		this.reelPosition.x-=5;
+		if(this.reelPosition.x<=-10) {
+			this.reelPosition.x=10;
+			this.reelPosition.y-=3;
+		}
+        return this.board.create('slider', [
+		    [this.reelPosition.x,this.reelPosition.y],
+			[this.reelPosition.x+3,this.reelPosition.y], 
+			[parents[1], parents[0], parents[2]]
+			], atts);
     };
     
     this.entier = function(parents, attributes) {
