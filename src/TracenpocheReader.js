@@ -347,7 +347,7 @@ JXG.TracenpocheReader = new function() {
         };
         
         var statement = function () {
-            var n = token, v;
+            var n = token, v, str, na;
 
             if (n.std) {
                 advance();
@@ -355,14 +355,26 @@ JXG.TracenpocheReader = new function() {
         
                 return n.std();
             }
-            v = expression(0) + ';';
+            v = expression(0);
+            if (v.assignment) {
+                 str = v.value + ';';
+                 na =  v.name.replace(/^tep\[/,"").replace(/\]$/,"");
+                 if (str.match(/\[\]\)/)) {
+                    str = str.replace(/\[\]\)/, "[" + na + "])")
+                 } else {
+                    str = str.replace(/\]\)/, "," + na + "])");
+                 }
+
+            } else {
+                str = v;
+            }
             /*
             if (!v.assignment && v.id !== "(") {
                 error(v, "Bad expression statement.");
             }
             */
             advance(";");
-            return v;
+            return str;
         };
 
         var statements = function () {
@@ -468,14 +480,17 @@ JXG.TracenpocheReader = new function() {
         
         var assignment = function (id) {
             return infixr(id, 10, function (left) {
+                var strObj = {};
                 this.first = left;
                 if (token.id === '[') {
                     this.first += expression(0);
-                    this.first = '$[' + this.first + ']';
+                    //this.first = '$[' + this.first + ']';
                 } 
                 this.second = expression(9);
-                this.assignment = true;
-                return this.first + this.value + this.second;
+                strObj.value = this.first + this.value + this.second;
+                strObj.assignment = true;
+                strObj.name = this.first;
+                return strObj;
             });
         };  
         
@@ -712,16 +727,6 @@ JXG.TracenpocheReader = new function() {
         fun(this, tep);
 //console.log(tep);
         
-        // Set the correct labels and names 
-        var el;
-        for (el in tep) {
-            if (JXG.exists(tep[el].setProperty)) {
-                tep[el].setProperty({name:el});
-                if (JXG.exists(tep[el].label) && JXG.exists(tep[el].label.content)) {
-                    tep[el].label.content.setText(el);
-                }
-            }
-        }
     };
 
     // 
@@ -746,6 +751,11 @@ JXG.TracenpocheReader = new function() {
     //
     this.handleAtts = function(attsArr) {
         var obj = {}, i, le = attsArr.length;
+        
+        // The last entry is the name of the element.
+        if (le>0) {
+            obj["name"] = attsArr[le-1];
+        }
         
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
