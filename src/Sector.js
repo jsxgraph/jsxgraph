@@ -295,6 +295,7 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
  * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
  * an angle has two angle points and no radius point.
+ * If type=="square", instead of a sector a parallelogram is displayed.
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -323,7 +324,7 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, text, attr,
+    var el, p, q, sq, text, attr,
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
@@ -380,15 +381,48 @@ JXG.createAngle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'angle', 'point');
         p = board.create('point', [
             function(){
-                var A = parents[0], B = parents[1],
+                var A = parents[0], S = parents[1],
                     r = attr.radius,
-                    d = B.Dist(A);
-                return [B.X()+(A.X()-B.X())*r/d,B.Y()+(A.Y()-B.Y())*r/d];
+                    d = S.Dist(A);
+                return [S.X()+(A.X()-S.X())*r/d,S.Y()+(A.Y()-S.Y())*r/d];
+            }], attr);
+
+        // Second helper point for square
+        q = board.create('point', [
+            function(){
+                var A = parents[2], S = parents[1],
+                    r = attr.radius,
+                    d = S.Dist(A);
+                return [S.X()+(A.X()-S.X())*r/d,S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
+        // Square
+        sq = board.create('curve', [[parents[1].X()],[parents[1].Y()]], attr);
+        sq.updateDataArray = function() {
+            var S = parents[1],
+                v, l1, l2, r;
+                   
+            v = JXG.Math.crossProduct(q.coords.usrCoords, S.coords.usrCoords);
+            l1 = [-p.X()*v[1]-p.Y()*v[2], p.Z()*v[1], p.Z()*v[2]];
+            v = JXG.Math.crossProduct(p.coords.usrCoords, S.coords.usrCoords);
+            l2 = [-q.X()*v[1]-q.Y()*v[2], q.Z()*v[1], q.Z()*v[2]];
+            r = JXG.Math.crossProduct(l1,l2);
+            r[1] /= r[0];
+            r[2] /= r[0];
+            
+            this.dataX = [S.X(), p.X(), r[1], q.X(), S.X()];
+            this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
+            return;
+        }; 
+        // Sector
         el = board.create('sector', [parents[1], p, parents[2]], attr);
-
+        
+        if (attr['type']=='square') {
+            el.setProperty({visible:false});
+        } else {
+            sq.setProperty({visible:false});
+        }
         /**
          * The point defining the radius of the angle element.
          * @type JXG.Point
@@ -421,7 +455,6 @@ JXG.createAngle = function(board, parents, attributes) {
 
             return JXG.Math.matVecMult(transform.matrix, c);
         }], dot);
-
 
         for (i = 0; i < 3; i++) {
             JXG.getRef(board,parents[i]).addChild(p);
