@@ -295,7 +295,9 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
  * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
  * an angle has two angle points and no radius point.
- * If type=="square", instead of a sector a parallelogram is displayed.
+ * Sector is displayed if type=="sector".
+ * If type=="square", instead of a sector a parallelogram is displayed. 
+ * In case of type=="auto", a square is displayed if the angle is near orthogonal.
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -324,7 +326,7 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, q, sq, text, attr,
+    var el, p, q, text, attr,
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
@@ -384,7 +386,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 var A = parents[0], S = parents[1],
                     r = attr.radius,
                     d = S.Dist(A);
-                return [S.X()+(A.X()-S.X())*r/d,S.Y()+(A.Y()-S.Y())*r/d];
+                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
         // Second helper point for square
@@ -393,13 +395,15 @@ JXG.createAngle = function(board, parents, attributes) {
                 var A = parents[2], S = parents[1],
                     r = attr.radius,
                     d = S.Dist(A);
-                return [S.X()+(A.X()-S.X())*r/d,S.Y()+(A.Y()-S.Y())*r/d];
+                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
-        // Square
-        sq = board.create('curve', [[parents[1].X()],[parents[1].Y()]], attr);
-        sq.updateDataArray = function() {
+        
+        // Sector is just a curve with its own updateDataArray method
+        el = board.create('sector', [parents[1], p, parents[2]], attr);
+
+        el.updateDataArraySquare = function() {
             var S = parents[1],
                 v, l1, l2, r;
                    
@@ -415,14 +419,23 @@ JXG.createAngle = function(board, parents, attributes) {
             this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
             return;
         }; 
-        // Sector
-        el = board.create('sector', [parents[1], p, parents[2]], attr);
-        
-        if (attr['type']=='square') {
-            el.setProperty({visible:false});
-        } else {
-            sq.setProperty({visible:false});
+        el.updateDataArraySector = el.updateDataArray;
+        el.updateDataArray = function() {
+            var rad;
+            if (this.visProp.type=='square') {
+                this.updateDataArraySquare();
+            } else if (this.visProp.type=='sector') {
+                this.updateDataArraySector();
+            } else {
+                rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
+                if (Math.abs(rad-Math.PI*0.5)<0.005) {
+                    this.updateDataArraySquare();
+                } else {
+                    this.updateDataArraySector();
+                }
+            }
         }
+        
         /**
          * The point defining the radius of the angle element.
          * @type JXG.Point
@@ -472,8 +485,8 @@ JXG.createAngle = function(board, parents, attributes) {
         // documented in GeometryElement
         el.getLabelAnchor = function() {
             var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-                dx = 10/(this.board.unitX),
-                dy = 10/(this.board.unitY),
+                dx = 13/(this.board.unitX),
+                dy = 13/(this.board.unitY),
                 p2c = this.point2.coords.usrCoords,
                 pmc = this.point1.coords.usrCoords,
                 bxminusax = p2c[1] - pmc[1],

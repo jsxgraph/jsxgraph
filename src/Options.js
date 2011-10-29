@@ -419,7 +419,7 @@ JXG.Options = {
          * @name Angle#radius
          */
         radius : 1.0,
-        type : 'sector',  // 'square' or 'sector'
+        type : 'auto',  // 'square' or 'sector' or 'auto'
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
