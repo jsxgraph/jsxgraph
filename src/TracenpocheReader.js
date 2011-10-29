@@ -60,7 +60,8 @@ JXG.TracenpocheReader = new function() {
                 c = inputStr.charAt(i);
             } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {  // name
                 str = c;
-                i += 1;
+                i++;
+				//i += 1;
                 // if the name starts with a small capital, anything may follow
                 // otherwise, if the next char is a capital letter like
                 // AB, the meaning is Dist(A,B)
@@ -96,53 +97,69 @@ JXG.TracenpocheReader = new function() {
             } else if (c >= '0' && c <= '9') {                              // number
                 // A number cannot start with a decimal point. It must start with a digit,
                 // possibly '0'.
+				// hexadecimal 0xABCDEF converts with #ABCDEF
                 str = c;
                 i++;
-                for (;;) {                  // Look for more digits
-                    c = inputStr.charAt(i);
-                    if (c < '0' || c > '9') { break; }
-                    i++;
-                    str += c;
-                }
-                if (c === '.') {            // Look for a decimal fraction part
-                    i++;
-                    str += c;
-                    for (;;) {
-                        c = inputStr.charAt(i);
-                        if (c < '0' || c > '9') { break; }
-                        i++;
-                        str += c;
-                    }
-                }
-                if (c === 'e' || c === 'E') {   // Look for an exponent part.
-                    i++;
-                    str += c;
-                    c = inputStr.charAt(i);
-                    if (c === '-' || c === '+') {
-                        i++;
-                        str += c;
-                        c = inputStr.charAt(i);
-                    }
-                    if (c < '0' || c > '9') {
-                        error('number', str, "Bad exponent");
-                    }
-                    do {
-                        i++;
-                        str += c;
-                        c = inputStr.charAt(i);
-                    } while (c >= '0' && c <= '9');
-                }
-                if (c >= 'a' && c <= 'z') {        // Make sure the next character is not a letter
-                    i++;
-                    str += c;
-                    error('number', str, "Bad number");
-                }
-                n = +str;          // Convert the string value to a number. If it is finite, then it is a good token.
-                if (isFinite(n)) {
-                    result.push(make('number', n));
-                } else {
-                    error('number', str, "Bad number");
-                }
+				c = inputStr.charAt(i);
+				// Look for hexadecimal notation e.g. for color  -> convert to decimal
+				if( ( str==='0' ) && ( c==='x' ) ) {
+					str='#';
+					i++;
+					for (;;) {                  // Look for more digits						
+						c = inputStr.charAt(i);
+						if ( ( c>='0' && c<='9' ) || ( c>='A' && c<='F') ) {
+							i++;
+							str += c; 
+						} else break;
+					}
+    	            result.push(make('string', str));
+				} else {
+					for (;;) {                  // Look for more digits						
+						if (c < '0' || c > '9') { break; }
+						i++;
+						str += c;
+						c = inputStr.charAt(i);
+					}
+					if (c === '.') {            // Look for a decimal fraction part
+						i++;
+						str += c;
+						for (;;) {
+							c = inputStr.charAt(i);
+							if (c < '0' || c > '9') { break; }
+							i++;
+							str += c;
+						}
+					}
+					if (c === 'e' || c === 'E') {   // Look for an exponent part.
+						i++;
+						str += c;
+						c = inputStr.charAt(i);
+						if (c === '-' || c === '+') {
+							i++;
+							str += c;
+							c = inputStr.charAt(i);
+						}
+						if (c < '0' || c > '9') {
+							error('number', str, "Bad exponent");
+						}
+						do {
+							i++;
+							str += c;
+							c = inputStr.charAt(i);
+						} while (c >= '0' && c <= '9');
+					}
+	              	if (c >= 'a' && c <= 'z') {        // Make sure the next character is not a letter
+                    	i++;
+                    	str += c;
+                    	error('number', str, "Bad number");
+                	}
+                	n = +str;          // Convert the string value to a number. If it is finite, then it is a good token.
+                	if (isFinite(n)) {
+                    	result.push(make('number', n));
+                	} else {
+                    	error('number', str, "Bad number");
+                	}
+				}
             } else if (c === '\'' || c === '"') {                               // string
                 str = '';
                 q = c;
@@ -756,7 +773,9 @@ JXG.TracenpocheReader = new function() {
         if (le>0) {
             obj["name"] = attsArr[le-1];
         }
-        
+
+		console.log("atts:",attsArr);
+
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
 			switch (attsArr[i]) {
@@ -828,9 +847,15 @@ JXG.TracenpocheReader = new function() {
 				case 'grisclair' : obj['color'] ='darkgray'; break;
 				case 'vertpale' : obj['color'] ='palegreen'; break;
 				case 'noir' : obj['color'] ='black'; break;
+				default : {
+					//color hexa value
+					if( attsArr[i].charAt(0)=='#' ) {
+						obj['color'] = attsArr[i].substr(1);
+					} 
+				}
 				
 /*
-not supported : 
+not supported -> message ? : 
 car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
 gras, italique  for bold / italic
 dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
@@ -839,7 +864,6 @@ stop  to see construction step by step from stop tag to stop tag
 static to avoid locus calculus when useless
 
 to be implementedd / found for JSXGraph:
-colors : 0xRRGGBB
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
 /, //, ///, \, \\, \\\, x, o : to code length or middle
 q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none
