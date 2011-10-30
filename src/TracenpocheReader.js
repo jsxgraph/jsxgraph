@@ -774,7 +774,8 @@ JXG.TracenpocheReader = new function() {
             obj["name"] = attsArr[le-1];
         }
 
-		console.log("atts:",attsArr);
+		//console.log("atts:",attsArr);
+		//q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none -> cf perpendiculaire
 
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
@@ -847,6 +848,7 @@ JXG.TracenpocheReader = new function() {
 				case 'grisclair' : obj['color'] ='darkgray'; break;
 				case 'vertpale' : obj['color'] ='palegreen'; break;
 				case 'noir' : obj['color'] ='black'; break;
+				case '//' :  obj['tepLengthCode'] ='//'; break;
 				default : {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
@@ -855,7 +857,7 @@ JXG.TracenpocheReader = new function() {
 				}
 				
 /*
-not supported -> message ? : 
+not supported (as I know : Keops) -> warning message ? : 
 car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
 gras, italique  for bold / italic
 dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
@@ -866,7 +868,6 @@ static to avoid locus calculus when useless
 to be implementedd / found for JSXGraph:
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
 /, //, ///, \, \\, \\\, x, o : to code length or middle
-q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none
 aimantage aimante le point sur la grille du repère (même invisible)
 aimantage5 aimante le point sur les coordonnées multiples de 0.2 (1/5)
 aimantage10 aimante le point sur les coordonnées multiples de 0.1 (1/10)
@@ -1047,6 +1048,37 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
     };
 
     this.perpendiculaire = function(parents, attributes) {
+		
+		var isRightAngleToShow=true;
+		//q0 : c=-1 : no right angle shown
+		//q1 ! c=0  : quadrant I (default)
+		//q2 ! c=1.57  : quadrant II
+		//q3 ! c=3.14  : quadrant III
+		//q4 ! c=4.71  : quadrant IV
+		if(attributes.indexOf("q0")>=0) {
+			isRightAngleToShow=false;
+		} else if(attributes.indexOf("q2")>=0) {
+			function correction() { return 1.57;};
+		} else if(attributes.indexOf("q3")>=0) {
+			function correction() { return 3.14;};
+		} else if(attributes.indexOf("q4")>=0) {
+			function correction() { return 4.71;};
+		} else function correction() { return 0;};
+		if(isRightAngleToShow) {
+			var p = this.board.create('perpendicularpoint',[parents[1],parents[0]], {visible:false, withLabel:false});
+			var sq = [];
+			sq[0] = this.board.create('point',[0,0], {fixed:true, visible:false, withLabel:false});
+			sq[1] = this.board.create('point',[0.3,0], {fixed:true, visible:false, withLabel:false});
+			sq[2] = this.board.create('point',[0.3,0.3], {fixed:true, visible:false, withLabel:false});
+			sq[3] = this.board.create('point',[0,0.3], {fixed:true, visible:false, withLabel:false});
+			tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
+			tr = this.board.create('transform',[function() { return parents[1].getAngle()+correction();},p],{type:'rotate'});
+			tt.bindTo(sq);
+			tr.bindTo(sq);			
+			var pol = this.board.create('polygon',sq,
+				{color:"green",strokeColor:"green",fillOpacity:0,highlightFillOpacity:0}
+				);        
+		}
         return this.board.create('perpendicular', [parents[1], parents[0]], this.handleAtts(attributes));
     };
 
@@ -1138,6 +1170,8 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
      * Transformations
      */
     
+	// /!\ Similitude is missing !
+	
     this.homothetie = function(parents, attributes) {
         var c = parents[0], a = parents[1];
         if (JXG.isNumber(a)) {
