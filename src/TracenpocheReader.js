@@ -775,7 +775,9 @@ JXG.TracenpocheReader = new function() {
         }
 
 		//console.log("atts:",attsArr);
-		//q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none -> cf perpendiculaire
+		// q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none -> cf perpendiculaire
+		// /, //, ///, \, \\, \\\, x, o : to code length or middle -> cf segment
+		//                                pb with // /// \ \\ \\\
 
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
@@ -867,7 +869,6 @@ static to avoid locus calculus when useless
 
 to be implementedd / found for JSXGraph:
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
-/, //, ///, \, \\, \\\, x, o : to code length or middle
 aimantage aimante le point sur la grille du repère (même invisible)
 aimantage5 aimante le point sur les coordonnées multiples de 0.2 (1/5)
 aimantage10 aimante le point sur les coordonnées multiples de 0.1 (1/10)
@@ -1015,7 +1016,75 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
      * Lines
      */
     this.segment = function(parents, attributes) {
-        return this.board.create('segment', parents, this.handleAtts(attributes));
+		var handleAtts = this.handleAtts(attributes);
+		var s = this.board.create('segment', parents, handleAtts);
+		//enconding
+		// /, //, ///, \, \\, \\\, x, o : to code length or middle
+		// pb with // /// \ \\ \\\
+			var p = this.board.create('midpoint',[s.point1,s.point2], {visible:false, withLabel:false});
+			var sq = [];
+			if(attributes.indexOf("/")>=0) {
+				sq[0] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[1] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
+				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
+				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tt.bindTo(sq);
+				tr.bindTo(sq);			
+				var c = this.board.create('segment',sq, handleAtts); 
+				c.setAttribute({withLabel:false,name:""});
+			}
+			if(attributes.indexOf("//")>=0) {
+				sq[0] = this.board.create('point',[-0.1,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[1] = this.board.create('point',[-0.1,0.2], {fixed:true, visible:false, withLabel:false});
+				sq[2] = this.board.create('point',[0.1,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[3] = this.board.create('point',[0.1,0.2], {fixed:true, visible:false, withLabel:false});
+				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
+				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tt.bindTo(sq);
+				tr.bindTo(sq);			
+				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c.setAttribute({withLabel:false,name:""});
+				c = this.board.create('segment',sq.slice(2), handleAtts); 
+				c.setAttribute({withLabel:false,name:""});
+			}
+			if(attributes.indexOf("///")>=0) {
+				sq[0] = this.board.create('point',[-0.15,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[1] = this.board.create('point',[-0.15,0.2], {fixed:true, visible:false, withLabel:false});
+				sq[2] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[3] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
+				sq[4] = this.board.create('point',[0.15,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[5] = this.board.create('point',[0.15,0.2], {fixed:true, visible:false, withLabel:false});
+				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
+				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tt.bindTo(sq);
+				tr.bindTo(sq);			
+				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c.setAttribute({withLabel:false,name:""});
+				c = this.board.create('segment',sq.slice(2,4), handleAtts); 
+				c.setAttribute({withLabel:false,name:""});
+				c = this.board.create('segment',sq.slice(4), handleAtts); 
+				c.setAttribute({withLabel:false,name:""});
+			}
+			if(attributes.indexOf("x")>=0) {
+				sq[0] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
+				sq[1] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
+				sq[2] = this.board.create('point',[-0.2,0], {fixed:true, visible:false, withLabel:false});
+				sq[3] = this.board.create('point',[0.2,0], {fixed:true, visible:false, withLabel:false});
+				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
+				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});				
+				tt.bindTo(sq);
+				tr.bindTo(sq);			
+				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c.setAttribute({withLabel:false,name:""});
+				c = this.board.create('segment',sq.slice(2), handleAtts); 
+				c.setAttribute({withLabel:false,name:""});
+			}
+			if(attributes.indexOf("o")>=0) {
+				var c = this.board.create('circle',[p,0.15], handleAtts);
+				c.setAttribute({fillOpacity:0,strokeWidth:1,withLabel:false});
+			}
+		//
+        return s;
     };
 
     this.droite = function(parents, attributes) {
