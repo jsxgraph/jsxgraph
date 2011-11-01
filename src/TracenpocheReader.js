@@ -777,7 +777,7 @@ JXG.TracenpocheReader = new function() {
 		//console.log("atts:",attsArr);
 		// q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none -> cf perpendiculaire
 		// /, //, ///, \, \\, \\\, x, o : to code length or middle -> cf segment
-		//                                pb with // /// \ \\ \\\
+		//                                problem with string // /// \ \\ \\\
 
         obj["withLabel"] = true;
         for (i=0; i<le; i++) {
@@ -897,11 +897,11 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
             "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
             "vecteur",
             // circles
-            "cercle", "cerclerayon",
+            "cercle", "cerclerayon","arc","angle",
             // polygons
             "polygone",
             // other
-            "texte", "reel", "entier", "fonction", 
+            "texte", "reel", "entier", "fonction",
             // transformations
             "homothetie", "reflexion", "rotation", "symetrie", "translation"
             ];
@@ -1196,7 +1196,57 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
     this.cerclerayon = function(parents, attributes) {
         return this.board.create('circle', parents, this.handleAtts(attributes));
     };
+
+	this.angle = function(parents, attributes) {
+		
+		function angleSaillant0x() {
+			if(JXG.Math.Geometry.angle(parents[0],parents[1],parents[2])>=0) {
+				return parents[0].X()
+			} else {
+				return parents[2].X()
+			}
+		}
+		
+		function angleSaillant0y() {
+			if(JXG.Math.Geometry.angle(parents[0],parents[1],parents[2])>=0) {
+				return parents[0].Y()
+			} else {
+				return parents[2].Y()
+			}
+		}
+
+		function angleSaillant2x() {
+			if(JXG.Math.Geometry.angle(parents[0],parents[1],parents[2])>=0) {
+				return parents[2].X()
+			} else {
+				return parents[0].X()
+			}
+		}
+		
+		function angleSaillant2y() {
+			if(JXG.Math.Geometry.angle(parents[0],parents[1],parents[2])>=0) {
+				return parents[2].Y()
+			} else {
+				return parents[0].Y()
+			}
+		}
+		
+		if(attributes.indexOf("r")>=0) {
+			return this.board.create('angle', parents , this.handleAtts(attributes));
+		} else {
+			var tripoint= [];
+			tripoint[0] = this.board.create('point', [angleSaillant0x,angleSaillant0y], { visible:false, withLabel:false});
+			tripoint[1] = parents[1];
+			tripoint[2] = this.board.create('point', [angleSaillant2x,angleSaillant2y], { visible:false, withLabel:false});
+			return this.board.create('angle', tripoint , this.handleAtts(attributes));
+		}
+	}
     
+	this.arc = function(parents, attributes) {				
+		return this.board.create('arc', parents, this.handleAtts(attributes));
+	}
+    
+
     /*
      * Polygons
      */
@@ -1234,7 +1284,7 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
         var f = new Function("x", "return " + parents[0]);
         return this.board.create('functiongraph', [f], this.handleAtts(attributes));
     };
-    
+	
     /*
      * Transformations
      */
