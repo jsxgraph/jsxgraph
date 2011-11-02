@@ -18,8 +18,27 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-JXG.TracenpocheReader = new function() {
 
+/* E.Ostenne notes :
+- demidroite & intersection : intersection point out of [AB) should not exist
+- aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override
+*/
+
+JXG.TracenpocheReader = new function() {
+	
+	aimantageList = new Array();
+	
+	this.aimantage = function() {
+		var loc;
+		for(var i=0;i<aimantageList.length;i++) {
+			loc=aimantageList[i];
+			loc[0].setPosition( JXG.COORDS_BY_USER,
+				  Math.round(loc[0].X()/loc[1])*loc[1],
+				  Math.round(loc[0].Y()/loc[1])*loc[1]
+			);
+		}
+	}
+	
     this.tokenize = function(inputStr, prefix, suffix) {
         if (typeof prefix !== 'string') { prefix = '<>+-&'; }
         if (typeof suffix !== 'string') { suffix = '=>&:';  }
@@ -737,7 +756,10 @@ JXG.TracenpocheReader = new function() {
         board.options.point.strokeColor = '#0000ff';
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;
-        
+		
+		// Aimantage for pints
+		board.addHook(this.aimantage,'mouseup');
+
 //console.log(s);        
         var fun = new Function("that", "tep", s);
         //console.log(fun.toString());
@@ -752,6 +774,10 @@ JXG.TracenpocheReader = new function() {
     this.prepareString = function(fileStr) {
         //fileStr = JXG.Util.utf8Decode(fileStr);
         //fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+		//replace options car-4, car-3 ... car+3, car+4 par jsxtepcarm4, jsxtepcarm3, ... jsxtepcarp3 , jsxtepcarp4
+		fileStr = fileStr.replace('car-','jsxtepcarm');
+		fileStr = fileStr.replace('car+','jsxtepcarp');
+		//
         return fileStr;
     };
     
@@ -775,13 +801,27 @@ JXG.TracenpocheReader = new function() {
         }
 
 		//console.log("atts:",attsArr);
-		// q0, q1,q2,q3,q4 to show right angle (quadrant 1,2,3,4) q1 par defautl, q0 for none -> cf perpendiculaire
+		// q0, q1,q2,q3,q4 to show right angle -> see perpendiculaire
 		// /, //, ///, \, \\, \\\, x, o : to code length or middle -> cf segment
 		//                                problem with string // /// \ \\ \\\
-
-        obj["withLabel"] = true;
+		//gras, italique  for bold, italic set to text not to each named object ! use html capabilities : <b>...</b> <i>...</i>
+		//aimantage, 5, 10 : see point 
+		//r for angle : see angle
+		
+        //default values
+		obj["withLabel"] = true;
+		obj["strokeColor"] = 'blue';
+		//
         for (i=0; i<le; i++) {
 			switch (attsArr[i]) {
+				case 'jsxtepcarm4' : obj["fontSize"] = 8; break;
+				case 'jsxtepcarm3' : obj["fontSize"] = 9; break;
+				case 'jsxtepcarm2' : obj["fontSize"] = 10; break;
+				case 'jsxtepcarm1' : obj["fontSize"] = 11; break;
+				case 'jsxtepcarp1' : obj["fontSize"] = 13; break;
+				case 'jsxtepcarp2' : obj["fontSize"] = 14; break;
+				case 'jsxtepcarp3' : obj["fontSize"] = 15; break;
+				case 'jsxtepcarp4' : obj["fontSize"] = 16; break;
                 case 'sansnom' : obj["withLabel"] = false; break;
 				case 'blinde' : obj["fixed"] = true; break;
 				case 'fixe' : obj["fixed"] = true; break;
@@ -860,22 +900,17 @@ JXG.TracenpocheReader = new function() {
 				
 /*
 not supported (as I know : Keops) -> warning message ? : 
-car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
-gras, italique  for bold / italic
 dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
 blinde to avoid deletion with mouse -> set to fixe here 
 stop  to see construction step by step from stop tag to stop tag
 static to avoid locus calculus when useless
 
 to be implementedd / found for JSXGraph:
+car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
-aimantage aimante le point sur la grille du repère (même invisible)
-aimantage5 aimante le point sur les coordonnées multiples de 0.2 (1/5)
-aimantage10 aimante le point sur les coordonnées multiples de 0.1 (1/10)
 p1 to show dash to localizepour coordinates of a point in the frame
 coord, coordx, coordy to show coordinates values near axis
 animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
-r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct or not.
 */
 			}
         }
@@ -895,7 +930,7 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
             "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
             // lines
             "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
-            "vecteur",
+            "demidroite", "vecteur",
             // circles
             "cercle", "cerclerayon","arc","angle",
             // polygons
@@ -912,11 +947,19 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
     this.point = function(parents, attributes) {
 		//console.log('point :',parents," @ ",attributes);
         if (parents.length==0) {
-            return this.board.create('point', [Math.random(),Math.random()], this.handleAtts(attributes));
+            var p=this.board.create('point', [Math.random(),Math.random()], this.handleAtts(attributes));
         } else {
-            return this.board.create('point', parents, this.handleAtts(attributes));
+            var p=this.board.create('point', parents, this.handleAtts(attributes));
         }
-    };
+		if(attributes.indexOf("aimantage")>=0) {
+			aimantageList.push([p,1]);	 
+		} else if(attributes.indexOf("aimantage5")>=0) {
+			aimantageList.push([p,5]);	 
+		} else if(attributes.indexOf("aimantage10")>=0) {
+			aimantageList.push([p,10]);	 
+		}
+		return p;
+	};
 
     this.pointsur = function(parents, attributes) {
         var p1, p2, c, lambda, par3;
@@ -1181,6 +1224,12 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
         }
     };
 
+    this.demidroite = function(parents, attributes) {				
+        var dd = this.board.create('line', parents, {straightFirst:false});
+		dd.setAttribute(this.handleAtts(attributes));
+		return dd;
+    };
+
     this.vecteur = function(parents, attributes) {
         return this.board.create('arrow', parents, this.handleAtts(attributes));
     };
@@ -1258,7 +1307,13 @@ r to draw direct angle (0° à 360°) and not only moduls angle to 0° à 180° direct
      * Other
      */
     this.texte = function(parents, attributes) {
-        return this.board.create('text', parents, this.handleAtts(attributes));
+		if(attributes.indexOf("gras")>=0) {
+			parents[2]="<b>"+parents[2]+"</b>";
+		}
+		if(attributes.indexOf("italique")>=0) {
+			parents[2]="<i>"+parents[2]+"</i>";
+		}
+		return this.board.create('text', parents, this.handleAtts(attributes));
     };
 
     this.reel = function(parents, attributes) {
