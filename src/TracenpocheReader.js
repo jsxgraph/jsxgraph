@@ -1174,11 +1174,13 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
         var m, li, el; 
         if (parents.length==1) {
             m = this.board.create('midpoint', [parents[0]], {visible:false, withLabel:false});
-            el = this.board.create('perpendicular', [parents[0], m], this.handleAtts(attributes));
+            //el = this.board.create('perpendicular', [parents[0], m], this.handleAtts(attributes));
+			el = this.perpendiculaire([m,parents[0]], attributes);			
         } else {
             li = this.board.create('line', parents, {visible:false, withLabel:false});
             m = this.board.create('midpoint', parents, {visible:false, withLabel:false});
-            el = this.board.create('perpendicular', [li, m], this.handleAtts(attributes));
+            //el = this.board.create('perpendicular', [li, m], this.handleAtts(attributes));
+			el = this.perpendiculaire([m,li], attributes);			
         }
         return el;
     };
