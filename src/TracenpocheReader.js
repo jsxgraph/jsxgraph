@@ -760,7 +760,7 @@ JXG.TracenpocheReader = new function() {
         var tep = {};
 		//to store last render position of "reel"/"entier" tep object
 		//initial position to get from board BoundingBox ...
-        this.reelPosition = {x:12,y:-9};
+        this.reelPosition = {x:13,y:-9};
         
         // Set the default options
         board.options.point.face = 'x';
@@ -1202,6 +1202,7 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 
     this.perpendiculaire = function(parents, attributes) {
 		
+		var h = this.handleAtts(attributes);
 		var isRightAngleToShow=true;
 		//q0 : c=-1 : no right angle shown
 		//q1 ! c=0  : quadrant I (default)
@@ -1218,7 +1219,7 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 			function correction() { return 4.71;};
 		} else function correction() { return 0;};
 		if(isRightAngleToShow) {
-			var p = this.board.create('perpendicularpoint',[parents[1],parents[0]], {visible:false, withLabel:false});
+			var p = this.board.create('orthogonalprojection',[parents[1],parents[0]], {visible:false, withLabel:false});
 			var sq = [];
 			sq[0] = this.board.create('point',[0,0], {fixed:true, visible:false, withLabel:false});
 			sq[1] = this.board.create('point',[0.3,0], {fixed:true, visible:false, withLabel:false});
@@ -1229,10 +1230,10 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 			tt.bindTo(sq);
 			tr.bindTo(sq);			
 			var pol = this.board.create('polygon',sq,
-				{color:"green",strokeColor:"green",fillOpacity:0,highlightFillOpacity:0}
+				{lines:{strokeColor:h["color"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0}
 				);        
 		}
-        return this.board.create('perpendicular', [parents[1], parents[0]], this.handleAtts(attributes));
+        return this.board.create('perpendicular', [parents[1], parents[0]], h);
     };
 
     this.bissectrice = function(parents, attributes) {
@@ -1369,9 +1370,9 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
         } else {
             // Handle global counter
             this.reelPosition.x-=5;
-            if(this.reelPosition.x<=-10) {
-                this.reelPosition.x=10;
-                this.reelPosition.y-=3;
+            if(this.reelPosition.x<=-8) {
+                this.reelPosition.x=8;
+                this.reelPosition.y+=1;
             }
             x = this.reelPosition.x;
             y = this.reelPosition.y;
