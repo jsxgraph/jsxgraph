@@ -20,8 +20,9 @@
 */
 
 /* E.Ostenne notes :
+- options with pb (with operator) : replacement in prepareString() !
 - demidroite & intersection : intersection point out of [AB) should not exist
-- aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override
+- aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
 */
 
 JXG.TracenpocheReader = new function() {
@@ -774,9 +775,16 @@ JXG.TracenpocheReader = new function() {
     this.prepareString = function(fileStr) {
         //fileStr = JXG.Util.utf8Decode(fileStr);
         //fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+		//
 		//replace options car-4, car-3 ... car+3, car+4 par jsxtepcarm4, jsxtepcarm3, ... jsxtepcarp3 , jsxtepcarp4
 		fileStr = fileStr.replace('car-','jsxtepcarm');
 		fileStr = fileStr.replace('car+','jsxtepcarp');
+		//segment length encoding
+		fileStr = fileStr.replace("\\\\\\",'jsxtepanti3');
+		fileStr = fileStr.replace("\\\\",'jsxtepanti2');
+		fileStr = fileStr.replace("\\",'jsxtepanti1');
+		fileStr = fileStr.replace("///",'jsxtepsur3');
+		fileStr = fileStr.replace("//",'jsxtepsur2');
 		//
         return fileStr;
     };
@@ -890,7 +898,15 @@ JXG.TracenpocheReader = new function() {
 				case 'grisclair' : obj['color'] ='darkgray'; break;
 				case 'vertpale' : obj['color'] ='palegreen'; break;
 				case 'noir' : obj['color'] ='black'; break;
-				case '//' :  obj['tepLengthCode'] ='//'; break;
+				case '/' :  obj['tepLengthCode'] =1; break;
+				case 'jsxtepsur1' :  obj['tepLengthCode'] =1; break;
+				case 'jsxtepsur2' :  obj['tepLengthCode'] =2; break;
+				case 'jsxtepsur3' :  obj['tepLengthCode'] =3; break;
+				case 'jsxtepanti1' :  obj['tepLengthCode'] =-1; break;
+				case 'jsxtepanti2' :  obj['tepLengthCode'] =-2; break;
+				case 'jsxtepanti3' :  obj['tepLengthCode'] =-3; break;
+				case 'x' :  obj['tepLengthCode'] =10; break;
+				case 'o' :  obj['tepLengthCode'] =11; break;
 				default : {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
@@ -1061,36 +1077,42 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
     this.segment = function(parents, attributes) {
 		var handleAtts = this.handleAtts(attributes);
 		var s = this.board.create('segment', parents, handleAtts);
-		//enconding
-		// /, //, ///, \, \\, \\\, x, o : to code length or middle
-		// pb with // /// \ \\ \\\
-			var p = this.board.create('midpoint',[s.point1,s.point2], {visible:false, withLabel:false});
-			var sq = [];
-			if(attributes.indexOf("/")>=0) {
+		//encoding : pb with /
+		var p = this.board.create('midpoint',[s.point1,s.point2], {visible:false, withLabel:false});
+		var sq = [];
+		var v = handleAtts['tepLengthCode'];
+		switch (v) {
+			case -1 :
+			case 1 :
+				// /
 				sq[0] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[1] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.79;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
 				var c = this.board.create('segment',sq, handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
-			}
-			if(attributes.indexOf("//")>=0) {
+				break;
+			case -2 :
+			case 2 :
+				// //
 				sq[0] = this.board.create('point',[-0.1,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[1] = this.board.create('point',[-0.1,0.2], {fixed:true, visible:false, withLabel:false});
 				sq[2] = this.board.create('point',[0.1,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[3] = this.board.create('point',[0.1,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.39;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
 				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(2), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
-			}
-			if(attributes.indexOf("///")>=0) {
+				break;
+			case -3 :
+			case 3 : 
+				//  ///
 				sq[0] = this.board.create('point',[-0.15,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[1] = this.board.create('point',[-0.15,0.2], {fixed:true, visible:false, withLabel:false});
 				sq[2] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
@@ -1098,7 +1120,7 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 				sq[4] = this.board.create('point',[0.15,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[5] = this.board.create('point',[0.15,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.26;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
 				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
@@ -1107,8 +1129,9 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(4), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
-			}
-			if(attributes.indexOf("x")>=0) {
+				break;
+			case 10 :
+				// x
 				sq[0] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[1] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
 				sq[2] = this.board.create('point',[-0.2,0], {fixed:true, visible:false, withLabel:false});
@@ -1121,12 +1144,13 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(2), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
-			}
-			if(attributes.indexOf("o")>=0) {
+			break;
+			case 11 :
+				// o
 				var c = this.board.create('circle',[p,0.15], handleAtts);
 				c.setAttribute({fillOpacity:0,strokeWidth:1,withLabel:false});
-			}
-		//
+				break;
+		}
         return s;
     };
 
