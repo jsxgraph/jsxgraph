@@ -654,26 +654,31 @@ JXG.TracenpocheReader = new function() {
 
         // Attributes
         prefix("{", function () {
-            var a = [], n, v, crd = '';
+            var a = [], n, v, crds = [];
             if (token.id !== "}") {
                 while (true) {
                     // Ignore
                     n = token;
                     if (n.value == '(') {
                         advance();
-                        crd += '(' + token.value + ',';
-                        advance();  // ','
-                        advance(); 
-                        crd += token.value + ')';
-                        advance();  // ')'
-                        a.push( "'" +  crd + "'");
+                        if (token.id !== ")") {
+                            while (true) {
+                                crds.push(expression(0));
+                                if (token.id !== ",") {
+                                    break;
+                                }
+                                advance(",");
+                            }
+                        }
+                        advance(")"); 
+                        a.push( "'(" + crds.join(",") + ")'" );                       
                     } else {
                     //if (n.arity !== "name"/* && n.arity !== "literal"*/) {
                     //    error(token, "Bad property name.");
                     //}
                         a.push( "'" + n.value + "'");
+                        advance();
                     }
-                    advance();
                     if (token.id !== ",") {
                         break;
                     }
@@ -930,6 +935,8 @@ JXG.TracenpocheReader = new function() {
 				}
 				
 /*
+Open:
+-----
 not supported (as I know : Keops) -> warning message ? : 
 dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
 blinde to avoid deletion with mouse -> set to fixe here 
@@ -938,10 +945,13 @@ static to avoid locus calculus when useless
 
 to be implementedd / found for JSXGraph:
 car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
-(x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)
 p1 to show dash to localizepour coordinates of a point in the frame
 coord, coordx, coordy to show coordinates values near axis
 animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
+
+Fixed:
+-----
+(x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)  # fixed for reel and entier AW; 
 */
 			}
         }
