@@ -394,6 +394,7 @@ JXG.TracenpocheReader = new function() {
             }
             v = expression(0);
             if (v.assignment) {
+                 // find the name of the variable which will be assigned.
                  str = v.value + ';';
                  na =  v.name.replace(/^tep\[/,"").replace(/\]$/,"");
                  if (str.match(/\[\]\)/)) {
@@ -653,17 +654,26 @@ JXG.TracenpocheReader = new function() {
 
         // Attributes
         prefix("{", function () {
-            var a = [], n, v;
+            var a = [], n, v, crd = '';
             if (token.id !== "}") {
                 while (true) {
                     // Ignore
                     n = token;
-                    
+                    if (n.value == '(') {
+                        advance();
+                        crd += '(' + token.value + ',';
+                        advance();  // ','
+                        advance(); 
+                        crd += token.value + ')';
+                        advance();  // ')'
+                        a.push( "'" +  crd + "'");
+                    } else {
                     //if (n.arity !== "name"/* && n.arity !== "literal"*/) {
                     //    error(token, "Bad property name.");
                     //}
+                        a.push( "'" + n.value + "'");
+                    }
                     advance();
-                    a.push( "'" + n.value + "'");
                     if (token.id !== ",") {
                         break;
                     }
@@ -801,7 +811,7 @@ JXG.TracenpocheReader = new function() {
     //--------------------------------------------------------------------- 
     //
     this.handleAtts = function(attsArr) {
-        var obj = {}, i, le = attsArr.length;
+        var obj = {}, i, le = attsArr.length, arr;
         
         // The last entry is the name of the element.
         if (le>0) {
@@ -911,7 +921,12 @@ JXG.TracenpocheReader = new function() {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
 						obj['color'] = attsArr[i].substr(1);
-					} 
+					} else if (attsArr[i].charAt(0)=='(' ) {
+                        arr = attsArr[i].substring(1, attsArr[i].length-1).split(',');
+                        arr[0] = parseFloat(arr[0]);
+                        arr[1] = parseFloat(arr[1]);
+                        obj['coords'] = arr;
+                    }
 				}
 				
 /*
@@ -1343,16 +1358,27 @@ animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive 
     };
 
     this.reel = function(parents, attributes) {
-        var atts = this.handleAtts(attributes);
+        var atts = this.handleAtts(attributes),
+            x, y;
         atts["snapWidth"] = parents[3];
-		this.reelPosition.x-=5;
-		if(this.reelPosition.x<=-10) {
-			this.reelPosition.x=10;
-			this.reelPosition.y-=3;
-		}
+        
+        if (JXG.exists(atts['coords'])) {
+            // Position given in attributes
+			x=atts['coords'][0];
+			y=atts['coords'][1];
+        } else {
+            // Handle global counter
+            this.reelPosition.x-=5;
+            if(this.reelPosition.x<=-10) {
+                this.reelPosition.x=10;
+                this.reelPosition.y-=3;
+            }
+            x = this.reelPosition.x;
+            y = this.reelPosition.y;
+        }
         return this.board.create('slider', [
-		    [this.reelPosition.x,this.reelPosition.y],
-			[this.reelPosition.x+3,this.reelPosition.y], 
+		    [x, y],
+			[x+3, y], 
 			[parents[1], parents[0], parents[2]]
 			], atts);
     };
