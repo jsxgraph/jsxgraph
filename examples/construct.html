@@ -60,8 +60,18 @@ pX3.type = JXG.OBJECT_TYPE_CAS;
 var li1 = brd.create('circle',[[1,2],3]);
 var gl = brd.create('glider',[1,1,li1]);
 //var gl = brd.create('point',[1,1]);
-var p = brd.create('point',[5,2]);
+var p = brd.create('point',[5,2], {name:'F', visible:true });
 var li2 = brd.create('line',[p, gl]);
+
+setvisible = function() {
+    if (p.X()<3) {
+        p.setProperty({visible:false});
+    } else {
+        p.setProperty({visible:true});
+    }
+};
+brd.addHook(setvisible, 'mouseup');
+
 
 ///brd.update();
 //gl.setPositionDirectly(JXG.COORDS_BY_USER, -3, 2);
@@ -116,6 +126,8 @@ if (false) {
 
 brd.update();
 */
+
+   
 </script> 
 </body>
 </html>

@@ -309,12 +309,12 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
  * @class This element is used to provide a constructor for a perpendicular.
  * @pseudo
  * @description  A perpendicular is a composition of two elements: a line and a point. The line is orthogonal
- * to a given line and contains a given point and meets the given line in the perpendicular point.
+ * to a given line and contains a given point.
  * @name Perpendicular
  * @constructor
  * @type JXG.Line
  * @augments Segment
- * @return A {@link JXG.Line} object trhough the given point that is orthogonal to the given line.
+ * @return A {@link JXG.Line} object through the given point that is orthogonal to the given line.
  * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
  * will contain p. 

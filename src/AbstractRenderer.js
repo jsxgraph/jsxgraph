@@ -153,6 +153,16 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             not = not || {};
 
             if (!element.visProp.draft) {
+                /*
+                if (JXG.isFunction(element.visProp.visible)) {
+                    if (element.visProp.visible()) {
+                        this.hide(element);
+                    } else {
+                        this.show(element);
+                    }
+                } 
+                */
+                        
                 if (!not.stroke) {
                     this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);

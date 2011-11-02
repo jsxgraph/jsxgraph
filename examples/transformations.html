@@ -62,12 +62,15 @@
         sq[1] = board.createElement('point', [sq[0],right], {style:7});
         sq[2] = board.createElement('point', [sq[0],[right,up]], {style:7});
         sq[3] = board.createElement('point', [sq[0],up], {style:7});
-        var pol = board.createElement('polygon',sq);
+        var pol = board.createElement('polygon',sq, {fillColor:'blue', gradient:'radial', gradientsecondcolor:'white', gradientSecondOpacity:'0'});
+        
 
         // Rotate the square around point sq[0]
         var rot = board.createElement('transform', ["Y(off)",sq[0]], {type:'rotate'});
         //rot.bindTo(sq);
         rot.bindTo(sq.slice(1));
+        
+        board.addConditions("<data>B.x=If(X(B)>0,X(B),0)</data>");
         
         board.update();
 
