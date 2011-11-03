@@ -566,8 +566,9 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             dy = y - oldy,
             newx, newy, pc;
 
-        if (!this.point1.draggable() || !this.point2.draggable()) 
+        if (!this.point1.draggable() || !this.point2.draggable()) {
             return this;
+        }
 
         pc = this.point1.coords;
         if (method == JXG.COORDS_BY_SCREEN) {

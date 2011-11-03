@@ -57,6 +57,13 @@ var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
 
+var A = brd.create('point', [0,0]);
+var B = brd.create('point', [2,0]);
+var l = brd.create('line', [A,B]);
+var C = brd.create('point', [1,-2]);
+var par = brd.create('parallel', [l,C]);
+
+/*
 var li1 = brd.create('circle',[[1,2],3]);
 var gl = brd.create('glider',[1,1,li1]);
 //var gl = brd.create('point',[1,1]);
@@ -71,7 +78,7 @@ setvisible = function() {
     }
 };
 brd.addHook(setvisible, 'mouseup');
-
+*/
 
 ///brd.update();
 //gl.setPositionDirectly(JXG.COORDS_BY_USER, -3, 2);

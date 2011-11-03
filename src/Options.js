@@ -764,13 +764,15 @@ JXG.Options = {
     
     /* special options for parallel lines */
     parallel : {
-        strokeColor: '#000000', // Parallel line
+        strokeColor: '#000000' // Parallel line
+        /*                     // obsolete
         point : {               // Parallel point
             visible: false,
             fixed: true,
             withLabel: false,
             name: ''
         }
+        */
     },
 
     /* special perpendicular options */

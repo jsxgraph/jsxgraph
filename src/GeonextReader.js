@@ -370,7 +370,7 @@ JXG.GeonextReader = {
      */
     readGeonext: function(tree, board) {
         var xmlNode, elChildNodes,
-            s, Data, inter, boardData, el,
+            s, Data, inter, boardData, el, p,
             conditions, tmp, strTrue = 'true', gxtReader = this;
 
         // maybe this is not necessary as we already provide layer options for sectors and circles via JXG.Options but
@@ -721,7 +721,10 @@ JXG.GeonextReader = {
 
                             // PARALLEL
                             case "210140":
-                                board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                p =  board.create('parallelpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], 
+                                        {withLabel:false, visible:false, name:'', fixed:true});
+                                el = board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                el.parallelpoint = p;
                                 break;
 
                             // PARALLELOGRAM_POINT
