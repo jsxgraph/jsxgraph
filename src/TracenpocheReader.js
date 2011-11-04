@@ -1003,46 +1003,28 @@ Fixed:
 	};
 
     this.pointsur = function(parents, attributes) {
-        var p1, p2, c, lambda, par3, el;
+        var p1, p2, c, lambda, par3, el, isFree;
 
         par3 = parents[parents.length-1];
         if (JXG.isNumber(par3)) {
             lambda = function(){ return par3; };
+            isFree = true;
         } else {
             lambda = function(){ return par3.Value(); };
+            isFree = false;
         }
         
         if (parents.length==3) {        // point between two points
             p1 = parents[0];
             p2 = parents[1];
 			var slideObj = this.board.create('line', [p1,p2], {visible:false, withLabel:false});
-            /*
-			return this.board.create('glider', [
+            if (isFree) {
+                return this.board.create('glider', [
 					p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), slideObj
 					],
                     this.handleAtts(attributes) 
-			);
-            */
-            // Fake glider: it needs the properties "position" and "slideObject".
-			el = this.board.create('point', [
-                    function(){ this.position = lambda(); return p1.X()+(p2.X()-p1.X())*lambda();},
-                    function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda();}
-					],
-                    this.handleAtts(attributes) 
-			);
-            el.slideObject = slideObj;
-            
-        } else if (parents.length==2) {   // point on segment
-            if (parents[0].elementClass==JXG.OBJECT_CLASS_LINE) {
-                p1 = parents[0].point1;
-                p2 = parents[0].point2;
-                /*
-                return this.board.create('glider', [
-                    p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), parents[0]
-                    ],
-                    this.handleAtts(attributes)
                 );
-                */
+            } else {
                 // Fake glider: it needs the properties "position" and "slideObject".
                 el = this.board.create('point', [
                     function(){ this.position = lambda(); return p1.X()+(p2.X()-p1.X())*lambda();},
@@ -1050,26 +1032,47 @@ Fixed:
 					],
                     this.handleAtts(attributes) 
                 );
-                el.slideObject = parents[0];
+                el.slideObject = slideObj;
+            }
+        } else if (parents.length==2) {   // point on segment
+            if (parents[0].elementClass==JXG.OBJECT_CLASS_LINE) {
+                p1 = parents[0].point1;
+                p2 = parents[0].point2;
+                if (isFree) {
+                    return this.board.create('glider', [
+                        p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), parents[0]
+                        ],
+                        this.handleAtts(attributes)
+                    );
+                } else {
+                    // Fake glider: it needs the properties "position" and "slideObject".
+                    el = this.board.create('point', [
+                        function(){ this.position = lambda(); return p1.X()+(p2.X()-p1.X())*lambda();},
+                        function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda();}
+                        ],
+                        this.handleAtts(attributes) 
+                    );
+                    el.slideObject = parents[0];
+                }
             } else {                      // point on circle
                 c = parents[0];
-                /*
-                return this.board.create('glider', [
-                    c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
-                    ],
-                    this.handleAtts(attributes)
-                );
-                */	
-                // Fake glider: it needs the properties "position" and "slideObject".			
-                el = this.board.create('point', [
-                    function() {return this.position = lambda(); c.midpoint.X()+c.Radius()*Math.cos(lambda());},
-                    function() {return c.midpoint.Y()+c.Radius()*Math.sin(lambda());}
-                    ],
-                    this.handleAtts(attributes)
-                );	
-                el.slideObject = c;			
+                if (isFree) {
+                    return this.board.create('glider', [
+                        c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
+                        ],
+                        this.handleAtts(attributes)
+                    );
+                } else {	
+                    // Fake glider: it needs the properties "position" and "slideObject".			
+                    el = this.board.create('point', [
+                        function() {return this.position = lambda(); c.midpoint.X()+c.Radius()*Math.cos(lambda());},
+                        function() {return c.midpoint.Y()+c.Radius()*Math.sin(lambda());}
+                        ],
+                        this.handleAtts(attributes)
+                    );	
+                    el.slideObject = c;			
+                }
             }
-            
         }
         return el;
     };
