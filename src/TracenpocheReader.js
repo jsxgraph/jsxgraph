@@ -91,7 +91,7 @@ JXG.TracenpocheReader = new function() {
                     c = inputStr.charAt(i);
                     if (isSmallName) {
                         if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-                            (c >= '0' && c <= '9') || (c === "'") /*|| c === '_' */) {
+                            (c >= '0' && c <= '9') || (c === "'") || c === '_') {
                             str += c;
                             i++;
                         } else {
@@ -979,7 +979,7 @@ Fixed:
             // other
             "texte", "reel", "entier", "fonction",
             // transformations
-            "homothetie", "reflexion", "rotation", "symetrie", "translation"
+            "homothetie", "reflexion", "rotation", "similitude", "symetrie", "translation"
             ];
             
     /*
@@ -1467,6 +1467,25 @@ Fixed:
                  function(){ return (-a.Value()+1)*c.X(); }, function(){ return a.Value();}, 0,
                  function(){ return (-a.Value()+1)*c.Y(); }, 0, function(){ return a.Value();}], 
                  {type:'generic'});
+        }
+    };
+
+    this.similitude = function(parents, attributes) {
+        var p0, a, co, si;
+        if (parents.length==3 && JXG.isPoint(parents[0])) {
+            p0 = parents[0];
+            a = parents[2]*Math.PI/180.0;
+            co = Math.cos(a)*parents[1];
+            si = Math.sin(a)*parents[1];
+            // Move rotation center to origin,
+            // scale and rotate,
+            // Move rotation center back
+            return this.board.create('transform', 
+                [1, 0, 0,
+                 function(){ return -co*p0.X()-(-si)*p0.Y()+p0.X();}, co, -si,
+                 function(){ return -si*p0.X()- (co)*p0.Y()+p0.Y();}, si, co
+                ],
+                {type:'generic'});
         }
     };
 
