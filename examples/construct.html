@@ -61,7 +61,7 @@ var A = brd.create('point', [0,0]);
 var B = brd.create('point', [2,0]);
 var l = brd.create('line', [A,B]);
 var C = brd.create('point', [1,-2]);
-var par = brd.create('parallel', [l,C]);
+var par = brd.create('parallel', [l,C], {point1:{id:'xxx'}, point2:{id:'yyy'}});
 
 /*
 var li1 = brd.create('circle',[[1,2],3]);
