@@ -780,6 +780,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @see #addLabelToElement
      */
     createLabel: function (coords) {
+        var attr = this.visProp.label || {};
+        attr.id = this.id + 'Label';
+        attr.isLabel = true;
+        attr.visible = this.visProp.visible;
+        attr.anchor = this;
+        
         if (!JXG.exists(coords)) {
             coords = [10, 10];
         }
@@ -790,14 +796,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         if (this.visProp.withlabel) {
             this.label.relativeCoords = coords;
 
-            this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], {
-                anchor: this,
-                id: this.id + 'Label',
-                isLabel: true,
-                visible: this.visProp.visible,
-                strokeColor: this.visProp.labelcolor || this.board.options.text.strokeColor
-            });
-
+            this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
             this.label.color = this.label.content.visProp.strokecolor;
 
             if (!this.visProp.visible) {
