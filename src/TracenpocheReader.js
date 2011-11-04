@@ -1130,13 +1130,16 @@ Fixed:
     /*
      * Lines
      */
-    this.segment = function(parents, attributes) {
+	 
+	 
+	this.segmentCode = function(parents, attributes) {
+		//encoding code length with / or // ...
 		var handleAtts = this.handleAtts(attributes);
-		var s = this.board.create('segment', parents, handleAtts);
-		//encoding : pb with /
-		var p = this.board.create('midpoint',[s.point1,s.point2], {visible:false, withLabel:false});
+		var v = handleAtts['tepLengthCode']
+		if(v==undefined) { return;}
 		var sq = [];
-		var v = handleAtts['tepLengthCode'];
+		var p = this.board.create('midpoint', parents, {visible:false, withLabel:false});
+		var tt,tr,c;
 		switch (v) {
 			case -1 :
 			case 1 :
@@ -1144,10 +1147,10 @@ Fixed:
 				sq[0] = this.board.create('point',[0,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[1] = this.board.create('point',[0,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.79;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return JXG.Math.Geometry.angle([parents[0].X()+10,0],parents[0],parents[1])-v*0.79;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
-				var c = this.board.create('segment',sq, handleAtts); 
+				c = this.board.create('segment',sq, handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
 				break;
 			case -2 :
@@ -1158,10 +1161,10 @@ Fixed:
 				sq[2] = this.board.create('point',[0.1,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[3] = this.board.create('point',[0.1,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.39;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return JXG.Math.Geometry.angle([parents[0].X()+10,0],parents[0],parents[1])-v*0.39;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
-				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(2), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
@@ -1176,10 +1179,10 @@ Fixed:
 				sq[4] = this.board.create('point',[0.15,-0.2], {fixed:true, visible:false, withLabel:false});
 				sq[5] = this.board.create('point',[0.15,0.2], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()-v*0.26;},p],{type:'rotate'});
+				tr = this.board.create('transform',[function() { return JXG.Math.Geometry.angle([parents[0].X()+10,0],parents[0],parents[1])-v*0.79;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
-				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(2,4), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
@@ -1193,20 +1196,25 @@ Fixed:
 				sq[2] = this.board.create('point',[-0.2,0], {fixed:true, visible:false, withLabel:false});
 				sq[3] = this.board.create('point',[0.2,0], {fixed:true, visible:false, withLabel:false});
 				tt = this.board.create('transform',[function() { return p.X();}, function() { return p.Y();}], {type:"translate"});
-				tr = this.board.create('transform',[function() { return s.getAngle()+0.79;},p],{type:'rotate'});				
+				tr = this.board.create('transform',[function() { return JXG.Math.Geometry.angle([parents[0].X()+10,0],parents[0],parents[1])-v*0.79;},p],{type:'rotate'});
 				tt.bindTo(sq);
 				tr.bindTo(sq);			
-				var c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
+				c = this.board.create('segment',sq.slice(0,2),handleAtts ); 
 				c.setAttribute({withLabel:false,name:""});
 				c = this.board.create('segment',sq.slice(2), handleAtts); 
 				c.setAttribute({withLabel:false,name:""});
 			break;
 			case 11 :
 				// o
-				var c = this.board.create('circle',[p,0.15], handleAtts);
+				c = this.board.create('circle',[p,0.15], handleAtts);
 				c.setAttribute({fillOpacity:0,strokeWidth:1,withLabel:false});
 				break;
 		}
+	}
+	
+    this.segment = function(parents, attributes) {		
+		var s = this.board.create('segment', parents, this.handleAtts(attributes));
+		this.segmentCode([s.point1,s.point2],attributes);
         return s;
     };
 
@@ -1227,15 +1235,17 @@ Fixed:
     };
 
     this.mediatrice = function(parents, attributes) {
-        var m, li, el; 
+        var m, li, el, code; 
         if (parents.length==1) {
             m = this.board.create('midpoint', [parents[0]], {visible:false, withLabel:false});
-            //el = this.board.create('perpendicular', [parents[0], m], this.handleAtts(attributes));
+			code = this.segmentCode([parents[0].point1, m], attributes);
+			code = this.segmentCode([m, parents[0].point2], attributes);
 			el = this.perpendiculaire([m,parents[0]], attributes);			
         } else {
             li = this.board.create('line', parents, {visible:false, withLabel:false});
             m = this.board.create('midpoint', parents, {visible:false, withLabel:false});
-            //el = this.board.create('perpendicular', [li, m], this.handleAtts(attributes));
+			code = this.segmentCode([parents[0],m], attributes);
+			code = this.segmentCode([m, parents[1]], attributes);
 			el = this.perpendiculaire([m,li], attributes);			
         }
         return el;
@@ -1270,9 +1280,12 @@ Fixed:
 			tr = this.board.create('transform',[function() { return parents[1].getAngle()+correction();},p],{type:'rotate'});
 			tt.bindTo(sq);
 			tr.bindTo(sq);			
-			var pol = this.board.create('polygon',sq,
+			var pol = this.board.create('polygon',sq,{lines:{strokeColor:h["color"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0});
+			
+			/* var pol = this.board.create('polygon',sq,
 				{lines:{strokeColor:h["color"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0}
 				);        
+			*/
 		}
         return this.board.create('perpendicular', [parents[1], parents[0]], h);
     };
