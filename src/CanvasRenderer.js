@@ -427,7 +427,11 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
     // documented in AbstractRenderer
     drawCurve: function (el) {
-        this.updatePathStringPrim(el);
+        if (el.visProp.handdrawing) {
+            this.updatePathStringBezierPrim(el);
+        } else {
+            this.updatePathStringPrim(el);
+        }
     },
 
     // documented in AbstractRenderer
@@ -739,7 +743,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
                     scr[2] = -maxSize;
                 }
 
-                if (nextSymb === 'M') {
+                if (nextSymb === symbm) {
                     context.moveTo(scr[1], scr[2]);
                 } else {
                     context.lineTo(scr[1], scr[2]);
@@ -751,6 +755,70 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         this._stroke(el);
     },
 
+    // already documented in JXG.AbstractRenderer
+    updatePathStringBezierPrim: function (el) {
+        var symbm = 'M',
+            symbl = 'C',
+            nextSymb = symbm,
+            maxSize = 5000.0,
+            i, j, scr,
+            lx, ly, f = el.visProp.strokewidth, 
+            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            len,
+            context = this.context;
+
+        if (el.numberPoints <= 0) {
+            return;
+        }
+
+        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+        }
+        len = Math.min(el.points.length, el.numberPoints);
+
+        context.beginPath();
+        for (j=1; j<3; j++) {
+            nextSymb = symbm;
+            for (i = 0; i < len; i++) {
+                scr = el.points[i].scrCoords;
+
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    // Chrome has problems with values  being too far away.
+                    if (scr[1] > maxSize) {
+                        scr[1] = maxSize;
+                    } else if (scr[1] < -maxSize) {
+                        scr[1] = -maxSize;
+                    }
+
+                    if (scr[2] > maxSize) {
+                        scr[2] = maxSize;
+                    } else if (scr[2] < -maxSize) {
+                        scr[2] = -maxSize;
+                    }
+
+                    if (nextSymb == symbm) {
+                        context.moveTo(scr[1]+0*f*(2*j*Math.random()-j), 
+                                       scr[2]+0*f*(2*j*Math.random()-j));
+                    } else {
+                        context.bezierCurveTo(
+                            (lx + (scr[1]-lx)*0.333 + f*(2*j*Math.random()-j)),
+                            (ly + (scr[2]-ly)*0.333 + f*(2*j*Math.random()-j)),
+                            (lx + 2*(scr[1]-lx)*0.333 + f*(2*j*Math.random()-j)),
+                            (ly + 2*(scr[2]-ly)*0.333 + f*(2*j*Math.random()-j)),
+                            scr[1], scr[2]);
+                    }
+                    nextSymb = symbl;
+                    lx = scr[1];
+                    ly = scr[2];
+                }
+            }
+        }
+        this._fill(el);
+        this._stroke(el);
+    },
+    
     // documented in AbstractRenderer
     updatePolygonPrim: function (node, el) {
         var scrCoords, i,

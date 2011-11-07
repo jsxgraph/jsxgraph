@@ -63,6 +63,7 @@ var l = brd.create('line', [A,B]);
 var C = brd.create('point', [1,-2]);
 var par = brd.create('parallel', [l,C], {point1:{id:'xxx'}, point2:{id:'yyy'}});
 
+brd.create('curve', [[0,1,2,1,0],[0,2,2,3,3]], {strokeWidth:3, strokeColor:'black'});
 /*
 var li1 = brd.create('circle',[[1,2],3]);
 var gl = brd.create('glider',[1,1,li1]);

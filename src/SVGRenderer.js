@@ -528,6 +528,70 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     },
 
     // already documented in JXG.AbstractRenderer
+    updatePathStringBezierPrim: function (el) {
+        var symbm = ' M ',
+            symbl = ' C ',
+            nextSymb = symbm,
+            maxSize = 5000.0,
+            pStr = '',
+            i, j, scr,
+            lx, ly, f = el.visProp.strokewidth, 
+            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            len;
+
+        if (el.numberPoints <= 0) {
+            return '';
+        }
+
+        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+        }
+
+        len = Math.min(el.points.length, el.numberPoints);
+        for (j=1; j<3; j++) {
+            nextSymb = symbm;
+            for (i = 0; i < len; i++) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    // Chrome has problems with values being too far away.
+                    if (scr[1] > maxSize) {
+                        scr[1] = maxSize;
+                    } else if (scr[1] < -maxSize) {
+                        scr[1] = -maxSize;
+                    }
+
+                    if (scr[2] > maxSize) {
+                        scr[2] = maxSize;
+                    } else if (scr[2] < -maxSize) {
+                        scr[2] = -maxSize;
+                    }
+                
+                    // Attention: first coordinate may be inaccurate if far way
+                    if (nextSymb == symbm) {
+                        pStr += [nextSymb, 
+                            scr[1]+0*f*(2*j*Math.random()-j), ' ', 
+                            scr[2]+0*f*(2*j*Math.random()-j)].join('');
+                    } else {
+                        pStr += [nextSymb, 
+                            (lx + (scr[1]-lx)*0.333 + f*(2*j*Math.random()-j)), ' ',
+                            (ly + (scr[2]-ly)*0.333 + f*(2*j*Math.random()-j)), ' ',
+                            (lx + 2*(scr[1]-lx)*0.333 + f*(2*j*Math.random()-j)), ' ',
+                            (ly + 2*(scr[2]-ly)*0.333 + f*(2*j*Math.random()-j)), ' ',
+                            scr[1], ' ', scr[2]
+                            ].join('');
+                    }
+                    nextSymb = symbl;
+                    lx = scr[1];
+                    ly = scr[2];
+                }
+            }
+        }
+        return pStr;
+    },
+        
+    // already documented in JXG.AbstractRenderer
     updatePolygonPrim: function (node, el) {
         var pStr = '',
             scrCoords, i,
