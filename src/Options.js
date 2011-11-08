@@ -593,7 +593,7 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
-        handDrawing: true,
+        handDrawing: false,
 
         /**#@+
          * @visprop
