@@ -863,7 +863,24 @@ JXG.Options = {
 
         draft: false,
         
+        /**
+         * List of attractor elements. If the distance of the point is less than
+         * attractorDistance the point is made to glider of this element.
+         * @type array
+         * @name JXG.Options.point#attractors
+         * @default empty
+         **/
         attractors: [],
+        
+        /**
+         * If the distance of the point to one of its attractors is less 
+         * than this number the point will be a glider on this 
+         * attracting element. 
+         * If set to zero nothing happens.
+         * @type number
+         * @name JXG.Options.point#attractorDistance
+         * @default 0
+         **/
         attractorDistance: 0.0
 
         /**#@-*/

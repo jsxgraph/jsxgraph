@@ -415,22 +415,21 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Sets x and y coordinate and calls the point's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
-     */
-    setPositionDirectly: function (method, x, y) {
-        var i, dx, dy, el, p,
-            oldCoords = this.coords,
-            newCoords, 
-            len, projCoords, d, found;
-
-        this.coords = new JXG.Coords(method, [x, y], this.board);
-        
-        len = this.visProp.attractors.length;
+     * A point can change its type from free point to glider
+     * and vice versa. If it is given an array of attractor elements 
+     * (attribute attractors) and the attribute attractorDistance
+     * then the pint will be made a glider if it less than attractorDistance
+     * apart from one of its attractor elements.
+     * If attractorDistance is equal to zero, the point stays in its
+     * current form.
+     **/
+    handleAttractors: function() {
+        var len = this.visProp.attractors.length,
+            found, i, el, projCoords, d;
+            
+        if (this.visProp.attractordistance==0.0) {
+            return;
+        }
         found = false;
         for (i=0; i<len; i++) {
             el = JXG.getRef(this.board, this.visProp.attractors[i]);
@@ -442,6 +441,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 projCoords = JXG.Math.Geometry.projectPointToCircle(this, el, this.board);
             } else if (el.elementClass==JXG.OBJECT_CLASS_CURVE) {
                 projCoords = JXG.Math.Geometry.projectPointToCurve(this, el, this.board);
+            } else if (el.type == JXG.OBJECT_TYPE_TURTLE) {
+                projCoords = JXG.Math.Geometry.projectPointToTurtle(this, el, this.board);
             }
             d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
             if (d<this.visProp.attractordistance) {
@@ -457,7 +458,24 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if (found==false) {
             this.type = JXG.OBJECT_TYPE_POINT;
         }
+    },
+    
+    /**
+     * Sets x and y coordinate and calls the point's update() method.
+     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {number} x x coordinate in screen/user units
+     * @param {number} y y coordinate in screen/user units
+     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     */
+    setPositionDirectly: function (method, x, y) {
+        var i, dx, dy, el, p,
+            oldCoords = this.coords,
+            newCoords;
 
+        this.coords = new JXG.Coords(method, [x, y], this.board);
+        this.handleAttractors();
+        
         if(this.group.length != 0) {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.

@@ -61,12 +61,18 @@ var A = brd.create('point', [0,0], {name:'A'});
 var B = brd.create('point', [2,0]);
 var l = brd.create('line', [A,B]);
 var l2 = brd.create('line', [1,2,1]);
+var tu = brd.create('turtle', [0,0]);
+tu.fd(3).rt(90).fd(3).rt(60).fd(3).pu().fd(2).pd().fd(1);
 
 var pa = brd.create('curve', [[0,1,2,1,0],[0,2,2,3,3]], {strokeWidth:3, strokeColor:'black', handDrawing:true});
 
 var C = brd.create('point', [1,-2], {attractors:[A, l, l2, pa], attractorDistance:0.3});
 
 var par = brd.create('parallel', [l, C], {point1:{id:'xxx'}, point2:{id:'yyy'}});
+
+var circ = brd.create('circle', [A,3]);
+var D = brd.create('glider', [-1,2, circ], {name:'glider', attractors:[circ, l2, tu], attractorDistance:0.3});
+var t = brd.create('tangent', [D]);
 
 /*
 var li1 = brd.create('circle',[[1,2],3]);
