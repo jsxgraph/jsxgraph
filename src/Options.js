@@ -861,7 +861,10 @@ JXG.Options = {
          */
         showInfobox: true,
 
-        draft: false
+        draft: false,
+        
+        attractors: [],
+        attractorDistance: 0.0
 
         /**#@-*/
     },

@@ -425,9 +425,38 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
             oldCoords = this.coords,
-            newCoords;
-            
+            newCoords, 
+            len, projCoords, d, found;
+
         this.coords = new JXG.Coords(method, [x, y], this.board);
+        
+        len = this.visProp.attractors.length;
+        found = false;
+        for (i=0; i<len; i++) {
+            el = JXG.getRef(this.board, this.visProp.attractors[i]);
+            if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
+                projCoords = el.coords;
+            } else if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
+                projCoords = JXG.Math.Geometry.projectPointToLine(this, el, this.board);
+            } else if (el.elementClass==JXG.OBJECT_CLASS_CIRCLE) {
+                projCoords = JXG.Math.Geometry.projectPointToCircle(this, el, this.board);
+            } else if (el.elementClass==JXG.OBJECT_CLASS_CURVE) {
+                projCoords = JXG.Math.Geometry.projectPointToCurve(this, el, this.board);
+            }
+            d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
+            if (d<this.visProp.attractordistance) {
+                found = true;
+                if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
+                    this.coords = el.coords;
+                } else {
+                    this.makeGlider(el);
+                }
+                break;
+            }
+        }
+        if (found==false) {
+            this.type = JXG.OBJECT_TYPE_POINT;
+        }
 
         if(this.group.length != 0) {
             // Update the initial coordinates. This is needed for free points
