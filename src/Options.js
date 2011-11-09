@@ -881,7 +881,18 @@ JXG.Options = {
          * @name JXG.Options.point#attractorDistance
          * @default 0
          **/
-        attractorDistance: 0.0
+        attractorDistance: 0.0,
+        
+        /**
+         * If the distance of the point to one of its attractors is at least 
+         * this number the point will be released from being a glider on the
+         * attracting element. 
+         * If set to zero nothing happens.
+         * @type number
+         * @name JXG.Options.point#snatchDistance
+         * @default 0
+         **/
+        snatchDistance: 0.0
 
         /**#@-*/
     },

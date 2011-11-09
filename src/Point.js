@@ -425,7 +425,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      **/
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
-            found, i, el, projCoords, d;
+            found, i, el, projCoords, d = 0.0;
             
         if (this.visProp.attractordistance==0.0) {
             return;
@@ -433,6 +433,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         found = false;
         for (i=0; i<len; i++) {
             el = JXG.getRef(this.board, this.visProp.attractors[i]);
+            if (!JXG.exists(el)) {
+                continue;
+            }
             if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
                 projCoords = el.coords;
             } else if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
@@ -453,11 +456,17 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     this.makeGlider(el);
                 }
                 break;
+            } else {
+                if (el==this.slideObject && d>=this.visProp.snatchdistance) {
+                    this.type = JXG.OBJECT_TYPE_POINT;
+                }
             }
         }
+        /*
         if (found==false) {
             this.type = JXG.OBJECT_TYPE_POINT;
         }
+        */
     },
     
     /**
