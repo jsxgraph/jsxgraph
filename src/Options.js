@@ -419,6 +419,7 @@ JXG.Options = {
          * @name Angle#radius
          */
         radius : 1.0,
+        type : 'auto',  // 'square' or 'sector' or 'auto'
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
@@ -592,6 +593,7 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
+        handDrawing: false,
 
         /**#@+
          * @visprop
@@ -763,13 +765,15 @@ JXG.Options = {
     
     /* special options for parallel lines */
     parallel : {
-        strokeColor: '#000000', // Parallel line
+        strokeColor: '#000000' // Parallel line
+        /*                     // obsolete
         point : {               // Parallel point
             visible: false,
             fixed: true,
             withLabel: false,
             name: ''
         }
+        */
     },
 
     /* special perpendicular options */
@@ -857,7 +861,38 @@ JXG.Options = {
          */
         showInfobox: true,
 
-        draft: false
+        draft: false,
+        
+        /**
+         * List of attractor elements. If the distance of the point is less than
+         * attractorDistance the point is made to glider of this element.
+         * @type array
+         * @name JXG.Options.point#attractors
+         * @default empty
+         **/
+        attractors: [],
+        
+        /**
+         * If the distance of the point to one of its attractors is less 
+         * than this number the point will be a glider on this 
+         * attracting element. 
+         * If set to zero nothing happens.
+         * @type number
+         * @name JXG.Options.point#attractorDistance
+         * @default 0
+         **/
+        attractorDistance: 0.0,
+        
+        /**
+         * If the distance of the point to one of its attractors is at least 
+         * this number the point will be released from being a glider on the
+         * attracting element. 
+         * If set to zero nothing happens.
+         * @type number
+         * @name JXG.Options.point#snatchDistance
+         * @default 0
+         **/
+        snatchDistance: 0.0
 
         /**#@-*/
     },

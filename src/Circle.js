@@ -194,6 +194,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
         var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
         return (Math.abs(dist-r) < prec);
+        //return (dist <= r + prec);
     },
 
     /**

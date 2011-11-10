@@ -801,10 +801,10 @@ JXG.createParallelPoint = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createParallel = function(board, parents, attributes) {
-    var p, pp, pl, attr;
+    var p, pp, pl, li, attr;
 
     /* parallel point polynomials are done in createParallelPoint */
-
+    /*
     try {
         attr = JXG.copyAttributes(attributes, board.options, 'parallel', 'point');
         pp = JXG.createParallelPoint(board, parents, attr);     // non-visible point
@@ -813,18 +813,30 @@ JXG.createParallel = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
-
+    */
+    
     p = null;
-    if(parents.length == 3)
+    if(parents.length == 3) {
+        // Parallel to line through parents[0] and parents[1]
         p = parents[2];
-    else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT)
+        li = function() { return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords) };
+    } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
+        // Parallel to line parents[1]
         p = parents[0];
-    else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT)
+        li = function() { return parents[1].stdform; };
+    } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
+        // Parallel to line parents[0]
         p = parents[1];
+        li = function() { return parents[0].stdform; };
+    }
 
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'parallel');
-    pl = board.create('line', [p, pp], attr);
+    //pl = board.create('line', [p, pp], attr);
+    pl = board.create('line', [function() {
+            var l = li();
+            return [ -(p.X()*l[1]+p.Y()*l[2]), p.Z()*l[1], p.Z()*l[2]];
+        }], attr);
 
     /**
      * Helper point used to create the parallel line.
@@ -832,7 +844,7 @@ JXG.createParallel = function(board, parents, attributes) {
      * @name parallelpoint
      * @type Parallelpoint
      */
-    pl.parallelpoint = pp;
+    // pl.parallelpoint = pp;
 
     return pl;
 };

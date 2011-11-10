@@ -153,6 +153,16 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             not = not || {};
 
             if (!element.visProp.draft) {
+                /*
+                if (JXG.isFunction(element.visProp.visible)) {
+                    if (element.visProp.visible()) {
+                        this.hide(element);
+                    } else {
+                        this.show(element);
+                    }
+                } 
+                */
+                        
                 if (!not.stroke) {
                     this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
@@ -374,7 +384,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     updateCurve: function (element) {
         this._updateVisual(element);
-        this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
+        if (element.visProp.handdrawing) {
+            this.updatePathPrim(element.rendNode, this.updatePathStringBezierPrim(element), element.board);
+        } else {
+            this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
+        }
         this.makeArrows(element);
     },
 
@@ -760,6 +774,17 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     updatePathStringPrim: function (element) { /* stub */ },
 
+    /**
+     * Builds a path data string from a {@link JXG.Curve} element such that the curve looks like
+     * hand drawn.
+     * Since the path data strings heavily depend on the
+     * underlying rendering technique this method is just a stub. Although such a path string is of no use for the
+     * CanvasRenderer, this method is used there to draw a path directly.
+     * @param element
+     */
+    updatePathStringBezierPrim: function (element) { /* stub */ },
+
+    
     /**
      * Update a polygon primitive.
      * @param {Node} node

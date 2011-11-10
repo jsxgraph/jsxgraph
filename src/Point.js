@@ -415,6 +415,61 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
+     * A point can change its type from free point to glider
+     * and vice versa. If it is given an array of attractor elements 
+     * (attribute attractors) and the attribute attractorDistance
+     * then the pint will be made a glider if it less than attractorDistance
+     * apart from one of its attractor elements.
+     * If attractorDistance is equal to zero, the point stays in its
+     * current form.
+     **/
+    handleAttractors: function() {
+        var len = this.visProp.attractors.length,
+            found, i, el, projCoords, d = 0.0;
+            
+        if (this.visProp.attractordistance==0.0) {
+            return;
+        }
+        found = false;
+        for (i=0; i<len; i++) {
+            el = JXG.getRef(this.board, this.visProp.attractors[i]);
+            if (!JXG.exists(el)) {
+                continue;
+            }
+            if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
+                projCoords = el.coords;
+            } else if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
+                projCoords = JXG.Math.Geometry.projectPointToLine(this, el, this.board);
+            } else if (el.elementClass==JXG.OBJECT_CLASS_CIRCLE) {
+                projCoords = JXG.Math.Geometry.projectPointToCircle(this, el, this.board);
+            } else if (el.elementClass==JXG.OBJECT_CLASS_CURVE) {
+                projCoords = JXG.Math.Geometry.projectPointToCurve(this, el, this.board);
+            } else if (el.type == JXG.OBJECT_TYPE_TURTLE) {
+                projCoords = JXG.Math.Geometry.projectPointToTurtle(this, el, this.board);
+            }
+            d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
+            if (d<this.visProp.attractordistance) {
+                found = true;
+                if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
+                    this.coords = el.coords;
+                } else {
+                    this.makeGlider(el);
+                }
+                break;
+            } else {
+                if (el==this.slideObject && d>=this.visProp.snatchdistance) {
+                    this.type = JXG.OBJECT_TYPE_POINT;
+                }
+            }
+        }
+        /*
+        if (found==false) {
+            this.type = JXG.OBJECT_TYPE_POINT;
+        }
+        */
+    },
+    
+    /**
      * Sets x and y coordinate and calls the point's update() method.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {number} x x coordinate in screen/user units
@@ -426,9 +481,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         var i, dx, dy, el, p,
             oldCoords = this.coords,
             newCoords;
-            
-        this.coords = new JXG.Coords(method, [x, y], this.board);
 
+        this.coords = new JXG.Coords(method, [x, y], this.board);
+        this.handleAttractors();
+        
         if(this.group.length != 0) {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.

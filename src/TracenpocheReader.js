@@ -106,9 +106,10 @@ JXG.TracenpocheReader = new function() {
                         }
                     }
                 }
-                if (result.length>0 && result[result.length-1].type=='name' 
-                    && result[result.length-1].value!='var' 
-                    && result[result.length-1].value!='for' 
+                if (result.length>0 
+                    && result[result.length-1].type == 'name' 
+                    && result[result.length-1].value != 'var' 
+                    && result[result.length-1].value != 'for' 
                     ) {     
                                                                     // Here we have the situation AB -> A#B
                     result.push(make('operator', '#'));
@@ -173,7 +174,8 @@ JXG.TracenpocheReader = new function() {
                     	str += c;
                     	error('number', str, "Bad number");
                 	}
-                	n = +str;          // Convert the string value to a number. If it is finite, then it is a good token.
+                    // Convert the string value to a number. If it is finite, then it is a good token.
+                    n = +str;          
                 	if (isFinite(n)) {
                     	result.push(make('number', n));
                 	} else {
@@ -358,7 +360,7 @@ JXG.TracenpocheReader = new function() {
                 if (!o) {
                     error(t, "Unknown operator.");
                 }
-            } else if (a === "string" || a ===  "number") {
+            } else if (a === "string" || a === "number") {
                 o = symbol_table["(literal)"];
                 // a = "literal";
             } else {
@@ -603,7 +605,10 @@ JXG.TracenpocheReader = new function() {
         infix("-", 50);
         infix("*", 60);
         infix("/", 60);
-        infix("%", 50);
+        infix("%", 85, function (left) {  // Actually this is a postfix operator e.g. 10%
+                this.first = left;
+                return this.first + '*0.01';
+        });
 
         infixr("^", 65, function (left) {
                 this.first = left;
@@ -968,7 +973,7 @@ Fixed:
      */
     this.tepElements = [
             // points
-            "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu",
+            "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu", "pointaimante",
             // lines
             "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
             "demidroite", "vecteur",
@@ -1130,10 +1135,16 @@ Fixed:
         return this.board.create('midpoint', parents, this.handleAtts(attributes));
     }
 
+    this.pointaimante = function(parents, attributes) {
+        // CO=6_50%
+        // D appartient dAB_50%
+        // M sur A_50%
+        return this.board.create('point', parents.slice(0,2), this.handleAtts(attributes));
+    }
+
     /*
      * Lines
      */
-	 
 	 
 	this.segmentCode = function(parents, attributes) {
 		//encoding code length with / or // ...

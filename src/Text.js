@@ -221,7 +221,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 this.updateCoords();
             }
             this.updateText();
-            this.updateSize();
+            //this.updateSize();
             this.updateTransform();
         }
         return this;

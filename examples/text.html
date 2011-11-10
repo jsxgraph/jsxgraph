@@ -37,7 +37,7 @@
     // This is a rotation in screen coordinates.
     // ratio is the the ratio between the board dimensions (maxY-minY)/(maxX-minX) in user coordinates
     ratio = 5;
-    var ts1 = brd.create('transform', [function(){return ratio;}, function(){return 1;}], {type:'scale'}); 
+    var ts1 = brd.create('transform', [function(){return ratio;}, function(){return 1;}], {type:'scale'});  
     var ts2 = brd.create('transform', [function(){return 1/ratio;}, function(){return 1;}], {type:'scale'}); 
     var tRot = brd.create('transform', [function(){return Math.atan2((p1.Y()-p0.Y())/ratio, p1.X()-p0.X());}], {type:'rotate'}); 
 
