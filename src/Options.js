@@ -637,9 +637,19 @@ JXG.Options = {
         strokeWidth: 1,
         dash : 2,
         /* snap to grid options */
+        
+        /**
+         * @deprecated
+         */
         snapToGrid : false,
-        snapSizeX : 2,
-        snapSizeY : 2
+        /**
+         * @deprecated
+         */
+        snapSizeX : 10,
+        /**
+         * @deprecated
+         */
+        snapSizeY : 10
 
         /**#@-*/
     },
@@ -867,9 +877,9 @@ JXG.Options = {
          * List of attractor elements. If the distance of the point is less than
          * attractorDistance the point is made to glider of this element.
          * @type array
-         * @name JXG.Options.point#attractors
+         * @name JXG.Point#attractors
          * @default empty
-         **/
+         */
         attractors: [],
         
         /**
@@ -878,9 +888,9 @@ JXG.Options = {
          * attracting element. 
          * If set to zero nothing happens.
          * @type number
-         * @name JXG.Options.point#attractorDistance
+         * @name JXG.Point#attractorDistance
          * @default 0
-         **/
+         */
         attractorDistance: 0.0,
         
         /**
@@ -889,10 +899,43 @@ JXG.Options = {
          * attracting element. 
          * If set to zero nothing happens.
          * @type number
-         * @name JXG.Options.point#snatchDistance
+         * @name JXG.Point#snatchDistance
          * @default 0
-         **/
-        snatchDistance: 0.0
+         */
+        snatchDistance: 0.0,
+        
+        /**
+         * If set to true, the point will snap to a grid defined by
+         * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+         * @see JXG.Point@snapSizeX
+         * @see JXG.Point@snapSizeY
+         * @type Boolean
+         * @name JXG.Point#snapToGrid
+         * @default false
+         */
+        snapToGrid: false,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * @see JXG.Point@snapToGrid
+         * @see JXG.Point@snapSizeY
+         * @type Number
+         * @name JXG.Point#snapSizeX
+         * @default 1
+         */
+        snapSizeX: 1,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * @see JXG.Point@snapToGrid
+         * @see JXG.Point@snapSizeX
+         * @type Number
+         * @name JXG.Point#snapSizeY
+         * @default 1
+         */
+        snapSizeY: 1
 
         /**#@-*/
     },
@@ -1119,8 +1162,15 @@ JXG.Validator = (function () {
         validateRenderer = function (v) {
             return (v in {vml: 0, svg: 0, canvas: 0});
         },
+        validatePositive = function (v) {
+            return v > 0;
+        },
+        validateNotNegative = function (v) {
+            return !(v < 0);
+        },
     i, v = {},
     validators = {
+        attractorDistance: validateNotNegative,
         color: validateColor,
         defaultDistance: JXG.isNumber,
         display : validateDisplay,
@@ -1161,10 +1211,11 @@ JXG.Validator = (function () {
         showInfobox: false,
         showNavigation : false,
         size : validateInteger,
-        snapSizeX : JXG.isNumber,
-        snapSizeY : JXG.isNumber,
+        snapSizeX : validatePositive,
+        snapSizeY : validatePositive,
         snapWidth : JXG.isNumber,
         snapToGrid : false,
+        snatchDistance: validateNotNegative,
         straightFirst : false,
         straightLast : false,
         stretch: false,

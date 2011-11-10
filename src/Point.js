@@ -480,9 +480,16 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
             oldCoords = this.coords,
-            newCoords;
+            newCoords, sX = this.visProp.snapsizex, sY = this.visProp.snapsizey;
 
         this.coords = new JXG.Coords(method, [x, y], this.board);
+        if (this.visProp.snaptogrid) {
+            x = this.coords.usrCoords[1];
+            y = this.coords.usrCoords[2];
+            
+            this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+        }
+        
         this.handleAttractors();
         
         if(this.group.length != 0) {
@@ -517,6 +524,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
             this.update();
         }
+
         return this;
     },
 

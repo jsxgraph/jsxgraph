@@ -1582,13 +1582,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             y = absPos[1]-cPos[1],
             newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
 
-        if (this.options.grid.snapToGrid) {
-            newCoords.setCoordinates(JXG.COORDS_BY_USER,
-                [Math.round((newCoords.usrCoords[1])*this.options.grid.snapSizeX)/this.options.grid.snapSizeX,
-                    Math.round((newCoords.usrCoords[2])*this.options.grid.snapSizeY)/this.options.grid.snapSizeY]);
-        }
-
-        return [newCoords.usrCoords[1], newCoords.usrCoords[2]];
+        return newCoords.usrCoords.slice(1);
     },
 
     /**
