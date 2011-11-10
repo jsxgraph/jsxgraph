@@ -962,7 +962,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             obj, xy = [], found;
 
-        evt.preventDefault();
+        //evt.preventDefault();
         evt.stopPropagation();
         this.updateHooks('mousedown', evt);
         // move origin - but only if we're not in drag mode
