@@ -866,7 +866,8 @@ JXG.Options = {
 
         /**
          * If true, the infobox is shown on mouse over, else not.
-         * @type boolean
+         * @name JXG.Point#showInfobox
+         * @type Boolean
          * @default true
          */
         showInfobox: true,
