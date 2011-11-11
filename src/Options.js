@@ -593,11 +593,18 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
-        handDrawing: false,
-
+        
         /**#@+
          * @visprop
          */
+
+       /**
+        * The data points of the curve are not connected with straight lines but with bezier curves.
+        * @name JXG.Curve#handDrawing
+        * @type Boolean
+        * @default false
+        */
+        handDrawing: false,
 
         /**
          * The curveType is set in @see generateTerm and used in {@link JXG.Curve#updateCurve}.

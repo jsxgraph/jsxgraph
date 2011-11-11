@@ -964,6 +964,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         //evt.preventDefault();
         evt.stopPropagation();
+
+        // prevent accidental selection of text
+        if (document.selection && typeof document.selection.empty == 'function') {
+            document.selection.empty();
+        } else if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        }
+
         this.updateHooks('mousedown', evt);
         // move origin - but only if we're not in drag mode
         if ( (this.mode === this.BOARD_MODE_NONE)
