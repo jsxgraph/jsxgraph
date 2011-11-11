@@ -996,9 +996,7 @@ Fixed:
     this.point = function(parents, attributes) {
 		//console.log('point :',parents," @ ",attributes);
 		var el,opt;
-		console.log("point attributes :",attributes)
 		opt = this.handleAtts(attributes);
-		console.log("point opt brutes :",opt)
         if (parents.length==0) {
             el = this.board.create('point', [Math.random(),Math.random()], opt);
         } else {
@@ -1011,7 +1009,32 @@ Fixed:
 		} else if(attributes.indexOf("aimantage10")>=0) {
 			aimantageList.push([el,10]);	 
 		}
-		console.log("point attributes ret :",el.getAttribute("labelColor"))
+		if(attributes.indexOf("coordx")>=0) {
+			this.board.create('text',[
+				function() { return el.X(); },
+				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
+				function() { return Math.round(el.X()*100)/100;}]
+				,{size:0}); 
+		}
+		if(attributes.indexOf("coordy")>=0) {
+			this.board.create('text',[
+				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
+				function () {  return el.Y(); },
+				function() { return Math.round(el.Y()*100)/100;}]
+				,{size:0}); 
+		}
+		if(attributes.indexOf("coord")>=0) {
+			this.board.create('text',[
+				function() { return el.X(); },
+				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
+				function() { return Math.round(el.X()*100)/100;}]
+				,{size:0}); 
+			this.board.create('text',[
+				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
+				function () {  return el.Y(); },
+				function() { return Math.round(el.Y()*100)/100;}]
+				,{size:0}); 
+		}
 		return el;
 	};
 
