@@ -23,6 +23,7 @@
 - options with pb (with operator) : replacement in prepareString() !
 - demidroite & intersection : intersection point out of [AB) should not exist
 - aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
+- labelColor : not efficient
 */
 
 JXG.TracenpocheReader = new function() {
@@ -821,7 +822,7 @@ JXG.TracenpocheReader = new function() {
     //--------------------------------------------------------------------- 
     //
     this.handleAtts = function(attsArr) {
-        var obj = {}, i, le = attsArr.length, arr;
+        var obj = {}, i, couleur, le = attsArr.length, arr;
         
         // The last entry is the name of the element.
         if (le>0) {
@@ -888,36 +889,36 @@ JXG.TracenpocheReader = new function() {
 				case 'plein80' : obj["fillOpacity"] = 0.8; break;
 				case 'plein90' : obj["fillOpacity"] = 0.9; break;
 				case 'plein100' : obj["fillOpacity"] = 1; break;
-				case 'blanc' : obj['color'] ='white'; break;
-				case 'jaune' : obj['color'] ='yellow'; break;
-				case 'jauneclair' : obj['color'] ='lightyellow'; break;
-				case 'kakiclair' : obj['color'] ='yellowgreen'; break;
-				case 'jaunepaille' : obj['color'] ='darkkhaki'; break;
-				case 'rose' : obj['color'] ='pink'; break;
-				case 'saumon' : obj['color'] ='salmon'; break;
-				case 'orange' : obj['color'] ='orange'; break;
-				case 'rougeclair' : obj['color'] ='palevioletred'; break;
-				case 'rouge' : obj['color'] ='red'; break;
-				case 'vertclair' : obj['color'] ='lime'; break;
-				case 'vert' : obj['color'] ='green'; break;
-				case 'vertfonce' : obj['color'] ='darkgreen'; break;
-				case 'kaki' : obj['color'] ='olive'; break;
-				case 'sapin' : obj['color'] ='springgreen'; break;
-				case 'marron' : obj['color'] ='maroon'; break;
-				case 'brique' : obj['color'] ='firebrick'; break;
-				case 'marronfonce' : obj['color'] ='saddlebrown'; break;
-				case 'violetfonce' : obj['color'] ='darkviolet'; break;
-				case 'rougefonce' : obj['color'] ='darkred'; break;
-				case 'cyan' : obj['color'] ='cyan'; break;
-				case 'bleuciel' : obj['color'] ='skyblue'; break;
-				case 'bleuocean' : obj['color'] ='aqua'; break;
-				case 'bleu' : obj['color'] ='blue'; break;
-				case 'bleufonce' : obj['color'] ='darkblue'; break;
-				case 'violet' : obj['color'] ='blueviolet'; break;
-				case 'gris' : obj['color'] ='gray'; break;
-				case 'grisclair' : obj['color'] ='darkgray'; break;
-				case 'vertpale' : obj['color'] ='palegreen'; break;
-				case 'noir' : obj['color'] ='black'; break;
+				case 'blanc' : couleur ='white'; break;
+				case 'jaune' : couleur ='yellow'; break;
+				case 'jauneclair' : couleur ='lightyellow'; break;
+				case 'kakiclair' : couleur ='yellowgreen'; break;
+				case 'jaunepaille' : couleur ='darkkhaki'; break;
+				case 'rose' : couleur ='pink'; break;
+				case 'saumon' : couleur ='salmon'; break;
+				case 'orange' : couleur ='orange'; break;
+				case 'rougeclair' : couleur ='palevioletred'; break;
+				case 'rouge' : couleur ='red'; break;
+				case 'vertclair' : couleur ='lime'; break;
+				case 'vert' : couleur ='green'; break;
+				case 'vertfonce' : couleur ='darkgreen'; break;
+				case 'kaki' : couleur ='olive'; break;
+				case 'sapin' : couleur ='springgreen'; break;
+				case 'marron' : couleur ='maroon'; break;
+				case 'brique' : couleur ='firebrick'; break;
+				case 'marronfonce' : couleur ='saddlebrown'; break;
+				case 'violetfonce' : couleur ='darkviolet'; break;
+				case 'rougefonce' : couleur ='darkred'; break;
+				case 'cyan' : couleur ='cyan'; break;
+				case 'bleuciel' : couleur ='skyblue'; break;
+				case 'bleuocean' : couleur ='aqua'; break;
+				case 'bleu' : couleur ='blue'; break;
+				case 'bleufonce' : couleur ='darkblue'; break;
+				case 'violet' : couleur ='blueviolet'; break;
+				case 'gris' : couleur ='gray'; break;
+				case 'grisclair' : couleur ='darkgray'; break;
+				case 'vertpale' : couleur ='palegreen'; break;
+				case 'noir' : couleur ='black'; break;
 				case '/' :  obj['tepLengthCode'] =1; break;
 				case 'jsxtepsur1' :  obj['tepLengthCode'] =1; break;
 				case 'jsxtepsur2' :  obj['tepLengthCode'] =2; break;
@@ -930,26 +931,30 @@ JXG.TracenpocheReader = new function() {
 				default : {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
-						obj['color'] = attsArr[i].substr(1);
+						couleur = attsArr[i].substr(1);
 					} else if (attsArr[i].charAt(0)=='(' ) {
                         arr = attsArr[i].substring(1, attsArr[i].length-1).split(',');
                         arr[0] = parseFloat(arr[0]);
                         arr[1] = parseFloat(arr[1]);
                         obj['coords'] = arr;
                     }
-				}
-				
+				}		
+			}
+        }
+		if( couleur!=undefined ) {
+			obj["strokeColor"]=couleur;
+			obj["labelColor"]=couleur;
+		}
 /*
 Open:
 -----
-not supported (as I know : Keops) -> warning message ? : 
+- not supported (as far as I know : E.Ostenne) -> warning message ? : 
 dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
 blinde to avoid deletion with mouse -> set to fixe here 
 stop  to see construction step by step from stop tag to stop tag
 static to avoid locus calculus when useless
 
-to be implementedd / found for JSXGraph:
-car-4,car-3,car-2,car-1,car+1,car+2,car+3,car+4 to decrease (-) or increase (+) font size : text or names
+- to be implementedd / found for JSXGraph:
 p1 to show dash to localizepour coordinates of a point in the frame
 coord, coordx, coordy to show coordinates values near axis
 animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
@@ -958,8 +963,6 @@ Fixed:
 -----
 (x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)  # fixed for reel and entier AW; 
 */
-			}
-        }
         return obj;
     };
 
@@ -992,19 +995,24 @@ Fixed:
      */
     this.point = function(parents, attributes) {
 		//console.log('point :',parents," @ ",attributes);
+		var el,opt;
+		console.log("point attributes :",attributes)
+		opt = this.handleAtts(attributes);
+		console.log("point opt brutes :",opt)
         if (parents.length==0) {
-            var p=this.board.create('point', [Math.random(),Math.random()], this.handleAtts(attributes));
+            el = this.board.create('point', [Math.random(),Math.random()], opt);
         } else {
-            var p=this.board.create('point', parents, this.handleAtts(attributes));
+            el = this.board.create('point', parents, opt);
         }
 		if(attributes.indexOf("aimantage")>=0) {
-			aimantageList.push([p,1]);	 
+			aimantageList.push([el,1]);	 
 		} else if(attributes.indexOf("aimantage5")>=0) {
-			aimantageList.push([p,5]);	 
+			aimantageList.push([el,5]);	 
 		} else if(attributes.indexOf("aimantage10")>=0) {
-			aimantageList.push([p,10]);	 
+			aimantageList.push([el,10]);	 
 		}
-		return p;
+		console.log("point attributes ret :",el.getAttribute("labelColor"))
+		return el;
 	};
 
     this.pointsur = function(parents, attributes) {
@@ -1024,7 +1032,7 @@ Fixed:
             p2 = parents[1];
 			var slideObj = this.board.create('line', [p1,p2], {visible:false, withLabel:false});
             if (isFree) {
-                return this.board.create('glider', [
+                el = this.board.create('glider', [
 					p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), slideObj
 					],
                     this.handleAtts(attributes) 
@@ -1044,7 +1052,7 @@ Fixed:
                 p1 = parents[0].point1;
                 p2 = parents[0].point2;
                 if (isFree) {
-                    return this.board.create('glider', [
+                    el = this.board.create('glider', [
                         p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), parents[0]
                         ],
                         this.handleAtts(attributes)
@@ -1062,7 +1070,7 @@ Fixed:
             } else {                      // point on circle
                 c = parents[0];
                 if (isFree) {
-                    return this.board.create('glider', [
+                    el = this.board.create('glider', [
                         c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
                         ],
                         this.handleAtts(attributes)
@@ -1084,30 +1092,34 @@ Fixed:
 
 
     this.intersection = function(parents, attributes) {
+		var el;
         if (parents.length==2) {  // line line
-            return this.board.create('intersection', [parents[0],parents[1],0], this.handleAtts(attributes));
+            el = this.board.create('intersection', [parents[0],parents[1],0], this.handleAtts(attributes));
         } else if (parents.length==3) {
             if (JXG.isNumber(parents[2])) {  // line circle
                 parents[2] -= 1;
-                return this.board.create('intersection', parents, this.handleAtts(attributes));
+                el = this.board.create('intersection', parents, this.handleAtts(attributes));
             } else {
-                return this.board.create('otherintersection', parents, this.handleAtts(attributes));
+                el = this.board.create('otherintersection', parents, this.handleAtts(attributes));
             }
         }
+		return el;
     }
     
     this.projete = function(parents, attributes) {
-        var lpar;
+        var el, lpar;
         if (parents.length == 2) {          // orthogonal projection
-            return this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
+            el = this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
         } else {                             // parallel projection along parents[2]
             lpar = this.board.create('parallel', [parents[2], parents[0]], {visible:false, withLabel:false});
-            return this.board.create('intersection', [parents[1], lpar, 0], this.handleAtts(attributes));
+            el = this.board.create('intersection', [parents[1], lpar, 0], this.handleAtts(attributes));
         }
+		return el;
     }
 
     this.barycentre = function(parents, attributes) {
-        return this.board.create('point', [
+		var el;
+        el =  this.board.create('point', [
             function() {
                 var i, s = 0, le = parents.length, x = 0.0;
                 for (i=0; i<le; i+=2) {
@@ -1125,14 +1137,19 @@ Fixed:
                 return y/s;
             }
         ], this.handleAtts(attributes));
+		return el;
     }
     
     this.image = function(parents, attributes) {
-        return this.board.create('point', [parents[1], parents[0]], this.handleAtts(attributes));
+		var el;
+		el = this.board.create('point', [parents[1], parents[0]], this.handleAtts(attributes));
+		return el;
     }
     
     this.milieu = function(parents, attributes) {
-        return this.board.create('midpoint', parents, this.handleAtts(attributes));
+		var el;
+        this.board.create('midpoint', parents, this.handleAtts(attributes));
+		return el;
     }
 
     this.pointaimante = function(parents, attributes) {
