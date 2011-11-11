@@ -23,7 +23,6 @@
 - options with pb (with operator) : replacement in prepareString() !
 - demidroite & intersection : intersection point out of [AB) should not exist
 - aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
-- labelColor : not efficient
 */
 
 JXG.TracenpocheReader = new function() {
@@ -822,7 +821,7 @@ JXG.TracenpocheReader = new function() {
     //--------------------------------------------------------------------- 
     //
     this.handleAtts = function(attsArr) {
-        var obj = {}, i, couleur, le = attsArr.length, arr;
+        var obj = {}, i, couleur, fontSize, le = attsArr.length, arr;
         
         // The last entry is the name of the element.
         if (le>0) {
@@ -843,14 +842,14 @@ JXG.TracenpocheReader = new function() {
 		//
         for (i=0; i<le; i++) {
 			switch (attsArr[i]) {
-				case 'jsxtepcarm4' : obj["fontSize"] = 8; break;
-				case 'jsxtepcarm3' : obj["fontSize"] = 9; break;
-				case 'jsxtepcarm2' : obj["fontSize"] = 10; break;
-				case 'jsxtepcarm1' : obj["fontSize"] = 11; break;
-				case 'jsxtepcarp1' : obj["fontSize"] = 13; break;
-				case 'jsxtepcarp2' : obj["fontSize"] = 14; break;
-				case 'jsxtepcarp3' : obj["fontSize"] = 15; break;
-				case 'jsxtepcarp4' : obj["fontSize"] = 16; break;
+				case 'jsxtepcarm4' : fontSize = 8; break;
+				case 'jsxtepcarm3' : fontSize = 9; break;
+				case 'jsxtepcarm2' : fontSize = 10; break;
+				case 'jsxtepcarm1' : fontSize = 11; break;
+				case 'jsxtepcarp1' : fontSize = 13; break;
+				case 'jsxtepcarp2' : fontSize = 14; break;
+				case 'jsxtepcarp3' : fontSize = 15; break;
+				case 'jsxtepcarp4' : fontSize = 16; break;
                 case 'sansnom' : obj["withLabel"] = false; break;
 				case 'blinde' : obj["fixed"] = true; break;
 				case 'fixe' : obj["fixed"] = true; break;
@@ -943,7 +942,13 @@ JXG.TracenpocheReader = new function() {
         }
 		if( couleur!=undefined ) {
 			obj["strokeColor"]=couleur;
-			obj["labelColor"]=couleur;
+			if(obj["label"]==undefined) { obj["label"]={}; };
+			obj["label"]["Color"]=couleur;
+		}
+		if( fontSize!=undefined) {
+			obj["fontSize"]=fontSize;
+			if(obj["label"]==undefined) { obj["label"]={}; };
+			obj["label"]["fontSize"]=fontSize;
 		}
 /*
 Open:
@@ -956,7 +961,6 @@ static to avoid locus calculus when useless
 
 - to be implementedd / found for JSXGraph:
 p1 to show dash to localizepour coordinates of a point in the frame
-coord, coordx, coordy to show coordinates values near axis
 animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
 
 Fixed:
@@ -993,7 +997,52 @@ Fixed:
     /*
      * Points 
      */
-    this.point = function(parents, attributes) {
+	 
+	this.pointCoordshow = function(el, attributes,handledAtt) {
+		//point option p1 : lines for coord visibility		
+		//point option coordx,coordy, coord
+		if(attributes.indexOf("p1")>=0) {
+			var p1,p2;
+			p1=this.board.create('point',[
+				function() { return el.X(); },
+				0,
+				],{visible:false});
+			p2=this.board.create('point',[
+				0,
+				function() { return el.Y(); },
+				],{visible:false});
+			this.board.create('segment',[p1,el],{strokeWith:2,strokeColor:"gray",dash:1});
+			this.board.create('segment',[p2,el],{strokeWith:2,strokeColor:"gray",dash:1});
+		}
+		if(attributes.indexOf("coordx")>=0) {
+			this.board.create('text',[
+				function() { return el.X(); },
+				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
+				function() { return Math.round(el.X()*100)/100;}]
+				,handledAtt); 
+		}
+		if(attributes.indexOf("coordy")>=0) {
+			this.board.create('text',[
+				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
+				function () {  return el.Y(); },
+				function() { return Math.round(el.Y()*100)/100;}]
+				,handledAtt); 
+		}
+		if(attributes.indexOf("coord")>=0) {
+			this.board.create('text',[
+				function() { return el.X(); },
+				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
+				function() { return Math.round(el.X()*100)/100;}]
+				,handledAtt); 
+			this.board.create('text',[
+				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
+				function () {  return el.Y(); },
+				function() { return Math.round(el.Y()*100)/100;}]
+				,handledAtt); 
+		}
+	}
+
+	this.point = function(parents, attributes) {
 		//console.log('point :',parents," @ ",attributes);
 		var el,opt;
 		opt = this.handleAtts(attributes);
@@ -1009,37 +1058,12 @@ Fixed:
 		} else if(attributes.indexOf("aimantage10")>=0) {
 			aimantageList.push([el,10]);	 
 		}
-		if(attributes.indexOf("coordx")>=0) {
-			this.board.create('text',[
-				function() { return el.X(); },
-				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
-				function() { return Math.round(el.X()*100)/100;}]
-				,{size:0}); 
-		}
-		if(attributes.indexOf("coordy")>=0) {
-			this.board.create('text',[
-				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
-				function () {  return el.Y(); },
-				function() { return Math.round(el.Y()*100)/100;}]
-				,{size:0}); 
-		}
-		if(attributes.indexOf("coord")>=0) {
-			this.board.create('text',[
-				function() { return el.X(); },
-				function () {var c= this.board.getBoundingBox(); return  (c[3]-c[1])*20/this.board.canvasHeight; },
-				function() { return Math.round(el.X()*100)/100;}]
-				,{size:0}); 
-			this.board.create('text',[
-				function() { var c= this.board.getBoundingBox(); return  (c[2]-c[0])*20/this.board.canvasWidth;},
-				function () {  return el.Y(); },
-				function() { return Math.round(el.Y()*100)/100;}]
-				,{size:0}); 
-		}
+		this.pointCoordshow(el,attributes,opt);		
 		return el;
 	};
 
     this.pointsur = function(parents, attributes) {
-        var p1, p2, c, lambda, par3, el, isFree;
+        var p1, p2, c, lambda, par3, el, isFree,opt;
 
         par3 = parents[parents.length-1];
         if (JXG.isNumber(par3)) {
@@ -1049,7 +1073,7 @@ Fixed:
             lambda = function(){ return par3.Value(); };
             isFree = false;
         }
-        
+        opt=this.handleAtts(attributes);
         if (parents.length==3) {        // point between two points
             p1 = parents[0];
             p2 = parents[1];
@@ -1058,7 +1082,7 @@ Fixed:
                 el = this.board.create('glider', [
 					p1.X()+(p2.X()-p1.X())*lambda(),p1.Y()+(p2.Y()-p1.Y())*lambda(), slideObj
 					],
-                    this.handleAtts(attributes) 
+                    opt 
                 );
             } else {
                 // Fake glider: it needs the properties "position" and "slideObject".
@@ -1066,7 +1090,7 @@ Fixed:
                     function(){ this.position = lambda(); return p1.X()+(p2.X()-p1.X())*lambda();},
                     function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda();}
 					],
-                    this.handleAtts(attributes) 
+                    opt 
                 );
                 el.slideObject = slideObj;
             }
@@ -1086,7 +1110,7 @@ Fixed:
                         function(){ this.position = lambda(); return p1.X()+(p2.X()-p1.X())*lambda();},
                         function(){ return p1.Y()+(p2.Y()-p1.Y())*lambda();}
                         ],
-                        this.handleAtts(attributes) 
+                        opt 
                     );
                     el.slideObject = parents[0];
                 }
@@ -1096,7 +1120,7 @@ Fixed:
                     el = this.board.create('glider', [
                         c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
                         ],
-                        this.handleAtts(attributes)
+                        opt
                     );
                 } else {	
                     // Fake glider: it needs the properties "position" and "slideObject".			
@@ -1104,44 +1128,50 @@ Fixed:
                         function() {return this.position = lambda(); c.midpoint.X()+c.Radius()*Math.cos(lambda());},
                         function() {return c.midpoint.Y()+c.Radius()*Math.sin(lambda());}
                         ],
-                        this.handleAtts(attributes)
+                        opt
                     );	
                     el.slideObject = c;			
                 }
             }
         }
+		this.pointCoordshow(el,attributes,opt);				
         return el;
     };
 
 
     this.intersection = function(parents, attributes) {
-		var el;
+		var el,opt;
+		opt = this.handleAtts(attributes);
         if (parents.length==2) {  // line line
-            el = this.board.create('intersection', [parents[0],parents[1],0], this.handleAtts(attributes));
+            el = this.board.create('intersection', [parents[0],parents[1],0], opt);
         } else if (parents.length==3) {
             if (JXG.isNumber(parents[2])) {  // line circle
                 parents[2] -= 1;
-                el = this.board.create('intersection', parents, this.handleAtts(attributes));
+                el = this.board.create('intersection', parents, opt);
             } else {
-                el = this.board.create('otherintersection', parents, this.handleAtts(attributes));
+                el = this.board.create('otherintersection', parents, opt);
             }
         }
+		this.pointCoordshow(el,attributes,opt);				
 		return el;
     }
     
     this.projete = function(parents, attributes) {
-        var el, lpar;
+        var el, opt, lpar;
+		opt = this.handleAtts(attributes);
         if (parents.length == 2) {          // orthogonal projection
-            el = this.board.create('orthogonalprojection', parents, this.handleAtts(attributes));
+            el = this.board.create('orthogonalprojection', parents, opt);
         } else {                             // parallel projection along parents[2]
             lpar = this.board.create('parallel', [parents[2], parents[0]], {visible:false, withLabel:false});
-            el = this.board.create('intersection', [parents[1], lpar, 0], this.handleAtts(attributes));
+            el = this.board.create('intersection', [parents[1], lpar, 0], opt);
         }
+		this.pointCoordshow(el,attributes,opt);				
 		return el;
     }
 
     this.barycentre = function(parents, attributes) {
-		var el;
+		var el,opt;
+		opt = this.handleAtts(attributes);
         el =  this.board.create('point', [
             function() {
                 var i, s = 0, le = parents.length, x = 0.0;
@@ -1159,19 +1189,24 @@ Fixed:
                 }
                 return y/s;
             }
-        ], this.handleAtts(attributes));
+        ], opt);
+		this.pointCoordshow(el,attributes,opt);				
 		return el;
     }
     
     this.image = function(parents, attributes) {
-		var el;
+		var el,opt;
+		opt = this.handleAtts(attributes);
 		el = this.board.create('point', [parents[1], parents[0]], this.handleAtts(attributes));
+		this.pointCoordshow(el,attributes,opt);				
 		return el;
     }
     
     this.milieu = function(parents, attributes) {
-		var el;
-        this.board.create('midpoint', parents, this.handleAtts(attributes));
+		var el,opt;
+		opt = this.handleAtts(attributes);
+        el = this.board.create('midpoint', parents, this.handleAtts(attributes));
+		this.pointCoordshow(el,attributes,opt);				
 		return el;
     }
 
@@ -1179,7 +1214,11 @@ Fixed:
         // CO=6_50%
         // D appartient dAB_50%
         // M sur A_50%
-        return this.board.create('point', parents.slice(0,2), this.handleAtts(attributes));
+		var el,opt;
+		opt = this.handleAtts(attributes);
+        el = this.board.create('point', parents.slice(0,2), this.handleAtts(attributes));
+		this.pointCoordshow(el,attributes,opt);				
+		return el;
     }
 
     /*
