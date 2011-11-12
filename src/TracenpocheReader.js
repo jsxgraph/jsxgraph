@@ -270,23 +270,46 @@ JXG.TracenpocheReader = new function() {
        
        // Analyze this.data for "@options;"
         // Just for testing.
-        this.board.setBoundingBox([-10,10,10,-10], true);
-        this.board.create('axis', [[0, 0], [1, 0]]);
-        this.board.create('axis', [[0, 0], [0, 1]]);
+        var start = this.data.indexOf('@options;');
+        if (start<0) {
+    	    this.board.setBoundingBox([-10,10,10,-10], true);
+	        this.board.create('axis', [[0, 0], [1, 0]]);
+        	this.board.create('axis', [[0, 0], [0, 1]]);
+            return;             // no figure found
+        }
         
-        /*
-        for (i=start+1; i<len; i++) {
+        start += 9;                 // skip string "@figure;"
+        var i2 = this.data.indexOf('@',start+1);
+        if (i2<0) { i2 = this.data.length; }
+
+        
+        /*for (i=start+1; i<i2; i++) {
             code = script[i];
             if (code=='') continue;
 
             if (code.match(/@/)) {   // Reached the end of the options section
-                return i-1;
+                //return i-1;
             }
             console.log("OPT>", code);
             // Read options:
         }
         */
-    };
+		var tokens = this.tokenize(this.data.slice(start, i2), '=<>!+-*&|/%^#', '=<>&|');
+        var s = this.parse(tokens, 'opt');
+		var opt={};
+		//console.log("s :",s);
+		if(s!='') {
+			//console.log(s);
+        	var fun = new Function("that", "opt", s);
+        	//console.log(fun.toString());
+        	fun(this, opt);	
+			//
+		} else {
+			this.board.setBoundingBox([-10,10,10,-10], true);
+    	    this.board.create('axis', [[0, 0], [1, 0]]);
+       		this.board.create('axis', [[0, 0], [0, 1]]);
+		}
+	};
 
     this.parse = function(tokens, scopeObjName) { 
         var scope;
@@ -744,7 +767,13 @@ JXG.TracenpocheReader = new function() {
         token_nr = 0;
         new_scope();
         advance();
-        var s = statements().join('\n');
+		//KEOPS
+		var st = statements();
+		if(st==null) { 
+			var s = '';
+		} else {
+        	var s = st.join('\n');
+		}
 //console.log(s);        
         return s;
     };
@@ -773,13 +802,13 @@ JXG.TracenpocheReader = new function() {
         this.reelPosition = {x:13,y:-9};
         
         // Set the default options
-        board.options.point.face = 'x';
-        board.options.point.strokeColor = '#0000ff';
-        board.options.point.strokeWidth = 1;
-        board.options.line.strokeWidth = 1;
+        this.board.options.point.face = 'x';
+        this.board.options.point.strokeColor = '#0000ff';
+        this.board.options.point.strokeWidth = 1;
+        this.board.options.line.strokeWidth = 1;
 		
 		// Aimantage for points
-		board.addHook(this.aimantage,'mouseup');
+		this.board.addHook(this.aimantage,'mouseup');
 
 //console.log(s);        
         var fun = new Function("that", "tep", s);
@@ -992,7 +1021,9 @@ Fixed:
             // other
             "texte", "reel", "entier", "fonction",
             // transformations
-            "homothetie", "reflexion", "rotation", "similitude", "symetrie", "translation"
+            "homothetie", "reflexion", "rotation", "similitude", "symetrie", "translation",			
+			//@options,
+			"repere","repereortho","grille","trame","aimante","fond","etat","chgt_etat_bloc","degres","radians","pilote"
             ];
             
     /*
@@ -1571,8 +1602,6 @@ Fixed:
     /*
      * Transformations
      */
-    
-	// /!\ Similitude is missing !
 	
     this.homothetie = function(parents, attributes) {
         var c = parents[0], a = parents[1];
@@ -1644,5 +1673,28 @@ Fixed:
         }
     };
 
+
+    /*
+     * @options;
+     */
+
+
+	this.repereortho = function(parents, attributes) {
+		//(313,263,30,1,1){ 0 , moyen , noir , num1 ,i};
+		// 1,1 à traiter par Ticks
+		this.board.moveOrigin(parents[0],parents[1]);
+		this.board.unitX=parents[2];
+		this.board.unitY=parents[2];
+        this.board.create('axis', [[0, 0], [1, 0]]);
+       	this.board.create('axis', [[0, 0], [0, 1]]);		
+	}
+
+	this.repere = function(parents, attributes) {
+		// repere(-5,5,-4,4,1,1){ 0 , moyen , noir , num1 };
+		// 1,1 à traiter par Ticks
+		this.board.setBoundingBox([parents[0],parents[3],parents[1],parents[2]], true);
+        this.board.create('axis', [[0, 0], [1, 0]]);
+       	this.board.create('axis', [[0, 0], [0, 1]]);
+	}
 
 };
