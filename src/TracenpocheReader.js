@@ -20,8 +20,8 @@
 */
 
 /* E.Ostenne notes :
-- options with pb (with operator) : replacement in prepareString() !
-- segment/halfline & intersection : intersection point out of [AB) or [AB] should not exist : done with "clone" point
+- options with pb (with operator)  : replacement in prepareString() !
+- intersection &  segment/halfline : intersection mod for point out of [AB), (BA] or [AB] that should not exist : done with a "clone" point
 - aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
 */
 
@@ -265,14 +265,14 @@ JXG.TracenpocheReader = new function() {
         return result;
     }; 
         
-    this.parseOptions = function(board) {
+    this.parseOptions = function() {
         //var code, i, len = script.length;
        
        // Analyze this.data for "@options;"
         // Just for testing.
-        board.setBoundingBox([-10,10,10,-10], true);
-        board.create('axis', [[0, 0], [1, 0]]);
-        board.create('axis', [[0, 0], [0, 1]]);
+        this.board.setBoundingBox([-10,10,10,-10], true);
+        this.board.create('axis', [[0, 0], [1, 0]]);
+        this.board.create('axis', [[0, 0], [0, 1]]);
         
         /*
         for (i=start+1; i<len; i++) {
@@ -750,11 +750,12 @@ JXG.TracenpocheReader = new function() {
     };
     
     this.parseData = function(board) {
-        this.parseOptions(board);
-        this.parseFigure(board);
+        this.board = board;
+        this.parseOptions();
+        this.parseFigure();
     };
 
-    this.parseFigure = function(board) {
+    this.parseFigure = function() {
         var i = this.data.indexOf('@figure;');
         if (i<0) {
             return;             // no figure found
@@ -765,7 +766,6 @@ JXG.TracenpocheReader = new function() {
         if (i2<0) { i2 = this.data.length; }
         
         var tokens = this.tokenize(this.data.slice(i, i2), '=<>!+-*&|/%^#', '=<>&|');
-        this.board = board;
         var s = this.parse(tokens, 'tep');
         var tep = {};
 		//to store last render position of "reel"/"entier" tep object
@@ -778,7 +778,7 @@ JXG.TracenpocheReader = new function() {
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;
 		
-		// Aimantage for pints
+		// Aimantage for points
 		board.addHook(this.aimantage,'mouseup');
 
 //console.log(s);        
@@ -835,6 +835,7 @@ JXG.TracenpocheReader = new function() {
 		//gras, italique  for bold, italic set to text not to each named object ! use html capabilities : <b>...</b> <i>...</i>
 		//aimantage, 5, 10 : see point 
 		//r for angle : see angle
+		//car-4...car+4 : replaced by jsxtepcarm4 ... jsxtepcarp4
 		
         //default values
 		obj["withLabel"] = true;
@@ -940,6 +941,7 @@ JXG.TracenpocheReader = new function() {
 				}		
 			}
         }
+		//for label/text with line
 		if( couleur!=undefined ) {
 			obj["strokeColor"]=couleur;
 			if(obj["label"]==undefined) { obj["label"]={}; };
@@ -1173,7 +1175,7 @@ Fixed:
         }
 		//to demi-droite / half-line cases
 		el1 = this.board.create('point',[
-			function() { return ((isInPartLine(parents[0],el) && isInPartLine(parents[1],el)) || el.real)?1:0; },
+			function() { return (el.real || (isInPartLine(parents[0],el) && isInPartLine(parents[1],el)) )?1:0; },
 			function() { return el.X(); },
 			function() { return el.Y(); }
 		], opt);
