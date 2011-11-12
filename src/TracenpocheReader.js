@@ -21,7 +21,7 @@
 
 /* E.Ostenne notes :
 - options with pb (with operator) : replacement in prepareString() !
-- demidroite & intersection : intersection point out of [AB) should not exist
+- segment/halfline & intersection : intersection point out of [AB) or [AB] should not exist : done with "clone" point
 - aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
 */
 
@@ -960,7 +960,6 @@ stop  to see construction step by step from stop tag to stop tag
 static to avoid locus calculus when useless
 
 - to be implementedd / found for JSXGraph:
-p1 to show dash to localizepour coordinates of a point in the frame
 animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
 
 Fixed:
@@ -1140,20 +1139,47 @@ Fixed:
 
 
     this.intersection = function(parents, attributes) {
-		var el,opt;
-		opt = this.handleAtts(attributes);
-        if (parents.length==2) {  // line line
-            el = this.board.create('intersection', [parents[0],parents[1],0], opt);
-        } else if (parents.length==3) {
-            if (JXG.isNumber(parents[2])) {  // line circle
+		
+		function isInPartLine(line,inter) {
+			//return false if intersection inter is not on the halfline line
+			var ok = true; //default
+			if (line.elementClass==JXG.OBJECT_CLASS_SEGMENT) {
+					ok = (JXG.Math.Geometry.isSameDirection(line.point1.coords,line.point2.coords,inter.coords) && 
+							JXG.Math.Geometry.isSameDirection(line.point2.coords,line.point1.coords,inter.coords));						
+			} else
+			if (line.elementClass==JXG.OBJECT_CLASS_LINE) {
+				if(line.getAttribute("straightFirst")==false) {
+					ok = JXG.Math.Geometry.isSameDirection(line.point1.coords,line.point2.coords,inter.coords);						
+				}
+				if(line.getAttribute("straightLast")==false) {
+					ok = ok && JXG.Math.Geometry.isSameDirection(line.point2.coords,line.point1.coords,inter.coords);						
+				}
+			}
+			return ok;
+		}
+		
+		var el, el1, opt = this.handleAtts(attributes);
+
+		if (parents.length==2) {  // line line
+            el = this.board.create('intersection', [parents[0],parents[1],0], {visible:false});
+        } else if (parents.length==3) { 
+		    // line circle : more than 1 result possible
+            if (JXG.isNumber(parents[2])) {  //num set : 1,2
                 parents[2] -= 1;
-                el = this.board.create('intersection', parents, opt);
-            } else {
-                el = this.board.create('otherintersection', parents, opt);
+                el = this.board.create('intersection', parents, {visible:false});
+            } else { //point to avoid
+                el = this.board.create('otherintersection', parents, {visible:false});
             }
         }
-		this.pointCoordshow(el,attributes,opt);				
-		return el;
+		//to demi-droite / half-line cases
+		el1 = this.board.create('point',[
+			function() { return ((isInPartLine(parents[0],el) && isInPartLine(parents[1],el)) || el.real)?1:0; },
+			function() { return el.X(); },
+			function() { return el.Y(); }
+		], opt);
+		//
+		this.pointCoordshow(el1,attributes,opt);		
+		return el1;
     }
     
     this.projete = function(parents, attributes) {
