@@ -635,7 +635,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
         copy.board = this.board;
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.visProp.curvetype = this.visProp.curvetype;
 

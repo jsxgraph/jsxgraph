@@ -165,7 +165,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         copy.id = this.id + 'T' + this.numTraces;
         this.numTraces++;
         copy.vertices = this.vertices;
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.board = this.board;
         JXG.clearVisPropOld(copy);

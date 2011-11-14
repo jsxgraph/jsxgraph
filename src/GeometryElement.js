@@ -780,7 +780,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @see #addLabelToElement
      */
     createLabel: function (coords) {
-        var attr = this.visProp.label || {};
+        var attr;
+        
+        if (typeof this.visProp.label === 'object') {
+            attr = JXG.deepCopy(this.visProp.label);
+        } else {
+            attr = {};
+        }
         attr.id = this.id + 'Label';
         attr.isLabel = true;
         attr.visible = this.visProp.visible;

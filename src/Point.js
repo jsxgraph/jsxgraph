@@ -1068,7 +1068,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.numTraces++;
 
         copy.coords = this.coords;
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.elementClass = JXG.OBJECT_CLASS_POINT;
         copy.board = this.board;

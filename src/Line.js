@@ -495,7 +495,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         copy.board = this.board;
 
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
@@ -819,7 +819,7 @@ JXG.createLine = function(board, parents, attributes) {
      * The line is defined by two points or coordinates of two points.
      * In the latter case, the points are created.
      */
-    if (parents.length == 2) { 
+    if (parents.length == 2) {
         // point 1 given by coordinates
         if (JXG.isArray(parents[0]) && parents[0].length>1) { 
             attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
@@ -857,7 +857,6 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         attr = JXG.copyAttributes(attributes, board.options, 'line');
-
         el = new JXG.Line(board, p1, p2, attr);
         if (constrained) {
         	el.constrained = true;

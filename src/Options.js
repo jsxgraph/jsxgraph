@@ -271,9 +271,9 @@ JXG.Options = {
         /**
          * Extra visual properties for traces of an element
          * @see JXG.GeometryElement#trace
-         * @name JXG.GeometryElement#traces
+         * @name JXG.GeometryElement#traceAttributes
          */
-        traces: {},
+        traceAttributes: {},
         
         /**
          * If this is set to true, the element is updated in every update
