@@ -486,7 +486,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 this.visProp[property] = value;
             }
     },
-           
+
+    // TODO
     resolveShortcuts: function(properties) {
         var key, i;
         

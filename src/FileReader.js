@@ -23,178 +23,237 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-JXG.FileReader = new function() {
+/**
+ * The FileReader object bundles the file input capabilities of JSXGraph.
+ */
+JXG.FileReader = {
 
-this.parseFileContent = function(url, board, format, async) {
-    if(!JXG.exists(async))
-        async = true;
+    /**
+     * Opens a file using the given URL and passes the contents to {@link JXG.FileReader#parseString}
+     * @param {String} url
+     * @param {JXG.Board|function} board Either a board or in case <tt>format</tt> equals 'raw' this has to be a callback function.
+     * @param {String} format The expected file format. Possible values are <dl>
+     * <dt>raw</dt><dd>Raw text file. In this case <tt>board</tt> has to be a callback function.</dd>
+     * <dt>geonext</dt><dd>Geonext File <a href="http://www.geonext.de">http://www.geonext.de</a></dd>
+     * <dt>intergeo</dt><dd>Intergeo file format <a href="http://www.i2geo.net">http://www.i2geo.net</a></dd>
+     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="http://www.tracenpoche.net">http://www.tracenpoche.net</a></dd>
+     * <dt>graph</dt><dd>Graph file</dd>
+     * <dt>digraph</dt><dd>DiGraph file</dd>
+     * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
+     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
+     * </dl>
+     * @param {Boolean} async Call ajax asynchonously.
+     */
+    parseFileContent: function (url, board, format, async) {
+        if(!JXG.exists(async)) {
+            async = true;
+        }
 
-    this.request = false;
-    var e;
-    try {
-        //this.request = new ActiveXObject("Msxml2.XMLHTTP");
-        this.request = new XMLHttpRequest();
-        if(format.toLowerCase()=='raw')
-            this.request.overrideMimeType('text/plain; charset=iso-8859-1');
-        else
-            this.request.overrideMimeType('text/xml; charset=iso-8859-1');
-    } catch (e) {
+        this.request = false;
+
         try {
-            this.request = new ActiveXObject("Msxml2.XMLHTTP");
+            this.request = new XMLHttpRequest();
+            if(format.toLowerCase()=='raw') {
+                this.request.overrideMimeType('text/plain; charset=iso-8859-1');
+            } else {
+                this.request.overrideMimeType('text/xml; charset=iso-8859-1');
+            }
         } catch (e) {
             try {
-                this.request = new ActiveXObject("Microsoft.XMLHTTP");
+                this.request = new ActiveXObject("Msxml2.XMLHTTP");
             } catch (e) {
-                this.request = false;
-            }
-        }
-    }
-    if (!this.request) {
-        alert("AJAX not activated!");
-        return;
-    }
-    this.request.open("GET", url, async);
-    if(format.toLowerCase()=='raw') {
-        this.cbp = function() {
-            var request = this.request;
-            if (request.readyState == 4) {
-                board(request.responseText);
-            }
-        }; //).bind(this);
-    } else {
-        this.cbp = function() {
-            var request = this.request;
-            if (request.readyState == 4) {
-                var text = '';
-
-            if (typeof request.responseStream!='undefined' && 
-                    (request.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
-                    || JXG.Util.asciiCharCodeAt(request.responseText.slice(0,1),0)==31) // gzip -> Cinderella
-                   ) {
-                    //text = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(BinFileReader(request)))).unzip();
-                    //text = text[0][0];
-                    //text = BinFileReader(request);  
-                    text = JXG.Util.Base64.decode(BinFileReader(request)); // After this, text contains the base64 encoded, zip-compressed string
-                } else {
-                    text = request.responseText;
+                try {
+                    this.request = new ActiveXObject("Microsoft.XMLHTTP");
+                } catch (e) {
+                    this.request = false;
                 }
-                this.parseString(text, board, format, false);
             }
-        }; //).bind(this);
-    }
-    this.cb = JXG.bind(this.cbp,this);
-    this.request.onreadystatechange = this.cb;
-
-    try {
-        this.request.send(null);
-    } catch (e) {
-        throw new Error("JSXGraph: problems opening " + url + " !");
-    }
-}; // end: this.parseFileContent
-
-this.cleanWhitespace = function(el) {
-    var cur = el.firstChild;
-    while ( cur != null ) {
-        if ( cur.nodeType == 3 && ! /\S/.test(cur.nodeValue) ) {
-            el.removeChild( cur );
-        } else if ( cur.nodeType == 1 ) {
-            this.cleanWhitespace( cur );
         }
-        cur = cur.nextSibling;
+
+        if (!this.request) {
+            alert("AJAX not activated!");
+            return;
+        }
+        
+        this.request.open("GET", url, async);
+
+        if(format.toLowerCase() === 'raw') {
+            this.cbp = function() {
+                var request = this.request;
+                if (request.readyState == 4) {
+                    board(request.responseText);
+                }
+            };
+        } else {
+            this.cbp = function() {
+                var request = this.request;
+                if (request.readyState == 4) {
+                    var text = '';
+
+                    if (typeof request.responseStream!='undefined' &&
+                        (request.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
+                            || JXG.Util.asciiCharCodeAt(request.responseText.slice(0,1),0)==31) // gzip -> Cinderella
+                        ) {
+                        text = JXG.Util.Base64.decode(BinFileReader(request)); // After this, text contains the base64 encoded, zip-compressed string
+                    } else {
+                        text = request.responseText;
+                    }
+                    this.parseString(text, board, format, false);
+                }
+            };
+        }
+
+        this.cb = JXG.bind(this.cbp, this);
+        this.request.onreadystatechange = this.cb;
+
+        try {
+            this.request.send(null);
+        } catch (e) {
+            throw new Error("JSXGraph: A problem occurred while trying to read '" + url + "'.");
+        }
+    },
+
+    /**
+     * Cleans out unneccessary whitespaces in a chunk of xml.
+     * @param {XMLElement} el
+     */
+    cleanWhitespace: function (el) {
+        var cur = el.firstChild;
+
+        while (cur != null) {
+            if (cur.nodeType == 3 && !/\S/.test(cur.nodeValue)) {
+                el.removeChild( cur );
+            } else if ( cur.nodeType == 1 ) {
+                this.cleanWhitespace( cur );
+            }
+            cur = cur.nextSibling;
+        }
+    },
+
+    /**
+     * Converts a given string into a XML tree.
+     * @param {String} str
+     * @returns {XMLElement} The xml tree represented by the root node.
+     */
+    stringToXMLTree: function (str) {
+        // The string "str" is converted into a XML tree.
+        if(typeof DOMParser === 'undefined') {
+            // IE workaround, since there is no DOMParser
+            DOMParser = function () {};
+            DOMParser.prototype.parseFromString = function (str, contentType) {
+                if (typeof ActiveXObject !== 'undefined') {
+                    var d = new ActiveXObject('MSXML.DomDocument');
+                    d.loadXML(str);
+                    return d;
+                }
+            };
+        }
+        var parser = new DOMParser(),
+            tree = parser.parseFromString(str, 'text/xml');
+
+        this.cleanWhitespace(tree);
+        return tree;
+    },
+
+    /**
+     * Parses a given string according to the file format given in format.
+     * @param {String} str Contents of the file.
+     * @param {JXG.Board} board The board the construction in the file should be loaded in.
+     * @param {String} format Possible values are <dl>
+     * <dt>raw</dt><dd>Raw text file. In this case <tt>board</tt> has to be a callback function.</dd>
+     * <dt>geonext</dt><dd>Geonext File <a href="http://www.geonext.de">http://www.geonext.de</a></dd>
+     * <dt>intergeo</dt><dd>Intergeo file format <a href="http://www.i2geo.net">http://www.i2geo.net</a></dd>
+     * <dt>tracenpoche</dt><dd>Tracenpoche construction <a href="http://www.tracenpoche.net">http://www.tracenpoche.net</a></dd>
+     * <dt>graph</dt><dd>Graph file</dd>
+     * <dt>digraph</dt><dd>DiGraph file</dd>
+     * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
+     * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
+     * </dl>
+     * @param {Boolean} isString Some file formats can be given as Base64 encoded strings or as plain xml, in both cases
+     * they are given as strings. This flag is used to distinguish those cases: <tt>true</tt> means, it is given as a string,
+     * no need to un-Base64 and unzip the file.
+     */
+    parseString: function (str, board, format, isString) {
+        var tree, graph, xml;
+
+        format = format.toLowerCase();
+
+        switch (format) {
+            case 'cdy':
+            case 'cinderella':
+                // if isString is true, str is the base64 encoded zip file, otherwise it's just the zip file
+                if(isString) {
+                    str = JXG.Util.Base64.decode(str);
+                }
+
+                str = JXG.CinderellaReader.readCinderella(str, board);
+                board.xmlString = str;
+
+                break;
+            case 'tracenpoche':
+                board.xmlString = JXG.TracenpocheReader.readTracenpoche(str, board);
+
+                break;
+            case 'graph':
+                str = JXG.GraphReader.readGraph(str, board, false);
+                break;
+            case 'digraph':
+                str = JXG.GraphReader.readGraph(str, updateboard, true);
+                break;
+            case 'geonext':
+                // str is a string containing the XML code of the construction
+                str = JXG.GeonextReader.prepareString(str);
+                xml = true;
+                break;
+            case 'geogebra':
+                isString = str.slice(0, 2) !== "PK";
+
+                // if isString is true, str is a base64 encoded string, otherwise it's the zipped file
+                str = JXG.GeogebraReader.prepareString(str, isString);
+                xml = true;
+                break;
+            case 'intergeo':
+                if(isString) {
+                    str = JXG.Util.Base64.decode(str);
+                }
+
+                str = JXG.IntergeoReader.prepareString(str);
+                xml = true;
+                break;
+        }
+
+        if (xml) {
+            board.xmlString = str;
+            tree = this.stringToXMLTree(str);
+            // Now, we can walk through the tree
+            this.readElements(tree, board, format);
+        }
+    },
+
+    /**
+     * Reading the elements of a geonext or geogebra file
+     * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
+     * @param {Object} board board object
+     */
+    readElements: function (tree, board, format) {
+        if (format.toLowerCase()=='geonext') {
+            board.suspendUpdate();
+            if(tree.getElementsByTagName('GEONEXT').length != 0) {
+                JXG.GeonextReader.readGeonext(tree, board);
+            }
+            board.unsuspendUpdate();
+        }
+        else if(tree.getElementsByTagName('geogebra').length != 0) {
+            JXG.GeogebraReader.readGeogebra(tree, board);
+        }
+        else if(format.toLowerCase()=='intergeo') {
+            JXG.IntergeoReader.readIntergeo(tree, board);
+        }
     }
 };
 
-this.stringToXMLTree = function(fileStr) {
-    // The string "fileStr" is converted into a XML tree.
-    if(typeof DOMParser == "undefined") {
-       // IE workaround, since there is no DOMParser
-       DOMParser = function () {};
-       DOMParser.prototype.parseFromString = function (str, contentType) {
-          if (typeof ActiveXObject != "undefined") {
-             var d = new ActiveXObject("MSXML.DomDocument");
-             d.loadXML(str);
-             return d;
-          }
-       };
-    }
-    var parser=new DOMParser();
-
-    var tree = parser.parseFromString(fileStr,"text/xml");
-    this.cleanWhitespace(tree);
-    return tree;
-};
-
-this.parseString = function(fileStr, board, format, isString) {
-    var tree, graph;
-
-    if (format.toLowerCase()=='cdy' || format.toLowerCase()=='cinderella') {
-    	// if isString is true, fileStr is the base64 encoded zip file, otherwise it's just the zip file
-    	if(isString)
-    		fileStr = JXG.Util.Base64.decode(fileStr);
-        fileStr = JXG.CinderellaReader.readCinderella(fileStr, board);
-        board.xmlString = fileStr;
-        return;
-    }
-    if (format.toLowerCase()=='tracenpoche') {
-        board.xmlString = JXG.TracenpocheReader.readTracenpoche(fileStr, board);
-        return;
-    }
-    if (format.toLowerCase()=='graph') {
-        //if(isString)
-        fileStr = JXG.GraphReader.readGraph(fileStr, board, false);
-        return;
-    }
-    if (format.toLowerCase()=='digraph') {
-        //if(isString)
-        fileStr = JXG.GraphReader.readGraph(fileStr, board, true);
-        return;
-    }    
-
-    // fileStr is a string containing the XML code of the construction
-    if (format.toLowerCase()=='geonext') {
-        fileStr = JXG.GeonextReader.prepareString(fileStr);
-    }
-    if (format.toLowerCase()=='geogebra') {
-        isString = fileStr.slice(0, 2) !== "PK";
-
-        // if isString is true, fileStr is a base64 encoded string, otherwise it's the zipped file
-    	fileStr = JXG.GeogebraReader.prepareString(fileStr, isString);
-    }
-    if (format.toLowerCase()=='intergeo') {
-        if(isString)
-            fileStr = JXG.Util.Base64.decode(fileStr);
-    	fileStr = JXG.IntergeoReader.prepareString(fileStr);
-    }
-
-    board.xmlString = fileStr;
-    tree = this.stringToXMLTree(fileStr);
-    // Now, we can walk through the tree
-    this.readElements(tree, board, format);
-}; // end this.parse
-
-/**
- * Reading the elements of a geonext or geogebra file
- * @param {} tree expects the content of the parsed geonext file returned by function parseFromString
- * @param {Object} board board object
- */
-this.readElements = function(tree, board, format) {
-    if (format.toLowerCase()=='geonext') {
-        board.suspendUpdate();
-        if(tree.getElementsByTagName('GEONEXT').length != 0) {
-            JXG.GeonextReader.readGeonext(tree, board);
-        }
-        board.unsuspendUpdate();
-    }
-    else if(tree.getElementsByTagName('geogebra').length != 0) {
-        JXG.GeogebraReader.readGeogebra(tree, board);
-    }
-    else if(format.toLowerCase()=='intergeo') {
-        JXG.IntergeoReader.readIntergeo(tree, board);
-    }
-    // cdy is already parsed in parseString()
-}; // end: this.readElements()
-
-}; // end: FileReader()
+// The following code is vbscript. This is a workaround to enable binary data downloads via AJAX in
+// Microsoft Internet Explorer.
 
 if(/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
 document.write('<script type="text/vbscript">\n\

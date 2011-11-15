@@ -1024,18 +1024,14 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     }
 
     par = [[0], [0]].concat(parents.slice(3));
-    /**
-     * @private
-     */
+    
     c = board.create('curve', par, attr);
-    /**
-     * @private
-     */
     c.updateDataArray = function() {
-            var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
-            this.dataX = u[0];
-            this.dataY = u[1];
-        };
+        var u = JXG.Math.Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
+        this.dataX = u[0];
+        this.dataY = u[1];
+    };
+
     return c;
 };
 
@@ -1093,11 +1089,7 @@ JXG.createTracecurve = function(board, parents, attributes) {
     attr['curvetype'] = 'plot';
   
     c = board.create('curve',[[0],[0]], attr);
-    
-    /**
-     * Compute the points of the trace curve
-     */
-    c.updateDataArray = function(){
+        c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
             from,

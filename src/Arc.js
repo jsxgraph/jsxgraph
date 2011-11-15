@@ -108,17 +108,17 @@ JXG.createArc = function(board, parents, attributes) {
     el.anglepoint = JXG.getReference(board, parents[2]);
     el.point3 = el.anglepoint;
 
-    /* Add arc as child to defining points */
+    // Add arc as child to defining points
     el.midpoint.addChild(el);
     el.radiuspoint.addChild(el);
     el.anglepoint.addChild(el);
     
+    /**
+     * TODO
+     */
     el.useDirection = attr['usedirection'];      // useDirection is necessary for circumCircleArcs
 
     // documented in JXG.Curve
-    /**
-     * @ignore
-     */
     el.updateDataArray = function() {
         var A = this.radiuspoint,
             B = this.midpoint,
@@ -187,10 +187,7 @@ JXG.createArc = function(board, parents, attributes) {
         return this.Radius();
     };
 
-    /**
-     * documented in JXG.GeometryElement
-     * @ignore
-     */
+    // documented in geometry element
     el.hasPoint = function (x, y) {
         var prec = this.board.options.precision.hasPoint/(this.board.unitX),
             checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
@@ -229,18 +226,12 @@ JXG.createArc = function(board, parents, attributes) {
         return has;    
     };
 
-    /**
-     * documented in JXG.GeometryElement
-     * @ignore
-     */
+    // documented in geometry element
     el.getTextAnchor = function() {
         return this.midpoint.coords;
     };
 
-    /**
-     * documented in JXG.GeometryElement
-     * @ignore
-     */
+    // documented in geometry element
     el.getLabelAnchor = function() {
         var angle = JXG.Math.Geometry.rad(this.radiuspoint, this.midpoint, this.anglepoint),
             dx = 10/(this.board.unitX),
@@ -272,7 +263,6 @@ JXG.createArc = function(board, parents, attributes) {
     
     /**
      * TODO description
-     * @private
      */
     el.updateQuadraticform = function () {
         var m = this.midpoint,
@@ -285,7 +275,6 @@ JXG.createArc = function(board, parents, attributes) {
 
     /**
      * TODO description
-     * @private
      */
     el.updateStdform = function () {
         this.stdform[3] = 0.5;
