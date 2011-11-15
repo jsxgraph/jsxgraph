@@ -719,10 +719,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Returns the coords object where a text that is bound to the element shall be drawn.
      * Differs in some cases from the values that getLabelAnchor returns.
-     * @type JXG.Coords
-     * @return JXG.Coords Place where the text shall be drawn.
-     * @see #getLabelAnchor
-     * @private
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getLabelAnchor
      */
     getTextAnchor: function () {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
@@ -731,10 +729,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Returns the coords object where the label of the element shall be drawn.
      * Differs in some cases from the values that getTextAnchor returns.
-     * @type JXG.Coords
-     * @return JXG.Coords Place where the label of an element shall be drawn.
-     * @see #getTextAnchor
-     * @private
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getTextAnchor
      */
     getLabelAnchor: function () {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);

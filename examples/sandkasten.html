@@ -103,6 +103,10 @@
             fontsize: 20
         };
         JXG.Options.grid.snapToGrid = false;
+        
+        JXG.GeometryElement.prototype.highlight = function () {};
+        JXG.GeometryElement.prototype.noHighlight = function () {};
+        
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
 
         var s = board.create('slider', [[-1, 1], [1, 1], [0, 1, 3]]);

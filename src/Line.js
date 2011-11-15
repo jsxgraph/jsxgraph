@@ -368,27 +368,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
-    /**
-     * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstarrow'] and visProp['lastarrow']
-     * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
-     * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
-     * @private
-     */
-    /*
-    setArrow: function (firstArrow, lastArrow) {
-         this.visProp.firstarrow = firstArrow;
-         this.visProp.lastarrow = lastArrow;
-
-         this.board.renderer.updateLine(this);
-    },
-    */
-
-    /**
-     * Calculates TextAnchor. DESCRIPTION
-     * @type JXG.Coords
-     * @return Text anchor coordinates as JXG.Coords object.
-     * @private
-     */
+    // documented in geometry element
     getTextAnchor: function() {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() + this.point1.X()), 0.5*(this.point2.Y() + this.point1.Y())],this.board);
     },
@@ -403,12 +383,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         }
     },
 
-    /**
-     * Calculates LabelAnchor. DESCRIPTION
-     * @type JXG.Coords
-     * @return Text anchor coordinates as JXG.Coords object.
-     * @private
-     */
+    // documented in geometry element
     getLabelAnchor: function() {
         var coords,screenCoords1,screenCoords2,
             relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
@@ -516,31 +491,33 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * DESCRIPTION
-     * @param {JXG.Transformation|Array} transform A {@link JXG.Transformation} object or an array of {@link JXG.Transformation} objects.
+     * Add transformations to this line.
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Line} Reference to this line object.
      */
     addTransform: function (transform) {
-        var list, i;
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
 
-        if (JXG.isArray(transform)) {
-            list = transform;
-        } else {
-            list = [transform];
-        }
-        for (i = 0; i < list.length; i++) {
+        for (i = 0; i < len; i++) {
             this.point1.transformations.push(list[i]);
             this.point2.transformations.push(list[i]);
         }
+        
+        return this;
     },
 
     /**
-     * TODO DESCRIPTION. What is this method for? -- michael
-     * @param method TYPE & DESCRIPTION. UNUSED.
-     * @param x TYPE & DESCRIPTION
-     * @param y TYPE & DESCRIPTION
+     * TODO DESCRIPTION.
+     * @param {null} method ignored
+     * @param {Number} x
+     * @param {Number} y
+     * @returns {JXG.Line} Reference to this line object.
      */
     setPosition: function (method, x, y) {
-        var t = this.board.create('transform',[x,y],{type:'translate'});
+        var t = this.board.create('transform', [x, y], {type:'translate'});
+        
         if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
             this.point1.transformations[this.point1.transformations.length-1].melt(t);
         } else {
@@ -551,15 +528,17 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } else {
             this.point2.addTransform(this.point2,t);
         }
+        
+        return this;
     },
 
     /**
      * Sets x and y coordinate and calls the circle's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} oldx previous x coordinate in screen/user units
-     * @param {number} oldy previous y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} oldx previous x coordinate in screen/user units
+     * @param {Number} oldy previous y coordinate in screen/user units
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
@@ -786,7 +765,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {number,function_number,function_number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+ * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
  * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
  * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
  * @example
@@ -981,7 +960,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
@@ -1017,7 +996,7 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
@@ -1056,7 +1035,7 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
  * // Create an axis providing two coord pairs.

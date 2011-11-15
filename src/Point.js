@@ -60,7 +60,7 @@ JXG.Point = function (board, coordinates, attributes) {
 
     /**
      * Relative position on a line if point is a glider on a line.
-     * @type number
+     * @type Number
      * @private
      */
     this.position = null;
@@ -330,7 +330,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for x, this is used by for CAS-points to access point coordinates.
      * @return User coordinate of point in x direction.
-     * @type number
+     * @type Number
      */
     X: function () {
         return this.coords.usrCoords[1];
@@ -339,7 +339,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for y, this is used by CAS-points to access point coordinates.
      * @return User coordinate of point in y direction.
-     * @type number
+     * @type Number
      */
     Y: function () {
         return this.coords.usrCoords[2];
@@ -348,7 +348,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for z, this is used by CAS-points to access point coordinates.
      * @return User coordinate of point in z direction.
-     * @type number
+     * @type Number
      */
     Z: function () {
         return this.coords.usrCoords[0];
@@ -358,7 +358,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in x direction.
-     * @type number
+     * @type Number
      * @private
      */
     XEval: function () {
@@ -369,7 +369,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in y direction.
-     * @type number
+     * @type Number
      * @private
      */
     YEval: function () {
@@ -380,7 +380,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in z direction.
-     * @type number
+     * @type Number
      * @private
      */
     ZEval: function () {
@@ -397,7 +397,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Here, function inlining seems to be worthwile  (for plotting).
      * @param {JXG.Point} point2 The point to which the distance shall be calculated.
      * @return Distance in user coordinate to the given point
-     * @type number
+     * @type Number
      */
     Dist: function(point2) {
         var sum,
@@ -471,11 +471,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     
     /**
      * Sets x and y coordinate and calls the point's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {Number} y optional: previous y coordinate in screen/user units (ignored)
      */
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
@@ -530,9 +530,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * TODO
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
      */
     setPositionByTransform: function (method, x, y) {
         var t = this.board.create('transform', [x,y], {type:'translate'});
@@ -551,9 +551,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Sets x and y coordinate and calls the point's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
      */
     setPosition: function (method, x, y) { 
         this.setPositionDirectly(method, x, y);
@@ -588,7 +588,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      *   <li>a JavaScript function,</li>
      *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript 
      *     function here,</li>
-     *   <li>a number</li>
+     *   <li>a Number</li>
      *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method 
      *     of this slider.</li>
      *   </ul>
@@ -641,7 +641,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * TODO
+     * Applies the transformations of the curve to {@link JXG.Point#baseElement}.
+     * @returns {JXG.Point} Reference to this point object.
      */
     updateTransform: function () {
         if (this.transformations.length==0 || this.baseElement==null) {
@@ -650,43 +651,43 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         var c, i;
 
         if (this===this.baseElement) {      // case of bindTo
-            c = this.transformations[0].apply(this.baseElement,'self');
+            c = this.transformations[0].apply(this.baseElement, 'self');
         } else {                           // case of board.create('point',[baseElement,transform]);
             c = this.transformations[0].apply(this.baseElement);
         }
         this.coords.setCoordinates(JXG.COORDS_BY_USER,c);
-        for (i=1;i<this.transformations.length;i++) {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER,this.transformations[i].apply(this));
+        for (i = 1; i < this.transformations.length; i++) {
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, this.transformations[i].apply(this));
         }
         return this;
     },
 
     /**
-     * TODO
-     * @param el TODO
-     * @param transform TODO
+     * Add transformations to this point.
+     * @param {JXG.GeometryElement} el TODO base element
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Point} Reference to this point object.
      */
     addTransform: function (el, transform) {
-        var list, i, len;
-        if (this.transformations.length==0) { // There is only one baseElement possible
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        if (len === 0) { // There is only one baseElement possible
             this.baseElement = el;
         }
-        if (JXG.isArray(transform)) {
-            list = transform;
-        } else {
-            list = [transform];
-        }
-        len = list.length;
-        for (i=0;i<len;i++) {
+
+        for (i = 0; i < len; i++) {
             this.transformations.push(list[i]);
         }
+        
         return this;
     },
 
     /**
      * Animate the point. 
-     * @param {number} direction The direction the glider is animated. Can be +1 or -1.
-     * @param {number} stepCount The number of steps.
+     * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
+     * @param {Number} stepCount The number of steps.
      * @name Glider#startAnimation
      * @see Glider#stopAnimation
      * @function
@@ -870,8 +871,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Animates a glider. Is called by the browser after startAnimation is called.
-     * @param {number} direction The direction the glider is animated.
-     * @param {number} stepCount The number of steps.
+     * @param {Number} direction The direction the glider is animated.
+     * @param {Number} stepCount The number of steps.
      * @see #startAnimation
      * @see #stopAnimation
      * @private
@@ -1094,7 +1095,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number,string,function_number,string,function_number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ * @param {Number,string,function_Number,string,function_Number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
  * constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
  * given by a number, the number determines the initial position of a free point. If given by a string or a function that coordinate will be constrained
  * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
@@ -1177,7 +1178,7 @@ JXG.createPoint = function(board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number_number_number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
+ * @param {Number_Number_Number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
  * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine euclidean
  * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
  * @example
@@ -1231,7 +1232,7 @@ JXG.createGlider = function(board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
  * intersection point if two points are available: <ul>
  *   <li>i==0: use the positive square root,</li> 
  *   <li>i==1: use the negative square root.</li></ul>

@@ -434,18 +434,12 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         return this.Radius();
     },
 
-    /**
-     * TODO description
-     * @private
-     */
+    // documented in geometry element
     getTextAnchor: function () {
         return this.midpoint.coords;
     },
 
-    /**
-     * TODO description
-     * @private
-     */
+    // documented in geometry element
     getLabelAnchor: function () {
         if(this.method == 'twoPoints') {
             var deltaX = this.midpoint.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
@@ -486,23 +480,23 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     },
 
     /**
-     * TODO description
-     * @param transform TODO type&description
-     * @private
+     * Add transformations to this circle.
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Circle} Reference to this circle object.
      */
     addTransform: function (transform) {
-        var list;
-        if (JXG.isArray(transform)) {
-            list = transform;
-        } else {
-            list = [transform];
-        }
-        for (var i=0;i<list.length;i++) {
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        for (i = 0; i < len; i++) {
             this.midpoint.transformations.push(list[i]);
-            if (this.method == 'twoPoints') {
+            if (this.method === 'twoPoints') {
                 this.point2.transformations.push(list[i]);
             }
         }
+        
+        return this;
     },
 
     /**
@@ -513,23 +507,20 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * @private
      */
     setPosition: function (method, x, y) {
-        //if(this.group.length != 0) {
-        // AW: Do we need this for lines?
-        //} else {
-        var t = this.board.create('transform',[x,y],{type:'translate'});
+        var t = this.board.create('transform', [x, y], {type:'translate'});
         this.addTransform(t);
-        //this.update();
-        //}
+
         return this;
     },
 
     /**
      * Sets x and y coordinate and calls the circle's update() method.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} oldx previous x coordinate in screen/user units
-     * @param {number} oldy previous y coordinate in screen/user units
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} oldx previous x coordinate in screen/user units
+     * @param {Number} oldy previous y coordinate in screen/user units
+     * @returns {JXG.Circle} Reference to this circle.
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
@@ -561,58 +552,39 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
             }
             this.point2.setPositionDirectly(method, newx, newy);
         }
-        /*
-        // TODO transformations???
-            // Update the initial coordinates. This is needed for free points
-            // that have a transformation bound to it.
-            for (i=this.transformations.length-1;i>=0;i--) {
-                this.initialCoords = new JXG.Coords(method, 
-                    JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix),[1,x,y]), 
-                    this.board);      
-            }
-        */
+
         this.update();
-        //document.getElementById("debug").innerHTML += "UPDATE "+dx+' '+dy+'<br>';
         return this;
     },
     
     /**
-     * Treat the circle as parametric curve:
-     * Return <tt>X(t)= radius*cos(t)+centerX</tt>, where t runs from 0 to 1.
-     * @param t TODO description
-     * @return TODO description
+     * Treats the circle as parametric curve and calculates its X coordinate.
+     * @param {Number} t Number between 0 and 1.
+     * @returns {Number} <tt>X(t)= radius*cos(t)+centerX</tt>.
      */
-    X: function (/** float */ t) /** float */ {
-        t *= 2.0*Math.PI;
-        return this.Radius()*Math.cos(t)+this.midpoint.coords.usrCoords[1];
+    X: function (t) {
+        return this.Radius()*Math.cos(t*2.0*Math.PI)+this.midpoint.coords.usrCoords[1];
     },
 
     /**
-     * Treat the circle as parametric curve:
-     * Return <tt>Y(t)= radius*cos(t)+centerX</tt>
-     * t runs from 0 to 1
-     * @param t TODO description
-     * @return TODO description
+     * Treats the circle as parametric curve and calculates its Y coordinate.
+     * @param {Number} t Number between 0 and 1.
+     * @returns {Number} <tt>X(t)= radius*sin(t)+centerY</tt>.
      */
-    Y: function (/** float */ t) /** float */ {
-        t *= 2.0*Math.PI;
-        return this.Radius()*Math.sin(t)+this.midpoint.coords.usrCoords[2];
+    Y: function (t) {
+        return this.Radius()*Math.sin(t*2.0*Math.PI)+this.midpoint.coords.usrCoords[2];
     },
 
     /**
-     * Treat the circle as parametric curve:
-     * Return <tt>Z(t)= 1.0</tt>
-     * t runs from 0 to 1
-     * @param t TODO description
-     * @return TODO description
+     * Treat the circle as parametric curve and calculates its Z coordinate.
+     * @param {Number} t ignored
+     * @return {Number} 1.0
      */
-    Z: function (/** float */ t) /** float */ {
+    Z: function (t) {
         return 1.0;
     },
 
     /**
-     * Treat the circle as parametric curve:
-     * t runs from 0 to 1
      * TODO description
      * @private
      */
@@ -621,8 +593,6 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     },
 
     /**
-     * Treat the circle as parametric curve:
-     * t runs from 0 to 1
      * TODO description
      * @private
      */
