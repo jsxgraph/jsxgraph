@@ -270,10 +270,19 @@ JXG.Options = {
 
         /**
          * Extra visual properties for traces of an element
+         * @type Object
          * @see JXG.GeometryElement#trace
          * @name JXG.GeometryElement#traceAttributes
          */
         traceAttributes: {},
+        
+        /**
+         * 
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#highlight
+         */
+        highlight: true,
         
         /**
          * If this is set to true, the element is updated in every update

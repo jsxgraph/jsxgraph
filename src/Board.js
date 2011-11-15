@@ -786,7 +786,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
         for (el in this.objects) {
             pEl = this.objects[el];
-            if (JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+            if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
                 if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
