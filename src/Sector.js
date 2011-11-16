@@ -445,6 +445,22 @@ JXG.createAngle = function(board, parents, attributes) {
          */
         el.radiuspoint = p;
 
+        /**
+         * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
+         * @type JXG.Point
+         * @name point
+         * @memberOf Angle.prototype
+         */
+        el.point = p;
+
+        /**
+         * Helper point for angles of type 'square'.
+         * @type JXG.Point
+         * @name pointsquare
+         * @memberOf Angle.prototype
+         */
+        el.pointsquare = q;
+
         dot = JXG.copyAttributes(attributes, board.options, 'angle', 'dot');
         /**
          * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
