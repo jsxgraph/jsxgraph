@@ -120,6 +120,8 @@
         var p = board.create('point', [-2, 3], {size: 9, fillColor: 'blue', face: '[]', label: {strokeColor: 'red', fontsize: 35}, snapToGrid: true, snapSizeX: 0.5, snapSizeY: 0.5, showinfobox: false, highlight: false});
 
         board.create('regularpolygon', [p1, p2, 4], {points: {ids: ['1', '2', '3']}});
+
+        board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}});
     })();
 
     var jan = (function () {

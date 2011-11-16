@@ -384,7 +384,7 @@ JXG.createAngle = function(board, parents, attributes) {
         p = board.create('point', [
             function(){
                 var A = parents[0], S = parents[1],
-                    r = attr.radius,
+                    r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
@@ -394,7 +394,7 @@ JXG.createAngle = function(board, parents, attributes) {
         q = board.create('point', [
             function(){
                 var A = parents[2], S = parents[1],
-                    r = attr.radius,
+                    r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
@@ -510,15 +510,15 @@ JXG.createAngle = function(board, parents, attributes) {
                 byminusay = p2c[2] - pmc[2],
                 coords, vecx, vecy, len;
 
-            if(this.label.content != null) {                          
-                this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
-            }  
+            if(this.label.content != null) {
+                this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);
+            }
 
-            coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay, 
-                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
+            coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay,
+                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay],
                             this.board);
-    
+
             vecx = coords.usrCoords[1] - pmc[1];
             vecy = coords.usrCoords[2] - pmc[2];
         
@@ -530,7 +530,7 @@ JXG.createAngle = function(board, parents, attributes) {
         };
 
     } else {
-        throw new Error("JSXGraph: Can't create angle with parent types '" + 
+        throw new Error("JSXGraph: Can't create angle with parent types '" +
                          (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
 
