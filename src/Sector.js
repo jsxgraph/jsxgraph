@@ -389,6 +389,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
+        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
         // Second helper point for square
         q = board.create('point', [
             function(){
@@ -417,8 +418,8 @@ JXG.createAngle = function(board, parents, attributes) {
             
             this.dataX = [S.X(), p.X(), r[1], q.X(), S.X()];
             this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
-            return;
-        }; 
+        };
+        
         el.updateDataArraySector = el.updateDataArray;
         el.updateDataArray = function() {
             var rad;
@@ -434,7 +435,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     this.updateDataArraySector();
                 }
             }
-        }
+        };
         
         /**
          * The point defining the radius of the angle element.

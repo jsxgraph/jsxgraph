@@ -440,6 +440,11 @@ JXG.Options = {
             visible: false,
             name: ''
         },
+        pointsquare: {
+            withLabel: false,
+            visible: false,
+            name: ''
+        },
         dot: {
             visible: false,
             strokeColor: 'none',
