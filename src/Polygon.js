@@ -561,7 +561,11 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
             p[i] = parents[i];
             p[i].addTransform(parents[i-2],rot);
         } else {
+            if (JXG.isArray(attr.ids) && attr.ids.length >= n-2) {
+                attr.id = attr.ids[i-2];
+            }
             p[i] = board.create('point',[p[i-2],rot], attr);
+console.log(p[i]);
         }
     }
     attr = JXG.copyAttributes(attributes, board.options, 'polygon');

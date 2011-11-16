@@ -646,7 +646,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     updateTransform: function () {
         if (this.transformations.length==0 || this.baseElement==null) {
-            return;
+            return this;
         }
         var c, i;
 
@@ -673,14 +673,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             list = JXG.isArray(transform) ? transform : [transform],
             len = list.length;
 
-        if (len === 0) { // There is only one baseElement possible
+        if (this.transformations.length === 0) { // There is only one baseElement possible
             this.baseElement = el;
         }
 
         for (i = 0; i < len; i++) {
             this.transformations.push(list[i]);
         }
-        
         return this;
     },
 
