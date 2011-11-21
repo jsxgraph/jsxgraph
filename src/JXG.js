@@ -941,6 +941,33 @@ JXG.extend(JXG, /** @lends JXG */ {
         
         return result;
     },
+
+    /**
+     * Compare two arrays.
+     * @param {Array} a1
+     * @param {Array} a2
+     * @returns {Boolean} <tt>true</tt>, if the arrays coefficients are of same type and value.
+     */
+    cmpArrays: function (a1, a2) {
+        var i;
+
+        // trivial cases
+        if (a1 === a2) {
+            return true;
+        }
+
+        if (a1.length !== a2.length) {
+            return false;
+        }
+
+        for (i = 0; i < a1.length; i++) {
+            if ((typeof a1[i] !== typeof a2[i]) || (a1[i] !== a2[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    },
     
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise

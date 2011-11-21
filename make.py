@@ -364,7 +364,7 @@ def makeHint():
 def makeTest():
     global jstest, reset
     
-    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole --reset');
 
 
 '''
