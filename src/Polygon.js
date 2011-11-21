@@ -565,7 +565,6 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
                 attr.id = attr.ids[i-2];
             }
             p[i] = board.create('point',[p[i-2],rot], attr);
-console.log(p[i]);
         }
     }
     attr = JXG.copyAttributes(attributes, board.options, 'polygon');

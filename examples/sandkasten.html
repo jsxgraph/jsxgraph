@@ -121,7 +121,7 @@
 
         board.create('regularpolygon', [p1, p2, 4], {points: {ids: ['1', '2', '3']}});
 
-        board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}});
+        board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}, withLabel: true});
     })();
 
     var jan = (function () {
