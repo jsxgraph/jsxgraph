@@ -243,6 +243,7 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
     }
 
     t = board.create('point', [function () { return JXG.Math.Geometry.projectPointToLine(p, l, board); }], attributes);
+    t.type = JXG.OBJECT_TYPE_OPROJECT;
     p.addChild(t); 
     l.addChild(t);
 

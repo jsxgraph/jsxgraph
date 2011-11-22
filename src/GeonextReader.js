@@ -427,25 +427,25 @@ JXG.GeonextReader = {
         // Read background image
         this.parseImage(board, this.gEBTN(boardData, 'file', 0, false), board.options.layer['image']);
 
-        board.options.grid.snapToGrid = (this.gEBTN(this.gEBTN(boardData, 'coordinates', 0, false), 'snap') == strTrue);
+        board.options.point.snapToGrid = (this.gEBTN(this.gEBTN(boardData, 'coordinates', 0, false), 'snap') == strTrue);
         //
         // TODO: Missing jsxgraph feature snapToPoint
         // If snapToGrid and snapToPoint are both true, point snapping is enabled
-        if (board.options.grid.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
-            board.options.grid.snapToGrid = false;
+        if (board.options.point.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
+            board.options.point.snapToGrid = false;
         }
-//board.options.grid.snapToGrid = false;
+        //board.options.grid.snapToGrid = false;
 
         xmlNode = this.gEBTN(boardData, 'grid', 1, false);
         tmp = this.gEBTN(xmlNode,  'x');
         if (tmp) {
             board.options.grid.gridX = 1 / parseFloat(tmp);
-            board.options.grid.snapSizeX = parseFloat(tmp);
+            board.options.point.snapSizeX = parseFloat(tmp);
         }
         tmp = this.gEBTN(xmlNode,  'y');
         if (tmp) {
             board.options.grid.gridY = 1 / parseFloat(tmp);
-            board.options.grid.snapSizeY = parseFloat(tmp);
+            board.options.point.snapSizeY = parseFloat(tmp);
         }
         //board.calculateSnapSizes();             // Seems not to be correct
         board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, 'dash'));
@@ -472,7 +472,7 @@ JXG.GeonextReader = {
         for (s = 0; s < elChildNodes.length; s++) {
             (function (s) {
                 var i, gxtEl = {},
-                    l, x, y, w, h, c, numberDefEls,
+                    l, x, y, c, numberDefEls,
                     el, p, inter, rgbo, tmp;
 
                 Data = elChildNodes[s];
@@ -581,6 +581,7 @@ JXG.GeonextReader = {
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
+                        p.type = JXG.OBJECT_TYPE_GXTCAS;
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
