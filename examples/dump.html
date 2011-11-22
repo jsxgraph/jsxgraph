@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../Playground/dump/Dump.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
+</head>
+<body>
+
+<h2>WRP Playground</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float: left;"></div>
+</div>
+
+<textarea id="debug" style="display:block;" cols="100" rows="50">DEBUG</textarea>
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var wrp = (function() {
+        var log = new JXG.Dump.Log(),
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true}),
+            p = board.create('point', [1, 2]);
+
+        $('#debug').html(JXG.Dump.toJavaScript(board, log));
+        console.log(log.print());
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>
