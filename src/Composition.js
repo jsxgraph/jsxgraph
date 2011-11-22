@@ -921,8 +921,8 @@ JXG.createArrowParallel = function(board, parents, attributes) {
  */
 JXG.createNormal = function(board, parents, attributes) {
     /* TODO normal polynomials */
-    var p;
-    var c;
+    var p, c;
+
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
@@ -1291,7 +1291,7 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIncenter = function(board, parents, attributes) {
-    var p, c, ret,
+    var p, c,
         A, B, C;
 
     if(parents.length >= 3 && JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
@@ -1342,7 +1342,7 @@ JXG.createIncenter = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createCircumcircle = function(board, parents, attributes) {
-    var p, c, attr, ret;
+    var p, c, attr;
 
     try {
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');

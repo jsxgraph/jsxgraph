@@ -128,17 +128,18 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
         this.radius = this.Radius(); 
     }
     else if(method == 'pointRadius') {
+        this.gxtterm = par2;
         this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
         this.updateRadius();                        // First evaluation of the graph  
     }
     else if(method == 'pointLine') {
         // dann ist p2 die Id eines Objekts vom Typ Line!
-        this.line = JXG.getReference(board,par2);
+        this.line = JXG.getReference(board, par2);
         this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);    
     }
     else if(method == 'pointCircle') {
         // dann ist p2 die Id eines Objekts vom Typ Circle!
-        this.circle = JXG.getReference(board,par2);
+        this.circle = JXG.getReference(board, par2);
         this.radius = this.circle.Radius();     
     } 
     
