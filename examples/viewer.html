@@ -6,6 +6,7 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../Playground/dump/Dump.js"></script>
    <!--<script type="text/javascript" src="../src/CanvasRenderer.js"></script>-->
    <script type="text/javascript" src="../src/GeonextReader.js"></script>
 </head>
@@ -16,6 +17,7 @@
    <!-- Drawing area  -->
 <form>
 <p>
+    <input type='button' value='Dump construction' onclick="dump();" />
 <table>
 <tr>
 <td>Uncompressed GEONExT examples:</td>
@@ -366,6 +368,14 @@
         var end = new Date();
         alert('Time: '+((end.getTime()-start.getTime())/1000.0));
     }
+
+    function dump() {
+        var log = new JXG.Dump.Log();
+
+        $('debug').innerHTML = JXG.Dump.toJavaScript(board, log);
+        console.log(log.print());
+    }
+
 </script>
 
 </body>
