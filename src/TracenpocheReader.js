@@ -633,6 +633,15 @@ JXG.TracenpocheReader = new function() {
                 return this.first + '*0.01';
         });
 
+        // This is for pointaimante
+        infix("_", 10, function (left) {  
+                this.first = left;
+                this.second = expression(10);
+//console.log( '[' + this.first + ',' + this.second + ']');
+                return '[' + this.first + ',' + this.second + ']';
+        });
+        //infix(",", 9);
+
         infixr("^", 65, function (left) {
                 this.first = left;
                 this.second = expression(64);
@@ -1274,6 +1283,7 @@ Fixed:
         // D appartient dAB_50%
         // M sur A_50%
 		var el,opt;
+console.log(parents.slice(0,2));
 		opt = this.handleAtts(attributes);
         el = this.board.create('point', parents.slice(0,2), this.handleAtts(attributes));
 		this.pointCoordshow(el,attributes,opt);				
