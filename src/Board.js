@@ -712,7 +712,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 ) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer >= dragEl.visProp.layer) {
-                        // If we an element and its label have the focus
+                        // If an element and its label have the focus
                         // simultaneously, the element is taken
                         if (JXG.exists(dragEl.label) && pEl==dragEl.label.content) {
                             continue;
@@ -778,6 +778,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
         this.updateInfobox(drag);
+        drag.highlight();
     },
 
     highlightElements: function (x, y) {
@@ -789,10 +790,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
-                if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
-                    this.highlightedObjects[el] = pEl;
+                //if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
+                //    this.highlightedObjects[el] = pEl;
                     pEl.highlight();
-                }
+                //}
             }
         }
     },
@@ -1192,11 +1193,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                     this.moveObject(pos[0], pos[1], this.touches[i]);
                 // Touch by two fingers: moving lines
-                } else if (this.touches[i].targets.length === 2) {  
+                } else if (this.touches[i].targets.length === 2) { 
                     pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                     this.touches[i].obj.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
                     pos = this.getMousePosition(evt, this.touches[i].targets[1].num);
                     this.touches[i].obj.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, pos[0], pos[1]);
+                    this.touches[i].obj.highlight();
                     this.update(this.touches[i].obj.point1);
                 }
             }
@@ -1536,7 +1538,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (el in this.highlightedObjects) {
             pEl = this.highlightedObjects[el];
             pEl.noHighlight();
-            delete(this.highlightedObjects[el]);
             needsDehighlight = true;
 
             // In highlightedObjects should only be objects which fulfill all these conditions

@@ -817,7 +817,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Highlights the element.
      */
     highlight: function () {
-        this.board.renderer.highlight(this);
+        if (this.board.highlightedObjects[this.id] == null) { // highlight only if not highlighted
+            this.board.highlightedObjects[this.id] = this;
+            this.board.renderer.highlight(this);
+        }
         return this;
     },
 
@@ -825,7 +828,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Uses the "normal" properties of the element.
      */
     noHighlight: function () {
-        this.board.renderer.noHighlight(this);
+        if (this.board.highlightedObjects[this.id] != null) { // highlight only if not highlighted
+            delete(this.board.highlightedObjects[this.id]);
+            this.board.renderer.noHighlight(this);
+        }
         return this;
     },
 
