@@ -42,34 +42,12 @@ JXG.Curve = function (board, parents, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_CURVE, JXG.OBJECT_CLASS_CURVE);
  
     this.points = []; 
-
-    /**
-     * Use the algorithm by Gillam and Hohenwarter for plotting.
-     * If false the naive algorithm is used.
-     * It is much slower, but the result is better.
-     */
-    this.doAdvancedPlot = attributes.doadvancedplot;
-    
-    /** 
-     * Number of points on curves after mouseUp, i.e. high quality output.
-     * Only used if this.doAdvancedPlot==false
-     * May be overwritten.
-     */
-    this.numberPointsHigh = attributes.numberpointshigh;
-    
-    /** 
-     * Number of points on curves after mousemove, i.e. low quality output.
-     * Only used if this.doAdvancedPlot==false
-     * May be overwritten.
-     */
-    this.numberPointsLow = attributes.numberpointslow;
-    
     /** 
      * Number of points on curves. This value changes
      * between numberPointsLow and numberPointsHigh.
      * It is set in {@link JXG.Curve#updateCurve}.
      */
-    this.numberPoints = this.numberPointsHigh; 
+    this.numberPoints = this.visProp.numberpointshigh; 
 
     this.dataX = null;
     this.dataY = null;
@@ -153,7 +131,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             c, trans, i, j, tX, tY,
             xi, xi1, yi, yi1,
             lbda, x0, y0, x1, y1, xy, den,
-            steps = this.numberPointsLow,
+            steps = this.visProp.numberpointslow,
             d = (this.maxX()-this.minX())/steps,
             prec = this.board.options.precision.hasPoint/this.board.unitX,
             checkPoint, len,
@@ -183,15 +161,15 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         } else if (this.visProp.curvetype == 'plot') {
             len = this.numberPoints; // Rough search quality
             for (i=0;i<len-1;i++) {
-                xi = this.X(i);
+                xi  = this.X(i);
                 xi1 = this.X(i+1);
-                yi = this.Y(i);
+                yi  = this.Y(i);
                 yi1 = this.Y(i+1);
-                x1 = xi1 - xi;
-                y1 = yi1-yi;
+                x1  = xi1 - xi;
+                y1  = yi1 - yi;
 
-                x0 = x-xi;
-                y0 = y-yi;
+                x0  = x - xi;
+                y0  = y - yi;
                 den = x1*x1+y1*y1;
 
                 if (den>=JXG.Math.eps) {
@@ -302,17 +280,16 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 suspendUpdate = true;
             }
         } else { // continuous x data
-            if (this.doAdvancedPlot) {
+            if (this.visProp.doadvancedplot) {
                 this.updateParametricCurve(mi, ma, len);
             } else {
                 if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-                    this.numberPoints = this.numberPointsHigh;
+                    this.numberPoints = this.visProp.numberpointshigh;
                 } else {
-                    this.numberPoints = this.numberPointsLow;
+                    this.numberPoints = this.visProp.numberpointslow;
                 }
-                len = this.numberPoints;
                 this.allocatePoints();  // It is possible, that the array length has increased.
-                this.updateParametricCurveNaive(mi, ma, len);
+                this.updateParametricCurveNaive(mi, ma, this.numberPoints);
             }
         }
 
@@ -320,7 +297,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doAdvancedPlot} is <tt>false</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#visProp.doadvancedplot} is <tt>false</tt>.
      * @param {Number} mi Left bound of curve
      * @param {Number} ma Right bound of curve
      * @param {Number} len Number of data points
@@ -341,7 +318,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doAdvancedPlot} is <tt>true</tt>.
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#visProp.doadvancedplot} is <tt>true</tt>.
      * @param {Number} mi Left bound of curve
      * @param {Number} ma Right bound of curve
      * @param {Number} len Number of data points
@@ -689,7 +666,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     // already documented in GeometryElement
     bounds: function () {
-        var steps = this.numberPointsLow,
+        var steps = this.visProp.numberpointslow,
             d = (this.maxX()-this.minX())/steps,
             i, j, trans, t, c, len, tX, tY, box = [this.minX(), 0, this.maxX(), 0];
 
