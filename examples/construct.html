@@ -75,6 +75,8 @@ var circ = brd.create('circle', [A,3]);
 var D = brd.create('glider', [-1,2, circ], {name:'glider', attractors:[circ, l2, tu], attractorDistance:0.05, snatchDistance:0.9});
 var t = brd.create('tangent', [D]);
 
+var pp = brd.create('point', [function(){ return 4;}, function(){ return A.Y();}]);
+
 /*
 var li1 = brd.create('circle',[[1,2],3]);
 var gl = brd.create('glider',[1,1,li1]);

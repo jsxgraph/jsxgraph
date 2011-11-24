@@ -185,43 +185,64 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var funps;
+        var funps, d1, d2, d, dnew;
 
-        if (this.needsUpdate) {
-            if(this.constrained) {
-                if(typeof this.funps != 'undefined') {
-                    funps = this.funps();
-                    if (funps && funps.length && funps.length === 2) {
-                        this.point1 = funps[0];
-                        this.point2 = funps[1];
+        if (!this.needsUpdate) { return this; }
+        
+        if(this.constrained) {
+            if(typeof this.funps != 'undefined') {
+                funps = this.funps();
+                if (funps && funps.length && funps.length === 2) {
+                    this.point1 = funps[0];
+                    this.point2 = funps[1];
+                }
+            } else {
+                if (typeof this.funp1 === 'function') {
+                    funps = this.funp1();
+                    if (JXG.isPoint(funps)) {
+                        this.point1 = funps;
+                    } else if (funps && funps.length && funps.length === 2) {
+                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
                     }
-                } else {
-                    if (typeof this.funp1 === 'function') {
-                        funps = this.funp1();
-
-                        if (JXG.isPoint(funps)) {
-                            this.point1 = funps;
-                        } else if (funps && funps.length && funps.length === 2) {
-                            this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
-                        }
-                    }
-                    if (typeof this.funp2 === 'function') {
-                        funps = this.funp2();
-
-                        if (JXG.isPoint(funps)) {
-                            this.point2 = funps;
-                        } else if (funps && funps.length && funps.length === 2) {
-                            this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
-                        }
+                }
+                if (typeof this.funp2 === 'function') {
+                    funps = this.funp2();
+                    if (JXG.isPoint(funps)) {
+                        this.point2 = funps;
+                    } else if (funps && funps.length && funps.length === 2) {
+                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
                     }
                 }
             }
-
-            this.updateStdform();
-            
-            if(this.visProp.trace) {
-                this.cloneToBackground(true);
+        }
+        
+        // Segments with fxed length
+        if (this.hasFixedLength) {
+            d = this.point1.Dist(this.point2);
+            dnew = this.fixedLength();
+            d1 = this.fixedLengthOldCoords[0].distance(JXG.COORDS_BY_USER, this.point1.coords);
+            d2 = this.fixedLengthOldCoords[1].distance(JXG.COORDS_BY_USER, this.point2.coords);
+            if (d1>JXG.Math.eps || d2>JXG.Math.eps || d!=dnew) {
+                if (d>JXG.Math.eps && d1>d2 && this.point2.isDraggable) {  // point1 has been changed more than point2
+                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
+                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
+                        );
+                } else if (d>JXG.Math.eps && this.point1.isDraggable) {
+                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
+                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
+                        );
+                }
+                this.fixedLengthOldCoords[0].setCoordinates(JXG.COORDS_BY_USER, this.point1.coords.usrCoords);
+                this.fixedLengthOldCoords[1].setCoordinates(JXG.COORDS_BY_USER, this.point2.coords.usrCoords);
             }
+        }
+        
+        this.updateStdform();
+            
+        if(this.visProp.trace) {
+            this.cloneToBackground(true);
         }
         return this;
     },
@@ -958,10 +979,9 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} 
+ * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
  * // Create a segment providing two points.
@@ -977,9 +997,27 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * </script><pre>
  */
 JXG.createSegment = function(board, parents, attributes) {
+    var el;
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    return board.create('line', parents, attributes);
+    el = board.create('line', parents.slice(0,2), attributes);
+    
+    if (parents.length==3) {
+        el.hasFixedLength = true;
+        if (JXG.isNumber(parents[2])) {
+            el.fixedLength = function() { return parents[2]; };
+        } else if (JXG.isFunction(parents[2])) {
+            el.fixedLength = parents[2];
+        }   else {
+            throw new Error("JSXGraph: Can't create segment with third parent type '" + 
+                        (typeof parents[2]) + "'." + 
+                        "\nPossible third parent types: number or function");
+        }
+        el.fixedLengthOldCoords = [];
+        el.fixedLengthOldCoords[0] = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords.slice(1,3), board);
+        el.fixedLengthOldCoords[1] = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords.slice(1,3), board);
+    }
+    return el;
 };
 
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);

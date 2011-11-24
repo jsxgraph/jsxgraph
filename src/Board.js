@@ -2039,7 +2039,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             fixed: true
         });
 
-
         p3 = this.create('point', [0, 1], {
             id: this.id + 'gY0e0',
             name: 'Punkt_0_1',
