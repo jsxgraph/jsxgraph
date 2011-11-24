@@ -185,7 +185,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var funps, d1, d2, d, dnew;
+        var funps, d1, d2, d, dnew, x, y, drag1, drag2;
 
         if (!this.needsUpdate) { return this; }
         
@@ -222,17 +222,42 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             dnew = this.fixedLength();
             d1 = this.fixedLengthOldCoords[0].distance(JXG.COORDS_BY_USER, this.point1.coords);
             d2 = this.fixedLengthOldCoords[1].distance(JXG.COORDS_BY_USER, this.point2.coords);
+
             if (d1>JXG.Math.eps || d2>JXG.Math.eps || d!=dnew) {
-                if (d>JXG.Math.eps && d1>d2 && this.point2.isDraggable) {  // point1 has been changed more than point2
-                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
-                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
-                        );
-                } else if (d>JXG.Math.eps && this.point1.isDraggable) {
-                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
-                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
-                        );
+			    drag1 = this.point1.isDraggable && (this.point1.type != JXG.OBJECT_TYPE_GLIDER) && !this.point1.visProp.fixed;
+		    	drag2 = this.point2.isDraggable && (this.point2.type != JXG.OBJECT_TYPE_GLIDER) && !this.point2.visProp.fixed;
+
+				if (d>JXG.Math.eps) {
+                    if ((d1>d2 && drag2) || 
+                        (d1<=d2 && drag2 && !drag1)) {  
+                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                            this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
+                            this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
+                            );
+                        this.point2.prepareUpdate().updateRenderer();
+                    } else if ((d1<=d2 && drag1) || 
+                               (d1>d2 && drag1 && !drag2)) {  
+                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                            this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
+                            this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
+                            );
+                        this.point1.prepareUpdate().updateRenderer();
+                    }
+                } else {
+					x = Math.random()-0.5;
+					y = Math.random()-0.5;
+					d = Math.sqrt(x*x+y*y);
+                    if (drag2) {  
+                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                            this.point1.X() + x*dnew/d,
+                            this.point1.Y() + y*dnew/d
+                            );
+                    } else if (drag1) {
+                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                            this.point2.X() + x*dnew/d,
+                            this.point2.Y() + y*dnew/d
+                            );
+                    }
                 }
                 this.fixedLengthOldCoords[0].setCoordinates(JXG.COORDS_BY_USER, this.point1.coords.usrCoords);
                 this.fixedLengthOldCoords[1].setCoordinates(JXG.COORDS_BY_USER, this.point2.coords.usrCoords);
