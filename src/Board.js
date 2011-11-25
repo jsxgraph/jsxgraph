@@ -1334,11 +1334,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return false;
         }
 
-        // this mode is deprecated and has to be implemented by the GUI itself
-        if (this.mode == this.BOARD_MODE_CONSTRUCT) {
-            return false;
-        }
-
         elements = this.initMoveObject(pos[0], pos[1]);
 
         // if no draggable object can be found, get out here immediately
@@ -1366,7 +1361,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             // prevent accidental text selection
             // this could get us new trouble: input fields, links and drop down boxes placed as text
-            // on the board doesn't work anymore.
+            // on the board don't work anymore.
             if (Evt && Evt.preventDefault) {
                 Evt.preventDefault();
             } else {
