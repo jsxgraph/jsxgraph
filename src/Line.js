@@ -216,53 +216,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             }
         }
         
-        // Segments with fxed length
-        if (this.hasFixedLength) {
-            d = this.point1.Dist(this.point2);
-            dnew = this.fixedLength();
-            d1 = this.fixedLengthOldCoords[0].distance(JXG.COORDS_BY_USER, this.point1.coords);
-            d2 = this.fixedLengthOldCoords[1].distance(JXG.COORDS_BY_USER, this.point2.coords);
-
-            if (d1>JXG.Math.eps || d2>JXG.Math.eps || d!=dnew) {
-			    drag1 = this.point1.isDraggable && (this.point1.type != JXG.OBJECT_TYPE_GLIDER) && !this.point1.visProp.fixed;
-		    	drag2 = this.point2.isDraggable && (this.point2.type != JXG.OBJECT_TYPE_GLIDER) && !this.point2.visProp.fixed;
-
-				if (d>JXG.Math.eps) {
-                    if ((d1>d2 && drag2) || 
-                        (d1<=d2 && drag2 && !drag1)) {  
-                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
-                            this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
-                            this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
-                            );
-                        this.point2.prepareUpdate().updateRenderer();
-                    } else if ((d1<=d2 && drag1) || 
-                               (d1>d2 && drag1 && !drag2)) {  
-                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
-                            this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
-                            this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
-                            );
-                        this.point1.prepareUpdate().updateRenderer();
-                    }
-                } else {
-					x = Math.random()-0.5;
-					y = Math.random()-0.5;
-					d = Math.sqrt(x*x+y*y);
-                    if (drag2) {  
-                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
-                            this.point1.X() + x*dnew/d,
-                            this.point1.Y() + y*dnew/d
-                            );
-                    } else if (drag1) {
-                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
-                            this.point2.X() + x*dnew/d,
-                            this.point2.Y() + y*dnew/d
-                            );
-                    }
-                }
-                this.fixedLengthOldCoords[0].setCoordinates(JXG.COORDS_BY_USER, this.point1.coords.usrCoords);
-                this.fixedLengthOldCoords[1].setCoordinates(JXG.COORDS_BY_USER, this.point2.coords.usrCoords);
-            }
-        }
+        this.updateSegmentFixedLength();
         
         this.updateStdform();
             
@@ -272,6 +226,75 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
+    /**
+     * Update segments with fixed length and at least one movable point.
+     * @private
+     */
+    updateSegmentFixedLength: function() {
+        // 
+        if (!this.hasFixedLength) { return this; }
+        // Compute the actual length of the segment
+        d = this.point1.Dist(this.point2);
+        // Determine the length the segment ought to have
+        dnew = this.fixedLength();
+        // Distances between the two points and their respective 
+        // position before the update
+        d1 = this.fixedLengthOldCoords[0].distance(JXG.COORDS_BY_USER, this.point1.coords);
+        d2 = this.fixedLengthOldCoords[1].distance(JXG.COORDS_BY_USER, this.point2.coords);
+
+        // If the position of the points or the fixed length function has been changed 
+        // we have to work.
+        if (d1>JXG.Math.eps || d2>JXG.Math.eps || d!=dnew) {
+            drag1 = this.point1.isDraggable && (this.point1.type != JXG.OBJECT_TYPE_GLIDER) && !this.point1.visProp.fixed;
+            drag2 = this.point2.isDraggable && (this.point2.type != JXG.OBJECT_TYPE_GLIDER) && !this.point2.visProp.fixed;
+
+            // First case: the two points are different
+            // Then we try to adapt the point that was not dragged
+            // If this point can not be moved (e.g. because it is a glider)
+            // we try move the other point
+            if (d>JXG.Math.eps) {
+                if ((d1>d2 && drag2) || 
+                    (d1<=d2 && drag2 && !drag1)) {  
+                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
+                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
+                        );
+                    this.point2.prepareUpdate().updateRenderer();
+                } else if ((d1<=d2 && drag1) || 
+                           (d1>d2 && drag1 && !drag2)) {  
+                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
+                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
+                        );
+                    this.point1.prepareUpdate().updateRenderer();
+                }
+            // Second case: the two points are identical. In this situation
+            // we choose a random direction.
+            } else {
+                x = Math.random()-0.5;
+                y = Math.random()-0.5;
+                d = Math.sqrt(x*x+y*y);
+                if (drag2) {  
+                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point1.X() + x*dnew/d,
+                        this.point1.Y() + y*dnew/d
+                        );
+                    this.point2.prepareUpdate().updateRenderer();
+                } else if (drag1) {
+                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point2.X() + x*dnew/d,
+                        this.point2.Y() + y*dnew/d
+                        );
+                    this.point1.prepareUpdate().updateRenderer();
+                }
+            }
+            // Finally, we save the position of the two points.
+            this.fixedLengthOldCoords[0].setCoordinates(JXG.COORDS_BY_USER, this.point1.coords.usrCoords);
+            this.fixedLengthOldCoords[1].setCoordinates(JXG.COORDS_BY_USER, this.point2.coords.usrCoords);
+        }
+        return this;
+    },
+    
     /**
      * TODO description. already documented in geometryelement?
      * @private
@@ -995,8 +1018,10 @@ JXG.createLine = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
 /**
- * @class This element is used to provide a constructor for a segment. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
- * and {@link JXG.Line#straightLast} properties set to false.
+ * @class This element is used to provide a constructor for a segment. 
+ * It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
+ * and {@link JXG.Line#straightLast} properties set to false. If there is a third variable then the 
+ * segemnt has a fixed length (which may be a function, too).
  * @pseudo
  * @description
  * @name Segment
@@ -1004,10 +1029,12 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} 
+ * @param {JXG.Point,array_JXG.Point,array} point1, point2 Parent elements can be two elements either of type {@link JXG.Point} 
  * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @see Line
+  * @param {number,function} length (optional) The points are adapted - if possible - such that their distance 
+  * has a this value.
+* @see Line
  * @example
  * // Create a segment providing two points.
  *   var p1 = board.create('point', [4.5, 2.0]);
@@ -1020,6 +1047,32 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  *   var slex1_p2 = slex1_board.create('point', [1.0, 1.0]);
  *   var slex1_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
  * </script><pre>
+ * 
+ * @example
+ * // Create a segment providing two points.
+ *   var p1 = board.create('point', [4.0, 1.0]);
+ *   var p2 = board.create('point', [1.0, 1.0]);
+ *   var l1 = board.create('segment', [p1, p2]);
+ *   var p3 = board.create('point', [4.0, 2.0]);
+ *   var p4 = board.create('point', [1.0, 2.0]);
+ *   var l2 = board.create('segment', [p3, p4, 3]);
+ *   var p5 = board.create('point', [4.0, 3.0]);
+ *   var p6 = board.create('point', [1.0, 4.0]);
+ *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]);
+ * </pre><div id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var slex2_board = JXG.JSXGraph.initBoard('617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var slex2_p1 = slex1_board.create('point', [4.0, 1.0]);
+ *   var slex2_p2 = slex1_board.create('point', [1.0, 1.0]);
+ *   var slex2_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
+ *   var slex2_p3 = slex1_board.create('point', [4.0, 2.0]);
+ *   var slex2_p4 = slex1_board.create('point', [1.0, 2.0]);
+ *   var slex2_l2 = slex1_board.create('segment', [slex1_p3, slex1_p4, 3]);
+ *   var slex2_p5 = slex1_board.create('point', [4.0, 2.0]);
+ *   var slex2_p6 = slex1_board.create('point', [1.0, 2.0]);
+ *   var slex2_l3 = slex1_board.create('segment', [slex1_p5, slex1_p6, function(){ return slex2_l1.L();}]);
+ * </script><pre>
+ * 
  */
 JXG.createSegment = function(board, parents, attributes) {
     var el;
