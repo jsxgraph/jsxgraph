@@ -156,6 +156,12 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.symbolic = {};
 
     /**
+     * The string used with {@link JXG.Board#create}
+     * @type String
+     */
+    this.elType = '';
+
+    /**
      * [c,b0,b1,a,k,r,q0,q1]
      *
      * See
@@ -252,8 +258,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         this.visProp.gradientsecondopacity = this.visProp.fillopacity;
         this.visProp.gradientpositionx = 0.5;
         this.visProp.gradientpositiony = 0.5;
-
-        //this.needsUpdate = true;
     }
 };
 
@@ -302,7 +306,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
     /**
      * Counts the direct children of an object without counting labels.
-     * 
      * @private
      * @return {number} Number of children
      */
@@ -322,20 +325,15 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Decides whether an element can be dragged. This is used in setPositionDirectly methods
      * where all parent elements are checked if they may be dragged, too.
-     * 
      * @private
      * @return {boolean}
      */
     draggable: function() {
-        if (this.isDraggable &&              
-            !this.visProp.fixed && !this.visProp.frozen &&
-            //this.type != JXG.OBJECT_TYPE_GLIDER &&    // Experimentally turned off
-            this.countChildren()<=1
-            ) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.isDraggable &&
+              !this.visProp.fixed &&
+              !this.visProp.frozen &&
+              //this.type != JXG.OBJECT_TYPE_GLIDER &&    // Experimentally turned off
+               this.countChildren() <= 1;
     },
     
     /**
@@ -982,23 +980,30 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     shadow: function (s) {
         this.setProperty({shadow:s});
         return this;
+    },
+
+    getType: function () {
+        return this.elType;
+    },
+
+    getParents: function () {
+        return this.parents;
+    },
+
+    getAttributes: function () {
+        var attributes = JXG.deepCopy(this.visProp),
+            cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
+                'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
+                'needsregularupdate', 'zoom', 'layer'],
+            i;
+
+        attributes.id = this.id;
+        attributes.name = this.name;
+
+        for (i = 0; i < cleanThis.length; i++) {
+            delete attributes[cleanThis[i]];
+        }
+
+        return attributes;
     }
 });
-
-/**
-  * Setting visPropOld is done in an non object oriented version
-  * since otherwise there would be problems in cloneToBackground
-  */
-JXG.clearVisPropOld = function (el) {
-    el.visPropOld = {
-        strokecolor: '',
-        strokeopacity: '',
-        strokewidth: '',
-        fillcolor: '',
-        fillopacity: '',
-        shadow: false,
-        firstarrow: false,
-        lastarrow: false
-    };
-};
-

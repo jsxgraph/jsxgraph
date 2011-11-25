@@ -116,6 +116,23 @@ JXG.extend(JXG, /** @lends JXG */ {
         return this.isAndroid() &&  navigator.userAgent.search(" AppleWebKit/") > -1;
     },
 
+    /**
+     * Resets visPropOld of <tt>el</tt>
+     * @param {JXG.GeometryElement} el
+     */
+    clearVisPropOld: function (el) {
+        el.visPropOld = {
+            strokecolor: '',
+            strokeopacity: '',
+            strokewidth: '',
+            fillcolor: '',
+            fillopacity: '',
+            shadow: false,
+            firstarrow: false,
+            lastarrow: false
+        };
+    },
+
     ieVersion: (function(){
 
         var undef,
