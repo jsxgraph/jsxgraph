@@ -88,7 +88,7 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     /**
     * Label offsets from label anchor
-    * @type array
+    * @type Array
      * @default JXG.Options.line#labelOffsets
     * @private
     */
@@ -108,6 +108,8 @@ JXG.Line = function (board, p1, p2, attributes) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
+
+    this.elType = 'line';
 
     this.updateStdform(); // This is needed in the following situation: 
                           // * the line is defined by three coordinates
@@ -913,6 +915,10 @@ JXG.createLine = function(board, parents, attributes) {
         } else {
             el.isDraggable = true;
         }
+
+        if (!el.constrained) {
+            el.parents = [p1.id, p2.id];
+        }
     }
     /**
      * Line is defined by three homogeneous coordinates.
@@ -964,6 +970,10 @@ JXG.createLine = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
         el.isDraggable = isDraggable;             // Not yet working, because the points are not draggable.
+
+        if (isDraggable) {
+            el.parents = [c[0](), c[1](), c[2]()];
+        }
     }
     /**
      * The parent array contains a function which returns two points.
@@ -1075,7 +1085,8 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * 
  */
 JXG.createSegment = function(board, parents, attributes) {
-    var el;
+    var el, i;
+
     attributes.straightFirst = false;
     attributes.straightLast = false;
     el = board.create('line', parents.slice(0,2), attributes);
@@ -1095,6 +1106,9 @@ JXG.createSegment = function(board, parents, attributes) {
         el.fixedLengthOldCoords[0] = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords.slice(1,3), board);
         el.fixedLengthOldCoords[1] = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords.slice(1,3), board);
     }
+
+    el.elType = 'segment';
+
     return el;
 };
 
@@ -1134,6 +1148,9 @@ JXG.createArrow = function(board, parents, attributes) {
     el = board.create('line', parents, attributes).setStraight(false, false);
     el.setArrow(false, true);
     el.type = JXG.OBJECT_TYPE_VECTOR;
+
+    el.elType = 'arrow';
+
     return el;
 };
 
@@ -1195,6 +1212,13 @@ JXG.createAxis = function(board, parents, attributes) {
          * @type JXG.Ticks
          */
         el.defaultTicks = board.create('ticks', [el, dist], attr);
+
+        el.defaultTicks.dump = false;
+
+        el.elType = 'axis';
+        el.subs = {
+            ticks: el.defaultTicks
+        };
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 
@@ -1233,7 +1257,7 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 JXG.createTangent = function(board, parents, attributes) {
     var p,
         c,
-        g, f, i, j, el, Dg, Df, tangent;
+        g, f, i, j, el, tangent;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
@@ -1342,7 +1366,13 @@ JXG.createTangent = function(board, parents, attributes) {
         // this is required for the geogebra reader to display a slope
         tangent.glider = p;
     }
-    
+
+    tangent.elType = 'tangent';
+    tangent.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        tangent.parents.push(parents[i].id);
+    }
+
     return tangent;
 };
 

@@ -59,7 +59,7 @@
  * </script><pre>
  */
 JXG.createArc = function(board, parents, attributes) {
-    var el, attr;
+    var el, attr, i;
 
 
     // this method is used to create circumccirclearcs, too. if a circumcirclearc is created we get a fourth
@@ -75,6 +75,15 @@ JXG.createArc = function(board, parents, attributes) {
 
     attr = JXG.copyAttributes(attributes, board.options, 'arc');
     el = board.create('curve', [[0],[0]], attr);
+
+    el.elType = 'arc';
+
+    el.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        if (parents[i].id) {
+            el.parents.push(parents[i].id);
+        }
+    }
 
     /**
      * documented in JXG.GeometryElement
@@ -327,6 +336,8 @@ JXG.createSemicircle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
         mp = board.create('midpoint', [parents[0], parents[1]], attr);
 
+        mp.dump = false;
+
         attr = JXG.copyAttributes(attributes, board.options, 'circle');
         /**
          * The semicircle itself.
@@ -334,7 +345,13 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name arc
          * @type Arc
          */
-        el = board.create('arc',[mp, parents[1], parents[0]], attr);
+        el = board.create('arc', [mp, parents[1], parents[0]], attr);
+
+        el.elType = 'semicircle';
+        el.parents = [parents[0].id, parents[1].id];
+        el.subs = {
+            center: mp
+        };
 
         /**
          * The midpoint of the two defining points.
@@ -392,6 +409,8 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'arc', 'center');
         mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
 
+        mp.dump = false;
+
         attr = JXG.copyAttributes(attributes, board.options, 'arc');
         attr.usedirection = true;
         /**
@@ -402,6 +421,11 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
          */
         el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attr);
 
+        el.elType = 'circumcirclearc';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        el.subs = {
+            center: mp
+        };
 
         /**
          * The midpoint of the circumcircle of the three points defining the circumcircle arc.

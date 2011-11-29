@@ -98,6 +98,8 @@ JXG.Text = function (board, content, coords, attributes) {
     }
     this.size = [1.0, 1.0];
 
+    this.elType = 'text';
+
     return this;
 };
 JXG.Text.prototype = new JXG.GeometryElement();
@@ -117,12 +119,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             dy = this.coords.scrCoords[2]-y,
             r = this.board.options.precision.hasPoint;
 
-        if (dx>=-r && dx<=2*r && 
-            dy>=-r && dy<=2*r) {
-            return true;
-        } else {
-            return false;
-        }
+        return dx >= -r && dx <= 2 * r && dy >= -r && dy <= 2 * r;
     },
 
     /**
@@ -449,14 +446,20 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  * </script><pre>
  */
 JXG.createText = function(board, parents, attributes) {
-    var attr;
+    var attr, t;
 
     attr = JXG.copyAttributes(attributes, board.options, 'text');
 
     // downwards compatibility
     attr.anchor = attr.parent || attr.anchor;
 
-    return new JXG.Text(board, parents[parents.length-1], parents, attr);
+    t = new JXG.Text(board, parents[parents.length-1], parents, attr);
+
+    if (typeof parents[parents.length-1] !== 'function') {
+        t.parents = parents;
+    }
+
+    return t;
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

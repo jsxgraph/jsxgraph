@@ -1081,6 +1081,23 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.traces[copy.id] = copy.rendNode;
         
         return this;
+    },
+
+    getParents: function () {
+        var p;
+
+        if (this.parents) {
+            if (this.type == JXG.OBJECT_TYPE_GLIDER) {
+                p = [[this.X(), this.Y()], this.slideObject];
+            } else {
+                p = this.parents
+            }
+
+        } else {
+            p = [this.Z(), this.X(), this.Y()];
+        }
+
+        return p;
     }
 });
 
@@ -1157,12 +1174,15 @@ JXG.createPoint = function(board, parents, attributes) {
             el = new JXG.Point(board, [0,0], attr);
             el.addTransform(parents[0],parents[1]);
             el.isDraggable = false;
+
+            el.parents = [parents[0].id, parents[1].id];
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
         }
+
     } else {
         el = new JXG.Point(board, [NaN, NaN], attr);
         el.addConstraint(parents);
@@ -1221,7 +1241,7 @@ JXG.createGlider = function(board, parents, attributes) {
 
     // eltype is set in here
     el.makeGlider(parents[parents.length-1]);
-    
+
     return el;
 };
 
@@ -1272,6 +1292,7 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
     parents[1].addChild(el);
 
     el.elType = 'intersection';
+    el.parents = [parents[0].id, parents[1].id, parents[2], parents[3]];
 
     el.generatePolynomial = function () {
         var poly1 = parents[0].generatePolynomial(el);
@@ -1335,7 +1356,8 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
     else {
         el = board.create('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
     }
-    el.elType = 'intersection';
+    el.elType = 'otherintersection';
+    el.parents = [parents[0].id, parents[1].id, parents[2]];
     
     parents[0].addChild(el);
     parents[1].addChild(el);

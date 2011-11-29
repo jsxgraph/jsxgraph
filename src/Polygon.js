@@ -88,6 +88,9 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.id = this.board.setId(this, 'Py');
     this.board.renderer.drawPolygon(this);
     this.board.finalizeAdding(this);
+
+
+    this.elType = 'polygon';
 };
 JXG.Polygon.prototype = new JXG.GeometryElement;
 
@@ -433,6 +436,32 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.board.update();
 
         return this;
+    },
+
+    getParents: function () {
+        var p = [], i;
+
+        for (i = 0; i < this.vertices.length; i++) {
+            p.push(this.vertices[i].id);
+        }
+        return p;
+    },
+
+    getAttributes: function () {
+        var attr = JXG.GeometryElement.prototype.getAttributes.call(this), i;
+
+        if (this.withLines) {
+            attr.lines = attr.lines || {};
+            attr.lines.ids = [];
+            attr.lines.colors = [];
+
+            for (i = 0; i < this.borders.length; i++) {
+                attr.lines.ids.push(this.borders[i].id);
+                attr.lines.colors.push(this.borders[i].visProp.strokecolor);
+            }
+        }
+
+        return attr;
     }
 });
 
@@ -478,7 +507,7 @@ JXG.createPolygon = function(board, parents, attributes) {
     }
     
     el = new JXG.Polygon(board, parents, attr);
-    
+
     return el;
 };
 
@@ -569,6 +598,8 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
     }
     attr = JXG.copyAttributes(attributes, board.options, 'polygon');
     el = board.create('polygon', p, attr);
+
+    el.elType = 'regularpolygon';
 
     return el;
 };

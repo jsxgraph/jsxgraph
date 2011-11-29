@@ -66,7 +66,7 @@
 JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           withText, withTicks, snapWidth, attr;
+           withText, withTicks, snapWidth, attr, precision;
 
     pos0 = parents[0];
     pos1 = parents[1];
@@ -214,6 +214,25 @@ JXG.createSlider = function(board, parents, attributes) {
 
         JXG.Point.prototype.remove.call(p3);
     };
+
+    p1.dump = false;
+    p2.dump = false;
+    l1.dump = false;
+    l2.dump = false;
+
+    p3.elType = 'slider';
+    p3.parents = parents;
+    p3.subs = {
+        point1: p1,
+        point2: p2,
+        segment1: l1,
+        segment2: l2
+    };
+
+    if (withTicks) {
+        ti.dump = false;
+        p3.subs.ticks = ti;
+    }
     
     return p3;
 };    

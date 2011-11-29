@@ -264,8 +264,8 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
     }
 });
 
-JXG.createTransform = function(board, parentArr, atts) {
-    return new JXG.Transformation(board,atts['type'],parentArr);
+JXG.createTransform = function(board, parents, attributes) {
+    return new JXG.Transformation(board, attributes['type'], parents);
 };
 
 JXG.JSXGraph.registerElement('transform', JXG.createTransform);

@@ -162,6 +162,20 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.elType = '';
 
     /**
+     * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+     * via a composition.
+     * @type Boolean
+     * @default true
+     */
+    this.dump = true;
+
+    /**
+     * Subs contains the subelements, created during the create method.
+     * @type Object
+     */
+    this.subs = {};
+
+    /**
      * [c,b0,b1,a,k,r,q0,q1]
      *
      * See
@@ -800,6 +814,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
+            this.label.content.dump = false;
             this.label.color = this.label.content.visProp.strokecolor;
 
             if (!this.visProp.visible) {
@@ -994,7 +1009,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         var attributes = JXG.deepCopy(this.visProp),
             cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
                 'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
-                'needsregularupdate', 'zoom', 'layer'],
+                'needsregularupdate', 'zoom', 'layer', 'labeloffsets'],
             i;
 
         attributes.id = this.id;

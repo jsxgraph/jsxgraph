@@ -142,6 +142,9 @@ JXG.Composition = function (elements) {
             this.add(e, elements[e]);
         }
     }
+
+    this.dump = true;
+    this.subs = {};
 };
 
 JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
@@ -194,6 +197,25 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
         }
 
         return found;
+    },
+
+    getParents: function () {
+        return this.parents;
+    },
+
+    getType: function () {
+        return this.elType;
+    },
+
+    getAttributes: function () {
+        var attr = {},
+            e;
+
+        for (e in this.subs) {
+            attr[e] = this.subs[e].visProp;
+        }
+        
+        return this.attr;
     }
 });
 
@@ -246,6 +268,9 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
     t.type = JXG.OBJECT_TYPE_OPROJECT;
     p.addChild(t); 
     l.addChild(t);
+
+    t.elType = 'orthogonalprojection';
+    t.parents = [p.id, t.id];
 
     t.update();
 
@@ -364,6 +389,9 @@ JXG.createPerpendicular = function(board, parents, attributes) {
                 ], 
                 attr);
 
+    pd.elType = 'perpendicular';
+    pd.parents = [l.id, p.id];
+
     return pd;
 };
 
@@ -416,6 +444,9 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
     t = board.create('point', [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
     p.addChild(t); 
     l.addChild(t);
+
+    t.elType = 'perpendicularpoint';
+    t.parents = [p.id, l.id];
 
     t.update();
 
@@ -528,9 +559,17 @@ JXG.createPerpendicularSegment = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment', 'point');
     t = JXG.createPerpendicularPoint(board, [l, p], attr);
 
+    t.dump = false;
+
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment');
     pd = JXG.createLine(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
+
+    pd.elType = 'perpendicularsegment';
+    pd.parents = [p.id, l.id];
+    pd.subs = {
+        point: t
+    };
 
     /**
      * Helper point created to create the perpendicular segment.
@@ -609,6 +648,9 @@ JXG.createMidpoint = function(board, parents, attributes) {
                               }], attributes);
     a.addChild(t);
     b.addChild(t);
+
+    t.elType = 'midpoint';
+    t.parents = [a.id, b.id];
 
     t.prepareUpdate().update();
 
@@ -714,6 +756,9 @@ JXG.createParallelPoint = function(board, parents, attributes) {
 	a.addChild(p);
 	b.addChild(p);
     c.addChild(p);
+
+    p.elType = 'parallelpoint';
+    p.parents = [a.id, b.id, c.id];
 
     // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
     // can be removed if the above issue is resolved.
@@ -839,6 +884,9 @@ JXG.createParallel = function(board, parents, attributes) {
             return [ -(p.X()*l[1]+p.Y()*l[2]), p.Z()*l[1], p.Z()*l[2]];
         }], attr);
 
+    pl.elType = 'parallel';
+    pl.parents = [p.id, li.id];
+
     /**
      * Helper point used to create the parallel line.
      * @memberOf Parallel.prototype
@@ -880,9 +928,16 @@ JXG.createParallel = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createArrowParallel = function(board, parents, attributes) {
+    var p;
+
     /* parallel arrow point polynomials are done in createParallelPoint */
     try {
-        return JXG.createParallel(board, parents, attributes).setStraight(false, false).setArrow(false,true);;
+        p = JXG.createParallel(board, parents, attributes).setStraight(false, false).setArrow(false,true);
+        p.elType = 'arrowparallel';
+
+        // parents are set in createParallel
+
+        return p;
     } catch (e) {
         throw new Error("JSXGraph: Can't create arrowparallel with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -922,7 +977,7 @@ JXG.createArrowParallel = function(board, parents, attributes) {
  */
 JXG.createNormal = function(board, parents, attributes) {
     /* TODO normal polynomials */
-    var p, c;
+    var p, c, l, i;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
@@ -948,25 +1003,25 @@ JXG.createNormal = function(board, parents, attributes) {
     if(c.elementClass==JXG.OBJECT_CLASS_LINE) {
         // Homogeneous version:
         // orthogonal(l,p) = (F^\delta\cdot l)\times p
-        return board.create('line', [
+        l = board.create('line', [
                     function(){ return c.stdform[1]*p.Y()-c.stdform[2]*p.X();},
                     function(){ return c.stdform[2]*p.Z();},
                     function(){ return -c.stdform[1]*p.Z();}
                     ], attributes );
     }
     else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        return board.create('line', [c.midpoint,p], attributes);
+        l = board.create('line', [c.midpoint,p], attributes);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.visProp.curvetype!='plot') {
             var g = c.X;
             var f = c.Y;
-            return board.create('line', [
+            l = board.create('line', [
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}
                     ], attributes );
         } else {                         // curveType 'plot'
-            return board.create('line', [
+            l = board.create('line', [
                     function(){ var i=Math.floor(p.position);
                                 var lbda = p.position-i;
                                 if (i==c.numberPoints-1) {i--; lbda=1; }
@@ -983,7 +1038,7 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
-            return board.create('line', [
+            l = board.create('line', [
                     function(){ var i=Math.floor(p.position);
                                 var lbda = p.position-i;
                                 var el,j;
@@ -1028,6 +1083,14 @@ JXG.createNormal = function(board, parents, attributes) {
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,line], [point,circle], [glider]");
     }
+
+    l.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        l.parents.push(parents[i].id);
+    }
+    l.elType = 'normal';
+
+    return l;
 };
 
 /**
@@ -1066,6 +1129,7 @@ JXG.createBisector = function(board, parents, attributes) {
         // hidden and fixed helper
         attr = JXG.copyAttributes(attributes, board.options, 'bisector', 'point');
         p = board.create('point', [function () { return JXG.Math.Geometry.angleBisector(parents[0], parents[1], parents[2], board); }], attr);
+        p.dump = false;
 
         for(i=0; i<3; i++)
             parents[i].addChild(p); // required for algorithm requiring dependencies between elements
@@ -1073,6 +1137,12 @@ JXG.createBisector = function(board, parents, attributes) {
         if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
         attr = JXG.copyAttributes(attributes, board.options, 'bisector');
         l = JXG.createLine(board, [parents[1], p], attr);
+
+        l.elType = 'bisector';
+        l.parents = [parents[0].id, parents[1].id, parents[2].id];
+        l.subs = {
+            point: p
+        };
 
         return l;
     }
@@ -1190,6 +1260,16 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 
     ret = new JXG.Composition({line1: g1, line2: g2});
 
+    g1.dump = false;
+    g2.dump = false;
+
+    ret.elType = 'bisectorlines';
+    ret.parents = [l1.id, l2.id];
+    ret.subs = {
+        line1: g1,
+        line2: g2
+    };
+
     return ret;
 };
 
@@ -1227,8 +1307,12 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
     if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], attributes);
 
-        for(i=0; i<3; i++)
+        for (i = 0; i < 3; i++) {
             parents[i].addChild(p);
+        }
+
+        p.elType = 'circumcirclemidpoint';
+        p.parents = [parents[0].id, parents[1].id, parents[2].id];
 
         p.generatePolynomial = function() {
                 /*
@@ -1309,6 +1393,10 @@ JXG.createIncenter = function(board, parents, attributes) {
 
             return new JXG.Coords(JXG.COORDS_BY_USER, [(a*A.X()+b*B.X()+c*C.X())/(a+b+c), (a*A.Y()+b*B.Y()+c*C.Y())/(a+b+c)], board);
         }], attributes);
+
+        p.elType = 'incenter';
+        p.parents = [parents[0].id, parents[1].id, parents[2].id];
+
     } else {
         throw new Error("JSXGraph: Can't create incenter with parent types '" +
             (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1348,10 +1436,18 @@ JXG.createCircumcircle = function(board, parents, attributes) {
     try {
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');
         p = JXG.createCircumcircleMidpoint(board, parents, attr);
+
+        p.dump = false;
         
         if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.circle;
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
         c = JXG.createCircle(board, [p, parents[0]], attr);
+
+        c.elType = 'circumcircle';
+        c.parents = [parents[0].id, parents[1].id, parents[2].id];
+        c.subs = {
+            point: p
+        };
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1395,6 +1491,8 @@ JXG.createIncircle = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'point');
         p = JXG.createIncenter(board, parents, attr);
 
+        p.dump = false;
+
         if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.circle;
         attr = JXG.copyAttributes(attributes, board.options, 'incircle');
         c = JXG.createCircle(board, [p, function() {
@@ -1405,6 +1503,12 @@ JXG.createIncircle = function(board, parents, attributes) {
 
             return Math.sqrt(((s-a)*(s-b)*(s-c))/s);
         }], attr);
+
+        c.elType = 'incircle';
+        c.parents = [parents[0].id, parents[1].id, parents[2].id];
+        c.subs = {
+            point: p
+        };
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                         (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -1465,6 +1569,9 @@ JXG.createReflection = function(board, parents, attributes) {
     p.addChild(r);
     l.addChild(r);
 
+    r.elType = 'reflection';
+    r.parents = [parents[0].id, parents[1].id];
+
     r.prepareUpdate().update();
 
     r.generatePolynomial = function() {
@@ -1520,19 +1627,23 @@ JXG.createReflection = function(board, parents, attributes) {
  *   var mpex1_mp1 = mpex1_board.create('mirrorpoint', [mpex1_p1, mpex1_p2]);
  * </script><pre>
  */
-JXG.createMirrorPoint = function(board, parentArr, attributes) {
+JXG.createMirrorPoint = function(board, parents, attributes) {
     var p, i;
 
     /* TODO mirror polynomials */
-    if(JXG.isPoint(parentArr[0]) && JXG.isPoint(parentArr[1])) {
-        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.rotation(parentArr[0], parentArr[1], Math.PI, board); }], attributes);
+    if(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
+        p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.rotation(parents[0], parents[1], Math.PI, board); }], attributes);
 
-        for(i=0; i<2; i++)
-            parentArr[i].addChild(p);
+        for(i = 0; i < 2; i++) {
+            parents[i].addChild(p);
+        }
+
+        p.elType = 'mirrorpoint';
+        p.parents = [parents[0].id, parents[1].id];
     }
     else {
         throw new Error("JSXGraph: Can't create mirror point with parent types '" +
-                        (typeof parentArr[0]) + "' and '" + (typeof parentArr[1]) + "'." +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point]");
     }
 
@@ -1604,8 +1715,9 @@ JXG.createIntegral = function(board, parents, attributes) {
         endy = curve.yterm(end);
     }
 
-    if(end < start)
+    if(end < start) {
         factor = -1;
+    }
 
     attr = JXG.copyAttributes(attributes, board.options, 'integral', 'start');
     pa_on_curve = board.create('glider', [startx, starty, curve], attr);
@@ -1640,12 +1752,34 @@ JXG.createIntegral = function(board, parents, attributes) {
                 }
             ], attr);
 
+        t.dump = false;
+
         pa_on_curve.addChild(t);
         pb_on_curve.addChild(t);
     }
 
     attr = JXG.copyAttributes(attributes, board.options, 'integral');
     p = board.create('curve', [[0],[0]], attr);
+
+    // dump stuff
+    pa_on_curve.dump = false;
+    pa_on_axis.dump = false;
+
+    pb_on_curve.dump = false;
+    pb_on_axis.dump = false;
+
+    p.elType = 'integral';
+    p.parents = [curve.id, interval];
+    p.subs = {
+        start: pa_on_curve,
+        startproject: pa_on_axis,
+        end: pb_on_curve,
+        endproject: pb_on_axis
+    };
+
+    if (attr.withLabel) {
+        p.subs.text = t;
+    }
 
     /**
      * documented in JXG.Curve
@@ -1777,6 +1911,9 @@ JXG.createLocus = function(board, parents, attributes) {
     c = board.create('curve', [[null], [null]], attributes);
     c.dontCallServer = false;
 
+    c.elType = 'locus';
+    c.parents = [p.id];
+
     /**
      * should be documented in JXG.Curve
      * @ignore
@@ -1862,10 +1999,14 @@ JXG.createGrid = function (board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'grid');
     c = board.create('curve', [[null], [null]], attr);
 
+    c.elType = 'grid';
+    c.parents = [];
+
     // TODO: use user given attributes
 
-    if(board.options.grid.dash)
+    if(board.options.grid.dash) {
         c.setProperty({dash: 2});
+    }
 
     c.updateDataArray = function () {
         var gridX = board.options.grid.gridX,

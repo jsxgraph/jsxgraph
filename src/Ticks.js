@@ -204,6 +204,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     highlightStrokeOpacity: board.options.text.strokeOpacity
                 });
                 label.isDraggable = false;
+                label.dump = false;
                 label.distanceX = 4;
                 label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
                 label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),

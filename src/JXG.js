@@ -815,13 +815,18 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Converts a JavaScript object into a JSON string.
      * @param {Object} obj A JavaScript object, functions will be ignored.
+     * @param {Boolean} [noquote=false] No quotes around the name of a property.
      * @returns {String} The given object stored in a JSON string.
      */
-    toJSON: function (obj) {
+    toJSON: function (obj, noquote) {
         var s;
 
+        if (!JXG.exists(noquote)) {
+            noquote = false;
+        }
+
         // check for native JSON support:
-        if (window.JSON && window.JSON.stringify) {
+        if (window.JSON && window.JSON.stringify && !noquote) {
             try {
                 s = JSON.stringify(obj);
                 return s;
@@ -837,20 +842,24 @@ JXG.extend(JXG, /** @lends JXG */ {
                     var list = [];
                     if (obj instanceof Array) {
                         for (var i=0;i < obj.length;i++) {
-                            list.push(JXG.toJSON(obj[i]));
+                            list.push(JXG.toJSON(obj[i], noquote));
                         }
                         return '[' + list.join(',') + ']';
                     } else {
                         for (var prop in obj) {
-                            list.push('"' + prop + '":' + JXG.toJSON(obj[prop]));
+                            if (noquote) {
+                                list.push(prop + ':' + JXG.toJSON(obj[prop], noquote));
+                            } else {
+                                list.push('"' + prop + '":' + JXG.toJSON(obj[prop], noquote));
+                            }
                         }
-                        return '{' + list.join(',') + '}';
+                        return '{' + list.join(',') + '} ';
                     }
                 } else {
                     return 'null';
                 }
             case 'string':
-                return '"' + obj.replace(/(["'])/g, '\\$1') + '"';
+                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
             case 'number':
             case 'boolean':
                 return new String(obj);

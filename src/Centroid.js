@@ -68,6 +68,9 @@ JXG.createCentroid = function(board, parents, attributes) {
         p2.addChild(cent);
         p3.addChild(cent);
 
+        cent.elType = 'centroid';
+        cent.parents = [parents[0].id, parents[1].id, parents[2].id];
+
         /**
          * The first one of the points given as parent elements.
          * @name Centroid#p1

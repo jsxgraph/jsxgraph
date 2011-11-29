@@ -696,6 +696,15 @@ JXG.createCircle = function (board, parents, attributes) {
                         "\nPossible parent types: [point,point], [point,number], [point,function], [point,circle], [point,point,point]");
     
     el.isDraggable = isDraggable;
+
+    el.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        if (parents[i].id) {
+            el.parents.push(parents[i].id);
+        }
+    }
+    el.elType = 'circle';
+
     return el;
 };
 

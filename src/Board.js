@@ -2126,6 +2126,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         });
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;
+
+        this.infobox.dump = false;
+
         this.renderer.hide(this.infobox);
         return this;
     },

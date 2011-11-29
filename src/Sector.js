@@ -69,6 +69,9 @@ JXG.createSector = function(board, parents, attributes) {
     el = board.create('curve', [[0], [0]], attr);
     el.type = JXG.OBJECT_TYPE_SECTOR;
 
+    el.elType = 'sector';
+    el.parents = [parents[0].id, parents[1].id, parents[2].id];
+
     /**
      * Midpoint of the sector.
      * @memberOf Sector.prototype
@@ -278,8 +281,16 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
         attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'point');
         mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
 
+        mp.dump = false;
+
         attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector');
         el = board.create('sector', [mp,parents[0],parents[2],parents[1]], attr);
+
+        el.elType = 'circumcirclesector';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        el.subs = {
+            point: mp
+        }
     } else {
         throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
@@ -389,6 +400,8 @@ JXG.createAngle = function(board, parents, attributes) {
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
+        p.dump = false;
+
         attr = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
         // Second helper point for square
         q = board.create('point', [
@@ -399,10 +412,19 @@ JXG.createAngle = function(board, parents, attributes) {
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
             }], attr);
 
+        q.dump = false;
+
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
         
         // Sector is just a curve with its own updateDataArray method
         el = board.create('sector', [parents[1], p, parents[2]], attr);
+
+        el.elType = 'angle';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        el.subs = {
+            point: p,
+            pointsquare: q
+        };
 
         el.updateDataArraySquare = function() {
             var S = parents[1],
@@ -486,13 +508,16 @@ JXG.createAngle = function(board, parents, attributes) {
             return JXG.Math.matVecMult(transform.matrix, c);
         }], dot);
 
+        el.dot.dump = false;
+        el.subs.dot = el.dot;
+
         for (i = 0; i < 3; i++) {
             JXG.getRef(board,parents[i]).addChild(p);
             JXG.getRef(board,parents[i]).addChild(el.dot);
         }
 
         el.type = JXG.OBJECT_TYPE_ANGLE;
-        
+
         if (el.visProp.withlabel) {
             el.label.content.setText(text);
             el.label.content.setProperty({fontSize:el.visProp.fontsize, strokeColor:el.visProp.textcolor});
