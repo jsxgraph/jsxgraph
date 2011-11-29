@@ -739,7 +739,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Moves an object.
      * @param {Number} x Coordinate
      * @param {Number} y Coordinate
-     * @param {JXG.GeometryElement} o The object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
+     * @param {object} o The touch object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
      */
     moveObject: function (x, y, o) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
@@ -781,27 +781,38 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         drag.highlight();
     },
 
+    /**
+     * Moves a line in multitouch mode.
+     * @param {array} p1 x,y coordinates of first touch 
+     * @param {array} p2 x,y coordinates of second touch 
+     * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+     */
     moveLine: function(p1, p2, o) {
         var np1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this),
             np2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this),
-            drag = o.obj,
-            mid, midold, d, d1, d2, old1, old2;
+            drag, mid, midold, d, d1, d2, old1, old2;
 
-        if (drag.elementClass != JXG.OBJECT_CLASS_LINE) {
+        if (JXG.exists(o.obj)) {
+            drag = o.obj;
+        } else {
             return;
         }
-		if (!JXG.exists(drag.point1) || !JXG.exists(drag.point2)) {
+        if (drag.elementClass!=JXG.OBJECT_CLASS_LINE) {
             return;
         }
-
         if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
-            old1 = o.targets[0];
-            old2 = o.targets[1];
+            old1 = [o.targets[0].Xprev,o.targets[0].Yprev];
+            old2 = [o.targets[1].Xprev,o.targets[1].Yprev];
+            
             midold = new JXG.Coords(JXG.COORDS_BY_SCREEN,
-                       [(old1.Xprev+old2.Xprev)*0.5, (old1.Yprev+old2.Yprev)*0.5], this);
+                       [(old1[0]+old2[0])*0.5, 
+                        (old1[1]+old2[1])*0.5], this);
             mid = new JXG.Coords(JXG.COORDS_BY_SCREEN,
-                       [(np1.scrCoords[1]+np2.scrCoords[1])*0.5, (np1.scrCoords[2]+np2.scrCoords[2])*0.5], this);
-            d = Math.sqrt((old1.Xprev-old2.Xprev)*(old1.Xprev-old2.Xprev) + (old1.Yprev-old2.Yprev)*(old1.Yprev-old2.Yprev));
+                       [(np1.scrCoords[1]+np2.scrCoords[1])*0.5, 
+                        (np1.scrCoords[2]+np2.scrCoords[2])*0.5], this);
+                       
+            d = JXG.Math.Geometry.distance(old1, old2);
+            // d = Math.sqrt((old1.Xprev-old2.Xprev)*(old1.Xprev-old2.Xprev) + (old1.Yprev-old2.Yprev)*(old1.Yprev-old2.Yprev));
             d1 = drag.point1.coords.distance(JXG.COORDS_BY_SCREEN, midold)*2/d;
             d2 = drag.point2.coords.distance(JXG.COORDS_BY_SCREEN, midold)*2/d;
             drag.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, 
