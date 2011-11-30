@@ -10,7 +10,6 @@
    <!--<script type="text/javascript" src="../src/CanvasRenderer.js"></script>-->
    <script type="text/javascript" src="../src/GeonextReader.js"></script>
 </head>
-<body>
 <body id="body">
    <!-- Drawing area  -->
    <div id="box" class='jxgbox' style="width:1000px; height:600px;"></div>
@@ -318,6 +317,7 @@
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" /> -->
          </form>
    <div id="debug" style="overflow:scroll;"></div>
+   <textarea id="output" cols="130" rows="50"></textarea>
    
 <script>
 //JXG.Options.renderer = 'canvas';
@@ -370,10 +370,7 @@
     }
 
     function dump() {
-        var log = new JXG.Dump.Log();
-
-        $('debug').innerHTML = JXG.Dump.toJavaScript(board, log);
-        console.log(log.print());
+        $('output').innerHTML = JXG.Dump.toJessie(board);
     }
 
 </script>

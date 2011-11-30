@@ -492,7 +492,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
-                        
+
                         //try {
                             p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
 
@@ -812,11 +812,11 @@ JXG.GeonextReader = {
                     case "polygon":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl.dataVertex = [];
+                        var dataVertex = [];
                         // In Geonext file format the first vertex is equal to the last vertex:
                         for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('vertex').length-1; i++) {
-                            gxtEl.dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
-                            gxtEl.dataVertex[i] = gxtReader.changeOriginIds(board, gxtEl.dataVertex[i]);
+                            dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
+                            dataVertex[i] = gxtReader.changeOriginIds(board, dataVertex[i]);
                         }
                         gxtEl.border = [];
                         gxtEl.lines = {
@@ -856,7 +856,7 @@ JXG.GeonextReader = {
                             gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
-                        p = board.create('polygon', gxtEl.dataVertex, gxtEl);
+                        p = board.create('polygon', dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons
                         // A.W.: Why do we need this?

@@ -1292,7 +1292,11 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
     parents[1].addChild(el);
 
     el.elType = 'intersection';
-    el.parents = [parents[0].id, parents[1].id, parents[2], parents[3]];
+    el.parents = [parents[0].id, parents[1].id, parents[2]];
+
+    if (parents[3] != null) {
+        el.parents.push(parents[3]);
+    }
 
     el.generatePolynomial = function () {
         var poly1 = parents[0].generatePolynomial(el);

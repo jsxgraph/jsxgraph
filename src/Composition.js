@@ -866,14 +866,18 @@ JXG.createParallel = function(board, parents, attributes) {
         // Parallel to line through parents[0] and parents[1]
         p = parents[2];
         li = function() { return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords) };
+
+        pp = [parents[0].id, parents[1].id, p.id];
     } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
         // Parallel to line parents[1]
         p = parents[0];
         li = function() { return parents[1].stdform; };
+        pp = [parents[1].id, p.id];
     } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
         // Parallel to line parents[0]
         p = parents[1];
         li = function() { return parents[0].stdform; };
+        pp = [parents[0].id, p.id];
     }
 
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
@@ -885,7 +889,7 @@ JXG.createParallel = function(board, parents, attributes) {
         }], attr);
 
     pl.elType = 'parallel';
-    pl.parents = [p.id, li.id];
+    pl.parents = pp;
 
     /**
      * Helper point used to create the parallel line.
