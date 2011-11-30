@@ -26,7 +26,7 @@
 
     var wrp = (function() {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true}),
-            p = board.create('point', [1, 2]);
+            p = board.create('point', [1, 2], {strokeColor: 'blue'});
 
         $('#debug').html(JXG.Dump.toJessie(board));
     })();
