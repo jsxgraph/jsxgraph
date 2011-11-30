@@ -1084,17 +1084,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     getParents: function () {
-        var p;
+        var p = [this.Z(), this.X(), this.Y()];
 
         if (this.parents) {
-            if (this.type == JXG.OBJECT_TYPE_GLIDER) {
-                p = [[this.X(), this.Y()], this.slideObject];
-            } else {
-                p = this.parents
-            }
+            p = this.parents;
+        }
 
-        } else {
-            p = [this.Z(), this.X(), this.Y()];
+        if (this.type == JXG.OBJECT_TYPE_GLIDER) {
+            p = [this.X(), this.Y(), this.slideObject.id];
+
         }
 
         return p;
