@@ -212,6 +212,10 @@ JXG.Options = {
          */
         withLabel: false,
 
+        label: {
+            fixed: true
+        },
+        
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
          * @type boolean
@@ -722,7 +726,7 @@ JXG.Options = {
             fontSize: 20
         }
     },
-
+    
     /* special legend options */
     legend: {
         /**
