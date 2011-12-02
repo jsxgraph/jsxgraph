@@ -1262,7 +1262,7 @@ JXG.createTangent = function(board, parents, attributes) {
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-    } else if (parents.length==2) {     // Two arguments: (point,line|curve|circle|conic) or (line|curve|circle|conic,point). // Not yet: curve!
+    } else if (parents.length==2) {     // Two arguments: (point,F"|conic) or (line|curve|circle|conic,point). // Not yet: curve!
         if (JXG.isPoint(parents[0])) {  // In fact, for circles and conics it is the polar.
             p = parents[0];
             c = parents[1];
