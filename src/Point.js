@@ -277,6 +277,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     this.updateConstraint(); // In case, the point is a constrained glider.
                     this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);
                 }
+            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_POINT) {
+                    this.coords  = JXG.Math.Geometry.projectPointToPoint(this, this.slideObject, this.board);
             }
         }
         
@@ -435,11 +437,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         found = false;
         for (i=0; i<len; i++) {
             el = JXG.getRef(this.board, this.visProp.attractors[i]);
-            if (!JXG.exists(el)) {
+            if (!JXG.exists(el) || el===this) {
                 continue;
             }
             if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
-                projCoords = el.coords;
+                projCoords = JXG.Math.Geometry.projectPointToPoint(this, el, this.board);
             } else if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
                 projCoords = JXG.Math.Geometry.projectPointToLine(this, el, this.board);
             } else if (el.elementClass==JXG.OBJECT_CLASS_CIRCLE) {
@@ -452,11 +454,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
             if (d<this.visProp.attractordistance) {
                 found = true;
-                if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
-                    this.coords = el.coords;
-                } else {
-                    this.makeGlider(el);
-                }
+                this.makeGlider(el);
                 break;
             } else {
                 if (el==this.slideObject && d>=this.visProp.snatchdistance) {

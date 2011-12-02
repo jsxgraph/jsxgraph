@@ -1283,5 +1283,17 @@ JXG.Math.Geometry = {
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board);
         point.position = t + npmin;
         return minEl.updateTransform(newCoords);
+    },
+
+    /**
+     * Trivial projection of a point to another point.
+     * @param {JXG.Point} point Point to project (not used).
+     * @param {JXG.Point} dest Point on that the point is projected.
+     * @param {JXG.Board} [board=point.board] Reference to the board (not used).
+     * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
+     */
+    projectPointToPoint: function(point, dest, board) {
+        return dest.coords;
     }
+    
 };
