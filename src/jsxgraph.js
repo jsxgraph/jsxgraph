@@ -130,10 +130,10 @@ JXG.JSXGraph = {
                  */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
-                if (unitX<unitY) {
-                    unitY = unitX;
+                if (Math.abs(unitX)<Math.abs(unitY)) {
+                    unitY = Math.abs(unitX)*unitY/Math.abs(unitY);
                 } else {
-                    unitX = unitY;
+                    unitX = Math.abs(unitY)*unitX/Math.abs(unitX);
                 }
             } else {
                 unitX = w/(bbox[2]-bbox[0]);

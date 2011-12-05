@@ -413,8 +413,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateEllipsePrim: function (node, x, y, rx, ry) {
         node.setAttributeNS(null, 'cx', x);
         node.setAttributeNS(null, 'cy', y);
-        node.setAttributeNS(null, 'rx', rx);
-        node.setAttributeNS(null, 'ry', ry);
+        node.setAttributeNS(null, 'rx', Math.abs(rx));
+        node.setAttributeNS(null, 'ry', Math.abs(ry));
     },
 
     // already documented in JXG.AbstractRenderer

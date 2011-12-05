@@ -14,14 +14,15 @@
 <body id="body">
 <h1 id="x1">Playground</h1>
 <input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
-<div id='jxgbox' class='jxgbox' style='width:700px; height:500px;'></div>
+<div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, grid:false, showNavigation:true});
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], axis:true, keepaspectratio:true, grid:false, showNavigation:true});
+/*
 // x axis
 var pX0 = brd.create('point', 
     [0, function(){
@@ -57,6 +58,7 @@ var pX3 = brd.create('point',
 var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
+*/
 
 var A = brd.create('point', [0,0], {name:'A', label:{fontSize:30}});
 var B = brd.create('point', [2,0]);
@@ -64,6 +66,8 @@ var l = brd.create('line', [A,B]);
 var l2 = brd.create('line', [1,2,1]);
 var tu = brd.create('turtle', [0,0]);
 tu.fd(3).rt(90).fd(3).rt(60).fd(3).pu().fd(2).pd().fd(1);
+
+brd.create('functiongraph', ["x^2"]);
 
 var pa = brd.create('curve', [[0,1,2,1,0],[0,2,2,3,3]], {strokeWidth:3, strokeColor:'black', handDrawing:true});
 

@@ -384,8 +384,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateEllipsePrim: function (node, x, y, rx, ry) {
         node.style.left = parseInt(x - rx) + 'px';
         node.style.top =  parseInt(y - ry) + 'px';
-        node.style.width = parseInt(rx * 2) + 'px';
-        node.style.height = parseInt(ry * 2) + 'px';
+        node.style.width = parseInt(Math.abs(rx) * 2) + 'px';
+        node.style.height = parseInt(Math.abs(ry) * 2) + 'px';
     },
 
     // already documented in JXG.AbstractRenderer
