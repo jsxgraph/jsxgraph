@@ -2567,9 +2567,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.unitX = w/(bbox[2]-bbox[0]);
             this.unitY = h/(bbox[1]-bbox[3]);
             if (Math.abs(this.unitX)<Math.abs(this.unitY)) {
-                this.unitY = Math.abs(this.unitX)*this.unitY/Math.abs(unitY);
+                this.unitY = Math.abs(this.unitX)*this.unitY/Math.abs(this.unitY);
             } else {
-                this.unitX = Math.abs(this.unitY)*this.unitX/Math.abs(unitX);
+                this.unitX = Math.abs(this.unitY)*this.unitX/Math.abs(this.unitX);
             }
         } else {
             this.unitX = w/(bbox[2]-bbox[0]);
