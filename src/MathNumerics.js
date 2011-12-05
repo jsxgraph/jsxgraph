@@ -702,7 +702,65 @@ JXG.Math.Numerics = (function(JXG, Math) {
 
             return fct;
         },
+		
+		/**
+         * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
+		 * is uniformly parametrized.
+		 * The first and the last points are control points.
+         * @param {Array} points Array consisting of JXG.Points.
+         * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
+         * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
+         * returning the length of the points array minus three.
+		*/
+        CRspline: function(points) {
+            var coeffs = [],
+			    makeFct = function(which) {
+                    return function(t, suspendedUpdate) {
+                        var len = points.length,
+                            s, c,
+                            n = len - 1;
 
+                        if (n <= 0 || len < 4 ) { return NaN; }
+						if (!suspendedUpdate) {
+							coeffs[which] = [];
+							for (s=0; s<len-3; s++) {
+								coeffs[which][s] = [
+									2*points[s+1][which](),
+									-points[s][which]() + points[s+2][which](),
+									2*points[s][which]() - 5*points[s+1][which]() +
+								    4*points[s+2][which]() - points[s+3][which](),
+									-points[s][which]() + 3*points[s+1][which]() -
+								    3*points[s+2][which]() + points[s+3][which]()];
+							}
+						}
+						if (isNaN(t)) { return NaN; }
+                        if (t <= 0) {
+							return -t*points[0][which]() + (t+1)*points[1][which]();
+						}
+                        if (t >= n - 1) {
+							return points[n-1][which]();
+						}
+
+                        s = Math.floor(t);
+						if (s==t) {
+							return points[s][which]();
+						}
+						t -= s;
+						c = coeffs[which][s];
+						return 0.5*(((c[3]*t + c[2])*t + c[1])*t + c[0]);
+                    };
+                };
+
+            return [makeFct('X'),
+                makeFct('Y'),
+                0,
+                function() {
+                    return points.length - 3;
+                }
+            ];
+        },
+
+		
         /**
          * Computes the regression polynomial of a given degree through a given set of coordinates.
          * Returns the regression polynomial function.

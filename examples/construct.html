@@ -59,99 +59,11 @@ var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
 */
-
-var A = brd.create('point', [0,0], {name:'A', label:{fontSize:30}});
-var B = brd.create('point', [2,0]);
-var l = brd.create('line', [A,B]);
-var l2 = brd.create('line', [1,2,1]);
-var tu = brd.create('turtle', [0,0]);
-tu.fd(3).rt(90).fd(3).rt(60).fd(3).pu().fd(2).pd().fd(1);
-
-brd.create('functiongraph', ["x^2"]);
-
-var pa = brd.create('curve', [[0,1,2,1,0],[0,2,2,3,3]], {strokeWidth:3, strokeColor:'black', handDrawing:true});
-
-var circ = brd.create('circle', [A,3]);
-var D = brd.create('glider', [-1,2, circ], {name:'glider', attractors:[circ, l2, tu], attractorDistance:0.05, snatchDistance:0.9});
-var t = brd.create('tangent', [D]);
-
-var pp = brd.create('point', [function(){ return 4;}, function(){ return A.Y();}], {name:'X'});
-
-var C = brd.create('glider', [1,-2, pp], {attractors:[A, l, l2, pa, pp], attractorDistance:0.05, snatchDistance:0.9});
-var par = brd.create('parallel', [l, C], {point1:{id:'xxx'}, point2:{id:'yyy'}});
-
-/*
-var li1 = brd.create('circle',[[1,2],3]);
-var gl = brd.create('glider',[1,1,li1]);
-//var gl = brd.create('point',[1,1]);
-var p = brd.create('point',[5,2], {name:'F', visible:true });
-var li2 = brd.create('line',[p, gl]);
-
-setvisible = function() {
-    if (p.X()<3) {
-        p.setProperty({visible:false});
-    } else {
-        p.setProperty({visible:true});
-    }
-};
-brd.addHook(setvisible, 'mouseup');
-*/
-
-///brd.update();
-//gl.setPositionDirectly(JXG.COORDS_BY_USER, -3, 2);
-//gl.moveTo([-3, 2]);
-//brd.update(gl);
-
-//console.log(li2.isDraggable, p.isDraggable, gl.isDraggable);
-/*
-if (false) {
-    var board = brd;
-    var c1 = board.create('circle',[[0, 0], [2, 0]]),
-        p1 = board.create('point',[-3, 1]),
-        g1 = board.create('glider',[2, 1, c1]),
-        s1 = board.create('segment',[g1, p1]),
-        p2 = board.create('midpoint',[s1]),
-        curve = board.create('tracecurve', [g1, p2]);
-} else if (false) {
-    p1 = brd.createElement('point', [0, 0]);
-    p2 = brd.createElement('point', [6, -1]);
-    c1 = brd.createElement('circle', [p1, 2]);
-    c2 = brd.createElement('circle', [p2, 1.5]);
-    g1 = brd.createElement('glider', [6, 3, c1], {name:"D"});
-    c3 = brd.createElement('circle', [g1, 4]);
-    g2 = brd.createElement('intersection', [c2,c3,0], {name: "I"});
-    p3 = brd.createElement('midpoint', [g1,g2], {name:"T",trace:false});
-
-    g3 = brd.createElement('otherintersection', [c2,c3,g2], {name: "I_2"});
-    p4 = brd.createElement('midpoint', [g1,g3], {name:"T_2",trace:true});
-    curve = brd.create('tracecurve', [g1, p3]);
-} else {
-    var O = brd.create('point',[0,0],{name:'O',fixed:true, fillColor:'blue', strokeColor:'blue'}),
-        A = brd.create('point',[1.2,0],{name:'A'}),
-        k = brd.create('circle',[O, A],{name:'k'}),
-        B = brd.create('glider',[0.7,1,k],{name:'B drag me'}),
-        g1 = brd.create('line',[O,B], {strokeColor:'lightgray'}),
-        C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'}),
-        g1a = brd.create('line',[O,C], {strokeColor:'lightgray'}),
-        C2 = brd.create('reflection',[g1a,A],{name:'C_2', fillColor:'blue', strokeColor:'blue'}),
- 
-        M = brd.create('glider',[2,2,g1], {name:'M', trace:false, fillColor:'red', strokeColor:'red'}),
-        k2 = brd.create('circle',[M,B],{name:'k'}),
- 
-        gpar = brd.create('parallel',[O,C2,M], {name:"g", strokeColor:'red'}),
-        Cprime = brd.create('intersection',[gpar,k2,0], {name:"C'", trace:false, fillColor:'blue', strokeColor:'blue'}),
- 
-        g2 = brd.create('line',[M, Cprime], {strokeColor:'black'}),
-        Cstern = brd.create('glider',[3,3,g2], {name:"C*", trace:false, fillColor:'green', strokeColor:'green'});
-    brd.create('tracecurve', [B, Cprime], {strokeColor:'blue'});
-    brd.create('tracecurve', [B, M], {strokeColor:'yellow'});
-    curve = brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
+var p = [];
+for (i=0;i<12;i++) {
+	p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:false}));
 }
-
-brd.update();
-*/
-
-   
+var c = brd.create('curve', JXG.Math.Numerics.CRspline(p));
 </script> 
 </body>
 </html>
