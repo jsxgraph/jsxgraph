@@ -29,31 +29,76 @@
  * Math portals which want to use JSXGraph to display interactive math graphics.
  */
 
-
+/**
+ * A JessieCode object provides an interfacce to the parser and stores all variables and objects used within a JessieCode script.
+ * @constructor
+ * @param {String} [code] Code to parse.
+ */
 JXG.JessieCode = function(code) {
     // Control structures
-    // scope stack
+
+    /**
+     * Stores all variables, local and global. The current scope is determined by {@link JXG.JessieCode#scope}.
+     * @type Array
+     * @private
+     */
     this.sstack = [{}];
+
+    /**
+     * Defines the current variable scope.
+     * @type Number
+     * @private
+     */
     this.scope = 0;
-    // parameter stack
+
+    /**
+     * A stack used to store the parameter lists for function definitions and calls.
+     * @type Array
+     * @private
+     */
     this.pstack = [[]];
+
+    /**
+     * Determines the parameter stack scope.
+     * @type Number
+     * @private
+     */
     this.pscope = 0;
 
-    // properties stack
+    /**
+     * Used to store the property-value definition while parsing an object literal.
+     * @type Array
+     * @private
+     */
     this.propstack = [{}];
+
+    /**
+     * The current scope of the object literal stack {@link JXG.JessieCode#propstack}.
+     * @type Number
+     * @private
+     */
     this.propscope = 0;
 
-    // array access list stack
-    this.aalstack = [[]];
-    this.aalscope = 0;
-
-    // property object, if a property is set, the last object is saved and re-used, if there is no object given
+    /**
+     * Whenever an element attribute is set via <tt>element.attribute = 'something';</tt>, the element is stored
+     * in here, so following attribute changes can be set without the element: <tt>.attribute = 'something else';</tt>.
+     * @type JXG.GeometryElement
+     * @private
+     */
     this.propobj = 0;
 
-    // save left-hand-side of variable assignment
+    /**
+     * Store the left hand side of an assignment. If an element is constructed and no attributes are given, this is
+     * used as the element's name.
+     * @type Array
+     * @private
+     */
     this.lhs = [];
 
-    // board currently in use
+    /**
+     * The board which currently is used to create and look up elements.
+     * @type JXG.Board
+     */
     this.board = null;
 
     if (typeof code === 'string') {
@@ -77,6 +122,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         };
     },
 
+    /**
+     * Output a debugging message. Uses debug console, if available. Otherwise an HTML element with the
+     * id "debug" and an innerHTML property is used.
+     * @param {String} log
+     * @private
+     */
     _debug: function (log) {
         if(typeof console !== "undefined") {
             console.log(log);
@@ -85,16 +136,31 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
     },
 
+    /**
+     * Throws an exception with the given error message.
+     * @param {String} msg Error message
+     */
     _error: function (msg) {
         throw new Error(msg);
     },
 
+    /**
+     * Assigns a value to a variable in the current scope.
+     * @param {String} vname Variable name
+     * @param {%} value Anything
+     * @see JXG.JessieCode#sstack
+     * @see JXG.JessieCode#scope
+     */
     letvar: function (vname, value) {
         this.sstack[this.scope][vname] = value;
     },
 
+    /**
+     * Looks up the value of the given variable.
+     * @param {String} vname Name of the variable
+     */
     getvar: function (vname) {
-        var s;
+        var s, undef;
 
         for (s = this.scope; s > -1; s--) {
             if (JXG.exists(this.sstack[s][vname])) {
@@ -107,9 +173,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return s;
         }
 
-        return 0;
+        return undef;
     },
 
+    /**
+     * Parses JessieCode
+     * @param {String} code
+     */
     parse: function (code) {
         var error_cnt = 0,
             error_off = [],
@@ -129,6 +199,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
     },
 
+    /**
+     * Parses a JessieCode snippet, e.g. "3+4", and wraps it into a function, if desired.
+     * @param {String} code A small snippet of JessieCode. Must not be an assignment.
+     * @param {Boolean} funwrap If true, the code is wrapped in a function.
+     * @param {String} varname Name of the parameter(s)
+     */
     snippet: function (code, funwrap, varname) {
         var vname, c, tmp, result;
 
@@ -158,6 +234,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         return result;
     },
 
+    /**
+     * Executes a parse subtree.
+     * @param {Object} node
+     * @returns Something
+     * @private
+     */
     execute: function (node) {
         var ret, v, i, parents = [], par = {};
 
@@ -422,6 +504,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         e.setProperty(par);
                         break;
                     case 'op_method':
+                        var mname = node.children[1].toLowerCase();
                         v = this.getvar(node.children[0]);
 
                         this.pstack.push([]);
@@ -433,8 +516,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             parents[i] = (this.execute(this.pstack[this.pscope][i]));
                         }
 
-                        if (typeof v[node.children[1]] === 'function') {
-                            v[node.children[1]].apply(v, parents);
+                        if (typeof v.methodMap !== 'undefined' && typeof v.methodMap[mname] === 'string') {
+                            v[v.methodMap[mname]].apply(v, parents);
                         } else {
                             this._error('Error: "' + node.children[0] + '" has no method "' + node.children[1] + '".');
                         }
@@ -583,7 +666,33 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         return n;
     }
 
-});
+});/*
+    Copyright 2008-2011
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
 /*
     Default template driver for JS/CC generated parsers running as
     browser-based JavaScript/ECMAScript applications.
@@ -595,19 +704,40 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     - Integrated panic-mode error recovery
     
     Written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
+    Modified 2011 by Michael Gerhaeuser, JSXGraph
     
     This is in the public domain.
 */
 
 
 JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
+    /**
+     * JS/CC interna
+     * @type Boolean
+     * @private
+     */
     _dbg_withtrace: false,
+
+    /**
+     * JS/CC interna
+     * @type String
+     * @private
+     */
     _dbg_string: '',
 
+    /**
+     * JS/CC interna
+     * @param {String} text
+     * @private
+     */
     _dbg_print: function (text) {
         this._dbg_string += text + "\n";
     },
 
+    /**
+     * Internal lexer method.
+     * @private
+     */
     _lex: function (info) {
         var state = 0,
             match = -1,
@@ -1252,7 +1382,13 @@ switch( match )
         return match;
     },
 
-
+    /**
+     * Internal parse tree generator.
+     * @param {String} src source code
+     * @param {Array} err_off The positions where the errors occured are stored here.
+     * @param {Array} err_la What the parser expected will be stored here.
+     * @private
+     */
     _parse: function (src, err_off, err_la) {
         var sstack = [],
             vstack = [],

@@ -81,6 +81,12 @@ JXG.Point = function (board, coordinates, attributes) {
      * @name Glider#slideObject
      */
     this.slideObject = null;
+
+    // documented in GeometryElement
+    this.methodMap = {
+        move: 'moveTo',
+        glide: 'makeGlider'
+    };
     
     /**
      * Stores the groups of this point in an array of Group.

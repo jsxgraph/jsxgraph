@@ -202,6 +202,14 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.stdform = [1,0,0,0,1, 1,0,0];
 
     /**
+     * The methodMap determines which methods can be called from within JessieCode and under which name it
+     * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+     * the value of a property is the name of the method in JavaScript.
+     * @type Object
+     */
+    this.methodMap = {};
+
+    /**
      * Quadratic form representation of circles (and conics)
      * @type Array
      * @default [[1,0,0],[0,1,0],[0,0,1]]
