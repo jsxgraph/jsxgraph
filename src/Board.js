@@ -203,6 +203,9 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.dimension = 2;
 
+    this.jc = new JXG.JessieCode();
+    this.jc.board = this;
+
     /**
      * Coordinates of the boards origin. This a object with the two properties
      * usrCoords and scrCoords. usrCoords always equals [1, 0, 0] and scrCoords

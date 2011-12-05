@@ -307,12 +307,11 @@ JXG.extend(JXG, /** @lends JXG */ {
      * function or number.
      */
     createFunction: function (term, board, variableName, evalGeonext) {
-        var newTerm;
-
-        if ((evalGeonext==null || evalGeonext) && JXG.isString(term)) {
+        if ((!JXG.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
             // Convert GEONExT syntax into  JavaScript syntax
-            newTerm = JXG.GeonextParser.geonext2JS(term, board);
-            return new Function(variableName,'return ' + newTerm + ';');
+            /*newTerm = JXG.GeonextParser.geonext2JS(term, board);
+            return new Function(variableName,'return ' + newTerm + ';');*/
+            return board.jc.snippet(term, true, variableName);
         } else if (JXG.isFunction(term)) {
             return term;
         } else if (JXG.isNumber(term)) {

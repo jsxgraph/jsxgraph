@@ -605,8 +605,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             v = terms[i];
             if (typeof v=='string') {
                 // Convert GEONExT syntax into  JavaScript syntax
-                t  = JXG.GeonextParser.geonext2JS(v, this.board);
-                newfuncs[i] = new Function('','return ' + t + ';');
+                /*t  = JXG.GeonextParser.geonext2JS(v, this.board);
+                newfuncs[i] = new Function('','return ' + t + ';');*/
+                newfuncs[i] = this.board.jc.snippet(v, true);
             } else if (typeof v=='function') {
                 newfuncs[i] = v;
             } else if (typeof v=='number') {

@@ -56,6 +56,17 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var jessie = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
+
+        var A = board.create('point', [1, 2]);
+
+        var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+
+        var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
+
+        return board;
+    })();
 
     var gJSXbrd;
     var gJSX = (function() {
@@ -122,7 +133,7 @@
         board.create('regularpolygon', [p1, p2, 4], {points: {ids: ['1', '2', '3']}});
 
         board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}, withLabel: true});
-    })();
+    });
 
     var jan = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
