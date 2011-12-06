@@ -625,6 +625,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.board.renderer.changePointStyle(this);
                     }
                     break;
+                case 'trace':
+                    if (value == 'false' || value == false) {
+                        this.clearTrace();
+                        this.visProp.trace = false;
+                    } else {
+                        this.visProp.trace = true;
+                    }
                 case 'gradient':
                     this.visProp.gradient = value;
                     this.board.renderer.setGradient(this);

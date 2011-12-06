@@ -2518,8 +2518,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el;
 
         for (el in this.objects) {
-            if (this.objects[el].visProp.trace)
-                this.objects[el].clearTrace();
+            this.objects[el].clearTrace();
         }
         this.numTraces = 0;
         return this;
