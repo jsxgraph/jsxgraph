@@ -706,44 +706,52 @@ JXG.Math.Numerics = (function(JXG, Math) {
 		/**
          * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
 		 * is uniformly parametrized.
-		 * The first and the last points are control points.
+		 * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
 		*/
-        CRspline: function(points) {
+        CatmullRomSpline: function(points) {
             var coeffs = [],
+				p, first = {}, last = {}, // control point at the beginning and at the end
+				
 			    makeFct = function(which) {
                     return function(t, suspendedUpdate) {
                         var len = points.length,
-                            s, c,
-                            n = len - 1;
+                            s, c;
 
-                        if (n <= 0 || len < 4 ) { return NaN; }
+                        if (len < 2 ) { return NaN; }
 						if (!suspendedUpdate) {
+							first[which] = function() {
+									return points[0][which]()-points[1][which]();
+								}
+							last[which] = function() {
+									return points[len-1][which]()-points[len-2][which]();
+								}
+							p = [first].concat(points, [last]);
 							coeffs[which] = [];
-							for (s=0; s<len-3; s++) {
+							for (s=0; s < len-1; s++) {
 								coeffs[which][s] = [
-									2*points[s+1][which](),
-									-points[s][which]() + points[s+2][which](),
-									2*points[s][which]() - 5*points[s+1][which]() +
-								    4*points[s+2][which]() - points[s+3][which](),
-									-points[s][which]() + 3*points[s+1][which]() -
-								    3*points[s+2][which]() + points[s+3][which]()];
+									2*p[s+1][which](),
+									 -p[s][which]() +   p[s+2][which](),
+									2*p[s][which]() - 5*p[s+1][which]() + 4*p[s+2][which]() - p[s+3][which](),
+									 -p[s][which]() + 3*p[s+1][which]() - 3*p[s+2][which]() + p[s+3][which]()
+									];
 							}
 						}
+						len += 2;  // add the two control points 
 						if (isNaN(t)) { return NaN; }
-                        if (t <= 0) {
-							return -t*points[0][which]() + (t+1)*points[1][which]();
-						}
-                        if (t >= n - 1) {
-							return points[n-1][which]();
+						// This is necessay for our advanced plotting algorithm:
+                        if (t < 0) {   
+							return p[1][which]();
+						} else if (t >= len - 2) {
+							return p[len-2][which]();
 						}
 
                         s = Math.floor(t);
 						if (s==t) {
-							return points[s][which]();
+							return p[s][which]();
 						}
 						t -= s;
 						c = coeffs[which][s];
@@ -755,7 +763,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 makeFct('Y'),
                 0,
                 function() {
-                    return points.length - 3;
+                    return points.length - 1;
                 }
             ];
         },
