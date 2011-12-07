@@ -1027,7 +1027,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             window.getSelection().removeAllRanges();
         }
 
-        this.updateHooks('mousedown', evt);
         // move origin - but only if we're not in drag mode
         if ( (this.mode === this.BOARD_MODE_NONE)
              && (evt.targetTouches.length == 2)
@@ -1036,7 +1035,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
 
-            return;
+            this.updateHooks('touchstart', evt);
+            return false;
         }
 
         // multitouch
@@ -1206,6 +1206,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
+
+        this.updateHooks('touchstart', evt);
+        return false;
     },
 
     touchMoveListener: function (evt) {
@@ -1219,13 +1222,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             ti = ti.getTime();
             if (ti-this.touchMoveLast<80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
-                return;
+                this.updateHooks('touchmove', evt, this.mode);
+                return false;
             } else {
                 this.touchMoveLast = ti;
             }            
         }
-
-        this.updateHooks('mousemove', evt, this.mode);
 
         this.dehighlightAll();   // As long as we do not highlight we need not dehighlight
                                  // Now we do highlight, so we may need to dehighlight
@@ -1271,6 +1273,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
+
+        this.updateHooks('touchmove', evt, this.mode);
+        return false;
     },
 
     touchEndListener: function (evt) {
@@ -1278,7 +1283,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber;
 
-        this.updateHooks('mouseup', evt);
+        this.updateHooks('touchend', evt);
         this.renderer.hide(this.infobox);
 
         if (evt.targetTouches.length > 0) {
@@ -1377,8 +1382,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseDownListener: function (Evt) {
         var pos, elements, xy = [];
 
-        this.updateHooks('mousedown', Evt);
-
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
             document.selection.empty();
@@ -1389,6 +1392,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (this.options.pan && Evt.shiftKey) {
             this.initMoveOrigin(pos[0], pos[1]);
+            this.updateHooks('mousedown', Evt);
             return false;
         }
 
@@ -1397,6 +1401,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // if no draggable object can be found, get out here immediately
         if (elements.length == 0) {
             this.mode = this.BOARD_MODE_NONE;
+            this.updateHooks('mousedown', Evt);
             return true;
         } else {
             this.mouse = {
@@ -1427,6 +1432,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
+        this.updateHooks('mousedown', Evt);
         return false;
     },
 
@@ -1457,8 +1463,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseMoveListener: function (Event, i) {
         var pos;
 
-        this.updateHooks('mousemove', Event, this.mode);
-
         // if not called from touch events, i is undefined
         i = 0;
 
@@ -1484,6 +1488,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.highlightElements(pos[0], pos[1]);
         }
         this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+        this.updateHooks('mousemove', Event, this.mode);
     },
     
     mouseWheelListener: function (Event) {
