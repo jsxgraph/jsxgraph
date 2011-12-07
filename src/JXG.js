@@ -113,7 +113,23 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean}
      */
     isWebkitAndroid: function () {
-        return this.isAndroid() &&  navigator.userAgent.search(" AppleWebKit/") > -1;
+        return this.isAndroid() && navigator.userAgent.search(" AppleWebKit/") > -1;
+    },
+
+    /**
+     * Detects if the user is using a Apple iPad / iPhone.
+     * @returns {Boolean}
+     */
+    isApple: function () {
+        return (navigator.userAgent.search(/iPad/) != -1 || navigator.userAgent.search(/iPhone/) != -1);
+    },
+
+    /**
+     * Detects if the user is using Safari on an Apple device.
+     * @returns {Boolean}
+     */
+    isWebkitApple: function () {
+        return this.isApple() && (navigator.userAgent.search(/Mobile *.*Safari/) > -1);
     },
 
     /**
