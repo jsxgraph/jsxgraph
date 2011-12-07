@@ -172,48 +172,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // the distance of the tick to p1. Is displayed on the board using a label
             // for majorTicks
             tickPosition,
-            // creates a label
-            makeLabel = function(pos, newTick, board, drawLabels, id) {
-                var labelText, label;
-
-                if (!drawLabels) {
-                    return null;
-                }
-                
-                labelText = pos.toString();
-                if (Math.abs(pos) < JXG.Math.eps) {
-                    labelText = '0';
-                }
-
-                if(labelText.length > 5 || labelText.indexOf('e') != -1) {
-                    labelText = pos.toPrecision(3).toString();
-                }
-                if (labelText.indexOf('.') > -1) {
-                    // trim trailing zeros
-                    labelText = labelText.replace(/0+$/, '');
-                    // trim trailing .
-                    labelText = labelText.replace(/\.$/, '');
-                }
-                
-                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
-                    id: id + i + 'Label',
-                    isLabel: true,
-                    layer: board.options.layer.line,
-                    highlightStrokeColor: board.options.text.strokeColor,
-                    highlightStrokeWidth: board.options.text.strokeWidth,
-                    highlightStrokeOpacity: board.options.text.strokeOpacity
-                });
-                label.isDraggable = false;
-                label.dump = false;
-                label.distanceX = 4;
-                label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
-                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
-                                newTick.usrCoords[2] + label.distanceY / (board.unitY));
-                
-                label.visProp.visible = drawLabels;
-                label.prepareUpdate().update().updateRenderer();
-                return label;
-            },
+           
             
             respDelta = function(val) {
                 return Math.ceil(val/ticksDelta)*ticksDelta;
@@ -314,7 +273,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     this.ticks.push(tickCoords);
                     this.ticks[this.ticks.length-1].major = true;
                     
-                    this.labels.push(makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id));
+                    this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                 }
             }
             this.dxMaj = dxMaj;
@@ -405,7 +364,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
             if(i % (this.visProp.minorticks+1) === 0) {
                 tickCoords.major = true;
-                this.labels.push(makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id));
+                this.labels.push(this._makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                 tickPosition += ticksDelta;
             } else {
                 tickCoords.major = false;
@@ -428,6 +387,52 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         this.dxMin = dxMin;
         this.dyMin = dyMin;
     },
+    
+    /** 
+     * Create a tick label 
+     * @private
+     **/
+    _makeLabel: function(pos, newTick, board, drawLabels, id, i) {
+                var labelText, label;
+
+                if (!drawLabels) {
+                    return null;
+                }
+                
+                labelText = pos.toString();
+                if (Math.abs(pos) < JXG.Math.eps) {
+                    labelText = '0';
+                }
+
+                if(labelText.length > 5 || labelText.indexOf('e') != -1) {
+                    labelText = pos.toPrecision(3).toString();
+                }
+                if (labelText.indexOf('.') > -1) {
+                    // trim trailing zeros
+                    labelText = labelText.replace(/0+$/, '');
+                    // trim trailing .
+                    labelText = labelText.replace(/\.$/, '');
+                }
+                
+                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
+                    id: id + i + 'Label',
+                    isLabel: true,
+                    layer: board.options.layer.line,
+                    highlightStrokeColor: board.options.text.strokeColor,
+                    highlightStrokeWidth: board.options.text.strokeWidth,
+                    highlightStrokeOpacity: board.options.text.strokeOpacity
+                });
+                label.isDraggable = false;
+                label.dump = false;
+                label.distanceX = 4;
+                label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
+                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
+                                newTick.usrCoords[2] + label.distanceY / (board.unitY));
+                
+                label.visProp.visible = drawLabels;
+                label.prepareUpdate().update().updateRenderer();
+                return label;
+     },
 
     /**
      * Removes the HTML divs of the tick labels
