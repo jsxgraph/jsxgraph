@@ -1035,7 +1035,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
 
-            this.updateHooks('touchstart', evt);
+            this.updateHooks(['touchstart', 'down'], evt);
             return false;
         }
 
@@ -1207,7 +1207,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.mouse;
 
-        this.updateHooks('touchstart', evt);
+        this.updateHooks(['touchstart', 'down'], evt);
         return false;
     },
 
@@ -1222,7 +1222,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             ti = ti.getTime();
             if (ti-this.touchMoveLast<80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.updateHooks('touchmove', evt, this.mode);
+                this.updateHooks(['touchmove', 'move'], evt, this.mode);
                 return false;
             } else {
                 this.touchMoveLast = ti;
@@ -1274,7 +1274,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.mouse;
 
-        this.updateHooks('touchmove', evt, this.mode);
+        this.updateHooks(['touchmove', 'move'], evt, this.mode);
         return false;
     },
 
@@ -1283,7 +1283,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber;
 
-        this.updateHooks('touchend', evt);
+        this.updateHooks(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
 
         if (evt.targetTouches.length > 0) {
@@ -1380,7 +1380,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
     mouseDownListener: function (Evt) {
-        var pos, elements, xy = [];
+        var pos, elements, xy, r;
 
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
@@ -1392,48 +1392,47 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (this.options.pan && Evt.shiftKey) {
             this.initMoveOrigin(pos[0], pos[1]);
-            this.updateHooks('mousedown', Evt);
-            return false;
-        }
-
-        elements = this.initMoveObject(pos[0], pos[1]);
-
-        // if no draggable object can be found, get out here immediately
-        if (elements.length == 0) {
-            this.mode = this.BOARD_MODE_NONE;
-            this.updateHooks('mousedown', Evt);
-            return true;
+            r = false;
         } else {
-            this.mouse = {
-                obj: null,
-                targets: [
-                    {
-                        X: pos[0],
-                        Y: pos[1],
-                        Xprev: NaN,
-                        Yprev: NaN
-                    }
-                ]
-            };
-            this.mouse.obj = elements[0];
 
-            xy = this.initXYstart(this.mouse.obj);
+            elements = this.initMoveObject(pos[0], pos[1]);
 
-            this.mouse.targets[0].Xstart = xy[0];
-            this.mouse.targets[0].Ystart = xy[1];
-
-            // prevent accidental text selection
-            // this could get us new trouble: input fields, links and drop down boxes placed as text
-            // on the board don't work anymore.
-            if (Evt && Evt.preventDefault) {
-                Evt.preventDefault();
+            // if no draggable object can be found, get out here immediately
+            if (elements.length == 0) {
+                this.mode = this.BOARD_MODE_NONE;
+                r = true;
             } else {
-                window.event.returnValue = false;
+                this.mouse = {
+                    obj: null,
+                    targets: [
+                        {
+                            X: pos[0],
+                            Y: pos[1],
+                            Xprev: NaN,
+                            Yprev: NaN
+                        }
+                    ]
+                };
+                this.mouse.obj = elements[0];
+
+                xy = this.initXYstart(this.mouse.obj);
+
+                this.mouse.targets[0].Xstart = xy[0];
+                this.mouse.targets[0].Ystart = xy[1];
+
+                // prevent accidental text selection
+                // this could get us new trouble: input fields, links and drop down boxes placed as text
+                // on the board don't work anymore.
+                if (Evt && Evt.preventDefault) {
+                    Evt.preventDefault();
+                } else {
+                    window.event.returnValue = false;
+                }
             }
         }
 
-        this.updateHooks('mousedown', Evt);
-        return false;
+        this.updateHooks(['mousedown', 'down'], Evt);
+        return r;
     },
 
     /**
@@ -1441,7 +1440,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     mouseUpListener: function (Evt) {
-        this.updateHooks('mouseup', Evt);
+        this.updateHooks(['mouseup', 'up'], Evt);
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -1489,9 +1488,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        this.updateHooks('mousemove', Event, this.mode);
+        this.updateHooks(['mousemove', 'move'], Event, this.mode);
     },
-    
+
+    /**
+     * Handler for mouse wheel events. Used to zoom in and out of the board.
+     * @param {Event} Event
+     * @returns {Boolean}
+     */
     mouseWheelListener: function (Event) {
         if (!this.options.zoom.wheel) {
             return true;
@@ -2345,16 +2349,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateHooks: function (m) {
-        var i, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
+        var i, j, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
 
         if (!JXG.exists(m))
-            m = 'update';
+            m = ['update'];
 
-        for (i=0; i<this.hooks.length; i++) {
-            if ((this.hooks[i] != null) && (this.hooks[i].mode == m)) {
-                this.hooks[i].fn.apply(this.hooks[i].context, args);
+        if (!JXG.isArray(m)) {
+            m = [m];
+        }
+
+        for (j = 0; j < this.m.length; j++) {
+            for (i = 0; i < this.hooks.length; i++) {
+                if ((this.hooks[i] != null) && (this.hooks[i].mode == m[j])) {
+                    this.hooks[i].fn.apply(this.hooks[i].context, args);
+                }
             }
         }
+
         return this;
     },
 
