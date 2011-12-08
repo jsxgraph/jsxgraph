@@ -2349,7 +2349,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateHooks: function (m) {
-        var i, j, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
+        var i, j, len, lenh, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
 
         if (!JXG.exists(m))
             m = ['update'];
@@ -2357,9 +2357,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!JXG.isArray(m)) {
             m = [m];
         }
-
-        for (j = 0; j < this.m.length; j++) {
-            for (i = 0; i < this.hooks.length; i++) {
+        
+        len = m.length;
+        lenh = this.hooks.length;
+        for (j = 0; j < len; j++) {
+            for (i = 0; i < lenh; i++) {
                 if ((this.hooks[i] != null) && (this.hooks[i].mode == m[j])) {
                     this.hooks[i].fn.apply(this.hooks[i].context, args);
                 }
