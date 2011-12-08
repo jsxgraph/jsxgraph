@@ -165,8 +165,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // the distance of the tick to p1. Is displayed on the board using a label
             // for majorTicks
             tickPosition,
+            // infinite or finite tick length
+            style,
            
-            
             respDelta = function(val) {
                 return Math.ceil(val/ticksDelta)*ticksDelta;
             },
@@ -180,16 +181,21 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMin = 0, dyMin = 0;
         // END OF variable declaration
 
+           
         // Grid-like ticks
-        if(this.visProp.minorheight < 0) {
-            distMin = this.board.canvasWidth+this.board.canvasHeight;
+        if (this.visProp.minorheight < 0)  {
+            this.minStyle = 'infinite';
+        } else {
+            this.minStyle = 'finite';
         }
+            
 
         if(this.visProp.majorheight < 0) {
-            distMaj = this.board.canvasWidth+this.board.canvasHeight;
+            this.majStyle = 'infinite';
+        } else {
+            this.majStyle = 'finite';
         }
 
-            
         // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
         // and has been moved in here to clean up the renderers code.
         //
@@ -197,7 +203,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // calculate the dx and dy values which make ticks out of this positions, i.e. from the
         // position (p_x, p_y) calculated above we have to draw a line from
         // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
-
         if(Math.abs(slope) < eps) {
             // if the slope of the line is (almost) 0, we can set dx and dy directly
             dxMaj = 0;
@@ -475,7 +480,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     updateRenderer: function () {
         if (this.needsUpdate) {
             if (this.ticks) {
-                this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin);
+                this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin, this.minStyle, this.majStyle);
             }
             this.needsUpdate = false;
         }

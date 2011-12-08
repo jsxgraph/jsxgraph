@@ -224,21 +224,97 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
      * **************************/
 
     // documented in AbstractRenderer
-    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin) {
+    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin, minStyle, majStyle) {
         var tickStr = '',
             i, c, node,
+            x = [],
+            y = [], 
+            dx, dy,
+            s, style, j = 0, 
+            cw = axis.board.canvasWidth,
+            ch = axis.board.canvasHeight,
             len = axis.ticks.length;
 
         for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
             if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.updateText(axis.labels[i]);
-                }
-                tickStr += "M " + (c[1] + dxMaj) + " " + (c[2] - dyMaj) + " L " + (c[1] - dxMaj) + " " + (c[2] + dyMaj) + " ";
+                dx = dxMaj;
+                dy = dyMaj;
+                style = majStyle;
             } else {
-                tickStr += "M " + (c[1] + dxMin) + " " + (c[2] - dyMin) + " L " + (c[1] - dxMin) + " " + (c[2] + dyMin) + " ";
+                dx = dxMin;
+                dy = dyMin;
+                style = minStyle;
             }
+            // finite tick length
+            if (style=='finite') {
+                x[0] = c[1] + dx;
+                y[0] = c[2] - dy;
+                x[1] = c[1] - dx;
+                y[1] = c[2] + dy;
+            // infinite tick length, grid-like
+            } else {
+                // vertical 
+                if (Math.abs(dx)<JXG.Math.eps) {
+                    x[0] = c[1];
+                    x[1] = c[1];
+                    y[0] = 0;
+                    y[1] = ch;
+                // horizontal
+                } else if (Math.abs(dy)<JXG.Math.eps) {
+                    x[0] = 0;
+                    x[1] = cw;
+                    y[0] = c[2];
+                    y[1] = c[2];
+                // other
+                } else {
+                    j = 0;
+                    s = JXG.Math.crossProduct([0,0,1], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with top
+                    s[1] /= s[0];
+                    if (s[1]>=0 && s[1]<=cw) {  
+                        x[j] = s[1];
+                        y[j] = 0;
+                        j++;
+                    }
+                    s = JXG.Math.crossProduct([0,1,0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with left
+                    s[2] /= s[0];
+                    if (s[2]>=0 && s[2]<=ch) {  
+                        x[j] = 0;
+                        y[j] = s[2];
+                        j++;
+                    }
+                    if (j<2) {
+                        s = JXG.Math.crossProduct([ch*ch,0,-ch], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with bottom
+                        s[1] /= s[0];
+                        if (s[1]>=0 && s[1]<=cw) {  
+                            x[j] = s[1];
+                            y[j] = ch;
+                            j++;
+                        }
+                    }
+                    if (j<2) {
+                        s = JXG.Math.crossProduct([cw*cw, -cw, 0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with right
+                        s[2] /= s[0];
+                        if (s[2]>=0 && s[2]<=ch) {  
+                            x[j] = cw;
+                            y[j] = s[2];
+                        }
+                    }
+                }
+            }
+            if (typeof x[0] != 'undefined' && typeof x[1] != 'undefined') {
+                tickStr += "M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
+            }
+        }
+        // Labels
+        for (i = 0; i < len; i++) {
+            c = axis.ticks[i].scrCoords;
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
+                    this.updateText(axis.labels[i]);
+            } 
         }
         node = this.getElementById(axis.id);
         if (!JXG.exists(node)) {
