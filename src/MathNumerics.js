@@ -1048,7 +1048,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 x = start, y,
                 x1, y1, delta1;
 
-            n = Math.floor(n);
+            n = Math.round(n);
+
             xarr[j] = x;
             yarr[j] = 0.0;
 
