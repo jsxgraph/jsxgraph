@@ -170,12 +170,14 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // new position 
             nx = 0,
             ny = 0,
+            ti,
             respDelta = function(val) {
                 return Math.ceil(val/ticksDelta)*ticksDelta;
             },
             
             // the following variables are used to define ticks height and slope
             eps = JXG.Math.eps,
+            dn,
             slope = -this.line.getSlope(),
             distMaj = this.visProp.majorheight/2,
             distMin = this.visProp.minorheight/2,
@@ -205,6 +207,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // calculate the dx and dy values which make ticks out of this positions, i.e. from the
         // position (p_x, p_y) calculated above we have to draw a line from
         // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
+        /*
         if(Math.abs(slope) < eps) {
             // if the slope of the line is (almost) 0, we can set dx and dy directly
             dxMaj = 0;
@@ -235,6 +238,16 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMin = -distMin/Math.sqrt(1/(slope*slope) + 1);
             dyMin = dxMin/slope;
         }
+        */
+        dxMaj = this.line.stdform[1];
+        dyMaj = this.line.stdform[2];
+        dxMin = dxMaj;
+        dyMin = dyMaj;
+        dn = Math.sqrt(dxMaj*dxMaj + dyMaj*dyMaj);
+        dxMaj *= distMaj/dn;
+        dyMaj *= distMaj/dn;
+        dxMin *= distMin/dn;
+        dyMin *= distMin/dn;
 
         // Begin cleanup
         this.removeTickLabels();
@@ -262,7 +275,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 ny = p1.coords.usrCoords[2] + this.fixedTicks[i]*deltaY;
                 tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
                 
-                this.ticks.push(this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true));
+                ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
+                if (ti.length==2) {
+                    this.ticks.push(ti);
+                }
                 this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                 // visibility test missing
             }
@@ -280,6 +296,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
          * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
          */
         // p1 is outside the visible area or the line is a segment
+        /*
         if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
             // calculate start and end points
             begin = p1.coords.distance(JXG.COORDS_BY_USER, e1);
@@ -340,15 +357,20 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         while(startTick.distance(JXG.COORDS_BY_USER, tickCoords) < Math.abs(end - begin) + JXG.Math.eps) {
             if(i % (this.visProp.minorticks+1) === 0) {
                 tickCoords.major = true;
-                this.labels.push(this._makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
-                tickPosition += ticksDelta;
             } else {
                 tickCoords.major = false;
                 this.labels.push(null);
             }
             i++;
 
-            this.ticks.push(this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major));
+            ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
+            if (ti.length==2) {
+                this.ticks.push(ti);
+                if (tickCoords.major) {
+                this.labels.push(this._makeLabel(tickPosition, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                tickPosition += ticksDelta;
+            }
+            }
 
             // Compute next position
             nx = tickCoords.usrCoords[1] + deltaX*ticksDelta;
@@ -363,6 +385,65 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
             }
         }
+        */
+        var dirs = 2, dir = -1, centerX, centerY, d;
+        
+        nx = (e1.usrCoords[1]+e2.usrCoords[1])*0.5;
+        ny = (e1.usrCoords[2]+e2.usrCoords[2])*0.5;
+        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+        d = p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
+        if ((p2.X()-p1.X())*(nx-p1.X())<0 || (p2.Y()-p1.Y())*(ny-p1.Y())<0) {
+            d *= -1;
+        }
+        tickPosition = Math.round(d/(this.visProp.minorticks+1))*(this.visProp.minorticks+1);
+        if (Math.abs(tickPosition)>JXG.Math.eps) {
+            dir = Math.abs(tickPosition)/tickPosition;
+        }
+
+        centerX = p1.coords.usrCoords[1] + deltaX*tickPosition;
+        centerY = p1.coords.usrCoords[2] + deltaY*tickPosition;
+        startTick = tickPosition;
+        tickPosition = 0;
+        
+        nx = centerX;
+        ny = centerY;
+        i = 0;          // counter for label ids
+        do {
+            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+            if (Math.round((tickPosition+startTick)) % (this.visProp.minorticks+1) === 0) {
+                tickCoords.major = true;
+            } else {
+                tickCoords.major = false;
+            }
+            
+            ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
+            if (ti.length==2) {
+                if (this.visProp.drawzero || dir*tickPosition+startTick!=0) {
+                    this.ticks.push(ti);
+                    if (tickCoords.major) {
+                        this.labels.push(this._makeLabel(dir*tickPosition+startTick, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                    } else {
+                        this.labels.push(null);
+                    }
+                    i++;
+                }
+                
+                if (dirs==2) {
+                    dir *= (-1);
+                        
+                } 
+                if (dir==1 || dirs==1) {
+                    tickPosition += ticksDelta;
+                }
+            } else {
+                dir *= (-1);
+                dirs--;
+            }
+            
+            nx = centerX + dir*deltaX*tickPosition;
+            ny = centerY + dir*deltaY*tickPosition;
+        } while (dirs>0);
+        
     },
     
     _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
@@ -388,11 +469,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     
     _tickEndings: function(coords, dxMaj, dyMaj, dxMin, dyMin, major) {
         var i, c, 
-            x = [],
-            y = [], 
+            x = [-1, -1],
+            y = [-1, -1], 
             dx, dy,
             s, style, 
-            j = 0, 
+            count = 0, 
             cw = this.board.canvasWidth,
             ch = this.board.canvasHeight;
 
@@ -463,7 +544,17 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     }
                 }
             }
-            return [x,y];
+            // We allow ticks to be outside of the visible region.
+            // This prents that small minor ticks outside of the canvas
+            // prevent the display of major ticks that intersect the canvas.
+            if ((x[0]>=-0.5*cw && x[0]<=1.5*cw && y[0]>=-0.5*ch && y[0]<=1.5*ch ) 
+                || 
+                (x[1]>=-0.5*cw && x[1]<=1.5*cw && y[1]>=-0.5*ch && y[1]<=1.5*ch)
+               ) {
+                return [x,y];
+            } else { 
+                return [];
+            }
     },
 
     /** 

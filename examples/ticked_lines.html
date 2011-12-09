@@ -10,18 +10,18 @@
 <body>
 <h2>Lines with ticks</h2>
 <div style="width:800px">
-  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:600px;"></div>
 </div>
-<div id="debug" style="width:400px;height:200px;background-color:wheat;"></div>
+<div id="debug" style="width:400px;height:200px;border:1px solid;;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
 
 //JXG.Options.renderer = 'canvas';
         var p1, p2, l1;
-        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 40, unitY: 40});
-        ax = board.create('axis', [[0,-1],[1,-1]]);
-        //ay = board.create('axis', [[0,0],[0,-1]], { ticks: {minHeight:4}});
-/*
+        //board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 340, unitX: 38, unitY: 40});
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-10,10,20,-10], keepaspectratio:true, axis:true});
+        ax = board.create('axis', [[0,0],[1,1]], { ticks: {minorHeight:4} });
+        ay = board.create('axis', [[0,0],[-1,1]], { ticks: {minorHeight:4} });
         p1 = board.createElement('point', [3, 0], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
         p2 = board.createElement('point', [8, 0], {style:2,name:"P_{2}"}); // Angabe fester Koordinaten
 
@@ -38,7 +38,7 @@
         
         //alert("Adding a label to Circle KK");
         //c.setProperty({labelColor: "#FF00FF", withLabel: true});
-*/        
+        
   /* ]]> */
   </script>
 </body>
