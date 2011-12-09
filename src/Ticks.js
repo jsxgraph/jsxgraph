@@ -136,7 +136,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // Point 2 of the line
             p2 = this.line.point2,
             // Distance between the two points from above
-            distP1P2 = p1.coords.distance(JXG.COORDS_BY_USER, p2.coords),
+            distP1P2 = p1.Dist(p2),
             // Distance of X coordinates of two major ticks
             // Initialized with the distance of Point 1 to a point between Point 1 and Point 2 on the line and with distance 1
             // this equals always 1 for lines parallel to x = 0 or y = 0. It's only important for lines other than that.
@@ -167,7 +167,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             tickPosition,
             // infinite or finite tick length
             style,
-           
+            // new position 
+            nx = 0,
+            ny = 0,
             respDelta = function(val) {
                 return Math.ceil(val/ticksDelta)*ticksDelta;
             },
@@ -239,10 +241,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         // initialize storage arrays
         // ticks stores the ticks coordinates
-        this.ticks = new Array();
+        this.ticks = [];
         
         // labels stores the text to display beside the ticks
-        this.labels = new Array();
+        this.labels = [];
         // END cleanup
         
         // calculate start (e1) and end (e2) points
@@ -253,65 +255,30 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // ... and calculate the drawn start and end point
         JXG.Math.Geometry.calcStraight(this.line, e1, e2);
             
+        // we have an array of fixed ticks we have to draw
         if(!this.equidistant) {
-            // we have an array of fixed ticks we have to draw
-            var dx_minus = p1.coords.usrCoords[1]-e1.usrCoords[1],
-                dy_minus = p1.coords.usrCoords[2]-e1.usrCoords[2],
-                length_minus = Math.sqrt(dx_minus*dx_minus + dy_minus*dy_minus),
-                dx_plus = p1.coords.usrCoords[1]-e2.usrCoords[1],
-                dy_plus = p1.coords.usrCoords[2]-e2.usrCoords[2],
-                length_plus = Math.sqrt(dx_plus*dx_plus + dy_plus*dy_plus),
-
-                // new ticks coordinates
-                nx = 0,
-                ny = 0;
-
-            for(i = 0; i < this.fixedTicks.length; i++) {
-                // is this tick visible?
-                if((-length_minus <= this.fixedTicks[i]) && (this.fixedTicks[i] <= length_plus)) {
-                    if(this.fixedTicks[i] < 0) {
-                        nx = Math.abs(dx_minus) * this.fixedTicks[i]/length_minus;
-                        ny = Math.abs(dy_minus) * this.fixedTicks[i]/length_minus;
-                    } else {
-                        nx = Math.abs(dx_plus) * this.fixedTicks[i]/length_plus;
-                        ny = Math.abs(dy_plus) * this.fixedTicks[i]/length_plus;
-                    }
-
-                    tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + nx, p1.coords.usrCoords[2] + ny], this.board);
-                    this.ticks.push(tickCoords);
-                    this.ticks[this.ticks.length-1].major = true;
-                    
-                    this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
-                }
+            for (i = 0; i < this.fixedTicks.length; i++) {
+                nx = p1.coords.usrCoords[1] + this.fixedTicks[i]*deltaX;
+                ny = p1.coords.usrCoords[2] + this.fixedTicks[i]*deltaY;
+                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+                
+                this.ticks.push(this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true));
+                this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                // visibility test missing
             }
-            this.dxMaj = dxMaj;
-            this.dyMaj = dyMaj;
-            this.dxMin = dxMin;
-            this.dyMin = dyMin;
-
             return;
-        } // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
-
+        } 
+        
+        // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
         // adjust distances
         if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
-            while (distScr > 4*this.minTicksDistance) {
-                ticksDelta /= 10;
-                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX*ticksDelta, p1.coords.usrCoords[2] + deltaY*ticksDelta], this.board));
-            }
-
-            // If necessary, enlarge ticksDelta
-            while (distScr < this.minTicksDistance) {
-                ticksDelta *= factor;
-                factor = (factor == 5 ? 2 : 5);
-                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX*ticksDelta, p1.coords.usrCoords[2] + deltaY*ticksDelta], this.board));
-            }
+            ticksDelta = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
         }
 
         /*
          * In the following code comments are sometimes talking about "respect ticksDelta". this could be done
          * by calculating the modulus of the distance wrt to ticksDelta and add resp. subtract a ticksDelta from that.
          */
-
         // p1 is outside the visible area or the line is a segment
         if(JXG.Math.Geometry.isSameDirection(p1.coords, e1, e2)) {
             // calculate start and end points
@@ -325,8 +292,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             } else {
                 end = -1*end;
                 begin = -1*begin;
-                if(this.line.visProp.straightfirst)
+                if (this.line.visProp.straightfirst) {
                     begin -= 2*ticksDelta
+                }
             }
 
             if (begin > end) {
@@ -339,7 +307,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             if (this.line.visProp.straightlast) {
                 end += 2*ticksDelta;
             }
-
             // TODO: We should check here if the line is visible at all. If it's not visible but
             // close to the viewport there may be drawn some ticks without a line visible.
             
@@ -359,8 +326,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             }
         }
 
-        startTick = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX, p1.coords.usrCoords[2] + begin*deltaY], this.board);
-        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + begin*deltaX, p1.coords.usrCoords[2] + begin*deltaY], this.board);
+        nx = p1.coords.usrCoords[1] + begin*deltaX;
+        ny = p1.coords.usrCoords[2] + begin*deltaY;
+        startTick = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
         
         deltaX /= this.visProp.minorticks+1;
         deltaY /= this.visProp.minorticks+1;
@@ -379,22 +348,124 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             }
             i++;
 
-            this.ticks.push(tickCoords);
-            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX*ticksDelta, tickCoords.usrCoords[2] + deltaY*ticksDelta], this.board);
+            this.ticks.push(this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major));
+
+            // Compute next position
+            nx = tickCoords.usrCoords[1] + deltaX*ticksDelta;
+            ny = tickCoords.usrCoords[2] + deltaY*ticksDelta
+            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+            
+            // Handle the tick at zero.
             if(!this.visProp.drawzero && tickCoords.distance(JXG.COORDS_BY_USER, p1.coords) <= JXG.Math.eps) {
                 // zero point is always a major tick. hence, we have to set i = 0;
                 i++;
                 tickPosition += ticksDelta;
-                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [tickCoords.usrCoords[1] + deltaX*ticksDelta, tickCoords.usrCoords[2] + deltaY*ticksDelta], this.board);
+                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
             }
         }
-
-        this.dxMaj = dxMaj;
-        this.dyMaj = dyMaj;
-        this.dxMin = dxMin;
-        this.dyMin = dyMin;
     },
     
+    _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
+        var nx, ny;
+        
+        while (distScr > 4*this.minTicksDistance) {
+            ticksDelta /= 10;
+            nx = p1c.usrCoords[1] + deltaX*ticksDelta;
+            ny = p1c.usrCoords[2] + deltaY*ticksDelta;
+            distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
+        }
+
+        // If necessary, enlarge ticksDelta
+        while (distScr < this.minTicksDistance) {
+            ticksDelta *= factor;
+            factor = (factor == 5 ? 2 : 5);
+            nx = p1c.usrCoords[1] + deltaX*ticksDelta;
+            ny = p1c.usrCoords[2] + deltaY*ticksDelta;
+            distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
+        }
+        return ticksDelta;
+    },
+    
+    _tickEndings: function(coords, dxMaj, dyMaj, dxMin, dyMin, major) {
+        var i, c, 
+            x = [],
+            y = [], 
+            dx, dy,
+            s, style, 
+            j = 0, 
+            cw = this.board.canvasWidth,
+            ch = this.board.canvasHeight;
+
+            c = coords.scrCoords;
+            if (major) {
+                dx = dxMaj;
+                dy = dyMaj;
+                style = this.majStyle;
+            } else {
+                dx = dxMin;
+                dy = dyMin;
+                style = this.minStyle;
+            }
+            
+            // finite tick length
+            if (style=='finite') {
+                x[0] = c[1] + dx;
+                y[0] = c[2] - dy;
+                x[1] = c[1] - dx;
+                y[1] = c[2] + dy;
+            // infinite tick length, grid-like
+            } else {
+                // vertical 
+                if (Math.abs(dx)<JXG.Math.eps) {
+                    x[0] = c[1];
+                    x[1] = c[1];
+                    y[0] = 0;
+                    y[1] = ch;
+                // horizontal
+                } else if (Math.abs(dy)<JXG.Math.eps) {
+                    x[0] = 0;
+                    x[1] = cw;
+                    y[0] = c[2];
+                    y[1] = c[2];
+                // other
+                } else {
+                    j = 0;
+                    s = JXG.Math.crossProduct([0,0,1], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with top
+                    s[1] /= s[0];
+                    if (s[1]>=0 && s[1]<=cw) {  
+                        x[j] = s[1];
+                        y[j] = 0;
+                        j++;
+                    }
+                    s = JXG.Math.crossProduct([0,1,0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with left
+                    s[2] /= s[0];
+                    if (s[2]>=0 && s[2]<=ch) {  
+                        x[j] = 0;
+                        y[j] = s[2];
+                        j++;
+                    }
+                    if (j<2) {
+                        s = JXG.Math.crossProduct([ch*ch,0,-ch], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with bottom
+                        s[1] /= s[0];
+                        if (s[1]>=0 && s[1]<=cw) {  
+                            x[j] = s[1];
+                            y[j] = ch;
+                            j++;
+                        }
+                    }
+                    if (j<2) {
+                        s = JXG.Math.crossProduct([cw*cw, -cw, 0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with right
+                        s[2] /= s[0];
+                        if (s[2]>=0 && s[2]<=ch) {  
+                            x[j] = cw;
+                            y[j] = s[2];
+                        }
+                    }
+                }
+            }
+            return [x,y];
+    },
+
     /** 
      * Create a tick label 
      * @private

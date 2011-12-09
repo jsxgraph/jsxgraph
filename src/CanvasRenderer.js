@@ -405,18 +405,21 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
         context.beginPath();
         for (i = 0; i < len; i++) {
+            c = axis.ticks[i];
+            x = c[0];
+            y = c[1];
+            context.moveTo(x[0], y[0]);
+            context.lineTo(x[1], y[1]);
+        }
+        // Labels
+        for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if (axis.labels[i] && (axis.board.needsFullUpdate || axis.needsRegularUpdate || axis.labels[i].visProp.display === 'internal') && axis.labels[i].visProp.visible) {
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
                     this.updateText(axis.labels[i]);
-                }
-                context.moveTo(c[1] + dxMaj, c[2] - dyMaj);
-                context.lineTo(c[1] - dxMaj, c[2] + dyMaj);
-            }
-            else {
-                context.moveTo(c[1] + dxMin, c[2] - dyMin);
-                context.lineTo(c[1] - dxMin, c[2] + dyMin);
-            }
+            } 
         }
         this._stroke(axis);
     },

@@ -110,23 +110,27 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         len = axis.ticks.length;
         for (i = 0; i < len; i++) {
-            c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.updateText(axis.labels[i]);
-                }
+            c = axis.ticks[i];
+            x = c[0];
+            y = c[1];
+            if (typeof x[0] != 'undefined' && typeof x[1] != 'undefined') {
                 tickArr.push(
-                    ' m ' + Math.round(r * (c[1] + dxMaj)) + ', ' + Math.round(r * (c[2] - dyMaj)) +
-                    ' l ' + Math.round(r * (c[1] - dxMaj)) + ', ' + Math.round(r * (c[2] + dyMaj)) + ' '
-                );
-            } else {
-                tickArr.push(
-                    ' m ' + Math.round(r * (c[1] + dxMin)) + ', ' + Math.round(r * (c[2] - dyMin)) +
-                    ' l ' + Math.round(r * (c[1] - dxMin)) + ', ' + Math.round(r * (c[2] + dyMin)) + ' '
+                    ' m ' + Math.round(r * x[0]) + ', ' + Math.round(r * y[0]) +
+                    ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' '
                 );
             }
         }
-
+        // Labels
+        for (i = 0; i < len; i++) {
+            c = axis.ticks[i].scrCoords;
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
+                    this.updateText(axis.labels[i]);
+            } 
+        }
+         
         //ticks = this.getElementById(axis.id);
         if (!JXG.exists(axis)) {
             ticks = this.createPrim('path', axis.id);
