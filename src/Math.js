@@ -393,8 +393,8 @@ JXG.Math = (function(JXG, Math, undefined) {
 
             if (k>n || k<0) return NaN;
 
-            k = Math.floor(k);
-            n = Math.floor(n);
+            k = Math.round(k);
+            n = Math.round(n);
 
             if (k===0 || k===n) return 1;
 

@@ -117,7 +117,8 @@ JXG.createSlider = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
     l2 = board.create('segment', [p1,p3],  attr);
                  
-    p3.Value = function() { return p3.visProp.snapwidth === -1 ? this.position*sdiff+smin : Math.round((this.position*sdiff+smin)/p3.visProp.snapwidth)*p3.visProp.snapwidth; };
+    p3.Value = function() { 
+        return p3.visProp.snapwidth === -1 ? this.position*sdiff+smin : Math.round((this.position*sdiff+smin)/this.visProp.snapwidth)*this.visProp.snapwidth; };
 
     /**
      * End value of the slider range.

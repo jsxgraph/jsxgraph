@@ -345,7 +345,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             
         } else {
             // p1 is inside the visible area and direction is PLUS
-
             // now we have to calculate the index of the first tick
             if(!this.line.visProp.straightfirst) {
                 begin = 0; 

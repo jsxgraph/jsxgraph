@@ -246,6 +246,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 dy = dyMin;
                 style = minStyle;
             }
+            
             // finite tick length
             if (style=='finite') {
                 x[0] = c[1] + dx;
