@@ -403,6 +403,7 @@ JXG.Math = (function(JXG, Math, undefined) {
                 b *= (n-i);
                 b /= (i+1);
             }
+
             return b;
         }),
 

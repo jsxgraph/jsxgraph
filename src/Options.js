@@ -498,7 +498,7 @@ JXG.Options = {
             drawLabels : true,
             drawZero : true,
             insertTicks : true,
-            minTicksDistance : 50,
+            minTicksDistance : 10,
             minorHeight : 4,          // if <0: full width and height
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
