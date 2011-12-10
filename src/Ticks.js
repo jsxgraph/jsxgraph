@@ -125,12 +125,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      * (Re-)calculates the ticks coordinates.
      */
     calculateTicksCoordinates: function() {
-        
-        /*
-         * Known bugs:
-         *   * Special ticks behave oddly. See example ticked_lines.html and drag P2 around P1.
-         */
-        
             // Point 1 of the line
         var p1 = this.line.point1,
             // Point 2 of the line
@@ -151,9 +145,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
             // if they're still too close together, they'll be expanded to a distance of 10 etc
             factor = 5,
-            // Edge points: This is where the display of the line starts and ends, e.g. the intersection points
-            // of the line with the edges of the viewing area if the line is a straight.
-            e1, e2,
             // Coordinates of the current tick
             tickCoords,
             // Coordinates of the first drawn tick
@@ -170,7 +161,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ny = 0,
             ti,
 			dirs = 2, dir = -1, 
-			centerX, centerY, d,
+			center = [], d, bb, perp,
             
             // the following variables are used to define ticks height and slope
             eps = JXG.Math.eps,
@@ -222,14 +213,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         this.labels = [];
         // END cleanup
         
-        // calculate start (e1) and end (e2) points
-        // for that first copy existing lines point coordinates...
-        e1 = new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1], p1.coords.usrCoords[2]], this.board);
-        e2 = new JXG.Coords(JXG.COORDS_BY_USER, [p2.coords.usrCoords[1], p2.coords.usrCoords[2]], this.board);
-            
-        // ... and calculate the drawn start and end point
-        JXG.Math.Geometry.calcStraight(this.line, e1, e2);
-            
         // we have an array of fixed ticks we have to draw
         if(!this.equidistant) {
             for (i = 0; i < this.fixedTicks.length; i++) {
@@ -255,32 +238,47 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ticksDelta = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
         }
 
-		// We jump into the middle of the canvas
-		// to tick position which is closest to (e1+e2)/2
+		// We shoot into the middle of the canvas
+		// to the tick position which is closest to the center
+		// of the canvas. We do this by an orthogonal projection
+		// of the canvas center to the line and by rounding of the
+		// distance of the projected point to point1 of the line.
 		// This position is saved in
-		// [centerX, centerY] and startTick.
-        nx = (e1.usrCoords[1]+e2.usrCoords[1])*0.5;
-        ny = (e1.usrCoords[2]+e2.usrCoords[2])*0.5;
-        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+		// center and startTick.
+        bb = this.board.getBoundingBox();
+        nx = (bb[0]+bb[2])*0.5;
+        ny = (bb[1]+bb[3])*0.5;
+		
+		// Project the center of the canvas to the line.
+		perp = [nx*this.line.stdform[2]-ny*this.line.stdform[1], 
+				-this.line.stdform[2], 
+				 this.line.stdform[1]];
+		center = JXG.Math.crossProduct(this.line.stdform, perp);
+		center[1] /= center[0];
+		center[2] /= center[0];
+		center[0] = 1;
+		// Round the distance of center to point1
+        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, center.slice(1), this.board);
         d = p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
-        if ((p2.X()-p1.X())*(nx-p1.X())<0 || (p2.Y()-p1.Y())*(ny-p1.Y())<0) {
+        if ((p2.X()-p1.X())*(center[1]-p1.X())<0 || (p2.Y()-p1.Y())*(center[2]-p1.Y())<0) {
             d *= -1;
         }
         tickPosition = Math.round(d/ticksDelta)*ticksDelta;
         
+		// Find the correct direction of center from point1
         if (Math.abs(tickPosition)>JXG.Math.eps) {
             dir = Math.abs(tickPosition)/tickPosition;
         }
-
-        centerX = p1.coords.usrCoords[1] + deltaX*tickPosition;
-        centerY = p1.coords.usrCoords[2] + deltaY*tickPosition;
+		// From now on, we jump around center
+        center[1] = p1.coords.usrCoords[1] + deltaX*tickPosition;
+        center[2] = p1.coords.usrCoords[2] + deltaY*tickPosition;
         startTick = tickPosition;
         tickPosition = 0;
         
-        nx = centerX;
-        ny = centerY;
+        nx = center[1];
+        ny = center[2];
         i = 0;          // counter for label ids
-		// Now, we jump around [centerX,centerY]
+		// Now, we jump around center
 		// until we are outside of the canvas.
 		// If this is the case we proceed in the other
 		// direction until we are out of the canvas in this direction, too.
@@ -315,7 +313,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 if (dirs==2) {
                     dir *= (-1);
                 } 
-				// Increase distance from [centerX, centerY]
+				// Increase distance from center
                 if (dir==1 || dirs==1) {
                     tickPosition += ticksDelta;  
                 }
@@ -324,8 +322,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 dirs--;
             }
             
-            nx = centerX + dir*deltaX*tickPosition;
-            ny = centerY + dir*deltaY*tickPosition;
+            nx = center[1] + dir*deltaX*tickPosition;
+            ny = center[2] + dir*deltaY*tickPosition;
         } while (dirs>0);
     },
     
@@ -356,7 +354,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ch = this.board.canvasHeight,
             x = [-1000*cw, -1000*ch],
             y = [-1000*cw, -1000*ch], 
-            dx, dy,
+            dx, dy, dxs, dys, d,
             s, style,
             count = 0,
             isInCanvas = false;
@@ -371,6 +369,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			dy = dyMin;
 			style = this.minStyle;
 		}
+		// This is necessary to compute the correct direction of infinite grid lines
+		// if unitX!=unitY.
+		dxs = dx*this.board.unitX;
+		dys = dy*this.board.unitY;
 
 		// For all ticks regardless if of finite or infinite
 		// tick length the intersection with the canvas border is 
@@ -391,14 +393,14 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		// other
 		} else {
 			count = 0;
-			s = JXG.Math.crossProduct([0,0,1], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with top
+			s = JXG.Math.crossProduct([0,0,1], [-dys*c[1]-dxs*c[2], dys, dxs]); // intersect with top
 			s[1] /= s[0];
 			if (s[1]>=0 && s[1]<=cw) {  
 				x[count] = s[1];
 				y[count] = 0;
 				count++;
 			}
-			s = JXG.Math.crossProduct([0,1,0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with left
+			s = JXG.Math.crossProduct([0,1,0], [-dys*c[1]-dxs*c[2], dys, dxs]); // intersect with left
 			s[2] /= s[0];
 			if (s[2]>=0 && s[2]<=ch) {  
 				x[count] = 0;
@@ -406,7 +408,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 				count++;
 			}
 			if (count<2) {
-				s = JXG.Math.crossProduct([ch*ch,0,-ch], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with bottom
+				s = JXG.Math.crossProduct([ch*ch,0,-ch], [-dys*c[1]-dxs*c[2], dys, dxs]); // intersect with bottom
 				s[1] /= s[0];
 				if (s[1]>=0 && s[1]<=cw) {  
 					x[count] = s[1];
@@ -415,7 +417,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 				}
 			}
 			if (count<2) {
-				s = JXG.Math.crossProduct([cw*cw, -cw, 0], [-dy*c[1]-dx*c[2], dy, dx]); // intersect with right
+				s = JXG.Math.crossProduct([cw*cw, -cw, 0], [-dys*c[1]-dxs*c[2], dys, dxs]); // intersect with right
 				s[2] /= s[0];
 				if (s[2]>=0 && s[2]<=ch) {  
 					x[count] = cw;
@@ -433,10 +435,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		}
 		// finite tick length
 		if (style=='finite') {
-			x[0] = c[1] + dx;
-			y[0] = c[2] - dy;
-			x[1] = c[1] - dx;
-			y[1] = c[2] + dy;
+			d = Math.sqrt(this.board.unitX*this.board.unitX+this.board.unitY*this.board.unitY);
+			x[0] = c[1] + dx*this.board.unitX/d;
+			y[0] = c[2] - dy*this.board.unitY/d;
+			x[1] = c[1] - dx*this.board.unitX/d;
+			y[1] = c[2] + dy*this.board.unitY/d;
 		}
         if (isInsideCanvas) {
             return [x,y];
