@@ -69,7 +69,9 @@ for (i=0;i<4;i++) {
 var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
 
 var t = brd.create('turtle', [-1,0], {id:'NIX'});
-t.fd(3); //.rt(90).fd(2).pu().fd(1).pd().rt(90).fd(3);
+//t.fd(3); //
+//t.setProperty({strokeColor:'black'});
+t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
 </script> 
 </body>
 </html>

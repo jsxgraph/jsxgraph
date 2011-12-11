@@ -1143,7 +1143,14 @@ JXG.Options = {
 
     /*special turtle options */
     turtle : {
-        strokeWidth : 1
+        strokeWidth : 1,
+		fillColor: 'none',
+		strokeColor: '#000000',
+		arrow : {
+			strokeWidth: 2,
+			withLabel: false,
+			strokeColor: '#ff0000'
+		}
     },
 
 
