@@ -409,6 +409,7 @@ JXG.Options = {
         line  : 7,
         circle: 6, 
         curve : 5,
+		turtle : 5,
         polygon: 3,
         sector: 3,
         angle : 3, 
@@ -1139,6 +1140,12 @@ JXG.Options = {
 
         /**#@-*/
     },
+
+    /*special turtle options */
+    turtle : {
+        strokeWidth : 1
+    },
+
 
     /**
       * Abbreviations of properties. Setting the shortcut means setting abbreviated properties

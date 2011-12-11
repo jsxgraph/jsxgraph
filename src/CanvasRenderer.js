@@ -432,7 +432,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     drawCurve: function (el) {
         if (el.visProp.handdrawing) {
             this.updatePathStringBezierPrim(el);
-        } else {
+        } else {		
             this.updatePathStringPrim(el);
         }
     },
@@ -713,7 +713,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             nextSymb = symbm,
             maxSize = 5000.0,
             i, scr,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len,
             context = this.context;
 
@@ -721,7 +721,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             return;
         }
 
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
         }
         len = Math.min(el.points.length, el.numberPoints);

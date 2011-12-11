@@ -50,7 +50,7 @@ JXG.Turtle = function (board, parents, attributes) {
     var x,y,dir;
     this.turtleIsHidden = false;
     this.board = board;
-    this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:null});
+    this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:this.board.options.layer.turtle});
     this.attributes.straightFirst = false;
     this.attributes.straightLast = false;
     x = 0;
@@ -145,6 +145,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
             this.curve.dataX.push(this.pos[0]);
             this.curve.dataY.push(this.pos[1]);
         }
+
         this.board.update();
         return this;
     },
@@ -630,8 +631,10 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
  * @return Reference to the created turtle object.
  */
 JXG.createTurtle = function(board, parents, attributes) {
+	var attr;
     parents = parents || [];
 
+    attr = JXG.copyAttributes(attributes, board.options, 'turtle');
     return new JXG.Turtle(board, parents, attributes);
 };
 

@@ -494,13 +494,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             symbm = ' m ',
             symbl = ' l ',
             nextSymb = symbm,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
         if (el.numberPoints <= 0) {
             return '';
         }
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 1.0);
         }
         len = Math.min(len, el.points.length);

@@ -497,14 +497,14 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             maxSize = 5000.0,
             pStr = '',
             i, scr,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len;
 
         if (el.numberPoints <= 0) {
             return '';
         }
 
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
         }
 
