@@ -63,7 +63,7 @@ pX3.type = JXG.OBJECT_TYPE_CAS;
 */
 
 var p = [];
-for (i=0;i<4;i++) {
+for (i=0;i<2;i++) {
 	p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
 }
 var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});

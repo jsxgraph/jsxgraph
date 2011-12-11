@@ -745,7 +745,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
 						// This is necessay for our advanced plotting algorithm:
                         if (t < 0) {   
 							return p[1][which]();
-						} else if (t >= len - 2) {
+						} else if (t >= len - 3) {
 							return p[len-2][which]();
 						}
 
