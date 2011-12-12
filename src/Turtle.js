@@ -53,6 +53,15 @@ JXG.Turtle = function (board, parents, attributes) {
     //this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:this.board.options.layer.turtle});
     //this.attributes.straightFirst = false;
     //this.attributes.straightLast = false;
+    
+    /**
+     * Store the visProp object for later reuse in penDown() and other methods.
+     * This object will be overwritten in JXG.Turtle.setProperty()
+     * @see JXG.Turtle#setProperty
+     */
+    this._attributes = JXG.deepCopy(this.visProp);
+    delete(this._attributes['id']);
+    
     x = 0;
     y = 0;
     dir = 90;
@@ -206,7 +215,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     */
     penDown: function() {
         this.isPenDown = true;
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]]/*, this.visProp*/);
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this._attributes);
         this.objects.push(this.curve);
 		
         return this;
@@ -326,7 +335,12 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
                 el.setProperty(arguments);
             }
         }
-		
+        /*
+        console.log(this.setProperty);
+        JXG.GeometryElement.setProperty.apply(this, arguments);
+        this._attributes = JXG.deepCopy(this.visProp);
+        delete(this._attributes['id']);
+        */
 		/*
         var key;
         var pair;
