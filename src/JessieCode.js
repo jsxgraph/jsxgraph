@@ -179,7 +179,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
                     }
 
-                    that.board.create(vname, parameters, attr);
+                    return that.board.create(vname, parameters, attr);
                 };
             })(this);
             
