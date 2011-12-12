@@ -96,6 +96,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         this.stack = [];
         this.objects = [];
         this.visProp.curveType = 'plot';
+        //delete(this.visProp.id);
         this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
         this.objects.push(this.curve);
 
