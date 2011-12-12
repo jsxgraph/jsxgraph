@@ -85,7 +85,9 @@ JXG.Point = function (board, coordinates, attributes) {
     // documented in GeometryElement
     this.methodMap = {
         move: 'moveTo',
-        glide: 'makeGlider'
+        glide: 'makeGlider',
+        X: 'X',
+        Y: 'Y'
     };
     
     /**
