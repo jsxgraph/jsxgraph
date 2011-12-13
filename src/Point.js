@@ -579,7 +579,19 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
         this.slideObject.addChild(this);
         this.isDraggable = true;
-        
+
+
+
+        if (glideObject.elementClass == JXG.OBJECT_CLASS_LINE)
+            this.coords = JXG.Math.Geometry.projectPointToLine(this, glideObject, this.board);
+        else if (object.elementClass == JXG.OBJECT_CLASS_CIRCLE)
+            this.coords = JXG.Math.Geometry.projectPointToCircle(this, glideObject, this.board);
+        else if (object.elementClass == JXG.OBJECT_CLASS_CURVE)
+            this.coords = JXG.Math.Geometry.projectPointToCurve(this, glideObject, this.board);
+
+
+
+
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
         };

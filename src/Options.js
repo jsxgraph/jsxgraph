@@ -891,7 +891,7 @@ JXG.Options = {
          * @name JXG.Point#size
          */
         size : 3,
-        fillColor : '#000000',
+        fillColor : '#82adffff',
         highlightFillColor : '#EEEEEE',
         strokeWidth: 2,
         strokeColor : '#000000',
