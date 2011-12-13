@@ -497,7 +497,7 @@ JXG.Options = {
             strokeColor : '#666666',
             highlightStrokeColor : '#888888',
             drawLabels : true,
-            drawZero : true,
+            drawZero : false,
             insertTicks : true,
             minTicksDistance : 10,
             minorHeight : 4,          // if <0: full width and height

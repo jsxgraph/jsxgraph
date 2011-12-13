@@ -21,8 +21,11 @@
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
+JXG.Options.axis.visible = false;
+JXG.Options.axis.ticks.drawLabels = false;
+JXG.Options.axis.ticks.drawZero = true;
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], 
-axis:false, keepaspectratio:true, 
+axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 /*
 // x axis

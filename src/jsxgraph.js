@@ -184,7 +184,7 @@ JXG.JSXGraph = {
         if(attributes["axis"]) {
         	board.defaultAxes = {};
             board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {ticks:{drawZero:true}});
-            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {ticks:{drawZero:false}});
+            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {ticks:{drawZero:board.options.axis.ticks.drawZero}});
         }
 
         if(attributes["grid"]) {
