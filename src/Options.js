@@ -647,6 +647,10 @@ JXG.Options = {
         /**#@-*/
     },
 
+    glider : {
+        fillColor: '#ffff00'
+    },
+
     /* special grid options */
     grid : {
         /**#@+
@@ -727,6 +731,10 @@ JXG.Options = {
             fontSize: 20
         }
     },
+
+    intersection: {
+        fillColor: '#ffffff'
+    },
     
     /* special legend options */
     legend: {
@@ -750,7 +758,7 @@ JXG.Options = {
         straightLast : true,
         fillColor : 'none',               // Important for VML on IE
         highlightFillColor : 'none',  // Important for VML on IE
-        strokeColor : '#0000ff',
+        strokeColor : '#ff0000',
         highlightStrokeColor : '#888888',
         withTicks: false,
 
@@ -883,10 +891,10 @@ JXG.Options = {
          * @name JXG.Point#size
          */
         size : 3,
-        fillColor : '#ff0000',
+        fillColor : '#000000',
         highlightFillColor : '#EEEEEE',
         strokeWidth: 2,
-        strokeColor : '#ff0000',
+        strokeColor : '#000000',
         highlightStrokeColor : '#C3D9FF',
         zoom: false,             // Change the point size on zoom
 
