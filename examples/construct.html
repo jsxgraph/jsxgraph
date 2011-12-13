@@ -70,9 +70,13 @@ var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:
 
 var t = brd.create('turtle', [-1,0], {id:'NIX'});
 //t.fd(3); //
-//t.setProperty({strokeColor:'black'});
 t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
-t.setProperty({strokeColor:'red'});
+t.setProperty({strokeWidth:5, strokeColor:'black'});
+t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
+t.setPenSize(1);
+t.setProperty({strokeColor:'black'});
+t.fd(3);
+brd.update();
 </script> 
 </body>
 </html>

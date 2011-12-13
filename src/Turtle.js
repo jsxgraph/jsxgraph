@@ -50,16 +50,14 @@ JXG.Turtle = function (board, parents, attributes) {
     var x,y,dir;
     this.turtleIsHidden = false;
     this.board = board;
-    //this.attributes = JXG.checkAttributes(attributes,{withLabel:false,layer:this.board.options.layer.turtle});
-    //this.attributes.straightFirst = false;
-    //this.attributes.straightLast = false;
-    
-    /**
-     * Store the visProp object for later reuse in penDown() and other methods.
-     * This object will be overwritten in JXG.Turtle.setProperty()
-     * @see JXG.Turtle#setProperty
-     */
-    this._attributes = JXG.deepCopy(this.visProp);
+    this.visProp.curveType = 'plot';
+
+    // Save visProp in this._attributes.
+    // this._attributes is overwritten by setPenSize, setPenColor...
+    // Setting the color or size affects the turtle from the time of
+    // calling the method,
+    // whereas Turtle.setProperty affects all turtle curves.
+    this._attributes = JXG.copyAttributes(this.visProp, board.options, 'turtle');
     delete(this._attributes['id']);
     
     x = 0;
@@ -104,9 +102,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         this.dir = 90;
         this.stack = [];
         this.objects = [];
-        this.visProp.curveType = 'plot';
-        //delete(this.visProp.id);
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this._attributes);
         this.objects.push(this.curve);
 
         this.turtle = this.board.create('point',this.pos,{fixed:true, name:' ', visible:false, withLabel:false});
@@ -147,7 +143,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         }
         if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
             this.curve = this.board.create('curve',
-                   [[this.pos[0]],[this.pos[1]]],this.visProp);
+                   [[this.pos[0]],[this.pos[1]]], this._attributes);
             this.objects.push(this.curve);
         }
         this.pos[0] += dx;
@@ -235,7 +231,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
             }
         }
         this.curve = this.board.create('curve',
-                  [[this.pos[0]],[this.pos[1]]], this.visProp);
+                  [[this.pos[0]],[this.pos[1]]], this._attributes);
         this.objects.push(this.curve);
         this.board.update();
         return this;
@@ -275,7 +271,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
                     [-(this.dir-90)*Math.PI/180.0,this.turtle], {type:'rotate'});
             t.applyOnce(this.turtle2);
         }
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this._attributes);
         this.objects.push(this.curve);
         this.board.update();
         return this;
@@ -283,91 +279,81 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
     *  Sets the pen size. Equivalent to setProperty({strokeWidth:size})
+    * but affects only the future turtle.
     * @param {float} size
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
    setPenSize: function(size) { 
-        this.visProp.strokewidth = size; 
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
+        //this.visProp.strokewidth = size; 
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.copyAttr('strokeWidth', size));
         this.objects.push(this.curve);
         return this;
     },
 
     /**
     *  Sets the pen color. Equivalent to setProperty({strokeColor:color})
+    * but affects only the future turtle.
     * @param {string} color
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
     setPenColor: function(colStr) { 
-        this.visProp.strokecolor = colStr; 
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
+        //this.visProp.strokecolor = colStr; 
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.copyAttr('strokeColor', colStr));
         this.objects.push(this.curve);
         return this;
     },
 
     /**
     *  Sets the highlight pen color. Equivalent to setProperty({highlightStrokeColor:color})
+    * but affects only the future turtle.
     * @param {string} color
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
     setHighlightPenColor: function(colStr) { 
-        this.visProp.highlightstrokecolor = colStr; 
-        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.visProp);
+        //this.visProp.highlightstrokecolor = colStr; 
+        this.curve = this.board.create('curve',[[this.pos[0]],[this.pos[1]]], this.copyAttr('highlightStrokeColor', colStr));
         this.objects.push(this.curve);
         return this;
     },
 
     /**
     * Sets properties of the turtle, see also {@link JXG.GeometryElement#setProperty}.
-    * Sets the property for all curves of the turtle.
+    * Sets the property for all curves of the turtle in the past and in the future.
     * @param {Object} key:value pairs
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
-    setProperty: function() {
-        var i, el, len = this.objects.length;
+    setProperty: function(attributes) {
+        var i, el, len = this.objects.length, tmp;
         for (i=0; i<len; i++) {
             el = this.objects[i];
             if (el.type==JXG.OBJECT_TYPE_CURVE) {
-                el.setProperty(arguments);
+                el.setProperty(attributes);
             }
         }
-        /*
-        console.log(this.setProperty);
-        JXG.GeometryElement.setProperty.apply(this, arguments);
+        // Set visProp of turtle
+        tmp = this.visProp['id'];
+        this.visProp = JXG.deepCopy(this.curve.visProp);
+        this.visProp['id'] = tmp;
         this._attributes = JXG.deepCopy(this.visProp);
         delete(this._attributes['id']);
-        */
-		/*
-        var key;
-        var pair;
-        var pairRaw;
-        for (i=0; i<arguments.length; i++) {
-            pairRaw = arguments[i];
-            if (typeof pairRaw == 'string') {    // pairRaw is string of the form 'key:value'
-                pair = pairRaw.split(':');
-            } else if (!JXG.isArray(pairRaw)) {    
-                // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
-                for (var key in pairRaw) {
-                    this.setProperty([key,pairRaw[key]]);
-                }
-                return this;
-            } else {                             // pairRaw consists of array [key,value]
-                pair = pairRaw;
-            }
-            this.attributes[pair[0]] = pair[1];
-        }
-        for (i=0; i<this.objects.length; i++) {
-            el = this.objects[i];
-            if (el.type==JXG.OBJECT_TYPE_CURVE) {
-                el.setProperty(this.attributes);
-            }
-        }
-		*/
         return this;
+    },
+    
+    /**
+    * Set a future attribute of the turtle.
+    * @private
+    * @param {String} key
+    * @param {Object} value (number, string)
+    * @type {Object}
+    * @return pointer to an attributes object
+    */
+    copyAttr: function(key, val) {
+        this._attributes[key.toLowerCase()] = val;
+        return this._attributes;
     },
 
     /**
@@ -485,7 +471,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
             }
             if (this.isPenDown) if (this.curve.dataX.length>=8192) { // IE workaround
                 this.curve = this.board.create('curve',
-                   [[this.pos[0]],[this.pos[1]]], this.visProp);
+                   [[this.pos[0]],[this.pos[1]]], this._attributes);
                 this.objects.push(this.curve);
             }
             this.pos[0] = target[0];
