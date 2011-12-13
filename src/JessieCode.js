@@ -191,6 +191,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return Math[vname.toLowerCase()];
         }
 
+        if (vname.toLowerCase() in {x: 1, y: 1}) {
+            return function (el) {
+                return el[vname.toUpperCase()]();
+            }
+        }
+
         s = JXG.getRef(this.board, vname);
         if (s !== vname) {
             return s;
