@@ -647,6 +647,8 @@ JXG.Options = {
         /**#@-*/
     },
 
+    glider: {},
+
     /* special grid options */
     grid : {
         /**#@+
