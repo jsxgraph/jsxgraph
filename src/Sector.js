@@ -444,13 +444,22 @@ JXG.createAngle = function(board, parents, attributes) {
         
         el.updateDataArraySector = el.updateDataArray;
         el.updateDataArray = function() {
-            var rad;
+            var rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
+
             if (this.visProp.type=='square') {
                 this.updateDataArraySquare();
             } else if (this.visProp.type=='sector') {
                 this.updateDataArraySector();
+                if (Math.abs(rad-Math.PI*0.5)<0.005) {
+                    if (this.dot.visProp.visible === false) {
+                        this.dot.setProperty({visible: true});
+                    }
+                } else {
+                    if (this.dot.visProp.visible) {
+                        this.dot.setProperty({visible: false});
+                    }
+                }
             } else {
-                rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
                 if (Math.abs(rad-Math.PI*0.5)<0.005) {
                     this.updateDataArraySquare();
                 } else {
@@ -552,6 +561,10 @@ JXG.createAngle = function(board, parents, attributes) {
             vecy = vecy*(len+dy)/len;
 
             return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
+        };
+
+        el.Value = function () {
+            return JXG.Math.Geometry.rad(this.point2, this.point1, this.point3);
         };
 
     } else {
