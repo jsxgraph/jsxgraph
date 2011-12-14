@@ -12,7 +12,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
     },
 
     point: {
-        strokeColor: '#ff0000',
-        fillColor: '#82adffff'
+        strokeColor: '#000000',
+        fillColor: '#82adff'
     }
 });
