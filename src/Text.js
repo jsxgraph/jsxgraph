@@ -100,6 +100,10 @@ JXG.Text = function (board, content, coords, attributes) {
 
     this.elType = 'text';
 
+    this.methodMap = JXG.deepCopy(this.methodMap, {
+        setText: 'setTextJessieCode'
+    });
+
     return this;
 };
 JXG.Text.prototype = new JXG.GeometryElement();
@@ -120,6 +124,28 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             r = this.board.options.precision.hasPoint;
 
         return dx >= -r && dx <= 2 * r && dy >= -r && dy <= 2 * r;
+    },
+
+    /**
+     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
+     * @param {String|function} text
+     */
+    setTextJessieCode: function (text) {
+        var s;
+
+        if (typeof text === 'function') {
+            s = function () {
+                this.plaintext = text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+        } else {
+            if (JXG.isNumber(text)) {
+                s = text;
+            } else {
+                s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+        }
+        
+        return this.setText(s);
     },
 
     /**

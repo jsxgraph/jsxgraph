@@ -355,6 +355,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         v = this.execute(node.children[0]);
                         this.lhs[this.scope] = v[1];
 
+                        if (v[0].type && v[0].elementClass && v[0].methodMap && v[1] === 'label') {
+                            this._error('Error: Left-hand side of assignment is read-only.');
+                        }
+
                         if (v[0] !== this.sstack[this.scope] || (JXG.isArray(v[0]) && typeof v[1] === 'number')) {
                             this.setProp(v[0], v[1], this.execute(node.children[1]));
                         } else {
@@ -574,13 +578,17 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         e = this.execute(node.children[0]);
                         v = node.children[1];
 
-                        if (e.type && e.elementClass && e.methodMap && !JXG.exists(e.methodMap[v])) {
-                            //e = e.visProp;
-                            v = v.toLowerCase();
-                        }
-
-                        if (e.type && e.elementClass && e.methodMap && JXG.exists(e.methodMap[v])) {
-                            v = e.methodMap[v];
+                        if (e.type && e.elementClass && e.methodMap) {
+                            if (v === 'label') {
+                                e = e.label;
+                                v = 'content';
+                            } else {
+                                if (!JXG.exists(e.methodMap[v])) {
+                                    v = v.toLowerCase();
+                                } else {
+                                    v = e.methodMap[v];
+                                }
+                            }
                         }
 
                         ret = e[v];
