@@ -204,6 +204,20 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             }
         }
 
+        if (vname.toLowerCase() === 'rad') {
+            s = JXG.Math.Geometry.rad;
+            s.sc = JXG.Math.Geometry;
+            
+            return s;
+        }
+
+        if (vname.toLowerCase() === 'deg') {
+            s = JXG.Math.Geometry.trueAngle;
+            s.sc = JXG.Math.Geometry;
+
+            return s;
+        }
+
         if (vname === '$') {
             return this.getElementById;
         }
