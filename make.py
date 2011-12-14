@@ -151,7 +151,7 @@ def makeCore():
         jstxt += '\n';
 
     # tmpfilename = tempfile.mktemp()
-    tmpfilename = 'distrib/jsxgraphsrc.js'
+    tmpfilename = output + '/jsxgraphsrc.js'
 
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
@@ -168,6 +168,10 @@ def makeCore():
     print s
     os.system(s)
     # os.remove(tmpfilename)
+
+    shutil.copy("src/themes/dark.js", output + "/themes/dark.js")
+    shutil.copy("src/themes/gui.js", output + "/themes/gui.js")
+
 
 '''
     Generate slim jsxplotcore.js and place it in <output>
@@ -275,7 +279,9 @@ def makeRelease():
     shutil.copy("README", "tmp/README")
     shutil.copy("LICENSE", "tmp/LICENSE")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css README LICENSE && cd ..")
+    shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
+    shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css themes/ README LICENSE && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
 
 
@@ -414,8 +420,12 @@ def main(argv):
         # Create tmp directory and output directory
         if not os.path.exists(output):
             os.mkdir(output)
+        if not os.path.exists(output + "/themes"):
+            os.mkdir(output + "/themes")
         if not os.path.exists("tmp"):
             os.mkdir("tmp")
+        if not os.path.exists("tmp/themes"):
+            os.mkdir("tmp/themes")
 
         # Call the target make function
         globals()["make" + target]()
