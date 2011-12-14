@@ -262,7 +262,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             par[what] = value;
             o.setProperty(par);
         } else {
-`            o[what] = value;
+            o[what] = value;
         }
     },
 
