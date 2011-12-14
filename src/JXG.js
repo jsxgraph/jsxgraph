@@ -609,6 +609,24 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Removes an element from the given array
+     * @param {Array} ar
+     * @param {%} el
+     */
+    removeElementFromArray: function(ar, el) {
+        var i;
+
+        for (i = 0; i < ar.length; i++) {
+            if (ar[i] === el) {
+                ar.splice(i, 1);
+                return ar;
+            }
+        }
+
+        return ar;
+    },
+
+    /**
      * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
      * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
      * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.

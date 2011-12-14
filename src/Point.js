@@ -87,7 +87,8 @@ JXG.Point = function (board, coordinates, attributes) {
         move: 'moveTo',
         glide: 'makeGlider',
         X: 'X',
-        Y: 'Y'
+        Y: 'Y',
+        free: 'free'
     };
     
     /**
@@ -590,6 +591,25 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         //this.needsUpdate = true;
         //this.update();
         return this;
+    },
+
+    /**
+     * Converts a glider into a free point.
+     */
+    free: function () {
+        var anc;
+
+        if (this.type !== JXG.OBJECT_TYPE_GLIDER) {
+            return;
+        }
+
+        for (anc in this.ancestors) {
+            JXG.removeElementFromArray(this.ancestors[anc].descendants, this);
+        }
+
+        this.ancestors = [];
+        this.slideObject = null;
+        this.type = JXG.OBJECT_TYPE_POINT;
     },
 
     /**
