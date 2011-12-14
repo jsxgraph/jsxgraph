@@ -2225,18 +2225,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     updateElements: function (drag) {
         var el, pEl;
-        // isBeforeDrag: see updateRenderer
-        //isBeforeDrag = true; // If possible, we start the update at the dragged object.
 
         drag = JXG.getRef(this, drag);
         // if (drag==null) { isBeforeDrag = false; }
         for (el in this.objects) {
             pEl = this.objects[el];
-            //if (isBeforeDrag && drag!=null && pEl.id == drag.id) {
-            //    isBeforeDrag = false;
-            //}
-            //if (!this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate)) { continue; }
-
             // For updates of an element we distinguish if the dragged element is updated or
             // other elements are updated.
             // The difference lies in the treatment of gliders.
@@ -2256,20 +2249,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     updateRenderer: function (drag) {
         var el, pEl;
-        // isBeforDrag does not work because transformations may depend 
-        // on a dragged element and can be bound to elements before the 
-        // dragged element.
-        //isBeforeDrag = true; // If possible, we start the update at the dragged object.
-
         if (this.options.renderer=='canvas') {
             this.updateRendererCanvas(drag);
         } else {
-            // drag = JXG.getReference(this, drag);
-            //if (drag==null) { isBeforeDrag = false; }
-
             for (el in this.objects) {
                 pEl = this.objects[el];
-                // if (isBeforeDrag && drag!=null && pEl.id == drag.id) { isBeforeDrag = false; }
                 //if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) { continue; }
                 pEl.updateRenderer();
             }

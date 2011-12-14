@@ -164,7 +164,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			center = [], d, bb, perp,
             
             // the following variables are used to define ticks height and slope
-            eps = JXG.Math.eps,
+            eps = JXG.Math.eps, pos, lb, ub,
             distMaj = this.visProp.majorheight/2,
             distMin = this.visProp.minorheight/2,
             dxMaj = 0, dyMaj = 0,
@@ -183,6 +183,19 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             this.majStyle = 'infinite';
         } else {
             this.majStyle = 'finite';
+        }
+
+        // Set lower and upper bound for the tick distance
+        if (this.line.visProp.straightfirst) {
+            lb = Number.NEGATIVE_INFINITY;
+        } else {
+            lb = 0 + eps;
+        }
+
+        if (this.line.visProp.straightlast) {
+            ub = Number.POSITIVE_INFINITY;
+        } else {
+            ub = distP1P2 - eps;
         }
 
         // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
@@ -223,7 +236,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
 				// Compute the start position and the end position of a tick.
 				// If both positions are out of the canvas, ti is empty.
-                if (ti.length==2) {
+                if (ti.length==2 && this.fixedTicks[i]>=lb && this.fixedTicks[i]<ub) {
                     this.ticks.push(ti);
                 }
                 this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
@@ -298,11 +311,14 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			// Compute the start position and the end position of a tick.
 			// If both positions are out of the canvas, ti is empty.
             ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
-            if (ti.length==2) {
-                if (this.visProp.drawzero || Math.abs(dir*tickPosition+startTick)>JXG.Math.eps) {
+            if (ti.length==2) {  // The tick has an overlap with the board
+                pos = dir*tickPosition+startTick;
+                if ( (Math.abs(pos)<=eps && this.visProp.drawzero)
+                     || (pos>lb && pos<ub)
+                    ) {
                     this.ticks.push(ti);
                     if (tickCoords.major) {
-                        this.labels.push(this._makeLabel(dir*tickPosition+startTick, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                        this.labels.push(this._makeLabel(pos, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                     } else {
                         this.labels.push(null);
                     }
