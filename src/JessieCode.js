@@ -262,7 +262,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             par[what] = value;
             o.setProperty(par);
         } else {
-            o[what] = value;
+`            o[what] = value;
         }
     },
 
@@ -600,7 +600,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             e = this.execute(node.children[1]);
 
                             if (e.type && e.elementClass && v.toLowerCase() !== 'x' && v.toLowerCase() !== 'y') {
-                                e = e.visProp;
                                 v = v.toLowerCase();
                             }
                         }
