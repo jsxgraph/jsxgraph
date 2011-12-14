@@ -941,8 +941,8 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {String}
      */
     trim: function (str) {
-        str = str.replace(/^w+/, "");
-        str = str.replace(/w+$/, "");
+        str = str.replace(/^\s+/, "");
+        str = str.replace(/\s+$/, "");
 
         return str;
     },
