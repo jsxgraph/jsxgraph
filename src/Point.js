@@ -573,6 +573,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {String|Object} glideObject The Object the point will be bound to.
      */
     makeGlider: function (glideObject) {
+        var oldc = this.coords.usrCoords.slice(1);
         this.slideObject = JXG.getReference(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
         this.elType = 'glider';
@@ -583,6 +584,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
         };
+
+        this.moveTo(oldc);
 
         //this.needsUpdate = true;
         //this.update();
