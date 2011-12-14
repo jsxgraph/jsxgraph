@@ -207,7 +207,9 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * the value of a property is the name of the method in JavaScript.
      * @type Object
      */
-    this.methodMap = {};
+    this.methodMap = {
+        setLabel: 'setLabelText'
+    };
 
     /**
      * Quadratic form representation of circles (and conics)
@@ -524,6 +526,20 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
         return properties;
+    },
+
+    /**
+     * Updates the element's label text, strips all html.
+     * @param {String} str
+     */
+    setLabelText: function (str) {
+        str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        if (this.label !== null) {
+            this.label.content.setText(str);
+        }
+        
+        return this;
     },
 
     /**

@@ -574,12 +574,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         e = this.execute(node.children[0]);
                         v = node.children[1];
 
-                        if (e.type && e.elementClass && !JXG.exists(e.methodMap[v])) {
+                        if (e.type && e.elementClass && e.methodMap && !JXG.exists(e.methodMap[v])) {
                             //e = e.visProp;
                             v = v.toLowerCase();
                         }
 
-                        if (e.type && e.elementClass && JXG.exists(e.methodMap[v])) {
+                        if (e.type && e.elementClass && e.methodMap && JXG.exists(e.methodMap[v])) {
                             v = e.methodMap[v];
                         }
 

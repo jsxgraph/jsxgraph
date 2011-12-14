@@ -83,14 +83,14 @@ JXG.Point = function (board, coordinates, attributes) {
     this.slideObject = null;
 
     // documented in GeometryElement
-    this.methodMap = {
+    this.methodMap = JXG.deepCopy(this.methodMap, {
         move: 'moveTo',
         glide: 'makeGlider',
         X: 'X',
         Y: 'Y',
         free: 'free'
-    };
-    
+    });
+
     /**
      * Stores the groups of this point in an array of Group.
      * @type array
