@@ -31,6 +31,8 @@
 
 /**
  * A JessieCode object provides an interfacce to the parser and stores all variables and objects used within a JessieCode script.
+ * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
+ * please use {@link JXG.JessieCode#parse}. For code snippets like single expressions use {@link JXG.JessieCode#snippet}.
  * @constructor
  * @param {String} [code] Code to parse.
  */
@@ -144,13 +146,62 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         throw new Error(msg);
     },
 
+    /**
+     * Checks if the given string is a valid identifier.
+     * @param {String} s
+     * @returns {Boolean}
+     */
     isIdentifier: function (s) {
         return /[A-Za-z_\$][A-Za-z0-9_\$]*/.test(s);
     },
 
+    /**
+     * Looks up an {@link JXG.GeometryElement} by its id.
+     * @param {String} id
+     * @returns {JXG.GeometryElement}
+     */
     getElementById: function (id) {
         return this.board.objects[id];
     },
+
+    /**
+     * Returns a element creator function which takes two parameters: the parents array and the attributes object.
+     * @param {String} vname The element type, e.g. 'point', 'line', 'midpoint'
+     * @returns {function}
+     */
+    creator: (function () {
+        // stores the already defined creators
+        var _ccache = {};
+
+        return function (vname) {
+            var f;
+
+            // _ccache is global, i.e. it is the same for ALL JessieCode instances.
+            // That's why we need the board id here
+            if (typeof _ccache[this.board.id + vname] === 'function') {
+                return _ccache[this.board.id + vname];
+            } else {
+                f = (function (that) {
+                    return function (parameters, attributes) {
+                        var attr;
+
+                        if (JXG.exists(attributes)) {
+                            attr = attributes;
+                        } else {
+                            attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
+                        }
+                        return that.board.create(vname, parameters, attr);
+                    }
+                })(this);
+
+                f.creator = true;
+                _ccache[this.board.id + vname] = f;
+
+                return f;
+            }
+
+        };
+    })(),
 
     /**
      * Assigns a value to a variable in the current scope.
@@ -178,27 +229,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // check for an element with this name
         if (vname in JXG.JSXGraph.elements) {
-            s = (function (that) { return function (parameters, attributes) {
-                    var attr;
-
-                    if (JXG.exists(attributes)) {
-                        attr = attributes;
-                    } else {
-                        attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
-                    }
-                    return that.board.create(vname, parameters, attr);
-                };
-            })(this);
-            
-            s.creator = true;
-            return s;
+            return this.creator(vname);
         }
 
         if (typeof Math[vname.toLowerCase()] !== 'undefined') {
             return Math[vname.toLowerCase()];
         }
 
-        if (vname.toLowerCase() in {x: 1, y: 1}) {
+        if (vname in {X: 1, Y: 1}) {
             return function (el) {
                 return el[vname.toUpperCase()]();
             }
@@ -374,8 +412,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         }
 
                         if (v[0] !== this.sstack[this.scope] || (JXG.isArray(v[0]) && typeof v[1] === 'number')) {
+                            // it is either an array component being set or a property of an object.
                             this.setProp(v[0], v[1], this.execute(node.children[1]));
                         } else {
+                            // this is just a local variable inside JessieCode
                             this.letvar(v[1], this.execute(node.children[1]));
                         }
 
@@ -401,8 +441,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             this.execute(node.children[1]);
                         }
                         break;
-                    case 'op_for':
-                        // todo
+                    case 'op_do':
                         do {
                             this.execute(node.children[0]);
                         } while (this.execute(node.children[1]));
@@ -555,16 +594,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // look up the variables name in the variable table
                         fun = this.execute(node.children[0]);
 
+                        // determine the scope the function wants to run in
                         if (fun.sc) {
                             sc = fun.sc;
                         } else {
                             sc = this;
                         }
 
+                        // interpret ALL the parameters
                         for(i = 0; i < this.pstack[this.pscope].length; i++) {
                             parents[i] = this.execute(this.pstack[this.pscope][i]);
                         }
 
+                        // get the properties from the propstack
                         if (props) {
                             attr = this.propstack[this.propscope];
                         }
@@ -573,6 +615,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         if (typeof fun === 'function' && !fun.creator) {
                             ret = fun.apply(sc, parents);
                         } else if (typeof fun === 'function' && !!fun.creator) {
+                            // creator methods are the only ones that take properties, hence this special case
                             ret = fun(parents, attr);
                         } else {
                             this._error('Error: Function \'' + node.children[0] + '\' is undefined.');
@@ -592,20 +635,38 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         e = this.execute(node.children[0]);
                         v = node.children[1];
 
+                        // is it a geometry element?
                         if (e.type && e.elementClass && e.methodMap) {
+                            // yeah, it is. but what does the user want?
                             if (v === 'label') {
+                                // he wants to access the label properties!
+                                // adjust the base object...
                                 e = e.label;
+                                // and the property we are accessing
                                 v = 'content';
                             } else {
+                                // ok, it's not the label he wants to change
                                 if (!JXG.exists(e.methodMap[v])) {
+                                    // the user wants to change an attribute
                                     v = v.toLowerCase();
                                 } else {
+                                    // the use wants to call a method
                                     v = e.methodMap[v];
                                 }
                             }
                         }
 
+                        if (!JXG.exists(e)) {
+                            this._error('Error: ' + e + ' is not an object.');
+                        }
+
+                        if (!JXG.exists(e[v])) {
+                            this._error('Error: unknown property ' + v + '.');
+                        }
+
                         ret = e[v];
+
+                        // set the scope, in case this is a method the user wants to call
                         ret.sc = e;
                         break;
                     case 'op_lhs':
@@ -2034,7 +2095,7 @@ switch( act )
 	break;
 	case 18:
 	{
-		 rval = this.createNode('node_op', 'op_for', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ] ); 
+		 rval = this.createNode('node_op', 'op_do', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ] ); 
 	}
 	break;
 	case 19:
