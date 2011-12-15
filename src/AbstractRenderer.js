@@ -950,7 +950,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
             }
             if (ev.highlightstrokewidth) {
-                this.setObjectStrokeWidth(element, ev.highlightstrokewidth);
+                this.setObjectStrokeWidth(element, Math.max(ev.highlightstrokewidth, ev.strokewidth));
             }
         }
 

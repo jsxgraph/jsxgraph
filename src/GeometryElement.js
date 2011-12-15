@@ -690,6 +690,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     break;
             }
         }
+
+        if (this.type == JXG.OBJECT_TYPE_AXIS)
+            this.board.fullUpdate();
+
         this.board.update(this);
         return this;
     },
