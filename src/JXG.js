@@ -327,7 +327,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             // Convert GEONExT syntax into  JavaScript syntax
             /*newTerm = JXG.GeonextParser.geonext2JS(term, board);
             return new Function(variableName,'return ' + newTerm + ';');*/
-            return board.jc.snippet(term, true, variableName);
+            return board.jc.snippet(term, true, variableName, true);
         } else if (JXG.isFunction(term)) {
             return term;
         } else if (JXG.isNumber(term)) {
