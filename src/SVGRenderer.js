@@ -280,7 +280,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     drawInternalText: function (el) {
         var node = this.createPrim('text', el.id);
 
-        node.setAttributeNS(null, "class", el.visProp.class);
+        node.setAttributeNS(null, "class", el.visProp.cssclass);
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
@@ -293,7 +293,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
-        el.rendNode.setAttributeNS(null, "class", el.visProp.class);
+        el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
             el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');

@@ -512,6 +512,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         var fs, context = this.context;
 
         context.save();
+        // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
         if (this._setColor(el, 'stroke', 'fill') && !isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2]) ) {
             if (el.visProp.fontsize) {
                 if (typeof el.visProp.fontsize === 'function') {
