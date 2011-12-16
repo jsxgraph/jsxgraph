@@ -1584,9 +1584,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Changes the text of the info box to show the given coordinates.
      * @param {Number} x
      * @param {Number} y
+     * @param {JXG.Point} el The element the mouse is pointing at
      * @returns {JXG.Board} Reference to the board.
      */
-    highlightInfobox: function (x, y) {
+    highlightInfobox: function (x, y, el) {
         this.highlightCustomInfobox('(' + x + ', ' + y + ')');
         return this;
     },
