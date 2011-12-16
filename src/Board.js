@@ -2022,6 +2022,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
+     * Sets the zoom level to <tt>fX</tt> resp <tt>fY</tt>.
+     * @param {Number} fX
+     * @param {Number} fY
+     * @returns {JXG.Board}
+     */
+    setZoom: function (fX, fY) {
+        var oX = this.options.zoom.factorX, oY = this.options.zoom.factorY;
+
+        this.options.zoom.factorX = fX/this.zoomX;
+        this.options.zoom.factorY = fY/this.zoomY;
+
+        this.zoomIn();
+
+        this.options.zoom.factorX = oX;
+        this.options.zoom.factorY = oY;
+
+        return this;
+    },
+
+    /**
      * Removes object from board and renderer.
      * @param {JXG.GeometryElement} object The object to remove.
      * @returns {JXG.Board} Reference to the board
