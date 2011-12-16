@@ -218,6 +218,13 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.quadraticform = [[1,0,0],[0,1,0],[0,0,1]];
 
+    /**
+     * An associative array containing all visual properties.
+     * @type Object
+     * @default empty object
+     */
+    this.visProp = {};
+
     if (arguments.length > 0) {
         /**
          * Reference to the board associated with the element.
@@ -262,12 +269,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
         this.needsRegularUpdate = attributes.needsregularupdate;
 
-        /**
-         * An associative array containing all visual properties.
-         * @type Object
-         * @default empty object
-         */
-        this.visProp = {};
         JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
         attributes = this.resolveShortcuts(attributes);
@@ -446,6 +447,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Can be used sometimes to commit changes to the object.
      */
     update: function () {
+        console.log(this);
         if (this.visProp.trace) {
             this.cloneToBackground(true);
         }
