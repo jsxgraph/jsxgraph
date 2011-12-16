@@ -185,7 +185,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             this.majStyle = 'finite';
         }
 
-        // Set lower and upper bound for the tick distance
+        // Set lower and upper bound for the tick distance.
+        // This is necessary for segments.
         if (this.line.visProp.straightfirst) {
             lb = Number.NEGATIVE_INFINITY;
         } else {

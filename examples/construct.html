@@ -9,6 +9,29 @@
     <script type="text/javascript" src="../src/GeonextReader.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 <style type="text/css">
+.fat {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:black;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: red;
+}
+
+.fatHL {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:blue;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: red;
+}
+    
+    
 </style>    
 </head>
 <body id="body">
@@ -24,8 +47,9 @@
 JXG.Options.axis.visible = false;
 JXG.Options.axis.ticks.drawLabels = false;
 JXG.Options.axis.ticks.drawZero = true;
+
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], 
-axis:true, keepaspectratio:true, 
+axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
 /*
 // x axis
@@ -64,7 +88,7 @@ var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
 */
-
+/*
 var p = [];
 for (i=0;i<2;i++) {
 	p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
@@ -79,7 +103,18 @@ t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
 t.setPenSize(1);
 t.setProperty({strokeColor:'black'});
 t.fd(3);
-brd.update();
+
+*/
+var txt = brd.create('text', [1,-2, 'Hello'], 
+    {cssClass:'fat', highlightCssClass:'fatHL',
+     fontSize:32, 
+     color:'red',
+     highlightStrokeColor:'yellow'});
+
+
+//brd.update();
+
+
 </script> 
 </body>
 </html>

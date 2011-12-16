@@ -1126,6 +1126,8 @@ JXG.Options = {
         useASCIIMathML : false,
         useMathJax : false,
         display : 'html',                    //'html' or 'internal'
+        cssClass : 'JXGtext',
+        highlightCssClass : 'JXGtext',
         withLabel: false
 
         /**#@-*/

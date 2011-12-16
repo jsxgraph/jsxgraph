@@ -512,7 +512,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
-            node.className = 'JXGtext';
+            //node.setAttribute("class", element.visProp.cssclass); //
+            node.className = element.visProp.cssclass;
             node.style.zIndex = '10';
             this.container.appendChild(node);
             node.setAttribute('id', this.container.id + '_' + element.id);
@@ -551,11 +552,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     element.rendNode.innerHTML = content;
                     element.htmlStr = content;
                     
-                    if (element.visProp.useasciimathml) {
-                        AMprocessNode(element.rendNode, false);
-                    }
                     if (element.visProp.usemathjax) {
                         MathJax.Hub.Typeset(element.rendNode);
+                    } else if (element.visProp.useasciimathml) {
+                        AMprocessNode(element.rendNode, false);
                     }
                 }
                 this.transformImage(element, element.transformations);
@@ -579,6 +579,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var fs = JXG.evaluate(element.visProp.fontsize);
 
         if (element.visProp.display === 'html' || this.type != 'canvas') {
+            //element.rendNode.setAttribute("class", element.visProp.cssclass);
+            element.rendNode.className = element.visProp.cssclass;
             try {
                 element.rendNode.style.fontSize = fs + 'px';
             } catch (e) {
@@ -937,7 +939,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!ev.draft) {
-            if (element.type === JXG.OBJECT_CLASS_POINT) {
+            if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                 this.setObjectFillColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
             } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
@@ -948,6 +950,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                 this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
+            }
+            if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                if (element.visProp.display === 'html') {    
+                    element.rendNode.className = element.visProp.highlightcssclass;
+                } 
             }
             if (ev.highlightstrokewidth) {
                 this.setObjectStrokeWidth(element, Math.max(ev.highlightstrokewidth, ev.strokewidth));
@@ -966,7 +973,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!element.visProp.draft) {
-            if (element.type === JXG.OBJECT_CLASS_POINT) {
+            if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                 this.setObjectFillColor(element, ev.strokecolor, ev.strokeopacity);
             } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
@@ -977,6 +984,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                 this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
+            }
+            if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                if (element.visProp.display === 'html') {    
+                    element.rendNode.className = element.visProp.cssclass;
+                }
             }
             this.setObjectStrokeWidth(element, ev.strokewidth);
         }
@@ -1036,15 +1048,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         node.style.right = board.options.navbar.right;
         node.style.bottom = board.options.navbar.bottom;
 
-        /*
-        createButton('&nbsp;&ndash;&nbsp;', board.zoomOut);
-        createButton('&nbsp;o&nbsp;', board.zoom100);
-        createButton('&nbsp;+&nbsp;', board.zoomIn);
-        createButton('&nbsp;&larr;&nbsp;', board.clickLeftArrow);
-        createButton('&nbsp;&uarr;&nbsp;', board.clickUpArrow);
-        createButton('&nbsp;&darr;&nbsp;', board.clickDownArrow);
-        createButton('&nbsp;&rarr;&nbsp;', board.clickRightArrow);
-        */
         // For XHTML we need unicode instead of HTML entities
         createButton('\u00A0\u2013\u00A0', board.zoomOut);
         createButton('\u00A0o\u00A0', board.zoom100);
