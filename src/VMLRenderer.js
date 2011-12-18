@@ -174,11 +174,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         var node;
         node = this.createNode('textbox');
         node.style.position = 'absolute';
+		/*
         if (document.documentMode === 8) {                 // IE 8
             node.setAttribute('class', el.visProp.cssclass);
         } else {
             node.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
         }
+		*/
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, 9);
@@ -188,12 +190,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     // documented in AbstractRenderer
     updateInternalText: function (el) {
         var content = el.plaintext;
-
+		/*
         if (document.documentMode === 8) {                 // IE 8
             el.rendNode.setAttribute('class', el.visProp.cssclass);
         } else {
             el.rendNode.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
         }
+		*/
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
             el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';

@@ -41,7 +41,7 @@
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
-JXG.Options.text.display = 'internal';
+//JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 JXG.Options.axis.visible = false;
@@ -105,11 +105,11 @@ t.setProperty({strokeColor:'black'});
 t.fd(3);
 
 */
-var txt = brd.create('text', [1,-2, 'Hello'], 
-    {cssClass:'fat', highlightCssClass:'fatHL',
+var txt = brd.create('text', [1,3, 'Hello'], 
+    {/*cssClass:'fat', highlightCssClass:'fatHL',*/
      fontSize:32, 
-     color:'red',
-     highlightStrokeColor:'yellow'});
+     strokeColor:'red',
+     highlightStrokeColor:'blue'});
 
 
 //brd.update();

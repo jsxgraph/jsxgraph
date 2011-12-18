@@ -579,6 +579,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var fs = JXG.evaluate(element.visProp.fontsize);
 
         if (element.visProp.display === 'html' || this.type != 'canvas') {
+        //if (element.visProp.display === 'html') {
             //element.rendNode.setAttribute("class", element.visProp.cssclass);
             element.rendNode.className = element.visProp.cssclass;
             try {

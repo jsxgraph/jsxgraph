@@ -284,7 +284,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
-        this.appendChildPrim(node, 9);
+        this.appendChildPrim(node,  el.visProp.layer);
 
         return node;
     },
@@ -293,7 +293,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
-        el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
+        // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
             el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
@@ -304,7 +304,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
         this.transformImage(el, el.transformations);
     },
-
+	
     /* **************************
      *    Image related stuff
      * **************************/
@@ -821,11 +821,11 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
                     node.style.color = c;     
+					node.style.opacity = oo;
                 } else {
                     node.setAttributeNS(null, "style", "fill:" + c);
-                    //node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                    node.setAttributeNS(null, "style", "fill-opacity:" + oo);
                 }
-                node.style.opacity = oo;
             } else {
                 node.setAttributeNS(null, 'stroke', c);
                 node.setAttributeNS(null, 'stroke-opacity', oo);
