@@ -20,10 +20,48 @@
 */
 
 /* E.Ostenne notes :
-- options with pb (with operator)  : replacement in prepareString() !
+
+@figure : objects 
+###################
 - intersection &  segment/halfline : intersection mod for point out of [AB), (BA] or [AB] that should not exist : done with a "clone" point
-- aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ...
+
+@figure : Objects options : { option1,otpion2 }
+###############################################
+- options with pb (with operator)  : replacement in prepareString() !
+- aimantage,aimantage5,aimantage10 : simulation to avoid mouse event override ... -> see board.options.grid.snapToGrid for aimante();
+
+Open:
+-----
+- not supported (as far as I know : E.Ostenne) -> warning message ? : 
+dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
+blinde to avoid deletion with mouse -> set to fixe here cause useless in jsxgraph
+stop  to see construction step by step from stop tag to stop tag
+static to avoid locus calculus when useless : useless in jsxgraph
+
+- to be implementedd / tested / found for JSXGraph:
+animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
+
+Fixed:
+-----
+(x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)  # fixed for reel and entier AW; 
+
+@options : Objects options : { option1,otpion2 }
+###############################################
+
+- not supported at that time :
+repere/repereortho : 
+    num1 (ok) but num2, num3, num4, num5, num10 & num20 not supported : to skip ticks label and only view some (step 2,3,4,5,10,20)
+	petit moyen grand : font size for ticks label
+fond (for image placement) :
+    xpix,ypix not supported : to associate instead of top-left point another point in the picture to jsx coordinates for placement
+angles units : how to set degrees ?
+
+- to be implemented for JSXGraph :
+etat : (useful) keyboard to change options for a group of objects
+pilote : (useless : rare cause in test -> Interactive Whiteboard : for accuracy ) to drive points movements with keyboards'cursors (object selected by keyboard association)
 */
+
+
 
 JXG.TracenpocheReader = new function() {
 	
@@ -990,22 +1028,6 @@ JXG.TracenpocheReader = new function() {
 			if(obj["label"]==undefined) { obj["label"]={}; };
 			obj["label"]["fontSize"]=fontSize;
 		}
-/*
-Open:
------
-- not supported (as far as I know : E.Ostenne) -> warning message ? : 
-dec0, dec1, dec2 ... dec10 to set number (0,1,2 ...) of decimal digits for a text rendering values
-blinde to avoid deletion with mouse -> set to fixe here 
-stop  to see construction step by step from stop tag to stop tag
-static to avoid locus calculus when useless
-
-- to be implementedd / found for JSXGraph:
-animation (anime,oscille,anime1,oscille1,oscille2) for "reel"/"entier" to drive animation
-
-Fixed:
------
-(x,y) : to set position of the name or of object with no geometrical position (reel, entier ...)  # fixed for reel and entier AW; 
-*/
         return obj;
     };
 
@@ -1032,7 +1054,7 @@ Fixed:
             // transformations
             "homothetie", "reflexion", "rotation", "similitude", "symetrie", "translation",			
 			//@options,
-			"repere","repereortho","grille","trame","aimante","fond","etat","chgt_etat_bloc","degres","radians","pilote"
+			"repere", "repereortho", "grille", "trame", "aimante", "fond", "etat", "chgt_etat_bloc", "degres", "radians", "pilote"
             ];
             
     /*
@@ -1689,22 +1711,157 @@ console.log(parents.slice(0,2));
      */
 
 
+    this.handleOptAtts = function(attsArr) {
+        var obj = {}, i, couleur, fontSize, le = attsArr.length, arr;
+      	//default
+		obj["axis"]=true;
+		obj["grid"]=false;
+		//	
+        for (i=0; i<le; i++) {
+			switch (attsArr[i]) {
+				case 'i' : obj["axis"] = false; break;
+				case 'invisible' : obj["axis"] = false; break;
+				case '0' : obj["strokeWidth"] = 1; break;
+				case '1' : obj["strokeWidth"] = 1; break;
+				case '2' : obj["strokeWidth"] = 2; break;
+				case '3' : obj["strokeWidth"] = 3; break;
+				case '4' : obj["strokeWidth"] = 4; break;
+				case '5' : obj["dash"] = 0; break;
+				case '6' : obj["dash"] = 1; break;
+				case '7' : obj["dash"] = 2; break;
+				case '8' : obj["dash"] = 3; break;
+				case '9' : obj["dash"] = 4; break;
+				case 'petit' : fontSize = 8; break;
+				case 'moyen' : fontSize = 12; break;
+				case 'grand' : fontSize = 16; break;
+				case 'blanc' : couleur ='white'; break;
+				case 'jaune' : couleur ='yellow'; break;
+				case 'jauneclair' : couleur ='lightyellow'; break;
+				case 'kakiclair' : couleur ='yellowgreen'; break;
+				case 'jaunepaille' : couleur ='darkkhaki'; break;
+				case 'rose' : couleur ='pink'; break;
+				case 'saumon' : couleur ='salmon'; break;
+				case 'orange' : couleur ='orange'; break;
+				case 'rougeclair' : couleur ='palevioletred'; break;
+				case 'rouge' : couleur ='red'; break;
+				case 'vertclair' : couleur ='lime'; break;
+				case 'vert' : couleur ='green'; break;
+				case 'vertfonce' : couleur ='darkgreen'; break;
+				case 'kaki' : couleur ='olive'; break;
+				case 'sapin' : couleur ='springgreen'; break;
+				case 'marron' : couleur ='maroon'; break;
+				case 'brique' : couleur ='firebrick'; break;
+				case 'marronfonce' : couleur ='saddlebrown'; break;
+				case 'violetfonce' : couleur ='darkviolet'; break;
+				case 'rougefonce' : couleur ='darkred'; break;
+				case 'cyan' : couleur ='cyan'; break;
+				case 'bleuciel' : couleur ='skyblue'; break;
+				case 'bleuocean' : couleur ='aqua'; break;
+				case 'bleu' : couleur ='blue'; break;
+				case 'bleufonce' : couleur ='darkblue'; break;
+				case 'violet' : couleur ='blueviolet'; break;
+				case 'gris' : couleur ='gray'; break;
+				case 'grisclair' : couleur ='darkgray'; break;
+				case 'vertpale' : couleur ='palegreen'; break;
+				case 'noir' : couleur ='black'; break;
+				default : {
+					//color hexa value
+					if( attsArr[i].charAt(0)=='#' ) {
+						couleur = attsArr[i].substr(1);
+					} else if (attsArr[i].charAt(0)=='(' ) {
+                        arr = attsArr[i].substring(1, attsArr[i].length-1).split(',');
+                        arr[0] = parseFloat(arr[0]);
+                        arr[1] = parseFloat(arr[1]);
+                        obj['coords'] = arr;
+                    }
+				}		
+			}
+        }
+		//for label/text with line
+		if( couleur!=undefined ) {
+			obj["strokeColor"]=couleur;
+		}
+		return obj;
+	}
+	
 	this.repereortho = function(parents, attributes) {
-		//(313,263,30,1,1){ 0 , moyen , noir , num1 ,i};
-		// 1,1 à traiter par Ticks
+		//repereortho(313,263,30,1,1){ 0 , moyen , noir , num1 ,i};
+		var opt,l1, att = this.handleOptAtts(attributes);
 		this.board.moveOrigin(parents[0],parents[1]);
 		this.board.unitX=parents[2];
 		this.board.unitY=parents[2];
-        this.board.create('axis', [[0, 0], [1, 0]]);
-       	this.board.create('axis', [[0, 0], [0, 1]]);		
+		this.board.options.grid.snapSizeX=1/parents[3];
+		this.board.options.grid.snapSizeY=1/parents[4];
+		this.board.options.grid.gridX=parents[3];
+		this.board.options.grid.gridY=parents[4];
+		if(att["axis"]) {
+			opt = [	
+				{strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
+				{insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
+			];
+	        l1=this.board.create('line', [[0, 0], [1, 0]],opt[0]);
+			l1.setArrow(false,true);
+			this.board.create('ticks', [l1,parents[4]], opt[1]);
+			l1=this.board.create('line', [[0, 0], [0, 1]], opt[0]);
+			l1.setArrow(false,true);
+			this.board.create('ticks', [l1,parents[4]], opt[1]);
+		}
 	}
 
 	this.repere = function(parents, attributes) {
 		// repere(-5,5,-4,4,1,1){ 0 , moyen , noir , num1 };
-		// 1,1 à traiter par Ticks
-		this.board.setBoundingBox([parents[0],parents[3],parents[1],parents[2]], true);
-        this.board.create('axis', [[0, 0], [1, 0]]);
-       	this.board.create('axis', [[0, 0], [0, 1]]);
+		var opt, l1, att = this.handleOptAtts(attributes);
+		this.board.setBoundingBox([parents[0],parents[3],parents[1],parents[2]], (parents[4]==parents[5]));
+		this.board.options.grid.snapSizeX=1/parents[4];
+		this.board.options.grid.snapSizeY=1/parents[5];
+		this.board.options.grid.gridX=parents[4];
+		this.board.options.grid.gridY=parents[5];
+		if(att["axis"]) {
+			opt = [	
+				{strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
+				{insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
+			];
+	        l1=this.board.create('line', [[0, 0], [1, 0]], opt[0] );
+			l1.setArrow(false,true);
+			this.board.create('ticks', [l1,parents[4]], opt[1]);
+			l1=this.board.create('line', [[0, 0], [0, 1]], opt[0]);
+			l1.setArrow(false,true);
+			this.board.create('ticks', [l1,parents[4]], opt[1]);
+		}
+	}
+	
+	this.aimante = function(parents, attributes) {
+		this.board.options.grid.snapToGrid=true;
+
+	}
+
+	this.grille = function(parents, attributes) {
+		this.board.addGrid();
+	}
+
+    this.trame =  function(parents, attributes) {
+		this.board.addGrid();
+	}
+
+	this.fond =  function(parents, attributes) {
+		this.board.create('image', [parents[0], [parents[3],parents[4]]]);
+	}
+	
+	
+    this.degres = function(parents, attributes) {
+		/* default angle measure for TeP : how to turn it outside for jsxgraph ? */
+	}
+    this.radians = function(parents, attributes) {
+		/* noting to do for jsxgraph : defaut angles unit */
+	}
+
+    this.chgt_etat_bloc = function(parents, attributes) {
+		this.etat(parents, attributes);
+	}
+    this.etat = function(parents, attributes) {
+	}
+
+    this.pilote = function(parents, attributes) {
 	}
 
 };
