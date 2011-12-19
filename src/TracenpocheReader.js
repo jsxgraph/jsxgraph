@@ -24,6 +24,8 @@
 @figure : objects 
 ###################
 - intersection &  segment/halfline : intersection mod for point out of [AB), (BA] or [AB] that should not exist : done with a "clone" point
+- segmentlong : pb with second parameter which does not exist (even maybe the first) that have to be created by the way before segment construction.
+				where to deselect "undefined" set for parents set ?
 
 @figure : Objects options : { option1,otpion2 }
 ###############################################
@@ -1043,10 +1045,10 @@ JXG.TracenpocheReader = new function() {
             // points
             "point", "pointsur", "intersection", "projete", "barycentre", "image", "milieu", "pointaimante",
             // lines
-            "segment", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
+            "segment", "segmentlong", "droite", "droiteEQR", "droiteEQ", "mediatrice", "parallele", "bissectrice", "perpendiculaire", "tangente",
             "demidroite", "vecteur",
             // circles
-            "cercle", "cerclerayon","arc","angle",
+            "cercle", "cerclerayon", "cercledia", "arc","angle",
             // polygons
             "polygone",
             // other
@@ -1127,7 +1129,8 @@ JXG.TracenpocheReader = new function() {
 
     this.pointsur = function(parents, attributes) {
         var p1, p2, c, lambda, par3, el, isFree,opt;
-
+		console.log("pointsur");
+		
         par3 = parents[parents.length-1];
         if (JXG.isNumber(par3)) {
             lambda = function(){ return par3; };
@@ -1179,6 +1182,7 @@ JXG.TracenpocheReader = new function() {
                 }
             } else {                      // point on circle
                 c = parents[0];
+				console.log("pointsur : C :",c.name);
                 if (isFree) {
                     el = this.board.create('glider', [
                         c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
@@ -1402,6 +1406,20 @@ console.log(parents.slice(0,2));
         return s;
     };
 
+    this.segmentlong = function(parents, attributes) {	
+		//s=segmentlong(A,M,v); AM=v : s and M created, if needed A created
+		//simple : A exists, B not, v=number 3
+		console.log(parents[0].name,parents[1],parents[2]);
+		var el,s,sli,opt;
+		opt=this.handleAtts(attributes)
+		//if A-parents[0] does not exists then creation
+		sli = this.board.create('circle',[parents[0],parents[2]], {visible:false});
+		el = this.pointsur([sli,0],[]);
+		s = this.board.create('segment', [parents[0],el], opt);
+		this.segmentCode([s.point1,s.point2],attributes);
+        return s;
+    };
+
     this.droite = function(parents, attributes) {
         return this.board.create('line', parents, this.handleAtts(attributes));
     };
@@ -1524,6 +1542,11 @@ console.log(parents.slice(0,2));
 
     this.cerclerayon = function(parents, attributes) {
         return this.board.create('circle', parents, this.handleAtts(attributes));
+    };
+
+    this.cercledia = function(parents, attributes) {
+		var p = this.board.create('midpoint', parents, {visible:false, withLabel:false});		
+        return this.board.create('circle', [p,parents[0]], this.handleAtts(attributes));
     };
 
 	this.angle = function(parents, attributes) {
