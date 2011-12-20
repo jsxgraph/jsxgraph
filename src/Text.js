@@ -40,8 +40,21 @@
 JXG.Text = function (board, content, coords, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
 
+    var coname = ['X', 'Y'], i;
+
     this.content = content;
     this.plaintext = '';
+
+    // see JXG.Point#Xjc and JXG.Point#Yjc for an explanation
+    this.Xjc = null;
+    this.Yjc = null;
+
+    for (i = 0; i < 2; i++) {
+        if (typeof coords[i] === 'string') {
+            this[coname[i] + 'jc'] = coords[i];
+            coords[i] = JXG.createFunction(coords[i], board, null, true);
+        }
+    }
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;

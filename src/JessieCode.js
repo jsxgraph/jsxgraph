@@ -366,6 +366,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             } else if (typeof value === 'string') {
                 o.isDraggable = false;
                 o[what] = JXG.createFunction(value, this.board, null, true);
+                o[what + 'jc'] = value;
             }
 
             this.board.update();
