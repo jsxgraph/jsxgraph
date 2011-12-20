@@ -135,8 +135,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         if (typeof text === 'function') {
             s = function () {
-                this.plaintext = text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            }
+                return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
         } else {
             if (JXG.isNumber(text)) {
                 s = text;
