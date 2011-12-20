@@ -38,6 +38,8 @@
  * @param {Boolean} [geonext=false] Geonext compatibility mode.
  */
 JXG.JessieCode = function(code, geonext) {
+    var i;
+
     // Control structures
 
     /**
@@ -108,9 +110,47 @@ JXG.JessieCode = function(code, geonext) {
     this.isfuncall = true;
 
     /**
-     * Reserved keywords
+     * The id of an HTML node in which innerHTML all warnings are stored (if no <tt>console</tt> object is available).
+     * @type String
+     * @default 'jcwarn'
      */
-    this.reserved = ['PI', 'X', 'Y', 'E', 'V', 'L'];
+    this.warnLog = 'jcwarn';
+
+    /**
+     * Built-in functions and constants
+     * @type Object
+     */
+    this.builtIn = {
+        PI: Math.PI,
+        X: function (el) {
+            return el.X();
+        },
+        Y: function (el) {
+            return el.Y();
+        },
+        V: function (el) {
+            return el.Value();
+        },
+        L: function (el) {
+            return el.L();
+        },
+        dist: function (p1, p2) {
+            if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
+                this._error('Error: Can\'t calculate distance.');
+            }
+
+            return p1.Dist(p2);
+        },
+        rad: JXG.Math.Geometry.rad,
+        deg: JXG.Math.Geometry.trueAngle,
+        factorial: JXG.Math.factorial,
+        '$': this.getElementById
+    };
+
+    // special scopes for factorial, deg, and rad
+    this.builtIn.rad.sc = JXG.Math.Geometry;
+    this.builtIn.deg.sc = JXG.Math.Geometry;
+    this.builtIn.factorial.sc = JXG.Math;
 
     /**
      * The board which currently is used to create and look up elements.
@@ -159,6 +199,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     _error: function (msg) {
         throw new Error(msg);
+    },
+
+    _warn: function (msg) {
+        if(typeof console !== "undefined") {
+            console.log('Warning: ' + msg);
+        } else if(document.getElementById(this.warnLog) !== null) {
+            document.getElementById(this.warnLog).innerHTML += 'Warning: ' + msg + '<br />';
+        }
     },
 
     /**
@@ -226,8 +274,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @see JXG.JessieCode#scope
      */
     letvar: function (vname, value) {
-        if (this.reserved.indexOf(vname) > -1) {
-            this._error('Error: ' + vname + ' is a reserved word.');
+        if (this.builtIn[vname]) {
+            this._warn('"' + vname + '" is a predefined value.');
         }
 
         this.sstack[this.scope][vname] = value;
@@ -247,42 +295,16 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         // check for an element with this name
-        if (vname in JXG.JSXGraph.elements) {
+        if (JXG.JSXGraph.elements[vname]) {
             return this.creator(vname);
         }
 
-        if (typeof Math[vname] !== 'undefined') {
+        if (Math[vname]) {
             return Math[vname];
         }
 
-        if (vname in {X: 1, Y: 1, L: 1}) {
-            return function (el) {
-                return el[vname]();
-            }
-        }
-
-        if (vname === 'V') {
-            return function (el) {
-                return el.Value();
-            }
-        }
-
-        if (vname === 'rad') {
-            s = JXG.Math.Geometry.rad;
-            s.sc = JXG.Math.Geometry;
-            
-            return s;
-        }
-
-        if (vname === 'deg') {
-            s = JXG.Math.Geometry.trueAngle;
-            s.sc = JXG.Math.Geometry;
-
-            return s;
-        }
-
-        if (vname === '$') {
-            return this.getElementById;
+        if (this.builtIn[vname]) {
+            return this.builtIn[vname];
         }
 
         s = JXG.getRef(this.board, vname);
