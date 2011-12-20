@@ -323,7 +323,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     setProp: function (o, what, value) {
         var par = {}, x, y;
 
-        if (o.elementClass === JXG.OBJECT_CLASS_POINT && (what === 'X' || what === 'y')) {
+        if (o.elementClass === JXG.OBJECT_CLASS_POINT && (what === 'X' || what === 'Y')) {
             // set coords
 
             what = what.toLowerCase();
@@ -357,6 +357,19 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             }
 
             this.board.update();
+        } else if (o.type === JXG.OBJECT_TYPE_TEXT && (what === 'X' || what === 'Y')) {
+            if (typeof value === 'number') {
+                o[what] = function () { return value; };
+            } else if (typeof value === 'function') {
+                o.isDraggable = false;
+                o[what] = value;
+            } else if (typeof value === 'string') {
+                o.isDraggable = false;
+                o[what] = JXG.createFunction(value, this.board, null, true);
+            }
+
+            this.board.update();
+
         } else if (o.type && o.elementClass && o.visProp) {
             par[what] = value;
             o.setProperty(par);
