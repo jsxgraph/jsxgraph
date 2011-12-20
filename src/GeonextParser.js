@@ -57,7 +57,7 @@ JXG.GeonextParser.replacePow = function(te) {
 		// If there is a ")" immediately before the ^ operator, it can be the end of a
 		// (i) term in parenthesis
 		// (ii) function call
-		// (iii) method  callthrow new Error("JSXGraph: Can't create Sector with parent types
+		// (iii) method  call
 		// In either case, first the corresponding opening parenthesis is searched.
 		// This is the case, when count==0
         if (left.charAt(left.length-1)==')') {
