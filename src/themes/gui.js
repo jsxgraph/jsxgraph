@@ -13,11 +13,6 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     point: {
         strokeColor: '#000000',
-        fillColor: '#82adff'
+        fillColor:   '#cc0000'
     },
-/*
-    polygon: {
-        fillColor: '#e0eb52'
-    }
-*/
 });
