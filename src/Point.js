@@ -82,6 +82,9 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.slideObject = null;
 
+    this.Xjc = null;
+    this.Yjc = null;
+
     // documented in GeometryElement
     this.methodMap = JXG.deepCopy(this.methodMap, {
         move: 'moveTo',
@@ -600,7 +603,27 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         var anc;
 
         if (this.type !== JXG.OBJECT_TYPE_GLIDER) {
-            return;
+            if (!this.isDraggable) {
+                this.isDraggable = true;
+                this.type = JXG.OBJECT_TYPE_POINT;
+
+                this.XEval = function () {
+                    return this.coords.usrCoords[1];
+                };
+
+                this.YEval = function () {
+                    return this.coords.usrCoords[2];
+                };
+
+                this.ZEval = function () {
+                    return this.coords.usrCoords[0];
+                };
+
+                this.Xjc = null;
+                this.Yjc = null;
+            } else {
+                return;
+            }
         }
 
         for (anc in this.ancestors) {
@@ -629,7 +652,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     addConstraint: function (terms) {
         this.type = JXG.OBJECT_TYPE_CAS;
         var newfuncs = [],
-            fs, i, v, t;
+            fs, i, v, t,
+            what = ['X', 'Y'];
         
         this.isDraggable = false;
         for (i=0;i<terms.length;i++) {
@@ -639,6 +663,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 /*t  = JXG.GeonextParser.geonext2JS(v, this.board);
                 newfuncs[i] = new Function('','return ' + t + ';');*/
                 newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+
+                if (terms.length === 2) {
+                    this[what[i] + 'jc'] = terms[i];
+                }
             } else if (typeof v=='function') {
                 newfuncs[i] = v;
             } else if (typeof v=='number') {
