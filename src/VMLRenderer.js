@@ -619,11 +619,16 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         pStr.push(["m ", parseInt(r * scr[1]), ",", parseInt(r * scr[2]), " l "].join(''));
 
         for (i = 1; i < len - 1; i++) {
-            scr = el.vertices[i].coords.scrCoords;
-            if (isNaN(scr[1]+scr[2])) return;
-            pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
+            if (el.vertices[i].isReal) {
+                scr = el.vertices[i].coords.scrCoords;
+                if (isNaN(scr[1]+scr[2])) return;
+                pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
+            } else {
+                this.updatePathPrim(node, '', el.board);
+                return;
+            }
             if (i < len - 2) {
-                pStr.push(", ");
+                    pStr.push(", ");
             }
         }
         pStr.push(" x e");

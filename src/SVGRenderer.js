@@ -608,8 +608,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         node.setAttributeNS(null, 'stroke', 'none');
         for (i = 0; i < len - 1; i++) {
-            scrCoords = el.vertices[i].coords.scrCoords;
-            pStr = pStr + scrCoords[1] + "," + scrCoords[2];
+             if (el.vertices[i].isReal) {
+                scrCoords = el.vertices[i].coords.scrCoords;
+                pStr = pStr + scrCoords[1] + "," + scrCoords[2];
+            } else {
+                node.setAttributeNS(null, 'points', '');
+                return;
+            }
             if (i < len - 2) {
                 pStr += " ";
             }
