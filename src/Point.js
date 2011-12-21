@@ -697,7 +697,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.updateConstraint = new Function('',fs);
         }
 
-        // if (!this.board.isSuspendedUpdate) { this.update(); }
+        if (!this.board.isSuspendedUpdate) { this.prepareUpdate().update().updateRenderer(); }
         return this;
     },
 

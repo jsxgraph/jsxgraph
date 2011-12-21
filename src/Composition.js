@@ -1308,7 +1308,9 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
     var p, i;
 
-    if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
+    if( parents[0].elementClass == JXG.OBJECT_CLASS_POINT 
+       && parents[1].elementClass == JXG.OBJECT_CLASS_POINT 
+       && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], attributes);
 
         for (i = 0; i < 3; i++) {
