@@ -447,7 +447,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Can be used sometimes to commit changes to the object.
      */
     update: function () {
-        //console.log(this);
         if (this.visProp.trace) {
             this.cloneToBackground(true);
         }
