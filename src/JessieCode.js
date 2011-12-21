@@ -736,6 +736,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                                     v = e.methodMap[v];
                                 } else {
                                     // the user wants to change an attribute
+                                    e = e.visProp;
                                     v = v.toLowerCase();
                                 }
                             }
