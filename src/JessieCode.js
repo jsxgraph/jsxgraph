@@ -412,7 +412,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
             for(i = 0; i < error_cnt; i++)
-                console.log("Parse error near >"  + code.substr( error_off[i], 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
+                this._error("Parse error near >"  + code.substr( error_off[i], 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
         }
 
         this.board.update();
