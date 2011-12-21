@@ -396,16 +396,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         for (i = 0; i < ccode.length; i++) {
             if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
-                cleaned.push(ccode[i]);
-            }
+                if (geonext) {
+                    ccode[i] = ccode[i].replace(/Deg\(/g, 'deg(')
+                                       .replace(/Rad\(/g, 'rad(')
+                                       .replace(/Sin\(/g, 'sin(')
+                                       .replace(/Cos\(/g, 'cos(')
+                                       .replace(/Dist/g, 'dist(')
+                                       .replace(/Factorial\(/g, 'factorial(')
+                                       .replace(/If\(/g, 'if(')
+                                       .replace(/Round\(/, 'round(');
+                }
 
-            if (geonext) {
-                ccode[i] = ccode[i].replace(/Deg\(/g, 'deg(')
-                                   .replace(/Rad\(/g, 'rad(')
-                                   .replace(/Dist/g, 'dist(')
-                                   .replace(/Factorial\(/g, 'factorial(')
-                                   .replace(/If\(/g, 'if(')
-                                   .replace(/Round\(/, 'round(');
+                cleaned.push(ccode[i]);
             }
         }
         code = cleaned.join('\n');

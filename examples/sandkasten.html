@@ -7,6 +7,8 @@
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <!--script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
 
@@ -67,6 +69,11 @@
         var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
         
         var t = board.create('text', [3, 2, 'TEXTYTEXT']);
+
+        board.addHook(function (e) {
+            console.log(e.touches[0].pageX);
+            console.log(e.touches[0].radiusX);
+        }, 'touchstart');
 
         return board;
     })();
