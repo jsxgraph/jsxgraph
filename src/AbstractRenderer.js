@@ -940,10 +940,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!ev.draft) {
+            /*
+               // Why did we have this? A.W.
             if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                 this.setObjectFillColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else 
+            */
+            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.borders[i].visProp.highlightstrokeopacity);
@@ -974,10 +978,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!element.visProp.draft) {
-            if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
+            /* 
+               // Why did we have this? A.W.
+              if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                 this.setObjectFillColor(element, ev.strokecolor, ev.strokeopacity);
-            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else 
+            */
+            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.borders[i].visProp.strokeopacity);
