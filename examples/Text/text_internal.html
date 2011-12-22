@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
@@ -17,7 +17,8 @@
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true, showNavigation:true, showCopyright:true});
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
-    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], {fontSize:'64'});
+    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], 
+		{fontSize:'64', strokeColor:'blue', highlightStrokeColor:'#DDDD00'});
     /*
     txt.rendNode.style.fill = "#ff00ff";
     txt.rendNode.style.stroke = "#000000";
@@ -40,7 +41,7 @@
     tOffInv.bindTo(txt); ts1.bindTo(txt); tRot.bindTo(txt); ts2.bindTo(txt); tOff.bindTo(txt);
     brd.update();
    
-    alert(txt.rendNode.getBBox().width);
+    //alert(txt.rendNode.getBBox().width);
 </script> 
 </body>
 </html>

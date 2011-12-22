@@ -89,7 +89,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 node.setAttribute(key, val, iFlag);
             }
         } catch (e) {
-            JXG.debug(node.id + ' ' + key + ' ' + val + '<br>\n');
+            JXG.debug('_setAttr:'/*node.id*/ + ' ' + key + ' ' + val + '<br>\n');
         }
     },
 
@@ -174,13 +174,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         var node;
         node = this.createNode('textbox');
         node.style.position = 'absolute';
-		/*
+        /*
         if (document.documentMode === 8) {                 // IE 8
             node.setAttribute('class', el.visProp.cssclass);
         } else {
             node.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
         }
-		*/
+        */
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, 9);
@@ -190,13 +190,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     // documented in AbstractRenderer
     updateInternalText: function (el) {
         var content = el.plaintext;
-		/*
+        /*
         if (document.documentMode === 8) {                 // IE 8
             el.rendNode.setAttribute('class', el.visProp.cssclass);
         } else {
             el.rendNode.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
         }
-		*/
+        */
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
             el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
@@ -228,8 +228,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         // Adding the rotation filter. This is always filter item 0:
         // node.filters.item(0), see transformImage
-        node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-
+        //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+        node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+		/*
+        if ('-ms-filter' in node.style) { 
+            node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+        }
+		*/
         el.rendNode = node;
         this.updateImage(el);
     },
@@ -246,7 +251,12 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (len > 0) {
             nt = el.rendNode.style.filter.toString();
             if (!nt.match(/DXImageTransform/)) {
-                node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+                node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+				/*
+                if ('-ms-filter' in node.style) { 
+                    node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+                }
+				*/
             }
 
             m = this.joinTransforms(el, t);
@@ -794,7 +804,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             }
 
             nodeStroke = el.rendNodeStroke;
-            if (JXG.exists(oo)) {
+            if (JXG.exists(oo) && el.type !== JXG.OBJECT_TYPE_IMAGE) {
                 this._setAttr(nodeStroke, 'opacity', (oo * 100) + '%');
             }
         }
