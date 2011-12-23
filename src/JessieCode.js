@@ -849,18 +849,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
      * Compiles a parse tree back to JessieCode.
      * @param {Object} node
-     * @param {Boolean} [javascript=false] Compile either to JavaScript or back to JessieCode (required for the UI).
+     * @param {Boolean} [javascript=false] Currently ignored. Compile either to JavaScript or back to JessieCode (required for the UI).
      * @returns Something
      * @private
      */
     compile: function (node, javascript) {
-        var ret, v, i, e, parents = [];
+        var ret, i, e;
 
         ret = '';
 
         if (!JXG.exists(javascript)) {
             javascript = false
         }
+
+        // ignore it
+        javascript = false;
 
         if (!node)
             return ret;
