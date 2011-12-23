@@ -19,7 +19,7 @@
 //JXG.Options.renderer = 'canvas';
         var p1, p2, l1;
         //board = JXG.JSXGraph.initBoard('jxgbox', {originX: 300, originY: 340, unitX: 38, unitY: 40});
-        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-8,10,12,-10], keepaspectratio:false, axis:true});
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-8,10,12,-10], keepaspectratio:true, axis:true});
         ax = board.create('axis', [[0,0],[1,1]], { ticks: {minorHeight:20} });
         ay = board.create('axis', [[0,0],[-1,1]], { ticks: {minorHeight:30} });
         p1 = board.createElement('point', [3, 0], {style:1,name:"P_{1}"}); // Angabe fester Koordinaten
@@ -30,7 +30,7 @@
         //z = board.create('point', [-2, 2]);
         
         l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
-        board.createElement('ticks', [l1, 2], { majorHeight:30}); //l1.enableTicks();
+        board.createElement('ticks', [l1, 1], { majorHeight:30}); //l1.enableTicks();
         board.createElement('ticks', [l1, [2.5, 7.5]]);
 
         

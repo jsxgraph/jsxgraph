@@ -11,10 +11,10 @@
 <style type="text/css">
 .fat {
     font-size:64px;
-    font-family: Palatino, Arial, Helvetica;
+    font-family: Arial, Helvetica;
     font-weight: bold;
     border: 3px solid red;
-    background-color:white;
+    background-color:yellow;
     padding: 10px;
     -moz-border-radius:10px;
     color: red;
@@ -25,10 +25,10 @@
     font-family: Arial, Helvetica;
     font-weight: bold;
     border: 3px solid red;
-    background-color:blue;
+    background-color:green;
     padding: 10px;
     -moz-border-radius:10px;
-    color: red;
+    color: white;
 }
     
     
@@ -45,11 +45,11 @@
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 JXG.Options.axis.visible = false;
-JXG.Options.axis.ticks.drawLabels = false;
+JXG.Options.axis.ticks.drawLabels = true;
 JXG.Options.axis.ticks.drawZero = true;
 
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], 
-axis:false, keepaspectratio:true, 
+axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
 var k = brd.create('circle',[[0,0],2]);
@@ -114,7 +114,7 @@ t.fd(3);
 
 */
 var txt = brd.create('text', [1,3, function(){ return JXG.JSXGraph.rendererType;}], 
-    {/*cssClass:'fat', highlightCssClass:'fatHL',*/
+    {cssClass:'fat', highlightCssClass:'fatHL',
      fontSize:32, 
      strokeColor:'red',
      highlightStrokeColor:'blue'});

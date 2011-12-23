@@ -230,11 +230,6 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         // node.filters.item(0), see transformImage
         //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
         node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-		/*
-        if ('-ms-filter' in node.style) { 
-            node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-        }
-		*/
         el.rendNode = node;
         this.updateImage(el);
     },
@@ -252,11 +247,6 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             nt = el.rendNode.style.filter.toString();
             if (!nt.match(/DXImageTransform/)) {
                 node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
-				/*
-                if ('-ms-filter' in node.style) { 
-                    node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
-                }
-				*/
             }
 
             m = this.joinTransforms(el, t);
