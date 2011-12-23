@@ -103,6 +103,13 @@ JXG.JessieCode = function(code, geonext) {
     this.lhs = [];
 
     /**
+     * lhs flag, used by JXG.JessieCode#replaceNames
+     * @type Boolean
+     * @default false
+     */
+    this.isLHS = false;
+
+    /**
      * This is a stub that might be used later on.
      * @type Boolean
      * @private
@@ -290,9 +297,15 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
      * Looks up the value of the given variable.
      * @param {String} vname Name of the variable
+     * @paran {Boolean} [local=false] Only look up the internal symbol table and don't look for
+     * the <tt>vname</tt> in Math or the element list.
      */
-    getvar: function (vname) {
+    getvar: function (vname, local) {
         var s, undef;
+
+        if (!JXG.exists(local)) {
+            local = false;
+        }
 
         for (s = this.scope; s > -1; s--) {
             if (JXG.exists(this.sstack[s][vname])) {
@@ -313,9 +326,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return this.builtIn[vname];
         }
 
-        s = JXG.getRef(this.board, vname);
-        if (s !== vname) {
-            return s;
+        if (!local) {
+            s = JXG.getRef(this.board, vname);
+            if (s !== vname) {
+                return s;
+            }
         }
 
         return undef;
@@ -378,7 +393,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             this.board.update();
 
         } else if (o.type && o.elementClass && o.visProp) {
-            if (this.visPropBlacklist.indexOf(what.toLowerCase()) === -1) {
+            if (this.visPropBlacklist.indexOf(what.toLowerCase && what.toLowerCase()) === -1) {
                 par[what] = value;
                 o.setProperty(par);
             } else {
@@ -468,6 +483,78 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         return result;
+    },
+
+    /**
+     * Traverses through the given subtree and changes all values of nodes with the replaced flag set by
+     * {@link JXG.JessieCode#replaceNames} to the name of the element (if not empty).
+     * @param {Object} node
+     */
+    replaceIDs: function (node) {
+        var i, v;
+
+        if (node.replaced) {
+            v = this.board.objects[node.value];
+            if (JXG.exists(v) && JXG.exists(v) && v.name !== '') {
+                node.value = v.name;
+                // maybe it's not necessary, but just to be sure that everything's cleaned up...
+                delete node.replaced;
+            }
+        }
+
+        if (node.children) {
+            // assignments are first evaluated on the right hand side
+            for (i = node.children.length ; i > 0; i--) {
+                if (JXG.exists(node.children[i-1])) {
+                    node.children[i-1] = this.replaceIDs(node.children[i-1]);
+                }
+
+            }
+        }
+
+        return node;
+    },
+
+    /**
+     * Traverses through the given subtree and changes all elements referenced by names through referencing them by ID.
+     * An identifier is only replaced if it is not found in all scopes above the current scope and if it
+     * has not been blacklisted within the codeblock determined by the given subtree.
+     * @param {Object} node
+     */
+    replaceNames: function (node) {
+        var i, v;
+
+        v = node.value;
+
+        // we are interested only in nodes of type node_var and node_op > op_lhs.
+        // currently, we are not checking if the id is a local variable. in this case, we're stuck anyway.
+
+        if (node.type == 'node_op' && v == 'op_lhs' && node.children.length === 1) {
+            this.isLHS = true;
+        } else if (node.type == 'node_var') {
+            if (this.isLHS) {
+                this.letvar(v, true);
+            } else if (!JXG.exists(this.getvar(v, true)) && JXG.exists(this.board.elementsByName[v])) {
+                node.value = this.board.elementsByName[v].id;
+                node.replaced = true;
+            }
+        }
+
+        if (node.children) {
+            // assignments are first evaluated on the right hand side
+            for (i = node.children.length ; i > 0; i--) {
+                if (JXG.exists(node.children[i-1])) {
+                    node.children[i-1] = this.replaceNames(node.children[i-1]);
+                }
+
+            }
+        }
+
+        if (node.type == 'node_op' && node.value == 'op_lhs' && node.children.length === 1) {
+            this.isLHS = false;
+        }
+
+        return node;
     },
 
     /**
@@ -641,6 +728,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                         ret.parseTree = node.children[1];
 
+                        this.isLHS = false;
+
+                        // new scope for parameters & local variables
+                        this.sstack.push([]);
+                        this.scope++;
+                        for(i = 0; i < this.pstack[this.pscope].length; i++) {
+                            this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
+                        }
+
+                        ret.replacedNames = this.replaceNames(node.children[1]);
+
+                        // clean up scope
+                        this.sstack.pop();
+                        this.scope--;
+
+
                         this.pstack.pop();
                         this.pscope--;
                         break;
@@ -773,7 +876,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         } else {
                             e = this.execute(node.children[1]);
 
-                            if (e.type && e.elementClass && v.toLowerCase() !== 'x' && v.toLowerCase() !== 'y') {
+                            if (e.type && e.elementClass && v.toLowerCase && v.toLowerCase() !== 'x' && v.toLowerCase() !== 'y') {
                                 v = v.toLowerCase();
                             }
                         }
