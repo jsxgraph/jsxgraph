@@ -710,6 +710,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // after this, the parameters are in pstack
                         this.execute(node.children[0]);
 
+                        this.replaceNames(node.children[1]);
+
                         ret = (function(_pstack, that) { return function() {
                             var r;
 
@@ -735,15 +737,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
                         }
 
-                        ret.parseTree = this.replaceNames(node.children[1]);
-
                         // clean up scope
                         this.sstack.pop();
                         this.scope--;
 
                         ret.toString = (function (_that) {
                             return function () {
-                                return _that.compile(_that.replaceIDs(this.parseTree));
+                                return _that.compile(_that.replaceIDs(JXG.deepCopy(node)));
                             };
                         })(this);
 
