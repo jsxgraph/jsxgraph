@@ -117,6 +117,12 @@ JXG.JessieCode = function(code, geonext) {
     this.warnLog = 'jcwarn';
 
     /**
+     * Element attributes that are not allowed to be set in JessieCode.
+     * @type Array
+     */
+    this.visPropBlacklist = ['cssclass', 'highlightcssclass'];
+
+    /**
      * Built-in functions and constants
      * @type Object
      */
@@ -372,8 +378,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             this.board.update();
 
         } else if (o.type && o.elementClass && o.visProp) {
-            par[what] = value;
-            o.setProperty(par);
+            if (this.visPropBlacklist.indexOf(what.toLowerCase()) === -1) {
+                par[what] = value;
+                o.setProperty(par);
+            } else {
+                this._warn('Attribute "' + what + '" can not be set with JessieCode.');
+            }
         } else {
             o[what] = value;
         }
@@ -678,6 +688,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // get the properties from the propstack
                         if (props) {
                             attr = this.propstack[this.propscope];
+                            for (i in attr) {
+                                if (this.visPropBlacklist.indexOf(i.toLowerCase()) > -1) {
+                                    this._warn('Attribute "' + i + '" can not be set with JessieCode.');
+                                    delete attr[i];
+                                }
+                            }
                         }
 
                         // check for the function in the variable table
