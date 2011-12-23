@@ -726,8 +726,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             return r;
                         }; })(this.pstack[this.pscope], this);
 
-                        ret.parseTree = node.children[1];
-
                         this.isLHS = false;
 
                         // new scope for parameters & local variables
@@ -737,11 +735,17 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
                         }
 
-                        ret.replacedNames = this.replaceNames(node.children[1]);
+                        ret.parseTree = this.replaceNames(node.children[1]);
 
                         // clean up scope
                         this.sstack.pop();
                         this.scope--;
+
+                        ret.toString = (function (_that) {
+                            return function () {
+                                return _that.compile(_that.replaceIDs(this.parseTree));
+                            };
+                        })(this);
 
 
                         this.pstack.pop();
