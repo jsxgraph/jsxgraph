@@ -507,14 +507,19 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawText: function (element) {
-        var node;
+        var node, z;
 
         if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
             //node.setAttribute("class", element.visProp.cssclass); //
             node.className = element.visProp.cssclass;
-            node.style.zIndex = '10';
+            if (this.container.style.zIndex=='') {
+                z = 0;
+            } else {
+                z = parseInt(this.container.style.zIndex);
+            }
+            node.style.zIndex = z+element.board.options.layer.text; //'10';
             this.container.appendChild(node);
             node.setAttribute('id', this.container.id + '_' + element.id);
         } else {
