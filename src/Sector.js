@@ -567,6 +567,10 @@ JXG.createAngle = function(board, parents, attributes) {
             return JXG.Math.Geometry.rad(this.point2, this.point1, this.point3);
         };
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            Value: 'Value'
+        });
+
     } else {
         throw new Error("JSXGraph: Can't create angle with parent types '" +
                          (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
