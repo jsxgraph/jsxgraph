@@ -496,8 +496,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (node.replaced) {
             v = this.board.objects[node.value];
             if (JXG.exists(v) && JXG.exists(v) && v.name !== '') {
+                node.type = 'node_var';
                 node.value = v.name;
-                // maybe it's not necessary, but just to be sure that everything's cleaned up...
+                // maybe it's not necessary, but just to be sure that everything's cleaned up we better delete all
+                // children and the replaced flag
+                node.children.length = 0;
                 delete node.replaced;
             }
         }
@@ -535,8 +538,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             if (this.isLHS) {
                 this.letvar(v, true);
             } else if (!JXG.exists(this.getvar(v, true)) && JXG.exists(this.board.elementsByName[v])) {
-                node.value = this.board.elementsByName[v].id;
-                node.replaced = true;
+                node = this.createReplacementNode(node);
+                //node.value = this.board.elementsByName[v].id;
+                //node.replaced = true;
             }
         }
 
@@ -553,6 +557,22 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (node.type == 'node_op' && node.value == 'op_lhs' && node.children.length === 1) {
             this.isLHS = false;
         }
+
+        return node;
+    },
+
+    createReplacementNode: function (node) {
+        var v = node.value,
+            el = this.board.elementsByName[v];
+
+        node = this.createNode('node_op', 'op_execfun',
+            this.createNode('node_var', '$'),
+            this.createNode('node_op', 'op_param',
+                this.createNode('node_str', el.id)
+            )
+        );
+
+        node.replaced = true;
 
         return node;
     },
@@ -828,7 +848,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         v = node.children[1];
 
                         // is it a geometry element?
-                        if (e.type && e.elementClass && e.methodMap) {
+                        if (e && e.type && e.elementClass && e.methodMap) {
                             // yeah, it is. but what does the user want?
                             if (v === 'label') {
                                 // he wants to access the label properties!
