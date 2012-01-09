@@ -649,6 +649,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     } else {
                         this.visProp.trace = true;
                     }
+                    break;
                 case 'gradient':
                     this.visProp.gradient = value;
                     this.board.renderer.setGradient(this);
