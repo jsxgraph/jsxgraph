@@ -494,7 +494,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var i, v;
 
         if (node.replaced) {
-            v = this.board.objects[node.value];
+            // these children exist, if node.replaced is set.
+            v = this.board.objects[node.children[1].children[0].value];
             if (JXG.exists(v) && JXG.exists(v) && v.name !== '') {
                 node.type = 'node_var';
                 node.value = v.name;
@@ -539,8 +540,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 this.letvar(v, true);
             } else if (!JXG.exists(this.getvar(v, true)) && JXG.exists(this.board.elementsByName[v])) {
                 node = this.createReplacementNode(node);
-                //node.value = this.board.elementsByName[v].id;
-                //node.replaced = true;
             }
         }
 
@@ -561,6 +560,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         return node;
     },
 
+    /**
+     * Replaces node_var nodes with node_op&gt;op_execfun nodes, calling the internal $() function with the id of the
+     * element accessed by the node_var node.
+     * @param {Object} node
+     * @returns {Object} op_execfun node
+     */
     createReplacementNode: function (node) {
         var v = node.value,
             el = this.board.elementsByName[v];

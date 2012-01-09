@@ -146,6 +146,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     setTextJessieCode: function (text) {
         var s;
 
+        this.visProp.castext = text;
+
         if (typeof text === 'function') {
             s = function () {
                 return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
