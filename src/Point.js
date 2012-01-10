@@ -675,7 +675,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 newfuncs[i] = (function(a) { return function() { return a.Value(); };})(v);
             }
 
-            newfuncs[i].from = typeof v;
+            newfuncs[i].origin = v;
         }
         if (terms.length==1) { // Intersection function
             this.updateConstraint = function() { 

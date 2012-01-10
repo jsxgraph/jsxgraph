@@ -361,18 +361,17 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 x = what === 'x' ? value : o.X();
                 y = what === 'y' ? value : o.Y();
 
-                o.XEval = function() { return this.coords.usrCoords[1]; };
-                o.YEval = function() { return this.coords.usrCoords[2]; };
+                //o.XEval = function() { return this.coords.usrCoords[1]; };
+                //o.YEval = function() { return this.coords.usrCoords[2]; };
                 o.setPosition(JXG.COORDS_BY_USER, x, y);
             } else if (o.isDraggable && (typeof value === 'function' || typeof value === 'string')) {
-                x = what === 'x' ? value : function () { return this.coords.usrCoords[1]; };
-                y = what === 'y' ? value : function () { return this.coords.usrCoords[2]; };
+                x = what === 'x' ? value : o.coords.usrCoords[1];
+                y = what === 'y' ? value : o.coords.usrCoords[2];
 
-                o.isDraggable = false;
                 o.addConstraint([x, y]);
             } else if (!o.isDraggable) {
-                x = what === 'x' ? value : o.XEval;
-                y = what === 'y' ? value : o.YEval;
+                x = what === 'x' ? value : o.XEval.origin;
+                y = what === 'y' ? value : o.YEval.origin;
 
                 o.addConstraint([x, y]);
             }
@@ -390,8 +389,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 o[what + 'jc'] = value;
             }
 
-            this.board.update();
+            o[what]
 
+            this.board.update();
         } else if (o.type && o.elementClass && o.visProp) {
             if (this.visPropBlacklist.indexOf(what.toLowerCase && what.toLowerCase()) === -1) {
                 par[what] = value;
