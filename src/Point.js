@@ -674,6 +674,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             } else if (typeof v == 'object' && typeof v.Value == 'function') {    // Slider
                 newfuncs[i] = (function(a) { return function() { return a.Value(); };})(v);
             }
+
+            newfuncs[i].from = typeof v;
         }
         if (terms.length==1) { // Intersection function
             this.updateConstraint = function() { 
