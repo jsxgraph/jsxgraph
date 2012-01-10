@@ -162,7 +162,10 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     }  else if(method == 'twoPoints') {
         this.point2.addChild(this);
     }
-   
+
+    this.methodMap = JXG.deepCopy(this.methodMap, {
+        setRadius: 'generateTerm'
+    });
 };
 JXG.Circle.prototype = new JXG.GeometryElement;
 
@@ -387,10 +390,11 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      */
     generateTerm: function (term) {
         if (typeof term=='string') {
-            var elements = this.board.elementsByName;
+            //var elements = this.board.elementsByName;
             // Convert GEONExT syntax into  JavaScript syntax
-            var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
-            this.updateRadius = new Function('return ' + newTerm + ';');
+            //var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
+            //this.updateRadius = new Function('return ' + newTerm + ';');
+            this.updateRadius = this.board.jc.snippet(term, true, null, true);
         } else if (typeof term=='number') {
             this.updateRadius = function () { return term; };
         } else { // function
