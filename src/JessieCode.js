@@ -374,7 +374,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 x = what === 'x' ? value : o.XEval;
                 y = what === 'y' ? value : o.YEval;
 
-                o.addConstraint(x, y);
+                o.addConstraint([x, y]);
             }
 
             this.board.update();
@@ -983,7 +983,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 break;
 
             case 'node_const_bool':
-                ret = node.value !== 'false';
+                ret = node.value.toLowerCase() !== 'false';
                 break;
 
             case 'node_str':

@@ -63,17 +63,13 @@
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
 
         var A = board.create('point', [1, 2]);
-
         var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+        var C = board.create('point', [-1, -1]);
 
         var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
-        
         var t = board.create('text', [3, 2, 'TEXTYTEXT']);
 
-        board.addHook(function (e) {
-            console.log(e.touches[0].pageX);
-            console.log(e.touches[0].radiusX);
-        }, 'touchstart');
+        var a = board.create('angle', [A, B, C], {text: function () { return A.X();}});
 
         return board;
     })();
