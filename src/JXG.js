@@ -323,19 +323,26 @@ JXG.extend(JXG, /** @lends JXG */ {
      * function or number.
      */
     createFunction: function (term, board, variableName, evalGeonext) {
+        var f = null;
+
         if ((!JXG.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
             // Convert GEONExT syntax into  JavaScript syntax
             /*newTerm = JXG.GeonextParser.geonext2JS(term, board);
             return new Function(variableName,'return ' + newTerm + ';');*/
-            return board.jc.snippet(term, true, variableName, true);
+            f = board.jc.snippet(term, true, variableName, true);
         } else if (JXG.isFunction(term)) {
-            return term;
+            f = term;
         } else if (JXG.isNumber(term)) {
-            return function () { return term; };
+            f = function () { return term; };
         } else if (JXG.isString(term)) {        // In case of string function like fontsize
-            return function () { return term; };
+            f = function () { return term; };
         }
-        return null;
+
+        if (f !== null) {
+            f.origin = term;
+        }
+
+        return f;
     },
 
     /**

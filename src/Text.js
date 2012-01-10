@@ -77,6 +77,7 @@ JXG.Text = function (board, content, coords, attributes) {
         }
         this.X = JXG.createFunction(coords[0],this.board,'');
         this.Y = JXG.createFunction(coords[1],this.board,'');
+
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
         this.updateCoords = new Function('',fs);

@@ -389,7 +389,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 o[what + 'jc'] = value;
             }
 
-            o[what]
+            o[what].origin = value;
 
             this.board.update();
         } else if (o.type && o.elementClass && o.visProp) {
