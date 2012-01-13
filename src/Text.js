@@ -115,7 +115,8 @@ JXG.Text = function (board, content, coords, attributes) {
     this.elType = 'text';
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
-        setText: 'setTextJessieCode'
+        setText: 'setTextJessieCode',
+        free: 'free'
     });
 
     return this;
@@ -235,6 +236,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         return this;
     },
 
+    free: function () {
+        this.X = JXG.createFunction(this.X(), this.board, '');
+        this.Y = JXG.createFunction(this.Y(), this.board, '');
+
+        this.isDraggable = true;
+    },
+
     /**
      * Evaluates the text.
      * Then, the update function of the renderer
@@ -267,7 +275,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     /**
-     * The update function of the renderer
+     * The update function of the renderert
      * is called. 
      * @private
      */
@@ -283,10 +291,12 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         if (this.transformations.length==0) {
             return;
         }
+
         for (var i=0;i<this.transformations.length;i++) {
             this.transformations[i].update();
         }
-	return this;
+
+	    return this;
     },
 
     /**
