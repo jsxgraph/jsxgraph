@@ -2156,7 +2156,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     initInfobox: function () {
         this.infobox = this.create('text', [0, 0, '0,0'], {
             id: this.id + '_infobox',
-            display: 'html'
+            display: 'html',
+            fixed: true
         });
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;
