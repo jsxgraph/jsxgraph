@@ -2076,6 +2076,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             delete(this.objects[object.id]);
             delete(this.elementsByName[object.name]);
 
+            if (object.visProp.trace) {
+                object.clearTrace();
+            }
+
             // the object deletion itself is handled by the object.
             if (JXG.exists(object.remove)) object.remove();
         } catch(e) {
