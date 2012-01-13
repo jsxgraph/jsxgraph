@@ -62,7 +62,7 @@
         JXG.Options.text.highlightStrokeColor = 'red';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
 
-        var A = board.create('point', [1, 2]);
+        var A = board.create('point', [1, 2], {snapSizeX: 0, snapSizeY: 0, snapToGrid: true});
         var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
         var C = board.create('point', [-1, -1]);
 

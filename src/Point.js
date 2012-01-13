@@ -499,7 +499,18 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             x = this.coords.usrCoords[1];
             y = this.coords.usrCoords[2];
             
-            this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                sX = this.board.defaultAxes.x.defaultTicks.ticksDelta*(this.board.defaultAxes.x.defaultTicks.visProp.minorticks+1);
+            }
+
+            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                sY = this.board.defaultAxes.y.defaultTicks.ticksDelta*(this.board.defaultAxes.y.defaultTicks.visProp.minorticks+1);
+            }
+
+            // if no valid snap sizes are available, don't change the coords.
+            if (sX > 0 && sY > 0) {
+                this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+            }
         }
         
         this.handleAttractors();

@@ -250,6 +250,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // adjust distances
         if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
             ticksDelta = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
+            this.ticksDelta = ticksDelta;
         }
 
 		// We shoot into the middle of the canvas
