@@ -68,6 +68,7 @@ pilote : (useless : rare cause in test -> Interactive Whiteboard : for accuracy 
 JXG.TracenpocheReader = new function() {
 	
 	aimantageList = new Array();
+	animationList = new Array();
 	
 	this.aimantage = function() {
 		var loc;
@@ -370,10 +371,11 @@ JXG.TracenpocheReader = new function() {
         
         var original_scope = {
             define: function (n) {
-                //console.log("Add scope var " + n.value);            
+                console.log("Add scope var " + n.value);            
                 this.def[n.value] = n.value;
             },
             find: function (n) {
+                console.log("Add scope find " + n);            
                 var e = this, o;
                 while (true) {
                     o = e.def[n];
@@ -388,6 +390,7 @@ JXG.TracenpocheReader = new function() {
                 }
             },
             pop: function () {
+                console.log("Add scope pop " + this.parent);            
                 scope = this.parent;
             }
         };
@@ -416,7 +419,7 @@ JXG.TracenpocheReader = new function() {
             if (a === "name") {
                 o = symbol_table[v];
                 if (!o) {
-                    o = variable(v);
+					o = variable(v);
                 }
             } else if (a === "operator") {
                 o = symbol_table[v];
@@ -433,6 +436,7 @@ JXG.TracenpocheReader = new function() {
             token.from  = t.from;
             token.to    = t.to;
             token.value = v;
+			console.log("advance :"+token.value);
             return token;
         };
 
@@ -1006,6 +1010,11 @@ JXG.TracenpocheReader = new function() {
 				case 'jsxtepanti3' :  obj['tepLengthCode'] =-3; break;
 				case 'x' :  obj['tepLengthCode'] =10; break;
 				case 'o' :  obj['tepLengthCode'] =11; break;
+				case 'anime1' : obj['tepanime'] = 2;
+				case 'anime' : obj['tepanime'] = 1;
+				case 'oscille1' : obj['tepanime'] = 4;
+				case 'oscille2' : obj['tepanime'] = 5;
+				case 'oscille' : obj['tepanime'] = 3;
 				default : {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
@@ -1129,7 +1138,6 @@ JXG.TracenpocheReader = new function() {
 
     this.pointsur = function(parents, attributes) {
         var p1, p2, c, lambda, par3, el, isFree,opt;
-		console.log("pointsur");
 		
         par3 = parents[parents.length-1];
         if (JXG.isNumber(par3)) {
@@ -1182,7 +1190,6 @@ JXG.TracenpocheReader = new function() {
                 }
             } else {                      // point on circle
                 c = parents[0];
-				console.log("pointsur : C :",c.name);
                 if (isFree) {
                     el = this.board.create('glider', [
                         c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
@@ -1309,7 +1316,6 @@ JXG.TracenpocheReader = new function() {
         // D appartient dAB_50%
         // M sur A_50%
 		var el,opt;
-console.log(parents.slice(0,2));
 		opt = this.handleAtts(attributes);
         el = this.board.create('point', parents.slice(0,2), this.handleAtts(attributes));
 		this.pointCoordshow(el,attributes,opt);				
@@ -1407,15 +1413,10 @@ console.log(parents.slice(0,2));
     };
 
     this.segmentlong = function(parents, attributes) {	
-		//s=segmentlong(A,M,v); AM=v : s and M created, if needed A created
-		//simple : A exists, B not, v=number 3
-		console.log(parents[0].name,parents[1],parents[2]);
-		var el,s,sli,opt;
+		//simple : A exists or not, B not, v=number 3
 		opt=this.handleAtts(attributes)
-		//if A-parents[0] does not exists then creation
-		sli = this.board.create('circle',[parents[0],parents[2]], {visible:false});
-		el = this.pointsur([sli,0],[]);
-		s = this.board.create('segment', [parents[0],el], opt);
+		//if parents[0] does not exists then creation
+		s = this.board.create('segment', parents, opt);
 		this.segmentCode([s.point1,s.point2],attributes);
         return s;
     };
@@ -1638,12 +1639,49 @@ console.log(parents.slice(0,2));
             x = this.reelPosition.x;
             y = this.reelPosition.y;
         }
-        return this.board.create('slider', [
+        var el = this.board.create('slider', [
 		    [x, y],
 			[x+3, y], 
 			[parents[1], parents[0], parents[2]]
 			], atts);
+		if(atts["tepanime"]) {
+/*
+
+@options;
+
+@figure;
+A = point(-1,0) ;
+B = point(1,1) ;
+C = point(0,-1) ;
+d =droite(A,B) ;
+para =parallele(C,d) ; 
+r = reel(2,0,5,1) {anime};
+
+*/
+			if(animationList.length==0) {
+				var animepoint = this.board.create('text',[x,y+0.5,'<span id="tepjsxanimation"><b>&gt;</b>&nbsp;Animer</span>']);
+				var tepjsxanimation=document.getElementById("tepjsxanimation");
+				tepjsxanimation["isAnime"]=false;
+				tepjsxanimation.style.color="#FF0000";
+				tepjsxanimation.onclick = function(e) {
+					if(this.isAnime) {
+						//on lance l'animation
+						this.innerHTML="<b>&gt;</b>&nbsp;Animer";
+						this.style.color="#FF0000";
+					} else {
+						//on arrête l'animation
+						this.innerHTML="<b>[]</b>&nbsp;Stop";					
+						this.style.color="#00FF00";
+					}
+					this.isAnime=!this.isAnime;					
+				}			
+				
+			}
+			animationList.push([el,atts["tepanime"]]);
+		}
+		return el;
     };
+	
     
     this.entier = function(parents, attributes) {
         return this.reel(parents, attributes);
