@@ -69,6 +69,8 @@ JXG.TracenpocheReader = new function() {
 	
 	aimantageList = new Array();
 	animationList = new Array();
+	animepoint = null;
+	timeoutCaller = null;
 	
 	this.aimantage = function() {
 		var loc;
@@ -371,7 +373,7 @@ JXG.TracenpocheReader = new function() {
         
         var original_scope = {
             define: function (n) {
-                console.log("Add scope var " + n.value);            
+                //console.log("Add scope var " + n.value);            
                 this.def[n.value] = n.value;
             },
             find: function (n) {
@@ -436,7 +438,7 @@ JXG.TracenpocheReader = new function() {
             token.from  = t.from;
             token.to    = t.to;
             token.value = v;
-			console.log("advance :"+token.value);
+			//console.log("advance :"+token.value);
             return token;
         };
 
@@ -1010,11 +1012,11 @@ JXG.TracenpocheReader = new function() {
 				case 'jsxtepanti3' :  obj['tepLengthCode'] =-3; break;
 				case 'x' :  obj['tepLengthCode'] =10; break;
 				case 'o' :  obj['tepLengthCode'] =11; break;
-				case 'anime1' : obj['tepanime'] = 2;
-				case 'anime' : obj['tepanime'] = 1;
-				case 'oscille1' : obj['tepanime'] = 4;
-				case 'oscille2' : obj['tepanime'] = 5;
-				case 'oscille' : obj['tepanime'] = 3;
+				case 'anime1' : obj['tepanime'] = 2; break;
+				case 'anime' : obj['tepanime'] = 1; break;
+				case 'oscille1' : obj['tepanime'] = 4; break;
+				case 'oscille2' : obj['tepanime'] = 5; break;
+				case 'oscille' : obj['tepanime'] = 3; break;
 				default : {
 					//color hexa value
 					if( attsArr[i].charAt(0)=='#' ) {
@@ -1622,8 +1624,12 @@ JXG.TracenpocheReader = new function() {
 
     this.reel = function(parents, attributes) {
         var atts = this.handleAtts(attributes),
-            x, y;
-        atts["snapWidth"] = parents[3];
+            x, y, 
+			pas=1.0;
+        if(parents[3]) {
+			atts["snapWidth"] = parents[3];
+			pas=parents[3]-0;
+		}
         
         if (JXG.exists(atts['coords'])) {
             // Position given in attributes
@@ -1644,6 +1650,7 @@ JXG.TracenpocheReader = new function() {
 			[x+3, y], 
 			[parents[1], parents[0], parents[2]]
 			], atts);
+		el.sens=pas;
 		if(atts["tepanime"]) {
 /*
 
@@ -1652,28 +1659,35 @@ JXG.TracenpocheReader = new function() {
 @figure;
 A = point(-1,0) ;
 B = point(1,1) ;
-C = point(0,-1) ;
 d =droite(A,B) ;
-para =parallele(C,d) ; 
-r = reel(2,0,5,1) {anime};
+r = reel(2,0,5,1) {oscille};
+C = pointsur(d, r) ;
+D = point(2,-1);
+e = droite(A,D);
+s = reel(2,-5,5) {anime};
+M=pointsur(e,s);
 
 */
 			if(animationList.length==0) {
-				var animepoint = this.board.create('text',[x,y+0.5,'<span id="tepjsxanimation"><b>&gt;</b>&nbsp;Animer</span>']);
-				var tepjsxanimation=document.getElementById("tepjsxanimation");
-				tepjsxanimation["isAnime"]=false;
-				tepjsxanimation.style.color="#FF0000";
-				tepjsxanimation.onclick = function(e) {
-					if(this.isAnime) {
+				this.animepoint = this.board.create('text',[x,y+0.5,'<b>&gt;</b>&nbsp;Animer']);
+				this.animepoint.rendNode.style.color="#FF0000";
+				this.animepoint.isAnime=false;
+				this.animepoint.jsxtepobj=this;
+				this.animepoint.rendNode.jsxtepanimeobj=this.animepoint;
+				this.animepoint.rendNode.onclick = function(e) {
+					if(this.jsxtepanimeobj.isAnime) {
 						//on lance l'animation
-						this.innerHTML="<b>&gt;</b>&nbsp;Animer";
-						this.style.color="#FF0000";
+						this.jsxtepanimeobj.setText("<b>&gt;</b>&nbsp;Animer");
+						this.jsxtepanimeobj.rendNode.style.color="#FF0000";
+						this.jsxtepanimeobj.jsxtepobj.board.unsuspendUpdate();
+						clearTimeout(timeoutCaller);						
 					} else {
 						//on arrête l'animation
-						this.innerHTML="<b>[]</b>&nbsp;Stop";					
-						this.style.color="#00FF00";
+						this.jsxtepanimeobj.setText("<b>&#9632;</b>&nbsp;Stop");
+						this.jsxtepanimeobj.rendNode.style.color="#00FF00";
+						this.jsxtepanimeobj.jsxtepobj.tepAnimerGo(this.jsxtepanimeobj.jsxtepobj);						
 					}
-					this.isAnime=!this.isAnime;					
+					this.jsxtepanimeobj.isAnime=!this.jsxtepanimeobj.isAnime;					
 				}			
 				
 			}
@@ -1682,7 +1696,100 @@ r = reel(2,0,5,1) {anime};
 		return el;
     };
 	
-    
+    this.tepAnimerGo = function(obj) {
+		console.log("Animation : Go");
+		var v;
+		obj.board.suspendUpdate();
+		for(var i=0;i<animationList.length;i++) {
+			v=animationList[i][0];
+			switch(animationList[i][1]) {
+				case 2 : /* anime1 */
+					if(v.position>=1.0) v.position=0.0; break;
+				case 4 :
+				case 5 : /* oscille1 et oscille2 */
+					if ( v.position>=1.0-1e-6 ) v.sens=-Math.abs(v.sens);
+					if ( v.position<=1e-6 ) v.sens=Math.abs(v.sens); 
+					break;
+			}
+		}
+		obj.board.unsuspendUpdate();
+		timeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
+	}
+	
+    this.tepAnimerRun = function(obj) {
+		
+		function animerSlider(v,typeAnime) {
+			var mi = v._smin,
+	        	ma = v._smax,
+    	    	diff = ma-mi,
+        		newval = v.Value()+v.sens,
+				newpos = (newval-mi)/diff,
+				continuer = true;
+			switch(typeAnime) {
+				case 1 : /* anime from min to max ever*/ 
+					if (newpos>1.0) newpos = 0.0;
+					break;
+				case 2 : /* anime1 to max and stop, new run for from min to max and so on*/ 
+					if (newpos>1.0) {
+						newpos = 1.0;
+						continuer=false;
+					}
+					break;
+				case 3 : /* oscille : to max then to min then to max ever*/ 
+					if (newpos>1.0) {
+						v.sens=-v.sens;
+						newpos=1.0;
+					} else { 
+						if(newpos<0.0) {
+							v.sens=-v.sens;
+							newpos=0.0;
+						}
+					}
+					break;						
+				case 4 : /* oscille1 to max and stop, new run to min and stop, new run to max and stop and so on */ 
+					if (newpos>1.0) {
+						newpos = 1.0;
+						continuer=false;
+					}
+					if (newpos<0.0) {
+						newpos = 0.0;
+						continuer=false;
+					}
+					break;
+				case 5 : /* oscille2 to max then to min and stop, new run to max then to min and stop, and so on */ 
+					if (newpos>1.0) {
+						v.sens=-v.sens;
+						newpos = 1.0;
+					}
+					if (newpos<=0) {
+						newpos=0;
+						continuer=false;
+					}
+					break;
+			}
+			//console.log("v.position / v.sens ->"+newpos+" / "+v.sens);
+			v.position = newpos;
+			return continuer;
+		}
+		
+		this.board.suspendUpdate();
+		var oncontinue = false;
+		for(var i=0;i<animationList.length;i++) {
+			oncontinue = oncontinue || animerSlider(animationList[i][0],animationList[i][1]);
+		}
+		this.board.unsuspendUpdate();
+		if (oncontinue) {
+			timeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
+		} else {
+			obj.animepoint.isAnime=false;
+			obj.animepoint.setText("<b>&gt;</b>&nbsp;Animer");
+			obj.animepoint.rendNode.style.color="#FF0000";
+			obj.board.unsuspendUpdate();
+			clearTimeout(timeoutCaller);						
+		}
+		
+	}
+
     this.entier = function(parents, attributes) {
         return this.reel(parents, attributes);
     };
@@ -1926,3 +2033,25 @@ r = reel(2,0,5,1) {anime};
 	}
 
 };
+
+/*
+
+var animate=null;
+var compte = 0;
+function animer() {
+    var mi = v._smin,
+        ma = v._smax,
+        diff = ma-mi,
+        newval = v.Value()+1;
+    v.position = (newval-mi)/diff;
+    if (v.position>1.0) v.position = 0.0;
+    board.update();
+    compte++;
+    if(compte<10) 
+animate = setTimeout(animer,500)
+    else 
+clearTimeout(animate);
+}
+animer();
+
+*/
