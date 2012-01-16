@@ -1061,12 +1061,25 @@ JXG.extend(JXG, /** @lends JXG */ {
         for(i = 0; i < arguments.length; i++) {
             s = arguments[i];
             if (window.console && console.log) {
-                // if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, ""); // Heiko wonders why?
+                //if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
                 console.log(s);
             } else if (document.getElementById('debug')) {
                 document.getElementById('debug').innerHTML += s + "<br/>";
             }
             // else: do nothing
+        }
+    },
+
+    debugWST: function (s) {
+        var e;
+        JXG.debug(s);
+
+        if (window.console && console.log) {
+            e = new Error();
+            if (e && e.stack) {
+                console.log('stacktrace');
+                console.log(e.stack.split('\n').slice(1).join('\n'));
+            }
         }
     }
 });
