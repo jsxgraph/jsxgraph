@@ -594,6 +594,40 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Search the parse tree below <tt>node</tt> for <em>stationary</em> dependencies, i.e. dependencies hard coded into
+     * the function.
+     * @param {Object} node
+     * @param {Object} result An object where the referenced elements will be stored. Access key is their id.
+     */
+    collectDependencies: function (node, result) {
+        var i, v, e;
+
+        v = node.value;
+
+        if (node.type == 'node_var') {
+            e = this.getvar(v);
+            if (e && e.visProp && e.type && e.elementClass && e.id) {
+                result[e.id] = e;
+            }
+        }
+
+        // the $()-function-calls are special because their parameter is given as a string, not as a node_var.
+        if (node.type == 'node_op' && node.value == 'op_execfun' && node.children.length > 1 && node.children[0].value == '$' && node.children[1].children.length > 0) {
+            e = node.children[1].children[0].value;
+            result[e] = this.board.objects[e];
+        }
+
+        if (node.children) {
+            for (i = node.children.length; i > 0; i--) {
+                if (JXG.exists(node.children[i-1])) {
+                    this.collectDependencies(node.children[i-1], result);
+                }
+
+            }
+        }
+    },
+
+    /**
      * Executes a parse subtree.
      * @param {Object} node
      * @returns Something
@@ -751,8 +785,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // after this, the parameters are in pstack
                         this.execute(node.children[0]);
 
-                        this.replaceNames(node.children[1]);
-
                         ret = (function(_pstack, that) { return function() {
                             var r;
 
@@ -778,6 +810,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
                         }
 
+                        this.replaceNames(node.children[1]);
+
                         // clean up scope
                         this.sstack.pop();
                         this.scope--;
@@ -788,6 +822,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             };
                         })(this);
 
+                        ret.deps = {};
+                        this.collectDependencies(node.children[1], ret.deps);
 
                         this.pstack.pop();
                         this.pscope--;
