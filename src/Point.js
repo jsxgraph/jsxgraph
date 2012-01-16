@@ -170,11 +170,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if(this.type == JXG.OBJECT_TYPE_GLIDER) {
             if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
                 if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.X()+Math.cos(this.position),this.slideObject.center.Y()+Math.sin(this.position)]);
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
                 } else {
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
-                    this.position = JXG.Math.Geometry.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
+                    this.position = JXG.Math.Geometry.rad([this.slideObject.center.X()+1.0,this.slideObject.center.Y()],this.slideObject.center,this);
                 }
             } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
@@ -1008,8 +1008,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
             radius = this.slideObject.Radius();
 
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), 
-                                                            this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.coords.usrCoords[1] + radius*Math.cos(alpha),
+                                                            this.slideObject.center.coords.usrCoords[2] + radius*Math.sin(alpha)]);
         }
         
         this.board.update(this);

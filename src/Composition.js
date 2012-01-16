@@ -565,19 +565,19 @@ JXG.createPerpendicularSegment = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment');
     pd = JXG.createLine(board, [function () { return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]); }], attr);
 
+    /**
+     * Helper point
+     * @memberOf PerpendicularSegment.prototype
+     * @type PerpendicularPoint
+     * @name point
+     */
+    pd.point = t;
+
     pd.elType = 'perpendicularsegment';
     pd.parents = [p.id, l.id];
     pd.subs = {
         point: t
     };
-
-    /**
-     * Helper point created to create the perpendicular segment.
-     * @memberOf Perpendicular.prototype
-     * @name perpendicularpoint
-     * @type Perpendicularpoint
-     */
-    pd.perpendicularpoint = t;
 
     return pd;
 };
@@ -1142,6 +1142,14 @@ JXG.createBisector = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'bisector');
         l = JXG.createLine(board, [parents[1], p], attr);
 
+        /**
+         * Helper point
+         * @memberOf Bisector.prototype
+         * @type Point
+         * @name point
+         */
+        l.point = p;
+
         l.elType = 'bisector';
         l.parents = [parents[0].id, parents[1].id, parents[2].id];
         l.subs = {
@@ -1317,7 +1325,7 @@ JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
             parents[i].addChild(p);
         }
 
-        p.elType = 'circumcirclemidpoint';
+        p.elType = 'circumcenter';
         p.parents = [parents[0].id, parents[1].id, parents[2].id];
 
         p.generatePolynomial = function() {
@@ -1440,7 +1448,7 @@ JXG.createCircumcircle = function(board, parents, attributes) {
     var p, c, attr;
 
     try {
-        attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'point');
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'center');
         p = JXG.createCircumcircleMidpoint(board, parents, attr);
 
         p.dump = false;
@@ -1452,7 +1460,7 @@ JXG.createCircumcircle = function(board, parents, attributes) {
         c.elType = 'circumcircle';
         c.parents = [parents[0].id, parents[1].id, parents[2].id];
         c.subs = {
-            point: p
+            center: p
         };
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
@@ -1494,7 +1502,7 @@ JXG.createIncircle = function(board, parents, attributes) {
     var p, c, attr, ret;
 
     try {
-        attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'point');
+        attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'center');
         p = JXG.createIncenter(board, parents, attr);
 
         p.dump = false;
@@ -1512,8 +1520,17 @@ JXG.createIncircle = function(board, parents, attributes) {
 
         c.elType = 'incircle';
         c.parents = [parents[0].id, parents[1].id, parents[2].id];
+
+        /**
+         * The center of the incircle
+         * @memberOf Incircle.prototype
+         * @type Incenter
+         * @name center
+         */
+        c.center = p;
+
         c.subs = {
-            point: p
+            center: p
         };
     } catch(e) {
         throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
@@ -1725,29 +1742,29 @@ JXG.createIntegral = function(board, parents, attributes) {
         factor = -1;
     }
 
-    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'start');
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'curveLeft');
     pa_on_curve = board.create('glider', [startx, starty, curve], attr);
     if(JXG.isFunction(startx))
         pa_on_curve.hideElement();
 
-    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'startproject');
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
     pa_on_axis = board.create('point', [function () { return pa_on_curve.X(); }, 0], attr);
 
     //pa_on_curve.addChild(pa_on_axis);
 
-    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'end');
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'curveRight');
     pb_on_curve = board.create('glider', [endx, endy, curve], attr);
     if(JXG.isFunction(endx))
         pb_on_curve.hideElement();
 
-    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'endproject');
+    attr = JXG.copyAttributes(attributes, board.options, 'integral', 'baseRight');
     pb_on_axis = board.create('point', [function () { return pb_on_curve.X(); }, 0], attr);
 
     //pb_on_curve.addChild(pb_on_axis);
 
     attr = JXG.copyAttributes(attributes, board.options, 'integral');
     if(attr.withLabel !== false) {
-        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'text');
+        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'label');
         Int = JXG.Math.Numerics.I([start, end], curve.yterm);
         t = board.create('text', [
             function () { return pb_on_curve.X() + 0.2; },
@@ -1777,14 +1794,14 @@ JXG.createIntegral = function(board, parents, attributes) {
     p.elType = 'integral';
     p.parents = [curve.id, interval];
     p.subs = {
-        start: pa_on_curve,
-        startproject: pa_on_axis,
-        end: pb_on_curve,
-        endproject: pb_on_axis
+        curveLeft: pa_on_curve,
+        baseLeft: pa_on_axis,
+        curveRight: pb_on_curve,
+        baseRight: pb_on_axis
     };
 
     if (attr.withLabel) {
-        p.subs.text = t;
+        p.subs.label = t;
     }
 
     /**

@@ -821,8 +821,8 @@ JXG.TracenpocheReader = new function() {
             } else {                      // point on circle
                 c = parents[0];
                 return this.board.create('point', [
-                    function(){ return c.midpoint.X()+c.Radius()*Math.cos(lambda()); },
-                    function(){ return c.midpoint.Y()+c.Radius()*Math.sin(lambda()); }
+                    function(){ return c.center.X()+c.Radius()*Math.cos(lambda()); },
+                    function(){ return c.center.Y()+c.Radius()*Math.sin(lambda()); }
                     ],
                     this.handleAtts(attributes)
                 );

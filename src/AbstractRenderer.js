@@ -421,8 +421,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
         // Radius umrechnen:
         var radius = element.Radius();
-        if (radius > 0.0 && !isNaN(radius + element.midpoint.coords.scrCoords[1] + element.midpoint.coords.scrCoords[2]) && radius * element.board.unitX < 20000) {
-            this.updateEllipsePrim(element.rendNode, element.midpoint.coords.scrCoords[1], element.midpoint.coords.scrCoords[2],
+        if (radius > 0.0 && !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) && radius * element.board.unitX < 20000) {
+            this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1], element.center.coords.scrCoords[2],
                     (radius * element.board.unitX), (radius * element.board.unitY));
         }
     },

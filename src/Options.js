@@ -440,7 +440,7 @@ JXG.Options = {
         textColor : '#0000FF',
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3,
-        point: {
+        radiuspoint: {
             withLabel: false,
             visible: false,
             name: ''
@@ -469,13 +469,7 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        useDirection: false, 
-        center: {
-            visible: false,
-            withLabel: false,
-            fixed: false,
-            name: ''
-        }
+        useDirection: false
     },
 
     /* special axis options */
@@ -565,10 +559,19 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
+        center : {               // center point
             visible: false,
             fixed: false,
             withLabel: false,
+            name: ''
+        }
+    },
+
+    circumcirclearc : {
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
             name: ''
         }
     },
@@ -582,8 +585,6 @@ JXG.Options = {
         highlightFillOpacity: 0.3,
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        //fillOpacity: 0.3,
-        //highlightFillOpacity: 0.3,
         point: {
             visible: false,
             fixed: false,
@@ -694,7 +695,7 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
+        center : {               // center point
             visible: false,
             fixed: false,
             withLabel: false,
@@ -707,25 +708,25 @@ JXG.Options = {
         withLabel: true,    // Show integral value as text
         strokeWidth: 0,
         strokeOpacity: 0,
-        start: {    // Start point
+        curveleft: {    // Start point
             visible: true
         },
-        startproject: {    // Start point
+        baseleft: {    // Start point
             visible: false,
             fixed: false,
             withLabel: false,
             name: ''
         },
-        end: {      // End point
+        curveright: {      // End point
             visible: true
         },
-        endproject: {      // End point
+        baseright: {      // End point
             visible: false,
             fixed: false,
             withLabel: false,
             name: ''
         },
-        text: {
+        label: {
             fontSize: 20
         }
     },
@@ -804,14 +805,6 @@ JXG.Options = {
     /* special options for parallel lines */
     parallel : {
         strokeColor: '#000000' // Parallel line
-        /*                     // obsolete
-        point : {               // Parallel point
-            visible: false,
-            fixed: true,
-            withLabel: false,
-            name: ''
-        }
-        */
     },
 
     /* special perpendicular options */
@@ -996,7 +989,7 @@ JXG.Options = {
 
         /**#@-*/
 
-        lines: {
+        borders: {
             withLabel: false,
 		    strokeWidth: 1,
 		    highlightStrokeWidth: 1,
@@ -1007,7 +1000,7 @@ JXG.Options = {
         /**
          *  Points for regular polygons
          */ 
-        points : {                    
+        vertices : {
             withLabel: true,
             strokeColor: '#ff0000',
             fillColor: '#ff0000',
@@ -1028,6 +1021,15 @@ JXG.Options = {
         highlightFillColor: '#00FF00',
         fillOpacity: 0.3,
         highlightFillOpacity: 0.3
+    },
+
+    semicircle : {
+        midpoint: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: ''
+        }
     },
 
     /* special slider options */
@@ -1087,7 +1089,7 @@ JXG.Options = {
             highlightFillColor : 'none',
             size: 6
         },
-        segment1: {
+        baseline: {
             needsRegularUpdate : false,
             name : '',
             strokeWidth: 1,
@@ -1108,13 +1110,13 @@ JXG.Options = {
             strokeWidth: 1,
             strokeColor : '#000000'
         }, 
-        segment2: {
+        highline: {
             strokeWidth: 3,
             name : '',
             strokeColor : '#000000',
             highlightStrokeColor : '#888888'
         },
-        text: {
+        label: {
             strokeColor: '#000000'
         }
     },

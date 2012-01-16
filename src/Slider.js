@@ -88,7 +88,7 @@ JXG.createSlider = function(board, parents, attributes) {
     p2 = board.create('point', pos1,  attr);
     board.create('group',[p1,p2]);
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment1');
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'baseline');
     l1 = board.create('segment', [p1,p2], attr);
 
     // this is required for a correct projection of the glider onto the segment below
@@ -114,7 +114,7 @@ JXG.createSlider = function(board, parents, attributes) {
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  
     p3.Value = function() { 
@@ -147,7 +147,7 @@ JXG.createSlider = function(board, parents, attributes) {
         } else {
             n = '';
         }
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'text');
+        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'label');
         t = board.create('text', [function(){return (p2.X()-p1.X())*0.05+p2.X();},
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
                                   function(){return n+(p3.Value()).toFixed(precision);}],
@@ -231,8 +231,8 @@ JXG.createSlider = function(board, parents, attributes) {
     p3.subs = {
         point1: p1,
         point2: p2,
-        segment1: l1,
-        segment2: l2
+        baseLine: l1,
+        highLine: l2
     };
 
     if (withTicks) {

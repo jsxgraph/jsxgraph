@@ -322,8 +322,8 @@ JXG.GeonextReader = {
                         // A circle containing an image
                         wf = function(){ return 2.0 * el.Radius(); };
                         hf = function(){ return wf() * hOrg / wOrg; };
-                        xf = function(){ return el.midpoint.X() - wf() * 0.5; };
-                        yf = function(){ return el.midpoint.Y() - hf() * 0.5; };
+                        xf = function(){ return el.center.X() - wf() * 0.5; };
+                        yf = function(){ return el.center.Y() - hf() * 0.5; };
                         im = board.create('image', [picStr, [xf,yf], [wf,hf]], {
                             layer: level,
                             id: id,
@@ -532,7 +532,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
                         tmp = gxtReader.gEBTN(Data, 'data', 0, false);
-                        gxtEl.midpoint = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'midpoint'));
+                        gxtEl.center = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'midpoint'));
 
                         if (tmp.getElementsByTagName('radius').length > 0) {
                             gxtEl.radius = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'radius'));
@@ -540,7 +540,7 @@ JXG.GeonextReader = {
                             gxtEl.radius = gxtReader.gEBTN(tmp, 'radiusvalue');
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
-                        c = board.create('circle', [gxtEl.midpoint, gxtEl.radius], gxtEl);
+                        c = board.create('circle', [gxtEl.center, gxtEl.radius], gxtEl);
 
                         gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, c);
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
@@ -697,7 +697,7 @@ JXG.GeonextReader = {
 
                             // CIRCUMCIRCLE_CENTER
                             case "210100":
-                                board.create('circumcirclemidpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], gxtEl.out);
+                                board.create('circumcenter', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], gxtEl.out);
                                 break;
 
                             // MIDPOINT
@@ -918,11 +918,11 @@ JXG.GeonextReader = {
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
-                        gxtEl.midpoint = gxtReader.changeOriginIds(board, gxtEl.midpoint);
+                        gxtEl.center = gxtReader.changeOriginIds(board, gxtEl.center);
                         gxtEl.angle = gxtReader.changeOriginIds(board, gxtEl.angle);
                         gxtEl.radius = gxtReader.changeOriginIds(board, gxtEl.radius);
 
-                        c = board.create('arc', [gxtEl.midpoint, gxtEl.radius, gxtEl.angle], gxtEl);
+                        c = board.create('arc', [gxtEl.center, gxtEl.radius, gxtEl.angle], gxtEl);
 
                         gxtReader.printDebugMessage('debug', c, Data.nodeName, 'OK');
                         break;
@@ -967,29 +967,6 @@ JXG.GeonextReader = {
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         
-                        /*
-                         * Not necessary: is handled by getTextAnchor() in parent element
-                        // TODO: Polygons
-                        // Handle parent elements of texts
-                        if (JXG.exists(gxtEl.parent)) {
-                            if (JXG.isPoint(gxtEl.parent)) {
-                                gxtEl.x = (function (x, y, p) { return function() { return x + p.X(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + p.Y(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_CIRCLE) {  
-                                gxtEl.x = (function (x, y, p) { return function() { return x + p.midpoint.X(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + p.midpoint.Y(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_LINE) {  
-                                gxtEl.x = (function (x, y, p) { return function() { return x + (p.point1.X()+p.point2.X())*0.5; }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + (p.point1.Y()+p.point2.Y())*0.5; }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            }
-                        }
-                        */
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
                                 anchor: gxtEl.parent,
                                 id: gxtEl.id,

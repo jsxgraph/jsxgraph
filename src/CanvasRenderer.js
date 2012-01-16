@@ -448,8 +448,8 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
     // documented in AbstractRenderer
     drawEllipse: function (el) {
-        var m1 = el.midpoint.coords.scrCoords[1],
-            m2 = el.midpoint.coords.scrCoords[2],
+        var m1 = el.center.coords.scrCoords[1],
+            m2 = el.center.coords.scrCoords[2],
             sX = el.board.unitX,
             sY = el.board.unitY,
             rX = 2 * el.Radius(),

@@ -40,7 +40,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_POLYGON, JXG.OBJECT_CLASS_AREA);
 
     var i, vertex, l,
-        attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'lines');
+        attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'borders');
     
     this.withLines = attributes.withlines;
     this.attr_line = attr_line;
@@ -558,7 +558,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
     var el, i, n, p = [], rot, c, len, pointsExist, attr;
 
     if (JXG.isNumber(parents[parents.length-1]) && parents.length!=3) {
-        throw new Error("JSXGraph: A regular polygon needs two point and a number as input.");
+        throw new Error("JSXGraph: A regular polygon needs two points and a number as input.");
     }
 
     len = parents.length;
@@ -584,7 +584,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
 
     p[0] = parents[0];
     p[1] = parents[1];
-    attr = JXG.copyAttributes(attributes, board.options, 'polygon', 'points');
+    attr = JXG.copyAttributes(attributes, board.options, 'polygon', 'vertices');
     for (i=2;i<n;i++) {
         rot = board.create('transform', [Math.PI*(2.0-(n-2)/n),p[i-1]], {type:'rotate'});
         if (pointsExist) {

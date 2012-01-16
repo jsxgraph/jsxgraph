@@ -278,8 +278,8 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
     var el, mp, attr;
     
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'point');
-        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'center');
+        mp = board.create('circumcenter',[parents[0], parents[1], parents[2]], attr);
 
         mp.dump = false;
 
@@ -288,8 +288,16 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
 
         el.elType = 'circumcirclesector';
         el.parents = [parents[0].id, parents[1].id, parents[2].id];
+
+        /**
+         * Center of the circumcirclesector
+         * @memberOf CircumcircleSector.prototype
+         * @name center
+         * @type Circumcenter
+         */
+        el.center = mp;
         el.subs = {
-            point: mp
+            center: mp
         }
     } else {
         throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + 
@@ -391,7 +399,7 @@ JXG.createAngle = function(board, parents, attributes) {
             }
         }
         
-        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'point');
+        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
         p = board.create('point', [
             function(){
                 var A = parents[0], S = parents[1],
