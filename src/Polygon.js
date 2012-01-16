@@ -353,7 +353,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
                 idx = this.findPoint(arguments[i]);
             }
             
-            if (JXG.isNumber(idx) && idx > -1 && idx < this.vertices.length && nidx.indexOf(idx) === -1) {
+            if (JXG.isNumber(idx) && idx > -1 && idx < this.vertices.length && JXG.indexOf(nidx, idx) === -1) {
                 nidx.push(idx);
             }
         }

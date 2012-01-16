@@ -149,8 +149,11 @@ JXG.extend(JXG, /** @lends JXG */ {
         };
     },
 
-    ieVersion: (function(){
-
+    /**
+     * Internet Explorer version. Works only for IE > 4.
+     * @type Number
+     */
+    ieVersion: (function() {
         var undef,
             v = 3,
             div = document.createElement('div'),
@@ -759,6 +762,29 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
         }
         return keys;
+    },
+    
+    /**
+     * Search an array for a given value.
+     * @param {Array} array
+     * @param {%} value
+     * @returns {Number} The index of the first appearance of the given value, or
+     * <tt>-1</tt> if the value was not found.
+     */
+    indexOf: function (array, value) {
+        var i;
+        
+        if (Array.indexOf) {
+            return array.indexOf(value);
+        }
+        
+        for (i = 0; i < array.length; i++) {
+            if (array[i] === value) {
+                return i;
+            }
+        }
+        
+        return -1;
     },
 
     /**
