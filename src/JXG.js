@@ -254,6 +254,20 @@ JXG.extend(JXG, /** @lends JXG */ {
     })(),
 
     /**
+     * Handle default parameters.
+     * @param {%} v Given value
+     * @param {%} d Default value
+     * @returns {%} <tt>d</tt>, if <tt>v</tt> is undefined or null.
+     */
+    def: function (v, d) {
+        if (JXG.exists(v)) {
+            return v;
+        } else {
+            return d;
+        }
+    },
+
+    /**
      * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
      * @param {String} s String containing either <strong>true</strong> or <strong>false</strong>.
      * @returns {Boolean} String typed boolean value converted to boolean.
