@@ -90,7 +90,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         highlightFillColor : '#6BBA70',
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3,
-        lines: {
+        borders: {
             withLabel: false,
             highlightStrokeColor: '#eee',
             layer: 5
@@ -120,7 +120,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
             size: 6,
             face: '<>'
         },
-        segment1: {
+        baseline: {
             needsRegularUpdate : false,
             name : '',
             strokeWidth: 1,
@@ -141,13 +141,13 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
             strokeWidth: 2,
             strokeColor: '#ddd'
         },
-        segment2: {
+        highline: {
             strokeWidth: 5,
             name : '',
             strokeColor : '#eee',
             highlightStrokeColor : '#eee'
         },
-        text: {
+        label: {
             strokeColor: '#ccc'
         }
     },
