@@ -340,37 +340,44 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
             if(attributes.highlightbysize) {
                 sector[i].highlight = function() {
-                    this.board.renderer.highlight(this);
-                    var dx = - this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
-                        dy = - this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                    if (!this.highlighted) {
+                        this.highlighted = true;
 
-                    if(this.label.content != null) {
-                        this.label.content.rendNode.style.fontSize = (2*this.board.options.text.fontSize) + 'px';
-                    }
 
-                    this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
+                        this.board.renderer.highlight(this);
+                        var dx = - this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
+                            dy = - this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+
+                        if(this.label.content != null) {
+                            this.label.content.rendNode.style.fontSize = (2*this.label.content.visProp.fontsize) + 'px';
+                        }
+
+                        this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
                             this.point1.coords.usrCoords[1]+dx*1.1,
                             this.point1.coords.usrCoords[2]+dy*1.1
                         ], this.board);
-                    this.prepareUpdate().update().updateRenderer();
+                        this.prepareUpdate().update().updateRenderer();
+                    }
                 };
 
                 sector[i].noHighlight = function() {
-                    this.board.renderer.noHighlight(this);
+                    if (this.highlighted) {
+                        this.highlighted = false;
+                        this.board.renderer.noHighlight(this);
 
-                    var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
-                        dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
+                        var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
+                            dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
-                    if(this.label.content != null) {
-                        this.label.content.rendNode.style.fontSize = (this.board.options.text.fontSize) + 'px';
-                    }
+                        if(this.label.content != null) {
+                            this.label.content.rendNode.style.fontSize = (this.label.content.visProp.fontsize) + 'px';
+                        }
 
-
-                    this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
+                        this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
                             this.point1.coords.usrCoords[1]+dx/1.1,
                             this.point1.coords.usrCoords[2]+dy/1.1
                         ], this.board);
-                    this.prepareUpdate().update().updateRenderer();
+                        this.prepareUpdate().update().updateRenderer();
+                    }
                 };
             }
 

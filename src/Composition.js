@@ -1765,7 +1765,6 @@ JXG.createIntegral = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'integral');
     if(attr.withLabel !== false) {
         attr = JXG.copyAttributes(attributes, board.options, 'integral', 'label');
-        Int = JXG.Math.Numerics.I([start, end], curve.yterm);
         t = board.create('text', [
             function () { return pb_on_curve.X() + 0.2; },
             function () { return pb_on_curve.Y() - 0.8; },
