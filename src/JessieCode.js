@@ -1074,6 +1074,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     case 'op_do':
                         ret = ' do {\n' + this.compile(node.children[0]) + '} while (' + this.compile(node.children[1]) + ');\n';
                         break;
+                    case 'op_for':
+                        ret = ' for (' + this.compile(node.children[0]) + '; ' + this.compile(node.children[1]) + '; ' + this.compile(node.children[2]) + ') {\n' + this.compile(node.children[3]) + '\n}\n';
+                        break;
                     case 'op_param':
                         if (node.children[1]) {
                             ret = this.compile(node.children[1]) + ', ';
