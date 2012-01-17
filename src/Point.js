@@ -912,24 +912,25 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         var delay = 35,
-            steps = Math.ceil(time/(delay * 1.0)),
-            coords = new Array(repeat*(steps+1)),
+            steps = Math.ceil(time/(delay*options.repeat)),
+            coords = new Array(options.repeat*(steps+1)),
             X = this.coords.usrCoords[1],
             Y = this.coords.usrCoords[2],
             dX = (where[0] - X),
             dY = (where[1] - Y),
             i, j,
             stepFun = function (i) {
+                var x = (i < steps/2 ? 2*i/steps : 2*(steps-i)/steps);
                 if (options.effect && options.effect == '<>') {
-                    return Math.pow(Math.sin((i/(steps*1.0))*Math.PI/2.), 2);
+                    return Math.pow(Math.sin((x)*Math.PI/2.), 2);
                 }
-                return i/steps;
+                return x;
             };
-        
-        for(j = 0; j < options.repeat; j++) {
-            for(i=steps; i>=0; i--) {
+
+        for (j = 0; j < options.repeat; j++) {
+            for(i = steps; i >= 0; i--) {
                 coords[j*(steps+1) + steps-i] = [X + dX * stepFun(i),
-                                                 Y+ dY * stepFun(i)];
+                    Y+ dY * stepFun(i)];
             }
         }
         this.animationPath = coords;
