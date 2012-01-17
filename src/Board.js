@@ -1459,11 +1459,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Event} Event The browsers event object.
      * @private
      */
-    mouseMoveListener: function (Event, i) {
+    mouseMoveListener: function (Event) {
         var pos;
-
-        // if not called from touch events, i is undefined
-        i = 0;
 
         pos = this.getMousePosition(Event);
 
@@ -1763,7 +1760,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
                     plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
-                    //plaintext += 'console.log("set X ", el.name);\n';
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
@@ -1784,7 +1780,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     plaintext += 'rgbo = JXG.rgba2rgbo('+(right)+');\n';
                     plaintext += 'el.visProp.strokecolor = rgbo[0];\n';
                     plaintext += 'el.visProp.strokeopacity = rgbo[1];\n';
-                    // plaintext += 'el.strokeColor = ' + (right) +';\n';
                     break;
                 case 'style':
                     plaintext += 'el.setStyle(' + (right) +');\n';
@@ -1803,7 +1798,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     JXG.debug("property '" + property + "' in conditions not yet implemented:" + right);
                     break;
             }
-            //plaintext += "}\n";
             str = str.slice(j+7); // cut off "</data>"
             i = str.indexOf('<data>');
             j = str.indexOf('<'+'/data>');

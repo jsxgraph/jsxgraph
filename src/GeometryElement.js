@@ -426,7 +426,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             switch(p) {
                 case 'strokecolor':
                 case 'fillcolor':
-                    //console.log(hash[r]);
                     animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'strokeopacity':

@@ -592,7 +592,9 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} owner The scope in which the event trigger is called.
      */
     addEvent: function ( obj, type, fn, owner ) {
-        owner['x_internal'+type] = function () {return fn.apply(owner,arguments);};
+        owner['x_internal'+type] = function () {
+            return fn.apply(owner, arguments);
+        };
 
         if (JXG.exists(obj.addEventListener)) { // Non-IE browser
             obj.addEventListener(type, owner['x_internal'+type], false);
