@@ -246,7 +246,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         var i;
 
         for (i = 0; i < this.borders.length; i++) {
-            this.borders[i].remove();
+            this.board.removeObject(this.borders[i]);
         }
         this.board.renderer.remove(this.rendNode);
     },
