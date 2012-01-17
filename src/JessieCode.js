@@ -404,7 +404,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             this.board.update();
         } else if (o.type && o.elementClass && o.visProp) {
-            if (this.visPropBlacklist.indexOf(what.toLowerCase && what.toLowerCase()) === -1) {
+            if (JXG.indexOf(this.visPropBlacklist, what.toLowerCase && what.toLowerCase()) === -1) {
                 par[what] = value;
                 o.setProperty(par);
             } else {
@@ -873,7 +873,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         if (props) {
                             attr = this.propstack[this.propscope];
                             for (i in attr) {
-                                if (this.visPropBlacklist.indexOf(i.toLowerCase()) > -1) {
+                                if (JXG.indexOf(this.visPropBlacklist, i.toLowerCase()) > -1) {
                                     this._warn('Attribute "' + i + '" can not be set with JessieCode.');
                                     delete attr[i];
                                 }
@@ -1272,7 +1272,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         return n;
     }
 
-});/*
+});
+/*
     Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
