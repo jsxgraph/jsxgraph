@@ -340,9 +340,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
             if(attributes.highlightbysize) {
                 sector[i].highlight = function() {
-                    if (!this.highlighted) {
-                        this.highlighted = true;
-
+                    if (!JXG.exists(this.board.highlightedObjects[this.id])) {
+                        this.board.highlightedObjects[this.id] = this;
 
                         this.board.renderer.highlight(this);
                         var dx = - this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
@@ -361,8 +360,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 };
 
                 sector[i].noHighlight = function() {
-                    if (this.highlighted) {
-                        this.highlighted = false;
+                    if (JXG.exists(this.board.highlightedObjects[this.id])) {
+                        delete(this.board.highlightedObjects[this.id]);
                         this.board.renderer.noHighlight(this);
 
                         var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],

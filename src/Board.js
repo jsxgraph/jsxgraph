@@ -844,10 +844,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
-                if (this.highlightedObjects[el] == null) { // highlight only if not highlighted
-                    this.highlightedObjects[el] = pEl;
+                //if (!JXG.exists(this.highlightedObjects[el])) { // highlight only if not highlighted
+                //    this.highlightedObjects[el] = pEl;
                     pEl.highlight();
-                }
+                //}
             }
         }
     },
