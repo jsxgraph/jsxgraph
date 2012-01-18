@@ -340,8 +340,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             }
             if(attributes.highlightbysize) {
                 sector[i].highlight = function() {
-                    if (!JXG.exists(this.board.highlightedObjects[this.id])) {
-                        this.board.highlightedObjects[this.id] = this;
+                    if (!this.highlighted) {
+                        this.highlighted = true;
 
                         this.board.renderer.highlight(this);
                         var dx = - this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
@@ -349,6 +349,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 
                         if(this.label.content != null) {
                             this.label.content.rendNode.style.fontSize = (2*this.label.content.visProp.fontsize) + 'px';
+                            this.label.content.prepareUpdate().update().updateRenderer();
                         }
 
                         this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
@@ -360,15 +361,16 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 };
 
                 sector[i].noHighlight = function() {
-                    if (JXG.exists(this.board.highlightedObjects[this.id])) {
-                        delete(this.board.highlightedObjects[this.id]);
+                    if (this.highlighted) {
+                        this.highlighted = false;
                         this.board.renderer.noHighlight(this);
 
                         var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
                             dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
                         if(this.label.content != null) {
-                            this.label.content.rendNode.style.fontSize = (this.label.content.visProp.fontsize) + 'px';
+                            this.label.content.rendNode.style.fontSize = (this.label.content.visProp.fontsize*2) + 'px';
+                            this.label.content.prepareUpdate().update().updateRenderer();
                         }
 
                         this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [

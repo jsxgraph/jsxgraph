@@ -99,6 +99,13 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.hasLabel = false;
 
     /**
+     * True, if the element is currently highlighted.
+     * @type Boolean
+     * @default false
+     */
+    this.highlighted = false;
+
+    /**
      * Stores all Intersection Objects which in this moment are not real and
      * so hide this element.
      * @type Object
@@ -867,8 +874,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Highlights the element.
      */
     highlight: function () {
-        if (!JXG.exists(this.board.highlightedObjects[this.id])) { // highlight only if not highlighted
-            this.board.highlightedObjects[this.id] = this;
+        if (!this.highlighted) { // highlight only if not highlighted
+            this.highlighted = true;
             this.board.renderer.highlight(this);
         }
         return this;
@@ -878,8 +885,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Uses the "normal" properties of the element.
      */
     noHighlight: function () {
-        if (JXG.exists(this.board.highlightedObjects[this.id])) { // highlight only if not highlighted
-            delete(this.board.highlightedObjects[this.id]);
+        if (this.highlighted) { // highlight only if not highlighted
+            this.highlighted = false;
             this.board.renderer.noHighlight(this);
         }
         return this;

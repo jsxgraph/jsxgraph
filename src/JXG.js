@@ -344,8 +344,8 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         if ((!JXG.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
             // Convert GEONExT syntax into  JavaScript syntax
-            /*newTerm = JXG.GeonextParser.geonext2JS(term, board);
-            return new Function(variableName,'return ' + newTerm + ';');*/
+            //newTerm = JXG.GeonextParser.geonext2JS(term, board);
+            //return new Function(variableName,'return ' + newTerm + ';');
             f = board.jc.snippet(term, true, variableName, true);
         } else if (JXG.isFunction(term)) {
             f = term;
