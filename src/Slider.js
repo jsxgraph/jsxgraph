@@ -114,8 +114,8 @@ JXG.createSlider = function(board, parents, attributes) {
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
 
-    p3.type = JXG.OBJECT_TYPE_SLIDER;
-    
+    p3.elementClass = JXG.OBJECT_CLASS_OTHER;
+
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  
