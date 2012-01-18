@@ -197,6 +197,10 @@ JXG.GeonextReader = {
             gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
         }
 
+        if (typeof(gxtEl.label === 'string')) {
+            delete(gxtEl.label);
+        }
+
         delete gxtEl.color;
         return gxtEl;
     },
