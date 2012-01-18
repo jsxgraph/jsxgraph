@@ -591,15 +591,19 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Function} fn The function to call when the event is triggered.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    addEvent: function ( obj, type, fn, owner ) {
-        owner['x_internal'+type] = function () {
-            return fn.apply(owner, arguments);
-        };
+    addEvent: function (obj, type, fn, owner) {
+        var el = function () {
+                return fn.apply(owner, arguments);
+            };
 
-        if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-            obj.addEventListener(type, owner['x_internal'+type], false);
+        el.origin = fn;
+        owner['x_internal'+type] = owner['x_internal'+type] || [];
+        owner['x_internal'+type].push(el);
+
+        if (JXG.exists(obj) && JXG.exists(obj.addEventListener)) { // Non-IE browser
+            obj.addEventListener(type, el, false);
         } else {  // IE
-            obj.attachEvent('on'+type, owner['x_internal'+type]);
+            obj.attachEvent('on'+type, el);
         }
     },
 
@@ -610,13 +614,36 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Function} fn The function to call when the event is triggered.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    removeEvent: function ( obj, type, fn, owner ) {
+    removeEvent: function (obj, type, fn, owner) {
+        var em = 'JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type],
+            i, j = -1, l;
+
+        if ((!JXG.exists(owner) || !JXG.exists(owner['x_internal' + type])) && !JXG.isArray(owner['x_internal' + type])) {
+            JXG.debug(em);
+            return;
+        }
+
+        l = owner['x_internal' + type].length;
+        for (i = 0; i < l; i++) {
+            if (owner['x_internal' + type][i].origin === fn) {
+                j = i;
+                break;
+            }
+        }
+
+        if (j === -1) {
+            JXG.debug(em + '; Event listener not found.');
+            return;
+        }
+
         try {
             if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-                obj.removeEventListener(type, owner['x_internal'+type], false);
+                obj.removeEventListener(type, owner['x_internal'+type][j], false);
             } else {  // IE
-                obj.detachEvent('on'+type, owner['x_internal'+type]);
+                obj.detachEvent('on'+type, owner['x_internal'+type][j]);
             }
+
+            JXG.removeElementFromArray(owner['x_internal'+type], owner['x_internal'+type][j]);
         } catch(e) {
             JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
         }

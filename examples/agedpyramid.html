@@ -68,13 +68,11 @@
                        g.highlight();
                        w[g._number].highlight();
                        setText(g._number);
-console.log('--- mouseover', g.id);
                    };
                })(m[i]), m[i]);
            JXG.addEvent(m[i].rendNode, 'mouseout',
                (function (g) {
                    return function () {
-console.log('mouseout', g.id);
                        g.noHighlight();
                        w[g._number].noHighlight();
                    };
@@ -94,12 +92,10 @@ console.log('mouseout', g.id);
            JXG.addEvent(w[i].rendNode, 'mousemove',
                (function(g,d){ return function(){
                                    g.highlight(); m[g._number].highlight(); setText(g._number);
-console.log('--- mouseover', g.id);
                                };})(w[i]), w[i]);
            JXG.addEvent(w[i].rendNode, 'mouseout',
                (function(g){ return function(){
                                    g.noHighlight(); m[g._number].noHighlight();
-console.log('mouseout', g.id);
                                };})(w[i]), w[i]);
            w[i].hasPoint = function(){return false;};
            w[i]._number = i;
