@@ -114,12 +114,12 @@ JXG.createSlider = function(board, parents, attributes) {
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
 
-    p3.elementClass = JXG.OBJECT_CLASS_OTHER;
-
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  
-    p3.Value = function() { 
+    p3.elementClass = JXG.OBJECT_CLASS_OTHER;
+
+    p3.Value = function() {
         return p3.visProp.snapwidth === -1 ? this.position*sdiff+smin : Math.round((this.position*sdiff+smin)/this.visProp.snapwidth)*this.visProp.snapwidth;
     };
 
