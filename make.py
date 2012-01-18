@@ -71,6 +71,7 @@ output = "distrib"
 version = None
 hint = None
 reset = ""
+port = 4224
 
 
 '''
@@ -86,6 +87,7 @@ def usage():
     print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
+    print "  -p, --port=PORT        Set server port for the JsTestDriver server. Default is 4224."
     print "      --reset            Force the test server to reload the browsers."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
@@ -101,6 +103,7 @@ def usage():
     print "  Hint                   Run JSHint on the file given with -l or --hint."
     print "  Plot                   Make a slim JSXGraph core just for function plotting."
     print "  Test                   Run Unit Tests with JsTestDriver."
+    print "  TestServer             Run JsTestDriver server."
     print "  Compressor             Minify and create a zip archive for JSXCompressor."
     print "  All                    Makes JSXGraph and Compressor."
     
@@ -370,7 +373,15 @@ def makeHint():
 def makeTest():
     global jstest, reset
     
-    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole --reset');
+    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+
+'''
+    Run Unit Tests Server
+'''
+def makeTestServer():
+    global jstest, reset, port
+
+    os.system('java -jar ' + jstest + ' --port ' + str(port));
 
 
 '''
@@ -382,10 +393,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest, reset
+    global yui, jsdoc, version, output, hint, jstest, reset, port
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset"])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -405,6 +416,8 @@ def main(argv):
             hint = arg
         elif opt in ("-t", "--test"):
             jstest = arg
+        elif opt in ("-p", "--port"):
+            port = arg
         elif opt in ("--reset"):
             reset = '--reset'
 

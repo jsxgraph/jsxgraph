@@ -512,13 +512,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
-            //node.setAttribute("class", element.visProp.cssclass); //
+
             node.className = element.visProp.cssclass;
             if (this.container.style.zIndex=='') {
                 z = 0;
             } else {
                 z = parseInt(this.container.style.zIndex);
             }
+
             node.style.zIndex = z+element.board.options.layer.text; //'10';
             this.container.appendChild(node);
             node.setAttribute('id', this.container.id + '_' + element.id);

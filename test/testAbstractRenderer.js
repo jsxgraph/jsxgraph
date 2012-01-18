@@ -58,12 +58,20 @@ TestCase("AbstractRenderer", {
                 id: id,
                 transformations: [],
                 plaintext: 'text',
+                board: {
+                    options: {
+                        layer: {
+                            text: 10
+                        }
+                    }
+                },
                 coords: {
                     scrCoords: [1, 10, 10]
                 }
             };
 
         this.ar.drawText(element);
+
         return element;
     },
 
@@ -74,6 +82,8 @@ TestCase("AbstractRenderer", {
             node = document.getElementById('jxgbox_textnode');
         assertNotNull('text has been added', node);
         assertEquals('text content', 'text', node.innerHTML);
+
+        // colors involve {SVG,VML,Canvas}Renderer, don't test here!
         //assertTrue('text color', '#000000' === node.style.color || 'black' === node.style.color);
     },
 

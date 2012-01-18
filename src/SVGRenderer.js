@@ -825,7 +825,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node = el.rendNode;
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
-                    node.style.color = c;     
+                    node.style.color = c;
 					node.style.opacity = oo;
                 } else {
                     node.setAttributeNS(null, "style", "fill:" + c);
