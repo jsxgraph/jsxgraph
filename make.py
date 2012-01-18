@@ -64,8 +64,8 @@ import urllib
 
 
 # Default values for options. May be overridden via command line options
-yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.6"
-jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.4.0/jsdoc-toolkit"
+yui = "~/Tools/yuicompressor"
+jsdoc = "~/Tools/jsdoc-toolkit"
 jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.1.jar"
 output = "distrib"
 version = None
