@@ -874,6 +874,17 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Highlights the element.
      */
     highlight: function () {
+        // I know, we have the JXG.Board.highlightedObjects AND JXG.GeometryElement.highlighted and YES we need both.
+        // Board.highlightedObjects is for the internal highlighting and GeometryElement.highlighted is for user highlighting
+        // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
+        // defined highlighting in many ways:
+        //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
+        //    everything (e.g. the pie chart example http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart (not exactly
+        //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
+        //    where it just kept highlighting until the radius of the pie was far beyond infinity...
+        //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
+        //    dehighlighted immediately, because highlight puts the element into highlightedObjects and from there it gets dehighlighted
+        //    through dehighlightAll.
         if (!this.highlighted) { // highlight only if not highlighted
             this.highlighted = true;
             this.board.renderer.highlight(this);
@@ -885,6 +896,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Uses the "normal" properties of the element.
      */
     noHighlight: function () {
+        // see comment in JXG.GeometryElement.highlight()
         if (this.highlighted) { // highlight only if not highlighted
             this.highlighted = false;
             this.board.renderer.noHighlight(this);
