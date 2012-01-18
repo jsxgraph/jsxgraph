@@ -568,6 +568,10 @@ JXG.Options = {
     },
 
     circumcirclearc : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
         center: {
             visible: false,
             withLabel: false,
@@ -664,7 +668,7 @@ JXG.Options = {
         strokeColor : '#C0C0C0',
         strokeOpacity : '0.5',
         strokeWidth: 1,
-        dash : 2,
+        dash : 0,    // dashed grids slow down the iPad considerably
         /* snap to grid options */
         
         /**
