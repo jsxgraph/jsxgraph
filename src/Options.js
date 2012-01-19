@@ -978,6 +978,7 @@ JXG.Options = {
          * @visprop
          */
 
+        hasInnerPoints: false, // if true, pointing to inner points triggers hasPoint.
         fillColor : '#00FF00',
         highlightFillColor : '#00FF00',
         fillOpacity : 0.3,
