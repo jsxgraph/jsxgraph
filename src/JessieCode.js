@@ -416,6 +416,29 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Encode characters outside the ASCII table into HTML Entities, because JavaScript or JS/CC can't handle a RegEx
+     * applied to a string with unicode characters.
+     * @param {String} string
+     * @returns {String}
+     */
+    utf8_encode : function (string) {
+        var utftext = [], n, c;
+
+        for (n = 0; n < string.length; n++) {
+            c = string.charCodeAt(n);
+
+            if (c < 128) {
+                utftext.push(String.fromCharCode(c));
+            } else {
+                utftext.push('&#x' + c.toString(16) + ';');
+            }
+
+        }
+
+        return utftext.join('');
+    },
+
+    /**
      * Parses JessieCode
      * @param {String} code
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
@@ -424,7 +447,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var error_cnt = 0,
             error_off = [],
             error_la = [],
-            ccode = code.split('\n'), i, cleaned = [];
+            ccode = code.replace(/\r\n/g,'\n').split('\n'), i, cleaned = [];
 
         if (!JXG.exists(geonext)) {
             geonext = false;
@@ -447,6 +470,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             }
         }
         code = cleaned.join('\n');
+        code = this.utf8_encode(code);
 
         if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
             for(i = 0; i < error_cnt; i++)
