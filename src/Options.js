@@ -978,7 +978,14 @@ JXG.Options = {
          * @visprop
          */
 
-        hasInnerPoints: false, // if true, pointing to inner points triggers hasPoint.
+        /**
+         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * @see JXG.GeometryElement#hasPoint
+         * @name JXG.Polygon#hasInnerPoints
+         * @type Boolean
+         * @default false
+         */
+        hasInnerPoints: false,
         fillColor : '#00FF00',
         highlightFillColor : '#00FF00',
         fillOpacity : 0.3,
