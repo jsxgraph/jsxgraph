@@ -2488,7 +2488,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * two or more elements.
      */
     create: function (elementType, parents, attributes) {
-        var el, i, s;
+        var el, i;
 
         elementType = elementType.toLowerCase();
 

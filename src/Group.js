@@ -182,6 +182,8 @@ JXG.createGroup = function(board, parents, attributes) {
     for (i = 0; i < parents.length; i++) {
         g.parents.push(parents[i].id);
     }
+
+    return g;
 };
 
 JXG.JSXGraph.registerElement('group', JXG.createGroup);
