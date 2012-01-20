@@ -885,8 +885,9 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-
-                        c = board.create('curve', ['x',gxtEl.funct], {
+						//gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board);
+						
+                        c = board.create('curve', ['x', gxtEl.funct], {
                                 id: gxtEl.id,
                                 name: gxtEl.name,
                                 strokeColor: gxtEl.strokeColor,
@@ -970,7 +971,7 @@ JXG.GeonextReader = {
                         gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
                         gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
-                        // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
+                        // not used: gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         
@@ -993,7 +994,12 @@ JXG.GeonextReader = {
                         gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                         gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                         gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
-
+						/*
+						gxtEl.functionx = JXG.GeonextParser.gxt2jc(gxtEl.functionx, board);
+						gxtEl.functiony = JXG.GeonextParser.gxt2jc(gxtEl.functiony, board);
+						gxtEl.min = JXG.GeonextParser.gxt2jc(gxtEl.min, board);
+						gxtEl.max = JXG.GeonextParser.gxt2jc(gxtEl.max, board);
+						*/
                         gxtEl.fillColor = 'none';
                         gxtEl.highlightFillColor = 'none';
                         
