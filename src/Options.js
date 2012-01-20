@@ -1073,6 +1073,16 @@ JXG.Options = {
         withTicks: true,
         withLabel: true,
 
+        layer: 9,
+        showInfobox: false,
+        name : '',
+        visible: true,
+        strokeColor : '#000000',
+        highlightStrokeColor : '#888888',
+        fillColor : '#ffffff',
+        highlightFillColor : 'none',
+        size: 6,
+
         /**#@-*/
             
         point1: {
@@ -1090,18 +1100,6 @@ JXG.Options = {
             visible: false,
             fixed: true,
             name: ''
-        },
-        glider: {
-            layer: 9,
-            showInfobox: false,
-            name : '',
-            withLabel: false,
-            visible: true,
-            strokeColor : '#000000',
-            highlightStrokeColor : '#888888',
-            fillColor : '#ffffff',
-            highlightFillColor : 'none',
-            size: 6
         },
         baseline: {
             needsRegularUpdate : false,

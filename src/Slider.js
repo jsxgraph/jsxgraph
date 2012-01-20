@@ -103,14 +103,9 @@ JXG.createSlider = function(board, parents, attributes) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
-    /*
-     * Special naming convention for sliders:
-     * p3 (which is the glider) receives the sliders name
-     */
-    if (attributes['name'] && attributes['name']!='') {
-        attr['name'] = attributes['name'];
-    }    
+    attr = JXG.copyAttributes(attributes, board.options, 'slider');
+    // overwrite this in any case; the sliders label is a special text element, not the gliders label.
+    attr.withLabel = false;
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
 
@@ -157,10 +152,10 @@ JXG.createSlider = function(board, parents, attributes) {
         /**
          * The text element to the right of the slider, indicating its current value.
          * @memberOf Slider.prototype
-         * @name text
+         * @name label
          * @type JXG.Text
          */
-        p3.text = t;
+        p3.label.content = t;
     }
 
     /**
