@@ -345,19 +345,19 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, q, text, attr,
+    var el, p, q, text, attr, attrsub,
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
         i = 0,
         j, x, pre, post, found, dot;
 
-
     // Test if three points are given
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
+        attr = JXG.copyAttributes(attributes, board.options, 'angle');
         //  If empty, create a new name
-        text = attributes.text;
-        if(text == '') {
+        text = attr.text;
+        if (text == '') {
             while(i < possibleNames.length) {
                 j=i;
                 x = possibleNames[i];
@@ -374,7 +374,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     i = possibleNames.length+1;
                 }
             }
-            if(i == possibleNames.length) {
+            if (i == possibleNames.length) {
                 pre = '&alpha;_{';
                 post = '}';
                 found = false;
@@ -399,18 +399,18 @@ JXG.createAngle = function(board, parents, attributes) {
             }
         }
         
-        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
+        attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
         p = board.create('point', [
             function(){
                 var A = parents[0], S = parents[1],
                     r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attr);
+            }], attrsub);
 
         p.dump = false;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
+        attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
         // Second helper point for square
         q = board.create('point', [
             function(){
@@ -418,12 +418,10 @@ JXG.createAngle = function(board, parents, attributes) {
                     r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attr);
+            }], attrsub);
 
         q.dump = false;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'angle');
-        
         // Sector is just a curve with its own updateDataArray method
         el = board.create('sector', [parents[1], p, parents[2]], attr);
 

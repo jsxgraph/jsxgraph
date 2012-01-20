@@ -439,6 +439,7 @@ JXG.Options = {
         strokeColor : '#FF7F00',
         textColor : '#0000FF',
         fillOpacity : 0.3,
+        text : '',
         highlightFillOpacity : 0.3,
         radiuspoint: {
             withLabel: false,
