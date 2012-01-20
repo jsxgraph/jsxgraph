@@ -40,21 +40,12 @@
 JXG.Text = function (board, content, coords, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
 
-    var coname = ['X', 'Y'], i;
+    var i;
 
     this.content = content;
     this.plaintext = '';
 
-    // see JXG.Point#Xjc and JXG.Point#Yjc for an explanation
-    this.Xjc = null;
-    this.Yjc = null;
-
-    for (i = 0; i < 2; i++) {
-        if (typeof coords[i] === 'string') {
-            this[coname[i] + 'jc'] = coords[i];
-            coords[i] = JXG.createFunction(coords[i], board, null, true);
-        }
-    }
+    this.isDraggable = false;
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
@@ -72,11 +63,11 @@ JXG.Text = function (board, content, coords, attributes) {
              this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
         this.isDraggable = true;
     } else {
-        if (!JXG.isFunction(coords[0]) && !JXG.isFunction(coords[1])) {
+        if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
             this.isDraggable = true;
         }
-        this.X = JXG.createFunction(coords[0],this.board,'');
-        this.Y = JXG.createFunction(coords[1],this.board,'');
+        this.X = JXG.createFunction(coords[0], this.board, null, true);
+        this.Y = JXG.createFunction(coords[1], this.board, null, true);
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
@@ -116,7 +107,8 @@ JXG.Text = function (board, content, coords, attributes) {
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
         setText: 'setTextJessieCode',
-        free: 'free'
+        free: 'free',
+        move: 'setCoords'
     });
 
     return this;
@@ -224,15 +216,23 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     /**
-     * Set the text to new, fixed coordinates.
+     * Move the text to new coordinates.
      * @param {number} x
      * @param {number} y
      * @return {object} reference to the text object.
      */
     setCoords: function (x,y) {
-        this.X = function() { return x; };
-        this.Y = function() { return y; };
-        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+        if (this.isDraggable) {
+            if (JXG.isArray(x) && x.length > 1) {
+                y = x[1];
+                x = x[0];
+            }
+
+            this.X = function() { return x; };
+            this.Y = function() { return y; };
+            this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+        }
+
         return this;
     },
 
