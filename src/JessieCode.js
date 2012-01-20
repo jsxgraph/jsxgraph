@@ -460,7 +460,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                                        .replace(/Rad\(/g, 'rad(')
                                        .replace(/Sin\(/g, 'sin(')
                                        .replace(/Cos\(/g, 'cos(')
-                                       .replace(/Dist/g, 'dist(')
+                                       .replace(/Dist\(/g, 'dist(')
                                        .replace(/Factorial\(/g, 'factorial(')
                                        .replace(/If\(/g, 'if(')
                                        .replace(/Round\(/, 'round(');
