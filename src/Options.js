@@ -437,9 +437,7 @@ JXG.Options = {
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
-        textColor : '#0000FF',
         fillOpacity : 0.3,
-        text : '',
         highlightFillOpacity : 0.3,
         radiuspoint: {
             withLabel: false,
@@ -459,6 +457,9 @@ JXG.Options = {
             face: 'o',
             withLabel: false,
             name: ''
+        },
+        label: {
+            strokeColor: '#0000FF'
         }
     },
 
@@ -1289,7 +1290,6 @@ JXG.Validator = (function () {
         strokeWidth : validateInteger,
         takeFirst : false,
         takeSizeFromFile : false,
-        textColor : validateColor,
         to10: false,
         toOrigin: false,
         translateTo10: false,

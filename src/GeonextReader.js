@@ -938,9 +938,9 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
                         try {
-                            gxtEl.text = Data.getElementsByTagName('text')[0].firstChild.data;
+                            gxtEl.name = Data.getElementsByTagName('text')[0].firstChild.data;
                         } catch (e) {
-                            gxtEl.text = '';
+                            gxtEl.name = '';
                         }
 
                         c = board.create('angle', [gxtEl.first, gxtEl.middle, gxtEl.last], gxtEl);

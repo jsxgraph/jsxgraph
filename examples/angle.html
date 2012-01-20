@@ -20,7 +20,13 @@
         var l2 = board.create('arrow', [p1, p3], {strokeWidth:'2', strokeColor:'blue',withLabel:false});        
         
         var alpha = board.create('angle', [p3,p1,p2], 
-            {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', /*text:'&alpha;', */ fontSize:30,
+            {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', 
+            label: {fontSize:30, strokeColor:'blue'},
+            point: {visible:false}}
+           );
+        var alpha = board.create('angle', [p2,p3,p1], 
+            {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', 
+            label: {fontSize:30, strokeColor:'blue'},
             point: {visible:false}}
            );
     })();

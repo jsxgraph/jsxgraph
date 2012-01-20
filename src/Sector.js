@@ -316,7 +316,8 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * an angle has two angle points and no radius point.
  * Sector is displayed if type=="sector".
  * If type=="square", instead of a sector a parallelogram is displayed. 
- * In case of type=="auto", a square is displayed if the angle is near orthogonal.
+ * In case of type=="auto", a square is displayed if the angle is near orthogonal. 
+ * If no name is provided the angle label is automatically set to a lower greek letter.
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -349,21 +350,20 @@ JXG.createAngle = function(board, parents, attributes) {
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
-        i = 0,
-        j, x, pre, post, found, dot;
+        i = 0, j, x, pre, post, found, dot;
 
     // Test if three points are given
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
         attr = JXG.copyAttributes(attributes, board.options, 'angle');
         //  If empty, create a new name
-        text = attr.text;
-        if (text == '') {
+        text = attr.name;
+        if (typeof text =='undefined' || text == '') {
             while(i < possibleNames.length) {
                 j=i;
                 x = possibleNames[i];
                 for(el in board.objects) {
                     if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                        if(board.objects[el].text == x) {
+                        if(board.objects[el].name == x) {
                             i++;
                             break;
                         }
@@ -382,7 +382,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 while(!found) {
                     for(el in board.objects) {
                         if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                            if(board.objects[el].text == (pre+j+post)) {
+                            if(board.objects[el].name == (pre+j+post)) {
                                 found = true;
                                 break;
                             }
@@ -397,6 +397,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     }
                 }
             }
+            attr.name = text;
         }
         
         attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
@@ -456,7 +457,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 this.updateDataArraySquare();
             } else if (this.visProp.type=='sector') {
                 this.updateDataArraySector();
-                if (Math.abs(rad-Math.PI*0.5)<0.005) {
+                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
                     if (this.dot.visProp.visible === false) {
                         this.dot.setProperty({visible: true});
                     }
@@ -466,7 +467,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     }
                 }
             } else {
-                if (Math.abs(rad-Math.PI*0.5)<0.005) {
+                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
                     this.updateDataArraySquare();
                 } else {
                     this.updateDataArraySector();
@@ -532,11 +533,6 @@ JXG.createAngle = function(board, parents, attributes) {
         }
 
         el.type = JXG.OBJECT_TYPE_ANGLE;
-
-        if (el.visProp.withlabel) {
-            el.label.content.setText(text);
-            el.label.content.setProperty({fontSize:el.visProp.fontsize, strokeColor:el.visProp.textcolor});
-        }
         JXG.getRef(board,parents[0]).addChild(el);
 
         // documented in GeometryElement
