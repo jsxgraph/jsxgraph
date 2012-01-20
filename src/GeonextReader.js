@@ -22,6 +22,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
+JXG.debug = function() {};
 JXG.GeonextReader = {
 
     changeOriginIds: function (board, id) {
@@ -584,6 +585,8 @@ JXG.GeonextReader = {
 
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
+                        gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
+                        gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
                         p.type = JXG.OBJECT_TYPE_GXTCAS;
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');

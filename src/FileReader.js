@@ -45,58 +45,60 @@ JXG.FileReader = {
      * @param {Boolean} async Call ajax asynchonously.
      */
     parseFileContent: function (url, board, format, async) {
+        var request = false;
+        
         if(!JXG.exists(async)) {
             async = true;
         }
 
-        this.request = false;
+        //this.request = false;
 
         try {
-            this.request = new XMLHttpRequest();
+            request = new XMLHttpRequest();
             if(format.toLowerCase()=='raw') {
-                this.request.overrideMimeType('text/plain; charset=iso-8859-1');
+                request.overrideMimeType('text/plain; charset=iso-8859-1');
             } else {
-                this.request.overrideMimeType('text/xml; charset=iso-8859-1');
+                request.overrideMimeType('text/xml; charset=iso-8859-1');
             }
         } catch (e) {
             try {
-                this.request = new ActiveXObject("Msxml2.XMLHTTP");
+                request = new ActiveXObject("Msxml2.XMLHTTP");
             } catch (e) {
                 try {
-                    this.request = new ActiveXObject("Microsoft.XMLHTTP");
+                    request = new ActiveXObject("Microsoft.XMLHTTP");
                 } catch (e) {
-                    this.request = false;
+                    request = false;
                 }
             }
         }
 
-        if (!this.request) {
+        if (!request) {
             alert("AJAX not activated!");
             return;
         }
         
-        this.request.open("GET", url, async);
+        request.open("GET", url, async);
 
         if(format.toLowerCase() === 'raw') {
             this.cbp = function() {
-                var request = this.request;
-                if (request.readyState == 4) {
-                    board(request.responseText);
+                var req = request;
+                if (req.readyState == 4) {
+                    board(req.responseText);
                 }
             };
         } else {
             this.cbp = function() {
-                var request = this.request;
-                if (request.readyState == 4) {
+                var req = request;
+                if (req.readyState == 4) {
                     var text = '';
 
-                    if (typeof request.responseStream!='undefined' &&
-                        (request.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
-                            || JXG.Util.asciiCharCodeAt(request.responseText.slice(0,1),0)==31) // gzip -> Cinderella
+                    if (typeof req.responseStream!='undefined' &&
+                        (req.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
+                            || JXG.Util.asciiCharCodeAt(req.responseText.slice(0,1),0)==31) // gzip -> Cinderella
                         ) {
-                        text = JXG.Util.Base64.decode(BinFileReader(request)); // After this, text contains the base64 encoded, zip-compressed string
+                        text = JXG.Util.Base64.decode(BinFileReader(req)); // After this, text contains the base64 encoded, zip-compressed string
                     } else {
-                        text = request.responseText;
+                        text = req.responseText;
                     }
                     this.parseString(text, board, format, false);
                 }
@@ -104,10 +106,10 @@ JXG.FileReader = {
         }
 
         this.cb = JXG.bind(this.cbp, this);
-        this.request.onreadystatechange = this.cb;
+        request.onreadystatechange = this.cb;
 
         try {
-            this.request.send(null);
+            request.send(null);
         } catch (e) {
             throw new Error("JSXGraph: A problem occurred while trying to read '" + url + "'.");
         }
