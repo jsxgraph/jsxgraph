@@ -439,13 +439,21 @@ JXG.GeonextParser.findDependencies = function(me, term, board) {
  * @return Given expression translated to JavaScript.
  */
 JXG.GeonextParser.gxt2jc = function(term, board) {
-    var newterm;
+    var newterm,
+		from = ['Sqrt'],
+		to = ['sqrt'];
     
     term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
     term = term.replace(/&gt;/g,'>'); 
     term = term.replace(/&amp;/g,'&'); 
     newterm = term;
     newterm = this.replaceNameById2(newterm, board);
+	/*
+    for (i=0; i<from.length; i++) {
+        expr = new RegExp(['(\\W|^)(',from[i],')'].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
+        newterm = newterm.replace(expr,['$1',to[i]].join(''));
+    } 
+	*/
     newterm = newterm.replace(/True/g,'true');
     newterm = newterm.replace(/False/g,'false');
     newterm = newterm.replace(/fasle/g,'false');

@@ -885,7 +885,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-						//gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board);
+						gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board);
 						
                         c = board.create('curve', ['x', gxtEl.funct], {
                                 id: gxtEl.id,
