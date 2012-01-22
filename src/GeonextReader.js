@@ -585,8 +585,16 @@ JXG.GeonextReader = {
 
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
-                        gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
-                        gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
+						if (false) { // Handle weird element names
+							gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
+							gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
+						} else {  // Workaround until the jessiecode compiler is 100% compatible
+							gxtEl.x = JXG.GeonextParser.geonext2JS(gxtEl.x, board);
+							gxtEl.x = new Function('return ' + gxtEl.x + ';');
+							gxtEl.y = JXG.GeonextParser.geonext2JS(gxtEl.y, board);
+							gxtEl.y = new Function('return ' + gxtEl.y + ';');
+						}
+
                         p.addConstraint([gxtEl.x, gxtEl.y]);
                         p.type = JXG.OBJECT_TYPE_GXTCAS;
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
@@ -885,7 +893,12 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-						gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board);
+						if (false) {
+							gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board); // Handle weird element names
+						} else { // Workaround until the jessiecode compiler is 100% compatible
+							gxtEl.funct = JXG.GeonextParser.geonext2JS(gxtEl.funct, board);
+							gxtEl.funct = new Function('x', 'return ' + gxtEl.funct + ';');
+						}
 						
                         c = board.create('curve', ['x', gxtEl.funct], {
                                 id: gxtEl.id,
@@ -926,7 +939,7 @@ JXG.GeonextReader = {
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
-                        gxtEl.center = gxtReader.changeOriginIds(board, gxtEl.center);
+                        gxtEl.center = gxtReader.changeOriginIds(board, gxtEl.midpoint);
                         gxtEl.angle = gxtReader.changeOriginIds(board, gxtEl.angle);
                         gxtEl.radius = gxtReader.changeOriginIds(board, gxtEl.radius);
 
@@ -961,9 +974,11 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
                         gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
+						gxtEl.fixed = false;
                         try {
                             if (Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild) {
                                 gxtEl.parent = Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild.data;
+								gxtEl.fixed = true;
                             }
                         } catch (e) {
                         }
@@ -982,6 +997,7 @@ JXG.GeonextReader = {
                                 digits: gxtEl.autodigits,
                                 isLabel: false,
                                 strokeColor: gxtEl.colorLabel,
+								fixed: gxtEl.fixed,
                                 visible: JXG.str2Bool(gxtEl.visible)
                             });
                         break;
