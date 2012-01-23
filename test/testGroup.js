@@ -25,7 +25,7 @@
 */
 
 /*
- *  Js-Test-Driver Test Suite for JXG.AbstractRenderer
+ *  Js-Test-Driver Test Suite for JXG.Group
  *  http://code.google.com/p/js-test-driver
  */
 
