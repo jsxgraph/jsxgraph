@@ -91,7 +91,8 @@ JXG.Point = function (board, coordinates, attributes) {
         glide: 'makeGlider',
         X: 'X',
         Y: 'Y',
-        free: 'free'
+        free: 'free',
+        setPosition: 'setGliderPosition'
     });
 
     /**
@@ -576,6 +577,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     setPosition: function (method, x, y) { 
         this.setPositionDirectly(method, x, y);
+        return this;
+    },
+    
+    setGliderPosition: function (x) {
+        if (this.type = JXG.OBJECT_TYPE_GLIDER) {
+            this.position = x;
+            this.board.update();
+        }
+        
         return this;
     },
 
