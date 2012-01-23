@@ -51,14 +51,14 @@ JXG.Options.axis.ticks.drawZero = true;
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], 
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
-
+/*
 var k = brd.create('circle',[[0,0],2]);
 var g = brd.create('line',[1,1,1]);
 var A = brd.create('intersection',[k,g,0]);
 var B = brd.create('otherintersection',[k,g,A]);
 var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
 var p = brd.create('polygon',[A,B,C]);
-
+*/
 /*
 // x axis
 var pX0 = brd.create('point', 
@@ -96,13 +96,14 @@ var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
 */
-/*
+
 var p = [];
 for (i=0;i<2;i++) {
-	p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
+	//p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
+	p.push(brd.create('point', [2,2*i-1],{withLabel:true}));
 }
 var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
-
+/*
 var t = brd.create('turtle', [-1,0], {id:'NIX'});
 //t.fd(3); //
 t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);

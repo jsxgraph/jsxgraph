@@ -702,60 +702,56 @@ JXG.Math.Numerics = (function(JXG, Math) {
 
             return fct;
         },
-		
-		/**
+        
+        /**
          * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
-		 * is uniformly parametrized.
-		 * Two artificial control points at the beginning and the end are added.
+         * is uniformly parametrized.
+         * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
-		*/
+        */
         CatmullRomSpline: function(points) {
             var coeffs = [],
-				p, first = {}, last = {}, // control point at the beginning and at the end
-				
-			    makeFct = function(which) {
+                p, first = {}, last = {}, // control point at the beginning and at the end
+                
+                makeFct = function(which) {
                     return function(t, suspendedUpdate) {
                         var len = points.length,
                             s, c;
 
                         if (len < 2 ) { return NaN; }
-						if (!suspendedUpdate) {
-							first[which] = function() {
-									return points[0][which]()-points[1][which]();
-								}
-							last[which] = function() {
-									return points[len-1][which]()-points[len-2][which]();
-								}
-							p = [first].concat(points, [last]);
-							coeffs[which] = [];
-							for (s=0; s < len-1; s++) {
-								coeffs[which][s] = [
-									2*p[s+1][which](),
-									 -p[s][which]() +   p[s+2][which](),
-									2*p[s][which]() - 5*p[s+1][which]() + 4*p[s+2][which]() - p[s+3][which](),
-									 -p[s][which]() + 3*p[s+1][which]() - 3*p[s+2][which]() + p[s+3][which]()
-									];
-							}
-						}
-						len += 2;  // add the two control points 
-						if (isNaN(t)) { return NaN; }
-						// This is necessay for our advanced plotting algorithm:
+                        if (!suspendedUpdate) {
+                            first[which] = function() {return points[0][which]()-points[1][which]();}
+                            last[which] = function() {return points[len-1][which]()-points[len-2][which]();}
+                            p = [first].concat(points, [last]);
+                            coeffs[which] = [];
+                            for (s=0; s < len-1; s++) {
+                                coeffs[which][s] = [
+                                    2*p[s+1][which](),
+                                     -p[s][which]() +   p[s+2][which](),
+                                    2*p[s][which]() - 5*p[s+1][which]() + 4*p[s+2][which]() - p[s+3][which](),
+                                     -p[s][which]() + 3*p[s+1][which]() - 3*p[s+2][which]() + p[s+3][which]()
+                                    ];
+                            }
+                        }
+                        len += 2;  // add the two control points 
+                        if (isNaN(t)) { return NaN; }
+                        // This is necessay for our advanced plotting algorithm:
                         if (t < 0) {   
-							return p[1][which]();
-						} else if (t >= len - 3) {
-							return p[len-2][which]();
-						}
+                            return p[1][which]();
+                        } else if (t >= len - 3) {
+                            return p[len-2][which]();
+                        }
 
                         s = Math.floor(t);
-						if (s==t) {
-							return p[s][which]();
-						}
-						t -= s;
-						c = coeffs[which][s];
-						return 0.5*(((c[3]*t + c[2])*t + c[1])*t + c[0]);
+                        if (s==t) {
+                            return p[s][which]();
+                        }
+                        t -= s;
+                        c = coeffs[which][s];
+                        return 0.5*(((c[3]*t + c[2])*t + c[1])*t + c[0]);
                     };
                 };
 
@@ -768,7 +764,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
             ];
         },
 
-		
+        
         /**
          * Computes the regression polynomial of a given degree through a given set of coordinates.
          * Returns the regression polynomial function.
