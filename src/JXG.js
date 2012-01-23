@@ -195,6 +195,36 @@ JXG.extend(JXG, /** @lends JXG */ {
     getRef: JXG.shortcut(JXG, 'getReference'),
 
     /**
+     * Checks if the given string is an id within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isId: function (board, s) {
+        return typeof(s) == 'string' && !!board.objects[s];
+    },
+
+    /**
+     * Checks if the given string is a name within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isName: function (board, s) {
+        return typeof(s) == 'string' && !!board.elementsByName[s];
+    },
+
+    /**
+     * Checks if the given string is a group id within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isGroup: function (board, s) {
+        return typeof(s) == 'string' && !!board.groups[s];
+    },
+
+    /**
      * Checks if the value of a given variable is of type string.
      * @param v A variable of any type.
      * @returns {Boolean} True, if v is of type string.
@@ -1103,6 +1133,24 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         return true;
+    },
+
+    /**
+     * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
+     * @param n
+     * @param p
+     * @returns {Number}
+     */
+    trunc: function (n, p) {
+        p = JXG.def(p, 0);
+
+        if (p == 0) {
+            n = ~~n;
+        } else {
+            n = n.toFixed(p);
+        }
+
+        return n;
     },
     
     /**

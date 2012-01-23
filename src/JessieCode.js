@@ -110,13 +110,6 @@ JXG.JessieCode = function(code, geonext) {
     this.isLHS = false;
 
     /**
-     * This is a stub that might be used later on.
-     * @type Boolean
-     * @private
-     */
-    this.isfuncall = true;
-
-    /**
      * The id of an HTML node in which innerHTML all warnings are stored (if no <tt>console</tt> object is available).
      * @type String
      * @default 'jcwarn'
@@ -157,17 +150,7 @@ JXG.JessieCode = function(code, geonext) {
         rad: JXG.Math.Geometry.rad,
         deg: JXG.Math.Geometry.trueAngle,
         factorial: JXG.Math.factorial,
-        trunc: function (n, p) {
-            p = JXG.def(p, 0);
-
-            if (p == 0) {
-                n = ~~n;
-            } else {
-                n = n.toFixed(p);
-            }
-
-            return n;
-        },
+        trunc: JXG.trunc,
         '$': this.getElementById
     };
 
@@ -175,6 +158,20 @@ JXG.JessieCode = function(code, geonext) {
     this.builtIn.rad.sc = JXG.Math.Geometry;
     this.builtIn.deg.sc = JXG.Math.Geometry;
     this.builtIn.factorial.sc = JXG.Math;
+
+    // set the javascript equivalent for the builtIns
+    // some of the anonymous functions should be replaced by global methods later on
+    this.builtIn.PI.src = 'Math.PI';
+    this.builtIn.X.src = '(function (e) { return e.X(); })';
+    this.builtIn.Y.src = '(function (e) { return e.Y(); })';
+    this.builtIn.V.src = '(function (e) { return e.Value(); })';
+    this.builtIn.L.src = '(function (e) { return e.L(); })';
+    this.builtIn.dist.src = '(function (e1, e2) { return e1.Dist(e2); })';
+    this.builtIn.rad.src = 'JXG.Math.Geometry.rad';
+    this.builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
+    this.builtIn.factorial.src = 'JXG.Math.factorial';
+    this.builtIn.trunc.src = 'JXG.trunc';
+    this.builtIn['$'].src = '(function (n) { return JXG.getRef(JXG.JSXGraph.boards[$jc$.board.id], n); })';
 
     /**
      * The board which currently is used to create and look up elements.
@@ -306,6 +303,50 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Checks if the given variable name can be found in {@link JXG.JessieCode#sstack}.
+     * @param {String} vname
+     * @returns {Number} The position in the local variable stack where the variable can be found. <tt>-1</tt> if it couldn't be found.
+     */
+    isLocalVariable: function (vname) {
+        var s;
+        for (s = this.scope; s > -1; s--) {
+            if (JXG.exists(this.sstack[s][vname])) {
+                return s;
+            }
+        }
+
+        return -1;
+    },
+
+    /**
+     * Checks if the given variable name is a valid creator method.
+     * @param {String} vname
+     * @returns {Boolean}
+     */
+    isCreator: function (vname) {
+        // check for an element with this name
+        return !!JXG.JSXGraph.elements[vname];
+    },
+
+    /**
+     * Checks if the given variable identifier is a valid member of the JavaScript Math Object.
+     * @param {String} vname
+     * @returns {Boolean}
+     */
+    isMathMethod: function (vname) {
+        return !!Math[vname];
+    },
+
+    /**
+     * Returns true if the given identifier is a builtIn variable/function.
+     * @param {String} vname
+     * @returns {Boolean}
+     */
+    isBuiltIn: function (vname) {
+        return !!this.builtIn[vname];
+    },
+
+    /**
      * Looks up the value of the given variable.
      * @param {String} vname Name of the variable
      * @paran {Boolean} [local=false] Only look up the internal symbol table and don't look for
@@ -314,26 +355,23 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     getvar: function (vname, local) {
         var s, undef;
 
-        if (!JXG.exists(local)) {
-            local = false;
-        }
+        local = JXG.def(local, false);
 
-        for (s = this.scope; s > -1; s--) {
-            if (JXG.exists(this.sstack[s][vname])) {
-                return this.sstack[s][vname];
-            }
+        s = this.isLocalVariable(vname);
+        if (s > -1) {
+            return this.sstack[s][vname];
         }
 
         // check for an element with this name
-        if (JXG.JSXGraph.elements[vname]) {
+        if (this.isCreator(vname)) {
             return this.creator(vname);
         }
 
-        if (Math[vname]) {
+        if (this.isMathMethod(vname)) {
             return Math[vname];
         }
 
-        if (this.builtIn[vname]) {
+        if (this.isBuiltIn(vname)) {
             return this.builtIn[vname];
         }
 
@@ -348,12 +386,60 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * Looks up a variable identifier in various tables and generates JavaScript code that could be eval'd to get the value.
+     * @param {String} vname Identifier
+     * @param {Boolean} [local=false] Don't resolve ids and names of elements
+     */
+    getvarJS: function (vname, local) {
+        var s;
+
+        local = JXG.def(local, false);
+
+        s = this.isLocalVariable(vname);
+        if (s > -1) {
+            return '$jc$.sstack[' + s + '][\'' + vname + '\']';
+        }
+
+        // check for an element with this name
+        if (this.isCreator(vname)) {
+            return '(function () { var a = Array.prototype.slice.call(arguments, 0); return $jc$.board.create.apply(this, [\'' + vname + '\'].concat(a)); })';
+        }
+
+        if (this.isMathMethod(vname)) {
+            return 'Math.' + vname;
+        }
+
+        if (this.isBuiltIn(vname)) {
+            return this.builtIn[vname].src;
+        }
+
+        if (JXG.indexOf(this.pstack[this.pscope], vname) > -1) {
+            return vname;
+        }
+
+        if (!local) {
+            if (JXG.isId(this.board, vname)) {
+                return '$jc$.board.objects[\'' + vname + '\']';
+            } else if (JXG.isName(this.board, vname)) {
+                return '$jc$.board.elementsByName[\'' + vname + '\']';
+            } else if (JXG.isGroup(this.board, vname)) {
+                return '$jc$.board.groups[\'' + vname + '\']';
+            }
+            //return 'JXG.getRef(JXG.JSXGraph.boards[$jc$.board.id], \'' + vname + '\')';
+        }
+
+        return '';
+    },
+
+    /**
      * Sets the property <tt>what</tt> of {@link JXG.JessieCode#propobj} to <tt>value</tt>
      * @param {String} what
      * @param {%} value
      */
     setProp: function (o, what, value) {
         var par = {}, x, y;
+
+        // TODO jessiecode to javascript compiler
 
         if (o.elementClass === JXG.OBJECT_CLASS_POINT && (what === 'X' || what === 'Y')) {
             // set coords
@@ -447,7 +533,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var error_cnt = 0,
             error_off = [],
             error_la = [],
-            ccode = code.replace(/\r\n/g,'\n').split('\n'), i, cleaned = [];
+            replacegxt = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc', 'If', 'Deg', 'Rad', 'Dist'],
+            regex,
+            ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
 
         if (!JXG.exists(geonext)) {
             geonext = false;
@@ -456,14 +544,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         for (i = 0; i < ccode.length; i++) {
             if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
                 if (geonext) {
-                    ccode[i] = ccode[i].replace(/Deg\(/g, 'deg(')
-                                       .replace(/Rad\(/g, 'rad(')
-                                       .replace(/Sin\(/g, 'sin(')
-                                       .replace(/Cos\(/g, 'cos(')
-                                       .replace(/Dist\(/g, 'dist(')
-                                       .replace(/Factorial\(/g, 'factorial(')
-                                       .replace(/If\(/g, 'if(')
-                                       .replace(/Round\(/, 'round(');
+                    for (j = 0; j < replacegxt.length; j++) {
+                        regex = new RegExp(replacegxt[j] + "\\(", 'g');
+                        ccode[i] = ccode[i].replace(regex, replacegxt[j].toLowerCase() + '(');
+                    }
                 }
 
                 cleaned.push(ccode[i]);
@@ -809,7 +893,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // after this, the parameters are in pstack
                         this.execute(node.children[0]);
 
-                        ret = (function(_pstack, that) { return function() {
+                        // begin replacement candidate
+
+                        /*ret = (function(_pstack, that) { return function() {
                             var r;
 
                             that.sstack.push({});
@@ -823,7 +909,48 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                             that.sstack.pop();
                             that.scope--;
                             return r;
-                        }; })(this.pstack[this.pscope], this);
+                        }; })(this.pstack[this.pscope], this);*/
+
+                        // end replacement candidate
+
+
+                        // new begin
+
+                        this.sstack.push({});
+                        this.scope++;
+
+                        ret = (function ($jc$) {
+                            var p = $jc$.pstack[$jc$.pscope].join(', '),
+                                str = 'var f = function (' + p + ') {\n$jc$.sstack.push([]);\n$jc$.scope++;\nvar r = (function () {' + $jc$.compile(node.children[1], true) + '})();\n$jc$.sstack.pop();\n$jc$.scope--;\nreturn r;\n}; f;';
+
+                            // the function code formatted:
+                            /*var f = function (_parameters_) {
+                                // handle the stack
+                                $jc$.sstack.push([]);
+                                $jc$.scope++;
+
+                                // this is required for stack handling: usually at some point in a function
+                                // there's a return statement, that prevents the cleanup of the stack.
+                                var r = (function () {
+                                    _compiledcode_;
+                                })();
+
+                                // clean up the stack
+                                $jc$.sstack.pop();
+                                $jc$.scope--;
+
+                                // return the result
+                                return r;
+                            };
+                            f;   // the return value of eval() */
+
+
+                            return eval(str);
+                        })(this);
+
+                        this.sstack.pop();
+                        this.scope--;
+                        // new end
 
                         this.isLHS = false;
 
@@ -1088,21 +1215,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
      * Compiles a parse tree back to JessieCode.
      * @param {Object} node
-     * @param {Boolean} [javascript=false] Currently ignored. Compile either to JavaScript or back to JessieCode (required for the UI).
+     * @param {Boolean} [js=false] Currently ignored. Compile either to JavaScript or back to JessieCode (required for the UI).
      * @returns Something
      * @private
      */
-    compile: function (node, javascript) {
+    compile: function (node, js) {
         var ret, i, e;
 
         ret = '';
 
-        if (!JXG.exists(javascript)) {
-            javascript = false
+        if (!JXG.exists(js)) {
+            js = false
         }
-
-        // ignore it
-        javascript = false;
 
         if (!node)
             return ret;
@@ -1112,156 +1236,185 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 switch (node.value) {
                     case 'op_none':
                         if (node.children[0]) {
-                            ret = this.compile(node.children[0]);
+                            ret = this.compile(node.children[0], js);
                         }
                         if (node.children[1]) {
-                            ret += this.compile(node.children[1]);
+                            ret += this.compile(node.children[1], js);
                         }
                         break;
                     case 'op_assign':
-                        ret = this.compile(node.children[0]) + ' = ' + this.compile(node.children[1]) + ';\n';
+                        e = this.compile(node.children[0], js);
+                        if (js) {
+                            if (this.isLocalVariable(e) !== this.scope) {
+                                this.sstack[this.scope][e] = true;
+                            }
+                            ret = '$jc$.sstack[' + this.scope + '][\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
+                        } else {
+                            ret = e + ' = ' + this.compile(node.children[1], js) + ';\n';
+                        }
+
                         break;
                     case 'op_noassign':
-                        ret = this.compile(node.children[0]);
+                        ret = this.compile(node.children[0], js);
                         break;
                     case 'op_if':
-                        ret = ' if ' + this.compile(node.children[0]) + this.compile(node.children[1]);
+                        ret = ' if (' + this.compile(node.children[0], js) + ') ' + this.compile(node.children[1], js);
                         break;
                     case 'op_if_else':
-                        ret = ' if ' + this.compile(node.children[0]) + this.compile(node.children[1]);
-                        ret += ' else ' + this.compile(node.children[2]);
+                        ret = ' if (' + this.compile(node.children[0], js) + ')' + this.compile(node.children[1], js);
+                        ret += ' else ' + this.compile(node.children[2], js);
                         break;
                     case 'op_while':
-                        ret = ' while (' + this.compile(node.children[0]) + ') {\n' + this.compile(node.children[1]) + '}\n';
+                        ret = ' while (' + this.compile(node.children[0], js) + ') {\n' + this.compile(node.children[1], js) + '}\n';
                         break;
                     case 'op_do':
-                        ret = ' do {\n' + this.compile(node.children[0]) + '} while (' + this.compile(node.children[1]) + ');\n';
+                        ret = ' do {\n' + this.compile(node.children[0], js) + '} while (' + this.compile(node.children[1], js) + ');\n';
                         break;
                     case 'op_for':
-                        ret = ' for (' + this.compile(node.children[0]) + '; ' + this.compile(node.children[1]) + '; ' + this.compile(node.children[2]) + ') {\n' + this.compile(node.children[3]) + '\n}\n';
+                        ret = ' for (' + this.compile(node.children[0], js) + '; ' + this.compile(node.children[1], js) + '; ' + this.compile(node.children[2], js) + ') {\n' + this.compile(node.children[3], js) + '\n}\n';
                         break;
                     case 'op_param':
                         if (node.children[1]) {
-                            ret = this.compile(node.children[1]) + ', ';
+                            ret = this.compile(node.children[1], js) + ', ';
                         }
 
-                        ret += this.compile(node.children[0]);
+                        ret += this.compile(node.children[0], js);
                         break;
                     case 'op_paramdef':
                         if (node.children[1]) {
-                            ret = this.compile(node.children[1]) + ', ';
+                            ret = this.compile(node.children[1], js) + ', ';
                         }
 
                         ret += node.children[0];
                         break;
                     case 'op_proplst':
                         if (node.children[0]) {
-                            ret = this.compile(node.children[0]) + ', ';
+                            ret = this.compile(node.children[0], js) + ', ';
                         }
 
-                        ret += this.compile(node.children[1]);
+                        ret += this.compile(node.children[1], js);
                         break;
                     case 'op_prop':
                         // child 0: Identifier
                         // child 1: Value
-                        ret = node.children[0] + ': ' + this.compile(node.children[1]);
+                        ret = node.children[0] + ': ' + this.compile(node.children[1], js);
                         break;
                     case 'op_proplst_val':
-                        ret = (javascript ? '{' : '<<') + this.compile(node.children[0]) + (javascript ? '}' : '>>');
+                        ret = (js ? '{' : '<<') + this.compile(node.children[0], js) + (js ? '}' : '>>');
                         break;
                     case 'op_array':
-                        ret = '[' + this.compile(node.children[0]) + ']';
+                        ret = '[' + this.compile(node.children[0], js) + ']';
                         break;
                     case 'op_extvalue':
-                        ret = this.compile(node.children[0]) + '[' + this.compile(node.children[1]) + ']';
+                        ret = this.compile(node.children[0], js) + '[' + this.compile(node.children[1], js) + ']';
                         break;
                     case 'op_return':
-                        ret = ' return ' + this.compile(node.children[0]) + ';\n';
+                        ret = ' return ' + this.compile(node.children[0], js) + ';\n';
                         break;
                     case 'op_function':
-                        ret = ' function (' + this.compile(node.children[0]) + ') {\n' + this.compile(node.children[1]) + '}';
+                        ret = ' function (' + this.compile(node.children[0], js) + ') {\n' + this.compile(node.children[1], js) + '}';
                         break;
                     case 'op_execfun':
-                        ret = this.compile(node.children[0]) + '(' + this.compile(node.children[1]) + ')';
                         // parse the properties only if given
                         if (node.children[2]) {
-                            ret += (javascript ? '{' : '<<') + this.compile(node.children[2]) + (javascript ? '}' : '>>');
+                            e = (js ? '{' : '<<') + this.compile(node.children[2], js) + (js ? '}' : '>>');
                         }
+
+                        ret = this.compile(node.children[0], js) + '(' + this.compile(node.children[1], js) + (node.children[2] ? ', ' + e : '') + ')';
+
+                        // save us a function call when compiled to javascript
+                        if (js && node.children[0] === '$') {
+                            ret = '$jc$.board.objects[' + this.compile(node.children[1], js) + ']';
+                        }
+
                         break;
                     case 'op_property':
-                        ret = this.compile(node.children[0]) + '.' + node.children[1];
+                        ret = this.compile(node.children[0], js) + '.' + node.children[1];
                         break;
                     case 'op_lhs':
                         if (node.children.length === 1) {
                             ret = node.children[0];
                         } else if (node.children[2] === 'dot') {
-                            ret = this.compile(node.children[1]) + '.' + node.children[0];
+                            ret = this.compile(node.children[1], js) + '.' + node.children[0];
                         } else if (node.children[2] === 'bracket') {
-                            ret = this.compile(node.children[1]) + '[' + this.compile(node.children[0]) + ']';
+                            ret = this.compile(node.children[1], js) + '[' + this.compile(node.children[0], js) + ']';
                         }
                         break;
                     case 'op_use':
-                        ret = 'use ' + node.children[0] + ';';
+                        if (js) {
+                            // TODO: compile node_op>op_use to javascript
+                            ret = '';
+                        } else {
+                            ret = 'use ' + node.children[0] + ';';
+                        }
                         break;
                     case 'op_delete':
                         ret = 'delete ' + node.children[0];
                         break;
                     case 'op_equ':
-                        ret = '(' + this.compile(node.children[0]) + ' == ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' == ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_neq':
-                        ret = '(' + this.compile(node.children[0]) + ' != ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' != ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_approx':
-                        ret = '(' + this.compile(node.children[0]) + ' ~= ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' ~= ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_grt':
-                        ret = '(' + this.compile(node.children[0]) + ' > ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' > ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_lot':
-                        ret = '(' + this.compile(node.children[0]) + ' < ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' < ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_gre':
-                        ret = '(' + this.compile(node.children[0]) + ' >= ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' >= ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_loe':
-                        ret = '(' + this.compile(node.children[0]) + ' <= ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' <= ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_or':
-                        ret = '(' + this.compile(node.children[0]) + ' || ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' || ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_and':
-                        ret = '(' + this.compile(node.children[0]) + ' && ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' && ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_not':
-                        ret = '!(' + this.compile(node.children[0]) + ')';
+                        ret = '!(' + this.compile(node.children[0], js) + ')';
                         break;
                     case 'op_add':
-                        ret = '(' + this.compile(node.children[0]) + ' + ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' + ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_sub':
-                        ret = '(' + this.compile(node.children[0]) + ' - ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' - ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_div':
-                        ret = '(' + this.compile(node.children[0]) + ' / ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' / ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_mod':
-                        ret = '(' + this.compile(node.children[0]) + ' % ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' % ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_mul':
-                        ret = '(' + this.compile(node.children[0]) + ' * ' + this.compile(node.children[1]) + ')';
+                        ret = '(' + this.compile(node.children[0], js) + ' * ' + this.compile(node.children[1], js) + ')';
                         break;
                     case 'op_exp':
-                        ret = '(' + this.compile(node.children[0]) + '^' + this.compile(node.children[1]) + ')';
+                        if (js) {
+                            ret = 'Math.pow(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                        } else {
+                            ret = '(' + this.compile(node.children[0], js) + '^' + this.compile(node.children[1], js) + ')';
+                        }
                         break;
                     case 'op_neg':
-                        ret = '(-' + this.compile(node.children[0]) + ')';
+                        ret = '(-' + this.compile(node.children[0], js) + ')';
                         break;
                 }
                 break;
 
             case 'node_var':
-                ret = node.value;
+                if (js) {
+                    ret = this.getvarJS(node.value);
+                } else {
+                    ret = node.value;
+                }
                 break;
 
             case 'node_const':

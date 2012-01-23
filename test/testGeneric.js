@@ -62,5 +62,16 @@ TestCase("Generic", {
 
         assertEquals('return value is ok', 'bar', f());
         assertEquals('global variables are not introduced', 0, abcdefg);
+    },
+
+    testConcat: function () {
+        expectAsserts(1);
+
+        var f = (function (a, b, c) {
+            var x = Array.prototype.slice.call(arguments, 0);
+            return ['a', 'b'].concat(x).length;
+        })(1, 2, 3);
+
+        assertEquals('length is ok', 5, f);
     }
 });
