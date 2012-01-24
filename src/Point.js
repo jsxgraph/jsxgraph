@@ -579,7 +579,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.setPositionDirectly(method, x, y);
         return this;
     },
-    
+
+    /**
+     * Sets the position of a glider relative to the defining elements of the {@link JXG.Point#slideObject}.
+     * @param {Number} x
+     * @returns {JXG.Point} Reference to the point element.
+     */
     setGliderPosition: function (x) {
         if (this.type = JXG.OBJECT_TYPE_GLIDER) {
             this.position = x;
