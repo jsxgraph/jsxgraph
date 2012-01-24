@@ -395,6 +395,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         local = JXG.def(local, false);
 
+        if (JXG.indexOf(this.pstack[this.pscope], vname) > -1) {
+            return vname;
+        }
+
         s = this.isLocalVariable(vname);
         if (s > -1) {
             return '$jc$.sstack[' + s + '][\'' + vname + '\']';
@@ -411,10 +415,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         if (this.isBuiltIn(vname)) {
             return this.builtIn[vname].src;
-        }
-
-        if (JXG.indexOf(this.pstack[this.pscope], vname) > -1) {
-            return vname;
         }
 
         if (!local) {
@@ -967,11 +967,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         this.sstack.pop();
                         this.scope--;
 
-                        ret.toString = (function (_that) {
+                        /*ret.toString = (function (_that) {
                             return function () {
                                 return _that.compile(_that.replaceIDs(JXG.deepCopy(node)));
                             };
-                        })(this);
+                        })(this);*/
 
                         ret.deps = {};
                         this.collectDependencies(node.children[1], ret.deps);
