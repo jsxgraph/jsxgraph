@@ -583,8 +583,6 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
 
-                        p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
-                        gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
 						if (false) { // Handle weird element names
 							gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
 							gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
@@ -595,8 +593,13 @@ JXG.GeonextReader = {
 							gxtEl.y = new Function('return ' + gxtEl.y + ';');
 						}
 
+                        /*
+                        p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
-                        p.type = JXG.OBJECT_TYPE_GXTCAS;
+                        p.type = JXG.OBJECT_TYPE_CAS;
+                        */
+                        p = board.create('point', [gxtEl.x, gxtEl.y], gxtEl);
+                        gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
