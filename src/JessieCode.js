@@ -919,6 +919,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         this.sstack.push({});
                         this.scope++;
 
+                        this.isLHS = false;
+
+                        for(i = 0; i < this.pstack[this.pscope].length; i++) {
+                            this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
+                        }
+
+                        this.replaceNames(node.children[1]);
+
                         ret = (function ($jc$) {
                             var p = $jc$.pstack[$jc$.pscope].join(', '),
                                 str = 'var f = function (' + p + ') {\n$jc$.sstack.push([]);\n$jc$.scope++;\nvar r = (function () {' + $jc$.compile(node.children[1], true) + '})();\n$jc$.sstack.pop();\n$jc$.scope--;\nreturn r;\n}; f;';
@@ -947,21 +955,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                             return eval(str);
                         })(this);
-
-                        this.sstack.pop();
-                        this.scope--;
-                        // new end
-
-                        this.isLHS = false;
-
-                        // new scope for parameters & local variables
-                        this.sstack.push([]);
-                        this.scope++;
-                        for(i = 0; i < this.pstack[this.pscope].length; i++) {
-                            this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
-                        }
-
-                        this.replaceNames(node.children[1]);
 
                         // clean up scope
                         this.sstack.pop();
@@ -1220,7 +1213,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @private
      */
     compile: function (node, js) {
-        var ret, i, e;
+        var ret, i, e, v;
 
         ret = '';
 
@@ -1323,7 +1316,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = this.compile(node.children[0], js) + '(' + this.compile(node.children[1], js) + (node.children[2] ? ', ' + e : '') + ')';
 
                         // save us a function call when compiled to javascript
-                        if (js && node.children[0] === '$') {
+                        if (js && node.children[0].value === '$') {
                             ret = '$jc$.board.objects[' + this.compile(node.children[1], js) + ']';
                         }
 
@@ -1342,8 +1335,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         break;
                     case 'op_use':
                         if (js) {
-                            // TODO: compile node_op>op_use to javascript
-                            ret = '';
+                            ret = '$jc$.board = JXG.JSXGraph.boards[\'' + node.children[0] + '\']';
                         } else {
                             ret = 'use ' + node.children[0] + ';';
                         }
@@ -1411,6 +1403,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
             case 'node_var':
                 if (js) {
+                    //ret = '$jc$.getvar(\'' + node.value + '\')';
                     ret = this.getvarJS(node.value);
                 } else {
                     ret = node.value;
