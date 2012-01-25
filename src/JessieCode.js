@@ -128,6 +128,7 @@ JXG.JessieCode = function(code, geonext) {
      */
     this.builtIn = {
         PI: Math.PI,
+        EULER: Math.E,
         X: function (el) {
             return el.X();
         },
@@ -334,7 +335,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @returns {Boolean}
      */
     isMathMethod: function (vname) {
-        return !!Math[vname];
+        return vname !== 'E' && !!Math[vname];
     },
 
     /**
