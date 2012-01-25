@@ -960,11 +960,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         this.sstack.pop();
                         this.scope--;
 
-                        /*ret.toString = (function (_that) {
+                        ret.toString = (function (_that) {
                             return function () {
                                 return _that.compile(_that.replaceIDs(JXG.deepCopy(node)));
                             };
-                        })(this);*/
+                        })(this);
 
                         ret.deps = {};
                         this.collectDependencies(node.children[1], ret.deps);
