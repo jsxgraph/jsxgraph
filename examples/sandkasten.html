@@ -60,13 +60,14 @@
 
     var jessie = (function () {
         JXG.Options.text.highlightStrokeColor = 'red';
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
 
         var A = board.create('point', [1, 2], {snapSizeX: 0, snapSizeY: 0, snapToGrid: true});
-        var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+        //var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+        var B = board.create('point', [1, 1]);
         var C = board.create('point', [-1, -1]);
 
-        var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
+        //var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
         var t = board.create('text', [3, 2, 'TEXTYTEXT']);
 
         var a = board.create('angle', [A, B, C], {text: function () { return A.X();}});

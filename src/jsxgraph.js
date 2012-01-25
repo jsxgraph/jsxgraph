@@ -148,7 +148,7 @@ JXG.JSXGraph = {
             unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
         }
 
-        zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
+        zoomfactor = ( (typeof attributes["zoomfactor"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
 

@@ -966,6 +966,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     gestureStartListener: function (evt) {
+        if (!this.options.zoom.wheel) {
+            return true;
+        }
+
         evt.preventDefault();
 
         if (this.mode === this.BOARD_MODE_NONE) {
@@ -981,6 +985,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     gestureChangeListener: function (evt) {
         var c;
+
+        if (!this.options.zoom.wheel) {
+            return true;
+        }
 
         evt.preventDefault();
 
@@ -1000,6 +1008,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     gestureEndListener: function (evt) {
+        if (!this.options.zoom.wheel) {
+            return true;
+        }
+
         evt.preventDefault();
 
         if (this.mode === this.BOARD_MODE_ZOOM) {
@@ -1028,7 +1040,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // move origin - but only if we're not in drag mode
-        if ( (this.mode === this.BOARD_MODE_NONE)
+        if ( this.options.pan
+             && this.mode === this.BOARD_MODE_NONE
              && (evt.targetTouches.length == 2)
              && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80)) {
 
