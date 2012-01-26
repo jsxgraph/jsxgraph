@@ -1031,7 +1031,7 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @class This element is used to provide a constructor for a segment. 
  * It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
  * and {@link JXG.Line#straightLast} properties set to false. If there is a third variable then the 
- * segemnt has a fixed length (which may be a function, too).
+ * segment has a fixed length (which may be a function, too).
  * @pseudo
  * @description
  * @name Segment
