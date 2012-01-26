@@ -215,7 +215,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @type Object
      */
     this.methodMap = {
-        setLabel: 'setLabelText'
+        setLabel: 'setLabelText',
+        getName: 'getName'
     };
 
     /**
@@ -353,6 +354,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return s; 
     },
 
+    /**
+     * Returns the elements name, Used in JessieCode.
+     * @returns {String}
+     */
+    getName: function () {
+        return this.name;
+    },
     
     /**
      * Decides whether an element can be dragged. This is used in setPositionDirectly methods
