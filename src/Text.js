@@ -222,16 +222,14 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * @return {object} reference to the text object.
      */
     setCoords: function (x,y) {
-        if (this.isDraggable) {
-            if (JXG.isArray(x) && x.length > 1) {
-                y = x[1];
-                x = x[0];
-            }
-
-            this.X = function() { return x; };
-            this.Y = function() { return y; };
-            this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+        if (JXG.isArray(x) && x.length > 1) {
+            y = x[1];
+            x = x[0];
         }
+
+        this.X = function() { return x; };
+        this.Y = function() { return y; };
+        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
 
         return this;
     },
