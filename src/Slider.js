@@ -112,8 +112,6 @@ JXG.createSlider = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  
-    p3.elementClass = JXG.OBJECT_CLASS_OTHER;
-
     p3.Value = function() {
         return p3.visProp.snapwidth === -1 ? this.position*sdiff+smin : Math.round((this.position*sdiff+smin)/this.visProp.snapwidth)*this.visProp.snapwidth;
     };
