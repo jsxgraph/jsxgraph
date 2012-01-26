@@ -2024,15 +2024,9 @@ JXG.createGrid = function (board, parents, attributes) {
     c.elType = 'grid';
     c.parents = [];
 
-    // TODO: use user given attributes
-
-    if(board.options.grid.dash) {
-        c.setProperty({dash: 2});
-    }
-
     c.updateDataArray = function () {
-        var gridX = board.options.grid.gridX,
-            gridY = board.options.grid.gridY,
+        var gridX = this.visProp.gridx,
+            gridY = this.visProp.gridy,
             topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
             bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
             i;
