@@ -219,7 +219,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         };
     })(),
 
-    /**
+   /**
      * Assigns a value to a variable in the current scope.
      * @param {String} vname Variable name
      * @param {%} value Anything
@@ -1386,6 +1386,56 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
+     * This is used as the global X() function.
+     * @param {JXG.Point|JXG.Text} e
+     * @returns {Number}
+     */
+    X: function (e) {
+        return e.X();
+    },
+
+    /**
+     * This is used as the global Y() function.
+     * @param {JXG.Point|JXG.Text} e
+     * @returns {Number}
+     */
+    Y: function (e) {
+        return e.Y();
+    },
+
+    /**
+     * This is used as the global V() function.
+     * @param {Glider|Slider} e
+     * @returns {%}
+     */
+    V: function (e) {
+        return e.Value();
+    },
+
+    /**
+     * This is used as the global L() function.
+     * @param {JXG.Line} e
+     * @returns {Number}
+     */
+   L: function (e) {
+        return e.L();
+    },
+
+    /**
+     * This is used as the global dist() function.
+     * @param {JXG.Point} p1
+     * @param {JXG.Point} p2
+     * @returns {Number}
+     */
+    dist: function (p1, p2) {
+        if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
+            this._error('Error: Can\'t calculate distance.');
+        }
+
+        return p1.Dist(p2);
+    },
+
+    /**
      * Defines built in methods and constants.
      * @returns {Object} BuiltIn control object
      */
@@ -1394,25 +1444,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             builtIn = {
                 PI: Math.PI,
                 EULER: Math.E,
-                X: function (el) {
-                    return el.X();
-                },
-                Y: function (el) {
-                    return el.Y();
-                },
-                V: function (el) {
-                    return el.Value();
-                },
-                L: function (el) {
-                    return el.L();
-                },
-                dist: function (p1, p2) {
-                    if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
-                        that._error('Error: Can\'t calculate distance.');
-                    }
-
-                    return p1.Dist(p2);
-                },
+                X: that.X,
+                Y: that.Y,
+                V: that.V,
+                L: that.L,
+                dist: that.dist,
                 rad: JXG.Math.Geometry.rad,
                 deg: JXG.Math.Geometry.trueAngle,
                 factorial: JXG.Math.factorial,
@@ -1428,16 +1464,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         // set the javascript equivalent for the builtIns
         // some of the anonymous functions should be replaced by global methods later on
         builtIn.PI.src = 'Math.PI';
-        builtIn.X.src = '(function (e) { return e.X(); })';
-        builtIn.Y.src = '(function (e) { return e.Y(); })';
-        builtIn.V.src = '(function (e) { return e.Value(); })';
-        builtIn.L.src = '(function (e) { return e.L(); })';
-        builtIn.dist.src = '(function (e1, e2) { return e1.Dist(e2); })';
+        builtIn.EULER.src = 'Math.E';
+        builtIn.X.src = '$jc$.X';
+        builtIn.Y.src = '$jc$.Y';
+        builtIn.V.src = '$jc$.V';
+        builtIn.L.src = '$jc$.L';
+        builtIn.dist.src = '$jc$.dist';
         builtIn.rad.src = 'JXG.Math.Geometry.rad';
         builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
         builtIn.factorial.src = 'JXG.Math.factorial';
         builtIn.trunc.src = 'JXG.trunc';
-        builtIn['$'].src = '(function (n) { return JXG.getRef(JXG.JSXGraph.boards[$jc$.board.id], n); })';
+        // usually unused, see node_op > op_execfun
+        builtIn['$'].src = '(function (n) { return JXG.getRef($jc$.board, n); })';
 
         return builtIn;
     },
