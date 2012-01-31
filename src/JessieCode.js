@@ -47,9 +47,7 @@ JXG.JessieCode = function(code, geonext) {
      * @type Array
      * @private
      */
-    this.sstack = [{
-        PI: Math.PI
-    }];
+    this.sstack = [{}];
 
     /**
      * Defines the current variable scope.
@@ -126,53 +124,7 @@ JXG.JessieCode = function(code, geonext) {
      * Built-in functions and constants
      * @type Object
      */
-    this.builtIn = {
-        PI: Math.PI,
-        EULER: Math.E,
-        X: function (el) {
-            return el.X();
-        },
-        Y: function (el) {
-            return el.Y();
-        },
-        V: function (el) {
-            return el.Value();
-        },
-        L: function (el) {
-            return el.L();
-        },
-        dist: function (p1, p2) {
-            if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
-                this._error('Error: Can\'t calculate distance.');
-            }
-
-            return p1.Dist(p2);
-        },
-        rad: JXG.Math.Geometry.rad,
-        deg: JXG.Math.Geometry.trueAngle,
-        factorial: JXG.Math.factorial,
-        trunc: JXG.trunc,
-        '$': this.getElementById
-    };
-
-    // special scopes for factorial, deg, and rad
-    this.builtIn.rad.sc = JXG.Math.Geometry;
-    this.builtIn.deg.sc = JXG.Math.Geometry;
-    this.builtIn.factorial.sc = JXG.Math;
-
-    // set the javascript equivalent for the builtIns
-    // some of the anonymous functions should be replaced by global methods later on
-    this.builtIn.PI.src = 'Math.PI';
-    this.builtIn.X.src = '(function (e) { return e.X(); })';
-    this.builtIn.Y.src = '(function (e) { return e.Y(); })';
-    this.builtIn.V.src = '(function (e) { return e.Value(); })';
-    this.builtIn.L.src = '(function (e) { return e.L(); })';
-    this.builtIn.dist.src = '(function (e1, e2) { return e1.Dist(e2); })';
-    this.builtIn.rad.src = 'JXG.Math.Geometry.rad';
-    this.builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
-    this.builtIn.factorial.src = 'JXG.Math.factorial';
-    this.builtIn.trunc.src = 'JXG.trunc';
-    this.builtIn['$'].src = '(function (n) { return JXG.getRef(JXG.JSXGraph.boards[$jc$.board.id], n); })';
+    this.builtIn = this.defineBuiltIn();
 
     /**
      * The board which currently is used to create and look up elements.
@@ -202,42 +154,21 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Output a debugging message. Uses debug console, if available. Otherwise an HTML element with the
-     * id "debug" and an innerHTML property is used.
-     * @param {String} log
-     * @private
+     * Create a new parse tree node. Basically the same as node(), but this builds
+     * the children part out of an arbitrary number of parameters, instead of one
+     * array parameter.
+     * @param {String} type Type of node, e.g. node_op, node_var, or node_const
+     * @param value The nodes value, e.g. a variables value or a functions body.
+     * @param children Arbitrary number of parameters; define the child nodes.
      */
-    _debug: function (log) {
-        if(typeof console !== "undefined") {
-            JXG.debug(log);
-        } else if(document.getElementById('debug') !== null) {
-            document.getElementById('debug').innerHTML += log + '<br />';
-        }
-    },
+    createNode: function (type, value, children) {
+        var n = this.node(type, value, []),
+            i;
 
-    /**
-     * Throws an exception with the given error message.
-     * @param {String} msg Error message
-     */
-    _error: function (msg) {
-        throw new Error(msg);
-    },
+        for(i = 2; i < arguments.length; i++)
+            n.children.push( arguments[i] );
 
-    _warn: function (msg) {
-        if(typeof console !== "undefined") {
-            JXG.debug('Warning: ' + msg);
-        } else if(document.getElementById(this.warnLog) !== null) {
-            document.getElementById(this.warnLog).innerHTML += 'Warning: ' + msg + '<br />';
-        }
-    },
-
-    /**
-     * Checks if the given string is a valid identifier.
-     * @param {String} s
-     * @returns {Boolean}
-     */
-    isIdentifier: function (s) {
-        return /[A-Za-z_\$][A-Za-z0-9_\$]*/.test(s);
+        return n;
     },
 
     /**
@@ -440,8 +371,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     setProp: function (o, what, value) {
         var par = {}, x, y;
 
-        // TODO jessiecode to javascript compiler
-
         if (o.elementClass === JXG.OBJECT_CLASS_POINT && (what === 'X' || what === 'Y')) {
             // set coords
 
@@ -562,7 +491,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 this._error("Parse error near >"  + code.substr( error_off[i], 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
         }
 
-        this.board.update();
+        //this.board.update();
     },
 
     /**
@@ -736,6 +665,51 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
     },
 
+    resolveProperty: function (e, v, compile) {
+        compile = JXG.def(compile, false);
+
+        // is it a geometry element?
+        if (e && e.type && e.elementClass && e.methodMap) {
+            // yeah, it is. but what does the user want?
+            if (v === 'label') {
+                // he wants to access the label properties!
+                // adjust the base object...
+                e = e.label;
+                // and the property we are accessing
+                v = 'content';
+            } else {
+                // ok, it's not the label he wants to change
+
+                // well, what then?
+                if (JXG.exists(e.subs[v])) {
+                    // a subelement it is, good sir.
+                    e = e.subs;
+                } else if (JXG.exists(e.methodMap[v])) {
+                    // the user wants to call a method
+                    v = e.methodMap[v];
+                } else {
+                    // the user wants to change an attribute
+                    e = e.visProp;
+                    v = v.toLowerCase();
+                }
+            }
+        }
+
+        if (!JXG.exists(e)) {
+            this._error('Error: ' + e + ' is not an object.');
+        }
+
+        if (!JXG.exists(e[v])) {
+            this._error('Error: unknown property ' + v + '.');
+        }
+
+        if (compile && typeof e[v] === 'function') {
+            return function () { return e[v].apply(e, arguments); };
+        }
+
+        return e[v];
+    },
+
     /**
      * Executes a parse subtree.
      * @param {Object} node
@@ -749,6 +723,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         if (!node)
             return ret;
+
 
         switch (node.type) {
             case 'node_op':
@@ -894,73 +869,72 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // after this, the parameters are in pstack
                         this.execute(node.children[0]);
 
-                        // begin replacement candidate
+                        if (this.board.options.jc.compile) {
+                            this.sstack.push({});
+                            this.scope++;
 
-                        /*ret = (function(_pstack, that) { return function() {
-                            var r;
+                            this.isLHS = false;
 
-                            that.sstack.push({});
-                            that.scope++;
-                            for(r = 0; r < _pstack.length; r++) {
-                                that.sstack[that.scope][_pstack[r]] = arguments[r];
+                            for (i = 0; i < this.pstack[this.pscope].length; i++) {
+                                this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
                             }
 
-                            r = that.execute(node.children[1]);
+                            this.replaceNames(node.children[1]);
 
-                            that.sstack.pop();
-                            that.scope--;
-                            return r;
-                        }; })(this.pstack[this.pscope], this);*/
+                            ret = (function ($jc$) {
+                                var p = $jc$.pstack[$jc$.pscope].join(', '),
+                                    str = 'var f = function (' + p + ') {\n$jc$.sstack.push([]);\n$jc$.scope++;\nvar r = (function () {\n' + $jc$.compile(node.children[1], true) + '})();\n$jc$.sstack.pop();\n$jc$.scope--;\nreturn r;\n}; f;';
 
-                        // end replacement candidate
+                                // the function code formatted:
+                                /*
+                                var f = function (_parameters_) {
+                                    // handle the stack
+                                    $jc$.sstack.push([]);
+                                    $jc$.scope++;
 
+                                    // this is required for stack handling: usually at some point in a function
+                                    // there's a return statement, that prevents the cleanup of the stack.
+                                    var r = (function () {
+                                        _compiledcode_;
+                                    })();
 
-                        // new begin
+                                    // clean up the stack
+                                    $jc$.sstack.pop();
+                                    $jc$.scope--;
 
-                        this.sstack.push({});
-                        this.scope++;
+                                    // return the result
+                                    return r;
+                                };
+                                f;   // the return value of eval()
+                                */
 
-                        this.isLHS = false;
+                                return eval(str);
+                            })(this);
 
-                        for(i = 0; i < this.pstack[this.pscope].length; i++) {
-                            this.sstack[this.scope][this.pstack[this.pscope][i]] = this.pstack[this.pscope][i];
+                            // clean up scope
+                            this.sstack.pop();
+                            this.scope--;
+                        } else {
+                            ret = (function (_pstack, that) {
+                                return function () {
+                                    var r;
+
+                                    that.sstack.push({});
+                                    that.scope++;
+                                    for (r = 0; r < _pstack.length; r++) {
+                                        that.sstack[that.scope][_pstack[r]] = arguments[r];
+                                    }
+
+                                    r = that.execute(node.children[1]);
+
+                                    that.sstack.pop();
+                                    that.scope--;
+                                    return r;
+                                };
+                            })(this.pstack[this.pscope], this);
                         }
 
-                        this.replaceNames(node.children[1]);
-
-                        ret = (function ($jc$) {
-                            var p = $jc$.pstack[$jc$.pscope].join(', '),
-                                str = 'var f = function (' + p + ') {\n$jc$.sstack.push([]);\n$jc$.scope++;\nvar r = (function () {' + $jc$.compile(node.children[1], true) + '})();\n$jc$.sstack.pop();\n$jc$.scope--;\nreturn r;\n}; f;';
-
-                            // the function code formatted:
-                            /*var f = function (_parameters_) {
-                                // handle the stack
-                                $jc$.sstack.push([]);
-                                $jc$.scope++;
-
-                                // this is required for stack handling: usually at some point in a function
-                                // there's a return statement, that prevents the cleanup of the stack.
-                                var r = (function () {
-                                    _compiledcode_;
-                                })();
-
-                                // clean up the stack
-                                $jc$.sstack.pop();
-                                $jc$.scope--;
-
-                                // return the result
-                                return r;
-                            };
-                            f;   // the return value of eval() */
-
-
-                            return eval(str);
-                        })(this);
-
-                        // clean up scope
-                        this.sstack.pop();
-                        this.scope--;
-
+                        ret.toJS = ret.toString;
                         ret.toString = (function (_that) {
                             return function () {
                                 return _that.compile(_that.replaceIDs(JXG.deepCopy(node)));
@@ -1049,42 +1023,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         e = this.execute(node.children[0]);
                         v = node.children[1];
 
-                        // is it a geometry element?
-                        if (e && e.type && e.elementClass && e.methodMap) {
-                            // yeah, it is. but what does the user want?
-                            if (v === 'label') {
-                                // he wants to access the label properties!
-                                // adjust the base object...
-                                e = e.label;
-                                // and the property we are accessing
-                                v = 'content';
-                            } else {
-                                // ok, it's not the label he wants to change
-
-                                // well, what then?
-                                if (JXG.exists(e.subs[v])) {
-                                    // a subelement it is, good sir.
-                                    e = e.subs;
-                                } else if (JXG.exists(e.methodMap[v])) {
-                                    // the user wants to call a method
-                                    v = e.methodMap[v];
-                                } else {
-                                    // the user wants to change an attribute
-                                    e = e.visProp;
-                                    v = v.toLowerCase();
-                                }
-                            }
-                        }
-
-                        if (!JXG.exists(e)) {
-                            this._error('Error: ' + e + ' is not an object.');
-                        }
-
-                        if (!JXG.exists(e[v])) {
-                            this._error('Error: unknown property ' + v + '.');
-                        }
-
-                        ret = e[v];
+                        ret = this.resolveProperty(e, v, false);
 
                         // set the scope, in case this is a method the user wants to call
                         ret.sc = e;
@@ -1239,10 +1178,14 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                     case 'op_assign':
                         e = this.compile(node.children[0], js);
                         if (js) {
-                            if (this.isLocalVariable(e) !== this.scope) {
-                                this.sstack[this.scope][e] = true;
+                            if (JXG.isArray(e)) {
+                                ret = '$jc$.setProp(' + e[0] + ', \'' + e[1] + '\', ' + this.compile(node.children[1], js) + ');\n';
+                            } else {
+                                if (this.isLocalVariable(e) !== this.scope) {
+                                    this.sstack[this.scope][e] = true;
+                                }
+                                ret = '$jc$.sstack[' + this.scope + '][\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
                             }
-                            ret = '$jc$.sstack[' + this.scope + '][\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
                         } else {
                             ret = e + ' = ' + this.compile(node.children[1], js) + ';\n';
                         }
@@ -1313,7 +1256,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         if (node.children[2]) {
                             e = (js ? '{' : '<<') + this.compile(node.children[2], js) + (js ? '}' : '>>');
                         }
-
                         ret = this.compile(node.children[0], js) + '(' + this.compile(node.children[1], js) + (node.children[2] ? ', ' + e : '') + ')';
 
                         // save us a function call when compiled to javascript
@@ -1323,15 +1265,27 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                         break;
                     case 'op_property':
-                        ret = this.compile(node.children[0], js) + '.' + node.children[1];
+                        if (js) {
+                            ret = '$jc$.resolveProperty(' + this.compile(node.children[0], js) + ', \'' + node.children[1] + '\', true)';
+                        } else {
+                            ret = this.compile(node.children[0], js) + '.' + node.children[1];
+                        }
                         break;
                     case 'op_lhs':
                         if (node.children.length === 1) {
                             ret = node.children[0];
                         } else if (node.children[2] === 'dot') {
-                            ret = this.compile(node.children[1], js) + '.' + node.children[0];
+                            if (js) {
+                                ret = [this.compile(node.children[1], js), node.children[0]];
+                            } else {
+                                ret = this.compile(node.children[1], js) + '.' + node.children[0];
+                            }
                         } else if (node.children[2] === 'bracket') {
-                            ret = this.compile(node.children[1], js) + '[' + this.compile(node.children[0], js) + ']';
+                            if (js) {
+                                ret = [this.compile(node.children[1], js), this.compile(node.children[0], js)];
+                            } else {
+                                ret = this.compile(node.children[1], js) + '[' + this.compile(node.children[0], js) + ']';
+                            }
                         }
                         break;
                     case 'op_use':
@@ -1432,21 +1386,94 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     },
 
     /**
-     * Create a new parse tree node. Basically the same as node(), but this builds
-     * the children part out of an arbitrary number of parameters, instead of one
-     * array parameter.
-     * @param {String} type Type of node, e.g. node_op, node_var, or node_const
-     * @param value The nodes value, e.g. a variables value or a functions body.
-     * @param children Arbitrary number of parameters; define the child nodes.
+     * Defines built in methods and constants.
+     * @returns {Object} BuiltIn control object
      */
-    createNode: function (type, value, children) {
-        var n = this.node(type, value, []),
-            i;
+    defineBuiltIn: function () {
+        var that = this,
+            builtIn = {
+                PI: Math.PI,
+                EULER: Math.E,
+                X: function (el) {
+                    return el.X();
+                },
+                Y: function (el) {
+                    return el.Y();
+                },
+                V: function (el) {
+                    return el.Value();
+                },
+                L: function (el) {
+                    return el.L();
+                },
+                dist: function (p1, p2) {
+                    if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
+                        that._error('Error: Can\'t calculate distance.');
+                    }
 
-        for(i = 2; i < arguments.length; i++)
-            n.children.push( arguments[i] );
+                    return p1.Dist(p2);
+                },
+                rad: JXG.Math.Geometry.rad,
+                deg: JXG.Math.Geometry.trueAngle,
+                factorial: JXG.Math.factorial,
+                trunc: JXG.trunc,
+                '$': that.getElementById
+            };
 
-        return n;
+        // special scopes for factorial, deg, and rad
+        builtIn.rad.sc = JXG.Math.Geometry;
+        builtIn.deg.sc = JXG.Math.Geometry;
+        builtIn.factorial.sc = JXG.Math;
+
+        // set the javascript equivalent for the builtIns
+        // some of the anonymous functions should be replaced by global methods later on
+        builtIn.PI.src = 'Math.PI';
+        builtIn.X.src = '(function (e) { return e.X(); })';
+        builtIn.Y.src = '(function (e) { return e.Y(); })';
+        builtIn.V.src = '(function (e) { return e.Value(); })';
+        builtIn.L.src = '(function (e) { return e.L(); })';
+        builtIn.dist.src = '(function (e1, e2) { return e1.Dist(e2); })';
+        builtIn.rad.src = 'JXG.Math.Geometry.rad';
+        builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
+        builtIn.factorial.src = 'JXG.Math.factorial';
+        builtIn.trunc.src = 'JXG.trunc';
+        builtIn['$'].src = '(function (n) { return JXG.getRef(JXG.JSXGraph.boards[$jc$.board.id], n); })';
+
+        return builtIn;
+    },
+
+    /**
+     * Output a debugging message. Uses debug console, if available. Otherwise an HTML element with the
+     * id "debug" and an innerHTML property is used.
+     * @param {String} log
+     * @private
+     */
+    _debug: function (log) {
+        if(typeof console !== "undefined") {
+            console.log(log);
+        } else if(document.getElementById('debug') !== null) {
+            document.getElementById('debug').innerHTML += log + '<br />';
+        }
+    },
+
+    /**
+     * Throws an exception with the given error message.
+     * @param {String} msg Error message
+     */
+    _error: function (msg) {
+        throw new Error(msg);
+    },
+
+    /**
+     * Output a warning message using {@link JXG#debug} and precedes the message with "Warning: ".
+     * @param {String} msg
+     */
+    _warn: function (msg) {
+        if(typeof console !== "undefined") {
+            console.log('Warning: ' + msg);
+        } else if(document.getElementById(this.warnLog) !== null) {
+            document.getElementById(this.warnLog).innerHTML += 'Warning: ' + msg + '<br />';
+        }
     }
 
 });

@@ -42,6 +42,11 @@ JXG.Options = {
         wheel: false
     },
 
+    jc : {
+        enabled: true,
+        compile: true
+    },
+
     /* navbar options */
     navbar: {
         strokeColor: '#aaaaaa',

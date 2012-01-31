@@ -279,6 +279,13 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.dependentBoards = [];
 
     /**
+     * During the update process this is set to false to prevent an endless loop.
+     * @default false
+     * @type Boolean
+     */
+    this.inUpdate = false;
+
+    /**
      * An associative array containing all geometric objects belonging to the board. Key is the id of the object and value is a reference to the object.
      * @type Object
      */
@@ -2422,8 +2429,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     update: function (drag) {
         var i, len, boardId, b;
-        
-        if (this.isSuspendedUpdate) { return this; }
+
+        if (this.inUpdate || this.isSuspendedUpdate) {
+            return this;
+        }
+        this.inUpdate = true;
+
         this.prepareUpdate(drag).updateElements(drag).updateConditions();
         this.renderer.suspendRedraw(this);
         this.updateRenderer(drag);
@@ -2446,6 +2457,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
         }
+
+        this.inUpdate = false;
         return this;
     },
 

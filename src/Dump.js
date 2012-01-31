@@ -99,15 +99,6 @@ JXG.Dump = {
     },
 
     /**
-     * Checks if <tt>s</tt> is a valid identifier.
-     * @param {String} s
-     * @returns {Boolean} <tt>true</tt> if <tt>s</tt> is a valid identifier.
-     */
-    isIdentifier: function (s) {
-        return /[A-Za-z_][A-Za-z0-9_]*/.test(s);
-    },
-
-    /**
      * Eliminate default values given by {@link JXG.Options} from the attributes object.
      * @param {Object} instance Attribute object of the element
      * @param {Object} % Arbitrary number of objects <tt>instance</tt> will be compared to. Usually these are

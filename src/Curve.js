@@ -861,7 +861,7 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
     var attr, par = ["x","x"].concat(parents);
-        
+
     attr = JXG.copyAttributes(attributes, board.options, 'curve');
     attr['curvetype'] = 'functiongraph';
     return new JXG.Curve(board, par, attr);
