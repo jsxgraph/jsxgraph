@@ -723,8 +723,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
 
                         if (len < 2 ) { return NaN; }
                         if (!suspendedUpdate) {
-                            first[which] = function() {return points[0][which]()-points[1][which]();}
-                            last[which] = function() {return points[len-1][which]()-points[len-2][which]();}
+                            first[which] = function() {return 2*points[0][which]()-points[1][which]();}
+                            last[which] = function() {return 2*points[len-1][which]()-points[len-2][which]();}
                             p = [first].concat(points, [last]);
                             coeffs[which] = [];
                             for (s=0; s < len-1; s++) {
