@@ -52,7 +52,7 @@ TestCase("Slider", {
     },
 
     testCreateSlider: function () {
-        expectAsserts(4);
+        expectAsserts(5);
 
         var s;
 
@@ -66,6 +66,7 @@ TestCase("Slider", {
         assertObject('slider is an object', s);
         assertInstanceOf('slider is an instance of JXG.Point', JXG.Point, s);
         assertEquals('slider.type is JXG.OBJECT_TYPE_GLIDER', JXG.OBJECT_TYPE_GLIDER, s.type);
+        assertEquals('slider.elementClass is JXG.OBJECT_CLASS_POINT', JXG.OBJECT_CLASS_POINT, s.elementClass);
     },
 
     testValue: function () {
