@@ -952,7 +952,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickUpArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight*0.1);
         return this;
     },
 
@@ -961,7 +961,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickDownArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight*0.1);
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
         return this;
     },
 
