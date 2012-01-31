@@ -1265,7 +1265,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                         break;
                     case 'op_property':
-                        if (js) {
+                        if (js && node.children[1] !== 'X' && node.children[1] !== 'Y') {
                             ret = '$jc$.resolveProperty(' + this.compile(node.children[0], js) + ', \'' + node.children[1] + '\', true)';
                         } else {
                             ret = this.compile(node.children[0], js) + '.' + node.children[1];
