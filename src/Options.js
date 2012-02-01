@@ -719,19 +719,22 @@ JXG.Options = {
         withLabel: true,    // Show integral value as text
         strokeWidth: 0,
         strokeOpacity: 0,
-        curveleft: {    // Start point
-            visible: true
+        fillOpacity: 0.8,
+        curveLeft: {    // Start point
+            visible: true,
+            layer: 9
         },
-        baseleft: {    // Start point
+        baseLeft: {    // Start point
             visible: false,
             fixed: false,
             withLabel: false,
             name: ''
         },
-        curveright: {      // End point
-            visible: true
+        curveRight: {      // End point
+            visible: true,
+            layer: 9
         },
-        baseright: {      // End point
+        baseRight: {      // End point
             visible: false,
             fixed: false,
             withLabel: false,
