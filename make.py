@@ -72,6 +72,7 @@ version = None
 hint = None
 reset = ""
 port = 4224
+server = ""
 
 
 '''
@@ -89,6 +90,7 @@ def usage():
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
     print "  -p, --port=PORT        Set server port for the JsTestDriver server. Default is 4224."
     print "      --reset            Force the test server to reload the browsers."
+    print "  -s, --server=URL       Overrides the server option in the JsTestDriver config."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
     print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
@@ -371,9 +373,9 @@ def makeHint():
     Run Unit Tests
 '''
 def makeTest():
-    global jstest, reset
+    global jstest, reset, server
     
-    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+    os.system('java -jar ' + jstest + ' ' + reset + ' ' + server + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
 
 '''
     Run Unit Tests Server
@@ -393,10 +395,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest, reset, port
+    global yui, jsdoc, version, output, hint, jstest, reset, port, server
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -420,6 +422,8 @@ def main(argv):
             port = arg
         elif opt in ("--reset"):
             reset = '--reset'
+        elif opt in ("-s", "--server"):
+            server = "--server " + arg
 
     target = "".join(args)
 
