@@ -90,6 +90,8 @@ JXG.Polygon = function (board, vertices, attributes) {
     this.board.renderer.drawPolygon(this);
     this.board.finalizeAdding(this);
 
+    this.methodMap.borders = 'borders';
+    this.methodMap.vertices = 'vertices';
 
     this.elType = 'polygon';
 };

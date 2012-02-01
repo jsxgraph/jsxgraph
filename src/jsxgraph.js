@@ -318,6 +318,10 @@ JXG.JSXGraph = {
         delete(board.renderer);
         delete(board.algebra);
 
+        // clear the creator cache
+        board.jc.creator.clearCache();
+        delete(board.jc);
+
         // Finally remove the board itself from the boards array
         delete(this.boards[board.id]);
     },
