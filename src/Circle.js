@@ -521,13 +521,19 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
             dy = y - oldy,
-            newx, newy;
+            newx, newy, len = this.parents.length, i;
 
+        /*
         if (!this.center.draggable())
             return this;
         if (this.method == "twoPoints" && !this.point2.draggable()) 
             return this;
-
+        */
+        for (i=0; i<len; i++) {
+            if (!JXG.getRef(this.board,this.parents[i]).draggable()) {
+                return this;
+            }
+        }
         if (method == JXG.COORDS_BY_SCREEN) {
             newx = this.center.coords.scrCoords[1]+dx;
             newy = this.center.coords.scrCoords[2]+dy;

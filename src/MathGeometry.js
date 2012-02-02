@@ -339,6 +339,7 @@ JXG.extend(JXG.Math.Geometry, {
 
         if (Math.abs(den) < JXG.Math.eps) {
             den = JXG.Math.eps;
+        	return new JXG.Coords(JXG.COORDS_BY_USER, [Infinity, Infinity], board);
         }
 
         x = (u * (B[2] - C[2]) - v * (A[2] - B[2])) / den;
