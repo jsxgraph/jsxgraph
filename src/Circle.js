@@ -521,40 +521,27 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
             dy = y - oldy,
-            newx, newy, len = this.parents.length, i;
+            newx, newy, 
+            len = this.parents.length, i, p;
 
-        /*
-        if (!this.center.draggable())
-            return this;
-        if (this.method == "twoPoints" && !this.point2.draggable()) 
-            return this;
-        */
         for (i=0; i<len; i++) {
-            if (!JXG.getRef(this.board,this.parents[i]).draggable()) {
+            if (!JXG.getRef(this.board, this.parents[i]).draggable()) {
                 return this;
             }
         }
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newx = this.center.coords.scrCoords[1]+dx;
-            newy = this.center.coords.scrCoords[2]+dy;
-        } else {
-            newx = this.center.coords.usrCoords[1]+dx;
-            newy = this.center.coords.usrCoords[2]+dy;
-        }
-        this.center.setPositionDirectly(method, newx, newy);
-
         
-        if (this.method == "twoPoints") {
+        for (i=0; i<len; i++) {
+            p = JXG.getRef(this.board, this.parents[i]);
             if (method == JXG.COORDS_BY_SCREEN) {
-                newx = this.point2.coords.scrCoords[1]+dx;
-                newy = this.point2.coords.scrCoords[2]+dy;
+                newx = p.coords.scrCoords[1]+dx;
+                newy = p.coords.scrCoords[2]+dy;
             } else {
-                newx = this.point2.coords.usrCoords[1]+dx;
-                newy = this.point2.coords.usrCoords[2]+dy;
+                newx = p.coords.usrCoords[1]+dx;
+                newy = p.coords.usrCoords[2]+dy;
             }
-            this.point2.setPositionDirectly(method, newx, newy);
+            p.setPositionDirectly(method, newx, newy);
         }
-
+        
         this.update();
         return this;
     },
