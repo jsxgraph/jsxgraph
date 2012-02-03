@@ -613,36 +613,17 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
-            dy = y - oldy,
-            newx, newy, pc;
+            dy = y - oldy;
 
         if (!this.point1.draggable() || !this.point2.draggable()) {
             return this;
         }
-
-        pc = this.point1.coords;
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newx = pc.scrCoords[1]+dx;
-            newy = pc.scrCoords[2]+dy;
-        } else {
-            newx = pc.usrCoords[1]+dx;
-            newy = pc.usrCoords[2]+dy;
-        }
-        this.point1.setPositionDirectly(method, newx, newy);
         
-        pc = this.point2.coords;
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newx = pc.scrCoords[1]+dx;
-            newy = pc.scrCoords[2]+dy;
-        } else {
-            newx = pc.usrCoords[1]+dx;
-            newy = pc.usrCoords[2]+dy;
-        }
-        this.point2.setPositionDirectly(method, newx, newy);
+        dx /= this.board.unitX;
+        dy /= -this.board.unitY;
+        var t = this.board.create('transform', [dx, dy, 0], {type:'translate'});
+        t.applyOnce([this.point1, this.point2] );
         
-        this.point1.prepareUpdate().update();    // Update needed if line depends on glider
-        this.point2.prepareUpdate().update();
-        this.prepareUpdate().update();
         return this;
     },
 
