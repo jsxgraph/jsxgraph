@@ -676,8 +676,8 @@ JXG.createCircle = function (board, parents, attributes) {
     } else if( parents.length==3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
         // Circle through three points
         el = JXG.createCircumcircle(board, p, attributes);
-        el.center.setProperty({visible:false});
-        isDraggable = false;
+        //el.center.setProperty({visible:false});
+        //isDraggable = false;
     } else
         throw new Error("JSXGraph: Can't create circle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
