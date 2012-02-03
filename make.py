@@ -66,7 +66,7 @@ import urllib
 # Default values for options. May be overridden via command line options
 yui = "~/Tools/yuicompressor"
 jsdoc = "~/Tools/jsdoc-toolkit"
-jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.1.jar"
+jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.4-a.jar"
 output = "distrib"
 version = None
 hint = None

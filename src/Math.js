@@ -73,6 +73,17 @@ JXG.Math = (function(JXG, Math, undefined) {
         eps: 0.000001,
 
         /**
+         * The JavaScript implementation of the % operator returns the symmetric modulo.
+         * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
+         * @param {Number} a
+         * @param {Number} m
+         * @returns Mathematical modulo <tt>a mod m</tt>
+         */
+        mod: function (a, m) {
+            return a - Math.floor(a/m)*m;
+        },
+
+        /**
          * Initializes a vector as an array with the coefficients set to the given value resp. zero.
          * @param {Number} n Length of the vector
          * @param {Number} [init=0] Initial value for each coefficient
