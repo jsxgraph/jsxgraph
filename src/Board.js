@@ -800,7 +800,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     moveLine: function(p1, p2, o) {
         var np1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this),
             np2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this),
-            drag, mid, midold, d, d1, d2, old1, old2;
+            drag, mid, midold, d, d1, d2, old1, old2,
+            S, alpha, t;
 
         if (JXG.exists(o.obj)) {
             drag = o.obj;
@@ -810,7 +811,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (drag.elementClass!=JXG.OBJECT_CLASS_LINE) {
             return;
         }
-        if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+        if (JXG.exists(o.targets[0]) &&
+            JXG.exists(o.targets[1]) &&
+            !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
             old1 = [o.targets[0].Xprev,o.targets[0].Yprev];
             old2 = [o.targets[1].Xprev,o.targets[1].Yprev];
             
@@ -820,7 +823,25 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             mid = new JXG.Coords(JXG.COORDS_BY_SCREEN,
                        [(np1.scrCoords[1]+np2.scrCoords[1])*0.5, 
                         (np1.scrCoords[2]+np2.scrCoords[2])*0.5], this);
-                       
+            
+            old1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, old1, this); 
+            old2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, old2, this); 
+            d1 = JXG.Math.crossProduct(old1.usrCoords, old2.usrCoords);
+            d2 = JXG.Math.crossProduct(np1.usrCoords, np2.usrCoords);
+            S = JXG.Math.crossProduct(d1, d2);
+            if (Math.abs(S[0])<JXG.Math.eps){
+                t = this.create('transform', [mid.usrCoords[1]-midold.usrCoords[1], mid.usrCoords[2]-midold.usrCoords[2]], {type:'translate'});
+                t.applyOnce([drag.point1, drag.point2]);
+            } else {
+                S[1] /= S[0];
+                S[2] /= S[0];
+                alpha = JXG.Math.Geometry.rad(midold.usrCoords.slice(1), S.slice(1), mid.usrCoords.slice(1));
+                t = this.create('transform', [alpha, S[1], S[2]], {type:'rotate'});
+                t.applyOnce([drag.point1, drag.point2]);
+            }
+/*
+*/
+            /*
             d = JXG.Math.Geometry.distance(old1, old2);
             // d = Math.sqrt((old1.Xprev-old2.Xprev)*(old1.Xprev-old2.Xprev) + (old1.Yprev-old2.Yprev)*(old1.Yprev-old2.Yprev));
             d1 = drag.point1.coords.distance(JXG.COORDS_BY_SCREEN, midold)*2/d;
@@ -833,6 +854,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     mid.scrCoords[1] + d2*(np2.scrCoords[1]-mid.scrCoords[1]), 
                     mid.scrCoords[2] + d2*(np2.scrCoords[2]-mid.scrCoords[2]) 
                     );
+            this.update(drag.point1);
+            */
             this.update(drag.point1);
             drag.highlight();
         }

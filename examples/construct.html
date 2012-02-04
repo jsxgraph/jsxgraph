@@ -59,7 +59,10 @@ var B = brd.create('point',[2,2]);
 var li1 = brd.create('line',[A,B]);
 var C = brd.create('point',[-2,2]);
 var D = brd.create('point',[0,2,2]);
+//var li2 = brd.create('parallel',[C,li1]);
 var li2 = brd.create('line',[C,D]);
+var E = brd.create('glider',[1,1,li2]);
+var F = brd.create('glider',[4,1,li1]);
 
 /*
 var k = brd.create('circle',[[0,0],2]);
