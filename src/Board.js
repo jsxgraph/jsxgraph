@@ -798,12 +798,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      */
     moveLine: function(p1, p2, o) {
-        var np1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this),
-            np2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this),
-            drag, mid, midold, d, d1, d2, old1, old2,
-            S, alpha, t;
+        var np1c, np2c, np1, np2, op1, op2,
+            nmid, omid, nd, od,
+            d, drag,
+            S, alpha, t1, t2, t3, t4, t5;
 
-        if (JXG.exists(o.obj)) {
+        if (JXG.exists(o) && JXG.exists(o.obj)) {
             drag = o.obj;
         } else {
             return;
@@ -811,58 +811,67 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (drag.elementClass!=JXG.OBJECT_CLASS_LINE) {
             return;
         }
+        
+        // New finger position
+        np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
+        np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
+        
         if (JXG.exists(o.targets[0]) &&
             JXG.exists(o.targets[1]) &&
             !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
-            old1 = [o.targets[0].Xprev,o.targets[0].Yprev];
-            old2 = [o.targets[1].Xprev,o.targets[1].Yprev];
+
+            np1 = np1c.usrCoords;
+            np2 = np2c.usrCoords;
+            // Previous finger position
+            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this)).usrCoords; 
+            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev,o.targets[1].Yprev], this)).usrCoords; 
             
-            midold = new JXG.Coords(JXG.COORDS_BY_SCREEN,
-                       [(old1[0]+old2[0])*0.5, 
-                        (old1[1]+old2[1])*0.5], this);
-            mid = new JXG.Coords(JXG.COORDS_BY_SCREEN,
-                       [(np1.scrCoords[1]+np2.scrCoords[1])*0.5, 
-                        (np1.scrCoords[2]+np2.scrCoords[2])*0.5], this);
+            // Affine mid points of the old and new positions
+            omid = [1, (op1[1]+op2[1])*0.5, (op1[2]+op2[2])*0.5];
+            nmid = [1, (np1[1]+np2[1])*0.5, (np1[2]+np2[2])*0.5];
+
+            // Old and new directions    
+            od = JXG.Math.crossProduct(op1, op2);
+            nd = JXG.Math.crossProduct(np1, np2);
+            S = JXG.Math.crossProduct(od, nd);
             
-            old1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, old1, this); 
-            old2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, old2, this); 
-            d1 = JXG.Math.crossProduct(old1.usrCoords, old2.usrCoords);
-            d2 = JXG.Math.crossProduct(np1.usrCoords, np2.usrCoords);
-            S = JXG.Math.crossProduct(d1, d2);
+            // If parallel, translate otherwise rotate
             if (Math.abs(S[0])<JXG.Math.eps){
-                t = this.create('transform', [mid.usrCoords[1]-midold.usrCoords[1], mid.usrCoords[2]-midold.usrCoords[2]], {type:'translate'});
-                t.applyOnce([drag.point1, drag.point2]);
+                return;
+                t1 = this.create('transform', [nmid[1]-omid[1], nmid[2]-omid[2]], {type:'translate'});
             } else {
                 S[1] /= S[0];
                 S[2] /= S[0];
-                alpha = JXG.Math.Geometry.rad(midold.usrCoords.slice(1), S.slice(1), mid.usrCoords.slice(1));
-                t = this.create('transform', [alpha, S[1], S[2]], {type:'rotate'});
-                t.applyOnce([drag.point1, drag.point2]);
+                alpha = JXG.Math.Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
+                t1 = this.create('transform', [alpha, S[1], S[2]], {type:'rotate'});
             }
-/*
-*/
-            /*
-            d = JXG.Math.Geometry.distance(old1, old2);
-            // d = Math.sqrt((old1.Xprev-old2.Xprev)*(old1.Xprev-old2.Xprev) + (old1.Yprev-old2.Yprev)*(old1.Yprev-old2.Yprev));
-            d1 = drag.point1.coords.distance(JXG.COORDS_BY_SCREEN, midold)*2/d;
-            d2 = drag.point2.coords.distance(JXG.COORDS_BY_SCREEN, midold)*2/d;
-            drag.point1.setPositionDirectly(JXG.COORDS_BY_SCREEN, 
-                    mid.scrCoords[1] + d1*(np1.scrCoords[1]-mid.scrCoords[1]), 
-                    mid.scrCoords[2] + d1*(np1.scrCoords[2]-mid.scrCoords[2]) 
-                    );
-            drag.point2.setPositionDirectly(JXG.COORDS_BY_SCREEN, 
-                    mid.scrCoords[1] + d2*(np2.scrCoords[1]-mid.scrCoords[1]), 
-                    mid.scrCoords[2] + d2*(np2.scrCoords[2]-mid.scrCoords[2]) 
-                    );
-            this.update(drag.point1);
-            */
+            // Old midpoint of fingers after first transformation:
+            t1.update();
+            omid = JXG.Math.matVecMult(t1.matrix, omid);
+            omid[1] /= omid[0];
+            omid[2] /= omid[0];
+            
+            // Shift to the new mid point
+            t2 = this.create('transform', [nmid[1]-omid[1], nmid[2]-omid[2]], {type:'translate'});
+            t2.update();
+            omid = JXG.Math.matVecMult(t2.matrix, omid);
+
+            d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+            // Scale
+            t3 = this.create('transform', [-nmid[1], -nmid[2]], {type:'translate'});
+            t4 = this.create('transform', [d, d], {type:'scale'});
+            t5 = this.create('transform', [nmid[1], nmid[2]], {type:'translate'});
+            
+            t1.melt(t2).melt(t3).melt(t4).melt(t5);
+            t1.applyOnce([drag.point1, drag.point2]);
+
             this.update(drag.point1);
             drag.highlight();
         }
-        o.targets[0].Xprev = np1.scrCoords[1];
-        o.targets[0].Yprev = np1.scrCoords[2];
-        o.targets[1].Xprev = np2.scrCoords[1];
-        o.targets[1].Yprev = np2.scrCoords[2];
+        o.targets[0].Xprev = np1c.scrCoords[1];
+        o.targets[0].Yprev = np1c.scrCoords[2];
+        o.targets[1].Xprev = np2c.scrCoords[1];
+        o.targets[1].Yprev = np2c.scrCoords[2];
     },
 
     highlightElements: function (x, y) {

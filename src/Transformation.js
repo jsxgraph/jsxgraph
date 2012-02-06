@@ -260,7 +260,7 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
                 }
             }
         };
-        return true;
+        return this;
     }
 });
 
