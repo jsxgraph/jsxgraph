@@ -844,7 +844,11 @@ JXG.extend(JXG.Math.Geometry, {
     meetLineCircle: function(lin, circ, i, board) {
         var a,b,c,d,n, A,B,C, k,t;
         if (circ[4] < JXG.Math.eps) { // Radius is zero, return center of circle
-            return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
+            if (Math.abs( JXG.Math.innerProduct([1,circ[6],circ[7]], lin, 3)) < JXG.Math.eps) {
+                return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
+            } else {
+                return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+            }
         }
         c = circ[0];
         b = circ.slice(1, 3);

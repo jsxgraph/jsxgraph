@@ -413,7 +413,12 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      */
     Radius: function () {
         if(this.method == 'twoPoints') {
-            return(Math.sqrt(Math.pow(this.center.coords.usrCoords[1]-this.point2.coords.usrCoords[1],2) + Math.pow(this.center.coords.usrCoords[2]-this.point2.coords.usrCoords[2],2)));
+            if (JXG.Math.Geometry.distance(this.point2.coords.usrCoords,[0,0,0])==0.0 || 
+                JXG.Math.Geometry.distance(this.center.coords.usrCoords,[0,0,0])==0.0) {
+                return NaN;
+            } else {
+                return this.center.Dist(this.point2);
+            }
         }
         else if(this.method == 'pointLine' || this.method == 'pointCircle') {
             return this.radius;
