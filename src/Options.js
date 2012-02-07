@@ -816,6 +816,11 @@ JXG.Options = {
         /**#@-*/
     },
     
+    /* special options for normal lines */
+    normal : {
+        strokeColor: '#000000' // Parallel line
+    },
+
     /* special options for parallel lines */
     parallel : {
         strokeColor: '#000000' // Parallel line

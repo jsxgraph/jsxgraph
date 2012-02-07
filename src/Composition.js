@@ -863,31 +863,39 @@ JXG.createParallel = function(board, parents, attributes) {
     
     p = null;
     if(parents.length == 3) {
-        // Parallel to line through parents[0] and parents[1]
+        // line parents[2] which is parallel to line through parents[0] and parents[1]
         p = parents[2];
-        li = function() { return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords) };
+        li = function() { return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords); };
 
-        pp = [parents[0].id, parents[1].id, p.id];
+        //pp = [parents[0].id, parents[1].id, p.id];
     } else if (parents[0].elementClass == JXG.OBJECT_CLASS_POINT) {
         // Parallel to line parents[1]
         p = parents[0];
         li = function() { return parents[1].stdform; };
-        pp = [parents[1].id, p.id];
+        //pp = [parents[1].id, p.id];
     } else if (parents[1].elementClass == JXG.OBJECT_CLASS_POINT) {
         // Parallel to line parents[0]
         p = parents[1];
         li = function() { return parents[0].stdform; };
-        pp = [parents[0].id, p.id];
+        //pp = [parents[0].id, p.id];
     }
 
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
+    
+    pp = board.create('point', [function() {
+            return JXG.Math.crossProduct([1,0,0], li());
+        }], {name:'', withLabel:false, visible:false});
+    pp.isDraggable = true;
+    
     attr = JXG.copyAttributes(attributes, board.options, 'parallel');
-    //pl = board.create('line', [p, pp], attr);
+    pl = board.create('line', [p, pp], attr);
+    /*
     pl = board.create('line', [function() {
             var l = li();
             return [ -(p.X()*l[1]+p.Y()*l[2]), p.Z()*l[1], p.Z()*l[2]];
         }], attr);
-
+    */
+    
     pl.elType = 'parallel';
     pl.parents = pp;
 
@@ -981,7 +989,7 @@ JXG.createArrowParallel = function(board, parents, attributes) {
  */
 JXG.createNormal = function(board, parents, attributes) {
     /* TODO normal polynomials */
-    var p, c, l, i;
+    var p, c, l, i, attr, pp;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
@@ -1004,17 +1012,27 @@ JXG.createNormal = function(board, parents, attributes) {
                         "\nPossible parent types: [point,line], [point,circle], [glider]");
     }
 
+    attr = JXG.copyAttributes(attributes, board.options, 'normal');
     if(c.elementClass==JXG.OBJECT_CLASS_LINE) {
         // Homogeneous version:
         // orthogonal(l,p) = (F^\delta\cdot l)\times p
+        /*
         l = board.create('line', [
                     function(){ return c.stdform[1]*p.Y()-c.stdform[2]*p.X();},
                     function(){ return c.stdform[2]*p.Z();},
                     function(){ return -c.stdform[1]*p.Z();}
                     ], attributes );
-    }
-    else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-        l = board.create('line', [c.midpoint,p], attributes);
+        */ 
+        // Private point
+        pp = board.create('point', [function() {
+                var p = JXG.Math.crossProduct([1,0,0], c.stdform)
+                return [p[0], -p[2], p[1]];
+            }], {name:'', withLabel:false, visible:false});
+        pp.isDraggable = true;
+    
+        l = board.create('line', [p, pp], attr);
+    } else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+        l = board.create('line', [c.midpoint,p], attr);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
         if (c.visProp.curvetype!='plot') {
             var g = c.X;
@@ -1023,7 +1041,7 @@ JXG.createNormal = function(board, parents, attributes) {
                     function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
                     function(){ return board.D(g)(p.position);},
                     function(){ return board.D(f)(p.position);}
-                    ], attributes );
+                    ], attr);
         } else {                         // curveType 'plot'
             l = board.create('line', [
                     function(){ var i=Math.floor(p.position);
@@ -1039,7 +1057,7 @@ JXG.createNormal = function(board, parents, attributes) {
                                 if (i==c.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return c.Y(i+1)-c.Y(i);}
-                    ], attributes );
+                    ], attr );
         }
     } else if (c.type == JXG.OBJECT_TYPE_TURTLE) {
             l = board.create('line', [
@@ -1080,7 +1098,7 @@ JXG.createNormal = function(board, parents, attributes) {
                                 if (i==el.numberPoints-1) i--;
                                 if (i<0) return 0.0;
                                 return el.Y(i+1)-el.Y(i);}
-                    ], attributes );
+                    ], attr );
     }
     else {
         throw new Error("JSXGraph: Can't create normal with parent types '" +
