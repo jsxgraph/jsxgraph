@@ -1133,14 +1133,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                         this.touches[i].targets[j].X = evt.targetTouches[k].screenX;
                         this.touches[i].targets[j].Y = evt.targetTouches[k].screenY;
-
                         evt.targetTouches[k].jxg_isused = true;
                         break;
                     }
                 }
 
                 if (this.touches[i].targets[j].num === -1) {
-                    JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + ')');
+                    JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
+                    this.touches[i].targets.splice(i, 1);
                 }
             }
         }
@@ -1294,7 +1294,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (this.mode == this.BOARD_MODE_DRAG) {
             // Runs over through all elements which are touched
             // by at least one finger.
-            for (i = 0; i < this.touches.length; i++) {  
+            for (i = 0; i < this.touches.length; i++) {
                 // Touch by one finger:  this is possible for all elements that can be dragged
                 if (this.touches[i].targets.length === 1) {
                     this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
@@ -1302,7 +1302,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                     this.moveObject(pos[0], pos[1], this.touches[i]);
                 // Touch by two fingers: moving lines
-                } else if (this.touches[i].targets.length === 2) { 
+                } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
                     this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
                     this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
                     this.touches[i].targets[1].X = evt.targetTouches[this.touches[i].targets[1].num].screenX;
