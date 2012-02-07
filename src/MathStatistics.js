@@ -292,31 +292,40 @@ JXG.Math.Statistics = {
      * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1 Dividend
      * @param {Array|Number} arr2 Divisor
+     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript <tt>%</tt> operator.
      * @returns {Array|Number}
      */
-    mod: function (arr1,arr2) {
-        var i, len, res = [];
+    mod: function (arr1, arr2, math) {
+        var i, len, res = [], mod = function (a, m) {
+            return a % m;
+        };
+
+        math = JXG.def(math, false);
+
+        if (math) {
+            mod = JXG.Math.mod;
+        }
 
         if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1[i] % arr2;
+                res[i] = mod(arr1[i], arr2);
             }
         } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1 % arr2[i];
+                res[i] = mod(arr1, arr2[i]);
             }
         } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1[i] % arr2[i];
+                res[i] = mod(arr1[i], arr2[i]);
             }
         } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 % arr2;
+            res = mod(arr1, arr2);
         } else {
             throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
         }
@@ -357,7 +366,7 @@ JXG.Math.Statistics = {
         } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
             res = arr1 * arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
+            throw new Error('JSXGraph Error (Math.Statistics.multiply): Invalid input.');
         }
 
         return res;
@@ -395,7 +404,7 @@ JXG.Math.Statistics = {
         } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
             res = arr1 - arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
+            throw new Error('JSXGraph Error (Math.Statistics.subtract): Invalid input.');
         }
 
         return res;
