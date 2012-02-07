@@ -768,7 +768,7 @@ JXG.Options = {
         fillColor : 'none',               // Important for VML on IE
         highlightFillColor : 'none',  // Important for VML on IE
         strokeColor : '#0000ff',
-        highlightStrokeColor : '#C7ED33',
+        highlightStrokeColor : '#888888',
         withTicks: false,
 
         /**#@-*/
