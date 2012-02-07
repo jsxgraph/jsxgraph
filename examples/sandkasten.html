@@ -72,6 +72,8 @@
 
         var a = board.create('angle', [A, B, C], {text: function () { return A.X();}});
 
+        var int = board.create('integral', [[-2, 2], p], {curveLeft: {visible: false}, curveRight: {visible: false}});
+
         return board;
     })();
 

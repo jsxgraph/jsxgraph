@@ -1740,20 +1740,20 @@ JXG.createIntegral = function(board, parents, attributes) {
 
     if(JXG.isFunction(start)) {
         startx = start;
-        starty = function () { return curve.yterm(startx()); };
+        starty = function () { return curve.Y(startx()); };
         start = startx();
     } else {
         startx = start;
-        starty = curve.yterm(start);
+        starty = curve.Y(start);
     }
 
     if(JXG.isFunction(start)) {
         endx = end;
-        endy = function () { return curve.yterm(endx()); };
+        endy = function () { return curve.Y(endx()); };
         end = endx();
     } else {
         endx = end;
-        endy = curve.yterm(end);
+        endy = curve.Y(end);
     }
 
     if(end < start) {
@@ -1787,7 +1787,7 @@ JXG.createIntegral = function(board, parents, attributes) {
             function () { return pb_on_curve.X() + 0.2; },
             function () { return pb_on_curve.Y() - 0.8; },
             function () {
-                    var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.yterm);
+                    var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
                     return '&int; = ' + (Int).toFixed(4);
                 }
             ], attr);
@@ -1838,7 +1838,7 @@ JXG.createIntegral = function(board, parents, attributes) {
         }
 
         x = [left, left];
-        y = [0, curve.yterm(left)];
+        y = [0, curve.Y(left)];
 
         for(i=0; i < curve.numberPoints; i++) {
             if( (left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right) ) {
@@ -1847,7 +1847,7 @@ JXG.createIntegral = function(board, parents, attributes) {
             }
         }
         x.push(right);
-        y.push(curve.yterm(right));
+        y.push(curve.Y(right));
         x.push(right);
         y.push(0);
 
