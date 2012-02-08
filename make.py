@@ -423,7 +423,10 @@ def main(argv):
         elif opt in ("--reset"):
             reset = '--reset'
         elif opt in ("-s", "--server"):
-            server = "--server " + arg
+            if arg == 'btmdxe':
+                server = "--server http://btmdxe.mat.uni-bayreuth.de:4224"
+            else:
+                server = "--server " + arg
 
     target = "".join(args)
 
