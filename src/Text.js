@@ -181,6 +181,10 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
         this.updateSize();
+        this.needsUpdate = true;
+        this.update();
+        this.updateRenderer();
+
         return this;
     },
 
