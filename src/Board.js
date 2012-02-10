@@ -347,7 +347,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-    /**
+   /**
      * If true updates are skipped.
      * @type Boolean
      */
@@ -458,6 +458,20 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     }
 
     this.addEventHandlers();
+
+    /**
+     * A flag which tells if the board registers mouse events.
+     * @type Boolean
+     * @default true
+     */
+    this.hasMouseHandlers = true;
+
+    /**
+     * A flag which tells if the board registers touch events.
+     * @type Boolean
+     * @default true
+     */
+    this.hasTouchHandlers = true;
 };
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
@@ -945,27 +959,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // this one works on IE, Firefox and Chromium with default configurations
         // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
         this.containerObj.oncontextmenu = function (e) {if (JXG.exists(e)) e.preventDefault(); return false; };
-
     },
 
     /**
-     *  Remove all event handlers from the board object
+     * Remove all event handlers from the board object
+     * @param {Boolean} [keepTouch=false] If this is <tt>true</tt>, only mouse event handlers are removed.
      */
-    removeEventHandlers: function () {
-        JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-        JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-        JXG.removeEvent(document, 'mouseup', this.mouseUpListener,this);
+    removeEventHandlers: function (keepTouch) {
 
-        JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-        JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-        JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+        if (this.hasMouseHandlers) {
+            JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+            JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+            JXG.removeEvent(document, 'mouseup', this.mouseUpListener,this);
 
-        JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-        JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+            JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+            JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
-        JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-        JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-        JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
+            this.hasMouseHandlers = false;
+        }
+
+        if (!keepTouch && this.hasTouchHandlers) {
+            JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+            JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+            JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+
+            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+            JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
+
+            this.hasTouchHandlers = false;
+        }
     },
 
     /**
@@ -1067,6 +1090,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, pos, elements, j, k,
             eps = this.options.precision.touch,
             obj, xy = [], found;
+
+        if (this.hasMouseHandlers) {
+            this.removeEventHandlers(true);
+        }
 
         //evt.preventDefault();
         evt.stopPropagation();
