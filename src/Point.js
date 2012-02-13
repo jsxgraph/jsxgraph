@@ -148,9 +148,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Updates the position of the point.
      */
     update: function (fromParent) {
-        var i, p1coords, p2coords, factor, distP1S, distP1P2, distP2S, v,
-            p1Scr, p2Scr, y, p1, p2, poly;
-            
         if (!this.needsUpdate) { return this; }
 
         if(typeof fromParent == 'undefined') {
@@ -169,25 +166,38 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
          * the defining elements of the line or circle have been changed.
          */
         if(this.type == JXG.OBJECT_TYPE_GLIDER) {
+            if (fromParent) {
+                this.updateGliderFromParent();
+            } else {
+                this.updateGlider();
+            }
+        }
+        
+        /**
+        * If point is a calculated point, call updateConstraint() to calculate new coords. 
+        * The second test is for dynamic axes.
+        */
+        if (this.type == JXG.OBJECT_TYPE_CAS || this.type == JXG.OBJECT_TYPE_AXISPOINT) {
+            this.updateConstraint();
+        }
+
+        this.updateTransform();
+
+        return this;
+    },
+
+    updateGlider: function() {
+        var i, p1coords, p2coords, factor, distP1S, distP1P2, distP2S, v,
+            p1Scr, p2Scr, y, p1, p2, poly;
+
             if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.X()+Math.cos(this.position),this.slideObject.center.Y()+Math.sin(this.position)]);
-                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
-                } else {
-                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
-                    this.position = JXG.Math.Geometry.rad([this.slideObject.center.X()+1.0,this.slideObject.center.Y()],this.slideObject.center,this);
-                }
+                this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
+                this.position = JXG.Math.Geometry.rad([this.slideObject.center.X()+1.0,this.slideObject.center.Y()],this.slideObject.center,this);
             } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
                 this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
                 p1coords = this.slideObject.point1.coords;
                 p2coords = this.slideObject.point2.coords;
-                if (fromParent) {
-                    if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
-                        this.coords.setCoordinates(JXG.COORDS_BY_USER, 
-                                               [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
-                                                p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
-                    }
-                } else {
+                    
                     factor = 1;
                     distP1S = p1coords.distance(JXG.COORDS_BY_USER, this.coords);
                     distP1P2 = p1coords.distance(JXG.COORDS_BY_USER, p2coords);
@@ -210,7 +220,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         this.position = (v-this._smin)/(this._smax-this._smin);
                         this.update(true);
                     }
-                }
+                    
                 p1Scr = this.slideObject.point1.coords.scrCoords;
                 p2Scr = this.slideObject.point2.coords.scrCoords;
 
@@ -275,33 +285,106 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     }
                 }
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
-                }
                 this.updateConstraint(); // In case, the point is a constrained glider.
                 this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
             } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
-                }
                 this.updateConstraint(); // In case, the point is a constrained glider.
                 this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
             } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_POINT) {
                     this.coords  = JXG.Math.Geometry.projectPointToPoint(this, this.slideObject, this.board);
             }
-        }
-        
-        /**
-        * If point is a calculated point, call updateConstraint() to calculate new coords. 
-        * The second test is for dynamic axes.
-        */
-        if (this.type == JXG.OBJECT_TYPE_CAS || this.type == JXG.OBJECT_TYPE_AXISPOINT) {
-            this.updateConstraint();
-        }
+    },
 
-        this.updateTransform();
+    updateGliderFromParent: function() {
+        var i, p1coords, p2coords, factor, distP1S, distP1P2, distP2S, v,
+            p1Scr, p2Scr, y, p1, p2, poly;
 
-        return this;
+            if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.X()+Math.cos(this.position),this.slideObject.center.Y()+Math.sin(this.position)]);
+                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
+            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+                this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
+                p1coords = this.slideObject.point1.coords;
+                p2coords = this.slideObject.point2.coords;
+                    if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
+                        this.coords.setCoordinates(JXG.COORDS_BY_USER, 
+                                               [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
+                                                p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
+                    }
+                p1Scr = this.slideObject.point1.coords.scrCoords;
+                p2Scr = this.slideObject.point2.coords.scrCoords;
+
+                if(this.slideObject.getSlope() == 0) {
+                    i = 1;
+                } else {
+                    i = 2;
+                }
+
+                y = this.coords.scrCoords[i];
+                if (!this.slideObject.visProp.straightfirst) {
+                    if(p1Scr[i] < p2Scr[i]) {
+                        if(y < p1Scr[i]) {
+                           this.coords = this.slideObject.point1.coords;
+                           this.position = 0;
+                        }
+                    }
+                    else if(p1Scr[i] > p2Scr[i]) {
+                        if(y > p1Scr[i]) {
+                           this.coords = this.slideObject.point1.coords;
+                           this.position = 0;
+                        }
+                    }
+                }
+                if (!this.slideObject.visProp.straightlast) {
+                    if(p1Scr[i] < p2Scr[i]) {
+                        if (y > p2Scr[i]) {
+                           this.coords = this.slideObject.point2.coords;
+                           this.position = 1;
+                        }
+                    }
+                    else if(p1Scr[i] > p2Scr[i]) {
+                        if (y < p2Scr[i]) {
+                           this.coords = this.slideObject.point2.coords;
+                           this.position = 1;
+                        }
+                    }
+                }  
+
+                if (this.onPolygon) {
+                    p1 = this.slideObject.point1.coords;
+                    p2 = this.slideObject.point2.coords;
+                    if (Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && 
+                        Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
+                        poly = this.slideObject.parentPolygon;
+                        for (i=0; i<poly.borders.length; i++) {
+                            if (this.slideObject == poly.borders[i]) {
+                                this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
+                                break;
+                            }
+                        }
+                    }
+                    else if (Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && 
+                             Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
+                        poly = this.slideObject.parentPolygon;
+                        for (i=0; i<poly.borders.length; i++) {
+                            if(this.slideObject == poly.borders[i]) {
+                                this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
+                                break;                        
+                            }
+                        }
+                    }
+                }
+            } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
+                this.updateConstraint(); // In case, the point is a constrained glider.
+                this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
+                this.updateConstraint(); // In case, the point is a constrained glider.
+                this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_POINT) {
+                    this.coords  = JXG.Math.Geometry.projectPointToPoint(this, this.slideObject, this.board);
+            }
     },
 
     /**

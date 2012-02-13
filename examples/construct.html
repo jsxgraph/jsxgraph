@@ -62,11 +62,12 @@ var D = brd.create('point',[0,2,2]);
 var li2 = brd.create('normal',[C,li1]);
 
 //var li2 = brd.create('line',[C,D]);
-//var E = brd.create('glider',[1,1,li2]);
+var E = brd.create('glider',[-1,1,li2]);
+var F = brd.create('glider',[4,1,li1]);
+
 //
 /*
 var D = brd.create('point',[1,-2,2]);
-var F = brd.create('glider',[4,1,li1]);
 var li2 = brd.create('circle',[C,D]);
 
 var I = brd.create('intersection',[li1, li2, 0]);
