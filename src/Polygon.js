@@ -41,28 +41,28 @@ JXG.Polygon = function (board, vertices, attributes) {
 
     var i, vertex, l,
         attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'borders');
-    
+
     this.withLines = attributes.withlines;
     this.attr_line = attr_line;
 
     /**
      * References to the points defining the polygon. The last vertex is the same as the first vertex.
      * @type Array
-     */    
-    this.vertices = [];    
+     */
+    this.vertices = [];
     for(i=0; i<vertices.length; i++) {
        vertex = JXG.getRef(this.board, vertices[i]);
        this.vertices[i] = vertex;
     }
-    
+
     if(this.vertices[this.vertices.length-1] != this.vertices[0]) {
         this.vertices.push(this.vertices[0]);
     }
-    
+
     /**
      * References to the border lines of the polygon.
      * @type Array
-     */  
+     */
     this.borders = [];
     if (this.withLines) {
         for(i = 0; i < this.vertices.length - 1; i++) {
@@ -75,16 +75,16 @@ JXG.Polygon = function (board, vertices, attributes) {
             l.parentPolygon = this;
         }
     }
-    
+
     // Add polygon as child to defining points
     for(i=0; i<this.vertices.length-1; i++) { // last vertex is first vertex
         vertex = JXG.getReference(this.board, this.vertices[i]);
         vertex.addChild(this);
     }
-    
+
     // create label
     this.createLabel([0, 0]);
-    
+
     /* Register polygon at board */
     this.id = this.board.setId(this, 'Py');
     this.board.renderer.drawPolygon(this);
@@ -110,7 +110,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         var i, j, len, c = false;
 
         if (this.visProp.hasinnerpoints) {
-            // All points of the polygon trigger hasPoint: inner and boundary points 
+            // All points of the polygon trigger hasPoint: inner and boundary points
             len = this.vertices.length;
             // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html for a reference
             for (i=0, j=len-2; i<len-1; j=i++) { // last vertex is first vertex
@@ -147,7 +147,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
             this.label.content.update();
             //this.board.renderer.updateLabel(this.label);
             this.board.renderer.updateText(this.label.content);
-        }    
+        }
     },
 
     /**
@@ -187,7 +187,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         copy.visProp.layer = this.board.options.layer.trace;
         copy.board = this.board;
         JXG.clearVisPropOld(copy);
-        
+
         er = this.board.renderer.enhancedRendering;
         this.board.renderer.enhancedRendering = true;
         this.board.renderer.drawPolygon(copy);
@@ -199,7 +199,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
     /**
      * Hide the polygon including its border lines. It will still exist but not visible on the board.
-     */    
+     */
     hideElement: function() {
         var i;
 
@@ -215,12 +215,12 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
             if(this.label.content.visProp.visible) {
                 this.board.renderer.hide(this.label.content);
             }
-        }    
+        }
     },
 
     /**
      * Make the element visible.
-     */    
+     */
     showElement: function() {
         var i;
 
@@ -240,7 +240,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
     /**
      * returns the area of the polygon
-     */ 
+     */
     Area: function() {
         //Surveyor's Formula
         var area = 0, i;
@@ -271,17 +271,17 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      */
     findPoint: function (p) {
         var i;
-        
+
         if (!JXG.isPoint(p)) {
             return -1;
         }
-        
+
         for (i = 0; i < this.vertices.length; i++) {
             if (this.vertices[i].id === p.id) {
                 return i;
             }
         }
-        
+
         return -1;
     },
 
@@ -340,7 +340,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
 
         return this;
     },
-    
+
     /**
      * Removes given set of vertices from the polygon
      * @param {%} % Arbitrary number of vertices as {@link JXG.Point} elements or index numbers
@@ -349,55 +349,55 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
     removePoints: function () {
         var i, j, idx, nvertices = [], nborders = [],
             nidx = [], partition = [];
-            
+
         // partition:
         // in order to keep the borders which could be recycled, we have to partition
         // the set of removed points. I.e. if the points 1, 2, 5, 6, 7, 10 are removed,
         // the partition is
         //       1-2, 5-7, 10-10
         // this gives us the borders, that can be removed and the borders we have to create.
-        
-        
-        // remove the last vertex which is identical to the first        
+
+
+        // remove the last vertex which is identical to the first
         this.vertices = this.vertices.slice(0, this.vertices.length-1);
-        
+
         // collect all valid parameters as indices in nidx
         for (i = 0; i < arguments.length; i++) {
             if (JXG.isPoint(arguments[i])) {
                 idx = this.findPoint(arguments[i]);
             }
-            
+
             if (JXG.isNumber(idx) && idx > -1 && idx < this.vertices.length && JXG.indexOf(nidx, idx) === -1) {
                 nidx.push(idx);
             }
         }
-        
+
         // sort the elements to be eliminated
         nidx = nidx.sort();
         nvertices = this.vertices.slice();
         nborders = this.borders.slice();
-        
+
         // initialize the partition
         if (this.withLines) {
             partition.push([nidx[nidx.length-1]]);
         }
-        
+
         // run through all existing vertices and copy all remaining ones to nvertices
         // compute the partition
         for (i = nidx.length-1; i > -1; i--) {
             nvertices[nidx[i]] = -1;
-            
+
             if (this.withLines && (nidx[i] - 1 > nidx[i-1])) {
                 partition[partition.length-1][1] = nidx[i];
                 partition.push([nidx[i-1]]);
             }
         }
-        
+
         // finalize the partition computation
         if (this.withLines) {
             partition[partition.length-1][1] = nidx[0];
         }
-        
+
         // update vertices
         this.vertices = [];
         for (i = 0; i < nvertices.length; i++) {
@@ -426,7 +426,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
                     this.board.removeObject(this.borders[j]);
                     nborders[j] = -1;
                 }
-                
+
                 // only create the new segment if it's not the closing border. the closing border is getting a special treatment at the end
                 // the if clause is newer than the min/max calls inside createSegment; i'm sure this makes the min/max calls obsolete, but
                 // just to be sure...
@@ -434,7 +434,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
                     nborders[partition[i][0] - 1] = JXG.createSegment(this.board, [nvertices[Math.max(partition[i][1]-1, 0)], nvertices[Math.min(partition[i][0]+1, this.vertices.length-1)]], this.attr_line);
                 }
             }
-            
+
             this.borders = [];
             for (i = 0; i < nborders.length; i++) {
                 if (nborders[i] !== -1) {
@@ -447,7 +447,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
                 this.borders.push(JXG.createSegment(this.board, [this.vertices[0], this.vertices[this.vertices.length-2]], this.attr_line));
             }
         }
-        
+
         this.board.update();
 
         return this;
@@ -520,7 +520,7 @@ JXG.createPolygon = function(board, parents, attributes) {
         if(!JXG.isPoint(parents[i]))
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
     }
-    
+
     el = new JXG.Polygon(board, parents, attr);
 
     return el;
@@ -580,7 +580,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
     if ((!JXG.isNumber(n) && !JXG.isPoint(JXG.getReference(board, n))) || n<3) {
         throw new Error("JSXGraph: The third parameter has to be number greater than 2 or a point.");
     }
-    
+
     if (JXG.isPoint(JXG.getReference(board, n))) {  // Regular polygon given by n points
         n = len;
         pointsExist = true;
@@ -588,7 +588,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
         len--;
         pointsExist = false;
     }
-    
+
     // The first two parent elements have to be points
     for(i=0; i<len; i++) {
         parents[i] = JXG.getReference(board, parents[i]);
@@ -609,6 +609,7 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
                 attr.id = attr.ids[i-2];
             }
             p[i] = board.create('point',[p[i-2],rot], attr);
+			p[i].type = JXG.OBJECT_TYPE_CAS;
         }
     }
     attr = JXG.copyAttributes(attributes, board.options, 'polygon');
