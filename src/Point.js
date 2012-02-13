@@ -303,14 +303,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.X()+Math.cos(this.position),this.slideObject.center.Y()+Math.sin(this.position)]);
                     this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
             } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
-                this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
+                //this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
                 p1coords = this.slideObject.point1.coords;
                 p2coords = this.slideObject.point2.coords;
-                    if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
-                        this.coords.setCoordinates(JXG.COORDS_BY_USER, 
-                                               [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
-                                                p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
-                    }
+                if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, 
+                                           [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
+                                            p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
+                }
+                /*
                 p1Scr = this.slideObject.point1.coords.scrCoords;
                 p2Scr = this.slideObject.point2.coords.scrCoords;
 
@@ -374,6 +375,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         }
                     }
                 }
+                */
             } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
                 this.updateConstraint(); // In case, the point is a constrained glider.
