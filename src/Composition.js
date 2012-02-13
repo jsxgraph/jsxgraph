@@ -214,7 +214,7 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
         for (e in this.subs) {
             attr[e] = this.subs[e].visProp;
         }
-        
+
         return this.attr;
     }
 });
@@ -266,7 +266,7 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
 
     t = board.create('point', [function () { return JXG.Math.Geometry.projectPointToLine(p, l, board); }], attributes);
     t.type = JXG.OBJECT_TYPE_OPROJECT;
-    p.addChild(t); 
+    p.addChild(t);
     l.addChild(t);
 
     t.elType = 'orthogonalprojection';
@@ -343,7 +343,7 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
  * @return A {@link JXG.Line} object through the given point that is orthogonal to the given line.
  * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
- * will contain p. 
+ * will contain p.
  * @example
  * // Create a perpendicular
  * var p1 = board.create('point', [0.0, 2.0]);
@@ -383,10 +383,10 @@ JXG.createPerpendicular = function(board, parents, attributes) {
 
     attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
     pd = JXG.createLine(board, [
-                    function(){ return  l.stdform[2]*p.X()-l.stdform[1]*p.Y();}, 
-                    function(){ return -l.stdform[2]*p.Z();}, 
+                    function(){ return  l.stdform[2]*p.X()-l.stdform[1]*p.Y();},
+                    function(){ return -l.stdform[2]*p.Z();},
                     function(){ return  l.stdform[1]*p.Z();}
-                ], 
+                ],
                 attr);
 
     pd.elType = 'perpendicular';
@@ -442,7 +442,7 @@ JXG.createPerpendicularPoint = function(board, parents, attributes) {
     }
 
     t = board.create('point', [function () { return JXG.Math.Geometry.perpendicular(l, p, board)[0]; }], attributes);
-    p.addChild(t); 
+    p.addChild(t);
     l.addChild(t);
 
     t.elType = 'perpendicularpoint';
@@ -631,19 +631,19 @@ JXG.createMidpoint = function(board, parents, attributes) {
 
     t = board.create('point', [
                                function () {
-                                var x = a.coords.usrCoords[1] + b.coords.usrCoords[1]; 
+                                var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
                                 if (isNaN(x) || Math.abs(a.coords.usrCoords[0])<JXG.Math.eps || Math.abs(b.coords.usrCoords[0])<JXG.Math.eps) {
                                     return NaN;
                                 } else {
-                                    return x*0.5; 
+                                    return x*0.5;
                                 }
                                },
-                               function () { 
-                                var y = a.coords.usrCoords[2] + b.coords.usrCoords[2]; 
+                               function () {
+                                var y = a.coords.usrCoords[2] + b.coords.usrCoords[2];
                                 if (isNaN(y) || Math.abs(a.coords.usrCoords[0])<JXG.Math.eps || Math.abs(b.coords.usrCoords[0])<JXG.Math.eps) {
                                     return NaN;
                                 } else {
-                                    return y*0.5; 
+                                    return y*0.5;
                                 }
                               }], attributes);
     a.addChild(t);
@@ -749,8 +749,8 @@ JXG.createParallelPoint = function(board, parents, attributes) {
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
 
-    p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; }, 
-                               function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }], 
+    p = board.create('point', [function () { return c.coords.usrCoords[1] + b.coords.usrCoords[1] - a.coords.usrCoords[1]; },
+                               function () { return c.coords.usrCoords[2] + b.coords.usrCoords[2] - a.coords.usrCoords[2]; }],
                                attributes);
 	// required for algorithms requiring dependencies between elements
 	a.addChild(p);
@@ -860,7 +860,7 @@ JXG.createParallel = function(board, parents, attributes) {
                         "\nPossible parent types: [line,point], [point,point,point]");
     }
     */
-    
+
     p = null;
     if(parents.length == 3) {
         // line parents[2] which is parallel to line through parents[0] and parents[1]
@@ -881,13 +881,14 @@ JXG.createParallel = function(board, parents, attributes) {
     }
 
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
-    
-    pp = board.create('point', [function() {
-            return JXG.Math.crossProduct([1,0,0], li());
-        }], {name:'', withLabel:false, visible:false});
-    pp.isDraggable = true;
-    
+
     attr = JXG.copyAttributes(attributes, board.options, 'parallel');
+	pp = board.create('point', [function() {
+            return JXG.Math.crossProduct([1,0,0], li());
+        }], {id:attr.point2.id, name: attr.point2.name, withLabel:false, visible:false});
+
+    pp.isDraggable = true;
+
     pl = board.create('line', [p, pp], attr);
     /*
     pl = board.create('line', [function() {
@@ -895,7 +896,7 @@ JXG.createParallel = function(board, parents, attributes) {
             return [ -(p.X()*l[1]+p.Y()*l[2]), p.Z()*l[1], p.Z()*l[2]];
         }], attr);
     */
-    
+
     pl.elType = 'parallel';
     pl.parents = pp;
 
@@ -1022,14 +1023,14 @@ JXG.createNormal = function(board, parents, attributes) {
                     function(){ return c.stdform[2]*p.Z();},
                     function(){ return -c.stdform[1]*p.Z();}
                     ], attributes );
-        */ 
+        */
         // Private point
         pp = board.create('point', [function() {
                 var p = JXG.Math.crossProduct([1,0,0], c.stdform)
                 return [p[0], -p[2], p[1]];
-            }], {name:'', withLabel:false, visible:false});
+            }], {id: attr.point2.id, name: attr.point2.name, withLabel:false, visible:false});
         pp.isDraggable = true;
-    
+
         l = board.create('line', [p, pp], attr);
     } else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         l = board.create('line', [c.midpoint,p], attr);
@@ -1145,7 +1146,7 @@ JXG.createNormal = function(board, parents, attributes) {
  */
 JXG.createBisector = function(board, parents, attributes) {
     var p, l, i, attr;
-    
+
     /* TODO bisector polynomials */
     if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_POINT && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         // hidden and fixed helper
@@ -1252,7 +1253,7 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
             return l1.stdform[2]/d1-l2.stdform[2]/d2;
         }
     ], attr);
-    
+
     if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
     attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
     g2 = board.create('line',[
@@ -1334,8 +1335,8 @@ JXG.createAngularBisectorsOfTwoLines = function(board, parents, attributes) {
 JXG.createCircumcircleMidpoint = function(board, parents, attributes) {
     var p, i;
 
-    if( parents[0].elementClass == JXG.OBJECT_CLASS_POINT 
-       && parents[1].elementClass == JXG.OBJECT_CLASS_POINT 
+    if( parents[0].elementClass == JXG.OBJECT_CLASS_POINT
+       && parents[1].elementClass == JXG.OBJECT_CLASS_POINT
        && parents[2].elementClass == JXG.OBJECT_CLASS_POINT) {
         p = JXG.createPoint(board, [function () { return JXG.Math.Geometry.circumcenterMidpoint(parents[0], parents[1], parents[2], board); }], attributes);
 
@@ -1470,7 +1471,7 @@ JXG.createCircumcircle = function(board, parents, attributes) {
         p = JXG.createCircumcircleMidpoint(board, parents, attr);
 
         p.dump = false;
-        
+
         if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.circle;
         attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
         c = JXG.createCircle(board, [p, parents[0]], attr);
