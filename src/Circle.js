@@ -167,7 +167,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     }
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
-        setRadius: 'generateTerm'
+        setRadius: 'setRadius'
     });
 };
 JXG.Circle.prototype = new JXG.GeometryElement;
@@ -404,6 +404,18 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
         if (typeof contentStr == 'string')
             JXG.GeonextParser.findDependencies(this,contentStr+'',this.board);
+    },
+
+    /**
+     * Set a new radius, then update the board.
+     * @param {String|Number|function} r A string, function or number describing the new radius.
+     * @returns {JXG.Circle} Reference to this circle
+     */
+    setRadius: function (r) {
+        this.generateTerm(r);
+        this.board.update();
+
+        return this;
     },
 
     /**
