@@ -1485,7 +1485,8 @@ JXG.TracenpocheReader = new function() {
 			tr = this.board.create('transform',[function() { return parents[1].getAngle()+correction();},p],{type:'rotate'});
 			tt.bindTo(sq);
 			tr.bindTo(sq);			
-			var pol = this.board.create('polygon',sq,{lines:{strokeColor:h["color"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0});
+
+			var pol = this.board.create('polygon',sq,{borders:{strokeColor:h["strokeColor"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0});
 			
 			/* var pol = this.board.create('polygon',sq,
 				{lines:{strokeColor:h["color"],strokeWidth:h["strokeWidth"]},fillOpacity:0,highlightFillOpacity:0}

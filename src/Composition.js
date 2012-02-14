@@ -248,7 +248,7 @@ JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
  * </script><pre>
  */
 JXG.createOrthogonalProjection = function(board, parents, attributes) {
-    var l, p, t;
+    var l, p, t, atts;
 
     if(JXG.isPoint(parents[0]) && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
         p = parents[0];
@@ -264,8 +264,9 @@ JXG.createOrthogonalProjection = function(board, parents, attributes) {
                         "\nPossible parent types: [point,line]");
     }
 
+    attr = JXG.copyAttributes(attributes, board.options, 'orthogonalprojection');
     t = board.create('point', [function () { return JXG.Math.Geometry.projectPointToLine(p, l, board); }], attributes);
-    t.type = JXG.OBJECT_TYPE_OPROJECT;
+    //t.type = JXG.OBJECT_TYPE_OPROJECT;
     p.addChild(t);
     l.addChild(t);
 
