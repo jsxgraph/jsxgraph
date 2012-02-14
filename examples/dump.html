@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/JessieCode.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
+</head>
+<body>
+
+<h2>WRP Playground</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float: left;"></div>
+</div>
+
+<textarea id="debug" style="display:block;" cols="100" rows="50">DEBUG</textarea>
+<button onclick="exec();">Execute</button>
+<div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float: left;"></div>
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var wrp = (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true}),
+            p = board.create('point', [1, 2], {strokeColor: 'blue'});
+
+        $('#debug').html(JXG.Dump.toJessie(board));
+    })();
+
+    function exec() {
+        var code = document.getElementById('debug').value,
+            board = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-5, 5, 5, -5], axis: false, keepaspectratio: true}),
+            p;
+
+        code = 'use jxgbox2;\n' + code;
+
+        p = new JXG.JessieCode();
+        p.parse(code);
+    }
+
+    /* ]]> */
+</script>
+</body>
+</html>

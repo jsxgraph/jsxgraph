@@ -224,21 +224,29 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
      * **************************/
 
     // documented in AbstractRenderer
-    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin) {
+    updateTicks: function (axis, dxMaj, dyMaj, dxMin, dyMin, minStyle, majStyle) {
         var tickStr = '',
             i, c, node,
+            x, y, 
             len = axis.ticks.length;
 
         for (i = 0; i < len; i++) {
-            c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.updateText(axis.labels[i]);
-                }
-                tickStr += "M " + (c[1] + dxMaj) + " " + (c[2] - dyMaj) + " L " + (c[1] - dxMaj) + " " + (c[2] + dyMaj) + " ";
-            } else {
-                tickStr += "M " + (c[1] + dxMin) + " " + (c[2] - dyMin) + " L " + (c[1] - dxMin) + " " + (c[2] + dyMin) + " ";
+            c = axis.ticks[i];
+            x = c[0];
+            y = c[1];
+            if (typeof x[0] != 'undefined' && typeof x[1] != 'undefined') {
+                tickStr += "M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
             }
+        }
+        // Labels
+        for (i = 0; i < len; i++) {
+            c = axis.ticks[i].scrCoords;
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
+                    this.updateText(axis.labels[i]);
+            } 
         }
         node = this.getElementById(axis.id);
         if (!JXG.exists(node)) {
@@ -272,11 +280,11 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     drawInternalText: function (el) {
         var node = this.createPrim('text', el.id);
 
-        node.setAttributeNS(null, "class", "JXGtext");
+        node.setAttributeNS(null, "class", el.visProp.cssclass);
         //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
-        this.appendChildPrim(node, 9);
+        this.appendChildPrim(node,  el.visProp.layer);
 
         return node;
     },
@@ -285,6 +293,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateInternalText: function (el) {
         var content = el.plaintext;
 
+        // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
             el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
@@ -295,7 +304,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
         this.transformImage(el, el.transformations);
     },
-
+	
     /* **************************
      *    Image related stuff
      * **************************/
@@ -413,8 +422,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateEllipsePrim: function (node, x, y, rx, ry) {
         node.setAttributeNS(null, 'cx', x);
         node.setAttributeNS(null, 'cy', y);
-        node.setAttributeNS(null, 'rx', rx);
-        node.setAttributeNS(null, 'ry', ry);
+        node.setAttributeNS(null, 'rx', Math.abs(rx));
+        node.setAttributeNS(null, 'ry', Math.abs(ry));
     },
 
     // already documented in JXG.AbstractRenderer
@@ -489,14 +498,14 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             maxSize = 5000.0,
             pStr = '',
             i, scr,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len;
 
         if (el.numberPoints <= 0) {
             return '';
         }
 
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
         }
 
@@ -599,8 +608,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         node.setAttributeNS(null, 'stroke', 'none');
         for (i = 0; i < len - 1; i++) {
-            scrCoords = el.vertices[i].coords.scrCoords;
-            pStr = pStr + scrCoords[1] + "," + scrCoords[2];
+             if (el.vertices[i].isReal) {
+                scrCoords = el.vertices[i].coords.scrCoords;
+                pStr = pStr + scrCoords[1] + "," + scrCoords[2];
+            } else {
+                node.setAttributeNS(null, 'points', '');
+                return;
+            }
             if (i < len - 2) {
                 pStr += " ";
             }
@@ -811,12 +825,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node = el.rendNode;
             if (el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.visProp.display === 'html') {
-                    node.style.color = c;     
+                    node.style.color = c;
+					node.style.opacity = oo;
                 } else {
                     node.setAttributeNS(null, "style", "fill:" + c);
-                    //node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                    node.setAttributeNS(null, "style", "fill-opacity:" + oo);
                 }
-                node.style.opacity = oo;
             } else {
                 node.setAttributeNS(null, 'stroke', c);
                 node.setAttributeNS(null, 'stroke-opacity', oo);

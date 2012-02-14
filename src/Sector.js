@@ -69,6 +69,9 @@ JXG.createSector = function(board, parents, attributes) {
     el = board.create('curve', [[0], [0]], attr);
     el.type = JXG.OBJECT_TYPE_SECTOR;
 
+    el.elType = 'sector';
+    el.parents = [parents[0].id, parents[1].id, parents[2].id];
+
     /**
      * Midpoint of the sector.
      * @memberOf Sector.prototype
@@ -275,11 +278,27 @@ JXG.JSXGraph.registerElement('sector', JXG.createSector);
     var el, mp, attr;
     
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
-        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'point');
-        mp = board.create('circumcirclemidpoint',[parents[0], parents[1], parents[2]], attr);
+        attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector', 'center');
+        mp = board.create('circumcenter',[parents[0], parents[1], parents[2]], attr);
+
+        mp.dump = false;
 
         attr = JXG.copyAttributes(attributes, board.options, 'circumcirclesector');
         el = board.create('sector', [mp,parents[0],parents[2],parents[1]], attr);
+
+        el.elType = 'circumcirclesector';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+
+        /**
+         * Center of the circumcirclesector
+         * @memberOf CircumcircleSector.prototype
+         * @name center
+         * @type Circumcenter
+         */
+        el.center = mp;
+        el.subs = {
+            center: mp
+        }
     } else {
         throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
@@ -297,7 +316,8 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * an angle has two angle points and no radius point.
  * Sector is displayed if type=="sector".
  * If type=="square", instead of a sector a parallelogram is displayed. 
- * In case of type=="auto", a square is displayed if the angle is near orthogonal.
+ * In case of type=="auto", a square is displayed if the angle is near orthogonal. 
+ * If no name is provided the angle label is automatically set to a lower greek letter.
  * @pseudo
  * @name Angle
  * @augments Sector
@@ -326,25 +346,24 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, q, text, attr,
+    var el, p, q, text, attr, attrsub,
         possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
                                 '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
                                 '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
-        i = 0,
-        j, x, pre, post, found, dot;
-
+        i = 0, j, x, pre, post, found, dot;
 
     // Test if three points are given
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
+        attr = JXG.copyAttributes(attributes, board.options, 'angle');
         //  If empty, create a new name
-        text = attributes.text;
-        if(text == '') {
+        text = attr.name;
+        if (typeof text =='undefined' || text == '') {
             while(i < possibleNames.length) {
                 j=i;
                 x = possibleNames[i];
                 for(el in board.objects) {
                     if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                        if(board.objects[el].text == x) {
+                        if(board.objects[el].name == x) {
                             i++;
                             break;
                         }
@@ -355,7 +374,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     i = possibleNames.length+1;
                 }
             }
-            if(i == possibleNames.length) {
+            if (i == possibleNames.length) {
                 pre = '&alpha;_{';
                 post = '}';
                 found = false;
@@ -363,7 +382,7 @@ JXG.createAngle = function(board, parents, attributes) {
                 while(!found) {
                     for(el in board.objects) {
                         if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                            if(board.objects[el].text == (pre+j+post)) {
+                            if(board.objects[el].name == (pre+j+post)) {
                                 found = true;
                                 break;
                             }
@@ -378,30 +397,41 @@ JXG.createAngle = function(board, parents, attributes) {
                     }
                 }
             }
+            attr.name = text;
         }
         
-        attr = JXG.copyAttributes(attributes, board.options, 'angle', 'point');
+        attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
         p = board.create('point', [
             function(){
                 var A = parents[0], S = parents[1],
-                    r = attr.radius,
+                    r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attr);
+            }], attrsub);
 
+        p.dump = false;
+
+        attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
         // Second helper point for square
         q = board.create('point', [
             function(){
                 var A = parents[2], S = parents[1],
-                    r = attr.radius,
+                    r = JXG.evaluate(attr.radius),
                     d = S.Dist(A);
                 return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attr);
+            }], attrsub);
 
-        attr = JXG.copyAttributes(attributes, board.options, 'angle');
-        
+        q.dump = false;
+
         // Sector is just a curve with its own updateDataArray method
         el = board.create('sector', [parents[1], p, parents[2]], attr);
+
+        el.elType = 'angle';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        el.subs = {
+            point: p,
+            pointsquare: q
+        };
 
         el.updateDataArraySquare = function() {
             var S = parents[1],
@@ -417,24 +447,33 @@ JXG.createAngle = function(board, parents, attributes) {
             
             this.dataX = [S.X(), p.X(), r[1], q.X(), S.X()];
             this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
-            return;
-        }; 
+        };
+        
         el.updateDataArraySector = el.updateDataArray;
         el.updateDataArray = function() {
-            var rad;
+            var rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
+
             if (this.visProp.type=='square') {
                 this.updateDataArraySquare();
             } else if (this.visProp.type=='sector') {
                 this.updateDataArraySector();
+                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
+                    if (this.dot.visProp.visible === false) {
+                        this.dot.setProperty({visible: true});
+                    }
+                } else {
+                    if (this.dot.visProp.visible) {
+                        this.dot.setProperty({visible: false});
+                    }
+                }
             } else {
-                rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
-                if (Math.abs(rad-Math.PI*0.5)<0.005) {
+                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
                     this.updateDataArraySquare();
                 } else {
                     this.updateDataArraySector();
                 }
             }
-        }
+        };
         
         /**
          * The point defining the radius of the angle element.
@@ -443,6 +482,22 @@ JXG.createAngle = function(board, parents, attributes) {
          * @memberOf Angle.prototype
          */
         el.radiuspoint = p;
+
+        /**
+         * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
+         * @type JXG.Point
+         * @name point
+         * @memberOf Angle.prototype
+         */
+        el.point = p;
+
+        /**
+         * Helper point for angles of type 'square'.
+         * @type JXG.Point
+         * @name pointsquare
+         * @memberOf Angle.prototype
+         */
+        el.pointsquare = q;
 
         dot = JXG.copyAttributes(attributes, board.options, 'angle', 'dot');
         /**
@@ -469,17 +524,15 @@ JXG.createAngle = function(board, parents, attributes) {
             return JXG.Math.matVecMult(transform.matrix, c);
         }], dot);
 
+        el.dot.dump = false;
+        el.subs.dot = el.dot;
+
         for (i = 0; i < 3; i++) {
             JXG.getRef(board,parents[i]).addChild(p);
             JXG.getRef(board,parents[i]).addChild(el.dot);
         }
 
         el.type = JXG.OBJECT_TYPE_ANGLE;
-        
-        if (el.visProp.withlabel) {
-            el.label.content.setText(text);
-            el.label.content.setProperty({fontSize:el.visProp.fontsize, strokeColor:el.visProp.textcolor});
-        }
         JXG.getRef(board,parents[0]).addChild(el);
 
         // documented in GeometryElement
@@ -493,15 +546,15 @@ JXG.createAngle = function(board, parents, attributes) {
                 byminusay = p2c[2] - pmc[2],
                 coords, vecx, vecy, len;
 
-            if(this.label.content != null) {                          
-                this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
-            }  
+            if(this.label.content != null) {
+                this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);
+            }
 
-            coords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay, 
-                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay], 
+            coords = new JXG.Coords(JXG.COORDS_BY_USER,
+                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay,
+                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay],
                             this.board);
-    
+
             vecx = coords.usrCoords[1] - pmc[1];
             vecy = coords.usrCoords[2] - pmc[2];
         
@@ -512,8 +565,16 @@ JXG.createAngle = function(board, parents, attributes) {
             return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
         };
 
+        el.Value = function () {
+            return JXG.Math.Geometry.rad(this.point2, this.point1, this.point3);
+        };
+
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            Value: 'Value'
+        });
+
     } else {
-        throw new Error("JSXGraph: Can't create angle with parent types '" + 
+        throw new Error("JSXGraph: Can't create angle with parent types '" +
                          (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
 

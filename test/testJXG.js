@@ -75,7 +75,7 @@ TestCase("JXG", {
     },
 
     testGetReference: function () {
-        expectAsserts(5);
+        expectAsserts(6);
 
         var board = {
                 objects: {
@@ -85,16 +85,20 @@ TestCase("JXG", {
                 elementsByName: {
                     line: 2,
                     circle: 2
+                },
+                groups: {
+                    group: 3
                 }
             };
 
         sinon.spy(JXG, 'getReference');
         assertEquals('test search board.objects', 1, JXG.getReference(board, 'point'));
         assertEquals('test search board.elementsByName', 2, JXG.getReference(board, 'circle'));
+        assertEquals('test search board.groups', 3, JXG.getReference(board, 'group'));
         assertEquals('test objects has an higher order of precedence  than elementsByName', 1, JXG.getRef(board, 'line'));
         assertEquals('test non existing keys are simply returned', 'arc', JXG.getRef(board, 'arc'));
 
-        assertEquals('test getRef amd getReferemce are actually the same', 4, JXG.getReference.callCount);
+        assertEquals('test getRef amd getReferemce are actually the same', 5, JXG.getReference.callCount);
         JXG.getReference.restore();
     },
 

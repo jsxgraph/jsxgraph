@@ -690,7 +690,7 @@ JXG.IntergeoReader = new function() {
     this.addCenterOfCircle = function(node) {
         var param = JXG.IntergeoReader.readParams(node),
             c = JXG.getReference(this.board,param[1]),
-            el = this.board.create('point',[function(){return c.midpoint.X();},function(){return c.midpoint.Y();}],
+            el = this.board.create('point',[function(){return c.center.X();},function(){return c.center.Y();}],
                     {name:param[0], id:param[0],withLabel:true});
         this.setAttributes(el);
         this.objects[param[0]].exists = true;

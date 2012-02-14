@@ -174,7 +174,16 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
  * @return An object of type JXG.Group.
  */
 JXG.createGroup = function(board, parents, attributes) {
-    return new JXG.Group(board, attributes["id"], attributes["name"], parents);
+    var i, g = new JXG.Group(board, attributes["id"], attributes["name"], parents);
+
+    g.elType = 'group';
+
+    g.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        g.parents.push(parents[i].id);
+    }
+
+    return g;
 };
 
 JXG.JSXGraph.registerElement('group', JXG.createGroup);

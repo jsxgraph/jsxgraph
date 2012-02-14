@@ -421,8 +421,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
 
         // Radius umrechnen:
         var radius = element.Radius();
-        if (radius > 0.0 && !isNaN(radius + element.midpoint.coords.scrCoords[1] + element.midpoint.coords.scrCoords[2]) && radius * element.board.unitX < 20000) {
-            this.updateEllipsePrim(element.rendNode, element.midpoint.coords.scrCoords[1], element.midpoint.coords.scrCoords[2],
+        if (radius > 0.0 && !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) && radius * element.board.unitX < 20000) {
+            this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1], element.center.coords.scrCoords[2],
                     (radius * element.board.unitX), (radius * element.board.unitY));
         }
     },
@@ -507,13 +507,20 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     drawText: function (element) {
-        var node;
+        var node, z;
 
         if (element.visProp.display === 'html') {
             node = this.container.ownerDocument.createElement('div');
             node.style.position = 'absolute';
-            node.className = 'JXGtext';
-            node.style.zIndex = '10';
+
+            node.className = element.visProp.cssclass;
+            if (this.container.style.zIndex=='') {
+                z = 0;
+            } else {
+                z = parseInt(this.container.style.zIndex);
+            }
+
+            node.style.zIndex = z+element.board.options.layer.text; //'10';
             this.container.appendChild(node);
             node.setAttribute('id', this.container.id + '_' + element.id);
         } else {
@@ -551,11 +558,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     element.rendNode.innerHTML = content;
                     element.htmlStr = content;
                     
-                    if (element.visProp.useasciimathml) {
-                        AMprocessNode(element.rendNode, false);
-                    }
                     if (element.visProp.usemathjax) {
                         MathJax.Hub.Typeset(element.rendNode);
+                    } else if (element.visProp.useasciimathml) {
+                        AMprocessNode(element.rendNode, false);
                     }
                 }
                 this.transformImage(element, element.transformations);
@@ -579,6 +585,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var fs = JXG.evaluate(element.visProp.fontsize);
 
         if (element.visProp.display === 'html' || this.type != 'canvas') {
+        //if (element.visProp.display === 'html') {
+            //element.rendNode.setAttribute("class", element.visProp.cssclass);
+            element.rendNode.className = element.visProp.cssclass;
             try {
                 element.rendNode.style.fontSize = fs + 'px';
             } catch (e) {
@@ -937,10 +946,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!ev.draft) {
-            if (element.type === JXG.OBJECT_CLASS_POINT) {
+            /*
+               // Why did we have this? A.W.
+            if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                 this.setObjectFillColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else 
+            */
+            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.borders[i].visProp.highlightstrokeopacity);
@@ -949,8 +962,13 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                 this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
             }
+            if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                if (element.visProp.display === 'html') {    
+                    element.rendNode.className = element.visProp.highlightcssclass;
+                } 
+            }
             if (ev.highlightstrokewidth) {
-                this.setObjectStrokeWidth(element, ev.highlightstrokewidth);
+                this.setObjectStrokeWidth(element, Math.max(ev.highlightstrokewidth, ev.strokewidth));
             }
         }
 
@@ -966,10 +984,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var i, ev = element.visProp;
 
         if (!element.visProp.draft) {
-            if (element.type === JXG.OBJECT_CLASS_POINT) {
+            /* 
+               // Why did we have this? A.W.
+              if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
                 this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                 this.setObjectFillColor(element, ev.strokecolor, ev.strokeopacity);
-            } else if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else 
+            */
+            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                 for (i = 0; i < element.borders.length; i++) {
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.borders[i].visProp.strokeopacity);
@@ -977,6 +999,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                 this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
+            }
+            if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                if (element.visProp.display === 'html') {    
+                    element.rendNode.className = element.visProp.cssclass;
+                }
             }
             this.setObjectStrokeWidth(element, ev.strokewidth);
         }
@@ -1036,15 +1063,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         node.style.right = board.options.navbar.right;
         node.style.bottom = board.options.navbar.bottom;
 
-        /*
-        createButton('&nbsp;&ndash;&nbsp;', board.zoomOut);
-        createButton('&nbsp;o&nbsp;', board.zoom100);
-        createButton('&nbsp;+&nbsp;', board.zoomIn);
-        createButton('&nbsp;&larr;&nbsp;', board.clickLeftArrow);
-        createButton('&nbsp;&uarr;&nbsp;', board.clickUpArrow);
-        createButton('&nbsp;&darr;&nbsp;', board.clickDownArrow);
-        createButton('&nbsp;&rarr;&nbsp;', board.clickRightArrow);
-        */
         // For XHTML we need unicode instead of HTML entities
         createButton('\u00A0\u2013\u00A0', board.zoomOut);
         createButton('\u00A0o\u00A0', board.zoom100);

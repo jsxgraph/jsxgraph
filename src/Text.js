@@ -40,8 +40,12 @@
 JXG.Text = function (board, content, coords, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
 
+    var i;
+
     this.content = content;
     this.plaintext = '';
+
+    this.isDraggable = false;
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
@@ -59,11 +63,12 @@ JXG.Text = function (board, content, coords, attributes) {
              this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
         this.isDraggable = true;
     } else {
-        if (!JXG.isFunction(coords[0]) && !JXG.isFunction(coords[1])) {
+        if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
             this.isDraggable = true;
         }
-        this.X = JXG.createFunction(coords[0],this.board,'');
-        this.Y = JXG.createFunction(coords[1],this.board,'');
+        this.X = JXG.createFunction(coords[0], this.board, null, true);
+        this.Y = JXG.createFunction(coords[1], this.board, null, true);
+
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
         this.updateCoords = new Function('',fs);
@@ -98,6 +103,14 @@ JXG.Text = function (board, content, coords, attributes) {
     }
     this.size = [1.0, 1.0];
 
+    this.elType = 'text';
+
+    this.methodMap = JXG.deepCopy(this.methodMap, {
+        setText: 'setTextJessieCode',
+        free: 'free',
+        move: 'setCoords'
+    });
+
     return this;
 };
 JXG.Text.prototype = new JXG.GeometryElement();
@@ -117,12 +130,31 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             dy = this.coords.scrCoords[2]-y,
             r = this.board.options.precision.hasPoint;
 
-        if (dx>=-r && dx<=2*r && 
-            dy>=-r && dy<=2*r) {
-            return true;
+        return dx >= -r && dx <= 2 * r && dy >= -r && dy <= 2 * r;
+    },
+
+    /**
+     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
+     * @param {String|function} text
+     */
+    setTextJessieCode: function (text) {
+        var s;
+
+        this.visProp.castext = text;
+
+        if (typeof text === 'function') {
+            s = function () {
+                return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
         } else {
-            return false;
+            if (JXG.isNumber(text)) {
+                s = text;
+            } else {
+                s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
         }
+        
+        return this.setText(s);
     },
 
     /**
@@ -149,6 +181,10 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
         this.updateSize();
+        this.needsUpdate = true;
+        this.update();
+        this.updateRenderer();
+
         return this;
     },
 
@@ -184,16 +220,29 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     /**
-     * Set the text to new, fixed coordinates.
+     * Move the text to new coordinates.
      * @param {number} x
      * @param {number} y
      * @return {object} reference to the text object.
      */
     setCoords: function (x,y) {
+        if (JXG.isArray(x) && x.length > 1) {
+            y = x[1];
+            x = x[0];
+        }
+
         this.X = function() { return x; };
         this.Y = function() { return y; };
-        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+
         return this;
+    },
+
+    free: function () {
+        this.X = JXG.createFunction(this.X(), this.board, '');
+        this.Y = JXG.createFunction(this.Y(), this.board, '');
+
+        this.isDraggable = true;
     },
 
     /**
@@ -228,7 +277,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     /**
-     * The update function of the renderer
+     * The update function of the renderert
      * is called. 
      * @private
      */
@@ -244,10 +293,12 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         if (this.transformations.length==0) {
             return;
         }
+
         for (var i=0;i<this.transformations.length;i++) {
             this.transformations[i].update();
         }
-	return this;
+
+	    return this;
     },
 
     /**
@@ -449,14 +500,20 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  * </script><pre>
  */
 JXG.createText = function(board, parents, attributes) {
-    var attr;
+    var attr, t;
 
     attr = JXG.copyAttributes(attributes, board.options, 'text');
 
     // downwards compatibility
     attr.anchor = attr.parent || attr.anchor;
 
-    return new JXG.Text(board, parents[parents.length-1], parents, attr);
+    t = new JXG.Text(board, parents[parents.length-1], parents, attr);
+
+    if (typeof parents[parents.length-1] !== 'function') {
+        t.parents = parents;
+    }
+
+    return t;
 };
 
 JXG.JSXGraph.registerElement('text', JXG.createText);

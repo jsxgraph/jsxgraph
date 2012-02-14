@@ -89,7 +89,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
                 node.setAttribute(key, val, iFlag);
             }
         } catch (e) {
-            JXG.debug(node.id + ' ' + key + ' ' + val + '<br>\n');
+            JXG.debug('_setAttr:'/*node.id*/ + ' ' + key + ' ' + val + '<br>\n');
         }
     },
 
@@ -110,23 +110,27 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         len = axis.ticks.length;
         for (i = 0; i < len; i++) {
-            c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if ((axis.board.needsFullUpdate || axis.needsRegularUpdate) && axis.labels[i] && axis.labels[i].visProp.visible) {
-                    this.updateText(axis.labels[i]);
-                }
+            c = axis.ticks[i];
+            x = c[0];
+            y = c[1];
+            if (typeof x[0] != 'undefined' && typeof x[1] != 'undefined') {
                 tickArr.push(
-                    ' m ' + Math.round(r * (c[1] + dxMaj)) + ', ' + Math.round(r * (c[2] - dyMaj)) +
-                    ' l ' + Math.round(r * (c[1] - dxMaj)) + ', ' + Math.round(r * (c[2] + dyMaj)) + ' '
-                );
-            } else {
-                tickArr.push(
-                    ' m ' + Math.round(r * (c[1] + dxMin)) + ', ' + Math.round(r * (c[2] - dyMin)) +
-                    ' l ' + Math.round(r * (c[1] - dxMin)) + ', ' + Math.round(r * (c[2] + dyMin)) + ' '
+                    ' m ' + Math.round(r * x[0]) + ', ' + Math.round(r * y[0]) +
+                    ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' '
                 );
             }
         }
-
+        // Labels
+        for (i = 0; i < len; i++) {
+            c = axis.ticks[i].scrCoords;
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
+                    this.updateText(axis.labels[i]);
+            } 
+        }
+         
         //ticks = this.getElementById(axis.id);
         if (!JXG.exists(axis)) {
             ticks = this.createPrim('path', axis.id);
@@ -170,11 +174,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         var node;
         node = this.createNode('textbox');
         node.style.position = 'absolute';
-        if (document.documentMode === 8) {
-            node.setAttribute('class', 'JXGtext');
+        /*
+        if (document.documentMode === 8) {                 // IE 8
+            node.setAttribute('class', el.visProp.cssclass);
         } else {
-            node.setAttribute(document.all ? 'className' : 'class', 'JXGtext');
+            node.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
         }
+        */
         el.rendNodeText = document.createTextNode('');
         node.appendChild(el.rendNodeText);
         this.appendChildPrim(node, 9);
@@ -184,7 +190,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     // documented in AbstractRenderer
     updateInternalText: function (el) {
         var content = el.plaintext;
-
+        /*
+        if (document.documentMode === 8) {                 // IE 8
+            el.rendNode.setAttribute('class', el.visProp.cssclass);
+        } else {
+            el.rendNode.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
+        }
+        */
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
             el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
@@ -216,8 +228,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
 
         // Adding the rotation filter. This is always filter item 0:
         // node.filters.item(0), see transformImage
-        node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-
+        //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+        node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
         el.rendNode = node;
         this.updateImage(el);
     },
@@ -234,7 +246,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (len > 0) {
             nt = el.rendNode.style.filter.toString();
             if (!nt.match(/DXImageTransform/)) {
-                node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
+                node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
             }
 
             m = this.joinTransforms(el, t);
@@ -384,8 +396,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
     updateEllipsePrim: function (node, x, y, rx, ry) {
         node.style.left = parseInt(x - rx) + 'px';
         node.style.top =  parseInt(y - ry) + 'px';
-        node.style.width = parseInt(rx * 2) + 'px';
-        node.style.height = parseInt(ry * 2) + 'px';
+        node.style.width = parseInt(Math.abs(rx) * 2) + 'px';
+        node.style.height = parseInt(Math.abs(ry) * 2) + 'px';
     },
 
     // already documented in JXG.AbstractRenderer
@@ -490,13 +502,13 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             symbm = ' m ',
             symbl = ' l ',
             nextSymb = symbm,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
         if (el.numberPoints <= 0) {
             return '';
         }
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 1.0);
         }
         len = Math.min(len, el.points.length);
@@ -607,11 +619,16 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         pStr.push(["m ", parseInt(r * scr[1]), ",", parseInt(r * scr[2]), " l "].join(''));
 
         for (i = 1; i < len - 1; i++) {
-            scr = el.vertices[i].coords.scrCoords;
-            if (isNaN(scr[1]+scr[2])) return;
-            pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
+            if (el.vertices[i].isReal) {
+                scr = el.vertices[i].coords.scrCoords;
+                if (isNaN(scr[1]+scr[2])) return;
+                pStr.push(parseInt(r * scr[1]) + "," + parseInt(r * scr[2]));
+            } else {
+                this.updatePathPrim(node, '', el.board);
+                return;
+            }
             if (i < len - 2) {
-                pStr.push(", ");
+                    pStr.push(", ");
             }
         }
         pStr.push(" x e");
@@ -777,7 +794,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             }
 
             nodeStroke = el.rendNodeStroke;
-            if (JXG.exists(oo)) {
+            if (JXG.exists(oo) && el.type !== JXG.OBJECT_TYPE_IMAGE) {
                 this._setAttr(nodeStroke, 'opacity', (oo * 100) + '%');
             }
         }

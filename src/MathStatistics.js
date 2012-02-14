@@ -180,7 +180,6 @@ JXG.Math.Statistics = {
 
     /**
      * Determines the absolute value of every given value.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr
      * @returns {Array|Number}
      */
@@ -194,10 +193,8 @@ JXG.Math.Statistics = {
             for (i = 0; i < len; i++) {
                 res[i] = Math.abs(arr[i]);
             }
-        } else if (JXG.isNumber(arr)) {
-            res = Math.abs(arr);
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.abs): Invalid input.');
+            res = Math.abs(arr);
         }
 
         return res;
@@ -207,7 +204,6 @@ JXG.Math.Statistics = {
      * Adds up two (sequences of) values. If one value is an array and the other one is a number the number
      * is added to every element of the array. If two arrays are given and the lengths don't match the shortest
      * length is taken.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1
      * @param {Array|Number} arr2
      * @returns {Array|Number}
@@ -233,10 +229,8 @@ JXG.Math.Statistics = {
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] + arr2[i];
             }
-        } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 + arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.add): Invalid input.');
+            res = arr1 + arr2;
         }
         
         return res;
@@ -245,7 +239,6 @@ JXG.Math.Statistics = {
     /**
      * Divides two (sequences of) values. If two arrays are given and the lengths don't match the shortest length
      * is taken.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1 Dividend
      * @param {Array|Number} arr2 Divisor
      * @returns {Array|Number}
@@ -271,12 +264,10 @@ JXG.Math.Statistics = {
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] / arr2[i];
             }
-        } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 / arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.div): Invalid input.');
+            res = arr1 / arr2;
         }
-        
+
         return res;
     },
 
@@ -289,36 +280,42 @@ JXG.Math.Statistics = {
     /**
      * Divides two (sequences of) values and returns the remainder. If two arrays are given and the lengths don't
      * match the shortest length is taken.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1 Dividend
      * @param {Array|Number} arr2 Divisor
+     * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript <tt>%</tt> operator.
      * @returns {Array|Number}
      */
-    mod: function (arr1,arr2) {
-        var i, len, res = [];
+    mod: function (arr1, arr2, math) {
+        var i, len, res = [], mod = function (a, m) {
+            return a % m;
+        };
+
+        math = JXG.def(math, false);
+
+        if (math) {
+            mod = JXG.Math.mod;
+        }
 
         if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
             len = arr1.length;
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1[i] % arr2;
+                res[i] = mod(arr1[i], arr2);
             }
         } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
             len = arr2.length;
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1 % arr2[i];
+                res[i] = mod(arr1, arr2[i]);
             }
         } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
             len = Math.min(arr1.length, arr2.length);
 
             for (i = 0; i < len; i++) {
-                res[i] = arr1[i] % arr2[i];
+                res[i] = mod(arr1[i], arr2[i]);
             }
-        } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 % arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
+            res = mod(arr1, arr2);
         }
 
         return res;
@@ -328,7 +325,6 @@ JXG.Math.Statistics = {
      * Multiplies two (sequences of) values. If one value is an array and the other one is a number the number
      * is multiplied to every element of the array. If two arrays are given and the lengths don't match the shortest
      * length is taken.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1
      * @param {Array|Number} arr2
      * @returns {Array|Number}
@@ -354,10 +350,8 @@ JXG.Math.Statistics = {
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] * arr2[i];
             }
-        } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 * arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
+            res = arr1 * arr2;
         }
 
         return res;
@@ -366,7 +360,6 @@ JXG.Math.Statistics = {
     /**
      * Subtracts two (sequences of) values. If two arrays are given and the lengths don't match the shortest
      * length is taken.
-     * @throws {Error} If the input is neither an array nor a number an exception is thrown.
      * @param {Array|Number} arr1 Minuend
      * @param {Array|Number} arr2 Subtrahend
      * @returns {Array|Number}
@@ -392,10 +385,8 @@ JXG.Math.Statistics = {
             for (i = 0; i < len; i++) {
                 res[i] = arr1[i] - arr2[i];
             }
-        } else if (JXG.isNumber(arr1) && JXG.isNumber(arr2)) {
-            res = arr1 - arr2;
         } else {
-            throw new Error('JSXGraph Error (Math.Statistics.mod): Invalid input.');
+            res = arr1 - arr2;
         }
 
         return res;

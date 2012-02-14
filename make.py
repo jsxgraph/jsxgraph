@@ -64,13 +64,15 @@ import urllib
 
 
 # Default values for options. May be overridden via command line options
-yui = "~/public_html/jsxgraph/trunk/tools/yuicompressor-2.4.6"
-jsdoc = "~/public_html/jsxgraph/jsdoc_toolkit-2.4.0/jsdoc-toolkit"
-jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.1.jar"
+yui = "~/Tools/yuicompressor"
+jsdoc = "~/Tools/jsdoc-toolkit"
+jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.4-a.jar"
 output = "distrib"
 version = None
 hint = None
 reset = ""
+port = 4224
+server = ""
 
 
 '''
@@ -86,7 +88,9 @@ def usage():
     print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
+    print "  -p, --port=PORT        Set server port for the JsTestDriver server. Default is 4224."
     print "      --reset            Force the test server to reload the browsers."
+    print "  -s, --server=URL       Overrides the server option in the JsTestDriver config."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
     print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
@@ -101,6 +105,7 @@ def usage():
     print "  Hint                   Run JSHint on the file given with -l or --hint."
     print "  Plot                   Make a slim JSXGraph core just for function plotting."
     print "  Test                   Run Unit Tests with JsTestDriver."
+    print "  TestServer             Run JsTestDriver server."
     print "  Compressor             Minify and create a zip archive for JSXCompressor."
     print "  All                    Makes JSXGraph and Compressor."
     
@@ -151,7 +156,7 @@ def makeCore():
         jstxt += '\n';
 
     # tmpfilename = tempfile.mktemp()
-    tmpfilename = 'distrib/jsxgraphsrc.js'
+    tmpfilename = output + '/jsxgraphsrc.js'
 
     fout = open(tmpfilename,'w')
     fout.write(jstxt)
@@ -168,6 +173,10 @@ def makeCore():
     print s
     os.system(s)
     # os.remove(tmpfilename)
+
+    shutil.copy("src/themes/dark.js", output + "/themes/dark.js")
+    shutil.copy("src/themes/gui.js", output + "/themes/gui.js")
+
 
 '''
     Generate slim jsxplotcore.js and place it in <output>
@@ -275,7 +284,9 @@ def makeRelease():
     shutil.copy("README", "tmp/README")
     shutil.copy("LICENSE", "tmp/LICENSE")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css README LICENSE && cd ..")
+    shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
+    shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css themes/ README LICENSE && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
 
 
@@ -362,9 +373,17 @@ def makeHint():
     Run Unit Tests
 '''
 def makeTest():
-    global jstest, reset
+    global jstest, reset, server
     
-    os.system('java -jar ' + jstest + ' ' + reset + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+    os.system('java -jar ' + jstest + ' ' + reset + ' ' + server + ' --tests all --basePath ./ --config test/jsTestDriver.conf --captureConsole');
+
+'''
+    Run Unit Tests Server
+'''
+def makeTestServer():
+    global jstest, reset, port
+
+    os.system('java -jar ' + jstest + ' --port ' + str(port));
 
 
 '''
@@ -376,10 +395,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest, reset
+    global yui, jsdoc, version, output, hint, jstest, reset, port, server
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset"])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -399,8 +418,15 @@ def main(argv):
             hint = arg
         elif opt in ("-t", "--test"):
             jstest = arg
+        elif opt in ("-p", "--port"):
+            port = arg
         elif opt in ("--reset"):
             reset = '--reset'
+        elif opt in ("-s", "--server"):
+            if arg == 'btmdxe':
+                server = "--server http://btmdxe.mat.uni-bayreuth.de:4224"
+            else:
+                server = "--server " + arg
 
     target = "".join(args)
 
@@ -414,8 +440,12 @@ def main(argv):
         # Create tmp directory and output directory
         if not os.path.exists(output):
             os.mkdir(output)
+        if not os.path.exists(output + "/themes"):
+            os.mkdir(output + "/themes")
         if not os.path.exists("tmp"):
             os.mkdir("tmp")
+        if not os.path.exists("tmp/themes"):
+            os.mkdir("tmp/themes")
 
         # Call the target make function
         globals()["make" + target]()

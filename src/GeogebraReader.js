@@ -2184,23 +2184,6 @@ this.writeElement = function(board, output, input, cmd) {
           break;
           case 1330922316: // circle 0x4F54434C
           case 1330922319: // conic 0x4F54434F
-            /*
-            m = function(circ) {
-	        return [[circ.midpoint.X()*circ.midpoint.X()+circ.midpoint.Y()*circ.midpoint.Y()-circ.Radius()*circ.Radius(),
-	                     -circ.midpoint.X(),-circ.midpoint.Y()],
-	                    [-circ.midpoint.X(),1,0],
-	                    [-circ.midpoint.Y(),0,1]
-	                   ];
-	            };
-
-	        t = board.create('line', [
-	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[0]; },
-	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[1]; },
-	                    function(){ return JXG.Math.matVecMult(m(input[1]), input[0].coords.usrCoords)[2]; }
-	                ], {visible: false});
-                     */
-            // input[0]: point
-            // input[1]: circle or conic
             var pol = board.create('polar',[input[1],input[0]],{visible:false});
 	        var i1 = board.create('intersection', [input[1], pol, 0], {visible: false});
 	        var i2 = board.create('intersection', [input[1], pol, 1], {visible: false});
@@ -2432,8 +2415,8 @@ this.writeElement = function(board, output, input, cmd) {
              attr.strokeColor = 'black';
              attr.strokeWidth = '1px';
           }
-          p = board.create('point', [function() { return JXG.getRef(board, input[0].id).midpoint.X(); },
-                                     function() { return JXG.getRef(board, input[0].id).midpoint.Y(); }], attr);
+          p = board.create('point', [function() { return JXG.getRef(board, input[0].id).center.X(); },
+                                     function() { return JXG.getRef(board, input[0].id).center.Y(); }], attr);
           JXG.debug("* <b>Center ("+ p.id +"):</b> "+ attr.name + "("+ gxtEl.x +", "+ gxtEl.y +")<br>\n");
           return p;
       } catch(e) {

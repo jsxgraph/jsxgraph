@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011
+    Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -40,6 +40,11 @@ JXG.Options = {
         factorX : 1.25,
         factorY : 1.25,
         wheel: false
+    },
+
+    jc : {
+        enabled: true,
+        compile: true
     },
 
     /* navbar options */
@@ -212,6 +217,10 @@ JXG.Options = {
          */
         withLabel: false,
 
+        label: {
+            fixed: true
+        },
+        
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
          * @type boolean
@@ -270,10 +279,19 @@ JXG.Options = {
 
         /**
          * Extra visual properties for traces of an element
+         * @type Object
          * @see JXG.GeometryElement#trace
-         * @name JXG.GeometryElement#traces
+         * @name JXG.GeometryElement#traceAttributes
          */
-        traces: {},
+        traceAttributes: {},
+        
+        /**
+         * 
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#highlight
+         */
+        highlight: true,
         
         /**
          * If this is set to true, the element is updated in every update
@@ -396,6 +414,7 @@ JXG.Options = {
         line  : 7,
         circle: 6, 
         curve : 5,
+		turtle : 5,
         polygon: 3,
         sector: 3,
         angle : 3, 
@@ -423,10 +442,14 @@ JXG.Options = {
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
-        textColor : '#0000FF',
         fillOpacity : 0.3,
         highlightFillOpacity : 0.3,
-        point: {
+        radiuspoint: {
+            withLabel: false,
+            visible: false,
+            name: ''
+        },
+        pointsquare: {
             withLabel: false,
             visible: false,
             name: ''
@@ -439,6 +462,9 @@ JXG.Options = {
             face: 'o',
             withLabel: false,
             name: ''
+        },
+        label: {
+            strokeColor: '#0000FF'
         }
     },
 
@@ -450,13 +476,7 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        useDirection: false, 
-        center: {
-            visible: false,
-            withLabel: false,
-            fixed: false,
-            name: ''
-        }
+        useDirection: false
     },
 
     /* special axis options */
@@ -478,9 +498,9 @@ JXG.Options = {
             strokeColor : '#666666',
             highlightStrokeColor : '#888888',
             drawLabels : true,
-            drawZero : true,
+            drawZero : false,
             insertTicks : true,
-            minTicksDistance : 50,
+            minTicksDistance : 10,
             minorHeight : 4,          // if <0: full width and height
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
@@ -546,10 +566,23 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
+        center : {               // center point
             visible: false,
             fixed: false,
             withLabel: false,
+            name: ''
+        }
+    },
+
+    circumcirclearc : {
+        fillColor : 'none',
+        highlightFillColor : 'none',
+        strokeColor : '#0000ff',
+        highlightStrokeColor : '#C3D9FF',
+        center: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
             name: ''
         }
     },
@@ -563,8 +596,6 @@ JXG.Options = {
         highlightFillOpacity: 0.3,
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        //fillOpacity: 0.3,
-        //highlightFillOpacity: 0.3,
         point: {
             visible: false,
             fixed: false,
@@ -593,11 +624,18 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
-        handDrawing: false,
-
+        
         /**#@+
          * @visprop
          */
+
+       /**
+        * The data points of the curve are not connected with straight lines but with bezier curves.
+        * @name JXG.Curve#handDrawing
+        * @type Boolean
+        * @default false
+        */
+        handDrawing: false,
 
         /**
          * The curveType is set in @see generateTerm and used in {@link JXG.Curve#updateCurve}.
@@ -621,6 +659,8 @@ JXG.Options = {
         /**#@-*/
     },
 
+    glider: {},
+
     /* special grid options */
     grid : {
         /**#@+
@@ -635,11 +675,21 @@ JXG.Options = {
         strokeColor : '#C0C0C0',
         strokeOpacity : '0.5',
         strokeWidth: 1,
-        dash : 2,
+        dash : 0,    // dashed grids slow down the iPad considerably
         /* snap to grid options */
+        
+        /**
+         * @deprecated
+         */
         snapToGrid : false,
-        snapSizeX : 2,
-        snapSizeY : 2
+        /**
+         * @deprecated
+         */
+        snapSizeX : 10,
+        /**
+         * @deprecated
+         */
+        snapSizeY : 10
 
         /**#@-*/
     },
@@ -656,7 +706,7 @@ JXG.Options = {
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
-        point : {               // center point
+        center : {               // center point
             visible: false,
             fixed: false,
             withLabel: false,
@@ -669,25 +719,28 @@ JXG.Options = {
         withLabel: true,    // Show integral value as text
         strokeWidth: 0,
         strokeOpacity: 0,
-        start: {    // Start point
-            visible: true
+        fillOpacity: 0.8,
+        curveLeft: {    // Start point
+            visible: true,
+            layer: 9
         },
-        startproject: {    // Start point
+        baseLeft: {    // Start point
             visible: false,
             fixed: false,
             withLabel: false,
             name: ''
         },
-        end: {      // End point
-            visible: true
+        curveRight: {      // End point
+            visible: true,
+            layer: 9
         },
-        endproject: {      // End point
+        baseRight: {      // End point
             visible: false,
             fixed: false,
             withLabel: false,
             name: ''
         },
-        text: {
+        label: {
             fontSize: 20
         }
     },
@@ -763,17 +816,26 @@ JXG.Options = {
         /**#@-*/
     },
     
-    /* special options for parallel lines */
-    parallel : {
-        strokeColor: '#000000' // Parallel line
-        /*                     // obsolete
-        point : {               // Parallel point
+    /* special options for normal lines */
+    normal : {
+        strokeColor: '#000000', //  normal line
+        point : {
             visible: false,
-            fixed: true,
+            fixed: false,
             withLabel: false,
             name: ''
         }
-        */
+    },
+
+    /* special options for parallel lines */
+    parallel : {
+        strokeColor: '#000000', // Parallel line
+        point : {
+            visible: false,
+            fixed: false,
+            withLabel: false,
+            name: ''
+        }
     },
 
     /* special perpendicular options */
@@ -856,7 +918,8 @@ JXG.Options = {
 
         /**
          * If true, the infobox is shown on mouse over, else not.
-         * @type boolean
+         * @name JXG.Point#showInfobox
+         * @type Boolean
          * @default true
          */
         showInfobox: true,
@@ -867,9 +930,9 @@ JXG.Options = {
          * List of attractor elements. If the distance of the point is less than
          * attractorDistance the point is made to glider of this element.
          * @type array
-         * @name JXG.Options.point#attractors
+         * @name JXG.Point#attractors
          * @default empty
-         **/
+         */
         attractors: [],
         
         /**
@@ -878,9 +941,9 @@ JXG.Options = {
          * attracting element. 
          * If set to zero nothing happens.
          * @type number
-         * @name JXG.Options.point#attractorDistance
+         * @name JXG.Point#attractorDistance
          * @default 0
-         **/
+         */
         attractorDistance: 0.0,
         
         /**
@@ -889,10 +952,49 @@ JXG.Options = {
          * attracting element. 
          * If set to zero nothing happens.
          * @type number
-         * @name JXG.Options.point#snatchDistance
+         * @name JXG.Point#snatchDistance
          * @default 0
-         **/
-        snatchDistance: 0.0
+         */
+        snatchDistance: 0.0,
+        
+        /**
+         * If set to true, the point will snap to a grid defined by
+         * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Point#snapSizeY
+         * @type Boolean
+         * @name JXG.Point#snapToGrid
+         * @default false
+         */
+        snapToGrid: false,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default x axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeY
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeX
+         * @default 1
+         */
+        snapSizeX: 1,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default y axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeY
+         * @default 1
+         */
+        snapSizeY: 1
 
         /**#@-*/
     },
@@ -903,6 +1005,14 @@ JXG.Options = {
          * @visprop
          */
 
+        /**
+         * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+         * @see JXG.GeometryElement#hasPoint
+         * @name JXG.Polygon#hasInnerPoints
+         * @type Boolean
+         * @default false
+         */
+        hasInnerPoints: false,
         fillColor : '#00FF00',
         highlightFillColor : '#00FF00',
         fillOpacity : 0.3,
@@ -918,7 +1028,7 @@ JXG.Options = {
 
         /**#@-*/
 
-        lines: {
+        borders: {
             withLabel: false,
 		    strokeWidth: 1,
 		    highlightStrokeWidth: 1,
@@ -929,7 +1039,7 @@ JXG.Options = {
         /**
          *  Points for regular polygons
          */ 
-        points : {                    
+        vertices : {
             withLabel: true,
             strokeColor: '#ff0000',
             fillColor: '#ff0000',
@@ -950,6 +1060,15 @@ JXG.Options = {
         highlightFillColor: '#00FF00',
         fillOpacity: 0.3,
         highlightFillOpacity: 0.3
+    },
+
+    semicircle : {
+        midpoint: {
+            visible: false,
+            withLabel: false,
+            fixed: false,
+            name: ''
+        }
     },
 
     /* special slider options */
@@ -979,6 +1098,16 @@ JXG.Options = {
         withTicks: true,
         withLabel: true,
 
+        layer: 9,
+        showInfobox: false,
+        name : '',
+        visible: true,
+        strokeColor : '#000000',
+        highlightStrokeColor : '#888888',
+        fillColor : '#ffffff',
+        highlightFillColor : 'none',
+        size: 6,
+
         /**#@-*/
             
         point1: {
@@ -997,19 +1126,7 @@ JXG.Options = {
             fixed: true,
             name: ''
         },
-        glider: {
-            layer: 9,
-            showInfobox: false,
-            name : '',
-            withLabel: false,
-            visible: true,
-            strokeColor : '#000000',
-            highlightStrokeColor : '#888888',
-            fillColor : '#ffffff',
-            highlightFillColor : 'none',
-            size: 6
-        },
-        segment1: {
+        baseline: {
             needsRegularUpdate : false,
             name : '',
             strokeWidth: 1,
@@ -1030,13 +1147,13 @@ JXG.Options = {
             strokeWidth: 1,
             strokeColor : '#000000'
         }, 
-        segment2: {
+        highline: {
             strokeWidth: 3,
             name : '',
             strokeColor : '#000000',
             highlightStrokeColor : '#888888'
         },
-        text: {
+        label: {
             strokeColor: '#000000'
         }
     },
@@ -1054,6 +1171,8 @@ JXG.Options = {
         useASCIIMathML : false,
         useMathJax : false,
         display : 'html',                    //'html' or 'internal'
+        cssClass : 'JXGtext',
+        highlightCssClass : 'JXGtext',
         withLabel: false
 
         /**#@-*/
@@ -1070,6 +1189,19 @@ JXG.Options = {
 
         /**#@-*/
     },
+
+    /*special turtle options */
+    turtle : {
+        strokeWidth : 1,
+		fillColor: 'none',
+		strokeColor: '#000000',
+		arrow : {
+			strokeWidth: 2,
+			withLabel: false,
+			strokeColor: '#ff0000'
+		}
+    },
+
 
     /**
       * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
@@ -1119,8 +1251,15 @@ JXG.Validator = (function () {
         validateRenderer = function (v) {
             return (v in {vml: 0, svg: 0, canvas: 0});
         },
+        validatePositive = function (v) {
+            return v > 0;
+        },
+        validateNotNegative = function (v) {
+            return !(v < 0);
+        },
     i, v = {},
     validators = {
+        attractorDistance: validateNotNegative,
         color: validateColor,
         defaultDistance: JXG.isNumber,
         display : validateDisplay,
@@ -1161,10 +1300,11 @@ JXG.Validator = (function () {
         showInfobox: false,
         showNavigation : false,
         size : validateInteger,
-        snapSizeX : JXG.isNumber,
-        snapSizeY : JXG.isNumber,
+        snapSizeX : validatePositive,
+        snapSizeY : validatePositive,
         snapWidth : JXG.isNumber,
         snapToGrid : false,
+        snatchDistance: validateNotNegative,
         straightFirst : false,
         straightLast : false,
         stretch: false,
@@ -1173,7 +1313,6 @@ JXG.Validator = (function () {
         strokeWidth : validateInteger,
         takeFirst : false,
         takeSizeFromFile : false,
-        textColor : validateColor,
         to10: false,
         toOrigin: false,
         translateTo10: false,

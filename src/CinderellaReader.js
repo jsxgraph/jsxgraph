@@ -121,7 +121,7 @@ JXG.CinderellaReader = new function() {
                 i = erg[1];
                 circle = JXG.getReference(board,defName);
                 board.create('glider',
-                        [circle.midpoint.coords.usrCoords[1]+defPoints[0],circle.midpoint.coords.usrCoords[2]-defPoints[1],circle],
+                        [circle.center.coords.usrCoords[1]+defPoints[0],circle.center.coords.usrCoords[2]-defPoints[1],circle],
                                 {name:objName, size:erg[0][1], fillColor:erg[0][0], strokeColor:erg[2], labelColor:erg[3]});
             }
             else if(dataLines[i].search(/PointOnLine.+/) != -1) { // Gleiter auf Geade

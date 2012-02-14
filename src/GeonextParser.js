@@ -57,7 +57,7 @@ JXG.GeonextParser.replacePow = function(te) {
 		// If there is a ")" immediately before the ^ operator, it can be the end of a
 		// (i) term in parenthesis
 		// (ii) function call
-		// (iii) method  callthrow new Error("JSXGraph: Can't create Sector with parent types
+		// (iii) method  call
 		// In either case, first the corresponding opening parenthesis is searched.
 		// This is the case, when count==0
         if (left.charAt(left.length-1)==')') {
@@ -430,5 +430,126 @@ JXG.GeonextParser.findDependencies = function(me, term, board) {
             }
         }
     }
+};
+
+/**
+ * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JavaScript syntax.
+ * @param {String} term Expression in GEONExT syntax
+ * @type String
+ * @return Given expression translated to JavaScript.
+ */
+JXG.GeonextParser.gxt2jc = function(term, board) {
+    var newterm,
+		from = ['Sqrt'],
+		to = ['sqrt'];
+    
+    term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
+    term = term.replace(/&gt;/g,'>'); 
+    term = term.replace(/&amp;/g,'&'); 
+    newterm = term;
+    newterm = this.replaceNameById2(newterm, board);
+	/*
+    for (i=0; i<from.length; i++) {
+        expr = new RegExp(['(\\W|^)(',from[i],')'].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
+        newterm = newterm.replace(expr,['$1',to[i]].join(''));
+    } 
+	*/
+    newterm = newterm.replace(/True/g,'true');
+    newterm = newterm.replace(/False/g,'false');
+    newterm = newterm.replace(/fasle/g,'false');
+
+    return newterm;
+};
+
+/**
+ * Replace an element's name in terms by an element's id.
+ * @param term Term containing names of elements.
+ * @param board Reference to the board the elements are on.
+ * @return The same string with names replaced by ids.
+ **/
+JXG.GeonextParser.replaceNameById2 = function(/** string */ term, /** JXG.Board */ board) /** string */ {
+    var pos = 0, end, elName, el, i,
+        funcs = ['X','Y','L','V'];
+
+    //    
+    // Find X(el), Y(el), ... 
+    // All functions declared in funcs
+    for (i=0;i<funcs.length;i++) {
+        pos = term.indexOf(funcs[i]+'(');
+        while (pos>=0) {
+            if (pos>=0) {
+                end = term.indexOf(')',pos+2);
+                if (end>=0) {
+                    elName = term.slice(pos+2,end);
+                    elName = elName.replace(/\\(['"])?/g,"$1");
+                    el = board.elementsByName[elName];
+                    term = term.slice(0,pos+2) + "$('"+el.id +"')" +  term.slice(end);
+                }
+            }
+            end = term.indexOf(')',pos+2);
+            pos = term.indexOf(funcs[i]+'(',end);
+        }
+    }
+
+    pos = term.indexOf('Dist(');
+    while (pos>=0) {
+        if (pos>=0) {
+            end = term.indexOf(',',pos+5);
+            if (end>=0) {
+                elName = term.slice(pos+5,end);
+                elName = elName.replace(/\\(['"])?/g,"$1");
+                el = board.elementsByName[elName];
+                term = term.slice(0,pos+5) + "$('"+el.id +"')" +  term.slice(end);
+            }
+        }
+        end = term.indexOf(',',pos+5);
+        pos = term.indexOf(',',end);
+        end = term.indexOf(')',pos+1);
+        if (end>=0) {
+            elName = term.slice(pos+1,end);
+            elName = elName.replace(/\\(['"])?/g,"$1");
+            el = board.elementsByName[elName];
+            term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
+        }
+        end = term.indexOf(')',pos+1);
+        pos = term.indexOf('Dist(',end);
+    }
+
+    funcs = ['Deg','Rad'];
+    for (i=0;i<funcs.length;i++) {
+        pos = term.indexOf(funcs[i]+'(');
+        while (pos>=0) {
+            if (pos>=0) {
+                end = term.indexOf(',',pos+4);
+                if (end>=0) {
+                    elName = term.slice(pos+4,end);
+                    elName = elName.replace(/\\(['"])?/g,"$1");
+                    el = board.elementsByName[elName];
+                    term = term.slice(0,pos+4) + "$('"+el.id +"')" +  term.slice(end);
+                }
+            }
+            end = term.indexOf(',',pos+4);
+            pos = term.indexOf(',',end);
+            end = term.indexOf(',',pos+1);
+            if (end>=0) {
+                elName = term.slice(pos+1,end);
+                elName = elName.replace(/\\(['"])?/g,"$1");
+                el = board.elementsByName[elName];
+                term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
+            }
+            end = term.indexOf(',',pos+1);
+            pos = term.indexOf(',',end);
+            end = term.indexOf(')',pos+1);
+            if (end>=0) {
+                elName = term.slice(pos+1,end);
+                elName = elName.replace(/\\(['"])?/g,"$1");
+                el = board.elementsByName[elName];
+                term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
+            }
+            end = term.indexOf(')',pos+1);
+            pos = term.indexOf(funcs[i]+'(',end);
+        }
+    }
+    return term;
 };
 

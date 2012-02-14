@@ -60,7 +60,7 @@ JXG.Point = function (board, coordinates, attributes) {
 
     /**
      * Relative position on a line if point is a glider on a line.
-     * @type number
+     * @type Number
      * @private
      */
     this.position = null;
@@ -81,7 +81,20 @@ JXG.Point = function (board, coordinates, attributes) {
      * @name Glider#slideObject
      */
     this.slideObject = null;
-    
+
+    this.Xjc = null;
+    this.Yjc = null;
+
+    // documented in GeometryElement
+    this.methodMap = JXG.deepCopy(this.methodMap, {
+        move: 'moveTo',
+        glide: 'makeGlider',
+        X: 'X',
+        Y: 'Y',
+        free: 'free',
+        setPosition: 'setGliderPosition'
+    });
+
     /**
      * Stores the groups of this point in an array of Group.
      * @type array
@@ -89,6 +102,8 @@ JXG.Point = function (board, coordinates, attributes) {
      * @private
      */
     this.group = [];
+
+    this.elType = 'point';
 
     /* Register point at board. */
     this.id = this.board.setId(this, 'P');
@@ -133,9 +148,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Updates the position of the point.
      */
     update: function (fromParent) {
-        var i, p1coords, p2coords, factor, distP1S, distP1P2, distP2S, v,
-            p1Scr, p2Scr, y, p1, p2, poly;
-            
         if (!this.needsUpdate) { return this; }
 
         if(typeof fromParent == 'undefined') {
@@ -154,127 +166,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
          * the defining elements of the line or circle have been changed.
          */
         if(this.type == JXG.OBJECT_TYPE_GLIDER) {
-            if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.X()+Math.cos(this.position),this.slideObject.midpoint.Y()+Math.sin(this.position)]);
-                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
-                } else {
-                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
-                    this.position = JXG.Math.Geometry.rad([this.slideObject.midpoint.X()+1.0,this.slideObject.midpoint.Y()],this.slideObject.midpoint,this);
-                }
-            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
-                this.coords  = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
-                p1coords = this.slideObject.point1.coords;
-                p2coords = this.slideObject.point2.coords;
-                if (fromParent) {
-                    if (Math.abs(p1coords.usrCoords[0])>=JXG.Math.eps && Math.abs(p2coords.usrCoords[0])>=JXG.Math.eps) {
-                        this.coords.setCoordinates(JXG.COORDS_BY_USER, 
-                                               [p1coords.usrCoords[1] + this.position*(p2coords.usrCoords[1] - p1coords.usrCoords[1]),
-                                                p1coords.usrCoords[2] + this.position*(p2coords.usrCoords[2] - p1coords.usrCoords[2])]);
-                    }
-                } else {
-                    factor = 1;
-                    distP1S = p1coords.distance(JXG.COORDS_BY_USER, this.coords);
-                    distP1P2 = p1coords.distance(JXG.COORDS_BY_USER, p2coords);
-                    distP2S = p2coords.distance(JXG.COORDS_BY_USER, this.coords);
-                    
-                    if ( ((distP1S > distP1P2) || (distP2S > distP1P2)) && (distP1S < distP2S)) { // Glider not between P1 & P2 and beyond P1
-                        factor = -1;
-                    }
-                    this.position = factor*distP1S/distP1P2;
-
-                    // Snap the glider point of the slider into its appropiate position
-                    // First, recalculate the new value of this.position
-                    // Second, call update(fromParent==true) to make the positioning snappier.
-                    if (this.visProp.snapwidth>0.0 && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
-                        if (this.position<0.0) this.position = 0.0;
-                        if (this.position>1.0) this.position = 1.0;
-                        
-                        v = this.position*(this._smax-this._smin)+this._smin;
-                        v = Math.round(v/this.visProp.snapwidth)*this.visProp.snapwidth;
-                        this.position = (v-this._smin)/(this._smax-this._smin);
-                        this.update(true);
-                    }
-                }
-                p1Scr = this.slideObject.point1.coords.scrCoords;
-                p2Scr = this.slideObject.point2.coords.scrCoords;
-
-                if(this.slideObject.getSlope() == 0) {
-                    i = 1;
-                } else {
-                    i = 2;
-                }
-
-                y = this.coords.scrCoords[i];
-                if (!this.slideObject.visProp.straightfirst) {
-                    if(p1Scr[i] < p2Scr[i]) {
-                        if(y < p1Scr[i]) {
-                           this.coords = this.slideObject.point1.coords;
-                           this.position = 0;
-                        }
-                    }
-                    else if(p1Scr[i] > p2Scr[i]) {
-                        if(y > p1Scr[i]) {
-                           this.coords = this.slideObject.point1.coords;
-                           this.position = 0;
-                        }
-                    }
-                }
-                if (!this.slideObject.visProp.straightlast) {
-                    if(p1Scr[i] < p2Scr[i]) {
-                        if (y > p2Scr[i]) {
-                           this.coords = this.slideObject.point2.coords;
-                           this.position = 1;
-                        }
-                    }
-                    else if(p1Scr[i] > p2Scr[i]) {
-                        if (y < p2Scr[i]) {
-                           this.coords = this.slideObject.point2.coords;
-                           this.position = 1;
-                        }
-                    }
-                }  
-
-                if (this.onPolygon) {
-                    p1 = this.slideObject.point1.coords;
-                    p2 = this.slideObject.point2.coords;
-                    if (Math.abs(this.coords.scrCoords[1]-p1.scrCoords[1])<this.board.options.precision.hasPoint && 
-                        Math.abs(this.coords.scrCoords[2]-p1.scrCoords[2])<this.board.options.precision.hasPoint) {
-                        poly = this.slideObject.parentPolygon;
-                        for (i=0; i<poly.borders.length; i++) {
-                            if (this.slideObject == poly.borders[i]) {
-                                this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
-                                break;
-                            }
-                        }
-                    }
-                    else if (Math.abs(this.coords.scrCoords[1]-p2.scrCoords[1])<this.board.options.precision.hasPoint && 
-                             Math.abs(this.coords.scrCoords[2]-p2.scrCoords[2])<this.board.options.precision.hasPoint) {
-                        poly = this.slideObject.parentPolygon;
-                        for (i=0; i<poly.borders.length; i++) {
-                            if(this.slideObject == poly.borders[i]) {
-                                this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
-                                break;                        
-                            }
-                        }
-                    }
-                }
-            } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
-                    //this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);
-                } else {
-                    this.updateConstraint(); // In case, the point is a constrained glider.
-                    this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);
-                }
-            } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
-                if (fromParent) {
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
-                    this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);
-                } else {
-                    this.updateConstraint(); // In case, the point is a constrained glider.
-                    this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);
-                }
+            if (fromParent) {
+                this.updateGliderFromParent();
+            } else {
+                this.updateGlider();
             }
         }
         
@@ -289,6 +184,157 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.updateTransform();
 
         return this;
+    },
+
+    /**
+    * Update of glider in case of dragging the glider or setting the postion of the glider.
+    * The relative position of the glider has to be updated.
+    * @private
+    */
+    updateGlider: function() {
+        var i, p1c, p2c, d, v, poly;
+
+        if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+            this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
+            this.position = JXG.Math.Geometry.rad([this.slideObject.center.X()+1.0,this.slideObject.center.Y()],this.slideObject.center,this);
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+            p1c = this.slideObject.point1.coords;
+            p2c = this.slideObject.point2.coords;
+            // Distance between the two defining points
+            d = p1c.distance(JXG.COORDS_BY_USER, p2c);
+            p1c = p1c.usrCoords.slice(0);
+            p2c = p2c.usrCoords.slice(0);
+            
+            if (d<JXG.Math.eps) {                                     // The defining points are identical
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
+                this.position = 0.0;
+            } else { 
+                if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
+                    if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
+                        d = JXG.Math.Geometry.distance([0,0,0], p2c);
+                        p2c = [1, p1c[1]+p2c[1]/d, p1c[2]+p2c[2]/d];
+                    } else {                                             // The first point is an ideal point
+                        d = JXG.Math.Geometry.distance([0,0,0], p1c);
+                        p1c = [1, p2c[1]+p1c[1]/d, p2c[2]+p1c[2]/d];
+                    }
+                }
+                i = 1;
+                d = p2c[i] - p1c[i];
+                if (Math.abs(d)<JXG.Math.eps) { 
+                    i = 2; 
+                    d = p2c[i] - p1c[i];
+                }
+
+                this.coords = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
+                this.position = (this.coords.usrCoords[i] - p1c[i]) / d;
+            }        
+                
+            // Snap the glider point of the slider into its appropiate position
+            // First, recalculate the new value of this.position
+            // Second, call update(fromParent==true) to make the positioning snappier.
+            if (this.visProp.snapwidth>0.0 && Math.abs(this._smax-this._smin)>=JXG.Math.eps) {
+                if (this.position<0.0) this.position = 0.0;
+                if (this.position>1.0) this.position = 1.0;
+                    
+                v = this.position*(this._smax-this._smin)+this._smin;
+                v = Math.round(v/this.visProp.snapwidth)*this.visProp.snapwidth;
+                this.position = (v-this._smin)/(this._smax-this._smin);
+                this.update(true);
+            }
+
+            p1c = this.slideObject.point1.coords.usrCoords;
+            if (!this.slideObject.visProp.straightfirst && Math.abs(p1c[0])>JXG.Math.eps && this.position<0) {
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
+                this.position = 0;
+            }
+            p2c = this.slideObject.point2.coords.usrCoords;
+            if (!this.slideObject.visProp.straightlast && Math.abs(p2c[0])>JXG.Math.eps && this.position>1) {
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, p2c);
+                this.position = 1;
+            }
+    
+            // onPolygon is GEONExT specific and has to be tested.
+            if (this.onPolygon) {
+                p1c = this.slideObject.point1.coords;
+                p2c = this.slideObject.point2.coords;
+                if (Math.abs(this.coords.scrCoords[1]-p1c.scrCoords[1])<this.board.options.precision.hasPoint && 
+                    Math.abs(this.coords.scrCoords[2]-p1c.scrCoords[2])<this.board.options.precision.hasPoint) {
+                    poly = this.slideObject.parentPolygon;
+                    for (i=0; i<poly.borders.length; i++) {
+                        if (this.slideObject == poly.borders[i]) {
+                            this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
+                            break;
+                        }
+                    }
+                }
+                else if (Math.abs(this.coords.scrCoords[1]-p2c.scrCoords[1])<this.board.options.precision.hasPoint && 
+                         Math.abs(this.coords.scrCoords[2]-p2c.scrCoords[2])<this.board.options.precision.hasPoint) {
+                    poly = this.slideObject.parentPolygon;
+                    for (i=0; i<poly.borders.length; i++) {
+                        if(this.slideObject == poly.borders[i]) {
+                            this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
+                            break;                        
+                        }
+                    }
+                }
+            }
+
+        } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_POINT) {
+            this.coords  = JXG.Math.Geometry.projectPointToPoint(this, this.slideObject, this.board);
+        }
+    },
+
+    /**
+    * Update of a glider in case a parent element has been updated. That means the 
+    * relative position of the glider stays the same.
+    * @private
+    */
+    updateGliderFromParent: function() {
+        var p1c, p2c, r, d;
+
+        if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+			r = this.slideObject.Radius();
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+					this.slideObject.center.X() + r*Math.cos(this.position),
+					this.slideObject.center.Y() + r*Math.sin(this.position)
+				]);
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+            p1c = this.slideObject.point1.coords;
+            p2c = this.slideObject.point2.coords;
+            d = p1c.distance(JXG.COORDS_BY_USER, p2c);
+            p1c = p1c.usrCoords.slice(0);
+            p2c = p2c.usrCoords.slice(0);
+            
+            if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
+                if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
+                    d = JXG.Math.Geometry.distance([0,0,0], p2c);
+                    p2c = [1, p1c[1]+p2c[1]/d, p1c[2]+p2c[2]/d];
+                } else {                                             // The first point is an ideal point
+                    d = JXG.Math.Geometry.distance([0,0,0], p1c);
+                    p1c = [1, p2c[1]+p1c[1]/d, p2c[2]+p1c[2]/d];
+                }
+            }
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                    p1c[1] + this.position*(p2c[1] - p1c[1]),
+					p1c[2] + this.position*(p2c[2] - p1c[2])
+                ]);
+        } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CURVE) {
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.Z(this.position), this.slideObject.X(this.position), this.slideObject.Y(this.position)]);
+            this.updateConstraint(); // In case, the point is a constrained glider.
+            this.coords  = JXG.Math.Geometry.projectPointToCurve(this, this.slideObject, this.board);  // side-effect: this.position is overwritten
+        } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_POINT) {
+            this.coords  = JXG.Math.Geometry.projectPointToPoint(this, this.slideObject, this.board);
+        }
     },
 
     /**
@@ -330,7 +376,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for x, this is used by for CAS-points to access point coordinates.
      * @return User coordinate of point in x direction.
-     * @type number
+     * @type Number
      */
     X: function () {
         return this.coords.usrCoords[1];
@@ -339,7 +385,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for y, this is used by CAS-points to access point coordinates.
      * @return User coordinate of point in y direction.
-     * @type number
+     * @type Number
      */
     Y: function () {
         return this.coords.usrCoords[2];
@@ -348,7 +394,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Getter method for z, this is used by CAS-points to access point coordinates.
      * @return User coordinate of point in z direction.
-     * @type number
+     * @type Number
      */
     Z: function () {
         return this.coords.usrCoords[0];
@@ -358,7 +404,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in x direction.
-     * @type number
+     * @type Number
      * @private
      */
     XEval: function () {
@@ -369,7 +415,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in y direction.
-     * @type number
+     * @type Number
      * @private
      */
     YEval: function () {
@@ -380,7 +426,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * New evaluation of the function term. 
      * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
      * @return User coordinate of point in z direction.
-     * @type number
+     * @type Number
      * @private
      */
     ZEval: function () {
@@ -397,7 +443,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Here, function inlining seems to be worthwile  (for plotting).
      * @param {JXG.Point} point2 The point to which the distance shall be calculated.
      * @return Distance in user coordinate to the given point
-     * @type number
+     * @type Number
      */
     Dist: function(point2) {
         var sum,
@@ -433,11 +479,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         found = false;
         for (i=0; i<len; i++) {
             el = JXG.getRef(this.board, this.visProp.attractors[i]);
-            if (!JXG.exists(el)) {
+            if (!JXG.exists(el) || el===this) {
                 continue;
             }
             if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
-                projCoords = el.coords;
+                projCoords = JXG.Math.Geometry.projectPointToPoint(this, el, this.board);
             } else if (el.elementClass==JXG.OBJECT_CLASS_LINE) {
                 projCoords = JXG.Math.Geometry.projectPointToLine(this, el, this.board);
             } else if (el.elementClass==JXG.OBJECT_CLASS_CIRCLE) {
@@ -450,11 +496,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
             if (d<this.visProp.attractordistance) {
                 found = true;
-                if (el.elementClass==JXG.OBJECT_CLASS_POINT) {
-                    this.coords = el.coords;
-                } else {
-                    this.makeGlider(el);
-                }
+                this.makeGlider(el);
                 break;
             } else {
                 if (el==this.slideObject && d>=this.visProp.snatchdistance) {
@@ -471,18 +513,36 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     
     /**
      * Sets x and y coordinate and calls the point's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} x optional: previous x coordinate in screen/user units (ignored)
+     * @param {Number} y optional: previous y coordinate in screen/user units (ignored)
      */
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
             oldCoords = this.coords,
-            newCoords;
+            newCoords, sX = this.visProp.snapsizex, sY = this.visProp.snapsizey;
 
         this.coords = new JXG.Coords(method, [x, y], this.board);
+        if (this.visProp.snaptogrid) {
+            x = this.coords.usrCoords[1];
+            y = this.coords.usrCoords[2];
+            
+            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                sX = this.board.defaultAxes.x.defaultTicks.ticksDelta*(this.board.defaultAxes.x.defaultTicks.visProp.minorticks+1);
+            }
+
+            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                sY = this.board.defaultAxes.y.defaultTicks.ticksDelta*(this.board.defaultAxes.y.defaultTicks.visProp.minorticks+1);
+            }
+
+            // if no valid snap sizes are available, don't change the coords.
+            if (sX > 0 && sY > 0) {
+                this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+            }
+        }
+        
         this.handleAttractors();
         
         if(this.group.length != 0) {
@@ -517,14 +577,15 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
             this.update();
         }
+
         return this;
     },
 
     /**
      * TODO
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
      */
     setPositionByTransform: function (method, x, y) {
         var t = this.board.create('transform', [x,y], {type:'translate'});
@@ -543,12 +604,26 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Sets x and y coordinate and calls the point's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
      */
     setPosition: function (method, x, y) { 
         this.setPositionDirectly(method, x, y);
+        return this;
+    },
+
+    /**
+     * Sets the position of a glider relative to the defining elements of the {@link JXG.Point#slideObject}.
+     * @param {Number} x
+     * @returns {JXG.Point} Reference to the point element.
+     */
+    setGliderPosition: function (x) {
+        if (this.type = JXG.OBJECT_TYPE_GLIDER) {
+            this.position = x;
+            this.board.update();
+        }
+        
         return this;
     },
 
@@ -557,19 +632,62 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {String|Object} glideObject The Object the point will be bound to.
      */
     makeGlider: function (glideObject) {
-        this.slideObject = JXG.getReference(this.board, glideObject);
+        var oldc = this.coords.usrCoords.slice(1);
+        this.slideObject = JXG.getRef(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
+        this.elType = 'glider';
         this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
         this.slideObject.addChild(this);
         this.isDraggable = true;
-        
+
         this.generatePolynomial = function() {
             return this.slideObject.generatePolynomial(this);
         };
 
+        this.moveTo(oldc);
+
         //this.needsUpdate = true;
         //this.update();
         return this;
+    },
+
+    /**
+     * Converts a glider into a free point.
+     */
+    free: function () {
+        var anc;
+
+        if (this.type !== JXG.OBJECT_TYPE_GLIDER) {
+            if (!this.isDraggable) {
+                this.isDraggable = true;
+                this.type = JXG.OBJECT_TYPE_POINT;
+
+                this.XEval = function () {
+                    return this.coords.usrCoords[1];
+                };
+
+                this.YEval = function () {
+                    return this.coords.usrCoords[2];
+                };
+
+                this.ZEval = function () {
+                    return this.coords.usrCoords[0];
+                };
+
+                this.Xjc = null;
+                this.Yjc = null;
+            } else {
+                return;
+            }
+        }
+
+        for (anc in this.ancestors) {
+            JXG.removeElementFromArray(this.ancestors[anc].descendants, this);
+        }
+
+        this.ancestors = [];
+        this.slideObject = null;
+        this.type = JXG.OBJECT_TYPE_POINT;
     },
 
     /**
@@ -580,7 +698,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      *   <li>a JavaScript function,</li>
      *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript 
      *     function here,</li>
-     *   <li>a number</li>
+     *   <li>a Number</li>
      *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method 
      *     of this slider.</li>
      *   </ul>
@@ -589,15 +707,21 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     addConstraint: function (terms) {
         this.type = JXG.OBJECT_TYPE_CAS;
         var newfuncs = [],
-            fs, i, v, t;
+            fs, i, v, t,
+            what = ['X', 'Y'];
         
         this.isDraggable = false;
         for (i=0;i<terms.length;i++) {
             v = terms[i];
             if (typeof v=='string') {
                 // Convert GEONExT syntax into  JavaScript syntax
-                t  = JXG.GeonextParser.geonext2JS(v, this.board);
-                newfuncs[i] = new Function('','return ' + t + ';');
+                //t  = JXG.GeonextParser.geonext2JS(v, this.board);
+                //newfuncs[i] = new Function('','return ' + t + ';');
+                newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+
+                if (terms.length === 2) {
+                    this[what[i] + 'jc'] = terms[i];
+                }
             } else if (typeof v=='function') {
                 newfuncs[i] = v;
             } else if (typeof v=='number') {
@@ -605,6 +729,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             } else if (typeof v == 'object' && typeof v.Value == 'function') {    // Slider
                 newfuncs[i] = (function(a) { return function() { return a.Value(); };})(v);
             }
+
+            newfuncs[i].origin = v;
         }
         if (terms.length==1) { // Intersection function
             this.updateConstraint = function() { 
@@ -628,48 +754,48 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.updateConstraint = new Function('',fs);
         }
 
-        // if (!this.board.isSuspendedUpdate) { this.update(); }
+        if (!this.board.isSuspendedUpdate) { this.prepareUpdate().update().updateRenderer(); }
         return this;
     },
 
     /**
-     * TODO
+     * Applies the transformations of the curve to {@link JXG.Point#baseElement}.
+     * @returns {JXG.Point} Reference to this point object.
      */
     updateTransform: function () {
         if (this.transformations.length==0 || this.baseElement==null) {
-            return;
+            return this;
         }
         var c, i;
 
         if (this===this.baseElement) {      // case of bindTo
-            c = this.transformations[0].apply(this.baseElement,'self');
+            c = this.transformations[0].apply(this.baseElement, 'self');
         } else {                           // case of board.create('point',[baseElement,transform]);
             c = this.transformations[0].apply(this.baseElement);
         }
         this.coords.setCoordinates(JXG.COORDS_BY_USER,c);
-        for (i=1;i<this.transformations.length;i++) {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER,this.transformations[i].apply(this));
+        for (i = 1; i < this.transformations.length; i++) {
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, this.transformations[i].apply(this));
         }
         return this;
     },
 
     /**
-     * TODO
-     * @param el TODO
-     * @param transform TODO
+     * Add transformations to this point.
+     * @param {JXG.GeometryElement} el TODO base element
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Point} Reference to this point object.
      */
     addTransform: function (el, transform) {
-        var list, i, len;
-        if (this.transformations.length==0) { // There is only one baseElement possible
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
+
+        if (this.transformations.length === 0) { // There is only one baseElement possible
             this.baseElement = el;
         }
-        if (JXG.isArray(transform)) {
-            list = transform;
-        } else {
-            list = [transform];
-        }
-        len = list.length;
-        for (i=0;i<len;i++) {
+
+        for (i = 0; i < len; i++) {
             this.transformations.push(list[i]);
         }
         return this;
@@ -677,8 +803,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Animate the point. 
-     * @param {number} direction The direction the glider is animated. Can be +1 or -1.
-     * @param {number} stepCount The number of steps.
+     * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
+     * @param {Number} stepCount The number of steps.
      * @name Glider#startAnimation
      * @see Glider#stopAnimation
      * @function
@@ -834,24 +960,25 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         var delay = 35,
-            steps = Math.ceil(time/(delay * 1.0)),
-            coords = new Array(repeat*(steps+1)),
+            steps = Math.ceil(time/(delay*options.repeat)),
+            coords = new Array(options.repeat*(steps+1)),
             X = this.coords.usrCoords[1],
             Y = this.coords.usrCoords[2],
             dX = (where[0] - X),
             dY = (where[1] - Y),
             i, j,
             stepFun = function (i) {
+                var x = (i < steps/2 ? 2*i/steps : 2*(steps-i)/steps);
                 if (options.effect && options.effect == '<>') {
-                    return Math.pow(Math.sin((i/(steps*1.0))*Math.PI/2.), 2);
+                    return Math.pow(Math.sin((x)*Math.PI/2.), 2);
                 }
-                return i/steps;
+                return x;
             };
-        
-        for(j = 0; j < options.repeat; j++) {
-            for(i=steps; i>=0; i--) {
+
+        for (j = 0; j < options.repeat; j++) {
+            for(i = steps; i >= 0; i--) {
                 coords[j*(steps+1) + steps-i] = [X + dX * stepFun(i),
-                                                 Y+ dY * stepFun(i)];
+                    Y+ dY * stepFun(i)];
             }
         }
         this.animationPath = coords;
@@ -862,8 +989,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
     /**
      * Animates a glider. Is called by the browser after startAnimation is called.
-     * @param {number} direction The direction the glider is animated.
-     * @param {number} stepCount The number of steps.
+     * @param {Number} direction The direction the glider is animated.
+     * @param {Number} stepCount The number of steps.
      * @see #startAnimation
      * @see #stopAnimation
      * @private
@@ -926,8 +1053,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
             radius = this.slideObject.Radius();
 
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.midpoint.coords.usrCoords[1] + radius*Math.cos(alpha), 
-                                                            this.slideObject.midpoint.coords.usrCoords[2] + radius*Math.sin(alpha)]);
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.slideObject.center.coords.usrCoords[1] + radius*Math.cos(alpha),
+                                                            this.slideObject.center.coords.usrCoords[2] + radius*Math.sin(alpha)]);
         }
         
         this.board.update(this);
@@ -1060,7 +1187,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.numTraces++;
 
         copy.coords = this.coords;
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.elementClass = JXG.OBJECT_CLASS_POINT;
         copy.board = this.board;
@@ -1070,6 +1197,21 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         this.traces[copy.id] = copy.rendNode;
         
         return this;
+    },
+
+    getParents: function () {
+        var p = [this.Z(), this.X(), this.Y()];
+
+        if (this.parents) {
+            p = this.parents;
+        }
+
+        if (this.type == JXG.OBJECT_TYPE_GLIDER) {
+            p = [this.X(), this.Y(), this.slideObject.id];
+
+        }
+
+        return p;
     }
 });
 
@@ -1086,7 +1228,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number,string,function_number,string,function_number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+ * @param {Number,string,function_Number,string,function_Number,string,function} z_,x,y Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
  * constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
  * given by a number, the number determines the initial position of a free point. If given by a string or a function that coordinate will be constrained
  * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
@@ -1146,12 +1288,15 @@ JXG.createPoint = function(board, parents, attributes) {
             el = new JXG.Point(board, [0,0], attr);
             el.addTransform(parents[0],parents[1]);
             el.isDraggable = false;
+
+            el.parents = [parents[0].id, parents[1].id];
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + 
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
         }
+
     } else {
         el = new JXG.Point(board, [NaN, NaN], attr);
         el.addConstraint(parents);
@@ -1169,7 +1314,7 @@ JXG.createPoint = function(board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {number_number_number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
+ * @param {Number_Number_Number_JXG.GeometryElement} z_,x_,y_,GlideObject Parent elements can be two or three elements of type number and the object the glider lives on.
  * The coordinates are completely optional. If not given the origin is used. If you provide two numbers for coordinates they will be interpreted as affine euclidean
  * coordinates, otherwise they will be interpreted as homogeneous coordinates. In any case the point will be projected on the glide object.
  * @example
@@ -1208,8 +1353,9 @@ JXG.createGlider = function(board, parents, attributes) {
         el = board.create('point', parents.slice(0, 2), attr);
     }
 
+    // eltype is set in here
     el.makeGlider(parents[parents.length-1]);
-    
+
     return el;
 };
 
@@ -1223,7 +1369,7 @@ JXG.createGlider = function(board, parents, attributes) {
  * @constructor
  * @type JXG.Point
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
+ * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. i determines the
  * intersection point if two points are available: <ul>
  *   <li>i==0: use the positive square root,</li> 
  *   <li>i==1: use the negative square root.</li></ul>
@@ -1258,6 +1404,13 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
 
     parents[0].addChild(el);
     parents[1].addChild(el);
+
+    el.elType = 'intersection';
+    el.parents = [parents[0].id, parents[1].id, parents[2]];
+
+    if (parents[3] != null) {
+        el.parents.push(parents[3]);
+    }
 
     el.generatePolynomial = function () {
         var poly1 = parents[0].generatePolynomial(el);
@@ -1321,6 +1474,8 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
     else {
         el = board.create('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
     }
+    el.elType = 'otherintersection';
+    el.parents = [parents[0].id, parents[1].id, parents[2]];
     
     parents[0].addChild(el);
     parents[1].addChild(el);
@@ -1340,29 +1495,6 @@ JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
 
 
 JXG.JSXGraph.registerElement('point',JXG.createPoint);
-/*
-// Post-poned (A.W.)
-JXG.JSXGraph.registerElement('point', {
-    icon:           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAqCAIAAACofUV1AAAAu0lEQVR42u2Y2w7EIAhEYeL//zL7ttntRakyhjTw2MhwYDSaqplJgoDkiAAOFV0XaSGFD19MjMjh7/u70g8E6vBV1JmIQK2VHhp7A/5KdWxKf24Dh+HRxDaIvnJiX3jD6OhjM8RdlRfdc/Ece0y5rFW+FEdxFMerOCbe+9NxqFW+9Dn2WHOuAs8iNkT6/cEbyZ0yniYwIBL50ob4IY/F4XThkVj0yJOOQK2VHtpEW0OnuP+lqEep7rn/+AD75zNf8mTQTQAAAABJRU5ErkJggg%3D%3D',
-    label:          'Free point',
-    alttext:        'Constructs a free point',
-    category:       'basic/points',
-    description:    'Click on the board to place a free point or enter a pair of coordinates in the textbox.',
-    showCoordsBox:  true,
-    showInputbox:   false,
-    checkInput:     function (draft, input) {
-                       if(draft && input[input.length-1].usrCoords)
-                           return true;
-
-                       if(!draft && input.length == 1) {
-                           return board.create('point', input[0].usrCoords.slice(1));
-                       }
-
-                       return false;
-                    },
-    creator:        JXG.createPoint
-});
-*/
 JXG.JSXGraph.registerElement('glider', JXG.createGlider);
 JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);
 JXG.JSXGraph.registerElement('otherintersection', JXG.createOtherIntersectionPoint);

@@ -405,18 +405,21 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
         context.beginPath();
         for (i = 0; i < len; i++) {
+            c = axis.ticks[i];
+            x = c[0];
+            y = c[1];
+            context.moveTo(x[0], y[0]);
+            context.lineTo(x[1], y[1]);
+        }
+        // Labels
+        for (i = 0; i < len; i++) {
             c = axis.ticks[i].scrCoords;
-            if (axis.ticks[i].major) {
-                if (axis.labels[i] && (axis.board.needsFullUpdate || axis.needsRegularUpdate || axis.labels[i].visProp.display === 'internal') && axis.labels[i].visProp.visible) {
+            if (axis.ticks[i].major 
+                && (axis.board.needsFullUpdate || axis.needsRegularUpdate) 
+                && axis.labels[i] 
+                && axis.labels[i].visProp.visible) {
                     this.updateText(axis.labels[i]);
-                }
-                context.moveTo(c[1] + dxMaj, c[2] - dyMaj);
-                context.lineTo(c[1] - dxMaj, c[2] + dyMaj);
-            }
-            else {
-                context.moveTo(c[1] + dxMin, c[2] - dyMin);
-                context.lineTo(c[1] - dxMin, c[2] + dyMin);
-            }
+            } 
         }
         this._stroke(axis);
     },
@@ -429,7 +432,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     drawCurve: function (el) {
         if (el.visProp.handdrawing) {
             this.updatePathStringBezierPrim(el);
-        } else {
+        } else {		
             this.updatePathStringPrim(el);
         }
     },
@@ -445,8 +448,8 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
     // documented in AbstractRenderer
     drawEllipse: function (el) {
-        var m1 = el.midpoint.coords.scrCoords[1],
-            m2 = el.midpoint.coords.scrCoords[2],
+        var m1 = el.center.coords.scrCoords[1],
+            m2 = el.center.coords.scrCoords[2],
             sX = el.board.unitX,
             sY = el.board.unitY,
             rX = 2 * el.Radius(),
@@ -509,6 +512,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         var fs, context = this.context;
 
         context.save();
+        // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
         if (this._setColor(el, 'stroke', 'fill') && !isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2]) ) {
             if (el.visProp.fontsize) {
                 if (typeof el.visProp.fontsize === 'function') {
@@ -710,7 +714,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             nextSymb = symbm,
             maxSize = 5000.0,
             i, scr,
-            isNoPlot = (el.visProp.curvetype !== 'plot'),
+            isNotPlot = (el.visProp.curvetype !== 'plot'),
             len,
             context = this.context;
 
@@ -718,7 +722,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             return;
         }
 
-        if (isNoPlot && el.board.options.curve.RDPsmoothing) {
+        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
             el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
         }
         len = Math.min(el.points.length, el.numberPoints);

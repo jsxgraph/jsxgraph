@@ -160,7 +160,7 @@ JXG.PsTricks = {
         if(el.visProp.fillcolor != 'none' && el.visProp.fillopacity != 0) {
             result += ", fillstyle=solid, fillcolor="+this.parseColor(el.visProp.fillcolor)+", opacity="+el.visProp.fillopacity.toFixed(5);
         }
-        result += "]("+el.midpoint.coords.usrCoords.slice(1).join('1')+"){"+radius+"}\n";
+        result += "]("+el.center.coords.usrCoords.slice(1).join('1')+"){"+radius+"}\n";
 
         return result;
     },
@@ -180,14 +180,14 @@ JXG.PsTricks = {
     addArc: function (el) {
         var radius = el.Radius(),
             p = {
-                coords: new JXG.Coords(JXG.COORDS_BY_USER,[el.board.canvasWidth/(el.board.unitY), el.midpoint.coords.usrCoords[2]], el.board)
+                coords: new JXG.Coords(JXG.COORDS_BY_USER,[el.board.canvasWidth/(el.board.unitY), el.center.coords.usrCoords[2]], el.board)
             },
-            angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4),
-            angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4),
+            angle2 = JXG.Math.Geometry.trueAngle(p, el.center, el.point2).toFixed(4),
+            angle1 = JXG.Math.Geometry.trueAngle(p, el.center, el.point3).toFixed(4),
             result = "\\psarc[linecolor=" + this.parseColor(el.visProp.strokecolor) + ", linewidth=" +el.visProp.strokewidth+"px]";
 
         result += this.setArrows(el);
-        result += "("+el.midpoint.coords.usrCoords.slice(1).join(',')+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
+        result += "("+el.center.coords.usrCoords.slice(1).join(',')+"){"+radius+"}{"+angle2+"}{"+angle1+"}\n";
 
         return result;
     },
@@ -195,12 +195,12 @@ JXG.PsTricks = {
     addSector: function (el) {
         var radius = el.Radius(),
             p = {
-                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth / (el.board.unitY), el.midpoint.coords.usrCoords[2]], el.board)
+                coords: new JXG.Coords(JXG.COORDS_BY_USER, [el.board.canvasWidth / (el.board.unitY), el.point1.coords.usrCoords[2]], el.board)
             },
-            angle2 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point2).toFixed(4),
-            angle1 = JXG.Math.Geometry.trueAngle(p, el.midpoint, el.point3).toFixed(4);
+            angle2 = JXG.Math.Geometry.trueAngle(p, el.point1, el.point2).toFixed(4),
+            angle1 = JXG.Math.Geometry.trueAngle(p, el.point1, el.point3).toFixed(4);
 
-        return this.drawWedge(el.visProp.fillcolor, el.visProp.fillopacity, el.midpoint.coords.usrCoords.slice(1), radius, angle2, angle1);
+        return this.drawWedge(el.visProp.fillcolor, el.visProp.fillopacity, el.point1.coords.usrCoords.slice(1), radius, angle2, angle1);
     },
 
     addAngle: function (el) {

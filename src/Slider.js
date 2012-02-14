@@ -66,7 +66,7 @@
 JXG.createSlider = function(board, parents, attributes) {
     var pos0, pos1, smin, start, smax, sdiff, 
            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
-           withText, withTicks, snapWidth, attr;
+           withText, withTicks, snapWidth, attr, precision;
 
     pos0 = parents[0];
     pos1 = parents[1];
@@ -88,7 +88,7 @@ JXG.createSlider = function(board, parents, attributes) {
     p2 = board.create('point', pos1,  attr);
     board.create('group',[p1,p2]);
     
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment1');
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'baseline');
     l1 = board.create('segment', [p1,p2], attr);
 
     // this is required for a correct projection of the glider onto the segment below
@@ -103,21 +103,22 @@ JXG.createSlider = function(board, parents, attributes) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'glider');
-    /*
-     * Special naming convention for sliders:
-     * p3 (which is the glider) receives the sliders name
-     */
-    if (attributes['name'] && attributes['name']!='') {
-        attr['name'] = attributes['name'];
-    }    
+    attr = JXG.copyAttributes(attributes, board.options, 'slider');
+    // overwrite this in any case; the sliders label is a special text element, not the gliders label.
+    attr.withLabel = false;
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
-    
-    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'segment2');
+
+    attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  
-    p3.Value = function() { return this.position*sdiff+smin; };
+    p3.Value = function() {
+        return p3.visProp.snapwidth === -1 ? this.position*sdiff+smin : Math.round((this.position*sdiff+smin)/this.visProp.snapwidth)*this.visProp.snapwidth;
+    };
+
+    p3.methodMap = JXG.deepCopy(p3.methodMap, {
+        Value: 'Value'
+    });
 
     /**
      * End value of the slider range.
@@ -141,7 +142,7 @@ JXG.createSlider = function(board, parents, attributes) {
         } else {
             n = '';
         }
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'text');
+        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'label');
         t = board.create('text', [function(){return (p2.X()-p1.X())*0.05+p2.X();},
                                   function(){return (p2.Y()-p1.Y())*0.05+p2.Y();},
                                   function(){return n+(p3.Value()).toFixed(precision);}],
@@ -149,10 +150,10 @@ JXG.createSlider = function(board, parents, attributes) {
         /**
          * The text element to the right of the slider, indicating its current value.
          * @memberOf Slider.prototype
-         * @name text
+         * @name label
          * @type JXG.Text
          */
-        p3.text = t;
+        p3.label.content = t;
     }
 
     /**
@@ -214,6 +215,25 @@ JXG.createSlider = function(board, parents, attributes) {
 
         JXG.Point.prototype.remove.call(p3);
     };
+
+    p1.dump = false;
+    p2.dump = false;
+    l1.dump = false;
+    l2.dump = false;
+
+    p3.elType = 'slider';
+    p3.parents = parents;
+    p3.subs = {
+        point1: p1,
+        point2: p2,
+        baseLine: l1,
+        highLine: l2
+    };
+
+    if (withTicks) {
+        ti.dump = false;
+        p3.subs.ticks = ti;
+    }
     
     return p3;
 };    

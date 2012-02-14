@@ -198,13 +198,13 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
         if (!JXG.isArray(p)) {   
             this.update();
             c = JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
-            p.coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
+            p.coords.setCoordinates(JXG.COORDS_BY_USER, c);
         } else {
             len = p.length;
             for (i=0; i<len; i++) {
                 this.update();
                 c = JXG.Math.matVecMult(this.matrix,p[i].coords.usrCoords);
-                p[i].coords.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
+                p[i].coords.setCoordinates(JXG.COORDS_BY_USER, c);
             }
         }
     },
@@ -260,12 +260,12 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
                 }
             }
         };
-        return true;
+        return this;
     }
 });
 
-JXG.createTransform = function(board, parentArr, atts) {
-    return new JXG.Transformation(board,atts['type'],parentArr);
+JXG.createTransform = function(board, parents, attributes) {
+    return new JXG.Transformation(board, attributes['type'], parents);
 };
 
 JXG.JSXGraph.registerElement('transform', JXG.createTransform);

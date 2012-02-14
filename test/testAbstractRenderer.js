@@ -58,24 +58,33 @@ TestCase("AbstractRenderer", {
                 id: id,
                 transformations: [],
                 plaintext: 'text',
+                board: {
+                    options: {
+                        layer: {
+                            text: 10
+                        }
+                    }
+                },
                 coords: {
                     scrCoords: [1, 10, 10]
                 }
             };
 
         this.ar.drawText(element);
+
         return element;
     },
 
     testDrawText: function () {
-        expectAsserts(3);
+        expectAsserts(2);
 
         var element = this.setUpTextElement('textnode'),
             node = document.getElementById('jxgbox_textnode');
-
         assertNotNull('text has been added', node);
         assertEquals('text content', 'text', node.innerHTML);
-        assertTrue('text color', '#000000' === node.style.color || 'black' === node.style.color);
+
+        // colors involve {SVG,VML,Canvas}Renderer, don't test here!
+        //assertTrue('text color', '#000000' === node.style.color || 'black' === node.style.color);
     },
 
     testUpdateText: function () {
@@ -96,7 +105,7 @@ TestCase("AbstractRenderer", {
     },
 
     testUpdateTextStyle: function () {
-        expectAsserts(2);
+        expectAsserts(1);
 
         var element = this.setUpTextElement('textnode'),
             node = document.getElementById('jxgbox_textnode');
@@ -105,7 +114,7 @@ TestCase("AbstractRenderer", {
         element.visProp.fontsize = 10;
         this.ar.updateTextStyle(element);
 
-        assertTrue('text color', '#008000' === node.style.color || 'green' === node.style.color);
+        //assertTrue('text color', '#008000' === node.style.color || 'green' === node.style.color);
         assertEquals('text size', '10px', node.style.fontSize);
     }
 

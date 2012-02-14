@@ -33,7 +33,11 @@
  * Math.Geometry namespace definition
  * @namespace
  */
-JXG.Math.Geometry = {
+JXG.Math.Geometry = {};
+
+// the splitting is necessary due to the shortcut for the circumcircleMidpoint method to circumcenter.
+
+JXG.extend(JXG.Math.Geometry, {
 
     /****************************************/
     /**** GENERAL GEOMETRIC CALCULATIONS ****/
@@ -308,14 +312,19 @@ JXG.Math.Geometry = {
     },
 
     /**
-     * Calculates the midpoint of the circumcircle of the three given points.
+     * @deprecated Please use {@link JXG.Math.Geometry#circumcenter} instead.
+     */
+    circumcenterMidpoint: JXG.shortcut(JXG.Math.Geometry, 'circumcenter'),
+
+    /**
+     * Calculates the center of the circumcircle of the three given points.
      * @param {JXG.Point} point1 Point
      * @param {JXG.Point} point2 Point
      * @param {JXG.Point} point3 Point
      * @param {JXG.Board} [board=point1.board] Reference to the board
-     * @returns {JXG.Coords} Coordinates of the midpoint of the circumcircle of the given points.
+     * @returns {JXG.Coords} Coordinates of the center of the circumcircle of the given points.
      */
-    circumcenterMidpoint: function(point1, point2, point3, board) {
+    circumcenter: function(point1, point2, point3, board) {
         var A = point1.coords.usrCoords,
             B = point2.coords.usrCoords,
             C = point3.coords.usrCoords,
@@ -330,6 +339,7 @@ JXG.Math.Geometry = {
 
         if (Math.abs(den) < JXG.Math.eps) {
             den = JXG.Math.eps;
+        	return new JXG.Coords(JXG.COORDS_BY_USER, [Infinity, Infinity], board);
         }
 
         x = (u * (B[2] - C[2]) - v * (A[2] - B[2])) / den;
@@ -687,7 +697,7 @@ JXG.Math.Geometry = {
     intersectCircleLine: function(circle, line, board) {
         var eA = line.point1.coords.usrCoords,
             eB = line.point2.coords.usrCoords,
-            fM = circle.midpoint.coords.usrCoords,
+            fM = circle.center.coords.usrCoords,
             s, d0, d1, b, w, h, r, n1, dx, dy, firstPointX, firstPointY, l, x, y, n1s, firstPoint, secondPoint, d;
 
         if (!JXG.exists(board))
@@ -695,8 +705,8 @@ JXG.Math.Geometry = {
 
         s = line.point1.Dist(line.point2);
         if (s > 0) {
-            d0 = circle.midpoint.Dist(line.point1);
-            d1 = circle.midpoint.Dist(line.point2);
+            d0 = circle.center.Dist(line.point1);
+            d1 = circle.center.Dist(line.point2);
             b = ((d0 * d0) + (s * s) - (d1 * d1)) / (2 * s);
             w = (d0 * d0) - (b * b);
             w = (w < 0) ? 0 : w;
@@ -719,7 +729,7 @@ JXG.Math.Geometry = {
             n1s = n1 / s;
             firstPoint = new JXG.Coords(JXG.COORDS_BY_USER, [x + n1s * dx, y + n1s * dy], board);
             secondPoint = new JXG.Coords(JXG.COORDS_BY_USER, [x - n1s * dx, y - n1s * dy], board);
-            d = circle.midpoint.coords.distance(JXG.COORDS_BY_USER, firstPoint);
+            d = circle.center.coords.distance(JXG.COORDS_BY_USER, firstPoint);
 
             if ((r < (d - 1)) || isNaN(d)) {
                 return [0];
@@ -742,8 +752,8 @@ JXG.Math.Geometry = {
         var intersection = {},
             r1 = circle1.Radius(),
             r2 = circle2.Radius(),
-            M1 = circle1.midpoint.coords.usrCoords,
-            M2 = circle2.midpoint.coords.usrCoords,
+            M1 = circle1.center.coords.usrCoords,
+            M2 = circle2.center.coords.usrCoords,
             rSum, rDiff, s,
             dx, dy, a, h;
 
@@ -753,7 +763,7 @@ JXG.Math.Geometry = {
         rSum = r1 + r2;
         rDiff = Math.abs(r1 - r2);
         // Abstand der Mittelpunkte der beiden Kreise
-        s = circle1.midpoint.coords.distance(JXG.COORDS_BY_USER, circle2.midpoint.coords);
+        s = circle1.center.coords.distance(JXG.COORDS_BY_USER, circle2.center.coords);
         if (s > rSum) {
             return [0]; // Kreise schneiden sich nicht, liegen nebeneinander
         } else if (s < rDiff) {
@@ -834,7 +844,11 @@ JXG.Math.Geometry = {
     meetLineCircle: function(lin, circ, i, board) {
         var a,b,c,d,n, A,B,C, k,t;
         if (circ[4] < JXG.Math.eps) { // Radius is zero, return center of circle
-            return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
+            if (Math.abs( JXG.Math.innerProduct([1,circ[6],circ[7]], lin, 3)) < JXG.Math.eps) {
+                return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
+            } else {
+                return new JXG.Coords(JXG.COORDS_BY_USER, [NaN,NaN], board);
+            }
         }
         c = circ[0];
         b = circ.slice(1, 3);
@@ -1081,16 +1095,16 @@ JXG.Math.Geometry = {
     /**
      * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
      * nearest one of the two intersection points of the line through the given point and the circles
-     * midpoint.
+     * center.
      * @param {JXG.Point} point Point to project.
      * @param {JXG.Circle} circle Circle on that the point is projected.
      * @param {JXG.Board} [board=point.board] Reference to the board
      * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
      */
     projectPointToCircle: function(point, circle, board) {
-        var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.midpoint.coords),
+        var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.center.coords),
             P = point.coords.usrCoords,
-            M = circle.midpoint.coords.usrCoords,
+            M = circle.center.coords.usrCoords,
             x, y, factor;
 
         if (!JXG.exists(board))
@@ -1283,5 +1297,17 @@ JXG.Math.Geometry = {
         newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board);
         point.position = t + npmin;
         return minEl.updateTransform(newCoords);
+    },
+
+    /**
+     * Trivial projection of a point to another point.
+     * @param {JXG.Point} point Point to project (not used).
+     * @param {JXG.Point} dest Point on that the point is projected.
+     * @param {JXG.Board} [board=point.board] Reference to the board (not used).
+     * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
+     */
+    projectPointToPoint: function(point, dest, board) {
+        return dest.coords;
     }
-};
+    
+});

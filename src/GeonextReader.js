@@ -22,6 +22,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
+JXG.debug = function() {};
 JXG.GeonextReader = {
 
     changeOriginIds: function (board, id) {
@@ -197,6 +198,10 @@ JXG.GeonextReader = {
             gxtEl.highlightFillOpacity = gxtEl.highlightStrokeOpacity;
         }
 
+        if (typeof(gxtEl.label === 'string')) {
+            delete(gxtEl.label);
+        }
+
         delete gxtEl.color;
         return gxtEl;
     },
@@ -322,8 +327,8 @@ JXG.GeonextReader = {
                         // A circle containing an image
                         wf = function(){ return 2.0 * el.Radius(); };
                         hf = function(){ return wf() * hOrg / wOrg; };
-                        xf = function(){ return el.midpoint.X() - wf() * 0.5; };
-                        yf = function(){ return el.midpoint.Y() - hf() * 0.5; };
+                        xf = function(){ return el.center.X() - wf() * 0.5; };
+                        yf = function(){ return el.center.Y() - hf() * 0.5; };
                         im = board.create('image', [picStr, [xf,yf], [wf,hf]], {
                             layer: level,
                             id: id,
@@ -427,25 +432,25 @@ JXG.GeonextReader = {
         // Read background image
         this.parseImage(board, this.gEBTN(boardData, 'file', 0, false), board.options.layer['image']);
 
-        board.options.grid.snapToGrid = (this.gEBTN(this.gEBTN(boardData, 'coordinates', 0, false), 'snap') == strTrue);
+        board.options.point.snapToGrid = (this.gEBTN(this.gEBTN(boardData, 'coordinates', 0, false), 'snap') == strTrue);
         //
         // TODO: Missing jsxgraph feature snapToPoint
         // If snapToGrid and snapToPoint are both true, point snapping is enabled
-        if (board.options.grid.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
-            board.options.grid.snapToGrid = false;
+        if (board.options.point.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
+            board.options.point.snapToGrid = false;
         }
-//board.options.grid.snapToGrid = false;
+        //board.options.grid.snapToGrid = false;
 
         xmlNode = this.gEBTN(boardData, 'grid', 1, false);
         tmp = this.gEBTN(xmlNode,  'x');
         if (tmp) {
             board.options.grid.gridX = 1 / parseFloat(tmp);
-            board.options.grid.snapSizeX = parseFloat(tmp);
+            board.options.point.snapSizeX = parseFloat(tmp);
         }
         tmp = this.gEBTN(xmlNode,  'y');
         if (tmp) {
             board.options.grid.gridY = 1 / parseFloat(tmp);
-            board.options.grid.snapSizeY = parseFloat(tmp);
+            board.options.point.snapSizeY = parseFloat(tmp);
         }
         //board.calculateSnapSizes();             // Seems not to be correct
         board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, 'dash'));
@@ -472,7 +477,7 @@ JXG.GeonextReader = {
         for (s = 0; s < elChildNodes.length; s++) {
             (function (s) {
                 var i, gxtEl = {},
-                    l, x, y, w, h, c, numberDefEls,
+                    l, x, y, c, numberDefEls,
                     el, p, inter, rgbo, tmp;
 
                 Data = elChildNodes[s];
@@ -492,7 +497,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.fixed = JXG.str2Bool(gxtReader.gEBTN(Data, 'fix'));
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
-                        
+
                         //try {
                             p = board.create('point', [parseFloat(gxtEl.x), parseFloat(gxtEl.y)], gxtEl);
 
@@ -532,7 +537,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
                         tmp = gxtReader.gEBTN(Data, 'data', 0, false);
-                        gxtEl.midpoint = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'midpoint'));
+                        gxtEl.center = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'midpoint'));
 
                         if (tmp.getElementsByTagName('radius').length > 0) {
                             gxtEl.radius = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'radius'));
@@ -540,7 +545,7 @@ JXG.GeonextReader = {
                             gxtEl.radius = gxtReader.gEBTN(tmp, 'radiusvalue');
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
-                        c = board.create('circle', [gxtEl.midpoint, gxtEl.radius], gxtEl);
+                        c = board.create('circle', [gxtEl.center, gxtEl.radius], gxtEl);
 
                         gxtReader.parseImage(board, Data, board.options.layer['image'], 0, 0, 0, 0, c);
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
@@ -578,9 +583,23 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
 
+						if (false) { // Handle weird element names
+							gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
+							gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
+						} else {  // Workaround until the jessiecode compiler is 100% compatible
+							gxtEl.x = JXG.GeonextParser.geonext2JS(gxtEl.x, board);
+							gxtEl.x = new Function('return ' + gxtEl.x + ';');
+							gxtEl.y = JXG.GeonextParser.geonext2JS(gxtEl.y, board);
+							gxtEl.y = new Function('return ' + gxtEl.y + ';');
+						}
+
+                        /*
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);
-                        gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         p.addConstraint([gxtEl.x, gxtEl.y]);
+                        p.type = JXG.OBJECT_TYPE_CAS;
+                        */
+                        p = board.create('point', [gxtEl.x, gxtEl.y], gxtEl);
+                        gxtReader.parseImage(board, Data, board.options.layer['point'], 0, 0, 0, 0, p);
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
@@ -696,7 +715,7 @@ JXG.GeonextReader = {
 
                             // CIRCUMCIRCLE_CENTER
                             case "210100":
-                                board.create('circumcirclemidpoint', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], gxtEl.out);
+                                board.create('circumcenter', [gxtEl.defEl[0], gxtEl.defEl[1], gxtEl.defEl[2]], gxtEl.out);
                                 break;
 
                             // MIDPOINT
@@ -811,21 +830,21 @@ JXG.GeonextReader = {
                     case "polygon":
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
-                        gxtEl.dataVertex = [];
+                        var dataVertex = [];
                         // In Geonext file format the first vertex is equal to the last vertex:
                         for (i = 0; i < Data.getElementsByTagName('data')[0].getElementsByTagName('vertex').length-1; i++) {
-                            gxtEl.dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
-                            gxtEl.dataVertex[i] = gxtReader.changeOriginIds(board, gxtEl.dataVertex[i]);
+                            dataVertex[i] = Data.getElementsByTagName('data')[0].getElementsByTagName('vertex')[i].firstChild.data;
+                            dataVertex[i] = gxtReader.changeOriginIds(board, dataVertex[i]);
                         }
                         gxtEl.border = [];
-                        gxtEl.lines = {
+                        gxtEl.borders = {
                             ids: []
                         };
                         for (i = 0; i < Data.getElementsByTagName('border').length; i++) {
                             gxtEl.border[i] = {};
                             xmlNode = Data.getElementsByTagName('border')[i];
                             gxtEl.border[i].id = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                            gxtEl.lines.ids.push(gxtEl.border[i].id);
+                            gxtEl.borders.ids.push(gxtEl.border[i].id);
                             gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                             gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
                             gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
@@ -855,7 +874,7 @@ JXG.GeonextReader = {
                             gxtEl.border[i].colorDraft = xmlNode.getElementsByTagName('draft')[0].firstChild.data;
                         }
                         gxtEl = gxtReader.transformProperties(gxtEl);
-                        p = board.create('polygon', gxtEl.dataVertex, gxtEl);
+                        p = board.create('polygon', dataVertex, gxtEl);
 
                         // to emulate the geonext behaviour on invisible polygons
                         // A.W.: Why do we need this?
@@ -877,8 +896,14 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
                         gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-
-                        c = board.create('curve', ['x',gxtEl.funct], {
+						if (false) {
+							gxtEl.funct = JXG.GeonextParser.gxt2jc(gxtEl.funct, board); // Handle weird element names
+						} else { // Workaround until the jessiecode compiler is 100% compatible
+							gxtEl.funct = JXG.GeonextParser.geonext2JS(gxtEl.funct, board);
+							gxtEl.funct = new Function('x', 'return ' + gxtEl.funct + ';');
+						}
+						
+                        c = board.create('curve', ['x', gxtEl.funct], {
                                 id: gxtEl.id,
                                 name: gxtEl.name,
                                 strokeColor: gxtEl.strokeColor,
@@ -917,11 +942,11 @@ JXG.GeonextReader = {
 
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
-                        gxtEl.midpoint = gxtReader.changeOriginIds(board, gxtEl.midpoint);
+                        gxtEl.center = gxtReader.changeOriginIds(board, gxtEl.midpoint);
                         gxtEl.angle = gxtReader.changeOriginIds(board, gxtEl.angle);
                         gxtEl.radius = gxtReader.changeOriginIds(board, gxtEl.radius);
 
-                        c = board.create('arc', [gxtEl.midpoint, gxtEl.radius, gxtEl.angle], gxtEl);
+                        c = board.create('arc', [gxtEl.center, gxtEl.radius, gxtEl.angle], gxtEl);
 
                         gxtReader.printDebugMessage('debug', c, Data.nodeName, 'OK');
                         break;
@@ -932,13 +957,15 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
+                        tmp = gxtEl.name;
                         try {
-                            gxtEl.text = Data.getElementsByTagName('text')[0].firstChild.data;
+                            gxtEl.name = Data.getElementsByTagName('text')[0].firstChild.data;
                         } catch (e) {
-                            gxtEl.text = '';
+                            gxtEl.name = '';
                         }
-
                         c = board.create('angle', [gxtEl.first, gxtEl.middle, gxtEl.last], gxtEl);
+                        c.setProperty({name:tmp});
+
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "text":
@@ -952,9 +979,11 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
                         gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
+						gxtEl.fixed = false;
                         try {
                             if (Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild) {
                                 gxtEl.parent = Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild.data;
+								gxtEl.fixed = true;
                             }
                         } catch (e) {
                         }
@@ -962,33 +991,10 @@ JXG.GeonextReader = {
                         gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
                         gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
-                        // not used gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
+                        // not used: gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         
-                        /*
-                         * Not necessary: is handled by getTextAnchor() in parent element
-                        // TODO: Polygons
-                        // Handle parent elements of texts
-                        if (JXG.exists(gxtEl.parent)) {
-                            if (JXG.isPoint(gxtEl.parent)) {
-                                gxtEl.x = (function (x, y, p) { return function() { return x + p.X(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + p.Y(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_CIRCLE) {  
-                                gxtEl.x = (function (x, y, p) { return function() { return x + p.midpoint.X(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + p.midpoint.Y(); }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            } else if (JXG.getReference(board, gxtEl.parent).elementClass == JXG.OBJECT_CLASS_LINE) {  
-                                gxtEl.x = (function (x, y, p) { return function() { return x + (p.point1.X()+p.point2.X())*0.5; }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                                gxtEl.y = (function (x, y, p) { return function() { return y + (p.point1.Y()+p.point2.Y())*0.5; }; })
-                                        (gxtEl.x, gxtEl.y, JXG.getReference(board, gxtEl.parent));
-                            }
-                        }
-                        */
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
                                 anchor: gxtEl.parent,
                                 id: gxtEl.id,
@@ -996,6 +1002,7 @@ JXG.GeonextReader = {
                                 digits: gxtEl.autodigits,
                                 isLabel: false,
                                 strokeColor: gxtEl.colorLabel,
+								fixed: gxtEl.fixed,
                                 visible: JXG.str2Bool(gxtEl.visible)
                             });
                         break;
@@ -1008,7 +1015,12 @@ JXG.GeonextReader = {
                         gxtEl.functiony = Data.getElementsByTagName('functiony')[0].firstChild.data;
                         gxtEl.min = Data.getElementsByTagName('min')[0].firstChild.data;
                         gxtEl.max = Data.getElementsByTagName('max')[0].firstChild.data;
-
+						/*
+						gxtEl.functionx = JXG.GeonextParser.gxt2jc(gxtEl.functionx, board);
+						gxtEl.functiony = JXG.GeonextParser.gxt2jc(gxtEl.functiony, board);
+						gxtEl.min = JXG.GeonextParser.gxt2jc(gxtEl.min, board);
+						gxtEl.max = JXG.GeonextParser.gxt2jc(gxtEl.max, board);
+						*/
                         gxtEl.fillColor = 'none';
                         gxtEl.highlightFillColor = 'none';
                         

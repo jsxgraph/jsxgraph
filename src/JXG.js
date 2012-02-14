@@ -113,11 +113,47 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean}
      */
     isWebkitAndroid: function () {
-        return this.isAndroid() &&  navigator.userAgent.search(" AppleWebKit/") > -1;
+        return this.isAndroid() && navigator.userAgent.search(" AppleWebKit/") > -1;
     },
 
-    ieVersion: (function(){
+    /**
+     * Detects if the user is using a Apple iPad / iPhone.
+     * @returns {Boolean}
+     */
+    isApple: function () {
+        return (navigator.userAgent.search(/iPad/) != -1 || navigator.userAgent.search(/iPhone/) != -1);
+    },
 
+    /**
+     * Detects if the user is using Safari on an Apple device.
+     * @returns {Boolean}
+     */
+    isWebkitApple: function () {
+        return this.isApple() && (navigator.userAgent.search(/Mobile *.*Safari/) > -1);
+    },
+
+    /**
+     * Resets visPropOld of <tt>el</tt>
+     * @param {JXG.GeometryElement} el
+     */
+    clearVisPropOld: function (el) {
+        el.visPropOld = {
+            strokecolor: '',
+            strokeopacity: '',
+            strokewidth: '',
+            fillcolor: '',
+            fillopacity: '',
+            shadow: false,
+            firstarrow: false,
+            lastarrow: false
+        };
+    },
+
+    /**
+     * Internet Explorer version. Works only for IE > 4.
+     * @type Number
+     */
+    ieVersion: (function() {
         var undef,
             v = 3,
             div = document.createElement('div'),
@@ -157,6 +193,36 @@ JXG.extend(JXG, /** @lends JXG */ {
      * This is just a shortcut to {@link JXG.getReference}.
      */
     getRef: JXG.shortcut(JXG, 'getReference'),
+
+    /**
+     * Checks if the given string is an id within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isId: function (board, s) {
+        return typeof(s) == 'string' && !!board.objects[s];
+    },
+
+    /**
+     * Checks if the given string is a name within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isName: function (board, s) {
+        return typeof(s) == 'string' && !!board.elementsByName[s];
+    },
+
+    /**
+     * Checks if the given string is a group id within the given board.
+     * @param {JXG.Board} board
+     * @param {String} s
+     * @returns {Boolean}
+     */
+    isGroup: function (board, s) {
+        return typeof(s) == 'string' && !!board.groups[s];
+    },
 
     /**
      * Checks if the value of a given variable is of type string.
@@ -219,6 +285,20 @@ JXG.extend(JXG, /** @lends JXG */ {
             return !(v === undefined || v === null);
         }
     })(),
+
+    /**
+     * Handle default parameters.
+     * @param {%} v Given value
+     * @param {%} d Default value
+     * @returns {%} <tt>d</tt>, if <tt>v</tt> is undefined or null.
+     */
+    def: function (v, d) {
+        if (JXG.exists(v)) {
+            return v;
+        } else {
+            return d;
+        }
+    },
 
     /**
      * Converts a string containing either <strong>true</strong> or <strong>false</strong> into a boolean value.
@@ -290,20 +370,26 @@ JXG.extend(JXG, /** @lends JXG */ {
      * function or number.
      */
     createFunction: function (term, board, variableName, evalGeonext) {
-        var newTerm;
+        var f = null;
 
-        if ((evalGeonext==null || evalGeonext) && JXG.isString(term)) {
+        if ((!JXG.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
             // Convert GEONExT syntax into  JavaScript syntax
-            newTerm = JXG.GeonextParser.geonext2JS(term, board);
-            return new Function(variableName,'return ' + newTerm + ';');
+            //newTerm = JXG.GeonextParser.geonext2JS(term, board);
+            //return new Function(variableName,'return ' + newTerm + ';');
+            f = board.jc.snippet(term, true, variableName, true);
         } else if (JXG.isFunction(term)) {
-            return term;
+            f = term;
         } else if (JXG.isNumber(term)) {
-            return function () { return term; };
+            f = function () { return term; };
         } else if (JXG.isString(term)) {        // In case of string function like fontsize
-            return function () { return term; };
+            f = function () { return term; };
         }
-        return null;
+
+        if (f !== null) {
+            f.origin = term;
+        }
+
+        return f;
     },
 
     /**
@@ -535,13 +621,19 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Function} fn The function to call when the event is triggered.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    addEvent: function ( obj, type, fn, owner ) {
-        owner['x_internal'+type] = function () {return fn.apply(owner,arguments);};
+    addEvent: function (obj, type, fn, owner) {
+        var el = function () {
+                return fn.apply(owner, arguments);
+            };
 
-        if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-            obj.addEventListener(type, owner['x_internal'+type], false);
+        el.origin = fn;
+        owner['x_internal'+type] = owner['x_internal'+type] || [];
+        owner['x_internal'+type].push(el);
+
+        if (JXG.exists(obj) && JXG.exists(obj.addEventListener)) { // Non-IE browser
+            obj.addEventListener(type, el, false);
         } else {  // IE
-            obj.attachEvent('on'+type, owner['x_internal'+type]);
+            obj.attachEvent('on'+type, el);
         }
     },
 
@@ -552,13 +644,36 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Function} fn The function to call when the event is triggered.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    removeEvent: function ( obj, type, fn, owner ) {
+    removeEvent: function (obj, type, fn, owner) {
+        var em = 'JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type],
+            i, j = -1, l;
+
+        if ((!JXG.exists(owner) || !JXG.exists(owner['x_internal' + type])) && !JXG.isArray(owner['x_internal' + type])) {
+            JXG.debug(em);
+            return;
+        }
+
+        l = owner['x_internal' + type].length;
+        for (i = 0; i < l; i++) {
+            if (owner['x_internal' + type][i].origin === fn) {
+                j = i;
+                break;
+            }
+        }
+
+        if (j === -1) {
+            JXG.debug(em + '; Event listener not found.');
+            return;
+        }
+
         try {
             if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-                obj.removeEventListener(type, owner['x_internal'+type], false);
+                obj.removeEventListener(type, owner['x_internal'+type][j], false);
             } else {  // IE
-                obj.detachEvent('on'+type, owner['x_internal'+type]);
+                obj.detachEvent('on'+type, owner['x_internal'+type][j]);
             }
+
+            JXG.removeElementFromArray(owner['x_internal'+type], owner['x_internal'+type][j]);
         } catch(e) {
             JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
         }
@@ -574,6 +689,24 @@ JXG.extend(JXG, /** @lends JXG */ {
         return function () {
             return fn.apply(owner,arguments);
         };
+    },
+
+    /**
+     * Removes an element from the given array
+     * @param {Array} ar
+     * @param {%} el
+     */
+    removeElementFromArray: function(ar, el) {
+        var i;
+
+        for (i = 0; i < ar.length; i++) {
+            if (ar[i] === el) {
+                ar.splice(i, 1);
+                return ar;
+            }
+        }
+
+        return ar;
     },
 
     /**
@@ -601,6 +734,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
             posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
+
         return [posx,posy];
     },
 
@@ -687,6 +821,29 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
         }
         return keys;
+    },
+    
+    /**
+     * Search an array for a given value.
+     * @param {Array} array
+     * @param {%} value
+     * @returns {Number} The index of the first appearance of the given value, or
+     * <tt>-1</tt> if the value was not found.
+     */
+    indexOf: function (array, value) {
+        var i;
+        
+        if (Array.indexOf) {
+            return array.indexOf(value);
+        }
+        
+        for (i = 0; i < array.length; i++) {
+            if (array[i] === value) {
+                return i;
+            }
+        }
+        
+        return -1;
     },
 
     /**
@@ -798,13 +955,18 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Converts a JavaScript object into a JSON string.
      * @param {Object} obj A JavaScript object, functions will be ignored.
+     * @param {Boolean} [noquote=false] No quotes around the name of a property.
      * @returns {String} The given object stored in a JSON string.
      */
-    toJSON: function (obj) {
+    toJSON: function (obj, noquote) {
         var s;
 
+        if (!JXG.exists(noquote)) {
+            noquote = false;
+        }
+
         // check for native JSON support:
-        if (window.JSON && window.JSON.stringify) {
+        if (window.JSON && window.JSON.stringify && !noquote) {
             try {
                 s = JSON.stringify(obj);
                 return s;
@@ -820,20 +982,24 @@ JXG.extend(JXG, /** @lends JXG */ {
                     var list = [];
                     if (obj instanceof Array) {
                         for (var i=0;i < obj.length;i++) {
-                            list.push(JXG.toJSON(obj[i]));
+                            list.push(JXG.toJSON(obj[i], noquote));
                         }
                         return '[' + list.join(',') + ']';
                     } else {
                         for (var prop in obj) {
-                            list.push('"' + prop + '":' + JXG.toJSON(obj[prop]));
+                            if (noquote) {
+                                list.push(prop + ':' + JXG.toJSON(obj[prop], noquote));
+                            } else {
+                                list.push('"' + prop + '":' + JXG.toJSON(obj[prop], noquote));
+                            }
                         }
-                        return '{' + list.join(',') + '}';
+                        return '{' + list.join(',') + '} ';
                     }
                 } else {
                     return 'null';
                 }
             case 'string':
-                return '"' + obj.replace(/(["'])/g, '\\$1') + '"';
+                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
             case 'number':
             case 'boolean':
                 return new String(obj);
@@ -899,8 +1065,8 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {String}
      */
     trim: function (str) {
-        str = str.replace(/^w+/, "");
-        str = str.replace(/w+$/, "");
+        str = str.replace(/^\s+/, "");
+        str = str.replace(/\s+$/, "");
 
         return str;
     },
@@ -941,6 +1107,51 @@ JXG.extend(JXG, /** @lends JXG */ {
         
         return result;
     },
+
+    /**
+     * Compare two arrays.
+     * @param {Array} a1
+     * @param {Array} a2
+     * @returns {Boolean} <tt>true</tt>, if the arrays coefficients are of same type and value.
+     */
+    cmpArrays: function (a1, a2) {
+        var i;
+
+        // trivial cases
+        if (a1 === a2) {
+            return true;
+        }
+
+        if (a1.length !== a2.length) {
+            return false;
+        }
+
+        for (i = 0; i < a1.length; i++) {
+            if ((typeof a1[i] !== typeof a2[i]) || (a1[i] !== a2[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /**
+     * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
+     * @param n
+     * @param p
+     * @returns {Number}
+     */
+    trunc: function (n, p) {
+        p = JXG.def(p, 0);
+
+        if (p == 0) {
+            n = ~~n;
+        } else {
+            n = n.toFixed(p);
+        }
+
+        return n;
+    },
     
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
@@ -953,12 +1164,25 @@ JXG.extend(JXG, /** @lends JXG */ {
         for(i = 0; i < arguments.length; i++) {
             s = arguments[i];
             if (window.console && console.log) {
-                if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
+                //if (typeof s === 'string') s = s.replace(/<\S[^><]*>/g, "");
                 console.log(s);
             } else if (document.getElementById('debug')) {
                 document.getElementById('debug').innerHTML += s + "<br/>";
             }
             // else: do nothing
+        }
+    },
+
+    debugWST: function (s) {
+        var e;
+        JXG.debug(s);
+
+        if (window.console && console.log) {
+            e = new Error();
+            if (e && e.stack) {
+                console.log('stacktrace');
+                console.log(e.stack.split('\n').slice(1).join('\n'));
+            }
         }
     }
 });

@@ -9,18 +9,80 @@
     <script type="text/javascript" src="../src/GeonextReader.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 <style type="text/css">
+.fat {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:yellow;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: red;
+}
+
+.fatHL {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:green;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: white;
+}
+    
+    
 </style>    
 </head>
 <body id="body">
 <h1 id="x1">Playground</h1>
 <input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
-<div id='jxgbox' class='jxgbox' style='width:700px; height:500px;'></div>
+<div id='jxgbox' class='jxgbox' style='width:800px; height:700px; z-Index:20'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
 //JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
-var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, showNavigation:true});
+//JXG.Options.grid.snapToGrid = true;
+
+//JXG.Options.axis.visible = false;
+//JXG.Options.axis.ticks.drawLabels = true;
+//JXG.Options.axis.ticks.drawZero = true;
+
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
+axis:true, keepaspectratio:true, 
+grid:false, showNavigation:true});
+
+
+var A = brd.create('point',[0,0], {label:{fontSize:16}});
+var B = brd.create('point',[2,2], {label:{fontSize:16, strokeColor:'blue'}});
+var li1 = brd.create('segment',[A,B]);
+var C = brd.create('point',[-2,2]);
+var D = brd.create('point',[0,2,2]);
+var li2 = brd.create('normal',[C,li1]);
+
+//var li2 = brd.create('line',[C,D]);
+var E = brd.create('glider',[-1,1,li2]);
+var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
+
+//
+/*
+var D = brd.create('point',[1,-2,2]);
+var li2 = brd.create('circle',[C,D]);
+
+var I = brd.create('intersection',[li1, li2, 0]);
+brd.create('circle',[B,I]);
+*/
+
+/*
+var k = brd.create('circle',[[0,0],2]);
+var g = brd.create('line',[1,1,1]);
+var A = brd.create('intersection',[k,g,0]);
+var B = brd.create('otherintersection',[k,g,A]);
+var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
+var p = brd.create('polygon',[A,B,C]);
+*/
+/*
 // x axis
 var pX0 = brd.create('point', 
     [0, function(){
@@ -56,66 +118,37 @@ var pX3 = brd.create('point',
 var xaxis = brd.create('axis', [pX2, pX3]);
 pX2.type = JXG.OBJECT_TYPE_CAS;   
 pX3.type = JXG.OBJECT_TYPE_CAS;    
-
-var li1 = brd.create('circle',[[1,2],3]);
-var gl = brd.create('glider',[1,1,li1]);
-//var gl = brd.create('point',[1,1]);
-var p = brd.create('point',[5,2]);
-var li2 = brd.create('line',[p, gl]);
-
-///brd.update();
-//gl.setPositionDirectly(JXG.COORDS_BY_USER, -3, 2);
-//gl.moveTo([-3, 2]);
-//brd.update(gl);
-
-//console.log(li2.isDraggable, p.isDraggable, gl.isDraggable);
-/*
-if (false) {
-    var board = brd;
-    var c1 = board.create('circle',[[0, 0], [2, 0]]),
-        p1 = board.create('point',[-3, 1]),
-        g1 = board.create('glider',[2, 1, c1]),
-        s1 = board.create('segment',[g1, p1]),
-        p2 = board.create('midpoint',[s1]),
-        curve = board.create('tracecurve', [g1, p2]);
-} else if (false) {
-    p1 = brd.createElement('point', [0, 0]);
-    p2 = brd.createElement('point', [6, -1]);
-    c1 = brd.createElement('circle', [p1, 2]);
-    c2 = brd.createElement('circle', [p2, 1.5]);
-    g1 = brd.createElement('glider', [6, 3, c1], {name:"D"});
-    c3 = brd.createElement('circle', [g1, 4]);
-    g2 = brd.createElement('intersection', [c2,c3,0], {name: "I"});
-    p3 = brd.createElement('midpoint', [g1,g2], {name:"T",trace:false});
-
-    g3 = brd.createElement('otherintersection', [c2,c3,g2], {name: "I_2"});
-    p4 = brd.createElement('midpoint', [g1,g3], {name:"T_2",trace:true});
-    curve = brd.create('tracecurve', [g1, p3]);
-} else {
-    var O = brd.create('point',[0,0],{name:'O',fixed:true, fillColor:'blue', strokeColor:'blue'}),
-        A = brd.create('point',[1.2,0],{name:'A'}),
-        k = brd.create('circle',[O, A],{name:'k'}),
-        B = brd.create('glider',[0.7,1,k],{name:'B drag me'}),
-        g1 = brd.create('line',[O,B], {strokeColor:'lightgray'}),
-        C = brd.create('reflection',[g1,A],{name:'C', fillColor:'blue', strokeColor:'blue'}),
-        g1a = brd.create('line',[O,C], {strokeColor:'lightgray'}),
-        C2 = brd.create('reflection',[g1a,A],{name:'C_2', fillColor:'blue', strokeColor:'blue'}),
- 
-        M = brd.create('glider',[2,2,g1], {name:'M', trace:false, fillColor:'red', strokeColor:'red'}),
-        k2 = brd.create('circle',[M,B],{name:'k'}),
- 
-        gpar = brd.create('parallel',[O,C2,M], {name:"g", strokeColor:'red'}),
-        Cprime = brd.create('intersection',[gpar,k2,0], {name:"C'", trace:false, fillColor:'blue', strokeColor:'blue'}),
- 
-        g2 = brd.create('line',[M, Cprime], {strokeColor:'black'}),
-        Cstern = brd.create('glider',[3,3,g2], {name:"C*", trace:false, fillColor:'green', strokeColor:'green'});
-    brd.create('tracecurve', [B, Cprime], {strokeColor:'blue'});
-    brd.create('tracecurve', [B, M], {strokeColor:'yellow'});
-    curve = brd.create('tracecurve', [B, Cstern], {strokeColor:'green'});
-}
-
-brd.update();
 */
+
+/*
+var p = [];
+for (i=0;i<2;i++) {
+	//p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
+	p.push(brd.create('point', [2,2*i-1],{withLabel:true}));
+}
+var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
+*/
+/*
+var t = brd.create('turtle', [-1,0], {id:'NIX'});
+//t.fd(3); //
+t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
+t.setProperty({strokeWidth:5, strokeColor:'black'});
+t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
+t.setPenSize(1);
+t.setProperty({strokeColor:'black'});
+t.fd(3);
+
+*/
+var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;}], 
+    {cssClass:'fat', highlightCssClass:'fatHL',
+     fontSize:32, 
+     strokeColor:'red',
+     highlightStrokeColor:'blue'});
+
+
+//brd.update();
+
+
 </script> 
 </body>
 </html>

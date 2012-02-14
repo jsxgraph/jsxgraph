@@ -22,27 +22,29 @@
     You should have received a copy of the GNU Lesser General Public License
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
-JXG.OBJECT_TYPE_ARC = 0x4F544143;               // Hex fuer OTAC = Object Type ArC
-JXG.OBJECT_TYPE_ARROW = 0x4F544157;             // Hex fuer OTAW = Object Type ArroW
-JXG.OBJECT_TYPE_AXIS = 0x4F544158;              // Hex fuer OTAX = Object Type AXis
-JXG.OBJECT_TYPE_AXISPOINT = 0x4F54150;          // Hex fuer OTAP = Object Type AxisPoint
-JXG.OBJECT_TYPE_TICKS = 0x4F545458;             // Hex fuer OTTX = Object Type TiX
-JXG.OBJECT_TYPE_CIRCLE = 0x4F54434C;            // Hex fuer OTCC = Object Type CirCle
-JXG.OBJECT_TYPE_CONIC = 0x4F54434F;             // Hex fuer OTCC = Object Type COnic
-JXG.OBJECT_TYPE_CURVE = 0x4F544750;             // Hex fuer OTGP = Object Type GraphPlot
-JXG.OBJECT_TYPE_GLIDER = 0x4F54474C;            // Hex fuer OTGL = Object Type GLider
-JXG.OBJECT_TYPE_IMAGE = 0x4F54524D;             // Hex fuer OTIM = Object Type IMage
-JXG.OBJECT_TYPE_LINE = 0x4F544C4E;              // Hex fuer OTLN = Object Type LiNe
-JXG.OBJECT_TYPE_POINT = 0x4F545054;             // Hex fuer OTPT = Object Type PoinT
-JXG.OBJECT_TYPE_SLIDER = 0x4F545344;            // Hex fuer OTSD = Object Type SliDer
-JXG.OBJECT_TYPE_CAS = 0x4F544350;               // Hex fuer OTCP = Object Type CasPoint
-JXG.OBJECT_TYPE_POLYGON = 0x4F545059;           // Hex fuer OTPY = Object Type PolYgon
-JXG.OBJECT_TYPE_SECTOR = 0x4F545343;            // Hex fuer OTSC = Object Type SeCtor
-JXG.OBJECT_TYPE_TEXT = 0x4F545445;              // Hex fuer OTTE = Object Type TextElement
-JXG.OBJECT_TYPE_ANGLE = 0x4F544147;             // Hex fuer OTAG = Object Type AnGle
-JXG.OBJECT_TYPE_INTERSECTION = 0x4F54524E;      // Hex fuer OTIN = Object Type INtersection
-JXG.OBJECT_TYPE_TURTLE = 0x4F5455;              // Hex fuer OTTU = Object Type TUrtle
-JXG.OBJECT_TYPE_VECTOR = 0x4F545654;            // Hex fuer OTVT = Object Type VecTor
+JXG.OBJECT_TYPE_ARC = 1;
+JXG.OBJECT_TYPE_ARROW = 2;
+JXG.OBJECT_TYPE_AXIS = 3;
+JXG.OBJECT_TYPE_AXISPOINT = 4;
+JXG.OBJECT_TYPE_TICKS = 5;
+JXG.OBJECT_TYPE_CIRCLE = 6;
+JXG.OBJECT_TYPE_CONIC = 7;
+JXG.OBJECT_TYPE_CURVE = 8;
+JXG.OBJECT_TYPE_GLIDER = 9;
+JXG.OBJECT_TYPE_IMAGE = 10;
+JXG.OBJECT_TYPE_LINE = 11;
+JXG.OBJECT_TYPE_POINT = 12;
+JXG.OBJECT_TYPE_SLIDER = 13;
+JXG.OBJECT_TYPE_CAS = 14;
+JXG.OBJECT_TYPE_GXTCAS = 15;
+JXG.OBJECT_TYPE_POLYGON = 16;
+JXG.OBJECT_TYPE_SECTOR = 17;
+JXG.OBJECT_TYPE_TEXT = 18;
+JXG.OBJECT_TYPE_ANGLE = 19;
+JXG.OBJECT_TYPE_INTERSECTION = 20;
+JXG.OBJECT_TYPE_TURTLE = 21;
+JXG.OBJECT_TYPE_VECTOR = 22;
+JXG.OBJECT_TYPE_OPROJECT = 23;
 
 
 JXG.OBJECT_CLASS_POINT = 1;
@@ -95,6 +97,13 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      * @default false
      */
     this.hasLabel = false;
+
+    /**
+     * True, if the element is currently highlighted.
+     * @type Boolean
+     * @default false
+     */
+    this.highlighted = false;
 
     /**
      * Stores all Intersection Objects which in this moment are not real and
@@ -154,6 +163,26 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.symbolic = {};
 
     /**
+     * The string used with {@link JXG.Board#create}
+     * @type String
+     */
+    this.elType = '';
+
+    /**
+     * The element is saved with an explicit entry in the file (<tt>true</tt>) or implicitly
+     * via a composition.
+     * @type Boolean
+     * @default true
+     */
+    this.dump = true;
+
+    /**
+     * Subs contains the subelements, created during the create method.
+     * @type Object
+     */
+    this.subs = {};
+
+    /**
      * [c,b0,b1,a,k,r,q0,q1]
      *
      * See
@@ -180,11 +209,29 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.stdform = [1,0,0,0,1, 1,0,0];
 
     /**
+     * The methodMap determines which methods can be called from within JessieCode and under which name it
+     * can be used. The map is saved in an object, the name of a property is the name of the method used in JessieCode,
+     * the value of a property is the name of the method in JavaScript.
+     * @type Object
+     */
+    this.methodMap = {
+        setLabel: 'setLabelText',
+        getName: 'getName'
+    };
+
+    /**
      * Quadratic form representation of circles (and conics)
      * @type Array
      * @default [[1,0,0],[0,1,0],[0,0,1]]
      */
     this.quadraticform = [[1,0,0],[0,1,0],[0,0,1]];
+
+    /**
+     * An associative array containing all visual properties.
+     * @type Object
+     * @default empty object
+     */
+    this.visProp = {};
 
     if (arguments.length > 0) {
         /**
@@ -230,12 +277,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
 
         this.needsRegularUpdate = attributes.needsregularupdate;
 
-        /**
-         * An associative array containing all visual properties.
-         * @type Object
-         * @default empty object
-         */
-        this.visProp = {};
         JXG.clearVisPropOld(this); // create this.visPropOld and set default values
 
         attributes = this.resolveShortcuts(attributes);
@@ -250,8 +291,6 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
         this.visProp.gradientsecondopacity = this.visProp.fillopacity;
         this.visProp.gradientpositionx = 0.5;
         this.visProp.gradientpositiony = 0.5;
-
-        //this.needsUpdate = true;
     }
 };
 
@@ -300,7 +339,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
     /**
      * Counts the direct children of an object without counting labels.
-     * 
      * @private
      * @return {number} Number of children
      */
@@ -316,24 +354,27 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return s; 
     },
 
+    /**
+     * Returns the elements name, Used in JessieCode.
+     * @returns {String}
+     */
+    getName: function () {
+        return this.name;
+    },
     
     /**
      * Decides whether an element can be dragged. This is used in setPositionDirectly methods
      * where all parent elements are checked if they may be dragged, too.
-     * 
      * @private
      * @return {boolean}
      */
     draggable: function() {
-        if (this.isDraggable &&              
-            !this.visProp.fixed && !this.visProp.frozen &&
-            //this.type != JXG.OBJECT_TYPE_GLIDER &&    // Experimentally turned off
-            this.countChildren()<=1
-            ) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.isDraggable 
+               && !this.visProp.fixed 
+               && !this.visProp.frozen 
+               && this.type != JXG.OBJECT_TYPE_GLIDER;    // Experimentally turned off
+               // && this.countChildren() <= 1; // Experimentally turned off
+              
     },
     
     /**
@@ -400,7 +441,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             switch(p) {
                 case 'strokecolor':
                 case 'fillcolor':
-                    //console.log(hash[r]);
                     animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'strokeopacity':
@@ -486,7 +526,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 this.visProp[property] = value;
             }
     },
-           
+
+    // TODO
     resolveShortcuts: function(properties) {
         var key, i;
         
@@ -500,6 +541,20 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
         return properties;
+    },
+
+    /**
+     * Updates the element's label text, strips all html.
+     * @param {String} str
+     */
+    setLabelText: function (str) {
+        str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        if (this.label !== null) {
+            this.label.content.setText(str);
+        }
+        
+        return this;
     },
 
     /**
@@ -601,6 +656,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.board.renderer.changePointStyle(this);
                     }
                     break;
+                case 'trace':
+                    if (value == 'false' || value == false) {
+                        this.clearTrace();
+                        this.visProp.trace = false;
+                    } else {
+                        this.visProp.trace = true;
+                    }
+                    break;
                 case 'gradient':
                     this.visProp.gradient = value;
                     this.board.renderer.setGradient(this);
@@ -636,13 +699,17 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     this.hasLabel = value;
                     break;
                 default:
-                    if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)))) {
+                    if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)) || (JXG.Validator[key] && JXG.isFunction(value) && JXG.Validator[key](value())))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
                         this._set(key, value);
                     }
                     break;
             }
         }
+
+        if (this.type == JXG.OBJECT_TYPE_AXIS)
+            this.board.fullUpdate();
+
         this.board.update(this);
         return this;
     },
@@ -719,10 +786,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Returns the coords object where a text that is bound to the element shall be drawn.
      * Differs in some cases from the values that getLabelAnchor returns.
-     * @type JXG.Coords
-     * @return JXG.Coords Place where the text shall be drawn.
-     * @see #getLabelAnchor
-     * @private
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getLabelAnchor
      */
     getTextAnchor: function () {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
@@ -731,10 +796,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Returns the coords object where the label of the element shall be drawn.
      * Differs in some cases from the values that getTextAnchor returns.
-     * @type JXG.Coords
-     * @return JXG.Coords Place where the label of an element shall be drawn.
-     * @see #getTextAnchor
-     * @private
+     * @returns {JXG.Coords} JXG.Coords Place where the text shall be drawn.
+     * @see JXG.GeometryElement#getTextAnchor
      */
     getLabelAnchor: function () {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
@@ -780,7 +843,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @see #addLabelToElement
      */
     createLabel: function (coords) {
-        var attr = this.visProp.label || {};
+        var attr;
+        
+        if (typeof this.visProp.label === 'object') {
+            attr = JXG.deepCopy(this.visProp.label);
+        } else {
+            attr = {};
+        }
         attr.id = this.id + 'Label';
         attr.isLabel = true;
         attr.visible = this.visProp.visible;
@@ -797,6 +866,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
+            this.label.content.dump = false;
             this.label.color = this.label.content.visProp.strokecolor;
 
             if (!this.visProp.visible) {
@@ -812,7 +882,21 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Highlights the element.
      */
     highlight: function () {
-        this.board.renderer.highlight(this);
+        // I know, we have the JXG.Board.highlightedObjects AND JXG.GeometryElement.highlighted and YES we need both.
+        // Board.highlightedObjects is for the internal highlighting and GeometryElement.highlighted is for user highlighting
+        // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
+        // defined highlighting in many ways:
+        //  * if overriding the highlight() methods the user had to handle the highlightedObjects stuff, otherwise he'd break
+        //    everything (e.g. the pie chart example http://jsxgraph.uni-bayreuth.de/wiki/index.php/Pie_chart (not exactly
+        //    user defined but for this type of chart the highlight method was overridden and not adjusted to the changes in here)
+        //    where it just kept highlighting until the radius of the pie was far beyond infinity...
+        //  * user defined highlighting would get pointless, everytime the user highlights something using .highlight(), it would get
+        //    dehighlighted immediately, because highlight puts the element into highlightedObjects and from there it gets dehighlighted
+        //    through dehighlightAll.
+        if (!this.highlighted) { // highlight only if not highlighted
+            this.highlighted = true;
+            this.board.renderer.highlight(this);
+        }
         return this;
     },
 
@@ -820,7 +904,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Uses the "normal" properties of the element.
      */
     noHighlight: function () {
-        this.board.renderer.noHighlight(this);
+        // see comment in JXG.GeometryElement.highlight()
+        if (this.highlighted) { // highlight only if not highlighted
+            this.highlighted = false;
+            this.board.renderer.noHighlight(this);
+        }
         return this;
     },
 
@@ -971,23 +1059,30 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     shadow: function (s) {
         this.setProperty({shadow:s});
         return this;
+    },
+
+    getType: function () {
+        return this.elType;
+    },
+
+    getParents: function () {
+        return this.parents;
+    },
+
+    getAttributes: function () {
+        var attributes = JXG.deepCopy(this.visProp),
+            cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
+                'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
+                'needsregularupdate', 'zoom', 'layer', 'labeloffsets'],
+            i;
+
+        attributes.id = this.id;
+        attributes.name = this.name;
+
+        for (i = 0; i < cleanThis.length; i++) {
+            delete attributes[cleanThis[i]];
+        }
+
+        return attributes;
     }
 });
-
-/**
-  * Setting visPropOld is done in an non object oriented version
-  * since otherwise there would be problems in cloneToBackground
-  */
-JXG.clearVisPropOld = function (el) {
-    el.visPropOld = {
-        strokecolor: '',
-        strokeopacity: '',
-        strokewidth: '',
-        fillcolor: '',
-        fillopacity: '',
-        shadow: false,
-        firstarrow: false,
-        lastarrow: false
-    };
-};
-

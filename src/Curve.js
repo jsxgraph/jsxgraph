@@ -28,7 +28,7 @@
  */
 
 /**
- * Curves are the common object for function graphs, parametric curves, polar curves, adn data plots.
+ * Curves are the common object for function graphs, parametric curves, polar curves, and data plots.
  * @class Creates a new curve object. Do not use this constructor to create a curve. Use {@link JXG.Board#create} with
  * type {@link Curve}, or {@link Functiongraph} instead.  
  * @augments JXG.GeometryElement
@@ -42,31 +42,12 @@ JXG.Curve = function (board, parents, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_CURVE, JXG.OBJECT_CLASS_CURVE);
  
     this.points = []; 
-
-    /** Use the algorithm by Gillam and Hohenwarter for plotting.
-      * If false the naive algorithm is used.
-      * It is much slower, but the result is better.
-      */
-    this.doAdvancedPlot = attributes.doadvancedplot;
-    
     /** 
-      * Number of points on curves after mouseUp, i.e. high quality output.
-      * Only used if this.doAdvancedPlot==false
-      * May be overwritten.
-      **/
-    this.numberPointsHigh = attributes.numberpointshigh;
-    /** 
-      * Number of points on curves after mousemove, i.e. low quality output.
-      * Only used if this.doAdvancedPlot==false
-      * May be overwritten.
-      **/
-    this.numberPointsLow = attributes.numberpointslow;
-    /** 
-      * Number of points on curves. This value changes
-      * between numberPointsLow and numberPointsHigh.
-      * It is set in {@link JXG.Curve#updateCurve}.
-      */
-    this.numberPoints = this.numberPointsHigh; 
+     * Number of points on curves. This value changes
+     * between numberPointsLow and numberPointsHigh.
+     * It is set in {@link JXG.Curve#updateCurve}.
+     */
+    this.numberPoints = this.visProp.numberpointshigh; 
 
     this.dataX = null;
     this.dataY = null;
@@ -103,7 +84,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     /**
      * Gives the default value of the left bound for the curve.
-     * May be overwritten in @see generateTerm.
+     * May be overwritten in {@link JXG.Curve#generateTerm}.
+     * @returns {Number} Left bound for the curve.
      */
     minX: function () {
         if (this.visProp.curvetype=='polar') {
@@ -116,7 +98,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     /**
      * Gives the default value of the right bound for the curve.
-     * May be overwritten in @see generateTerm.
+     * May be overwritten in {@link JXG.Curve#generateTerm}.
+     * @returns {Number} Right bound for the curve.
      */
     maxX: function () {
         var rightCoords;
@@ -129,13 +112,11 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * Treat the curve as curve with homogeneous coordinates:
-     * Return <tt>Z(t)= 1.0</tt>
-     * t runs from 0 to 1
-     * @param t TODO description
-     * @return TODO description
+     * Treat the curve as curve with homogeneous coordinates
+     * @param {Number} t A number between 0.0 and 1.0.
+     * @return {Number} Always 1.0
      */
-    Z: function (/** float */ t) /** float */ {
+    Z: function (t) {
         return 1.0;
     },
 
@@ -150,7 +131,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             c, trans, i, j, tX, tY,
             xi, xi1, yi, yi1,
             lbda, x0, y0, x1, y1, xy, den,
-            steps = this.numberPointsLow,
+            steps = this.visProp.numberpointslow,
             d = (this.maxX()-this.minX())/steps,
             prec = this.board.options.precision.hasPoint/this.board.unitX,
             checkPoint, len,
@@ -180,15 +161,15 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         } else if (this.visProp.curvetype == 'plot') {
             len = this.numberPoints; // Rough search quality
             for (i=0;i<len-1;i++) {
-                xi = this.X(i);
+                xi  = this.X(i);
                 xi1 = this.X(i+1);
-                yi = this.Y(i);
+                yi  = this.Y(i);
                 yi1 = this.Y(i+1);
-                x1 = xi1 - xi;
-                y1 = yi1-yi;
+                x1  = xi1 - xi;
+                y1  = yi1 - yi;
 
-                x0 = x-xi;
-                y0 = y-yi;
+                x0  = x - xi;
+                y0  = y - yi;
                 den = x1*x1+y1*y1;
 
                 if (den>=JXG.Math.eps) {
@@ -213,19 +194,20 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     allocatePoints: function () {
         var i, len;
+        
         len = this.numberPoints;
-        if (this.points.length<this.numberPoints) {
-            for (i=this.points.length; i<len; i++) {
+        
+        if (this.points.length < this.numberPoints) {
+            for (i = this.points.length; i < len; i++) {
                 this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0,0], this.board);
             }
         }
     },
 
     /**
-     * Computes for equidistant points on the x-axis the values
-     * of the function, {@link #updateCurve}
-     * Then, the update function of the renderer
-     * is called.
+     * Computes for equidistant points on the x-axis the values of the function
+     * @returns {JXG.Curve} Reference to the curve object.
+     * @see JXG.Curve#updateCurve
      */
     update: function () {
         if (this.needsUpdate) {
@@ -238,19 +220,17 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * Then, the update function of the renderer
-     * is called.
+     * Updates the visual contents of the curve.
+     * @returns {JXG.Curve} Reference to the curve object.
      */
     updateRenderer: function () {
         if (this.needsUpdate) {
             this.board.renderer.updateCurve(this);
             this.needsUpdate = false;
 
-            /* Update the label if visible. */
+            // Update the label if visible.
             if(this.hasLabel && this.label.content.visProp.visible) {
-                //this.label.setCoordinates(this.coords);
                 this.label.content.update();
-                //this.board.renderer.updateLabel(this.label);
                 this.board.renderer.updateText(this.label.content);
             }
         }
@@ -258,22 +238,22 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * For dynamic dataplots updateCurve
-     * can be used to compute new entries
-     * for the arrays this.dataX and
-     * this.dataY. It is used in @see updateCurve.
-     * Default is an empty method, can be overwritten
-     * by the user.
+     * For dynamic dataplots updateCurve can be used to compute new entries
+     * for the arrays {@link JXG.Curve#dataX} and {@link JXG.Curve#dataY}. It
+     * is used in {@link JXG.Curve#updateCurve}. Default is an empty method, can
+     * be overwritten by the user.
      */
     updateDataArray: function () {
-        return this;
+        // this used to return this, but we shouldn't rely on the user to implement it.
     },
 
     /**
      * Computes for equidistant points on the x-axis the values
-     * of the function. @see #update
+     * of the function.
      * If the mousemove event triggers this update, we use only few
      * points. Otherwise, e.g. on mouseup, many points are used.
+     * @see JXG.Curve#update
+     * @returns {JXG.Curve} Reference to the curve object.
      */
     updateCurve: function () {
         var len, mi, ma, x, y, i,
@@ -284,7 +264,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         ma = this.maxX();
 
         // Discrete data points
-        if (this.dataX!=null) { // x-coordinates are in an array
+        if (this.dataX != null) { // x-coordinates are in an array
             this.numberPoints = this.dataX.length;
             len = this.numberPoints;
             this.allocatePoints();  // It is possible, that the array length has increased.
@@ -300,24 +280,30 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 suspendUpdate = true;
             }
         } else { // continuous x data
-            if (this.doAdvancedPlot) {
-                this.updateParametricCurve(mi,ma,len);
+            if (this.visProp.doadvancedplot) {
+                this.updateParametricCurve(mi, ma, len);
             } else {
                 if (this.board.updateQuality==this.board.BOARD_QUALITY_HIGH) {
-                    this.numberPoints = this.numberPointsHigh;
+                    this.numberPoints = this.visProp.numberpointshigh;
                 } else {
-                    this.numberPoints = this.numberPointsLow;
+                    this.numberPoints = this.visProp.numberpointslow;
                 }
-                len = this.numberPoints;
                 this.allocatePoints();  // It is possible, that the array length has increased.
-                this.updateParametricCurveNaive(mi,ma,len);
+                this.updateParametricCurveNaive(mi, ma, this.numberPoints);
             }
         }
 
         return this;
     },
 
-    updateParametricCurveNaive: function(mi,ma,len) {
+    /**
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#visProp.doadvancedplot} is <tt>false</tt>.
+     * @param {Number} mi Left bound of curve
+     * @param {Number} ma Right bound of curve
+     * @param {Number} len Number of data points
+     * @returns {JXG.Curve} Reference to the curve object.
+     */
+    updateParametricCurveNaive: function(mi, ma, len) {
         var i, t,
             suspendUpdate = false,
             stepSize = (ma-mi)/len;
@@ -331,6 +317,13 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return this;
     },
 
+    /**
+     * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#visProp.doadvancedplot} is <tt>true</tt>.
+     * @param {Number} mi Left bound of curve
+     * @param {Number} ma Right bound of curve
+     * @param {Number} len Number of data points
+     * @returns {JXG.Curve} Reference to the curve object.
+     */
     updateParametricCurve: function(mi, ma) {
         var i, t, t0,
             suspendUpdate = false,
@@ -345,7 +338,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             divisors = [],
             distOK = false,
             j = 0,
-            d, //count = 0,
+            d,
             distFromLine = function(p1, p2, p0) {
                 var x0 = p0[1] - p1[1],
                     y0 = p0[2] - p1[2],
@@ -356,7 +349,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
                 if (den >= JXG.Math.eps) {
                     lbda = (x0 * x1 + y0 * y1) / den;
-                    //d = x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1);
                     if (lbda>0.0) {
                         if (lbda<=1.0) {
                             x0 -= lbda*x1;
@@ -371,22 +363,19 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 d = x0*x0 + y0*y0;
                 return Math.sqrt(d);
             };
-            // str = '';
-            //stime = new Date(),
-            //etime;
 
-        if (this.board.updateQuality==this.board.BOARD_QUALITY_LOW) {
+        if (this.board.updateQuality == this.board.BOARD_QUALITY_LOW) {
             MAX_DEPTH = 15;
             MAX_XDIST = 10;
             MAX_YDIST = 10;
         } else {
-            MAX_DEPTH = 21; // 20
+            MAX_DEPTH = 21;
             MAX_XDIST = 0.7;
             MAX_YDIST = 0.7;
         }
         
         divisors[0] = ma-mi;
-        for (i=1;i<MAX_DEPTH;i++) {
+        for (i = 1; i < MAX_DEPTH; i++) {
             divisors[i] = divisors[i-1]*0.5;
         }
 
@@ -396,6 +385,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         
         t = mi;
         po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
+        
         // Now, there was a first call to the functions defining the curve.
         // Defining elements like sliders have been evaluated.
         // Therefore, we can set suspendUpdate to false, so that these defining elements
@@ -423,7 +413,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             while (depth < MAX_DEPTH 
                    && (!distOK || depth < 3) 
                    && (this.isSegmentDefined(x0, y0, x, y) || depth <= 7) ) {
-                   // && !(!this.isSegmentDefined(x0, y0, x, y) && depth > 8) ) {
+
                 dyadicStack[top] = i;
                 depthStack[top] = depth;
                 pointStack[top] = [x,y];
@@ -433,16 +423,17 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 depth++;                   // Here, depth is increased and may reach MAX_DEPTH
                 t = mi+i*divisors[depth];  // In that case, t is undefined and we will see a jump
                                            // in the curve.
+
                 po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false);
                 x = po.scrCoords[1];
                 y = po.scrCoords[2];
                 distOK = this.isDistOK(x-x0, y-y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0,y0,x,y);
             }
-            if (j>1) {
+            
+            if (j > 1) {
                 d = distFromLine(this.points[j-2].scrCoords, [x,y], this.points[j-1].scrCoords);
                 if (d<0.015) {
                     j--;
-                    //count++;
                 }
             }
             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
@@ -462,64 +453,91 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         } while (top > 0 && j<500000);
         this.numberPoints = this.points.length;
 
-        //etime = new Date();
-        //console.log(etime.getTime()-stime.getTime());
-
         return this;
-
     },
 
-    isSegmentOutside: function (x0,y0,x1,y1) {
-        if (y0<0 && y1<0) { return true; }
-        else if (y0>this.board.canvasHeight && y1>this.board.canvasHeight) { return true; }
-        else if (x0<0 && x1<0) { return true; }
-        else if (x0>this.board.canvasWidth && x1>this.board.canvasWidth) { return true; }
-        return false;
+    /**
+     * Determines if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
+     * outside the viewport of the board. All parameters have to be given in screen coordinates.
+     * @param {Number} x0
+     * @param {Number} y0
+     * @param {Number} x1
+     * @param {Number} y1
+     * @returns {Boolean} <tt>true</tt> if the given segment is outside the visible area.
+     */
+    isSegmentOutside: function (x0, y0, x1, y1) {
+        return (y0 < 0 && y1 < 0) || (y0 > this.board.canvasHeight && y1 > this.board.canvasHeight) ||
+               (x0 < 0 && x1 < 0) || (x0 > this.board.canvasWidth && x1 > this.board.canvasWidth);
     },
 
-    isDistOK: function (dx, dy, MAXX,MAXY) {
-        if (isNaN(dx+dy)) { return false; }
-        return (Math.abs(dx)<MAXY && Math.abs(dy)<MAXY);
+    /**
+     * Compares the absolute value of <tt>dx</tt> with <tt>MAXX</tt> and the absolute value of <tt>dy</tt>
+     * with <tt>MAXY</tt>.
+     * @param {Number} dx
+     * @param {Number} dy
+     * @param {Number} MAXX
+     * @param {Number} MAXY
+     * @returns {Boolean} <tt>true</tt>, if <tt>|dx| &lt; MAXX</tt> and <tt>|dy| &lt; MAXY</tt>.
+     */
+    isDistOK: function (dx, dy, MAXX, MAXY) {
+        return (Math.abs(dx) < MAXX && Math.abs(dy) < MAXY) && !isNaN(dx+dy);
     },
 
     isSegmentDefined: function (x0,y0,x1,y1) {
         return !(isNaN(x0 + y0) && isNaN(x1 + y1));
-
     },
 
+    /**
+     * Applies the transformations of the curve to the given point <tt>p</tt>.
+     * @param {JXG.Point} p
+     * @returns {JXG.Point} The given point.
+     */
     updateTransform: function (p) {
         var t, c, i,
             len = this.transformations.length;
-        if (len==0) {
-            return p;
-        }
-        for (i=0; i<len; i++) {
+
+        for (i = 0; i < len; i++) {
             t = this.transformations[i];
             t.update();
-            c = JXG.Math.matVecMult(t.matrix,p.usrCoords);
-            p.setCoordinates(JXG.COORDS_BY_USER,[c[1],c[2]]);
+            c = JXG.Math.matVecMult(t.matrix, p.usrCoords);
+            p.setCoordinates(JXG.COORDS_BY_USER, [c[1], c[2]]);
         }
         return p;
     },
 
+    /**
+     * Add transformations to this curve.
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Curve} Reference to the curve object.
+     */
     addTransform: function (transform) {
-        var list, i, len;
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
         
-        list = JXG.isArray(transform) ? transform : [transform];
-        len = list.length;
         for (i = 0; i < len; i++) {
             this.transformations.push(list[i]);
         }
+        
         return this;
     },
 
+    /**
+     * Translates the object by <tt>(x, y)</tt>.
+     * @param {null} method ignored
+     * @param {Number} x
+     * @param {Number} y
+     * @returns {JXG.Curve} Reference to the curve object.
+     */
     setPosition: function (method, x, y) {
         var t = this.board.create('transform',[x,y],{type:'translate'});
-        if (this.transformations.length>0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
+        
+        if (this.transformations.length > 0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
             this.transformations[this.transformations.length-1].melt(t);
         } else {
             this.addTransform(t);
         }
+        
         return this;
     },
 
@@ -613,11 +631,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         JXG.GeonextParser.findDependencies(this,contentStr, this.board);
     },
 
-    /**
-     * Calculates LabelAnchor.
-     * @type JXG.Coords
-     * @return Text anchor coordinates as JXG.Coords object.
-     */
+    // documented in geometry element
     getLabelAnchor: function() {
         var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
         c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
@@ -635,7 +649,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         copy.points = this.points.slice(0);
         copy.numberPoints = this.numberPoints;
         copy.board = this.board;
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         copy.visProp.curvetype = this.visProp.curvetype;
 
@@ -650,8 +664,9 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return this;
     },
 
+    // already documented in GeometryElement
     bounds: function () {
-        var steps = this.numberPointsLow,
+        var steps = this.visProp.numberpointslow,
             d = (this.maxX()-this.minX())/steps,
             i, j, trans, t, c, len, tX, tY, box = [this.minX(), 0, this.maxX(), 0];
 
@@ -846,7 +861,7 @@ JXG.JSXGraph.registerElement('curve', JXG.createCurve);
  */
 JXG.createFunctiongraph = function(board, parents, attributes) {
     var attr, par = ["x","x"].concat(parents);
-        
+
     attr = JXG.copyAttributes(attributes, board.options, 'curve');
     attr['curvetype'] = 'functiongraph';
     return new JXG.Curve(board, par, attr);
@@ -986,18 +1001,14 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     }
 
     par = [[0], [0]].concat(parents.slice(3));
-    /**
-     * @private
-     */
+    
     c = board.create('curve', par, attr);
-    /**
-     * @private
-     */
     c.updateDataArray = function() {
-            var u = JXG.Math.Numerics.riemann(f,n(),type(),this.minX(),this.maxX());
-            this.dataX = u[0];
-            this.dataY = u[1];
-        };
+        var u = JXG.Math.Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
+        this.dataX = u[0];
+        this.dataY = u[1];
+    };
+
     return c;
 };
 
@@ -1055,11 +1066,7 @@ JXG.createTracecurve = function(board, parents, attributes) {
     attr['curvetype'] = 'plot';
   
     c = board.create('curve',[[0],[0]], attr);
-    
-    /**
-     * Compute the points of the trace curve
-     */
-    c.updateDataArray = function(){
+        c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
             from,

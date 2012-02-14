@@ -88,7 +88,7 @@ JXG.Line = function (board, p1, p2, attributes) {
 
     /**
     * Label offsets from label anchor
-    * @type array
+    * @type Array
      * @default JXG.Options.line#labelOffsets
     * @private
     */
@@ -108,6 +108,8 @@ JXG.Line = function (board, p1, p2, attributes) {
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
     this.point2.addChild(this);
+
+    this.elType = 'line';
 
     this.updateStdform(); // This is needed in the following situation: 
                           // * the line is defined by three coordinates
@@ -185,47 +187,116 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var funps;
+        var funps, d1, d2, d, dnew, x, y, drag1, drag2;
 
-        if (this.needsUpdate) {
-            if(this.constrained) {
-                if(typeof this.funps != 'undefined') {
-                    funps = this.funps();
-                    if (funps && funps.length && funps.length === 2) {
-                        this.point1 = funps[0];
-                        this.point2 = funps[1];
+        if (!this.needsUpdate) { return this; }
+        
+        if(this.constrained) {
+            if(typeof this.funps != 'undefined') {
+                funps = this.funps();
+                if (funps && funps.length && funps.length === 2) {
+                    this.point1 = funps[0];
+                    this.point2 = funps[1];
+                }
+            } else {
+                if (typeof this.funp1 === 'function') {
+                    funps = this.funp1();
+                    if (JXG.isPoint(funps)) {
+                        this.point1 = funps;
+                    } else if (funps && funps.length && funps.length === 2) {
+                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
                     }
-                } else {
-                    if (typeof this.funp1 === 'function') {
-                        funps = this.funp1();
-
-                        if (JXG.isPoint(funps)) {
-                            this.point1 = funps;
-                        } else if (funps && funps.length && funps.length === 2) {
-                            this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
-                        }
-                    }
-                    if (typeof this.funp2 === 'function') {
-                        funps = this.funp2();
-
-                        if (JXG.isPoint(funps)) {
-                            this.point2 = funps;
-                        } else if (funps && funps.length && funps.length === 2) {
-                            this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
-                        }
+                }
+                if (typeof this.funp2 === 'function') {
+                    funps = this.funp2();
+                    if (JXG.isPoint(funps)) {
+                        this.point2 = funps;
+                    } else if (funps && funps.length && funps.length === 2) {
+                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
                     }
                 }
             }
-
-            this.updateStdform();
+        }
+        
+        this.updateSegmentFixedLength();
+        
+        this.updateStdform();
             
-            if(this.visProp.trace) {
-                this.cloneToBackground(true);
-            }
+        if(this.visProp.trace) {
+            this.cloneToBackground(true);
         }
         return this;
     },
 
+    /**
+     * Update segments with fixed length and at least one movable point.
+     * @private
+     */
+    updateSegmentFixedLength: function() {
+        // 
+        if (!this.hasFixedLength) { return this; }
+        // Compute the actual length of the segment
+        d = this.point1.Dist(this.point2);
+        // Determine the length the segment ought to have
+        dnew = this.fixedLength();
+        // Distances between the two points and their respective 
+        // position before the update
+        d1 = this.fixedLengthOldCoords[0].distance(JXG.COORDS_BY_USER, this.point1.coords);
+        d2 = this.fixedLengthOldCoords[1].distance(JXG.COORDS_BY_USER, this.point2.coords);
+
+        // If the position of the points or the fixed length function has been changed 
+        // we have to work.
+        if (d1>JXG.Math.eps || d2>JXG.Math.eps || d!=dnew) {
+            drag1 = this.point1.isDraggable && (this.point1.type != JXG.OBJECT_TYPE_GLIDER) && !this.point1.visProp.fixed;
+            drag2 = this.point2.isDraggable && (this.point2.type != JXG.OBJECT_TYPE_GLIDER) && !this.point2.visProp.fixed;
+
+            // First case: the two points are different
+            // Then we try to adapt the point that was not dragged
+            // If this point can not be moved (e.g. because it is a glider)
+            // we try move the other point
+            if (d>JXG.Math.eps) {
+                if ((d1>d2 && drag2) || 
+                    (d1<=d2 && drag2 && !drag1)) {  
+                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
+                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
+                        );
+                    this.point2.prepareUpdate().updateRenderer();
+                } else if ((d1<=d2 && drag1) || 
+                           (d1>d2 && drag1 && !drag2)) {  
+                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
+                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
+                        );
+                    this.point1.prepareUpdate().updateRenderer();
+                }
+            // Second case: the two points are identical. In this situation
+            // we choose a random direction.
+            } else {
+                x = Math.random()-0.5;
+                y = Math.random()-0.5;
+                d = Math.sqrt(x*x+y*y);
+                if (drag2) {  
+                    this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point1.X() + x*dnew/d,
+                        this.point1.Y() + y*dnew/d
+                        );
+                    this.point2.prepareUpdate().updateRenderer();
+                } else if (drag1) {
+                    this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
+                        this.point2.X() + x*dnew/d,
+                        this.point2.Y() + y*dnew/d
+                        );
+                    this.point1.prepareUpdate().updateRenderer();
+                }
+            }
+            // Finally, we save the position of the two points.
+            this.fixedLengthOldCoords[0].setCoordinates(JXG.COORDS_BY_USER, this.point1.coords.usrCoords);
+            this.fixedLengthOldCoords[1].setCoordinates(JXG.COORDS_BY_USER, this.point2.coords.usrCoords);
+        }
+        return this;
+    },
+    
     /**
      * TODO description. already documented in geometryelement?
      * @private
@@ -368,27 +439,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
-    /**
-     * Determines whether the line has arrows at start or end of the line. Is stored in visProp['firstarrow'] and visProp['lastarrow']
-     * @param {boolean} firstArrow True if there is an arrow at the start of the line, false otherwise.
-     * @param {boolean} lastArrow True if there is an arrow at the end of the line, false otherwise.
-     * @private
-     */
-    /*
-    setArrow: function (firstArrow, lastArrow) {
-         this.visProp.firstarrow = firstArrow;
-         this.visProp.lastarrow = lastArrow;
-
-         this.board.renderer.updateLine(this);
-    },
-    */
-
-    /**
-     * Calculates TextAnchor. DESCRIPTION
-     * @type JXG.Coords
-     * @return Text anchor coordinates as JXG.Coords object.
-     * @private
-     */
+    // documented in geometry element
     getTextAnchor: function() {
         return new JXG.Coords(JXG.COORDS_BY_USER, [0.5*(this.point2.X() + this.point1.X()), 0.5*(this.point2.Y() + this.point1.Y())],this.board);
     },
@@ -403,12 +454,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         }
     },
 
-    /**
-     * Calculates LabelAnchor. DESCRIPTION
-     * @type JXG.Coords
-     * @return Text anchor coordinates as JXG.Coords object.
-     * @private
-     */
+    // documented in geometry element
     getLabelAnchor: function() {
         var coords,screenCoords1,screenCoords2,
             relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
@@ -495,7 +541,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         copy.board = this.board;
 
-        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traces, true);
+        copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
         copy.visProp.layer = this.board.options.layer.trace;
         JXG.clearVisPropOld(copy);
 
@@ -516,31 +562,33 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * DESCRIPTION
-     * @param {JXG.Transformation|Array} transform A {@link JXG.Transformation} object or an array of {@link JXG.Transformation} objects.
+     * Add transformations to this line.
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Line} Reference to this line object.
      */
     addTransform: function (transform) {
-        var list, i;
+        var i,
+            list = JXG.isArray(transform) ? transform : [transform],
+            len = list.length;
 
-        if (JXG.isArray(transform)) {
-            list = transform;
-        } else {
-            list = [transform];
-        }
-        for (i = 0; i < list.length; i++) {
+        for (i = 0; i < len; i++) {
             this.point1.transformations.push(list[i]);
             this.point2.transformations.push(list[i]);
         }
+        
+        return this;
     },
 
     /**
-     * TODO DESCRIPTION. What is this method for? -- michael
-     * @param method TYPE & DESCRIPTION. UNUSED.
-     * @param x TYPE & DESCRIPTION
-     * @param y TYPE & DESCRIPTION
+     * TODO DESCRIPTION.
+     * @param {null} method ignored
+     * @param {Number} x
+     * @param {Number} y
+     * @returns {JXG.Line} Reference to this line object.
      */
     setPosition: function (method, x, y) {
-        var t = this.board.create('transform',[x,y],{type:'translate'});
+        var t = this.board.create('transform', [x, y], {type:'translate'});
+        
         if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
             this.point1.transformations[this.point1.transformations.length-1].melt(t);
         } else {
@@ -551,48 +599,31 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } else {
             this.point2.addTransform(this.point2,t);
         }
+        
+        return this;
     },
 
     /**
      * Sets x and y coordinate and calls the circle's update() method.
-     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} oldx previous x coordinate in screen/user units
-     * @param {number} oldy previous y coordinate in screen/user units
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Number} x x coordinate in screen/user units
+     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} oldx previous x coordinate in screen/user units
+     * @param {Number} oldy previous y coordinate in screen/user units
      */
     setPositionDirectly: function (method, x, y, oldx, oldy) {
         var dx = x - oldx, 
-            dy = y - oldy,
-            newx, newy, pc;
+            dy = y - oldy;
 
         if (!this.point1.draggable() || !this.point2.draggable()) {
             return this;
         }
-
-        pc = this.point1.coords;
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newx = pc.scrCoords[1]+dx;
-            newy = pc.scrCoords[2]+dy;
-        } else {
-            newx = pc.usrCoords[1]+dx;
-            newy = pc.usrCoords[2]+dy;
-        }
-        this.point1.setPositionDirectly(method, newx, newy);
         
-        pc = this.point2.coords;
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newx = pc.scrCoords[1]+dx;
-            newy = pc.scrCoords[2]+dy;
-        } else {
-            newx = pc.usrCoords[1]+dx;
-            newy = pc.usrCoords[2]+dy;
-        }
-        this.point2.setPositionDirectly(method, newx, newy);
+        dx /= this.board.unitX;
+        dy /= -this.board.unitY;
+        var t = this.board.create('transform', [dx, dy, 0], {type:'translate'});
+        t.applyOnce([this.point1, this.point2] );
         
-        this.point1.prepareUpdate().update();    // Update needed if line depends on glider
-        this.point2.prepareUpdate().update();
-        this.prepareUpdate().update();
         return this;
     },
 
@@ -786,7 +817,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
  * @param {JXG.Point,array,function_JXG.Point,array,function} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of
  * numbers describing the coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
  * It is possible to provide a function returning an array or a point, instead of providing an array or a point.
- * @param {number,function_number,function_number,function} a,b,c A line can also be created providing three numbers. The line is then described by
+ * @param {Number,function_Number,function_Number,function} a,b,c A line can also be created providing three numbers. The line is then described by
  * the set of solutions of the equation <tt>a*x+b*y+c*z = 0</tt>. It is possible to provide three functions returning numbers, too.
  * @param {function} f This function must return an array containing three numbers forming the line's homogeneous coordinates.
  * @example
@@ -819,7 +850,7 @@ JXG.createLine = function(board, parents, attributes) {
      * The line is defined by two points or coordinates of two points.
      * In the latter case, the points are created.
      */
-    if (parents.length == 2) { 
+    if (parents.length == 2) {
         // point 1 given by coordinates
         if (JXG.isArray(parents[0]) && parents[0].length>1) { 
             attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
@@ -857,7 +888,6 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         attr = JXG.copyAttributes(attributes, board.options, 'line');
-
         el = new JXG.Line(board, p1, p2, attr);
         if (constrained) {
         	el.constrained = true;
@@ -865,6 +895,10 @@ JXG.createLine = function(board, parents, attributes) {
         	el.funp2 = parents[1];
         } else {
             el.isDraggable = true;
+        }
+
+        if (!el.constrained) {
+            el.parents = [p1.id, p2.id];
         }
     }
     /**
@@ -917,6 +951,10 @@ JXG.createLine = function(board, parents, attributes) {
         attr = JXG.copyAttributes(attributes, board.options, 'line');
         el = new JXG.Line(board, p1, p2, attr);
         el.isDraggable = isDraggable;             // Not yet working, because the points are not draggable.
+
+        if (isDraggable) {
+            el.parents = [c[0](), c[1](), c[2]()];
+        }
     }
     /**
      * The parent array contains a function which returns two points.
@@ -971,8 +1009,10 @@ JXG.createLine = function(board, parents, attributes) {
 JXG.JSXGraph.registerElement('line', JXG.createLine);
 
 /**
- * @class This element is used to provide a constructor for a segment. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
- * and {@link JXG.Line#straightLast} properties set to false.
+ * @class This element is used to provide a constructor for a segment. 
+ * It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
+ * and {@link JXG.Line#straightLast} properties set to false. If there is a third variable then the 
+ * segment has a fixed length (which may be a function, too).
  * @pseudo
  * @description
  * @name Segment
@@ -980,11 +1020,12 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * @constructor
  * @type JXG.Line
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
+ * @param {JXG.Point,array_JXG.Point,array} point1, point2 Parent elements can be two elements either of type {@link JXG.Point} 
+ * or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
- * of the equation <tt>a*x+b*y+c*z = 0</tt>.
- * @see Line
+  * @param {number,function} length (optional) The points are adapted - if possible - such that their distance 
+  * has a this value.
+* @see Line
  * @example
  * // Create a segment providing two points.
  *   var p1 = board.create('point', [4.5, 2.0]);
@@ -997,11 +1038,59 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  *   var slex1_p2 = slex1_board.create('point', [1.0, 1.0]);
  *   var slex1_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
  * </script><pre>
+ * 
+ * @example
+ * // Create a segment providing two points.
+ *   var p1 = board.create('point', [4.0, 1.0]);
+ *   var p2 = board.create('point', [1.0, 1.0]);
+ *   var l1 = board.create('segment', [p1, p2]);
+ *   var p3 = board.create('point', [4.0, 2.0]);
+ *   var p4 = board.create('point', [1.0, 2.0]);
+ *   var l2 = board.create('segment', [p3, p4, 3]);
+ *   var p5 = board.create('point', [4.0, 3.0]);
+ *   var p6 = board.create('point', [1.0, 4.0]);
+ *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]);
+ * </pre><div id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ *   var slex2_board = JXG.JSXGraph.initBoard('617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
+ *   var slex2_p1 = slex1_board.create('point', [4.0, 1.0]);
+ *   var slex2_p2 = slex1_board.create('point', [1.0, 1.0]);
+ *   var slex2_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
+ *   var slex2_p3 = slex1_board.create('point', [4.0, 2.0]);
+ *   var slex2_p4 = slex1_board.create('point', [1.0, 2.0]);
+ *   var slex2_l2 = slex1_board.create('segment', [slex1_p3, slex1_p4, 3]);
+ *   var slex2_p5 = slex1_board.create('point', [4.0, 2.0]);
+ *   var slex2_p6 = slex1_board.create('point', [1.0, 2.0]);
+ *   var slex2_l3 = slex1_board.create('segment', [slex1_p5, slex1_p6, function(){ return slex2_l1.L();}]);
+ * </script><pre>
+ * 
  */
 JXG.createSegment = function(board, parents, attributes) {
+    var el, i;
+
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    return board.create('line', parents, attributes);
+    el = board.create('line', parents.slice(0,2), attributes);
+    
+    if (parents.length==3) {
+        el.hasFixedLength = true;
+        if (JXG.isNumber(parents[2])) {
+            el.fixedLength = function() { return parents[2]; };
+        } else if (JXG.isFunction(parents[2])) {
+            el.fixedLength = parents[2];
+        }   else {
+            throw new Error("JSXGraph: Can't create segment with third parent type '" + 
+                        (typeof parents[2]) + "'." + 
+                        "\nPossible third parent types: number or function");
+        }
+        el.fixedLengthOldCoords = [];
+        el.fixedLengthOldCoords[0] = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords.slice(1,3), board);
+        el.fixedLengthOldCoords[1] = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords.slice(1,3), board);
+    }
+
+    el.elType = 'segment';
+
+    return el;
 };
 
 JXG.JSXGraph.registerElement('segment', JXG.createSegment);
@@ -1018,7 +1107,7 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @see Line
  * @example
@@ -1040,6 +1129,9 @@ JXG.createArrow = function(board, parents, attributes) {
     el = board.create('line', parents, attributes).setStraight(false, false);
     el.setArrow(false, true);
     el.type = JXG.OBJECT_TYPE_VECTOR;
+
+    el.elType = 'arrow';
+
     return el;
 };
 
@@ -1057,7 +1149,7 @@ JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
  * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point} or array of numbers describing the
  * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
- * @param {number_number_number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
+ * @param {Number_Number_Number} a,b,c A line can also be created providing three numbers. The line is then described by the set of solutions
  * of the equation <tt>a*x+b*y+c*z = 0</tt>.
  * @example
  * // Create an axis providing two coord pairs.
@@ -1101,6 +1193,13 @@ JXG.createAxis = function(board, parents, attributes) {
          * @type JXG.Ticks
          */
         el.defaultTicks = board.create('ticks', [el, dist], attr);
+
+        el.defaultTicks.dump = false;
+
+        el.elType = 'axis';
+        el.subs = {
+            ticks: el.defaultTicks
+        };
     }
     else
         throw new Error("JSXGraph: Can't create point with parent types '" + 
@@ -1139,12 +1238,12 @@ JXG.JSXGraph.registerElement('axis', JXG.createAxis);
 JXG.createTangent = function(board, parents, attributes) {
     var p,
         c,
-        g, f, i, j, el, Dg, Df, tangent;
+        g, f, i, j, el, tangent;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
         c = p.slideObject;
-    } else if (parents.length==2) {     // Two arguments: (point,line|curve|circle|conic) or (line|curve|circle|conic,point). // Not yet: curve!
+    } else if (parents.length==2) {     // Two arguments: (point,F"|conic) or (line|curve|circle|conic,point). // Not yet: curve!
         if (JXG.isPoint(parents[0])) {  // In fact, for circles and conics it is the polar.
             p = parents[0];
             c = parents[1];
@@ -1248,7 +1347,13 @@ JXG.createTangent = function(board, parents, attributes) {
         // this is required for the geogebra reader to display a slope
         tangent.glider = p;
     }
-    
+
+    tangent.elType = 'tangent';
+    tangent.parents = [];
+    for (i = 0; i < parents.length; i++) {
+        tangent.parents.push(parents[i].id);
+    }
+
     return tangent;
 };
 

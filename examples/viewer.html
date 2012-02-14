@@ -6,16 +6,17 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/Dump.js"></script>
    <!--<script type="text/javascript" src="../src/CanvasRenderer.js"></script>-->
    <script type="text/javascript" src="../src/GeonextReader.js"></script>
 </head>
-<body>
 <body id="body">
    <!-- Drawing area  -->
    <div id="box" class='jxgbox' style="width:1000px; height:600px;"></div>
    <!-- Drawing area  -->
 <form>
 <p>
+    <input type='button' value='Dump construction' onclick="dump();" />
 <table>
 <tr>
 <td>Uncompressed GEONExT examples:</td>
@@ -66,6 +67,8 @@
 </td>
 <td>
 	<select id="beispiele_gxt">
+        <option> trapez.gxt </option>
+        <option> achs_sp1.gxt </option>
         <option> quad.gxt </option>
         <option> bmw.gxt </option>
         <option> bmw_fib.gxt </option>
@@ -316,6 +319,7 @@
     <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" /> -->
          </form>
    <div id="debug" style="overflow:scroll;"></div>
+   <textarea id="output" cols="130" rows="50"></textarea>
    
 <script>
 //JXG.Options.renderer = 'canvas';
@@ -366,6 +370,11 @@
         var end = new Date();
         alert('Time: '+((end.getTime()-start.getTime())/1000.0));
     }
+
+    function dump() {
+        $('output').innerHTML = JXG.Dump.toJessie(board);
+    }
+
 </script>
 
 </body>

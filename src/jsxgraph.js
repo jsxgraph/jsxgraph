@@ -42,7 +42,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.92 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.94rc1 Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.
@@ -130,10 +130,10 @@ JXG.JSXGraph = {
                  */
                 unitX = w/(bbox[2]-bbox[0]);
                 unitY = h/(-bbox[3]+bbox[1]);
-                if (unitX<unitY) {
-                    unitY = unitX;
+                if (Math.abs(unitX)<Math.abs(unitY)) {
+                    unitY = Math.abs(unitX)*unitY/Math.abs(unitY);
                 } else {
-                    unitX = unitY;
+                    unitX = Math.abs(unitY)*unitX/Math.abs(unitX);
                 }
             } else {
                 unitX = w/(bbox[2]-bbox[0]);
@@ -148,7 +148,7 @@ JXG.JSXGraph = {
             unitY = ( (typeof attributes["unitY"]) == 'undefined' ? 50 : attributes["unitY"]);
         }
 
-        zoomfactor = ( (typeof attributes["zoom"]) == 'undefined' ? 1.0 : attributes["zoom"]);
+        zoomfactor = ( (typeof attributes["zoomfactor"]) == 'undefined' ? 1.0 : attributes["zoom"]);
         zoomX = zoomfactor*( (typeof attributes["zoomX"]) == 'undefined' ? 1.0 : attributes["zoomX"]);
         zoomY = zoomfactor*( (typeof attributes["zoomY"]) == 'undefined' ? 1.0 : attributes["zoomY"]);
 
@@ -184,7 +184,7 @@ JXG.JSXGraph = {
         if(attributes["axis"]) {
         	board.defaultAxes = {};
             board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {ticks:{drawZero:true}});
-            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {ticks:{drawZero:false}});
+            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {ticks:{drawZero:board.options.axis.ticks.drawZero}});
         }
 
         if(attributes["grid"]) {
@@ -317,6 +317,10 @@ JXG.JSXGraph = {
         // Free the renderer and the algebra object
         delete(board.renderer);
         delete(board.algebra);
+
+        // clear the creator cache
+        board.jc.creator.clearCache();
+        delete(board.jc);
 
         // Finally remove the board itself from the boards array
         delete(this.boards[board.id]);

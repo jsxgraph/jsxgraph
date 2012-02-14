@@ -3,9 +3,12 @@
     <title>JSXGraph example</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 
-    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
+    <!--script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
 
@@ -14,7 +17,7 @@
     <script id="shader-fs" type="x-shader/x-fragment">
         #ifdef GL_ES
         precision highp float;
-        #endif
+        #endifhandleAt
 
         void main(void) {
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
@@ -50,10 +53,47 @@
 </div>
 
 <div id="debug" style="display:block;">DEBUG</div>
-<a href="javascript:void(0);" id="hideaxis">Hide Axis</a>
+<a href="javascript:gJSX();" id="hideaxis">gJSX</a>
 <img id="snapshot" />
 <script type="text/javascript">
     /* <![CDATA[ */
+
+    var jessie = (function () {
+        JXG.Options.text.highlightStrokeColor = 'red';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
+
+        var A = board.create('point', [1, 2], {snapSizeX: 0, snapSizeY: 0, snapToGrid: true});
+        var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+        //var B = board.create('point', [1, 1]);
+        var C = board.create('point', [-1, -1]);
+
+        var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
+        var t = board.create('text', [3, 2, 'TEXTYTEXT']);
+
+        var a = board.create('angle', [A, B, C], {text: function () { return A.X();}});
+
+        var int = board.create('integral', [[-2, 2], p], {curveLeft: {visible: false}, curveRight: {visible: false}});
+
+        return board;
+    })();
+
+    var gJSXbrd;
+    var gJSX = (function() {
+        var pointStr = function (x, y) {
+            return x + ', ' + y;
+        };
+        if (gJSXbrd) {
+            JXG.JSXGraph.freeBoard(gJSXbrd);
+        }
+        var x = 5;
+        var y = 3;
+        
+        JXG.Options.grid.snapToGrid = true;
+        gJSXbrd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-10,10,10,-10],axis:true,grid:true,keepaspectratio:true,showNavigation:true,showCopyright:false});
+        var ptGr = gJSXbrd.create('point', [x,y],{size:1,color:'blue',fixed:true});
+        var tPt = gJSXbrd.create('point', [0,0 ],{name:'',size:1,color:'red'} );
+        var hi = gJSXbrd.create('text', [-5,-5, function() {document.getElementById('debug').value=pointStr( tPt.X().toFixed(1), tPt.Y().toFixed(1) ); return 0}],{visible:false});
+    });
 
     var gesture = (function () {
         JXG.addEvent(document.getElementById('jxgbox'), 'gesturestart', function (e) {
@@ -77,23 +117,32 @@
     });
 
     var lineconstr = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
+        JXG.Options.line.withLabel = true;
+        JXG.Options.line.label = {
+            strokeColor: 'gray',
+            fontsize: 20
+        };
+        JXG.Options.grid.snapToGrid = false;
+        
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
 
         var s = board.create('slider', [[-1, 1], [1, 1], [0, 1, 3]]);
 
-        var p1 = board.create('point', [2, 3], {trace: false, size: 6, traces: {size: 2, fillColor: 'blue', strokeColor: 'blue'}});
+        var p1 = board.create('point', [2, 3], {trace: true, size: 6, traceAttributes: {size: 2, fillColor: 'blue', strokeColor: 'blue'}});
         var p2 = board.create('point', [4, 5]);
 
         board.create('line', [p1, p2]);
 
-        board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traces: {strokeColor: 'green', strokeWidth: 1}, trace: false});
-        var l = board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
+        //board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traceAttributes: {strokeColor: 'green', strokeWidth: 1}, trace: true});
+        //var l = board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
+        //l.setProperty({withLabel: true});
 
-        var p = board.create('point', [-2, 3], {size: 9, fillColor: 'blue', face: '[]'});
-        p.setProperty({gradient: 'linear', gradientSecondColor: 'green', gradientsecondopacity: 1.0});
+        var p = board.create('point', [-2, 3], {size: 9, fillColor: 'blue', face: '[]', label: {strokeColor: 'red', fontsize: 35}, snapToGrid: true, snapSizeX: 0.5, snapSizeY: 0.5, showinfobox: false, highlight: false});
 
-        l.setProperty({withLabel: true});
-    })();
+        board.create('regularpolygon', [p1, p2, 4], {points: {ids: ['1', '2', '3']}});
+
+        board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}, withLabel: true});
+    });
 
     var jan = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
