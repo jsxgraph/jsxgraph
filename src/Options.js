@@ -821,7 +821,7 @@ JXG.Options = {
         strokeColor: '#000000', //  normal line
         point : {
             visible: false,
-            fixed: true,
+            fixed: false,
             withLabel: false,
             name: ''
         }
@@ -832,7 +832,7 @@ JXG.Options = {
         strokeColor: '#000000', // Parallel line
         point : {
             visible: false,
-            fixed: true,
+            fixed: false,
             withLabel: false,
             name: ''
         }
