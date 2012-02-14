@@ -818,12 +818,24 @@ JXG.Options = {
     
     /* special options for normal lines */
     normal : {
-        strokeColor: '#000000' // Parallel line
+        strokeColor: '#000000', //  normal line
+        point : {
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
     },
 
     /* special options for parallel lines */
     parallel : {
-        strokeColor: '#000000' // Parallel line
+        strokeColor: '#000000', // Parallel line
+        point : {
+            visible: false,
+            fixed: true,
+            withLabel: false,
+            name: ''
+        }
     },
 
     /* special perpendicular options */

@@ -880,15 +880,18 @@ JXG.createParallel = function(board, parents, attributes) {
         //pp = [parents[0].id, p.id];
     }
 
-    if (!JXG.exists(attributes.layer)) attributes.layer = board.options.layer.line;
+    if (!JXG.exists(attributes.layer)) {
+        attributes.layer = board.options.layer.line;
+    }
 
-    attr = JXG.copyAttributes(attributes, board.options, 'parallel');
+    attr = JXG.copyAttributes(attributes, board.options, 'parallel', 'point');
 	pp = board.create('point', [function() {
             return JXG.Math.crossProduct([1,0,0], li());
-        }], {id:attr.point2.id, name: attr.point2.name, withLabel:false, visible:false});
+        }], attr);
 
     pp.isDraggable = true;
 
+    attr = JXG.copyAttributes(attributes, board.options, 'parallel');
     pl = board.create('line', [p, pp], attr);
     /*
     pl = board.create('line', [function() {
@@ -901,12 +904,14 @@ JXG.createParallel = function(board, parents, attributes) {
     pl.parents = pp;
 
     /**
-     * Helper point used to create the parallel line.
+     * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,
+     * not even with visible set to <tt>true</tt>. Creating another line through this point would make that other line
+     * parallel to the create parallel.
      * @memberOf Parallel.prototype
-     * @name parallelpoint
-     * @type Parallelpoint
+     * @name point
+     * @type JXG.Point
      */
-    // pl.parallelpoint = pp;
+    pl.point = pp;
 
     return pl;
 };
@@ -990,7 +995,7 @@ JXG.createArrowParallel = function(board, parents, attributes) {
  */
 JXG.createNormal = function(board, parents, attributes) {
     /* TODO normal polynomials */
-    var p, c, l, i, attr, pp;
+    var p, c, l, i, attr, pp, attrp;
 
     if (parents.length==1) { // One arguments: glider on line, circle or curve
         p = parents[0];
@@ -1025,13 +1030,23 @@ JXG.createNormal = function(board, parents, attributes) {
                     ], attributes );
         */
         // Private point
+        attrp = JXG.copyAttributes(attributes, board.options, 'normal', 'point');
         pp = board.create('point', [function() {
-                var p = JXG.Math.crossProduct([1,0,0], c.stdform)
+                var p = JXG.Math.crossProduct([1,0,0], c.stdform);
                 return [p[0], -p[2], p[1]];
-            }], {id: attr.point2.id, name: attr.point2.name, withLabel:false, visible:false});
+            }], attrp);
         pp.isDraggable = true;
 
         l = board.create('line', [p, pp], attr);
+
+        /**
+         * A helper point used to create a normal to a {@link JXG.Line} object. For normals to circles or curves this
+         * element is <tt>undefined</tt>.
+         * @type JXG.Point
+         * @name point
+         * @memberOf Normal.prototype
+         */
+        l.point = pp;
     } else if(c.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
         l = board.create('line', [c.midpoint,p], attr);
     } else if (c.elementClass == JXG.OBJECT_CLASS_CURVE) {
