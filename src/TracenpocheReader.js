@@ -1194,7 +1194,7 @@ JXG.TracenpocheReader = new function() {
                 c = parents[0];
                 if (isFree) {
                     el = this.board.create('glider', [
-                        c.midpoint.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
+                        c.center.X()+c.Radius()*Math.cos(lambda()), c.midpoint.Y()+c.Radius()*Math.sin(lambda()), c
                         ],
                         opt
                     );
@@ -1202,7 +1202,7 @@ JXG.TracenpocheReader = new function() {
                     // Fake glider: it needs the properties "position" and "slideObject".			
                     el = this.board.create('point', [
                         function() {return this.position = lambda(); c.midpoint.X()+c.Radius()*Math.cos(lambda());},
-                        function() {return c.midpoint.Y()+c.Radius()*Math.sin(lambda());}
+                        function() {return c.center.Y()+c.Radius()*Math.sin(lambda());}
                         ],
                         opt
                     );	
@@ -1967,7 +1967,7 @@ M=pointsur(e,s);
 				{strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
 				{insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
 			];
-	        l1=this.board.create('line', [[0, 0], [1, 0]],opt[0]);
+	        l1=this.board.create('line', [[0, 0], [1, 0]], opt[0]);
 			l1.setArrow(false,true);
 			this.board.create('ticks', [l1,parents[4]], opt[1]);
 			l1=this.board.create('line', [[0, 0], [0, 1]], opt[0]);
