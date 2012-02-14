@@ -957,13 +957,15 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl);
 
+                        tmp = gxtEl.name;
                         try {
                             gxtEl.name = Data.getElementsByTagName('text')[0].firstChild.data;
                         } catch (e) {
                             gxtEl.name = '';
                         }
-
                         c = board.create('angle', [gxtEl.first, gxtEl.middle, gxtEl.last], gxtEl);
+                        c.setProperty({name:tmp});
+
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "text":
