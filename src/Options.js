@@ -827,6 +827,10 @@ JXG.Options = {
         }
     },
 
+    /* special options for orthogonal projectionn points */
+    orthogonalprojection : {
+    }, 
+    
     /* special options for parallel lines */
     parallel : {
         strokeColor: '#000000', // Parallel line
