@@ -633,7 +633,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     makeGlider: function (glideObject) {
         var oldc = this.coords.usrCoords.slice(1);
-        this.slideObject = JXG.getReference(this.board, glideObject);
+        this.slideObject = JXG.getRef(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
         this.elType = 'glider';
         this.visProp.snapwidth = -1;          // By default, deactivate snapWidth

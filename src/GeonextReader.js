@@ -837,14 +837,14 @@ JXG.GeonextReader = {
                             dataVertex[i] = gxtReader.changeOriginIds(board, dataVertex[i]);
                         }
                         gxtEl.border = [];
-                        gxtEl.lines = {
+                        gxtEl.borders = {
                             ids: []
                         };
                         for (i = 0; i < Data.getElementsByTagName('border').length; i++) {
                             gxtEl.border[i] = {};
                             xmlNode = Data.getElementsByTagName('border')[i];
                             gxtEl.border[i].id = xmlNode.getElementsByTagName('id')[0].firstChild.data;
-                            gxtEl.lines.ids.push(gxtEl.border[i].id);
+                            gxtEl.borders.ids.push(gxtEl.border[i].id);
                             gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                             gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
                             gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
