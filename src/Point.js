@@ -186,6 +186,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         return this;
     },
 
+    /**
+    * Update of glider in case of dragging the glider or setting the postion of the glider.
+    * The relative position of the glider has to be updated.
+    * @private
+    */
     updateGlider: function() {
         var i, p1c, p2c, d, v, poly;
 
@@ -237,7 +242,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.update(true);
             }
 
-            p1c = this.slideObject.point2.coords.usrCoords;
+            p1c = this.slideObject.point1.coords.usrCoords;
             if (!this.slideObject.visProp.straightfirst && Math.abs(p1c[0])>JXG.Math.eps && this.position<0) {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
                 this.position = 0;
@@ -248,6 +253,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.position = 1;
             }
     
+            // onPolygon is GEONExT specific and has to be tested.
             if (this.onPolygon) {
                 p1c = this.slideObject.point1.coords;
                 p2c = this.slideObject.point2.coords;
@@ -284,6 +290,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
     },
 
+    /**
+    * Update of a glider in case a parent element has been updated. That means the 
+    * relative position of the glider stays the same.
+    * @private
+    */
     updateGliderFromParent: function() {
         var p1c, p2c, r, d;
 
