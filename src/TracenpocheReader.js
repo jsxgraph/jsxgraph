@@ -67,10 +67,9 @@ pilote : (useless : rare cause in test -> Interactive Whiteboard : for accuracy 
 
 JXG.TracenpocheReader = new function() {
 	
-	aimantageList = new Array();
-	animationList = new Array();
-	animepoint = null;
-	timeoutCaller = null;
+	aimantageList = new Array(); //list of point to magnetized to ...
+	//
+	animationList = new Array(); //list of real/integer used to animate pointon
 	
 	this.aimantage = function() {
 		var loc;
@@ -1660,7 +1659,7 @@ JXG.TracenpocheReader = new function() {
 @figure;
 A = point(-1,0) ;
 B = point(1,1) ;
-d =droite(A,B) ;
+d = droite(A,B) ;
 r = reel(2,0,5,1) {oscille};
 C = pointsur(d, r) ;
 D = point(2,-1);
@@ -1670,18 +1669,18 @@ M=pointsur(e,s);
 
 */
 			if(animationList.length==0) {
-				this.animepoint = this.board.create('text',[x,y+0.5,'<b>&gt;</b>&nbsp;Animer']);
-				this.animepoint.rendNode.style.color="#FF0000";
-				this.animepoint.isAnime=false;
-				this.animepoint.jsxtepobj=this;
-				this.animepoint.rendNode.jsxtepanimeobj=this.animepoint;
-				this.animepoint.rendNode.onclick = function(e) {
+				this.animationStartStopLink = this.board.create('text',[x,y+0.5,'<b>&gt;</b>&nbsp;Animer']);
+				this.animationStartStopLink.rendNode.style.color="#FF0000";
+				this.animationStartStopLink.isAnime=false;
+				this.animationStartStopLink.jsxtepobj=this;
+				this.animationStartStopLink.rendNode.jsxtepanimeobj=this.animationStartStopLink;
+				this.animationStartStopLink.rendNode.onclick = function(e) {
 					if(this.jsxtepanimeobj.isAnime) {
 						//on lance l'animation
 						this.jsxtepanimeobj.setText("<b>&gt;</b>&nbsp;Animer");
 						this.jsxtepanimeobj.rendNode.style.color="#FF0000";
 						this.jsxtepanimeobj.jsxtepobj.board.unsuspendUpdate();
-						clearTimeout(timeoutCaller);						
+						clearTimeout(animationTimeoutCaller);						
 					} else {
 						//on arrête l'animation
 						this.jsxtepanimeobj.setText("<b>&#9632;</b>&nbsp;Stop");
@@ -1714,7 +1713,7 @@ M=pointsur(e,s);
 			}
 		}
 		obj.board.unsuspendUpdate();
-		timeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
+		animationTimeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
 	}
 	
     this.tepAnimerRun = function(obj) {
@@ -1775,18 +1774,20 @@ M=pointsur(e,s);
 		
 		this.board.suspendUpdate();
 		var oncontinue = false;
+		var v = true; //to avaid JS optimization with || !!!!
 		for(var i=0;i<animationList.length;i++) {
-			oncontinue = oncontinue || animerSlider(animationList[i][0],animationList[i][1]);
+			v=animerSlider(animationList[i][0],animationList[i][1]);
+			oncontinue = oncontinue || v;
 		}
 		this.board.unsuspendUpdate();
 		if (oncontinue) {
-			timeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
+			animationTimeoutCaller=setTimeout(obj.tepAnimerRun,200,obj);
 		} else {
-			obj.animepoint.isAnime=false;
-			obj.animepoint.setText("<b>&gt;</b>&nbsp;Animer");
-			obj.animepoint.rendNode.style.color="#FF0000";
+			obj.animationStartStopLink.isAnime=false;
+			obj.animationStartStopLink.setText("<b>&gt;</b>&nbsp;Animer");
+			obj.animationStartStopLink.rendNode.style.color="#FF0000";
 			obj.board.unsuspendUpdate();
-			clearTimeout(timeoutCaller);						
+			clearTimeout(animationTimeoutCaller);						
 		}
 		
 	}
