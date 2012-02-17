@@ -53,6 +53,10 @@ para =parallele(C,d) ;
 <input type='button' value="Read TracenPoche string" onClick="loadFile('tep','Tracenpoche')" />
 <div id="debug" style="display:block;"></div>
 <script type="text/javascript">
+    var xxx = function(event) {
+            var chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+            alert ("The Unicode character code is: " + chCode);
+        }
     var board;
     function loadFile(bspname, format) {
         document.getElementById('box').innerHTML = '';
@@ -66,6 +70,7 @@ para =parallele(C,d) ;
         //document.title = "Tracenpoche example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
         //board = JXG.JSXGraph.loadBoardFromFile('box', value, format);
         board = JXG.JSXGraph.loadBoardFromString('box', str, format);
+        JXG.addEvent(document, 'keypress', xxx, board);
     };
 
     function showFile(bspname) {
