@@ -65,7 +65,10 @@ para =parallele(C,d) ;
         //document.getElementById('debug').innerHTML = "<b>Debug (lade "+ value +" ...):</b>";
         */
         var str = document.getElementById('inputtext').value;
-        if (typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
+        if (typeof board != 'undefined') {
+            JXG.removeEvent(document, 'keypress', xxx, board);
+            JXG.JSXGraph.freeBoard(board);
+        }
 
         //document.title = "Tracenpoche example: "+ document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].text;
         //board = JXG.JSXGraph.loadBoardFromFile('box', value, format);
