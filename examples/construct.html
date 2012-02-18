@@ -64,7 +64,10 @@ var li2 = brd.create('normal',[C,li1]);
 //var li2 = brd.create('line',[C,D]);
 var E = brd.create('glider',[-1,1,li2]);
 var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
-var G = brd.create('orthogonalprojection',[C,li1]);
+//var G = brd.create('orthogonalprojection',[C,li1]);
+var X = brd.create('midpoint',[C,F]);
+
+var cu = brd.create('tracecurve',[F,X], {dash:2, strokeColor:'red'});
 
 //
 /*

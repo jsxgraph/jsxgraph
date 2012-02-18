@@ -628,10 +628,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * Treat the line as parametric curve in homogeneuous coordinates.
+     * Treat the line as parametric curve in homogeneous coordinates.
      * <pre>x = 1 * sin(theta)*cos(phi)
      * y = 1 * sin(theta)*sin(phi)
-     * z = 1 * sin(theta)</pre>
+     * z = 1 * cos(theta)</pre>
      * and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
      * It follows:
      * <pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
@@ -657,13 +657,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         B = c;
         sq = Math.sqrt(A*A+B*B);
         sinTheta = -B/sq;
+        /*
         cosTheta = A/sq;
 
         if (Math.abs(cosTheta) < JXG.Math.eps) {
             cosTheta = 1.0;
         }
-
-        return sinTheta*Math.cos(phi)/cosTheta;
+        */
+        return sinTheta*Math.cos(phi); // /cosTheta;
     },
 
     /**
@@ -682,13 +683,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         B = c;
         sq = Math.sqrt(A*A+B*B);
         sinTheta = -B/sq;
+        /*
         cosTheta = A/sq;
 
         if (Math.abs(cosTheta) < JXG.Math.eps) {
             cosTheta = 1.0;
         }
-
-        return sinTheta*Math.sin(phi)/cosTheta;
+        */
+        return sinTheta*Math.sin(phi); ///cosTheta;
     },
 
     /**
@@ -707,7 +709,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         sq = Math.sqrt(A*A+B*B);
         cosTheta = A/sq;
 
-        return Math.abs(cosTheta) >= JXG.Math.eps ? 1.0 : 0.0;
+        //return Math.abs(cosTheta) >= JXG.Math.eps ? 1.0 : 0.0;
+        return cosTheta; 
     },
     
     /*

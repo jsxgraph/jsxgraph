@@ -1066,7 +1066,7 @@ JXG.createTracecurve = function(board, parents, attributes) {
     attr['curvetype'] = 'plot';
   
     c = board.create('curve',[[0],[0]], attr);
-        c.updateDataArray = function(){
+    c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
             from,
