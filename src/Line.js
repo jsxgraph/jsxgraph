@@ -628,87 +628,68 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * Treat the line as parametric curve in homogeneuous coordinates.
-     * <pre>x = 1 * sin(theta)*cos(phi)
-     * y = 1 * sin(theta)*sin(phi)
-     * z = 1 * sin(theta)</pre>
-     * and the line is the set of solutions of <tt>a*x+b*y+c*z = 0</tt>.
-     * It follows:
-     * <pre>sin(theta)*(a*cos(phi)+b*sin(phi))+c*cos(theta) = 0</pre>
-     * Define:
-     * <pre>  A = (a*cos(phi)+b*sin(phi))
-     *   B = c</pre>
-     * Then
-     * <pre>cos(theta) = A/sqrt(A*A+B*B)
-     * sin(theta) = -B/sqrt(A*A+B*B)</pre>
-     * and <tt>X(phi) = x</tt> from above.
-     * phi runs from 0 to 1
-     * @param {Number} phi
-     * @returns {Number} X(phi) TODO description
-     */
-    X: function (phi) {
-        var a = this.stdform[1],
-            b = this.stdform[2],
-            c = this.stdform[0],
-            A, B, sq, sinTheta, cosTheta;
-
-        phi *= Math.PI;
-        A = a*Math.cos(phi)+b*Math.sin(phi);
-        B = c;
-        sq = Math.sqrt(A*A+B*B);
-        sinTheta = -B/sq;
-        cosTheta = A/sq;
-
-        if (Math.abs(cosTheta) < JXG.Math.eps) {
-            cosTheta = 1.0;
+     * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
+     * First we transform the interval [0,1] to [-1,1].
+     * If the line has homogeneous coordinates [c,a,b] = stdform[] then the direction of the line is [b,-a].
+     * Now, we take one finite point that defines the line, i.e. we take either point1 or point2 (in case the line is not the ideal line).
+     * Let the coordinates of that point be [z, x, y].
+     * Then, the curve runs linearly from 
+     * [0, b, -a] (t=-1) to [z, x, y] (t=0)
+     * and 
+     * [z, x, y] (t=0) to [0, -b, a] (t=1)
+     * 
+     * @param {Number} t Parameter running from 0 to 1.
+     * @returns {Number} X(t) x-coordinate of the line treated as parametric curve.
+     * */
+    X: function (t) {
+        var b = this.stdform[2], x;
+        
+        x = (Math.abs(this.point1.coords.usrCoords[0])>JXG.Math.eps) ?
+            this.point1.coords.usrCoords[1] : this.point2.coords.usrCoords[1];
+        t = (t-0.5)*2.0;
+        if (t<0.0) {
+            t *= (-1);
+            return (1.0-t)*x + t*b; 
+        } else {
+            return (1.0-t)*x - t*b; 
         }
-
-        return sinTheta*Math.cos(phi)/cosTheta;
     },
-
+    
     /**
      * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
-     * @param {Number} phi
-     * @returns {Number} Y(phi) TODO description
+     * @param {Number} t Parameter running from 0 to 1.
+     * @returns {Number} Y(t) y-coordinate of the line treated as parametric curve.
      */
-    Y: function (phi) {
-        var a = this.stdform[1],
-            b = this.stdform[2],
-            c = this.stdform[0],
-            A, B, sq, sinTheta, cosTheta;
+    Y: function (t) {
+        var a = this.stdform[1], y;
 
-        phi *= Math.PI;
-        A = a*Math.cos(phi)+b*Math.sin(phi);
-        B = c;
-        sq = Math.sqrt(A*A+B*B);
-        sinTheta = -B/sq;
-        cosTheta = A/sq;
-
-        if (Math.abs(cosTheta) < JXG.Math.eps) {
-            cosTheta = 1.0;
+        y = (Math.abs(this.point1.coords.usrCoords[0])>JXG.Math.eps) ?
+            this.point1.coords.usrCoords[2] : this.point2.coords.usrCoords[2];
+        t = (t-0.5)*2.0;
+        if (t<0.0) {
+            t *= (-1);
+            return (1.0-t)*y - t*a; 
+        } else {
+            return (1.0-t)*y + t*a; 
         }
-
-        return sinTheta*Math.sin(phi)/cosTheta;
     },
-
+    
     /**
      * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
-     * @param {Number} phi
-     * @returns {Number} Z(phi) TODO description
+     * @param {Number} t Parameter running from 0 to 1.
+     * @returns {Number} Z(t) z-coordinate of the line treated as parametric curve.
      */
-    Z: function (phi) {
-        var a = this.stdform[1],
-            b = this.stdform[2],
-            c = this.stdform[0],
-            A, B, sq, cosTheta;
-        phi *= Math.PI;
-        A = a*Math.cos(phi)+b*Math.sin(phi);
-        B = c;
-        sq = Math.sqrt(A*A+B*B);
-        cosTheta = A/sq;
-
-        return Math.abs(cosTheta) >= JXG.Math.eps ? 1.0 : 0.0;
+    Z: function (t) {
+        var z = (Math.abs(this.point1.coords.usrCoords[0])>JXG.Math.eps) ?
+            this.point1.coords.usrCoords[0] : this.point2.coords.usrCoords[0];
+        
+        t = (t-0.5)*2.0;
+        if (t<0.0) {
+            t *= (-1);
+        }
+        return (1.0-t) * z;
     },
+
     
     /*
      * This is needed for GEONExT compatibility
