@@ -1795,7 +1795,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        //this.clearTraces();
+        this.clearTraces();
         this.fullUpdate();
 
         return this;
