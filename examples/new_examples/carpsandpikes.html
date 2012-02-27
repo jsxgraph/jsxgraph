@@ -90,14 +90,14 @@
             yt = plot.create('text', [1, 23, 'Carps']),
 
             // Define sliders to dynamically change parameters of the equations and create text elements to describe them
-            s = controlroom.create('slider', [[0,2],[7,2],[0.0,3,10]],{name:'',strokeColor:'black',fillColor:'black'}),
+            s = controlroom.create('slider', [[0,2],[7,2],[0.0,3,10]],{name:''}),
             st = controlroom.create('text', [0,1.5, "Reproduction rate carps"]),
-            u = controlroom.create('slider', [[0,1],[7,1],[0.0,7,10]],{name:'',strokeColor:'black',fillColor:'black'}),
+            u = controlroom.create('slider', [[0,1],[7,1],[0.0,7,10]],{name:''}),
             ut = controlroom.create('text', [0,0.5, "Death rate pikes"]),
 
-            o = controlroom.create('slider', [[0,0],[7,0],[0.0,1,10]],{name:'',strokeColor:'black',fillColor:'black'}),
+            o = controlroom.create('slider', [[0,0],[7,0],[0.0,1,10]],{name:''}),
             ot = controlroom.create('text', [0,-0.5, "Pikes appetite"]),
-            p = controlroom.create('slider', [[0,-1],[7,-1],[0.0,3,10]],{name:'',strokeColor:'black',fillColor:'black'}),
+            p = controlroom.create('slider', [[0,-1],[7,-1],[0.0,3,10]],{name:''}),
             pt = controlroom.create('text', [0,-1.5, "Reproduction rate pikes"]),
 
             // Variables for the JXG.Curves
