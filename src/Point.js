@@ -210,12 +210,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.position = 0.0;
             } else { 
                 if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
+					d = 1.0/JXG.Math.eps;
                     if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
-                        d = JXG.Math.Geometry.distance([0,0,0], p2c);
-                        p2c = [1, p1c[1]+p2c[1]/d, p1c[2]+p2c[2]/d];
+                        d /= JXG.Math.Geometry.distance([0,0,0], p2c);
+                        p2c = [1, p1c[1]+p2c[1]*d, p1c[2]+p2c[2]*d];
                     } else {                                             // The first point is an ideal point
-                        d = JXG.Math.Geometry.distance([0,0,0], p1c);
-                        p1c = [1, p2c[1]+p1c[1]/d, p2c[2]+p1c[2]/d];
+                        d /= JXG.Math.Geometry.distance([0,0,0], p1c);
+                        p1c = [1, p2c[1]+p1c[1]*d, p2c[2]+p1c[2]*d];
                     }
                 }
                 i = 1;
@@ -312,12 +313,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             p2c = p2c.usrCoords.slice(0);
             
             if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
+				d = 1.0/JXG.Math.eps;
                 if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
-                    d = JXG.Math.Geometry.distance([0,0,0], p2c);
-                    p2c = [1, p1c[1]+p2c[1]/d, p1c[2]+p2c[2]/d];
+                    d /= JXG.Math.Geometry.distance([0,0,0], p2c);
+                    p2c = [1, p1c[1]+p2c[1]*d, p1c[2]+p2c[2]*d];
                 } else {                                             // The first point is an ideal point
-                    d = JXG.Math.Geometry.distance([0,0,0], p1c);
-                    p1c = [1, p2c[1]+p1c[1]/d, p2c[2]+p1c[2]/d];
+                    d /= JXG.Math.Geometry.distance([0,0,0], p1c);
+                    p1c = [1, p2c[1]+p1c[1]*d, p2c[2]+p1c[2]*d];
                 }
             }
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [
