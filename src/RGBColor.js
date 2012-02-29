@@ -295,15 +295,13 @@ JXG.rgb2hex = function () {
 };
 
 JXG.hex2rgb = function (hex) {
-
     var r, g, b;
-
     if (hex.charAt(0) == '#')
         hex = hex.slice(1);
 
-    r = hex.substr(0, 2);
-    g = hex.substr(2, 2);
-    b = hex.substr(4, 2);
+    r = parseInt(hex.substr(0, 2), 16);
+    g = parseInt(hex.substr(2, 2), 16);
+    b = parseInt(hex.substr(4, 2), 16);
 
     return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 };
