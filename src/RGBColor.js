@@ -294,6 +294,20 @@ JXG.rgb2hex = function () {
     return '#' + r + g + b;
 };
 
+JXG.hex2rgb = function (hex) {
+
+    var r, g, b;
+
+    if (hex.charAt(0) == '#')
+        hex = hex.slice(1);
+
+    r = hex.substr(0, 2);
+    g = hex.substr(2, 2);
+    b = hex.substr(4, 2);
+
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+};
+
 /**
 * Converts HSV color to RGB color.
 * Based on C Code in "Computer Graphics -- Principles and Practice,"
