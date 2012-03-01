@@ -975,7 +975,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
             JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
-            this.hasMouseHandlers = false;
+            // this.hasMouseHandlers = false; // should not be set to false,
+            // because IMHO (and that's how I used it in the GUI) this variable should only reflect,
+            // if the device is capable to handle mouse operations -- and this is still the case even
+            // after removing the registered handlers
         }
 
         if (!keepTouch && this.hasTouchHandlers) {
@@ -987,7 +990,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
             JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
 
-            this.hasTouchHandlers = false;
+            //this.hasTouchHandlers = false; // see above
         }
     },
 
