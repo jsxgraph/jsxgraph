@@ -457,8 +457,6 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
         this.options.text.useASCIIMathML = false;
     }
 
-    this.addEventHandlers();
-
     /**
      * A flag which tells if the board registers mouse events.
      * @type Boolean
@@ -472,6 +470,8 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @default true
      */
     this.hasTouchHandlers = false;
+
+    this.addEventHandlers();
 };
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
