@@ -464,14 +464,14 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @type Boolean
      * @default true
      */
-    this.hasMouseHandlers = true;
+    this.hasMouseHandlers = false;
 
     /**
      * A flag which tells if the board registers touch events.
      * @type Boolean
      * @default true
      */
-    this.hasTouchHandlers = true;
+    this.hasTouchHandlers = false;
 };
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
@@ -936,23 +936,28 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      *  Add all possible event handlers to the board object
      */
     addEventHandlers: function () {
-        JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-        JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-        JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+        if (!this.hasMouseHandlers) {
+            JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+            JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+            JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 
-        // To run JSXGraph on mobile touch devices we need these event listeners.
-        JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-        JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-        JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+            // EXPERIMENTAL: mouse wheel for zoom
+            JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+            // special treatment for firefox
+            JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+            this.hasMouseHandlers = true;
+        }
 
-        // EXPERIMENTAL: mouse wheel for zoom
-        JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-        // special treatment for firefox
-        JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+        if (!this.hasTouchHandlers) {
+             // To run JSXGraph on mobile touch devices we need these event listeners.
+            JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+            JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
-        // special events for iOS devices to enable gesture based zooming
-        JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-
+           // special events for iOS devices to enable gesture based zooming
+            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+            this.hasTouchHandlers = true;
+        }
 
         // This one produces errors on IE
         //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
