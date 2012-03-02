@@ -942,7 +942,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     addMouseEventHandlers: function () {
         if (!this.hasMouseHandlers) {
-            console.log('mouse handlers added');
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
@@ -963,7 +962,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     addTouchEventHandlers: function () {
         if (!this.hasTouchHandlers) {
-            console.log('touch handlers added');
              // To run JSXGraph on mobile touch devices we need these event listeners.
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
@@ -977,7 +975,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     removeMouseEventHandlers: function () {
         if (this.hasMouseHandlers) {
-            console.log('mouse handlesr removed');
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
@@ -1004,7 +1001,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     removeTouchEventHandlers: function () {
         if (this.hasTouchHandlers) {
-            console.log('touch handlesr removed');
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
@@ -1124,8 +1120,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, pos, elements, j, k,
             eps = this.options.precision.touch,
             obj, xy = [], found;
-
-        console.log('touchstart');
 
         if (this.hasMouseHandlers) {
             this.removeMouseEventHandlers();
@@ -1329,8 +1323,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     touchMoveListener: function (evt) {
         var i, j, pos;
 
-        console.log('touchmove');
-
         evt.preventDefault();
         evt.stopPropagation();
         // Reduce update frequency for Android devices
@@ -1399,8 +1391,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var i, j, k,
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber;
-
-        console.log('touchend');
 
         this.updateHooks(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
@@ -1501,8 +1491,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseDownListener: function (Evt) {
         var pos, elements, xy, r;
 
-        console.log('mousedown');
-
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
             document.selection.empty();
@@ -1563,7 +1551,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseUpListener: function (Evt) {
         this.updateHooks(['mouseup', 'up'], Evt);
 
-        console.log('mouseup');
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
         this.mode = this.BOARD_MODE_NONE;
@@ -1583,8 +1570,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     mouseMoveListener: function (Event) {
         var pos;
-
-        console.log('mousemove');
 
         pos = this.getMousePosition(Event);
 
