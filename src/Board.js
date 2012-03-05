@@ -1098,7 +1098,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.prevScale = evt.scale;
         }
 
-
         return false;
     },
 
