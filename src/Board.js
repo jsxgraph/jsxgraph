@@ -968,7 +968,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
            // special events for iOS devices to enable gesture based zooming
-            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+//			JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+			JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+//			JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
+
             this.hasTouchHandlers = true;
         }
     },
@@ -1005,9 +1008,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
 
-            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-            JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
+//          JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+            JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+//          JXG.removeEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
 
             this.hasTouchHandlers = false; // see above
         }
@@ -1136,7 +1139,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // move origin - but only if we're not in drag mode
-        if ( this.options.pan
+		if ( this.options.pan
              && this.mode === this.BOARD_MODE_NONE
              && (evt.targetTouches.length == 2)
              && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80)) {
