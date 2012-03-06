@@ -53,6 +53,8 @@
  * jsxgraph-params:
  *   width:    default: 500
  *   height:   default: 400
+ *   modules:  default: "", additional javascript files that shoulde be loaded, comma separated and without the file
+ *             extension. Those have to be in the same directory as the jsxgraphcore.js, e.g. "Square,JessieScript"
  *   filename, filestring or $input (between <jsxgraph>-tags) --> required
  *   box:      default: jxgbox
  *   board:    default: brd
@@ -124,6 +126,12 @@ function jsxgraphOutput($input, $args, $parser) {
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
   }
+  
+  $modules = explode(',', $args['modules']);
+  for ($i = 0; $i < count($modules); $i++) {
+    $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
+  }
+  
   // Output div
   $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
   $output .= "<script type='text/javascript'>";
