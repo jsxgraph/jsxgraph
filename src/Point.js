@@ -473,7 +473,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      **/
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
-            found, i, el, pEl, projCoords, d = 0.0;
+            found, i, el, /*el2,*/ pEl, projCoords, d = 0.0;
             
         if (this.visProp.attractordistance==0.0) {
             return;
@@ -513,6 +513,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             for (el in this.board.objects) {
                 pEl = this.board.objects[el];
                 if (pEl.elementClass==JXG.OBJECT_CLASS_POINT && pEl!==this) {
+                    /*
+                    for (el2 in this.descendants) {
+                        if (this.descendants[el2] == pEl) {
+                            continue;
+                        }
+                    }
+                    */
                     projCoords = JXG.Math.Geometry.projectPointToPoint(this, pEl, this.board); 
                     d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
                     if (d<this.visProp.attractordistance) {
@@ -526,6 +533,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                             this.type = JXG.OBJECT_TYPE_POINT;
                         }
                     }
+                } else if (pEl==this) {
+                    break;
                 }
             }
         }
