@@ -53,24 +53,34 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6],
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
+/*
+A = brd.create('point',[0, 1]);
+B = brd.create('point', [1,0]);
+C = brd.create('point', [0.5, 0.5]);
+
+l = brd.create('line',[A,B]);
+C.makeGlider(l);
+*/
 
 var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}});
-var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}});
+var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, attractors:[A], attractorDistance:0.4, snatchDistance:0.1});
+
+/*
 var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});
 //var cu2 = brd.create('curve',[function(t){ return li1.X(t)/li1.Z(t); }, function(t){ return li1.Y(t)/li1.Z(t); }, 0.0, 1.0], {strokeColor:'black', strokeWidth:4});
 
-var C = brd.create('point',[-2,2]);
+var C = brd.create('point',[-2,2], {});
 var D = brd.create('point',[0,2,2]);
 var li2 = brd.create('normal',[C,li1]);
 
 //var li2 = brd.create('line',[C,D]);
 var E = brd.create('glider',[-1,1,li2]);
-var F = brd.create('glider',[4,1,li1], {size:12, color:'blue', snapSizeX:2, snapSizeY:2, snapToGrid:true});
+var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
 //var G = brd.create('orthogonalprojection',[C,li1]);
 var X = brd.create('midpoint',[C,F]);
 
 var cu = brd.create('tracecurve',[F,X], {dash:0, strokeColor:'red'});
-
+*/
 
 //
 /*

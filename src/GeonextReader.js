@@ -438,6 +438,9 @@ JXG.GeonextReader = {
         // If snapToGrid and snapToPoint are both true, point snapping is enabled
         if (board.options.point.snapToGrid && this.gEBTN(this.gEBTN(boardData, 'grid', 1, false), 'pointsnap') == strTrue) {
             board.options.point.snapToGrid = false;
+            board.options.point.snapToPoints = true;
+            board.options.point.attractorDistance = 0.5;
+            board.options.point.snatchDistance = 0.1;
         }
         //board.options.grid.snapToGrid = false;
 

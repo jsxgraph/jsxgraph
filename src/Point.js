@@ -473,7 +473,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      **/
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
-            found, i, el, projCoords, d = 0.0;
+            found, i, el, pEl, projCoords, d = 0.0;
             
         if (this.visProp.attractordistance==0.0) {
             return;
@@ -498,11 +498,34 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
             if (d<this.visProp.attractordistance) {
                 found = true;
-                this.makeGlider(el);
+                if (!(this.type==JXG.OBJECT_TYPE_GLIDER && this.slideObject==el)) {
+                    this.makeGlider(el);
+                }
                 break;
             } else {
                 if (el==this.slideObject && d>=this.visProp.snatchdistance) {
                     this.type = JXG.OBJECT_TYPE_POINT;
+                }
+            }
+        }
+
+        if (this.visProp.snaptopoints) {
+            for (el in this.board.objects) {
+                pEl = this.board.objects[el];
+                if (pEl.elementClass==JXG.OBJECT_CLASS_POINT && pEl!==this) {
+                    projCoords = JXG.Math.Geometry.projectPointToPoint(this, pEl, this.board); 
+                    d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
+                    if (d<this.visProp.attractordistance) {
+                        found = true;
+                        if (!(this.type==JXG.OBJECT_TYPE_GLIDER && this.slideObject==pEl)) {
+                            this.makeGlider(pEl);
+                        }
+                        break;
+                    } else {
+                        if (pEl==this.slideObject && d>=this.visProp.snatchdistance) {
+                            this.type = JXG.OBJECT_TYPE_POINT;
+                        }
+                    }
                 }
             }
         }
@@ -511,6 +534,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.type = JXG.OBJECT_TYPE_POINT;
         }
         */
+        return this;
     },
     
     /**
@@ -634,7 +658,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {String|Object} glideObject The Object the point will be bound to.
      */
     makeGlider: function (glideObject) {
-        var oldc = this.coords.usrCoords.slice(1);
         this.slideObject = JXG.getRef(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
         this.elType = 'glider';
@@ -646,10 +669,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             return this.slideObject.generatePolynomial(this);
         };
 
-        this.moveTo(oldc);
-
-        //this.needsUpdate = true;
-        //this.update();
+        this.updateGlider(); // Determine the initial value of this.position
         return this;
     },
 
