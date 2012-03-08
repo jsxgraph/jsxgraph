@@ -53,18 +53,21 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6],
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
+brd.suspendUpdate();
+A = brd.create('point', [0, -1]);
+B = brd.create('point', [4, -1]);
+C = brd.create('point', [2, 2]);
+pol = brd.create('polygon', [A,B,C]);
+
+D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
+D.onPolygon = true;
+brd.unsuspendUpdate();
+
+
 /*
-A = brd.create('point',[0, 1]);
-B = brd.create('point', [1,0]);
-C = brd.create('point', [0.5, 0.5]);
-
-l = brd.create('line',[A,B]);
-C.makeGlider(l);
-*/
-
 var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
 var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, snapToPoints:true, attractorDistance:0.4});
-
+*/
 /*
 var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});
 //var cu2 = brd.create('curve',[function(t){ return li1.X(t)/li1.Z(t); }, function(t){ return li1.Y(t)/li1.Z(t); }, 0.0, 1.0], {strokeColor:'black', strokeWidth:4});

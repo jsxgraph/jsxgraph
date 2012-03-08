@@ -154,9 +154,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             fromParent = false;
         }
       
-        if(this.visProp.trace) {
-            this.cloneToBackground(true);
-        }
         /*
          * We need to calculate the new coordinates no matter of the points visibility because
          * a child could be visible and depend on the coordinates of the point (e.g. perpendicular).
@@ -182,6 +179,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         this.updateTransform();
+        
+        if(this.visProp.trace) {
+            this.cloneToBackground(true);
+        }
 
         return this;
     },
@@ -198,6 +199,41 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
             this.position = JXG.Math.Geometry.rad([this.slideObject.center.X()+1.0,this.slideObject.center.Y()],this.slideObject.center,this);
         } else if(this.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+
+            /** 
+             * onPolygon==true: the point is a slider on a seg,ent and this segment is one of the 
+             * "borders" of a polygon.
+             * This is a GEONExT feature.
+             **/
+            if (this.onPolygon) {
+                p1c = this.slideObject.point1.coords;
+                p2c = this.slideObject.point2.coords;
+                // Test, if the new position of the glider is close to point 1 of the slide object
+                // If yes, slideObject is set to the preceding border of the polygon.
+                if (Math.abs(this.coords.scrCoords[1]-p1c.scrCoords[1])<this.board.options.precision.hasPoint && 
+                    Math.abs(this.coords.scrCoords[2]-p1c.scrCoords[2])<this.board.options.precision.hasPoint) {
+                    poly = this.slideObject.parentPolygon;
+                    for (i=0; i<poly.borders.length; i++) {
+                        if (this.slideObject == poly.borders[i]) {
+                            this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
+                            break;
+                        }
+                    }
+                }
+                // Test, if the new position of the glider is close to point 2 of the slide object
+                // If yes, slideObject is set to the next border of the polygon.
+                else if (Math.abs(this.coords.scrCoords[1]-p2c.scrCoords[1])<this.board.options.precision.hasPoint && 
+                         Math.abs(this.coords.scrCoords[2]-p2c.scrCoords[2])<this.board.options.precision.hasPoint) {
+                    poly = this.slideObject.parentPolygon;
+                    for (i=0; i<poly.borders.length; i++) {
+                        if(this.slideObject == poly.borders[i]) {
+                            this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
+                            break;                        
+                        }
+                    }
+                }
+            }
+
             p1c = this.slideObject.point1.coords;
             p2c = this.slideObject.point2.coords;
             // Distance between the two defining points
@@ -205,7 +241,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             p1c = p1c.usrCoords.slice(0);
             p2c = p2c.usrCoords.slice(0);
             
-            if (d<JXG.Math.eps) {                                     // The defining points are identical
+            if (d<JXG.Math.eps) {                                        // The defining points are identical
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
                 this.position = 0.0;
             } else { 
@@ -254,31 +290,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.position = 1;
             }
     
-            // onPolygon is GEONExT specific and has to be tested.
-            if (this.onPolygon) {
-                p1c = this.slideObject.point1.coords;
-                p2c = this.slideObject.point2.coords;
-                if (Math.abs(this.coords.scrCoords[1]-p1c.scrCoords[1])<this.board.options.precision.hasPoint && 
-                    Math.abs(this.coords.scrCoords[2]-p1c.scrCoords[2])<this.board.options.precision.hasPoint) {
-                    poly = this.slideObject.parentPolygon;
-                    for (i=0; i<poly.borders.length; i++) {
-                        if (this.slideObject == poly.borders[i]) {
-                            this.slideObject = poly.borders[(i - 1 + poly.borders.length) % poly.borders.length];
-                            break;
-                        }
-                    }
-                }
-                else if (Math.abs(this.coords.scrCoords[1]-p2c.scrCoords[1])<this.board.options.precision.hasPoint && 
-                         Math.abs(this.coords.scrCoords[2]-p2c.scrCoords[2])<this.board.options.precision.hasPoint) {
-                    poly = this.slideObject.parentPolygon;
-                    for (i=0; i<poly.borders.length; i++) {
-                        if(this.slideObject == poly.borders[i]) {
-                            this.slideObject = poly.borders[(i + 1 + poly.borders.length) % poly.borders.length];
-                            break;                        
-                        }
-                    }
-                }
-            }
 
         } else if(this.slideObject.type == JXG.OBJECT_TYPE_TURTLE) {
             this.updateConstraint(); // In case, the point is a constrained glider.
