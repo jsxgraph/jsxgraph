@@ -375,7 +375,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dx, dy, dxs, dys, d,
             s, style,
             count = 0,
-            isInCanvas = false;
+            isInsideCanvas = false;
 
 		c = coords.scrCoords;
 		if (major) {

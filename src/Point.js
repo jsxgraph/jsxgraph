@@ -463,6 +463,63 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
+     * Move a point to its nearest grid point.
+     * The function uses the coords object of the point as
+     * its actual position.
+     **/
+    handleSnapToGrid: function() {
+        var x, y, sX = this.visProp.snapsizex, sY = this.visProp.snapsizey;
+        
+        if (this.visProp.snaptogrid) {
+            x = this.coords.usrCoords[1];
+            y = this.coords.usrCoords[2];
+            
+            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                sX = this.board.defaultAxes.x.defaultTicks.ticksDelta*(this.board.defaultAxes.x.defaultTicks.visProp.minorticks+1);
+            }
+
+            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                sY = this.board.defaultAxes.y.defaultTicks.ticksDelta*(this.board.defaultAxes.y.defaultTicks.visProp.minorticks+1);
+            }
+
+            // if no valid snap sizes are available, don't change the coords.
+            if (sX > 0 && sY > 0) {
+                this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+            }
+        }
+        return this;
+    },
+ 
+    /**
+     * Let a point snap to the nearest point in distance of 
+     * {@link JXG.Point#attractorDistance}. 
+     * The function uses the coords object of the point as
+     * its actual position.
+     **/
+    handleSnapToPoints: function() {
+        var el, pEl, pCoords, d=0.0, dMax=Infinity, c=null;
+        
+        if (this.visProp.snaptopoints) {
+            for (el in this.board.objects) {
+                pEl = this.board.objects[el];
+                if (pEl.elementClass==JXG.OBJECT_CLASS_POINT && pEl!==this) {
+                    pCoords = JXG.Math.Geometry.projectPointToPoint(this, pEl, this.board); 
+                    d = pCoords.distance(JXG.COORDS_BY_USER, this.coords);
+                    if (d<this.visProp.attractordistance && d<dMax) {
+                        dMax = d;
+                        c = pCoords;
+                    } 
+                }
+            }
+            if (c!=null) {
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, c.usrCoords);
+            }
+        }
+
+        return this;
+    },
+     
+    /**
      * A point can change its type from free point to glider
      * and vice versa. If it is given an array of attractor elements 
      * (attribute attractors) and the attribute attractorDistance
@@ -473,7 +530,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      **/
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
-            found, i, el, /*el2,*/ pEl, projCoords, d = 0.0;
+            found, i, el, projCoords, d = 0.0;
             
         if (this.visProp.attractordistance==0.0) {
             return;
@@ -509,35 +566,6 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
         }
 
-        if (this.visProp.snaptopoints) {
-            for (el in this.board.objects) {
-                pEl = this.board.objects[el];
-                if (pEl.elementClass==JXG.OBJECT_CLASS_POINT && pEl!==this) {
-                    /*
-                    for (el2 in this.descendants) {
-                        if (this.descendants[el2] == pEl) {
-                            continue;
-                        }
-                    }
-                    */
-                    projCoords = JXG.Math.Geometry.projectPointToPoint(this, pEl, this.board); 
-                    d = projCoords.distance(JXG.COORDS_BY_USER, this.coords);
-                    if (d<this.visProp.attractordistance) {
-                        found = true;
-                        if (!(this.type==JXG.OBJECT_TYPE_GLIDER && this.slideObject==pEl)) {
-                            this.makeGlider(pEl);
-                        }
-                        break;
-                    } else {
-                        if (pEl==this.slideObject && d>=this.visProp.snatchdistance) {
-                            this.type = JXG.OBJECT_TYPE_POINT;
-                        }
-                    }
-                } else if (pEl==this) {
-                    break;
-                }
-            }
-        }
         /*
         if (found==false) {
             this.type = JXG.OBJECT_TYPE_POINT;
@@ -557,27 +585,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     setPositionDirectly: function (method, x, y) {
         var i, dx, dy, el, p,
             oldCoords = this.coords,
-            newCoords, sX = this.visProp.snapsizex, sY = this.visProp.snapsizey;
+            newCoords;
 
         this.coords = new JXG.Coords(method, [x, y], this.board);
-        if (this.visProp.snaptogrid) {
-            x = this.coords.usrCoords[1];
-            y = this.coords.usrCoords[2];
-            
-            if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                sX = this.board.defaultAxes.x.defaultTicks.ticksDelta*(this.board.defaultAxes.x.defaultTicks.visProp.minorticks+1);
-            }
-
-            if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                sY = this.board.defaultAxes.y.defaultTicks.ticksDelta*(this.board.defaultAxes.y.defaultTicks.visProp.minorticks+1);
-            }
-
-            // if no valid snap sizes are available, don't change the coords.
-            if (sX > 0 && sY > 0) {
-                this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
-            }
-        }
         
+        this.handleSnapToGrid();
+        this.handleSnapToPoints();
         this.handleAttractors();
         
         if(this.group.length != 0) {

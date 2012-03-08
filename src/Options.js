@@ -1001,11 +1001,9 @@ JXG.Options = {
         snapSizeY: 1,
 
         /**
-         * If set to true, the point will snap to all previously constructed points in distance of 
-         * {@link JXG.Point#attractorDistance}. The point will be released from another point if
-         * is is dragged away at least{@link JXG.Point#snatchDistance}.
+         * If set to true, the point will snap to the nearest point in distance of 
+         * {@link JXG.Point#attractorDistance}. 
          * @see JXG.Point#attractorDistance
-         * @see JXG.Point#snatchDistance
          * @type Boolean
          * @name JXG.Point#snapToPoints
          * @default false

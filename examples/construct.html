@@ -62,8 +62,8 @@ l = brd.create('line',[A,B]);
 C.makeGlider(l);
 */
 
-var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}});
-var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, attractors:[A], attractorDistance:0.4, snatchDistance:0.1});
+var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
+var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, snapToPoints:true, attractorDistance:0.4});
 
 /*
 var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});

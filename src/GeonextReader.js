@@ -440,7 +440,6 @@ JXG.GeonextReader = {
             board.options.point.snapToGrid = false;
             board.options.point.snapToPoints = true;
             board.options.point.attractorDistance = 0.5;
-            board.options.point.snatchDistance = 0.1;
         }
         //board.options.grid.snapToGrid = false;
 
