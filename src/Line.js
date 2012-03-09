@@ -132,7 +132,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         var c = [], s,
             v = [1, x, y],
             vnew,
-            p1Scr, p2Scr, distP1P, distP2P, distP1P2;
+            p1c, p2c, d, pos, i;
 
         c[0] = this.stdform[0] -
                this.stdform[1]*this.board.origin.scrCoords[1]/this.board.unitX+
@@ -152,31 +152,46 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         
         // The point is too far away from the line
         // dist(v,vnew)^2 projective
-        //if (JXG.Math.Geometry.distance(v,vnew)>this.board.options.precision.hasPoint) {
-        s = (v[0]-vnew[0])*(v[0]-vnew[0])+(v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
+        s = /*(v[0]-vnew[0])*(v[0]-vnew[0])+*/ (v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
         if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
             return false;
         }
 
         if(this.visProp.straightfirst && this.visProp.straightlast) {
             return true;
-        } else { // If the line is a ray or segment we have to check if the projected point is "inside" P1 and P2.
-            p1Scr = this.point1.coords.scrCoords;
-            p2Scr = this.point2.coords.scrCoords;
-            distP1P2 = (p2Scr[1]-p1Scr[1])*(p2Scr[1]-p1Scr[1])+(p2Scr[2]-p1Scr[2])*(p2Scr[2]-p1Scr[2]);  // dist(p1,p2)^2 affine
-            distP1P = (vnew[1]-p1Scr[1])*(vnew[1]-p1Scr[1])+(vnew[2]-p1Scr[2])*(vnew[2]-p1Scr[2]);       // dist(vnew,p1)^2 affine
-            distP2P = (vnew[1]-p2Scr[1])*(vnew[1]-p2Scr[1])+(vnew[2]-p2Scr[2])*(vnew[2]-p2Scr[2]);       // dist(vnew,p2)^2 affine
-
-            if((distP1P > distP1P2) || (distP2P > distP1P2)) { // Check if P(x|y) is not between  P1 and P2
-                if(distP1P < distP2P) { // P liegt auf der Seite von P1
-                    if(!this.visProp.straightfirst) {
-                        return false;
-                    }
-                } else { // P liegt auf der Seite von P2
-                    if(!this.visProp.straightlast) {
-                        return false;
+        } else { // If the line is a ray or segment we have to check if the projected point is between P1 and P2.
+            p1c = this.point1.coords;
+            p2c = this.point2.coords;
+            vnew = (new JXG.Coords(JXG.COORDS_BY_SCREEN, vnew.slice(1), this.board)).usrCoords;
+            d = p1c.distance(JXG.COORDS_BY_USER, p2c);
+            p1c = p1c.usrCoords.slice(0);
+            p2c = p2c.usrCoords.slice(0);
+            if (d<JXG.Math.eps) {                                        // The defining points are identical
+                pos = 0.0;
+            } else { 
+                if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
+					d = 1.0/JXG.Math.eps;
+                    if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
+                        d /= JXG.Math.Geometry.distance([0,0,0], p2c);
+                        p2c = [1, p1c[1]+p2c[1]*d, p1c[2]+p2c[2]*d];
+                    } else {                                             // The first point is an ideal point
+                        d /= JXG.Math.Geometry.distance([0,0,0], p1c);
+                        p1c = [1, p2c[1]+p1c[1]*d, p2c[2]+p1c[2]*d];
                     }
                 }
+                i = 1;
+                d = p2c[i] - p1c[i];
+                if (Math.abs(d)<JXG.Math.eps) { 
+                    i = 2; 
+                    d = p2c[i] - p1c[i];
+                }
+                pos = (vnew[i] - p1c[i]) / d;
+            }        
+            if(!this.visProp.straightfirst && pos<0) {
+                return false;
+            }
+            if(!this.visProp.straightlast && pos>1.0) {
+                return false;
             }
             return true;
         }
