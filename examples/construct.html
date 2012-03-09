@@ -56,8 +56,9 @@ grid:false, showNavigation:true});
 brd.suspendUpdate();
 A = brd.create('point', [0, -1]);
 B = brd.create('point', [4, -1]);
-C = brd.create('point', [2, 2]);
-pol = brd.create('polygon', [A,B,C]);
+C = brd.create('point', [6, 2]);
+E = brd.create('point', [2, 1]);
+pol = brd.create('polygon', [A,B,C,E]);
 
 D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
 D.onPolygon = true;
