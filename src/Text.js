@@ -253,15 +253,35 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * is called. 
      */
     update: function () {
-        var anchor;
+        var anchor, sx, sy;
 
         if (this.needsUpdate) {
             if (this.relativeCoords) {
                 if (this.visProp.islabel) {
+                    switch (this.visProp.position) {
+                        case 'lft':
+                            sx = -1.2; sy = 0; break;
+                        case 'rt':
+                            sx = 1;  sy = 0; break;
+                        case 'top':
+                            sx = -0.5;  sy = 1; break;
+                        case 'bot':
+                            sx = -0.5;  sy = -1.4; break;
+                        case 'ulft':
+                            sx = -1.2; sy = 1; break;
+                        case 'urt':
+                            sx = 1; sy = 1; break;
+                        case 'llft':
+                            sx = -1; sy = -1; break;
+                        case 'lrt':
+                            sx =  1; sy = -1; break;
+                        default:
+                            sx = 1; sy = 1; 
+                    }
                     anchor = this.element.getLabelAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                        [this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                         this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
+                        [sx*this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                         sy*this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
                 } else {
                     anchor = this.element.getTextAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_USER,

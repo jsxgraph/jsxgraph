@@ -54,14 +54,20 @@ axis:true, keepaspectratio:true,
 grid:false, showNavigation:true});
 
 brd.suspendUpdate();
-A = brd.create('point', [0, -1]);
+A = brd.create('point', [0, -1], {label:{position:'bot'}});
 B = brd.create('point', [4, -1]);
+
+li = brd.create('segment', [A,B], {withLabel:true, label:{fixed:true, position:'llft'}});
+
 C = brd.create('point', [6, 2]);
-E = brd.create('point', [2, 1]);
+
+E = brd.create('point', [2, 1], {label:{fixed:false}});
+/*
 pol = brd.create('polygon', [A,B,C,E]);
 
 D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
 D.onPolygon = true;
+*/
 brd.unsuspendUpdate();
 
 

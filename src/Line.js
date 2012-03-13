@@ -465,27 +465,55 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      */
     setLabelRelativeCoords: function(relCoords) {
         if (JXG.exists(this.label.content)) { 
-            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]],this.board);
+            this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [relCoords[0],-relCoords[1]], this.board);
         }
     },
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var coords,screenCoords1,screenCoords2,
+        var coords, scr1, scr2,
+            x, y,
             relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
 
         if(!this.visProp.straightfirst && !this.visProp.straightlast) {
             this.setLabelRelativeCoords(this.labelOffsets);
-            return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X()-0.5*(this.point2.X() - this.point1.X()),this.point2.Y()-0.5*(this.point2.Y() - this.point1.Y())],this.board);
+            switch (this.visProp.label.position) {
+                case 'lft':
+                case 'llft':
+                case 'ulft':
+                    if (this.point1.X() <= this.point2.X()) {
+                        x = this.point1.X();
+                        y = this.point1.Y();
+                    } else {
+                        x = this.point2.X();
+                        y = this.point2.Y();
+                    }
+                    break;
+                case 'rt':
+                case 'lrt':
+                case 'urt':
+                    if (this.point1.X() > this.point2.X()) {
+                        x = this.point1.X();
+                        y = this.point1.Y();
+                    } else {
+                        x = this.point2.X();
+                        y = this.point2.Y();
+                    }
+                    break;
+                default:
+                    x = 0.5*(this.point1.X() + this.point2.X());
+                    y = 0.5*(this.point1.Y() + this.point2.Y());
+            }
+            return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
         } else {
-            screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-            screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-            JXG.Math.Geometry.calcStraight(this, screenCoords1, screenCoords2);
+            scr1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+            scr2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+            JXG.Math.Geometry.calcStraight(this, scr1, scr2);
 
             if (!this.visProp.straightfirst || this.type == JXG.OBJECT_TYPE_AXIS) {
-                coords = screenCoords2;
+                coords = scr2;
             } else {
-                coords = screenCoords1;
+                coords = scr1;
             }
 
             // Hack
@@ -494,46 +522,46 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 slope = this.getSlope();
                 if (coords.scrCoords[2] == 0) {
                     if (slope == Infinity) {
-                        relCoords = [xoffset,-yoffset];
+                        relCoords = [xoffset, -yoffset];
                     }
                     else if (slope >= 0) {
-                        relCoords = [xoffset,-yoffset];
+                        relCoords = [xoffset, -yoffset];
                     }
                     else {
-                        relCoords = [-xoffset,-yoffset];
+                        relCoords = [-xoffset, -yoffset];
                     }
                 }
                 else if (coords.scrCoords[2] == this.board.canvasHeight) {
                     if (slope == Infinity) {
-                        relCoords = [xoffset,yoffset];
+                        relCoords = [xoffset, yoffset];
                     }
                     else if (slope >= 0) {
-                        relCoords = [-xoffset,yoffset];
+                        relCoords = [-xoffset, yoffset];
                     }
                     else {
-                        relCoords = [xoffset,yoffset];
+                        relCoords = [xoffset, yoffset];
                     }
                 }
                 if (coords.scrCoords[1] == 0) {
                     if (slope == Infinity) {
-                        relCoords = [xoffset,yoffset]; // ??
+                        relCoords = [xoffset, yoffset]; // ??
                     }
                     else if (slope >= 0) {
-                        relCoords = [xoffset,-yoffset];
+                        relCoords = [xoffset, -yoffset];
                     }
                     else {
-                        relCoords = [xoffset,yoffset];
+                        relCoords = [xoffset, yoffset];
                     }
                 }
                 else if (coords.scrCoords[1] == this.board.canvasWidth) {
                     if (slope == Infinity) {
-                        relCoords = [-xoffset,yoffset]; // ??
+                        relCoords = [-xoffset, yoffset]; // ??
                     }
                     else if (slope >= 0) {
-                        relCoords = [-xoffset,yoffset];
+                        relCoords = [-xoffset, yoffset];
                     }
                     else {
-                        relCoords = [-xoffset,-yoffset];
+                        relCoords = [-xoffset, -yoffset];
                     }
                 }
                 this.setLabelRelativeCoords(relCoords);

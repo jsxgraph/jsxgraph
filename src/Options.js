@@ -218,7 +218,15 @@ JXG.Options = {
         withLabel: false,
 
         label: {
-            fixed: true
+            fixed: true,
+            /**
+            * Possible stirng values for the position of a label are:
+            * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
+            * @type String
+            * @default 'urt'
+            * @name JXG.GeometryElement#label.position
+            */
+            position: 'urt'
         },
         
         /**

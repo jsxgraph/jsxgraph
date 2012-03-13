@@ -847,6 +847,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         
         if (typeof this.visProp.label === 'object') {
             attr = JXG.deepCopy(this.visProp.label);
+            // Copy the remaining label options 
+            if (!JXG.exists(attr.fixed)) attr.fixed = this.board.options.elements.label.fixed;
+            if (!JXG.exists(attr.position)) attr.position = this.board.options.elements.label.position;
         } else {
             attr = {};
         }
@@ -865,7 +868,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         if (this.visProp.withlabel) {
             this.label.relativeCoords = coords;
 
-            this.label.content = JXG.createText(this.board, [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
+            this.label.content = JXG.createText(this.board, 
+                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
             this.label.content.dump = false;
             this.label.color = this.label.content.visProp.strokecolor;
 
