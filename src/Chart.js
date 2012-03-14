@@ -497,6 +497,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         if (!JXG.exists(attributes.highlightonsector)) {
             attributes.highlightonsector = false;
         }
+        
         myAtts['name'] = attributes['name'];
         myAtts['id'] = attributes['id'];
         myAtts['strokewidth'] = attributes['strokewidth'] || 1;
@@ -504,17 +505,17 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         myAtts['strokecolor'] = attributes['strokecolor'] || 'black';
         myAtts['straightfirst'] = false;
         myAtts['straightlast'] = false;
-        myAtts['fillcolor'] = attributes['fillcolor'] || '#FFFF88';
-        myAtts['fillopacity'] = attributes['fillopacity'] || 0.4;
-        myAtts['highlightfillcolor'] = attributes['highlightfillcolor'] || '#FF7400';
-        myAtts['highlightstrokecolor'] = attributes['highlightstrokecolor'] || 'black';
+        myAtts['fillcolor'] = attributes['fillColor'] || '#FFFF88';
+        myAtts['fillopacity'] = attributes['fillOpacity'] || 0.4;
+        myAtts['highlightfillcolor'] = attributes['highlightFillColor'] || '#FF7400';
+        myAtts['highlightstrokecolor'] = attributes['highlightStrokeColor'] || 'black';
         myAtts['gradient'] = attributes['gradient'] || 'none';
 
         cent = attributes['center'] || [0,0];
         xc = cent[0];
         yc = cent[1];
 
-        center = board.create('point',[xc,yc], {name:'',fixed:true, withlabel:false,visible:false});
+        center = board.create('point',[xc,yc], {name:'', fixed:true, withlabel:false, visible:false});
         start_angle = Math.PI/2 - Math.PI/numofparams;
         if(attributes['startangle'] || attributes['startangle'] === 0)
             start_angle = attributes['startangle'];
@@ -523,7 +524,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         p = [];
         line = [];
         var get_anchor =  function() {
-            var x1,x2,y1,y2,relCoords = [].concat(this.labelOffsets);
+            var x1, x2, y1, y2,
+                relCoords = this.visProp.label.offsets.slice(0);
+                
             x1 = this.point1.X();
             x2 = this.point2.X();
             y1 = this.point1.Y();
@@ -557,7 +560,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             p[i] = board.create('point',[xcoord,ycoord], {name:'',fixed:true,withlabel:false,visible:false});
             line[i] = board.create('line',[center,p[i]],
             {name:paramArray[i],
-                strokeColor:myAtts['strokecolor'], strokeWidth:myAtts['strokewidth'], strokeOpacity:1.0,
+                strokeColor:myAtts['strokecolor'], 
+                strokeWidth:myAtts['strokewidth'], 
+                strokeOpacity:1.0,
                 straightFirst:false, straightLast:false, withLabel:true,
                 highlightStrokeColor:myAtts['highlightstrokecolor']
             });
@@ -570,6 +575,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 pdata[j][i].addTransform(pdata[j][i], t);
             }
         }
+        
         polygons = new Array(len);
         for(i=0;i<len;i++) {
             myAtts['labelcolor'] = colorArray && colorArray[i%colorArray.length];
@@ -579,7 +585,8 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 withLines:true,
                 withLabel:false,
                 fillColor:myAtts['fillcolor'],
-                fillOpacity:myAtts['fillopacity']
+                fillOpacity:myAtts['fillopacity'],
+                highlightFillColor:myAtts['highlightfillcolor']
             });
             for(j=0;j<numofparams;j++) {
                 polygons[i].borders[j].setProperty('strokecolor:' + colorArray[i%colorArray.length]);
@@ -619,17 +626,21 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
             myAtts['highlightfillcolor'] = 'none';
             myAtts['strokecolor'] = attributes['strokecolor'] || 'black';
             myAtts['strokewidth'] = attributes['circlestrokewidth'] || 0.5;
+            myAtts['layer'] = 0;
+            
             // we have ncircles-1 intervals between ncircles circles
             dr = (ends[0]-starts[0])/(ncircles-1);
             for(i=0;i<ncircles;i++) {
-                pcircles[i] = board.create('point', [starts[0]+i*dr,0],{name:clabelArray[i], size:0, withLabel:true, visible:true});
+                pcircles[i] = board.create('point', [starts[0]+i*dr,0],
+                    {name:clabelArray[i], size:0, fixed:true, withLabel:true, visible:true}
+                    );
                 pcircles[i].addTransform(pcircles[i],t);
                 circles[i] = board.create('circle', [center,pcircles[i]], myAtts);
             }
 
         }
         this.rendNode = polygons[0].rendNode;
-        return {circles:circles, lines:line, points:pdata, midpoint:center,polygons:polygons}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
+        return {circles:circles, lines:line, points:pdata, midpoint:center, polygons:polygons}; //[0];  // Not enough! We need points, but this gives an error in board.setProperty.
     },
 
     /**
@@ -782,6 +793,7 @@ JXG.Legend = function(board, coords, attributes) {
     this.myAtts['straightfirst'] = false;
     this.myAtts['straightlast'] = false;
     this.myAtts['withlabel'] = true;
+    this.myAtts['fixed'] = true;
     this.style = attr['legendstyle'] || attr.style;
 
     switch(this.style) {
@@ -804,14 +816,15 @@ JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
         this.myAtts['strokecolor'] = this.color_array[i];
         this.myAtts['highlightstrokecolor'] = this.color_array[i];
         this.myAtts['name'] = this.label_array[i];
-        this.myAtts['labeloffsets'] = [10, 0];
+        this.myAtts['label'] = {offsets:[10, 0]};
+        
         this.lines[i] = board.create('line', 
                 [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],
                 [this.coords.usrCoords[1] + line_length,this.coords.usrCoords[2] - i*offy]],
                 this.myAtts
                 );
         this.lines[i].getLabelAnchor = function() {
-            this.setLabelRelativeCoords(this.labelOffsets);
+            this.setLabelRelativeCoords(this.visProp.label.offsets);
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
         }
     }
