@@ -474,10 +474,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     // documented in geometry element
     getLabelAnchor: function() {
         var c1, c2,
-            x, y, sx = 0, sy = 0,
-            //coords, relCoords, slope;
-            //xoffset = this.label.visProp.offsets[0], 
-            //yoffset = this.label.visProp.offsets[1];
+            x, y, 
+            sx = 0, sy = 0,
 
         c1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
         c2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
@@ -516,65 +514,37 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 sx = parseFloat(this.label.content.visProp.offsets[0]);
                 sy = parseFloat(this.label.content.visProp.offsets[1]);
             }
-            if (Math.abs(x)<JXG.Math.eps) x += 2*sx;
-            if (Math.abs(x-this.board.canvasWidth)<JXG.Math.eps) x -= 2.5*sx;
-            if (Math.abs(y)<JXG.Math.eps) y += 2*sy;
-            if (Math.abs(y-this.board.canvasHeight)<JXG.Math.eps) y -= 2*sy;
+            if (Math.abs(x)<JXG.Math.eps) {
+                if (this.visProp.label.position=='ulft'
+                    || this.visProp.label.position=='llft'
+                    || this.visProp.label.position=='lft') {
+                    x += 2*sx;
+                } 
+            }
+            if (Math.abs(x-this.board.canvasWidth)<JXG.Math.eps) {
+                if (this.visProp.label.position=='urt'
+                    || this.visProp.label.position=='lrt'
+                    || this.visProp.label.position=='rt') {
+                    x -= 2.5*sx;
+                } 
+            }
+            
+            if (Math.abs(y-this.board.canvasHeight)<JXG.Math.eps) {
+                if (this.visProp.label.position=='llft'
+                    || this.visProp.label.position=='lrt'
+                    || this.visProp.label.position=='bot') {
+                    y -= 3*sy;
+                } 
+            }
+            if (Math.abs(y)<JXG.Math.eps) {
+                if (this.visProp.label.position=='ulft'
+                    || this.visProp.label.position=='urt'
+                    || this.visProp.label.position=='top') {
+                    y += 2*sy;
+                } 
+            }
         } 
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
-/*
-            // Hack
-            if (this.label.content != null) {
-                relCoords = [0,0];
-                slope = this.getSlope();
-                if (coords.scrCoords[2] == 0) {
-                    if (slope == Infinity) {
-                        relCoords = [xoffset, -yoffset];
-                    }
-                    else if (slope >= 0) {
-                        relCoords = [xoffset, -yoffset];
-                    }
-                    else {
-                        relCoords = [-xoffset, -yoffset];
-                    }
-                }
-                else if (coords.scrCoords[2] == this.board.canvasHeight) {
-                    if (slope == Infinity) {
-                        relCoords = [xoffset, yoffset];
-                    }
-                    else if (slope >= 0) {
-                        relCoords = [-xoffset, yoffset];
-                    }
-                    else {
-                        relCoords = [xoffset, yoffset];
-                    }
-                }
-                if (coords.scrCoords[1] == 0) {
-                    if (slope == Infinity) {
-                        relCoords = [xoffset, yoffset]; // ??
-                    }
-                    else if (slope >= 0) {
-                        relCoords = [xoffset, -yoffset];
-                    }
-                    else {
-                        relCoords = [xoffset, yoffset];
-                    }
-                }
-                else if (coords.scrCoords[1] == this.board.canvasWidth) {
-                    if (slope == Infinity) {
-                        relCoords = [-xoffset, yoffset]; // ??
-                    }
-                    else if (slope >= 0) {
-                        relCoords = [-xoffset, yoffset];
-                    }
-                    else {
-                        relCoords = [-xoffset, -yoffset];
-                    }
-                }
-                this.setLabelRelativeCoords(relCoords);
-            }
-*/
-//            return coords;
     },
 
     // documented in geometry element
