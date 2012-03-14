@@ -48,16 +48,17 @@
 //JXG.Options.axis.visible = false;
 //JXG.Options.axis.ticks.drawLabels = true;
 //JXG.Options.axis.ticks.drawZero = true;
+//JXG.Options.axis.withLabel = true;
 
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
 brd.suspendUpdate();
-A = brd.create('point', [0, -1], {label:{position:'bot'}});
+A = brd.create('point', [0, -1]/*, {label:{fixed:false, position:'bot'}}*/);
 B = brd.create('point', [4, -1]);
 
-li = brd.create('segment', [A,B], {withLabel:true, label:{fixed:true, position:'llft'}});
+li = brd.create('line', [A,B], {straightFirst:false, withLabel:true, label:{fixed:false, position:'lft'}});
 
 C = brd.create('point', [6, 2]);
 

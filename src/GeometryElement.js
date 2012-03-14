@@ -850,6 +850,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             // Copy the remaining label options 
             if (!JXG.exists(attr.fixed)) attr.fixed = this.board.options.elements.label.fixed;
             if (!JXG.exists(attr.position)) attr.position = this.board.options.elements.label.position;
+            if (!JXG.exists(attr.offsets)) attr.offsets = this.board.options.elements.label.offsets.slice(0);
         } else {
             attr = {};
         }
@@ -859,7 +860,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         attr.anchor = this;
         
         if (!JXG.exists(coords)) {
-            coords = [10, 10];
+            coords = [0, 0];
         }
 
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
@@ -869,7 +870,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.relativeCoords = coords;
 
             this.label.content = JXG.createText(this.board, 
-                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], attr);
+                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], 
+                attr);
+
             this.label.content.dump = false;
             this.label.color = this.label.content.visProp.strokecolor;
 

@@ -226,7 +226,15 @@ JXG.Options = {
             * @default 'urt'
             * @name JXG.GeometryElement#label.position
             */
-            position: 'urt'
+            position: 'urt',
+            /**
+            *  Label offsets from label anchor 
+            *  Absolute values. The direction is determined by JXG.GeometryElement#label.position
+            * @type Array
+            * @default [10,10]
+            * @name JXG.GeometryElement#label.offsets
+             **/
+            offsets: [10, 10]
         },
         
         /**
@@ -520,6 +528,9 @@ JXG.Options = {
         },
         point2 : {                  // Default values for point2 if created by line
             needsRegularUpdate : false
+        },
+        label: {
+            position:'lrt'
         }
     },
     
@@ -804,9 +815,9 @@ JXG.Options = {
             minorTicks : 4,
             defaultDistance : 1,
             strokeOpacity : 0.3
-        },
+        }
         /* absolute label offset from anchor */
-        labelOffsets: [10,10]
+        //labelOffsets: [10,10]
     },
 
     /* special options for locus curves */
@@ -1066,6 +1077,10 @@ JXG.Options = {
             strokeColor: '#ff0000',
             fillColor: '#ff0000',
             fixed: true
+        },
+        
+        label: {
+            offsets: [0,0]
         }
     },
 
@@ -1304,7 +1319,7 @@ JXG.Validator = (function () {
         highlightStrokeColor: validateColor,
         highlightStrokeOpacity: JXG.isNumber,
         insertTicks : false,
-        labelOffsets: validateScreenCoords,
+        //: validateScreenCoords,
         lastArrow : false,
         majorHeight : validateInteger,
         maxTicksDistance : validatePositiveInteger,

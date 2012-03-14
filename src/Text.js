@@ -59,8 +59,8 @@ JXG.Text = function (board, content, coords, attributes) {
         this.element.addChild(this);
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, 
-            [this.relativeCoords.scrCoords[1]+anchor.scrCoords[1],
-             this.relativeCoords.scrCoords[2]+anchor.scrCoords[2]], this.board);
+            [parseFloat(this.visProp.offsets[0]) + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+             parseFloat(this.visProp.offsets[1]) + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
         this.isDraggable = true;
     } else {
         if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
@@ -253,35 +253,38 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * is called. 
      */
     update: function () {
-        var anchor, sx, sy;
+        var anchor, sx, sy, f;
 
         if (this.needsUpdate) {
             if (this.relativeCoords) {
                 if (this.visProp.islabel) {
+                    f = parseFloat(this.visProp.fontsize);
+                    sx = parseFloat(this.visProp.offsets[0]);
+                    sy = -parseFloat(this.visProp.offsets[1]);
                     switch (this.visProp.position) {
                         case 'lft':
-                            sx = -1.2; sy = 0; break;
+                            sx = -sx - 0.3*f; sy = 0; break;
                         case 'rt':
-                            sx = 1;  sy = 0; break;
+                            sy = 0; break;
                         case 'top':
-                            sx = -0.5;  sy = 1; break;
+                            sx = -0.3*f; break;
                         case 'bot':
-                            sx = -0.5;  sy = -1.4; break;
+                            sx = -0.3*f;  sy = -sy + 0.8*f; break;
                         case 'ulft':
-                            sx = -1.2; sy = 1; break;
+                            sx = -sx - 0.3*f; break;
                         case 'urt':
-                            sx = 1; sy = 1; break;
+                            break;
                         case 'llft':
-                            sx = -1; sy = -1; break;
+                            sx = -sx -0.3*f; sy = -sy + 0.8*f; break;
                         case 'lrt':
-                            sx =  1; sy = -1; break;
+                            sy = -sy + 0.8*f; break;
                         default:
-                            sx = 1; sy = 1; 
+                            
                     }
                     anchor = this.element.getLabelAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                        [sx*this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                         sy*this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
+                        [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                         sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
                 } else {
                     anchor = this.element.getTextAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_USER,

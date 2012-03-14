@@ -83,7 +83,7 @@ JXG.Polygon = function (board, vertices, attributes) {
     }
 
     // create label
-    this.createLabel([0, 0]);
+    this.createLabel();
 
     /* Register polygon at board */
     this.id = this.board.setId(this, 'Py');

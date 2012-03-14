@@ -92,11 +92,13 @@ JXG.Line = function (board, p1, p2, attributes) {
      * @default JXG.Options.line#labelOffsets
     * @private
     */
+    /*
     this.labelOffsets = [].concat(attributes.labeloffsets);
     //make sure we have absolute values
     this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
     this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
-
+    */
+    
     /* Register line at board */
     this.id = this.board.setId(this, 'L');
     this.board.renderer.drawLine(this);
@@ -471,12 +473,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var coords, scr1, scr2,
-            x, y,
-            relCoords, slope, xoffset = this.labelOffsets[0], yoffset = this.labelOffsets[1];
+        var coords, uc1, uc2,
+            x, y, sx = 0, sy = 0,
+            relCoords, slope;
+            //xoffset = this.label.visProp.offsets[0], 
+            //yoffset = this.label.visProp.offsets[1];
 
         if(!this.visProp.straightfirst && !this.visProp.straightlast) {
-            this.setLabelRelativeCoords(this.labelOffsets);
+            //this.setLabelRelativeCoords(this.labelOffsets);
             switch (this.visProp.label.position) {
                 case 'lft':
                 case 'llft':
@@ -506,16 +510,54 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             }
             return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
         } else {
-            scr1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-            scr2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-            JXG.Math.Geometry.calcStraight(this, scr1, scr2);
-
+            uc1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+            uc2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+            JXG.Math.Geometry.calcStraight(this, uc1, uc2);
+/*
             if (!this.visProp.straightfirst || this.type == JXG.OBJECT_TYPE_AXIS) {
-                coords = scr2;
+                coords = uc2;
             } else {
-                coords = scr1;
+                coords = uc1;
             }
+*/
 
+            if (JXG.exists(this.label.content)) {
+                sx = parseFloat(this.label.content.visProp.offsets[0]);
+                sy = parseFloat(this.label.content.visProp.offsets[1]);
+            }
+            switch (this.visProp.label.position) {
+                case 'lft':
+                case 'llft':
+                case 'ulft':
+                    if (uc1.scrCoords[1] <= uc2.scrCoords[1]) {
+                        x = uc1.scrCoords[1];
+                        y = uc1.scrCoords[2];
+                    } else {
+                        x = uc2.scrCoords[1];
+                        y = uc2.scrCoords[2];
+                    }
+                    break;
+                case 'rt':
+                case 'lrt':
+                case 'urt':
+                    if (uc1.scrCoords[1] > uc2.scrCoords[1]) {
+                        x = uc1.scrCoords[1];
+                        y = uc1.scrCoords[2];
+                    } else {
+                        x = uc2.scrCoords[1];
+                        y = uc2.scrCoords[2];
+                    }
+                    break;
+                default:
+                    x = 0.5*(uc1.scrCoords[1] + uc2.scrCoords[1]);
+                    y = 0.5*(uc1.scrCoords[2] + uc2.scrCoords[2]);
+            }
+            if (x==0) x += 2*sx;
+            if (x==this.board.canvasWidth) x -= 2.5*sx;
+            if (y==0) y += 2*sy;
+            if (y==this.board.canvasHeight) y -= 2*sy;
+            return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+/*
             // Hack
             if (this.label.content != null) {
                 relCoords = [0,0];
@@ -566,8 +608,9 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 }
                 this.setLabelRelativeCoords(relCoords);
             }
-            return coords;
-        }
+*/
+//            return coords;
+        }        
     },
 
     // documented in geometry element
