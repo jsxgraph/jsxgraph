@@ -473,90 +473,55 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var coords, uc1, uc2,
+        var c1, c2,
             x, y, sx = 0, sy = 0,
-            relCoords, slope;
+            //coords, relCoords, slope;
             //xoffset = this.label.visProp.offsets[0], 
             //yoffset = this.label.visProp.offsets[1];
 
-        if(!this.visProp.straightfirst && !this.visProp.straightlast) {
-            //this.setLabelRelativeCoords(this.labelOffsets);
-            switch (this.visProp.label.position) {
-                case 'lft':
-                case 'llft':
-                case 'ulft':
-                    if (this.point1.X() <= this.point2.X()) {
-                        x = this.point1.X();
-                        y = this.point1.Y();
-                    } else {
-                        x = this.point2.X();
-                        y = this.point2.Y();
-                    }
-                    break;
-                case 'rt':
-                case 'lrt':
-                case 'urt':
-                    if (this.point1.X() > this.point2.X()) {
-                        x = this.point1.X();
-                        y = this.point1.Y();
-                    } else {
-                        x = this.point2.X();
-                        y = this.point2.Y();
-                    }
-                    break;
-                default:
-                    x = 0.5*(this.point1.X() + this.point2.X());
-                    y = 0.5*(this.point1.Y() + this.point2.Y());
-            }
-            return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
-        } else {
-            uc1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-            uc2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
-            JXG.Math.Geometry.calcStraight(this, uc1, uc2);
-/*
-            if (!this.visProp.straightfirst || this.type == JXG.OBJECT_TYPE_AXIS) {
-                coords = uc2;
-            } else {
-                coords = uc1;
-            }
-*/
+        c1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
+        c2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+        
+        if (this.visProp.straightfirst || this.visProp.straightlast) {
+            JXG.Math.Geometry.calcStraight(this, c1, c2);
+        } 
+        c1 = c1.scrCoords;
+        c2 = c2.scrCoords;
+        switch (this.visProp.label.position) {
+            case 'lft':
+            case 'llft':
+            case 'ulft':
+                if (c1[1] <= c2[1]) {
+                    x = c1[1]; y = c1[2];
+                } else {
+                    x = c2[1]; y = c2[2];
+                }
+                break;
+            case 'rt':
+            case 'lrt':
+            case 'urt':
+                if (c1[1] > c2[1]) {
+                    x = c1[1]; y = c1[2];
+                } else {
+                    x = c2[1]; y = c2[2];
+                }
+                break;
+            default:
+                x = 0.5*(c1[1] + c2[1]);
+                y = 0.5*(c1[2] + c2[2]);
+        }
 
-            if (JXG.exists(this.label.content)) {
+        if (this.visProp.straightfirst || this.visProp.straightlast) {
+            if (JXG.exists(this.label.content)) {  // Does not exist during createLabel
                 sx = parseFloat(this.label.content.visProp.offsets[0]);
                 sy = parseFloat(this.label.content.visProp.offsets[1]);
             }
-            switch (this.visProp.label.position) {
-                case 'lft':
-                case 'llft':
-                case 'ulft':
-                    if (uc1.scrCoords[1] <= uc2.scrCoords[1]) {
-                        x = uc1.scrCoords[1];
-                        y = uc1.scrCoords[2];
-                    } else {
-                        x = uc2.scrCoords[1];
-                        y = uc2.scrCoords[2];
-                    }
-                    break;
-                case 'rt':
-                case 'lrt':
-                case 'urt':
-                    if (uc1.scrCoords[1] > uc2.scrCoords[1]) {
-                        x = uc1.scrCoords[1];
-                        y = uc1.scrCoords[2];
-                    } else {
-                        x = uc2.scrCoords[1];
-                        y = uc2.scrCoords[2];
-                    }
-                    break;
-                default:
-                    x = 0.5*(uc1.scrCoords[1] + uc2.scrCoords[1]);
-                    y = 0.5*(uc1.scrCoords[2] + uc2.scrCoords[2]);
-            }
-            if (x==0) x += 2*sx;
-            if (x==this.board.canvasWidth) x -= 2.5*sx;
-            if (y==0) y += 2*sy;
-            if (y==this.board.canvasHeight) y -= 2*sy;
-            return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            if (Math.abs(x)<JXG.Math.eps) x += 2*sx;
+            if (Math.abs(x-this.board.canvasWidth)<JXG.Math.eps) x -= 2.5*sx;
+            if (Math.abs(y)<JXG.Math.eps) y += 2*sy;
+            if (Math.abs(y-this.board.canvasHeight)<JXG.Math.eps) y -= 2*sy;
+        } 
+        return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
 /*
             // Hack
             if (this.label.content != null) {
@@ -610,7 +575,6 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             }
 */
 //            return coords;
-        }        
     },
 
     // documented in geometry element
