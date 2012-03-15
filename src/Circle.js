@@ -725,7 +725,8 @@ JXG.createCircle = function (board, parents, attributes) {
             el.parents.push(parents[i].id);
         }
     }
-
+    
+    el.elType = 'circle';
     return el;
 };
 
