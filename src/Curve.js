@@ -68,6 +68,7 @@ JXG.Curve = function (board, parents, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
+    this.elType = 'curve';
     this.createLabel();
 
     if (typeof this.xterm=='string') {
@@ -634,8 +635,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     // documented in geometry element
     getLabelAnchor: function() {
         var c, x, y, 
-            ax = 0.05*this.board.canvasWidth;
-            ay = 0.05*this.board.canvasHeight;
+            ax = 0.05*this.board.canvasWidth,
+            ay = 0.05*this.board.canvasHeight,
             bx = 0.95*this.board.canvasWidth, 
             by = 0.95*this.board.canvasHeight;
         

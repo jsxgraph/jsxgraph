@@ -152,6 +152,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     this.board.finalizeAdding(this);
 
     this.createGradient();
+    this.elType = 'circle';
     this.createLabel();
 
     this.center.addChild(this);
@@ -478,16 +479,6 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
                 x = c[1] - Math.sqrt(0.5)*r; y = c[2] + Math.sqrt(0.5)*r; break;
         }
         return  new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
-/*        
-        if(this.method == 'twoPoints') {
-            var deltaX = this.center.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
-            var deltaY = this.center.coords.usrCoords[2]-this.point2.coords.usrCoords[2];
-            return new JXG.Coords(JXG.COORDS_BY_USER, [this.center.coords.usrCoords[1]+deltaX, this.center.coords.usrCoords[2]+deltaY], this.board);
-        }
-        else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
-            return new JXG.Coords(JXG.COORDS_BY_USER, [this.center.coords.usrCoords[1]-this.Radius(),this.center.coords.usrCoords[2]], this.board);
-        }
-*/
     },
 
 
@@ -734,7 +725,6 @@ JXG.createCircle = function (board, parents, attributes) {
             el.parents.push(parents[i].id);
         }
     }
-    el.elType = 'circle';
 
     return el;
 };

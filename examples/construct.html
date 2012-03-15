@@ -48,22 +48,24 @@
 //JXG.Options.axis.visible = false;
 //JXG.Options.axis.ticks.drawLabels = true;
 //JXG.Options.axis.ticks.drawZero = true;
-//JXG.Options.axis.withLabel = true;
+JXG.Options.axis.withLabel = true;
 
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
 brd.suspendUpdate();
-A = brd.create('point', [0, -1]/*, {label:{fixed:false, position:'bot'}}*/);
+
+A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 B = brd.create('point', [4, -1]);
 
-li = brd.create('circle', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false}});
+li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false, fontSize:30} });
 
 C = brd.create('point', [6, 2]);
 
 E = brd.create('point', [2, 1], {label:{fixed:false}});
-f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'rt'}});
+
+f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
 /*
 pol = brd.create('polygon', [A,B,C,E]);
 

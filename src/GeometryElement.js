@@ -839,35 +839,26 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
            
     /**
      * Creates a label element for this geometry element.
-     * @param {Array} [coords=[10,10]] Relative coordinates.
      * @see #addLabelToElement
      */
-    createLabel: function (coords) {
-        var attr;
+    createLabel: function () {
+        var attr = {};
         
-        if (typeof this.visProp.label === 'object') {
-            attr = JXG.deepCopy(this.visProp.label);
-            // Copy the remaining label options 
-            if (!JXG.exists(attr.fixed)) attr.fixed = this.board.options.elements.label.fixed;
-            if (!JXG.exists(attr.position)) attr.position = this.board.options.elements.label.position;
-            if (!JXG.exists(attr.offsets)) attr.offsets = this.board.options.elements.label.offsets.slice(0);
-        } else {
-            attr = {};
+        if (this.elType!='') {
+            attr =  JXG.deepCopy(this.board.options[this.elType].label, this.visProp.label);
         }
+        attr = JXG.deepCopy(this.board.options.label, attr);
+        
         attr.id = this.id + 'Label';
         attr.isLabel = true;
         attr.visible = this.visProp.visible;
         attr.anchor = this;
         
-        if (!JXG.exists(coords)) {
-            coords = [0, 0];
-        }
-
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
 
         if (this.visProp.withlabel) {
-            this.label.relativeCoords = coords;
+            this.label.relativeCoords = [0, 0];
 
             this.label.content = JXG.createText(this.board, 
                 [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], 

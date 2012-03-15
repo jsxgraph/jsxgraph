@@ -217,26 +217,6 @@ JXG.Options = {
          */
         withLabel: false,
 
-        label: {
-            fixed: true,
-            /**
-            * Possible stirng values for the position of a label are:
-            * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
-            * @type String
-            * @default 'urt'
-            * @name JXG.GeometryElement#label.position
-            */
-            position: 'urt',
-            /**
-            *  Label offsets from label anchor 
-            *  Absolute values. The direction is determined by JXG.GeometryElement#label.position
-            * @type Array
-            * @default [10,10]
-            * @name JXG.GeometryElement#label.offsets
-             **/
-            offsets: [10, 10]
-        },
-        
         /**
          * If false the element won't be visible on the board, otherwise it is shown.
          * @type boolean
@@ -530,7 +510,7 @@ JXG.Options = {
             needsRegularUpdate : false
         },
         label: {
-            position:'lrt'
+            position:'lft'
         }
     },
     
@@ -578,8 +558,7 @@ JXG.Options = {
             name: ''
         },
         label: {
-            fixed: true,
-            position: 'top'
+            position: 'ulft'
         }
     },
 
@@ -676,8 +655,12 @@ JXG.Options = {
         RDPsmoothing : false,     // Apply the Ramer-Douglas-Peuker algorithm
         numberPointsHigh : 1600,  // Number of points on curves after mouseUp
         numberPointsLow : 400,    // Number of points on curves after mousemove
-        doAdvancedPlot : true    // Use the algorithm by Gillam and Hohenwarter
+        doAdvancedPlot : true,    // Use the algorithm by Gillam and Hohenwarter
                                  // It is much slower, but the result is better
+        
+        label: {
+            position: 'lft'
+        }
 
         /**#@-*/
     },
@@ -769,6 +752,32 @@ JXG.Options = {
     },
 
     /* special legend options */
+    label: {
+        strokeColor: 'black',
+        
+        fixed: true,
+        /**
+         * Possible stirng values for the position of a label for
+         * label anchor points are:
+         * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
+         * This is relevant for non-points: line, circle, curve.
+         * @type String
+         * @default 'urt'
+         * @name JXG.GeometryElement#label.position
+         */
+        position: 'urt',
+        
+        /**
+        *  Label offsets from label anchor 
+        *  The label anchor is determined by JXG.GeometryElement#label.position
+        * @type Array
+        * @default [10,10]
+        * @name JXG.GeometryElement#label.offsets
+        **/
+        offsets: [10, 10]
+    },
+        
+    /* special legend options */
     legend: {
         /**
          * @visprop
@@ -819,9 +828,12 @@ JXG.Options = {
             minorTicks : 4,
             defaultDistance : 1,
             strokeOpacity : 0.3
+        },
+        
+        label: {
+            position:'llft'
         }
-        /* absolute label offset from anchor */
-        //labelOffsets: [10,10]
+
     },
 
     /* special options for locus curves */

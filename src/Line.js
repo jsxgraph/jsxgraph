@@ -86,24 +86,12 @@ JXG.Line = function (board, p1, p2, attributes) {
     */
     this.parentPolygon = null;
 
-    /**
-    * Label offsets from label anchor
-    * @type Array
-     * @default JXG.Options.line#labelOffsets
-    * @private
-    */
-    /*
-    this.labelOffsets = [].concat(attributes.labeloffsets);
-    //make sure we have absolute values
-    this.labelOffsets[0] = Math.abs(this.labelOffsets[0]);
-    this.labelOffsets[1] = Math.abs(this.labelOffsets[1]);
-    */
-    
     /* Register line at board */
     this.id = this.board.setId(this, 'L');
     this.board.renderer.drawLine(this);
     this.board.finalizeAdding(this);
 
+    this.elType = 'line';
     // create Label
     this.createLabel();
 
@@ -111,7 +99,6 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.point1.addChild(this);
     this.point2.addChild(this);
 
-    this.elType = 'line';
 
     this.updateStdform(); // This is needed in the following situation: 
                           // * the line is defined by three coordinates
@@ -485,7 +472,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } 
         c1 = c1.scrCoords;
         c2 = c2.scrCoords;
-        switch (this.visProp.label.position) {
+        switch (this.label.content.visProp.position/*this.visProp.label.position*/) {
             case 'lft':
             case 'llft':
             case 'ulft':
@@ -889,6 +876,7 @@ JXG.createLine = function(board, parents, attributes) {
                             "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]], [a,b,c]");
         
         attr = JXG.copyAttributes(attributes, board.options, 'line');
+
         el = new JXG.Line(board, p1, p2, attr);
         if (constrained) {
         	el.constrained = true;
