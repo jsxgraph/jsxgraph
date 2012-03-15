@@ -576,6 +576,10 @@ JXG.Options = {
             withLabel: false,
             fixed: false,
             name: ''
+        },
+        label: {
+            fixed: true,
+            position: 'top'
         }
     },
 

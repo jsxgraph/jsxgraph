@@ -633,9 +633,33 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, this.board.canvasHeight*0.5], this.board);
-        c = JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2],0.0,this,this.board)[0];
-        return c;
+        var c, x, y, 
+            ax = 0.05*this.board.canvasWidth;
+            ay = 0.05*this.board.canvasHeight;
+            bx = 0.95*this.board.canvasWidth, 
+            by = 0.95*this.board.canvasHeight;
+        
+        switch (this.visProp.label.position) {
+            case 'ulft':
+                x = ax; y = ay; break;
+            case 'llft':
+                x = ax; y = by; break;
+            case 'rt':
+                x = bx; y = 0.5*by; break;
+            case 'lrt':
+                x = bx; y = by; break;
+            case 'urt':
+                x = bx; y = ay; break;
+            case 'top':
+                x = 0.5*bx; y = ay; break;
+            case 'bot':
+                x = 0.5*bx; y = by; break;
+            case 'lft':
+            default:
+                x = ax; y = 0.5*by; break;
+        }
+        c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+        return JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1],c.usrCoords[2], 0.0, this, this.board)[0];
     },
 
     // documented in geometry element

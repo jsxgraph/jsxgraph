@@ -454,6 +454,31 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function () {
+        var r = this.Radius(),
+            c = this.center.coords.usrCoords,
+            x, y;
+
+        switch (this.visProp.label.position) {
+            case 'lft':
+                x = c[1] - r; y = c[2]; break;
+            case 'llft':
+                x = c[1] - Math.sqrt(0.5)*r; y = c[2] - Math.sqrt(0.5)*r; break;
+            case 'rt':
+                x = c[1] + r; y = c[2]; break;
+            case 'lrt':
+                x = c[1] + Math.sqrt(0.5)*r; y = c[2] - Math.sqrt(0.5)*r; break;
+            case 'urt':
+                x = c[1] + Math.sqrt(0.5)*r; y = c[2] + Math.sqrt(0.5)*r; break;
+            case 'top':
+                x = c[1]; y = c[2] + r; break;
+            case 'bot':
+                x = c[1]; y = c[2] - r; break;
+            case 'ulft':
+            default:
+                x = c[1] - Math.sqrt(0.5)*r; y = c[2] + Math.sqrt(0.5)*r; break;
+        }
+        return  new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+/*        
         if(this.method == 'twoPoints') {
             var deltaX = this.center.coords.usrCoords[1]-this.point2.coords.usrCoords[1];
             var deltaY = this.center.coords.usrCoords[2]-this.point2.coords.usrCoords[2];
@@ -462,6 +487,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         else if(this.method == 'pointLine' || this.method == 'pointCircle' || this.method == 'pointRadius') {
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.center.coords.usrCoords[1]-this.Radius(),this.center.coords.usrCoords[2]], this.board);
         }
+*/
     },
 
 
@@ -668,7 +694,7 @@ JXG.createCircle = function (board, parents, attributes) {
     }
     
     attr = JXG.copyAttributes(attributes, board.options, 'circle');
-    
+   
     if( parents.length==2 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) ) {
         // Point/Point
         el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);

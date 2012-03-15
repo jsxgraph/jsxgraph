@@ -58,11 +58,12 @@ brd.suspendUpdate();
 A = brd.create('point', [0, -1]/*, {label:{fixed:false, position:'bot'}}*/);
 B = brd.create('point', [4, -1]);
 
-li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false, position:'urt'}});
+li = brd.create('circle', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false}});
 
 C = brd.create('point', [6, 2]);
 
 E = brd.create('point', [2, 1], {label:{fixed:false}});
+f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'rt'}});
 /*
 pol = brd.create('polygon', [A,B,C,E]);
 
