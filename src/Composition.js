@@ -902,7 +902,10 @@ JXG.createParallel = function(board, parents, attributes) {
     */
 
     pl.elType = 'parallel';
-    pl.parents = pp;
+    pl.parents = [parents[0].id, parents[1].id];
+    if (parents.length === 3) {
+        pl.parents.push(parents[2].id);
+    }
 
     /**
      * Helper point used to create the parallel line. This point lies on the line at infinity, hence it's not visible,

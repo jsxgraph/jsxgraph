@@ -239,6 +239,7 @@ JXG.Dump = {
             if (elements[i].attributes.name.length > 0) {
                 script.push('// ' + elements[i].attributes.name);
             }
+
             script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJSAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
             script.push('');
         }
