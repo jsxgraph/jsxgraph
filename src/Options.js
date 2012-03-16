@@ -510,7 +510,8 @@ JXG.Options = {
             needsRegularUpdate : false
         },
         label: {
-            position:'lft'
+            position: 'lft',
+            offsets: [10,-20]
         }
     },
     

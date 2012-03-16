@@ -844,11 +844,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     createLabel: function () {
         var attr = {};
         
-        if (this.elType!='') {
-            attr =  JXG.deepCopy(this.board.options[this.elType].label, this.visProp.label);
-        }
-        attr = JXG.deepCopy(this.board.options.label, attr);
-        
+        attr =  JXG.deepCopy(this.visProp.label, null);
         attr.id = this.id + 'Label';
         attr.isLabel = true;
         attr.visible = this.visProp.visible;

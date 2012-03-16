@@ -562,6 +562,24 @@ JXG.extend(JXG, /** @lends JXG */ {
             this.extend(a, o, null, true);
         }
         
+        /**
+         * Special treatment of labels
+         */
+        o = options;                   
+        isAvail = true;
+        for (i = 2; i < len; i++) {
+            if (JXG.exists(o[arguments[i]])) {
+                o = o[arguments[i]];
+            } else {
+                isAvail = false;
+                break;
+            }
+        }
+        if (isAvail) {
+            a.label =  JXG.deepCopy(o.label, a.label);
+        }
+        a.label = JXG.deepCopy(options.label, a.label);
+        
         return a;
     },
     
