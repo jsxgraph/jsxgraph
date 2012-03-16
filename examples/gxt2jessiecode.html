@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+<!--<html>-->
+<head>
+   <title>JSXGraph: gxt2jessiecode</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript"  src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript"  src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript"  src="../src/Dump.js"></script>
+   <script type="text/javascript"  src="../src/GeonextReader.js"></script>
+</head>
+<body id="body">
+<form>
+    <textarea id="input" cols="130" rows="2"></textarea> <br />
+    <input type='button' value='Read compressed Geonext file' onclick="loadFile('Geonext')" /> 
+<div id="box" class='jxgbox' style="width:1000px; height:600px;"></div>
+    <input type='button' value='Jessiecode output' onclick="dump();" />   
+    <input type='button' value='Show XML' onclick='board.showXML()'>      <br />
+    <h1>Jessiecode:</h1>
+    <textarea id="output" cols="130" rows="50"></textarea>
+</form>
+
+<script>
+   var board;
+   
+    
+   function loadFile(format) {
+        var value = document.getElementById('input').value;
+        document.getElementById('box').innerHTML = '';
+        //document.getElementById('debug').innerHTML = "<b>Debug:</b><p>";
+    
+        if(typeof board != 'undefined') {
+            JXG.JSXGraph.freeBoard(board);
+        }
+        board = JXG.JSXGraph.loadBoardFromString('box', value, format);
+   }
+
+    function dump() {
+        document.getElementById('output').innerHTML = JXG.Dump.toJessie(board);
+    }
+</script>
+
+</body>
+</html>
