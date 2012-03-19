@@ -692,6 +692,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @param {String|Object} glideObject The Object the point will be bound to.
      */
     makeGlider: function (glideObject) {
+        //var c = this.coords.usrCoords.slice(1);
         this.slideObject = JXG.getRef(this.board, glideObject);
         this.type = JXG.OBJECT_TYPE_GLIDER;
         this.elType = 'glider';
@@ -704,6 +705,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         };
 
         this.updateGlider(); // Determine the initial value of this.position
+        //this.moveTo(c);
         return this;
     },
 
@@ -738,11 +740,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         for (anc in this.ancestors) {
-            JXG.removeElementFromArray(this.ancestors[anc].descendants, this);
+            delete this.ancestors[anc].descendants[this.id];
+            delete this.ancestors[anc].childElements[this.id];
         }
 
         this.ancestors = [];
         this.slideObject = null;
+        this.elType = 'point';
         this.type = JXG.OBJECT_TYPE_POINT;
     },
 
