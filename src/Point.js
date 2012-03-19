@@ -706,6 +706,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         this.updateGlider(); // Determine the initial value of this.position
         //this.moveTo(c);
+        this.prepareUpdate().update().updateRenderer();
         return this;
     },
 
