@@ -620,7 +620,7 @@ JXG.GeonextReader = {
                         //if ((board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.first].type == JXG.OBJECT_TYPE_ARROW)
                         // && (board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_LINE || board.objects[gxtEl.last].type == JXG.OBJECT_TYPE_ARROW)) {
                         if ((JXG.getReference(board, gxtEl.first).elementClass == JXG.OBJECT_CLASS_LINE)
-                         && (JXG.getReference(board, gxtEl.last).elementClass == JXG.OBJECT_CLASS_LINE)) {
+                            && (JXG.getReference(board, gxtEl.last).elementClass == JXG.OBJECT_CLASS_LINE)) {
                             /*
                             inter = new JXG.Intersection(board, gxtEl.id, board.objects[gxtEl.first],
                                     board.objects[gxtEl.last], gxtEl.outFirst.id, '',
@@ -737,14 +737,19 @@ JXG.GeonextReader = {
 
                             // NORMAL
                             case "210130":
-                                board.create('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                //board.create('normal', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                board.create('perpendicularsegment', [gxtEl.defEl[0], gxtEl.defEl[1]], gxtEl.out);
                                 break;
 
                             // PARALLEL
                             case "210140":
                                 p =  board.create('parallelpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], 
                                         {withLabel:false, visible:false, name:'', fixed:true});
-                                el = board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                
+                                // GEONExT uses its own parallel construction to make the order
+                                // of intersection points compatible.
+                                // el = board.create('parallel', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                el = board.create('line', [gxtEl.defEl[0], p], gxtEl.out);  
                                 el.parallelpoint = p;
                                 break;
 
@@ -815,7 +820,7 @@ JXG.GeonextReader = {
                                             }], gxtEl.out);
                                         //p = JXG.getReference(board,gxtEl.defEl[2]);
                                     } else if (i==2) {
-                                        el = board.create('segment', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                                        el = board.create('segment', [gxtEl.defEl[0], gxtEl.defEl[1]], gxtEl.out);
                                     } else if (i==3) {
                                         el = board.create('segment', [gxtEl.defEl[1], p], gxtEl.out);
                                     }

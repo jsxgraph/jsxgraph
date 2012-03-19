@@ -777,7 +777,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
             return;
         }
-        if (rgba !== false) {
+        if (JXG.exists(rgba) && rgba !== false) {
             if (rgba.length!=9) {          // RGB, not RGBA
                 c = rgba;
                 oo = o;
@@ -813,7 +813,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             return;
         }
 
-        if (rgba !== false) {
+        if (JXG.exists(rgba) && rgba !== false) {
             if (rgba.length!=9) {          // RGB, not RGBA
                 c = rgba;
                 oo = o;
