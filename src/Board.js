@@ -1217,28 +1217,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-                        // For the UNDO/REDO of object moves
+						var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
-                        var Xstart = [], Ystart = [];
+						// For the UNDO/REDO of object moves
+						xy = this.initXYstart(obj);
+						for (var i=0; i<xy.length; i++) {
+							targets[0].Xstart.push(xy[i][0]);
+							targets[0].Ystart.push(xy[i][1]);
+						}
 
-                        xy = this.initXYstart(obj);
-                        for (var i=0; i<xy.length; i++) {
-                            Xstart.push(xy[i][0]);
-                            Ystart.push(xy[i][1]);
-                        }
+						this.touches.push({ obj: obj, targets: targets });
 
-                        this.touches.push({
-                            obj: obj,
-                            targets: [{
-                                num: i,
-                                X: evt.targetTouches[i].screenX,
-                                Y: evt.targetTouches[i].screenY,
-                                Xprev: NaN,
-                                Yprev: NaN,
-                                Xstart: Xstart,
-                                Ystart: Ystart
-                            }]
-                        });
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
                         found = false;
                         // first check if this line is already capture in this.touches
@@ -1248,23 +1237,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
 
-                                    var Xstart = [], Ystart = [];
+									var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] };
 
-                                    xy = this.initXYstart(obj);
+									// For the UNDO/REDO of object moves
+									xy = this.initXYstart(obj);
                                     for (var i=0; i<xy.length; i++) {
-                                        Xstart.push(xy[i][0]);
-                                        Ystart.push(xy[i][1]);
+                                        target.Xstart.push(xy[i][0]);
+                                        target.Ystart.push(xy[i][1]);
                                     }
 
-                                    this.touches[j].targets.push({
-                                        num: i,
-                                        X: evt.targetTouches[i].screenX,
-                                        Y: evt.targetTouches[i].screenY,
-                                        Xprev: NaN,
-                                        Yprev: NaN,
-                                        Xstart: Xstart,
-                                        Ystart: Ystart
-                                    });
+                                    this.touches[j].targets.push(target);
                                 }
 
                                 evt.targetTouches[i].jxg_isused = true;
@@ -1276,27 +1258,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // the touches control object.
                         if (!found) {
 
-                            var Xstart = [], Ystart = [];
+							var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
+							// For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (var i=0; i<xy.length; i++) {
-                                Xstart.push(xy[i][0]);
-                                Ystart.push(xy[i][1]);
+                                targets[0].Xstart.push(xy[i][0]);
+                                targets[0].Ystart.push(xy[i][1]);
                             }
 
-                            this.touches.push({
-                                obj: obj,
-                                targets: [{
-                                    num: i,
-                                    X: evt.targetTouches[i].screenX,
-                                    Y: evt.targetTouches[i].screenY,
-                                    Xprev: NaN,
-                                    Yprev: NaN,
-                                    Xstart: Xstart,
-                                    Ystart: Ystart
-                                }]
-                            });
+                            this.touches.push({ obj: obj, targets: targets });
                         }
+
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         found = false;
                         // first check if this line is already capture in this.touches
@@ -1313,27 +1286,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
+							var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
-                            var Xstart = [], Ystart = [];
-
+							// For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (var i=0; i<xy.length; i++) {
-                                Xstart.push(xy[i][0]);
-                                Ystart.push(xy[i][1]);
+                                targets[0].Xstart.push(xy[i][0]);
+                                targets[0].Ystart.push(xy[i][1]);
                             }
 
-                            this.touches.push({
-                                obj: obj,
-                                targets: [{
-                                    num: i,
-                                    X: evt.targetTouches[i].screenX,
-                                    Y: evt.targetTouches[i].screenY,
-                                    Xprev: NaN,
-                                    Yprev: NaN,
-                                    Xstart: Xstart,
-                                    Ystart: Ystart
-                                }]
-                            });
+                            this.touches.push({ obj: obj, targets: targets });
                         }
                     }
                 }
