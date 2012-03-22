@@ -911,16 +911,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} The starting point in usr coords
      */
    initXYstart: function (obj) {
-        var xy;
+        var xy = [];
 
         if (obj.type == JXG.OBJECT_TYPE_LINE) {
-            xy = obj.point1.coords.usrCoords.slice(1);
+            xy.push(obj.point1.coords.usrCoords.slice(1));
+            xy.push(obj.point2.coords.usrCoords.slice(1));
         } else if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-            xy = obj.midpoint.coords.usrCoords.slice(1);
+            xy.push(obj.midpoint.coords.usrCoords.slice(1));
         } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
-            xy = [obj.position, obj.position];
+            xy.push([obj.position, obj.position]);
         } else {
-            xy = obj.coords.usrCoords.slice(1);
+            xy.push(obj.coords.usrCoords.slice(1));
         }
 
         return xy;
@@ -1216,8 +1217,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-                        // TODO: this might need some review bei heiko (for the undo/redo stuff i guess)
+                        // For the UNDO/REDO of object moves
+
+                        var Xstart = [], Ystart = [];
+
                         xy = this.initXYstart(obj);
+                        for (var i=0; i<xy.length; i++) {
+                            Xstart.push(xy[i][0]);
+                            Ystart.push(xy[i][1]);
+                        }
+
                         this.touches.push({
                             obj: obj,
                             targets: [{
@@ -1226,8 +1235,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Y: evt.targetTouches[i].screenY,
                                 Xprev: NaN,
                                 Yprev: NaN,
-                                Xstart: xy[0],
-                                Ystart: xy[1]
+                                Xstart: Xstart,
+                                Ystart: Ystart
                             }]
                         });
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
@@ -1238,15 +1247,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 found = true;
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
+
+                                    var Xstart = [], Ystart = [];
+
                                     xy = this.initXYstart(obj);
+                                    for (var i=0; i<xy.length; i++) {
+                                        Xstart.push(xy[i][0]);
+                                        Ystart.push(xy[i][1]);
+                                    }
+
                                     this.touches[j].targets.push({
                                         num: i,
                                         X: evt.targetTouches[i].screenX,
                                         Y: evt.targetTouches[i].screenY,
                                         Xprev: NaN,
                                         Yprev: NaN,
-                                        Xstart: xy[0],
-                                        Ystart: xy[1]
+                                        Xstart: Xstart,
+                                        Ystart: Ystart
                                     });
                                 }
 
@@ -1258,7 +1275,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
+
+                            var Xstart = [], Ystart = [];
+
                             xy = this.initXYstart(obj);
+                            for (var i=0; i<xy.length; i++) {
+                                Xstart.push(xy[i][0]);
+                                Ystart.push(xy[i][1]);
+                            }
 
                             this.touches.push({
                                 obj: obj,
@@ -1268,8 +1292,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                     Y: evt.targetTouches[i].screenY,
                                     Xprev: NaN,
                                     Yprev: NaN,
-                                    Xstart: xy[0],
-                                    Ystart: xy[1]
+                                    Xstart: Xstart,
+                                    Ystart: Ystart
                                 }]
                             });
                         }
@@ -1289,7 +1313,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
+
+                            var Xstart = [], Ystart = [];
+
                             xy = this.initXYstart(obj);
+                            for (var i=0; i<xy.length; i++) {
+                                Xstart.push(xy[i][0]);
+                                Ystart.push(xy[i][1]);
+                            }
 
                             this.touches.push({
                                 obj: obj,
@@ -1299,8 +1330,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                     Y: evt.targetTouches[i].screenY,
                                     Xprev: NaN,
                                     Yprev: NaN,
-                                    Xstart: xy[0],
-                                    Ystart: xy[1]
+                                    Xstart: Xstart,
+                                    Ystart: Ystart
                                 }]
                             });
                         }
@@ -1526,10 +1557,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 };
                 this.mouse.obj = elements[0];
 
+                this.mouse.targets[0].Xstart = [];
+                this.mouse.targets[0].Ystart = [];
+
                 xy = this.initXYstart(this.mouse.obj);
 
-                this.mouse.targets[0].Xstart = xy[0];
-                this.mouse.targets[0].Ystart = xy[1];
+                for (var i=0; i<xy.length; i++) {
+                  this.mouse.targets[0].Xstart.push(xy[i][0]);
+                  this.mouse.targets[0].Ystart.push(xy[i][1]);
+                }
 
                 // prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
