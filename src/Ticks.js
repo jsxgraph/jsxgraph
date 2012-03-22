@@ -156,19 +156,19 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             tickPosition,
             // infinite or finite tick length
             style,
-            // new position 
+            // new position
             nx = 0,
             ny = 0,
             ti,
 			dirs = 2, dir = -1, 
-			center = [], d, bb, perp,
+			center, d, bb, perp,
             
             // the following variables are used to define ticks height and slope
             eps = JXG.Math.eps, pos, lb, ub,
             distMaj = this.visProp.majorheight/2,
             distMin = this.visProp.minorheight/2,
-            dxMaj = 0, dyMaj = 0,
-            dxMin = 0, dyMin = 0;
+            dxMaj, dyMaj,
+            dxMin, dyMin;
         // END OF variable declaration
 
            
@@ -244,13 +244,17 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 // visibility test missing
             }
             return;
-        } 
-        
+        }
+
         // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
         // adjust distances
         if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
             ticksDelta = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
             this.ticksDelta = ticksDelta;
+        }
+
+        if (!this.visProp.insertticks) {
+            ticksDelta /= this.visProp.minorticks+1;
         }
 
 		// We shoot into the middle of the canvas
@@ -279,7 +283,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             d *= -1;
         }
         tickPosition = Math.round(d/ticksDelta)*ticksDelta;
-        
+
 		// Find the correct direction of center from point1
         if (Math.abs(tickPosition)>JXG.Math.eps) {
             dir = Math.abs(tickPosition)/tickPosition;
@@ -289,7 +293,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         center[2] = p1.coords.usrCoords[2] + deltaY*tickPosition;
         startTick = tickPosition;
         tickPosition = 0;
-        
+
         nx = center[1];
         ny = center[2];
         i = 0;          // counter for label ids
@@ -300,7 +304,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		// Then we are done.
         do {
             tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
-			
+
 			// Test if tick is a major tick.
             // This is the case if (dir*tickPosition+startTick)/ticksDelta is
             // a multiple of the number of minorticks+1

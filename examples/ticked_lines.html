@@ -30,7 +30,7 @@
         //z = board.create('point', [-2, 2]);
         
         l1 = board.createElement('line', [p1, p2], {straightFirst: true, straightLast: true});
-        board.createElement('ticks', [l1, 1], { majorHeight:30}); //l1.enableTicks();
+        board.createElement('ticks', [l1, 2], {drawLabels: true, majorHeight:30, insertticks: false, id: 'TICKS'}); //l1.enableTicks();
         board.createElement('ticks', [l1, [2.5, 7.5]]);
 
         
