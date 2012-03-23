@@ -969,9 +969,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
            // special events for iOS devices to enable gesture based zooming
-//			JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-			JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-//			JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
+//            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+//            JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
 
             this.hasTouchHandlers = true;
         }
@@ -1139,7 +1139,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // move origin - but only if we're not in drag mode
-		if ( this.options.pan
+        if ( this.options.pan
              && this.mode === this.BOARD_MODE_NONE
              && (evt.targetTouches.length == 2)
              && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80)) {
@@ -1217,16 +1217,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-						targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                        targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
-						// For the UNDO/REDO of object moves
-						xy = this.initXYstart(obj);
-						for (l=0; l<xy.length; l++) {
-							targets[0].Xstart.push(xy[l][0]);
-							targets[0].Ystart.push(xy[l][1]);
-						}
+                        // For the UNDO/REDO of object moves
+                        xy = this.initXYstart(obj);
+                        for (l=0; l<xy.length; l++) {
+                            targets[0].Xstart.push(xy[l][0]);
+                            targets[0].Ystart.push(xy[l][1]);
+                        }
 
-						this.touches.push({ obj: obj, targets: targets });
+                        this.touches.push({ obj: obj, targets: targets });
 
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
                         found = false;
@@ -1237,10 +1237,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
 
-									var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] };
+                                    var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] };
 
-									// For the UNDO/REDO of object moves
-									xy = this.initXYstart(obj);
+                                    // For the UNDO/REDO of object moves
+                                    xy = this.initXYstart(obj);
                                     for (l=0; l<xy.length; l++) {
                                         target.Xstart.push(xy[l][0]);
                                         target.Ystart.push(xy[l][1]);
@@ -1258,9 +1258,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // the touches control object.
                         if (!found) {
 
-							targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
-							// For the UNDO/REDO of object moves
+                            // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (l=0; l<xy.length; l++) {
                                 targets[0].Xstart.push(xy[l][0]);
@@ -1286,9 +1286,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
-							targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
-							// For the UNDO/REDO of object moves
+                            // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (l=0; l<xy.length; l++) {
                                 targets[0].Xstart.push(xy[l][0]);
@@ -1359,7 +1359,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
                     this.touches[i].targets[1].X = evt.targetTouches[this.touches[i].targets[1].num].screenX;
                     this.touches[i].targets[1].Y = evt.targetTouches[this.touches[i].targets[1].num].screenY;
-					this.moveLine(
+                    this.moveLine(
                         this.getMousePosition(evt, this.touches[i].targets[0].num),
                         this.getMousePosition(evt, this.touches[i].targets[1].num),
                         this.touches[i]
