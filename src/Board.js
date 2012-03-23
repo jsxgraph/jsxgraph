@@ -1120,9 +1120,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Touch-Events
      */
     touchStartListener: function (evt) {
-        var i, pos, elements, j, k,
+        var i, pos, elements, j, k, l,
             eps = this.options.precision.touch,
-            obj, xy = [], found;
+            obj, xy = [], found, targets;
 
         if (this.hasMouseHandlers) {
             this.removeMouseEventHandlers();
@@ -1217,13 +1217,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-						var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+						targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
 						// For the UNDO/REDO of object moves
 						xy = this.initXYstart(obj);
-						for (var i=0; i<xy.length; i++) {
-							targets[0].Xstart.push(xy[i][0]);
-							targets[0].Ystart.push(xy[i][1]);
+						for (l=0; l<xy.length; l++) {
+							targets[0].Xstart.push(xy[l][0]);
+							targets[0].Ystart.push(xy[l][1]);
 						}
 
 						this.touches.push({ obj: obj, targets: targets });
@@ -1241,9 +1241,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
 									// For the UNDO/REDO of object moves
 									xy = this.initXYstart(obj);
-                                    for (var i=0; i<xy.length; i++) {
-                                        target.Xstart.push(xy[i][0]);
-                                        target.Ystart.push(xy[i][1]);
+                                    for (l=0; l<xy.length; l++) {
+                                        target.Xstart.push(xy[l][0]);
+                                        target.Ystart.push(xy[l][1]);
                                     }
 
                                     this.touches[j].targets.push(target);
@@ -1258,13 +1258,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // the touches control object.
                         if (!found) {
 
-							var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+							targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
 							// For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
-                            for (var i=0; i<xy.length; i++) {
-                                targets[0].Xstart.push(xy[i][0]);
-                                targets[0].Ystart.push(xy[i][1]);
+                            for (l=0; l<xy.length; l++) {
+                                targets[0].Xstart.push(xy[l][0]);
+                                targets[0].Ystart.push(xy[l][1]);
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
@@ -1286,13 +1286,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
-							var targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+							targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
 
 							// For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
-                            for (var i=0; i<xy.length; i++) {
-                                targets[0].Xstart.push(xy[i][0]);
-                                targets[0].Ystart.push(xy[i][1]);
+                            for (l=0; l<xy.length; l++) {
+                                targets[0].Xstart.push(xy[l][0]);
+                                targets[0].Ystart.push(xy[l][1]);
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
