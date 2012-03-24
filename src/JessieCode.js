@@ -111,6 +111,13 @@ JXG.JessieCode = function(code, geonext) {
      */
     this.board = null;
 
+    /**
+     * Maximum number of seconds the parser is allowed to run. After that the interpreter is stopped.
+     * @type Number
+     * @default 10000
+     */
+    this.maxRuntime = 10000;
+
     if (typeof code === 'string') {
         this.parse(code);
     }
@@ -444,6 +451,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var error_cnt = 0,
             error_off = [],
             error_la = [],
+            to,
             replacegxt = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc', 'If', 'Deg', 'Rad', 'Dist'],
             regex,
             ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
@@ -467,10 +475,17 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         code = cleaned.join('\n');
         code = this.utf8_encode(code);
 
+        to = window.setTimeout(this.maxRuntime, function () {
+            this.cancel = true;
+        });
+        this.cancel = false;
+
         if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
             for(i = 0; i < error_cnt; i++)
                 this._error("Parse error near >"  + code.substr( error_off[i], 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
         }
+
+        window.clearTimeout(to);
 
         //this.board.update();
     },
@@ -701,6 +716,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         var ret, v, i, e, parents = [];
 
         ret = 0;
+
+        if (this.cancel) {
+            this._error('Max runtime exceeded');
+        }
 
         if (!node)
             return ret;
