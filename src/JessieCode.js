@@ -475,9 +475,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         code = cleaned.join('\n');
         code = this.utf8_encode(code);
 
-        to = window.setTimeout(this.maxRuntime, function () {
+        to = window.setTimeout(function () {
             this.cancel = true;
-        });
+        }, this.maxRuntime);
         this.cancel = false;
 
         if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
