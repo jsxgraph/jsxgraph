@@ -697,6 +697,11 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
     },
 
+    removeAllEvents: function(obj, type, owner) {
+        while (owner['x_internal' + type].length > 0)
+            JXG.removeEvent(obj, type, owner['x_internal' + type][0].origin, owner);
+    },
+
     /**
      * Generates a function which calls the function fn in the scope of owner.
      * @param {Function} fn Function to call.
