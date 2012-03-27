@@ -162,6 +162,14 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         for (el in group.objects) {
             this.addPoint(group.objects[el]);
         }
+    },
+
+    setProperty: function () {
+        var el;
+
+        for (el in this.objects) {
+            this.objects[el].setProperty.apply(this.objects[el], arguments);
+        }
     }
 });
 
