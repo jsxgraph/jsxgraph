@@ -698,8 +698,9 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     removeAllEvents: function(obj, type, owner) {
-        while (owner['x_internal' + type].length > 0)
-            JXG.removeEvent(obj, type, owner['x_internal' + type][0].origin, owner);
+		if (owner['x_internal' + type])
+        	while (owner['x_internal' + type].length > 0)
+            	JXG.removeEvent(obj, type, owner['x_internal' + type][0].origin, owner);
     },
 
     /**
