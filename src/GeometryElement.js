@@ -233,6 +233,19 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.visProp = {};
 
+    /**
+     * Stores the eventhandlers attached to the element.
+     * @type Object
+     */
+    this.eventHandlers = {};
+
+    /**
+     * Is the mouse over this element?
+     * @type Boolean
+     * @default false
+     */
+    this.mouseover = false;
+
     if (arguments.length > 0) {
         /**
          * Reference to the board associated with the element.
@@ -1078,5 +1091,44 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
 
         return attributes;
-    }
+    },
+
+    triggerEventHandlers: function (event) {
+        var i;
+
+        if (JXG.isArray(this.eventHandlers[event])) {
+            for (i = 0; i < this.eventHandlers[event].length; i++) {
+                this.eventHandlers[event][i].call(this);
+            }
+        }
+    },
+
+    on: function (event, handler) {
+        if (!JXG.isArray(this.eventHandlers[event])) {
+            this.eventHandlers[event] = [];
+        }
+
+        this.eventHandlers[event].push(handler);
+    },
+
+    addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
+
+    off: function (event, handler) {
+        var i;
+
+        if (!event || !JXG.isArray(this.eventHandlers[event])) {
+            return;
+        }
+
+        if (handler) {
+            i = JXG.indexOf(this.eventHandlers[event], handler);
+            if (i > -1) {
+                this.eventHandlers[event].splice(i, 1);
+            }
+        } else {
+            this.eventHandlers[event].length = 0;
+        }
+    },
+
+    removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off')
 });
