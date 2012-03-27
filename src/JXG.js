@@ -667,7 +667,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             i, j = -1, l;
 
         if ((!JXG.exists(owner) || !JXG.exists(owner['x_internal' + type])) && !JXG.isArray(owner['x_internal' + type])) {
-            JXG.debug(em);
+            //JXG.debug(em);
             return;
         }
 
@@ -698,9 +698,11 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     removeAllEvents: function(obj, type, owner) {
-		if (owner['x_internal' + type])
-        	while (owner['x_internal' + type].length > 0)
+		if (owner['x_internal' + type]) {
+        	while (owner['x_internal' + type].length > 0) {
             	JXG.removeEvent(obj, type, owner['x_internal' + type][0].origin, owner);
+            }
+        }
     },
 
     /**
