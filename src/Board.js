@@ -2244,7 +2244,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // the object deletion itself is handled by the object.
             if (JXG.exists(object.remove)) object.remove();
         } catch(e) {
-            JXG.debug(object.id + ': Could not be removed, JS says:\n\n' + e);
+            JXG.debug(object.id + ': Could not be removed: ' + e);
         }
 
         return this;
