@@ -100,6 +100,8 @@ JXG.GeonextReader = {
         // GEONExT hides labels by setting opacity to 0.
         if (JXG.rgba2rgbo(this.gEBTN(color, 'label'))[1]==0) {
             gxtEl.withLabel = false;
+        } else {
+            gxtEl.withLabel = true;
         }
         
         // backwards compatibility
@@ -382,6 +384,8 @@ JXG.GeonextReader = {
         // maybe these have to be the same for geonext.
         board.options.layer.sector = board.options.layer.angle;
         board.options.layer.circle = board.options.layer.angle;
+        
+        board.options.line.label.position = 'top';
 
         boardData = this.gEBTN(tree, 'board', 0, false);
         conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);

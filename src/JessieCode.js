@@ -434,7 +434,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             if (c < 128) {
                 utftext.push(String.fromCharCode(c));
             } else {
-                utftext.push('&#x' + c.toString(16) + ';');
+                //utftext.push('&#x' + c.toString(16) + ';');
+                utftext.push('&#x' + c + ';');
             }
 
         }
