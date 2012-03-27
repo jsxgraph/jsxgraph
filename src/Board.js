@@ -728,7 +728,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 pEl.triggerEventHandlers('down');
                 this.downObjects.push(pEl);
             }
-
             if (
                 ((this.geonextCompatibilityMode
                   &&(pEl.elementClass==JXG.OBJECT_CLASS_POINT
@@ -787,9 +786,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             oldCoords;
 
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-            if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev))
+            if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) {
                  drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
-
+            }
             // Remember the actual position for the next move event. Then we are able to
             // compute the difference vector.
             o.targets[0].Xprev = newPos.scrCoords[1];

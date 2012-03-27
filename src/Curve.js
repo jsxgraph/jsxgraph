@@ -166,6 +166,17 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 xi1 = this.X(i+1);
                 yi  = this.Y(i);
                 yi1 = this.Y(i+1);
+                for (j=0; j<this.transformations.length; j++) {
+                    trans = this.transformations[j];
+                    trans.update();
+                    c = JXG.Math.matVecMult(trans.matrix,[1,xi,yi]);
+                    xi = c[1];
+                    yi = c[2];
+                    c = JXG.Math.matVecMult(trans.matrix,[1,xi1,yi1]);
+                    xi1 = c[1];
+                    yi1 = c[2];
+                }
+
                 x1  = xi1 - xi;
                 y1  = yi1 - yi;
 

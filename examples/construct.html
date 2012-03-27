@@ -70,6 +70,7 @@ D.onPolygon = true;
 */
 brd.unsuspendUpdate();
 
+/*
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 brd.addHook(function() {
     var x = A.X(), y = A.Y();
@@ -77,7 +78,34 @@ brd.addHook(function() {
 		A.setPosition(JXG.COORDS_BY_USER, 0.0, y);
 	}
   }, 'update');
-	
+*/	
+
+
+myPoint = function(board, x, y) {
+    var le = 0.2,
+    cu = board.create('curve', [ [x+0, x+le, x+le, x+0, x+0], 
+                                 [y+0, y+0, y+le, y+le, y+0]], 
+                      {fillColor:'red', fillOpacity:'0.4', fixed:false});
+    cu.isDraggable = true;
+    cu.coords = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], board);  
+    
+    cu.setPositionDirectly = function (method, x, y, oldx, oldy) {    
+        var dx = x - oldx, 
+            dy = y - oldy;
+
+        dx /= this.board.unitX;
+        dy /= -this.board.unitY;
+        len = this.dataX.length;
+        for (i=0; i<len; i++) {
+            this.dataX[i] += dx;
+            this.dataY[i] += dy;
+        }
+        return this;
+    };
+    return cu;
+}
+    
+p = myPoint(brd, 2, 1);
 
 /*
 var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
