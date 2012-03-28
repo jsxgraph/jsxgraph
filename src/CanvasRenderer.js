@@ -54,7 +54,7 @@ JXG.CanvasRenderer = function (container) {
         this.container.style.position = 'relative';
     }
 
-    this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', this.container.style.width, '" height="', this.container.style.height, '"><', '/canvas>'].join('');
+    this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', JXG.getStyle(this.container, 'width'), '" height="', JXG.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
     this.canvasRoot = document.getElementById(this.canvasId);
     this.context =  this.canvasRoot.getContext('2d');
 

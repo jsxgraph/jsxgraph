@@ -83,8 +83,8 @@ JXG.SVGRenderer = function (container) {
     this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
     this.svgRoot.style.overflow = 'hidden';
 
-    this.svgRoot.style.width = '100%';//this.container.style.width;
-    this.svgRoot.style.height = '100%';//this.container.style.height;
+    this.svgRoot.style.width = JXG.getStyle(this.container, 'width');
+    this.svgRoot.style.height = JXG.getStyle(this.container, 'height');
 
     this.container.appendChild(this.svgRoot);
 
