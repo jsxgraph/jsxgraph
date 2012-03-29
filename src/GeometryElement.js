@@ -540,7 +540,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
     },
 
-    // TODO
+    /**
+     * Resolves property shortcuts like <tt>color</tt> and expands them, e.g. <tt>strokeColor</tt> and <tt>fillColor</tt>.
+     * Writes the expanded properties back to the given <tt>properties</tt>.
+     * @param {Object} properties
+     * @returns {Object} The given parameter with shortcuts expanded.
+     */
     resolveShortcuts: function(properties) {
         var key, i;
         
@@ -1068,14 +1073,26 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return this;
     },
 
+    /**
+     * The type of the element as used in {@link JXG.Board#create}.
+     * @returns {String}
+     */
     getType: function () {
         return this.elType;
     },
 
+    /**
+     * List of the element ids resp. values used as parents in {@link JXG.Board#create}.
+     * @returns {Array}
+     */
     getParents: function () {
         return this.parents;
     },
 
+    /**
+     * Retrieve a copy of the current visProp.
+     * @returns {Object}
+     */
     getAttributes: function () {
         var attributes = JXG.deepCopy(this.visProp),
             cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
@@ -1093,6 +1110,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return attributes;
     },
 
+    /**
+     * Triggers all event handlers of this element for a given event.
+     * @param {String} event
+     */
     triggerEventHandlers: function (event) {
         var i;
 
@@ -1103,6 +1124,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
     },
 
+    /**
+     * Register a new event handler
+     * @param {String} event
+     * @param {Function} handler
+     */
     on: function (event, handler) {
         if (!JXG.isArray(this.eventHandlers[event])) {
             this.eventHandlers[event] = [];
@@ -1111,8 +1137,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         this.eventHandlers[event].push(handler);
     },
 
+    /**
+     * Alias of {@link JXG.GeometryElement#on}.
+     */
     addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
 
+    /**
+     * Unregister an event handler.
+     * @param {String} event
+     * @param {Function} handler The same function used in {@link JXG.GeometryElement#on}.
+     */
     off: function (event, handler) {
         var i;
 
@@ -1130,5 +1164,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
     },
 
+    /**
+     * Alias of {@link JXG.GeometryElement#off}.
+     */
     removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off')
 });

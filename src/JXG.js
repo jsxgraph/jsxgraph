@@ -697,6 +697,13 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
     },
 
+    /**
+     * Removes all events of the given type from a given DOM node; Use with caution and do not use it on a container div
+     * of a {@link JXG.Board} because this might corrupt the event handling system.
+     * @param {Object} obj Reference to a DOM node.
+     * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
+     * @param {Object} owner The scope in which the event trigger is called.
+     */
     removeAllEvents: function(obj, type, owner) {
 		if (owner['x_internal' + type]) {
         	while (owner['x_internal' + type].length > 0) {
