@@ -680,7 +680,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         if (j === -1) {
-            JXG.debug(em + '; Event listener not found.');
+            //JXG.debug(em + '; Event listener not found.');
             return;
         }
 
@@ -693,7 +693,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 
             JXG.removeElementFromArray(owner['x_internal'+type], owner['x_internal'+type][j]);
         } catch(e) {
-            JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
+            //JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
         }
     },
 
