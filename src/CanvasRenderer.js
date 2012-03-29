@@ -210,7 +210,9 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         context.save();
 
         if (element.visProp.dash > 0) {
-            // TODO - dash styles for canvas
+            if (context.setLineDash) {
+                context.setLineDash(this.dashArray[element.visProp.dash]);
+            }
         } else {
             this.context.lineDashArray = [];
         }
