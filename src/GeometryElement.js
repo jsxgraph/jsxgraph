@@ -1111,6 +1111,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
+     * Checks whether (x,y) is near the element.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @returns {Boolean} True if (x,y) is near the element, False otherwise.
+     */
+    hasPoint: function (x, y) {
+        return false;
+    },
+
+    /**
      * Triggers all event handlers of this element for a given event.
      * @param {String} event
      */
