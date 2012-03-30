@@ -111,6 +111,10 @@ JXG.JessieCode = function(code, geonext) {
      */
     this.board = null;
 
+    this.countLines = true;
+    this.parCurLine = 1;
+    this.parCurColumn = 0;
+
     /**
      * Maximum number of seconds the parser is allowed to run. After that the interpreter is stopped.
      * @type Number
@@ -486,8 +490,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         this.cancel = false;*/
 
         if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
-            for(i = 0; i < error_cnt; i++)
+            for(i = 0; i < error_cnt; i++) {
+                this.line = error_off[i].line;
                 this._error("Parse error in line " + error_off[i].line + " near >"  + code.substr( error_off[i].offset, 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
+            }
         }
 
         /*window.clearTimeout(to);*/
@@ -522,6 +528,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         // just in case...
         tmp = this.sstack[0][vname];
 
+        this.countLines = false;
+
         c = vname + ' = ' + (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
         this.parse(c, geonext);
 
@@ -531,6 +539,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         } else {
             delete this.sstack[0][vname];
         }
+
+        this.countLines = true;
 
         return result;
     },
@@ -697,11 +707,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (!JXG.exists(e)) {
-            this._error('Error: ' + e + ' is not an object.');
+            this._error(e + ' is not an object.');
         }
 
         if (!JXG.exists(e[v])) {
-            this._error('Error: unknown property ' + v + '.');
+            this._error('unknown property ' + v + '.');
         }
 
         if (compile && typeof e[v] === 'function') {
@@ -729,6 +739,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         if (!node)
             return ret;
 
+        this.line = node.line;
+
 
         switch (node.type) {
             case 'node_op':
@@ -746,7 +758,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         this.lhs[this.scope] = v[1];
 
                         if (v[0].type && v[0].elementClass && v[0].methodMap && v[1] === 'label') {
-                            this._error('Error: Left-hand side of assignment is read-only.');
+                            this._error('Left-hand side of assignment is read-only.');
                         }
 
                         if (v[0] !== this.sstack[this.scope] || (JXG.isArray(v[0]) && typeof v[1] === 'number')) {
@@ -866,7 +878,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         break;
                     case 'op_return':
                         if (this.scope === 0) {
-                            this._error('Error: Unexpected return.');
+                            this._error('Unexpected return.');
                         } else {
                             return this.execute(node.children[0]);
                         }
@@ -997,8 +1009,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         } else if (typeof fun === 'function' && !!fun.creator) {
                             // creator methods are the only ones that take properties, hence this special case
                             ret = fun(parents, attr);
+                            ret.jcLine = this.line;
                         } else {
-                            this._error('Error: Function \'' + fun + '\' is undefined.');
+                            this._error('Function \'' + fun + '\' is undefined.');
                         }
 
                         // clear parameter stack
@@ -1520,7 +1533,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} msg Error message
      */
     _error: function (msg) {
-        throw new Error(msg);
+        var e = new Error('Error(' + this.line + '): ' + msg);
+        e.line = this.line;
+        throw e;
     },
 
     /**
@@ -1529,9 +1544,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      */
     _warn: function (msg) {
         if(typeof console !== "undefined") {
-            console.log('Warning: ' + msg);
+            console.log('Warning(' + this.line + '): ' + msg);
         } else if(document.getElementById(this.warnLog) !== null) {
-            document.getElementById(this.warnLog).innerHTML += 'Warning: ' + msg + '<br />';
+            document.getElementById(this.warnLog).innerHTML += 'Warning(' + this.line + '): ' + msg + '<br />';
         }
     }
 
@@ -1582,45 +1597,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
 
 JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
-    /**
-     * JS/CC interna
-     * @type Boolean
-     * @private
-     */
-    _dbg_withtrace: false,
-
-    _dbg_withparsetree: false,
-
-    _dbg_withstepbystep: false,
-
-    /**
-     * JS/CC interna
-     * @type String
-     * @private
-     */
-    _dbg_string: '',
-
-    /**
-     * JS/CC interna
-     * @param {String} text
-     * @private
-     */
-    _dbg_print: function (text) {
-        this._dbg_string += text + "\n";
-    },
-
-    _dbg_flush: function () {
-        alert(this._dbg_string);
-    },
-
-    _dbg_wait: function () {
-        // Not implemented for Web.
-    },
-
-    _dbg_parsetree: function (indent, nodes, tree) {
-        //Not implemented for Web.
-    },
-
     /**
      * Internal lexer method.
      * @private
@@ -2312,14 +2288,15 @@ switch( state )
 
 
 
-
                     //Line- and column-counter
                     if( state > -1 ) {
                         if( chr == 10 ) {
                             PCB.line++;
                             PCB.column = 0;
-                            this.parCurLine = PCB.line;
-                            this.parCurColumn = PCB.column;
+                            if (this.countLines) {
+                                this.parCurLine = PCB.line;
+                                this.parCurColumn = PCB.column;
+                            }
                         }
                         PCB.column++;
                     }
@@ -2362,29 +2339,19 @@ switch( state )
             vstack = [],
             err_cnt = 0,
             act,
+            rval,
             i,
 
-            //PCB: Parser Control Block
-            parsercontrol = new Function( "",
-                                "var la;" +
-                                "var act;" +
-                                "var offset;" +
-                                "var src;" +
-                                "var att;" +
-                                "var line;" +
-                                "var column;" +
-                                "var error_step;" ),
-            PCB = new parsercontrol(),
-
-            //Visual parse tree generation
-            treenode = new Function( "",
-                                "var sym;"+
-                                "var att;"+
-                                "var child;" ),
-            treenodes = new Array(),
-            tree = new Array(),
-            tmptree = null;
-
+            PCB = {
+                la: 0,
+                act: 0,
+                offset: 0,
+                src: src,
+                att: '',
+                line: 1,
+                column: 1,
+                error_step: 0
+            };
 
 /* Pop-Table */
 var pop_tab = new Array(
@@ -2961,28 +2928,21 @@ var labels = new Array(
 
 
 
-        PCB.line = 1;
-        PCB.column = 1;
-        PCB.offset = 0;
-        PCB.error_step = 0;
-        PCB.src = src;
-        PCB.att = new String();
-    
         if( !err_off ) {
-            err_off = new Array();
+            err_off = [];
         }
         if( !err_la ) {
-            err_la = new Array();
+            err_la = [];
         }
 
-        sstack.push( 0 );
-        vstack.push( 0 );
+        sstack.push(0);
+        vstack.push(0);
     
         PCB.la = this._lex(PCB);
             
         while( true ) {
             PCB.act = 139;
-            for( var i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 ) {
+            for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 ) {
                 if( act_tab[sstack[sstack.length-1]][i] == PCB.la ) {
                     PCB.act = act_tab[sstack[sstack.length-1]][i+1];
                     break;
@@ -2996,192 +2956,95 @@ var labels = new Array(
                     PCB.act *= -1;
             }
 
-        if( this._dbg_withtrace && sstack.length > 0 )
-        {
-            this._dbg_print( "\nState " + sstack[sstack.length-1] + "\n" +
-                            "\tLookahead: " + labels[PCB.la] +
-                                " (\"" + PCB.att + "\")\n" +
-                            "\tAction: " + PCB.act + "\n" + 
-                            "\tSource: \"" + PCB.src.substr( PCB.offset, 30 ) +
-                                    ( ( PCB.offset + 30 < PCB.src.length ) ?
-                                        "..." : "" ) + "\"\n" +
-                            "\tStack: " + sstack.join() + "\n" +
-                            "\tValue stack: " + vstack.join() + "\n" );
-            
-            if( this._dbg_withstepbystep )
-                this._dbg_wait();
-        }
-        
-            
-        //Parse error? Try to recover!
-        if( PCB.act == 139 )
-        {
-            if( this._dbg_withtrace )
+            //Parse error? Try to recover!
+            if( PCB.act == 139 )
             {
-                var expect = new String();
-                
-                this._dbg_print( "Error detected: " +
-                    "There is no reduce or shift on the symbol " +
-                        labels[PCB.la] );
-                
-                for( var i = 0; i < act_tab[sstack[sstack.length-1]].length;
-                        i+=2 )
+                //Report errors only when error_step is 0, and this is not a
+                //subsequent error from a previous parse
+                if( PCB.error_step == 0 )
                 {
-                    if( expect != "" )
-                        expect += ", ";
-                        
-                    expect += "\"" +
-                                labels[ act_tab[sstack[sstack.length-1]][i] ]
-                                    + "\"";
+                    err_cnt++;
+                    err_off.push( {offset: PCB.offset - PCB.att.length, line: PCB.line} );
+                    err_la.push([]);
+                    for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
+                        err_la[err_la.length-1].push(
+                                labels[act_tab[sstack[sstack.length-1]][i]] );
                 }
-                
-                this._dbg_print( "Expecting: " + expect );
-            }
             
-            //Report errors only when error_step is 0, and this is not a
-            //subsequent error from a previous parse
-            if( PCB.error_step == 0 )
-            {
-                err_cnt++;
-                err_off.push( {offset: PCB.offset - PCB.att.length, line: PCB.line} );
-                err_la.push( new Array() );
-                for( var i = 0; i < act_tab[sstack[sstack.length-1]].length;
-                        i+=2 )
-                    err_la[err_la.length-1].push(
-                            labels[act_tab[sstack[sstack.length-1]][i]] );
-            }
-            
-            //Perform error recovery            
-            while( sstack.length > 1 && PCB.act == 139 )
-            {
-                sstack.pop();
-                vstack.pop();
-                
-                //Try to shift on error token
-                for( var i = 0; i < act_tab[sstack[sstack.length-1]].length;
-                        i+=2 )
+                //Perform error recovery
+                while( sstack.length > 1 && PCB.act == 139 )
                 {
-                    if( act_tab[sstack[sstack.length-1]][i] == 1 )
+                    sstack.pop();
+                    vstack.pop();
+                
+                    //Try to shift on error token
+                    for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
                     {
-                        PCB.act = act_tab[sstack[sstack.length-1]][i+1];
-                        
-                        sstack.push( PCB.act );
-                        vstack.push( new String() );
-                        
-                        if( this._dbg_withtrace )
-                        {
-                            this._dbg_print(
-                                "Error recovery: error token " +
-                                    "could be shifted!" );
-                            this._dbg_print( "Error recovery: " +
-                                    "current stack is " + sstack.join() );
-                        }
-
-                        break;
-                    }
-                }
-            }
-            
-            //Is it better to leave the parser now?
-            if( sstack.length > 1 && PCB.act != 139 )
-            {
-                //Ok, now try to shift on the next tokens
-                while( PCB.la != 66 )
-                {
-                    if( this._dbg_withtrace )
-                        this._dbg_print( "Error recovery: " +
-                            "Trying to shift on \""
-                                + labels[ PCB.la ] + "\"" );
-
-                    PCB.act = 139;
-                    
-                    for( var i = 0; i < act_tab[sstack[sstack.length-1]].length;
-                            i+=2 )
-                    {
-                        if( act_tab[sstack[sstack.length-1]][i] == PCB.la )
+                        if( act_tab[sstack[sstack.length-1]][i] == 1 )
                         {
                             PCB.act = act_tab[sstack[sstack.length-1]][i+1];
+                        
+                            sstack.push( PCB.act );
+                            vstack.push( '' );
+                        
                             break;
                         }
                     }
-                    
-                    if( PCB.act != 139 )
-                        break;
-                        
-                    if( this._dbg_withtrace )
-                        this._dbg_print( "Error recovery: Discarding \""
-                            + labels[ PCB.la ] + "\"" );
-                    
-                    while( ( PCB.la = this._lex( PCB ) )
-                                < 0 )
-                        PCB.offset++;
-                
-                    if( this._dbg_withtrace )
-                        this._dbg_print( "Error recovery: New token \""
-                            + labels[ PCB.la ] + "\"" );
                 }
-                while( PCB.la != 66 && PCB.act == 139 );
-            }
             
-            if( PCB.act == 139 || PCB.la == 66 )
-            {
-                if( this._dbg_withtrace )
-                    this._dbg_print( "\tError recovery failed, " +
-                            "terminating parse process..." );
-                break;
+                //Is it better to leave the parser now?
+                if( sstack.length > 1 && PCB.act != 139 )
+                {
+                    //Ok, now try to shift on the next tokens
+                    while( PCB.la != 66 )
+                    {
+                        PCB.act = 139;
+                    
+                        for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
+                        {
+                            if( act_tab[sstack[sstack.length-1]][i] == PCB.la )
+                            {
+                                PCB.act = act_tab[sstack[sstack.length-1]][i+1];
+                                break;
+                            }
+                        }
+                    
+                        if( PCB.act != 139 )
+                            break;
+                        
+                        while( ( PCB.la = this._lex( PCB ) ) < 0 )
+                            PCB.offset++;
+                    }
+                    while( PCB.la != 66 && PCB.act == 139 ) {}
+                }
+            
+                if( PCB.act == 139 || PCB.la == 66 )
+                {
+                    break;
+                }
+
+                //Try to parse the next three tokens successfully...
+                PCB.error_step = 3;
             }
 
-            if( this._dbg_withtrace )
-                this._dbg_print( "\tError recovery succeeded, " +
-                                            "continuing" );
-            
-            //Try to parse the next three tokens successfully...
-            PCB.error_step = 3;
-        }
-
-        //Shift
-        if( PCB.act > 0 )
-        {
-            //Parse tree generation
-            if( this._dbg_withparsetree )
+            //Shift
+            if( PCB.act > 0 )
             {
-                var node = new treenode();
-                node.sym = labels[ PCB.la ];
-                node.att = PCB.att;
-                node.child = new Array();
-                tree.push( treenodes.length );
-                treenodes.push( node );
+                sstack.push( PCB.act );
+                vstack.push( PCB.att );
+            
+                PCB.la = this._lex( PCB );
+            
+                //Successfull shift and right beyond error recovery?
+                if( PCB.error_step > 0 )
+                    PCB.error_step--;
             }
+            //Reduce
+            else
+            {
+                act = PCB.act * -1;
             
-            if( this._dbg_withtrace )
-                this._dbg_print( "Shifting symbol: " +
-                        labels[PCB.la] + " (" + PCB.att + ")" );
-        
-            sstack.push( PCB.act );
-            vstack.push( PCB.att );
-            
-            PCB.la = this._lex( PCB );
-            
-            if( this._dbg_withtrace )
-                this._dbg_print( "\tNew lookahead symbol: " +
-                        labels[PCB.la] + " (" + PCB.att + ")" );
-                
-            //Successfull shift and right beyond error recovery?
-            if( PCB.error_step > 0 )
-                PCB.error_step--;
-        }
-        //Reduce
-        else
-        {        
-            act = PCB.act * -1;
-            
-            if( this._dbg_withtrace )
-                this._dbg_print( "Reducing by production: " + act );
-            
-            rval = void( 0 );
-            
-            if( this._dbg_withtrace )
-                this._dbg_print( "\tPerforming semantic action..." );
+                rval = void( 0 );
             
 switch( act )
 {
@@ -3539,83 +3402,35 @@ switch( act )
 
 
             
-            if( this._dbg_withparsetree )
-                tmptree = new Array();
-
-            if( this._dbg_withtrace )
-                this._dbg_print( "\tPopping " +
-                                    pop_tab[act][1] +  " off the stack..." );
-                
-            for( var i = 0; i < pop_tab[act][1]; i++ )
-            {
-                if( this._dbg_withparsetree )
-                    tmptree.push( tree.pop() );
-                    
-                sstack.pop();
-                vstack.pop();
-            }
-
-            //Get goto-table entry
-            PCB.act = 139;
-            for( var i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
-            {
-                if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
+                for( i = 0; i < pop_tab[act][1]; i++ )
                 {
-                    PCB.act = goto_tab[sstack[sstack.length-1]][i+1];
-                    break;
+                    sstack.pop();
+                    vstack.pop();
                 }
-            }
+
+                //Get goto-table entry
+                PCB.act = 139;
+                for( i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
+                {
+                    if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
+                    {
+                        PCB.act = goto_tab[sstack[sstack.length-1]][i+1];
+                        break;
+                    }
+                }
             
-            //Do some parse tree construction if desired
-            if( this._dbg_withparsetree )
-            {
-                var node = new treenode();
-                node.sym = labels[ pop_tab[act][0] ];
-                node.att = rval;
-                node.child = tmptree.reverse();
-                tree.push( treenodes.length );
-                treenodes.push( node );
-            }
-            
-            //Goal symbol match?
-            if( act == 0 ) //Don't use PCB.act here!
-                break;
+                //Goal symbol match?
+                if( act == 0 ) //Don't use PCB.act here!
+                    break;
                 
-            if( this._dbg_withtrace )
-                this._dbg_print( "\tPushing non-terminal " +
-                        labels[ pop_tab[act][0] ] );
-            
-            //...and push it!
-            sstack.push( PCB.act );
-            vstack.push( rval );
+                //...and push it!
+                sstack.push( PCB.act );
+                vstack.push( rval );
+            }
         }
-    }
 
-    if( this._dbg_withtrace )
-    {
-        this._dbg_print( "\nParse complete." );
-        
-        //This function is used for parser drivers that will output
-        //the entire debug messages in a row.
-        this._dbg_flush();
+        return err_cnt;
     }
-
-    if( this._dbg_withparsetree )
-    {
-        if( err_cnt == 0 )
-        {
-            this._dbg_print( "\n\n--- Parse tree ---" );
-            this._dbg_parsetree( 0, treenodes, tree );
-        }
-        else
-        {
-            this._dbg_print( "\n\nParse tree cannot be viewed. " +
-                                    "There where parse errors." );
-        }
-    }
-    
-    return err_cnt;
-}
 
 });
 
