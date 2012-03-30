@@ -674,6 +674,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
 JXG.createChart = function(board, parents, attributes) {
 
     if((parents.length == 1) && (typeof parents[0] == 'string')) {
+        // todo: don't use document in here. let the user provide the dom node directly
         var table = document.getElementById(parents[0]),
             data, row, i, j, col, charts = [], w, x, showRows,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len, attr;

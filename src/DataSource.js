@@ -122,6 +122,8 @@ JXG.extend(JXG.DataSource.prototype, /** @lends JXG.DataSource.prototype */ {
         if(rowHeader)
             this.rowHeaders = [];
 
+        // todo: the user should provide the dom node directly
+        // to adjust: examples in examples folder & wiki
         table = document.getElementById(table);
 
         if(typeof table != 'undefined') {
