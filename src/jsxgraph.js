@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011
+    Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,7 +42,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.94rc2 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.94 Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.

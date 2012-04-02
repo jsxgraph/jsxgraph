@@ -3,7 +3,7 @@
 
 
 license = """/*
-    Copyright 2008-2011
+    Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -29,7 +29,7 @@ license = """/*
     """
 
 duallicense = """/*
-    Copyright 2008-2011
+    Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -156,9 +156,9 @@ def makeCore():
         jstxt += '\n';
 
     # tmpfilename = tempfile.mktemp()
-    tmpfilename = output + '/jsxgraphsrc.js'
+    srcFilename = output + '/jsxgraphsrc.js'
 
-    fout = open(tmpfilename,'w')
+    fout = open(srcFilename,'w')
     fout.write(jstxt)
     fout.close()
 
@@ -169,7 +169,7 @@ def makeCore():
     fout.close()
 
     # Minify; YUI compressor from Yahoo
-    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
+    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + srcFilename + " >>" + coreFilename
     print s
     os.system(s)
     # os.remove(tmpfilename)
@@ -281,12 +281,19 @@ def makeRelease():
     makeDocs(True)
     
     shutil.copy(output + "/jsxgraphcore.js", "tmp/jsxgraphcore.js")
+    shutil.copy(output + "/jsxgraphsrc.js", "tmp/jsxgraphsrc.js")
     shutil.copy("README", "tmp/README")
     shutil.copy("LICENSE", "tmp/LICENSE")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
+    
+    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella']
+    for f in reader:
+        shutil.copy("src/"+f+"Reader.js", "distrib/")
+        shutil.copy("src/"+f+"Reader.js", "tmp/")
+            
     shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css themes/ README LICENSE && cd ..")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
 
 
@@ -314,24 +321,24 @@ def makeCompressor(afterCore = False):
         jstxt += '\n';
 
 
-    tmpfilename = tempfile.mktemp()
-    fout = open(tmpfilename,'w')
+    srcFilename = output + "/jsxcompressor.js"
+    fout = open(srcFilename,'w')
     fout.write(jstxt)
     fout.close()
 
     # Prepend license text
-    coreFilename = output + "/jsxcompressor.js"
+    coreFilename = output + "/jsxcompressor.min.js"
     fout = open(coreFilename, 'w')
     fout.write(duallicense)
     fout.close()
 
     # Minify 
     # YUI compressor from Yahoo
-    s = 'java -jar ' + yui + '/build/yuicompressor*.jar --type js ' + tmpfilename + ' >>' + coreFilename
+    s = 'java -jar ' + yui + '/build/yuicompressor*.jar --type js ' + srcFilename + ' >>' + coreFilename
     print s
     os.system(s)
      
-    os.remove(tmpfilename)
+    os.system("cp %s %s" % (srcFilename, 'JSXCompressor/'))
     os.system("cp %s %s" % (coreFilename, 'JSXCompressor/'))
     # If makeCore has been called just befure, make sure you grab the newest version
     os.system("cp %s %s" % (out + '/jsxgraphcore.js', 'JSXCompressor/'))
