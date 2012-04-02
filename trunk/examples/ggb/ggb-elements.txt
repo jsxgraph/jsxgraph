@@ -1,0 +1,71 @@
+Geometrische Eingabe:
+
+Implementiert:
+* Punkt: Punkt, Schneide zwei Objekte, Mittelpunkt
+* Vektor: Vektor zw. zwei Punkten, Vektor von Punkt aus abtragen
+* Strecke: Strecke zw. zwei Punkten, Strecke mit fester Länge von Punkt aus
+* Strahl: Strahl durch zwei Punkte
+* Vieleck: Vieleck, Regelmäßiges Vieleck
+* Gerade: Gerade durch zwei Punkte, Parallele Gerade, Senkrechte Gerade, Mittelsenkrechte, Winkelhalbierende, Tangenten, Polare oder konjugierter Durchmesser
+* Ortslinie: Ortslinie (serverseitig)
+* Kegelschnitt: Kreis mit Mittelpunkt durch Punkt, Kreis mit Mittelpunkt und Radius, Kreis durch drei Punkte
+* Bogen und Sektor: Halbkreis, Kreisbogen mit Mittelpunkt durch zwei Punkte, Kreissektor mit Mittelpunkt durch zwei Punkte, Umkreisbogen durch drei Punkte, Umkreissektor durch drei Punkte
+* Zahl und Winkel: Abstand oder Länge, Fläche, Steigung, Schieberegler, Winkel, Winkel mit fester Größe
+* Geometrische Abbildungen: Spiegle Objekt an Punkt, Spiegle Objekt an Gerade, Drehe Objekt um Punkt, Verschiebe Objekt um Vektor, Strecke Objekt zentrisch von Punkt
+
+Noch nicht implementiert:
+* Nullstelle
+* Extremum
+* Wendepunkt
+* Ableitung
+* Integralrechnung (mit Untersumme, Obersumme)
+* Zahl und Winkel: Fläche
+* Wahrheitswerte: Kontrollkästchen um Objekte anzuzeigen / auszublenden
+* Text: Text, LaTeX Formeln
+
+Noch nicht funktionsfähig:
+* Kegelschnitt: Kegelschnitt durch fünf Punkte
+* Bild: Bild einfügen (IE-Problem)
+* Eigenschaften von Bildern: Hintergrundbild, Transparenzeffekt
+
+-------
+
+Algebraische Eingabe: (noch keine direkte Eingabe implementiert, aber gelesen werden kann:)
+Implementiert:
+* Zahlen und Winkel: Schieberegler und Pfeiltasten, Werte einschränken
+* Punkte und Vektoren
+* Gerade: xAchse und yAchse
+* Zahl: Länge, Abstand, Steigung
+* Winkel: Winkel
+* Punkt: Punkt, Mittelpunkt, Schwerpunkt
+* Vektor: Vektor
+* Strecke: Strecke
+* Strahl: Strahl
+* Vieleck: Vieleck
+* Gerade: Gerade,  Senkrechte,  Mittelsenkrechte,  Streckensymmetrale,  Winkelhalbierende,  Winkelsymmetrale,  Tangente,  Achsen, Polare
+* Kegelschnitt: Kreis
+* Parameterkurve
+* Bogen und Sektor: Halbkreis,  Kreisbogen,  Umkreisbogen,  Bogen, Kreissektor, Umkreissektor, Sektor
+* Text: Name
+* Geometrische Abbildungen: Verschiebe, Drehe, Spiegle, StreckeZentrisch
+
+Noch nicht implementiert:
+* Allgemeines: Werte von Objekten ändern, Animation
+* Funktion von x: Funktion auf Intervall einschränken
+* Liste von Objekten
+* Arithmetische Operationen (Parser und Grammatik im Aufbau)
+* Wahrheitswerte: Kontrollkästchen und Pfeiltasten
+* Boolesche Operationen, Boolesche Befehle
+* Allgemeine Befehle: Beziehung, Lösche, Element
+* Zahl: Fläche, Ganzzahliger Rest, Ganzzahldivision, Krümmung, Radius, Umfang, Parameter, Hauptachsenlänge, Nebenachsenlänge, Exzentrizität, Integral, Untersumme, Obersumme, Iteration, Minimum und Maximum, Teilverhältnis, Doppelverhältnis
+* Punkt: Brennpunkt, Scheitel, Schneide, Nullstelle, Extremum, Wendepunkt
+* Vektor: Richtung, Einheitsvektor, Normalvektor, Einheitsnormalvektor, Krümmungsvektor
+* Gerade: Asymptote,  Leitlinie,  Hauptachse,  Nebenachse,  Durchmesser
+* Kegelschnitt: Ellipse, Hyperbel, Parabel
+* Funktion: Ableitung,  Integral,  Polynom,  TaylorPolynom,  Funktion (im Aufbau),  Bedingte Funktion
+* Folge: Folge, Andere Befehle für Folgen, Iterationsliste
+* Ortslinie: Ortslinie
+
+Noch nicht funktionsfähig:
+* Kegelschnitt: Krümmungskreis, Kegelschnitt
+* Bild: Eckpunkt (IE-Problem)

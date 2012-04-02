@@ -1,0 +1,114 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Centroid.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>Solving ODE numerically with explicit Runge-Kutta-methods</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; float:left;"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 1.5, 1.5, -1.5], axis: false, grid: false}),
+            mu = 1.0/81.45,
+            apolloPath, moonPath,
+            moon, apollo, earth,
+            ode = function () {
+                var I = [17.066, 0],
+                    x0 = [0.994, 0, 0, -2.0015851063790825],
+                    N = 10000,
+                    data, dataX, dataY, i,
+
+                    f = function(t, x) {
+                        var m  = 1.0/81.45,
+                            D1 = Math.sqrt(Math.pow((x[0]+m)*(x[0]+m)+x[2]*x[2],3)),
+                            D2 = Math.sqrt(Math.pow((x[0]-(1-m))*(x[0]-(1-m))+x[2]*x[2],3)),
+                            y = [];
+
+                        y[0] = x[1];
+                        y[1] = x[0]+2*x[3]-(1-m)*(x[0]+m)/D1-m*(x[0]-(1-m))/D2;
+                        y[2] = x[3];
+                        y[3] = x[2]-2*x[1]-(1-m)*x[2]/D1-m*x[2]/D2;
+
+                        return y;
+                    };
+
+
+                data = JXG.Math.Numerics.rungeKutta('rk4', x0, I, N, f);
+
+                dataX = [];
+                dataY = [];
+                for(i = 0; i < data.length; i++) {
+                    dataX[i] = data[i][0];
+                    dataY[i] = data[i][2];
+                }
+
+                return [dataX, dataY];
+            },
+            circle = function (radius, points) {
+                var dataX = [], dataY = [], i;
+
+                for (i = 0; i < points; i++) {
+                    dataX[i] = radius*Math.cos(i/(points-1)*2*Math.PI);
+                    dataY[i] = -radius*Math.sin(i/(points-1)*2*Math.PI);
+                }
+
+                return [dataX, dataY];
+            };
+
+        earth = board.create('point', [0, 0], {
+            withLabel: false,
+            strokeColor: '#4096EE',
+            fillColor: '#4096EE',
+            size: 40
+        });
+
+        apolloPath = board.createElement('curve', ode(), {
+            strokeColor: 'red',
+            strokeWidth: 2,
+            visible: false
+        });
+
+        moonPath = board.create('curve', circle(1-mu, apolloPath.dataX.length), {
+            strokeColor: 'green',
+            strokeWidth: 2,
+            visible: false
+        });
+
+        moon = board.create('point', [1, 0], {
+            withLabel: false,
+            strokeColor: 'gray',
+            fillColor: 'gray',
+            size: 10
+        });
+        
+        apollo = board.create('point', [1, 0], {
+            withLabel: false,
+            strokeColor: 'white',
+            fillColor: 'white',
+            size: 2,
+            face: '<>'
+        });
+
+        moon.moveAlong(function (i) {
+            return [moonPath.dataX[i%moonPath.dataX.length], moonPath.dataY[i%moonPath.dataY.length]];
+        }, 2000);
+
+        apollo.moveAlong(function (i) {
+            return [apolloPath.dataX[i%apolloPath.dataX.length], apolloPath.dataY[i%apolloPath.dataY.length]];
+        }, 2000);
+    })();
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="createCurve();">Solve example ODE</a><br />
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

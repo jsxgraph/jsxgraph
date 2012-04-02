@@ -1,0 +1,75 @@
+<html>
+<head>
+   <title>JSXGraph example: YahooFinance server module</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Get shareprices with YahooFinance server module</h2>
+In case there's no internet connection goto <a href="fakeshareprice.html">fake data</a> example.<br />
+<select id="stock"><option value="^GDAXI">DAX</option><option value="^DJI">Dow Jones</option></select>
+<a href="#" onclick="change();">Load this stock quote</a>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+    var x = [], y = [], g, board, val, hi, lo, share, timer, restart = true;
+
+    JXG.Server.loadModule('YahooFinance');
+
+    var init = function (data) {
+        hi = data.max*1.00002;
+        lo = data.min*0.99998;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, hi, 200, lo], axis: true, grid: false});
+        board.createElement('axis',[[0,lo],[1,lo]]);
+    }
+
+    var cb = function (data) {
+        try {
+            x.push(x.length+1);
+            y.push(data.price);
+            val = data.price;
+            if (restart) {
+                restart = false
+                g = board.create('curve', [x,y],{strokeWidth:3, strokeColor:'green',shadow:false}); 
+                txt = board.create('text', [3,(hi+lo)*0.5,function(){return share + ' = '+val;}],{fontSize:'14px'}); 
+                reg = board.create('functiongraph',[JXG.Math.Numerics.regressionPolynomial(1,g.dataX,g.dataY)],{strokecolor:'red',dash:3});
+            } else {
+                g.dataX = x;                    
+                g.dataY = y;
+            }
+            board.update();
+        } catch (e) { $('#debug').html(e); }
+    }
+
+    function change() {
+        // clean up
+        if(board) {
+            board.removeObject([g, txt, reg]);
+            JXG.JSXGraph.freeBoard(board);
+            delete g;
+            delete txt;
+            delete reg;
+            delete board;
+        }
+        if(timer)
+            window.clearInterval(timer);
+
+        share = $('#stock').val();
+
+        restart = true;
+        x = [];
+        y = [];
+
+        JXG.Server.modules.YahooFinance.getMinMax(share, init);
+        timer = window.setInterval('JXG.Server.modules.YahooFinance.getCurrentSharePrice("' + share + '", cb);', 1300);
+    }
+
+  /* ]]> */
+  </script>
+</body>
+</html>

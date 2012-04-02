@@ -1,0 +1,934 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
+    <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
+    <!--script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script-->
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script>
+    <script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script>
+    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../src/Square.js"></script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endifhandleAt
+
+        void main(void) {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec3 aVertexPosition;
+
+        uniform mat4 uMVMatrix;
+        uniform mat4 uPMatrix;
+
+        void main(void) {
+            gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        }
+    </script>
+</head>
+<body>
+
+<h2>Playground to test things temporarily. May change very often.</h2>
+
+<!--a href="javascript:zoomPoints();">Zoom all points (new)</a><br />
+<a href="javascript:brd.zoomAllPoints();">Zoom all points (old)</a><br />
+<a href="javascript:zoomAll();">Zoom all elements (new)</a-->
+
+<input type="text" id="input" value="sin(x)*x">
+<input type="button" value="plot" onClick="plotter()">
+<input type="button" value="clear all" onClick="clearAll()">
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left;"></div>
+  <div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+</div>
+
+<div id="debug" style="display:block;">DEBUG</div>
+<a href="javascript:gJSX();" id="hideaxis">gJSX</a>
+<img id="snapshot" />
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var jessie = (function () {
+        JXG.Options.text.highlightStrokeColor = 'red';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
+
+        var A = board.create('point', [1, 2], {snapSizeX: 0, snapSizeY: 0, snapToGrid: true});
+        var B = board.create('point', ["Sin(X(A))+2", 3], {color: 'black'});
+        //var B = board.create('point', [1, 1]);
+        var C = board.create('point', [-1, -1]);
+
+        var p = board.create('functiongraph', ["Sin(x)*X(A)"]);
+        var t = board.create('text', [3, 2, 'TEXTYTEXT']);
+
+        var a = board.create('angle', [A, B, C], {text: function () { return A.X();}});
+
+        var int = board.create('integral', [[-2, 2], p], {curveLeft: {visible: false}, curveRight: {visible: false}});
+
+        return board;
+    })();
+
+    var gJSXbrd;
+    var gJSX = (function() {
+        var pointStr = function (x, y) {
+            return x + ', ' + y;
+        };
+        if (gJSXbrd) {
+            JXG.JSXGraph.freeBoard(gJSXbrd);
+        }
+        var x = 5;
+        var y = 3;
+        
+        JXG.Options.grid.snapToGrid = true;
+        gJSXbrd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-10,10,10,-10],axis:true,grid:true,keepaspectratio:true,showNavigation:true,showCopyright:false});
+        var ptGr = gJSXbrd.create('point', [x,y],{size:1,color:'blue',fixed:true});
+        var tPt = gJSXbrd.create('point', [0,0 ],{name:'',size:1,color:'red'} );
+        var hi = gJSXbrd.create('text', [-5,-5, function() {document.getElementById('debug').value=pointStr( tPt.X().toFixed(1), tPt.Y().toFixed(1) ); return 0}],{visible:false});
+    });
+
+    var gesture = (function () {
+        JXG.addEvent(document.getElementById('jxgbox'), 'gesturestart', function (e) {
+            e.preventDefault();
+            console.log('gesture start');
+            return false;
+        }, this);
+        JXG.addEvent(document.getElementById('jxgbox'), 'gesturechange', function (e) {
+            e.preventDefault();
+            console.log('gesture change');
+            console.log("Scale: " + e.scale + ", Rotation: " + e.rotation);
+
+            //document.getElementById('jxgbox').style.webkitTransform = 'scale(' + e.scale + ') rotate(' + e.rotation + 'deg)';
+            return false;
+        }, this);
+        JXG.addEvent(document.getElementById('jxgbox'), 'gestureend', function (e) {
+            e.preventDefault();
+            console.log('gesture end');
+            return false;
+        }, this);
+    });
+
+    var lineconstr = (function () {
+        JXG.Options.line.withLabel = true;
+        JXG.Options.line.label = {
+            strokeColor: 'gray',
+            fontsize: 20
+        };
+        JXG.Options.grid.snapToGrid = false;
+        
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true, grid: false});
+
+        var s = board.create('slider', [[-1, 1], [1, 1], [0, 1, 3]]);
+
+        var p1 = board.create('point', [2, 3], {trace: true, size: 6, traceAttributes: {size: 2, fillColor: 'blue', strokeColor: 'blue'}});
+        var p2 = board.create('point', [4, 5]);
+
+        board.create('line', [p1, p2]);
+
+        //board.create('line', [function () { return [2, s.Value()];}, function () { return [4, 3];}], {strokeColor: 'red', traceAttributes: {strokeColor: 'green', strokeWidth: 1}, trace: true});
+        //var l = board.create('line', [function () { return [1, s.Value(), 3]}], {strokeColor: 'green'});
+        //l.setProperty({withLabel: true});
+
+        var p = board.create('point', [-2, 3], {size: 9, fillColor: 'blue', face: '[]', label: {strokeColor: 'red', fontsize: 35}, snapToGrid: true, snapSizeX: 0.5, snapSizeY: 0.5, showinfobox: false, highlight: false});
+
+        board.create('regularpolygon', [p1, p2, 4], {points: {ids: ['1', '2', '3']}});
+
+        board.create('angle', [p1, p2, p], {radius: function () {return s.Value();}, withLabel: true});
+    });
+
+    var jan = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
+        
+        var p1, p2, p3, p4, p5, p6, l, p;
+        
+        p1 = board.create('point', [-3, 3]);
+        p2 = board.create('point', [-1, 5]);
+        p3 = board.create('point', [1, 5]);
+        p4 = board.create('point', [3, 3]);
+
+        p5 = board.create('point', [1, 1]);
+        p6 = board.create('point', [-1, 1]);
+
+        
+        p = board.create('polygon', [p1, p2, p3, p4]);
+
+        p.addPoints(p5, p6);
+        
+        p.removePoints(p2, p6).removePoints(p1);
+
+        return p;
+    });
+
+    var normal = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: true});
+
+
+        var l = board.create('line', [1, 2, 3], {point1: {id: 'wrzlpfrmpf'}, point2: {id: 'bf3 rules!!111elf'}});
+    });
+
+    var plotter, clearAll;
+
+    var clear = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+        var f, curve; // global objects
+
+        plotter = function () {
+            var txtraw = document.getElementById('input').value;
+            var txt = JXG.GeonextParser.geonext2JS(txtraw);
+            f = new Function('x','var y = '+txt+'; return y;');
+            curve = board.create('functiongraph',[f,
+                function(){
+                    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+                    return c.usrCoords[1];
+                },
+                function(){
+                    var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+                    return c.usrCoords[1];
+                }
+            ],{name:txtraw, withLabel:true});
+        };
+
+        clearAll = function () {
+            JXG.JSXGraph.freeBoard(board);
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+            f = null;
+            curve = null;
+        };
+
+    });
+
+    var android = (function () {
+        JXG.Options.renderer = 'canvas';
+        var board, i, p, col;
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        p = [];
+        for (i=0;i<2*3+1;i++) {
+            if (i%3==0) {
+                col = 'red';
+            } else {
+                col = 'blue';
+            }
+            if (i==0) {
+                p.push(board.createElement('point',[-3,3],{strokeColor:col,fillColor:col}));
+            } else {
+                p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
+            }
+        }
+        var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokecolor:'blue', name:"curve", strokeWidth:5, lastArrow:true});
+    });
+
+    var arcadi = (function () {
+        var b1 = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            b2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            hook = function () {
+                var otherboard, bb, obb, equals = true, i;
+
+                if (this == b1) {
+                    otherboard = b2;
+                } else {
+                    otherboard = b1;
+                }
+
+                bb = this.getBoundingBox();
+                obb = otherboard.getBoundingBox();
+
+                for (i = 0; i < bb.length; i++) {
+                    if (Math.abs(bb[i] - obb[i]) > JXG.Math.eps) {
+                        equals = false;
+                        break;
+                    }
+                }
+
+                if (!equals) {
+                    otherboard.setBoundingBox(bb, false);
+                }
+            };
+
+        b1.addHook(hook, "update", b1);
+        b2.addHook(hook, "update", b2);
+    });
+
+    var david = (function () {
+        JXG.Options.text.display = 'internal';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            p1 = board.create('point', [1, 1]),
+
+            img = document.getElementById('snapshot'),
+            renderer = board.renderer,
+            rendererType = board.options.renderer;
+
+        board.container = 'debug';
+        board.containerObj = document.getElementById('debug');
+        board.containerObj.innerHTML = '';
+        board.containerObj.style.width = board.canvasWidth + 'px';
+        board.containerObj.style.height = board.canvasHeight + 'px';
+        board.renderer = new JXG.CanvasRenderer(board.containerObj),
+        board.options.renderer = 'canvas';
+        board.removeEventHandlers();
+
+        board.fullUpdate();
+
+
+        img.style.width = board.canvasWidth + 'px';
+        img.style.height = board.canvasHeight + 'px';
+        img.src = board.renderer.canvasRoot.toDataURL();
+        board.containerObj.innerHTML = '';
+        delete board.renderer;
+        board.container = 'jxgbox';
+        board.containerObj = document.getElementById('jxgbox');
+        board.options.renderer = rendererType;
+        board.renderer = renderer;
+        board.addEventHandlers();
+        board.fullUpdate();
+
+        return board;
+    });
+
+    var angle = (function () {
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-3, 3, 3, -3], axis:true, showCopyright:false, showNavigation:true}),
+            p1 = brd.create('point', [2, 0]),
+            p2 = brd.create('point', [0, 0]),
+            p3 = brd.create('point', [1, 1.5]),
+            yaxis = brd.create('angle', [p1, p2, p3], {radius: 0.5});
+    });
+
+    var alyssa = (function () {
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, 4, 1, -4], axis:false, showCopyright:false, showNavigation:true});
+        var xaxis, yaxis, curve;
+        brd.suspendUpdate();
+        //yaxis = brd.create('axis', [[0,0],[0,1]], {withLabel: true});
+        xaxis = brd.create('axis', [[0, 0], [1, 0]], {
+            ticks: {
+                ticksDistance: .1,
+                insertTicks: false
+            },
+            withLabel: true
+        });
+        //brd.create('line', [1, 1, 0], {labelColor: 'red'});
+        //curve = brd.create('functiongraph', [function(x){return Math.sin(x);} ]);
+        brd.unsuspendUpdate();
+    });
+
+    var ticks = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: true});
+
+        var points = [];
+        points.push(board.create('point', [1, 1]));
+        points.push(board.create('point', [2, 3]));
+        points.push(board.create('point', [4, 1]));
+        points.push(board.create('point', [3, 3]));
+
+        var py = board.create('polygon', points);
+        board.removeObject(py);
+//        window.setTimeout(function () {board.setBoundingBox([-3, 3, 3, -3], false);}, 5000);
+    });
+
+    var e = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false}),
+            c = board.create('slider', [[1, 3], [3, 3], [0, 3, 6]], {precision: 5}),
+            f = function (h) {
+                if (h > JXG.Math.eps) {
+                    return (Math.pow(c.Value(), h) - 1)/h;
+                } else {
+                    return NaN;
+                }
+            },
+            p = board.create('point', [0, function () { return f(JXG.Math.eps*2); }], {fillColor: 'none', strokeColor: 'navy', strokeWidth: 2, face: 'o', size: 3}),
+            plot = board.create('functiongraph', [f]);
+
+    });
+
+    var line = (function () {
+        var glex2_board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false});
+        var glex2_l1 = glex2_board.create('line', [1.0, 1.0, 1.0]);
+        var glex2_l2 = glex2_board.create('line', [1.0, 0.0, 2.0], {strokeColor: 'green'});
+        var glex2_l3 = glex2_board.create('line', [2.0, 2.0, 6.0], {strokeColor: 'pink'});
+        var glex2_l3 = glex2_board.create('line', [2.0, 2.0, 3.0], {strokeColor: 'red'});
+    });
+
+    var poincare = (function () {
+        var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-5,5,5,-5]});
+        var c = brd.create('circle',[[0,0],3],{strokeColor:'black'});  // outer circle
+
+        var p = brd.create('point',[0,-4],{withLabel:false});
+        var t = brd.create('polar', [c,p], {strokeColor:'gray', dash:2, visible:false});
+        var s1 = brd.create('intersection', [c,t,0], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var s2 = brd.create('intersection', [c,t,1], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var arc = brd.create('arc',[p,s1,s2],{name:'g', withLabel:true});
+
+        var pp = brd.create('point',[1,2],{withLabel:true,name:'P'});
+        var t = brd.create('polar', [c,pp], {visible:false});
+        var l = brd.create('line', [[0,0],pp], {visible:false});
+        var A = brd.create('intersection', [l,t,0], {withLabel:true,visible:false});
+        var M = brd.create('midpoint',[pp,A], {withLabel:true,visible:false});
+        var perp = brd.create('perpendicular', [l,M], {name:'', withLabel:false, strokeColor:'gray', dash:1, straightFirst:true, straightLast:true, point: {visible:true}});
+        var test = brd.create('point', [function () { return new JXG.Coords(JXG.COORDS_BY_USER, [2, 1], brd)}]);
+
+/*        var x = brd.create('glider',[3, 3, perp], {name:'drag me'});
+
+        var t2 = brd.create('polar', [c, x], {strokeColor:'gray', dash:2, visible:false});
+        var ss1 = brd.create('intersection', [c,t2,0], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var ss2 = brd.create('intersection', [c,t2,1], {withLabel:false, strokeColor:'green', fillColor:'green'});
+        var arc = brd.create('circumcirclearc',[ss1,pp,ss2], {strokeWidth:1, trace:true, dash:3});*/
+
+        return brd;
+    });
+
+    var perp = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
+            p1 = board.create('point', [2, 2]),
+            p2 = board.create('point', [0, 2]),
+            p3 = board.create('point', [0, 4]),
+            l = board.create('line', [p1, p2]),
+            pp = board.create('perpendicular', [p3, l]);
+
+    });
+
+    var dot = (function () {
+        JXG.Options.precision.hasPoint = 0;
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
+            p1 = board.create('point', [2, 2]),
+            p2 = board.create('point', [0, 2]),
+            p3 = board.create('point', [0, 4]);
+
+        board.create('angle', [p1, p2, p3], {dot: {visible: true}});
+
+        var hideAxis = function() {
+            var ax = board.defaultAxes.x;
+            var i;
+            ax.hideElement();
+            ax.defaultTicks.hideElement();
+        };
+
+        JXG.addEvent(document.getElementById('hideaxis'), 'click', hideAxis, board);
+
+        var foo = {
+            bar: function () {
+                console.log(this);
+            }
+        };
+
+        board.addHook(foo.bar, 'update', console);
+    });
+
+    var drei = (function () {
+        JXG.Options.renderer = 'svg';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
+            cs = [
+                [-2, 2, 2, 1], [2, 2, 2, 1], [-2, 2, -2, 1], [2, 2, -2, 1],
+                //[0, -2, 0, 1], [0, -2, 0, 1], [0, -2, 0, 1], [0, -2, 0, 1]
+                [-2, -2, 2, 1], [2, -2, 2, 1], [-2, -2, -2, 1], [2, -2, -2, 1]
+            ],
+            ps = [],
+            init = function () {
+                for (i = 0; i < cs.length; i++) {
+                    //co = render(cs[i]);
+                    ps[i] = board.create('point', [0, 0], {withLabel: false, trace: false});
+                    ps[i].threeD = JXG.Math.Statistics.add(cs[i], [3, 0, 0]);
+                }
+
+                // back
+                board.create('segment', [ps[0], ps[1]]);
+                board.create('segment', [ps[2], ps[3]]);
+                board.create('segment', [ps[0], ps[2]]);
+                board.create('segment', [ps[1], ps[3]]);
+
+                // front
+                board.create('segment', [ps[4], ps[5]]);
+                board.create('segment', [ps[6], ps[7]]);
+                board.create('segment', [ps[4], ps[6]]);
+                board.create('segment', [ps[5], ps[7]]);
+
+                // left
+                board.create('segment', [ps[0], ps[4]]);
+                board.create('segment', [ps[2], ps[6]]);
+
+                // right
+                board.create('segment', [ps[1], ps[5]]);
+                board.create('segment', [ps[3], ps[7]]);
+            },
+            render = function (camera, points) {
+                var c = camera.position,//[6, 0, 6],
+                    n = camera.normal,//[-2, 0, -2],
+                    i, b, nt,
+                    nl = Math.sqrt(JXG.Math.innerProduct(n, n)),
+                    sgny = Math.abs(n[1]) < JXG.Math.eps ? 0 : (n[1] > 0 ? 1 : -1),
+                    phi, theta,
+                    rotx, roty, transform;
+
+                theta = 0;//-Math.atan2(n[1], n[2]);
+                phi = 0;//-Math.atan2(n[0], n[2]);
+
+                /*if (n[0] > 0) {
+                 phi = Math.atan2(n[1], n[0]);
+                 } else if (Math.abs(n[0]) < JXG.Math.eps) {
+                 phi = sgny*Math.PI/2;
+                 } else {
+                 phi = Math.atan2(n[1], n[0]) + sgny*Math.PI;
+                 }
+                 theta = Math.acos(n[2]/nl);*/
+
+                rotx = [
+                    [1, 0, 0, 0],
+                    [0, Math.cos(theta), -Math.sin(theta), 0],
+                    [0, Math.sin(theta), Math.cos(theta), 0],
+                    [0, 0, 0, 1]
+                ];
+
+                roty = [
+                    [Math.cos(phi), 0, Math.sin(phi), 0],
+                    [0, 1, 0, 0],
+                    [-Math.sin(phi), 0, Math.cos(phi), 0],
+                    [0, 0, 0, 1]
+                ];
+
+                //transform = JXG.Math.matMatMult(JXG.Math.projection(Math.PI/4, 1, 0.1, 100), JXG.Math.matMatMult(rotx, roty));
+                transform = JXG.Math.matMatMult(rotx, roty);
+                nt = JXG.Math.matVecMult(transform, JXG.Math.Statistics.subtract(n, c));
+                console.log(nt);
+                for (i = 0; i < points.length; i++) {
+                    b = JXG.Math.matVecMult(transform, JXG.Math.Statistics.subtract(points[i].threeD, c));
+
+                    //points[i].moveTo(b[0], b[1]);
+
+                    points[i].moveTo([Math.abs(nt[2])*b[0]/b[2], Math.abs(nt[2])*b[1]/b[2]]);
+                    //points[i].moveTo([nl*b[0]/b[2], nl*b[1]/b[2]]);
+                }
+
+                //return ;
+            },
+            animate = function () {
+                render({
+                    position: [12*Math.sin(t), 3, 12*Math.cos(t)],
+                    normal: [-1*Math.sin(t), 0, -1*Math.cos(t)]
+                    //normal: [-1*Math.sin(t)*(2+Math.sin(t)), 0, -1*Math.cos(t)*(2+Math.sin(t))]
+                }, ps);
+                t += 0.1;
+                //if (t > 2*Math.PI) {
+//                    t = 0;
+//                }
+                setTimeout(animate, 100);
+                //document.getElementById('debug').innerHTML = t/Math.PI;
+            },
+            i, co, t = 0;
+
+        init();
+        /*render({
+         position: [6, 0, 6],
+         normal: [-2, 0, -2]
+         }, ps);*/
+
+        setTimeout(animate, 100);
+
+        var pmat = JXG.Math.transpose(JXG.Math.projection(Math.PI/4, 1, 0.1, 100));
+        var d = document.getElementById("debug");
+
+
+        d.innerHTML = '';
+        for (i = 0; i < pmat.length; i++) {
+            for (var j = 0; j < pmat[i].length; j++) {
+                d.innerHTML += pmat[i][j];
+                d.innerHTML += ', ';
+            }
+            d.innerHTML += '<br />';
+        }
+
+        //board.options.axis.majorHeight = 5;
+
+        //console.log(project([0, 0, 0]), project([1, 0, 0]), project([0, 1, 0]), project([0, 0, 1]));
+
+        // axes
+        /*var axp = {
+         visible: true,
+         withLabel: true,
+         face: 'x',
+         size: 5,
+         strokeWidth: 2,
+         strokeColor: 'green'
+         },
+         axl = {
+         withLabel: false,
+         strokeColor: 'black',
+         strokeWidth: 1,
+         lastArrow: true
+         },
+         o = board.create('point', render([0, 0, 0]), axp),
+         p100 = board.create('point', render([2, 0, 0]), axp),
+         p010 = board.create('point', render([0, 2, 0]), axp),
+         p001 = board.create('point', render([0, 0, 2]), axp),
+         xax = board.create('line', [o, p100], axl),
+         yax = board.create('line', [o, p010], axl),
+         zax = board.create('line', [o, p001], axl);*/
+    });
+
+    var yikes = (function () {
+        var brd, p0, p1, p2, p3, r, seg, angleVal, a;
+        JXG.Options.text.useMathJax = true;
+        brd = JXG.JSXGraph.initBoard("jxgbox"
+            ,{boundingbox:[-11,11,11,-11]
+            ,showNavigation:false
+            ,showCopyright:false
+            ,keepaspectratio:true
+            ,grid:false
+            ,axis:true
+        });
+        p0 = brd.create('point',   [0,0],  {name:'', face:'+', strokeColor:'grey',fixed:true});
+
+        p1 = brd.create('point',   [3,4],  {name:'', face:'+', size:4, showInfobox:false});
+
+        p2 = brd.create('point',   [1,0],  {name:'', face:'+', size:4, visible:false});
+
+        p3 = brd.create('midpoint',[p0,p1],{name:'', face:'+', size:1, visible:false});
+
+        brd.create('text',[
+            function() {
+                angleVal = brd.angle(p2,p0,p1);
+                var op = ((angleVal < 0)? -1:1);
+                return op*2*Math.cos(0.5*brd.angle(p2,p0,p1));
+            },
+            function() {
+                angleVal = brd.angle(p2,p0,p1);
+                var op = ((angleVal < 0)? -1:1);
+                return op*2*Math.sin(0.5*brd.angle(p2,p0,p1));
+            },
+            function() {
+                angleVal = brd.angle(p2,p0,p1);
+                if (angleVal < 0) { angleVal += 2*Math.PI}
+                angleVal *= (180/Math.PI);
+                return '\\(\\theta = '+(angleVal).toFixed(2)+'^o\\)';
+            }
+        ]);
+
+        brd.create('text',[
+            function() {return p1.X()+0.2;},function() {return p1.Y()+0.2;},
+            function() {
+                r = (Math.sqrt(p1.X()*p1.X()+p1.Y()*p1.Y())).toFixed(2);
+                angleVal = brd.angle(p2,p0,p1)*180/Math.PI;
+                if (angleVal <0) { angleVal += 360}
+                return 'A('+p1.X().toFixed(2)+','+p1.Y().toFixed(2)+')';
+            }
+        ]);
+
+        brd.create('text',[-10,-10,function() {
+            var op = ((p1.Y() < 0)? '-': '+');
+            return '\\(' + p1.X().toFixed(2) + op +
+                Math.abs(p1.Y()).toFixed(2) + 'i=' +
+                r + '\\quad cis (' + angleVal.toFixed(2) + '^o) \\)';
+        }]);
+        brd.create('text',[0,0, function() {
+            MathJax.Hub.Queue(['Typeset',MathJax.Hub,'content']);
+            return '';
+        }]);
+   });
+
+    var carstensbeispiel = (function () {
+		var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 3, 5, -3], axis:false});
+		board.suspendUpdate();
+		var p1 = board.create('point',[0, 0],{name: 'M', size: 4, strokeWidth: 2, strokeColor: '#770000', fillColor: '#ff0000', fixed: true});
+		var c1 = board.create('circle',[p1, [2, 0]],{name: 'k_a', size: 4, strokeWidth: 2, strokeColor: '#007700'});
+		var p2 = board.create('point',[-3, 1],{name: 'P', size: 4, strokeWidth: 2,  strokeColor: '#770000	', fillColor: '#ff0000'});
+		var l1 = board.create('line',[p1, p2],{name: 'r', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightFirst: false, straightLast: false});
+		var p3 = board.create('midpoint',[p2, p1],{name: '', size: 2, strokeWidth: 2, strokeColor: '#777777', fillColor: '#dddddd', straightFirst: false, straightLast: false});
+		var c2 = board.create('circle',[p3, p2],{name: 'k_b', size: 4, strokeWidth: 2, strokeColor: '#ff0000'});
+		var p3 = board.create('intersection',[c1, c2, 0],{name: 'B_1', size: 4, strokeWidth: 2, strokeColor: '#777777', fillColor: '#dddddd', straightFirst: false, straightLast: false});
+		var p4 = board.create('intersection',[c1, c2, 1],{name: 'B_2', size: 4, strokeWidth: 2, strokeColor: '#777777', fillColor: '#dddddd', straightFirst: false, straightLast: false});
+		var l2 = board.create('line',[p2, p3],{name: 'r', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightFirst: true, straightLast: true});
+		var l3 = board.create('line',[p2, p4],{name: 'r', size: 4, strokeWidth: 2, strokeColor: '#000077', fillColor: '#ff0000', straightFirst: true, straightLast: true});
+		board.unsuspendUpdate();
+
+		return board;
+    });
+
+    var carstensmail = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
+        board.suspendUpdate();
+        var p1 = board.create('point', [1, 0]),
+            p2 = board.create('point', [2, 1]),
+            p3 = board.create('point', [2, 3]),
+            p4 = board.create('point', [-2, 0]),
+            l1 = board.create('line', [p1, p2]),
+            l2 = board.create('line', [p3, p4]);
+        board.create('intersection', [l1, l2, 0], {trace: true});
+        board.unsuspendUpdate();
+    });
+
+    var normalperp = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
+
+        var l = board.create('line', [[0, 0], [2, 1]]),
+            p = board.create('point', [2, 3]);
+
+        board.create('perpendicular', [l, p]);
+        board.create('normal', [l, p]);
+    });
+
+    var scroll = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]});
+
+        JXG.addEvent(document.getElementById('jxgbox'), 'mousewheel', function (e) { console.log(e) }, board);
+    });
+
+    var hron = (function () {
+        JXG.Options.layer.polygon = 4;
+        JXG.Options.layer.image = 4;
+        JXG.Options.layer.line = 4;
+        JXG.Options.renderer = 'canvas';
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10]}),
+            p1 = board.create('point', [-3, -5]),
+            p2 = board.create('point', [2, -2]),
+            p3 = board.create('point', [7, 6]),
+            poly = board.create('polygon', [p1, p2 , p3]),
+            img = board.create('image', ['http://www.webresourcesdepot.com/wp-content/uploads/image/jsxgraph.gif', [0, 0], [3, 3]]),
+            p4 = board.create('point', [-3, 2]),
+            p5 = board.create('point', [4, 5]),
+            l = board.create('line', [p4, p5], {strokeWidth: 10});
+    });
+
+    var radaxes = (function () {
+        JXG.Options.renderer = 'svg';
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
+            ct1 = board.create('point', [0, 3]),
+            ct2 = board.create('point', [-4, -2]),
+            ct3 = board.create('point', [4, -1]),
+            cc = board.create('circumcircle', [ct1, ct2, ct3], {
+                strokeColor: 'red',
+                point: {
+                    face: 'x',
+                    visible: true,
+                    name: null,
+                    withLabel: true
+                }
+            }),
+            ptest = board.create('point', [0, 0]),
+            xaxis = board.create('axis', [[0, 0], [1, 0]], {
+                ticks: {
+//                    minTicksDistance: 0,
+                    ticksDistance: 2,
+                    insertTicks: true,
+                    minorTicks: 3,
+                    minorHeight: 10
+                }
+            });
+    });
+
+    var tyrus = (function () {
+        //JXG.Options.renderer = 'canvas';
+        var board = JXG.JSXGraph.initBoard('jxgbox');
+
+        var line1 = board.create('line', [[0, 0], [1, 0]], {strokeWidth: 1});
+        var line2 = board.create('line', [[0, 0], [1, 1]], {strokeWidth: 1});
+
+        var ticks = board.create('ticks', [line1, 1], {
+            minTicksDistance: 10,
+            insertTicks: true,
+            drawLabels: true
+        });
+
+        //var graph1 = board.create('functiongraph', [function(x){ return 0}, -2, 4] ,{strokeWidth:1});
+        //var graph2 = board.create('functiongraph', [function(x){ return 1/2*x}, -2, 4] ,{strokeWidth:1});
+        //var graph3 = board.create('functiongraph', [function(x){ return x}, -2, 4] ,{strokeWidth:1});
+        //var graph4 = board.create('functiongraph', [function(x){ return 2*x}, -2, 4] ,{strokeWidth:1});
+    });
+
+    var eulerline = (function () {
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1.5, 2, 1.5, -1], keepaspectratio:true});
+
+        var cerise = {
+                strokeColor: '#901B77',
+                fillColor: '#CA147A'
+            },
+
+            grass = {
+                strokeColor: '#009256',
+                fillColor: '#65B72E',
+                visible: true,
+                withLabel: true
+            },
+
+            perpendicular = {
+                strokeColor: 'black',
+                dash: 1,
+                strokeWidth: 1,
+                point: JXG.deepCopy(cerise, {
+                    visible: true,
+                    withLabel: true
+                })
+            },
+
+            median = {
+                strokeWidth: 1,
+                strokeColor: '#333333',
+                dash:2
+            },
+
+            A = board.create('point', [1, 0], cerise),
+            B = board.create('point', [-1, 0], cerise),
+            C = board.create('point', [0.2, 1.5], cerise),
+            pol = board.create('polygon',[A,B,C], {
+                fillColor: '#FFFF00',
+                lines: {
+                    strokeWidth: 2,
+                    strokeColor: '#009256'
+                }
+            });
+
+        var pABC, pBCA, pCAB, i1;
+        perpendicular.point.name = 'H_c';
+        pABC = board.create('perpendicular', [pol.borders[0], C], perpendicular);
+        perpendicular.point.name = 'H_a';
+        pBCA = board.create('perpendicular', [pol.borders[1], A], perpendicular);
+        perpendicular.point.name = 'H_b';
+        pCAB = board.create('perpendicular', [pol.borders[2], B], perpendicular);
+        grass.name = 'H';
+        i1 = board.create('intersection', [pABC[0], pCAB[0], 0], grass);
+
+        var mAB, mBC, mCA;
+        cerise.name = 'M_c';
+        mAB = board.create('midpoint', [A, B], cerise);
+        cerise.name = 'M_a';
+        mBC = board.create('midpoint', [B, C], cerise);
+        cerise.name = 'M_b';
+        mCA = board.create('midpoint', [C, A], cerise);
+
+        var ma, mb, mc, i2;
+        ma = board.create('segment', [mBC, A], median);
+        mb = board.create('segment', [mCA, B], median);
+        mc = board.create('segment', [mAB, C], median);
+        grass.name = 'S';
+        i2 = board.create('intersection', [ma, mc, 0], grass);
+
+        var c;
+        grass.name = 'U';
+        c = board.create('circumcircle',[A, B, C], {
+            strokeColor: '#000000',
+            dash: 3,
+            strokeWidth: 1,
+            point: grass
+        });
+
+        var euler;
+        euler = board.create('line', [i1, i2], {
+            strokeWidth: 2,
+            strokeColor:'#901B77'
+        });
+    });
+
+
+    var old = (function () {
+        function zoomAll () {
+            brd.zoomElements([li]);//JXG.keys(brd.objects));
+        }
+
+        function zoomPoints() {
+            var e, points = [];
+
+            for (e in brd.objects) {
+                if (JXG.isPoint(brd.objects[e]) && brd.objects[e].visProp.visible) {
+                    points.push(brd.objects[e]);
+                }
+            }
+
+            brd.zoomElements(points);
+        }
+
+        JXG.Options.renderer = 'canvas';
+        JXG.Options.text.useMathJax = false;
+        JXG.Options.showCopyright = false;
+
+        var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox:[-5, 5, 5, -5], grid: false, keepaspectratio: true});
+
+        p1 = brd.create('point', [0,0], {withLabel: false});
+        p1.setProperty({withLabel: true});
+
+        p2 = brd.create('point', [2,1], {strokeColor: 'green', fillColor: 'green', fixed: true});
+        p3 = brd.create('point', [0,1]);
+        p4 = brd.create('point', [4,2], {name: "Z"});
+
+        cca = brd.create('circle', [p1, p2]);
+
+        sq = brd.create('square', [p1, p3]);
+
+        li= brd.create('segment', [p3, p4]);
+        t = brd.create('text', [4, 5, 'foobar'], {parent: cca, withLabel: false});
+
+        pol = brd.create('polygon', [p1, p2, p3, p4], {
+            lines: {
+                ids: ['borderid1', 'borderid2', 'borderid3', 'borderid4'],
+                colors: ['yellow', 'green', 'red'],
+                strokeWidth: 7
+            }
+        });
+
+        sli = brd.create('slider', [[1, 1], [3, 1], [0, 1, 3]], {
+            glider: {
+                fillColor: 'green'
+            },
+            point1: {
+                visible: true
+            }
+        });
+
+        ax = brd.create('ticks', [li, 2]);
+
+        p1.setProperty({
+            color: '#00ff00',
+            opacity: 0.5,
+            size: 15,
+            face: 'x',
+            strokeWidth: 10,
+            shadow: true,
+            draft: false
+        });
+
+        li.setProperty({
+            straightFirst: true,
+            straightLast: true,
+            dash: 2,
+            firstArrow: true
+        });
+
+
+        oldie = 2;
+
+        a = brd.create('polygon', [p1, p2, p3]);
+        c = brd.create('circle', [p4, 3], {withLabel: true});
+
+        l = brd.create('axis', [p1, p4], {ticks: {ticksDistance: 1, insertTicks: false}});
+        //ti = brd.create('ticks', [l, 1], {drawLabels: false});
+
+        t = brd.create('text', [1, 3, function () { return '\\[e^x\\]'}]);
+
+        bigboy = brd.create('text', [1, 3, 'big boy']);
+
+        fun = brd.create('functiongraph', [function (x) { return p3.X() * Math.sin(x); }, -3, 3], {withLabel: true});
+
+        h = function () {
+            if (oldie < 0 && p4.Y() > 0) {
+                bigboy.setText('big boy');
+            }
+
+            if (oldie > 0 && p4.Y() < 0) {
+                bigboy.setText('lil boy');
+            }
+            oldie = p4.Y();
+        };
+
+        brd.addHook(h);
+    });
+
+    //brd.update();
+
+    /* ]]> */
+</script>
+</body>
+</html>

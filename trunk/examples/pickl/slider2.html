@@ -1,0 +1,30 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>JXGServer modul Test-Areal</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:400px; height:400px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+   JXG.Server.load('fft');
+
+board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 16, 16, -2], axis: true, grid: false, keepaspectratio: false, showcopyright: false});
+
+var s1 = board.createElement('slider',[[0,-3],[10,-3],[0,1,10]],{name: "a"});
+
+var gra1 = board.createElement('functiongraph', [function(x){return s1.Value()*Math.sin(x); },0,10]);
+   
+  /* ]]> */
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/dark.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDark.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+
+<body>
+
+<img src="img/logo-darker.png" id="watermark" />
+
+<div id="header">
+    <span id="jsxgraph-head"><a href="http://jsxgraph.org/"><img src="img/logo-grayscale.png" alt="JSXGraph" /></a></span>
+</div>
+
+<div id="title">
+    <ul id="menu">
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Infinity</a></h2></li>
+        <li id="menu-info"><h2><a href="javascript:void(0);" id="head-explanation">Info</a></h2></li>
+        <li id="menu-source"><h2><a href="javascript:void(0);" id="head-source">Source</a></h2></li>
+    </ul>
+</div>
+
+<div id="container" class="content-block">
+    <center>
+    <div id="construction">
+        <div id="jxgbox" class="jxgbox" style="width: 500px; height: 500px;"></div>
+    </div>
+    </center>
+
+<script type="text/javascript" src="js/jsxgraph-dark.js"></script>
+
+<script id="jxg" type="text/javascript">
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-9, 8, 9, -10],
+                keepaspectreatio: true,
+                axis: false,
+                grid: false,
+                shownavigation: false
+            });
+
+        // construction
+        board.suspendUpdate();
+        var S = board.create('slider', [[-5,-6],[5,-6],[0,0.85,1]], {
+            name:'Whirl'
+        });
+        var hue = board.create('slider', [[-5,-7],[5,-7],[0,20.5,36]], {
+            name:'Colors'
+        });
+
+        var points = new Array();
+        points[0] = board.create('point',[5, 5], {name:' '});
+        points[1] = board.create('point',[-5, 5], {name:' '});
+        points[2] = board.create('point',[-5, -5], {name:' '});
+        points[3] = board.create('point',[5, -5], {name:' '});
+
+        function quadrangle(pt, n) {
+            var col;
+            var arr = new Array();
+            for(var i = 0; i < 4; i++) {
+                arr[i] = board.create('point',
+                    [function(t) {
+                        return function () {var x = pt[t].X();
+                                var x1 = pt[(t+1)%4].X();
+                                var s = S.Value();
+                                return x+(x1-x)*s;
+                         }}(i),
+                    function(t) {
+                        return function () {var y = pt[t].Y();
+                                var y1 = pt[(t+1)%4].Y();
+                                var s = S.Value();
+                                return y+(y1-y)*s;
+                         }}(i)
+                    ],
+                {size:1, name: "", withLabel: false, visible: false});
+            }
+            col =  function(){return JXG.hsv2rgb(hue.Value()*n,0.7,0.9);};
+            board.create('polygon',pt, {fillColor:col});
+            if(n>0)
+                quadrangle(arr, --n);
+        }
+        quadrangle(points,30);
+       
+        board.unsuspendUpdate();
+    })();
+</script>
+</div>
+
+<div id="explanation" class="content-block">
+    Just enjoy this construction!
+</div>
+
+
+<div id="source" class="content-block">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    JSXGraph is licensed under <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2011 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    var p;
+                    for(p in parts) {
+                        $('#' + p).hide();
+                    }
+
+                    $('#'+_part).show();
+                }
+            }(part));
+        }
+    });
+    
+    // ]]>
+</script>
+</body>
+</html>

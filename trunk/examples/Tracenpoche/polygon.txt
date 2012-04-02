@@ -1,0 +1,20 @@
+@options;
+
+@figure;
+//De Thomas Crespin pour AmiCollege;
+  A0 = point( -9 , 5 )  { vertfonce , rond3 , sansnom };
+  B0 = point( 8 , 8 )  { vertfonce , rond3 , sansnom };
+  C0 = point( -8 , -3 )  { vertfonce , rond3 , sansnom };
+  D0 = point( 9 , -8 )  { vertfonce , rond3 , sansnom };
+  for i = 0 to 18 do ;
+  p = 0.05*([i+1]);
+  A[i+1]=pointsur(A0,B0,p) { sansnom , i };
+  B[i+1]=pointsur(B0,C0,p) { sansnom , i };
+  C[i+1]=pointsur(C0,D0,p) { sansnom , i };
+  end;
+  polyA0B1B2A1A2B3B4A3A4B5B6A5A6B7B8A7A8B9B10A9A10B11B12A11A12B13B14A13A14B15B16A15A16B17B18A17A18B19C0A19 = polygone( A0 , B1 , B2 , A1 , A2 , B3 , B4 , A3 , A4 , B5 , B6 , A5 , A6 , B7 , B8 , A7 , A8 , B9 , B10 , A9 , A10 , B11 , B12 , A11 , A12 , B13 , B14 , A13 , A14 , B15 , B16 , A15 , A16 , B17 , B18 , A17 , A18 , B19 , C0 , A19  )  { plein50 };
+  polyC1B0B1C2C3B2B3C4C5B4B5C6C7B6B7C8C9B8B9C10C11B10B11C12C13B12B13C14C15B14B15C16C17B16B17C18C19B18B19D0 = polygone( C1 , B0 , B1 , C2 , C3 , B2 , B3 , C4 , C5 , B4 , B5 , C6 , C7 , B6 , B7 , C8 , C9 , B8 , B9 , C10 , C11 , B10 , B11 , C12 , C13 , B12 , B13 , C14 , C15 , B14 , B15 , C16 , C17 , B16 , B17 , C18 , C19 , B18 , B19 , D0  )  { plein50 };
+  sA0B0 = segment( A0 , B0 );
+  sB0C0 = segment( B0 , C0 );
+  sC0D0 = segment( C0 , D0 );
+

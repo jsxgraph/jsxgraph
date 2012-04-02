@@ -1,0 +1,474 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:1000px; height:1000px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+	
+	var canvasHeight = 10;
+	var canvasWidth = 10;
+	
+	
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, canvasWidth, canvasHeight, 0], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+
+	var adj = [ [0, 1, 1, 1, 0, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 1, 1],
+				[0, 0, 1, 0, 1, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0],
+				];
+	
+
+	
+	var k = new Array(adj.length); //Knoten
+	var a = {}; //Kanten
+	
+	var spaltensumme = new Array();
+	var zeilensumme = new Array();
+	var maxlayer = 0;
+	var maxwidth = 0;
+	var reverse = new Array();
+	var i,j;
+	var anzahldummies = 0;
+	var a2 = new Array();		//Dummyknoten
+	var dummy;
+	var layers;
+	
+	
+function print(matrix){									//Gib gewünschte Matrix schön aus, dient zur Kontrolle
+	var i,j;
+	for(i=0; i<matrix.length; i++){
+		for(j=0; j<matrix[i].length; j++){
+			document.write(matrix[i][j]+" ");
+			}
+			document.write("<br>");
+	}
+}	
+	
+function init(){
+	for(i=0;i<adj.length; i++){
+		k[i]= new Array(2);					//zeichne in Array neues Array
+		k[i][1] = 1;						//Setze zuerst in K[1] alle Einträge auf 1 um damit zu sagen das der Knoten noch berücksichtigt werden soll
+	}
+	
+}
+	init();									//aufrufen der Funktion damit neues Array erzeugt wird und k[i][1] = 1 gesetzt wird
+	plot(adj);									//Zeiche Graphen
+	
+	
+function istallesnull (){				
+
+	for(i=0; i<k.length; i++){
+		if(k[i][1] == 1){
+			return "nein";					//Überprüfe ob an der Stelle im Array eine 1 steht, wenn ja muss der Knoten noch berücksichtigt werden
+		}
+	}
+	//alert("Alles ist null!!!");
+	return "ja";							//ist alles null, ist man fertig, da alle Knoten betrachtet wurden und man nun weiß welche kanten man gegebenenfall umdrehen muss
+}
+
+function algorithmus(){
+	zyklenfrei();
+	layering();
+	erzeugedummynode();
+	kreuzungsminimierung();
+	scale();
+	
+}
+
+
+
+function zyklenfrei (){						//ruft solange nacheinander die einzelnen funktionen auf, solange noch Punkte da sind die noch nicht betrachtet wurden
+	while (istallesnull () == "nein"){
+			senkenLoeschen();
+			quellenLoeschen();
+			maxvalue();
+	}
+	//return adj;
+}
+
+function zsumme(zeile) {					//berechnet zeilensumme, wenn der Knoten noch existiert
+	var zs = 0;
+	var l;
+		for(l=0; l<k.length; l++)
+		{
+			if(k[l][1] == 1){
+				zs += adj[zeile][l];
+			}	
+		}
+		return zs;
+}
+
+function spsumme(adj,spalte) {					//berechnet spaltensumme, wenn der Knoten noch existiert
+	var sps = 0;
+	var l;
+		for(l=0; l<k.length; l++)
+		{
+			if(k[l][1] == 1){
+				sps += adj[l][spalte];
+			}	
+		}
+		return sps;
+}
+
+function getposition(index){					
+	if(index>=0 && index<k.length){
+		return k[index][1];								//gib mir die zuvor gesetzte POsition des Knotens zurück
+	}
+	else if(index>=k.length &&index<k.length+anzahldummies){
+		return dummy[index-k.length][1];
+	}
+}
+	
+function setposition(index, pos) {								//Setze Position des Knotens angefangen bei 1
+	
+	if(index>=0 && index<k.length){								//wenn index größer 0 und kleiner der Originalmatrix
+		k[index][1] = pos;										//Setze im Array K[index][1] die Position
+	}
+	else if(index>=k.length && index<k.length+anzahldummies){		//wenn index im bereich größer als die Originalmatrix ist
+		dummy[index-k.length][1] = pos;						//dann lege Position des Knotens ins DummyArray
+	}
+	
+}
+
+
+function nodeX(index){											
+	if(index >=0 && index<k.length){						//Wenn index größer null und kleiner gegebender Matrixlänge
+		return k[index][0].X();								//dann gib mir den X-wert des knoten "index"
+	}
+	else if(index>=k.length && index<k.length+anzahldummies){		//wenn index größer als geg. Matrixlänge und index kleiner als geg. Matrixlänge+nun zugefügter Dummyknotenlänge
+			return dummy[index-k.length][0].X();							//dann gib mir X Wert von dummyknoten. das k-length muss abgezogen werden, da das dummyarray bei null anfängt und die länge von k.length noch abgezogen werden muss damt man richtigen x-wert bekommt
+	}
+}
+
+function nodeY(index){
+	if(index >=0 && index<k.length){							//selbiges wie oben für die Y-Werte
+		return k[index][0].Y();
+	}
+	else if(index>=k.length && index<k.length+anzahldummies){
+			return dummy[index-k.length][0].Y();
+	}
+}
+
+function getnode(index){
+	if(index >=0 && index<k.length){						
+		return k[index][0];								
+	}
+	else if(index>=k.length && index<k.length+anzahldummies){		
+			return dummy[index-k.length][0];							//dann gib mir X Wert von dummyknoten. das k-length muss abgezogen werden, da das dummyarray bei null anfängt und die länge von k.length noch abgezogen werden muss damt man richtigen x-wert bekommt
+	}
+}
+
+
+function senkenLoeschen (){
+	var i;
+	for(i=0; i<adj.length; i++)						//löscht solange alle Senken, bis keine mehr da sind
+	{
+		if( k[i][1] == 1){
+		
+			zeilensumme[i] = zsumme(i);
+	
+			if(zeilensumme[i] == 0)
+			{
+				k[i][1] = 0;
+				//board.removeObject(k[i][0]);   //sehr böse, darf man nicht machen!
+				}
+			}
+		}
+	}
+
+//Lösche alle Quellen, also Knoten mit Eingangsgrad = 0, sowie  ausgehenden Kanten
+
+function quellenLoeschen (){
+	
+	for(j=0; j<adj.length; j++)
+	{
+		if(k[j][1] == 1){
+		
+		 spaltensumme[j] = spsumme(adj,j);
+		
+		if(spaltensumme[j] == 0)
+		{
+			k[j][1] = 0;
+			//board.removeObject(k[j][0]);
+			}
+		}
+		}
+		
+}
+	
+		
+function maxvalue (){
+		
+		var maxNode = -1 ;
+		var maxValue = -10000000 ;
+		
+	for(i=0; i<k.length; i++)
+	{
+		if(k[i][1] == 1){
+			
+			zeilensumme[i] = zsumme(i);
+			spaltensumme[i] = spsumme(adj,i);
+			
+			if(zeilensumme[i]-spaltensumme[i]>maxValue){		//berechne wert des Knotens mit "Ausgangskante-Eingangskante"
+				maxValue = zeilensumme[i]-spaltensumme[i];		//Maximaler berechneter Wert
+				maxNode = i;									//Knoten mit Maximalem Wert
+				//alert(k[maxNode][0].name);						// er gibt B aus, was richtig ist
+			}	
+		}		
+	}	
+
+	for(i=0; i<k.length; i++){
+	
+		if(k[i][1] == 1){
+		
+			adj[maxNode][i] += adj[i][maxNode];
+			adj[i][maxNode] = 0;
+			reverse.push([i,maxNode]);
+			
+			board.removeObject(a[i+","+maxNode]);
+		}
+	
+	}
+	
+	if(maxNode != -1){
+	
+	k[maxNode][1] = 0;
+	//board.removeObject(k[maxNode][0]);
+	}
+}
+
+function plot(matrix){
+    var i, j;
+	for(i=0; i<matrix.length; i++){
+								
+		var x = Math.random()*canvasWidth;				// Zeichne Punkte mit willkürlichem x-wert im Intervall (0-5)
+		var y = Math.random()*canvasHeight;				// Zeichne Punkte mit willkürlichen y-Wert im intervall (0-5)
+		
+		k[i][0]=board.createElement('point' , [x,y]);		//erzeuge willkürlich die Punkte
+	}
+	//Zeichne Kanten
+	for(i=0; i<matrix.length; i++)
+	{
+		for(j=0; j<matrix[i].length; j++)
+		{
+			if (matrix[i][j] !=0)							//durchlaufe matrixazenzmatrix, bei jeden Eintrag der ungleich 0 ist, also bei 1
+			{
+				a[i+","+j] = board.createElement('arrow' , [k[i][0], k[j][0]]);		//dann zeichne Pfeil von zeile nach spalte
+			}				
+		}
+	}
+}
+
+function layering(){
+	var i; 
+	var l;
+	var n = 0;
+	var scale;
+	for(i=0; i<k.length; i++){
+		zeilensumme[i] = 0;
+		for(l=0; l<k.length; l++){	
+			zeilensumme[i] += adj[i][l];			//Berechne alle Zeilensummen
+		}
+		if(zeilensumme[i] == 0){					//Wenn Zeilensumme = 0 ist
+		k[i][1] = 1;								//Setze Senken im Array K[i][1] auf 1
+		k[i][0].moveTo([k[i][0].X(), 1]);			//Setze Senken auf Layer 1	
+		}	
+	}
+
+	
+	while(istallesnull() == "nein"){														//Solange noch nicht alle Spalten betrachtet wurden mache folgendes:
+		for(i=0; i<k.length; i++){											//Gehe Spalten durch
+			if(k[i][1] == 1){												//Ist der Eintrag im Array = 1 und der Knoten somit eine Senke
+				for(l=0; l<k.length; l++){									//Gehe Zeilen durch
+					if(adj[l][i] == 1){										//Ist eintrag in Zeile = 1
+						k[l][0].moveTo([k[l][0].X(), k[i][0].Y() +1]);		//Setze entsprechenden Knoten einen Layer höher
+						k[l][1] = 1;										//Setze entsprechendes Array des knoten in K[i][1] auf 1
+						if(k[l][0].Y()>maxlayer){							//ist Knoten auf Höchstem Layer
+							maxlayer = k[l][0].Y();							//merke dir in maxlayer die Höhe des layers
+						
+						}
+					}
+				}
+			k[i][1] = 0;													//Setze die Felder der schon betrachteten Knoten im Array wieder null
+																		//gehe immer weiter durch die Spalten bis alle betrachtet wurden
+			
+			}
+		}
+	}
+}
+
+function erzeugedummynode(){											//Funktion um Dummyknoten zu erzeugen
+	var l,m;
+	var i,j;
+	var c,d
+	var dz = 0;
+	for(l=0; l<k.length; l++){		
+		for(m=0; m<k.length; m++){			
+			if(adj[l][m] == 1){										//laufe durch gegebene AdjMatrix, wenn Eintrag gleich 1 ist
+				if(k[l][0].Y()-k[m][0].Y()>1){							//und wenn die Differenz der y-werte zweier Layer größer 1
+					anzahldummies += k[l][0].Y()-k[m][0].Y()-1;			//summiere über die Differenz der Layer-1 um die Anzahl der benöigten Dummyknoten zu bekommen. Werden in anzahldummies gespeichert
+				}
+			}
+		}
+	}
+	for(i=0; i<(k.length+anzahldummies); i++){							//initialisiere die neue Matrix a2 die auf der alten zu anfang gegebenen Adjmatrix
+		a2.push(new Array(k.length+anzahldummies));						//besteht und aus der Anzahl der einzufügenden Dummyknoten
+			for(j=0; j<k.length+anzahldummies; j++){
+				a2[i][j] =0;											//Setzte zuerst die komplette AMtrix = 0. Die Information der kanten wird im nächsten
+			}															//Schritt eingefügt
+	}
+	dummy = new Array(anzahldummies);								//erzeuge ein neues Array mit der Länger der zu zeichnenden Dummyknoten
+	for(c=0; c<anzahldummies; c++){
+		dummy[c] = new Array(2);
+		dummy[c][1] = 1;
+	}
+	
+	
+	for(c=0; c<(k.length+anzahldummies); c++){						//
+		for(d=0; d<k.length+anzahldummies; d++){		
+			if((c<k.length && d<k.length && adj[c][d] == 1) || (c>= k.length && a2[c][d] == 1)){		//wenn c=Zeile kleiner Länge geg. Matrix und d=Spalte kleiner geg.Matrix und Eintrag in geg. Matrix gleich 1 oder c=Zeile größer geg. Matrix und Eintrag = 1
+				if((nodeY(c)-nodeY(d))==1){							//und wenn Differenz der Layer auf denen die Knoten mit vorher gefung. eintrag = 1 gleich 1 ist
+					a2[c][d] = 1; 									//Setzte diese Einträge in der neuen Matrix auch gleich 1
+				}
+				else{												//wenn nicht ( also wenn differenz nicht gleich 1)
+					a2[c][d]=0;										//setzte Eintrag gleich 0
+					a2[c][k.length+dz] = 1;							//setzte Knoten in Zeile c und spalte k.length+1, also den ersten dummyknoten gleich 1
+					a2[k.length+dz][d] =1;							//setzte zeile k.length+1 (erster dummy in zeile) und spalte gleich 1
+					dummy[dz][0] = board.createElement('point', [canvasWidth/2,(nodeY(c)-1)], {visible:'false'});		//speichere erzeugten Knoten (mit new dummynode) mit x-koord. =1 und y-koord. gleich "Eins näher an Zielknoten"Knoten in dummyarray an stelle dz
+					
+					
+					
+					board.removeObject(a[c+","+d]);
+					a[c+","+(k.length+dz)] = board.createElement('line' , [getnode(c), dummy[dz][0]],{straightFirst:'false', straightLast:'false'});
+					a[(k.length+dz)+","+d] = board.createElement('arrow', [dummy[dz][0], getnode(d)]);
+	
+					dz++;	
+						//wurde ein Dummyknoten erzeugt dann erhöhe dz um eins, damit der nächste eintrag in eier neuen Spalte/Zeile ist
+						//alert(dz+". Dummy erzeugt!");
+						//alert(nodeY(dz-1+k.length));
+						
+						
+				}	
+				}	
+
+			}
+	}
+
+}
+
+
+function kreuzungsminimierung(){				// Minimiere Kreuzungen immer zwischen zwei benachbarten Layern
+	var i,j,c,d;
+	var bary;
+	var barywert;
+	layers = new Array(maxlayer);				//erzeuge ein Array mit der Länge der voher ausgrechneten maxlayeranzahl
+	for(i=0; i<maxlayer; i++){					//durchlaufe die layer bis maxlayer
+		layers[i] = new Array();				//in jeden Feld des Arrays ein neues Array erzeugen
+		}
+	for(j=0; j<(k.length+anzahldummies); j++){		//durchlaufe matrix a2
+		layers[nodeY(j)-1].push(j);					//durchlaufe jeden Layer nodeY-1 da bei 0 angefangen wird zu zählen. mit .push werden Knoten in das Array gepushed
+	}
+	for(i=0; i<layers[maxlayer-1].length; i++){		//durchlaufe die zeile des Maxlayers im Arrays layers 
+		setposition(layers[maxlayer-1][i], i+1);	// setze position in zeile des maxlayers im arrays layers und an der stelle i und setzte position angefangen bei 1 und es wird hochgezählt
+	}
+	for(j=maxlayer-2; j>=0; j--){					//gehe nun in 1 layer weiter unter maxlayer und immer weiter runter
+		bary = new Array(layers[j].length);			// bary ist neues array mit länge der zeile eines arrays im array layers (hängt davon ab wieviel knoten auf einem layer liegen)
+		for(i=0; i<layers[j].length; i++){			//Durchlaufe die Zeile im Array layers bis zum zeilenende
+			barywert = 0;							//Barycenterwert ist zuerst 0
+			var sp = 0;								//var sp zuanfangs 0; Spalten summe ist die anzahl der eingehenden kanten
+			for(c=0; c<a2.length; c++){				//durchlaufe die spalten der matrix a2
+				if(a2[c][layers[j][i]]==1){			//wenn die Zeilen der matrix a2 und die Spalte (festgelegt durch zeile j und spalte i im array layers) gleich 1 ist, also bei jeder eingehender kante
+					barywert += getposition(c);		// dann ist barywert die summe der positionen Knoten der eingehenden kanten
+					sp++;							//sp eins hochzählen
+				}
+			}
+			barywert = barywert/sp;					//barycenterwert = barywert(also summer der pos der knoten der eingehende kanten) / anzahl der eingehenden kanten
+			setposition(layers[j][i], barywert);		//speichere für jeden knoten auf den layer den barycenterwert übergangsweise in setposition
+			//alert("Barywert zu "+layers[j][i]+": "+getposition(layers[j][i]));
+			for(c=0; c<bary.length; c++){					//gehe durch array mit länge bary.length, also anzahl der knoten auf einem layer
+				if(typeof bary[c] == 'undefined'){			//wenn an der stelle im bary array noch nichts steht, dann schreibe dorthin die position des knotens
+					bary[c] = layers[j][i];
+					//alert("füge " + bary[c] + " an stelle "+c+" ein");
+					break;
+				}
+				else if(getposition(bary[c])>=barywert){			//wenn der barycenterwert des gerade gesetzten knotens größer ist als der des nächsten Knotens
+						for(d=bary.length-2; d>=c; d--){		//
+							bary[d+1]=bary[d];					//Verschiebe alle schon gesetzten größeren Knoten nach hinten und setzte den neuen Knoten an die richtige Stelle
+							//alert("shift");
+						}
+						bary[c]=layers[j][i];
+						break;
+							//alert("füge " + bary[c] + " an stelle "+c+" ein");
+				}
+				else;
+			}
+		}
+		for(c=0; c<bary.length; c++){
+			//alert("Speichere für Index " +bary[c]+ " X-Wert " +(c+1));//wenn alle Knoten im array bary richtig geordnet sind, dann setzte wieder deren position angefangen bei 1
+			setposition(bary[c], c+1);
+		}
+	}
+	for(i=0; i<k.length; i++){						
+		k[i][0].moveTo([getposition(i), nodeY(i)]);			//laufe durch die Originalmatrix und setzte alle Knoten an x-wert (vorher ausgerechnete Position) und y-wert (layer)
+		if(k[i][0].X() > maxwidth) {
+			maxwidth = k[i][0].X();
+		}
+	}
+	for(i=0; i<anzahldummies; i++){					//laufe durch die dummyzeilen und spalten und setzte den x wert der dummynodes auf die vorher ausgerechnete position
+		dummy[i][0].moveTo([getposition(k.length+i), nodeY(k.length+i)]);
+		if(dummy[i][0].X() > maxwidth) {
+			maxwidth = dummy[i][0].X();
+		}
+	}
+}
+
+
+
+function scale(){
+	scaleY = canvasHeight / maxlayer;
+	scaleX = canvasWidth / maxwidth;
+
+	for(i=0; i<k.length; i++){
+			k[i][0].moveTo([k[i][0].X()*scaleX-(scaleX/2), k[i][0].Y()*scaleY -(scaleY/2)]);
+			
+		}
+	for(i=0; i<dummy.length; i++){
+		dummy[i][0].moveTo([dummy[i][0].X()*scaleX-(scaleX/2), dummy[i][0].Y()*scaleY -(scaleY/2)]);
+	}
+
+ }
+
+
+
+
+
+
+
+ /* ]]> */
+  </script> 
+  
+  <a href="javascript:algorithmus();">Algorithmus</a> <br>
+  <a href="javascript:plota2();">Pfeile</a> <br>
+ 
+ <!-- <a href="javascript:zyklenfrei();">Zyklenfrei</a> <br>
+  
+  <a href="javascript:plot()">Neue Adjazenzmatrix</a><br>
+  <a href="javascript:senkenLoeschen()">Senken löschen</a> <br>
+  <a href="javascript:quellenLoeschen()">Quellen löschen</a> <br>
+  <a href="javascript:maxvalue()">MaxKnoten</a><br>
+  <a href="javascript:layering()">ykoord</a><br> -->
+ 
+
+
+  <div id="debug"></div>
+</body>
+</html>

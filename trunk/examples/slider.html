@@ -1,0 +1,41 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Slider example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        var p = 0.1;
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 600, unitY: 200});
+        b1axisx = board.create('axis', [[0,0], [1,0]], {});
+        b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+        var f = function(r) {
+            var n = 1/r;
+            return  Math.sqrt(2/Math.PI/(n+1))*Math.pow(2,n)*Math.pow(p*(1-p),n/2);
+        }
+        var s = board.create('slider', [[0.1,1],[0.6,1],[0.2,0.5,4]], {name:'S', snapWidth:0.1});
+        board.create('text', [0.2,-0.5,function(){ return 'n='+Math.round((1/s.Value())); }]);
+        
+        var p1 = board.create('point', 
+            [ s, function(){return f(s.Value());}
+            ], {trace:true, strokecolor:'red'}); 
+
+/*
+        var p1 = board.create('point', 
+            [
+             function(){return s.Value();},
+             function(){return f(s.Value());}
+            ], {trace:true, strokecolor:'red'}); 
+*/        
+  /* ]]> */
+  </script>
+</body>
+</html>

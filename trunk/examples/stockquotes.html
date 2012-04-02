@@ -1,0 +1,56 @@
+<html>
+<head>
+   <title>JSXGraph stockquotes example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="jxgbox" class="jxgbox" style="width:700px; height:400px;"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+var hi, lo, brd, periodical;
+new Ajax.Request('/ajax/stockquotes.php', {
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText;
+                var a = t.split(',');
+                hi = a[6]*1.001;
+                lo = a[7]*0.999;
+                brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[0,hi,200,lo]});
+                brd.createElement('axis',[[0,lo],[1,lo]]);
+                periodical = setInterval(fetchData,1000);
+            };
+    }});
+
+//brd = JXG.JSXGraph.initBoard('jxgbox', {originX: -100, originY: 300, axis:true, unitX: 2, unitY: 10});
+var graph1;
+var x = [];
+var y = [];
+
+var fetchData = function() {
+    new Ajax.Request('stockquotes.php', {
+        onComplete: function(transport) {
+            if (200 == transport.status) {
+                var t = transport.responseText;
+                var a = t.split(',');
+                x.push(x.length+1);
+                y.push(a[1]);
+                //$('debug').innerHTML = a[1];
+                if (!graph1) { 
+                    graph1 = brd.createElement('curve', [x,y],{strokeWidth:1}); 
+                } else {
+                    graph1.dataX = x;                    graph1.dataY = y;
+                }
+                $('debug').innerHTML = t;
+                brd.update();
+            };
+    }});
+};
+        
+/* ]]> */
+</script>
+</body>
+</html>

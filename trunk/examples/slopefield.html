@@ -1,0 +1,148 @@
+<html>
+<head>
+<title>Slope fields and the Runge-Kutta method</title> 
+<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<form>
+dy / dx = f(x,y) = <input type="text" id="odeinput" value="(2-x)*y""><input type=button value="ok" onclick="doIt()"> <br />
+Segment length = <input name="SegmentLength" id="SegmentLength" size="20" value="0.4" type="text"><input type=button value="ok" onclick="doIt()"> <br />
+x min = <input id="Xmin" size="10" value="-4" type="text"><input type=button value="ok" onclick="doIt()"> 
+x max = <input id="Xmax" size="10"  value="4" type="text"><input type=button value="ok" onclick="doIt()"> <br />
+</form>
+
+<div id='jxgbox' class='jxgbox' style='width:500px; height:500px;'></div>
+<script type='text/javascript'>
+var length = 0.4;
+var xmin = -4;
+var xmax = 4;
+var xsep = 0.5;
+var xnum = Math.ceil((xmax-xmin)/xsep);
+
+var ymin = -4;
+var ymax = 4;
+var ysep = 0.5;
+var ynum = Math.ceil((ymax-ymin)/ysep);
+
+var brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[xmin,ymax,xmax,ymin]});
+//var N = brd.create('slider',[[-7,9.5],[7,9.5],[-15,10,15]], {name:'N'});
+//var P = brd.create('point',[0,1], {name:'(x_0,y_0)'});
+var N = 10;
+var P;
+
+function doIt() {
+  JXG.JSXGraph.freeBoard(brd);
+  
+  length = parseFloat(document.getElementById('SegmentLength').value);
+  xmin = parseFloat(document.getElementById('Xmin').value);
+  xmax = parseFloat(document.getElementById('Xmax').value);
+  brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[xmin,ymax,xmax,ymin]});
+  var txt = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput").value);
+  f = new Function("x", "yy", "var y = yy[0]; var z = " + txt + "; return [z];");      // f is a global variable
+  brd.suspendUpdate();
+  P = brd.create('point',[0,1], {name:'P'});
+  plotFunction();
+  slopefield(f);
+  brd.unsuspendUpdate();
+}
+
+function ode() {
+   return JXG.Math.Numerics.rungeKutta('heun', [P.Y()], [P.X(), P.X()+N], 200, f);
+}
+
+function slope(x,y,f) { 
+  return f(x,[y])[0];
+}
+
+
+function slopefield(f) {
+   var xval, yval;
+   for (var i=0;i<=xnum;i++) { 
+     xval = xmin + i*xsep;
+     for (var j=0;j<=ynum;j++) { 
+       yval = ymin + j*ysep;
+
+       brd.create('segment',[
+       [xval-0.5*length*Math.cos(Math.atan( slope(xval,yval,f) )), yval-0.5*length*Math.sin(Math.atan( slope(xval,yval,f) ))], 
+       [xval+0.5*length*Math.cos(Math.atan( slope(xval,yval,f) )), yval+0.5*length*Math.sin(Math.atan( slope(xval,yval,f) ))]
+       ], 
+       {strokeWidth:1, dash:0});    
+     }
+   }
+}
+
+function plotFunction() {
+    var g = brd.create('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2'});
+    g.updateDataArray = function() {
+        var data = ode();
+        var h = N/200;
+        this.dataX = [];
+        this.dataY = [];
+        for(var i=0; i<data.length; i++) {
+            this.dataX[i] = P.X()+i*h;
+            this.dataY[i] = data[i][0];
+        }
+    };
+};
+
+doIt();
+</script>
+
+
+
+
+<script type="text/javascript">
+//   var slope = "";
+//   var dydx = JXG.GeonextParser.geonext2JS(document.getElementById("odeinpt").value);
+//   var txt = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput").value);
+//   document.write(eval(txt.replace(/x/g,5).replace(/y/g,3)));
+//       slope = eval(dydx.replace(/x/g,xval).replace(/y/g,yval));
+
+
+
+//var dydx = "y*(2-y)";
+//var yvalue = 3;
+//dydx = dydx.replace(/y/g,yvalue);
+//document.write(dydx);
+//document.write(parseFloat(dydx));
+//document.write(eval(dydx));
+//  var txt = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput").value);
+//document.write(eval(txt.replace(/x/g,5).replace(/y/g,3)));
+
+
+/*
+function parser(dydx) {
+
+   dydx = dydx.replace(/cos/g,"Math.cos");
+   dydx = dydx.replace(/sin/g,"Math.sin");
+   dydx = dydx.replace(/tan/g,"Math.tan");
+   dydx = dydx.replace(/sec/g,"1/Math.cos");
+   dydx = dydx.replace(/csc/g,"1/Math.sin");
+   dydx = dydx.replace(/cot/g,"1/Math.tan");
+   dydx = dydx.replace(/acos/g,"Math.acos");
+   dydx = dydx.replace(/asin/g,"Math.asin");
+   dydx = dydx.replace(/atan/g,"Math.atan");
+   dydx = dydx.replace(/log/g,"Math.LOG10E*Math.log"); // base 10
+   dydx = dydx.replace(/ln/g,"Math.log"); // base e
+   dydx = dydx.replace(/sqrt/g,"Math.sqrt"); // base e
+   dydx = dydx.replace(/abs/g,"Math.abs"); // base e
+   dydx = dydx.replace(/pi/g,"Math.PI"); // base e
+   dydx = dydx.replace(/PI/g,"Math.PI"); // base e
+   dydx = dydx.replace(/Pi/g,"Math.PI"); // base e
+   dydx = dydx.replace(/\[/g,"("); // replace [ by ( etc.
+   dydx = dydx.replace(/\]/g,")");
+   dydx = dydx.replace(/\{/g,"(");
+   dydx = dydx.replace(/\}/g,")");
+   return dydx;
+}
+*/
+
+//Sequence[Sequence[Segment[(X - 0.5 length cos(atan(Y (2 - Y))), Y - 0.5 length sin(atan(Y (2 - Y)))), (X + 0.5 length cos(atan(Y (2 - Y))), Y + 0.5 length sin(atan(Y (2 - Y))))], X, xmin, xmax, xsep], Y, ymin, ymax, ysep]
+
+
+</script>
+
+</body>
+</html>

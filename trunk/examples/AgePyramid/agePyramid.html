@@ -1,0 +1,170 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="ageV1W1EJ.js"></script>
+   <!--
+   <script type="text/javascript" src="ageV2W1EJ.js"></script>
+   <script type="text/javascript" src="ageV3W1EJ.js"></script>
+   -->
+</head>
+<body>
+<h2>Age pyramid</h2>
+<div id="jxgbox" class="jxgbox" style="width:500px; height:600px;"></div>
+<form>
+    <input type="button" id="playbutton" value=" play animation " onClick="player();">
+</form>
+<div id="output2" style="padding:20px; background-color:#bbbbbb; width:500; font-family:Arial,Helvetica">&nbsp; </div>
+<div id="output" style="padding:20px; background-color:#dddddd; width:500; font-family:Arial,Helvetica"> &nbsp;</div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+var i, t = '', brd;
+var textout = document.getElementById('output');
+var textout2 = document.getElementById('output2');
+
+/**
+ * Read the data from the JavaScript file, which was converted "by hand" from the csv file.
+ */
+function readFile(dataArr) {
+    var len = dataArr.length, 
+        i, male, female, y,
+        data = [];
+    for (i=len-1;i>=0;i--) {
+        if (i%3==2) {
+            dataArr.splice(i,1);
+        } else {
+            if (i%3==1) {
+                female = dataArr[i][3].replace(/ /g,'')*1;
+            } else if (i%3==0) {
+                y = dataArr[i][0]*1;
+                male = dataArr[i][3].replace(/ /g,'')*1;
+                data.push([y,male,female]);
+            } 
+            dataArr[i].splice(0,4); // year,'',m/w,no,
+        }
+    }
+    data.reverse();
+    ages = JXG.Math.Matrix.transpose(dataArr);
+    return {matrix:ages, total: data};
+};
+
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-850,110,850,-20],axis:false});
+var slide = brd.create('slider',[[-700,-5],[300,-5],[2009,2009,2060]],{name:'Start year',snapWidth:1});
+
+function createCurves(stat,brd, c1, c2) {
+    var i, m = [], w = [],
+        op = 1,
+        off = 80,
+        len = stat.matrix.length;
+    for (i=0;i<len;i++) {
+        m[i] = brd.create('curve',[[0],[0]],
+                {fillColor:c1,strokeColor:c1,
+                strokeOpacity:op,fillOpacity:op,
+                strokeWidth:1,
+                highlightFillColor:'yellow',highlightStrokeColor:'yellow'});
+                
+        m[i].updateDataArray = (function(xArr, y) { return function() {
+                this.dataX = [-off,-off-xArr[2*(slide.Value()-2009)]*1,-off-xArr[2*(slide.Value()-2009)]*1,-off,-off];
+                this.dataY = [y,y,y+1,y+1,y];
+            }; })(stat.matrix[i], i);
+            
+        JXG.addEvent(m[i].rendNode, 'mouseover', 
+            (function(g,d){ return function(){
+                                g.highlight(); w[g._number].highlight(); setText(g._number);
+                            };})(m[i]), m[i]);
+        JXG.addEvent(m[i].rendNode, 'mouseout', 
+            (function(g){ return function(){
+                                g.noHighlight(); w[g._number].noHighlight(); 
+                            };})(m[i]), m[i]);
+        m[i].hasPoint = function(){return false;};
+        m[i]._number = i;
+    
+        w[i] = brd.create('curve',[[0],[0]],
+                {fillColor:c2,strokeColor:c2,
+                strokeWidth:1,
+                strokeOpacity:op,fillOpacity:op,
+                highlightFillColor:'yellow',highlightStrokeColor:'yellow'});
+        w[i].updateDataArray = (function(xArr, y) { return function() {
+                this.dataX = [off,off+xArr[2*(slide.Value()-2009)+1]*1,off+xArr[2*(slide.Value()-2009)+1]*1,off,off];
+                this.dataY = [y,y,y+1,y+1,y];
+            }; }    )(stat.matrix[i], i);
+        JXG.addEvent(w[i].rendNode, 'mouseover', 
+            (function(g,d){ return function(){
+                                g.highlight(); m[g._number].highlight(); setText(g._number);
+                            };})(w[i]), w[i]);
+        JXG.addEvent(w[i].rendNode, 'mouseout',  
+            (function(g){ return function(){
+                                g.noHighlight(); m[g._number].noHighlight();
+                            };})(w[i]), w[i]);
+        w[i].hasPoint = function(){return false;};
+        w[i]._number = i;
+        
+    }
+    var t = brd.create('turtle',[],{strokeColor:'#999999', highlightStrokeColor:'#999999'}); t.ht().pu().rt(90);
+    for (i=0;i<=90;i+=10) { 
+        t.moveTo([-750,i]).penDown().forward(750-off+10).penUp();
+        t.moveTo([off-10,i]).penDown().forward(750-off+10).penUp();
+        brd.create('text',[-15,i,i.toFixed(0)]);
+    }
+    return [m,w];
+};
+
+var stat1 = readFile(dataV1W1EJ);
+brd.suspendUpdate();
+createCurves(stat1,brd,'#658cb2','#b23f8c');
+brd.create('text',[-300,45,'men'],{strokeColor:'white',fontSize:20});
+brd.create('text',[200,45,'women'],{strokeColor:'white',fontSize:20});
+brd.addHook(setTextYear);
+brd.unsuspendUpdate();
+setTextYear();
+
+function setText(n) {
+    var age = n,
+        male = ages[n][2*(slide.Value()-2009)]*1,
+        female = ages[n][2*(slide.Value()-2009)+1]*1;
+    textout.innerHTML = 'age:'+age+
+                        ', born in '+(slide.Value()-age)+
+                        '<br> male:'+male+
+                        ', female:'+female+
+                        ', together:'+(male+female)+
+                        ' (thousand)<br> ratio w/m:'+(female/male).toFixed(2);
+};
+function setTextYear() {
+    var n = slide.Value()-2009,
+        data = stat1.total;
+    textout2.innerHTML = 'Year:'+data[n][0]+
+                        '<br> male:'+data[n][1]+
+                        ', female:'+data[n][2]+
+                        ', together:'+(data[n][1]+data[n][2])+
+                        ' (million)<br> ratio w/m:'+(data[n][2]/data[n][1]).toFixed(3);
+};
+
+var animate = null;
+function sliderAnimation() {
+    var s = slide._smin,
+        e = slide._smax,
+        sdiff = e-s,
+        newval = slide.Value()+2;
+    slide.position = (newval-s)/sdiff;
+    if (slide.position>1.0) slide.position = 0.0;
+    brd.update();
+    animate = setTimeout(sliderAnimation,500);
+};
+
+function player(){
+    if (!animate) {
+        document.getElementById('playbutton').value = ' stop animation ';
+        sliderAnimation();
+    } else {
+        document.getElementById('playbutton').value = ' play animation ';
+        clearTimeout(animate);
+        animate = null;
+    }
+};
+
+/* ]]> */
+</script>
+</body>
+</html>

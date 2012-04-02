@@ -1,0 +1,35 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>sin(1/x)</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 50, unitY: 50});
+		p = board.createElement('point', [4, 1]);
+
+		// Axes
+        b1axisx = board.createElement('axis', [[0,0], [1,0]], {});
+        b1axisy = board.createElement('axis', [[0,0], [0,1]], {});
+
+		curve = board.createElement('curve', [
+            function(t){ return t; },
+            function(t){ return (p.X()*Math.sin(p.Y() * 1/t)); },
+            -Math.PI*2, Math.PI*2]);
+    
+		curve = board.createElement('curve', [
+            function(t){ return t; },
+            function(t){ return (p.X()*Math.sin(10*p.Y()*t)/t); },
+            -Math.PI*2, Math.PI*2], {strokeColor: '#ff0000'});
+
+  /* ]]> */
+  </script>
+</body>
+</html>

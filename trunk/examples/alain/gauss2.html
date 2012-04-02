@@ -1,0 +1,18 @@
+<html><head>
+<link rel="stylesheet" type="text/css" href="jsxgraph.css"/>
+<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head><body>
+<h1>Lois binomiales</h1>
+<div id="box" class="jxgbox" style="width:640px; height:480px;"></div>
+<script type="text/javascript">
+var figure = JXG.JSXGraph.initBoard('box',{axis:true, boundingbox:[-10,0.6,50,-0.25]});
+var N=figure.create('slider',[[10,-0.1],[40,-0.1],[1,20,50]],{name:'N',strokeColor:'blue',snapWidth:1});
+var p=figure.create('slider',[[10,-0.15],[40,-0.15],[0,0.4,1]],{name:'p',strokeColor:'cyan'});
+var g=figure.create('functiongraph',[function(x){return Math.exp(-Math.pow(x-N.Value()*p.Value(),2)/(2*N.Value()*p.Value()*(1-p.Value())))/Math.sqrt(2*Math.PI*p.Value()*(1-p.Value())*N.Value());},0,50],{strokeColor:'green',strokeWidth:1});
+var b=function(x){return figure.binomial(N.Value(),Math.round(x))*Math.pow(p.Value(),Math.round(x))*Math.pow(1-p.Value(),N.Value()-Math.round(x));};
+//var B=figure.create('functiongraph',[b,0,50],{strokeColor:'red',strokeWidth:1});
+figure.create('riemannsum',[b,function(){return N.Value();},'lower',0,function(){return N.Value();}],{fillColor:'orange',strokeColor:'red'});
+figure.create('text',[0,0.5,"Approximation gaussienne de la loi binomiale de paramètres "+N.Value()+" et "+p.Value().toFixed(2)],{strokeColor:'black'});
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html>-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.93/jsxgraphcore.js"></script>-->
+    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore-0.82.js"></script>-->
+    <script type="text/javascript" src="../src/GeonextReader.js"></script>
+    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+<style type="text/css">
+.fat {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:yellow;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: red;
+}
+
+.fatHL {
+    font-size:64px;
+    font-family: Arial, Helvetica;
+    font-weight: bold;
+    border: 3px solid red;
+    background-color:green;
+    padding: 10px;
+    -moz-border-radius:10px;
+    color: white;
+}
+    
+    
+</style>    
+</head>
+<body id="body">
+<h1 id="x1">Playground</h1>
+<input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
+<div id='jxgbox' class='jxgbox' style='width:800px; height:700px; z-Index:20'></div>
+<div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
+
+<script type='text/javascript'>
+//JXG.Options.text.display = 'internal';
+//JXG.Options.renderer = 'canvas';
+//JXG.Options.grid.snapToGrid = true;
+
+//JXG.Options.axis.visible = false;
+//JXG.Options.axis.ticks.drawLabels = true;
+//JXG.Options.axis.ticks.drawZero = true;
+JXG.Options.axis.withLabel = true;
+
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
+axis:true, keepaspectratio:true, 
+grid:false, showNavigation:true});
+
+brd.suspendUpdate();
+
+A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
+B = brd.create('point', [4, -1]);
+li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false, fontSize:30} });
+C = brd.create('point', [6, 2]);
+E = brd.create('point', [2, 1], {label:{fixed:false}});
+f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
+/*
+pol = brd.create('polygon', [A,B,C,E]);
+
+D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
+D.onPolygon = true;
+*/
+brd.unsuspendUpdate();
+
+/*
+A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
+brd.addHook(function() {
+    var x = A.X(), y = A.Y();
+	if (A.X()<0.0) {
+		A.setPosition(JXG.COORDS_BY_USER, 0.0, y);
+	}
+  }, 'update');
+*/	
+
+
+myPoint = function(board, x, y) {
+    var le = 0.2,
+    cu = board.create('curve', [ [x+0, x+le, x+le, x+0, x+0], 
+                                 [y+0, y+0, y+le, y+le, y+0]], 
+                      {fillColor:'red', fillOpacity:'0.4', fixed:false});
+    cu.isDraggable = true;
+    cu.coords = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], board);  
+    
+    cu.setPositionDirectly = function (method, x, y, oldx, oldy) {    
+        var dx = x - oldx, 
+            dy = y - oldy;
+
+        dx /= this.board.unitX;
+        dy /= -this.board.unitY;
+        len = this.dataX.length;
+        for (i=0; i<len; i++) {
+            this.dataX[i] += dx;
+            this.dataY[i] += dy;
+        }
+        return this;
+    };
+    return cu;
+}
+    
+p = myPoint(brd, 2, 1);
+
+/*
+var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
+var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, snapToPoints:true, attractorDistance:0.4});
+*/
+/*
+var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});
+//var cu2 = brd.create('curve',[function(t){ return li1.X(t)/li1.Z(t); }, function(t){ return li1.Y(t)/li1.Z(t); }, 0.0, 1.0], {strokeColor:'black', strokeWidth:4});
+
+var C = brd.create('point',[-2,2], {});
+var D = brd.create('point',[0,2,2]);
+var li2 = brd.create('normal',[C,li1]);
+
+//var li2 = brd.create('line',[C,D]);
+var E = brd.create('glider',[-1,1,li2]);
+var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
+//var G = brd.create('orthogonalprojection',[C,li1]);
+var X = brd.create('midpoint',[C,F]);
+
+var cu = brd.create('tracecurve',[F,X], {dash:0, strokeColor:'red'});
+*/
+
+//
+/*
+var D = brd.create('point',[1,-2,2]);
+var li2 = brd.create('circle',[C,D]);
+
+var I = brd.create('intersection',[li1, li2, 0]);
+brd.create('circle',[B,I]);
+*/
+
+/*
+var k = brd.create('circle',[[0,0],2]);
+var g = brd.create('line',[1,1,1]);
+var A = brd.create('intersection',[k,g,0]);
+var B = brd.create('otherintersection',[k,g,A]);
+var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
+var p = brd.create('polygon',[A,B,C]);
+*/
+/*
+// x axis
+var pX0 = brd.create('point', 
+    [0, function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[3]+(bb[1]-bb[3])*0.1;
+        }
+    ], {visible:false, withLabel:false}); 
+var pX1 = brd.create('point', 
+    [1, function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[3]+(bb[1]-bb[3])*0.1;
+        }
+    ], {visible:false, withLabel:false}); 
+
+var xaxis = brd.create('axis', [pX0, pX1]);
+pX0.type = JXG.OBJECT_TYPE_CAS;   
+pX1.type = JXG.OBJECT_TYPE_CAS;    
+
+// y axis
+var pX2 = brd.create('point', 
+    [function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[0]+(bb[2]-bb[0])*0.1;
+        }, 0
+    ], {visible:false, withLabel:false}); 
+var pX3 = brd.create('point', 
+    [function(){
+            var bb = brd.getBoundingBox(); 
+            return bb[0]+(bb[2]-bb[0])*0.1;
+        }, 1
+    ], {visible:false, withLabel:false}); 
+
+var xaxis = brd.create('axis', [pX2, pX3]);
+pX2.type = JXG.OBJECT_TYPE_CAS;   
+pX3.type = JXG.OBJECT_TYPE_CAS;    
+*/
+
+/*
+var p = [];
+for (i=0;i<2;i++) {
+	//p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
+	p.push(brd.create('point', [2,2*i-1],{withLabel:true}));
+}
+var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
+*/
+/*
+var t = brd.create('turtle', [-1,0], {id:'NIX'});
+//t.fd(3); //
+t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
+t.setProperty({strokeWidth:5, strokeColor:'black'});
+t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
+t.setPenSize(1);
+t.setProperty({strokeColor:'black'});
+t.fd(3);
+
+*/
+var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;}], 
+    {cssClass:'fat', highlightCssClass:'fatHL',
+     fontSize:32, 
+     strokeColor:'red',
+     highlightStrokeColor:'blue'});
+
+
+//brd.update();
+
+
+</script> 
+</body>
+</html>

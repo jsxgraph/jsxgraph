@@ -1,0 +1,48 @@
+JSXCompressor - Delivering compressed JavaScript
+
+The open source library JSXGraph (http://jsxgraph.org) contains utilities to read files which
+have been compressed by the ZLIB (http://zlib.org) library. That means, JSXGraph has a pure 
+JavaScript implementation of DEFLATE, unzip and base64_decode.
+This can be used for delivering compressed JavaScript inside of an HTML file.
+Of course, with todays browsers it depends on the transmission bandwidth if this is worthwile.
+If the web server does not support compression of data, then this tool may be an option.
+
+One possibility to compress the JavaScript source is to use PHP. The code below
+writes the content of a JavaScript file as a compressed, base64 encoded string
+into the HTML. This string can be accessed via the JavaScript variable jsxcompressed.
+<!-- -------------------------------------------------------- -->
+<?php
+function jxgcompress($filename) 
+{   
+    if (file_exists($filename)) {
+        $base64 = base64_encode(gzcompress(rawurlencode(file_get_contents($filename)),9));
+        echo "var jxgcompressed = \"$base64\";\n";
+    } else {
+        throw new Exception("$filename not found");
+    }
+}
+?>
+
+<script type="text/javascript">
+<?php 
+    jxgcompress("./helloworld.js");
+?>   
+</script>
+<!-- -------------------------------------------------------- -->
+
+To uncompress and run this code, the following code has to be included:
+<!-- -------------------------------------------------------- -->
+<script src="./jsxcompressor.js" type="text/javascript"></script>
+<script type="text/javascript">
+eval(JXG.decompress(jxgcompressed));
+</script>
+<!-- -------------------------------------------------------- -->
+
+Thats all.
+
+The zip file jsxcompressor.zip contains two examples: testhelloworld.php and testjsxgraph.php
+
+Enjoy,
+Alfred Wassermann
+
+(alfred.wassermann@uni-bayreuth.de)

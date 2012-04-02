@@ -1,0 +1,158 @@
+<html>
+	<head>
+		<!--
+			GEONExT Worksheet Creator
+			
+			http://geonext.de/xwc
+			xwc@geonext.de
+			
+			(c) 2004-2007
+		-->
+		<title>GEONExT WorksheetCreator</title>
+		<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+		<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+		<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+		<title>Zusatzaufgabe1  Funktionskonstruktion </title>
+		<style type="text/css">
+		<!--
+		body {
+			margin: 0px;
+		}
+		.STYhead {
+			font-family: sans-serif;
+			font-size: 24px;
+			color: rgb(0, 0, 0);
+			font-weight: bold;
+			background: rgb(255, 255, 255);
+			padding: 10px 10px 25px 10px;
+		}
+		.STYnavigation {
+			font-family: sans-serif;
+			font-size: 10px;
+			color: rgb(255, 255, 255);
+			font-weight: bold;
+			background: rgb(50,150,100);
+			padding: 5px;
+		}
+		.STYbuttons {
+			font-family: sans-serif;
+			font-size: 10px;
+			color: rgb(255, 255, 255);
+			font-weight: bold;
+			background: rgb(50,150,100);
+			padding: 10px 0px 10px 0px;
+		}
+		.STYapplet {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 1px 10px 10px 10px;
+		}
+		.STYtext {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 15px 10px 5px 10px;
+			line-height:20px;
+		}
+		.STYtitle {
+			font-family: sans-serif;
+			font-size: 16px;
+			background: rgb(255, 255, 255);
+			padding: 0px 0px 0px 0px;
+			font-weight: bold;
+			line-height:20px;
+		}
+		.STYinstruction {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 1px 10px 10px 10px;
+			line-height:20px;
+		}
+		.STYxwc {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			color: rgb(200, 200, 200);
+			font-weight: normal;
+			padding: 1px 10px 1px 10px;
+		}
+		a:active, a:visited, a:link, a:hover
+		{	
+			font-family: Arial,Verdana,sans-serif,Helvetica;
+			text-decoration: none;
+			color: 	rgb(50,150,100);
+		}
+		-->
+		</style>
+	</head>
+	<body bgcolor="#ffffff">
+		<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="80" align="center" valign="top" class="STYnavigation" rowspan="4">
+					<table height="100%" border="0" cellspacing="0">
+						<tr>
+							<td align="center" valign="top" class="STYbuttons"><a href="page.0003.html" class="STYbuttons" onmouseover="window.document.images['backid'].src='images/navigation/arrow_left_hl.gif';window.status='Zurück';return true;" onmouseout="window.document.images['backid'].src='images/navigation/arrow_left.gif';"><img alt="Zurück" border="0" src="images/navigation/arrow_left.gif" id="backid"></a></td>
+							<td align="center" valign="top" class="STYbuttons"><a href="index.html" class="STYbuttons" onmouseover="window.document.images['indexid'].src='images/navigation/info_hl.gif';;window.status='Übersicht';return true;" onmouseout="window.document.images['indexid'].src='images/navigation/info.gif';"><img alt="Übersicht" border="0" src="images/navigation/info.gif" id="indexid"></a></td>
+							<td align="center" valign="top" class="STYbuttons"><a href="page.0005.html" class="STYbuttons" onmouseover="window.document.images['nextid'].src='images/navigation/arrow_right_hl.gif';;window.status='Weiter';return true;" onmouseout="window.document.images['nextid'].src='images/navigation/arrow_right.gif';"><img alt="Weiter" border="0" src="images/navigation/arrow_right.gif" id="nextid"></a></td>
+						</tr>
+						<tr>
+							<td align="center" valign="bottom" class="STYnavigation" colspan="3"><img src="images/logo.gif" hspace="5" vspace="10"></td>
+						</tr>
+					</table>		
+				</td>
+				<td height="10" align="left" valign="top" class="STYxwc" colspan="2"><img src="images/gni.gif" align="top" border="0"> Worksheet Creator [<img src="images/xwc.gif">]</td>
+			</tr>
+			<tr>
+				<td  height="10" align="left" valign="top" class="STYhead" colspan="2">Zusatzaufgabe1  Funktionskonstruktion  </td>
+			</tr>
+			<tr>
+				<td width="50%" height="100%" align="left" valign="top" class="STYapplet">
+					<div id="jxgbox" class="jxgbox" style="width:550px; height:500px;"></div>
+					<script type="text/javascript">
+					/* <![CDATA[ */
+
+					board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -15], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+
+					s0 = board.createElement('slider',[[0,-9],[14,-9],[-5,0,5]],{name:'a',snapWidth:1});
+					s1 = board.createElement('slider',[[0,-10],[14,-10],[-5,0,5]],{name:'b',snapWidth:1});
+					s2 = board.createElement('slider',[[0,-11],[14,-11],[-5,0,5]],{name:'c',snapWidth:1});
+					s3 = board.createElement('slider',[[0,-12],[14,-12],[-5,3,5]],{name:'d',snapWidth:1});
+					s4 = board.createElement('slider',[[0,-13],[14,-13],[-5,2,5]],{name:'e',snapWidth:1});
+					graph = board.createElement('functiongraph', [function(x){ return s4.Value()+s3.Value()*x+s2.Value()*x*x+s1.Value()*x*x*x+s0.Value()*x*x*x*x; },-10, 10],{strokeColor:function(){return JXG.hsv2rgb(s4.Value(),1,1)}});
+ 
+					/* ]]> */
+					</script>
+				</td>
+				
+				<td width="50%" align="left" valign="top" class="STYinstruction">
+					<h1 class="STYtitle"></h1>
+				Im nebenstehenden Fenster siehst du den Graphen einer Funktion der Form ax^4+bx^3+cx^2+dx+e.<br>
+				Dabei lässt sich jeder der fünf Koeffizienten unabhängig durch einen der abgebildeten Schieberegler verändern.<br>	
+				<p>
+				Konstruiere  eine Funktion deren Ableitung...<br>
+				a) überall den gleichen Funktionswert annimmt.<br>
+				b) an drei Stellen den Wert Null annimmt.<br>
+				c) an drei Stellen den Wert Null annimmt und die x-Achse berührt.<br>
+				Halte deine erstellten Funktionen und ihre zugehörigen Graphen in deinem Lerntagebuch fest.<br>
+				<p>
+				<br>
+				<br>
+				<br>
+				Mit Hilfe des Applets ist es möglich Funktionen zu konstruieren, deren Ableitungen an unendlich vielen Stellen den Funktionswert Null annehmen. Ist es möglich eine Funktion zu erstellen, deren Ableitungsfunktion nur an fünf Stellen null wird? Begründe deine Antwort!<br>
+
+				</td>
+			</tr>
+		</table>
+	</body>
+	<!--
+		GEONExT Worksheet Creator
+		
+		http://geonext.de/xwc
+		xwc@geonext.de
+		
+		(c) 2004-2007
+	-->
+</html>

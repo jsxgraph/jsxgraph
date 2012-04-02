@@ -1,0 +1,200 @@
+\documentclass[10pt]{article}
+\usepackage{a4wide}
+\usepackage[latin1]{inputenc}
+\usepackage[ngerman]{babel,varioref}
+\usepackage[T1] {fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{verbatim}
+\usepackage{pst-all}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+
+\usepackage{geometry}
+\geometry{a4paper,left=30mm,right=30mm, top=2cm, bottom=2cm}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\PC}{\mathcal{P}}
+\newcommand{\ZC}{\mathcal{Z}}
+\newcommand{\Sum}{\sum\limits}
+\newcommand{\Prod}{\prod\limits}
+\newcommand{\Lim}{\lim\limits}
+\newcommand{\Int}{\int\limits}
+\renewcommand{\Im}{\text{Im}}
+\renewcommand{\Re}{\text{Re}}
+\newcommand{\eps}{\varepsilon}
+\parindent 0pt
+\pagestyle{empty}
+
+
+\newcommand{\luecke}[1]{\raisebox{-6pt}{\makebox[#1]{\dotfill}}}
+
+\def\versionnumber{0.81}  % Version of this reference card
+\def\year{2010}
+\def\month{June}
+\def\version{\month\ \year\ v\versionnumber}
+
+\begin{document}
+\title{JessieScript Reference (Version \version)}
+\begin{center} {\LARGE\textbf {JessieScript Reference (Version
+\version)}}
+\end{center}
+\section{Construct}
+Easy mathematical constructions can be created with the line
+\begin{verbatim}
+     board.construct(...);
+\end{verbatim} Within the brackets its possible to pass different
+elements, separated by semicolon, as one string. Blanks are
+irrelevant.
+\\\\ Possible elements are: \\ \begin{tabular}{|l|l|} \hline \\[-0.75em] {\large
+\textbf{Example}} & {\large \textbf{Description}} \\
+\hline\hline \verb+A(1,1)+ & point at (1,1) with name \verb'A'
+\\ \hline \verb+BB(-2|0.5)+ & point at
+(-2,0.5) with name \verb'BB' \\
+\hline\verb+]AB[+ & straight line through points \verb'A' and \verb'B' \\
+\hline\verb+[AB[+ &
+ray through points \verb'A' and \verb'B', stopping at \verb'A' \\
+\hline\verb+]A BB]+ & ray through points \verb'A' and \verb'BB',
+stopping at \verb'BB'
+\\ \hline\verb+[AB]+ & segment between \verb'A' and \verb'B' \\
+\hline \verb+g=[AB]+ & segment between \verb'A' and \verb'B' with name \verb'g' \\
+\hline\verb+k(A,4)+ & circle with midpoint \verb'A' and radius 4 \\
+\hline\verb+k(A,[BC])+ & circle with midpoint \verb'A', whose
+radius is given by the (not necessarily
+\\ & existing) segment \verb'[BC]' \\ \hline\verb+k(A,B)+ & circle with midpoint \verb'A',
+through point \verb'B' \\
+\hline\verb+k1=k(A,3)+ & circle with midpoint \verb'A' with radius
+3 with name \verb'k1'
+\\ \hline\verb+P(g)+ & glider \verb'P' on the object \verb'g' \\
+\hline\verb+Q(k1,0,1)+ & glider \verb'Q' on the object \verb'k1'
+at (0,1) \\ \hline \verb+g&k1+ & intersection point(s) of the
+objects \verb'g' and \verb'k1' \\ \hline \verb+S=g&k1+ &
+intersection point(s) of the \verb'g' and \verb'k1'.  \\ &
+Multiple intersection points
+are named with \verb'S'$_1$ and \verb'S'$_2$, single ones with \verb'S'. \\
+\hline\verb+||(A,g)+ & parallel line to \verb'g' through point
+\verb'A'
+\\  \hline\verb+|_(A,g)+ & perpendicular line to \verb'g' through point
+\verb'A' \\ \hline\verb+<(A,B,C)+ & angle, defined by the points \verb'A', \verb'B', \verb'C' \\
+\hline\verb+alpha=<(A,B,C)+ & angle, defined by the points
+\verb'A', \verb'B', \verb'C', with name $\alpha$
+\\  & Possible greek denominators are \verb'alpha',
+\verb'beta', \verb'gamma', \verb'delta', \verb'epsilon', \\ &
+\verb'zeta', \verb'eta', \verb'theta', \verb'iota', \verb'kappa',
+\verb'lambda', \verb'mu', \verb'nu', \verb'xi', \verb'omicron',
+\verb'pi', \verb'rho', \verb'sigmaf', \\ & \verb'sigma',
+\verb'tau', \verb'upsilon', \verb'phi', \verb'chi', \verb'psi' and
+\verb'omega'. \\ \hline\verb+1/2(A,B)+ & midpoint between \verb'A'
+and \verb'B'
+\\ \hline\verb+3/4(A,B)+ & point dividing the segment from \verb'A'
+to \verb'B' at ratio 3:7 , \\ & i.e. $\frac{3}{4}$ parts of the
+segment \verb'[AB]' are between \verb'A' and the constructed point
+\\ & Therefore, any ratio of natural numbers is possible. \\
+\hline\verb+P[A,B,C,D]+ & polygon through points \verb'A',
+\verb'B', \verb'C', \verb'D' with name 'P' \\
+\hline\verb'f:x^2+2*x' & functiongraph, $f:x\mapsto x^2+2\cdot x$ \\
+\hline\verb'f:sin(x)' & functiongraph, $g:x\mapsto \sin(x)$ \\
+\hline\verb'#Hello world(0,3)' & text \verb'Hello world' at (0,3)
+\\ \hline
+\end{tabular} \vspace*{0.5cm} \\
+Its possible for every element (except points, graphs and
+polygons) to provide a name directly by using
+\begin{verbatim}
+    objname = ...
+\end{verbatim} \\ The function returns an object with all constructed elements, so that afterwards
+the properties can still be changed.
+
+\section{Fast modification of properties}
+For setting the three most important properties there is a fast
+possibility, all others have to be set afterwards by accessing the
+particular elements and calling the corresponding function.
+\\ These are \\
+\begin{tabular}{|l|l|} \hline \\[-0.75em] {\large
+\textbf{Property}} & {\large \textbf{Description}} \\
+\hline\hline\verb+invisible+ & the object is invisible \\
+\hline\verb+draft+ & the object is drawn in draft mode \\
+\hline\verb+nolabel+ & the object does not have a label
+\\ \hline
+\end{tabular} \vspace*{0.5cm} \\
+These properties are set directly at declaring the objects by
+writing the respective key word (resp. key words, a combination is
+possible), seperated by a blank behind the construction command
+before the semicolon, i.e.
+\begin{verbatim}
+     P(1,1) nolabel; Q(2,3) draft nolabel; [PQ] invisible;
+\end{verbatim}
+
+\section{Access to the elements}
+Access to the elements after constructing them is possible by using: \\
+\begin{tabular}
+{|l|l|} \hline \\[-0.75em] {\large
+\textbf{element}} & {\large \textbf{description}} \\ \hline\hline
+\verb+constr.points[i]+ & take the $i$-th point or glider of the
+construction \verb+constr+, \\ & also midpoints and dividing points are within this array \\
+\hline\verb+constr.lines[i]+ & take the $i$-th line, ray or
+segment of the construction \verb+constr+, \\ & also parallel and
+perpendicular lines are within this array
+\\
+\hline\verb+constr.circles[i]+ & take the $i$-th cicle of the
+construction \verb+constr+
+\\
+\hline\verb+constr.intersections[i]+ & take the $i$-th
+intersection point of the construction \verb+constr+
+\\
+\hline\verb+constr.angles[i]+ & liefert take the $i$-th angle of
+the construction \verb+constr+
+\\
+\hline\verb+constr.functions[i]+ & take the $i$-th function graph
+of the construction \verb+constr+
+\\
+\hline\verb+constr.texts[i]+ & take the $i$-th text element of the
+construction \verb+constr+
+\\
+\hline\verb+constr.polygons[i]+ & take the $i$-th polygon of the
+construction \verb+constr+
+\\
+\hline\verb+constr.A+ & take the element with name \verb'A' of the
+construction \verb+constr+
+\\ \hline
+\end{tabular}
+
+\section{Macros}
+Additionally it is possible to define macros. The key word is
+\verb+Macro+, the parameters are, seperated by comma, provided
+within round brackets, the content between curly braces. Left of
+the equal sign any name can be given to the macro. \\ So the
+syntax is given by
+\begin{verbatim}
+     macroName = Macro(param1, param2, param3, ...) { command1; command2; command3; ... };
+\end{verbatim}
+After that, the macro can be called by
+\begin{verbatim}
+     result = macroName(x1,x2,x3,...);
+\end{verbatim}
+
+\section{Example}
+An example shall demonstrate the practical implementation.
+\begin{verbatim}
+    board = JXG.JSXGraph.initBoard("box", {originX: 50, originY: 300, unitX: 50,
+                                           unitY: 50, axis:true});
+
+    cons1 = board.construct("A(1,1);BC(1,3);k(A,[A BC]);X(2,4)");
+    cons2 = board.construct("J(7,4);l_2=[BC A]");
+
+    cons1.points[0].face(">");
+    cons1.BC.strokeColor("black");
+    cons2.l_2.strokeWidth(4);
+    cons1.X.size(8);
+
+    cons3 = board.construct("test = Macro(D,E,F) { g=[DE] nolabel; k1=k(D,[EF]);};
+                                 ttt=test(A,X,J);");
+    cons3.ttt.g.strokeColor("red");
+\end{verbatim}
+
+\end{document}

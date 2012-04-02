@@ -1,0 +1,36 @@
+<html>
+<head>
+   <title>Load geonext file by string</title>
+   <link rel="stylesheet" type="text/css" href="distrib/jsxgraph.css" />
+   <script type="text/javascript" src="distrib/prototype.js"></script>
+   <script type="text/javascript" src="distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+   <!-- 
+      Drawing area 
+   -->
+   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; ">
+   </div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+    var board;
+
+    function loadFile() {
+        var filename = document.getElementById('filename').value;
+        if(board)
+    		JXG.JSXGraph.freeBoard(board);
+		board = JXG.JSXGraph.loadBoardFromFile('box', filename, 'Geonext');
+    }
+	/* ]]> */
+	</script>
+	    
+	<form>
+		<input type='text' value='Enter filename' id='filename' onclick='if(this.value == "Enter filename") {this.value = "";}' />
+		<input type='button' value='Load file' onclick="loadFile();" />
+   </form>
+   <div id="debug" style="position:relative; width:600px; height:100px; border:none; background-color:white;">
+   </div>
+
+</body>
+</html>

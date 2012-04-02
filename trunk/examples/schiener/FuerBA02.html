@@ -1,0 +1,746 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/trunk/src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../src/GraphReader.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */
+    
+function algorithmusWithJanaInit() {
+	var canvasHeight = 10;
+	var canvasWidth = 10;
+	
+	var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [0, canvasWidth, canvasHeight, 0], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+	
+	var adj = [ [0, 1, 1, 1, 0, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 1, 1],
+				[0, 0, 1, 0, 1, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 1, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0],
+				];
+    var k, tmp, a;
+	k = init(adj.length);									//aufrufen der Funktion damit neues Array erzeugt wird und k[i][1] = 1 gesetzt wird
+	tmp = plot(adj, board, k, canvasWidth, canvasHeight);	 // returns [a,k]							//Zeiche Graphen
+    a = tmp[0]; // Knoten
+    k = tmp[1]; // Kanten
+    
+    algorithmus(k,a, board, adj, canvasWidth,canvasHeight)
+}
+
+function algorithmusWithReadGraph(filename) { // z.B. 'graphs/graph1neu.txt'
+    var brd = JXG.JSXGraph.loadBoardFromFile('jxgbox', filename, 'digraph');
+    window.setTimeout(function () { waitForGraphAndDoPlacement(brd); } , 100);
+}
+
+function waitForGraphAndDoPlacement (board) {
+    var i, j, k, a={},cWidth, cHeight;
+    if(board.addedGraph != null) {
+        // anfangen
+        k = init(board.addedGraph.n);
+        for(i=0; i<board.addedGraph.n; i++) {
+            k[i][0] = board.addedGraph.nodes[i].reference;
+        }   
+        for(i=0; i<board.addedGraph.n; i++) {
+            for(j=0; j<board.addedGraph.n; j++) {
+                if(board.addedGraph.adjMatrix[i][j] != 0) {
+                    a[i+","+j] = board.addedGraph.segments[i][j].edge;
+                }
+            }
+        }
+        cWidth = board.canvasWidth/board.stretchX;
+        cHeight = board.canvasHeight/board.stretchY;
+      
+        algorithmus(k, a, board, board.addedGraph.adjMatrix, cWidth, cHeight);
+    }
+    else {
+        // warten
+        window.setTimeout(function () { waitForGraphAndDoPlacement(board); }, 100);
+    }
+}
+	
+	
+function print(matrix) {									//Gib gewünschte Matrix schön aus, dient zur Kontrolle
+	var i,j;
+	for(i=0; i<matrix.length; i++) {
+		for(j=0; j<matrix[i].length; j++) {
+			document.write(matrix[i][j]+" ");
+		}
+		document.write("<br>");
+	}
+}	
+	
+function init(n) {
+    var i, k = new Array(n);
+	for(i=0;i<n; i++) {
+		k[i]= new Array(2);					//zeichne in Array neues Array
+		k[i][1] = 1;						//Setze zuerst in K[1] alle Einträge auf 1 um damit zu sagen das der Knoten noch berücksichtigt werden soll
+	}
+	return k;
+}
+
+function plot(matrix, board, k, canvasWidth, canvasHeight){
+    var i, j, x, y, a={};
+	for(i=0; i<matrix.length; i++) {
+								
+		x = Math.random()*canvasWidth;				// Zeichne Punkte mit willkürlichem x-wert im Intervall (0-5)
+		y = Math.random()*canvasHeight;				// Zeichne Punkte mit willkürlichen y-Wert im intervall (0-5)
+		
+		k[i][0]=board.createElement('point' , [x,y]);		//erzeuge willkürlich die Punkte
+	}
+	//Zeichne Kanten
+	for(i=0; i<matrix.length; i++) {
+		for(j=0; j<matrix[i].length; j++) {
+			if (matrix[i][j] !=0) {							//durchlaufe matrixazenzmatrix, bei jeden Eintrag der ungleich 0 ist, also bei 1
+				a[i+","+j] = board.createElement('arrow' , [k[i][0], k[j][0]]);		//dann zeichne Pfeil von zeile nach spalte
+			}				
+		}
+	}
+    return [a,k];
+}
+
+function algorithmus(k,a, board, adj, canvasWidth, canvasHeight) {
+    var ml, lays, pvl, mw, tmp, anzahldummies, a2, dummy;
+	
+    // remove cycles
+    zyklenfrei(k, a, board, adj);
+    
+    // layering
+	tmp = layering(k, adj); // returns [maxlayer,k]
+    ml = tmp[0];
+    k = tmp[1];
+    
+    // create dummy nodes
+	tmp = erzeugedummynode(k,a, board, adj, canvasWidth, canvasHeight); // returns [a,anzahldummies,a2,dummy]
+    a = tmp[0];
+    anzahldummies = tmp[1];
+    a2 = tmp[2];
+    dummy = tmp[3];
+    
+    // allocate layers
+	tmp = layerverteilung(ml, k, anzahldummies, dummy); // returns [layers, k, dummy]
+    lays = tmp[0];
+    k = tmp[1];
+    dummy = tmp[2];
+    
+    // minimize crossings
+	tmp = kreuzungsminimierungRaufRunter(false,ml,lays,k,anzahldummies,dummy,a2); // returns [pivotlayer,k,dummy]
+    pvl = tmp[0];
+    k = tmp[1];
+    dummy = tmp[2];
+    
+	tmp = kreuzungsminimierungRaufRunter(true,ml,lays,k,anzahldummies,dummy,a2); // returns [maxwidth,k,dummy]
+    mw = tmp[0];
+    k = tmp[1];
+    dummy = tmp[2];    
+    
+    // adjustment
+	ausrichtung (ml,pvl,lays,k, anzahldummies, dummy, a2);
+	scale(ml,mw, k, dummy, canvasWidth, canvasHeight);
+} 
+
+	
+	
+function istallesnull(k) {				
+    var i; 
+	for(i=0; i<k.length; i++) {
+		if(k[i][1] == 1) {
+			return false;					//Überprüfe ob an der Stelle im Array eine 1 steht, wenn ja muss der Knoten noch berücksichtigt werden
+		}
+	}
+	
+	return true;							//ist alles null, ist man fertig, da alle Knoten betrachtet wurden und man nun weiß welche kanten man gegebenenfall umdrehen muss
+}
+
+
+
+function zyklenfrei (k, a, board, adj) {						//ruft solange nacheinander die einzelnen funktionen auf, solange noch Punkte da sind die noch nicht betrachtet wurden
+	while (istallesnull(k) == false) {
+        k = senkenLoeschen(k, adj);
+        k = quellenLoeschen(k, adj);
+        k = maxvalue(k, a, board, adj);
+	}
+}
+
+function zsumme(adj,zeile,k) {					//berechnet zeilensumme, wenn der Knoten noch existiert
+	var zs = 0, l;
+    for(l=0; l<k.length; l++) {
+        if(k[l][1] == 1) {
+            zs += adj[zeile][l];
+        }	
+    }
+    return zs;
+}
+
+function spsumme(adj,spalte,k) {					//berechnet spaltensumme, wenn der Knoten noch existiert
+	var sps = 0, l;
+    for(l=0; l<k.length; l++) {
+        if(k[l][1] == 1) {
+            sps += adj[l][spalte];
+        }	
+    }
+    return sps;
+}
+
+function getposition(index, k, anzahldummies, dummy){					
+	if(index>=0 && index<k.length) {
+		return k[index][1];								//gib mir die zuvor gesetzte POsition des Knotens zurück
+	}
+	else if(index>=k.length &&index<k.length+anzahldummies) {
+		return dummy[index-k.length][1];
+	}
+}
+	
+function setposition(index, pos, k, anzahldummies, dummy) {								//Setze Position des Knotens angefangen bei 1
+	if(index>=0 && index<k.length) {								//wenn index größer 0 und kleiner der Originalmatrix
+		k[index][1] = pos;										//Setze im Array K[index][1] die Position
+	}
+	else if(index>=k.length && index<k.length+anzahldummies) {		//wenn index im bereich größer als die Originalmatrix ist
+		dummy[index-k.length][1] = pos;						//dann lege Position des Knotens ins DummyArray
+	}
+	return [k,dummy];
+}
+
+function setX(index, x, k, anzahldummies, dummy) {								
+	
+	if(index>=0 && index<k.length) {								
+		k[index][0].moveTo([x,nodeY(index, k, anzahldummies, dummy)]);										
+	}
+	else if(index>=k.length && index<k.length+anzahldummies) {		
+		dummy[index-k.length][0].moveTo([x,nodeY(index, k, anzahldummies, dummy)]);						
+	}
+	
+}
+
+function nodeX(index, k, anzahldummies, dummy) {											
+	if(index >=0 && index<k.length) {						//Wenn index größer null und kleiner gegebender Matrixlänge
+		return k[index][0].X();								//dann gib mir den X-wert des knoten "index"
+	}
+	else if(index>=k.length && index<k.length+anzahldummies) {		//wenn index größer als geg. Matrixlänge und index kleiner als geg. Matrixlänge+nun zugefügter Dummyknotenlänge
+			return dummy[index-k.length][0].X();							//dann gib mir X Wert von dummyknoten. das k-length muss abgezogen werden, da das dummyarray bei null anfängt und die länge von k.length noch abgezogen werden muss damt man richtigen x-wert bekommt
+	}
+}
+
+function nodeY(index, k, anzahldummies, dummy) {
+	if(index >=0 && index<k.length) {							//selbiges wie oben für die Y-Werte
+		return k[index][0].Y();
+	}
+	else if(index>=k.length && index<k.length+anzahldummies) {
+			return dummy[index-k.length][0].Y();
+	}
+}
+
+function getnode(index, k, anzahldummies, dummy) {
+	if(index >=0 && index<k.length) {						
+		return k[index][0];								
+	}
+	else if(index>=k.length && index<k.length+anzahldummies) {		
+			return dummy[index-k.length][0];							//dann gib mir X Wert von dummyknoten. das k-length muss abgezogen werden, da das dummyarray bei null anfängt und die länge von k.length noch abgezogen werden muss damt man richtigen x-wert bekommt
+	}
+}
+
+function gewicht(u, v, k) {
+	if(u<k.length && v<k.length)
+		return 1;
+	else if((u<k.length && v>=k.length) || (v<k.length && u>=k.length))
+		return 100;
+	else
+		return 100000;
+}
+
+function PriowertUp (index, k, a2) {
+	var p = 0, r;
+	for(r=0; r<a2.length; r++) {
+		if(a2[index][r] == 1) {
+			p += gewicht(index, r, k);
+		}
+	}
+	return p;
+}
+function PriowertDown(index, k, a2) {
+	var p = 0, r;
+	for(r=0; r<a2.length; r++) {
+		if(a2[r][index] == 1) {
+			p += gewicht(index, r, k);
+		}
+	}
+	return p;
+}
+
+//function PrioritySort(a,b, k, anzahldummies, dummy) {
+//	return nodeX(a, k, anzahldummies, dummy) - nodeX(b, k, anzahldummies, dummy);
+//}
+
+function bubblesort(array, k, anzahldummies, dummy) {
+    var sortiert = false, i, tmp; 
+    while (!sortiert){
+        sortiert = true
+        for (i=0; i<array.length-1; i++) {
+            if (nodeX(array[i], k, anzahldummies, dummy)>nodeX(array[i+1], k, anzahldummies, dummy)) {
+                sortiert = false
+                tmp = array[i]
+                array[i]=array[i+1]
+                array[i+1] = tmp
+            }
+        }
+    }
+    return array;
+}
+
+function medianUp (index, a2, k, anzahldummies, dummy) {
+	var median = new Array(), r;
+	for(r=0; r<a2.length; r++) {
+		if(a2[index][r] == 1) {
+			median.push(r);		
+		}		
+	}
+	//median.sort(PrioritySort); // geaendert in bubblesort BV
+    median = bubblesort(median, k, anzahldummies, dummy)
+    
+	//alert(median.join(","));
+	if(median.length%2 == 0) {
+		return median[(median.length/2)-1];
+	}
+	else { 
+        return median[(median.length-1)/2];
+	}
+}
+
+function medianDown (index, a2, k, anzahldummies, dummy) {
+	var median = new Array(), i;
+	for(i=0; i<a2.length; i++) {
+		if(a2[i][index] == 1) {
+			median.push(i);		
+		}		
+	}
+	//median.sort(PrioritySort);  // geaendert in bubblesort BV
+    median = bubblesort(median, k, anzahldummies, dummy);
+    
+	if(median.length%2 == 0) {
+		return median[(median.length/2)-1];
+	}
+	else { 
+        return median[(median.length-1)/2];
+	}
+}
+
+function belegt(p,i,w, k, anzahldummies, dummy) {
+    var j;
+	for(j=0; j<i; j++) {
+		if(nodeX(p[j], k, anzahldummies, dummy) == w) {
+			return true;
+        }
+	}
+	return false;
+}
+
+function senkenLoeschen (k, adj) {
+	var zeilensumme = new Array(), i;
+	for(i=0; i<adj.length; i++) {						//löscht solange alle Senken, bis keine mehr da sind
+		if( k[i][1] == 1) {
+			zeilensumme[i] = zsumme(adj,i,k);
+	
+			if(zeilensumme[i] == 0) {
+				k[i][1] = 0;
+			}
+		}
+	}
+    return k;
+}
+
+
+function quellenLoeschen (k, adj) {
+	var spaltensumme = new Array(), j;
+	for(j=0; j<adj.length; j++) {
+		if(k[j][1] == 1) {
+            spaltensumme[j] = spsumme(adj,j,k);
+		
+            if(spaltensumme[j] == 0) {
+                k[j][1] = 0;
+            }
+		}
+	}	
+    return k;
+}
+	
+		
+function maxvalue (k, a, board, adj) {
+    var i,
+        maxNode = -1,
+        maxValue = (-1)*Number.MAX_VALUE,
+        zeilensumme = new Array(),
+		spaltensumme = new Array(),
+	    reverse = new Array();    // wird das wirklich irgendwo gebraucht?    BV
+		
+	for(i=0; i<k.length; i++) {
+		if(k[i][1] == 1) {
+			zeilensumme[i] = zsumme(adj,i,k);
+			spaltensumme[i] = spsumme(adj,i,k);
+			
+			if(zeilensumme[i]-spaltensumme[i]>maxValue){		//berechne wert des Knotens mit "Ausgangskante-Eingangskante"
+				maxValue = zeilensumme[i]-spaltensumme[i];		//Maximaler berechneter Wert
+				maxNode = i;									//Knoten mit Maximalem Wert
+																// er gibt B aus, was richtig ist
+			}	
+		}		
+	}	
+
+	for(i=0; i<k.length; i++) {
+		if(k[i][1] == 1) {
+			adj[maxNode][i] += adj[i][maxNode];
+			adj[i][maxNode] = 0;
+			reverse.push([i,maxNode]); // wirklich noetig??? BV
+			
+			board.removeObject(a[i+","+maxNode]);
+		}
+	
+	}
+	
+	if(maxNode != -1) {
+        k[maxNode][1] = 0;
+	}
+    return k;
+}
+
+
+
+function layering(k, adj) {
+	var i, l, n=0,
+	    zeilensumme = new Array(),
+	    maxlayer = 0;
+	for(i=0; i<k.length; i++) {
+		zeilensumme[i] = 0;
+		for(l=0; l<k.length; l++) {	
+			zeilensumme[i] += adj[i][l];			//Berechne alle Zeilensummen
+		}
+		if(zeilensumme[i] == 0) {					//Wenn Zeilensumme = 0 ist
+    		k[i][1] = 1;								//Setze Senken im Array K[i][1] auf 1
+            k[i][0].moveTo([k[i][0].X(), 1]);			//Setze Senken auf Layer 1	
+		}	
+	}
+
+	
+	while(istallesnull(k) == false) {														//Solange noch nicht alle Spalten betrachtet wurden mache folgendes:
+		for(i=0; i<k.length; i++) {											//Gehe Spalten durch
+			if(k[i][1] == 1) {												//Ist der Eintrag im Array = 1 und der Knoten somit eine Senke
+				for(l=0; l<k.length; l++) {									//Gehe Zeilen durch
+					if(adj[l][i] == 1){										//Ist eintrag in Zeile = 1
+						k[l][0].moveTo([k[l][0].X(), k[i][0].Y() +1]);		//Setze entsprechenden Knoten einen Layer höher
+						k[l][1] = 1;										//Setze entsprechendes Array des knoten in K[i][1] auf 1
+						if(k[l][0].Y()>maxlayer){							//ist Knoten auf Höchstem Layer
+							maxlayer = k[l][0].Y();							//merke dir in maxlayer die Höhe des layers
+						
+						}
+					}
+				}
+                k[i][1] = 0;													//Setze die Felder der schon betrachteten Knoten im Array wieder null
+																		//gehe immer weiter durch die Spalten bis alle betrachtet wurden
+			}
+		}
+	}
+	return [maxlayer,k];
+}
+
+function erzeugedummynode(k,a, board, adj, canvasWidth, canvasHeight) {											//Funktion um Dummyknoten zu erzeugen
+	var l,m,
+	    i,j,
+    	c,d,
+    	dz = 0,
+        anzahldummies = 0,
+	    a2 = new Array(),		//Dummyknoten
+	    dummy;        
+	for(l=0; l<k.length; l++) {		
+		for(m=0; m<k.length; m++) {			
+			if(adj[l][m] == 1) {										//laufe durch gegebene AdjMatrix, wenn Eintrag gleich 1 ist
+				if(k[l][0].Y()-k[m][0].Y()>1) {							//und wenn die Differenz der y-werte zweier Layer größer 1
+					anzahldummies += k[l][0].Y()-k[m][0].Y()-1;			//summiere über die Differenz der Layer-1 um die Anzahl der benöigten Dummyknoten zu bekommen. Werden in anzahldummies gespeichert
+				}
+			}
+		}
+	}
+	for(i=0; i<(k.length+anzahldummies); i++) {							//initialisiere die neue Matrix a2 die auf der alten zu anfang gegebenen Adjmatrix
+		a2.push(new Array(k.length+anzahldummies));						//besteht und aus der Anzahl der einzufügenden Dummyknoten
+        for(j=0; j<k.length+anzahldummies; j++) {
+            a2[i][j] =0;											//Setzte zuerst die komplette Matrix = 0. Die Information der kanten wird im nächsten
+        }															//Schritt eingefügt
+	}
+	dummy = new Array(anzahldummies);								//erzeuge ein neues Array mit der Länger der zu zeichnenden Dummyknoten
+	for(c=0; c<anzahldummies; c++) {
+		dummy[c] = new Array(2);
+		dummy[c][1] = 1;
+	}
+	
+	
+	for(c=0; c<(k.length+anzahldummies); c++) {						//
+		for(d=0; d<k.length+anzahldummies; d++) {		
+			if((c<k.length && d<k.length && adj[c][d] == 1) || (c>= k.length && a2[c][d] == 1)){		//wenn c=Zeile kleiner Länge geg. Matrix und d=Spalte kleiner geg.Matrix und Eintrag in geg. Matrix gleich 1 oder c=Zeile größer geg. Matrix und Eintrag = 1
+				if((nodeY(c, k, anzahldummies, dummy)-nodeY(d, k, anzahldummies, dummy))==1) {							//und wenn Differenz der Layer auf denen die Knoten mit vorher gefung. eintrag = 1 gleich 1 ist
+					a2[c][d] = 1; 									//Setzte diese Einträge in der neuen Matrix auch gleich 1
+				}
+				else {												//wenn nicht ( also wenn differenz nicht gleich 1)
+					a2[c][d]=0;										//setzte Eintrag gleich 0
+					a2[c][k.length+dz] = 1;							//setzte Knoten in Zeile c und spalte k.length+1, also den ersten dummyknoten gleich 1
+					a2[k.length+dz][d] =1;							//setzte zeile k.length+1 (erster dummy in zeile) und spalte gleich 1
+					dummy[dz][0] = board.createElement('point', [canvasWidth/2,(nodeY(c, k, anzahldummies, dummy)-1)], {visible:'false'});		//speichere erzeugten Knoten (mit new dummynode) mit x-koord. =1 und y-koord. gleich "Eins näher an Zielknoten"Knoten in dummyarray an stelle dz
+					
+					
+					
+					board.removeObject(a[c+","+d]);
+					a[c+","+(k.length+dz)] = board.createElement('line' , [getnode(c, k, anzahldummies, dummy), dummy[dz][0]],{straightFirst:'false', straightLast:'false'});
+					a[(k.length+dz)+","+d] = board.createElement('arrow', [dummy[dz][0], getnode(d, k, anzahldummies, dummy)]);
+	
+					dz++;	
+						//wurde ein Dummyknoten erzeugt dann erhöhe dz um eins, damit der nächste eintrag in eier neuen Spalte/Zeile ist
+						//alert(dz+". Dummy erzeugt!");
+						//alert(nodeY(dz-1+k.length, k, anzahldummies, dummy));
+						
+						
+				}	
+			}	
+        }
+	}
+    return [a,anzahldummies,a2,dummy];
+}
+
+
+function layerverteilung(maxlayer, k, anzahldummies, dummy) {
+    var i, j,
+        layers = new Array(maxlayer),				//erzeuge ein Array mit der Länge der voher ausgrechneten maxlayeranzahl
+        tmp;
+	for(i=0; i<maxlayer; i++) {					//durchlaufe die layer bis maxlayer
+		layers[i] = new Array();				//in jeden Feld des Arrays ein neues Array erzeugen
+	}
+	for(j=0; j<(k.length+anzahldummies); j++) {		//durchlaufe matrix a2
+		layers[nodeY(j, k, anzahldummies, dummy)-1].push(j);					//durchlaufe jeden Layer nodeY-1 da bei 0 angefangen wird zu zählen. mit .push werden Knoten in das Array gepushed
+	}
+	for(i=0; i<layers[maxlayer-1].length; i++) {		//durchlaufe die zeile des Maxlayers im Arrays layers 
+		tmp = setposition(layers[maxlayer-1][i], i+1, k, anzahldummies, dummy);	// setze position in zeile des maxlayers im arrays layers und an der stelle i und setzte position angefangen bei 1 und es wird hochgezählt // return [k,dummy];
+        k = tmp[0];
+        dummy = tmp[1];
+	}
+	return [layers, k, dummy];
+	
+}
+
+
+function kreuzungsminimierungRaufRunter(up, maxlayer,layers,k,anzahldummies,dummy,a2) {				// Minimiere Kreuzungen immer zwischen zwei benachbarten Layern
+// falls up == true: rauf, sonst: runter
+	var i,j,c,d,
+        bary,
+        barywert,
+    	maxwidth = 0,
+        pivotlayer, // nur fuer runter
+        sp,
+        aa1,aa2,aa3,
+        tmp;
+
+    if(up) {
+        aa1 = 1;
+        aa2 = maxlayer-1;
+        aa3 = 1;
+    }
+    else {
+        aa1 = maxlayer-2;
+        aa2 = 0;
+        aa3 = -1;
+    }
+	for(j=aa1; aa3*j<=aa2; j=j+aa3) {					//gehe nun 1 layer weiter unter maxlayer und immer weiter runter
+		bary = new Array(layers[j].length);			// bary ist neues array mit länge der zeile eines arrays im array layers (hängt davon ab wieviel knoten auf einem layer liegen)
+		for(i=0; i<layers[j].length; i++) {			//Durchlaufe die Zeile im Array layers bis zum zeilenende
+			barywert = 0;							//Barycenterwert ist zuerst 0
+			sp = 0;								    //var sp zuanfangs 0; Spalten summe ist die anzahl der eingehenden kanten
+			for(c=0; c<a2.length; c++) {			//durchlaufe die spalten der matrix a2
+                if(up) {
+    				if(a2[layers[j][i]][c]==1) {		//wenn die Zeilen der matrix a2 und die Spalte (festgelegt durch zeile j und spalte i im array layers) gleich 1 ist, also bei jeder eingehender kante
+    					barywert += getposition(c, k, anzahldummies, dummy);		// dann ist barywert die summe der positionen Knoten der eingehenden kanten
+    					sp++;							//sp eins hochzählen
+    				}
+                }
+                else {
+    				if(a2[c][layers[j][i]]==1) {		//wenn die Zeilen der matrix a2 und die Spalte (festgelegt durch zeile j und spalte i im array layers) gleich 1 ist, also bei jeder eingehender kante
+    					barywert += getposition(c, k, anzahldummies, dummy);		// dann ist barywert die summe der positionen Knoten der eingehenden kanten
+    					sp++;							//sp eins hochzählen
+    				}
+                }
+			}
+			if(sp!=0) barywert = barywert/sp;					//barycenterwert = barywert(also summer der pos der knoten der eingehende kanten) / anzahl der eingehenden kanten
+			tmp = setposition(layers[j][i], barywert,k,anzahldummies,dummy);		//speichere für jeden knoten auf den layer den barycenterwert übergangsweise in setposition, // returns [k,dummy]
+            k = tmp[0];
+            dummy = tmp[1];
+			//alert("Barywert zu "+layers[j][i]+": "+getposition(layers[j][i],k, anzahldummies, dummy));
+			for(c=0; c<bary.length; c++) {					//gehe durch array mit länge bary.length, also anzahl der knoten auf einem layer
+				if(typeof bary[c] == 'undefined') {			//wenn an der stelle im bary array noch nichts steht, dann schreibe dorthin die position des knotens
+					bary[c] = layers[j][i];
+					//alert("füge " + bary[c] + " an stelle "+c+" ein");
+					break;
+				}
+				else if(getposition(bary[c],k, anzahldummies, dummy)>=barywert) {			//wenn der barycenterwert des gerade gesetzten knotens größer ist als der des nächsten Knotens
+						for(d=bary.length-2; d>=c; d--) {		//
+							bary[d+1]=bary[d];					//Verschiebe alle schon gesetzten größeren Knoten nach hinten und setzte den neuen Knoten an die richtige Stelle
+							//alert("shift");
+						}
+						bary[c]=layers[j][i];
+						break;
+							//alert("füge " + bary[c] + " an stelle "+c+" ein");
+				}
+				else;
+			}
+		}
+		for(c=0; c<bary.length; c++) {
+			//alert("Speichere für Index " +bary[c]+ " X-Wert " +(c+1));//wenn alle Knoten im array bary richtig geordnet sind, dann setzte wieder deren position angefangen bei 1
+			tmp = setposition(bary[c], c+1,k,anzahldummies,dummy); // returns [k,dummy]
+            k = tmp[0];
+            dummy = tmp[1];
+		}
+		layers[j] = bary;
+	}
+	for(i=0; i<k.length; i++) {						
+		k[i][0].moveTo([getposition(i,k, anzahldummies, dummy), nodeY(i, k, anzahldummies, dummy)]);			//laufe durch die Originalmatrix und setzte alle Knoten an x-wert (vorher ausgerechnete Position) und y-wert (layer)
+		if(k[i][0].X() > maxwidth) {
+			maxwidth = k[i][0].X();
+            if(!up) {
+                pivotlayer = k[i][0].Y()-1;
+            }
+		}
+	}
+	for(i=0; i<anzahldummies; i++) {					//laufe durch die dummyzeilen und spalten und setzte den x wert der dummynodes auf die vorher ausgerechnete position
+		dummy[i][0].moveTo([getposition(k.length+i,k, anzahldummies, dummy), nodeY(k.length+i, k, anzahldummies, dummy)]);
+		if(dummy[i][0].X() > maxwidth) {
+			maxwidth = dummy[i][0].X();
+            if(!up) {
+                pivotlayer = dummy[i][0].Y()-1;
+            }
+		}
+	}
+	
+    if(up) {
+        return [maxwidth,k,dummy];
+    }
+    else {
+        return [pivotlayer,k,dummy];
+    }
+	
+}
+	
+function ausrichtung(maxlayer,pivotlayer,layers, k, anzahldummies, dummy, a2) {
+	var i,j,c,d, priority, wunschposition, tmp;
+	for(i=pivotlayer+1; i<maxlayer; i++) { 
+		priority = new Array(layers[i].length);
+		for(j=0; j<layers[i].length; j++) {
+			tmp = setposition(layers[i][j], PriowertUp(layers[i][j], k, a2), k, anzahldummies, dummy); // returns [k,dummy]
+            k = tmp[0];
+            dummy = tmp[1];
+			for(c=0; c<priority.length; c++){					
+				if(typeof priority[c] == 'undefined'){			
+					priority[c] = layers[i][j];
+					
+					break;
+				}
+				else if(getposition(priority[c],k, anzahldummies, dummy)<getposition(layers[i][j],k, anzahldummies, dummy)) {		
+                    for(d=priority.length-2; d>=c; d--) {		
+                        priority[d+1]=priority[d];				
+                    }
+                    priority[c]=layers[i][j];
+                    break;	
+				}
+				else;
+			}
+		}
+		//alert("Priority zu "+i+": "+priority.join(","));
+		for(j = 0; j<priority.length; j++) {
+			var wunschposition = nodeX(medianUp(priority[j], a2, k, anzahldummies, dummy), k, anzahldummies, dummy);
+			if(wunschposition<nodeX(priority[j], k, anzahldummies, dummy)) {
+				wunschposition = nodeX(priority[j], k, anzahldummies, dummy);
+			}
+			while(belegt(priority, j, wunschposition, k, anzahldummies, dummy)) {
+				wunschposition++;
+			}
+
+			setX(priority[j],wunschposition, k, anzahldummies, dummy);
+		}
+	}
+	
+	for(i=pivotlayer-1; i>=0; i--) {
+		priority = new Array(layers[i].length);
+		for(j=0; j<layers[i].length; j++) {
+			tmp = setposition(layers[i][j], PriowertDown(layers[i][j],k,a2), k, anzahldummies, dummy); // returns [k,dummy];
+            k = tmp[0];
+            dummy = tmp[1];            
+			for(c=0; c<priority.length; c++) {					
+				if(typeof priority[c] == 'undefined') {			
+					priority[c] = layers[i][j];
+					
+					break;
+				}
+				else if(getposition(priority[c],k, anzahldummies, dummy)<getposition(layers[i][j],k, anzahldummies, dummy)) {		
+                    for(d=priority.length-2; d>=c; d--){		
+                        priority[d+1]=priority[d];				
+                        
+                    }
+                    priority[c]=layers[i][j];
+                    break;
+				}
+				else;
+			}
+		}
+		//alert("Priority zu "+i+": "+priority.join(","));
+		for(j = 0; j<priority.length; j++) {
+			wunschposition = nodeX(medianDown(priority[j],a2, k, anzahldummies, dummy), k, anzahldummies, dummy);
+			if(wunschposition<nodeX(priority[j], k, anzahldummies, dummy)){
+				wunschposition = nodeX(priority[j], k, anzahldummies, dummy);
+			}
+			while(belegt(priority, j, wunschposition, k, anzahldummies, dummy)){
+				wunschposition++;
+			}
+
+			setX(priority[j],wunschposition, k, anzahldummies, dummy);
+			
+		}
+	}
+	
+}	
+
+
+
+
+
+function scale(maxlayer, maxwidth, k, dummy, canvasWidth, canvasHeight) {
+	var scaleY = canvasHeight / maxlayer,
+	    scaleX = canvasWidth / maxwidth;
+
+	for(i=0; i<k.length; i++) {
+			k[i][0].moveTo([k[i][0].X()*scaleX-(scaleX/2), k[i][0].Y()*scaleY -(scaleY/2)]);
+			
+		}
+	for(i=0; i<dummy.length; i++) {
+		dummy[i][0].moveTo([dummy[i][0].X()*scaleX-(scaleX/2), dummy[i][0].Y()*scaleY -(scaleY/2)]);
+	}
+
+ }
+
+
+
+
+
+
+
+ /* ]]> */
+  </script> 
+  
+  
+  <a href="javascript:algorithmusWithJanaInit();">Algorithmus</a> <br>
+  <a href="javascript:algorithmusWithReadGraph('graphJana.txt');">Graph einlesen + Algorithmus</a> <br>
+  
+
+
+  <div id="debug"></div>
+</body>
+</html>

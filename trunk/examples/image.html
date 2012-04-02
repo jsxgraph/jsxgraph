@@ -1,0 +1,59 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+</head>
+<body>
+  <h2>Images</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    (function(){
+        var p0, p1, picStr, board;
+        
+        picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
+        //picStr = "./uccellino.jpg";
+        picStr = "./fagiolo.jpg";
+//JXG.Options.renderer = 'canvas';
+        
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
+
+        var p0 = board.create('point', [0,0], {style:5, name:'opacity'}); 
+        
+        /*
+        var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'}); 
+        var li = board.create('line', [p0,p1]); 
+        */
+        var im = board.create('image',[picStr, [0,0], [3,2]],
+            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
+
+        /*
+        // 
+        // Translate image and point "rot+scale" by freagging point "offset"
+        var tOff = board.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
+        tOff.bindTo(im);
+        tOff.bindTo(p1);
+        
+        // Rotate image around point "offset" by dragging point "rot+scale"
+        var tRot = board.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'}); 
+        tRot.bindTo(im);
+        
+        // Scale image by dragging point "rot+scale"
+        // We do this by moving the image back to the origin (inverse of transformation tOff),
+        // then scale the image (because scaling "starts from (0,0))
+        // Finally, we move the image back to point "Offset"
+        var tOffInv = board.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
+        var tScale = board.create('transform', [function(){return p1.Dist(p0)/3;},
+                                            function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
+        tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
+        //board.update();
+        */
+    })();
+  /* ]]> */
+  </script>
+</body>
+</html>

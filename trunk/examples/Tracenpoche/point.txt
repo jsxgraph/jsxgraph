@@ -1,0 +1,7 @@
+@options;
+
+@figure;
+  A0 = point( -3 , 2 )  { vertfonce , rond3 , sansnom };
+  C0 = point( 8 , -3 )  { vertfonce , rond3 , sansnom };
+  D0 = point( 7 , -4 )  { vertfonce , rond3 , sansnom };
+  c = cerclerayon( A0 , 3)  { vertfonce , rond3 , sansnom };

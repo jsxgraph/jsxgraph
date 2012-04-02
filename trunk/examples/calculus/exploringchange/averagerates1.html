@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>Exploring Change - Plotting Average Rates of Change</title>
+    <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+    <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h1>Durchschnittliche &Auml;nderungsrate</h1>
+
+<p><strong>Eine kleine Einf&uuml;hrung.</strong></p>
+
+<h2>Entdecke</h2>
+
+<div style="width:800px">
+    <div id="step" class="jxgbox" style="width:600px; height:600px;"></div>
+
+    <script type="text/javascript">
+    JXG.Options.text.useMathJax = true;
+    JXG.Options.point.showInfobox = false;
+    
+    var board = JXG.JSXGraph.initBoard('step', {boundingbox: [-6, 6, 4, -4], keepaspectratio: false, axis:true, showNavigation: true}),
+        A = board.create('point', [-2, 0], {name: function() { return A ? 'A = (' + A.X().toFixed(2) + ', ' + A.Y().toFixed(2) + ')' : 'A';}}),
+        B = board.create('point', [0, 2], {name:  function() { return B ? 'B = (' + B.X().toFixed(2) + ', ' + B.Y().toFixed(2) + ')' : 'B';}}),
+        line = board.create('segment', [A, B]),
+        ratio = board.create('text', [-5, 3, function() { return '\\[\\frac{y_B-y_A}{x_B-x_A} = ' + ((B.Y() - A.Y())/(B.X() - A.X())).toFixed(4) + '\\]';}]);
+    
+    board.update();
+    </script>
+
+    <div style="width: 800px;">
+        <p>
+            Mit Hilfe dieses Arbeitsblattes werden wir durchschnittliche &Auml;nderungsraten untersuchen.
+        </p>
+        <p>
+            Die beiden Punkte k&ouml;nnen an beliebige Stellen in der Ebene gezogen werden. Die durchschnittliche &Auml;nderungsrate von
+            A \((x_A, y_A)\) und B \((x_B, y_B)\) von y im Bezug auf x wird ausgedr&uuml;ckt durch den Quotienten
+            \[
+                \frac{y_B-y_A}{x_B-x_A}.
+            \]
+        </p>
+        <p>
+            Aufgaben:
+        </p>
+        <ol>
+            <li>
+                Wann ist die durchschnittliche &Auml;nderungsrate von A und B positiv? Wann ist sie negativ?
+            </li>
+            <li>
+                Muss der Punkt A auf einer bestimmten Seite von Punkt B liegen, um eine positive &Auml;nderungsrate zu
+                erhalten? Wieso?
+            </li>
+            <li>
+                <a href="javascript:board.create('text', [-5, 2, function() { return 'Steigung der Strecke AB = \\(' + line.getSlope().toFixed(4) + '\\)';}]);">Klick
+                hier</a> um die Steigung der Strecke AB anzeigen zu lassen. Bewege wieder die beiden Punkte auf der Zeichenebene
+                und beobachte beide Messungen. Wieso stimmen die beiden Messungen immer &uuml;berein?
+            </li>
+        </ol>
+    </div>
+</div>
+
+</body>
+</html>

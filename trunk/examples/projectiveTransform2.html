@@ -1,0 +1,84 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1>Projective Transformation 2</h1>
+<div id="jxgbox" class="jxgbox" style="width:400px; height:400px; overflow:hidden; float:left"></div>
+<div id="jxgbox2" class="jxgbox" style="width:400px; height:400px; overflow:hidden; float:left"></div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+//----------------------------------------------------------------------
+
+var mat=[[1,0.2,0.3],
+         [0.6,7,3],
+         [0.8,1,7.1]];
+         
+var mat2 = JXG.Math.inverse(mat);
+
+//----------------------------------------------------------------------
+
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox:[-1,21,21,-6], keepaspectratio:true, axis:false});
+
+var i, p=[], l=[], p1=[], p2=[], q1=[], q2=[], lh=[], lv=[];
+p[0] = brd.create('point',JXG.Math.matVecMult(mat,[1,0,0]),{withLabel:false});
+p[1] = brd.create('point',JXG.Math.matVecMult(mat,[1,8,0]),{withLabel:false});
+p[2] = brd.create('point',JXG.Math.matVecMult(mat,[1,8,8]),{withLabel:false});
+p[3] = brd.create('point',JXG.Math.matVecMult(mat,[1,0,8]),{withLabel:false});
+
+l[0] = brd.create('segment',[p[0],p[1]],{withLabel:false});
+l[1] = brd.create('segment',[p[1],p[2]],{withLabel:false});
+l[2] = brd.create('segment',[p[2],p[3]],{withLabel:false});
+l[3] = brd.create('segment',[p[3],p[0]],{withLabel:false});
+
+var tmp;
+for (i=1;i<8;i++) {
+    tmp = JXG.Math.matVecMult(mat,[1,i,0]);
+    p1[i] = brd.create('glider',[tmp[1]/tmp[0],tmp[2]/tmp[0],l[0]],{withLabel:false});
+    tmp = JXG.Math.matVecMult(mat,[1,8,i]);
+    q2[i] = brd.create('glider',[tmp[1]/tmp[0],tmp[2]/tmp[0],l[1]],{withLabel:false});
+    tmp = JXG.Math.matVecMult(mat,[1,i,8]);
+    p2[i] = brd.create('glider',[tmp[1]/tmp[0],tmp[2]/tmp[0],l[2]],{withLabel:false});
+    tmp = JXG.Math.matVecMult(mat,[1,0,i]);
+    q1[i] = brd.create('glider',[tmp[1]/tmp[0],tmp[2]/tmp[0],l[3]],{withLabel:false});
+}
+
+for (i=1;i<8;i++) {
+    lv[i] = brd.create('segment',[p1[i],p2[i]],{withLabel:false});
+    lh[i] = brd.create('segment',[q1[i],q2[i]],{withLabel:false});
+}
+
+var brd2 = JXG.JSXGraph.initBoard('jxgbox2',{boundingbox:[-1,21,21,-6], keepaspectratio:true, axis:false});
+
+brd.addChild(brd2);
+var pp=[], ll=[], pp1=[], pp2=[], qq1=[], qq2=[], llh=[], llv=[];
+pp[0] = brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p[0].coords.usrCoords);}],{withLabel:false});
+pp[1] = brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p[1].coords.usrCoords);}],{withLabel:false});
+pp[2] = brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p[2].coords.usrCoords);}],{withLabel:false});
+pp[3] = brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p[3].coords.usrCoords);}],{withLabel:false});
+
+ll[0] = brd2.create('segment',[pp[0],pp[1]],{withLabel:false});
+ll[1] = brd2.create('segment',[pp[1],pp[2]],{withLabel:false});
+ll[2] = brd2.create('segment',[pp[2],pp[3]],{withLabel:false});
+ll[3] = brd2.create('segment',[pp[3],pp[0]],{withLabel:false});
+
+for (i=1;i<8;i++) {
+    pp1[i] = (function(k){ return brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p1[k].coords.usrCoords);}],{withLabel:false}); })(i);
+    qq2[i] = (function(k){ return brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,q2[k].coords.usrCoords);}],{withLabel:false}); })(i);
+    pp2[i] = (function(k){ return brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,p2[k].coords.usrCoords);}],{withLabel:false}); })(i);
+    qq1[i] = (function(k){ return brd2.create('point',[function(){return JXG.Math.matVecMult(mat2,q1[k].coords.usrCoords);}],{withLabel:false}); })(i);
+}
+
+for (i=1;i<8;i++) {
+    llv[i] = brd2.create('segment',[pp1[i],pp2[i]],{withLabel:false});
+    llh[i] = brd2.create('segment',[qq1[i],qq2[i]],{withLabel:false});
+}
+
+/* ]]> */
+</script>
+</body>
+</html>

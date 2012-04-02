@@ -1,0 +1,36 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Angle</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */   
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1,6,10,-3], axis:false, grid:false});
+        
+        var p1 = board.create('point', [0, 0], {face:'+',name:"A"}); 
+        var p2 = board.create('point', [3, 4], {face:'o',name:"B"});
+        var p3 = board.create('point', [4, 0], {face:'[]',name:"C"});
+
+        var l1 = board.create('line', [p1, p2], {strokeWidth:'2', strokeColor:'green',withLabel:true});
+        var l2 = board.create('arrow', [p1, p3], {strokeWidth:'2', strokeColor:'blue',withLabel:false});        
+        
+        var alpha = board.create('angle', [p3,p1,p2], 
+            {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', 
+            label: {fontSize:30, strokeColor:'blue'},
+            point: {visible:false}}
+           );
+        var alpha = board.create('angle', [p2,p3,p1], 
+            {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', 
+            label: {fontSize:30, strokeColor:'blue'},
+            point: {visible:false}}
+           );
+    })();
+/* ]]> */
+</script>
+</body>
+</html>

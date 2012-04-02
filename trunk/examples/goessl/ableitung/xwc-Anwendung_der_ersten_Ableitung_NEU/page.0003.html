@@ -1,0 +1,185 @@
+<html>
+	<head>
+		<!--
+			GEONExT Worksheet Creator
+			
+			http://geonext.de/xwc
+			xwc@geonext.de
+			
+			(c) 2004-2007
+		-->
+		<title>GEONExT WorksheetCreator</title>
+		<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+		<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+		<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script>
+		<title>Multiple Choice</title>
+		<style type="text/css">
+		<!--
+		body {
+			margin: 0px;
+		}
+		.STYhead {
+			font-family: sans-serif;
+			font-size: 24px;
+			color: rgb(0, 0, 0);
+			font-weight: bold;
+			background: rgb(255, 255, 255);
+			padding: 10px 10px 25px 10px;
+		}
+		.STYnavigation {
+			font-family: sans-serif;
+			font-size: 10px;
+			color: rgb(255, 255, 255);
+			font-weight: bold;
+			background: rgb(50,150,100);
+			padding: 5px;
+		}
+		.STYbuttons {
+			font-family: sans-serif;
+			font-size: 10px;
+			color: rgb(255, 255, 255);
+			font-weight: bold;
+			background: rgb(50,150,100);
+			padding: 10px 0px 10px 0px;
+		}
+		.STYapplet {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 1px 10px 10px 10px;
+		}
+		.STYtext {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 15px 10px 5px 10px;
+			line-height:20px;
+		}
+		.STYtitle {
+			font-family: sans-serif;
+			font-size: 16px;
+			background: rgb(255, 255, 255);
+			padding: 0px 0px 0px 0px;
+			font-weight: bold;
+			line-height:20px;
+		}
+		.STYinstruction {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			padding: 1px 10px 10px 10px;
+			line-height:20px;
+		}
+		.STYxwc {
+			font-family: sans-serif;
+			font-size: 14px;
+			background: rgb(255, 255, 255);
+			color: rgb(200, 200, 200);
+			font-weight: normal;
+			padding: 1px 10px 1px 10px;
+		}
+		a:active, a:visited, a:link, a:hover
+		{	
+			font-family: Arial,Verdana,sans-serif,Helvetica;
+			text-decoration: none;
+			color: 	rgb(50,150,100);
+		}
+		-->
+		</style>
+	</head>
+	<body bgcolor="#ffffff">
+		<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="80" align="center" valign="top" class="STYnavigation" rowspan="4">
+					<table height="100%" border="0" cellspacing="0">
+						<tr>
+							<td align="center" valign="top" class="STYbuttons"><a href="page.0002.html" class="STYbuttons" onmouseover="window.document.images['backid'].src='images/navigation/arrow_left_hl.gif';window.status='Zurück';return true;" onmouseout="window.document.images['backid'].src='images/navigation/arrow_left.gif';"><img alt="Zurück" border="0" src="images/navigation/arrow_left.gif" id="backid"></a></td>
+							<td align="center" valign="top" class="STYbuttons"><a href="index.html" class="STYbuttons" onmouseover="window.document.images['indexid'].src='images/navigation/info_hl.gif';;window.status='Übersicht';return true;" onmouseout="window.document.images['indexid'].src='images/navigation/info.gif';"><img alt="Übersicht" border="0" src="images/navigation/info.gif" id="indexid"></a></td>
+							<td align="center" valign="top" class="STYbuttons"><a href="page.0004.html" class="STYbuttons" onmouseover="window.document.images['nextid'].src='images/navigation/arrow_right_hl.gif';;window.status='Weiter';return true;" onmouseout="window.document.images['nextid'].src='images/navigation/arrow_right.gif';"><img alt="Weiter" border="0" src="images/navigation/arrow_right.gif" id="nextid"></a></td>
+						</tr>
+						<tr>
+							<td align="center" valign="bottom" class="STYnavigation" colspan="3"><img src="images/logo.gif" hspace="5" vspace="10"></td>
+						</tr>
+					</table>		
+				</td>
+				<td height="10" align="left" valign="top" class="STYxwc" colspan="2"><img src="images/gni.gif" align="top" border="0"> Worksheet Creator [<img src="images/xwc.gif">]</td>
+			</tr>
+			<tr>
+				<td  height="10" align="left" valign="top" class="STYhead" colspan="2">Multiple Choice</td>
+			</tr>
+			<tr>
+				<td width="25" align="left" valign="top" class="STYapplet">
+					<div id="jxgbox" class="jxgbox" style="width:550px; height:450px; position:relative; "></div>
+					<script type="text/javascript">
+  /* <![CDATA[ */
+
+  var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 10, 21, -10], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+ 
+var fg1= board.createElement('functiongraph',[function(x){return Math.exp(-0.05*x)*Math.cos(x)*(x-6);},-1.60,20.45], {highlightstrokeColor:'blue'});	        //Funktionsgraph
+var fg2= board.createElement('functiongraph',[function(x){return Math.exp(-0.05*x)*((-0.05*x+1.3)*Math.cos(x)+(6-x)*Math.sin(x));},-1.60,20.45], {strokeColor:'red'});	        //Funktionsgraph
+
+
+/* ]]> */
+
+
+			function pruefeloesung2() {
+			var input1 = document.getElementById('option1'),
+				input2 = document.getElementById('option2'),
+				input3 = document.getElementById('option3'),
+				input4 = document.getElementById('option4'),
+				input5 = document.getElementById('option5'),
+				input6 = document.getElementById('option6'),
+				input7 = document.getElementById('option7');
+				
+				
+				if(input2.checked && input3.checked && input7.checked && !input1.checked && !input4.checked && !input5.checked && !input6.checked) {
+					alert ('Herzlichen Glückwunsch!!!Alles Richtig!');
+				} else {
+					alert ('Probiers nochmal...');
+				}
+				}
+				
+			
+  </script>
+				</td>
+				<td width="100%" align="left" valign="top" class="STYinstruction">
+					<h1 class="STYtitle"></h1>
+					Links siehst du noch einmal die Ausgangsfunktion mit ihrer zugehörigen Ableitungsfunktion.<br>
+Mit den Kenntnissen aus den vorrangegangenen Blättern und den Zusammenhängen zwischen Ausgangs- und Ableitungsfunktion, lassen sich nun allgemeine Aussagen formulieren.<br>
+					<br>
+					<br>
+<h1 class="STYtitle"></h1>
+				
+				<p>Markiere die richtigen Aussagen!	</p> 
+					
+					<form action="input_text.html">
+					<p><input type="checkbox" name="loesung" id="option1">Ist die Funktion f(x) monoton zunehmend, so gilt f'(x)=<0 für jeden Wert von x.<br/>
+					<p><input type="checkbox" name="loesung" id="option2">Gilt für die Ableitungsfunktion f'(x)>0, so ist f streng monoton zunehmend.<br />
+					<p><input type="checkbox" name="loesung" id="option3">Gilt f'(a)=0 und wechselt f'(x) für zunehmende Werte von x an der Stelle a von positiven zu negativen Werten, so hat die Funktion in a ein lokales Maximum und der dazugehörige Graph einen Hochpunkt.<br />
+					<p><input type="checkbox" name="loesung" id="option4">Für f'(x)=0 erhält man in der Funktion eine vertikale Tangente.<br />
+					<p><input type="checkbox" name="loesung" id="option5">Ändern sich die Vorzeichen der Funktionswerte nicht und es gilt f'(b)=0, so befindet sich bei b ein lokales Minimum der Funktion und der dazugehörige Graph hat einen Tiefpunkt. <br />
+					<p><input type="checkbox" name="loesung" id="option6">Besitzt die Funktion an der Stelle c eine Nullstelle, so hat die Ableitung in c ein Extremum. <br />
+					<p><input type="checkbox" name="loesung" id="option7">Gilt für alle x -Werte, dass f'(x)=0, so ist die Ausgangsfunktion eine Konstante. <br />
+					<p><input value="Fertig?" type="button" onclick="pruefeloesung2();">
+					</form>
+					
+					</ol>
+
+					<br><br>
+
+				</td>
+			</tr>
+			<tr>
+			</tr>
+		</table>
+	</body>
+	<!--
+		GEONExT Worksheet Creator
+		
+		http://geonext.de/xwc
+		xwc@geonext.de
+		
+		(c) 2004-2007
+	-->
+</html>

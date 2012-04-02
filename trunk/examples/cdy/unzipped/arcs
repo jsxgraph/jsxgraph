@@ -1,0 +1,184 @@
+//Cindy-2.0.17 build 779 (2007/02/14 21:22)DEMO
+//Created on: 17.03.2010 17:46:16
+//For: ausstellung
+//DO NOT EDIT --- MACHINE GENERATED CODE
+Geometry:=Euclidean;
+("A"):=FreePoint([0.9719626168224299+i*0.0,4.0+i*0.0,-0.9345794392523364+i*-0.0]);
+"A".setAppearance(2,5,1,0,0,9,true,false);
+"A".setAttribute("color","2");
+"A".setAttribute("visibility","9");
+"A".setAttribute("drawtrace","false");
+"A".setAttribute("tracelength","100");
+"A".setAttribute("traceskip","1");
+"A".setAttribute("tracedim","1.0");
+"A".setAttribute("render","false");
+"A".setAttribute("pinning","false");
+"A".setAttribute("labeled","true");
+"A".setAttribute("ptsize","5");
+"A".setAttribute("pointborder","true");
+"A".setLabelPos(3,3,1,false,0.0,0.2,1);
+("B"):=FreePoint([-0.9777777777777777+i*-0.0,4.0+i*0.0,-0.7407407407407407+i*-0.0]);
+"B".setAppearance(2,5,1,0,0,9,true,false);
+"B".setAttribute("color","2");
+"B".setAttribute("visibility","9");
+"B".setAttribute("drawtrace","false");
+"B".setAttribute("tracelength","100");
+"B".setAttribute("traceskip","1");
+"B".setAttribute("tracedim","1.0");
+"B".setAttribute("render","false");
+"B".setAttribute("pinning","false");
+"B".setAttribute("labeled","true");
+"B".setAttribute("ptsize","5");
+"B".setAttribute("pointborder","true");
+"B".setLabelPos(3,3,1,false,0.0,0.2,1);
+("C"):=FreePoint([4.0+i*0.0,-2.432748538011696+i*0.0,0.584795321637427+i*0.0]);
+"C".setAppearance(2,5,1,0,0,9,true,false);
+"C".setAttribute("color","2");
+"C".setAttribute("visibility","9");
+"C".setAttribute("drawtrace","false");
+"C".setAttribute("tracelength","100");
+"C".setAttribute("traceskip","1");
+"C".setAttribute("tracedim","1.0");
+"C".setAttribute("render","false");
+"C".setAttribute("pinning","false");
+"C".setAttribute("labeled","true");
+"C".setAttribute("ptsize","5");
+"C".setAttribute("pointborder","true");
+"C".setLabelPos(3,3,1,false,0.0,0.2,1);
+("C0"):=Arc("A","B","C");
+"C0".setAppearance(8,5,5,0,0,9,false,false);
+"C0".setArrowType(0,3,100,8);
+"C0".setAttribute("color","8");
+"C0".setAttribute("visibility","9");
+"C0".setAttribute("drawtrace","false");
+"C0".setAttribute("tracelength","100");
+"C0".setAttribute("traceskip","1");
+"C0".setAttribute("tracedim","1.0");
+"C0".setAttribute("render","false");
+"C0".setAttribute("linesize","5");
+"C0".setAttribute("colorfill","14");
+"C0".setAttribute("visibilityfill","0");
+"C0".setAttribute("linkvisibility","false");
+"C0".setArrowType(0,3,100,8);
+("D"):=FreePoint([4.0+i*0.0,3.7647058823529416+i*0.0,-0.8403361344537815+i*-0.0]);
+"D".setAppearance(2,5,1,0,0,9,true,false);
+"D".setAttribute("color","2");
+"D".setAttribute("visibility","9");
+"D".setAttribute("drawtrace","false");
+"D".setAttribute("tracelength","100");
+"D".setAttribute("traceskip","1");
+"D".setAttribute("tracedim","1.0");
+"D".setAttribute("render","false");
+"D".setAttribute("pinning","false");
+"D".setAttribute("labeled","true");
+"D".setAttribute("ptsize","5");
+"D".setAttribute("pointborder","true");
+"D".setLabelPos(3,3,1,false,0.0,0.2,1);
+("E"):=FreePoint([4.0+i*0.0,1.8969072164948453+i*0.0,-1.0309278350515465+i*-0.0]);
+"E".setAppearance(2,5,1,0,0,9,true,false);
+"E".setAttribute("color","2");
+"E".setAttribute("visibility","9");
+"E".setAttribute("drawtrace","false");
+"E".setAttribute("tracelength","100");
+"E".setAttribute("traceskip","1");
+"E".setAttribute("tracedim","1.0");
+"E".setAttribute("render","false");
+"E".setAttribute("pinning","false");
+"E".setAttribute("labeled","true");
+"E".setAttribute("ptsize","5");
+"E".setAttribute("pointborder","true");
+"E".setLabelPos(3,3,1,false,0.0,0.2,1);
+("F"):=FreePoint([2.0+i*0.0,4.0+i*0.0,-2.3809523809523814+i*-0.0]);
+"F".setAppearance(2,5,1,0,0,9,true,false);
+"F".setAttribute("color","2");
+"F".setAttribute("visibility","9");
+"F".setAttribute("drawtrace","false");
+"F".setAttribute("tracelength","100");
+"F".setAttribute("traceskip","1");
+"F".setAttribute("tracedim","1.0");
+"F".setAttribute("render","false");
+"F".setAttribute("pinning","false");
+"F".setAttribute("labeled","true");
+"F".setAttribute("ptsize","5");
+"F".setAttribute("pointborder","true");
+"F".setLabelPos(3,3,1,false,0.0,0.2,1);
+("C1"):=Arc("D","E","F");
+"C1".setAppearance(3,5,1,0,0,9,false,false);
+"C1".setArrowType(0,3,100,8);
+"C1".setAttribute("color","3");
+"C1".setAttribute("visibility","9");
+"C1".setAttribute("drawtrace","false");
+"C1".setAttribute("tracelength","100");
+"C1".setAttribute("traceskip","1");
+"C1".setAttribute("tracedim","1.0");
+"C1".setAttribute("render","false");
+"C1".setAttribute("linesize","1");
+"C1".setAttribute("colorfill","5");
+"C1".setAttribute("visibilityfill","0");
+"C1".setAttribute("linkvisibility","false");
+"C1".setArrowType(0,3,100,8);
+Geometry:=Euclidean;
+//
+//Exercise Information
+exercise {
+  input {
+    setElements(());
+    addMode("de.cinderella.modes.Move()");
+    addMode("de.cinderella.modes.SingleAdd()");
+    addMode("de.cinderella.modes.MultiAdd(de.cinderella.algorithms.Join)");
+    addMode("de.cinderella.modes.DefineCompass()");
+    addMode("de.cinderella.actions.Undo()");
+    addMode("de.cinderella.actions.GiveHint()");
+    addMode("de.cinderella.actions.Restart()");
+   setAttribute("exercise.name","Exercise");
+   setAttribute("exercise.message","");
+  }
+  arrows {
+  }
+}
+behavior {Environment();
+          setParams(1.0,0.0,0.0);
+          addToLevel(1);
+         }
+behavior {Motor();
+          setParams(1.0,0.1,0.0);
+          addToLevel(1);
+         }
+kernel.setAcc(2);
+kernel.setFrames(1);
+kernel.setSpeed(1.0);
+//Start portinfo
+kernel.setBackgroundColor(168,176,192);
+kernel.setBlackColor(0,0,0);
+kernel.setHighlightColor(255,255,255);
+port EuclideanPort() {
+   setAttribute("imagescalemode","scalemode.center");
+   setAttribute("imagealpha","1.0");
+   setAttribute("image.filename","");
+   setAttribute("show.adjacencymatrix","1");
+   setAttribute("show.vertexqueue","");
+   setAttribute("antialiasing","false");
+   setAttribute("precision.measure","precision.4");
+   setAttribute("precision.measure.int","4");
+   setAttribute("precision.angle","precision.1");
+   setAttribute("precision.angle.int","1");
+   setAttribute("anglemodulo","modulo.0");
+   setAttribute("printscale","1:1");
+   setAttribute("printscale.int","1:1");
+   setAttribute("darkenDependent","true");
+   setAttribute("mesh.rectangular","false");
+   setAttribute("mesh.triangular","false");
+   setAttribute("axes.show","false");
+   setAttribute("snap","false");
+   setAttribute("mesh.density","0");
+   setPolar(false);
+   setPortWidth(680);
+   setPortHeight(350);
+   setScale(25.0);
+   setOriginY(226);
+   setOriginX(233);
+   setMesh(false);
+   setAxes(false);
+   setSnap(false);
+}
+//End portinfo

@@ -1,0 +1,226 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1>Total Areas of Alternating Subtriangles in a n-gon with n=2m</h1>
+Let P be a point connected to and inside the vertices of a 2m-gon. 
+Number the triangles counterclockwise from 1 to 2n. Then the sum of the areas of the even-numbered triangles is equal to the sum of the areas 
+of the odd-numbered triangles.<br>
+Drag the point P to change the figure or change with the radio buttons the number of vertices.
+<br><br>
+<form>
+    <table><tr>
+    <td>n = </td>
+    <td><input type="radio" name="n" value="sechs" onClick="run(6);"> 6</td>
+    <td><input type="radio" name="n" value="acht" onClick="run(8);"> 8</td>
+    <td><input type="radio" name="n" value="zehn" checked="checked" onClick="run(10);"> 10</td>
+    </tr></table>
+</form>
+<table><tr><td>
+<table border='1'>
+<tr id="input1">
+</tr>
+<tr id="input2">
+</tr>
+</table>
+</td>
+<td width='100'></td>
+<td>
+<table border='1'>
+<tr id="input3">
+    <td bgcolor='#3CB371' id="input3a"></td>
+        <td bgcolor='#DA70D6' id="input3b"></td>
+</tr>
+<tr>
+    <td align='center' id='sum_1'> 1 </td>
+    <td align='center' id='sum_2'> 2 </td>
+</tr>
+</table>
+</td>
+</table>
+<br>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var board = JXG.JSXGraph.initBoard('box', {originX: 400, originY: 200, unitX: 150, unitY: 150});
+    
+    function run(n) {
+        // Tabellen oberhalb der Zeichenflaeche abhaengig von n anlegen
+        var tr1=document.getElementById("input1");
+        
+        while(tr1.firstChild) {
+            var node = tr1.firstChild;
+            var away = tr1.removeChild(node);
+        }
+
+        for(var i = 1; i <= n; i++) {
+            if(i % 2 != 0) {
+                var neu = document.createElement("td");
+                var neuText = document.createTextNode("A");
+                var neu2 = document.createElement("sub");
+                var neuText2 = document.createTextNode(i);
+                neu2.appendChild(neuText2);
+                neu.appendChild(neuText);
+                neu.appendChild(neu2);
+                tr1.appendChild(neu);
+                neu.style.backgroundColor = '#3CB371';
+            }
+            else {
+                var neu = document.createElement("td");
+                var neuText = document.createTextNode("A");
+                var neu2 = document.createElement("sub");
+                var neuText2 = document.createTextNode(i);
+                neu2.appendChild(neuText2);
+                neu.appendChild(neuText);
+                neu.appendChild(neu2);
+                tr1.appendChild(neu);        
+                neu.style.backgroundColor = '#DA70D6';
+            }
+        }    
+        
+        var tr2=document.getElementById("input2");
+        while(tr2.firstChild) {
+            var node = tr2.firstChild;
+            var away = tr2.removeChild(node);
+        }    
+        for(var i = 1; i <= n; i++) {
+            var neu = document.createElement("td");
+            neu.setAttribute("id","area_"+i);
+            var neuText = document.createTextNode("1");
+            neu.appendChild(neuText);
+            tr2.appendChild(neu);    
+        }
+        
+        var tr3a=document.getElementById("input3a");
+        var s = "";
+        for(var i = 1; i <= n; i=i+2) {
+            if(i != 1) {
+                s += " + A<sub>"+i+"</sub>";
+            }
+            else {
+                s += "A<sub>"+i+"</sub>";
+            }
+        }
+        tr3a.innerHTML = s;
+
+        var tr3b=document.getElementById("input3b");
+        s = "";
+        for(var i = 2; i <= n; i=i+2) {
+            if(i != 2) {
+                s += " + A<sub>"+i+"</sub>";
+            }
+            else {
+                s += "A<sub>"+i+"</sub>";
+            }
+        }
+        tr3b.innerHTML = s;
+        
+        // Board erzeugen
+        JXG.JSXGraph.freeBoard(board);
+        board = JXG.JSXGraph.initBoard('box', {originX: 400, originY: 200, unitX: 150, unitY: 150});
+        //board.renderer.suspendRedraw();
+        var r = 1;
+        
+        // n-Eck
+        var p = new Array(n);
+        for(var i = 0; i < n; i++) {
+            p[i] = board.createElement('point', [r*Math.sin(i*2*Math.PI/n), r*Math.cos(i*2*Math.PI/n)] , {fixed:true,fillColor:'blue'});
+        }
+        
+        // Zieh-Punkt im Inneren
+        var q = board.createElement('point',[-0.3,-0.3],{fillColor:'red',strokeColor:'red',name:'P'});
+        
+        // Polygone
+        var polygones = new Array(n);
+        var mp = new Array(n);
+        for(var i=0; i<n; i++) {
+            if(i < n-1) {
+                if(i % 2 == 0) {
+                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#3CB371',name:''});
+                }
+                else {
+                    polygones[i] = board.createElement('polygon',[q,p[i],p[i+1]], {fillColor:'#DA70D6',name:''});
+                }
+                
+                // Labels fuer die Polygone....
+                mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[i+1]], {name:'',visible:false});
+                board.createElement('text',[
+                    (function(j){ return function(){ return mp[j].X();}; })(i),
+                    (function(j){ return function(){ return mp[j].Y();}; })(i),
+                    'A<sub>'+(i+1)+'</sub>'
+                ],{});
+            }
+            else {
+                polygones[i] = board.createElement('polygon',[q,p[i],p[0]], {fillColor:'#DA70D6',name:''});
+                
+                // Labels fuer die Polygone....
+                mp[i] = board.createElement('circumcircleMidpoint',[q,p[i],p[0]], {name:'',visible:false});
+                board.createElement('text',[
+                    (function(j){ return function(){ return mp[j].X();}; })(i),
+                    (function(j){ return function(){ return mp[j].Y();}; })(i),
+                    'A<sub>'+(i+1)+'</sub>'
+                ],{});
+            }
+        }
+        
+        // Labels der Polygonseiten verstecken
+/*
+        for(var j=0; j < n; j++) {
+            for(var i=0; i < polygones[j].borders.length; i++) {
+                polygones[j].borders[i].label.content.hideElement();
+            }  
+        }
+*/        
+        // Hook-Funktion definieren, die die Tabelleninhalte updatet
+        function print_table(board) {
+            var distances = new Array(n);
+            for(var i=0; i<n; i++) {
+                distances[i] = q.coords.distance(JXG.COORDS_BY_USER, p[i].coords);
+            }  
+            var border_poly = 2*r*Math.sin(Math.PI/n);
+            var areas = new Array(n);
+            for(var i=0; i<n; i++) {
+                if(i<n-1) {
+                    var bordersum = (border_poly+distances[i]+distances[i+1])/2.0;
+                    areas[i] = Math.sqrt(bordersum*(bordersum-border_poly)*(bordersum-distances[i])*(bordersum-distances[i+1]));
+                }
+                else {
+                    var bordersum = (border_poly+distances[i]+distances[0])/2.0;
+                    areas[i] = Math.sqrt(bordersum*(bordersum-border_poly)*(bordersum-distances[i])*(bordersum-distances[0]));
+                }
+            }
+            for(var i=0; i<n; i++) {
+                $('area_'+(i+1)).innerHTML = areas[i].toFixed(2);
+            }
+            
+            var sum = 0;
+            for(var i=0; i<n; i=i+2) {
+                sum += areas[i];
+            }
+            $('sum_2').innerHTML = sum.toFixed(4);
+            sum = 0;
+            for(var i=1; i<n; i=i+2) {
+                sum += areas[i];
+            }
+            $('sum_1').innerHTML = sum.toFixed(4);            
+            
+        }
+        //board.renderer.unsuspendRedraw();
+        
+        // und beim board registrieren.
+        print_table_id = board.addHook(print_table);
+    }
+    run(10);
+     
+/* ]]> */
+</script>
+</body>
+</html>

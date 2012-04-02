@@ -1,0 +1,39 @@
+<!-- This example ilustrates the construction of a line_segment using two points -->
+
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<line_segment id="s">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>2</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</line_segment>
+		<point id="P">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="Q">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>2</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<line_segment_by_points>
+			<line_segment out="true">s</line_segment>
+			<point>P</point>
+			<point>Q</point>
+		</line_segment_by_points>
+	</constraints>
+</construction>

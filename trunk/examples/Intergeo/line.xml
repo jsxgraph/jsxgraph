@@ -1,0 +1,16 @@
+<!-- This example ilustrates the use of the line element -->
+
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>3</double>
+				<double>5</double>
+				<double>-3</double>
+			</homogeneous_coordinates>
+		</line>
+	</elements>
+	<constraints>
+		<!---->
+	</constraints>
+</construction>

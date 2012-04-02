@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+    <meta name="viewport" content="width=default-width; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+
+    <title>JSXGraph function plot</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="jsxgraph.css" />
+	<!--<script type="text/javascript" src="../../src/loadjsxgraph.js"></script>-->
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+	
+	<!-- iPad/iPhone specific css below, add after your main css >
+	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
+	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
+	-->
+	<!-- script type="text/javascript" charset="utf-8" src="phonegap.js"></script -->
+    <script type="text/javascript">
+    JXG.Options.showCopyright = true;
+    JXG.Options.showNavigation = false;
+    
+    var colorArray = ['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'];
+    var plotNr = 0;
+    var options = {
+            'strokeWidth':2,
+            'minX':-5,
+            'maxX':5,
+            'minY':-5,
+            'maxY':5,
+            'showDerivative':false,
+            'lastFunction': 'sin(x)*x'
+        };
+    var board;
+    var jxgHistory = [];
+    
+	function init() {
+		// set board settings dependent on device
+		if(navigator.userAgent.match(/iPad/i)) {
+			// we are on an iPad
+			document.getElementById('jxgboxDiv').style.width  = '760px';
+			document.getElementById('jxgboxDiv').style.height = '835px';
+		} else if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) {
+			// we are on an iPhone/iPod Touch
+			document.getElementById('jxgboxDiv').style.width  = '312px';
+			document.getElementById('jxgboxDiv').style.height = '291px';
+        } else if(navigator.userAgent.match(/chrome/i)) {
+            document.getElementById('jxgboxDiv').style.width  = '760px';
+            document.getElementById('jxgboxDiv').style.height = '835px';
+		} else {
+			// default settings - same like iPhone/iPod
+			document.getElementById('jxgboxDiv').style.width  = '312px';
+			document.getElementById('jxgboxDiv').style.height = '291px';
+		}
+        restoreOptions();
+		board = JXG.JSXGraph.initBoard('jxgboxDiv', 
+                {axis:true, grid:false, 
+                 boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
+        
+        document.getElementById('input').value = options.lastFunction;
+        restoreHistory();
+	};
+	
+	function plotter() {
+        var txt = document.getElementById('input').value;
+        var color = colorArray[plotNr%colorArray.length]; 
+        options.lastFunction = txt;
+        plotFunction(txt, color, options);
+        
+        // Save options.lastFunction
+        localStorage.removeItem('JXG_Options');        
+        localStorage.setItem('JXG_Options', JSON.stringify(options));
+        
+        // Save jxgHistory
+        saveHistory(txt, color, options);
+        plotNr++;
+    };
+    
+    function plotFunction(txt, color, opt) {
+        var t = JXG.GeonextParser.geonext2JS(txt);
+        var f = new Function('x','var y = '+t+'; return y;');
+        
+        board.create('functiongraph',[f],
+                {strokeColor:color, strokeWidth:opt.strokeWidth,
+                highlightStrokeColor:'#999999', name:txt, 
+                withLabel:opt.withLabel,
+                dash:opt.dash});
+        if (opt.showDerivative) {
+            board.create('functiongraph',[JXG.Math.Numerics.D(f)],
+                {strokeColor:color, strokeWidth:opt.strokeWidth, dash:2,
+                 highlightStrokeColor:'#999999'});
+        }
+    };
+	
+	function clearBoard() {
+        JXG.JSXGraph.freeBoard(board);
+        board = JXG.JSXGraph.initBoard('jxgboxDiv', 
+                {axis:true, grid:true, 
+                 boundingbox:[options.minX,options.maxY, options.maxX, options.minY]});
+        plotNr = 0;
+        
+        jxgHistory = [];
+        localStorage.removeItem('JXG_History');        
+        localStorage.setItem('JXG_History', JSON.stringify(jxgHistory));
+	};
+	
+    
+	/**
+	 * We read from localStorage, during init() and after pressing
+	 * cancel in Options.
+	 */
+	function restoreOptions() {
+        var retrievedObject = localStorage.getItem('JXG_Options');
+        if (retrievedObject!=null) {
+            options = JSON.parse(retrievedObject);
+        }
+	};
+
+    function saveHistory(txt, color, opt) {
+        jxgHistory.push(
+            {
+                'txt': txt,
+                'color': color,
+                'strokeWidth': opt.strokeWidth,
+                'showDerivative': opt.showDerivative,
+                'withLabel': opt.withLabel,
+                'dash': opt.dash,
+            });
+        localStorage.removeItem('JXG_History');        
+        localStorage.setItem('JXG_History', JSON.stringify(jxgHistory));
+    };
+    
+    function restoreHistory() {
+        var i, len, h;
+        var retrievedObject = localStorage.getItem('JXG_History');
+        if (retrievedObject!=null) {
+            jxgHistory = JSON.parse(retrievedObject);
+            len = jxgHistory.length;
+            if (len>0) {
+                board.suspendUpdate();
+                for(i=0;i<len;i++) {
+                    h = jxgHistory[i];
+                    plotFunction(h.txt, h.color, h);
+                }
+                board.unsuspendUpdate();
+            }
+        }
+    };
+
+  </script>
+  </head>
+  <body onload="init();">
+  	<div id="topbar">
+        <div id="leftbutton"><a href="javascript:clearBoard()">Clear</a></div>
+		<div id="title">Jessiegraph</div>
+        <div id="rightbutton"><a href="options.html">Settings</a></div>
+	</div>
+    <div id="jxgBar">
+        <div id="duobutton">
+            <div class="links">
+                <input value="sin(x)*x" id="input" type="input" /><a href="javascript:plotter()">plot</a>
+            </div>
+        </div>
+    </div>
+	<div id="content" align="center">
+		<!-- correct the box settings for iphone, ipad, rotatet ipad, ... -->
+        <div id="jxgboxDiv" class="jxgbox"></div>
+	</div>
+
+	<div id="footer">
+		<a class="noeffect" href="http://jsxgraph.org/">Powered by JSXGraph</a>
+	</div>
+  </body>
+</html>

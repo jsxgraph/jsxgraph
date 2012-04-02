@@ -1,0 +1,100 @@
+<html>
+<head>
+  <title>Exploring Change - Position</title>
+  <link rel="stylesheet" type="text/css" href="../../../distrib/jsxgraph.css" />
+  <script type="text/javascript" src="../../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<h1>Exploring Change: Position</h1>
+
+<p><strong>Here goes some introductory text.</strong></p>
+
+<h2>Investigate</h2>
+
+<div style="width:800px">
+    <div id="position" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+    <script type="text/javascript">
+    var board = JXG.JSXGraph.initBoard('position', {boundingbox: [-1, 27, 27, -9], keepaspectratio: false, axis:false, showNavigation: false}),
+        abscissa = board.create('axis', [[0,0], [1,0]], {drawZero: true}),
+        anchor1 = board.create('point', [0, 25], {visible: false}),
+        anchor2 = board.create('point', [9, 25], {visible: false}),
+        street = board.create('line', [anchor1, anchor2]),
+        friend2 = board.create('point', [0,25], {name: 'Friend2', fixed: true}),
+        pizza = board.create('point', [4.5,25], {name: 'Pizza', fixed: true}),
+        home = board.create('point', [7.5,25], {name: 'Home', fixed: true}),
+        friendshouse = board.create('point', [9.6,25], {name: 'Friend\'s House', fixed: true}),
+        park = board.create('point', [15,25], {name: 'Park', fixed: true}),
+        store = board.create('point', [18,25], {name: 'Store', fixed: true}),
+        library = board.create('point', [19.5,25], {name: 'Library', fixed: true}),
+        school = board.create('point', [24,25], {name: 'School', fixed: true}),
+        me = board.create('glider', [7.5,25,street], {withLabel: false, color: 'green'}),
+        meLabel = board.create('text', [function() { return me.X() + 0.4;}, function() { return me.Y() - 0.4;}, 'Me']),
+        wakeup = board.create('point', [6,23], {size: 1, name: '6 am', fixed: true}),
+        midnight = board.create('point', [24,23],{size: 1, name: 'Midnight',fixed: true}),
+        timeaxis = board.create('segment', [wakeup, midnight]),
+        pointTime = board.create('glider', [0,23,timeaxis], {withLabel: false, color: 'green'}),
+        pointTimeLabel = board.create('text', [function() { return pointTime.X() + 0.4;}, function() { return pointTime.Y() - 0.4;}, function() {return 'Time: ' + pointTime.X().toFixed(2);}]),
+        pointPosition = board.create('point', [function() {return pointTime.X();}, function() {return parseFloat((me.X()-home.X()).toFixed(2));}], {name: 'P', trace: true, color: 'navy'}),
+        animatebutton = board.create('text', [0, 23.2, '<button onclick="pointTime.moveTo([24,23], 45000);">Animate</button>']),
+        animatebutton = board.create('text', [3, 23.2, '<button onclick="board.stopAllAnimation(); pointTime.moveTo([6,23], 0); pointPosition.moveTo([6, 0], 0); me.moveTo([7.5,25], 0); board.clearTraces();">Reset</button>']);
+    </script>
+
+    <div style="width: 800px;">
+        <p>
+            The first new thing here is the time axis. A point Time was created and it's x-coordinate represents the
+            current time of day. The also new point P represents time versus position. It's x-coordinate is the time,
+            and the y-coordinate is your position.
+        </p>
+        <p>
+            For this first trial, you won't move point Me at all. Questions:
+        </p>
+
+        <ol>
+            <li>
+                What kind of position trace do you think you'll get if point Me just sits there and point Time moves?
+                (Think! How is your distance from home changing if you stay in your bed as the minutes tick by?)
+            </li>
+        </ol>
+        <p>
+            Check your answer by pressing the Animate button and observe.
+        </p>
+        <p>
+            After examining your trace (was it what you expected?) press the Reset button.
+        </p>
+        <p>
+            Now drag point Me while point Time moves. Point P will plot your position with respect to time. You can drag
+            point Me any way you wish, but try each of these suggested movements as well. Each time, draw a little sketch
+            of your trace in the margin and make a note of what you did to get that trace. Remember to press Reset when
+            you want to try a new motion.
+        </p>
+        <ul>
+            <li>
+                Drag point Me at a steady pace to your friend's house (try not to vary your speed at all), stay for about
+                an hour, and then go home at a steady pace.
+            </li>
+            <li>
+                <strong>... some more scenarios ...</strong>
+            </li>
+        </ul>
+        <p>
+            Make a variety of traces, and look for relationships between how you move the point and the resulting trace.
+            Questions:
+        </p>
+        <ol>
+            <li>
+                How must you drag point Me to make the directed distance (position) measurement increase? What happens
+                on the trace when you do this? (Remember that going from -2 to -1 is an increase.)
+            </li>
+            <li>
+                How must you drag point Me to make the directed distance (position) measurement decrease? What happens
+                on the trace when you do this?
+            </li>
+        </ol>
+        <p><strong>Closing words...</strong></p>
+    </div>
+</div>
+
+</body>
+</html>

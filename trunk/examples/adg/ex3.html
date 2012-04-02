@@ -1,0 +1,75 @@
+<html>
+<head>
+   <title>Watt | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 510px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; float: left;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+      <input type="button" onclick="computeLocus1();" value="Calculate locus 1" />
+      <input type="button" onclick="computeLocus2();" value="Calculate locus 2" />
+      <input type="button" onclick="showTimes();" value="Show times" />
+  </form>
+  </div>
+</div>
+</center>
+  <div id="polynomials" style="display: block; width: 600px; height: 500px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+   board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-12, 12, 12, -12], axis: true, grid: false, keepaspectratio: true});
+
+  A = board.create('point', [0,0]);
+B = A;
+
+  k1 = board.create('circle', [A, 8]);
+
+  D = board.create('glider', [1,1,k1]);
+  
+  T1 = board.create('midpoint', [D, B], {color: 'green'});
+  T2 = board.create('midpoint', [T1, B]);
+  T3 = board.create('midpoint', [T2, B]);
+
+  locus1 = null;
+  time1 = 0;
+  locus2 = null;
+  time2 = 0;
+
+  function computeLocus1() {
+    locus1 = board.create('locus', [T2]);
+    time1 =  locus1.ctime;
+  }
+
+  function computeLocus2() {
+    time2 = 0;
+    l1 = board.create('locus', [T1]);
+    time2 += l1.ctime;
+    g1 = board.create('glider', [1,1,l1]);
+    m1 = board.create('midpoint', [A, g1]);
+    l2 = board.create('locus', [m1]);
+    time2 += l2.ctime;
+//    g2 = board.create('glider', [1,1,l2]);
+//    m2 = board.create('midpoint', [A,g2]);
+//    l3 = board.create('locus', [m2]);
+//    time2 += l3.ctime;
+  }
+
+  function showTimes() {
+    var d = document.getElementById('polynomials');
+    d.innerHTML = '';
+    d.innerHTML += 'chained: ' + time2 + '<br />';
+    d.innerHTML += 'direct: ' + time1;
+  }
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

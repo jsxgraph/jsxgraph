@@ -1,0 +1,37 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>do not highlight axes</h2>
+<div style="width:800px">
+  <div id="jxgbox1" class="jxgbox" style="width:600px; height:600px; float:left"></div>
+  <div id="jxgbox2" class="jxgbox" style="width:600px; height:600px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    JXG.Options.axis.highlightStrokeColor = 'green';
+
+    // first one without highlight
+
+    JXG.Options.axis.highlight = false;
+    JXG.Options.axis.ticks.highlight = false;
+
+    var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-7, 12, 7, -7], axis: true, grid: false});
+    var p1 = board1.createElement('point', [3, 3], {name: 'Drag me'});
+
+    // now with highlight
+
+    JXG.Options.axis.highlight = true;
+    JXG.Options.axis.ticks.highlight = true;
+
+    var board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-7, 12, 7, -7], axis: true, grid: false});
+    var p2 = board2.createElement('point', [3, 3], {name: 'Drag me'});
+  /* ]]> */
+  </script>
+<div id="debug" style="display:block;"></div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+	 	<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+	</head>
+ 	<body>
+ 		<div id="jsxgbox" class="jxgbox" style="width:800px; height:800px;"></div>
+<div id="debug" style="display:block;"></div>
+		<script type="text/javascript">
+
+var board = JXG.JSXGraph.initBoard('jsxgbox', {originX: 300, originY: 300, unitX: 50, unitY: 50});
+ 			//var S = board.create('slider', [-5,-6,10,0,1,0.5], {name:'S'});
+ 			var S = board.create('slider', [[-5,-6],[5,-6],[0,0.5,1]], {name:'S'});
+ 			//
+            
+ 			var points = [];
+			points[0] = board.create('point',[5, 5], {name:''});	
+	 		points[1] = board.create('point',[-5, 5], {name:''});	
+	 		points[2] = board.create('point',[-5, -5], {name:''});	
+	 		points[3] = board.create('point',[5, -5], {name:''});	
+                
+            function viereck(pt, n) {
+                var arr = new Array();
+                for(var i = 0; i < 4; i++) {
+                    arr[i] = board.create('point', 
+                        [function(t) {
+                            return function () {var x = pt[t].X(); 
+                                                var x1 = pt[(t+1)%4].X(); 
+                                                var s = S.Value();
+                                                return x+(x1-x)*s;
+                         }}(i), 
+                         function(t) {
+                            return function () {var y = pt[t].Y(); 
+                                                var y1 = pt[(t+1)%4].Y(); 
+                                                var s = S.Value();
+                                                return y+(y1-y)*s;
+                         }}(i)
+                        ], 
+                        { name:"", withLabel:false, size:1});
+                }
+                board.create('polygon',pt, {fillColor: JXG.hsv2rgb(100,0.6,(n/30.0)*(n/30.0)), fillOpacity:0.4});
+                if(n>0) {
+                    viereck(arr, --n);
+                }
+            }
+	 		
+            //board.suspendUpdate();
+	 		viereck(points,10);
+            //board.unsuspendUpdate();
+ 			//*/
+		</script>
+ 	</body>
+</html>
+	 		

@@ -1,0 +1,661 @@
+                                                                % Reference Card for JSXGraph
+% To create a document out of this for printing, save this text into
+% a file 'jsxgraph_refcard.tex' and run the commands
+%     tex jsxgraph_refcard.tex
+%     dvips -t landscape jsxgraph_refcard.dvi -o
+%     gs -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=jsxgraph_refcard.pdf jsxgraph_refcard.ps
+% this will result in a PDF file 'jsxgraph_refcard.pdf'
+% this is a comment
+
+%**start of header
+\newcount\columnsperpage
+\overfullrule=0pt
+
+% This file can be printed with 1, 2, or 3 columns per page (see below).
+% [For 2 or 3 columns, you'll need 6 and 8 point fonts.]
+% Specify how many you want here.  Nothing else needs to be changed.
+
+\columnsperpage=3
+
+% This reference card is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+
+% This file is intended to be processed by plain TeX (TeX82).
+%
+% The final reference card has six columns, three on each side.
+% This file can be used to produce it in any of three ways:
+% 1 column per page
+%    produces six separate pages, each of which needs to be reduced to 80%.
+%    This gives the best resolution.
+% 2 columns per page
+%    produces three already-reduced pages.
+%    You will still need to cut and paste.
+% 3 columns per page
+%    produces two pages which must be printed sideways to make a
+%    ready-to-use 8.5 x 11 inch reference card.
+%    For this you need a dvi device driver that can print landscape
+% Which mode to use is controlled by setting \columnsperpage above.
+
+%
+% Thanks:
+%  (reference card macros due to Stephen Gildea)
+
+\def\versionnumber{0.92}  % Version of this reference card
+\def\year{2011}
+\def\month{September}
+\def\version{\month\ \year\ v\versionnumber}
+
+\def\shortcopyrightnotice{\vskip .5ex plus 2 fill
+  \centerline{\small \copyright\ \year\ v\versionnumber}}
+
+\def\copyrightnotice{\vskip 1ex plus 100 fill\begingroup\small
+\centerline{\version.}
+\endgroup}
+
+% make \bye not \outer so that the \def\bye in the \else clause below
+% can be scanned without complaint.
+\def\bye{\par\vfill\supereject\end}
+
+\newdimen\intercolumnskip
+\newbox\columna
+\newbox\columnb
+
+\def\ncolumns{\the\columnsperpage}
+
+\message{[\ncolumns\space 
+  column\if 1\ncolumns\else s\fi\space per page]}
+
+\def\scaledmag#1{ scaled \magstep #1}
+
+% This multi-way format was designed by Stephen Gildea
+% October 1986.
+\if 1\ncolumns
+  \hsize 4in
+  \vsize 10in
+  \voffset -.7in
+  \font\titlefont=\fontname\tenbf \scaledmag3
+  \font\headingfont=\fontname\tenbf \scaledmag2
+        \font\headingfonttt=\fontname\tentt \scaledmag2
+  \font\smallfont=\fontname\sevenrm
+  \font\smallsy=\fontname\sevensy
+
+  \footline{\hss\folio\hss}
+  \def\makefootline{\baselineskip10pt\hsize4in\line{\the\footline}}
+\else
+  \hsize 3.2in
+  \vsize 7.5in %% was 7.95in
+  \advance\vsize by 1cm
+  \hoffset -12mm %-2mm % was -.75in
+  \voffset -.81in
+  \font\titlefont=cmbx10 \scaledmag2
+  \font\headingfont=cmbx9 \scaledmag1
+  \font\headingfonttt=cmtt9 \scaledmag1
+  \font\smallfont=cmr6
+  \font\smallsy=cmsy6
+  \font\eightrm=cmr8
+  \font\eightbf=cmbx8
+  \font\eightit=cmti8
+  \font\eighttt=cmtt8
+  \font\eightsy=cmsy8
+  \font\eightsl=cmsl8
+  \font\eighti=cmmi8
+  \font\eightex=cmex10 at 8pt
+  \textfont0=\eightrm  
+  \textfont1=\eighti
+  \textfont2=\eightsy
+  \textfont3=\eightex
+  \def\rm{\fam0 \eightrm}
+  \def\bf{\eightbf}
+  \def\it{\eightit}
+  \def\tt{\eighttt}
+  \def\sl{\eightsl}
+  \normalbaselineskip=.8\normalbaselineskip
+  \normallineskip=.8\normallineskip
+  \normallineskiplimit=.8\normallineskiplimit
+  \normalbaselines\rm       %make definitions take effect
+
+  \if 2\ncolumns
+    \let\maxcolumn=b
+    \footline{\hss\rm\folio\hss}
+    \def\makefootline{\vskip 2in \hsize=6.86in\line{\the\footline}}
+  \else \if 3\ncolumns
+    \let\maxcolumn=c
+    \nopagenumbers
+  \else
+    \errhelp{You must set \columnsperpage equal to 1, 2, or 3.}
+    \errmessage{Illegal number of columns per page}
+  \fi\fi
+
+  \intercolumnskip=.46in
+  \def\abc{a}
+  \output={%
+      % This next line is useful when designing the layout.
+      %\immediate\write16{Column \folio\abc\space starts with \firstmark}
+      \if \maxcolumn\abc \multicolumnformat \global\def\abc{a}
+      \else\if a\abc
+    \global\setbox\columna\columnbox \global\def\abc{b}
+        %% in case we never use \columnb (two-column mode)
+        \global\setbox\columnb\hbox to -\intercolumnskip{}
+      \else
+    \global\setbox\columnb\columnbox \global\def\abc{c}\fi\fi}
+  \def\multicolumnformat{\shipout\vbox{\makeheadline
+      \hbox{\box\columna\hskip\intercolumnskip
+        \box\columnb\hskip\intercolumnskip\columnbox}
+      \makefootline}\advancepageno}
+  \def\columnbox{\leftline{\pagebody}}
+
+  \def\bye{\par\vfill\supereject
+    \if a\abc \else\null\vfill\eject\fi
+    \if a\abc \else\null\vfill\eject\fi
+    \end}  
+\fi
+
+% we won't be using math mode much, so redefine some of the characters
+% we might want to talk about
+%\catcode`\^=12
+%\catcode`\_=12
+\catcode`\~=12
+
+\chardef\\=`\\
+\chardef\{=`\{
+\chardef\}=`\}
+\chardef\underscore=`\_
+\chardef\'="0D % These are upright quote marks
+
+
+\hyphenation{}
+
+\parindent 0pt
+\parskip .85ex plus .35ex minus .5ex
+
+\def\small{\smallfont\textfont2=\smallsy\baselineskip=.8\baselineskip}
+
+\outer\def\newcolumn{\vfill\eject}
+
+\outer\def\title#1{{\titlefont\centerline{#1}}\vskip 1ex plus .5ex}
+
+%\outer\def\section#1{\par\filbreak
+%  \vskip .5ex  minus .1ex {\headingfont #1}\mark{#1}%
+%  \vskip .3ex  minus .1ex}
+\outer\def\section#1{\par\filbreak
+  \vskip .5ex  minus .1ex \vskip2\jot
+\hrule width.5\hsize
+\vskip1\jot{\headingfont #1}\mark{#1}%
+  \vskip .3ex  minus .1ex}
+
+\outer\def\librarysection#1#2{\par\filbreak
+  \vskip .5ex  minus .1ex {\headingfont #1}\quad{\headingfonttt<#2>}\mark{#1}%
+  \vskip .3ex  minus .1ex}
+
+\newdimen\keyindent
+
+\def\beginindentedkeys{\keyindent=1em}
+\def\endindentedkeys{\keyindent=0em}
+\def\begindoubleindentedkeys{\keyindent=2em}
+\def\enddoubleindentedkeys{\keyindent=1em}
+\endindentedkeys
+
+\def\paralign{\vskip\parskip\halign}
+
+\def\<#1>{$\langle${\rm #1}$\rangle$}
+
+\def\kbd#1{{\tt#1}\null}    %\null so not an abbrev even if period follows
+
+\def\beginexample{\par\vskip1\jot
+\hrule width.5\hsize
+\vskip1\jot
+\begingroup\parindent=2em
+  \obeylines\obeyspaces\parskip0pt\tt}
+{\obeyspaces\global\let =\ }
+\def\endexample{\endgroup}
+
+\def\Example{\qquad{\sl Example\/}.\enspace\ignorespaces}
+
+\def\key#1#2{\leavevmode\hbox to \hsize{\vtop
+  {\hsize=.75\hsize\rightskip=1em
+  \hskip\keyindent\relax#1}\kbd{#2}\hfil}}
+
+\newbox\metaxbox
+\setbox\metaxbox\hbox{\kbd{M-x }}
+\newdimen\metaxwidth
+\metaxwidth=\wd\metaxbox
+
+%\def\metax#1#2{\leavevmode\hbox to \hsize{\hbox to .75\hsize
+%  {\hskip\keyindent\relax#1\hfil}%
+%  \hskip -\metaxwidth minus 1fil
+%  \kbd{#2}\hfil}}
+\def\metax#1#2{\leavevmode\hbox to \hsize{\hbox to .75\hsize
+  {\hskip\keyindent\relax\kbd{#1}\hfil}%
+  \hskip -\metaxwidth minus 1fil
+  #2\hfil}}
+
+\def\threecol#1#2#3{\hskip\keyindent\relax#1\hfil&\kbd{#2}\quad
+  &\kbd{#3}\quad\cr}
+
+%**end of header
+
+\title{JSXGraph Reference Card}
+
+\section{Include JSXGraph in HTML}
+Three parts are needed: Include files containing the software, an HTML element, and 
+JavaScript code.
+
+{\bf Include files:}
+
+Two files have to be included:
+{\tt jsxgraph.css}, and {\tt jsxgraphcore.js}.
+
+{\obeylines\obeyspaces\parskip0pt\tt
+- $<$link rel="stylesheet" type="text/css" 
+        href="domain/jsxgraph.css"/$>$
+- $<$script type="text/javascript" 
+          src="domain/jsxgraphcore.js"$>$$<$/script$>$}
+
+{\tt domain} is the location of the files. This can be a local directory or
+{\tt http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js}
+{\tt http://jsxgraph.uni-bayreuth.de/distrib/}
+%{\tt http://jsxgraph.uni-bayreuth.de/distrib/}
+
+{\bf HTML element containing the construction:}
+
+\metax{$<$div id="box" class="jxgbox"}{}
+\metax{\phantom{xxx}style="width:600px; height:600px;"$>$$<$/div$>$}{}
+
+{\bf JavaScript code:}
+
+\metax{$<$script type="text/javascript"$>$}{}
+\metax{\phantom{xxx}{\tt var b = JXG.JSXGraph.initBoard(\'box\',$\{$axis:true$\}$);}}{}
+\metax{$<$script$>$}{}
+
+\section{Initializing the board}
+\metax{var b = JXG.JSXGraph.initBoard(\'box\',$\{$attributes$\}$);}{}
+
+{\sl -- Attributes of the board}\par
+\metax{boundingbox:}{$[x_1,y_1,x_2,y_2]$ user coordinates of the}
+\metax{}{upper left and bottom right corner}
+\metax{keepaspectratio:true/false}{ default: false}
+%\metax{unitX, unitY:}{number of pixels of one unit}
+%\metax{}{in $x$/$y$-axis direction}
+%\metax{originX, originY:}{pixel position of the origin}
+\metax{zoomX,zoomY:}{zoom factor in $x$/$y$-axis direction}
+\metax{zoomfactor:}{overall zoom factor in both directions}
+\metax{axis,grid,showNavigation,showCopyright,zoom,pan:}{}\par%{\hfill true/false}
+show axis, grid, zoom/navigation buttons, copyright text; enable mouse wheel zoom, shift$+$mouse panning
+
+{\sl Properties and methods of the board:}\par
+\metax{b.snapToGrid:true/false:}{grid mode}
+\metax{b.suspendUpdate()}{stop updating (if speed is needed)}
+\metax{b.unsuspendUpdate()}{restart updating}
+\metax{b.addChild(b2)}{Connect board {\tt b2} to board {\tt b}}
+
+\section{Basic commands}
+\metax{var el = b.create(\'type\',[parents],$\{$attributes$\}$);}{}
+\metax{el.setProperty($\{$key1:value1,key2:value2,...$\}$);}{}
+
+\section{Point}
+\metax{b.create(\'point\',[parents],$\{$atts$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[x,y]}{Euclidean coordinates}
+\metax{[z,x,y]}{Homogeneous coordinates ($z$ in first place)}
+\metax{[function()$\{$return p1.X();$\}$,}{}
+\metax{  function()$\{$return p2.Y();$\}$]}{Functions for $x,y$, (and $z$)}
+\metax{[function()$\{$return [a,b];$\}$]}{Function returning array}
+\metax{[function()$\{$return new JXG.Coords(...);$\}$]}{}
+\metax{}{Function returning Coords object}
+
+\eject
+
+{\bf Methods}
+
+\metax{p.X(),p.Y()}{$x$-coordinate, $y$-coordinate}
+\metax{p.Z()}{(Homogeneous) $z$-coordinate}
+\metax{p.Dist(q)}{Distance from $p$ to point $q$}
+%\metax{p.setPosition(JXG.COORDS\_BY\_USER,x,y)}{move point}
+
+
+\section{Glider}
+Point on circle, line, curve, or turtle.
+
+\metax{b.create(\'glider\',[parents],$\{$atts$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[x,y,c]}{Initial coordinates and object to glide on}
+\metax{[c]}{Object to glide on (initially at origin)}
+
+Coordinates may also be defined by functions, see Point.
+
+\section{Line}
+\metax{b.create(\'line\',[parents],$\{$atts$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[p1,p2]}{{}line through 2 points}
+\metax{[c,a,b]}{{}line defined by 3 coordinates (can also be functions)}
+\metax{[[x1,y1],[x2,y2]]}{{}line by 2 coordinate pairs}
+
+In case of coordinates as parents, the line is the set of solutions
+of the equation $ a\cdot x+b\cdot y+c\cdot z=0.$
+
+\section{Circle}
+\metax{b.create(\'circle\',[parents],$\{$atts$\}$);}{}
+
+{\bf Parent elements:}
+
+\metax{[p1,p2]}{2 points: center and point on circle line}
+\metax{[p,r]}{center, radius (constant or function)}
+\metax{[p,c],[c,p]}{center, circle from which the radius is taken}
+\metax{[p,l],[l,p]}{center, line segment for the radius}
+\metax{[p1,p2,p3]}{circle through 3 points}
+Points may also be specified as array of coordinates.
+
+\section{Polygon}
+\metax{b.create(\'polygon\',[p1,p2,...],$\{$atts$\}$);}{}
+\metax{[p1,p2,...]}{The array of points}
+is connected by line segments and the inner area is filled.
+
+\metax{b.create(\'regularpolygon\',[p1,p2,n],$\{$atts$\}$);}{}
+
+\section{Slider}
+\metax{var s = b.create(\'slider\',[[a,b],[c,d],[e,f,g]],$\{$atts$\}$);}{}
+\metax{[a,b],[c,d]:}{visual start and end position of the slider}
+\metax{[e,f,g]:}{the slider returns values between $e$ and $g$,}
+\metax{}{the initial position is at value $f$}
+\metax{snapWidth:num}{minimum distance between 2 values}
+\metax{s.Value():}{returns the position of the slider $\in[e,g]$}
+
+\section{Group}
+\metax{b.create(\'group\',[p1,p2,...],$\{$atts$\}$);}{}
+\metax{[p1,p2,...]}{array of points}
+Invisible grouping of points. If one point is moved, the others are
+transformed accordingly.
+
+\section{Curve}
+-- \metax{b.create(\'functiongraph\',[parents],$\{$atts$\}$);}{}
+\metax{}{\sl Function graph, $x\mapsto f(x)$}
+
+\metax{[function(x)$\{$return x*x;$\}$,-1,1]}{function term}
+\metax{}{optional: start, end}
+
+%The other types of curves are defined through:
+
+-- \metax{b.create(\'curve\',[parents],$\{$atts$\}$);}{}
+{\sl $\cdot$ Parameter curve, $t\mapsto(f(t),g(t))$:}
+
+\metax{[function(t)$\{$return 5*t;$\}$,function(t)$\{$return t*t;$\}$,0,2]}{}
+\metax{}{$x$ function, $y$ function, optional: start, end}
+
+{\sl $\cdot$ Polar curve:} 
+Defined by the equation $r=f(\phi)$.
+
+\metax{[function(phi)$\{$return 5*phi;$\}$,[1,2],0,Math.PI]}{}
+\metax{}{Defining function, optional: center, start, end}
+
+{\sl $\cdot$ Data plot:}\par
+\metax{[[1,2,3],[4,-2,3]]}{array of $x$- and $y$-coordinates, {\sl or}}
+\metax{[[1,2,3],function(x)$\{$return x*x;$\}$]}{}
+\metax{}{array of $x$-coordinates, function term}
+
+-- \metax{b.create(\'spline\',[p1,p2,...],$\{$atts$\}$);}{}
+\metax{[p1,p2,...]}{{\sl Cubic spline:} array of points}
+
+-- \metax{b.create(\'riemannsum\',[f,n,type],$\{$atts$\}$);}{}
+{\sl Riemann sum} of type 'left', 'right', 'middle', 'trapezodial', 'upper', or 'lower'
+
+-- \metax{b.create(\'integral',[[a,b],f],$\{$atts$\}$);}{}
+Display the area $\int_a^b f(x)dx$. 
+
+
+\section{Tangent, normal}
+\metax{var el = b.create(\'tangent\',[g],$\{$atts$\}$);}{}
+\metax{var el = b.create(\'normal\',[g],$\{$atts$\}$);}{}
+\metax{g}{glider on circle, line, polygon, curve, or turtle}
+
+\section{Conic sections}
+\par{\sl -- ellipse, hyperbola:}\hfill defined by the two foci points
+and a point on the conic section or the length of the major axis.
+\metax{b.create(\'ellipse\',[p1,p2,p3],$\{$atts$\}$);}{}
+\metax{b.create(\'ellipse\',[p1,p2,a],$\{$atts$\}$);}{}
+\metax{b.create(\'hyperbola\',[p1,p2,p3],$\{$atts$\}$);}{}
+\metax{b.create(\'hyperbola\',[p1,p2,a],$\{$atts$\}$);}{}
+\par{\sl -- parabola:}\hfill defined by the focus and the directrix (line). 
+\metax{b.create(\'parabola\',[p1,line],$\{$atts$\}$);}{}
+\par{\sl -- conic section:}\hfill defined by $5$ points or
+by the (symmetric) quadratic form
+$$
+(x,y,z)
+\pmatrix{a_{00}&a_{01}&a_{02}\cr
+a_{01}&a_{11}&a_{12}\cr
+a_{02}&a_{12}&a_{22}\cr}
+(x,y,z)^\top
+$$
+\metax{b.create(\'conic\',[p1,$\ldots$,p5],$\{$atts$\}$);}{}
+\metax{b.create(\'conic\',[$a_{00}$,$a_{11}$,$a_{22}$,$a_{01}$,$a_{02}$,$a_{12}$],$\{$atts$\}$);}{}
+
+\section{Turtle}
+%\metax{var t = b.create(\'turtle\');}{}
+%\metax{var t = b.create(\'turtle\',[],$\{$atts$\}$);}{}
+\metax{var t = b.create(\'turtle\',[parents],$\{$atts$\}$);}{}
+
+\metax{t.X(), t.Y(), t.dir}{position, direction (degrees)}. 
+%All angles have to be supplied in degrees.
+
+{\bf Parent elements:}
+
+\metax{[x,y,angle]}{Optional start values for $x$, $y$, and direction}
+
+{\bf Methods:}
+
+%Most of the methods have an abbreviated alternative version.
+
+\metax{t.back(len); or t.bk(len);}{}
+\metax{t.clean();}{erase the turtle lines without resetting the turtle}
+\metax{t.clearScreen(); or t.cs();}{call {\tt t.home()} and {\tt t.clean()}}
+\metax{t.forward(len); t.fd(len);}{}
+\metax{t.hideTurtle(); or t.ht();}{}
+\metax{t.home();}{Set the turtle to [0,0] and direction to 90.}
+\metax{t.left(angle); or t.lt(angle);}{}
+\metax{t.lookTo(t2.pos);}{Turtle looks to the turtle {\tt t2}}
+\metax{t.lookTo([x,y]);}{Turtle looks to a coordinate pair}
+\metax{t.moveTo([x,y]);}{Move the turtle with drawing} 
+\metax{t.penDown(); or t.pd();}{}
+\metax{t.penUp(); or t.pu();}{}
+\metax{t.popTurtle();}{pop turtle status from stack}
+\metax{t.pushTurtle();}{push turtle status on stack}
+\metax{t.right(angle); or t.rt(angle);}{}
+\metax{t.setPos(x,y);}{Move the turtle without drawing}
+\metax{t.setPenColor(col);}{{\tt col}: colorString, e.g. 'red' or '\#ff0000'}
+%\eject
+\metax{t.setPenSize(size);}{{\tt size}: number}
+\metax{t.showTurtle(); or t.st();}{}
+
+\section{Text}
+Display static or dynamic texts.\par
+\metax{el = b.create(\'text\',[x,y,"Hello"]);}{}
+\metax{el = b.create(\'text\',[x,y,f]);}{where}
+\metax{f = function()$\{$ return p.X(); $\}$}{}
+Example for a dynamic text: $f$ returns the $x$ coordinate of the point $p$.\par
+
+\section{Image}
+Display bitmap image (also as data uri).\par
+\metax{el = b.create(\'image\',[uri-string,[x,y],[w,h]]);}{}
+\metax{}{{\tt [x,y]:} position of lower left corner, {\tt [w,h]:} width, height}
+
+\section{Other geometric elements}
+{\sl -- angle:} \hfill filled area defined by 3 points
+\metax{el = b.create(\'angle\',[M,B,C],$\{$atts$\}$);}{}
+\par{\sl -- arc:} \hfill circular arc defined by 3 points
+\metax{el = b.create(\'arc\',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- arrow:} \hfill line through 2 points with arrow head
+\metax{el = b.create(\'arrow\',[A,B],$\{$atts$\}$);}{}
+\par{\sl -- arrowparallel:} \hfill arrow parallel to arrow $a$ starting at point $P$
+\metax{el = b.create(\'arrowparallel\',[a,P],$\{$atts$\}$); or [P,a]}{}
+%\metax{el = b.create(\'arrowparallel\',[P,a],$\{$atts$\}$);}{}
+\par{\sl -- bisector:} \hfill angular bisector defined by 3 points, returns line
+\metax{el = b.create(\'bisector\',[A,B,C],$\{$atts$\}$);}{}
+\par{} \hfill angular bisector defined by 2 lines, returns 2 lines
+\metax{el = b.create(\'bisectorlines\',[l1,l2],$\{$atts$\}$);}{}
+\par{\sl -- incircle:} \hfill incircle of triangle defined by 3 points
+\metax{el = b.create(\'incircle\',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- circumcircle:} \hfill circle through 3 points (deprecated)
+\metax{el = b.create(\'circumcircle\',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- circumcirclemidpoint:} \hfill center of circle through 3 points
+\metax{el = b.create(\'circumcirclemidpoint\',[A,B,C]);}{}
+\par{\sl -- circumcircle arc:} \hfill circular arc defined by 3 points
+\metax{el = b.create(\'circumcirclearc\',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- midpoint:} midpoint between 2 points or the 2 points defined by a line
+\par{\sl -- circumcircle sector:} \hfill circular sector defined by 3 points
+\metax{el = b.create(\'circumcirclesector\',[A,B,C],$\{$atts$\}$);}{}
+
+\metax{el = b.create(\'midpoint\',[A,B],$\{$atts$\}$); or [line]}{}
+%\metax{el = b.create(\'midpoint\',[line],$\{$atts$\}$);}{}
+\par{\sl -- mirrorpoint:} \hfill rotate point $B$ around point $A$ by $180^\circ$
+\metax{el = b.create(\'mirrorpoint\',[A,B],$\{$atts$\}$);}{}
+\par{\sl -- parallel:} \hfill line parallel to line $l$ through point $P$
+\metax{el = b.create(\'parallel\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'parallel\',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- parallelpoint:} \hfill point D such that $ABCD$ from a parallelogram
+\metax{el = b.create(\'parallelpoint\',[A,B,C],$\{$atts$\}$);}{}
+\par{\sl -- perpendicular:} \hfill line perpendicular to line $l$ through point $P$
+\metax{el = b.create(\'perpendicular\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'perpendicular\',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- perpendicularpoint:} \hfill  orthogonal projection of $P$ onto $l$
+\metax{el = b.create(\'orthogonalprojection\',[l,P],$\{$$\}$); or [P,l]}{}
+%\metax{el = b.create(\'perpendicularpoint\',[P,l],$\{$$\}$);}{}
+
+\par{\sl -- reflection:} \hfill reflection of point $P$ over the line $l$. 
+Superseded by transformations
+
+\metax{el = b.create(\'reflection\',[l,P],$\{$atts$\}$); or [P,l]}{}
+%\metax{el = b.create(\'reflection\',[P,l],$\{$atts$\}$);}{}
+\par{\sl -- sector:} \hfill circle sector defined by 3 points \hfill ???
+\metax{el = b.create(\'sector\',[A,B,C],$\{$atts$\}$);}{}
+
+\par{\sl -- semi circle:} \hfill defined by 2 points $p_1$ and $p_2$.
+\metax{b.create(\'semicircle\',[p1,p2],$\{atts\}$);}{}
+
+\par{\sl -- intersection:} \hfill of 2 objects (lines or circles). 
+
+Returns array of length 2 with first and second intersection point (also for line/line intersection).
+
+\metax{b.create(\'intersection\',[o1,o2,n],$\{atts\}$);}{}
+
+\section{Transform}
+Affine transformation of points, images and texts.\par
+\metax{t = b.create(\'transform\',[data,base],$\{$type:\'type\'$\}$);}{}
+{\tt base}: the transformation is applied to the coordinates of this object.\par
+Possible types:\par
+-- translate: {\tt data}$=${\tt [x,y]}\par
+-- scale: {\tt data}$=${\tt [x,y]}\par
+-- reflect: {\tt data}$=${\tt [line]} or {\tt [x1,y1,x2,y2]}\par
+-- rotate: {\tt data}$=${\tt [angle,point]} or {\tt [angle,x,y]}\par
+-- shear: {\tt data}$=${\tt [angle]} \par
+-- generic: {\tt data}$=${\tt [v11,v12,v13,v21,$\ldots$,v33]} $3\times 3$ matrix\par
+{\bf Methods:}\par
+\metax{t.bindTo(p)}{the coordinates of $p$ are defined by $t$}
+\metax{t.applyOnce(p)}{apply the transformation once}
+\metax{t.melt(s)}{combine two transformations to one: $ t:= t\cdot s$}
+\metax{p2 = b.create('point',[p1,t],$\{$fixed:true$\}$);}{}
+\metax{}{Point $p_2$: apply $t$ on point $p_1$}
+
+\section{Attributes of geometric elements}
+{\sl Generic attributes:}\par
+\metax{strokeWidth:}{number}
+\metax{strokeColor,fillColor,highlightFillColor,}{}
+\metax{highlightStrokeColor,labelColor:}{color string}
+\metax{strokeOpacity,fillOpacity,highlightFillOpacity,}{}
+\metax{highlightStrokeOpacity:}{value between 0 and 1}
+\metax{visible,trace,draft:}{true, false}
+\metax{dash:}{dash style for lines: $0, 1, \ldots, 6$}
+\metax{infoboxtext:}{string}
+
+{\sl Attributes for point elements:}\par
+%\metax{style:}{point style: $0, 1, \ldots, 12$}
+\metax{face:}{possible point faces: '\kbd{[]}', '\kbd o', '\kbd x', '\kbd +', '\kbd <', '\kbd >', '\kbd A', '\kbd v'}
+\metax{size:}{number}
+\metax{fixed:}{true, false}
+
+{\sl Attributes for line elements:}\par
+\metax{straightFirst,straightLast,withTicks:}{true, false}
+
+{\sl Attributes for line, arc and curve elements:}\par
+\metax{firstArrow,lastArrow:}{true, false}
+
+{\sl Attributes for polygon elements:}\par
+\metax{withLines:}{true, false}
+
+{\sl Attributes for text elements:}\par
+\metax{display:}{'html', 'internal'}
+\metax{fontSize:}{numerical value}
+
+{\sl Attributes for angle elements:}\par
+\metax{text:}{string}
+
+{\sl Color string:}\par HTML color definition or HSV color scheme:
+\par
+\metax{JXG.hsv2rgb(h,s,v)}{$0\leq h\leq 360$, $0\leq s,v\leq1$}
+\metax{}{returns RGB color string.}
+
+\section{Mathematical functions}
+Functions of the intrinsic JavaScript object {\sl Math}:\par
+\metax{Math.abs,Math.acos,Math.asin,Math.atan,Math.ceil,}{}
+\metax{Math.cos,Math.exp,Math.floor,Math.log,Math.max,}{}
+\metax{Math.min,Math.random,Math.sin,Math.sqrt,Math.tan}{}
+
+\metax{(number).toFixed(3):}{Rounding a number to fixed precision}
+
+Additional mathematical functions are methods of {\tt JXG.Board}.
+\metax{b.angle(A,B,C)}{angle $ABC$}
+\metax{b.cosh(x), board.sinh(x)}{}
+\metax{b.pow(a,b)}{$a^b$}
+\metax{b.D(f,x)}{compute ${d\over dx}f$ numerically}
+\metax{b.I([a,b],f)}{compute $\int_a^b f(x)dx$ numerically}
+\metax{b.root(f,x)}{root of the function $f$.}
+\metax{}{Uses Newton method with start value $x$}
+\metax{b.factorial(n)}{computes $n!=1\cdot 2\cdot 3\cdots n$}
+\metax{b.binomial(n,k)}{computes ${n\choose k}$}
+\metax{b.distance(arr1,arr2)}{Euclidean distance}
+\metax{b.lagrangePolynomial([p1,p2,...])}{}
+\metax{}{returns a polynomial through the given points}
+\metax{b.neville([p1,p2,...])}{polynomial curve interpolation}
+\metax{c = JXG.Math.Numerics.bezier([p1,p2,...])}{\hfill Bezier curve}
+\metax{}{$p_2,p_3,p_5,p_6,\ldots$ are control points. \kbd{b.create('curve',c);}}
+\metax{c = JXG.Math.Numerics.bspline([p1,p2,...],order)}{\hfill B-spline curve}
+\metax{f = JXG.Math.Numerics.regressionPolynomial(n,xArr,yArr)}{}
+\metax{}{Regression pol. of deg. $n$: \kbd{b.create('functiongraph',f);}}
+\metax{b.riemannsum(f,n,type,start,end)}{Area of Riemann}
+\metax{}{sum, see {\sl Curves}}
+
+{-- Intersection of objects:}\par
+\metax{b.intersection(el1,el2,i,j)}{intersection of the elements}
+\metax{}{$el_1$ and $el_2$ which can be lines, circles or curves}\par
+In case of circle and line intersection, $i\in\{0,1\}$ denotes 
+the first or second intersection. In case of an intersection with a curve, $i$ and $j$ are floats
+which are the start values for the path positions in the Newton method for $el_1$ and $el_2$, resp.
+
+\section{Todo list}
+'axis', 'ticks'.
+
+\section{Chart}
+To do $\ldots$
+
+
+\section{Links}
+Help pages are available at
+{\tt http://jsxgraph.org}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% END LIBRARIES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This goes at the bottom of the last page (column 6)
+\copyrightnotice
+%
+
+\bye
+
+% Local variables:
+% compile-command: "tex wiki-refcard.tex"
+% End:

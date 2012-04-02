@@ -1,0 +1,173 @@
+<!-- This example illustrates intersections between circles and lines.
+Equivalent WIRIS code:
+	A = point(-4,0)
+	B = point(4,0)
+	C = point(-9,0)
+	D = point(9,0)
+	c = circumference(A,distance(A,C))
+	d = circumference(C,distance(C,D))
+	{E,F} = intersect(c,d)
+	G = point(4,7)
+	H = point(4,-7)
+	l = line(G,H)
+	{I,J} = intersect(c,l)
+	{K,L} = intersect(d,l)
+-->
+
+<construction>
+	<elements>
+		<point id="A">
+			<homogeneous_coordinates>
+				<double>-4</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="B">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="C">
+			<homogeneous_coordinates>
+				<double>-9</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="D">
+			<homogeneous_coordinates>
+				<double>9</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="E">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="F">
+			<homogeneous_coordinates>
+				<double>0</double>
+				<double>-3</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="G">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>7</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="H">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>-7</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="I">
+			<homogeneous_coordinates>
+				<double>NaN</double>
+				<double>NaN</double>
+				<double>NaN</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="J">
+			<homogeneous_coordinates>
+				<double>NaN</double>
+				<double>NaN</double>
+				<double>NaN</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="K">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>5</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="L">
+			<homogeneous_coordinates>
+				<double>4</double>
+				<double>-5</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<circle id="c">
+			<matrix>
+				<double>1</double>
+				<double>0</double>
+				<double>-4</double>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+				<double>-4</double>
+				<double>0</double>
+				<double>-9</double>
+			</matrix>
+		</circle>
+		<circle id="d">
+			<matrix>
+				<double>1</double>
+				<double>0</double>
+				<double>4</double>
+				<double>0</double>
+				<double>1</double>
+				<double>0</double>
+				<double>4</double>
+				<double>0</double>
+				<double>-9</double>
+			</matrix>
+		</circle>
+		<line id="l">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>0</double>
+				<double>-4</double>
+			</homogeneous_coordinates>
+		</line>
+	</elements>
+	<constraints>
+		<circle_by_center_and_point>
+			<circle out="true">c</circle>
+			<point>A</point>
+			<point>C</point>
+		</circle_by_center_and_point>
+		<circle_by_center_and_point>
+			<circle out="true">d</circle>
+			<point>C</point>
+			<point>D</point>
+		</circle_by_center_and_point>
+		<line_through_two_points>
+			<line out="true">l</line>
+			<point>G</point>
+			<point>H</point>
+		</line_through_two_points>
+		<intersection_points_of_two_circles>
+			<point out="true">E</point>
+			<point out="true">F</point>
+			<circle>c</circle>
+			<circle>d</circle>
+		</intersection_points_of_two_circles>
+		<intersection_points_of_circle_and_line>
+			<point out="true">I</point>
+			<point out="true">J</point>
+			<circle>c</circle>
+			<line>l</line>
+		</intersection_points_of_circle_and_line>
+		<intersection_points_of_circle_and_line>
+			<point out="true">K</point>
+			<point out="true">L</point>
+			<circle>d</circle>
+			<line>l</line>
+		</intersection_points_of_circle_and_line>
+	</constraints>
+</construction>
+

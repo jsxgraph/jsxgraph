@@ -1,0 +1,40 @@
+<!-- This file illustrates the use of ellipse element and foci_of_conic constraint.
+     It still has not been run on any DGS, so it may contain bugs. -->
+<construction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xml/intergeo.xsd">
+	<elements>
+		<ellipse id="e">
+			<matrix>
+				<double>3</double>
+				<double>0</double>
+				<double>0</double>
+				<double>0</double>
+				<double>4</double>
+				<double>0</double>
+				<double>0</double>
+				<double>0</double>
+				<double>12</double>
+			</matrix>
+		</ellipse>
+		<point id="f1">
+			<homogeneous_coordinates>
+				<double>-1</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+		<point id="f2">
+			<homogeneous_coordinates>
+				<double>1</double>
+				<double>0</double>
+				<double>1</double>
+			</homogeneous_coordinates>
+		</point>
+	</elements>
+	<constraints>
+		<foci_of_conic>
+			<point out="true">f1</point>
+			<point out="true">f2</point>
+			<conic>e</conic>
+		</foci_of_conic>
+	</constraints>
+</construction>

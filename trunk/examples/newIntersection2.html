@@ -1,0 +1,30 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Testing of new intersection functions part 2</h2>
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    brd = JXG.JSXGraph.initBoard('jxgbox', {originX:250, originY:250, unitX:150, unitY:150});
+    b1p1 = brd.createElement('point', [0,0],{});
+    b1p2 = brd.createElement('point', [1,0],{visible: false});
+    b1l1 = brd.createElement('line', [b1p1, b1p2], {straightFirst:false, straightLast:true, visible:false}); //Trägerhalbgerade
+    b1p3 = brd.createElement('glider', [0.5, 0, b1l1]); //variabler Umfang
+    b1p4 = brd.createElement('midpoint', [b1p1,b1p3], {}); //halber Umfang
+    b1l2 = brd.createElement('line', [b1p1, b1p4], {straightFirst:false, straightLast:false});  //Strecke halber Umfang
+    b1p5 = brd.createElement('glider', [0.2, 0,b1l2]); //veränderbare Seite
+    b1l3 = brd.createElement('perpendicular', [b1l1,b1p5],{strokeColor:['#ff0000',null]})[0]; //Senkrechte durch variablen Eckpunkt
+    b1c1 = brd.createElement('circle', [b1p5,b1p4],{}); //Kreis zum Abtragen der zweiten Seitenlänge
+
+    b1p6 = brd.createElement('point',[brd.intersectionFunc(b1c1,b1l3,1)], {style:8});
+  /* ]]> */
+  </script>
+</body>
+</html>

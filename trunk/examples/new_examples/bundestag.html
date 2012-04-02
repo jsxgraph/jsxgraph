@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/dark.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDark.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+
+<body>
+
+<img src="img/logo-darker.png" id="watermark" />
+
+<div id="header">
+    <!--powered by<br /-->
+    <span id="jsxgraph-head"><a href="http://jsxgraph.org/"><img src="img/logo-grayscale.png" alt="JSXGraph" /></a></span>
+</div>
+
+<div id="title">
+    <ul id="menu">
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Bundestag elections from 1949 to 2009</a></h2></li>
+        <li id="menu-info"><h2><a href="javascript:void(0);" id="head-explanation">Info</a></h2></li>
+        <li id="menu-source"><h2><a href="javascript:void(0);" id="head-source">Source</a></h2></li>
+    </ul>
+</div>
+
+<div id="container" class="content-block">
+    <center>
+    <div id="construction">
+        <div id="jxgbox" class="jxgbox" style="width: 700px; height: 500px;"></div>
+    </div>
+    </center>
+
+<script type="text/javascript" src="js/jsxgraph-dark.js">
+</script>
+
+<script id="jxg" type="text/javascript">
+
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 53, 18, -2], axis: false, grid: false}),
+            colors = ['#333', '#555', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', '#888', '#965220', 'red', 'blue', 'lightgray'],
+            years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
+            chart, slider, last = 0, table, ticks, i,
+        
+            select_years = function (year) {
+                var i, data, col;
+
+                col = table.getColumn(year);
+
+                for(i = 0; i < col.length; i++) {
+                    if(isNaN(col[i]))
+                        col[i] = 0.;
+                }
+
+                if (chart) {
+                    for (i = 0; i < chart[0].length; i++) {
+                        chart[0][i].vertices[1].moveTo([chart[0][i].vertices[1].X(), col[i]], 500);
+                        chart[0][i].vertices[2].moveTo([chart[0][i].vertices[2].X(), col[i]], 500);
+                   }
+                } else {
+                    chart = board.create('chart', [col], {
+                        chartStyle: 'bar',
+                        colors: colors
+                    });
+                    board.create('legend', [13, 47], {
+                        labels: table.rowHeaders,
+                        colors: colors
+                    })
+                }
+            };
+
+        board.create('axis', [[-0.75,0], [-0.75, 1]], {
+            strokeWidth: 2,
+            ticks: {
+                drawZero: false
+            }
+        });
+        board.create('line', [[0,0], [1, 0]]);
+        slider = board.create('slider', [[0, 50], [14, 50], [1949, 1949, 2009]], {
+            name: 'Year',
+            glider: {
+                size: 7,
+                face: 'v'
+            },
+            label: {
+                fontSize: 14
+            }
+        });
+        slider.label.content.setText(function () {
+            var t = 'Year: ' + Math.floor(slider.Value()),
+                i, found = false;
+
+            for (i = 0; i < years.length-1; i++) {
+                if (years[i] <= slider.Value() && slider.Value() < years[i+1]) {
+                    if (last !== i) {
+                        select_years(i);
+                        last = i;
+                    }
+
+                    if (years[i] === Math.floor(slider.Value())) {
+                        t = '<strong>' + t + '<' + '/strong>';
+                    }
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                if (last !== years.length-1) {
+                    select_years(years.length-1);
+                    last = years.length-1;
+                }
+                t = '<strong>' + t + '<' + '/strong>';
+            }
+
+            return t;
+        });
+
+        ticks = [];
+        for (i = 0; i < years.length; i++) {
+            ticks.push((years[i] - years[0])/(years[years.length-1]-years[0])*(slider.baseline.point2.X()-slider.baseline.point1.X()));
+        }
+        board.create('ticks', [slider.baseline, ticks], {
+            drawLabels: false,
+            strokeColor: '#ddd',
+            strokeWidth: 2,
+            majorHeight: 10
+        });
+
+        $(document).ready(function () {
+            table = (new JXG.DataSource()).loadFromTable('btw', true, true)
+            select_years(0);
+        });
+    })();
+</script>
+</div>
+
+<div id="explanation" class="content-block">
+    <h3>The data used to create this chart (from <a href="http://de.wikipedia.org/wiki/Ergebnisse_der_Bundestagswahlen">Wikipedia</a>)</h3>
+<table id="btw" style="border: 1px solid gray;">
+    <tr>
+        <th>Year</th>
+        <th>1949</th><th>1953</th><th>1957</th><th>1961</th><th>1965</th><th>1969</th><th>1972</th><th>1976</th>
+        <th>1980</th><th>1983</th><th>1987</th><th>1990</th><th>1994</th><th>1998</th><th>2002</th><th>2005</th>
+        <th>2009</th>
+    </tr>
+    <tr>
+        <td>CDU</td>
+        <td>25.2</td><td>36.4</td><td>39.7</td><td>35.8</td><td>39.3</td><td>36.6</td><td>35.2</td><td>38.0</td>
+        <td>34.2</td><td>38.2</td><td>34.5</td><td>36.7</td><td>34.2</td><td>28.4</td><td>29.5</td><td>27.8</td>
+        <td>27.3</td>
+    </tr>
+    <tr>
+        <td>CSU</td>
+        <td>5.8</td><td>8.8</td><td>10.5</td><td>9.6</td><td>9.6</td><td>9.5</td><td>9.7</td><td>10.6</td><td>10.3</td>
+        <td>10.6</td><td>9.8</td><td>7.1</td><td>7.3</td><td>6.7</td><td>9.0</td><td>7.4</td><td>6.5</td>
+    </tr>
+    <tr>
+        <td>SPD</td>
+        <td>29.2</td><td>28.8</td><td>31.8</td><td>36.2</td><td>39.3</td><td>42.7</td><td>45.8</td><td>42.6</td>
+        <td>42.9</td><td>38.2</td><td>37.0</td><td>33.5</td><td>36.4</td><td>40.9</td><td>38.5</td><td>34.2</td>
+        <td>23.0</td>
+    </tr>
+    <tr>
+        <td>FDP</td>
+        <td>11.9</td><td>9.5</td><td>7.7</td><td>12.8</td><td>9.5</td><td>5.8</td><td>8.4</td><td>7.9</td><td>10.6</td>
+        <td>7.0</td><td>9.1</td><td>11.0</td><td>6.9</td><td>6.2</td><td>7.4</td><td>9.8</td><td>14.6</td>
+    </tr>
+    <tr>
+        <td>B&uuml;ndnis 90/Die Gr&uuml;nen</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>1.5</td><td>5.6</td>
+        <td>8.3</td><td>5</td><td>7.3</td><td>6.7</td><td>8.6</td><td>8.1</td><td>10.7</td>
+    </tr>
+    <tr>
+        <td>PDS/Linke</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>2.4</td><td>4.4</td><td>5.1</td><td>4.0</td><td>8.7</td><td>11.9</td>
+    </tr>
+    <tr>
+        <td>Piraten</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2.0</td>
+    </tr>
+    <tr>
+        <td>NPD</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>2.0</td><td>4.3</td><td>0.6</td><td>0.3</td><td>0.2</td><td>0.2</td>
+        <td>0.6</td><td>0.3</td><td>0.0</td><td>0.3</td><td>0.4</td><td>1.6</td><td>1.5</td>
+    </tr>
+    <tr>
+        <td>DP</td>
+        <td>4.0</td><td>3.3</td><td>3.4</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+    </tr>
+    <tr>
+        <td>GB/BHE</td>
+        <td>-</td><td>5.9</td><td>4.6</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+    </tr>
+    <tr>
+        <td>REP</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>2.1</td><td>1.9</td><td>1.8</td><td>0.6</td><td>0.6</td><td>0.4</td>
+    </tr>
+    <tr>
+        <td>KPD</td>
+        <td>5.7</td><td>2.2</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+    </tr>
+    <tr>
+        <td>BP</td><td>4.2</td><td>1.7</td><td>0.9</td><td>-</td><td>-</td><td>0.2</td><td>-</td><td>-</td>
+        <td>-</td><td>-</td><td>0.1</td><td>0.1</td><td>0.1</td><td>0.1</td><td>0.0</td><td>0.1</td><td>0.1</td>
+    </tr>
+    <tr>
+        <td>Others</td>
+        <td>14.0</td><td>7.8</td><td>9.4</td><td>5.7</td><td>3.6</td><td>5.3</td><td>0.9</td><td>0.9</td>
+        <td>0.5</td><td>0.5</td><td>1.3</td><td>4.1</td><td>3.4</td><td>5.9</td><td>3.0</td><td>1.7</td><td>2.0</td>
+    </tr>
+</table>
+</div>
+
+
+<div id="source" class="content-block">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    JSXGraph is licensed under <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2011 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    var p;
+                    for(p in parts) {
+                        $('#' + p).hide();
+                    }
+
+                    $('#'+_part).show();
+                }
+            }(part));
+        }
+    });
+
+    // ]]>
+</script>
+</body>
+</html>

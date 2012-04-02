@@ -1,0 +1,503 @@
+<html>
+<head>
+    <title>JSXGraph example: Bundestag elections</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <style type="text/css">
+        a.topmenu {
+            padding: 5px;
+            background-color: #ddd;
+            text-decoration: none;
+            color: black;
+        }
+
+        a.topmenu:hover {
+            padding: 5px;
+            margin: 0px;
+            background-color: #999;
+            text-decoration: underline;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+<h2>German Bundestag elections - From 1949 to 2005</h2>
+
+<a href="#" onclick="show('page0');" class="topmenu">Table</a><a href="#" onclick="show('page1');" class="topmenu">Whole table as chart</a><a href="#" onclick="show('page2');" class="topmenu">Choose parties to display</a><a href="#" onclick="show('page3');" class="topmenu">Choose year to display</a>
+<br /><br />
+<!-- Sub page 0: The table with the data -->
+<div id="page0" style="display: block;">
+<table id="btw" style="border: 1px solid gray;">
+<tr>
+<td>Wahljahr</td>
+<td>1949</td>
+<td>1953</td>
+<td>1957</td>
+<td>1961</td>
+<td>1965</td>
+<td>1969</td>
+<td>1972</td>
+<td>1976</td>
+<td>1980</td>
+<td>1983</td>
+<td>1987</td>
+<td>1990</td>
+<td>1994</td>
+<td>1998</td>
+<td>2002</td>
+<td>2005</td>
+<td>2009</td>
+
+</tr>
+<tr>
+<td>CDU</td>
+<td>25.2</td>
+<td>36.4</td>
+<td>39.7</td>
+<td>35.8</td>
+<td>39.3</td>
+<td>36.6</td>
+<td>35.2</td>
+
+<td>38.0</td>
+<td>34.2</td>
+<td>38.2</td>
+<td>34.5</td>
+<td>36.7</td>
+<td>34.2</td>
+<td>28.4</td>
+<td>29.5</td>
+<td>27.8</td>
+<td>27.3</td>
+
+</tr>
+<tr>
+<td>CSU</td>
+<td>5.8</td>
+<td>8.8</td>
+<td>10.5</td>
+<td>9.6</td>
+<td>9.6</td>
+<td>9.5</td>
+<td>9.7</td>
+
+<td>10.6</td>
+<td>10.3</td>
+<td>10.6</td>
+<td>9.8</td>
+<td>7.1</td>
+<td>7.3</td>
+<td>6.7</td>
+<td>9.0</td>
+<td>7.4</td>
+<td>6.5</td>
+
+</tr>
+<tr>
+<td>SPD</td>
+<td>29.2</td>
+<td>28.8</td>
+<td>31.8</td>
+<td>36.2</td>
+<td>39.3</td>
+<td>42.7</td>
+<td>45.8</td>
+
+<td>42.6</td>
+<td>42.9</td>
+<td>38.2</td>
+<td>37.0</td>
+<td>33.5</td>
+<td>36.4</td>
+<td>40.9</td>
+<td>38.5</td>
+<td>34.2</td>
+<td>23.0</td>
+
+</tr>
+<tr>
+<td>FDP</td>
+<td>11.9</td>
+<td>9.5</td>
+<td>7.7</td>
+<td>12.8</td>
+<td>9.5</td>
+<td>5.8</td>
+<td>8.4</td>
+
+<td>7.9</td>
+<td>10.6</td>
+<td>7.0</td>
+<td>9.1</td>
+<td>11.0</td>
+<td>6.9</td>
+<td>6.2</td>
+<td>7.4</td>
+<td>9.8</td>
+<td>14.6</td>
+
+</tr>
+<tr>
+<td>B&uuml;ndnis 90/Die Gr&uuml;nen</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>1.5</td>
+<td>5.6</td>
+<td>8.3</td>
+<td>5</td>
+<td>7.3</td>
+<td>6.7</td>
+<td>8.6</td>
+<td>8.1</td>
+<td>10.7</td>
+
+</tr>
+<tr>
+<td>PDS/Linke</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>2.4</td>
+<td>4.4</td>
+<td>5.1</td>
+<td>4.0</td>
+<td>8.7</td>
+<td>11.9</td>
+
+</tr>
+
+<tr>
+<td>Piraten</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>2.0</td>
+
+</tr>
+<tr>
+<td>NPD</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>2.0</td>
+<td>4.3</td>
+<td>0.6</td>
+
+<td>0.3</td>
+<td>0.2</td>
+<td>0.2</td>
+<td>0.6</td>
+<td>0.3</td>
+<td>0.0</td>
+<td>0.3</td>
+<td>0.4</td>
+<td>1.6</td>
+<td>1.5</td>
+
+</tr>
+<tr>
+<td>DP</td>
+<td>4.0</td>
+<td>3.3</td>
+<td>3.4</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+</tr>
+<tr>
+<td>GB/BHE</td>
+<td>-</td>
+<td>5.9</td>
+<td>4.6</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+</tr>
+<tr>
+<td>REP</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>2.1</td>
+<td>1.9</td>
+<td>1.8</td>
+<td>0.6</td>
+<td>0.6</td>
+<td>0.4</td>
+
+</tr>
+<tr>
+<td>KPD</td>
+<td>5.7</td>
+<td>2.2</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+
+</tr>
+<tr>
+<td>BP</td>
+<td>4.2</td>
+<td>1.7</td>
+<td>0.9</td>
+<td>-</td>
+<td>-</td>
+<td>0.2</td>
+
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.1</td>
+<td>0.0</td>
+
+<td>0.1</td>
+<td>0.1</td>
+
+</tr>
+<tr>
+<td>Sonstige</td>
+<td>14.0</td>
+<td>7.8</td>
+<td>9.4</td>
+<td>5.7</td>
+<td>3.6</td>
+<td>5.3</td>
+
+<td>0.9</td>
+<td>0.9</td>
+<td>0.5</td>
+<td>0.5</td>
+<td>1.3</td>
+<td>4.1</td>
+<td>3.4</td>
+<td>5.9</td>
+<td>3.0</td>
+
+<td>1.7</td>
+<td>2.0</td>
+
+</tr>
+</table>
+</div>
+
+<!-- Sub page 1: Chart showing the data from the whole table of page 0 -->
+
+<div style="width:800px; display: block;" id="page1">
+  <div id="jxgbox1" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+
+<div style="width:800px; display: block;" id="page2">
+  <div id="jxgbox2" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+<div style="float: left"><br/><br /><br />
+<form name="form_parties">
+    <input type="checkbox" value="0" onclick="select_parties();" name="parties">CDU<br/>
+    <input type="checkbox" value="1" onclick="select_parties();" name="parties">CSU<br/>
+    <input type="checkbox" value="2" onclick="select_parties();" name="parties">SPD<br/>
+    <input type="checkbox" value="3" onclick="select_parties();" name="parties">FDP<br/>
+    <input type="checkbox" value="4" onclick="select_parties();" name="parties">B&uuml;ndnis 90/Die Gr&uuml;nen<br/>
+    <input type="checkbox" value="5" onclick="select_parties();" name="parties">PDS/Linke<br/>
+    <input type="checkbox" value="6" onclick="select_parties();" name="parties">Piraten<br/>
+    <input type="checkbox" value="7" onclick="select_parties();" name="parties">NPD<br/>
+    <input type="checkbox" value="8" onclick="select_parties();" name="parties">DP<br/>
+    <input type="checkbox" value="9" onclick="select_parties();" name="parties">GB/BHE<br/>
+    <input type="checkbox" value="10" onclick="select_parties();" name="parties">REP<br/>
+    <input type="checkbox" value="11" onclick="select_parties();" name="parties">KPD<br/>
+    <input type="checkbox" value="12" onchange="select_parties();" name="parties">BP<br/>
+    <input type="checkbox" value="13" onchange="select_parties();" name="parties">Sonstige<br/>
+</form></div>
+</div>
+
+<div style="width:800px; display: block;" id="page3">
+  <div id="jxgbox3" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+<div style="float: left"><br/><br /><br />
+<select id="select_years" onchange="select_years();">
+    <option value="0">1949</option>
+    <option value="1">1953</option>
+    <option value="2">1957</option>
+    <option value="3">1961</option>
+    <option value="4">1965</option>
+    <option value="5">1969</option>
+    <option value="6">1972</option>
+    <option value="7">1976</option>
+    <option value="8">1980</option>
+    <option value="9">1983</option>
+    <option value="10">1987</option>
+    <option value="11">1990</option>
+    <option value="12">1994</option>
+    <option value="13">1998</option>
+    <option value="14">2002</option>
+    <option value="15">2005</option>
+    <option value="16">2009</option>
+</select></div>
+</div>
+
+<div id="debug" style="display:block; float: right;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+        var board1 = JXG.JSXGraph.initBoard('jxgbox1', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            board3 = JXG.JSXGraph.initBoard('jxgbox3', {boundingbox: [-1, 50, 18, -5], axis: true, grid: false}),
+            colors = ['black', '#333333', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', 'gray', '#965220', 'red', 'blue', 'lightgray'],
+            years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
+            hStroke = [], charts1, charts2, charts3, i;
+
+       
+ // sub page 1
+        charts1 = board1.create('chart', ['btw'], {chartStyle: 'point,line', withHeaders: true, colors: colors, strokeColor: colors, fillColor: colors, highlightFillColor: colors, highlightStrokeColor: colors});
+
+        board1.highlightInfobox = function(x,y,el) {
+            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
+            this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokecolor'] + ' 2px';
+            this.infobox.rendNode.style.padding = '5px';
+            this.infobox.rendNode.style.backgroundColor = 'white';
+        };
+
+        // sub page 2
+        function select_parties() {
+            var i, chartType = 'line', color = [], part;
+
+            if(charts2)
+                board2.removeObject(charts2);
+
+            part = [];
+            $('input[name=parties]').each(function () { if(this.checked) { part.push(parseInt($(this).val())); color.push(colors[parseInt($(this).val())]); } });
+
+            if(part.length <4)
+                chartType = 'bar';
+
+	    	charts2 = board2.create('chart', ['btw'], {chartStyle: chartType, withHeaders: true, colors: color, strokeColor: color, fillColor: color, highlightFillColor: color, highlightStrokeColor: color, rows: part});
+        }
+
+        board2.highlightInfobox = function(x,y,el) {
+            this.infobox.setText('<span style="color:black;font-weight:bold">' + years[Math.round(x)-1] + ': ' + y + ' %</span>');
+            this.infobox.rendNode.style.border = 'groove ' + el.visProp['strokeColor'] + ' 2px';
+            this.infobox.rendNode.style.padding = '5px';
+            this.infobox.rendNode.style.backgroundColor = 'white';
+        };
+
+        // sub page 3
+        function select_years() {
+            var years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005],
+                i, data, table, col, year;
+
+            year = parseInt($('#select_years').val());
+
+            table = (new JXG.DataSource()).loadFromTable('btw', true, true);
+            col = table.getColumn(year);
+            for(i=0; i<col.length; i++) {
+                if(isNaN(col[i]))
+                    col[i] = 0.;
+            }
+
+            if(charts3) {
+                for(i=0; i<charts3[0].length; i++) {
+                    charts3[0][i].vertices[1].moveTo([charts3[0][i].vertices[1].X(), col[i]], 500);
+                    charts3[0][i].vertices[2].moveTo([charts3[0][i].vertices[2].X(), col[i]], 500);
+                }
+            } else {
+                board3.suspendUpdate();
+    	    	charts3 = board3.create('chart', [col], {chartStyle: 'bar', colors: colors});
+                board3.unsuspendUpdate();
+            }
+        }
+
+        // general
+        function show(page) {
+            var i;
+            for(i=0; i<4; i++) {
+                $('#page' + i).css('display', 'none');
+            }
+
+            $('#' + page).css('display', 'block');
+        }
+        show('page0');
+
+  /* ]]> */
+  </script>
+</body>
+</html>

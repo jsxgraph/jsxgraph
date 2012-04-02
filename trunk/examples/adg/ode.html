@@ -1,0 +1,72 @@
+<html>
+<head>
+   <title>ODE | JSXGraph Example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<div id="debug" style="display: none"></div>
+<center>
+<div style="width: 1000px;">
+    <div style="width:600px; height: 410px;">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; text-align: left; float: left;"></div>
+  <div id="polynomials" style="display: none; width: 600px; height: 400px; margin-left: 10px; text-align: left; padding-left: -200px;"></div>
+  </div>
+
+    <div style="width: 800px; margin-top: 10px;">
+  <form>
+f<sub>1</sub>(x,y1,y2)=<input type="text" id="odeinput1" value="y1+y2"><br />
+f<sub>2</sub>(x,y1,y2)=<input type="text" id="odeinput2" value="y2+1"><input type=button value="ok" onclick="doIt()">
+  </form>
+  </div>
+</div>
+</center>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+var brd = JXG.JSXGraph.initBoard('jxgbox', {axis:true, boundingbox:[-11,11,11,-11]});
+var N = brd.create('slider',[[-7,9.5],[7,9.5],[-15,10,15]], {name:'N'});
+var P1 = brd.create('point',[1,-1], {name:'(x_0,c_1)'});
+var line = brd.create('line',[function(){return -P1.X();},function(){return 1;},function(){return 0;}],{visible:false});
+var P2 = brd.create('glider',[1,-0.5,line], {name:'(x_0,c_2)'});
+ 
+function doIt() {
+  var txt1 = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput1").value);
+  var txt2 = JXG.GeonextParser.geonext2JS(document.getElementById("odeinput2").value);
+  f = new Function("x", "yy", "var y1 = yy[0], y2 = yy[1];  var z1 = " + txt1 + "; var z2 = " + txt2 + "; return [z1,z2];");
+  brd.update();
+}
+ 
+function ode() {
+   return JXG.Math.Numerics.rungeKutta(JXG.Math.Numerics.predefinedButcher.Heun, [P1.Y(),P2.Y()], [P1.X(), P1.X()+N.Value()], 200, f);
+}
+ 
+var g1 = brd.createElement('curve', [[0],[0]], {strokeColor:'red', strokeWidth:'2px', name:'y_1', withLabel:false});
+var g2 = brd.createElement('curve', [[0],[0]], {strokeColor:'black', strokeWidth:'2px', name:'y_2', withLabel:false});
+g1.updateDataArray = function() {
+    var data = ode();
+    var h = N.Value()/200;
+    this.dataX = [];
+    this.dataY = [];
+    for(var i=0; i<data.length; i++) {
+        this.dataX[i] = P1.X()+i*h;
+        this.dataY[i] = data[i][0];
+    }
+};
+g2.updateDataArray = function() {
+    var data = ode();
+    var h = N.Value()/200;
+    this.dataX = [];
+    this.dataY = [];
+    for(var i=0; i<data.length; i++) {
+        this.dataX[i] = P2.X()+i*h;
+        this.dataY[i] = data[i][1];
+    }
+};
+doIt();
+
+  /* ]]> */
+  </script>
+<br/>
+</body>
+</html>

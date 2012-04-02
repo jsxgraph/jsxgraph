@@ -1,0 +1,51 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Playground</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {grid:true,originX: 250, originY: 300, unitX: 50, unitY: 50, axis:true});
+        /*
+        // 1: dreheobjektumpunkt.ggb
+        p1 = board.createElement('point', [0, 0], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+        p2 = board.createElement('point', [1, 0], {face:'circle',size:6,name:"B",fillColor:'red',strokeColor:'yellow'});
+        t = board.createElement('transform', [Math.PI/2.0,'A'], {type:'rotate'}); 
+        p3 = board.createElement('point', [p2,t], {name:'rotate'}); 
+        */
+        
+        /*
+        // 2: streckeobjektzentrischvonpunkt.ggb
+        p0 = board.createElement('point', [1, 1], {face:'circle',size:6,name:"O",fillColor:'red',strokeColor:'yellow'});
+        p1 = board.createElement('point', [2, 2], {face:'circle',size:6,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+        p2 = board.createElement('point', [2, 1], {face:'circle',size:6,name:"B",fillColor:'red',strokeColor:'yellow'});
+        p3 = board.createElement('point', [1, 2], {face:'circle',size:6,name:"C",fillColor:'red',strokeColor:'yellow'});
+        t1 = board.createElement('transform', [2,2], {type:'scale'});
+        t2 = board.createElement('transform', [function(){return (1-2)*p0.X();},function(){return(1-2)*p0.Y();}], {type:'translate'});
+        p4 = board.createElement('point', [p1,[t1,t2]], {name:'zentrA'}); 
+        p5 = board.createElement('point', [p2,[t1,t2]], {name:'zentrB'});  
+        p6 = board.createElement('point', [p3,[t1,t2]], {name:'zentrC'});          
+        */
+        
+   
+    // 3. verschiebeobjektumvektor.ggb
+        p1 = board.createElement('point', [0, 2], {face:'circle',size:3,name:"A",fillColor:'red',strokeColor:'yellow'}); 
+        p2 = board.createElement('point', [1, 0], {face:'circle',size:3,name:"B",fillColor:'red',strokeColor:'yellow'});
+        p3 = board.createElement('point', [2, 1], {face:'circle',size:3,name:"B",fillColor:'red',strokeColor:'yellow'});
+        a = board.createElement('arrow',[p2,p3]);
+        t = board.createElement('transform', [function(){return a.point2.X()-a.point1.X();},function(){return a.point2.Y()-a.point1.Y();}], {type:'translate'});
+        p3 = board.createElement('point', [p1,t], {name:'translate'}); 
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

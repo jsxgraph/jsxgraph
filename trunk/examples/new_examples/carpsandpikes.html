@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="css/dark.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="css/shThemeDark.css" />
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushJScript.js"></script>
+</head>
+
+<body>
+
+<img src="img/logo-darker.png" id="watermark" />
+
+<div id="header">
+    <span id="jsxgraph-head"><a href="http://jsxgraph.org/"><img src="img/logo-grayscale.png" alt="JSXGraph" /></a></span>
+</div>
+
+<div id="title">
+    <ul id="menu">
+        <li id="menu-title"><h2><a href="javascript:void(0);" id="head-construction">Carps &amp; Pikes</a></h2></li>
+        <li id="menu-info"><h2><a href="javascript:void(0);" id="head-explanation">Info</a></h2></li>
+        <li id="menu-source"><h2><a href="javascript:void(0);" id="head-source">Source</a></h2></li>
+    </ul>
+</div>
+
+<div id="container" class="content-block">
+    <center>
+    <div id="construction">
+        <div id="control" style="width: 230px; height: 230px; float: left; text-align: left;">
+            Carps: <span id="carp"></span> <button id="rmcarp">-</button> <button id="addcarp">+</button>
+            <br />
+            Pikes: <span id="pike"></span> <button id="rmpike">-</button> <button id="addpike">+</button>
+            <br />
+            <div id="controlroom" class="jxgbox" style="width: 200px; height: 200px; float: left; background: none; border: 0;"></div>
+            <div id="plot" class="jxgbox" style="width: 200px; height: 200px; background: none; border: 0;"></div>
+            <div style="width: 220px; text-align: right;">
+                <button id="start">Begin Simulation</button>
+            </div>
+        </div>
+        <div id="lake" class="jxgbox" style="width: 500px; height: 500px; float: left; background-color: #4096EE;"></div>
+    </div>
+    </center>
+
+<script type="text/javascript" src="js/jsxgraph-dark.js"></script>
+
+<script id="jxg" type="text/javascript">
+
+    (function() {
+        var plot = JXG.JSXGraph.initBoard('plot', {
+                //boundingbox: [-1.5, 28.5, 28.5, -1.5],
+                boundingbox: [-2, 25, 25, -5],
+                axis: true,
+                grid: false,
+                showNavigation: false
+            }),
+            controlroom = JXG.JSXGraph.initBoard('controlroom', {
+                boundingbox: [-1, 3, 12, -3],
+                axis: false,
+                grid: false,
+                showNavigation: false
+            }),
+            lake = JXG.JSXGraph.initBoard('lake', {
+                boundingbox: [-0.1, 1.1, 1.1, -0.1],
+                axis: false,
+                grid: false,
+                showNavigation: false
+            }),
+            i,
+            carps = [],
+            pikes = [],
+            runsim = false,
+
+            // initial values
+            startpred = 10,
+            startprey = 5,
+
+            // axis labels for plot
+            xt = plot.create('text', [18, -3, 'Pikes']),
+            yt = plot.create('text', [1, 23, 'Carps']),
+
+            // Define sliders to dynamically change parameters of the equations and create text elements to describe them
+            s = controlroom.create('slider', [[0,2],[7,2],[0.0,3,10]],{name:''}),
+            st = controlroom.create('text', [0,1.5, "Reproduction rate carps"]),
+            u = controlroom.create('slider', [[0,1],[7,1],[0.0,7,10]],{name:''}),
+            ut = controlroom.create('text', [0,0.5, "Death rate pikes"]),
+
+            o = controlroom.create('slider', [[0,0],[7,0],[0.0,1,10]],{name:''}),
+            ot = controlroom.create('text', [0,-0.5, "Pikes appetite"]),
+            p = controlroom.create('slider', [[0,-1],[7,-1],[0.0,3,10]],{name:''}),
+            pt = controlroom.create('text', [0,-1.5, "Reproduction rate pikes"]),
+
+            // Variables for the JXG.Curves
+            g3,
+            g4,
+
+            // Initialise ODE and solve it with JXG.Math.Numerics.rungeKutta()
+            ode = function () {
+                // evaluation interval
+                var I = [0, 200],
+                    // Number of steps. 1000 should be enough
+                    N = 1000,
+
+                    // Right hand side of the ODE dx/dt = f(t, x)
+                    f = function(t, x) {
+                        var bpred = s.Value()/10,
+                            bprey = u.Value()/10,
+                            dpred = o.Value()/10,
+                            dprey = p.Value()/10,
+                            y = [];
+
+                        y[0] = x[0]*(bpred - dpred*x[1]);
+                        y[1] = -x[1]*(bprey - dprey*x[0]);
+
+                        return y;
+                    },
+
+                    // Initial value
+                    x0 = [startpred, startprey],
+
+                    // Solve ode
+                    data = JXG.Math.Numerics.rungeKutta('heun', x0, I, N, f),
+
+                    // to plot the data against time we need the times where the equations were solved
+                    t = [],
+                    q = I[0],
+                    h = (I[1]-I[0])/N,
+                    i;
+
+                for(i=0; i<data.length; i++) {
+                    data[i].push(q);
+                    q += h;
+                }
+
+                return data;
+            },
+            t = 0,
+            indicator,
+            cancelsim = function () {
+                runsim = false;
+
+                $('#start').html('Begin Simulation');
+                $('#start').unbind('click');
+                $('#start').click(initsim);
+
+                plot.removeObject(indicator);
+                plot.update();
+                $('#addcarp').show();
+                $('#rmcarp').show();
+                $('#addpike').show();
+                $('#rmpike').show();
+
+                $('#pike').html(startpred);
+                $('#carp').html(startprey);
+
+                for (i = carps.length; i > 0; i--) {
+                    rm(carps.pop());
+                }
+                for (i = pikes.length; i > 0; i--) {
+                    rm(pikes.pop());
+                }
+
+                for (i = 0; i < startpred; i++) {
+                    pikes.push(add('pike'));
+                }
+
+                for (i = 0; i < startprey; i++) {
+                    carps.push(add('carp'));
+                }
+            },
+            initsim = function () {
+                runsim = true;
+                t = 0;
+
+                $('#start').unbind('click');
+                $('#start').click(cancelsim);
+                indicator = plot.create('point', [0, 0], {face: 'x', size: 5, color: 'white', withLabel: false, strokeWidth: 3});
+                
+                $('#addcarp').hide();
+                $('#rmcarp').hide();
+                $('#addpike').hide();
+                $('#rmpike').hide();
+
+                $('#start').html('End Simulation');
+                sim();
+            },
+            sim = function () {
+                /*var ccarp = Math.ceil(g3.dataY[t]),
+                    cpike = Math.ceil(g3.dataX[t]);
+                    */
+                var ccarp = Math.round(g3.dataY[t]),
+                    cpike = Math.round(g3.dataX[t]);
+
+                if (ccarp > carps.length) {
+                    for (i = carps.length; i < ccarp; i++) {
+                        carps.push(add('carp'));
+                    }
+                } else if (ccarp < carps.length) {
+                    for (i = carps.length; i > ccarp; i--) {
+                        rm(carps.pop());
+                    }
+                }
+
+                if (cpike > pikes.length) {
+                    for (i = pikes.length; i < cpike; i++) {
+                        pikes.push(add('pike'));
+                    }
+                } else if (cpike < pikes.length) {
+                    for (i = pikes.length; i > cpike; i--) {
+                        rm(pikes.pop());
+                    }
+                }
+
+                indicator.moveTo([g3.dataX[t], g3.dataY[t]], 0);
+
+                t++;
+                $('#pike').html(cpike);
+                $('#carp').html(ccarp);
+
+                if (ccarp > 100 || cpike > 100) {
+                    cancelsim();
+                    alert('Too much fish, aborting.');
+                    return;
+                }
+                if (runsim && t < g3.time.length) {
+                    window.setTimeout(sim, 50);
+                } else {
+                    cancelsim();
+                }
+            },
+            anim = function (fish) {
+                fish.moveTo([Math.random(), Math.random()], Math.ceil(Math.random()*800 + 1200), {callback: function () { anim(fish); }});
+            },
+            add = function (what) {
+                var url, color, face, size,
+                    fish,
+                    x = Math.random(),
+                    y = Math.random();
+                
+                if (what == 'carp') {
+                    url = 'img/carp_icon.png';
+                    color = '6BBA70';
+                    face = 'o';
+                    size = 9;
+                } else {
+                    url = 'img/pike_icon.png';
+                    color = 'B02B2C';
+                    face = '<>';
+                    size = 9;
+                }
+
+                //fish = lake.create('point', [Math.random(), Math.random()], {color: color, withLabel: false, visible: false, face: face, size: size});
+                fish = lake.create('point', [Math.random(), Math.random()], {withLabel: false, visible: false});
+                fish.image = lake.create('image',[url, [function () { return fish.X()}, function () { return fish.Y();}], [0.11, 0.05]]);
+                anim(fish);
+                return fish;
+            },
+            rm = function (fish) {
+                lake.removeObject(fish.image);
+                lake.removeObject(fish);
+            };
+
+        // board dependencies
+        controlroom.addChild(plot);
+        controlroom.addChild(lake);
+
+        // Plot
+        g3 = plot.createElement('curve', [[], []], {strokeColor: '#FF7400', strokeWidth: 3});
+        //g4 = plot.createElement('curve', [[], []], {strokeColor: '#4096EE', strokeWidth: 3});
+
+        g3.updateDataArray = function() {
+            var data = ode(),
+                i;
+
+            this.time = [];
+            this.dataX = [];
+            this.dataY = [];
+
+            for(i = 0; i < data.length; i++) {
+                this.dataX[i] = data[i][1];
+                this.dataY[i] = data[i][0];
+                this.time[i] = data[i][2];
+            }
+        };
+        g3.hasPoint = function () {};
+        plot.update();
+
+        cancelsim();
+
+        $('#pike').html(startpred);
+        $('#carp').html(startprey);
+        // event handlers
+        $('#addcarp').click(function () {
+            if (startprey >= 15) {
+                startprey = 15;
+                return
+            }
+            startprey++;
+            $('#carp').html(startprey);
+            carps.push(add('carp'));
+            plot.update();
+        });
+        $('#rmcarp').click(function () {
+            if (startprey <= 1) {
+                startprey = 1;
+                return
+            }
+            startprey--;
+            $('#carp').html(startprey);
+            rm(carps.pop());
+            plot.update();
+        });
+        $('#addpike').click(function () {
+            if (startpred >= 15) {
+                startpred = 15;
+                return
+            }
+            startpred++;
+            $('#pike').html(startpred);
+            pikes.push(add('pike'));
+            plot.update();
+        });
+        $('#rmpike').click(function () {
+            if (startpred <= 1) {
+                startpred = 1;
+                return
+            }
+            startpred--;
+            $('#pike').html(startpred);
+            rm(pikes.pop());
+            plot.update();
+        });
+    })();
+</script>
+</div>
+
+<div id="explanation" class="content-block">
+    
+</div>
+
+
+<div id="source" class="content-block">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    JSXGraph is licensed under <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2011 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    var p;
+                    for(p in parts) {
+                        $('#' + p).hide();
+                    }
+
+                    $('#'+_part).show();
+                }
+            }(part));
+        }
+    });
+    
+    // ]]>
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+
+    <!-- Adjust the paths -->
+
+    <!-- JSXGraph -->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="../templates/css/jsxexamples.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" type="text/css" href="../templates/css/shCore.css" />
+    <link rel="stylesheet" type="text/css" href="../templates/css/shThemeDefault.css" />
+    <script type="text/javascript" src="../templates/js/shCore.js"></script>
+    <script type="text/javascript" src="../templates/js/shBrushJScript.js"></script>
+</head>
+<body>
+
+<!-- powered by <a href="http://jsxgraph.org/">JSXGraph</a>.-->
+
+<div id="container">
+
+<span id="jsxgraph-head">powered by <a href="http://jsxgraph.org/"><img src="../templates/img/jsxgraph_badge_39.png" alt="JSXGraph" /></a></span>
+
+<h1>Kaleidoscope</h1>
+
+
+<a name="construction"></a>
+<h2><a href="kaleidoscope.html#construction" id="head-construction">Construction</a></h2>
+
+<div id="construction">
+    <div id="jxgbox" class="jxgbox" style="width: 600px; height: 600px;"></div>
+</div>
+
+<script id="jxg" type="text/javascript">
+    (function() {
+
+        // Configure board
+        JXG.Options.showCopyright = false;
+        JXG.Options.grid.snapToGrid = false;
+        JXG.Options.polygon.fillOpacity = 1;
+        JXG.Options.polygon.fillColor = '#7690c9';
+        JXG.Options.line.strokeColor = '#008dd2';
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-10, 12, 10, -8],
+                keepaspectreatio: true,
+                axis:false,
+                grid: false
+            }),
+
+        // functions
+        mirror_polygon = function(polygons, axes, level) {
+            var vertices,
+                new_vertices,
+                new_polygons = [],
+                i, j, k;
+
+            board.options.polygon.fillOpacity = (levels-l)/levels;
+
+            for(k = 0; k < axes.length; k++) {
+
+                // mirror the polygons
+                for(i = 0; i < polygons.length; i++) {
+                    // split horizon
+                    if(polygons[i].builtaxisid !== axes[k].id) {
+                        vertices = polygons[i].vertices;
+                        new_vertices = [];
+
+                        for(j = 0; j < vertices.length-1; j++) {
+                            new_vertices.push(
+                                board.create('reflection',
+                                    function(_j, _k) {
+                                        return [vertices[_j], axes[_k]];
+                                    }(j, k),
+                                {size: 1, strokeColor: 'none', withLabel: false, visible: false}
+                                    )
+                                );
+                        }
+
+                        new_polygons.push(board.create('polygon', new_vertices, {withLines: false}));
+                        new_polygons[new_polygons.length-1].builtaxisid = axes[k].id
+                    }
+                }
+            }
+
+            return new_polygons;
+        },
+
+        coordinates_to_points = function(coordinates, attributes) {
+            var points = [], i;
+
+            for(i = 0; i < coordinates.length; i++) {
+                points.push(board.create('point', coordinates[i], attributes));
+            }
+
+            return points;
+        },
+
+        //data
+        points = [[1, 0.25], [2.75, 0.25]],
+        axes = [
+            [[0, -3], [0, 6]]
+        ],
+
+        levels = 3,
+
+        // variables
+        polygon,
+        i, l;
+
+        // main program
+        points = coordinates_to_points(points, {size: 1, withLabel: false});
+        polygon = [board.create('regularpolygon', points.concat([5]), {withLines: false})];
+
+        for(i = 0; i < axes.length; i++) {
+            axes[i] = board.create('segment', coordinates_to_points(axes[i], {size: 1, withLabel: false}));
+        }
+
+        board.suspendUpdate();
+        for(l = 0; l < levels; l++) {
+            polygon = mirror_polygon(polygon, axes);
+        }
+        board.unsuspendUpdate();
+    })();
+</script>
+
+
+<a name="explanation"></a>
+<h2><a href="kaleidoscope.html#explanation" id="head-explanation">Explanation</a></h2>
+
+<div id="explanation">
+    Explanation goes here.
+</div>
+
+
+<a name="source"></a>
+<h2><a href="kaleidoscope.html#source" id="head-source">Source code</a></h2>
+
+<div id="source">
+    <script id="jxgsource" type="syntaxhighlighter" class="brush: js"></script>
+</div>
+
+<div id="footer">
+    <span style="float: left"><img src="../templates/img/jsxgraph_logo_20.png" alt="JSXGraph logo" /></span>
+    JSXGraph is licensed under the <a href="http://www.gnu.org/licenses/lgpl.txt">LGPL</a>; &copy; 2008-2010 <a href="http://jsxgraph.uni-bayreuth.de/wp/documentation/the-team/">JSXGraph Team</a>
+</div>
+
+</div> <!-- #container -->
+
+
+<script type="text/javascript">
+    // <![CDATA[
+
+    $(document).ready(function() {
+        var parts = {
+                construction: 'show',
+                source: 'hide',
+                explanation: 'hide'
+            },
+            part;
+
+        $('#jxgsource').text($('#jxg').text());
+        SyntaxHighlighter.all();
+
+        for(part in parts) {
+            $('#' + part)[parts[part]]();
+
+            $('#head-'+part).click(function(_part) {
+                return function() {
+                    $('#'+_part).slideToggle(500);
+                }
+            }(part));
+        }
+    });
+    
+    // ]]>
+</script>
+</body>
+</html>
