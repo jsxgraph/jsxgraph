@@ -1,3 +1,0 @@
-
-echo "x <-c(1,2,3); print(x*3);" | R --no-save
-
