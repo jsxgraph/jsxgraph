@@ -174,8 +174,8 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * Pointer to the html element containing the board.
      * @type Object
      */
-    this.containerObj = document.getElementById(this.container);
-    if (this.containerObj == null) {
+    this.containerObj = typeof document != 'undefined' ? document.getElementById(this.container) : null;
+    if (typeof document != 'undefined' && this.containerObj == null) {
         throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
     }
 
@@ -255,7 +255,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.canvasHeight = canvasHeight;
 
     // If the given id is not valid, generate an unique id
-    if (JXG.exists(id) && id !== '' && !JXG.exists(document.getElementById(id))) {
+    if (JXG.exists(id) && id !== '' && typeof document != 'undefined' && !JXG.exists(document.getElementById(id))) {
         this.id = id;
     } else {
         this.id = this.generateId();
@@ -978,7 +978,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
    },
 
     addMouseEventHandlers: function () {
-        if (!this.hasMouseHandlers) {
+        if (!this.hasMouseHandlers && typeof document != 'undefined') {
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
@@ -998,7 +998,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     addTouchEventHandlers: function () {
-        if (!this.hasTouchHandlers) {
+        if (!this.hasTouchHandlers && typeof document != 'undefined') {
              // To run JSXGraph on mobile touch devices we need these event listeners.
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
@@ -1014,7 +1014,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     removeMouseEventHandlers: function () {
-        if (this.hasMouseHandlers) {
+        if (this.hasMouseHandlers && typeof document != 'undefined') {
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
@@ -1040,7 +1040,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     removeTouchEventHandlers: function () {
-        if (this.hasTouchHandlers) {
+        if (this.hasTouchHandlers && typeof document != 'undefined') {
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
@@ -2794,7 +2794,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.animationObjects[element.id] = element;
 
         if (!this.animationIntervalCode) {
-            this.animationIntervalCode = window.setInterval('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
+            this.animationIntervalCode = setInterval('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
         }
 
         return this;
@@ -2815,7 +2815,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             delete(this.animationObjects[el]);
         }
 
-        window.clearInterval(this.animationIntervalCode);
+        clearInterval(this.animationIntervalCode);
         delete(this.animationIntervalCode);
 
         return this;
@@ -2883,7 +2883,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         if (count == 0) {
-            window.clearInterval(this.animationIntervalCode);
+            clearInterval(this.animationIntervalCode);
             delete(this.animationIntervalCode);
         } else {
             this.update(obj);

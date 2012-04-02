@@ -43,10 +43,12 @@ var JXG = {};
     JXG.baseFiles = null;
     // this maybe required by additional software/extensions and/or future renderers
     JXG.requirePath = '';
-    for (i=0;i<document.getElementsByTagName("script").length;i++) {
-        s = document.getElementsByTagName("script")[i];
-        if (s.src && s.src.match(/loadjsxgraphInOneFile\.js(\?.*)?$/)) {
-            JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
+    if (typeof document !== 'undefined') {
+        for (i=0;i<document.getElementsByTagName("script").length;i++) {
+            s = document.getElementsByTagName("script")[i];
+            if (s.src && s.src.match(/loadjsxgraphInOneFile\.js(\?.*)?$/)) {
+                JXG.requirePath = s.src.replace(/loadjsxgraphInOneFile\.js(\?.*)?$/,'');
+            }
         }
     }
 JXG.serverBase = JXG.requirePath + 'server/';

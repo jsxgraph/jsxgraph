@@ -81,7 +81,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     supportsVML: function () {
         // From stackoverflow.com
-        return !!document.namespaces;
+        return typeof document != 'undefined' && !!document.namespaces;
     },
 
     /**
@@ -89,7 +89,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports SVG.
      */
     supportsSVG: function () {
-        return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+        return typeof document != 'undefined' && document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
     },
 
     /**
@@ -97,7 +97,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports HTML canvas.
      */
     supportsCanvas: function () {
-        return !!document.createElement('canvas').getContext;
+        return typeof document != 'undefined' && !!document.createElement('canvas').getContext;
     },
 
     /**
@@ -154,8 +154,13 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @type Number
      */
     ieVersion: (function() {
-        var undef,
-            v = 3,
+        var undef;
+        
+        if (typeof document == 'undefined') {
+            return undef;
+        }
+    
+        var v = 3,
             div = document.createElement('div'),
             all = div.getElementsByTagName('i');
 
@@ -591,6 +596,13 @@ JXG.extend(JXG, /** @lends JXG */ {
     getDimensions: function (elementId) {
         var element, display, els, originalVisibility, originalPosition,
             originalDisplay, originalWidth, originalHeight;
+            
+        if (typeof document == 'undefined' || elementId == null) {
+            return {
+                width: 500,
+                height: 500
+            };
+        }
 
         // Borrowed from prototype.js
         element = document.getElementById(elementId);
@@ -1221,36 +1233,38 @@ JXG.extend(JXG, /** @lends JXG */ {
 });
 
 // JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
-JXG.addEvent(window, 'load', function () {
-    var scripts = document.getElementsByTagName('script'), type,
-        i, j, div, board, width, height, bbox, axis, grid;
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    JXG.addEvent(window, 'load', function () {
+        var scripts = document.getElementsByTagName('script'), type,
+            i, j, div, board, width, height, bbox, axis, grid;
     
-    for(i=0;i<scripts.length;i++) {
-        type = scripts[i].getAttribute('type', false);
-		if (!JXG.exists(type)) continue;
-        if (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
-            width = scripts[i].getAttribute('width', false) || '500px';
-            height = scripts[i].getAttribute('height', false) || '500px';
-            bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
-            bbox = bbox.split(',');
-            if (bbox.length!==4) {
-                bbox = [-5, 5, 5, -5];
-            } else {
-                for(j=0;j<bbox.length;j++) {
-                    bbox[j] = parseFloat(bbox[j]);
+        for(i=0;i<scripts.length;i++) {
+            type = scripts[i].getAttribute('type', false);
+	    	if (!JXG.exists(type)) continue;
+            if (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
+                width = scripts[i].getAttribute('width', false) || '500px';
+                height = scripts[i].getAttribute('height', false) || '500px';
+                bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
+                bbox = bbox.split(',');
+                if (bbox.length!==4) {
+                    bbox = [-5, 5, 5, -5];
+                } else {
+                    for(j=0;j<bbox.length;j++) {
+                        bbox[j] = parseFloat(bbox[j]);
+                    }
                 }
+                axis = JXG.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
+                grid = JXG.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
+
+                div = document.createElement('div');
+                div.setAttribute('id', 'jessiescript_autgen_jxg_'+i);
+                div.setAttribute('style', 'width:'+width+'; height:'+height+'; float:left');
+                div.setAttribute('class', 'jxgbox');
+                document.body.insertBefore(div, scripts[i]);
+
+                board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
+                board.construct(scripts[i].innerHTML);
             }
-            axis = JXG.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
-            grid = JXG.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
-
-            div = document.createElement('div');
-            div.setAttribute('id', 'jessiescript_autgen_jxg_'+i);
-            div.setAttribute('style', 'width:'+width+'; height:'+height+'; float:left');
-            div.setAttribute('class', 'jxgbox');
-            document.body.insertBefore(div, scripts[i]);
-
-            board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
-            board.construct(scripts[i].innerHTML);
         }
-    }
-}, window);
+    }, window);
+}

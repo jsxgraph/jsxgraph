@@ -66,6 +66,8 @@ JXG.JSXGraph = {
 
         if (JXG.supportsSVG()) {
             JXG.Options.renderer = 'svg';
+        } else if (JXG.supportsCanvas()) {
+            JXG.Options.renderer = 'canvas';
         } else if (JXG.supportsVML()) {
             JXG.Options.renderer = 'vml';
             // Ok, this is some real magic going on here. IE/VML always was so
@@ -83,15 +85,17 @@ JXG.JSXGraph = {
             }
             document.onmousemove = MouseMove;
         } else {
-            JXG.Options.renderer = 'canvas';
+            JXG.Options.renderer = 'no';
         }
 
         // Load the source files for the renderer
-        arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
-        for (i = 0; i < arr.length; i++) ( function(include) {
-            JXG.require(JXG.requirePath + include + '.js');
-        } )(arr[i]);
-
+        if (JXG.rendererFiles[JXG.Options.renderer]) {
+            arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
+            for (i = 0; i < arr.length; i++) ( function(include) {
+                JXG.require(JXG.requirePath + include + '.js');
+            } )(arr[i]);
+        }
+        
         return JXG.Options.renderer;
     })(),
 
@@ -164,8 +168,10 @@ JXG.JSXGraph = {
             renderer = new JXG.VMLRenderer(document.getElementById(box));
         } else if(JXG.Options.renderer == 'silverlight') {
             renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
-        } else {
+        } else if (JXG.Options.renderer == 'canvas') {
             renderer = new JXG.CanvasRenderer(document.getElementById(box));
+        } else {
+            renderer = new JXG.NoRenderer();
         }
 
         // create the board
