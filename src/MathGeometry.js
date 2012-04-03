@@ -328,17 +328,18 @@ JXG.extend(JXG.Math.Geometry, {
         var A = point1.coords.usrCoords,
             B = point2.coords.usrCoords,
             C = point3.coords.usrCoords,
-            u, v, den, x, y;
+            u, v, m1, m2;
+            //u, v, den, m1, y, eps = JXG.Math.eps;
 
         if (!JXG.exists(board))
             board = point1.board;
-
+/*
         u = ((A[1] - B[1]) * (A[1] + B[1]) + (A[2] - B[2]) * (A[2] + B[2])) * 0.5;
         v = ((B[1] - C[1]) * (B[1] + C[1]) + (B[2] - C[2]) * (B[2] + C[2])) * 0.5;
         den = (A[1] - B[1]) * (B[2] - C[2]) - (B[1] - C[1]) * (A[2] - B[2]);
 
-        if (Math.abs(den) < JXG.Math.eps) {
-            den = JXG.Math.eps;
+        if (Math.abs(den) < eps) {
+            den = eps;
         	return new JXG.Coords(JXG.COORDS_BY_USER, [Infinity, Infinity], board);
         }
 
@@ -346,6 +347,15 @@ JXG.extend(JXG.Math.Geometry, {
         y = (v * (A[1] - B[1]) - u * (B[1] - C[1])) / den;
 
         return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+*/
+        u = [B[0]-A[0], -B[2]+A[2], B[1]-A[1]];
+        v = [(A[0]+B[0])*0.5, (A[1]+B[1])*0.5, (A[2]+B[2])*0.5];
+        m1 = JXG.Math.crossProduct(u, v);
+        u = [C[0]-B[0], -C[2]+B[2], C[1]-B[1]];
+        v = [(B[0]+C[0])*0.5, (B[1]+C[1])*0.5, (B[2]+C[2])*0.5];
+        m2 = JXG.Math.crossProduct(u, v);
+
+        return new JXG.Coords(JXG.COORDS_BY_USER, JXG.Math.crossProduct(m1, m2), board);
     },
 
     /**
