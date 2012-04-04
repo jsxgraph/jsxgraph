@@ -2891,6 +2891,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return this;
     },
+    
+    migratePoint: function(src, dest) {
+        var child, childId;
+        for (childId in src.childElements) {
+            child = src.childElements[childId];
+            delete src.childElements[childId];
+            dest.addChild(child);
+            
+            if (child.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+                if      (child.center == src) { child.center = dest; }
+                else if (child.point2 == src) { child.point2 = dest; }
+            } else if (child.elementClass == JXG.OBJECT_CLASS_LINE) {
+                if      (child.point1 == src) { child.point1 = dest; }
+                else if (child.point2 == src) { child.point2 = dest; }
+            }
+            child.prepareUpdate().update().updateRenderer();
+            src.child
+        }
+        this.removeObject(src);
+    },
 
     /**
      * Initializes color blindness simulation.

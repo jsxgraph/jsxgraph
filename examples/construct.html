@@ -70,6 +70,10 @@ D.onPolygon = true;
 */
 brd.unsuspendUpdate();
 
+brd.migratePoint(A, C);
+
+
+
 /*
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 brd.addHook(function() {
@@ -80,6 +84,7 @@ brd.addHook(function() {
   }, 'update');
 */	
 
+/*
 
 myPoint = function(board, x, y) {
     var le = 0.2,
@@ -106,6 +111,7 @@ myPoint = function(board, x, y) {
 }
     
 p = myPoint(brd, 2, 1);
+*/
 
 /*
 var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
@@ -202,12 +208,14 @@ t.setProperty({strokeColor:'black'});
 t.fd(3);
 
 */
+
+/*
 var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;}], 
     {cssClass:'fat', highlightCssClass:'fatHL',
      fontSize:32, 
      strokeColor:'red',
      highlightStrokeColor:'blue'});
-
+*/
 
 //brd.update();
 
