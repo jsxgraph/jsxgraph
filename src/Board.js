@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011
+    Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2891,25 +2891,42 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return this;
     },
-    
+
+    /**
+     * Migrate the dependency properties of the point src 
+     * to the point dest and  delete the point src.
+     * For example, a circle around the point src 
+     * receives the new center dest. The old center src
+     * will be deleted.
+     * @param{Point} src Original point which will be deleted
+     * @param{Point} dest New point with the dependencies of src.
+     * @returns {JXG.Board} Reference to the board
+     */     
     migratePoint: function(src, dest) {
-        var child, childId;
+        var child, childId, prop;
+        
+        src = JXG.getRef(this, src);
+        dest = JXG.getRef(this, dest);
+        
         for (childId in src.childElements) {
             child = src.childElements[childId];
-            delete src.childElements[childId];
-            dest.addChild(child);
-            
-            if (child.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-                if      (child.center == src) { child.center = dest; }
-                else if (child.point2 == src) { child.point2 = dest; }
-            } else if (child.elementClass == JXG.OBJECT_CLASS_LINE) {
-                if      (child.point1 == src) { child.point1 = dest; }
-                else if (child.point2 == src) { child.point2 = dest; }
+
+            found = false;
+            for  (prop in child) {
+                if (child[prop] ===  src) {
+                    child[prop] = dest;
+                    found = true;
+                }
             }
-            child.prepareUpdate().update().updateRenderer();
-            src.child
+            if (found) {
+                delete src.childElements[childId];
+            }
+            dest.addChild(child);          
+            //child.prepareUpdate().update().updateRenderer();
         }
         this.removeObject(src);
+        this.update();
+        return this;
     },
 
     /**
