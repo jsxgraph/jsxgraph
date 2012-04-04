@@ -54,6 +54,7 @@ Fixed:
 repere/repereortho : 
     num1 (ok) but num2, num3, num4, num5, num10 & num20 not supported : to skip ticks label and only view some (step 2,3,4,5,10,20)
 	petit moyen grand : font size for ticks label
+	fixed : true sinon déplacement
 fond (for image placement) :
     xpix,ypix not supported : to associate instead of top-left point another point in the picture to jsx coordinates for placement
 angles units : how to set degrees ?
@@ -1966,8 +1967,8 @@ M=pointsur(e,s);
 		this.board.options.grid.gridY=parents[4];
 		if(att["axis"]) {
 			opt = [	
-				{strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
-				{insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
+				{fixed:true,strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
+				{fixed:true,insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
 			];
 	        l1=this.board.create('line', [[0, 0], [1, 0]], opt[0]);
 			l1.setArrow(false,true);
@@ -1988,8 +1989,8 @@ M=pointsur(e,s);
 		this.board.options.grid.gridY=parents[5];
 		if(att["axis"]) {
 			opt = [	
-				{strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
-				{insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
+				{fixed:true,strokeColor:att["strokeColor"],highlightStrokeColor:att["strokeColor"],strokeOpacity:0.6,highlightStrokeOpacity:0.6},
+				{fixed:true,insertTicks:false, drawZero:true, drawLabels:true, minorTicks:0,label:{Color:att["strokeColor"]}}
 			];
 	        l1=this.board.create('line', [[0, 0], [1, 0]], opt[0] );
 			l1.setArrow(false,true);
