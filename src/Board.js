@@ -1506,9 +1506,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
 
-            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+//            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) { // not necessary!!!
                 this.update();
-            }
+//            }
 
             this.touches.length = 0;
         }
@@ -1605,7 +1605,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.updateQuality = this.BOARD_QUALITY_HIGH;
         this.mode = this.BOARD_MODE_NONE;
 
-        if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) {
+//        if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) { // not necessary !!!
             this.update();
 
             for (i = 0; i < this.downObjects.length; i++) {
@@ -1613,7 +1613,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
             this.downObjects.length = 0;
-        }
+//        }
 
         // release dragged mouse object
         this.mouse = null;
