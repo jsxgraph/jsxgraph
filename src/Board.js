@@ -902,9 +902,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
         drag.triggerEventHandlers('drag');
         o.targets[0].Xprev = np1c.scrCoords[1];
+        o.targets[0].Xstart = np1c.scrCoords[1];
         o.targets[0].Yprev = np1c.scrCoords[2];
+        o.targets[0].Ystart = np1c.scrCoords[2];
         o.targets[1].Xprev = np2c.scrCoords[1];
+        o.targets[1].Xstart = np2c.scrCoords[1];
         o.targets[1].Yprev = np2c.scrCoords[2];
+        o.targets[1].Ystart = np2c.scrCoords[2];
     },
 
     highlightElements: function (x, y) {
