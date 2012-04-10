@@ -901,14 +901,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             drag.highlight();
         }
         drag.triggerEventHandlers('drag');
+
         o.targets[0].Xprev = np1c.scrCoords[1];
-        o.targets[0].Xstart = np1c.scrCoords[1];
         o.targets[0].Yprev = np1c.scrCoords[2];
-        o.targets[0].Ystart = np1c.scrCoords[2];
-        o.targets[1].Xprev = np2c.scrCoords[1];
-        o.targets[1].Xstart = np2c.scrCoords[1];
-        o.targets[1].Yprev = np2c.scrCoords[2];
-        o.targets[1].Ystart = np2c.scrCoords[2];
+		o.targets[1].Xprev = np2c.scrCoords[1];
+		o.targets[1].Yprev = np2c.scrCoords[2];
+
+		// needed for multitouch logging in the GUI
+		o.targets[0].Zstart = np1c.usrCoords[0];
+		o.targets[0].Xstart = np1c.usrCoords[1];
+        o.targets[0].Ystart = np1c.usrCoords[2];
+		o.targets[1].Zstart = np2c.usrCoords[0];
+		o.targets[1].Xstart = np2c.usrCoords[1];
+        o.targets[1].Ystart = np2c.usrCoords[2];
     },
 
     highlightElements: function (x, y) {
