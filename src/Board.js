@@ -2800,10 +2800,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     addAnimation: function (element) {
+        var that = this;
         this.animationObjects[element.id] = element;
 
         if (!this.animationIntervalCode) {
-            this.animationIntervalCode = setInterval('JXG.JSXGraph.boards[\'' + this.id + '\'].animate();', 35);
+            this.animationIntervalCode = setInterval(function () {
+                JXG.JSXGraph.boards[that.id].animate();
+            }, 35);
         }
 
         return this;
