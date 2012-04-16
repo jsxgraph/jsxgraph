@@ -191,7 +191,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     update: function() {
-        var funps, d1, d2, d, dnew, x, y, drag1, drag2;
+        var funps;
 
         if (!this.needsUpdate) { return this; }
         
@@ -237,8 +237,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @private
      */
     updateSegmentFixedLength: function() {
+        var d, dnew, d1, d2, drag1, drag2, x, y;
         // 
         if (!this.hasFixedLength) { return this; }
+
         // Compute the actual length of the segment
         d = this.point1.Dist(this.point2);
         // Determine the length the segment ought to have
