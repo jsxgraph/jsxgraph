@@ -906,14 +906,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         o.targets[0].Yprev = np1c.scrCoords[2];
 		o.targets[1].Xprev = np2c.scrCoords[1];
 		o.targets[1].Yprev = np2c.scrCoords[2];
-
-		// needed for multitouch logging in the GUI
-		o.targets[0].Zstart = np1c.usrCoords[0];
-		o.targets[0].Xstart = np1c.usrCoords[1];
-        o.targets[0].Ystart = np1c.usrCoords[2];
-		o.targets[1].Zstart = np2c.usrCoords[0];
-		o.targets[1].Xstart = np2c.usrCoords[1];
-        o.targets[1].Ystart = np2c.usrCoords[2];
     },
 
     highlightElements: function (x, y) {
@@ -1105,7 +1097,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
         return this;
     },
-
+/*
     gestureStartListener: function (evt) {
         if (!this.options.zoom.wheel) {
             return true;
@@ -1123,7 +1115,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return false;
     },
-
+*/
     gestureChangeListener: function (evt) {
         var c;
 
@@ -1146,7 +1138,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return false;
     },
-
+/*
     gestureEndListener: function (evt) {
         if (!this.options.zoom.wheel) {
             return true;
@@ -1160,7 +1152,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return false;
     },
-
+*/
     /**
      * Touch-Events
      */
@@ -1525,7 +1517,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < this.downObjects.length; i++) {
             found = false;
             for (j = 0; j < this.touches.length; j++) {
-                if (this.touches.obj.id == this.downObjects[i].id) {
+                if (this.touches[j].obj.id == this.downObjects[i].id) {
                     found = true;
                 }
             }
