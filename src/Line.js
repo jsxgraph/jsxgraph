@@ -208,7 +208,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     if (JXG.isPoint(funps)) {
                         this.point1 = funps;
                     } else if (funps && funps.length && funps.length === 2) {
-                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
+                        this.point1.setPositionDirectly(JXG.COORDS_BY_USER, funps);
                     }
                 }
                 if (typeof this.funp2 === 'function') {
@@ -216,7 +216,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     if (JXG.isPoint(funps)) {
                         this.point2 = funps;
                     } else if (funps && funps.length && funps.length === 2) {
-                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps[0], funps[1]);
+                        this.point2.setPositionDirectly(JXG.COORDS_BY_USER, funps);
                     }
                 }
             }
@@ -264,15 +264,15 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 if ((d1>d2 && drag2) || 
                     (d1<=d2 && drag2 && !drag1)) {  
                     this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
-                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d
+                        [this.point1.X() + (this.point2.X()-this.point1.X())*dnew/d,
+                        this.point1.Y() + (this.point2.Y()-this.point1.Y())*dnew/d]
                         );
                     this.point2.prepareUpdate().updateRenderer();
                 } else if ((d1<=d2 && drag1) || 
                            (d1>d2 && drag1 && !drag2)) {  
                     this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
-                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d
+                        [this.point2.X() + (this.point1.X()-this.point2.X())*dnew/d,
+                        this.point2.Y() + (this.point1.Y()-this.point2.Y())*dnew/d]
                         );
                     this.point1.prepareUpdate().updateRenderer();
                 }
@@ -284,14 +284,14 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 d = Math.sqrt(x*x+y*y);
                 if (drag2) {  
                     this.point2.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point1.X() + x*dnew/d,
-                        this.point1.Y() + y*dnew/d
+                        [this.point1.X() + x*dnew/d,
+                        this.point1.Y() + y*dnew/d]
                         );
                     this.point2.prepareUpdate().updateRenderer();
                 } else if (drag1) {
                     this.point1.setPositionDirectly(JXG.COORDS_BY_USER, 
-                        this.point2.X() + x*dnew/d,
-                        this.point2.Y() + y*dnew/d
+                        [this.point2.X() + x*dnew/d,
+                        this.point2.Y() + y*dnew/d]
                         );
                     this.point1.prepareUpdate().updateRenderer();
                 }
@@ -589,24 +589,26 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * TODO DESCRIPTION.
-     * @param {null} method ignored
-     * @param {Number} x
-     * @param {Number} y
+     * Apply a translation by <tt>tv = (x, y)</tt> to the line.
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} tv (x, y)
      * @returns {JXG.Line} Reference to this line object.
      */
-    setPosition: function (method, x, y) {
-        var t = this.board.create('transform', [x, y], {type:'translate'});
+    setPosition: function (method, tv) {
+        var t;
+
+        tv = new JXG.Coords(method, tv, this.board);
+        t = this.board.create('transform', tv.usrCoords.slice(1), {type:'translate'});
         
-        if (this.point1.transformations.length>0 && this.point1.transformations[this.point1.transformations.length-1].isNumericMatrix) {
-            this.point1.transformations[this.point1.transformations.length-1].melt(t);
+        if (this.point1.transformations.length > 0 && this.point1.transformations[this.point1.transformations.length - 1].isNumericMatrix) {
+            this.point1.transformations[this.point1.transformations.length - 1].melt(t);
         } else {
-            this.point1.addTransform(this.point1,t);
+            this.point1.addTransform(this.point1, t);
         }
-        if (this.point2.transformations.length>0 && this.point2.transformations[this.point2.transformations.length-1].isNumericMatrix) {
-            this.point2.transformations[this.point2.transformations.length-1].melt(t);
+        if (this.point2.transformations.length > 0 && this.point2.transformations[this.point2.transformations.length - 1].isNumericMatrix) {
+            this.point2.transformations[this.point2.transformations.length - 1].melt(t);
         } else {
-            this.point2.addTransform(this.point2,t);
+            this.point2.addTransform(this.point2, t);
         }
         
         return this;
@@ -615,21 +617,23 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     /**
      * Sets x and y coordinate and calls the circle's update() method.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Number} x x coordinate in screen/user units
-     * @param {Number} y y coordinate in screen/user units
-     * @param {Number} oldx previous x coordinate in screen/user units
-     * @param {Number} oldy previous y coordinate in screen/user units
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
+     * @returns {JXG.Line}
      */
-    setPositionDirectly: function (method, x, y, oldx, oldy) {
-        var dx = x - oldx, 
-            dy = y - oldy;
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var dc, dx, dy,
+            c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board);
+
+        dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
         if (!this.point1.draggable() || !this.point2.draggable()) {
             return this;
         }
-        
-        dx /= this.board.unitX;
-        dy /= -this.board.unitY;
+
+        dx = dc[1];
+        dy = dc[2];
         var t = this.board.create('transform', [dx, dy, 0], {type:'translate'});
         t.applyOnce([this.point1, this.point2] );
         

@@ -787,7 +787,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
             if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) {
-                 drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords[1], newPos.scrCoords[2], o.targets[0].Xprev, o.targets[0].Yprev);
+                 drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
             }
             // Remember the actual position for the next move event. Then we are able to
             // compute the difference vector.
@@ -798,7 +798,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             oldCoords = drag.coords;
 
             // First the new position of the glider is set to the new mouse position
-            drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords[1], newPos.usrCoords[2]);
+            drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords.slice(1));
 
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
             if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
@@ -825,8 +825,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Moves a line in multitouch mode.
-     * @param {array} p1 x,y coordinates of first touch
-     * @param {array} p2 x,y coordinates of second touch
+     * @param {Array} p1 x,y coordinates of first touch
+     * @param {Array} p2 x,y coordinates of second touch
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      */
     moveLine: function(p1, p2, o) {
@@ -1924,13 +1924,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             switch (property) {
                 case 'x':
                     plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,'+(right) +',y);\n';
+                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,['+(right) +',y]);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
                     plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,x,'+(right) +');\n';
+                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[x,'+(right) +']);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
                     break;
                 case 'visible':
@@ -2851,8 +2851,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if ((!JXG.exists(newCoords)) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
                     delete(o.animationPath);
                 } else {
-                    //o.setPositionByTransform(JXG.COORDS_BY_USER, newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]);
-                    o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords[0], newCoords[1]);
+                    //o.setPositionByTransform(JXG.COORDS_BY_USER, [newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]]);
+                    o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords);
                     //this.update(o);  // May slow down the animation, but is important
                     // for dependent glider objects (see tangram.html).
                     // Otherwise the intended projection may be incorrect.

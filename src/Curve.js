@@ -543,13 +543,15 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     /**
      * Translates the object by <tt>(x, y)</tt>.
-     * @param {null} method ignored
-     * @param {Number} x
-     * @param {Number} y
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords
      * @returns {JXG.Curve} Reference to the curve object.
      */
-    setPosition: function (method, x, y) {
-        var t = this.board.create('transform',[x,y],{type:'translate'});
+    setPosition: function (method, coords) {
+        var t;
+
+        coords = new JXG.Coords(method, coords, this.board);
+        t = this.board.create('transform', coords.usrCoords.slice(1),{type:'translate'});
         
         if (this.transformations.length > 0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
             this.transformations[this.transformations.length-1].melt(t);
@@ -1109,6 +1111,7 @@ JXG.createTracecurve = function(board, parents, attributes) {
     attr['curvetype'] = 'plot';
   
     c = board.create('curve',[[0],[0]], attr);
+
     c.updateDataArray = function(){
         var i, step, t, el, pEl, x, y, v,
             le = attr.numberpoints, 
@@ -1132,7 +1135,7 @@ JXG.createTracecurve = function(board, parents, attributes) {
             t = mi + i*step;
             x = slideObj.X(t)/slideObj.Z(t);
             y = slideObj.Y(t)/slideObj.Z(t);
-            glider.setPositionDirectly(JXG.COORDS_BY_USER, x, y);    // Position the glider
+            glider.setPositionDirectly(JXG.COORDS_BY_USER, [x, y]);    // Position the glider
             from = false;
             for (el in this.board.objects) {                         // Update all elements from the glider up to the trace element
                 pEl = this.board.objects[el];

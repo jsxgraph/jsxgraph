@@ -133,26 +133,14 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
     /**
      * Sets x and y coordinate of the image.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {number} y optional: previous y coordinate in screen/user units (ignored)
+     * @param {Array} coords coordinate in screen/user units
+     * @returns {JXG.Image}
      */
-    setPositionDirectly: function (method, x, y, oldx, oldy) {
-        var newCoords, dx, dy;
+    setPositionDirectly: function (method, coords) {
+        var coords = new JXG.Coords(method, coords, this.board);
             
-        if (method == JXG.COORDS_BY_SCREEN) {
-            newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-            x = newCoords.usrCoords[1];
-            y = newCoords.usrCoords[2];
-        }
-        //dx = x-this.coords.usrCoords[1];
-        //dy = x-this.coords.usrCoords[2];
-
-        this.X = JXG.createFunction(x,this.board,'');
-        this.Y = JXG.createFunction(y,this.board,'');
-        //this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
-        //this.prepareUpdate().update();
+        this.X = JXG.createFunction(coords.usrCoords[1], this.board, '');
+        this.Y = JXG.createFunction(coords.usrCoords[2], this.board, '');
 
         return this;
     }

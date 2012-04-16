@@ -167,9 +167,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 // Some shortcuts
 JXG.Point.prototype.setPositionX = function (method, x) {
     var y = (method==JXG.COORDS_BY_USER)?this.coords.usrCoords[2]:this.coords.scrCoords[2];
-    this.setPosition(method,x,y);
+    this.setPosition(method,[x,y]);
 };
 JXG.Point.prototype.setPositionY = function (method, y) {
     var x = (method==JXG.COORDS_BY_USER)?this.coords.usrCoords[1]:this.coords.scrCoords[1];
-    this.setPosition(method,x,y);
+    this.setPosition(method,[x,y]);
 };

@@ -542,12 +542,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      **/
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
-            found, i, el, projCoords, d = 0.0;
+            i, el, projCoords, d = 0.0;
             
         if (this.visProp.attractordistance==0.0) {
             return;
         }
-        found = false;
+
         for (i=0; i<len; i++) {
             el = JXG.getRef(this.board, this.visProp.attractors[i]);
             if (!JXG.exists(el) || el===this) {
@@ -578,28 +578,21 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
         }
 
-        /*
-        if (found==false) {
-            this.type = JXG.OBJECT_TYPE_POINT;
-        }
-        */
         return this;
     },
     
     /**
-     * Sets x and y coordinate and calls the point's update() method.
+     * Sets coordinates and calls the point's update() method.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Number} x x coordinate in screen/user units
-     * @param {Number} y y coordinate in screen/user units
-     * @param {Number} x optional: previous x coordinate in screen/user units (ignored)
-     * @param {Number} y optional: previous y coordinate in screen/user units (ignored)
+     * @param {Array} coords coordinates <tt>(z, x, y)</tt> in screen/user units
+     * @returns {JXG.Point}
      */
-    setPositionDirectly: function (method, x, y) {
-        var i, dx, dy, el, p,
+    setPositionDirectly: function (method, coords) {
+        var i, dx, dy, dz, el, p,
             oldCoords = this.coords,
             newCoords;
 
-        this.coords = new JXG.Coords(method, [x, y], this.board);
+        this.coords = new JXG.Coords(method, coords, this.board);
         
         this.handleSnapToGrid();
         this.handleSnapToPoints();
@@ -608,28 +601,33 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if(this.group.length != 0) {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
-            dx = this.coords.usrCoords[1]-oldCoords.usrCoords[1];
-            dy = this.coords.usrCoords[2]-oldCoords.usrCoords[2];
-            for (i=0;i<this.group.length;i++) {
+            dx = this.coords.usrCoords[1] - oldCoords.usrCoords[1];
+            dy = this.coords.usrCoords[2] - oldCoords.usrCoords[2];
+            dz = this.coords.usrCoords[0] = oldCoords.usrCoords[0];
+            for (i = 0; i < this.group.length; i++) {
                 for (el in this.group[i].objects) {
                     p = this.group[i].objects[el];
                     p.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                        [p.initialCoords.usrCoords[1]+dx,p.initialCoords.usrCoords[2]+dy], 
+                        [p.initialCoords.usrCoords[0]+dz, p.initialCoords.usrCoords[1]+dx,p.initialCoords.usrCoords[2]+dy],
                         this.board);
                 }
             }
 
-            this.group[this.group.length-1].dX = this.coords.scrCoords[1] - oldCoords.scrCoords[1];
-            this.group[this.group.length-1].dY = this.coords.scrCoords[2] - oldCoords.scrCoords[2];
+            this.group[this.group.length-1].dX = dx;
+            this.group[this.group.length-1].dY = dy;
+            this.group[this.group.length-1].dZ = dz;
             this.group[this.group.length-1].update(this);
         } else {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
-            for (i=this.transformations.length-1;i>=0;i--) {
-                if (method == JXG.COORDS_BY_SCREEN) {
-                    newCoords = (new JXG.Coords(method, [x, y], this.board)).usrCoords;                
+            for (i = this.transformations.length - 1; i >= 0; i--) {
+                if (method === JXG.COORDS_BY_SCREEN) {
+                    newCoords = (new JXG.Coords(method, coords, this.board)).usrCoords;
                 } else {
-                    newCoords = [1,x,y];
+                    if (coords.length === 2) {
+                        coords = [1].concat(coords);
+                    }
+                    newCoords = coords;
                 }
                 this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
                         JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords), 
@@ -642,13 +640,16 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * TODO
+     * Translates the point by <tt>tv = (x, y)</tt>.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Number} x x coordinate in screen/user units
-     * @param {Number} y y coordinate in screen/user units
+     * @param {Number} tv (x, y)
+     * @returns {JXG.Point}
      */
-    setPositionByTransform: function (method, x, y) {
-        var t = this.board.create('transform', [x,y], {type:'translate'});
+    setPositionByTransform: function (method, tv) {
+        var t;
+
+        tv = new JXG.Coords(method, tv, this.board);
+        t = this.board.create('transform', tv.usrCoords.slice(1), {type:'translate'});
 
         if (this.transformations.length > 0 && this.transformations[this.transformations.length - 1].isNumericMatrix) {
             this.transformations[this.transformations.length - 1].melt(t);
@@ -663,14 +664,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     },
 
     /**
-     * Sets x and y coordinate and calls the point's update() method.
+     * Sets coordinates and calls the point's update() method.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Number} x x coordinate in screen/user units
-     * @param {Number} y y coordinate in screen/user units
+     * @param {Array} coords coordinates in screen/user units
+     * @returns {JXG.Point}
      */
-    setPosition: function (method, x, y) { 
-        this.setPositionDirectly(method, x, y);
-        return this;
+    setPosition: function (method, coords) {
+        return this.setPositionDirectly(method, coords);
     },
 
     /**
@@ -930,7 +930,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
             time = time || 0;
             if (time === 0) {
-                this.setPosition(JXG.COORDS_BY_USER, p[p.length - 1].X(), p[p.length - 1].Y());
+                this.setPosition(JXG.COORDS_BY_USER, [p[p.length - 1].X(), p[p.length - 1].Y()]);
                 return this.board.update(this);
             }
 
@@ -964,8 +964,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @see #animate
      */
     moveTo: function(where, time, options) {
-        if (typeof time == 'undefined' || time == 0) {
-            this.setPosition(JXG.COORDS_BY_USER, where[0], where[1]);
+        where = new JXG.Coords(JXG.COORDS_BY_USER, where, this.board);
+
+        if (typeof time == 'undefined' || time == 0 || (Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > JXG.Math.eps)) {
+            this.setPosition(JXG.COORDS_BY_USER, where.usrCoords);
             return this.board.update(this);
         }
 
@@ -976,8 +978,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     		coords = new Array(steps+1),
     		X = this.coords.usrCoords[1],
     		Y = this.coords.usrCoords[2],
-    		dX = (where[0] - X),
-    		dY = (where[1] - Y),
+    		dX = (where.usrCoords[1] - X),
+    		dY = (where.usrCoords[2] - Y),
     	    i,
             stepFun = function (i) {
                 if (options.effect && options.effect == '<>') {
@@ -986,11 +988,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 return i/steps;
             };
 
-        if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps)
+        if(Math.abs(dX) < JXG.Math.eps && Math.abs(dY) < JXG.Math.eps) {
             return this;
-    	
+        }
+
     	for(i=steps; i>=0; i--) {
-    		coords[steps-i] = [X + dX * stepFun(i), Y+ dY * stepFun(i)];
+    		coords[steps-i] = [where.usrCoords[0], X + dX * stepFun(i), Y+ dY * stepFun(i)];
     	}
 
     	this.animationPath = coords;
@@ -1038,8 +1041,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         for (j = 0; j < options.repeat; j++) {
             for(i = steps; i >= 0; i--) {
-                coords[j*(steps+1) + steps-i] = [X + dX * stepFun(i),
-                    Y+ dY * stepFun(i)];
+                coords[j*(steps+1) + steps-i] = [where[0], X + dX * stepFun(i), Y+ dY * stepFun(i)];
             }
         }
         this.animationPath = coords;

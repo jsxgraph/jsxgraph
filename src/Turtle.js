@@ -265,8 +265,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
             this.pos = [x,y];
         }
         if (!this.turtleIsHidden) {
-            this.turtle.setPositionDirectly(JXG.COORDS_BY_USER,x,y);
-            this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER,x,y+this.arrowLen);
+            this.turtle.setPositionDirectly(JXG.COORDS_BY_USER, [x, y]);
+            this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER, [x, y + this.arrowLen]);
             var t = this.board.create('transform', 
                     [-(this.dir-90)*Math.PI/180.0,this.turtle], {type:'rotate'});
             t.applyOnce(this.turtle2);

@@ -389,7 +389,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                 //o.XEval = function() { return this.coords.usrCoords[1]; };
                 //o.YEval = function() { return this.coords.usrCoords[2]; };
-                o.setPosition(JXG.COORDS_BY_USER, x, y);
+                o.setPosition(JXG.COORDS_BY_USER, [x, y]);
             } else if (o.isDraggable && (typeof value === 'function' || typeof value === 'string')) {
                 x = what === 'x' ? value : o.coords.usrCoords[1];
                 y = what === 'y' ? value : o.coords.usrCoords[2];
@@ -707,11 +707,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (!JXG.exists(e)) {
-            this._error(e + ' is not an object.');
+            this._error(e + ' is not an object');
         }
 
         if (!JXG.exists(e[v])) {
-            this._error('unknown property ' + v + '.');
+            this._error('unknown property ' + v);
         }
 
         if (compile && typeof e[v] === 'function') {
@@ -740,7 +740,6 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             return ret;
 
         this.line = node.line;
-
 
         switch (node.type) {
             case 'node_op':
@@ -797,12 +796,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         } while (this.execute(node.children[1]));
                         break;
                     case 'op_for':
-                        i = new Date().getTime();
                         for (this.execute(node.children[0]); this.execute(node.children[1]); this.execute(node.children[2])) {
-                            if (new Date().getTime() - i > this.maxRuntime || this.cancel) {
-                                this._error('for: max runtime exceeded');
-                                break;
-                            }
                             this.execute(node.children[3]);
                         }
                         break;
@@ -992,7 +986,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         fun = this.execute(node.children[0]);
 
                         // determine the scope the function wants to run in
-                        if (fun.sc) {
+                        if (fun && fun.sc) {
                             sc = fun.sc;
                         } else {
                             sc = this;
@@ -1025,7 +1019,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = this.resolveProperty(e, v, false);
 
                         // set the scope, in case this is a method the user wants to call
-                        ret.sc = e;
+                        if (JXG.exists(ret)) {
+                            ret.sc = e;
+                        }
+
                         break;
                     case 'op_lhs':
                         v = node.children[0];
@@ -1523,7 +1520,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _debug: function (log) {
         if(typeof console !== "undefined") {
             console.log(log);
-        } else if(document.getElementById('debug') !== null) {
+        } else if(document && document.getElementById('debug') !== null) {
             document.getElementById('debug').innerHTML += log + '<br />';
         }
     },
@@ -1545,7 +1542,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     _warn: function (msg) {
         if(typeof console !== "undefined") {
             console.log('Warning(' + this.line + '): ' + msg);
-        } else if(document.getElementById(this.warnLog) !== null) {
+        } else if(document && document.getElementById(this.warnLog) !== null) {
             document.getElementById(this.warnLog).innerHTML += 'Warning(' + this.line + '): ' + msg + '<br />';
         }
     }
@@ -1598,732 +1595,736 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
 JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     /**
+     * JS/CC interna
+     * @type Boolean
+     * @private
+     */
+    _dbg_withtrace: false,
+
+    /**
+     * JS/CC interna
+     * @type String
+     * @private
+     */
+    _dbg_string: '',
+
+    /**
+     * JS/CC interna
+     * @param {String} text
+     * @private
+     */
+    _dbg_print: function (text) {
+        this._dbg_string += text + "\n";
+    },
+
+    /**
      * Internal lexer method.
      * @private
      */
-    _lex: function (PCB) {
-        var state,
+    _lex: function (info) {
+        var state = 0,
             match = -1,
             match_pos = 0,
             start = 0,
-            pos,
-            chr;
+            pos = info.offset + 1;
 
-        while (1) {
+        do {
+            pos--;
             state = 0;
-            match = -1;
-            match_pos = 0;
-            start = 0;
-            pos = PCB.offset + 1 + ( match_pos - start );
+            match = -2;
+            start = pos;
+
+            if (info.src.length <= start) {
+                return 65;
+            }
 
             do {
-
-                pos--;
-                state = 0;
-                match = -2;
-                start = pos;
-
-                if( PCB.src.length <= start )
-                    return 66;
-
-                do {
-                    chr = PCB.src.charCodeAt( pos );
 
 switch( state )
 {
 	case 0:
-		if( ( chr >= 9 && chr <= 10 ) || chr == 13 || chr == 32 ) state = 1;
-		else if( chr == 33 ) state = 2;
-		else if( chr == 35 ) state = 3;
-		else if( chr == 36 || ( chr >= 65 && chr <= 67 ) || ( chr >= 71 && chr <= 72 ) || ( chr >= 74 && chr <= 81 ) || chr == 83 || chr == 86 || ( chr >= 88 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 99 ) || ( chr >= 103 && chr <= 104 ) || ( chr >= 106 && chr <= 113 ) || chr == 115 || chr == 118 || ( chr >= 120 && chr <= 122 ) ) state = 4;
-		else if( chr == 37 ) state = 5;
-		else if( chr == 40 ) state = 6;
-		else if( chr == 41 ) state = 7;
-		else if( chr == 42 ) state = 8;
-		else if( chr == 43 ) state = 9;
-		else if( chr == 44 ) state = 10;
-		else if( chr == 45 ) state = 11;
-		else if( chr == 46 ) state = 12;
-		else if( chr == 47 ) state = 13;
-		else if( ( chr >= 48 && chr <= 57 ) ) state = 14;
-		else if( chr == 58 ) state = 15;
-		else if( chr == 59 ) state = 16;
-		else if( chr == 60 ) state = 17;
-		else if( chr == 61 ) state = 18;
-		else if( chr == 62 ) state = 19;
-		else if( chr == 91 ) state = 20;
-		else if( chr == 93 ) state = 21;
-		else if( chr == 94 ) state = 22;
-		else if( chr == 123 ) state = 23;
-		else if( chr == 124 ) state = 24;
-		else if( chr == 125 ) state = 25;
-		else if( chr == 38 ) state = 48;
-		else if( chr == 68 || chr == 100 ) state = 49;
-		else if( chr == 39 ) state = 51;
-		else if( chr == 73 || chr == 105 ) state = 52;
-		else if( chr == 126 ) state = 53;
-		else if( chr == 70 || chr == 102 ) state = 64;
-		else if( chr == 85 || chr == 117 ) state = 65;
-		else if( chr == 69 || chr == 101 ) state = 73;
-		else if( chr == 84 || chr == 116 ) state = 74;
-		else if( chr == 87 || chr == 119 ) state = 80;
-		else if( chr == 82 || chr == 114 ) state = 84;
+		if( ( info.src.charCodeAt( pos ) >= 9 && info.src.charCodeAt( pos ) <= 10 ) || info.src.charCodeAt( pos ) == 13 || info.src.charCodeAt( pos ) == 32 ) state = 1;
+		else if( info.src.charCodeAt( pos ) == 33 ) state = 2;
+		else if( info.src.charCodeAt( pos ) == 35 ) state = 3;
+		else if( info.src.charCodeAt( pos ) == 36 || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 67 ) || ( info.src.charCodeAt( pos ) >= 71 && info.src.charCodeAt( pos ) <= 72 ) || ( info.src.charCodeAt( pos ) >= 74 && info.src.charCodeAt( pos ) <= 81 ) || info.src.charCodeAt( pos ) == 83 || info.src.charCodeAt( pos ) == 86 || ( info.src.charCodeAt( pos ) >= 88 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 99 ) || ( info.src.charCodeAt( pos ) >= 103 && info.src.charCodeAt( pos ) <= 104 ) || ( info.src.charCodeAt( pos ) >= 106 && info.src.charCodeAt( pos ) <= 113 ) || info.src.charCodeAt( pos ) == 115 || info.src.charCodeAt( pos ) == 118 || ( info.src.charCodeAt( pos ) >= 120 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 37 ) state = 5;
+		else if( info.src.charCodeAt( pos ) == 40 ) state = 6;
+		else if( info.src.charCodeAt( pos ) == 41 ) state = 7;
+		else if( info.src.charCodeAt( pos ) == 42 ) state = 8;
+		else if( info.src.charCodeAt( pos ) == 43 ) state = 9;
+		else if( info.src.charCodeAt( pos ) == 44 ) state = 10;
+		else if( info.src.charCodeAt( pos ) == 45 ) state = 11;
+		else if( info.src.charCodeAt( pos ) == 46 ) state = 12;
+		else if( info.src.charCodeAt( pos ) == 47 ) state = 13;
+		else if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 14;
+		else if( info.src.charCodeAt( pos ) == 58 ) state = 15;
+		else if( info.src.charCodeAt( pos ) == 59 ) state = 16;
+		else if( info.src.charCodeAt( pos ) == 60 ) state = 17;
+		else if( info.src.charCodeAt( pos ) == 61 ) state = 18;
+		else if( info.src.charCodeAt( pos ) == 62 ) state = 19;
+		else if( info.src.charCodeAt( pos ) == 91 ) state = 20;
+		else if( info.src.charCodeAt( pos ) == 93 ) state = 21;
+		else if( info.src.charCodeAt( pos ) == 94 ) state = 22;
+		else if( info.src.charCodeAt( pos ) == 123 ) state = 23;
+		else if( info.src.charCodeAt( pos ) == 124 ) state = 24;
+		else if( info.src.charCodeAt( pos ) == 125 ) state = 25;
+		else if( info.src.charCodeAt( pos ) == 38 ) state = 48;
+		else if( info.src.charCodeAt( pos ) == 68 || info.src.charCodeAt( pos ) == 100 ) state = 49;
+		else if( info.src.charCodeAt( pos ) == 39 ) state = 51;
+		else if( info.src.charCodeAt( pos ) == 73 || info.src.charCodeAt( pos ) == 105 ) state = 52;
+		else if( info.src.charCodeAt( pos ) == 126 ) state = 53;
+		else if( info.src.charCodeAt( pos ) == 70 || info.src.charCodeAt( pos ) == 102 ) state = 64;
+		else if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 65;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 73;
+		else if( info.src.charCodeAt( pos ) == 84 || info.src.charCodeAt( pos ) == 116 ) state = 74;
+		else if( info.src.charCodeAt( pos ) == 87 || info.src.charCodeAt( pos ) == 119 ) state = 80;
+		else if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 84;
 		else state = -1;
 		break;
 
 	case 1:
 		state = -1;
-		match = 2;
+		match = 1;
 		match_pos = pos;
 		break;
 
 	case 2:
-		if( chr == 61 ) state = 26;
+		if( info.src.charCodeAt( pos ) == 61 ) state = 26;
 		else state = -1;
-		match = 31;
+		match = 30;
 		match_pos = pos;
 		break;
 
 	case 3:
 		state = -1;
-		match = 41;
-		match_pos = pos;
-		break;
-
-	case 4:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 45;
-		match_pos = pos;
-		break;
-
-	case 5:
-		state = -1;
-		match = 35;
-		match_pos = pos;
-		break;
-
-	case 6:
-		state = -1;
-		match = 38;
-		match_pos = pos;
-		break;
-
-	case 7:
-		state = -1;
-		match = 39;
-		match_pos = pos;
-		break;
-
-	case 8:
-		state = -1;
-		match = 36;
-		match_pos = pos;
-		break;
-
-	case 9:
-		state = -1;
-		match = 32;
-		match_pos = pos;
-		break;
-
-	case 10:
-		state = -1;
 		match = 40;
 		match_pos = pos;
 		break;
 
-	case 11:
-		state = -1;
-		match = 33;
-		match_pos = pos;
-		break;
-
-	case 12:
-		if( ( chr >= 48 && chr <= 57 ) ) state = 29;
+	case 4:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
 		else state = -1;
 		match = 44;
 		match_pos = pos;
 		break;
 
-	case 13:
+	case 5:
 		state = -1;
 		match = 34;
 		match_pos = pos;
 		break;
 
-	case 14:
-		if( ( chr >= 48 && chr <= 57 ) ) state = 14;
-		else if( chr == 46 ) state = 29;
-		else state = -1;
-		match = 47;
-		match_pos = pos;
-		break;
-
-	case 15:
-		state = -1;
-		match = 42;
-		match_pos = pos;
-		break;
-
-	case 16:
-		state = -1;
-		match = 20;
-		match_pos = pos;
-		break;
-
-	case 17:
-		if( chr == 60 ) state = 30;
-		else if( chr == 61 ) state = 31;
-		else state = -1;
-		match = 28;
-		match_pos = pos;
-		break;
-
-	case 18:
-		if( chr == 61 ) state = 32;
-		else state = -1;
-		match = 21;
-		match_pos = pos;
-		break;
-
-	case 19:
-		if( chr == 61 ) state = 33;
-		else if( chr == 62 ) state = 34;
-		else state = -1;
-		match = 27;
-		match_pos = pos;
-		break;
-
-	case 20:
-		state = -1;
-		match = 16;
-		match_pos = pos;
-		break;
-
-	case 21:
-		state = -1;
-		match = 17;
-		match_pos = pos;
-		break;
-
-	case 22:
+	case 6:
 		state = -1;
 		match = 37;
 		match_pos = pos;
 		break;
 
-	case 23:
+	case 7:
 		state = -1;
-		match = 18;
+		match = 38;
 		match_pos = pos;
 		break;
 
-	case 24:
-		if( chr == 124 ) state = 37;
+	case 8:
+		state = -1;
+		match = 35;
+		match_pos = pos;
+		break;
+
+	case 9:
+		state = -1;
+		match = 31;
+		match_pos = pos;
+		break;
+
+	case 10:
+		state = -1;
+		match = 39;
+		match_pos = pos;
+		break;
+
+	case 11:
+		state = -1;
+		match = 32;
+		match_pos = pos;
+		break;
+
+	case 12:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 29;
 		else state = -1;
 		match = 43;
 		match_pos = pos;
 		break;
 
-	case 25:
+	case 13:
+		state = -1;
+		match = 33;
+		match_pos = pos;
+		break;
+
+	case 14:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 14;
+		else if( info.src.charCodeAt( pos ) == 46 ) state = 29;
+		else state = -1;
+		match = 46;
+		match_pos = pos;
+		break;
+
+	case 15:
+		state = -1;
+		match = 41;
+		match_pos = pos;
+		break;
+
+	case 16:
 		state = -1;
 		match = 19;
 		match_pos = pos;
 		break;
 
-	case 26:
-		state = -1;
-		match = 23;
-		match_pos = pos;
-		break;
-
-	case 27:
-		state = -1;
-		match = 30;
-		match_pos = pos;
-		break;
-
-	case 28:
-		state = -1;
-		match = 46;
-		match_pos = pos;
-		break;
-
-	case 29:
-		if( ( chr >= 48 && chr <= 57 ) ) state = 29;
+	case 17:
+		if( info.src.charCodeAt( pos ) == 60 ) state = 30;
+		else if( info.src.charCodeAt( pos ) == 61 ) state = 31;
 		else state = -1;
-		match = 48;
+		match = 27;
 		match_pos = pos;
 		break;
 
-	case 30:
-		state = -1;
-		match = 14;
+	case 18:
+		if( info.src.charCodeAt( pos ) == 61 ) state = 32;
+		else state = -1;
+		match = 20;
 		match_pos = pos;
 		break;
 
-	case 31:
-		state = -1;
-		match = 25;
-		match_pos = pos;
-		break;
-
-	case 32:
-		state = -1;
-		match = 22;
-		match_pos = pos;
-		break;
-
-	case 33:
-		state = -1;
+	case 19:
+		if( info.src.charCodeAt( pos ) == 61 ) state = 33;
+		else if( info.src.charCodeAt( pos ) == 62 ) state = 34;
+		else state = -1;
 		match = 26;
 		match_pos = pos;
 		break;
 
-	case 34:
+	case 20:
 		state = -1;
 		match = 15;
 		match_pos = pos;
 		break;
 
-	case 35:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 6;
+	case 21:
+		state = -1;
+		match = 16;
 		match_pos = pos;
 		break;
 
-	case 36:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 3;
+	case 22:
+		state = -1;
+		match = 36;
 		match_pos = pos;
 		break;
 
-	case 37:
+	case 23:
+		state = -1;
+		match = 17;
+		match_pos = pos;
+		break;
+
+	case 24:
+		if( info.src.charCodeAt( pos ) == 124 ) state = 37;
+		else state = -1;
+		match = 42;
+		match_pos = pos;
+		break;
+
+	case 25:
+		state = -1;
+		match = 18;
+		match_pos = pos;
+		break;
+
+	case 26:
+		state = -1;
+		match = 22;
+		match_pos = pos;
+		break;
+
+	case 27:
 		state = -1;
 		match = 29;
 		match_pos = pos;
 		break;
 
-	case 38:
+	case 28:
+		state = -1;
+		match = 45;
+		match_pos = pos;
+		break;
+
+	case 29:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) ) state = 29;
+		else state = -1;
+		match = 47;
+		match_pos = pos;
+		break;
+
+	case 30:
+		state = -1;
+		match = 13;
+		match_pos = pos;
+		break;
+
+	case 31:
 		state = -1;
 		match = 24;
 		match_pos = pos;
 		break;
 
-	case 39:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 7;
+	case 32:
+		state = -1;
+		match = 21;
 		match_pos = pos;
 		break;
 
-	case 40:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 9;
+	case 33:
+		state = -1;
+		match = 25;
 		match_pos = pos;
 		break;
 
-	case 41:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 4;
+	case 34:
+		state = -1;
+		match = 14;
 		match_pos = pos;
 		break;
 
-	case 42:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 12;
-		match_pos = pos;
-		break;
-
-	case 43:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 13;
-		match_pos = pos;
-		break;
-
-	case 44:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
+	case 35:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
 		else state = -1;
 		match = 5;
 		match_pos = pos;
 		break;
 
-	case 45:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
+	case 36:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
 		else state = -1;
-		match = 11;
+		match = 2;
 		match_pos = pos;
 		break;
 
-	case 46:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
-		else state = -1;
-		match = 10;
+	case 37:
+		state = -1;
+		match = 28;
 		match_pos = pos;
 		break;
 
-	case 47:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 122 ) ) state = 4;
+	case 38:
+		state = -1;
+		match = 23;
+		match_pos = pos;
+		break;
+
+	case 39:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 6;
+		match_pos = pos;
+		break;
+
+	case 40:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
 		else state = -1;
 		match = 8;
 		match_pos = pos;
 		break;
 
+	case 41:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 3;
+		match_pos = pos;
+		break;
+
+	case 42:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 11;
+		match_pos = pos;
+		break;
+
+	case 43:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 12;
+		match_pos = pos;
+		break;
+
+	case 44:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 4;
+		match_pos = pos;
+		break;
+
+	case 45:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 10;
+		match_pos = pos;
+		break;
+
+	case 46:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 9;
+		match_pos = pos;
+		break;
+
+	case 47:
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else state = -1;
+		match = 7;
+		match_pos = pos;
+		break;
+
 	case 48:
-		if( chr == 38 ) state = 27;
+		if( info.src.charCodeAt( pos ) == 38 ) state = 27;
 		else state = -1;
 		break;
 
 	case 49:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 78 ) || ( chr >= 80 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 110 ) || ( chr >= 112 && chr <= 122 ) ) state = 4;
-		else if( chr == 79 || chr == 111 ) state = 35;
-		else if( chr == 69 || chr == 101 ) state = 81;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 78 ) || ( info.src.charCodeAt( pos ) >= 80 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 110 ) || ( info.src.charCodeAt( pos ) >= 112 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 35;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 81;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 50:
-		if( chr == 39 ) state = 28;
-		else if( ( chr >= 0 && chr <= 38 ) || ( chr >= 40 && chr <= 91 ) || ( chr >= 93 && chr <= 254 ) ) state = 51;
-		else if( chr == 92 ) state = 55;
+		if( info.src.charCodeAt( pos ) == 39 ) state = 28;
+		else if( ( info.src.charCodeAt( pos ) >= 0 && info.src.charCodeAt( pos ) <= 38 ) || ( info.src.charCodeAt( pos ) >= 40 && info.src.charCodeAt( pos ) <= 91 ) || ( info.src.charCodeAt( pos ) >= 93 && info.src.charCodeAt( pos ) <= 254 ) ) state = 51;
+		else if( info.src.charCodeAt( pos ) == 92 ) state = 55;
 		else state = -1;
-		match = 46;
+		match = 45;
 		match_pos = pos;
 		break;
 
 	case 51:
-		if( chr == 39 ) state = 28;
-		else if( ( chr >= 0 && chr <= 38 ) || ( chr >= 40 && chr <= 91 ) || ( chr >= 93 && chr <= 254 ) ) state = 51;
-		else if( chr == 92 ) state = 55;
+		if( info.src.charCodeAt( pos ) == 39 ) state = 28;
+		else if( ( info.src.charCodeAt( pos ) >= 0 && info.src.charCodeAt( pos ) <= 38 ) || ( info.src.charCodeAt( pos ) >= 40 && info.src.charCodeAt( pos ) <= 91 ) || ( info.src.charCodeAt( pos ) >= 93 && info.src.charCodeAt( pos ) <= 254 ) ) state = 51;
+		else if( info.src.charCodeAt( pos ) == 92 ) state = 55;
 		else state = -1;
 		break;
 
 	case 52:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 69 ) || ( chr >= 71 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 101 ) || ( chr >= 103 && chr <= 122 ) ) state = 4;
-		else if( chr == 70 || chr == 102 ) state = 36;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 69 ) || ( info.src.charCodeAt( pos ) >= 71 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 101 ) || ( info.src.charCodeAt( pos ) >= 103 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 70 || info.src.charCodeAt( pos ) == 102 ) state = 36;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 53:
-		if( chr == 61 ) state = 38;
+		if( info.src.charCodeAt( pos ) == 61 ) state = 38;
 		else state = -1;
 		break;
 
 	case 54:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 81 ) || ( chr >= 83 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 113 ) || ( chr >= 115 && chr <= 122 ) ) state = 4;
-		else if( chr == 82 || chr == 114 ) state = 39;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 81 ) || ( info.src.charCodeAt( pos ) >= 83 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 113 ) || ( info.src.charCodeAt( pos ) >= 115 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 39;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 55:
-		if( chr == 39 ) state = 50;
-		else if( ( chr >= 0 && chr <= 38 ) || ( chr >= 40 && chr <= 91 ) || ( chr >= 93 && chr <= 254 ) ) state = 51;
-		else if( chr == 92 ) state = 55;
+		if( info.src.charCodeAt( pos ) == 39 ) state = 50;
+		else if( ( info.src.charCodeAt( pos ) >= 0 && info.src.charCodeAt( pos ) <= 38 ) || ( info.src.charCodeAt( pos ) >= 40 && info.src.charCodeAt( pos ) <= 91 ) || ( info.src.charCodeAt( pos ) >= 93 && info.src.charCodeAt( pos ) <= 254 ) ) state = 51;
+		else if( info.src.charCodeAt( pos ) == 92 ) state = 55;
 		else state = -1;
 		break;
 
 	case 56:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 40;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 40;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 57:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 41;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 41;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 58:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 42;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 42;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 59:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 43;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 43;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 60:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 44;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 44;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 61:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 45;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 45;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 62:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 77 ) || ( chr >= 79 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 109 ) || ( chr >= 111 && chr <= 122 ) ) state = 4;
-		else if( chr == 78 || chr == 110 ) state = 46;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 109 ) || ( info.src.charCodeAt( pos ) >= 111 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 78 || info.src.charCodeAt( pos ) == 110 ) state = 46;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 63:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 77 ) || ( chr >= 79 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 109 ) || ( chr >= 111 && chr <= 122 ) ) state = 4;
-		else if( chr == 78 || chr == 110 ) state = 47;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 109 ) || ( info.src.charCodeAt( pos ) >= 111 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 78 || info.src.charCodeAt( pos ) == 110 ) state = 47;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 64:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 66 && chr <= 78 ) || ( chr >= 80 && chr <= 84 ) || ( chr >= 86 && chr <= 90 ) || chr == 95 || ( chr >= 98 && chr <= 110 ) || ( chr >= 112 && chr <= 116 ) || ( chr >= 118 && chr <= 122 ) ) state = 4;
-		else if( chr == 79 || chr == 111 ) state = 54;
-		else if( chr == 65 || chr == 97 ) state = 75;
-		else if( chr == 85 || chr == 117 ) state = 86;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 66 && info.src.charCodeAt( pos ) <= 78 ) || ( info.src.charCodeAt( pos ) >= 80 && info.src.charCodeAt( pos ) <= 84 ) || ( info.src.charCodeAt( pos ) >= 86 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 98 && info.src.charCodeAt( pos ) <= 110 ) || ( info.src.charCodeAt( pos ) >= 112 && info.src.charCodeAt( pos ) <= 116 ) || ( info.src.charCodeAt( pos ) >= 118 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 54;
+		else if( info.src.charCodeAt( pos ) == 65 || info.src.charCodeAt( pos ) == 97 ) state = 75;
+		else if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 86;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 65:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 82 ) || ( chr >= 84 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 114 ) || ( chr >= 116 && chr <= 122 ) ) state = 4;
-		else if( chr == 83 || chr == 115 ) state = 56;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 82 ) || ( info.src.charCodeAt( pos ) >= 84 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 114 ) || ( info.src.charCodeAt( pos ) >= 116 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 83 || info.src.charCodeAt( pos ) == 115 ) state = 56;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 66:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 82 ) || ( chr >= 84 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 114 ) || ( chr >= 116 && chr <= 122 ) ) state = 4;
-		else if( chr == 83 || chr == 115 ) state = 57;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 82 ) || ( info.src.charCodeAt( pos ) >= 84 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 114 ) || ( info.src.charCodeAt( pos ) >= 116 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 83 || info.src.charCodeAt( pos ) == 115 ) state = 57;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 67:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 84 ) || ( chr >= 86 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 116 ) || ( chr >= 118 && chr <= 122 ) ) state = 4;
-		else if( chr == 85 || chr == 117 ) state = 58;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 84 ) || ( info.src.charCodeAt( pos ) >= 86 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 116 ) || ( info.src.charCodeAt( pos ) >= 118 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 58;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 68:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 82 ) || ( chr >= 84 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 114 ) || ( chr >= 116 && chr <= 122 ) ) state = 4;
-		else if( chr == 83 || chr == 115 ) state = 59;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 82 ) || ( info.src.charCodeAt( pos ) >= 84 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 114 ) || ( info.src.charCodeAt( pos ) >= 116 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 83 || info.src.charCodeAt( pos ) == 115 ) state = 59;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 69:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 75 ) || ( chr >= 77 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 107 ) || ( chr >= 109 && chr <= 122 ) ) state = 4;
-		else if( chr == 76 || chr == 108 ) state = 60;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 75 ) || ( info.src.charCodeAt( pos ) >= 77 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 107 ) || ( info.src.charCodeAt( pos ) >= 109 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 76 || info.src.charCodeAt( pos ) == 108 ) state = 60;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 70:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 83 ) || ( chr >= 85 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 115 ) || ( chr >= 117 && chr <= 122 ) ) state = 4;
-		else if( chr == 84 || chr == 116 ) state = 61;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 83 ) || ( info.src.charCodeAt( pos ) >= 85 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 115 ) || ( info.src.charCodeAt( pos ) >= 117 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 84 || info.src.charCodeAt( pos ) == 116 ) state = 61;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 71:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 81 ) || ( chr >= 83 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 113 ) || ( chr >= 115 && chr <= 122 ) ) state = 4;
-		else if( chr == 82 || chr == 114 ) state = 62;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 81 ) || ( info.src.charCodeAt( pos ) >= 83 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 113 ) || ( info.src.charCodeAt( pos ) >= 115 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 62;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 72:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 78 ) || ( chr >= 80 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 110 ) || ( chr >= 112 && chr <= 122 ) ) state = 4;
-		else if( chr == 79 || chr == 111 ) state = 63;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 78 ) || ( info.src.charCodeAt( pos ) >= 80 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 110 ) || ( info.src.charCodeAt( pos ) >= 112 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 79 || info.src.charCodeAt( pos ) == 111 ) state = 63;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 73:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 75 ) || ( chr >= 77 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 107 ) || ( chr >= 109 && chr <= 122 ) ) state = 4;
-		else if( chr == 76 || chr == 108 ) state = 66;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 75 ) || ( info.src.charCodeAt( pos ) >= 77 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 107 ) || ( info.src.charCodeAt( pos ) >= 109 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 76 || info.src.charCodeAt( pos ) == 108 ) state = 66;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 74:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 81 ) || ( chr >= 83 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 113 ) || ( chr >= 115 && chr <= 122 ) ) state = 4;
-		else if( chr == 82 || chr == 114 ) state = 67;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 81 ) || ( info.src.charCodeAt( pos ) >= 83 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 113 ) || ( info.src.charCodeAt( pos ) >= 115 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 82 || info.src.charCodeAt( pos ) == 114 ) state = 67;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 75:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 75 ) || ( chr >= 77 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 107 ) || ( chr >= 109 && chr <= 122 ) ) state = 4;
-		else if( chr == 76 || chr == 108 ) state = 68;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 75 ) || ( info.src.charCodeAt( pos ) >= 77 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 107 ) || ( info.src.charCodeAt( pos ) >= 109 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 76 || info.src.charCodeAt( pos ) == 108 ) state = 68;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 76:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 72 ) || ( chr >= 74 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 104 ) || ( chr >= 106 && chr <= 122 ) ) state = 4;
-		else if( chr == 73 || chr == 105 ) state = 69;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 72 ) || ( info.src.charCodeAt( pos ) >= 74 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 104 ) || ( info.src.charCodeAt( pos ) >= 106 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 73 || info.src.charCodeAt( pos ) == 105 ) state = 69;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 77:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 70;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 70;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 78:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 84 ) || ( chr >= 86 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 116 ) || ( chr >= 118 && chr <= 122 ) ) state = 4;
-		else if( chr == 85 || chr == 117 ) state = 71;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 84 ) || ( info.src.charCodeAt( pos ) >= 86 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 116 ) || ( info.src.charCodeAt( pos ) >= 118 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 85 || info.src.charCodeAt( pos ) == 117 ) state = 71;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 79:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 72 ) || ( chr >= 74 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 104 ) || ( chr >= 106 && chr <= 122 ) ) state = 4;
-		else if( chr == 73 || chr == 105 ) state = 72;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 72 ) || ( info.src.charCodeAt( pos ) >= 74 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 104 ) || ( info.src.charCodeAt( pos ) >= 106 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 73 || info.src.charCodeAt( pos ) == 105 ) state = 72;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 80:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 71 ) || ( chr >= 73 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 103 ) || ( chr >= 105 && chr <= 122 ) ) state = 4;
-		else if( chr == 72 || chr == 104 ) state = 76;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 71 ) || ( info.src.charCodeAt( pos ) >= 73 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 103 ) || ( info.src.charCodeAt( pos ) >= 105 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 72 || info.src.charCodeAt( pos ) == 104 ) state = 76;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 81:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 75 ) || ( chr >= 77 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 107 ) || ( chr >= 109 && chr <= 122 ) ) state = 4;
-		else if( chr == 76 || chr == 108 ) state = 77;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 75 ) || ( info.src.charCodeAt( pos ) >= 77 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 107 ) || ( info.src.charCodeAt( pos ) >= 109 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 76 || info.src.charCodeAt( pos ) == 108 ) state = 77;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 82:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 83 ) || ( chr >= 85 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 115 ) || ( chr >= 117 && chr <= 122 ) ) state = 4;
-		else if( chr == 84 || chr == 116 ) state = 78;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 83 ) || ( info.src.charCodeAt( pos ) >= 85 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 115 ) || ( info.src.charCodeAt( pos ) >= 117 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 84 || info.src.charCodeAt( pos ) == 116 ) state = 78;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 83:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 83 ) || ( chr >= 85 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 115 ) || ( chr >= 117 && chr <= 122 ) ) state = 4;
-		else if( chr == 84 || chr == 116 ) state = 79;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 83 ) || ( info.src.charCodeAt( pos ) >= 85 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 115 ) || ( info.src.charCodeAt( pos ) >= 117 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 84 || info.src.charCodeAt( pos ) == 116 ) state = 79;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 84:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 68 ) || ( chr >= 70 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 100 ) || ( chr >= 102 && chr <= 122 ) ) state = 4;
-		else if( chr == 69 || chr == 101 ) state = 82;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 68 ) || ( info.src.charCodeAt( pos ) >= 70 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 100 ) || ( info.src.charCodeAt( pos ) >= 102 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 69 || info.src.charCodeAt( pos ) == 101 ) state = 82;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 85:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 66 ) || ( chr >= 68 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 98 ) || ( chr >= 100 && chr <= 122 ) ) state = 4;
-		else if( chr == 67 || chr == 99 ) state = 83;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 66 ) || ( info.src.charCodeAt( pos ) >= 68 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 98 ) || ( info.src.charCodeAt( pos ) >= 100 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 67 || info.src.charCodeAt( pos ) == 99 ) state = 83;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 	case 86:
-		if( ( chr >= 48 && chr <= 57 ) || ( chr >= 65 && chr <= 77 ) || ( chr >= 79 && chr <= 90 ) || chr == 95 || ( chr >= 97 && chr <= 109 ) || ( chr >= 111 && chr <= 122 ) ) state = 4;
-		else if( chr == 78 || chr == 110 ) state = 85;
+		if( ( info.src.charCodeAt( pos ) >= 48 && info.src.charCodeAt( pos ) <= 57 ) || ( info.src.charCodeAt( pos ) >= 65 && info.src.charCodeAt( pos ) <= 77 ) || ( info.src.charCodeAt( pos ) >= 79 && info.src.charCodeAt( pos ) <= 90 ) || info.src.charCodeAt( pos ) == 95 || ( info.src.charCodeAt( pos ) >= 97 && info.src.charCodeAt( pos ) <= 109 ) || ( info.src.charCodeAt( pos ) >= 111 && info.src.charCodeAt( pos ) <= 122 ) ) state = 4;
+		else if( info.src.charCodeAt( pos ) == 78 || info.src.charCodeAt( pos ) == 110 ) state = 85;
 		else state = -1;
-		match = 45;
+		match = 44;
 		match_pos = pos;
 		break;
 
 }
 
 
+                pos++;
 
-                    //Line- and column-counter
-                    if( state > -1 ) {
-                        if( chr == 10 ) {
-                            PCB.line++;
-                            PCB.column = 0;
-                            if (this.countLines) {
-                                this.parCurLine = PCB.line;
-                                this.parCurColumn = PCB.column;
-                            }
-                        }
-                        PCB.column++;
-                    }
+            } while( state > -1 );
 
-                    pos++;
+        } while (1 > -1 && match == 1);
 
-                } while( state > -1 );
-
-            } while (2 > -1 && match == 2);
-
-            if (match > -1) {
-                PCB.att = PCB.src.substr( start, match_pos - start );
-                PCB.offset = match_pos;
+        if (match > -1) {
+            info.att = info.src.substr( start, match_pos - start );
+            info.offset = match_pos;
         
-	if( match == 46 )
-	{
-		 PCB.att = PCB.att.substr( 1, PCB.att.length - 2 );
-                                                                                PCB.att = PCB.att.replace( /\\\'/g, "\'" );    
+switch( match )
+{
+	case 45:
+		{
+		 info.att = info.att.substr( 1, info.att.length - 2 );
+                                                                                info.att = info.att.replace( /\\\'/g, "\'" );    
 		}
+		break;
 
-            } else {
-                PCB.att = new String();
-                match = -1;
-            }
+}
 
-            break;
+
+        } else {
+            info.att = new String();
+            match = -1;
         }
+
         return match;
     },
 
@@ -2339,319 +2340,312 @@ switch( state )
             vstack = [],
             err_cnt = 0,
             act,
+            go,
+            la,
             rval,
             i,
-
-            PCB = {
-                la: 0,
-                act: 0,
-                offset: 0,
-                src: src,
-                att: '',
-                line: 1,
-                column: 1,
-                error_step: 0
-            };
+            parseinfo = new Function( "", "var offset; var src; var att;" ),
+            info = new parseinfo();
 
 /* Pop-Table */
 var pop_tab = new Array(
 	new Array( 0/* Program' */, 1 ),
-	new Array( 49/* Program */, 2 ),
-	new Array( 49/* Program */, 0 ),
-	new Array( 51/* Stmt_List */, 2 ),
-	new Array( 51/* Stmt_List */, 0 ),
-	new Array( 52/* Param_List */, 3 ),
-	new Array( 52/* Param_List */, 1 ),
-	new Array( 52/* Param_List */, 0 ),
-	new Array( 54/* Prop_List */, 3 ),
-	new Array( 54/* Prop_List */, 1 ),
-	new Array( 54/* Prop_List */, 0 ),
-	new Array( 55/* Prop */, 3 ),
-	new Array( 56/* Param_Def_List */, 3 ),
-	new Array( 56/* Param_Def_List */, 1 ),
-	new Array( 56/* Param_Def_List */, 0 ),
-	new Array( 58/* Assign */, 3 ),
-	new Array( 50/* Stmt */, 3 ),
-	new Array( 50/* Stmt */, 5 ),
-	new Array( 50/* Stmt */, 3 ),
-	new Array( 50/* Stmt */, 5 ),
-	new Array( 50/* Stmt */, 9 ),
-	new Array( 50/* Stmt */, 3 ),
-	new Array( 50/* Stmt */, 2 ),
-	new Array( 50/* Stmt */, 2 ),
-	new Array( 50/* Stmt */, 2 ),
-	new Array( 50/* Stmt */, 2 ),
-	new Array( 50/* Stmt */, 3 ),
-	new Array( 50/* Stmt */, 1 ),
-	new Array( 57/* Lhs */, 3 ),
-	new Array( 57/* Lhs */, 4 ),
-	new Array( 57/* Lhs */, 1 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 3 ),
-	new Array( 53/* Expression */, 1 ),
-	new Array( 61/* LogExp */, 3 ),
-	new Array( 61/* LogExp */, 3 ),
-	new Array( 61/* LogExp */, 2 ),
-	new Array( 61/* LogExp */, 1 ),
-	new Array( 60/* AddSubExp */, 3 ),
-	new Array( 60/* AddSubExp */, 3 ),
-	new Array( 60/* AddSubExp */, 1 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 1 ),
-	new Array( 63/* ExpExp */, 3 ),
-	new Array( 63/* ExpExp */, 1 ),
-	new Array( 64/* NegExp */, 2 ),
-	new Array( 64/* NegExp */, 2 ),
-	new Array( 64/* NegExp */, 1 ),
-	new Array( 59/* ExtValue */, 4 ),
-	new Array( 59/* ExtValue */, 4 ),
-	new Array( 59/* ExtValue */, 5 ),
-	new Array( 59/* ExtValue */, 3 ),
-	new Array( 59/* ExtValue */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 7 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 )
+	new Array( 48/* Program */, 2 ),
+	new Array( 48/* Program */, 0 ),
+	new Array( 50/* Stmt_List */, 2 ),
+	new Array( 50/* Stmt_List */, 0 ),
+	new Array( 51/* Param_List */, 3 ),
+	new Array( 51/* Param_List */, 1 ),
+	new Array( 51/* Param_List */, 0 ),
+	new Array( 53/* Prop_List */, 3 ),
+	new Array( 53/* Prop_List */, 1 ),
+	new Array( 53/* Prop_List */, 0 ),
+	new Array( 54/* Prop */, 3 ),
+	new Array( 55/* Param_Def_List */, 3 ),
+	new Array( 55/* Param_Def_List */, 1 ),
+	new Array( 55/* Param_Def_List */, 0 ),
+	new Array( 57/* Assign */, 3 ),
+	new Array( 49/* Stmt */, 3 ),
+	new Array( 49/* Stmt */, 5 ),
+	new Array( 49/* Stmt */, 3 ),
+	new Array( 49/* Stmt */, 5 ),
+	new Array( 49/* Stmt */, 9 ),
+	new Array( 49/* Stmt */, 3 ),
+	new Array( 49/* Stmt */, 2 ),
+	new Array( 49/* Stmt */, 2 ),
+	new Array( 49/* Stmt */, 2 ),
+	new Array( 49/* Stmt */, 2 ),
+	new Array( 49/* Stmt */, 3 ),
+	new Array( 49/* Stmt */, 1 ),
+	new Array( 56/* Lhs */, 3 ),
+	new Array( 56/* Lhs */, 4 ),
+	new Array( 56/* Lhs */, 1 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 3 ),
+	new Array( 52/* Expression */, 1 ),
+	new Array( 60/* LogExp */, 3 ),
+	new Array( 60/* LogExp */, 3 ),
+	new Array( 60/* LogExp */, 2 ),
+	new Array( 60/* LogExp */, 1 ),
+	new Array( 59/* AddSubExp */, 3 ),
+	new Array( 59/* AddSubExp */, 3 ),
+	new Array( 59/* AddSubExp */, 1 ),
+	new Array( 61/* MulDivExp */, 3 ),
+	new Array( 61/* MulDivExp */, 3 ),
+	new Array( 61/* MulDivExp */, 3 ),
+	new Array( 61/* MulDivExp */, 1 ),
+	new Array( 62/* ExpExp */, 3 ),
+	new Array( 62/* ExpExp */, 1 ),
+	new Array( 63/* NegExp */, 2 ),
+	new Array( 63/* NegExp */, 2 ),
+	new Array( 63/* NegExp */, 1 ),
+	new Array( 58/* ExtValue */, 4 ),
+	new Array( 58/* ExtValue */, 4 ),
+	new Array( 58/* ExtValue */, 5 ),
+	new Array( 58/* ExtValue */, 3 ),
+	new Array( 58/* ExtValue */, 1 ),
+	new Array( 64/* Value */, 1 ),
+	new Array( 64/* Value */, 1 ),
+	new Array( 64/* Value */, 1 ),
+	new Array( 64/* Value */, 3 ),
+	new Array( 64/* Value */, 1 ),
+	new Array( 64/* Value */, 7 ),
+	new Array( 64/* Value */, 3 ),
+	new Array( 64/* Value */, 3 ),
+	new Array( 64/* Value */, 1 ),
+	new Array( 64/* Value */, 1 )
 );
 
 /* Action-Table */
 var act_tab = new Array(
-	/* State 0 */ new Array(  ),
-	/* State 1 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 2 */ new Array(  ),
-	/* State 3 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 4 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 5 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 6 */ new Array( 38/* "(" */,40 ),
-	/* State 7 */ new Array( 45/* "Identifier" */,41 ),
-	/* State 8 */ new Array( 45/* "Identifier" */,42 ),
-	/* State 9 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 10 */ new Array( 20/* ";" */,44 ),
-	/* State 11 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,52 ),
-	/* State 12 */ new Array(  ),
-	/* State 13 */ new Array(  ),
-	/* State 14 */ new Array( 21/* "=" */,54 ),
-	/* State 15 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 16 */ new Array( 44/* "." */,57 , 38/* "(" */,58 , 16/* "[" */,59 ),
-	/* State 17 */ new Array( 21/* "=" */,-30 ),
-	/* State 18 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 19 */ new Array( 32/* "+" */,61 , 33/* "-" */,62 ),
-	/* State 20 */ new Array(  ),
-	/* State 21 */ new Array( 35/* "%" */,63 , 34/* "/" */,64 , 36/* "*" */,65 ),
-	/* State 22 */ new Array(  ),
-	/* State 23 */ new Array(  ),
-	/* State 24 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 25 */ new Array(  ),
-	/* State 26 */ new Array( 38/* "(" */,67 ),
-	/* State 27 */ new Array( 45/* "Identifier" */,70 ),
-	/* State 28 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 29 */ new Array(  ),
-	/* State 30 */ new Array(  ),
-	/* State 31 */ new Array(  ),
-	/* State 32 */ new Array( 37/* "^" */,73 ),
-	/* State 33 */ new Array( 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 34 */ new Array( 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 35 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 36 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
-	/* State 37 */ new Array(  ),
-	/* State 38 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 39 */ new Array( 5/* "WHILE" */,80 ),
-	/* State 40 */ new Array( 45/* "Identifier" */,17 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 41 */ new Array( 20/* ";" */,83 ),
-	/* State 42 */ new Array(  ),
-	/* State 43 */ new Array(  ),
-	/* State 44 */ new Array(  ),
-	/* State 45 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 46 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 47 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 48 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 49 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 50 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 51 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 52 */ new Array(  ),
-	/* State 53 */ new Array( 19/* "}" */,91 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 54 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 55 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 56 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 57 */ new Array( 45/* "Identifier" */,96 ),
-	/* State 58 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 59 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 60 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 61 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 62 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 63 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 64 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 65 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 66 */ new Array( 39/* ")" */,104 , 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
-	/* State 67 */ new Array( 45/* "Identifier" */,106 ),
-	/* State 68 */ new Array( 15/* ">>" */,107 , 40/* "," */,108 ),
-	/* State 69 */ new Array(  ),
-	/* State 70 */ new Array( 42/* ":" */,109 ),
-	/* State 71 */ new Array( 17/* "]" */,110 , 40/* "," */,111 ),
-	/* State 72 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
-	/* State 73 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 74 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
-	/* State 75 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
-	/* State 76 */ new Array( 4/* "ELSE" */,113 ),
-	/* State 77 */ new Array( 45/* "Identifier" */,114 ),
-	/* State 78 */ new Array( 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 79 */ new Array(  ),
-	/* State 80 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 81 */ new Array( 20/* ";" */,117 ),
-	/* State 82 */ new Array( 44/* "." */,57 , 38/* "(" */,58 , 16/* "[" */,59 ),
-	/* State 83 */ new Array(  ),
-	/* State 84 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 85 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 86 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 87 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 88 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 89 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 90 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
-	/* State 91 */ new Array(  ),
-	/* State 92 */ new Array(  ),
-	/* State 93 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
-	/* State 94 */ new Array( 32/* "+" */,61 , 33/* "-" */,62 ),
-	/* State 95 */ new Array( 32/* "+" */,61 , 33/* "-" */,62 ),
-	/* State 96 */ new Array( 21/* "=" */,-28 ),
-	/* State 97 */ new Array( 39/* ")" */,118 , 40/* "," */,111 ),
-	/* State 98 */ new Array( 17/* "]" */,119 , 32/* "+" */,61 , 33/* "-" */,62 ),
-	/* State 99 */ new Array( 35/* "%" */,63 , 34/* "/" */,64 , 36/* "*" */,65 ),
-	/* State 100 */ new Array( 35/* "%" */,63 , 34/* "/" */,64 , 36/* "*" */,65 ),
-	/* State 101 */ new Array(  ),
-	/* State 102 */ new Array(  ),
-	/* State 103 */ new Array(  ),
-	/* State 104 */ new Array(  ),
-	/* State 105 */ new Array( 39/* ")" */,120 , 40/* "," */,121 ),
-	/* State 106 */ new Array(  ),
-	/* State 107 */ new Array(  ),
-	/* State 108 */ new Array( 45/* "Identifier" */,70 ),
-	/* State 109 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 110 */ new Array(  ),
-	/* State 111 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 112 */ new Array(  ),
-	/* State 113 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 114 */ new Array(  ),
-	/* State 115 */ new Array( 17/* "]" */,126 , 32/* "+" */,61 , 33/* "-" */,62 ),
-	/* State 116 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,127 ),
-	/* State 117 */ new Array( 31/* "!" */,18 , 33/* "-" */,33 , 32/* "+" */,34 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 118 */ new Array( 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 119 */ new Array( 21/* "=" */,-29 ),
-	/* State 120 */ new Array( 18/* "{" */,130 ),
-	/* State 121 */ new Array( 45/* "Identifier" */,131 ),
-	/* State 122 */ new Array(  ),
-	/* State 123 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
-	/* State 124 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
-	/* State 125 */ new Array(  ),
-	/* State 126 */ new Array(  ),
-	/* State 127 */ new Array(  ),
-	/* State 128 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,132 ),
-	/* State 129 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
-	/* State 130 */ new Array(  ),
-	/* State 131 */ new Array(  ),
-	/* State 132 */ new Array( 45/* "Identifier" */,17 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 133 */ new Array( 19/* "}" */,135 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 134 */ new Array( 39/* ")" */,136 ),
-	/* State 135 */ new Array(  ),
-	/* State 136 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,33 , 32/* "+" */,34 ),
-	/* State 137 */ new Array(  )
+	/* State 0 */ new Array( 65/* "$$" */,-2 , 2/* "IF" */,-2 , 4/* "WHILE" */,-2 , 5/* "DO" */,-2 , 6/* "FOR" */,-2 , 8/* "USE" */,-2 , 10/* "DELETE" */,-2 , 9/* "RETURN" */,-2 , 17/* "{" */,-2 , 19/* ";" */,-2 , 44/* "Identifier" */,-2 , 30/* "!" */,-2 , 46/* "Integer" */,-2 , 47/* "Float" */,-2 , 37/* "(" */,-2 , 45/* "String" */,-2 , 7/* "FUNCTION" */,-2 , 13/* "<<" */,-2 , 15/* "[" */,-2 , 11/* "TRUE" */,-2 , 12/* "FALSE" */,-2 , 32/* "-" */,-2 , 31/* "+" */,-2 ),
+	/* State 1 */ new Array( 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 , 65/* "$$" */,0 ),
+	/* State 2 */ new Array( 65/* "$$" */,-1 , 2/* "IF" */,-1 , 4/* "WHILE" */,-1 , 5/* "DO" */,-1 , 6/* "FOR" */,-1 , 8/* "USE" */,-1 , 10/* "DELETE" */,-1 , 9/* "RETURN" */,-1 , 17/* "{" */,-1 , 19/* ";" */,-1 , 44/* "Identifier" */,-1 , 30/* "!" */,-1 , 46/* "Integer" */,-1 , 47/* "Float" */,-1 , 37/* "(" */,-1 , 45/* "String" */,-1 , 7/* "FUNCTION" */,-1 , 13/* "<<" */,-1 , 15/* "[" */,-1 , 11/* "TRUE" */,-1 , 12/* "FALSE" */,-1 , 32/* "-" */,-1 , 31/* "+" */,-1 ),
+	/* State 3 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 4 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 5 */ new Array( 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 6 */ new Array( 37/* "(" */,40 ),
+	/* State 7 */ new Array( 44/* "Identifier" */,41 ),
+	/* State 8 */ new Array( 44/* "Identifier" */,42 ),
+	/* State 9 */ new Array( 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 10 */ new Array( 19/* ";" */,44 ),
+	/* State 11 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 19/* ";" */,52 ),
+	/* State 12 */ new Array( 18/* "}" */,-4 , 2/* "IF" */,-4 , 4/* "WHILE" */,-4 , 5/* "DO" */,-4 , 6/* "FOR" */,-4 , 8/* "USE" */,-4 , 10/* "DELETE" */,-4 , 9/* "RETURN" */,-4 , 17/* "{" */,-4 , 19/* ";" */,-4 , 44/* "Identifier" */,-4 , 30/* "!" */,-4 , 46/* "Integer" */,-4 , 47/* "Float" */,-4 , 37/* "(" */,-4 , 45/* "String" */,-4 , 7/* "FUNCTION" */,-4 , 13/* "<<" */,-4 , 15/* "[" */,-4 , 11/* "TRUE" */,-4 , 12/* "FALSE" */,-4 , 32/* "-" */,-4 , 31/* "+" */,-4 ),
+	/* State 13 */ new Array( 65/* "$$" */,-27 , 2/* "IF" */,-27 , 4/* "WHILE" */,-27 , 5/* "DO" */,-27 , 6/* "FOR" */,-27 , 8/* "USE" */,-27 , 10/* "DELETE" */,-27 , 9/* "RETURN" */,-27 , 17/* "{" */,-27 , 19/* ";" */,-27 , 44/* "Identifier" */,-27 , 30/* "!" */,-27 , 46/* "Integer" */,-27 , 47/* "Float" */,-27 , 37/* "(" */,-27 , 45/* "String" */,-27 , 7/* "FUNCTION" */,-27 , 13/* "<<" */,-27 , 15/* "[" */,-27 , 11/* "TRUE" */,-27 , 12/* "FALSE" */,-27 , 32/* "-" */,-27 , 31/* "+" */,-27 , 3/* "ELSE" */,-27 , 18/* "}" */,-27 ),
+	/* State 14 */ new Array( 20/* "=" */,54 ),
+	/* State 15 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-38 , 21/* "==" */,-38 , 27/* "<" */,-38 , 26/* ">" */,-38 , 24/* "<=" */,-38 , 25/* ">=" */,-38 , 22/* "!=" */,-38 , 23/* "~=" */,-38 , 2/* "IF" */,-38 , 4/* "WHILE" */,-38 , 5/* "DO" */,-38 , 6/* "FOR" */,-38 , 8/* "USE" */,-38 , 10/* "DELETE" */,-38 , 9/* "RETURN" */,-38 , 17/* "{" */,-38 , 44/* "Identifier" */,-38 , 30/* "!" */,-38 , 46/* "Integer" */,-38 , 47/* "Float" */,-38 , 37/* "(" */,-38 , 45/* "String" */,-38 , 7/* "FUNCTION" */,-38 , 13/* "<<" */,-38 , 15/* "[" */,-38 , 11/* "TRUE" */,-38 , 12/* "FALSE" */,-38 , 32/* "-" */,-38 , 31/* "+" */,-38 , 38/* ")" */,-38 , 16/* "]" */,-38 , 39/* "," */,-38 , 14/* ">>" */,-38 ),
+	/* State 16 */ new Array( 43/* "." */,57 , 37/* "(" */,58 , 15/* "[" */,59 , 36/* "^" */,-54 , 19/* ";" */,-54 , 21/* "==" */,-54 , 27/* "<" */,-54 , 26/* ">" */,-54 , 24/* "<=" */,-54 , 25/* ">=" */,-54 , 22/* "!=" */,-54 , 23/* "~=" */,-54 , 28/* "||" */,-54 , 29/* "&&" */,-54 , 32/* "-" */,-54 , 31/* "+" */,-54 , 35/* "*" */,-54 , 33/* "/" */,-54 , 34/* "%" */,-54 ),
+	/* State 17 */ new Array( 20/* "=" */,-30 , 43/* "." */,-62 , 15/* "[" */,-62 , 37/* "(" */,-62 , 36/* "^" */,-62 , 19/* ";" */,-62 , 21/* "==" */,-62 , 27/* "<" */,-62 , 26/* ">" */,-62 , 24/* "<=" */,-62 , 25/* ">=" */,-62 , 22/* "!=" */,-62 , 23/* "~=" */,-62 , 28/* "||" */,-62 , 29/* "&&" */,-62 , 32/* "-" */,-62 , 31/* "+" */,-62 , 35/* "*" */,-62 , 33/* "/" */,-62 , 34/* "%" */,-62 ),
+	/* State 18 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 19 */ new Array( 31/* "+" */,61 , 32/* "-" */,62 , 19/* ";" */,-42 , 21/* "==" */,-42 , 27/* "<" */,-42 , 26/* ">" */,-42 , 24/* "<=" */,-42 , 25/* ">=" */,-42 , 22/* "!=" */,-42 , 23/* "~=" */,-42 , 28/* "||" */,-42 , 29/* "&&" */,-42 , 2/* "IF" */,-42 , 4/* "WHILE" */,-42 , 5/* "DO" */,-42 , 6/* "FOR" */,-42 , 8/* "USE" */,-42 , 10/* "DELETE" */,-42 , 9/* "RETURN" */,-42 , 17/* "{" */,-42 , 44/* "Identifier" */,-42 , 30/* "!" */,-42 , 46/* "Integer" */,-42 , 47/* "Float" */,-42 , 37/* "(" */,-42 , 45/* "String" */,-42 , 7/* "FUNCTION" */,-42 , 13/* "<<" */,-42 , 15/* "[" */,-42 , 11/* "TRUE" */,-42 , 12/* "FALSE" */,-42 , 38/* ")" */,-42 , 16/* "]" */,-42 , 39/* "," */,-42 , 14/* ">>" */,-42 ),
+	/* State 20 */ new Array( 43/* "." */,-59 , 15/* "[" */,-59 , 37/* "(" */,-59 , 36/* "^" */,-59 , 19/* ";" */,-59 , 21/* "==" */,-59 , 27/* "<" */,-59 , 26/* ">" */,-59 , 24/* "<=" */,-59 , 25/* ">=" */,-59 , 22/* "!=" */,-59 , 23/* "~=" */,-59 , 28/* "||" */,-59 , 29/* "&&" */,-59 , 32/* "-" */,-59 , 31/* "+" */,-59 , 35/* "*" */,-59 , 33/* "/" */,-59 , 34/* "%" */,-59 , 2/* "IF" */,-59 , 4/* "WHILE" */,-59 , 5/* "DO" */,-59 , 6/* "FOR" */,-59 , 8/* "USE" */,-59 , 10/* "DELETE" */,-59 , 9/* "RETURN" */,-59 , 17/* "{" */,-59 , 44/* "Identifier" */,-59 , 30/* "!" */,-59 , 46/* "Integer" */,-59 , 47/* "Float" */,-59 , 45/* "String" */,-59 , 7/* "FUNCTION" */,-59 , 13/* "<<" */,-59 , 11/* "TRUE" */,-59 , 12/* "FALSE" */,-59 , 38/* ")" */,-59 , 16/* "]" */,-59 , 39/* "," */,-59 , 14/* ">>" */,-59 ),
+	/* State 21 */ new Array( 34/* "%" */,63 , 33/* "/" */,64 , 35/* "*" */,65 , 19/* ";" */,-45 , 21/* "==" */,-45 , 27/* "<" */,-45 , 26/* ">" */,-45 , 24/* "<=" */,-45 , 25/* ">=" */,-45 , 22/* "!=" */,-45 , 23/* "~=" */,-45 , 28/* "||" */,-45 , 29/* "&&" */,-45 , 32/* "-" */,-45 , 31/* "+" */,-45 , 2/* "IF" */,-45 , 4/* "WHILE" */,-45 , 5/* "DO" */,-45 , 6/* "FOR" */,-45 , 8/* "USE" */,-45 , 10/* "DELETE" */,-45 , 9/* "RETURN" */,-45 , 17/* "{" */,-45 , 44/* "Identifier" */,-45 , 30/* "!" */,-45 , 46/* "Integer" */,-45 , 47/* "Float" */,-45 , 37/* "(" */,-45 , 45/* "String" */,-45 , 7/* "FUNCTION" */,-45 , 13/* "<<" */,-45 , 15/* "[" */,-45 , 11/* "TRUE" */,-45 , 12/* "FALSE" */,-45 , 38/* ")" */,-45 , 16/* "]" */,-45 , 39/* "," */,-45 , 14/* ">>" */,-45 ),
+	/* State 22 */ new Array( 43/* "." */,-60 , 15/* "[" */,-60 , 37/* "(" */,-60 , 36/* "^" */,-60 , 19/* ";" */,-60 , 21/* "==" */,-60 , 27/* "<" */,-60 , 26/* ">" */,-60 , 24/* "<=" */,-60 , 25/* ">=" */,-60 , 22/* "!=" */,-60 , 23/* "~=" */,-60 , 28/* "||" */,-60 , 29/* "&&" */,-60 , 32/* "-" */,-60 , 31/* "+" */,-60 , 35/* "*" */,-60 , 33/* "/" */,-60 , 34/* "%" */,-60 , 2/* "IF" */,-60 , 4/* "WHILE" */,-60 , 5/* "DO" */,-60 , 6/* "FOR" */,-60 , 8/* "USE" */,-60 , 10/* "DELETE" */,-60 , 9/* "RETURN" */,-60 , 17/* "{" */,-60 , 44/* "Identifier" */,-60 , 30/* "!" */,-60 , 46/* "Integer" */,-60 , 47/* "Float" */,-60 , 45/* "String" */,-60 , 7/* "FUNCTION" */,-60 , 13/* "<<" */,-60 , 11/* "TRUE" */,-60 , 12/* "FALSE" */,-60 , 38/* ")" */,-60 , 16/* "]" */,-60 , 39/* "," */,-60 , 14/* ">>" */,-60 ),
+	/* State 23 */ new Array( 43/* "." */,-61 , 15/* "[" */,-61 , 37/* "(" */,-61 , 36/* "^" */,-61 , 19/* ";" */,-61 , 21/* "==" */,-61 , 27/* "<" */,-61 , 26/* ">" */,-61 , 24/* "<=" */,-61 , 25/* ">=" */,-61 , 22/* "!=" */,-61 , 23/* "~=" */,-61 , 28/* "||" */,-61 , 29/* "&&" */,-61 , 32/* "-" */,-61 , 31/* "+" */,-61 , 35/* "*" */,-61 , 33/* "/" */,-61 , 34/* "%" */,-61 , 2/* "IF" */,-61 , 4/* "WHILE" */,-61 , 5/* "DO" */,-61 , 6/* "FOR" */,-61 , 8/* "USE" */,-61 , 10/* "DELETE" */,-61 , 9/* "RETURN" */,-61 , 17/* "{" */,-61 , 44/* "Identifier" */,-61 , 30/* "!" */,-61 , 46/* "Integer" */,-61 , 47/* "Float" */,-61 , 45/* "String" */,-61 , 7/* "FUNCTION" */,-61 , 13/* "<<" */,-61 , 11/* "TRUE" */,-61 , 12/* "FALSE" */,-61 , 38/* ")" */,-61 , 16/* "]" */,-61 , 39/* "," */,-61 , 14/* ">>" */,-61 ),
+	/* State 24 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 25 */ new Array( 43/* "." */,-64 , 15/* "[" */,-64 , 37/* "(" */,-64 , 36/* "^" */,-64 , 19/* ";" */,-64 , 21/* "==" */,-64 , 27/* "<" */,-64 , 26/* ">" */,-64 , 24/* "<=" */,-64 , 25/* ">=" */,-64 , 22/* "!=" */,-64 , 23/* "~=" */,-64 , 28/* "||" */,-64 , 29/* "&&" */,-64 , 32/* "-" */,-64 , 31/* "+" */,-64 , 35/* "*" */,-64 , 33/* "/" */,-64 , 34/* "%" */,-64 , 2/* "IF" */,-64 , 4/* "WHILE" */,-64 , 5/* "DO" */,-64 , 6/* "FOR" */,-64 , 8/* "USE" */,-64 , 10/* "DELETE" */,-64 , 9/* "RETURN" */,-64 , 17/* "{" */,-64 , 44/* "Identifier" */,-64 , 30/* "!" */,-64 , 46/* "Integer" */,-64 , 47/* "Float" */,-64 , 45/* "String" */,-64 , 7/* "FUNCTION" */,-64 , 13/* "<<" */,-64 , 11/* "TRUE" */,-64 , 12/* "FALSE" */,-64 , 38/* ")" */,-64 , 16/* "]" */,-64 , 39/* "," */,-64 , 14/* ">>" */,-64 ),
+	/* State 26 */ new Array( 37/* "(" */,67 ),
+	/* State 27 */ new Array( 44/* "Identifier" */,70 , 14/* ">>" */,-10 , 39/* "," */,-10 ),
+	/* State 28 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 16/* "]" */,-7 , 39/* "," */,-7 ),
+	/* State 29 */ new Array( 43/* "." */,-68 , 15/* "[" */,-68 , 37/* "(" */,-68 , 36/* "^" */,-68 , 19/* ";" */,-68 , 21/* "==" */,-68 , 27/* "<" */,-68 , 26/* ">" */,-68 , 24/* "<=" */,-68 , 25/* ">=" */,-68 , 22/* "!=" */,-68 , 23/* "~=" */,-68 , 28/* "||" */,-68 , 29/* "&&" */,-68 , 32/* "-" */,-68 , 31/* "+" */,-68 , 35/* "*" */,-68 , 33/* "/" */,-68 , 34/* "%" */,-68 , 2/* "IF" */,-68 , 4/* "WHILE" */,-68 , 5/* "DO" */,-68 , 6/* "FOR" */,-68 , 8/* "USE" */,-68 , 10/* "DELETE" */,-68 , 9/* "RETURN" */,-68 , 17/* "{" */,-68 , 44/* "Identifier" */,-68 , 30/* "!" */,-68 , 46/* "Integer" */,-68 , 47/* "Float" */,-68 , 45/* "String" */,-68 , 7/* "FUNCTION" */,-68 , 13/* "<<" */,-68 , 11/* "TRUE" */,-68 , 12/* "FALSE" */,-68 , 38/* ")" */,-68 , 16/* "]" */,-68 , 39/* "," */,-68 , 14/* ">>" */,-68 ),
+	/* State 30 */ new Array( 43/* "." */,-69 , 15/* "[" */,-69 , 37/* "(" */,-69 , 36/* "^" */,-69 , 19/* ";" */,-69 , 21/* "==" */,-69 , 27/* "<" */,-69 , 26/* ">" */,-69 , 24/* "<=" */,-69 , 25/* ">=" */,-69 , 22/* "!=" */,-69 , 23/* "~=" */,-69 , 28/* "||" */,-69 , 29/* "&&" */,-69 , 32/* "-" */,-69 , 31/* "+" */,-69 , 35/* "*" */,-69 , 33/* "/" */,-69 , 34/* "%" */,-69 , 2/* "IF" */,-69 , 4/* "WHILE" */,-69 , 5/* "DO" */,-69 , 6/* "FOR" */,-69 , 8/* "USE" */,-69 , 10/* "DELETE" */,-69 , 9/* "RETURN" */,-69 , 17/* "{" */,-69 , 44/* "Identifier" */,-69 , 30/* "!" */,-69 , 46/* "Integer" */,-69 , 47/* "Float" */,-69 , 45/* "String" */,-69 , 7/* "FUNCTION" */,-69 , 13/* "<<" */,-69 , 11/* "TRUE" */,-69 , 12/* "FALSE" */,-69 , 38/* ")" */,-69 , 16/* "]" */,-69 , 39/* "," */,-69 , 14/* ">>" */,-69 ),
+	/* State 31 */ new Array( 19/* ";" */,-49 , 21/* "==" */,-49 , 27/* "<" */,-49 , 26/* ">" */,-49 , 24/* "<=" */,-49 , 25/* ">=" */,-49 , 22/* "!=" */,-49 , 23/* "~=" */,-49 , 28/* "||" */,-49 , 29/* "&&" */,-49 , 32/* "-" */,-49 , 31/* "+" */,-49 , 35/* "*" */,-49 , 33/* "/" */,-49 , 34/* "%" */,-49 , 2/* "IF" */,-49 , 4/* "WHILE" */,-49 , 5/* "DO" */,-49 , 6/* "FOR" */,-49 , 8/* "USE" */,-49 , 10/* "DELETE" */,-49 , 9/* "RETURN" */,-49 , 17/* "{" */,-49 , 44/* "Identifier" */,-49 , 30/* "!" */,-49 , 46/* "Integer" */,-49 , 47/* "Float" */,-49 , 37/* "(" */,-49 , 45/* "String" */,-49 , 7/* "FUNCTION" */,-49 , 13/* "<<" */,-49 , 15/* "[" */,-49 , 11/* "TRUE" */,-49 , 12/* "FALSE" */,-49 , 38/* ")" */,-49 , 16/* "]" */,-49 , 39/* "," */,-49 , 14/* ">>" */,-49 ),
+	/* State 32 */ new Array( 36/* "^" */,73 , 19/* ";" */,-51 , 21/* "==" */,-51 , 27/* "<" */,-51 , 26/* ">" */,-51 , 24/* "<=" */,-51 , 25/* ">=" */,-51 , 22/* "!=" */,-51 , 23/* "~=" */,-51 , 28/* "||" */,-51 , 29/* "&&" */,-51 , 32/* "-" */,-51 , 31/* "+" */,-51 , 35/* "*" */,-51 , 33/* "/" */,-51 , 34/* "%" */,-51 , 2/* "IF" */,-51 , 4/* "WHILE" */,-51 , 5/* "DO" */,-51 , 6/* "FOR" */,-51 , 8/* "USE" */,-51 , 10/* "DELETE" */,-51 , 9/* "RETURN" */,-51 , 17/* "{" */,-51 , 44/* "Identifier" */,-51 , 30/* "!" */,-51 , 46/* "Integer" */,-51 , 47/* "Float" */,-51 , 37/* "(" */,-51 , 45/* "String" */,-51 , 7/* "FUNCTION" */,-51 , 13/* "<<" */,-51 , 15/* "[" */,-51 , 11/* "TRUE" */,-51 , 12/* "FALSE" */,-51 , 38/* ")" */,-51 , 16/* "]" */,-51 , 39/* "," */,-51 , 14/* ">>" */,-51 ),
+	/* State 33 */ new Array( 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 34 */ new Array( 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 35 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 36 */ new Array( 43/* "." */,77 , 37/* "(" */,58 , 15/* "[" */,78 , 36/* "^" */,-54 , 2/* "IF" */,-54 , 4/* "WHILE" */,-54 , 5/* "DO" */,-54 , 6/* "FOR" */,-54 , 8/* "USE" */,-54 , 10/* "DELETE" */,-54 , 9/* "RETURN" */,-54 , 17/* "{" */,-54 , 19/* ";" */,-54 , 44/* "Identifier" */,-54 , 30/* "!" */,-54 , 46/* "Integer" */,-54 , 47/* "Float" */,-54 , 45/* "String" */,-54 , 7/* "FUNCTION" */,-54 , 13/* "<<" */,-54 , 11/* "TRUE" */,-54 , 12/* "FALSE" */,-54 , 32/* "-" */,-54 , 31/* "+" */,-54 , 21/* "==" */,-54 , 27/* "<" */,-54 , 26/* ">" */,-54 , 24/* "<=" */,-54 , 25/* ">=" */,-54 , 22/* "!=" */,-54 , 23/* "~=" */,-54 , 28/* "||" */,-54 , 29/* "&&" */,-54 , 35/* "*" */,-54 , 33/* "/" */,-54 , 34/* "%" */,-54 , 38/* ")" */,-54 , 16/* "]" */,-54 , 39/* "," */,-54 , 14/* ">>" */,-54 ),
+	/* State 37 */ new Array( 36/* "^" */,-62 , 2/* "IF" */,-62 , 4/* "WHILE" */,-62 , 5/* "DO" */,-62 , 6/* "FOR" */,-62 , 8/* "USE" */,-62 , 10/* "DELETE" */,-62 , 9/* "RETURN" */,-62 , 17/* "{" */,-62 , 19/* ";" */,-62 , 44/* "Identifier" */,-62 , 30/* "!" */,-62 , 46/* "Integer" */,-62 , 47/* "Float" */,-62 , 37/* "(" */,-62 , 45/* "String" */,-62 , 7/* "FUNCTION" */,-62 , 13/* "<<" */,-62 , 15/* "[" */,-62 , 11/* "TRUE" */,-62 , 12/* "FALSE" */,-62 , 32/* "-" */,-62 , 31/* "+" */,-62 , 21/* "==" */,-62 , 27/* "<" */,-62 , 26/* ">" */,-62 , 24/* "<=" */,-62 , 25/* ">=" */,-62 , 22/* "!=" */,-62 , 23/* "~=" */,-62 , 28/* "||" */,-62 , 29/* "&&" */,-62 , 35/* "*" */,-62 , 33/* "/" */,-62 , 34/* "%" */,-62 , 43/* "." */,-62 , 38/* ")" */,-62 , 16/* "]" */,-62 , 39/* "," */,-62 , 14/* ">>" */,-62 ),
+	/* State 38 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 39 */ new Array( 4/* "WHILE" */,80 ),
+	/* State 40 */ new Array( 44/* "Identifier" */,17 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 41 */ new Array( 19/* ";" */,83 ),
+	/* State 42 */ new Array( 65/* "$$" */,-22 , 2/* "IF" */,-22 , 4/* "WHILE" */,-22 , 5/* "DO" */,-22 , 6/* "FOR" */,-22 , 8/* "USE" */,-22 , 10/* "DELETE" */,-22 , 9/* "RETURN" */,-22 , 17/* "{" */,-22 , 19/* ";" */,-22 , 44/* "Identifier" */,-22 , 30/* "!" */,-22 , 46/* "Integer" */,-22 , 47/* "Float" */,-22 , 37/* "(" */,-22 , 45/* "String" */,-22 , 7/* "FUNCTION" */,-22 , 13/* "<<" */,-22 , 15/* "[" */,-22 , 11/* "TRUE" */,-22 , 12/* "FALSE" */,-22 , 32/* "-" */,-22 , 31/* "+" */,-22 , 3/* "ELSE" */,-22 , 18/* "}" */,-22 ),
+	/* State 43 */ new Array( 65/* "$$" */,-23 , 2/* "IF" */,-23 , 4/* "WHILE" */,-23 , 5/* "DO" */,-23 , 6/* "FOR" */,-23 , 8/* "USE" */,-23 , 10/* "DELETE" */,-23 , 9/* "RETURN" */,-23 , 17/* "{" */,-23 , 19/* ";" */,-23 , 44/* "Identifier" */,-23 , 30/* "!" */,-23 , 46/* "Integer" */,-23 , 47/* "Float" */,-23 , 37/* "(" */,-23 , 45/* "String" */,-23 , 7/* "FUNCTION" */,-23 , 13/* "<<" */,-23 , 15/* "[" */,-23 , 11/* "TRUE" */,-23 , 12/* "FALSE" */,-23 , 32/* "-" */,-23 , 31/* "+" */,-23 , 3/* "ELSE" */,-23 , 18/* "}" */,-23 ),
+	/* State 44 */ new Array( 65/* "$$" */,-24 , 2/* "IF" */,-24 , 4/* "WHILE" */,-24 , 5/* "DO" */,-24 , 6/* "FOR" */,-24 , 8/* "USE" */,-24 , 10/* "DELETE" */,-24 , 9/* "RETURN" */,-24 , 17/* "{" */,-24 , 19/* ";" */,-24 , 44/* "Identifier" */,-24 , 30/* "!" */,-24 , 46/* "Integer" */,-24 , 47/* "Float" */,-24 , 37/* "(" */,-24 , 45/* "String" */,-24 , 7/* "FUNCTION" */,-24 , 13/* "<<" */,-24 , 15/* "[" */,-24 , 11/* "TRUE" */,-24 , 12/* "FALSE" */,-24 , 32/* "-" */,-24 , 31/* "+" */,-24 , 3/* "ELSE" */,-24 , 18/* "}" */,-24 ),
+	/* State 45 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 46 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 47 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 48 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 49 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 50 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 51 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 52 */ new Array( 65/* "$$" */,-25 , 2/* "IF" */,-25 , 4/* "WHILE" */,-25 , 5/* "DO" */,-25 , 6/* "FOR" */,-25 , 8/* "USE" */,-25 , 10/* "DELETE" */,-25 , 9/* "RETURN" */,-25 , 17/* "{" */,-25 , 19/* ";" */,-25 , 44/* "Identifier" */,-25 , 30/* "!" */,-25 , 46/* "Integer" */,-25 , 47/* "Float" */,-25 , 37/* "(" */,-25 , 45/* "String" */,-25 , 7/* "FUNCTION" */,-25 , 13/* "<<" */,-25 , 15/* "[" */,-25 , 11/* "TRUE" */,-25 , 12/* "FALSE" */,-25 , 32/* "-" */,-25 , 31/* "+" */,-25 , 3/* "ELSE" */,-25 , 18/* "}" */,-25 ),
+	/* State 53 */ new Array( 18/* "}" */,92 , 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 54 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 55 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 56 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 57 */ new Array( 44/* "Identifier" */,96 ),
+	/* State 58 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 38/* ")" */,-7 , 39/* "," */,-7 ),
+	/* State 59 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 60 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-41 , 21/* "==" */,-41 , 27/* "<" */,-41 , 26/* ">" */,-41 , 24/* "<=" */,-41 , 25/* ">=" */,-41 , 22/* "!=" */,-41 , 23/* "~=" */,-41 , 2/* "IF" */,-41 , 4/* "WHILE" */,-41 , 5/* "DO" */,-41 , 6/* "FOR" */,-41 , 8/* "USE" */,-41 , 10/* "DELETE" */,-41 , 9/* "RETURN" */,-41 , 17/* "{" */,-41 , 44/* "Identifier" */,-41 , 30/* "!" */,-41 , 46/* "Integer" */,-41 , 47/* "Float" */,-41 , 37/* "(" */,-41 , 45/* "String" */,-41 , 7/* "FUNCTION" */,-41 , 13/* "<<" */,-41 , 15/* "[" */,-41 , 11/* "TRUE" */,-41 , 12/* "FALSE" */,-41 , 32/* "-" */,-41 , 31/* "+" */,-41 , 38/* ")" */,-41 , 16/* "]" */,-41 , 39/* "," */,-41 , 14/* ">>" */,-41 ),
+	/* State 61 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 62 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 63 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 64 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 65 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 66 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 38/* ")" */,104 ),
+	/* State 67 */ new Array( 44/* "Identifier" */,106 , 38/* ")" */,-14 , 39/* "," */,-14 ),
+	/* State 68 */ new Array( 39/* "," */,107 , 14/* ">>" */,108 ),
+	/* State 69 */ new Array( 14/* ">>" */,-9 , 39/* "," */,-9 ),
+	/* State 70 */ new Array( 41/* ":" */,109 ),
+	/* State 71 */ new Array( 39/* "," */,110 , 16/* "]" */,111 ),
+	/* State 72 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 16/* "]" */,-6 , 39/* "," */,-6 , 38/* ")" */,-6 ),
+	/* State 73 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 74 */ new Array( 43/* "." */,77 , 37/* "(" */,58 , 15/* "[" */,78 , 36/* "^" */,-52 , 19/* ";" */,-52 , 21/* "==" */,-52 , 27/* "<" */,-52 , 26/* ">" */,-52 , 24/* "<=" */,-52 , 25/* ">=" */,-52 , 22/* "!=" */,-52 , 23/* "~=" */,-52 , 28/* "||" */,-52 , 29/* "&&" */,-52 , 32/* "-" */,-52 , 31/* "+" */,-52 , 35/* "*" */,-52 , 33/* "/" */,-52 , 34/* "%" */,-52 , 2/* "IF" */,-52 , 4/* "WHILE" */,-52 , 5/* "DO" */,-52 , 6/* "FOR" */,-52 , 8/* "USE" */,-52 , 10/* "DELETE" */,-52 , 9/* "RETURN" */,-52 , 17/* "{" */,-52 , 44/* "Identifier" */,-52 , 30/* "!" */,-52 , 46/* "Integer" */,-52 , 47/* "Float" */,-52 , 45/* "String" */,-52 , 7/* "FUNCTION" */,-52 , 13/* "<<" */,-52 , 11/* "TRUE" */,-52 , 12/* "FALSE" */,-52 , 38/* ")" */,-52 , 16/* "]" */,-52 , 39/* "," */,-52 , 14/* ">>" */,-52 ),
+	/* State 75 */ new Array( 43/* "." */,77 , 37/* "(" */,58 , 15/* "[" */,78 , 36/* "^" */,-53 , 19/* ";" */,-53 , 21/* "==" */,-53 , 27/* "<" */,-53 , 26/* ">" */,-53 , 24/* "<=" */,-53 , 25/* ">=" */,-53 , 22/* "!=" */,-53 , 23/* "~=" */,-53 , 28/* "||" */,-53 , 29/* "&&" */,-53 , 32/* "-" */,-53 , 31/* "+" */,-53 , 35/* "*" */,-53 , 33/* "/" */,-53 , 34/* "%" */,-53 , 2/* "IF" */,-53 , 4/* "WHILE" */,-53 , 5/* "DO" */,-53 , 6/* "FOR" */,-53 , 8/* "USE" */,-53 , 10/* "DELETE" */,-53 , 9/* "RETURN" */,-53 , 17/* "{" */,-53 , 44/* "Identifier" */,-53 , 30/* "!" */,-53 , 46/* "Integer" */,-53 , 47/* "Float" */,-53 , 45/* "String" */,-53 , 7/* "FUNCTION" */,-53 , 13/* "<<" */,-53 , 11/* "TRUE" */,-53 , 12/* "FALSE" */,-53 , 38/* ")" */,-53 , 16/* "]" */,-53 , 39/* "," */,-53 , 14/* ">>" */,-53 ),
+	/* State 76 */ new Array( 3/* "ELSE" */,113 , 65/* "$$" */,-16 , 2/* "IF" */,-16 , 4/* "WHILE" */,-16 , 5/* "DO" */,-16 , 6/* "FOR" */,-16 , 8/* "USE" */,-16 , 10/* "DELETE" */,-16 , 9/* "RETURN" */,-16 , 17/* "{" */,-16 , 19/* ";" */,-16 , 44/* "Identifier" */,-16 , 30/* "!" */,-16 , 46/* "Integer" */,-16 , 47/* "Float" */,-16 , 37/* "(" */,-16 , 45/* "String" */,-16 , 7/* "FUNCTION" */,-16 , 13/* "<<" */,-16 , 15/* "[" */,-16 , 11/* "TRUE" */,-16 , 12/* "FALSE" */,-16 , 32/* "-" */,-16 , 31/* "+" */,-16 , 18/* "}" */,-16 ),
+	/* State 77 */ new Array( 44/* "Identifier" */,114 ),
+	/* State 78 */ new Array( 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 79 */ new Array( 65/* "$$" */,-18 , 2/* "IF" */,-18 , 4/* "WHILE" */,-18 , 5/* "DO" */,-18 , 6/* "FOR" */,-18 , 8/* "USE" */,-18 , 10/* "DELETE" */,-18 , 9/* "RETURN" */,-18 , 17/* "{" */,-18 , 19/* ";" */,-18 , 44/* "Identifier" */,-18 , 30/* "!" */,-18 , 46/* "Integer" */,-18 , 47/* "Float" */,-18 , 37/* "(" */,-18 , 45/* "String" */,-18 , 7/* "FUNCTION" */,-18 , 13/* "<<" */,-18 , 15/* "[" */,-18 , 11/* "TRUE" */,-18 , 12/* "FALSE" */,-18 , 32/* "-" */,-18 , 31/* "+" */,-18 , 3/* "ELSE" */,-18 , 18/* "}" */,-18 ),
+	/* State 80 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 81 */ new Array( 19/* ";" */,117 ),
+	/* State 82 */ new Array( 43/* "." */,57 , 37/* "(" */,58 , 15/* "[" */,59 ),
+	/* State 83 */ new Array( 65/* "$$" */,-21 , 2/* "IF" */,-21 , 4/* "WHILE" */,-21 , 5/* "DO" */,-21 , 6/* "FOR" */,-21 , 8/* "USE" */,-21 , 10/* "DELETE" */,-21 , 9/* "RETURN" */,-21 , 17/* "{" */,-21 , 19/* ";" */,-21 , 44/* "Identifier" */,-21 , 30/* "!" */,-21 , 46/* "Integer" */,-21 , 47/* "Float" */,-21 , 37/* "(" */,-21 , 45/* "String" */,-21 , 7/* "FUNCTION" */,-21 , 13/* "<<" */,-21 , 15/* "[" */,-21 , 11/* "TRUE" */,-21 , 12/* "FALSE" */,-21 , 32/* "-" */,-21 , 31/* "+" */,-21 , 3/* "ELSE" */,-21 , 18/* "}" */,-21 ),
+	/* State 84 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-37 , 21/* "==" */,-37 , 27/* "<" */,-37 , 26/* ">" */,-37 , 24/* "<=" */,-37 , 25/* ">=" */,-37 , 22/* "!=" */,-37 , 23/* "~=" */,-37 , 2/* "IF" */,-37 , 4/* "WHILE" */,-37 , 5/* "DO" */,-37 , 6/* "FOR" */,-37 , 8/* "USE" */,-37 , 10/* "DELETE" */,-37 , 9/* "RETURN" */,-37 , 17/* "{" */,-37 , 44/* "Identifier" */,-37 , 30/* "!" */,-37 , 46/* "Integer" */,-37 , 47/* "Float" */,-37 , 37/* "(" */,-37 , 45/* "String" */,-37 , 7/* "FUNCTION" */,-37 , 13/* "<<" */,-37 , 15/* "[" */,-37 , 11/* "TRUE" */,-37 , 12/* "FALSE" */,-37 , 32/* "-" */,-37 , 31/* "+" */,-37 , 38/* ")" */,-37 , 16/* "]" */,-37 , 39/* "," */,-37 , 14/* ">>" */,-37 ),
+	/* State 85 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-36 , 21/* "==" */,-36 , 27/* "<" */,-36 , 26/* ">" */,-36 , 24/* "<=" */,-36 , 25/* ">=" */,-36 , 22/* "!=" */,-36 , 23/* "~=" */,-36 , 2/* "IF" */,-36 , 4/* "WHILE" */,-36 , 5/* "DO" */,-36 , 6/* "FOR" */,-36 , 8/* "USE" */,-36 , 10/* "DELETE" */,-36 , 9/* "RETURN" */,-36 , 17/* "{" */,-36 , 44/* "Identifier" */,-36 , 30/* "!" */,-36 , 46/* "Integer" */,-36 , 47/* "Float" */,-36 , 37/* "(" */,-36 , 45/* "String" */,-36 , 7/* "FUNCTION" */,-36 , 13/* "<<" */,-36 , 15/* "[" */,-36 , 11/* "TRUE" */,-36 , 12/* "FALSE" */,-36 , 32/* "-" */,-36 , 31/* "+" */,-36 , 38/* ")" */,-36 , 16/* "]" */,-36 , 39/* "," */,-36 , 14/* ">>" */,-36 ),
+	/* State 86 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-35 , 21/* "==" */,-35 , 27/* "<" */,-35 , 26/* ">" */,-35 , 24/* "<=" */,-35 , 25/* ">=" */,-35 , 22/* "!=" */,-35 , 23/* "~=" */,-35 , 2/* "IF" */,-35 , 4/* "WHILE" */,-35 , 5/* "DO" */,-35 , 6/* "FOR" */,-35 , 8/* "USE" */,-35 , 10/* "DELETE" */,-35 , 9/* "RETURN" */,-35 , 17/* "{" */,-35 , 44/* "Identifier" */,-35 , 30/* "!" */,-35 , 46/* "Integer" */,-35 , 47/* "Float" */,-35 , 37/* "(" */,-35 , 45/* "String" */,-35 , 7/* "FUNCTION" */,-35 , 13/* "<<" */,-35 , 15/* "[" */,-35 , 11/* "TRUE" */,-35 , 12/* "FALSE" */,-35 , 32/* "-" */,-35 , 31/* "+" */,-35 , 38/* ")" */,-35 , 16/* "]" */,-35 , 39/* "," */,-35 , 14/* ">>" */,-35 ),
+	/* State 87 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-34 , 21/* "==" */,-34 , 27/* "<" */,-34 , 26/* ">" */,-34 , 24/* "<=" */,-34 , 25/* ">=" */,-34 , 22/* "!=" */,-34 , 23/* "~=" */,-34 , 2/* "IF" */,-34 , 4/* "WHILE" */,-34 , 5/* "DO" */,-34 , 6/* "FOR" */,-34 , 8/* "USE" */,-34 , 10/* "DELETE" */,-34 , 9/* "RETURN" */,-34 , 17/* "{" */,-34 , 44/* "Identifier" */,-34 , 30/* "!" */,-34 , 46/* "Integer" */,-34 , 47/* "Float" */,-34 , 37/* "(" */,-34 , 45/* "String" */,-34 , 7/* "FUNCTION" */,-34 , 13/* "<<" */,-34 , 15/* "[" */,-34 , 11/* "TRUE" */,-34 , 12/* "FALSE" */,-34 , 32/* "-" */,-34 , 31/* "+" */,-34 , 38/* ")" */,-34 , 16/* "]" */,-34 , 39/* "," */,-34 , 14/* ">>" */,-34 ),
+	/* State 88 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-33 , 21/* "==" */,-33 , 27/* "<" */,-33 , 26/* ">" */,-33 , 24/* "<=" */,-33 , 25/* ">=" */,-33 , 22/* "!=" */,-33 , 23/* "~=" */,-33 , 2/* "IF" */,-33 , 4/* "WHILE" */,-33 , 5/* "DO" */,-33 , 6/* "FOR" */,-33 , 8/* "USE" */,-33 , 10/* "DELETE" */,-33 , 9/* "RETURN" */,-33 , 17/* "{" */,-33 , 44/* "Identifier" */,-33 , 30/* "!" */,-33 , 46/* "Integer" */,-33 , 47/* "Float" */,-33 , 37/* "(" */,-33 , 45/* "String" */,-33 , 7/* "FUNCTION" */,-33 , 13/* "<<" */,-33 , 15/* "[" */,-33 , 11/* "TRUE" */,-33 , 12/* "FALSE" */,-33 , 32/* "-" */,-33 , 31/* "+" */,-33 , 38/* ")" */,-33 , 16/* "]" */,-33 , 39/* "," */,-33 , 14/* ">>" */,-33 ),
+	/* State 89 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-32 , 21/* "==" */,-32 , 27/* "<" */,-32 , 26/* ">" */,-32 , 24/* "<=" */,-32 , 25/* ">=" */,-32 , 22/* "!=" */,-32 , 23/* "~=" */,-32 , 2/* "IF" */,-32 , 4/* "WHILE" */,-32 , 5/* "DO" */,-32 , 6/* "FOR" */,-32 , 8/* "USE" */,-32 , 10/* "DELETE" */,-32 , 9/* "RETURN" */,-32 , 17/* "{" */,-32 , 44/* "Identifier" */,-32 , 30/* "!" */,-32 , 46/* "Integer" */,-32 , 47/* "Float" */,-32 , 37/* "(" */,-32 , 45/* "String" */,-32 , 7/* "FUNCTION" */,-32 , 13/* "<<" */,-32 , 15/* "[" */,-32 , 11/* "TRUE" */,-32 , 12/* "FALSE" */,-32 , 32/* "-" */,-32 , 31/* "+" */,-32 , 38/* ")" */,-32 , 16/* "]" */,-32 , 39/* "," */,-32 , 14/* ">>" */,-32 ),
+	/* State 90 */ new Array( 29/* "&&" */,55 , 28/* "||" */,56 , 19/* ";" */,-31 , 21/* "==" */,-31 , 27/* "<" */,-31 , 26/* ">" */,-31 , 24/* "<=" */,-31 , 25/* ">=" */,-31 , 22/* "!=" */,-31 , 23/* "~=" */,-31 , 2/* "IF" */,-31 , 4/* "WHILE" */,-31 , 5/* "DO" */,-31 , 6/* "FOR" */,-31 , 8/* "USE" */,-31 , 10/* "DELETE" */,-31 , 9/* "RETURN" */,-31 , 17/* "{" */,-31 , 44/* "Identifier" */,-31 , 30/* "!" */,-31 , 46/* "Integer" */,-31 , 47/* "Float" */,-31 , 37/* "(" */,-31 , 45/* "String" */,-31 , 7/* "FUNCTION" */,-31 , 13/* "<<" */,-31 , 15/* "[" */,-31 , 11/* "TRUE" */,-31 , 12/* "FALSE" */,-31 , 32/* "-" */,-31 , 31/* "+" */,-31 , 38/* ")" */,-31 , 16/* "]" */,-31 , 39/* "," */,-31 , 14/* ">>" */,-31 ),
+	/* State 91 */ new Array( 18/* "}" */,-3 , 2/* "IF" */,-3 , 4/* "WHILE" */,-3 , 5/* "DO" */,-3 , 6/* "FOR" */,-3 , 8/* "USE" */,-3 , 10/* "DELETE" */,-3 , 9/* "RETURN" */,-3 , 17/* "{" */,-3 , 19/* ";" */,-3 , 44/* "Identifier" */,-3 , 30/* "!" */,-3 , 46/* "Integer" */,-3 , 47/* "Float" */,-3 , 37/* "(" */,-3 , 45/* "String" */,-3 , 7/* "FUNCTION" */,-3 , 13/* "<<" */,-3 , 15/* "[" */,-3 , 11/* "TRUE" */,-3 , 12/* "FALSE" */,-3 , 32/* "-" */,-3 , 31/* "+" */,-3 ),
+	/* State 92 */ new Array( 65/* "$$" */,-26 , 2/* "IF" */,-26 , 4/* "WHILE" */,-26 , 5/* "DO" */,-26 , 6/* "FOR" */,-26 , 8/* "USE" */,-26 , 10/* "DELETE" */,-26 , 9/* "RETURN" */,-26 , 17/* "{" */,-26 , 19/* ";" */,-26 , 44/* "Identifier" */,-26 , 30/* "!" */,-26 , 46/* "Integer" */,-26 , 47/* "Float" */,-26 , 37/* "(" */,-26 , 45/* "String" */,-26 , 7/* "FUNCTION" */,-26 , 13/* "<<" */,-26 , 15/* "[" */,-26 , 11/* "TRUE" */,-26 , 12/* "FALSE" */,-26 , 32/* "-" */,-26 , 31/* "+" */,-26 , 3/* "ELSE" */,-26 , 18/* "}" */,-26 ),
+	/* State 93 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 19/* ";" */,-15 , 38/* ")" */,-15 ),
+	/* State 94 */ new Array( 31/* "+" */,61 , 32/* "-" */,62 , 19/* ";" */,-40 , 21/* "==" */,-40 , 27/* "<" */,-40 , 26/* ">" */,-40 , 24/* "<=" */,-40 , 25/* ">=" */,-40 , 22/* "!=" */,-40 , 23/* "~=" */,-40 , 28/* "||" */,-40 , 29/* "&&" */,-40 , 2/* "IF" */,-40 , 4/* "WHILE" */,-40 , 5/* "DO" */,-40 , 6/* "FOR" */,-40 , 8/* "USE" */,-40 , 10/* "DELETE" */,-40 , 9/* "RETURN" */,-40 , 17/* "{" */,-40 , 44/* "Identifier" */,-40 , 30/* "!" */,-40 , 46/* "Integer" */,-40 , 47/* "Float" */,-40 , 37/* "(" */,-40 , 45/* "String" */,-40 , 7/* "FUNCTION" */,-40 , 13/* "<<" */,-40 , 15/* "[" */,-40 , 11/* "TRUE" */,-40 , 12/* "FALSE" */,-40 , 38/* ")" */,-40 , 16/* "]" */,-40 , 39/* "," */,-40 , 14/* ">>" */,-40 ),
+	/* State 95 */ new Array( 31/* "+" */,61 , 32/* "-" */,62 , 19/* ";" */,-39 , 21/* "==" */,-39 , 27/* "<" */,-39 , 26/* ">" */,-39 , 24/* "<=" */,-39 , 25/* ">=" */,-39 , 22/* "!=" */,-39 , 23/* "~=" */,-39 , 28/* "||" */,-39 , 29/* "&&" */,-39 , 2/* "IF" */,-39 , 4/* "WHILE" */,-39 , 5/* "DO" */,-39 , 6/* "FOR" */,-39 , 8/* "USE" */,-39 , 10/* "DELETE" */,-39 , 9/* "RETURN" */,-39 , 17/* "{" */,-39 , 44/* "Identifier" */,-39 , 30/* "!" */,-39 , 46/* "Integer" */,-39 , 47/* "Float" */,-39 , 37/* "(" */,-39 , 45/* "String" */,-39 , 7/* "FUNCTION" */,-39 , 13/* "<<" */,-39 , 15/* "[" */,-39 , 11/* "TRUE" */,-39 , 12/* "FALSE" */,-39 , 38/* ")" */,-39 , 16/* "]" */,-39 , 39/* "," */,-39 , 14/* ">>" */,-39 ),
+	/* State 96 */ new Array( 20/* "=" */,-28 , 43/* "." */,-58 , 15/* "[" */,-58 , 37/* "(" */,-58 , 36/* "^" */,-58 , 19/* ";" */,-58 , 21/* "==" */,-58 , 27/* "<" */,-58 , 26/* ">" */,-58 , 24/* "<=" */,-58 , 25/* ">=" */,-58 , 22/* "!=" */,-58 , 23/* "~=" */,-58 , 28/* "||" */,-58 , 29/* "&&" */,-58 , 32/* "-" */,-58 , 31/* "+" */,-58 , 35/* "*" */,-58 , 33/* "/" */,-58 , 34/* "%" */,-58 ),
+	/* State 97 */ new Array( 39/* "," */,110 , 38/* ")" */,118 ),
+	/* State 98 */ new Array( 31/* "+" */,61 , 32/* "-" */,62 , 16/* "]" */,119 ),
+	/* State 99 */ new Array( 34/* "%" */,63 , 33/* "/" */,64 , 35/* "*" */,65 , 19/* ";" */,-44 , 21/* "==" */,-44 , 27/* "<" */,-44 , 26/* ">" */,-44 , 24/* "<=" */,-44 , 25/* ">=" */,-44 , 22/* "!=" */,-44 , 23/* "~=" */,-44 , 28/* "||" */,-44 , 29/* "&&" */,-44 , 32/* "-" */,-44 , 31/* "+" */,-44 , 2/* "IF" */,-44 , 4/* "WHILE" */,-44 , 5/* "DO" */,-44 , 6/* "FOR" */,-44 , 8/* "USE" */,-44 , 10/* "DELETE" */,-44 , 9/* "RETURN" */,-44 , 17/* "{" */,-44 , 44/* "Identifier" */,-44 , 30/* "!" */,-44 , 46/* "Integer" */,-44 , 47/* "Float" */,-44 , 37/* "(" */,-44 , 45/* "String" */,-44 , 7/* "FUNCTION" */,-44 , 13/* "<<" */,-44 , 15/* "[" */,-44 , 11/* "TRUE" */,-44 , 12/* "FALSE" */,-44 , 38/* ")" */,-44 , 16/* "]" */,-44 , 39/* "," */,-44 , 14/* ">>" */,-44 ),
+	/* State 100 */ new Array( 34/* "%" */,63 , 33/* "/" */,64 , 35/* "*" */,65 , 19/* ";" */,-43 , 21/* "==" */,-43 , 27/* "<" */,-43 , 26/* ">" */,-43 , 24/* "<=" */,-43 , 25/* ">=" */,-43 , 22/* "!=" */,-43 , 23/* "~=" */,-43 , 28/* "||" */,-43 , 29/* "&&" */,-43 , 32/* "-" */,-43 , 31/* "+" */,-43 , 2/* "IF" */,-43 , 4/* "WHILE" */,-43 , 5/* "DO" */,-43 , 6/* "FOR" */,-43 , 8/* "USE" */,-43 , 10/* "DELETE" */,-43 , 9/* "RETURN" */,-43 , 17/* "{" */,-43 , 44/* "Identifier" */,-43 , 30/* "!" */,-43 , 46/* "Integer" */,-43 , 47/* "Float" */,-43 , 37/* "(" */,-43 , 45/* "String" */,-43 , 7/* "FUNCTION" */,-43 , 13/* "<<" */,-43 , 15/* "[" */,-43 , 11/* "TRUE" */,-43 , 12/* "FALSE" */,-43 , 38/* ")" */,-43 , 16/* "]" */,-43 , 39/* "," */,-43 , 14/* ">>" */,-43 ),
+	/* State 101 */ new Array( 19/* ";" */,-48 , 21/* "==" */,-48 , 27/* "<" */,-48 , 26/* ">" */,-48 , 24/* "<=" */,-48 , 25/* ">=" */,-48 , 22/* "!=" */,-48 , 23/* "~=" */,-48 , 28/* "||" */,-48 , 29/* "&&" */,-48 , 32/* "-" */,-48 , 31/* "+" */,-48 , 35/* "*" */,-48 , 33/* "/" */,-48 , 34/* "%" */,-48 , 2/* "IF" */,-48 , 4/* "WHILE" */,-48 , 5/* "DO" */,-48 , 6/* "FOR" */,-48 , 8/* "USE" */,-48 , 10/* "DELETE" */,-48 , 9/* "RETURN" */,-48 , 17/* "{" */,-48 , 44/* "Identifier" */,-48 , 30/* "!" */,-48 , 46/* "Integer" */,-48 , 47/* "Float" */,-48 , 37/* "(" */,-48 , 45/* "String" */,-48 , 7/* "FUNCTION" */,-48 , 13/* "<<" */,-48 , 15/* "[" */,-48 , 11/* "TRUE" */,-48 , 12/* "FALSE" */,-48 , 38/* ")" */,-48 , 16/* "]" */,-48 , 39/* "," */,-48 , 14/* ">>" */,-48 ),
+	/* State 102 */ new Array( 19/* ";" */,-47 , 21/* "==" */,-47 , 27/* "<" */,-47 , 26/* ">" */,-47 , 24/* "<=" */,-47 , 25/* ">=" */,-47 , 22/* "!=" */,-47 , 23/* "~=" */,-47 , 28/* "||" */,-47 , 29/* "&&" */,-47 , 32/* "-" */,-47 , 31/* "+" */,-47 , 35/* "*" */,-47 , 33/* "/" */,-47 , 34/* "%" */,-47 , 2/* "IF" */,-47 , 4/* "WHILE" */,-47 , 5/* "DO" */,-47 , 6/* "FOR" */,-47 , 8/* "USE" */,-47 , 10/* "DELETE" */,-47 , 9/* "RETURN" */,-47 , 17/* "{" */,-47 , 44/* "Identifier" */,-47 , 30/* "!" */,-47 , 46/* "Integer" */,-47 , 47/* "Float" */,-47 , 37/* "(" */,-47 , 45/* "String" */,-47 , 7/* "FUNCTION" */,-47 , 13/* "<<" */,-47 , 15/* "[" */,-47 , 11/* "TRUE" */,-47 , 12/* "FALSE" */,-47 , 38/* ")" */,-47 , 16/* "]" */,-47 , 39/* "," */,-47 , 14/* ">>" */,-47 ),
+	/* State 103 */ new Array( 19/* ";" */,-46 , 21/* "==" */,-46 , 27/* "<" */,-46 , 26/* ">" */,-46 , 24/* "<=" */,-46 , 25/* ">=" */,-46 , 22/* "!=" */,-46 , 23/* "~=" */,-46 , 28/* "||" */,-46 , 29/* "&&" */,-46 , 32/* "-" */,-46 , 31/* "+" */,-46 , 35/* "*" */,-46 , 33/* "/" */,-46 , 34/* "%" */,-46 , 2/* "IF" */,-46 , 4/* "WHILE" */,-46 , 5/* "DO" */,-46 , 6/* "FOR" */,-46 , 8/* "USE" */,-46 , 10/* "DELETE" */,-46 , 9/* "RETURN" */,-46 , 17/* "{" */,-46 , 44/* "Identifier" */,-46 , 30/* "!" */,-46 , 46/* "Integer" */,-46 , 47/* "Float" */,-46 , 37/* "(" */,-46 , 45/* "String" */,-46 , 7/* "FUNCTION" */,-46 , 13/* "<<" */,-46 , 15/* "[" */,-46 , 11/* "TRUE" */,-46 , 12/* "FALSE" */,-46 , 38/* ")" */,-46 , 16/* "]" */,-46 , 39/* "," */,-46 , 14/* ">>" */,-46 ),
+	/* State 104 */ new Array( 43/* "." */,-63 , 15/* "[" */,-63 , 37/* "(" */,-63 , 36/* "^" */,-63 , 19/* ";" */,-63 , 21/* "==" */,-63 , 27/* "<" */,-63 , 26/* ">" */,-63 , 24/* "<=" */,-63 , 25/* ">=" */,-63 , 22/* "!=" */,-63 , 23/* "~=" */,-63 , 28/* "||" */,-63 , 29/* "&&" */,-63 , 32/* "-" */,-63 , 31/* "+" */,-63 , 35/* "*" */,-63 , 33/* "/" */,-63 , 34/* "%" */,-63 , 2/* "IF" */,-63 , 4/* "WHILE" */,-63 , 5/* "DO" */,-63 , 6/* "FOR" */,-63 , 8/* "USE" */,-63 , 10/* "DELETE" */,-63 , 9/* "RETURN" */,-63 , 17/* "{" */,-63 , 44/* "Identifier" */,-63 , 30/* "!" */,-63 , 46/* "Integer" */,-63 , 47/* "Float" */,-63 , 45/* "String" */,-63 , 7/* "FUNCTION" */,-63 , 13/* "<<" */,-63 , 11/* "TRUE" */,-63 , 12/* "FALSE" */,-63 , 38/* ")" */,-63 , 16/* "]" */,-63 , 39/* "," */,-63 , 14/* ">>" */,-63 ),
+	/* State 105 */ new Array( 39/* "," */,120 , 38/* ")" */,121 ),
+	/* State 106 */ new Array( 38/* ")" */,-13 , 39/* "," */,-13 ),
+	/* State 107 */ new Array( 44/* "Identifier" */,70 ),
+	/* State 108 */ new Array( 43/* "." */,-66 , 15/* "[" */,-66 , 37/* "(" */,-66 , 36/* "^" */,-66 , 19/* ";" */,-66 , 21/* "==" */,-66 , 27/* "<" */,-66 , 26/* ">" */,-66 , 24/* "<=" */,-66 , 25/* ">=" */,-66 , 22/* "!=" */,-66 , 23/* "~=" */,-66 , 28/* "||" */,-66 , 29/* "&&" */,-66 , 32/* "-" */,-66 , 31/* "+" */,-66 , 35/* "*" */,-66 , 33/* "/" */,-66 , 34/* "%" */,-66 , 2/* "IF" */,-66 , 4/* "WHILE" */,-66 , 5/* "DO" */,-66 , 6/* "FOR" */,-66 , 8/* "USE" */,-66 , 10/* "DELETE" */,-66 , 9/* "RETURN" */,-66 , 17/* "{" */,-66 , 44/* "Identifier" */,-66 , 30/* "!" */,-66 , 46/* "Integer" */,-66 , 47/* "Float" */,-66 , 45/* "String" */,-66 , 7/* "FUNCTION" */,-66 , 13/* "<<" */,-66 , 11/* "TRUE" */,-66 , 12/* "FALSE" */,-66 , 38/* ")" */,-66 , 16/* "]" */,-66 , 39/* "," */,-66 , 14/* ">>" */,-66 ),
+	/* State 109 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 110 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 111 */ new Array( 43/* "." */,-67 , 15/* "[" */,-67 , 37/* "(" */,-67 , 36/* "^" */,-67 , 19/* ";" */,-67 , 21/* "==" */,-67 , 27/* "<" */,-67 , 26/* ">" */,-67 , 24/* "<=" */,-67 , 25/* ">=" */,-67 , 22/* "!=" */,-67 , 23/* "~=" */,-67 , 28/* "||" */,-67 , 29/* "&&" */,-67 , 32/* "-" */,-67 , 31/* "+" */,-67 , 35/* "*" */,-67 , 33/* "/" */,-67 , 34/* "%" */,-67 , 2/* "IF" */,-67 , 4/* "WHILE" */,-67 , 5/* "DO" */,-67 , 6/* "FOR" */,-67 , 8/* "USE" */,-67 , 10/* "DELETE" */,-67 , 9/* "RETURN" */,-67 , 17/* "{" */,-67 , 44/* "Identifier" */,-67 , 30/* "!" */,-67 , 46/* "Integer" */,-67 , 47/* "Float" */,-67 , 45/* "String" */,-67 , 7/* "FUNCTION" */,-67 , 13/* "<<" */,-67 , 11/* "TRUE" */,-67 , 12/* "FALSE" */,-67 , 38/* ")" */,-67 , 16/* "]" */,-67 , 39/* "," */,-67 , 14/* ">>" */,-67 ),
+	/* State 112 */ new Array( 19/* ";" */,-50 , 21/* "==" */,-50 , 27/* "<" */,-50 , 26/* ">" */,-50 , 24/* "<=" */,-50 , 25/* ">=" */,-50 , 22/* "!=" */,-50 , 23/* "~=" */,-50 , 28/* "||" */,-50 , 29/* "&&" */,-50 , 32/* "-" */,-50 , 31/* "+" */,-50 , 35/* "*" */,-50 , 33/* "/" */,-50 , 34/* "%" */,-50 , 2/* "IF" */,-50 , 4/* "WHILE" */,-50 , 5/* "DO" */,-50 , 6/* "FOR" */,-50 , 8/* "USE" */,-50 , 10/* "DELETE" */,-50 , 9/* "RETURN" */,-50 , 17/* "{" */,-50 , 44/* "Identifier" */,-50 , 30/* "!" */,-50 , 46/* "Integer" */,-50 , 47/* "Float" */,-50 , 37/* "(" */,-50 , 45/* "String" */,-50 , 7/* "FUNCTION" */,-50 , 13/* "<<" */,-50 , 15/* "[" */,-50 , 11/* "TRUE" */,-50 , 12/* "FALSE" */,-50 , 38/* ")" */,-50 , 16/* "]" */,-50 , 39/* "," */,-50 , 14/* ">>" */,-50 ),
+	/* State 113 */ new Array( 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 114 */ new Array( 36/* "^" */,-58 , 2/* "IF" */,-58 , 4/* "WHILE" */,-58 , 5/* "DO" */,-58 , 6/* "FOR" */,-58 , 8/* "USE" */,-58 , 10/* "DELETE" */,-58 , 9/* "RETURN" */,-58 , 17/* "{" */,-58 , 19/* ";" */,-58 , 44/* "Identifier" */,-58 , 30/* "!" */,-58 , 46/* "Integer" */,-58 , 47/* "Float" */,-58 , 37/* "(" */,-58 , 45/* "String" */,-58 , 7/* "FUNCTION" */,-58 , 13/* "<<" */,-58 , 15/* "[" */,-58 , 11/* "TRUE" */,-58 , 12/* "FALSE" */,-58 , 32/* "-" */,-58 , 31/* "+" */,-58 , 21/* "==" */,-58 , 27/* "<" */,-58 , 26/* ">" */,-58 , 24/* "<=" */,-58 , 25/* ">=" */,-58 , 22/* "!=" */,-58 , 23/* "~=" */,-58 , 28/* "||" */,-58 , 29/* "&&" */,-58 , 35/* "*" */,-58 , 33/* "/" */,-58 , 34/* "%" */,-58 , 43/* "." */,-58 , 38/* ")" */,-58 , 16/* "]" */,-58 , 39/* "," */,-58 , 14/* ">>" */,-58 ),
+	/* State 115 */ new Array( 31/* "+" */,61 , 32/* "-" */,62 , 16/* "]" */,126 ),
+	/* State 116 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 19/* ";" */,127 ),
+	/* State 117 */ new Array( 30/* "!" */,18 , 32/* "-" */,33 , 31/* "+" */,34 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 118 */ new Array( 46/* "Integer" */,22 , 47/* "Float" */,23 , 44/* "Identifier" */,37 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 43/* "." */,-56 , 36/* "^" */,-56 , 19/* ";" */,-56 , 21/* "==" */,-56 , 27/* "<" */,-56 , 26/* ">" */,-56 , 24/* "<=" */,-56 , 25/* ">=" */,-56 , 22/* "!=" */,-56 , 23/* "~=" */,-56 , 28/* "||" */,-56 , 29/* "&&" */,-56 , 32/* "-" */,-56 , 31/* "+" */,-56 , 35/* "*" */,-56 , 33/* "/" */,-56 , 34/* "%" */,-56 , 2/* "IF" */,-56 , 4/* "WHILE" */,-56 , 5/* "DO" */,-56 , 6/* "FOR" */,-56 , 8/* "USE" */,-56 , 10/* "DELETE" */,-56 , 9/* "RETURN" */,-56 , 17/* "{" */,-56 , 30/* "!" */,-56 , 38/* ")" */,-56 , 16/* "]" */,-56 , 39/* "," */,-56 , 14/* ">>" */,-56 ),
+	/* State 119 */ new Array( 43/* "." */,-55 , 15/* "[" */,-55 , 37/* "(" */,-55 , 36/* "^" */,-55 , 19/* ";" */,-55 , 21/* "==" */,-55 , 27/* "<" */,-55 , 26/* ">" */,-55 , 24/* "<=" */,-55 , 25/* ">=" */,-55 , 22/* "!=" */,-55 , 23/* "~=" */,-55 , 28/* "||" */,-55 , 29/* "&&" */,-55 , 32/* "-" */,-55 , 31/* "+" */,-55 , 35/* "*" */,-55 , 33/* "/" */,-55 , 34/* "%" */,-55 , 20/* "=" */,-29 ),
+	/* State 120 */ new Array( 44/* "Identifier" */,130 ),
+	/* State 121 */ new Array( 17/* "{" */,131 ),
+	/* State 122 */ new Array( 14/* ">>" */,-8 , 39/* "," */,-8 ),
+	/* State 123 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 14/* ">>" */,-11 , 39/* "," */,-11 ),
+	/* State 124 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 16/* "]" */,-5 , 39/* "," */,-5 , 38/* ")" */,-5 ),
+	/* State 125 */ new Array( 65/* "$$" */,-17 , 2/* "IF" */,-17 , 4/* "WHILE" */,-17 , 5/* "DO" */,-17 , 6/* "FOR" */,-17 , 8/* "USE" */,-17 , 10/* "DELETE" */,-17 , 9/* "RETURN" */,-17 , 17/* "{" */,-17 , 19/* ";" */,-17 , 44/* "Identifier" */,-17 , 30/* "!" */,-17 , 46/* "Integer" */,-17 , 47/* "Float" */,-17 , 37/* "(" */,-17 , 45/* "String" */,-17 , 7/* "FUNCTION" */,-17 , 13/* "<<" */,-17 , 15/* "[" */,-17 , 11/* "TRUE" */,-17 , 12/* "FALSE" */,-17 , 32/* "-" */,-17 , 31/* "+" */,-17 , 3/* "ELSE" */,-17 , 18/* "}" */,-17 ),
+	/* State 126 */ new Array( 36/* "^" */,-55 , 2/* "IF" */,-55 , 4/* "WHILE" */,-55 , 5/* "DO" */,-55 , 6/* "FOR" */,-55 , 8/* "USE" */,-55 , 10/* "DELETE" */,-55 , 9/* "RETURN" */,-55 , 17/* "{" */,-55 , 19/* ";" */,-55 , 44/* "Identifier" */,-55 , 30/* "!" */,-55 , 46/* "Integer" */,-55 , 47/* "Float" */,-55 , 37/* "(" */,-55 , 45/* "String" */,-55 , 7/* "FUNCTION" */,-55 , 13/* "<<" */,-55 , 15/* "[" */,-55 , 11/* "TRUE" */,-55 , 12/* "FALSE" */,-55 , 32/* "-" */,-55 , 31/* "+" */,-55 , 21/* "==" */,-55 , 27/* "<" */,-55 , 26/* ">" */,-55 , 24/* "<=" */,-55 , 25/* ">=" */,-55 , 22/* "!=" */,-55 , 23/* "~=" */,-55 , 28/* "||" */,-55 , 29/* "&&" */,-55 , 35/* "*" */,-55 , 33/* "/" */,-55 , 34/* "%" */,-55 , 43/* "." */,-55 , 38/* ")" */,-55 , 16/* "]" */,-55 , 39/* "," */,-55 , 14/* ">>" */,-55 ),
+	/* State 127 */ new Array( 65/* "$$" */,-19 , 2/* "IF" */,-19 , 4/* "WHILE" */,-19 , 5/* "DO" */,-19 , 6/* "FOR" */,-19 , 8/* "USE" */,-19 , 10/* "DELETE" */,-19 , 9/* "RETURN" */,-19 , 17/* "{" */,-19 , 19/* ";" */,-19 , 44/* "Identifier" */,-19 , 30/* "!" */,-19 , 46/* "Integer" */,-19 , 47/* "Float" */,-19 , 37/* "(" */,-19 , 45/* "String" */,-19 , 7/* "FUNCTION" */,-19 , 13/* "<<" */,-19 , 15/* "[" */,-19 , 11/* "TRUE" */,-19 , 12/* "FALSE" */,-19 , 32/* "-" */,-19 , 31/* "+" */,-19 , 3/* "ELSE" */,-19 , 18/* "}" */,-19 ),
+	/* State 128 */ new Array( 23/* "~=" */,45 , 22/* "!=" */,46 , 25/* ">=" */,47 , 24/* "<=" */,48 , 26/* ">" */,49 , 27/* "<" */,50 , 21/* "==" */,51 , 19/* ";" */,132 ),
+	/* State 129 */ new Array( 43/* "." */,77 , 37/* "(" */,58 , 15/* "[" */,78 , 36/* "^" */,-57 , 19/* ";" */,-57 , 21/* "==" */,-57 , 27/* "<" */,-57 , 26/* ">" */,-57 , 24/* "<=" */,-57 , 25/* ">=" */,-57 , 22/* "!=" */,-57 , 23/* "~=" */,-57 , 28/* "||" */,-57 , 29/* "&&" */,-57 , 32/* "-" */,-57 , 31/* "+" */,-57 , 35/* "*" */,-57 , 33/* "/" */,-57 , 34/* "%" */,-57 , 2/* "IF" */,-57 , 4/* "WHILE" */,-57 , 5/* "DO" */,-57 , 6/* "FOR" */,-57 , 8/* "USE" */,-57 , 10/* "DELETE" */,-57 , 9/* "RETURN" */,-57 , 17/* "{" */,-57 , 44/* "Identifier" */,-57 , 30/* "!" */,-57 , 46/* "Integer" */,-57 , 47/* "Float" */,-57 , 45/* "String" */,-57 , 7/* "FUNCTION" */,-57 , 13/* "<<" */,-57 , 11/* "TRUE" */,-57 , 12/* "FALSE" */,-57 , 38/* ")" */,-57 , 16/* "]" */,-57 , 39/* "," */,-57 , 14/* ">>" */,-57 ),
+	/* State 130 */ new Array( 38/* ")" */,-12 , 39/* "," */,-12 ),
+	/* State 131 */ new Array( 18/* "}" */,-4 , 2/* "IF" */,-4 , 4/* "WHILE" */,-4 , 5/* "DO" */,-4 , 6/* "FOR" */,-4 , 8/* "USE" */,-4 , 10/* "DELETE" */,-4 , 9/* "RETURN" */,-4 , 17/* "{" */,-4 , 19/* ";" */,-4 , 44/* "Identifier" */,-4 , 30/* "!" */,-4 , 46/* "Integer" */,-4 , 47/* "Float" */,-4 , 37/* "(" */,-4 , 45/* "String" */,-4 , 7/* "FUNCTION" */,-4 , 13/* "<<" */,-4 , 15/* "[" */,-4 , 11/* "TRUE" */,-4 , 12/* "FALSE" */,-4 , 32/* "-" */,-4 , 31/* "+" */,-4 ),
+	/* State 132 */ new Array( 44/* "Identifier" */,17 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 ),
+	/* State 133 */ new Array( 18/* "}" */,135 , 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 134 */ new Array( 38/* ")" */,136 ),
+	/* State 135 */ new Array( 43/* "." */,-65 , 15/* "[" */,-65 , 37/* "(" */,-65 , 36/* "^" */,-65 , 19/* ";" */,-65 , 21/* "==" */,-65 , 27/* "<" */,-65 , 26/* ">" */,-65 , 24/* "<=" */,-65 , 25/* ">=" */,-65 , 22/* "!=" */,-65 , 23/* "~=" */,-65 , 28/* "||" */,-65 , 29/* "&&" */,-65 , 32/* "-" */,-65 , 31/* "+" */,-65 , 35/* "*" */,-65 , 33/* "/" */,-65 , 34/* "%" */,-65 , 2/* "IF" */,-65 , 4/* "WHILE" */,-65 , 5/* "DO" */,-65 , 6/* "FOR" */,-65 , 8/* "USE" */,-65 , 10/* "DELETE" */,-65 , 9/* "RETURN" */,-65 , 17/* "{" */,-65 , 44/* "Identifier" */,-65 , 30/* "!" */,-65 , 46/* "Integer" */,-65 , 47/* "Float" */,-65 , 45/* "String" */,-65 , 7/* "FUNCTION" */,-65 , 13/* "<<" */,-65 , 11/* "TRUE" */,-65 , 12/* "FALSE" */,-65 , 38/* ")" */,-65 , 16/* "]" */,-65 , 39/* "," */,-65 , 14/* ">>" */,-65 ),
+	/* State 136 */ new Array( 2/* "IF" */,3 , 4/* "WHILE" */,4 , 5/* "DO" */,5 , 6/* "FOR" */,6 , 8/* "USE" */,7 , 10/* "DELETE" */,8 , 9/* "RETURN" */,9 , 17/* "{" */,12 , 19/* ";" */,13 , 44/* "Identifier" */,17 , 30/* "!" */,18 , 46/* "Integer" */,22 , 47/* "Float" */,23 , 37/* "(" */,24 , 45/* "String" */,25 , 7/* "FUNCTION" */,26 , 13/* "<<" */,27 , 15/* "[" */,28 , 11/* "TRUE" */,29 , 12/* "FALSE" */,30 , 32/* "-" */,33 , 31/* "+" */,34 ),
+	/* State 137 */ new Array( 65/* "$$" */,-20 , 2/* "IF" */,-20 , 4/* "WHILE" */,-20 , 5/* "DO" */,-20 , 6/* "FOR" */,-20 , 8/* "USE" */,-20 , 10/* "DELETE" */,-20 , 9/* "RETURN" */,-20 , 17/* "{" */,-20 , 19/* ";" */,-20 , 44/* "Identifier" */,-20 , 30/* "!" */,-20 , 46/* "Integer" */,-20 , 47/* "Float" */,-20 , 37/* "(" */,-20 , 45/* "String" */,-20 , 7/* "FUNCTION" */,-20 , 13/* "<<" */,-20 , 15/* "[" */,-20 , 11/* "TRUE" */,-20 , 12/* "FALSE" */,-20 , 32/* "-" */,-20 , 31/* "+" */,-20 , 3/* "ELSE" */,-20 , 18/* "}" */,-20 )
 );
 
 /* Goto-Table */
 var goto_tab = new Array(
-	/* State 0 */ new Array( 49/* Program */,1 ),
-	/* State 1 */ new Array( 50/* Stmt */,2 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 0 */ new Array( 48/* Program */,1 ),
+	/* State 1 */ new Array( 49/* Stmt */,2 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 2 */ new Array(  ),
-	/* State 3 */ new Array( 53/* Expression */,35 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 4 */ new Array( 53/* Expression */,38 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 5 */ new Array( 50/* Stmt */,39 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 3 */ new Array( 52/* Expression */,35 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 4 */ new Array( 52/* Expression */,38 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 5 */ new Array( 49/* Stmt */,39 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 6 */ new Array(  ),
 	/* State 7 */ new Array(  ),
 	/* State 8 */ new Array(  ),
-	/* State 9 */ new Array( 50/* Stmt */,43 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 9 */ new Array( 49/* Stmt */,43 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 10 */ new Array(  ),
 	/* State 11 */ new Array(  ),
-	/* State 12 */ new Array( 51/* Stmt_List */,53 ),
+	/* State 12 */ new Array( 50/* Stmt_List */,53 ),
 	/* State 13 */ new Array(  ),
 	/* State 14 */ new Array(  ),
 	/* State 15 */ new Array(  ),
 	/* State 16 */ new Array(  ),
 	/* State 17 */ new Array(  ),
-	/* State 18 */ new Array( 61/* LogExp */,60 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 18 */ new Array( 60/* LogExp */,60 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 19 */ new Array(  ),
 	/* State 20 */ new Array(  ),
 	/* State 21 */ new Array(  ),
 	/* State 22 */ new Array(  ),
 	/* State 23 */ new Array(  ),
-	/* State 24 */ new Array( 53/* Expression */,66 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 24 */ new Array( 52/* Expression */,66 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 25 */ new Array(  ),
 	/* State 26 */ new Array(  ),
-	/* State 27 */ new Array( 54/* Prop_List */,68 , 55/* Prop */,69 ),
-	/* State 28 */ new Array( 52/* Param_List */,71 , 53/* Expression */,72 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 27 */ new Array( 53/* Prop_List */,68 , 54/* Prop */,69 ),
+	/* State 28 */ new Array( 51/* Param_List */,71 , 52/* Expression */,72 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 29 */ new Array(  ),
 	/* State 30 */ new Array(  ),
 	/* State 31 */ new Array(  ),
 	/* State 32 */ new Array(  ),
-	/* State 33 */ new Array( 59/* ExtValue */,74 , 65/* Value */,20 ),
-	/* State 34 */ new Array( 59/* ExtValue */,75 , 65/* Value */,20 ),
-	/* State 35 */ new Array( 50/* Stmt */,76 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 33 */ new Array( 58/* ExtValue */,74 , 64/* Value */,20 ),
+	/* State 34 */ new Array( 58/* ExtValue */,75 , 64/* Value */,20 ),
+	/* State 35 */ new Array( 49/* Stmt */,76 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 36 */ new Array(  ),
 	/* State 37 */ new Array(  ),
-	/* State 38 */ new Array( 50/* Stmt */,79 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 38 */ new Array( 49/* Stmt */,79 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 39 */ new Array(  ),
-	/* State 40 */ new Array( 58/* Assign */,81 , 57/* Lhs */,14 , 59/* ExtValue */,82 , 65/* Value */,20 ),
+	/* State 40 */ new Array( 57/* Assign */,81 , 56/* Lhs */,14 , 58/* ExtValue */,82 , 64/* Value */,20 ),
 	/* State 41 */ new Array(  ),
 	/* State 42 */ new Array(  ),
 	/* State 43 */ new Array(  ),
 	/* State 44 */ new Array(  ),
-	/* State 45 */ new Array( 61/* LogExp */,84 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 46 */ new Array( 61/* LogExp */,85 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 47 */ new Array( 61/* LogExp */,86 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 48 */ new Array( 61/* LogExp */,87 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 49 */ new Array( 61/* LogExp */,88 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 50 */ new Array( 61/* LogExp */,89 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 51 */ new Array( 61/* LogExp */,90 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 45 */ new Array( 60/* LogExp */,84 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 46 */ new Array( 60/* LogExp */,85 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 47 */ new Array( 60/* LogExp */,86 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 48 */ new Array( 60/* LogExp */,87 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 49 */ new Array( 60/* LogExp */,88 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 50 */ new Array( 60/* LogExp */,89 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 51 */ new Array( 60/* LogExp */,90 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 52 */ new Array(  ),
-	/* State 53 */ new Array( 50/* Stmt */,92 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
-	/* State 54 */ new Array( 53/* Expression */,93 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 55 */ new Array( 60/* AddSubExp */,94 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 56 */ new Array( 60/* AddSubExp */,95 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 53 */ new Array( 49/* Stmt */,91 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
+	/* State 54 */ new Array( 52/* Expression */,93 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 55 */ new Array( 59/* AddSubExp */,94 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 56 */ new Array( 59/* AddSubExp */,95 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 57 */ new Array(  ),
-	/* State 58 */ new Array( 52/* Param_List */,97 , 53/* Expression */,72 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 59 */ new Array( 60/* AddSubExp */,98 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 58 */ new Array( 51/* Param_List */,97 , 52/* Expression */,72 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 59 */ new Array( 59/* AddSubExp */,98 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 60 */ new Array(  ),
-	/* State 61 */ new Array( 62/* MulDivExp */,99 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 62 */ new Array( 62/* MulDivExp */,100 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 63 */ new Array( 63/* ExpExp */,101 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 64 */ new Array( 63/* ExpExp */,102 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 65 */ new Array( 63/* ExpExp */,103 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 61 */ new Array( 61/* MulDivExp */,99 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 62 */ new Array( 61/* MulDivExp */,100 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 63 */ new Array( 62/* ExpExp */,101 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 64 */ new Array( 62/* ExpExp */,102 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 65 */ new Array( 62/* ExpExp */,103 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 66 */ new Array(  ),
-	/* State 67 */ new Array( 56/* Param_Def_List */,105 ),
+	/* State 67 */ new Array( 55/* Param_Def_List */,105 ),
 	/* State 68 */ new Array(  ),
 	/* State 69 */ new Array(  ),
 	/* State 70 */ new Array(  ),
 	/* State 71 */ new Array(  ),
 	/* State 72 */ new Array(  ),
-	/* State 73 */ new Array( 63/* ExpExp */,112 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 73 */ new Array( 62/* ExpExp */,112 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 74 */ new Array(  ),
 	/* State 75 */ new Array(  ),
 	/* State 76 */ new Array(  ),
 	/* State 77 */ new Array(  ),
-	/* State 78 */ new Array( 60/* AddSubExp */,115 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 78 */ new Array( 59/* AddSubExp */,115 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 79 */ new Array(  ),
-	/* State 80 */ new Array( 53/* Expression */,116 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 80 */ new Array( 52/* Expression */,116 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
 	/* State 81 */ new Array(  ),
 	/* State 82 */ new Array(  ),
 	/* State 83 */ new Array(  ),
@@ -2678,18 +2672,18 @@ var goto_tab = new Array(
 	/* State 104 */ new Array(  ),
 	/* State 105 */ new Array(  ),
 	/* State 106 */ new Array(  ),
-	/* State 107 */ new Array(  ),
-	/* State 108 */ new Array( 55/* Prop */,122 ),
-	/* State 109 */ new Array( 53/* Expression */,123 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 110 */ new Array(  ),
-	/* State 111 */ new Array( 53/* Expression */,124 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 107 */ new Array( 54/* Prop */,122 ),
+	/* State 108 */ new Array(  ),
+	/* State 109 */ new Array( 52/* Expression */,123 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 110 */ new Array( 52/* Expression */,124 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 111 */ new Array(  ),
 	/* State 112 */ new Array(  ),
-	/* State 113 */ new Array( 50/* Stmt */,125 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 113 */ new Array( 49/* Stmt */,125 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 114 */ new Array(  ),
 	/* State 115 */ new Array(  ),
 	/* State 116 */ new Array(  ),
-	/* State 117 */ new Array( 53/* Expression */,128 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 118 */ new Array( 59/* ExtValue */,129 , 65/* Value */,20 ),
+	/* State 117 */ new Array( 52/* Expression */,128 , 60/* LogExp */,15 , 59/* AddSubExp */,19 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 , 58/* ExtValue */,36 , 64/* Value */,20 ),
+	/* State 118 */ new Array( 58/* ExtValue */,129 , 64/* Value */,20 ),
 	/* State 119 */ new Array(  ),
 	/* State 120 */ new Array(  ),
 	/* State 121 */ new Array(  ),
@@ -2701,156 +2695,14 @@ var goto_tab = new Array(
 	/* State 127 */ new Array(  ),
 	/* State 128 */ new Array(  ),
 	/* State 129 */ new Array(  ),
-	/* State 130 */ new Array( 51/* Stmt_List */,133 ),
-	/* State 131 */ new Array(  ),
-	/* State 132 */ new Array( 58/* Assign */,134 , 57/* Lhs */,14 , 59/* ExtValue */,82 , 65/* Value */,20 ),
-	/* State 133 */ new Array( 50/* Stmt */,92 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 130 */ new Array(  ),
+	/* State 131 */ new Array( 50/* Stmt_List */,133 ),
+	/* State 132 */ new Array( 57/* Assign */,134 , 56/* Lhs */,14 , 58/* ExtValue */,82 , 64/* Value */,20 ),
+	/* State 133 */ new Array( 49/* Stmt */,91 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 134 */ new Array(  ),
 	/* State 135 */ new Array(  ),
-	/* State 136 */ new Array( 50/* Stmt */,137 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* ExpExp */,31 , 64/* NegExp */,32 ),
+	/* State 136 */ new Array( 49/* Stmt */,137 , 57/* Assign */,10 , 52/* Expression */,11 , 56/* Lhs */,14 , 60/* LogExp */,15 , 58/* ExtValue */,16 , 59/* AddSubExp */,19 , 64/* Value */,20 , 61/* MulDivExp */,21 , 62/* ExpExp */,31 , 63/* NegExp */,32 ),
 	/* State 137 */ new Array(  )
-);
-
-/* Default-Actions-Table */
-var defact_tab = new Array(
-	 /* State 0 */ 2 ,
-	 /* State 1 */ 0 ,
-	 /* State 2 */ 1 ,
-	 /* State 3 */ -1 ,
-	 /* State 4 */ -1 ,
-	 /* State 5 */ -1 ,
-	 /* State 6 */ -1 ,
-	 /* State 7 */ -1 ,
-	 /* State 8 */ -1 ,
-	 /* State 9 */ -1 ,
-	 /* State 10 */ -1 ,
-	 /* State 11 */ -1 ,
-	 /* State 12 */ 4 ,
-	 /* State 13 */ 27 ,
-	 /* State 14 */ -1 ,
-	 /* State 15 */ 38 ,
-	 /* State 16 */ 54 ,
-	 /* State 17 */ 62 ,
-	 /* State 18 */ -1 ,
-	 /* State 19 */ 42 ,
-	 /* State 20 */ 59 ,
-	 /* State 21 */ 45 ,
-	 /* State 22 */ 60 ,
-	 /* State 23 */ 61 ,
-	 /* State 24 */ -1 ,
-	 /* State 25 */ 64 ,
-	 /* State 26 */ -1 ,
-	 /* State 27 */ 10 ,
-	 /* State 28 */ 7 ,
-	 /* State 29 */ 68 ,
-	 /* State 30 */ 69 ,
-	 /* State 31 */ 49 ,
-	 /* State 32 */ 51 ,
-	 /* State 33 */ -1 ,
-	 /* State 34 */ -1 ,
-	 /* State 35 */ -1 ,
-	 /* State 36 */ 54 ,
-	 /* State 37 */ 62 ,
-	 /* State 38 */ -1 ,
-	 /* State 39 */ -1 ,
-	 /* State 40 */ -1 ,
-	 /* State 41 */ -1 ,
-	 /* State 42 */ 22 ,
-	 /* State 43 */ 23 ,
-	 /* State 44 */ 24 ,
-	 /* State 45 */ -1 ,
-	 /* State 46 */ -1 ,
-	 /* State 47 */ -1 ,
-	 /* State 48 */ -1 ,
-	 /* State 49 */ -1 ,
-	 /* State 50 */ -1 ,
-	 /* State 51 */ -1 ,
-	 /* State 52 */ 25 ,
-	 /* State 53 */ -1 ,
-	 /* State 54 */ -1 ,
-	 /* State 55 */ -1 ,
-	 /* State 56 */ -1 ,
-	 /* State 57 */ -1 ,
-	 /* State 58 */ 7 ,
-	 /* State 59 */ -1 ,
-	 /* State 60 */ 41 ,
-	 /* State 61 */ -1 ,
-	 /* State 62 */ -1 ,
-	 /* State 63 */ -1 ,
-	 /* State 64 */ -1 ,
-	 /* State 65 */ -1 ,
-	 /* State 66 */ -1 ,
-	 /* State 67 */ 14 ,
-	 /* State 68 */ -1 ,
-	 /* State 69 */ 9 ,
-	 /* State 70 */ -1 ,
-	 /* State 71 */ -1 ,
-	 /* State 72 */ 6 ,
-	 /* State 73 */ -1 ,
-	 /* State 74 */ 52 ,
-	 /* State 75 */ 53 ,
-	 /* State 76 */ 16 ,
-	 /* State 77 */ -1 ,
-	 /* State 78 */ -1 ,
-	 /* State 79 */ 18 ,
-	 /* State 80 */ -1 ,
-	 /* State 81 */ -1 ,
-	 /* State 82 */ -1 ,
-	 /* State 83 */ 21 ,
-	 /* State 84 */ 37 ,
-	 /* State 85 */ 36 ,
-	 /* State 86 */ 35 ,
-	 /* State 87 */ 34 ,
-	 /* State 88 */ 33 ,
-	 /* State 89 */ 32 ,
-	 /* State 90 */ 31 ,
-	 /* State 91 */ 26 ,
-	 /* State 92 */ 3 ,
-	 /* State 93 */ 15 ,
-	 /* State 94 */ 40 ,
-	 /* State 95 */ 39 ,
-	 /* State 96 */ 58 ,
-	 /* State 97 */ -1 ,
-	 /* State 98 */ -1 ,
-	 /* State 99 */ 44 ,
-	 /* State 100 */ 43 ,
-	 /* State 101 */ 48 ,
-	 /* State 102 */ 47 ,
-	 /* State 103 */ 46 ,
-	 /* State 104 */ 63 ,
-	 /* State 105 */ -1 ,
-	 /* State 106 */ 13 ,
-	 /* State 107 */ 66 ,
-	 /* State 108 */ -1 ,
-	 /* State 109 */ -1 ,
-	 /* State 110 */ 67 ,
-	 /* State 111 */ -1 ,
-	 /* State 112 */ 50 ,
-	 /* State 113 */ -1 ,
-	 /* State 114 */ 58 ,
-	 /* State 115 */ -1 ,
-	 /* State 116 */ -1 ,
-	 /* State 117 */ -1 ,
-	 /* State 118 */ 56 ,
-	 /* State 119 */ 55 ,
-	 /* State 120 */ -1 ,
-	 /* State 121 */ -1 ,
-	 /* State 122 */ 8 ,
-	 /* State 123 */ 11 ,
-	 /* State 124 */ 5 ,
-	 /* State 125 */ 17 ,
-	 /* State 126 */ 55 ,
-	 /* State 127 */ 19 ,
-	 /* State 128 */ -1 ,
-	 /* State 129 */ 57 ,
-	 /* State 130 */ 4 ,
-	 /* State 131 */ 12 ,
-	 /* State 132 */ -1 ,
-	 /* State 133 */ -1 ,
-	 /* State 134 */ -1 ,
-	 /* State 135 */ 65 ,
-	 /* State 136 */ -1 ,
-	 /* State 137 */ 20 
 );
 
 
@@ -2858,7 +2710,6 @@ var defact_tab = new Array(
 /* Symbol labels */
 var labels = new Array(
 	"Program'" /* Non-terminal symbol */,
-	"ERROR_RESYNC" /* Terminal symbol */,
 	"WHITESPACE" /* Terminal symbol */,
 	"IF" /* Terminal symbol */,
 	"ELSE" /* Terminal symbol */,
@@ -2923,129 +2774,146 @@ var labels = new Array(
 	"ExpExp" /* Non-terminal symbol */,
 	"NegExp" /* Non-terminal symbol */,
 	"Value" /* Non-terminal symbol */,
-	"$" /* Terminal symbol */
+	"$$" /* Terminal symbol */
 );
 
 
-
+    
+        info.offset = 0;
+        info.src = src;
+        info.att = '';
+    
         if( !err_off ) {
             err_off = [];
         }
         if( !err_la ) {
             err_la = [];
         }
-
+    
         sstack.push(0);
         vstack.push(0);
     
-        PCB.la = this._lex(PCB);
-            
-        while( true ) {
-            PCB.act = 139;
-            for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 ) {
-                if( act_tab[sstack[sstack.length-1]][i] == PCB.la ) {
-                    PCB.act = act_tab[sstack[sstack.length-1]][i+1];
+        la = this._lex(info);
+
+        while (true) {
+            act = 139;
+            for (i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2) {
+                if (act_tab[sstack[sstack.length-1]][i] == la) {
+                    act = act_tab[sstack[sstack.length-1]][i+1];
                     break;
                 }
             }
-        
-            if( PCB.act == 139 ) {
-                if( ( PCB.act = defact_tab[ sstack[sstack.length-1] ] ) < 0 )
-                    PCB.act = 139;
-                else
-                    PCB.act *= -1;
-            }
 
-            //Parse error? Try to recover!
-            if( PCB.act == 139 )
-            {
-                //Report errors only when error_step is 0, and this is not a
-                //subsequent error from a previous parse
-                if( PCB.error_step == 0 )
-                {
-                    err_cnt++;
-                    err_off.push( {offset: PCB.offset - PCB.att.length, line: PCB.line} );
-                    err_la.push([]);
-                    for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
-                        err_la[err_la.length-1].push(
-                                labels[act_tab[sstack[sstack.length-1]][i]] );
+            if (this._dbg_withtrace && sstack.length > 0) {
+                this._dbg_print("\nState " + sstack[sstack.length-1] + "\n" +
+                                "\tLookahead: " + labels[la] + " (\"" + info.att + "\")\n" +
+                                "\tAction: " + act + "\n" +
+                                "\tSource: \"" + info.src.substr( info.offset, 30 ) + ( ( info.offset + 30 < info.src.length ) ?
+                                        "..." : "" ) + "\"\n" +
+                                "\tStack: " + sstack.join() + "\n" +
+                                "\tValue stack: " + vstack.join() + "\n");
+            }
+        
+            //Panic-mode: Try recovery when parse-error occurs!
+            if (act == 139) {
+                if (this._dbg_withtrace)
+                    this._dbg_print("Error detected: There is no reduce or shift on the symbol " + labels[la]);
+            
+                err_cnt++;
+                err_off.push(info.offset - info.att.length);
+                err_la.push([]);
+                for (i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2) {
+                    err_la[err_la.length-1].push( labels[act_tab[sstack[sstack.length-1]][i]] );
                 }
             
-                //Perform error recovery
-                while( sstack.length > 1 && PCB.act == 139 )
-                {
-                    sstack.pop();
-                    vstack.pop();
-                
-                    //Try to shift on error token
-                    for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
-                    {
-                        if( act_tab[sstack[sstack.length-1]][i] == 1 )
-                        {
-                            PCB.act = act_tab[sstack[sstack.length-1]][i+1];
-                        
-                            sstack.push( PCB.act );
-                            vstack.push( '' );
-                        
+                //Remember the original stack!
+                var rsstack = [];
+                var rvstack = [];
+                for (i = 0; i < sstack.length; i++) {
+                    rsstack[i] = sstack[i];
+                    rvstack[i] = vstack[i];
+                }
+
+                while (act == 139 && la != 65) {
+                    if (this._dbg_withtrace) {
+                        this._dbg_print("\tError recovery\n" +
+                                        "Current lookahead: " + labels[la] + " (" + info.att + ")\n" +
+                                        "Action: " + act + "\n\n");
+                    }
+                    if (la == -1) {
+                        info.offset++;
+                    }
+
+                    while (act == 139 && sstack.length > 0) {
+                        sstack.pop();
+                        vstack.pop();
+
+                        if (sstack.length == 0) {
                             break;
                         }
-                    }
-                }
-            
-                //Is it better to leave the parser now?
-                if( sstack.length > 1 && PCB.act != 139 )
-                {
-                    //Ok, now try to shift on the next tokens
-                    while( PCB.la != 66 )
-                    {
-                        PCB.act = 139;
-                    
-                        for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
-                        {
-                            if( act_tab[sstack[sstack.length-1]][i] == PCB.la )
-                            {
-                                PCB.act = act_tab[sstack[sstack.length-1]][i+1];
+
+                        act = 139;
+                        for (i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2) {
+                            if (act_tab[sstack[sstack.length-1]][i] == la) {
+                                act = act_tab[sstack[sstack.length-1]][i+1];
                                 break;
                             }
                         }
-                    
-                        if( PCB.act != 139 )
-                            break;
-                        
-                        while( ( PCB.la = this._lex( PCB ) ) < 0 )
-                            PCB.offset++;
                     }
-                    while( PCB.la != 66 && PCB.act == 139 ) {}
+
+                    if (act != 139) {
+                        break;
+                    }
+
+                    for (i = 0; i < rsstack.length; i++) {
+                        sstack.push(rsstack[i]);
+                        vstack.push(rvstack[i]);
+                    }
+
+                    la = this._lex(info);
                 }
-            
-                if( PCB.act == 139 || PCB.la == 66 )
-                {
+
+                if (act == 139) {
+                    if (this._dbg_withtrace ) {
+                        this._dbg_print("\tError recovery failed, terminating parse process...");
+                    }
                     break;
                 }
 
-                //Try to parse the next three tokens successfully...
-                PCB.error_step = 3;
+                if (this._dbg_withtrace) {
+                    this._dbg_print("\tError recovery succeeded, continuing");
+                }
             }
 
             //Shift
-            if( PCB.act > 0 )
-            {
-                sstack.push( PCB.act );
-                vstack.push( PCB.att );
-            
-                PCB.la = this._lex( PCB );
-            
-                //Successfull shift and right beyond error recovery?
-                if( PCB.error_step > 0 )
-                    PCB.error_step--;
+            if (act > 0) {
+                if (this._dbg_withtrace) {
+                    this._dbg_print("Shifting symbol: " + labels[la] + " (" + info.att + ")");
+                }
+
+                sstack.push(act);
+                vstack.push(info.att);
+
+                la = this._lex(info);
+
+                if (this._dbg_withtrace) {
+                    this._dbg_print("\tNew lookahead symbol: " + labels[la] + " (" + info.att + ")");
+                }
             }
             //Reduce
-            else
-            {
-                act = PCB.act * -1;
-            
-                rval = void( 0 );
-            
+            else {
+                act *= -1;
+
+                if (this._dbg_withtrace) {
+                    this._dbg_print("Reducing by producution: " + act);
+                }
+
+                rval = void(0);
+
+                if (this._dbg_withtrace) {
+                    this._dbg_print("\tPerforming semantic action...");
+                }
+
 switch( act )
 {
 	case 0:
@@ -3401,39 +3269,50 @@ switch( act )
 }
 
 
-            
-                for( i = 0; i < pop_tab[act][1]; i++ )
-                {
+
+                if (this._dbg_withtrace) {
+                    this._dbg_print("\tPopping " + pop_tab[act][1] + " off the stack...");
+                }
+
+                for (i = 0; i < pop_tab[act][1]; i++) {
                     sstack.pop();
                     vstack.pop();
                 }
 
-                //Get goto-table entry
-                PCB.act = 139;
-                for( i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
-                {
-                    if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )
-                    {
-                        PCB.act = goto_tab[sstack[sstack.length-1]][i+1];
+                go = -1;
+                for (i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2) {
+                    if (goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0]) {
+                        go = goto_tab[sstack[sstack.length-1]][i+1];
                         break;
                     }
                 }
-            
-                //Goal symbol match?
-                if( act == 0 ) //Don't use PCB.act here!
+
+                if (act == 0) {
                     break;
-                
-                //...and push it!
-                sstack.push( PCB.act );
-                vstack.push( rval );
+                }
+
+                if (this._dbg_withtrace) {
+                    this._dbg_print("\tPushing non-terminal " + labels[pop_tab[act][0]]);
+                }
+
+                sstack.push(go);
+                vstack.push(rval);
             }
+
+            if (this._dbg_withtrace ) {
+                alert(this._dbg_string);
+                this._dbg_string = '';
+            }
+        }
+
+        if (this._dbg_withtrace) {
+            this._dbg_print("\nParse complete.");
+            alert(this._dbg_string);
         }
 
         return err_cnt;
     }
-
 });
-
 
 
 

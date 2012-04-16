@@ -58,6 +58,17 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var simple = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
+
+        var p = board.create('point', [1, 1]);
+        var q = board.create('point', [-1, 1]);
+        var l = board.create('line', [p, q]);
+        var c = board.create('circle', [p, q]);
+
+        //p.moveTo([0, 8, 0.5], 3000);
+    })();
+
     var jessie = (function () {
         JXG.Options.text.highlightStrokeColor = 'red';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
@@ -75,7 +86,7 @@
         var int = board.create('integral', [[-2, 2], p], {curveLeft: {visible: false}, curveRight: {visible: false}});
 
         return board;
-    })();
+    });
 
     var gJSXbrd;
     var gJSX = (function() {

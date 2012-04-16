@@ -532,12 +532,14 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     /**
      * TODO description
      * @param method TODO
-     * @param x TODO
-     * @param y TODO
+     * @param coords TODO
      * @private
      */
-    setPosition: function (method, x, y) {
-        var t = this.board.create('transform', [x, y], {type:'translate'});
+    setPosition: function (method, coords) {
+        var t;
+
+        coords = new JXG.Coords(method, coords, this.board);
+        t = this.board.create('transform', coords.usrCoords.slice(1), {type:'translate'});
         this.addTransform(t);
 
         return this;
@@ -546,34 +548,26 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     /**
      * Sets x and y coordinate and calls the circle's update() method.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Number} x x coordinate in screen/user units
-     * @param {Number} y y coordinate in screen/user units
-     * @param {Number} oldx previous x coordinate in screen/user units
-     * @param {Number} oldy previous y coordinate in screen/user units
+     * @param {Array} coords coordinate in screen/user units
+     * @param {Array} oldcoords previous coordinate in screen/user units
      * @returns {JXG.Circle} Reference to this circle.
      */
-    setPositionDirectly: function (method, x, y, oldx, oldy) {
-        var dx = x - oldx, 
-            dy = y - oldy,
-            newx, newy, 
+    setPositionDirectly: function (method, coords, oldcoords) {
+        coords = new JXG.Coords(method, coords, this.board);
+        oldcoords = new JXG.Coords(method, oldcoords, this.board);
+
+        var diffc = JXG.Math.Statistics.subtract(coords.usrCoords, oldcoords.usrCoords),
             len = this.parents.length, i, p;
 
-        for (i=0; i<len; i++) {
+        for (i = 0; i < len; i++) {
             if (!JXG.getRef(this.board, this.parents[i]).draggable()) {
                 return this;
             }
         }
         
-        for (i=0; i<len; i++) {
+        for (i = 0; i < len; i++) {
             p = JXG.getRef(this.board, this.parents[i]);
-            if (method == JXG.COORDS_BY_SCREEN) {
-                newx = p.coords.scrCoords[1]+dx;
-                newy = p.coords.scrCoords[2]+dy;
-            } else {
-                newx = p.coords.usrCoords[1]+dx;
-                newy = p.coords.usrCoords[2]+dy;
-            }
-            p.setPositionDirectly(method, newx, newy);
+            p.setPositionDirectly(JXG.COORDS_BY_USER, JXG.Math.Statistics.add(p.coords.usrCoords, diffc));
         }
         
         this.update();

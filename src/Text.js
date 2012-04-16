@@ -396,50 +396,45 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     /**
      * Sets x and y coordinate of the text.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {number} x x coordinate in screen/user units
-     * @param {number} y y coordinate in screen/user units
-     * @param {number} oldx previous x coordinate in screen/user units
-     * @param {number} oldy previous y coordinate in screen/user units
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
      */
-    setPositionDirectly: function (method, x, y, oldx, oldy) {
-        var i, 
-            dx, dy,
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var dx, dy,
             newCoords, oldCoords;
             
         if (this.relativeCoords) {
             if (this.visProp.islabel) {
                 if (method == JXG.COORDS_BY_USER) {
-                    oldCoords = new JXG.Coords(JXG.COORDS_BY_USER, [oldx,oldy], this.board);
-                    newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], this.board);
+                    oldCoords = new JXG.Coords(JXG.COORDS_BY_USER, oldcoords, this.board);
+                    newCoords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);
                     dx = newCoords.scrCoords[1]-oldCoords.scrCoords[1];
                     dy = newCoords.scrCoords[2]-oldCoords.scrCoords[2];
                 } else {
-                    dx = x - oldx;
-                    dy = y - oldy;
+                    dx = coords[0] - oldcoords[0];
+                    dy = coords[1] - oldcoords[1];
                 }
                 this.relativeCoords.scrCoords[1] += dx;
                 this.relativeCoords.scrCoords[2] += dy;
             } else {
                 if (method == JXG.COORDS_BY_SCREEN) {
-                    oldCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oldx,oldy], this.board);
-                    newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+                    oldCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, oldcoords, this.board);
+                    newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, coords, this.board);
                     dx = newCoords.usrCoords[1]-oldCoords.usrCoords[1];
                     dy = newCoords.usrCoords[2]-oldCoords.usrCoords[2];
                 } else {
-                    dx = x - oldx;
-                    dy = y - oldy;
+                    dx = coords[0] - oldcoords[1];
+                    dy = coords[0] - oldcoords[1];
                 }
                 this.relativeCoords.usrCoords[1] += dx;
                 this.relativeCoords.usrCoords[2] += dy;
             }
         } else {
             if (method == JXG.COORDS_BY_SCREEN) {
-                newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
-                x = newCoords.usrCoords[1];
-                y = newCoords.usrCoords[2];
+                newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, coords, this.board);
             }
-            this.X = JXG.createFunction(x,this.board,'');
-            this.Y = JXG.createFunction(y,this.board,'');
+            this.X = JXG.createFunction(newCoords.usrCoords[1], this.board, '');
+            this.Y = JXG.createFunction(newCoords[2], this.board, '');
         }
 
         /*
