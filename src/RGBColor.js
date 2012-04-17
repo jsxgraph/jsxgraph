@@ -13,22 +13,29 @@
  * @returns {Array} RGB color values as an array [r, g, b] which component's are between 0 and 255.
  */
 JXG.rgbParser = function() {
+    var color_string,
+        testFloat = false,
+        i,
+        r, g, b;
 
-    if(arguments.length == 0)
-        return [0, 0, 0];
+    if(arguments.length === 0) {
+        return [];
+    }
 
     if(arguments.length >= 3) {
         arguments[0] = [arguments[0], arguments[1], arguments[2]];
         arguments.length = 1;
     }
 
-    var color_string = arguments[0];
+    color_string = arguments[0];
     if(JXG.isArray(color_string)) {
-        var testFloat = false, i;
-        for(i=0; i<3; i++)
+        for(i = 0; i < 3; i++) {
             testFloat |= /\./.test(arguments[0][i].toString());
-        for(i=0; i<3; i++)
+        }
+
+        for(i = 0; i < 3; i++) {
             testFloat &= (arguments[0][i] >= 0.0) & (arguments[0][i] <= 1.0);
+        }
 
         if(testFloat)
             return [Math.ceil(arguments[0][0] * 255), Math.ceil(arguments[0][1] * 255), Math.ceil(arguments[0][2] * 255)];
@@ -36,19 +43,16 @@ JXG.rgbParser = function() {
             arguments[0].length = 3;
             return arguments[0];
         }
-    } else if(typeof arguments[0] == 'string') {
+    } else if(typeof arguments[0] === 'string') {
         color_string = arguments[0];
     }
-
-    var r, g, b;
 
     // strip any leading #
     if (color_string.charAt(0) == '#') { // remove # if any
         color_string = color_string.substr(1,6);
     }
 
-    color_string = color_string.replace(/ /g,'');
-    color_string = color_string.toLowerCase();
+    color_string = color_string.replace(/ /g,'').toLowerCase();
 
     // before getting into regexps, try simple matches
     // and overwrite the input
@@ -197,17 +201,13 @@ JXG.rgbParser = function() {
         yellow: 'ffff00',
         yellowgreen: '9acd32'
     };
-    for (var key in simple_colors) {
-        if (color_string == key) {
-            color_string = simple_colors[key];
-        }
-    }
+    color_string = simple_colors[color_string] || color_string;
     // end of simple type-in colors
 
     // array of color definition objects
     var color_defs = [
         {
-            re: /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/,
+            re: /^\s*rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)\s*$/,
             example: ['rgb(123, 234, 45)', 'rgb(255,234,245)'],
             process: function (bits){
                 return [
@@ -242,7 +242,7 @@ JXG.rgbParser = function() {
     ];
 
     // search through the definitions to find a match
-    for (var i = 0; i < color_defs.length; i++) {
+    for (i = 0; i < color_defs.length; i++) {
         var re = color_defs[i].re,
             processor = color_defs[i].process,
             bits = re.exec(color_string),
@@ -254,6 +254,10 @@ JXG.rgbParser = function() {
             b = channels[2];
         }
 
+    }
+
+    if (isNaN(r) || isNaN(g) || isNaN(b)) {
+        return [];
     }
 
     // validate/cleanup values

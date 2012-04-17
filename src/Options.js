@@ -231,7 +231,7 @@ JXG.Options = {
          * A private element will be inaccessible in certain environments, e.g. a graphical user interface.
          * @default false
          */
-        private: false,
+        priv: false,
 
         /**
          * Display layer which will contain the element.
