@@ -54,6 +54,13 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6],
 axis:true, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
+
+var dataX = [-2, 1, 5];
+var dataY = [-1, 1, -1];
+
+var cur = brd.create('curve', [dataX, dataY]);
+var p = brd.create('glider', [0,0,cur]);
+/*
 brd.suspendUpdate();
 
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
@@ -62,16 +69,19 @@ li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed
 C = brd.create('point', [6, 2]);
 E = brd.create('point', [2, 1], {label:{fixed:false}});
 f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
+*/
+
 /*
 pol = brd.create('polygon', [A,B,C,E]);
 
 D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
 D.onPolygon = true;
 */
+/*
 brd.unsuspendUpdate();
 
 brd.migratePoint(A, C);
-
+*/
 
 
 /*

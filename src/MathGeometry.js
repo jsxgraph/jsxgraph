@@ -1187,7 +1187,7 @@ JXG.extend(JXG.Math.Geometry, {
      */
     projectCoordsToCurve: function(x, y, t, curve, board) {
         var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda, j,
-            infty = 1000000.0, minfunc, tnew, fnew, fold, delta, steps;
+            infty = Number.POSITIVE_INFINITY, minfunc, tnew, fnew, fold, delta, steps;
 
         if (!JXG.exists(board))
             board = curve.board;
@@ -1281,7 +1281,7 @@ JXG.extend(JXG.Math.Geometry, {
         var newCoords, t, x, y, i,
             np = 0,
             npmin = 0,
-            mindist = 1000000.0,
+            mindist = Number.POSITIVE_INFINITY,
             dist, el, minEl,
             len = turtle.objects.length;
 
