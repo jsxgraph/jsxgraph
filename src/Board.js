@@ -1450,7 +1450,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // init the targettouches marker
             for (i = 0; i < evt.targetTouches.length; i++) {
                 evt.targetTouches[i].jxg_isused = false;
-
             }
 
             for (i = 0; i < tmpTouches.length; i++) {
@@ -1460,8 +1459,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                 for (j = 0; j < tmpTouches[i].targets.length; j++) {
                     tmpTouches[i].targets[j].found = false;
-
                     for (k = 0; k < evt.targetTouches.length; k++) {
+
                         if (Math.abs(Math.pow(evt.targetTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
                             tmpTouches[i].targets[j].found = true;
                             tmpTouches[i].targets[j].num = k;
@@ -1474,9 +1473,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
 
                 if (JXG.isPoint(tmpTouches[i].obj)) {
-                    found = tmpTouches[i].targets[0].found;
+                    found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found);
                 } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_LINE) {
-                    found = tmpTouches[i].targets[0].found || tmpTouches[i].targets[1].found;
+                    found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found) || (tmpTouches[i].targets[1] && tmpTouches[i].targets[1].found);
                 } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                     found = foundNumber === 1 || foundNumber === 3;
                 }
@@ -1503,6 +1502,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 }
             }
+
         } else {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
