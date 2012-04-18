@@ -1186,8 +1186,10 @@ JXG.extend(JXG.Math.Geometry, {
      * the position on the curve.
      */
     projectCoordsToCurve: function(x, y, t, curve, board) {
-        var newCoords, x0, y0, x1, y1, den, i, mindist, dist, lbda, j,
-            infty = Number.POSITIVE_INFINITY, minfunc, tnew, fnew, fold, delta, steps;
+        var newCoords, i, 
+            x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
+            infty = Number.POSITIVE_INFINITY, 
+            minfunc, tnew, fnew, fold, delta, steps;
 
         if (!JXG.exists(board))
             board = curve.board;
@@ -1204,7 +1206,7 @@ JXG.extend(JXG.Math.Geometry, {
             steps = 20;
             delta = (curve.maxX() - curve.minX()) / steps;
             tnew = curve.minX();
-            for (j = 0; j < steps; j++) {
+            for (i = 0; i < steps; i++) {
                 fnew = minfunc(tnew);
                 if (fnew < fold) {
                     t = tnew;
@@ -1222,44 +1224,50 @@ JXG.extend(JXG.Math.Geometry, {
             }
             newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t),curve.Y(t)], board);
         } else if (curve.visProp.curvetype == 'plot') {
+            t = 0;
             mindist = infty;
-            for (i = 0; i < curve.numberPoints; i++) {
-                x0 = x - curve.X(i);
-                y0 = y - curve.Y(i);
-                dist = Math.sqrt(x0 * x0 + y0 * y0);
+            for (i = 0; i < curve.numberPoints-1; i++) {
+                // li: line through points i, i+1 of curve
+                li = JXG.Math.crossProduct([curve.Z(i+1), curve.X(i+1), curve.Y(i+1)],
+                                               [curve.Z(i), curve.X(i), curve.Y(i)]);
+                                            
+                // ideal point of perpendicular to li
+                v = [0, li[1], li[2]];
+                //  perpendicular to li through (x,y)
+                v = JXG.Math.crossProduct(v, [1, x, y]);
+                // orthogonal projection (intersection of li and perp 
+                coords = this.meetLineLine(v, li, 0, board);
+
+                x1 = curve.X(i+1) - curve.X(i);
+                y1 = curve.Y(i+1) - curve.Y(i);
+                if (Math.abs(x1)>JXG.Math.eps) {
+                    x0 = coords.usrCoords[1] - curve.X(i);
+                    lbda = x0 / x1;
+                } else if (Math.abs(y1)>JXG.Math.eps) {
+                    y0 = coords.usrCoords[1] - curve.Y(i);
+                    lbda = y0 / y1;
+                } else {
+                    lbda = 0;
+                }
+                
+                if (0.0<=lbda && lbda<=1.0) {     
+                    dist = this.distance(coords.usrCoords, [1, x, y]);
+                    d = i + lbda;
+                } else if (lbda<0.0) {
+                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
+                    dist = this.distance(coords.usrCoords, [1, x, y]);
+                    d = i;
+                } else if (lbda>1.0 && i+1== curve.numberPoints-1) {
+                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)], board);
+                    dist = this.distance(coords.usrCoords, [1, x, y]);
+                    d = curve.numberPoints-1;
+                }
                 if (dist < mindist) {
                     mindist = dist;
-                    t = i;
-                }
-                if (i == curve.numberPoints - 1) {
-                    continue;
-                }
-
-                x1 = curve.X(i + 1) - curve.X(i);
-                y1 = curve.Y(i + 1) - curve.Y(i);
-                den = x1 * x1 + y1 * y1;
-                if (den >= JXG.Math.eps) {
-                    lbda = (x0 * x1 + y0 * y1) / den;
-                    dist = Math.sqrt(x0 * x0 + y0 * y0 - lbda * (x0 * x1 + y0 * y1));
-                } else {
-                    lbda = 0.0;
-                    dist = Math.sqrt(x0 * x0 + y0 * y0);
-                }
-                if (lbda >= 0.0 && lbda <= 1.0 && dist < mindist) {
-                    t = i + lbda;
-                    mindist = dist;
+                    t = d;
+                    newCoords = coords;
                 }
             }
-            i = Math.floor(t);
-            lbda = t - i;
-            if (i < curve.numberPoints - 1) {
-                x = lbda * curve.X(i + 1) + (1.0 - lbda) * curve.X(i);
-                y = lbda * curve.Y(i + 1) + (1.0 - lbda) * curve.Y(i);
-            } else {
-                x = curve.X(i);
-                y = curve.Y(i);
-            }
-            newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x,y], board);
         } else {             // functiongraph
             t = x;
             x = t; //curve.X(t);
