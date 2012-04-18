@@ -1229,7 +1229,7 @@ JXG.extend(JXG.Math.Geometry, {
             for (i = 0; i < curve.numberPoints-1; i++) {
                 // li: line through points i, i+1 of curve
                 li = JXG.Math.crossProduct([curve.Z(i+1), curve.X(i+1), curve.Y(i+1)],
-                                               [curve.Z(i), curve.X(i), curve.Y(i)]);
+                                           [curve.Z(i), curve.X(i), curve.Y(i)]);
                                             
                 // ideal point of perpendicular to li
                 v = [0, li[1], li[2]];
@@ -1246,8 +1246,9 @@ JXG.extend(JXG.Math.Geometry, {
                 } else if (Math.abs(y1)>JXG.Math.eps) {
                     y0 = coords.usrCoords[1] - curve.Y(i);
                     lbda = y0 / y1;
-                } else {
+                } else {        // Here, the two points are identical
                     lbda = 0;
+                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
                 }
                 
                 if (0.0<=lbda && lbda<=1.0) {     

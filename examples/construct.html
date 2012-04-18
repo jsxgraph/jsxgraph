@@ -57,9 +57,12 @@ grid:false, showNavigation:true});
 
 var dataX = [-2, 1, 5];
 var dataY = [-1, 1, -1];
+var dataX = [-2, 1, NaN, 3, 5];
+var dataY = [-1, 1, NaN, 2, -1];
 
 var cur = brd.create('curve', [dataX, dataY]);
 var p = brd.create('glider', [0,0,cur]);
+
 /*
 brd.suspendUpdate();
 
