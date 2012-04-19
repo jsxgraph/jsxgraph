@@ -906,9 +906,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         o.targets[0].Yprev = np1c.scrCoords[2];
 		o.targets[1].Xprev = np2c.scrCoords[1];
 		o.targets[1].Yprev = np2c.scrCoords[2];
-
-
-
     },
 
     highlightElements: function (x, y) {
