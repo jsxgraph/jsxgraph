@@ -338,7 +338,8 @@ JXG.Options = {
          * @default false
          */
         drawLabels: false,
-        
+        label:{},
+       
         /**
          * Draw the zero tick, that lies at line.point1?
          * @type Boolean
@@ -472,6 +473,7 @@ JXG.Options = {
 
     /* special arc options */
     arc : {
+        label: {},
         firstArrow : false,
         lastArrow : false,
         fillColor : 'none',
@@ -495,6 +497,9 @@ JXG.Options = {
         withLabel: false, 
         /* line ticks options */
         ticks : {
+            label: { 
+                offsets:[4,-12+3]     // This seems to be a good offset for 12 point fonts
+            },
             needsRegularUpdate : false,            
             strokeWidth: 1,
             strokeColor : '#666666',
@@ -764,7 +769,7 @@ JXG.Options = {
         
         fixed: true,
         /**
-         * Possible stirng values for the position of a label for
+         * Possible string values for the position of a label for
          * label anchor points are:
          * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
          * This is relevant for non-points: line, circle, curve.
@@ -826,6 +831,9 @@ JXG.Options = {
         },
         ticks : {
             drawLabels : true,
+            label: { 
+                offsets:[4,-12+3] // This seems to be a good offset for 12 point fonts
+            },
             drawZero : false,
             insertTicks : false,
             minTicksDistance : 50,
@@ -911,6 +919,7 @@ JXG.Options = {
          */
 
     	withLabel: true,
+        label: {},
 
         /**
          * This attribute was used to determined the point layout. It was derived from GEONExT and was

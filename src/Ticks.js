@@ -475,7 +475,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      * @private
      **/
     _makeLabel: function(pos, newTick, board, drawLabels, id, i) {
-                var labelText, label;
+                var labelText, label, attr;
 
                 if (!drawLabels) {
                     return null;
@@ -496,18 +496,29 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     labelText = labelText.replace(/\.$/, '');
                 }
                 
-                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], {
+                attr = {
                     id: id + i + 'Label',
                     isLabel: true,
                     layer: board.options.layer.line,
                     highlightStrokeColor: board.options.text.strokeColor,
                     highlightStrokeWidth: board.options.text.strokeWidth,
                     highlightStrokeOpacity: board.options.text.strokeOpacity
-                });
+                };
+                attr = JXG.deepCopy(attr, this.visProp.label);
+                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
                 label.isDraggable = false;
                 label.dump = false;
-                label.distanceX = 4;
-                label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
+
+                /*
+                 * Ticks have their own label handling which is done below and not
+                 * in Text.update().
+                 * The reason is that there is no parent element for the labels
+                 * which can determine the label position.
+                 */
+                //label.distanceX = 4;
+                //label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
+                label.distanceX = this.visProp.label.offsets[0];
+                label.distanceY = this.visProp.label.offsets[1];
                 label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
                                 newTick.usrCoords[2] + label.distanceY / (board.unitY));
                 

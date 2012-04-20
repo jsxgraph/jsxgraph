@@ -48,13 +48,13 @@
 //JXG.Options.axis.visible = false;
 //JXG.Options.axis.ticks.drawLabels = true;
 //JXG.Options.axis.ticks.drawZero = true;
-JXG.Options.axis.withLabel = true;
+JXG.Options.axis.withLabel = false;
 
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
-axis:true, keepaspectratio:true, 
+axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
-
+/*
 var dataX = [-2, 1, 5];
 var dataY = [-1, 1, -1];
 var dataX = [-2, 1, NaN, 3, 5];
@@ -62,27 +62,42 @@ var dataY = [-1, 1, NaN, 2, -1];
 
 var cur = brd.create('curve', [dataX, dataY]);
 var p = brd.create('glider', [0,0,cur]);
+*/
+
+/*
+A = brd.create('point', [0, 0], {});
+B = brd.create('point', [2, 2], {label:{offsets:[30,30], fixed:false, position:'bot'}});
+li = brd.create('line', [A, B], {withLabel:true, label:{offsets:[10,10], fixed:false, position:'lft'}});
+C = brd.create('glider', [-1, -1,li], {label:{offsets:[-30,-30]} });
+*/
+/*
+B = brd.create('point', [8, 0]);
+C = brd.create('point', [4, 6]);
+pol = brd.create('polygon', [A,B,C]);
+
+C2 = brd.create('midpoint', [A, B]);
+B2 = brd.create('midpoint', [A, C]);
+mc = brd.create('perpendicular', [C2, pol.borders[0]]);
+mb = brd.create('perpendicular', [B2, pol.borders[2]]);
+M = brd.create('intersection', [mb,mc,0]);
+*/
 
 /*
 brd.suspendUpdate();
-
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 B = brd.create('point', [4, -1]);
 li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false, fontSize:30} });
 C = brd.create('point', [6, 2]);
 E = brd.create('point', [2, 1], {label:{fixed:false}});
-f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
-*/
+//f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
 
-/*
+
 pol = brd.create('polygon', [A,B,C,E]);
-
 D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
 D.onPolygon = true;
+brd.unsuspendUpdate();
 */
 /*
-brd.unsuspendUpdate();
-
 brd.migratePoint(A, C);
 */
 
@@ -164,7 +179,6 @@ var B = brd.create('otherintersection',[k,g,A]);
 var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
 var p = brd.create('polygon',[A,B,C]);
 */
-/*
 // x axis
 var pX0 = brd.create('point', 
     [0, function(){
@@ -179,10 +193,12 @@ var pX1 = brd.create('point',
         }
     ], {visible:false, withLabel:false}); 
 
-var xaxis = brd.create('axis', [pX0, pX1]);
+var xaxis = brd.create('axis', [pX0, pX1], {ticks:{label:{offsets:[4,10]}}});
 pX0.type = JXG.OBJECT_TYPE_CAS;   
 pX1.type = JXG.OBJECT_TYPE_CAS;    
+var xaxis2 = brd.create('axis', [[0,0],[1,0]], {ticks:{label:{offsets:[4,10]}}});
 
+/*
 // y axis
 var pX2 = brd.create('point', 
     [function(){
