@@ -171,6 +171,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMin, dyMin;
         // END OF variable declaration
 
+        if (this.isUpdating) {
+            return;
+        }
+
+        this.isUpdating = true;
            
         // Grid-like ticks
         if (this.visProp.minorheight < 0)  {
@@ -347,6 +352,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             nx = center[1] + dir*deltaX*tickPosition;
             ny = center[2] + dir*deltaY*tickPosition;
         } while (dirs>0);
+
+        this.needsUpdate = true;
+        this.updateRenderer();
+
+        this.isUpdating = false;
     },
     
     _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
