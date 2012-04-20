@@ -59,12 +59,31 @@
     /* <![CDATA[ */
 
     var simple = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true, zoom: false, /*pan: false,*/ grid: false});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:false, zoom: false, /*pan: false,*/ grid: false});
 
-        var p = board.create('point', [1, 1]);
-        var q = board.create('point', [-1, 1]);
-        var l = board.create('line', [p, q]);
-        var c = board.create('circle', [p, q]);
+        var ax = board.create('line', [[0, 0], [1, 0]]);
+        var p = board.create('point', [1, 1], {label: {offsets: [-29,10]}});
+
+        var c = board.create('circle', [p, 2], {label: {position: 'rt'}, withLabel: true});
+
+        var t = board.create('ticks', [ax, [3.5]], {majorHeight: 80, drawLabels:true, drawZero:true, label:{offsets: [29,-10]}});
+
+        var te = board.create('text', [0, 0, 'test']);
+
+
+        var r = board.create('point', [-1, 0]);
+        var q = board.create('point', [1, 0]);
+        var a = board.create('line', [r, q]);
+
+        var w = board.create('point', [0, -2]);
+        var e = board.create('point', [0, 2]);
+        var b = board.create('line', [w, e]);
+
+        var i = board.create('intersection', [a, b]);
+
+        var g = board.create('glider', [i]);
+
+        board.create('tangent', [g]);
 
         //p.moveTo([0, 8, 0.5], 3000);
     })();

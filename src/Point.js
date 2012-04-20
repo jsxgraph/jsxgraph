@@ -1459,14 +1459,18 @@ JXG.createGlider = function(board, parents, attributes) {
  */
 JXG.createIntersectionPoint = function(board, parents, attributes) {
     var el;
-    if (parents.length>=3) {
-        if(parents.length == 3)
-            parents.push(null);
-        el = board.create('point', [board.intersection(parents[0], parents[1], parents[2], parents[3])], attributes);
-    }
 
-    parents[0].addChild(el);
-    parents[1].addChild(el);
+    // make sure we definitely have the indices
+    parents.push(0, 0);
+    el = board.create('point', [board.intersection(parents[0], parents[1], parents[2], parents[3])], attributes);
+
+    try {
+        parents[0].addChild(el);
+        parents[1].addChild(el);
+    } catch (e) {
+        throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
+                                (typeof parents[0]) + "' and '" + (typeof parents[1])+ "'.");
+    }
 
     el.elType = 'intersection';
     el.parents = [parents[0].id, parents[1].id, parents[2]];

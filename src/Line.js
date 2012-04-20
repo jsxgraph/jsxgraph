@@ -1343,6 +1343,10 @@ JXG.createTangent = function(board, parents, attributes) {
         tangent.glider = p;
     }
 
+    if (!JXG.exists(tangent)) {
+        throw new Error('JSXGraph: Couldn\'t create tangent with the given parents.');
+    }
+
     tangent.elType = 'tangent';
     tangent.parents = [];
     for (i = 0; i < parents.length; i++) {

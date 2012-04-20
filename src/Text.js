@@ -405,52 +405,26 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             
         if (this.relativeCoords) {
             if (this.visProp.islabel) {
-                if (method == JXG.COORDS_BY_USER) {
-                    oldCoords = new JXG.Coords(JXG.COORDS_BY_USER, oldcoords, this.board);
-                    newCoords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);
-                    dx = newCoords.scrCoords[1]-oldCoords.scrCoords[1];
-                    dy = newCoords.scrCoords[2]-oldCoords.scrCoords[2];
-                } else {
-                    dx = coords[0] - oldcoords[0];
-                    dy = coords[1] - oldcoords[1];
-                }
+                oldCoords = new JXG.Coords(method, oldcoords, this.board);
+                newCoords = new JXG.Coords(method, coords, this.board);
+                dx = newCoords.scrCoords[1]-oldCoords.scrCoords[1];
+                dy = newCoords.scrCoords[2]-oldCoords.scrCoords[2];
                 this.relativeCoords.scrCoords[1] += dx;
                 this.relativeCoords.scrCoords[2] += dy;
             } else {
-                if (method == JXG.COORDS_BY_SCREEN) {
-                    oldCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, oldcoords, this.board);
-                    newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, coords, this.board);
-                    dx = newCoords.usrCoords[1]-oldCoords.usrCoords[1];
-                    dy = newCoords.usrCoords[2]-oldCoords.usrCoords[2];
-                } else {
-                    dx = coords[0] - oldcoords[1];
-                    dy = coords[0] - oldcoords[1];
-                }
+                oldCoords = new JXG.Coords(method, oldcoords, this.board);
+                newCoords = new JXG.Coords(method, coords, this.board);
+                dx = newCoords.usrCoords[1]-oldCoords.usrCoords[1];
+                dy = newCoords.usrCoords[2]-oldCoords.usrCoords[2];
                 this.relativeCoords.usrCoords[1] += dx;
                 this.relativeCoords.usrCoords[2] += dy;
             }
         } else {
-            if (method == JXG.COORDS_BY_SCREEN) {
-                newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, coords, this.board);
-            }
+            newCoords = new JXG.Coords(method, coords, this.board);
             this.X = JXG.createFunction(newCoords.usrCoords[1], this.board, '');
-            this.Y = JXG.createFunction(newCoords[2], this.board, '');
+            this.Y = JXG.createFunction(newCoords.usrCoords[2], this.board, '');
         }
 
-        /*
-         // Update the initial coordinates. This is needed for free points
-        // that have a transformation bound to it.
-            for (i=this.transformations.length-1;i>=0;i--) {
-                if (method == JXG.COORDS_BY_SCREEN) {
-                    newCoords = (new JXG.Coords(method, [x, y], this.board)).usrCoords;                
-                } else {
-                    newCoords = [1,x,y];
-                }
-                this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                        JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords), 
-                        this.board);      
-            }
-        */
         return this;
     }
     
