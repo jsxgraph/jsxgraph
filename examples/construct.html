@@ -180,6 +180,7 @@ var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillCol
 var p = brd.create('polygon',[A,B,C]);
 */
 // x axis
+/*
 var pX0 = brd.create('point', 
     [0, function(){
             var bb = brd.getBoundingBox(); 
@@ -196,7 +197,13 @@ var pX1 = brd.create('point',
 var xaxis = brd.create('axis', [pX0, pX1], {ticks:{label:{offsets:[4,10]}}});
 pX0.type = JXG.OBJECT_TYPE_CAS;   
 pX1.type = JXG.OBJECT_TYPE_CAS;    
-var xaxis2 = brd.create('axis', [[0,0],[1,0]], {ticks:{label:{offsets:[4,10]}}});
+*/
+var xaxis2 = brd.create('axis', [[0,0],[1,0]], 
+    {ticks: {
+            label:{offsets:[4,10]}, 
+            ticksDistance: 1,
+            insertTicks: false
+        }});
 
 /*
 // y axis
