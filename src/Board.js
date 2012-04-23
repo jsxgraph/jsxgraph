@@ -951,14 +951,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var xy = [];
 
         if (obj.type == JXG.OBJECT_TYPE_LINE) {
-            xy.push(obj.point1.coords.usrCoords.slice(1));
-            xy.push(obj.point2.coords.usrCoords.slice(1));
+            xy.push(obj.point1.coords.usrCoords);
+            xy.push(obj.point2.coords.usrCoords);
         } else if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-            xy.push(obj.midpoint.coords.usrCoords.slice(1));
+            xy.push(obj.midpoint.coords.usrCoords);
         } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
-            xy.push([obj.position, obj.position]);
+            xy.push([obj.position, obj.position, obj.position]);
         } else {
-            xy.push(obj.coords.usrCoords.slice(1));
+            xy.push(obj.coords.usrCoords);
         }
 
         return xy;
@@ -1254,13 +1254,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-                        targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                        targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                         // For the UNDO/REDO of object moves
                         xy = this.initXYstart(obj);
                         for (l=0; l<xy.length; l++) {
-                            targets[0].Xstart.push(xy[l][0]);
-                            targets[0].Ystart.push(xy[l][1]);
+                            targets[0].Xstart.push(xy[l][1]);
+                            targets[0].Ystart.push(xy[l][2]);
+                            targets[0].Zstart.push(xy[l][0]);
                         }
 
                         this.touches.push({ obj: obj, targets: targets });
@@ -1274,13 +1275,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
 
-                                    var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] };
+                                    var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
 
                                     // For the UNDO/REDO of object moves
                                     xy = this.initXYstart(obj);
                                     for (l=0; l<xy.length; l++) {
-                                        target.Xstart.push(xy[l][0]);
-                                        target.Ystart.push(xy[l][1]);
+                                        target.Xstart.push(xy[l][1]);
+                                        target.Ystart.push(xy[l][2]);
+                                        target.Zstart.push(xy[l][0]);
                                     }
 
                                     this.touches[j].targets.push(target);
@@ -1295,13 +1297,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // the touches control object.
                         if (!found) {
 
-                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (l=0; l<xy.length; l++) {
-                                targets[0].Xstart.push(xy[l][0]);
-                                targets[0].Ystart.push(xy[l][1]);
+                                targets[0].Xstart.push(xy[l][1]);
+                                targets[0].Ystart.push(xy[l][2]);
+                                targets[0].Zstart.push(xy[l][0]);
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
@@ -1323,13 +1326,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
-                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [] }];
+                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
                             for (l=0; l<xy.length; l++) {
-                                targets[0].Xstart.push(xy[l][0]);
-                                targets[0].Ystart.push(xy[l][1]);
+                                targets[0].Xstart.push(xy[l][1]);
+                                targets[0].Ystart.push(xy[l][2]);
+                                targets[0].Zstart.push(xy[l][0]);
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
@@ -1496,7 +1500,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 Xprev: NaN,
                                 Yprev: NaN,
                                 Xstart: tmpTouches[i].targets[j].Xstart,
-                                Ystart: tmpTouches[i].targets[j].Ystart
+                                Ystart: tmpTouches[i].targets[j].Ystart,
+                                Zstart: tmpTouches[i].targets[j].Zstart
                             });
                         }
                     }
@@ -1570,12 +1575,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                 this.mouse.targets[0].Xstart = [];
                 this.mouse.targets[0].Ystart = [];
+                this.mouse.targets[0].Zstart = [];
 
                 xy = this.initXYstart(this.mouse.obj);
 
                 for (i = 0; i < xy.length; i++) {
-                  this.mouse.targets[0].Xstart.push(xy[i][0]);
-                  this.mouse.targets[0].Ystart.push(xy[i][1]);
+                  this.mouse.targets[0].Xstart.push(xy[i][1]);
+                  this.mouse.targets[0].Ystart.push(xy[i][2]);
+                  this.mouse.targets[0].Zstart.push(xy[i][0]);
                 }
 
                 // prevent accidental text selection
