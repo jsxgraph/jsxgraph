@@ -706,6 +706,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     initMoveOrigin: function (x, y) {
         this.drag_dx = x - this.origin.scrCoords[1];
         this.drag_dy = y - this.origin.scrCoords[2];
+
+		console.log(this.drag_dx);
+		console.log(this.drag_dy);
+
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
     },
 
@@ -964,6 +968,44 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return xy;
     },
 
+	mouseOriginMoveStart: function (evt) {
+		if (this.options.pan && evt.shiftKey) {
+			var pos = this.getMousePosition(evt);
+			this.initMoveOrigin(pos[0], pos[1]);
+			return true;
+		} else
+			return false;
+	},
+
+	mouseOriginMove: function (evt) {
+		if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+			var pos = this.getMousePosition(evt);
+			this.moveOrigin(pos[0], pos[1]);
+			return true;
+		} else
+			return false;
+	},
+
+	touchOriginMoveStart: function (evt) {
+		if (this.options.pan && evt.targetTouches.length == 2 && JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80) {
+			var pos = this.getMousePosition(evt, 0);
+			this.initMoveOrigin(pos[0], pos[1]);
+			return true;
+		} else
+			return false;
+	},
+
+	touchOriginMove: function(evt) {
+		if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+			var pos = this.getMousePosition(evt, 0);
+			this.moveOrigin(pos[0], pos[1]);
+		}
+	},
+
+	originMoveEnd: function () {
+		this.mode = this.BOARD_MODE_NONE;
+	},
+
 /**********************************************************
  *
  * Event Handler
@@ -976,7 +1018,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     addEventHandlers: function () {
         this.addMouseEventHandlers();
         this.addTouchEventHandlers();
-   },
+  	},
 
     addMouseEventHandlers: function () {
         if (!this.hasMouseHandlers && typeof document != 'undefined') {
@@ -1093,6 +1135,29 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
         return this;
     },
+
+	gestureChangeListener: function (evt) {
+		var c;
+
+		if (!this.options.zoom.wheel) {
+			return true;
+		}
+
+		evt.preventDefault();
+
+		if (this.mode === this.BOARD_MODE_NONE) {
+			c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+
+			if (this.prevScale < evt.scale) {
+				this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
+			} else {
+				this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
+			}
+			this.prevScale = evt.scale;
+		}
+
+		return false;
+	},
 /*
     gestureStartListener: function (evt) {
         if (!this.options.zoom.wheel) {
@@ -1111,30 +1176,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return false;
     },
-*/
-    gestureChangeListener: function (evt) {
-        var c;
 
-        if (!this.options.zoom.wheel) {
-            return true;
-        }
-
-        evt.preventDefault();
-
-        if (this.mode === this.BOARD_MODE_NONE) {
-            c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
-
-            if (this.prevScale < evt.scale) {
-                this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
-            } else {
-                this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
-            }
-            this.prevScale = evt.scale;
-        }
-
-        return false;
-    },
-/*
     gestureEndListener: function (evt) {
         if (!this.options.zoom.wheel) {
             return true;
@@ -1149,7 +1191,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return false;
     },
 */
-    /**
+	/**
      * Touch-Events
      */
     touchStartListener: function (evt) {
@@ -1172,14 +1214,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // move origin - but only if we're not in drag mode
-        if ( this.options.pan
-             && this.mode === this.BOARD_MODE_NONE
-             && (evt.targetTouches.length == 2)
-             && (JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80)) {
-
-            pos = this.getMousePosition(evt, 0);
-            this.initMoveOrigin(pos[0], pos[1]);
-
+        if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
             this.updateHooks(['touchstart', 'down'], evt);
             return false;
         }
@@ -1377,38 +1412,41 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.options.precision.hasPoint = this.options.precision.touch;
-        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-            pos = this.getMousePosition(evt, 0);
-            this.moveOrigin(pos[0], pos[1]);
-        } else if (this.mode == this.BOARD_MODE_DRAG) {
-            // Runs over through all elements which are touched
-            // by at least one finger.
-            for (i = 0; i < this.touches.length; i++) {
-                // Touch by one finger:  this is possible for all elements that can be dragged
-                if (this.touches[i].targets.length === 1) {
-                    this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
-                    this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
-                    pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                    this.moveObject(pos[0], pos[1], this.touches[i]);
-                // Touch by two fingers: moving lines
-                } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-                    this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
-                    this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
-                    this.touches[i].targets[1].X = evt.targetTouches[this.touches[i].targets[1].num].screenX;
-                    this.touches[i].targets[1].Y = evt.targetTouches[this.touches[i].targets[1].num].screenY;
-                    this.moveLine(
-                        this.getMousePosition(evt, this.touches[i].targets[0].num),
-                        this.getMousePosition(evt, this.touches[i].targets[1].num),
-                        this.touches[i]
-                        );
-                }
-            }
-        } else {
-            for (i = 0; i < evt.targetTouches.length; i++) {
-                pos = this.getMousePosition(evt, i);
-                this.highlightElements(pos[0], pos[1]);
-            }
-        }
+
+		if (!this.touchOriginMove()) {
+
+			if (this.mode == this.BOARD_MODE_DRAG) {
+				// Runs over through all elements which are touched
+				// by at least one finger.
+				for (i = 0; i < this.touches.length; i++) {
+					// Touch by one finger:  this is possible for all elements that can be dragged
+					if (this.touches[i].targets.length === 1) {
+						this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
+						this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
+						pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
+						this.moveObject(pos[0], pos[1], this.touches[i]);
+						// Touch by two fingers: moving lines
+					} else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+						this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
+						this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
+						this.touches[i].targets[1].X = evt.targetTouches[this.touches[i].targets[1].num].screenX;
+						this.touches[i].targets[1].Y = evt.targetTouches[this.touches[i].targets[1].num].screenY;
+						this.moveLine(
+							this.getMousePosition(evt, this.touches[i].targets[0].num),
+							this.getMousePosition(evt, this.touches[i].targets[1].num),
+							this.touches[i]
+						);
+					}
+				}
+
+			} else {
+				for (i = 0; i < evt.targetTouches.length; i++) {
+					pos = this.getMousePosition(evt, i);
+					this.highlightElements(pos[0], pos[1]);
+				}
+			}
+		}
+
         if (this.mode != this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
@@ -1506,11 +1544,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         } else {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
-            this.mode = this.BOARD_MODE_NONE;
 
-//            if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) { // not necessary!!!
-                this.update();
-//            }
+			this.originMoveEnd();
+            this.update();
 
             this.touches.length = 0;
         }
@@ -1543,13 +1579,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
         }
-        pos = this.getMousePosition(Evt);
 
-        if (this.options.pan && Evt.shiftKey) {
-            this.initMoveOrigin(pos[0], pos[1]);
+        if (this.mouseOriginMoveStart(Evt)) {
             r = false;
         } else {
 
+			pos = this.getMousePosition(Evt);
             elements = this.initMoveObject(pos[0], pos[1]);
 
             // if no draggable object can be found, get out here immediately
@@ -1607,17 +1642,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
-        this.mode = this.BOARD_MODE_NONE;
 
-//        if (this.mode !== this.BOARD_MODE_MOVE_ORIGIN) { // not necessary !!!
-            this.update();
+		this.originMoveEnd();
+		this.update();
 
-            for (i = 0; i < this.downObjects.length; i++) {
-                this.downObjects[i].triggerEventHandlers('up');
-            }
+		for (i = 0; i < this.downObjects.length; i++) {
+			this.downObjects[i].triggerEventHandlers('up');
+		}
 
-            this.downObjects.length = 0;
-//        }
+		this.downObjects.length = 0;
 
         // release dragged mouse object
         this.mouse = null;
@@ -1645,13 +1678,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //   * user drags an object
         //   * user just moves the mouse, here highlight all elements at
         //     the current mouse position
-        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
-            this.moveOrigin(pos[0] - this.drag_dx, pos[1] - this.drag_dy);
-        } else if (this.mode == this.BOARD_MODE_DRAG) {
-            this.moveObject(pos[0], pos[1], this.mouse);
-        } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-            this.highlightElements(pos[0], pos[1]);
-        }
+
+		if (!this.mouseOriginMove(Event)) {
+        	if (this.mode == this.BOARD_MODE_DRAG) {
+           		this.moveObject(pos[0], pos[1], this.mouse);
+        	} else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
+            	this.highlightElements(pos[0], pos[1]);
+        	}
+		}
+
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
         this.updateHooks(['mousemove', 'move'], Event, this.mode);
@@ -1864,7 +1899,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @params {Number} y
      * @returns {JXG.Board} Reference to this board.
      */
-    moveOrigin: function (x, y) {
+     moveOrigin: function (x, y) {
         var el, ob;
 
         // This is not required, but to be downwards compatible, we should keep it for a while.
