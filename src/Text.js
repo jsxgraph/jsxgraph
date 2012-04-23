@@ -89,6 +89,7 @@ JXG.Text = function (board, content, coords, attributes) {
         this.updateText = new Function('this.plaintext = ' + this.content + ';');
     }
 
+    this.size = [1.0, 1.0];
     this.updateText();                    // First evaluation of the content.
     
     this.id = this.board.setId(this, 'T');
@@ -101,7 +102,6 @@ JXG.Text = function (board, content, coords, attributes) {
     if (typeof this.content === 'string') {
         this.notifyParents(this.content);
     }
-    this.size = [1.0, 1.0];
 
     this.elType = 'text';
 
@@ -180,10 +180,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
-        this.updateSize();
-        this.needsUpdate = true;
-        this.update();
-        this.updateRenderer();
+        this.prepareUpdate().update().updateRenderer();
 
         return this;
     },
@@ -288,6 +285,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     updateRenderer: function () {
         if (this.needsUpdate) {
             this.board.renderer.updateText(this);
+            this.updateSize();
             this.needsUpdate = false;
         }
         return this;
