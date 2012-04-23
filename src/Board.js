@@ -1005,10 +1005,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
-           // special events for iOS devices to enable gesture based zooming
-//            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+           	// special event for iOS devices to enable gesture based zooming
             JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-//            JXG.addEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
 
             this.hasTouchHandlers = true;
         }
@@ -1046,9 +1044,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
 
-//          JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
             JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
-//          JXG.removeEvent(this.containerObj, 'gestureend', this.gestureEndListener, this);
 
             this.hasTouchHandlers = false; // see above
         }
@@ -1873,9 +1869,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // This is not required, but to be downwards compatible, we should keep it for a while.
         // changed in version 0.91a
+
         if (JXG.exists(x) && JXG.exists(y)) {
-            this.origin.scrCoords[1] = x;
-            this.origin.scrCoords[2] = y;
+            this.origin.scrCoords[1] = x - this.drag_dx;
+            this.origin.scrCoords[2] = y - this.drag_dy;
         }
 
         for (ob in this.objects) {
