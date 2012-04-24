@@ -668,6 +668,7 @@ JXG.extend(JXG.Math.Geometry, {
 
     /**
      * Calculates the coordinates of the intersection of the given lines.
+     * @deprecated 
      * @param {JXG.Line} line1 Line.
      * @param {JXG.Line} line2 Line.
      * @param {JXG.Board} [board=line1.board] Reference to the board
@@ -698,6 +699,7 @@ JXG.extend(JXG.Math.Geometry, {
 
     /**
      * Calculates the coordinates of the intersection of the given line and circle.
+     * @deprecated 
      * @param {JXG.Circle} circle Circle.
      * @param {JXG.Line} line Line.
      * @param {JXG.Board} [board=line.board] Reference to the board
@@ -752,6 +754,7 @@ JXG.extend(JXG.Math.Geometry, {
 
     /**
      * Calculates the coordinates of the intersection of the given circles.
+     * @deprecated 
      * @param {JXG.Circle} circle1 Circle.
      * @param {JXG.Circle} circle2 Circle.
      * @param {JXG.Board} [board=circle1.board] Reference to the board
