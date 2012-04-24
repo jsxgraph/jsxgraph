@@ -59,14 +59,16 @@
     /* <![CDATA[ */
 
     var simple = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:false, zoom: false, /*pan: false,*/ grid: false});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});
 
-        var ax = board.create('line', [[0, 0], [1, 0]]);
-        var p = board.create('point', [1, 1], {label: {offsets: [-29,10]}});
+        //var ax = board.create('line', [[0, 0], [1, 0]]);
+        var p = board.create('point', [0, 0], {label: {offsets: [10,10]}});
+        var q = board.create('point', [3.14, 0], {label: {offsets: [10,10]}});
+        var r = board.create('point', [0, 1], {label: {offsets: [10,10]}});
 
-        var c = board.create('circle', [p, 2], {label: {position: 'rt'}, withLabel: true});
+        //var c = board.create('circle', [p, 2], {label: {position: 'rt'}, withLabel: true});
 
-        var t = board.create('ticks', [ax, [3.5]], {majorHeight: 80, drawLabels:true, drawZero:true, label:{offsets: [29,-10]}});
+        /*var t = board.create('ticks', [ax, [3.5]], {majorHeight: 80, drawLabels:true, drawZero:true, label:{offsets: [29,-10]}});
 
         var te = board.create('text', [0, 0, 'test']);
 
@@ -83,7 +85,8 @@
 
         var g = board.create('glider', [i]);
 
-        board.create('tangent', [g]);
+        board.create('tangent', [g]);*/
+        //board.create('axis', [[0, 0], [1, 0]], {ticks: {scale: 3.14}});
 
         //p.moveTo([0, 8, 0.5], 3000);
     })();

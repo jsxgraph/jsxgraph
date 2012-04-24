@@ -382,6 +382,9 @@ JXG.Options = {
          */
         minorTicks: 4,
 
+        scale: 1,
+        scaleSymbol: '',
+
         /**
          * The default distance between two ticks. Please be aware that this value does not have
          * to be used if {@link JXG.Ticks#insertTicks} is set to true.

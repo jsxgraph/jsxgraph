@@ -141,6 +141,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
             // Distance between two major ticks in user coordinates
             ticksDelta = (this.equidistant ? this.ticksFunction(1) : 1),
+            symbTicksDelta, f,
             // This factor is for enlarging ticksDelta and it switches between 5 and 2
             // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
             // if they're still too close together, they'll be expanded to a distance of 10 etc
@@ -149,11 +150,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             tickCoords,
             // Coordinates of the first drawn tick
             startTick,
+            symbStartTick,
             // a counter
             i,
             // the distance of the tick to p1. Is displayed on the board using a label
             // for majorTicks
             tickPosition,
+            symbTickPosition,
             // infinite or finite tick length
             style,
             // new position
@@ -251,16 +254,25 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             return;
         }
 
+        symbTicksDelta = ticksDelta;
+        ticksDelta *= this.visProp.scale;
+
         // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
         // adjust distances
         if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
-            ticksDelta = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
-            this.ticksDelta = ticksDelta;
+            f = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
+            ticksDelta *= f;
+            symbTicksDelta *= f;
         }
 
         if (!this.visProp.insertticks) {
             ticksDelta /= this.visProp.minorticks+1;
+            symbTicksDelta /= this.visProp.minorticks+1;
         }
+
+        this.ticksDelta = ticksDelta;
+        this.symbTicksDelta = symbTicksDelta;
+
 
 		// We shoot into the middle of the canvas
 		// to the tick position which is closest to the center
@@ -299,6 +311,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         startTick = tickPosition;
         tickPosition = 0;
 
+        symbTickPosition = 0;
+        // this could be done more elaborate to prevent rounding errors
+        symbStartTick = startTick/this.visProp.scale;
+
         nx = center[1];
         ny = center[2];
         i = 0;          // counter for label ids
@@ -323,7 +339,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			// If both positions are out of the canvas, ti is empty.
             ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
             if (ti.length==2) {  // The tick has an overlap with the board
-                pos = dir*tickPosition+startTick;
+                pos = dir*symbTickPosition+symbStartTick;
                 if ( (Math.abs(pos)<=eps && this.visProp.drawzero)
                      || (pos>lb && pos<ub)
                     ) {
@@ -342,7 +358,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 } 
 				// Increase distance from center
                 if (dir==1 || dirs==1) {
-                    tickPosition += ticksDelta;  
+                    tickPosition += ticksDelta;
+                    symbTickPosition += symbTicksDelta;
                 }
             } else {
                 dir *= (-1);
@@ -360,24 +377,24 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     },
     
     _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
-        var nx, ny;
+        var nx, ny, f = 1;
         
         while (distScr > 4*this.minTicksDistance) {
-            ticksDelta /= 10;
-            nx = p1c.usrCoords[1] + deltaX*ticksDelta;
-            ny = p1c.usrCoords[2] + deltaY*ticksDelta;
+            f /= 10;
+            nx = p1c.usrCoords[1] + deltaX*ticksDelta*f;
+            ny = p1c.usrCoords[2] + deltaY*ticksDelta*f;
             distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
         }
 
         // If necessary, enlarge ticksDelta
         while (distScr < this.minTicksDistance) {
-            ticksDelta *= factor;
+            f *= factor;
             factor = (factor == 5 ? 2 : 5);
-            nx = p1c.usrCoords[1] + deltaX*ticksDelta;
-            ny = p1c.usrCoords[2] + deltaY*ticksDelta;
+            nx = p1c.usrCoords[1] + deltaX*ticksDelta*f;
+            ny = p1c.usrCoords[2] + deltaY*ticksDelta*f;
             distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
         }
-        return ticksDelta;
+        return f;
     },
     
     _tickEndings: function(coords, dxMaj, dyMaj, dxMin, dyMin, major) {
@@ -504,6 +521,12 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     labelText = labelText.replace(/0+$/, '');
                     // trim trailing .
                     labelText = labelText.replace(/\.$/, '');
+                }
+
+                if (this.visProp.scalesymbol.length > 0 && labelText === '1') {
+                    labelText = this.visProp.scalesymbol;
+                } else {
+                    labelText = labelText + this.visProp.scalesymbol;
                 }
                 
                 attr = {
