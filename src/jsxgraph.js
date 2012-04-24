@@ -112,7 +112,7 @@ JXG.JSXGraph = {
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
             board,
-            wheelzoom, shiftpan;
+            wheelzoom, shiftpan, attr;
 
         dimensions = JXG.getDimensions(box);
 
@@ -188,13 +188,14 @@ JXG.JSXGraph = {
         board.initInfobox();
         
         if(attributes["axis"]) {
+            attr = typeof attributes['axis'] === 'object' ? attributes['axis'] : {ticks: {drawZero: true}};
         	board.defaultAxes = {};
-            board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], {ticks:{drawZero:true}});
-            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], {ticks:{drawZero:board.options.axis.ticks.drawZero}});
+            board.defaultAxes.x = board.create('axis', [[0,0], [1,0]], attr);
+            board.defaultAxes.y = board.create('axis', [[0,0], [0,1]], attr);
         }
 
         if(attributes["grid"]) {
-            board.create('grid', []);
+            board.create('grid', [], (typeof attributes["grid"] === 'object' ? attributes['grid'] : {}));
         }
 
         if (typeof attributes["shownavigation"] != 'undefined') attributes["showNavigation"] = attributes["shownavigation"];
