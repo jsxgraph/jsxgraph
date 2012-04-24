@@ -675,11 +675,21 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} owner The scope in which the event trigger is called.
      */
     removeEvent: function (obj, type, fn, owner) {
-        var em = 'JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type],
+        var em = 'JSXGraph: Can\'t remove event listener on' + type + ' : ' + owner['x_internal' + type],
             i, j = -1, l;
 
-        if ((!JXG.exists(owner) || !JXG.exists(owner['x_internal' + type])) && !JXG.isArray(owner['x_internal' + type])) {
-            //JXG.debug(em);
+        if (!JXG.exists(owner)) {
+            JXG.debug(em + ' -- no such owner');
+            return;
+        }
+
+        if (!JXG.exists(owner['x_internal' + type])) {
+            JXG.debug(em + ' -- no such type');
+            return;
+        }
+
+        if (!JXG.isArray(owner['x_internal' + type])) {
+            JXG.debug(em + ' -- not an array');
             return;
         }
 
@@ -692,21 +702,22 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         if (j === -1) {
-            //JXG.debug(em + '; Event listener not found.');
+            JXG.debug(em + ' -- event not found in internal list');
             return;
         }
 
         try {
             if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-                obj.removeEventListener(type, owner['x_internal'+type][j], false);
+                obj.removeEventListener(type, owner['x_internal' + type][j], false);
             } else {  // IE
-                obj.detachEvent('on'+type, owner['x_internal'+type][j]);
+                obj.detachEvent('on' + type, owner['x_internal' + type][j]);
             }
 
-            JXG.removeElementFromArray(owner['x_internal'+type], owner['x_internal'+type][j]);
         } catch(e) {
-            //JXG.debug('JSXGraph: Can\'t remove event listener on' + type + ': ' + owner['x_internal' + type]);
+            JXG.debug(em + ' -- event not registered in browser');
         }
+
+        JXG.removeElementFromArray(owner['x_internal' + type], owner['x_internal' + type][j]);
     },
 
     /**
