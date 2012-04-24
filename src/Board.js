@@ -707,9 +707,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.drag_dx = x - this.origin.scrCoords[1];
         this.drag_dy = y - this.origin.scrCoords[2];
 
-		console.log(this.drag_dx);
-		console.log(this.drag_dy);
-
         this.mode = this.BOARD_MODE_MOVE_ORIGIN;
     },
 
