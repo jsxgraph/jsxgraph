@@ -151,8 +151,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             // Coordinates of the first drawn tick
             startTick,
             symbStartTick,
-            // a counter
-            i,
+            // two counters
+            i, j,
             // the distance of the tick to p1. Is displayed on the board using a label
             // for majorTicks
             tickPosition,
@@ -173,10 +173,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMaj, dyMaj,
             dxMin, dyMin;
         // END OF variable declaration
-
-        if (this.isUpdating) {
-            return;
-        }
 
         this.isUpdating = true;
            
@@ -318,6 +314,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         nx = center[1];
         ny = center[2];
         i = 0;          // counter for label ids
+        j = 0;
 		// Now, we jump around center
 		// until we are outside of the canvas.
 		// If this is the case we proceed in the other
@@ -352,12 +349,12 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                     i++;
                 }
                 
-				// Toggle direction
+                // Toggle direction
                 if (dirs==2) {
                     dir *= (-1);
-                } 
+                }
 				// Increase distance from center
-                if (dir==1 || dirs==1) {
+                if (j % 2 === 0 || dirs === 1) {
                     tickPosition += ticksDelta;
                     symbTickPosition += symbTicksDelta;
                 }
@@ -365,6 +362,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 dir *= (-1);
                 dirs--;
             }
+
+            j++;
             
             nx = center[1] + dir*deltaX*tickPosition;
             ny = center[2] + dir*deltaY*tickPosition;
@@ -372,8 +371,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         this.needsUpdate = true;
         this.updateRenderer();
-
-        this.isUpdating = false;
     },
     
     _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
@@ -507,7 +504,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 if (!drawLabels) {
                     return null;
                 }
-                
+
                 labelText = pos.toString();
                 if (Math.abs(pos) < JXG.Math.eps) {
                     labelText = '0';
@@ -525,6 +522,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
                 if (this.visProp.scalesymbol.length > 0 && labelText === '1') {
                     labelText = this.visProp.scalesymbol;
+                } else if (this.visProp.scalesymbol.length > 0 && labelText === '0') {
+                    labelText = '0';
                 } else {
                     labelText = labelText + this.visProp.scalesymbol;
                 }

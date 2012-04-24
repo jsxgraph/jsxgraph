@@ -382,7 +382,23 @@ JXG.Options = {
          */
         minorTicks: 4,
 
+        /**
+         * Scale the ticks but not the tick labels.
+         * @type Number
+         * @default 1
+         * @name JXG.Ticks#scale
+         * @see JXG.Ticks#scaleSymbol
+         */
         scale: 1,
+
+        /**
+         * A string that is appended to every tick, used to represent the scale
+         * factor given in {@link JXG.Ticks#scaleSymbol}.
+         * @type String
+         * @default ''
+         * @name JXG.Ticks#scaleSymbol
+         * @see JXG.Ticks#scale
+         */
         scaleSymbol: '',
 
         /**
