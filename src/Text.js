@@ -232,7 +232,9 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         this.Y = function() { return y; };
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
 
-        this.board.update();
+        // this should be a local update, otherwise there might be problems
+        // with the tick update routine resulting in orphaned tick labels
+        this.prepareUpdate().update().updateRenderer();
 
         return this;
     },

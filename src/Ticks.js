@@ -175,7 +175,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // END OF variable declaration
 
         this.isUpdating = true;
-           
+
         // Grid-like ticks
         if (this.visProp.minorheight < 0)  {
             this.minStyle = 'infinite';
@@ -499,65 +499,65 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      * @private
      **/
     _makeLabel: function(pos, newTick, board, drawLabels, id, i) {
-                var labelText, label, attr;
+        var labelText, label, attr;
 
-                if (!drawLabels) {
-                    return null;
-                }
+        if (!drawLabels) {
+            return null;
+        }
 
-                labelText = pos.toString();
-                if (Math.abs(pos) < JXG.Math.eps) {
-                    labelText = '0';
-                }
+        labelText = pos.toString();
+        if (Math.abs(pos) < JXG.Math.eps) {
+            labelText = '0';
+        }
 
-                if(labelText.length > 5 || labelText.indexOf('e') != -1) {
-                    labelText = pos.toPrecision(3).toString();
-                }
-                if (labelText.indexOf('.') > -1) {
-                    // trim trailing zeros
-                    labelText = labelText.replace(/0+$/, '');
-                    // trim trailing .
-                    labelText = labelText.replace(/\.$/, '');
-                }
+        if(labelText.length > 5 || labelText.indexOf('e') != -1) {
+            labelText = pos.toPrecision(3).toString();
+        }
+        if (labelText.indexOf('.') > -1) {
+            // trim trailing zeros
+            labelText = labelText.replace(/0+$/, '');
+            // trim trailing .
+            labelText = labelText.replace(/\.$/, '');
+        }
 
-                if (this.visProp.scalesymbol.length > 0 && labelText === '1') {
-                    labelText = this.visProp.scalesymbol;
-                } else if (this.visProp.scalesymbol.length > 0 && labelText === '0') {
-                    labelText = '0';
-                } else {
-                    labelText = labelText + this.visProp.scalesymbol;
-                }
-                
-                attr = {
-                    id: id + i + 'Label',
-                    isLabel: true,
-                    layer: board.options.layer.line,
-                    highlightStrokeColor: board.options.text.strokeColor,
-                    highlightStrokeWidth: board.options.text.strokeWidth,
-                    highlightStrokeOpacity: board.options.text.strokeOpacity
-                };
-                attr = JXG.deepCopy(attr, this.visProp.label);
-                label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
-                label.isDraggable = false;
-                label.dump = false;
+        if (this.visProp.scalesymbol.length > 0 && labelText === '1') {
+            labelText = this.visProp.scalesymbol;
+        } else if (this.visProp.scalesymbol.length > 0 && labelText === '0') {
+            labelText = '0';
+        } else {
+            labelText = labelText + this.visProp.scalesymbol;
+        }
 
-                /*
-                 * Ticks have their own label handling which is done below and not
-                 * in Text.update().
-                 * The reason is that there is no parent element for the labels
-                 * which can determine the label position.
-                 */
-                //label.distanceX = 4;
-                //label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
-                label.distanceX = this.visProp.label.offsets[0];
-                label.distanceY = this.visProp.label.offsets[1];
-                label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
-                                newTick.usrCoords[2] + label.distanceY / (board.unitY));
-                
-                label.visProp.visible = drawLabels;
-                //label.prepareUpdate().update().updateRenderer();
-                return label;
-     },
+        attr = {
+            id: id + i + 'Label',
+            isLabel: true,
+            layer: board.options.layer.line,
+            highlightStrokeColor: board.options.text.strokeColor,
+            highlightStrokeWidth: board.options.text.strokeWidth,
+            highlightStrokeOpacity: board.options.text.strokeOpacity
+        };
+        attr = JXG.deepCopy(attr, this.visProp.label);
+        label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
+        label.isDraggable = false;
+        label.dump = false;
+
+        /*
+         * Ticks have their own label handling which is done below and not
+         * in Text.update().
+         * The reason is that there is no parent element for the labels
+         * which can determine the label position.
+         */
+        //label.distanceX = 4;
+        //label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
+        label.distanceX = this.visProp.label.offsets[0];
+        label.distanceY = this.visProp.label.offsets[1];
+        label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
+            newTick.usrCoords[2] + label.distanceY / (board.unitY));
+
+        label.visProp.visible = drawLabels;
+        //label.prepareUpdate().update().updateRenderer();
+        return label;
+    },
 
     /**
      * Removes the HTML divs of the tick labels
