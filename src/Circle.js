@@ -168,7 +168,9 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     }
 
     this.methodMap = JXG.deepCopy(this.methodMap, {
-        setRadius: 'setRadius'
+        setRadius: 'setRadius',
+        getRadius: 'getRadius',
+        radius: 'Radius'
     });
 };
 JXG.Circle.prototype = new JXG.GeometryElement;
@@ -177,9 +179,9 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     /**
      * Checks whether (x,y) is near the circle.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
-     * @return {bool} True if (x,y) is near the circle, False otherwise.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @return {Boolean} True if (x,y) is near the circle, False otherwise.
      * @private
      */
     hasPoint: function (x, y) {
@@ -421,10 +423,16 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     /**
      * Calculates the radius of the circle.
-     * @type float
+     * @param {String|Number|function} [value] Set new radius
+     * @type Number
      * @return The radius of the circle
      */
-    Radius: function () {
+    Radius: function (value) {
+        if (JXG.exists(value)) {
+            this.setRadius(value);
+            return this.Radius();
+        }
+
         if(this.method == 'twoPoints') {
             if (JXG.Math.Geometry.distance(this.point2.coords.usrCoords,[0,0,0])==0.0 || 
                 JXG.Math.Geometry.distance(this.center.coords.usrCoords,[0,0,0])==0.0) {
