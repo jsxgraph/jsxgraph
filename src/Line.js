@@ -1121,10 +1121,11 @@ JXG.JSXGraph.registerElement('segment', JXG.createSegment);
 JXG.createArrow = function(board, parents, attributes) {
     var el;
 
+    attributes['firstArrow'] = false;
+    attributes['lastArrow'] = true;
     el = board.create('line', parents, attributes).setStraight(false, false);
-    el.setArrow(false, true);
+    //el.setArrow(false, true);
     el.type = JXG.OBJECT_TYPE_VECTOR;
-
     el.elType = 'arrow';
 
     return el;

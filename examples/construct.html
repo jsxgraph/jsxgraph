@@ -1,4 +1,4 @@
-<!--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html>-->
+﻿<!--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html>-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 <head>
    <title>JSXGraph example</title>
@@ -51,10 +51,10 @@
 JXG.Options.axis.withLabel = false;
 
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
-axis:true, keepaspectratio:true, 
+axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
-
+/*
 brd.suspendUpdate();
 p0 = brd.create('point', [0, 0], {});
 var mytext = 'Right Here';
@@ -70,6 +70,11 @@ var label5 =  brd.create('text',
          mytext]); 
 
 brd.unsuspendUpdate();
+*/
+var sli = brd.create('slider',[[0,3],[2,3],[0,0,1]]); 
+var cp=brd.create('arrow',[[-1,0],[-1,2]],
+    {name:'X', highlight:false, dash:true, strokeOpacity: function(){return sli.Value();}});
+
 //alert(label5.getSize());
 
 /*
@@ -273,7 +278,6 @@ var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;
 */
 
 //brd.update();
-
 
 </script> 
 </body>
