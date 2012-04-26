@@ -772,16 +772,27 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
      */
     getPosition: function (e, index) {
-        var posx = 0,
-            posy = 0;
+        var i, len, posx = 0, posy = 0;
 
         if (!e) {
             e = window.event;
         }
 
-        if (JXG.exists(index)) {
-            e = e.targetTouches[index];
-        }
+		if (JXG.exists(index)) {
+
+			if (index == -1) {
+
+				len = e.targetTouches.length;
+				for (i=0; i<len; i++) {
+					if (e.targetTouches[i]) {
+						e = e.targetTouches[i];
+						break;
+					}
+				}
+
+			} else
+				e = e.targetTouches[index];
+		}
 
         if (e.pageX || e.pageY) {
             posx = e.pageX;
