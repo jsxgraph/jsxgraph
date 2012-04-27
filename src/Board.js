@@ -1848,8 +1848,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
      */
     getAllUnderMouse: function (Evt) {
-        var elList = this.getAllObjectsUnderMouse();
-
+        var elList = this.getAllObjectsUnderMouse(Evt);
         elList.push(this.getUsrCoordsOfMouse(Evt));
 
         return elList;
