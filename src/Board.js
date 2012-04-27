@@ -1135,31 +1135,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
 	gestureChangeListener: function (evt) {
 
-		var c, t = new Date().getTime();
+		var c;
 
 		if (!this.options.zoom.wheel) {
 			return true;
 		}
 
-		if (typeof this.lastZoomChange == 'undefined' || this.lastZoomChange < t - 500) {
+		evt.preventDefault();
 
-			console.log("t1 = " + this.lastZoomChange);
-			console.log("t2 = " + t - 100);
+		if (this.mode === this.BOARD_MODE_NONE) {
+			c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
-			evt.preventDefault();
-
-			if (this.mode === this.BOARD_MODE_NONE) {
-				c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
-
-				if (this.prevScale < evt.scale) {
-					this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
-				} else {
-					this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
-				}
-				this.prevScale = evt.scale;
+			if (this.prevScale < evt.scale) {
+				this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
+			} else {
+				this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
 			}
-
-			this.lastZoomChange = t;
+			this.prevScale = evt.scale;
 		}
 
 		return false;
