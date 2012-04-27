@@ -1141,14 +1141,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 			return true;
 		}
 
-		console.log( this.lastZoomChange);
-		console.log( t - 100);
+		if (typeof this.lastZoomChange == 'undefined' || this.lastZoomChange < t - 500) {
 
-
-		if (typeof this.lastZoomChange == 'undefined' || this.lastZoomChange < t - 100) {
-
-			console.log( this.lastZoomChange);
-			console.log( t - 100);
+			console.log("t1 = " + this.lastZoomChange);
+			console.log("t2 = " + t - 100);
 
 			evt.preventDefault();
 
