@@ -821,6 +821,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         drag.triggerEventHandlers('drag');
 
         this.updateInfobox(drag);
+        this.update();
         drag.highlight();
     },
 
