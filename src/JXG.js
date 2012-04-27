@@ -684,7 +684,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         if (!JXG.exists(owner['x_internal' + type])) {
-            JXG.debug(em + ' -- no such type');
+            //JXG.debug(em + ' -- no such type');
             return;
         }
 
@@ -702,7 +702,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         if (j === -1) {
-            JXG.debug(em + ' -- event not found in internal list');
+            //JXG.debug(em + ' -- event not found in internal list');
             return;
         }
 

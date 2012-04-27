@@ -1854,6 +1854,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return elList;
     },
+
     /**
      * Collects all elements under current mouse position.
      * @param {Event} Evt Event object containing the mouse coordinates.
