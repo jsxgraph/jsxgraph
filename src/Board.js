@@ -97,7 +97,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.BOARD_MODE_ZOOM = 0x0011;
 
-    // TODO: Do we still need the CONSTRUCTIOIN_TYPE_* properties?!?
+    // TODO: Do we still need the CONSTRUCTIOIN_TYPE_* properties?!? -- Haaner says: NO
     // BEGIN CONSTRUCTION_TYPE_* stuff
 
     /**
@@ -1134,23 +1134,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
 	gestureChangeListener: function (evt) {
-		var c;
+
+		var c, t = new Date().getTime();
 
 		if (!this.options.zoom.wheel) {
 			return true;
 		}
 
-		evt.preventDefault();
+		console.log( this.lastZoomChange);
+		console.log( t - 100);
 
-		if (this.mode === this.BOARD_MODE_NONE) {
-			c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
-			if (this.prevScale < evt.scale) {
-				this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
-			} else {
-				this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
+		if (typeof this.lastZoomChange == 'undefined' || this.lastZoomChange < t - 100) {
+
+			console.log( this.lastZoomChange);
+			console.log( t - 100);
+
+			evt.preventDefault();
+
+			if (this.mode === this.BOARD_MODE_NONE) {
+				c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+
+				if (this.prevScale < evt.scale) {
+					this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
+				} else {
+					this.zoomOut(c.usrCoords[1], c.usrCoords[2]);
+				}
+				this.prevScale = evt.scale;
 			}
-			this.prevScale = evt.scale;
+
+			this.lastZoomChange = t;
 		}
 
 		return false;
