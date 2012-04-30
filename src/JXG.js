@@ -894,18 +894,19 @@ JXG.extend(JXG, /** @lends JXG */ {
      * Search an array for a given value.
      * @param {Array} array
      * @param {%} value
+     * @param {String} sub Use this property if the elements of the array are objects.
      * @returns {Number} The index of the first appearance of the given value, or
      * <tt>-1</tt> if the value was not found.
      */
-    indexOf: function (array, value) {
+    indexOf: function (array, value, sub) {
         var i;
         
-        if (Array.indexOf) {
+        if (Array.indexOf && !JXG.exists(sub)) {
             return array.indexOf(value);
         }
         
         for (i = 0; i < array.length; i++) {
-            if (array[i] === value) {
+            if (array[i].sub === value) {
                 return i;
             }
         }

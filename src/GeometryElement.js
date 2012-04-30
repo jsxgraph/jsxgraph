@@ -1125,11 +1125,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @param {String} event
      */
     triggerEventHandlers: function (event) {
-        var i;
+        var i, h, args = Array.prototype.slice.call(arguments, 1);
 
         if (JXG.isArray(this.eventHandlers[event])) {
             for (i = 0; i < this.eventHandlers[event].length; i++) {
-                this.eventHandlers[event][i].call(this);
+                h = this.eventHandlers[event][i];
+                h.handler.apply(h.context, args);
             }
         }
     },
@@ -1138,13 +1139,17 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * Register a new event handler
      * @param {String} event
      * @param {Function} handler
+     * @param {Object} [context] The context the handler will be called in, default is the element itself.
      */
-    on: function (event, handler) {
+    on: function (event, handler, context) {
         if (!JXG.isArray(this.eventHandlers[event])) {
             this.eventHandlers[event] = [];
         }
 
-        this.eventHandlers[event].push(handler);
+        this.eventHandlers[event].push({
+            handler: handler,
+            context: context
+        });
     },
 
     /**
@@ -1165,7 +1170,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
 
         if (handler) {
-            i = JXG.indexOf(this.eventHandlers[event], handler);
+            i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
             if (i > -1) {
                 this.eventHandlers[event].splice(i, 1);
             }

@@ -263,11 +263,13 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
 
     /**
      * An array containing all hook functions.
-     * @type Array
-     * @see JXG.Board#addHook
-     * @see JXG.Board#removeHook
-     * @see JXG.Board#updateHooks
+     * @type Object
+     * @see JXG.Board#on
+     * @see JXG.Board#off
+     * @see JXG.Board#triggerEventHandlers
      */
+    this.eventHandlers = {};
+
     this.hooks = [];
 
     /**
@@ -910,7 +912,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         o.targets[1].Yprev = np2c.scrCoords[2];
     },
 
-    highlightElements: function (x, y, target) {
+    highlightElements: function (x, y, evt, target) {
         var el, pEl;
 
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
@@ -926,6 +928,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (this.hasMouseHandlers)
                         pEl.highlight();
 
+                    this.triggerEventHandlers('hit', pEl, evt, target);
                     try { GUI.hittedObj(pEl, target); } catch (e) { ; }
                 }
 
@@ -1203,7 +1206,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // move origin - but only if we're not in drag mode
         if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            this.updateHooks(['touchstart', 'down'], evt);
+            this.triggerEventHandlers(['touchstart', 'down'], evt);
             return false;
         }
 
@@ -1377,7 +1380,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.mouse;
 
-        this.updateHooks(['touchstart', 'down'], evt);
+        this.triggerEventHandlers(['touchstart', 'down'], evt);
         return false;
     },
 
@@ -1392,7 +1395,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             ti = ti.getTime();
             if (ti-this.touchMoveLast<80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.updateHooks(['touchmove', 'move'], evt, this.mode);
+                this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
                 return false;
             } else {
                 this.touchMoveLast = ti;
@@ -1436,7 +1439,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             } else {
                 for (i = 0; i < evt.targetTouches.length; i++) {
                     pos = this.getMousePosition(evt, i);
-                    this.highlightElements(pos[0], pos[1], i);
+                    this.highlightElements(pos[0], pos[1], evt, i);
                 }
             }
         }
@@ -1447,7 +1450,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.mouse;
 
-        this.updateHooks(['touchmove', 'move'], evt, this.mode);
+        this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
         return false;
     },
 
@@ -1456,7 +1459,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber;
 
-        this.updateHooks(['touchend', 'up'], evt);
+        this.triggerEventHandlers(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
 
         if (evt.targetTouches.length > 0) {
@@ -1621,7 +1624,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        this.updateHooks(['mousedown', 'down'], Evt);
+        this.triggerEventHandlers(['mousedown', 'down'], Evt);
         return r;
     },
 
@@ -1632,7 +1635,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseUpListener: function (Evt) {
         var i;
 
-        this.updateHooks(['mouseup', 'up'], Evt);
+        this.triggerEventHandlers(['mouseup', 'up'], Evt);
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -1677,13 +1680,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (this.mode == this.BOARD_MODE_DRAG) {
                    this.moveObject(pos[0], pos[1], this.mouse);
             } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-                this.highlightElements(pos[0], pos[1], -1);
+                this.highlightElements(pos[0], pos[1], Event, -1);
             }
         }
 
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        this.updateHooks(['mousemove', 'move'], Event, this.mode);
+        this.triggerEventHandlers(['mousemove', 'move'], Event, this.mode);
     },
 
     /**
@@ -2516,61 +2519,125 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Adds a hook to this board. A hook is a function which will be called on every board update.
+     * Please use {@link JXG.Board#on} instead.
      * @param {Function} hook A function to be called by the board after an update occured.
      * @param {String} [m='update'] When the hook is to be called. Possible values are <i>mouseup</i>, <i>mousedown</i> and <i>update</i>.
      * @param {Object} [context=board] Determines the execution context the hook is called. This parameter is optional, default is the
      * board object the hook is attached to.
      * @returns {Number} Id of the hook, required to remove the hook from the board.
+     * @deprecated
      */
     addHook: function (hook, m, context) {
-        if (!JXG.exists(m))
-            m = 'update';
+        m = JXG.def('update');
 
-        context = context || this;
-        this.hooks.push({
-            fn: hook,
-            mode: m,
-            context: context
-        });
+        context = JXG.def(context, this);
 
-        if (m=='update') {
-            hook.apply(context, [this]);
-        }
+        this.hooks.push([m, hook]);
+        this.on(m, hook, context);
 
-        return (this.hooks.length-1);
+        return this.hooks.length;
     },
 
     /**
-     * Removes a hook from the board.
-     * @param {Number} id Id for the hook. The number you got when you added the hook.
-     * @returns {JXG.Board} Reference to the board
+     * Attaches an event to the board.
+     * @param {String} event Specifies the event, possible values are <ul><li>update</li><li>{mouse,touch,}{down,up,move}</li><li>hit</li></ul>.
+     * @param {function} handler A function to be called by the board after a specific event occured
+     * @param {Object} [context] Determines the execution context the hook is called. This parameter is optional, default is the
+     * board object the hook is attached to.
+     * @returns {Number} An id to identify the event handler, can be used to remove the event handler.
      */
-    removeHook: function (id) {
-        this.hooks[id] = null;
+    on: function (event, handler, context) {
+        context = JXG.def(context, this);
+
+        if (!JXG.isArray(this.eventHandlers[event])) {
+            this.eventHandlers[event] = [];
+        }
+
+        this.eventHandlers[event].push({
+            handler: handler,
+            context: context
+        });
+
         return this;
     },
 
     /**
-     * Runs through all hooked functions and calls them.
-     * @returns {JXG.Board} Reference to the board
+     * Alias of {@link JXG.Board#on}.
      */
-    updateHooks: function (m) {
-        var i, j, len, lenh, args = arguments.length > 1 ? Array.prototype.slice.call(arguments, 1) : [];
+    addEvent: JXG.shortcut(JXG.Board.prototype, 'on'),
 
-        if (!JXG.exists(m))
-            m = ['update'];
-
-        if (!JXG.isArray(m)) {
-            m = [m];
+    /**
+     * Please use {@link JXG.Board#off} instead.
+     * @param {Number|function} id The number you got when you added the hook or a reference to the event handler.
+     * @returns {JXG.Board} Reference to the board
+     * @deprecated
+     */
+    removeHook: function (id) {
+        if (this.hooks[id] !== null) {
+            this.off(this.hooks[id][0], this.hooks[id][1]);
+            this.hooks[id] = null;
         }
 
-        len = m.length;
-        lenh = this.hooks.length;
-        for (j = 0; j < len; j++) {
-            for (i = 0; i < lenh; i++) {
-                if ((this.hooks[i] != null) && (this.hooks[i].mode == m[j])) {
-                    this.hooks[i].fn.apply(this.hooks[i].context, args);
+        return this;
+    },
+
+    /**
+     * Removes an event handler
+     * @param handler
+     */
+    off: function (event, handler) {
+        var i;
+
+        if (!event || !JXG.isArray(this.eventHandlers[event])) {
+            return;
+        }
+
+        if (handler) {
+            i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
+            if (i > -1) {
+                this.eventHandlers[event].splice(i, 1);
+            }
+        } else {
+            this.eventHandlers[event].length = 0;
+        }
+
+        return this;
+    },
+
+    /**
+     * Alias of {@link JXG.Board#off}.
+     */
+    removeEvent: JXG.shortcut(JXG.Board.prototype, 'off'),
+
+    /**
+     * Runs through all hooked functions and calls them.
+     * @returns {JXG.Board} Reference to the board
+     * @deprecated
+     */
+    updateHooks: function (m) {
+        this.triggerEventHandlers.apply(this, arguments);
+
+        return this;
+    },
+
+    /**
+     * Trigger all event handlers attached to the given event.
+     * @param {String|Array} event A single event or an array of events that occurred.
+     * @returns {JXG.Board}
+     */
+    triggerEventHandlers: function (event) {
+        var i, j, h, evt, args = Array.prototype.slice.call(arguments, 1);
+
+        if (!JXG.isArray(event)) {
+            event = [event];
+        }
+
+        for (j = 0; j < event.length; j++) {
+            evt = event[j];
+            if (JXG.isArray(this.eventHandlers[evt])) {
+                for (i = 0; i < this.eventHandlers[evt].length; i++) {
+                    h = this.eventHandlers[evt][i];
+                    h.handler.apply(h.context, args);
                 }
             }
         }
@@ -2621,7 +2688,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.renderer.suspendRedraw(this);
         this.updateRenderer(drag);
         this.renderer.unsuspendRedraw();
-        this.updateHooks();
+        this.triggerEventHandlers('update');
 
         // To resolve dependencies between boards
         //for (var board in JXG.JSXGraph.boards) {
@@ -2635,7 +2702,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 b.renderer.suspendRedraw();
                 b.updateRenderer();
                 b.renderer.unsuspendRedraw();
-                b.updateHooks();
+                b.triggerEventHandlers('update');
             }
 
         }
@@ -2933,21 +3000,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Migrate the dependency properties of the point src 
+     * Migrate the dependency properties of the point src
      * to the point dest and  delete the point src.
-     * For example, a circle around the point src 
+     * For example, a circle around the point src
      * receives the new center dest. The old center src
      * will be deleted.
      * @param {JXG.Point} src Original point which will be deleted
      * @param {JXG.Point} dest New point with the dependencies of src.
      * @returns {JXG.Board} Reference to the board
-     */     
+     */
     migratePoint: function(src, dest) {
         var child, childId, prop;
-        
+
         src = JXG.getRef(this, src);
         dest = JXG.getRef(this, dest);
-        
+
         for (childId in src.childElements) {
             child = src.childElements[childId];
 
@@ -2961,7 +3028,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (found) {
                 delete src.childElements[childId];
             }
-            dest.addChild(child);          
+            dest.addChild(child);
             //child.prepareUpdate().update().updateRenderer();
         }
         this.removeObject(src);
