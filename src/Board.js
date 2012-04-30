@@ -919,9 +919,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
+
                 if (!JXG.exists(this.highlightedObjects[el])) { // highlight only if not highlighted
                     this.highlightedObjects[el] = pEl;
-                    pEl.highlight();
+
+                    if (this.hasMouseHandlers)
+                        pEl.highlight();
 
                     try { GUI.hittedObj(pEl); } catch (e) { ; }
                 }
@@ -1793,7 +1796,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (el in this.highlightedObjects) {
             pEl = this.highlightedObjects[el];
-            pEl.noHighlight();
+
+            if (this.hasMouseHandlers)
+                pEl.noHighlight();
+
             needsDehighlight = true;
 
             // In highlightedObjects should only be objects which fulfill all these conditions
