@@ -925,8 +925,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                     if (this.hasMouseHandlers)
                         pEl.highlight();
-
-                    try { GUI.hittedObj(pEl); } catch (e) { ; }
                 }
 
                 if (pEl.mouseover) {
