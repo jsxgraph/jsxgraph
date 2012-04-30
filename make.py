@@ -98,8 +98,9 @@ def usage():
     print "Targets:"
     print "  Core                   Concatenates and minifies JSXGraph source files into"
     print "                         distrib/jsxgraphcore.js ."
-    print "  Release                Makes Core and Docs and creates distribution ready zip archives"
+    print "  Release                Makes Core, Readers and Docs and creates distribution ready zip archives"
     print "                         in distrib/ ."
+    print "  Readers                Makes Readers and copies them to distrib/ ."
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
     print "  Hint                   Run JSHint on the file given with -l or --hint."
@@ -272,6 +273,35 @@ def makeDocs(afterCore = False):
     
 
 '''
+    Make targets Readers and place them in <output>
+'''
+def makeReaders():
+    global yui, output, version, license
+
+    print "Making Readers..."
+    
+    lic = ("/* Version %s */\n" % version) + license
+    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella']
+    for f in reader:
+        fname = f + "Reader"
+        shutil.copy("src/" + fname + ".js", "tmp/")
+        shutil.copy("src/" + fname + ".js", output)
+
+        # Minify; YUI compressor from Yahoo
+        srcFilename = "tmp/" + fname + ".js"
+        
+        # Prepend license text
+        coreFilename = output + "/" + fname + ".min.js"
+        
+        fout = open(coreFilename,'w')
+        fout.write(lic)
+        fout.close()
+        
+        s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + srcFilename + " >>" + coreFilename
+        print s
+        os.system(s)
+
+'''
     Make targets Core and Docs and create distribution-ready zip archives in <output>
 '''
 def makeRelease():
@@ -286,11 +316,8 @@ def makeRelease():
     shutil.copy("LICENSE", "tmp/LICENSE")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
     
-    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella']
-    for f in reader:
-        shutil.copy("src/"+f+"Reader.js", "distrib/")
-        shutil.copy("src/"+f+"Reader.js", "tmp/")
-            
+    makeReaders()
+    
     shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
     os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE && cd ..")

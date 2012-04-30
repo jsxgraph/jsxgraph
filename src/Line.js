@@ -503,6 +503,20 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 sx = parseFloat(this.label.content.visProp.offsets[0]);
                 sy = parseFloat(this.label.content.visProp.offsets[1]);
             }
+            x += sx;
+            y -= sy;
+            if (x<JXG.Math.eps) {
+                x = sx;
+            } else if (x>this.board.canvasWidth) {
+                x = this.board.canvasWidth - sx - 2*this.label.content.visProp.fontsize;
+            }
+            if (y<JXG.Math.eps) {
+                y = sy + this.label.content.visProp.fontsize;
+            } else if (y>this.board.canvasHeight) {
+                y = this.board.canvasHeight - sy;
+            }
+            
+            /*
             if (Math.abs(x)<JXG.Math.eps) {
                 if (this.visProp.label.position=='ulft'
                     || this.visProp.label.position=='llft'
@@ -532,6 +546,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                     y += 2*sy;
                 } 
             }
+            */
         } 
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
     },
