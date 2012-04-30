@@ -922,6 +922,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (!JXG.exists(this.highlightedObjects[el])) { // highlight only if not highlighted
                     this.highlightedObjects[el] = pEl;
                     pEl.highlight();
+
+                    try { GUI.hittedObj(pEl); } catch (e) { ; }
                 }
 
                 if (pEl.mouseover) {
@@ -1237,22 +1239,28 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             for (j = 0; j < this.touches[i].targets.length; j++) {
                 this.touches[i].targets[j].num = -1;
 
-                for (k = 0; k < evt.targetTouches.length; k++) {
-                    // find the new targettouches
-                    if (Math.abs(Math.pow(evt.targetTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
-                        this.touches[i].targets[j].num = k;
+                do {
+                    for (k = 0; k < evt.targetTouches.length; k++) {
+                        // find the new targettouches
+                        if (Math.abs(Math.pow(evt.targetTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
+                            this.touches[i].targets[j].num = k;
 
-                        this.touches[i].targets[j].X = evt.targetTouches[k].screenX;
-                        this.touches[i].targets[j].Y = evt.targetTouches[k].screenY;
-                        evt.targetTouches[k].jxg_isused = true;
-                        break;
+                            this.touches[i].targets[j].X = evt.targetTouches[k].screenX;
+                            this.touches[i].targets[j].Y = evt.targetTouches[k].screenY;
+                            evt.targetTouches[k].jxg_isused = true;
+                            break;
+                        }
                     }
-                }
 
-                if (this.touches[i].targets[j].num === -1) {
-                    JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
-                    this.touches[i].targets.splice(i, 1);
-                }
+                    eps = eps * 2;
+
+                } while (this.touches[i].targets[j].num == -1);
+/*
+                 if (this.touches[i].targets[j].num === -1) {
+                     JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
+                         this.touches[i].targets.splice(i, 1);
+                 }
+*/
             }
         }
 
