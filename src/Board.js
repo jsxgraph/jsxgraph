@@ -1244,6 +1244,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < this.touches.length; i++) {
             for (j = 0; j < this.touches[i].targets.length; j++) {
                 this.touches[i].targets[j].num = -1;
+                eps = this.options.precision.touch;
 
                 do {
                     for (k = 0; k < evt.targetTouches.length; k++) {
@@ -1259,14 +1260,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
 
                     eps = eps * 2;
+                } while (this.touches[i].targets[j].num == -1 && eps < this.options.precision.touchMax);
 
-                } while (this.touches[i].targets[j].num == -1);
-/*
-                 if (this.touches[i].targets[j].num === -1) {
-                     JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
-                         this.touches[i].targets.splice(i, 1);
-                 }
-*/
+                if (this.touches[i].targets[j].num === -1) {
+                    JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
+                    this.touches[i].targets.splice(i, 1);
+                }
+
             }
         }
 
