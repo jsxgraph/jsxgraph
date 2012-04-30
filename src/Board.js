@@ -2528,14 +2528,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @deprecated
      */
     addHook: function (hook, m, context) {
-        m = JXG.def('update');
+        m = JXG.def(m, 'update');
 
         context = JXG.def(context, this);
 
         this.hooks.push([m, hook]);
         this.on(m, hook, context);
 
-        return this.hooks.length;
+        return this.hooks.length - 1;
     },
 
     /**
@@ -2573,7 +2573,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @deprecated
      */
     removeHook: function (id) {
-        if (this.hooks[id] !== null) {
+        if (this.hooks[id]) {
             this.off(this.hooks[id][0], this.hooks[id][1]);
             this.hooks[id] = null;
         }
@@ -2615,6 +2615,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @deprecated
      */
     updateHooks: function (m) {
+        arguments[0] = JXG.def(arguments[0], 'update');
         this.triggerEventHandlers.apply(this, arguments);
 
         return this;

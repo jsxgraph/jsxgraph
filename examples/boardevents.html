@@ -22,8 +22,8 @@
 
     var l = board.create('line', [p, q]);
 
-    board.on('down', function () {
-        out.innerHTML += 'down<br/>';
+    board.on('down', function (e) {
+        out.innerHTML += 'down' + e + '<br/>';
     });
 
     board.on('hit', function (el, e, i) {
