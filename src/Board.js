@@ -910,7 +910,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         o.targets[1].Yprev = np2c.scrCoords[2];
     },
 
-    highlightElements: function (x, y) {
+    highlightElements: function (x, y, target) {
         var el, pEl;
 
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
@@ -925,6 +925,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                     if (this.hasMouseHandlers)
                         pEl.highlight();
+
+                    try { GUI.hittedObj(pEl, target); } catch (e) { ; }
                 }
 
                 if (pEl.mouseover) {
@@ -1434,7 +1436,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             } else {
                 for (i = 0; i < evt.targetTouches.length; i++) {
                     pos = this.getMousePosition(evt, i);
-                    this.highlightElements(pos[0], pos[1]);
+                    this.highlightElements(pos[0], pos[1], i);
                 }
             }
         }
@@ -1675,7 +1677,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (this.mode == this.BOARD_MODE_DRAG) {
                    this.moveObject(pos[0], pos[1], this.mouse);
             } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-                this.highlightElements(pos[0], pos[1]);
+                this.highlightElements(pos[0], pos[1], -1);
             }
         }
 
