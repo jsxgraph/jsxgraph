@@ -2594,6 +2594,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (handler) {
             i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
+
             if (i > -1) {
                 this.eventHandlers[event].splice(i, 1);
             }

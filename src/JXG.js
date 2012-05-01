@@ -676,7 +676,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     removeEvent: function (obj, type, fn, owner) {
         var em = 'JSXGraph: Can\'t remove event listener on' + type + ' : ' + owner['x_internal' + type],
-            i, j = -1, l;
+            i;
 
         if (!JXG.exists(owner)) {
             JXG.debug(em + ' -- no such owner');
@@ -684,7 +684,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         if (!JXG.exists(owner['x_internal' + type])) {
-            //JXG.debug(em + ' -- no such type');
+            JXG.debug(em + ' -- no such type');
             return;
         }
 
@@ -693,31 +693,25 @@ JXG.extend(JXG, /** @lends JXG */ {
             return;
         }
 
-        l = owner['x_internal' + type].length;
-        for (i = 0; i < l; i++) {
-            if (owner['x_internal' + type][i].origin === fn) {
-                j = i;
-                break;
-            }
-        }
+        i = JXG.indexOf(owner['x_internal' + type], fn, 'origin');
 
-        if (j === -1) {
-            //JXG.debug(em + ' -- event not found in internal list');
+        if (i === -1) {
+            JXG.debug(em + ' -- event not found in internal list');
             return;
         }
 
         try {
             if (JXG.exists(obj.addEventListener)) { // Non-IE browser
-                obj.removeEventListener(type, owner['x_internal' + type][j], false);
+                obj.removeEventListener(type, owner['x_internal' + type][i], false);
             } else {  // IE
-                obj.detachEvent('on' + type, owner['x_internal' + type][j]);
+                obj.detachEvent('on' + type, owner['x_internal' + type][i]);
             }
 
         } catch(e) {
             JXG.debug(em + ' -- event not registered in browser');
         }
 
-        JXG.removeElementFromArray(owner['x_internal' + type], owner['x_internal' + type][j]);
+        owner['x_internal' + type].splice(i, 1);
     },
 
     /**
@@ -728,9 +722,16 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} owner The scope in which the event trigger is called.
      */
     removeAllEvents: function(obj, type, owner) {
+        var i, len;
 		if (owner['x_internal' + type]) {
-        	while (owner['x_internal' + type].length > 0) {
-            	JXG.removeEvent(obj, type, owner['x_internal' + type][0].origin, owner);
+            len = owner['x_internal' + type].length;
+
+        	for (i = len - 1; i >= 0; i--) {
+            	JXG.removeEvent(obj, type, owner['x_internal' + type][i].origin, owner);
+            }
+
+            if (owner['x_internal' + type].length > 0) {
+                JXG.debug('removeAllEvents: Not all events could be removed.');
             }
         }
     },
@@ -751,6 +752,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * Removes an element from the given array
      * @param {Array} ar
      * @param {%} el
+     * @returns {Array}
      */
     removeElementFromArray: function(ar, el) {
         var i;
@@ -899,14 +901,14 @@ JXG.extend(JXG, /** @lends JXG */ {
      * <tt>-1</tt> if the value was not found.
      */
     indexOf: function (array, value, sub) {
-        var i;
+        var i, s = JXG.exists(sub);
         
-        if (Array.indexOf && !JXG.exists(sub)) {
+        if (Array.indexOf && !s) {
             return array.indexOf(value);
         }
         
         for (i = 0; i < array.length; i++) {
-            if (array[i].sub === value) {
+            if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
                 return i;
             }
         }

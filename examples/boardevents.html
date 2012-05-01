@@ -22,14 +22,49 @@
 
     var l = board.create('line', [p, q]);
 
+    // test add/remove of internal event handlers
     board.on('down', function (e) {
         out.innerHTML += 'down' + e + '<br/>';
     });
 
     board.on('hit', function (el, e, i) {
-        out.innerHTML += 'hit: ' + el.name + '<br />';
+        out.innerHTML += 'hit 1: ' + el.name + '<br />';
     });
 
+    board.on('hit', function (el, e, i) {
+        out.innerHTML += 'hit 2: ' + el.name + '<br />';
+    });
+
+    board.off('hit');
+
+    var hithdlr = function (el, e, i) {
+        out.innerHTML += 'hit 3: ' + el.name + '<br />';
+    };
+    board.on('hit', hithdlr);
+
+    board.off('hit', hithdlr);
+
+    board.on('hit', function (el, e, i) {
+        out.innerHTML += 'hit 4: ' + el.name + '<br />';
+    });
+
+
+    // test add/remove native event handlers
+    JXG.addEvent(board.containerObj, 'mousedown', function (e) {
+        out.innerHTML += 'mousedown 1<br />';
+    }, this);
+    JXG.removeAllEvents(board.containerObj, 'mousedown', this);
+
+    var mousedown2 = function (e) {
+        out.innerHTML += 'mousedown 2<br />';
+    };
+    JXG.addEvent(board.containerObj, 'mousedown', mousedown2, this);
+
+    JXG.addEvent(board.containerObj, 'mousedown', function (e) {
+        out.innerHTML += 'mousedown 3<br />';
+    }, this);
+
+    JXG.removeEvent(board.containerObj, 'mousedown', mousedown2, this);
     /* ]]> */
 </script>
 </body>
