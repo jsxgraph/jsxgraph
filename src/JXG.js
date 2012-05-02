@@ -696,7 +696,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         i = JXG.indexOf(owner['x_internal' + type], fn, 'origin');
 
         if (i === -1) {
-            JXG.debug(em + ' -- event not found in internal list');
+            JXG.debug(em + ' -- no such event function in internal list');
             return;
         }
 
