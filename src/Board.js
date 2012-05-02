@@ -2275,7 +2275,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             delete(this.objects[object.id]);
             delete(this.elementsByName[object.name]);
 
-            if (object.visProp.trace) {
+            if (object.visProp && object.visProp.trace) {
                 object.clearTrace();
             }
 
