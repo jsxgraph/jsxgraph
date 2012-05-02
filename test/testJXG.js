@@ -30,6 +30,16 @@
  */
 
 TestCase("JXG", {
+    div: null,
+
+    setUp: function () {
+        document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+        this.div = document.getElementById('jxgbox');
+    },
+
+    tearDown: function () {
+
+    },
 
     testExtend: function () {
         expectAsserts(4);
@@ -234,5 +244,56 @@ TestCase("JXG", {
         assertEquals('test number original content', 10, copy.num);
         assertEquals('test subobject original content', 42, copy.subo.foo);
         assertEquals('test name content', 'test', copy.name);
-    }
+    },
+
+    testAddEvent: function() {
+        expectAsserts(1);
+
+        var mousedown = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown, this);
+        fire.event(this.div, 'mousedown');
+
+        assertTrue(mousedown.calledOnce);
+    },
+
+    testRemoveEvent: function () {
+        expectAsserts(3);
+
+        var mousedown1 = sinon.stub(),
+            mousedown2 = sinon.stub(),
+            mousedown3 = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown1, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown2, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown3, this);
+
+        JXG.removeEvent(this.div, 'mousedown', mousedown2, this);
+
+        fire.event(this.div, 'mousedown');
+
+        assertTrue(mousedown1.calledOnce);
+        assertFalse(mousedown2.calledOnce);
+        assertTrue(mousedown3.calledOnce);
+    },
+
+    testRemoveAllEvents: function () {
+        expectAsserts(3);
+
+        var mousedown1 = sinon.stub(),
+            mousedown2 = sinon.stub(),
+            mousedown3 = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown1, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown2, this);
+
+        JXG.removeAllEvents(this.div, 'mousedown', this);
+
+        JXG.addEvent(this.div, 'mousedown', mousedown3, this);
+
+        fire.event(this.div, 'mousedown');
+
+        assertFalse(mousedown1.calledOnce);
+        assertFalse(mousedown2.calledOnce);
+        assertTrue(mousedown3.calledOnce);    }
 });
