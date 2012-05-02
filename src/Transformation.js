@@ -97,29 +97,35 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
                 this.evalParam = JXG.createEvalFunction(board,params,4);
             }
             this.update = function() {
-                var x, y, xoff, yoff, d;
-                
+                var x, y, z, xoff, yoff, d,
+                    v, p;
+                // Determine homogeneous coordinates of reflections axis
                 if (params.length==1) { // line
-                    x = params[0].point2.X()-params[0].point1.X();
-                    y = params[0].point2.Y()-params[0].point1.Y();
-                    xoff = params[0].point1.X();
-                    yoff = params[0].point1.Y();
+                    v = params[0].stdform;
                 } else if (params.length==2){ // two points
-                    x = params[1].X()-params[0].X();
-                    y = params[1].Y()-params[0].Y();
-                    xoff = params[0].X();
-                    yoff = params[0].Y();
+                    v = JXG.Math.crossProduct(params[1].coords.usrCoords, params[0].coords.usrCoords);
                 } else if (params.length==4){ // two points coordinates [px,py,qx,qy]
-                    x = this.evalParam(2)-this.evalParam(0);
-                    y = this.evalParam(3)-this.evalParam(1);
-                    xoff = this.evalParam(0);
-                    yoff = this.evalParam(1);
+                    v = JXG.Math.crossProduct(
+                        [1, this.evalParam(2), this.evalParam(3)],
+                        [1, this.evalParam(0), this.evalParam(1)]);
                 }
-                d = x*x+y*y;
+                // Project origin to the line.  This gives a finite point p
+                x = v[1];
+                y = v[2];
+                z = v[0];
+                p = [-z*x, -z*y, x*x+y*y];
+                d = p[2];
+                // Normalize p
+                xoff = p[0]/p[2];
+                yoff = p[1]/p[2];
+                // x, y is the direction of the line
+                x = -v[2];
+                y =  v[1];
+                
                 this.matrix[1][1] = (x*x-y*y)/d;
                 this.matrix[1][2] = 2*x*y/d;
-                this.matrix[2][1] = 2*x*y/d;
-                this.matrix[2][2] = (-x*x+y*y)/d;
+                this.matrix[2][1] = this.matrix[1][2];
+                this.matrix[2][2] = -this.matrix[1][1];
                 this.matrix[1][0] = xoff*(1-this.matrix[1][1])-yoff*this.matrix[1][2];
                 this.matrix[2][0] = yoff*(1-this.matrix[2][2])-xoff*this.matrix[2][1];
             };
