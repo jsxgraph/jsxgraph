@@ -1698,7 +1698,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             return true;
         }
 
-        Event = Event ? Event : window.event;
+        Event = Event || window.event;
         var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40,
             pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(Event), this);
 
@@ -1892,12 +1892,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return elList;
     },
 
-    /**
-     * Moves the origin and initializes an update of all elements.
-     * @params {Number} x
-     * @params {Number} y
-     * @returns {JXG.Board} Reference to this board.
-     */
+     /**
+      * Moves the origin and initializes an update of all elements.
+      * @params {Number} x
+      * @params {Number} y
+      * @returns {JXG.Board} Reference to this board.
+      */
      moveOrigin: function (x, y) {
         var el, ob;
 
@@ -1905,8 +1905,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // changed in version 0.91a
 
         if (JXG.exists(x) && JXG.exists(y)) {
-            this.origin.scrCoords[1] = x - this.drag_dx;
-            this.origin.scrCoords[2] = y - this.drag_dy;
+            this.origin.scrCoords[1] = x;
+            this.origin.scrCoords[2] = y;
+
+            if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                this.origin.scrCoords[1] -= this.drag_dx;
+                this.origin.scrCoords[2] -= this.drag_dy;
+            }
         }
 
         for (ob in this.objects) {
@@ -2093,6 +2098,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.zoomX *= zX;
         this.zoomY *= zY;
         this.applyZoom();
+
         return this;
     },
 
