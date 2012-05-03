@@ -198,6 +198,10 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     updateSize: function () {
         // Here comes a very crude estimation of the dimensions of
         // the textbox. It is only necessary for the IE.
+        if (typeof document === 'undefined') {
+            return this;
+        }
+
         if (this.visProp.display=='html' && this.board.renderer.type!='vml') {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
         } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
