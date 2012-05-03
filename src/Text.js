@@ -264,9 +264,11 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                     sx =  parseFloat(this.visProp.offsets[0]);
                     sy = -parseFloat(this.visProp.offsets[1]);
                     anchor = this.element.getLabelAnchor();
-                    this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                        [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                         sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
+
+                    if (typeof anchor != 'undefined')
+                        this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                            [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                             sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
                 } else {
                     anchor = this.element.getTextAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_USER,
