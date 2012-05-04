@@ -1229,47 +1229,53 @@ JXG.extend(JXG.Math.Geometry, {
         } else if (curve.visProp.curvetype == 'plot') {
             t = 0;
             mindist = infty;
-            for (i = 0; i < curve.numberPoints-1; i++) {
-                // li: line through points i, i+1 of curve
-                li = JXG.Math.crossProduct([curve.Z(i+1), curve.X(i+1), curve.Y(i+1)],
-                                           [curve.Z(i), curve.X(i), curve.Y(i)]);
+            if (curve.numberPoints==0) {
+                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0,1,1], board);
+            } else if (curve.numberPoints==1) {
+                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(0), curve.X(0), curve.Y(0)], board);
+            } else {
+                for (i = 0; i < curve.numberPoints-1; i++) {
+                    // li: line through points i, i+1 of curve
+                    li = JXG.Math.crossProduct([curve.Z(i+1), curve.X(i+1), curve.Y(i+1)],
+                                            [curve.Z(i), curve.X(i), curve.Y(i)]);
                                             
-                // ideal point of perpendicular to li
-                v = [0, li[1], li[2]];
-                //  perpendicular to li through (x,y)
-                v = JXG.Math.crossProduct(v, [1, x, y]);
-                // orthogonal projection (intersection of li and perp 
-                coords = this.meetLineLine(v, li, 0, board);
+                    // ideal point of perpendicular to li
+                    v = [0, li[1], li[2]];
+                    //  perpendicular to li through (x,y)
+                    v = JXG.Math.crossProduct(v, [1, x, y]);
+                    // orthogonal projection (intersection of li and perp 
+                    coords = this.meetLineLine(v, li, 0, board);
 
-                x1 = curve.X(i+1) - curve.X(i);
-                y1 = curve.Y(i+1) - curve.Y(i);
-                if (Math.abs(x1)>JXG.Math.eps) {
-                    x0 = coords.usrCoords[1] - curve.X(i);
-                    lbda = x0 / x1;
-                } else if (Math.abs(y1)>JXG.Math.eps) {
-                    y0 = coords.usrCoords[1] - curve.Y(i);
-                    lbda = y0 / y1;
-                } else {        // Here, the two points are identical
-                    lbda = 0;
-                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
-                }
+                    x1 = curve.X(i+1) - curve.X(i);
+                    y1 = curve.Y(i+1) - curve.Y(i);
+                    if (Math.abs(x1)>JXG.Math.eps) {
+                        x0 = coords.usrCoords[1] - curve.X(i);
+                        lbda = x0 / x1;
+                    } else if (Math.abs(y1)>JXG.Math.eps) {
+                        y0 = coords.usrCoords[1] - curve.Y(i);
+                        lbda = y0 / y1;
+                    } else {        // Here, the two points are identical
+                        lbda = 0;
+                        coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
+                    }
                 
-                if (0.0<=lbda && lbda<=1.0) {     
-                    dist = this.distance(coords.usrCoords, [1, x, y]);
-                    d = i + lbda;
-                } else if (lbda<0.0) {
-                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
-                    dist = this.distance(coords.usrCoords, [1, x, y]);
-                    d = i;
-                } else if (lbda>1.0 && i+1== curve.numberPoints-1) {
-                    coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)], board);
-                    dist = this.distance(coords.usrCoords, [1, x, y]);
-                    d = curve.numberPoints-1;
-                }
-                if (dist < mindist) {
-                    mindist = dist;
-                    t = d;
-                    newCoords = coords;
+                    if (0.0<=lbda && lbda<=1.0) {     
+                        dist = this.distance(coords.usrCoords, [1, x, y]);
+                        d = i + lbda;
+                    } else if (lbda<0.0) {
+                        coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i), curve.X(i), curve.Y(i)], board);
+                        dist = this.distance(coords.usrCoords, [1, x, y]);
+                        d = i;
+                    } else if (lbda>1.0 && i+1== curve.numberPoints-1) {
+                        coords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)], board);
+                        dist = this.distance(coords.usrCoords, [1, x, y]);
+                        d = curve.numberPoints-1;
+                    }
+                    if (dist < mindist) {
+                        mindist = dist;
+                        t = d;
+                        newCoords = coords;
+                    }
                 }
             }
         } else {             // functiongraph

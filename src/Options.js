@@ -487,6 +487,8 @@ JXG.Options = {
             name: ''
         },
         label: {
+            position: 'top',
+            offsets: [0,0],
             strokeColor: '#0000FF'
         }
     },
@@ -868,7 +870,6 @@ JXG.Options = {
         label: {
             position:'llft'
         }
-
     },
 
     /* special options for locus curves */

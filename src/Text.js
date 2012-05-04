@@ -198,10 +198,11 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     updateSize: function () {
         // Here comes a very crude estimation of the dimensions of
         // the textbox. It is only necessary for the IE.
+/*        
         if (typeof document === 'undefined') {
             return this;
         }
-
+*/
         if (this.visProp.display=='html' && this.board.renderer.type!='vml') {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
         } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
@@ -265,10 +266,9 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                     sy = -parseFloat(this.visProp.offsets[1]);
                     anchor = this.element.getLabelAnchor();
 
-                    if (typeof anchor != 'undefined')
-                        this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                            [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                             sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
+                    this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
+                        [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+                         sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
                 } else {
                     anchor = this.element.getTextAnchor();
                     this.coords.setCoordinates(JXG.COORDS_BY_USER,
