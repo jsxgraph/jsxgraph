@@ -130,7 +130,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      */
     hasPoint: function (x,y) {
         var coordsScr = this.coords.scrCoords, r;
-        r = parseFloat(this.visProp.size);
+        r = parseFloat(this.visProp.size) + parseFloat(this.visProp.strokewidth)*0.5;
         if(r < this.board.options.precision.hasPoint) {
             r = this.board.options.precision.hasPoint;
         }

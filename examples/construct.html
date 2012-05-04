@@ -92,9 +92,9 @@ B = brd.create('point', [-1, 2], {label:{offsets:[10,10], fixed:false, position:
 li = brd.create('line', [A, B], {withLabel:true, label:{offsets:[10,10], fixed:false, position:'bot'}});
 C = brd.create('glider', [-1, -1, li], {label:{offsets:[-30,-30]} });
 
-D =  brd.create('point', [0, -1], {});
+D =  brd.create('point', [0, -1], {strokeWidth:50});
 t = brd.create('transform', [li], {type:'reflect'});
-E = brd.create('point', [D,t], {});
+E = brd.create('point', [D,t]);
 
 
 brd.create('angle', [D,C,E], {name:'&alpha;'});
