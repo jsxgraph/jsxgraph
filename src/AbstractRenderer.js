@@ -318,8 +318,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board);
 
         JXG.Math.Geometry.calcStraight(element, screenCoords1, screenCoords2);
-        this.updateLinePrim(element.rendNode, screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
-                                         screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], element.board);
+        this.updateLinePrim(element.rendNode, 
+                            screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
+                            screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], element.board);
 
         this.makeArrows(element);
         this._updateVisual(element, {fill: true});

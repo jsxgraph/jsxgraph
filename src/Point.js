@@ -193,7 +193,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     * @private
     */
     updateGlider: function() {
-        var i, p1c, p2c, d, v, poly, cc, pos;
+        var i, p1c, p2c, d, v, poly, cc, pos, sgn;
 
         if(this.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
             this.coords  = JXG.Math.Geometry.projectPointToCircle(this, this.slideObject, this.board);
@@ -245,26 +245,39 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             if (d<JXG.Math.eps) {                                        // The defining points are identical
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
                 this.position = 0.0;
-            } else { 
-                if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
-					d = 1.0/JXG.Math.eps;
-                    if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
-                        d /= JXG.Math.Geometry.distance([0,0,0], p2c);
-                        p2c = [1, p1c[1]+p2c[1]*d, p1c[2]+p2c[2]*d];
-                    } else {                                             // The first point is an ideal point
-                        d /= JXG.Math.Geometry.distance([0,0,0], p1c);
-                        p1c = [1, p2c[1]+p1c[1]*d, p2c[2]+p1c[2]*d];
-                    }
-                }
-                i = 1;
-                d = p2c[i] - p1c[i];
-                if (Math.abs(d)<JXG.Math.eps) { 
-                    i = 2; 
-                    d = p2c[i] - p1c[i];
-                }
-
+            } else {
                 this.coords = JXG.Math.Geometry.projectPointToLine(this, this.slideObject, this.board);
-                this.position = (this.coords.usrCoords[i] - p1c[i]) / d;
+                if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
+                    i = 1;
+                    d = p2c[i];
+                    if (Math.abs(d)<JXG.Math.eps) { 
+                        i = 2; 
+                        d = p2c[i];
+                    }
+                    d = (this.coords.usrCoords[i] - p1c[i]) / d;
+                    sgn = (d>=0) ? 1.0 : -1;
+                    d = Math.abs(d);
+                    this.position = sgn * d/(d+1);
+                } else if (Math.abs(p1c[0])<JXG.Math.eps) {          // The first point is an ideal point
+                    i = 1;
+                    d = p1c[i];
+                    if (Math.abs(d)<JXG.Math.eps) { 
+                        i = 2; 
+                        d = p1c[i];
+                    }
+                    d = (this.coords.usrCoords[i] - p2c[i]) / d;
+                    sgn = (d>=0) ? 1.0 : -1;
+                    d = Math.abs(d);
+                    this.position = sgn * 1/(d+1);
+                } else {
+                    i = 1;
+                    d = p2c[i] - p1c[i];
+                    if (Math.abs(d)<JXG.Math.eps) { 
+                        i = 2; 
+                        d = p2c[i] - p1c[i];
+                    }
+                    this.position = (this.coords.usrCoords[i] - p1c[i]) / d;
+                }
             }        
                 
             // Snap the glider point of the slider into its appropiate position
@@ -323,7 +336,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             d = p1c.distance(JXG.COORDS_BY_USER, p2c);
             p1c = p1c.usrCoords.slice(0);
             p2c = p2c.usrCoords.slice(0);
-            
+           /* 
+if (this.name=="x") { console.log(this.position+" "+
+    d+" "+ 
+p2c+" "+
+JXG.Math.Geometry.distance([0,0,0], p2c) + ";;;;"+
+    (p1c[1] + this.position*(p2c[1] - p1c[1]))+" "+ 
+    ( p1c[2] + this.position*(p2c[2] - p1c[2])) ); 
+}
             if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
 				d = 1.0/JXG.Math.eps;
                 if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
@@ -333,8 +353,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     d /= JXG.Math.Geometry.distance([0,0,0], p1c);
                     p1c = [1, p2c[1]+p1c[1]*d, p2c[2]+p1c[2]*d];
                 }
-            }
+            }*/
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                    p1c[0] + this.position*(p2c[0] - p1c[0]),
                     p1c[1] + this.position*(p2c[1] - p1c[1]),
 					p1c[2] + this.position*(p2c[2] - p1c[2])
                 ]);
