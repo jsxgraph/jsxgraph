@@ -1026,10 +1026,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
       },
 
     addMouseEventHandlers: function () {
-        if (!this.hasMouseHandlers && typeof document != 'undefined') {
+        if (!this.hasMouseHandlers {
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-            JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+            JXG.addEvent(this.containerObj, 'mouseup', this.mouseUpListener,this);
 
             // EXPERIMENTAL: mouse wheel for zoom
             JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1046,11 +1046,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     addTouchEventHandlers: function () {
-        if (!this.hasTouchHandlers && typeof document != 'undefined') {
+        if (!this.hasTouchHandlers) {
              // To run JSXGraph on mobile touch devices we need these event listeners.
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+            JXG.addEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 
                // special event for iOS devices to enable gesture based zooming
             JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
@@ -1061,10 +1061,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     removeMouseEventHandlers: function () {
-        if (this.hasMouseHandlers && typeof document != 'undefined') {
+        if (this.hasMouseHandlers) {
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-            JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+            JXG.removeEvent(this.containerObj, 'mouseup', this.mouseUpListener, this);
 
             JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
             JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1087,10 +1087,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     removeTouchEventHandlers: function () {
-        if (this.hasTouchHandlers && typeof document != 'undefined') {
+        if (this.hasTouchHandlers) {
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-            JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+            JXG.removeEvent(this.containerObj, 'touchend', this.touchEndListener, this);
 
             JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
             JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
