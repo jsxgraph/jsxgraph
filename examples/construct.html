@@ -87,13 +87,17 @@ var cur = brd.create('curve', [dataX, dataY]);
 var p = brd.create('glider', [0,0,cur]);
 */
 
-//A = brd.create('point', [1,2, 1], {});
-//B = brd.create('point', [0,-1, 2], {label:{offsets:[10,10], fixed:false, position:'bot'}});
-A = brd.create('point', [-1290406.182669789, -483608.26697892265], {});
-B = brd.create('point', [0, 12.903981264637002, 4.836065573770491], {label:{offsets:[10,10], fixed:false, position:'bot'}});
+A = brd.create('point', [0,2, 1], {});
+B = brd.create('point', [1,-1, 2], {label:{offsets:[10,10], fixed:false, position:'bot'}});
+//A = brd.create('point', [-1290406.182669789, -483608.26697892265], {});
+//B = brd.create('point', [0, 12.903981264637002, 4.836065573770491], {label:{offsets:[10,10], fixed:false, position:'bot'}});
 li = brd.create('line', [A, B], 
     {withLabel:true, label:{offsets:[10,10], fixed:false, position:'bot'}, strokeWidth:3});
 C = brd.create('glider', [-1, -1, li], {name:"x", label:{offsets:[-30,-30]} });
+brd.create('text', [-3, 3, function(){ return C.position.toFixed(3)+ " " + ((1-C.position)/C.position).toFixed(3);}], {fontSize:32}  );
+C.position = 3;
+brd.update();
+
 /*
 D =  brd.create('point', [0, -1], {strokeWidth:50});
 t = brd.create('transform', [li], {type:'reflect'});
