@@ -1146,6 +1146,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.eventHandlers[event] = [];
         }
 
+        context = JXG.def(context, this);
+
         this.eventHandlers[event].push({
             handler: handler,
             context: context
