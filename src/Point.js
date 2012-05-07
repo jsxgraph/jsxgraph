@@ -190,6 +190,12 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
     * Update of glider in case of dragging the glider or setting the postion of the glider.
     * The relative position of the glider has to be updated.
+    * If the second point is an ideal point, then -1 < this.position < 1,
+    * this.position==+/-1 equals point2, this.position==0 equals point1
+    * 
+    * If the first point is an ideal point, then 0 < this.position < 2
+    * this.position==0  or 2 equals point1, this.position==1 equals point2
+    * 
     * @private
     */
     updateGlider: function() {
@@ -267,7 +273,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     }
                     d = (this.coords.usrCoords[i] - p2c[i]) / d;
                     if (d<0.0) {
-                        this.position = -d + 1;
+                        this.position = (1 - 2.0*d) / (1.0 - d); // 1.0 - d/(1-d);
                     } else {
                         this.position = 1/(d+1);
                     }
@@ -348,8 +354,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 ]);
             } else if (Math.abs(p1c[0])<JXG.Math.eps) {                 // The first point is an ideal point
                 lbda = Math.max(this.position, JXG.Math.eps);
+                lbda = Math.min(lbda, 2.0-JXG.Math.eps);
                 if (lbda > 1.0) {
-                    lbda = -lbda + 1;
+                    lbda = (lbda-1)/(lbda-2);
                 } else {
                     lbda = (1.0-lbda)/lbda;
                 }

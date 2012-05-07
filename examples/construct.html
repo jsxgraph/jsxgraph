@@ -95,7 +95,7 @@ li = brd.create('line', [A, B],
     {withLabel:true, label:{offsets:[10,10], fixed:false, position:'bot'}, strokeWidth:3});
 C = brd.create('glider', [-1, -1, li], {name:"x", label:{offsets:[-30,-30]} });
 brd.create('text', [-3, 3, function(){ return C.position.toFixed(3)+ " " + ((1-C.position)/C.position).toFixed(3);}], {fontSize:32}  );
-C.position = 3;
+C.position = 1.5;
 brd.update();
 
 /*
