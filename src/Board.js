@@ -1026,7 +1026,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
       },
 
     addMouseEventHandlers: function () {
-        if (!this.hasMouseHandlers {
+        if (!this.hasMouseHandlers) {
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             JXG.addEvent(this.containerObj, 'mouseup', this.mouseUpListener,this);
