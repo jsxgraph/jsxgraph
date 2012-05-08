@@ -476,6 +476,20 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.hasTouchHandlers = false;
 
+    /**
+     * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
+     * @type Boolean
+     * @default false
+     */
+    this.hasMouseUp = false;
+
+    /**
+     * A flag which tells if the board the JXG.Board#touchEndListener is currently registered.
+     * @type Boolean
+     * @default false
+     */
+    this.hasTouchEnd = false;
+
     this.addEventHandlers();
 };
 
@@ -1029,9 +1043,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!this.hasMouseHandlers && typeof document != 'undefined') {
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-            JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
+            // this is now added dynamically in mousedown
+            //JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 
-            // EXPERIMENTAL: mouse wheel for zoom
             JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
             // special treatment for firefox
             JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1050,7 +1064,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
              // To run JSXGraph on mobile touch devices we need these event listeners.
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+            // this is now added dynamically in touchstart
+            //JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
                // special event for iOS devices to enable gesture based zooming
             JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
@@ -1064,7 +1079,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.hasMouseHandlers && typeof document != 'undefined') {
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
-            JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+            if (this.hasMouseUp) {
+                JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+            }
 
             JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
             JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1090,7 +1107,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.hasTouchHandlers && typeof document != 'undefined') {
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
-            JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+            if (this.hasTouchEnd) {
+                JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+            }
 
             JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
             JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
@@ -1195,6 +1214,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         //evt.preventDefault();
         evt.stopPropagation();
+
+        JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+        this.hasTouchEnd = true;
 
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
@@ -1559,6 +1581,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.downObjects.splice(i, 1);
             }
         }
+
+        if (this.touches.length === 0) {
+            JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+            this.hasTouchEnd = false;
+        }
     },
 
     /**
@@ -1575,6 +1602,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
         }
+
+        JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
+        this.hasMouseUp = true;
 
         if (this.mouseOriginMoveStart(Evt)) {
             r = false;
@@ -1648,6 +1678,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.downObjects.length = 0;
 
+        JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+        this.hasMouseUp = false;
         // release dragged mouse object
         this.mouse = null;
     },

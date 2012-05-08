@@ -23,8 +23,8 @@
     var l = board.create('line', [p, q]);
 
     // test add/remove of internal event handlers
-    board.on('down', function (e) {
-        out.innerHTML += 'down' + e + '<br/>';
+    board.on('up', function (e) {
+        out.innerHTML += 'up ' + e + '<br/>';
     });
 
     board.on('hit', function (el, e, i) {
