@@ -1215,8 +1215,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //evt.preventDefault();
         evt.stopPropagation();
 
-        JXG.addEvent(document, 'touchend', this.touchEndListener, this);
-        this.hasTouchEnd = true;
+        if (!this.hasTouchEnd) {
+            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+            this.hasTouchEnd = true;
+        }
 
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
@@ -1582,7 +1584,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        if (this.touches.length === 0) {
+        if (!evt.targetTouches || evt.targetTouches.length === 0) {
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
             this.hasTouchEnd = false;
         }
