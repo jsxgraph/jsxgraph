@@ -818,7 +818,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         JXG.GeometryElement.prototype.hideElement.call(this);
 
         for (i = 0; i < this.ticks.length; i++) {
-            this.ticks[i].setProperty({visible: false});
+            this.ticks[i].hideElement();
         }
     },
 
@@ -828,7 +828,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         JXG.GeometryElement.prototype.showElement.call(this);
 
         for (i = 0; i < this.ticks.length; i++) {
-            this.ticks[i].setProperty({visible: true});
+            this.ticks[i].showElement();
         }
     }
 });
