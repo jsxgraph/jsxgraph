@@ -73,5 +73,41 @@ TestCase("Generic", {
         })(1, 2, 3);
 
         assertEquals('length is ok', 5, f);
+    },
+
+    testInheritance: function () {
+        expectAsserts(2);
+
+        var successSuper = false,
+            successBase = false,
+
+            woopSuper = function () {
+                successSuper = true;
+            },
+
+            Super = function() {
+            },
+            Class = function () {
+            },
+
+            o;
+
+        JXG.extend(Super.prototype, {
+            woop: woopSuper
+        });
+        Class.prototype = new Super;
+
+        JXG.extend(Class.prototype, {
+            woop: function () {
+                Super.prototype.woop.call(this);
+                successBase = true;
+            }
+        });
+
+        o = new Class();
+        o.woop();
+
+        assertTrue('super called', successSuper);
+        assertTrue('base called', successBase);
     }
 });

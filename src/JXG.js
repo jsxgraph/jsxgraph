@@ -76,6 +76,13 @@ JXG.shortcut = function (object, fun) {
 JXG.extend(JXG, /** @lends JXG */ {
 
     /**
+     * Determines the property that stores the relevant information in the event object.
+     * @type {String}
+     * @default 'touches'
+     */
+    touchProperty: 'touches',
+
+    /**
      * Detect browser support for VML.
      * @returns {Boolean} True, if the browser supports VML.
      */
@@ -774,7 +781,8 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
      */
     getPosition: function (e, index) {
-        var i, len, posx = 0, posy = 0;
+        var i, len, posx = 0, posy = 0,
+            evtTouches = e[JXG.touchProperty];
 
         if (!e) {
             e = window.event;
@@ -784,16 +792,16 @@ JXG.extend(JXG, /** @lends JXG */ {
 
 			if (index == -1) {
 
-				len = e.targetTouches.length;
+				len = evtTouches.length;
 				for (i=0; i<len; i++) {
-					if (e.targetTouches[i]) {
-						e = e.targetTouches[i];
+					if (evtTouches[i]) {
+						e = evtTouches[i];
 						break;
 					}
 				}
 
 			} else
-				e = e.targetTouches[index];
+				e = evtTouches[index];
 		}
 
         if (e.pageX || e.pageY) {
@@ -815,8 +823,8 @@ JXG.extend(JXG, /** @lends JXG */ {
     getOffset: function (obj) {
         var o = obj,
             o2 = obj,
-            l =o.offsetLeft - o.scrollLeft,
-            t =o.offsetTop - o.scrollTop;
+            l = o.offsetLeft - o.scrollLeft,
+            t = o.offsetTop - o.scrollTop;
         
         /*
          * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -1029,11 +1037,9 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {String} The given object stored in a JSON string.
      */
     toJSON: function (obj, noquote) {
-        var s;
+        var s, val;
 
-        if (!JXG.exists(noquote)) {
-            noquote = false;
-        }
+        noquote = JXG.def(noquote, false);
 
         // check for native JSON support:
         if (window.JSON && window.JSON.stringify && !noquote) {
@@ -1057,10 +1063,17 @@ JXG.extend(JXG, /** @lends JXG */ {
                         return '[' + list.join(',') + ']';
                     } else {
                         for (var prop in obj) {
+
+                            try {
+                                val = JXG.toJSON(obj[prop], noquote);
+                            } catch (e) {
+                                val = '';
+                            }
+
                             if (noquote) {
-                                list.push(prop + ':' + JXG.toJSON(obj[prop], noquote));
+                                list.push(prop + ':' + val);
                             } else {
-                                list.push('"' + prop + '":' + JXG.toJSON(obj[prop], noquote));
+                                list.push('"' + prop + '":' + val);
                             }
                         }
                         return '{' + list.join(',') + '} ';

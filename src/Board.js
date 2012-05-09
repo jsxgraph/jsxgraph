@@ -1006,7 +1006,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchOriginMoveStart: function (evt) {
-        if (this.options.pan && evt.targetTouches.length == 2 && JXG.Math.Geometry.distance([evt.targetTouches[0].screenX, evt.targetTouches[0].screenY], [evt.targetTouches[1].screenX, evt.targetTouches[1].screenY]) < 80) {
+        var touches = evt[JXG.touchProperty];
+
+        if (this.options.pan && touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80) {
             var pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
             return true;
@@ -1206,7 +1208,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     touchStartListener: function (evt) {
         var i, pos, elements, j, k, l,
             eps = this.options.precision.touch,
-            obj, xy = [], found, targets;
+            obj, xy = [], found, targets,
+            evtTouches = evt[JXG.touchProperty];
+
+        if (!this.hasTouchEnd) {
+            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+            this.hasTouchEnd = true;
+        }
 
         if (this.hasMouseHandlers) {
             this.removeMouseEventHandlers();
@@ -1214,11 +1222,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         //evt.preventDefault();
         evt.stopPropagation();
-
-        if (!this.hasTouchEnd) {
-            JXG.addEvent(document, 'touchend', this.touchEndListener, this);
-            this.hasTouchEnd = true;
-        }
 
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
@@ -1260,8 +1263,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //      (c) if the element is a line, init and try to find a second targettouch on that line. if a second one is found, add and mark it
         //      (d) if the element is a circle, init and try to find TWO other targettouches on that circle. if only one is found, mark it and continue. otherwise
         //          add both to the touches array and mark them.
-        for (i = 0; i < evt.targetTouches.length; i++) {
-            evt.targetTouches[i].jxg_isused = false;
+        for (i = 0; i < evtTouches.length; i++) {
+            evtTouches[i].jxg_isused = false;
         }
 
         for (i = 0; i < this.touches.length; i++) {
@@ -1270,14 +1273,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 eps = this.options.precision.touch;
 
                 do {
-                    for (k = 0; k < evt.targetTouches.length; k++) {
+                    for (k = 0; k < evtTouches.length; k++) {
                         // find the new targettouches
-                        if (Math.abs(Math.pow(evt.targetTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
+                        if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
                             this.touches[i].targets[j].num = k;
 
-                            this.touches[i].targets[j].X = evt.targetTouches[k].screenX;
-                            this.touches[i].targets[j].Y = evt.targetTouches[k].screenY;
-                            evt.targetTouches[k].jxg_isused = true;
+                            this.touches[i].targets[j].X = evtTouches[k].screenX;
+                            this.touches[i].targets[j].Y = evtTouches[k].screenY;
+                            evtTouches[k].jxg_isused = true;
                             break;
                         }
                     }
@@ -1294,8 +1297,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
-        for (i = 0; i < evt.targetTouches.length; i++) {
-            if (!evt.targetTouches[i].jxg_isused) {
+        for (i = 0; i < evtTouches.length; i++) {
+            if (!evtTouches[i].jxg_isused) {
                 pos = this.getMousePosition(evt, i);
                 elements = this.initMoveObject(pos[0], pos[1]);
 
@@ -1305,7 +1308,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
-                        targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
+                        targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                         // For the UNDO/REDO of object moves
                         xy = this.initXYstart(obj);
@@ -1326,7 +1329,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
 
-                                    var target = { num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
+                                    var target = { num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
 
                                     // For the UNDO/REDO of object moves
                                     xy = this.initXYstart(obj);
@@ -1339,7 +1342,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                     this.touches[j].targets.push(target);
                                 }
 
-                                evt.targetTouches[i].jxg_isused = true;
+                                evtTouches[i].jxg_isused = true;
                             }
                         }
 
@@ -1348,7 +1351,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // the touches control object.
                         if (!found) {
 
-                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
+                            targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
@@ -1368,7 +1371,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             if (obj.id === this.touches[j].obj.id) {
                                 // TODO: for now we only support single touch circle movement
                                 found = true;
-                                evt.targetTouches[i].jxg_isused = true;
+                                evtTouches[i].jxg_isused = true;
                                 break;
                             }
                         }
@@ -1377,7 +1380,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
-                            targets = [{ num: i, X: evt.targetTouches[i].screenX, Y: evt.targetTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
+                            targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
                             xy = this.initXYstart(obj);
@@ -1392,7 +1395,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 }
 
-                evt.targetTouches[i].jxg_isused = true;
+                evtTouches[i].jxg_isused = true;
             }
         }
 
@@ -1404,11 +1407,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.options.precision.hasPoint = this.options.precision.mouse;
 
         this.triggerEventHandlers(['touchstart', 'down'], evt);
+
         return false;
     },
 
     touchMoveListener: function (evt) {
-        var i, j, pos;
+        var i, pos,
+            evtTouches = evt[JXG.touchProperty];
 
         evt.preventDefault();
         evt.stopPropagation();
@@ -1419,6 +1424,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (ti-this.touchMoveLast<80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
                 this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
+
                 return false;
             } else {
                 this.touchMoveLast = ti;
@@ -1441,16 +1447,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 for (i = 0; i < this.touches.length; i++) {
                     // Touch by one finger:  this is possible for all elements that can be dragged
                     if (this.touches[i].targets.length === 1) {
-                        this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
-                        this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
+                        this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                        this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                         pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                         this.moveObject(pos[0], pos[1], this.touches[i]);
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-                        this.touches[i].targets[0].X = evt.targetTouches[this.touches[i].targets[0].num].screenX;
-                        this.touches[i].targets[0].Y = evt.targetTouches[this.touches[i].targets[0].num].screenY;
-                        this.touches[i].targets[1].X = evt.targetTouches[this.touches[i].targets[1].num].screenX;
-                        this.touches[i].targets[1].Y = evt.targetTouches[this.touches[i].targets[1].num].screenY;
+                        this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                        this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                        this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
+                        this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
                         this.moveLine(
                             this.getMousePosition(evt, this.touches[i].targets[0].num),
                             this.getMousePosition(evt, this.touches[i].targets[1].num),
@@ -1460,7 +1466,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
 
             } else {
-                for (i = 0; i < evt.targetTouches.length; i++) {
+                for (i = 0; i < evtTouches.length; i++) {
                     pos = this.getMousePosition(evt, i);
                     this.highlightElements(pos[0], pos[1], evt, i);
                 }
@@ -1474,18 +1480,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.options.precision.hasPoint = this.options.precision.mouse;
 
         this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
+
         return false;
     },
 
     touchEndListener: function (evt) {
         var i, j, k,
             eps = this.options.precision.touch,
-            tmpTouches = [], found, foundNumber;
+            tmpTouches = [], found, foundNumber,
+            evtTouches = evt[JXG.touchProperty];
 
         this.triggerEventHandlers(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
 
-        if (evt.targetTouches.length > 0) {
+        if (evtTouches.length > 0) {
             for (i = 0; i < this.touches.length; i++) {
                 tmpTouches[i] = this.touches[i];
             }
@@ -1506,8 +1514,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             //     (c) circle with [proceed like in line]
 
             // init the targettouches marker
-            for (i = 0; i < evt.targetTouches.length; i++) {
-                evt.targetTouches[i].jxg_isused = false;
+            for (i = 0; i < evtTouches.length; i++) {
+                evtTouches[i].jxg_isused = false;
             }
 
             for (i = 0; i < tmpTouches.length; i++) {
@@ -1517,13 +1525,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                 for (j = 0; j < tmpTouches[i].targets.length; j++) {
                     tmpTouches[i].targets[j].found = false;
-                    for (k = 0; k < evt.targetTouches.length; k++) {
+                    for (k = 0; k < evtTouches.length; k++) {
 
-                        if (Math.abs(Math.pow(evt.targetTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evt.targetTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
+                        if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
                             tmpTouches[i].targets[j].found = true;
                             tmpTouches[i].targets[j].num = k;
-                            tmpTouches[i].targets[j].X = evt.targetTouches[k].screenX;
-                            tmpTouches[i].targets[j].Y = evt.targetTouches[k].screenY;
+                            tmpTouches[i].targets[j].X = evtTouches[k].screenX;
+                            tmpTouches[i].targets[j].Y = evtTouches[k].screenY;
                             foundNumber++;
                             break;
                         }
@@ -1584,7 +1592,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        if (!evt.targetTouches || evt.targetTouches.length === 0) {
+        if (!evtTouches || evtTouches.length === 0) {
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
             this.hasTouchEnd = false;
         }
