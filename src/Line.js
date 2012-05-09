@@ -810,6 +810,26 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 break;
             }
         }
+    },
+
+    hideElement: function () {
+        var i;
+
+        JXG.GeometryElement.prototype.hideElement.call(this);
+
+        for (i = 0; i < this.ticks.length; i++) {
+            this.ticks[i].setProperty({visible: false});
+        }
+    },
+
+    showElement: function () {
+        var i;
+
+        JXG.GeometryElement.prototype.showElement.call(this);
+
+        for (i = 0; i < this.ticks.length; i++) {
+            this.ticks[i].setProperty({visible: true});
+        }
     }
 });
 

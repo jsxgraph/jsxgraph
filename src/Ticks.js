@@ -326,11 +326,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			// Test if tick is a major tick.
             // This is the case if (dir*tickPosition+startTick)/ticksDelta is
             // a multiple of the number of minorticks+1
-            if (Math.round((dir*tickPosition+startTick)/ticksDelta) % (this.visProp.minorticks+1) === 0) {
-                tickCoords.major = true;
-            } else {
-                tickCoords.major = false;
-            }
+            tickCoords.major = Math.round((dir * tickPosition + startTick) / ticksDelta) % (this.visProp.minorticks + 1) === 0;
             
 			// Compute the start position and the end position of a tick.
 			// If both positions are out of the canvas, ti is empty.
@@ -572,8 +568,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 !(this.board.options.renderer=='canvas'&&this.board.options.text.display=='internal')
                ) {
                 for(j=0; j<this.ticks.length; j++) {
-                    if(this.labels[j]!=null && this.labels[j].visProp.visible) {
-//                        this.board.renderer.remove(this.labels[j].rendNode);
+                    if(this.labels[j] != null) {
                         this.board.removeObject(this.labels[j]);
                     }
                 }
@@ -610,7 +605,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         this.visProp.visible = false;
         this.board.renderer.hide(this);
 
-        for (i=0; i<this.labels.length; i++) {
+        for (i = 0; i < this.labels.length; i++) {
             if (JXG.exists(this.labels[i]))
                 this.labels[i].hideElement();
         }
@@ -624,7 +619,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         this.visProp.visible = true;
         this.board.renderer.show(this);
 
-        for (i=0; i<this.labels.length; i++) {
+        for (i = 0; i < this.labels.length; i++) {
             if (JXG.exists(this.labels[i]))
                 this.labels[i].showElement();
         }

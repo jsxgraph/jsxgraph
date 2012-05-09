@@ -494,6 +494,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     hideElement: function () {
         this.visProp.visible = false;
         this.board.renderer.hide(this);
+
         if (this.label!=null && this.hasLabel) {
             this.label.hiddenByParent = true;
             if (this.label.content.visProp.visible) {
@@ -509,6 +510,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     showElement: function () {
         this.visProp.visible = true;
         this.board.renderer.show(this);
+
         if (this.label!=null && this.hasLabel && this.label.hiddenByParent) {
             this.label.hiddenByParent = false;
             if (this.label.content.visProp.visible) {
