@@ -225,7 +225,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         this.updateSegmentFixedLength();
         
         this.updateStdform();
-            
+
         if(this.visProp.trace) {
             this.cloneToBackground(true);
         }

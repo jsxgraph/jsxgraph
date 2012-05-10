@@ -314,13 +314,13 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#drawLine
      */
     updateLine: function (element) {
-        var screenCoords1 = new JXG.Coords(JXG.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
-            screenCoords2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board);
+        var c1 = new JXG.Coords(JXG.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
+            c2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board);
 
-        JXG.Math.Geometry.calcStraight(element, screenCoords1, screenCoords2);
+        JXG.Math.Geometry.calcStraight(element, c1, c2);
         this.updateLinePrim(element.rendNode, 
-                            screenCoords1.scrCoords[1], screenCoords1.scrCoords[2],
-                            screenCoords2.scrCoords[1], screenCoords2.scrCoords[2], element.board);
+                            c1.scrCoords[1], c1.scrCoords[2],
+                            c2.scrCoords[1], c2.scrCoords[2], element.board);
 
         this.makeArrows(element);
         this._updateVisual(element, {fill: true});

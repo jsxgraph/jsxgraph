@@ -460,12 +460,14 @@ JXG.extend(JXG.Math.Geometry, {
 
         takePoint1 = false;
         takePoint2 = false;
-        if (!straightFirst && // Line starts at point1 and point2 is inside the board
+        if (!straightFirst && // Line starts at point1 and point1 is inside the board
+                Math.abs(point1.usrCoords[0]) >= JXG.Math.eps &&
                 point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
                 point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight) {
             takePoint1 = true;
         }
         if (!straightLast && // Line ends at point2 and point2 is inside the board
+                Math.abs(point2.usrCoords[0]) >= JXG.Math.eps &&
                 point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
                 point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight) {
             takePoint2 = true;
@@ -612,7 +614,7 @@ JXG.extend(JXG.Math.Geometry, {
     },
 
     /**
-     * The vectors p2-p1 and i2-i1 are supposed collinear.
+     * The vectors p2-p1 and i2-i1 are supposed to be collinear.
      * If their cosine is positive they point into the same direction
      * otherwise they point in opposite direction
      * @param {JXG.Coords} p1 
@@ -626,6 +628,15 @@ JXG.extend(JXG.Math.Geometry, {
             dpy = p2.usrCoords[2] - p1.usrCoords[2],
             dix = i2.usrCoords[1] - i1.usrCoords[1],
             diy = i2.usrCoords[2] - i1.usrCoords[2];
+            
+        if (Math.abs(p2.usrCoords[0])<JXG.Math.eps) {
+            dpx = p2.usrCoords[1];
+            dpy = p2.usrCoords[2];
+        }
+        if (Math.abs(p1.usrCoords[0])<JXG.Math.eps) {
+            dpx = -p1.usrCoords[1];
+            dpy = -p1.usrCoords[2];
+        }
             
         return dpx * dix + dpy * diy >= 0;
     },

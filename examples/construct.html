@@ -54,6 +54,13 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6],
 axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
 
+p = brd.create('point', [1,1, 1], {name:'A'});
+q = brd.create('point', [0, 6, 3.5], {name:'B'});
+
+l = brd.create('line', [p, q], {straightFirst: false, name:'li'});
+
+//border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});
+
 /*
 brd.suspendUpdate();
 p0 = brd.create('point', [0, 0], {});
@@ -71,10 +78,11 @@ var label5 =  brd.create('text',
 
 brd.unsuspendUpdate();
 */
+/*
 var sli = brd.create('slider',[[0,3],[2,3],[0,0,1]]); 
 var cp=brd.create('arrow',[[-1,0],[-1,2]],
     {name:'X', highlight:false, dash:true, strokeOpacity: function(){return sli.Value();}});
-
+*/
 //alert(label5.getSize());
 
 /*
@@ -86,7 +94,7 @@ var dataY = [-1, 1, NaN, 2, -1];
 var cur = brd.create('curve', [dataX, dataY]);
 var p = brd.create('glider', [0,0,cur]);
 */
-
+/*
 A = brd.create('point', [0,2, 1], {});
 B = brd.create('point', [1,-1, 2], {label:{offsets:[10,10], fixed:false, position:'bot'}});
 //A = brd.create('point', [-1290406.182669789, -483608.26697892265], {});
@@ -97,7 +105,7 @@ C = brd.create('glider', [-1, -1, li], {name:"x", label:{offsets:[-30,-30]} });
 brd.create('text', [-3, 3, function(){ return C.position.toFixed(3)+ " " + ((1-C.position)/C.position).toFixed(3);}], {fontSize:32}  );
 C.position = 1.5;
 brd.update();
-
+*/
 /*
 D =  brd.create('point', [0, -1], {strokeWidth:50});
 t = brd.create('transform', [li], {type:'reflect'});
