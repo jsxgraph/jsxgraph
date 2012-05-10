@@ -53,14 +53,14 @@ JXG.Options.axis.withLabel = false;
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
-
+/*
 p = brd.create('point', [1,1, 1], {name:'A'});
 q = brd.create('point', [0, 6, 3.5], {name:'B'});
 
 l = brd.create('line', [p, q], {straightFirst: false, name:'li'});
 
 //border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});
-
+*/
 /*
 brd.suspendUpdate();
 p0 = brd.create('point', [0, 0], {});
@@ -113,6 +113,13 @@ E = brd.create('point', [D,t]);
 brd.create('angle', [D,C,E], {name:'&alpha;'});
 */
 
+s5 = brd.create('point',[-1498738.789161728, -18632.701100762082]);
+s6 = brd.create('point',[0, 14.987298899237935, 0.18628281117696854]);
+s7 = brd.create('line',[s5, s6]);
+s8 = brd.create('point',[-1.2108382726502964, -5.215918712955123]);
+//s9 = brd.create('transform', [s7], {type:'reflect'});
+//s10 = brd.create('point', [s8, s9]);
+s10 = brd.create('reflection', [s8, s7]);
 /*
 */
 /*

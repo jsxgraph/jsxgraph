@@ -205,7 +205,7 @@ JXG.extend(JXG.Math.Geometry, {
      * @returns {JXG.Coords} Coordinates of the reflected point.
      */
     reflection: function(line, point, board) {
-        /* (v,w) defines the slope of the line */
+        // (v,w) defines the slope of the line 
         var pc = point.coords.usrCoords,
             p1c = line.point1.coords.usrCoords,
             p2c = line.point2.coords.usrCoords,
@@ -222,7 +222,7 @@ JXG.extend(JXG.Math.Geometry, {
 
         mu = (v * y0 - w * x0) / (v * v + w * w);
 
-        /* point + mu*(-y,x) waere Lotpunkt */
+        // point + mu*(-y,x) waere Lotpunkt 
         x1 = pc[1] + 2 * mu * w;
         y1 = pc[2] - 2 * mu * v;
 

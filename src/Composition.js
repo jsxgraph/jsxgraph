@@ -1612,7 +1612,7 @@ JXG.createIncircle = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createReflection = function(board, parents, attributes) {
-    var l, p, r;
+    var l, p, r, t;
 
     if(parents[0].elementClass == JXG.OBJECT_CLASS_POINT && parents[1].elementClass == JXG.OBJECT_CLASS_LINE) {
         p = parents[0];
@@ -1628,7 +1628,9 @@ JXG.createReflection = function(board, parents, attributes) {
                         "\nPossible parent types: [line,point]");
     }
 
-    r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], attributes);
+    //r = JXG.createPoint(board, [function () { return JXG.Math.Geometry.reflection(l, p, board); }], attributes);
+    t = JXG.createTransform(board, [l], {type:'reflect'});
+    r = JXG.createPoint(board, [p, t], attributes);
     p.addChild(r);
     l.addChild(r);
 
