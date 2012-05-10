@@ -395,6 +395,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleStart = node2;
                 el.rendNode.setAttributeNS(null, 'marker-start', 'url(#' + this.container.id + '_' + el.id + 'TriangleEnd)');
+            } else {
+                this.defs.appendChild(node2);
             }
         } else {
             node2 = el.rendNodeTriangleStart;
@@ -409,6 +411,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 this.defs.appendChild(node2);
                 el.rendNodeTriangleEnd = node2;
                 el.rendNode.setAttributeNS(null, 'marker-end', 'url(#' + this.container.id + '_' + el.id + 'TriangleStart)');
+            } else {
+                this.defs.appendChild(node2);
             }
         } else {
             node2 = el.rendNodeTriangleEnd;
