@@ -1034,7 +1034,7 @@ JXG.GeonextReader = {
 						*/
                         gxtEl.fillColor = 'none';
                         gxtEl.highlightFillColor = 'none';
-                        
+
                         board.create('curve', 
                                     [ new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functionx, board) + ';' ),
                                       new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functiony, board) + ';' ),

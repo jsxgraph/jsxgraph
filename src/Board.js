@@ -2056,6 +2056,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         plaintext += 'this.prepareUpdate().updateElements();\n';
         plaintext += 'return true;\n';
 
+        plaintext = plaintext.replace(/&lt;/g, "<");
+        plaintext = plaintext.replace(/&gt;/g, ">");
+        plaintext = plaintext.replace(/&amp;/g, "&");
+
         this.updateConditions = new Function(plaintext);
         this.updateConditions();
     },

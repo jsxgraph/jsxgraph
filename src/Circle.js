@@ -678,7 +678,7 @@ JXG.createCircle = function (board, parents, attributes) {
     for (i=0;i<parents.length;i++) {
         if (JXG.isPoint(parents[i])) {
             p[i] = parents[i];              // Point
-        } else if (parents[i].length>1) {
+        } else if (JXG.isArray(parents[i]) && parents[i].length>1) {
             attr = JXG.copyAttributes(attributes, board.options, 'circle', 'center');
             p[i] = board.create('point', parents[i], attr);  // Coordinates
         } else {

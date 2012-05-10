@@ -411,7 +411,7 @@ JXG.extend(JXG.Math.Geometry, {
      */
     calcStraight: function(el, point1, point2) {
         var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
-            c, s, i, j, p1, p2;
+            c, s, i, j, p1, p2, margin;
 
         straightFirst = el.visProp.straightfirst;
         straightLast = el.visProp.straightlast;
@@ -441,11 +441,13 @@ JXG.extend(JXG.Math.Geometry, {
 
         // Intersect the line with the four borders of the board.
         s = [];
-        s[0] = JXG.Math.crossProduct(c, [0,0,1]);  // top
-        s[1] = JXG.Math.crossProduct(c, [0,1,0]);  // left
-        s[2] = JXG.Math.crossProduct(c, [-el.board.canvasHeight,0,1]);  // bottom
-        s[3] = JXG.Math.crossProduct(c, [-el.board.canvasWidth,1,0]);   // right
-
+        margin = 10;   // Enlarge the drawable region slightly. This hides the small sides
+                       // of thick lines in most cases.
+        s[0] = JXG.Math.crossProduct(c, [margin,0,1]);  // top
+        s[1] = JXG.Math.crossProduct(c, [margin,1,0]);  // left
+        s[2] = JXG.Math.crossProduct(c, [-margin-el.board.canvasHeight,0,1]);  // bottom
+        s[3] = JXG.Math.crossProduct(c, [-margin-el.board.canvasWidth,1,0]);   // right
+        
         // Normalize the intersections
         for (i = 0; i < 4; i++) {
             if (Math.abs(s[i][0]) > JXG.Math.eps) {
