@@ -103,7 +103,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     
     /** Radius of the circle
      * only set if method equals 'pointRadius'
-     * @type JXG.Point
+     * @type Number
      * @default null
      * @see #method     
      */    
@@ -132,7 +132,7 @@ JXG.Circle = function (board, method, par1, par2, attributes) {
     }
     else if(method == 'pointRadius') {
         this.gxtterm = par2;
-        this.generateTerm(par2);  // Converts GEONExT syntax into JavaScript syntax
+        this.updateRadius = JXG.createFunction(par2, this.board, null, true);  // Converts GEONExT syntax into JavaScript syntax
         this.updateRadius();                        // First evaluation of the graph  
     }
     else if(method == 'pointLine') {
@@ -181,7 +181,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * Checks whether (x,y) is near the circle.
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @return {Boolean} True if (x,y) is near the circle, False otherwise.
+     * @returns {Boolean} True if (x,y) is near the circle, False otherwise.
      * @private
      */
     hasPoint: function (x, y) {
@@ -198,7 +198,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     /**
      * Used to generate a polynomial for a point p that lies on this circle.
      * @param p The point for that the polynomial is generated.
-     * @return An array containing the generated polynomial.
+     * @returns {Array} An array containing the generated polynomial.
      * @private
      */
     generatePolynomial: function (p) {
@@ -252,8 +252,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     /**
      * Generate symbolic radius calculation for loci determination with Groebner-Basis algorithm.
-     * @type String
-     * @return String containing symbolic calculation of the circle's radius or an empty string
+     * @returns {String} String containing symbolic calculation of the circle's radius or an empty string
      * if the radius can't be expressed in a polynomial equation.
      * @private
      */
@@ -267,24 +266,25 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
          *   (d) center and radius given by another circle
          */
 
-        var rsq = '';
+        var rsq = '',
+            m1, m2, p1, p2, q1, q2;
 
         if (this.method == "twoPoints") {
-            var m1 = this.center.symbolic.x;
-            var m2 = this.center.symbolic.y;
-            var p1 = this.point2.symbolic.x;
-            var p2 = this.point2.symbolic.y;
+            m1 = this.center.symbolic.x;
+            m2 = this.center.symbolic.y;
+            p1 = this.point2.symbolic.x;
+            p2 = this.point2.symbolic.y;
 
             rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
         } else if (this.method == "pointRadius") {
             if (typeof(this.radius) == 'number')
                 rsq = '' + this.radius*this.radius;
         } else if (this.method == "pointLine") {
-            var p1 = this.line.point1.symbolic.x;
-            var p2 = this.line.point1.symbolic.y;
+            p1 = this.line.point1.symbolic.x;
+            p2 = this.line.point1.symbolic.y;
 
-            var q1 = this.line.point2.symbolic.x;
-            var q2 = this.line.point2.symbolic.y;
+            q1 = this.line.point2.symbolic.x;
+            q2 = this.line.point2.symbolic.y;
 
             rsq = '((' + p1 + ')-(' + q1 + '))^2 + ((' + p2 + ')-(' + q2 + '))^2';
         } else if (this.method == "pointCircle") {
@@ -379,32 +379,10 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
 
     /**
      * TODO description
-     * @param term TODO type & description
-     * @private
-     */
-    generateTerm: function (term) {
-        if (typeof term=='string') {
-            //var elements = this.board.elementsByName;
-            // Convert GEONExT syntax into  JavaScript syntax
-            //var newTerm = JXG.GeonextParser.geonext2JS(term+'', this.board);
-            //this.updateRadius = new Function('return ' + newTerm + ';');
-            this.updateRadius = this.board.jc.snippet(term, true, null, true);
-        } else if (typeof term=='number') {
-            this.updateRadius = function () { return term; };
-        } else { // function
-            this.updateRadius = term;
-        }
-    },
-
-    /**
-     * TODO description
      * @param contentStr TODO type&description
      * @private
      */
     notifyParents: function (contentStr) {
-        var res = null;
-        var elements = this.board.elementsByName;
-
         if (typeof contentStr == 'string')
             JXG.GeonextParser.findDependencies(this,contentStr+'',this.board);
     },
@@ -415,7 +393,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * @returns {JXG.Circle} Reference to this circle
      */
     setRadius: function (r) {
-        this.generateTerm(r);
+        this.updateRadius = JXG.createFunction(r, this.board, null, true);
         this.board.update();
 
         return this;
@@ -424,8 +402,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     /**
      * Calculates the radius of the circle.
      * @param {String|Number|function} [value] Set new radius
-     * @type Number
-     * @return The radius of the circle
+     * @returns {Number} The radius of the circle
      */
     Radius: function (value) {
         if (JXG.exists(value)) {

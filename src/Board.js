@@ -987,7 +987,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (drag.method==='twoPoints') {
                 t1.applyOnce([drag.point2]);
             } else if (drag.method==='pointRadius') {
-                drag.setRadius(drag.radius*d);
+                if (JXG.isNumber(drag.updateRadius.origin)) {
+                    drag.setRadius(drag.radius*d);
+                }
             }
             this.update(drag.center);
             drag.highlight();

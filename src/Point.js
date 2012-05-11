@@ -491,8 +491,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Getter method for the distance to a second point, this is required for CAS-elements.
      * Here, function inlining seems to be worthwile  (for plotting).
      * @param {JXG.Point} point2 The point to which the distance shall be calculated.
-     * @return Distance in user coordinate to the given point
-     * @type Number
+     * @returns {Number} Distance in user coordinate to the given point
      */
     Dist: function(point2) {
         var sum,
