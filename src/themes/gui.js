@@ -1,6 +1,7 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
     glider : {
-        fillColor: '#ffff00'
+        fillColor: '#ffff00',
+        measureColor: 'orange'
     },
 
     intersection: {
