@@ -842,29 +842,53 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Moves a line in multitouch mode.
+     * Moves elements in multitouch mode.
      * @param {Array} p1 x,y coordinates of first touch
      * @param {Array} p2 x,y coordinates of second touch
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      */
-    moveLine: function(p1, p2, o) {
-        var np1c, np2c, np1, np2, op1, op2,
-            nmid, omid, nd, od,
-            d, drag,
-            S, alpha, t1, t2, t3, t4, t5;
+    twoFingerMove: function(p1, p2, o) {
+        var np1c, np2c, drag;
 
         if (JXG.exists(o) && JXG.exists(o.obj)) {
             drag = o.obj;
         } else {
             return;
         }
-        if (drag.elementClass!=JXG.OBJECT_CLASS_LINE) {
+        /*
+        if (drag.elementClass!==JXG.OBJECT_CLASS_LINE) {
             return;
         }
-
+        */
         // New finger position
         np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
         np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
+
+        if (drag.elementClass===JXG.OBJECT_CLASS_LINE) {
+            this.moveLine(np1c, np2c, o, drag);
+        } else if (drag.elementClass===JXG.OBJECT_CLASS_CIRCLE) {
+            this.moveCircle(np1c, np2c, o, drag);
+        }
+        drag.triggerEventHandlers('drag');
+
+        o.targets[0].Xprev = np1c.scrCoords[1];
+        o.targets[0].Yprev = np1c.scrCoords[2];
+        o.targets[1].Xprev = np2c.scrCoords[1];
+        o.targets[1].Yprev = np2c.scrCoords[2];
+    },
+
+    /**
+     * Moves a line with two fingers
+     * @param {JXG.Coords} np1c x,y coordinates of first touch
+     * @param {JXG.Coords} np2c x,y coordinates of second touch
+     * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+     * @param {object} drag The object that is dragged:
+     */
+    moveLine: function(np1c, np2c, o, drag) {
+        var np1, np2, op1, op2,
+            nmid, omid, nd, od,
+            d, 
+            S, alpha, t1, t2, t3, t4, t5;
 
         if (JXG.exists(o.targets[0]) &&
             JXG.exists(o.targets[1]) &&
@@ -918,12 +942,56 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.update(drag.point1);
             drag.highlight();
         }
-        drag.triggerEventHandlers('drag');
+    },
 
-        o.targets[0].Xprev = np1c.scrCoords[1];
-        o.targets[0].Yprev = np1c.scrCoords[2];
-        o.targets[1].Xprev = np2c.scrCoords[1];
-        o.targets[1].Yprev = np2c.scrCoords[2];
+    /**
+     * Moves a circle with two fingers
+     * @param {JXG.Coords} np1c x,y coordinates of first touch
+     * @param {JXG.Coords} np2c x,y coordinates of second touch
+     * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+     * @param {object} drag The object that is dragged:
+     */
+    moveCircle: function(np1c, np2c, o, drag) {
+        var np1, np2, op1, op2,
+            d, alpha, t1, t2, t3, t4, t5;
+        
+        if (drag.method === 'pointCircle' 
+            || drag.method === 'pointLine') {
+            return;
+        }
+        
+        if (JXG.exists(o.targets[0]) &&
+            JXG.exists(o.targets[1]) &&
+            !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+            
+            np1 = np1c.usrCoords;
+            np2 = np2c.usrCoords;
+            // Previous finger position
+            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this)).usrCoords;
+            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev,o.targets[1].Yprev], this)).usrCoords;
+            
+            // Shift by the movement of the first finger
+            t1 = this.create('transform', [np1[1]-op1[1], np1[2]-op1[2]], {type:'translate'});
+            alpha = JXG.Math.Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
+            
+            // Rotate and scale by the movement of the second finger
+            d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+            t2 = this.create('transform', [-np1[1], -np1[2]], {type:'translate'});
+            t3 = this.create('transform', [alpha], {type:'rotate'});
+            t4 = this.create('transform', [d, d], {type:'scale'});
+            t5 = this.create('transform', [ np1[1], np1[2]], {type:'translate'});
+
+            t1.melt(t2).melt(t3).melt(t4).melt(t5);
+            t1.applyOnce([drag.center]);
+
+            if (drag.method==='twoPoints') {
+                t1.applyOnce([drag.point2]);
+            } else if (drag.method==='pointRadius') {
+                drag.setRadius(drag.radius*d);
+            }
+            this.update(drag.center);
+            drag.highlight();
+        }
     },
 
     highlightElements: function (x, y, evt, target) {
@@ -1275,7 +1343,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 do {
                     for (k = 0; k < evtTouches.length; k++) {
                         // find the new targettouches
-                        if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
+                        if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) + 
+                            Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
                             this.touches[i].targets[j].num = k;
 
                             this.touches[i].targets[j].X = evtTouches[k].screenX;
@@ -1320,7 +1389,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                         this.touches.push({ obj: obj, targets: targets });
 
-                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
+                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         found = false;
                         // first check if this line is already capture in this.touches
                         for (j = 0; j < this.touches.length; j++) {
@@ -1364,7 +1433,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches.push({ obj: obj, targets: targets });
                         }
 
-                    } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                    } 
+/*                    
+                    else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         found = false;
                         // first check if this line is already capture in this.touches
                         for (j = 0; j < this.touches.length; j++) {
@@ -1393,6 +1464,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches.push({ obj: obj, targets: targets });
                         }
                     }
+*/
                 }
 
                 evtTouches[i].jxg_isused = true;
@@ -1442,7 +1514,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!this.touchOriginMove()) {
 
             if (this.mode == this.BOARD_MODE_DRAG) {
-                // Runs over through all elements which are touched
+ 
+               // Runs over through all elements which are touched
                 // by at least one finger.
                 for (i = 0; i < this.touches.length; i++) {
                     // Touch by one finger:  this is possible for all elements that can be dragged
@@ -1453,11 +1526,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         this.moveObject(pos[0], pos[1], this.touches[i]);
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                        
                         this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
                         this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                         this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
                         this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                        this.moveLine(
+                        this.twoFingerMove(
                             this.getMousePosition(evt, this.touches[i].targets[0].num),
                             this.getMousePosition(evt, this.touches[i].targets[1].num),
                             this.touches[i]

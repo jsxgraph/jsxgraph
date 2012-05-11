@@ -112,7 +112,7 @@ t = brd.create('transform', [li], {type:'reflect'});
 E = brd.create('point', [D,t]);
 brd.create('angle', [D,C,E], {name:'&alpha;'});
 */
-
+/*
 s5 = brd.create('point',[-1498738.789161728, -18632.701100762082]);
 s6 = brd.create('point',[0, 14.987298899237935, 0.18628281117696854]);
 s7 = brd.create('line',[s5, s6]);
@@ -120,6 +120,7 @@ s8 = brd.create('point',[-1.2108382726502964, -5.215918712955123]);
 //s9 = brd.create('transform', [s7], {type:'reflect'});
 //s10 = brd.create('point', [s8, s9]);
 s10 = brd.create('reflection', [s8, s7]);
+*/
 /*
 */
 /*
@@ -134,11 +135,12 @@ mb = brd.create('perpendicular', [B2, pol.borders[2]]);
 M = brd.create('intersection', [mb,mc,0]);
 */
 
-/*
-brd.suspendUpdate();
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 B = brd.create('point', [4, -1]);
-li = brd.create('line', [A,B], {straightFirst:true, withLabel:true, label:{fixed:false, fontSize:30} });
+c = brd.create('circle', [A, B]);
+//d = brd.create('line', [A, B]);
+/*
+brd.suspendUpdate();
 C = brd.create('point', [6, 2]);
 E = brd.create('point', [2, 1], {label:{fixed:false}});
 //f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
