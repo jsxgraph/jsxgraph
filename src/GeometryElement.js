@@ -183,6 +183,14 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.subs = {};
 
     /**
+     * The position of this element inside the {@link JXG.Board#objectsList}.
+     * @type {Number}
+     * @default -1
+     * @private
+     */
+    this._pos = -1;
+
+    /**
      * [c,b0,b1,a,k,r,q0,q1]
      *
      * See

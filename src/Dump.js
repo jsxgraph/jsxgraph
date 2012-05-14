@@ -157,12 +157,12 @@ JXG.Dump = {
      */
     dump: function (board) {
         var e, obj, element, s,
-            elementList = [], i;
+            elementList = [], len = board.objectsList.length;
 
         this.addMarkers(board, 'dumped', false);
 
-        for (e in board.objects) {
-            obj = board.objects[e];
+        for (e = 0; e < len; e++) {
+            obj = board.objectsList[e];
             element = {};
 
             if (!obj.dumped && obj.dump) {

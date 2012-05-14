@@ -294,6 +294,12 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.objects = {};
 
     /**
+     * An array containing all geometric objects on the board in the order of construction.
+     * @type {Array}
+     */
+    this.objectsList = [];
+
+    /**
      * An associative array containing all groups belonging to the board. Key is the id of the group and value is a reference to the object.
      * @type Object
      */
@@ -611,6 +617,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         obj.id = elId;
         this.objects[elId] = obj;
+        obj._pos = this.objectsList.length;
+        this.objectsList[this.objectsList.length] = obj;
 
         return elId;
     },
@@ -734,11 +742,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} A list of geometric elements.
      */
     initMoveObject: function (x, y) {
-        var pEl, el, collect = [], haspoint,
+        var pEl, el, collect = [], haspoint, len = this.objectsList.length,
             dragEl = {visProp:{layer:-10000}};
 
-        for (el in this.objects) {
-            pEl = this.objects[el];
+        //for (el in this.objects) {
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
             haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
             if (pEl.visProp.visible && haspoint) {
@@ -997,17 +1006,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     highlightElements: function (x, y, evt, target) {
-        var el, pEl;
+        var el, pEl, pId, len = this.objectsList.length;
 
         // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
-        for (el in this.objects) {
-            pEl = this.objects[el];
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
+            pId = pEl.id;
             if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                 // this is required in any case because otherwise the box won't be shown until the point is dragged
                 this.updateInfobox(pEl);
 
-                if (!JXG.exists(this.highlightedObjects[el])) { // highlight only if not highlighted
-                    this.highlightedObjects[el] = pEl;
+                if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
+                    this.highlightedObjects[pId] = pEl;
 
                     if (this.hasMouseHandlers)
                         pEl.highlight();
@@ -1024,10 +1034,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        for (el in this.objects) {
-            pEl = this.objects[el];
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
+            pId = pEl.id;
             if (pEl.mouseover) {
-                if (!this.highlightedObjects[el]) {
+                if (!this.highlightedObjects[pId]) {
                     pEl.triggerEventHandlers('out');
                     pEl.mouseover = false;
                 }
@@ -1999,11 +2010,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             absPos = JXG.getPosition(Evt),
             dx = absPos[0]-cPos[0],
             dy = absPos[1]-cPos[1],
-            elList = [];
+            elList = [],
+            el, pEl, len = this.objectsList.length;
 
-        for (var el in this.objects) {
-            if (this.objects[el].visProp.visible && this.objects[el].hasPoint && this.objects[el].hasPoint(dx, dy)) {
-                elList.push(this.objects[el]);
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
+            if (pEl.visProp.visible && pEl.hasPoint && pEl.hasPoint(dx, dy)) {
+                elList[elList.length] = pEl;
             }
         }
 
@@ -2017,10 +2030,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
       * @returns {JXG.Board} Reference to this board.
       */
      moveOrigin: function (x, y) {
-        var el, ob;
-
-        // This is not required, but to be downwards compatible, we should keep it for a while.
-        // changed in version 0.91a
+        var el, ob, len = this.objectsList.length;
 
         if (JXG.exists(x) && JXG.exists(y)) {
             this.origin.scrCoords[1] = x;
@@ -2032,8 +2042,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        for (ob in this.objects) {
-            el = this.objects[ob];
+        for (ob = 0; ob < len; ob++) {
+            el = this.objectsList[ob];
             if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
                 el.elementClass==JXG.OBJECT_CLASS_CURVE ||
                 el.type==JXG.OBJECT_TYPE_AXIS ||
@@ -2181,9 +2191,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board.
      */
     applyZoom: function () {
-        var el, ob;
-        for (ob in this.objects) {
-            el = this.objects[ob];
+        var el, ob, len = this.objectsList.length;
+
+        for (ob = 0; ob < len; ob++) {
+            el = this.objectsList[ob];
             if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
                 el.elementClass==JXG.OBJECT_CLASS_CURVE ||
                 el.type==JXG.OBJECT_TYPE_AXIS ||
@@ -2273,19 +2284,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             maxX = 0,
             minY = 0,
             maxY = 0,
-            el, border, borderX, borderY;
+            el, border, borderX, borderY, len = this.objectsList.length, pEl;
 
-        for (el in this.objects) {
-            if (JXG.isPoint(this.objects[el]) && this.objects[el].visProp.visible) {
-                if (this.objects[el].coords.usrCoords[1] < minX) {
-                    minX = this.objects[el].coords.usrCoords[1];
-                } else if (this.objects[el].coords.usrCoords[1] > maxX) {
-                    maxX = this.objects[el].coords.usrCoords[1];
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
+            if (JXG.isPoint(pEl) && pEl.visProp.visible) {
+                if (pEl.coords.usrCoords[1] < minX) {
+                    minX = pEl.coords.usrCoords[1];
+                } else if (pEl.coords.usrCoords[1] > maxX) {
+                    maxX = pEl.coords.usrCoords[1];
                 }
-                if (this.objects[el].coords.usrCoords[2] > maxY) {
-                    maxY = this.objects[el].coords.usrCoords[2];
-                } else if (this.objects[el].coords.usrCoords[2] < minY) {
-                    minY = this.objects[el].coords.usrCoords[2];
+                if (pEl.coords.usrCoords[2] > maxY) {
+                    maxY = pEl.coords.usrCoords[2];
+                } else if (pEl.coords.usrCoords[2] < minY) {
+                    minY = pEl.coords.usrCoords[2];
                 }
             }
         }
@@ -2400,6 +2412,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
             // remove the object itself from our control structures
+            if (object._pos > -1) {
+                this.objectsList.splice(object._pos, 1);
+                for (el = object._pos; el < this.objectsList.length; el++) {
+                    this.objectsList[el]._pos--;
+                }
+            } else {
+                JXG.debug('object ' + object.id + ' not found in list.');
+            }
             delete(this.objects[object.id]);
             delete(this.elementsByName[object.name]);
 
@@ -2562,9 +2582,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     prepareUpdate: function () {
-        var el, pEl;
-        for (el in this.objects) {
-            pEl = this.objects[el];
+        var el, pEl, len = this.objectsList.length;
+
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
             if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
             pEl.needsUpdate = true;
         }
@@ -2577,12 +2598,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateElements: function (drag) {
-        var el, pEl;
+        var el, pEl, len = this.objectsList.length;
 
         drag = JXG.getRef(this, drag);
         // if (drag==null) { isBeforeDrag = false; }
-        for (el in this.objects) {
-            pEl = this.objects[el];
+        for (el = 0; el < len; el++) {
+            pEl = this.objectsList[el];
             // For updates of an element we distinguish if the dragged element is updated or
             // other elements are updated.
             // The difference lies in the treatment of gliders.
@@ -2601,12 +2622,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateRenderer: function (drag) {
-        var el, pEl;
+        var el, pEl, len = this.objectsList.length;
+
         if (this.options.renderer=='canvas') {
             this.updateRendererCanvas(drag);
         } else {
-            for (el in this.objects) {
-                pEl = this.objects[el];
+            for (el = 0; el < len; el++) {
+                pEl = this.objectsList[el];
                 //if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) { continue; }
                 pEl.updateRenderer();
             }
@@ -2622,7 +2644,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateRendererCanvas: function (drag) {
-        var el, pEl, i,
+        var el, pEl, i, olen = this.objects.length,
             layers = this.options.layer,
             len = this.options.layer.numlayers,
             last = Number.NEGATIVE_INFINITY, mini, la;
@@ -2635,8 +2657,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
             last = mini;
-            for (el in this.objects) {
-                pEl = this.objects[el];
+            for (el = 0; el < olen; el++) {
+                pEl = this.objectsList[el];
                 if (pEl.visProp.layer === mini) {
                     pEl.prepareUpdate().updateRenderer();
                 }
@@ -2943,10 +2965,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     clearTraces: function () {
-        var el;
+        var el, len = this.objectsList.length;
 
-        for (el in this.objects) {
-            this.objects[el].clearTrace();
+        for (el = 0; el < len; el++) {
+            this.objectsList[el].clearTrace();
         }
         this.numTraces = 0;
         return this;

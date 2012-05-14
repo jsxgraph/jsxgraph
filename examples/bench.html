@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>Board events</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<div id="out"></div>
+
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5, 5, 5, -5], axis: true, grid: false, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
+        out = document.getElementById('out'),
+        noels = 1000, delels = 10, i, len, el, r, runs = 1000, start;
+
+    for (i = 0; i < noels; i++) {
+        board.create('point', [Math.random() * 10 - 5, Math.random() * 10 - 5]);
+    }
+
+    start = new Date().getTime();
+    for (r = 0; r < runs; r++) {
+        for (i in board.objects) {
+            el = board.objects[i];
+        }
+    }
+    out.innerHTML += runs + ' runs in ' + (new Date().getTime() - start) + 'ms<br />';
+
+    start = new Date().getTime();
+    for (r = 0; r < runs; r++) {
+        for (i in board.objectsList) {
+            el = board.objectsList[i];
+        }
+    }
+    out.innerHTML += runs + ' runs in ' + (new Date().getTime() - start) + 'ms<br />';
+
+    console.log(board.objectsList.length);
+    for (i = 0; i < delels; i++) {
+        do {
+            el = board.objectsList[Math.floor(Math.random()*(board.objectsList.length - 1))];
+            r = el.elType;
+            if (r === 'point') {
+                board.removeObject(el);
+            }
+        } while (r !== 'point');
+    }
+    console.log(board.objectsList.length);
+
+    /* ]]> */
+</script>
+</body>
+</html>
