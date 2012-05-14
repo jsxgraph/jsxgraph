@@ -50,7 +50,7 @@ var JXG = {};
     } else {
         JXG.baseFiles = 'jxg';
     }
-    JXG.rendererFiles = [];
+    JXG.rendererFiles = {};
     if (JXG.useMinify) {
         JXG.rendererFiles['svg'] = 'SVGRendererMinify';
         JXG.rendererFiles['vml'] = 'VMLRendererMinify';

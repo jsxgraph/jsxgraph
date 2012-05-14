@@ -62,13 +62,26 @@ JXG.JSXGraph = {
      * @type String
      */
     rendererType: (function() {
-        var i, arr;
+        var loadRenderer = function (renderer) {
+            var arr, i;
 
-        if (JXG.supportsSVG()) {
-            JXG.Options.renderer = 'svg';
-        } else if (JXG.supportsCanvas()) {
-            JXG.Options.renderer = 'canvas';
-        } else if (JXG.supportsVML()) {
+            // Load the source files for the renderer
+            if (JXG.rendererFiles[renderer]) {
+                arr = JXG.rendererFiles[renderer].split(',');
+
+                for (i = 0; i < arr.length; i++) {
+                    (function(include) {
+                        JXG.require(JXG.requirePath + include + '.js');
+                    })(arr[i]);
+                }
+
+                delete(JXG.rendererFiles[renderer]);
+            }
+        };
+
+        JXG.Options.renderer = 'no';
+
+        if (JXG.supportsVML()) {
             JXG.Options.renderer = 'vml';
             // Ok, this is some real magic going on here. IE/VML always was so
             // terribly slow, except in one place: Examples placed in a moodle course
@@ -84,18 +97,19 @@ JXG.JSXGraph = {
                 document.body.scrollTop;
             }
             document.onmousemove = MouseMove;
-        } else {
-            JXG.Options.renderer = 'no';
+            loadRenderer('vml');
         }
 
-        // Load the source files for the renderer
-        if (JXG.rendererFiles[JXG.Options.renderer]) {
-            arr = JXG.rendererFiles[JXG.Options.renderer].split(',');
-            for (i = 0; i < arr.length; i++) ( function(include) {
-                JXG.require(JXG.requirePath + include + '.js');
-            } )(arr[i]);
+        if (JXG.supportsCanvas()) {
+            JXG.Options.renderer = 'canvas';
+            loadRenderer('canvas');
         }
-        
+
+        if (JXG.supportsSVG()) {
+            JXG.Options.renderer = 'svg';
+            loadRenderer('svg');
+        }
+
         return JXG.Options.renderer;
     })(),
 

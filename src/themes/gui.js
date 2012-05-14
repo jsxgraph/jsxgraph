@@ -1,4 +1,6 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
+    renderer: 'canvas',
+
     glider : {
         fillColor: '#ffff00',
         measureColor: 'orange'
