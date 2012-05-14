@@ -2644,7 +2644,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateRendererCanvas: function (drag) {
-        var el, pEl, i, olen = this.objects.length,
+        var el, pEl, i, olen = this.objectsList.length,
             layers = this.options.layer,
             len = this.options.layer.numlayers,
             last = Number.NEGATIVE_INFINITY, mini, la;
