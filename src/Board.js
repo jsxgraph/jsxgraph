@@ -2433,6 +2433,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.debug(object.id + ': Could not be removed: ' + e);
         }
 
+        this.update();
+
         return this;
     },
 
