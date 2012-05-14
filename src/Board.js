@@ -2598,11 +2598,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     updateElements: function (drag) {
-        var el, pEl, len = this.objectsList.length;
+        var el, pEl;
 
         drag = JXG.getRef(this, drag);
-        // if (drag==null) { isBeforeDrag = false; }
-        for (el = 0; el < len; el++) {
+
+        for (el = 0; el < this.objectsList.length; el++) {
             pEl = this.objectsList[el];
             // For updates of an element we distinguish if the dragged element is updated or
             // other elements are updated.
@@ -2613,6 +2613,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 pEl.update(false);  // the dragged object itself is updated
             }
         }
+
         return this;
     },
 
