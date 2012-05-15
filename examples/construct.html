@@ -134,10 +134,28 @@ mc = brd.create('perpendicular', [C2, pol.borders[0]]);
 mb = brd.create('perpendicular', [B2, pol.borders[2]]);
 M = brd.create('intersection', [mb,mc,0]);
 */
-
+/*
 A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 B = brd.create('point', [4, -1]);
 c = brd.create('circle', [A, B]);
+*/
+var t = "s5 = point(-946663.0736663843, 3.0990685859441154) <<id: 'GUI1', name: 'GUI1'>> ;\n";
+t += "s6 = point(0, 9.466553767993226, 0) <<id: 'GUI2', name: 'GUI2'>> ;";
+t += "s7 = line('GUI1', 'GUI2') <<id: 'GUI3', name: 'a'>> ; \t";
+t += "s8 = point(-1.551917770552033, 0.670078680643019) <<id: 'GUI4', name: 'A'>> ; \t";
+t += "s9 = circle('GUI4', 2.5) <<id: 'GUI5', name: 'k_{a}'>> ;\t ";
+t += "s10 = intersection('GUI3', 'GUI5', 1, 0) <<id: 'GUI7', name: 'B'>> ;\t";
+t += "s11 = intersection('GUI3', 'GUI5', 0, 0) <<id: 'GUI8', name: 'C'>> ;\t";
+t += "s12 = glider(-2.4912110176854245, -1.3236868583988772, 'GUI5') <<id: 'GUI10', snapwidth: -1, name: 'D'>> ;\t";
+t += "s13 = glider(-1.053686442561572, -1.4768117153926692, 'GUI5') <<id: 'GUI11', snapwidth: -1, name: 'E'>> ;\t";
+t += "s14 = polygon('GUI10', 'GUI7', 'GUI8', 'GUI11', 'GUI10') <<id: 'GUI57', name: 'P_{a}'>> ;\t";
+
+code = 'use jxgbox;\n' + t;
+
+p = new JXG.JessieCode();
+p.parse(code);
+
+
 //d = brd.create('line', [A, B]);
 /*
 brd.suspendUpdate();

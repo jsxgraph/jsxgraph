@@ -1149,7 +1149,10 @@ JXG.Options = {
         fillColor: '#00FF00',
         highlightFillColor: '#00FF00',
         fillOpacity: 0.3,
-        highlightFillOpacity: 0.3
+        highlightFillOpacity: 0.3,
+        label: {
+            offsets:[0,0]
+        }
     },
 
     semicircle : {

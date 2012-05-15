@@ -57,7 +57,7 @@
 JXG.createSector = function(board, parents, attributes) {
     var el, attr;
         
-    // Alles 3 Punkte?
+    // Three points?
     if ( !(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
         throw new Error("JSXGraph: Can't create Sector with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + 
@@ -67,6 +67,7 @@ JXG.createSector = function(board, parents, attributes) {
     attr = JXG.copyAttributes(attributes, board.options, 'sector');
 
     el = board.create('curve', [[0], [0]], attr);
+    
     el.type = JXG.OBJECT_TYPE_SECTOR;
 
     el.elType = 'sector';
@@ -208,8 +209,8 @@ JXG.createSector = function(board, parents, attributes) {
      */
     el.getLabelAnchor = function() {
         var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-            dx = 10/(this.board.unitX),
-            dy = 10/(this.board.unitY),
+            dx = 13/(this.board.unitX),
+            dy = 13/(this.board.unitY),
             p2c = this.point2.coords.usrCoords,
             pmc = this.point1.coords.usrCoords,
             bxminusax = p2c[1] - pmc[1],
@@ -513,15 +514,22 @@ JXG.createAngle = function(board, parents, attributes) {
                 return [0, 0];
             }
             
-            var c = p.coords.usrCoords,
-                transform = board.create('transform', [-parents[1].X(), -parents[1].Y()], {type: 'translate'});
-            
+            /*
+            transform = board.create('transform', [-parents[1].X(), -parents[1].Y()], {type: 'translate'});
             transform.melt(board.create('transform', [0.5, 0.5], {type: 'scale'}));
             transform.melt(board.create('transform', [JXG.Math.Geometry.rad(parents[0], parents[1], parents[2])/2, 0, 0], {type:'rotate'}));
             transform.melt(board.create('transform', [parents[1].X(), parents[1].Y()], {type: 'translate'}));
             transform.update();
-
-            return JXG.Math.matVecMult(transform.matrix, c);
+            */
+            var c = p.coords.usrCoords,
+                a2 = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2])*0.5,
+                x = parents[1].X(),
+                y = parents[1].Y(),
+                mat = [ [1, 0, 0],
+                        [x-0.5*x*Math.cos(a2)+0.5*y*Math.sin(a2), Math.cos(a2)*0.5, -Math.sin(a2)*0.5],
+                        [y-0.5*x*Math.sin(a2)-0.5*y*Math.cos(a2), Math.sin(a2)*0.5,  Math.cos(a2)*0.5]];
+                        
+                return JXG.Math.matVecMult(mat, c);
         }], dot);
 
         el.dot.dump = false;
@@ -535,21 +543,39 @@ JXG.createAngle = function(board, parents, attributes) {
         el.type = JXG.OBJECT_TYPE_ANGLE;
         JXG.getRef(board,parents[0]).addChild(el);
 
+        // Determine the midpoint of the angle sector line.
+        el.rot = board.create('transform', 
+            [ function(){ return 0.5*JXG.Math.Geometry.rad(el.point2, el.point1, el.point3);}, el.point1], 
+            {type:'rotate'} );
+
         // documented in GeometryElement
         el.getLabelAnchor = function() {
-            var angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-                dx = 13/(this.board.unitX),
-                dy = 13/(this.board.unitY),
-                p2c = this.point2.coords.usrCoords,
+            var //angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
+                dx = this.visProp.label.fontSize/(this.board.unitX),
+                dy = this.visProp.label.fontSize/(this.board.unitY),
+                //p2c = this.point2.coords.usrCoords,
                 pmc = this.point1.coords.usrCoords,
-                bxminusax = p2c[1] - pmc[1],
-                byminusay = p2c[2] - pmc[2],
-                coords, vecx, vecy, len;
+                //bxminusax = p2c[1] - pmc[1],
+                //byminusay = p2c[2] - pmc[2],
+                //coords, 
+                vecx, vecy, len,
+                vec;
 
             if(this.label.content != null) {
                 this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this.board);
             }
 
+            this.rot.update();
+            vec = JXG.Math.matVecMult(this.rot.matrix, this.point2.coords.usrCoords);
+            vecx = vec[1] - pmc[1];
+            vecy = vec[2] - pmc[2];
+            len = Math.sqrt(vecx*vecx+vecy*vecy);
+            vecx = vecx*(len+dx)/len;
+            vecy = vecy*(len+dy)/len;
+
+            return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx, pmc[2]+vecy], this.board);
+            
+            /*
             coords = new JXG.Coords(JXG.COORDS_BY_USER,
                             [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay,
                              pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay],
@@ -562,7 +588,8 @@ JXG.createAngle = function(board, parents, attributes) {
             vecx = vecx*(len+dx)/len;
             vecy = vecy*(len+dy)/len;
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx,pmc[2]+vecy],this.board);
+            return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx, pmc[2]+vecy], this.board);
+            */
         };
 
         el.Value = function () {
