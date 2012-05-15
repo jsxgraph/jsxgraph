@@ -829,22 +829,32 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     updatePolygonPrim: function (node, el) {
         var scrCoords, i,
             len = el.vertices.length,
-            context = this.context;
+            context = this.context, isReal=true;
 
         if (len <= 0) {
             return;
         }
 
         context.beginPath();
-        scrCoords = el.vertices[0].coords.scrCoords;
+        i = 0;
+        while (!el.vertices[i].isReal && i<len-1) { 
+            i++; 
+            isReal = false;
+        }
+        scrCoords = el.vertices[i].coords.scrCoords;
         context.moveTo(scrCoords[1], scrCoords[2]);
-        for (i = 1; i < len; i++) {
+        for (i = i; i < len-1; i++) {
+            if (!el.vertices[i].isReal) { 
+                isReal = false; 
+            }
             scrCoords = el.vertices[i].coords.scrCoords;
             context.lineTo(scrCoords[1], scrCoords[2]);
         }
         context.closePath();
 
-        this._fill(el);    // The edges of a polygon are displayed separately (as segments).
+        if (isReal) {
+            this._fill(el);    // The edges of a polygon are displayed separately (as segments).
+        }
     },
 
     /* **************************

@@ -614,7 +614,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
         node.setAttributeNS(null, 'stroke', 'none');
         for (i = 0; i < len - 1; i++) {
-             if (el.vertices[i].isReal) {
+            if (el.vertices[i].isReal) {
                 scrCoords = el.vertices[i].coords.scrCoords;
                 pStr = pStr + scrCoords[1] + "," + scrCoords[2];
             } else {
