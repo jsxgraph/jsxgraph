@@ -9,6 +9,7 @@
 <body>
 
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+<div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 
 <div id="out"></div>
 
@@ -17,40 +18,40 @@
 
     JXG.Options.renderer = 'canvas';
     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5, 5, 5, -5], axis: true, grid: false, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
+        board2,
         out = document.getElementById('out'),
-        noels = 100, delels = 10, i, len, el, r, runs = 1000, start;
+        noels = 100, delels = 10, i, len, el, r, runs = 100, start;
 
-    for (i = 0; i < noels; i++) {
+    JXG.Options.renderer = 'svg';
+    board2 = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox:[-5, 5, 5, -5], axis: true, grid: false, keepaspectratio: true, showcopyright: false, zoom: true, pan: true});
+
+    board.create('plot', [Math.sin]);
+    board.create('plot', [Math.cos]);
+    board2.create('plot', [Math.sin]);
+    board2.create('plot', [Math.cos]);
+
+    /*for (i = 0; i < noels; i++) {
         board.create('point', [Math.random() * 10 - 5, Math.random() * 10 - 5]);
-    }
+    }*/
+
 
     start = new Date().getTime();
     for (r = 0; r < runs; r++) {
-        for (i in board.objects) {
+        board.update();
+        /*for (i in board.objects) {
             el = board.objects[i];
-        }
+        }*/
     }
-    out.innerHTML += runs + ' runs in ' + (new Date().getTime() - start) + 'ms<br />';
+    out.innerHTML += runs + ' updates with canvas ' + (new Date().getTime() - start) + 'ms<br />';
 
     start = new Date().getTime();
     for (r = 0; r < runs; r++) {
-        for (i in board.objectsList) {
+        board2.update();
+        /*for (i in board.objectsList) {
             el = board.objectsList[i];
-        }
+        }*/
     }
-    out.innerHTML += runs + ' runs in ' + (new Date().getTime() - start) + 'ms<br />';
-
-    console.log(board.objectsList.length);
-    for (i = 0; i < delels; i++) {
-        do {
-            el = board.objectsList[Math.floor(Math.random()*(board.objectsList.length - 1))];
-            r = el.elType;
-            if (r === 'point') {
-                board.removeObject(el);
-            }
-        } while (r !== 'point');
-    }
-    console.log(board.objectsList.length);
+    out.innerHTML += runs + ' updates with svg ' + (new Date().getTime() - start) + 'ms<br />';
 
     /* ]]> */
 </script>
