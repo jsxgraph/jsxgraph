@@ -1074,7 +1074,7 @@ JXG.Options = {
 
         /**
          * If set to true, the point will snap to the nearest point in distance of 
-         * {@link JXG.Point#attractorDistance}. 
+         * {@link JXG.Point#attractorDistance}.
          * @see JXG.Point#attractorDistance
          * @type Boolean
          * @name JXG.Point#snapToPoints
