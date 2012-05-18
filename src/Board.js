@@ -1367,7 +1367,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         }
                     }
 
-                    eps = eps * 2;
+                    eps *= 2;
+
                 } while (this.touches[i].targets[j].num == -1 && eps < this.options.precision.touchMax);
 
                 if (this.touches[i].targets[j].num === -1) {

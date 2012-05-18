@@ -33,5 +33,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 		baseline: { needsRegularUpdate: true },
 		highline: { needsRegularUpdate: true },
 		ticks: { needsRegularUpdate: true }
-	}
+	},
+
+	precision: { touchMax: Infinity }
+
 });
