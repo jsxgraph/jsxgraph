@@ -3165,7 +3165,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     migratePoint: function(src, dest) {
-        var child, childId, prop;
+        var child, childId, prop, found;
 
         src = JXG.getRef(this, src);
         dest = JXG.getRef(this, dest);
