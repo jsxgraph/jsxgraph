@@ -563,7 +563,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     element.htmlStr = content;
                     
                     if (element.visProp.usemathjax) {
-                        MathJax.Hub.Typeset(element.rendNode);
+                        // typesetting directly might not work because mathjax was not loaded completely
+                        // see http://www.mathjax.org/docs/1.1/typeset.html
+                        MathJax.Hub.Queue(['Typeset', MathJax.Hub, element.rendNode]);
+                        //MathJax.Hub.Typeset(element.rendNode);
                     } else if (element.visProp.useasciimathml) {
                         AMprocessNode(element.rendNode, false);
                     }
