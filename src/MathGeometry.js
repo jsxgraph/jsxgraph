@@ -406,13 +406,20 @@ JXG.extend(JXG.Math.Geometry, {
      * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
      * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and set by this method.
      * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set by this method.
+     * @param {Number} margin Optional margin, to avoid the display of the small sides
+     * of lines.
      * @see Line
      * @see JXG.Line
      */
-    calcStraight: function(el, point1, point2) {
+    calcStraight: function(el, point1, point2, margin) {
         var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
-            c, s, i, j, p1, p2, margin;
+            c, s, i, j, p1, p2;
 
+        if (margin == null) { 
+            margin = 10;   // Enlarge the drawable region slightly. This hides the small sides
+                           // of thick lines in most cases.
+        }
+        
         straightFirst = el.visProp.straightfirst;
         straightLast = el.visProp.straightlast;
 
@@ -441,8 +448,6 @@ JXG.extend(JXG.Math.Geometry, {
 
         // Intersect the line with the four borders of the board.
         s = [];
-        margin = 10;   // Enlarge the drawable region slightly. This hides the small sides
-                       // of thick lines in most cases.
         s[0] = JXG.Math.crossProduct(c, [margin,0,1]);  // top
         s[1] = JXG.Math.crossProduct(c, [margin,1,0]);  // left
         s[2] = JXG.Math.crossProduct(c, [-margin-el.board.canvasHeight,0,1]);  // bottom

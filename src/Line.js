@@ -462,35 +462,40 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var c1, c2,
-            x, y, 
-            sx = 0, sy = 0,
-
-        c1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board);
-        c2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
+        var x, y, 
+            fs = 0,
+            sx = 0, 
+            sy = 0,
+            c1 = new JXG.Coords(JXG.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
+            c2 = new JXG.Coords(JXG.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
         
         if (this.visProp.straightfirst || this.visProp.straightlast) {
-            JXG.Math.Geometry.calcStraight(this, c1, c2);
+            JXG.Math.Geometry.calcStraight(this, c1, c2, 0);
         } 
         c1 = c1.scrCoords;
         c2 = c2.scrCoords;
-        switch (this.label.content.visProp.position/*this.visProp.label.position*/) {
+        
+        switch (this.label.content.visProp.position) {
             case 'lft':
             case 'llft':
             case 'ulft':
                 if (c1[1] <= c2[1]) {
-                    x = c1[1]; y = c1[2];
+                    x = c1[1]; 
+                    y = c1[2];
                 } else {
-                    x = c2[1]; y = c2[2];
+                    x = c2[1]; 
+                    y = c2[2];
                 }
                 break;
             case 'rt':
             case 'lrt':
             case 'urt':
                 if (c1[1] > c2[1]) {
-                    x = c1[1]; y = c1[2];
+                    x = c1[1]; 
+                    y = c1[2];
                 } else {
-                    x = c2[1]; y = c2[2];
+                    x = c2[1]; 
+                    y = c2[2];
                 }
                 break;
             default:
@@ -502,51 +507,24 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if (JXG.exists(this.label.content)) {  // Does not exist during createLabel
                 sx = parseFloat(this.label.content.visProp.offsets[0]);
                 sy = parseFloat(this.label.content.visProp.offsets[1]);
+                fs = this.label.content.visProp.fontsize;
             }
-            x += sx;
-            y -= sy;
-            if (x<JXG.Math.eps) {
-                x = sx;
-            } else if (x>this.board.canvasWidth) {
-                x = this.board.canvasWidth - sx - 2*this.label.content.visProp.fontsize;
-            }
-            if (y<JXG.Math.eps) {
-                y = sy + this.label.content.visProp.fontsize;
-            } else if (y>this.board.canvasHeight) {
-                y = this.board.canvasHeight - sy;
-            }
-            
-            /*
+
             if (Math.abs(x)<JXG.Math.eps) {
-                if (this.visProp.label.position=='ulft'
-                    || this.visProp.label.position=='llft'
-                    || this.visProp.label.position=='lft') {
-                    x += 2*sx;
-                } 
-            }
-            if (Math.abs(x-this.board.canvasWidth)<JXG.Math.eps) {
-                if (this.visProp.label.position=='urt'
-                    || this.visProp.label.position=='lrt'
-                    || this.visProp.label.position=='rt') {
-                    x -= 2.5*sx;
-                } 
+                x = sx;
+            } else if (Math.abs(x-this.board.canvasWidth) < JXG.Math.eps) {
+                x = this.board.canvasWidth - sx - 2*fs;
+            } else {
+                x += sx;
             }
             
-            if (Math.abs(y-this.board.canvasHeight)<JXG.Math.eps) {
-                if (this.visProp.label.position=='llft'
-                    || this.visProp.label.position=='lrt'
-                    || this.visProp.label.position=='bot') {
-                    y -= 3*sy;
-                } 
-            }
             if (Math.abs(y)<JXG.Math.eps) {
-                if (this.visProp.label.position=='ulft'
-                    || this.visProp.label.position=='urt'
-                    || this.visProp.label.position=='top') {
-                    y += 2*sy;
-                } 
+                y = sy + fs;
+            } else if (Math.abs(y-this.board.canvasHeight) < JXG.Math.eps) {
+                y = this.board.canvasHeight - sy;
+            } else {
+                y -= sy;
             }
-            */
         } 
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
     },

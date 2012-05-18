@@ -42,7 +42,7 @@
 
 <script type='text/javascript'>
 //JXG.Options.text.display = 'internal';
-JXG.Options.renderer = 'canvas';
+//JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 
 //JXG.Options.axis.visible = false;
@@ -53,12 +53,12 @@ JXG.Options.axis.withLabel = false;
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
+p = brd.create('point', [1, 1, 1], {name:'A'});
+q = brd.create('point', [1, 6, 3.5], {name:'B'});
+
+l = brd.create('line', [p, q], {withLabel:true, name:'li', label:{position:'llft', fontSize:32}});
+
 /*
-p = brd.create('point', [1,1, 1], {name:'A'});
-q = brd.create('point', [0, 6, 3.5], {name:'B'});
-
-l = brd.create('line', [p, q], {straightFirst: false, name:'li'});
-
 //border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});
 */
 /*
@@ -139,6 +139,8 @@ A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
 B = brd.create('point', [4, -1]);
 c = brd.create('circle', [A, B]);
 */
+
+/*
 var t = "s5 = point(-946663.0736663843, 3.0990685859441154) <<id: 'GUI1', name: 'GUI1'>> ;\n";
 t += "s6 = point(0, 9.466553767993226, 0) <<id: 'GUI2', name: 'GUI2'>> ;";
 t += "s7 = line('GUI1', 'GUI2') <<id: 'GUI3', name: 'a'>> ; \t";
@@ -152,9 +154,8 @@ t += "s14 = polygon('GUI10', 'GUI7', 'GUI8', 'GUI11', 'GUI10') <<id: 'GUI57', na
 
 code = 'use jxgbox;\n' + t;
 
-p = new JXG.JessieCode();
-p.parse(code);
-
+(new JXG.JessieCode()).parse(code);
+*/
 
 //d = brd.create('line', [A, B]);
 /*
