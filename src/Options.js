@@ -592,7 +592,7 @@ JXG.Options = {
             name: ''
         },
         label: {
-            position: 'ulft'
+            position: 'urt'
         }
     },
 

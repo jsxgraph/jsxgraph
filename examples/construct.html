@@ -56,7 +56,7 @@ grid:false, showNavigation:true});
 p = brd.create('point', [1, 1, 1], {name:'A'});
 q = brd.create('point', [1, 6, 3.5], {name:'B'});
 
-l = brd.create('line', [p, q], {withLabel:true, name:'li', label:{position:'llft', fontSize:32}});
+l = brd.create('segment', [p, q], {withLabel:true, name:'li', label:{position:'lft', fontSize:32}});
 
 /*
 //border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});

@@ -512,18 +512,19 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
             if (Math.abs(x)<JXG.Math.eps) {
                 x = sx;
-            } else if (Math.abs(x-this.board.canvasWidth) < JXG.Math.eps) {
-                x = this.board.canvasWidth - sx - 2*fs;
+            //} else if (Math.abs(x-this.board.canvasWidth) < JXG.Math.eps) {
+            } else if (this.board.canvasWidth+JXG.Math.eps>x && x>this.board.canvasWidth-fs-JXG.Math.eps) {
+                x = this.board.canvasWidth - sx - fs;
             } else {
                 x += sx;
             }
             
-            if (Math.abs(y)<JXG.Math.eps) {
+            if (JXG.Math.eps+fs > y && y > -JXG.Math.eps) {
                 y = sy + fs;
-            } else if (Math.abs(y-this.board.canvasHeight) < JXG.Math.eps) {
+            } else if (this.board.canvasHeight+JXG.Math.eps > y && y > this.board.canvasHeight-fs-JXG.Math.eps) {
                 y = this.board.canvasHeight - sy;
             } else {
-                y -= sy;
+                y += sy;
             }
         } 
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
