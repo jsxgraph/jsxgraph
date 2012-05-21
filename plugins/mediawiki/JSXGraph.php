@@ -63,6 +63,7 @@ $jsxgraph_version = '0.3.1';
 
 // CHANGE this to load local files:
 $outputURI        = 'http://jsxgraph.uni-bayreuth.de/distrib';
+$outputURICDN     = 'http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94';
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -98,6 +99,7 @@ function jsxgraphOutput($input, $args, $parser) {
   global $jsxgraph_version; // see line 9 of this file
   global $markerList;
   global $outputURI;
+  global $outputURICDN;
 
   $error_message = "no error"; //will be overwritten, if error occurs
   $CRLF = "\r\n";
@@ -124,12 +126,20 @@ function jsxgraphOutput($input, $args, $parser) {
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+    if (preg_match("/^XXXX132\.180/",getenv("REMOTE_ADDR"))) {
+	     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+	     $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
+	 } else {
+        $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
+        $output .= "<script src='".$outputURICDN."/GeonextReader.js' type='text/javascript'></script>";
+    }
   }
-  
-  $modules = explode(',', $args['modules']);
-  for ($i = 0; $i < count($modules); $i++) {
-    $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
+
+  if (trim($modules)!="") { 
+    $modules = explode(',', $args['modules']);
+    for ($i = 0; $i < count($modules); $i++) {
+      $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
+    }
   }
   
   // Output div
