@@ -204,7 +204,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.dimension = 2;
 
     this.jc = new JXG.JessieCode();
-    this.jc.board = this;
+    this.jc.use(this);
 
     /**
      * Coordinates of the boards origin. This a object with the two properties
@@ -497,6 +497,15 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.hasTouchEnd = false;
 
     this.addEventHandlers();
+
+    this.methodMap = {
+        update: 'update',
+        on: 'on',
+        off: 'off',
+        setView: 'setBoundingBox',
+        setBoundingBox: 'setBoundingBox',
+        migratePoint: 'migratePoint'
+    };
 };
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
