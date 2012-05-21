@@ -1173,6 +1173,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             if (this.hasMouseUp) {
                 JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+				this.hasMouseUp = false;
             }
 
             JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1201,6 +1202,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             if (this.hasTouchEnd) {
                 JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+				this.hasTouchEnd = false;
             }
 
             JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
