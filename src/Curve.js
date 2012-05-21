@@ -711,44 +711,28 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     // already documented in GeometryElement
     bounds: function () {
-        var steps = this.visProp.numberpointslow,
-            d = (this.maxX()-this.minX())/steps,
-            i, j, trans, t, c, len, tX, tY, box = [this.minX(), 0, this.maxX(), 0];
+        var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
+            l = this.points.length, i;
 
-        if (this.visProp.curvetype=='parameter' || this.visProp.curvetype=='polar' || this.visProp.curvetype=='functiongraph') {
-            len = this.transformations.length;
-            t = this.minX();
-            for (i = 0; i < steps; i++) {
-                tX = this.X(t, true);
-                tY = this.Y(t, true);
-                for (j = 0; j < len; j++) {
-                    trans = this.transformations[j];
-                    trans.update();
-                    c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
-                    tX = c[1];
-                    tY = c[2];
-                }
-                if (box[1] < tY) {
-                    box[1] = tY;
-                }
-                if (box[3] > tY) {
-                    box[3] = tY;
-                }
-                t+=d;
+        for (i = 0; i < l; i++) {
+            if (minX > this.points[i].usrCoords[1]) {
+                minX = this.points[i].usrCoords[1];
             }
-        } else if (this.visProp.curvetype == 'plot') {
-            len = this.numberPoints;
-            for (i = 0; i < len; i++) {
-                tY = this.Y(i);
-                if (box[1] < tY) {
-                    box[1] = tY;
-                }
-                if (box[3] > tY) {
-                    box[3] = tY;
-                }
+
+            if (maxX < this.points[i].usrCoords[1]) {
+                maxX = this.points[i].usrCoords[1];
+            }
+
+            if (minY > this.points[i].usrCoords[2]) {
+                minY = this.points[i].usrCoords[2];
+            }
+
+            if (maxY < this.points[i].usrCoords[2]) {
+                maxY = this.points[i].usrCoords[2];
             }
         }
-        return box;
+
+        return [minX, maxY, maxX, minY];
     }
 });
 
