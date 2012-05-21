@@ -2417,8 +2417,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
             for (el in this.objects) {
-                if (JXG.exists(this.objects[el].childElements))
+                if (JXG.exists(this.objects[el].childElements)) {
                     delete(this.objects[el].childElements[object.id]);
+                    delete(this.objects[el].descendants[object.id]);
+                }
             }
 
             // remove the object itself from our control structures
