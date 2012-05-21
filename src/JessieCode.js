@@ -696,8 +696,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
     resolveProperty: function (e, v, compile) {
         compile = JXG.def(compile, false);
 
-        // is it a geometry element?
-        if (e && e.type && e.elementClass && e.methodMap) {
+        // is it a geometry element or a board?
+        if (e /*&& e.type && e.elementClass*/ && e.methodMap) {
             // yeah, it is. but what does the user want?
             if (v === 'label') {
                 // he wants to access the label properties!
@@ -707,9 +707,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 v = 'content';
             } else {
                 // ok, it's not the label he wants to change
-
                 // well, what then?
-                if (JXG.exists(e.subs[v])) {
+                if (JXG.exists(e.subs) && JXG.exists(e.subs[v])) {
                     // a subelement it is, good sir.
                     e = e.subs;
                 } else if (JXG.exists(e.methodMap[v])) {
@@ -1094,7 +1093,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         // search all the boards for the one with the appropriate container div
                         for(var b in JXG.JSXGraph.boards) {
                             if(JXG.JSXGraph.boards[b].container === node.children[0].toString()) {
-                                this.board = JXG.JSXGraph.boards[b];
+                                this.use(JXG.JSXGraph.boards[b]);
                                 found = true;
                             }
                         }
@@ -1329,7 +1328,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         break;
                     case 'op_use':
                         if (js) {
-                            ret = '$jc$.board = JXG.JSXGraph.boards[\'' + node.children[0] + '\']';
+                            ret = '$jc$.use(JXG.JSXGraph.boards[\'' + node.children[0] + '\'])';
                         } else {
                             ret = 'use ' + node.children[0] + ';';
                         }
@@ -1508,6 +1507,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
     },
 
+    use: function (board) {
+        this.board = board;
+        this.builtIn['$board'] = board;
+        this.builtIn['$board'].src = '$jc$.board';
+    },
+
     /**
      * Defines built in methods and constants.
      * @returns {Object} BuiltIn control object
@@ -1526,7 +1531,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 deg: JXG.Math.Geometry.trueAngle,
                 factorial: JXG.Math.factorial,
                 trunc: JXG.trunc,
-                '$': that.getElementById
+                '$': that.getElementById,
+                '$board': that.board
             };
 
         // special scopes for factorial, deg, and rad
@@ -1549,6 +1555,9 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         builtIn.trunc.src = 'JXG.trunc';
         // usually unused, see node_op > op_execfun
         builtIn['$'].src = '(function (n) { return JXG.getRef($jc$.board, n); })';
+        if (builtIn['$board']) {
+            builtIn['$board'].src = '$jc$.board';
+        }
 
         return builtIn;
     },
