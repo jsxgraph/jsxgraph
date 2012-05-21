@@ -135,7 +135,7 @@ function jsxgraphOutput($input, $args, $parser) {
     }
   }
 
-  if (trim($modules)!="") { 
+  if (isset($args['modules']) && trim($args['modules'])!="") { 
     $modules = explode(',', $args['modules']);
     for ($i = 0; $i < count($modules); $i++) {
       $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
