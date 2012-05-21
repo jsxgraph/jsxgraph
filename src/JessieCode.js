@@ -233,7 +233,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         return r;
     })(),
 
-   /**
+    /**
      * Assigns a value to a variable in the current scope.
      * @param {String} vname Variable name
      * @param {%} value Anything
@@ -1475,7 +1475,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {JXG.Line} e
      * @returns {Number}
      */
-   L: function (e) {
+    L: function (e) {
         return e.L();
     },
 
@@ -1507,10 +1507,38 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
     },
 
+
     use: function (board) {
         this.board = board;
         this.builtIn['$board'] = board;
         this.builtIn['$board'].src = '$jc$.board';
+    },
+
+    /**
+     * Find the first symbol to the given value from the given scope upwards.
+     * @param {%} v Value
+     * @param {Number} [scope=-1] The scope, default is to start with current scope (-1).
+     * @returns {Array} An array containing the symbol and the scope if a symbol could be found,
+     * an empty array otherwise;
+     */
+    findSymbol: function (v, scope) {
+        var s, i;
+
+        scope = JXG.def(scope, -1);
+
+        if (scope === -1) {
+            scope = this.scope;
+        }
+
+        for (s = scope; s >= 0; s--) {
+            for (i in this.sstack[s]) {
+                if (this.sstack[s][i] === v) {
+                    return [i, s];
+                }
+            }
+        }
+
+        return [];
     },
 
     /**
