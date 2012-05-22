@@ -174,8 +174,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMin, dyMin;
         // END OF variable declaration
 
-        this.isUpdating = true;
-
         // Grid-like ticks
         if (this.visProp.minorheight < 0)  {
             this.minStyle = 'infinite';
@@ -564,11 +562,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         var j;
 
         // remove existing tick labels
-        if(this.ticks != null) {
+        if(this.labels != null) {
             if ((this.board.needsFullUpdate||this.needsRegularUpdate) &&
                 !(this.board.options.renderer=='canvas'&&this.board.options.text.display=='internal')
                ) {
-                for(j=0; j<this.ticks.length; j++) {
+                for(j=0; j<this.labels.length; j++) {
                     if(this.labels[j] != null) {
                         this.board.removeObject(this.labels[j]);
                     }
