@@ -1554,8 +1554,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
 
-		console.log("core mode (touchmove) end: " + this.mode);
-
         return false;
     },
 
@@ -1564,8 +1562,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber,
             evtTouches = evt[JXG.touchProperty];
-
-		console.log("core mode (touchend) start: " + this.mode);
 
         this.triggerEventHandlers(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
