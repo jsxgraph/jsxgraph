@@ -856,7 +856,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.updateInfobox(drag);
         this.update();
-        drag.highlight();
+        drag.highlight(true);
     },
 
     /**
@@ -873,11 +873,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else {
             return;
         }
-        /*
-        if (drag.elementClass!==JXG.OBJECT_CLASS_LINE) {
-            return;
-        }
-        */
+
         // New finger position
         np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
         np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
@@ -958,7 +954,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             t1.applyOnce([drag.point1, drag.point2]);
 
             this.update(drag.point1);
-            drag.highlight();
+            drag.highlight(true);
         }
     },
 
@@ -1010,7 +1006,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
             this.update(drag.center);
-            drag.highlight();
+            drag.highlight(true);
         }
     },
 
@@ -1027,10 +1023,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                 if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                     this.highlightedObjects[pId] = pEl;
-
-                    //if (this.hasMouseHandlers) // not needed as the only call comes from mouseMoveListener ...
-                        pEl.highlight();
-
+                    pEl.highlight();
                     this.triggerEventHandlers('hit', pEl, evt, target);
                 }
 
@@ -1078,41 +1071,47 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     mouseOriginMoveStart: function (evt) {
-        if (this.options.pan && evt.shiftKey) {
+        var r = this.options.pan && evt.shiftKey;
+        if (r) {
             var pos = this.getMousePosition(evt);
             this.initMoveOrigin(pos[0], pos[1]);
-            return true;
-        } else
-            return false;
+        }
+
+        return r;
     },
 
     mouseOriginMove: function (evt) {
-        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+        var r = this.mode == this.BOARD_MODE_MOVE_ORIGIN;
+
+        if (r) {
             var pos = this.getMousePosition(evt);
             this.moveOrigin(pos[0], pos[1]);
-            return true;
-        } else
-            return false;
+        }
+
+        return r;
     },
 
     touchOriginMoveStart: function (evt) {
-        var touches = evt[JXG.touchProperty];
+        var touches = evt[JXG.touchProperty],
+            r = this.options.pan && touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80;
 
-        if (this.options.pan && touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80) {
+        if (r) {
             var pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
-            return true;
-        } else
-            return false;
+        }
+
+        return r;
     },
 
     touchOriginMove: function(evt) {
-        if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
+        var r = this.mode == this.BOARD_MODE_MOVE_ORIGIN;
+
+        if (r) {
             var pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
-            return true;
-        } else
-            return false;
+        }
+
+        return r;
     },
 
     originMoveEnd: function () {
@@ -1416,13 +1415,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         }
 
                         this.touches.push({ obj: obj, targets: targets });
-
-                        if (this.renderer.type == 'canvas') {
-                            this.highlightedObjects[obj.id] = obj;
-                        } else {
-                            obj.highlight();
-                        }
-
+                        this.highlightedObjects[obj.id] = obj;
+                        obj.highlight(true);
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         found = false;
                         // first check if this line is already capture in this.touches
@@ -1464,14 +1458,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
-
-                            if (this.renderer.type == 'canvas') {
-                                this.highlightedObjects[obj.id] = obj;
-                            } else {
-                                obj.highlight();
-                            }
+                            this.highlightedObjects[obj.id] = obj;
+                            obj.highlight(true);
                         }
-
                     }
                 }
 
@@ -1547,7 +1536,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         }
                     }
                 }
-
             }
         }
 
@@ -1556,7 +1544,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
-
         this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
 
         return false;
@@ -1646,18 +1633,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
 
                 } else {
-
-                    if (this.renderer.type == 'canvas') {
-                        delete this.highlightedObjects[tmpTouches[i].obj.id];
-                    } else {
-                        tmpTouches[i].obj.noHighlight();
-                    }
+                    delete this.highlightedObjects[tmpTouches[i].obj.id];
+                    tmpTouches[i].obj.noHighlight();
                 }
             }
 
         } else {
             this.touches.length = 0;
-            this.dehighlightAll();
         }
 
         for (i = 0; i < this.downObjects.length; i++) {
@@ -1676,6 +1658,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!evtTouches || evtTouches.length === 0) {
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
             this.hasTouchEnd = false;
+
+            this.dehighlightAll();
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             this.originMoveEnd();
@@ -1725,6 +1709,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 };
                 this.mouse.obj = elements[elements.length-1];
 
+                this.dehighlightAll();
+                this.highlightedObjects[this.mouse.obj.id] = this.mouse.obj;
+                this.mouse.obj.highlight(true);
+
                 this.mouse.targets[0].Xstart = [];
                 this.mouse.targets[0].Ystart = [];
                 this.mouse.targets[0].Zstart = [];
@@ -1765,8 +1753,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
         this.originMoveEnd();
-        this.update();
         this.dehighlightAll();
+        this.update();
 
         for (i = 0; i < this.downObjects.length; i++) {
             this.downObjects[i].triggerEventHandlers('up');
@@ -1776,6 +1764,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
         this.hasMouseUp = false;
+
         // release dragged mouse object
         this.mouse = null;
     },
@@ -1792,10 +1781,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.updateQuality = this.BOARD_QUALITY_LOW;
 
-        if (this.mode != this.BOARD_MODE_DRAG)
-            this.dehighlightAll();
-
         if (this.mode != this.BOARD_MODE_DRAG) {
+            this.dehighlightAll();
             this.renderer.hide(this.infobox);
         }
 
@@ -1807,7 +1794,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (!this.mouseOriginMove(Event)) {
             if (this.mode == this.BOARD_MODE_DRAG) {
-                   this.moveObject(pos[0], pos[1], this.mouse);
+                this.moveObject(pos[0], pos[1], this.mouse);
             } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
                 this.highlightElements(pos[0], pos[1], Event, -1);
             }
