@@ -1445,7 +1445,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         // IF there is a second touch targetting this line, we will find it later on, and then add it to
                         // the touches control object.
                         if (!found) {
-
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
@@ -1459,38 +1458,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches.push({ obj: obj, targets: targets });
                         }
 
-                    } 
-/*                    
-                    else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
-                        found = false;
-                        // first check if this line is already capture in this.touches
-                        for (j = 0; j < this.touches.length; j++) {
-                            if (obj.id === this.touches[j].obj.id) {
-                                // TODO: for now we only support single touch circle movement
-                                found = true;
-                                evtTouches[i].jxg_isused = true;
-                                break;
-                            }
-                        }
-
-                        // we couldn't find it in touches, so we just init a new touches
-                        // IF there is a second touch targetting this line, we will find it later on, and then add it to
-                        // the touches control object.
-                        if (!found) {
-                            targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
-
-                            // For the UNDO/REDO of object moves
-                            xy = this.initXYstart(obj);
-                            for (l=0; l<xy.length; l++) {
-                                targets[0].Xstart.push(xy[l][1]);
-                                targets[0].Ystart.push(xy[l][2]);
-                                targets[0].Zstart.push(xy[l][0]);
-                            }
-
-                            this.touches.push({ obj: obj, targets: targets });
-                        }
                     }
-*/
                 }
 
                 evtTouches[i].jxg_isused = true;
@@ -1510,11 +1478,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchMoveListener: function (evt) {
-        var i, pos,
+        var i, count = 0, pos,
             evtTouches = evt[JXG.touchProperty];
 
         evt.preventDefault();
         evt.stopPropagation();
+
+        // count the expected number of touches
+        for (i = 0; i < this.touches.length; i++) {
+            count += this.touches[i].targets.length;
+        }
+
+        // sometimes the browser sends us one or more touchMove events that in fact belongs to a previous
+        // this.touches-state. We can't handle them right now, that's why ignore this event completely.
+        if (count !== evtTouches.length) {
+            return;
+        }
+
         // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
@@ -1540,7 +1520,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!this.touchOriginMove()) {
 
             if (this.mode == this.BOARD_MODE_DRAG) {
- 
                // Runs over through all elements which are touched
                 // by at least one finger.
                 for (i = 0; i < this.touches.length; i++) {
@@ -1626,7 +1605,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 for (j = 0; j < tmpTouches[i].targets.length; j++) {
                     tmpTouches[i].targets[j].found = false;
                     for (k = 0; k < evtTouches.length; k++) {
-
                         if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
                             tmpTouches[i].targets[j].found = true;
                             tmpTouches[i].targets[j].num = k;
