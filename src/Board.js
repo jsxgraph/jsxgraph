@@ -1110,7 +1110,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             var pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
-        }
+			return true;
+        } else
+			return false;
     },
 
     originMoveEnd: function () {
@@ -1552,6 +1554,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
 
+		console.log("core mode (touchmove) end: " + this.mode);
+
         return false;
     },
 
@@ -1560,6 +1564,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             eps = this.options.precision.touch,
             tmpTouches = [], found, foundNumber,
             evtTouches = evt[JXG.touchProperty];
+
+		console.log("core mode (touchend) start: " + this.mode);
 
         this.triggerEventHandlers(['touchend', 'up'], evt);
         this.renderer.hide(this.infobox);
