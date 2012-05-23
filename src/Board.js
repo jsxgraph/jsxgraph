@@ -972,26 +972,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     moveCircle: function(np1c, np2c, o, drag) {
         var np1, np2, op1, op2,
             d, alpha, t1, t2, t3, t4, t5;
-        
+
         if (drag.method === 'pointCircle' 
             || drag.method === 'pointLine') {
             return;
         }
-        
+
         if (JXG.exists(o.targets[0]) &&
             JXG.exists(o.targets[1]) &&
             !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
-            
+
             np1 = np1c.usrCoords;
             np2 = np2c.usrCoords;
             // Previous finger position
             op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this)).usrCoords;
             op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev,o.targets[1].Yprev], this)).usrCoords;
-            
+
             // Shift by the movement of the first finger
             t1 = this.create('transform', [np1[1]-op1[1], np1[2]-op1[2]], {type:'translate'});
             alpha = JXG.Math.Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
-            
+
             // Rotate and scale by the movement of the second finger
             d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
             t2 = this.create('transform', [-np1[1], -np1[2]], {type:'translate'});
@@ -1028,7 +1028,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                     this.highlightedObjects[pId] = pEl;
 
-                    if (this.hasMouseHandlers)
+                    //if (this.hasMouseHandlers) // not needed as the only call comes from mouseMoveListener ...
                         pEl.highlight();
 
                     this.triggerEventHandlers('hit', pEl, evt, target);
@@ -1110,9 +1110,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode == this.BOARD_MODE_MOVE_ORIGIN) {
             var pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1]);
-			return true;
+            return true;
         } else
-			return false;
+            return false;
     },
 
     originMoveEnd: function () {
@@ -1175,7 +1175,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
             if (this.hasMouseUp) {
                 JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
-				this.hasMouseUp = false;
+                this.hasMouseUp = false;
             }
 
             JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
@@ -1204,7 +1204,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
             if (this.hasTouchEnd) {
                 JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
-				this.hasTouchEnd = false;
+                this.hasTouchEnd = false;
             }
 
             JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
@@ -1417,6 +1417,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                         this.touches.push({ obj: obj, targets: targets });
 
+                        if (this.renderer.type == 'canvas') {
+                            this.highlightedObjects[obj.id] = obj;
+                        } else {
+                            obj.highlight();
+                        }
+
                     } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                         found = false;
                         // first check if this line is already capture in this.touches
@@ -1458,6 +1464,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             }
 
                             this.touches.push({ obj: obj, targets: targets });
+
+                            if (this.renderer.type == 'canvas') {
+                                this.highlightedObjects[obj.id] = obj;
+                            } else {
+                                obj.highlight();
+                            }
                         }
 
                     }
@@ -1500,8 +1512,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        this.dehighlightAll();   // As long as we do not highlight we need not dehighlight
-                                 // Now we do highlight, so we may need to dehighlight
         if (this.mode != this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
@@ -1538,11 +1548,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 }
 
-            } else {
-                for (i = 0; i < evtTouches.length; i++) {
-                    pos = this.getMousePosition(evt, i);
-                    this.highlightElements(pos[0], pos[1], evt, i);
-                }
             }
         }
 
@@ -1639,11 +1644,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             });
                         }
                     }
+
+                } else {
+
+                    if (this.renderer.type == 'canvas') {
+                        delete this.highlightedObjects[tmpTouches[i].obj.id];
+                    } else {
+                        tmpTouches[i].obj.noHighlight();
+                    }
                 }
             }
 
         } else {
             this.touches.length = 0;
+            this.dehighlightAll();
         }
 
         for (i = 0; i < this.downObjects.length; i++) {
@@ -1752,6 +1766,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.originMoveEnd();
         this.update();
+        this.dehighlightAll();
 
         for (i = 0; i < this.downObjects.length; i++) {
             this.downObjects[i].triggerEventHandlers('up');
@@ -1777,7 +1792,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.updateQuality = this.BOARD_QUALITY_LOW;
 
-        this.dehighlightAll();
+        if (this.mode != this.BOARD_MODE_DRAG)
+            this.dehighlightAll();
+
         if (this.mode != this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
