@@ -159,7 +159,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         var hasColor = true, isTrace = false, 
             ev = element.visProp, hl,
             rgba, rgbo, c, o, oo;
-        
+
         type = type || 'stroke';
         targetType = targetType || type;
         if (!JXG.exists(element.board) || !JXG.exists(element.board.highlightedObjects)) {
@@ -173,7 +173,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         } else {
             hl = '';
         }
-        
+
         // type is equal to 'fill' or 'stroke'
         rgba = JXG.evaluate(ev[hl+type+'color']);
         if (rgba !== 'none' && rgba !== false ) {
@@ -188,7 +188,10 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
                 oo = o*rgbo[1];
             }
             this.context.globalAlpha = oo;
+
+
             this.context[targetType+'Style'] = c;
+
         } else {
             hasColor = false;
         }
@@ -217,9 +220,12 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             this.context.lineDashArray = [];
         }
 
-        if (this._setColor(element, 'stroke')) {
-            context.stroke();
-        }
+		if (element.visProp.visible) {
+			if (this._setColor(element, 'stroke')) {
+				context.stroke();
+			}
+		}
+
         context.restore();
     },
 
