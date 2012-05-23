@@ -1641,11 +1641,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
         } else {
-            this.updateQuality = this.BOARD_QUALITY_HIGH;
-
-            this.originMoveEnd();
-            this.update();
-
             this.touches.length = 0;
         }
 
@@ -1665,6 +1660,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!evtTouches || evtTouches.length === 0) {
             JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
             this.hasTouchEnd = false;
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+            this.originMoveEnd();
+            this.update();
         }
     },
 
