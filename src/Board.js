@@ -1484,17 +1484,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         evt.preventDefault();
         evt.stopPropagation();
 
-        // count the expected number of touches
-        for (i = 0; i < this.touches.length; i++) {
-            count += this.touches[i].targets.length;
-        }
-
-        // sometimes the browser sends us one or more touchMove events that in fact belongs to a previous
-        // this.touches-state. We can't handle them right now, that's why ignore this event completely.
-        if (count !== evtTouches.length) {
-            return;
-        }
-
         // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
@@ -1520,27 +1509,30 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!this.touchOriginMove()) {
 
             if (this.mode == this.BOARD_MODE_DRAG) {
-               // Runs over through all elements which are touched
+                // Runs over through all elements which are touched
                 // by at least one finger.
                 for (i = 0; i < this.touches.length; i++) {
                     // Touch by one finger:  this is possible for all elements that can be dragged
                     if (this.touches[i].targets.length === 1) {
-                        this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                        this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                        pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                        this.moveObject(pos[0], pos[1], this.touches[i]);
+                        if (evtTouches[this.touches[i].targets[0].num]) {
+                            this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                            this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                            pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                            this.moveObject(pos[0], pos[1], this.touches[i]);
+                        }
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-                        
-                        this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                        this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                        this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
-                        this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                        this.twoFingerMove(
-                            this.getMousePosition(evt, this.touches[i].targets[0].num),
-                            this.getMousePosition(evt, this.touches[i].targets[1].num),
-                            this.touches[i]
-                        );
+                        if (evtTouches[this.touches[i].targets[0].num] && evtTouches[this.touches[i].targets[1].num]) {
+                            this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                            this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                            this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
+                            this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
+                            this.twoFingerMove(
+                                this.getMousePosition(evt, this.touches[i].targets[0].num),
+                                this.getMousePosition(evt, this.touches[i].targets[1].num),
+                                this.touches[i]
+                            );
+                        }
                     }
                 }
 
