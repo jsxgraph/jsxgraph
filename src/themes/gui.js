@@ -6,24 +6,26 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 //		type: 'sector',
 //		radius: 0.6,
 		fillColor: '#ddd',
-		strokeColor: 'black'
+		strokeColor: '#000'
 	},
 
     glider : {
-        fillColor: '#ffff00'
+        fillColor: '#ff0',
+		strokeColor: '#000',
+		fillOpacity: 1
     },
 
     intersection: {
-        fillColor: '#ffffff'
+        fillColor: '#fff'
     },
 
     line: {
-        strokeColor: '#ff0000'
+        strokeColor: '#f00'
     },
 
     point: {
-        fillColor:   '#cc0000',
-		strokeColor: '#000000'
+        fillColor:   '#c00',
+		strokeColor: '#000'
     },
 
 	slider: {

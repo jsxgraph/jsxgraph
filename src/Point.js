@@ -1442,7 +1442,7 @@ JXG.createPoint = function(board, parents, attributes) {
  */
 JXG.createGlider = function(board, parents, attributes) {
     var el, 
-        attr = JXG.copyAttributes(attributes, board.options, 'point');
+        attr = JXG.copyAttributes(attributes, board.options, 'glider');
         
     if (parents.length === 1) {
         el = board.create('point', [0, 0], attr);
