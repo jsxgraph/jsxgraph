@@ -37,5 +37,4 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 	},
 
 	precision: { touchMax: Infinity }
-
 });
