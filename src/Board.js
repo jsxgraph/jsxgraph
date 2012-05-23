@@ -1384,6 +1384,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                 if (this.touches[i].targets[j].num === -1) {
                     JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
+                    JXG.debug('eps = ' + eps + ', touchMax = ' + JXG.Options.precision);
                     this.touches[i].targets.splice(i, 1);
                 }
 
