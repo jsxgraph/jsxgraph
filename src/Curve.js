@@ -125,9 +125,10 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * Checks whether (x,y) is near the curve.
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @param {Number} start Optional start index for search on data plots. 
      * @return {Boolean} True if (x,y) is near the curve, False otherwise.
      */
-    hasPoint: function (x,y) {
+    hasPoint: function (x, y, start) {
         var t, dist = Infinity,
             c, trans, i, j, tX, tY,
             xi, xi1, yi, yi1,
@@ -160,8 +161,11 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 t+=d;
             }
         } else if (this.visProp.curvetype == 'plot') {
+            if (!JXG.exists(start) || start<0) {
+                start = 0;
+            }
             len = this.numberPoints; // Rough search quality
-            for (i=0;i<len-1;i++) {
+            for (i=start;i<len-1;i++) {
                 xi  = this.X(i);
                 xi1 = this.X(i+1);
                 yi  = this.Y(i);
