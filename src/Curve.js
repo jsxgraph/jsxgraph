@@ -223,18 +223,20 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     update: function () {
         if (this.needsUpdate && !this.board.needsFullUpdate && this.Y && this.Y.toJS) {
-            if (this.Y.toJS() == this.YtoJS) {
+            if (this.Y.toJS() == this.YtoJS && this.Y.deps && JXG.keys(this.Y.deps, true).length === 0) {
                 return this;
             }
 
             this.YtoJS = this.Y.toJS();
         }
+
         if (this.needsUpdate) {
             if (this.visProp.trace) {
                 this.cloneToBackground(true);
             }
             this.updateCurve();
         }
+
         return this;
     },
 
@@ -243,7 +245,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * @returns {JXG.Curve} Reference to the curve object.
      */
     updateRenderer: function () {
-        if (this.needsUpdate) {
+        if (this.needsUpdate && this.visProp.visible) {
             this.board.renderer.updateCurve(this);
             this.needsUpdate = false;
 

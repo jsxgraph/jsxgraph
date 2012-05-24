@@ -220,11 +220,9 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             this.context.lineDashArray = [];
         }
 
-		if (element.visProp.visible) {
-			if (this._setColor(element, 'stroke')) {
-				context.stroke();
-			}
-		}
+        if (this._setColor(element, 'stroke')) {
+            context.stroke();
+        }
 
         context.restore();
     },
@@ -264,10 +262,6 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             s05 = size * 0.5,
             stroke05 = parseFloat(el.visProp.strokewidth) / 2.0,
             context = this.context;
-
-        if (size <= 0 || !el.visProp.visible) {
-            return;
-        }
 
         switch (f) {
             case 'cross':  // x
@@ -576,7 +570,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         el.visPropOld.strokecolor = rgba;
         el.visPropOld.strokeopacity = o;
     },
-    
+
     // already documented in JXG.AbstractRenderer
 /*    
     updateTextStyle: function (element) { 
@@ -830,7 +824,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         this._fill(el);
         this._stroke(el);
     },
-    
+
     // documented in AbstractRenderer
     updatePolygonPrim: function (node, el) {
         var scrCoords, i,

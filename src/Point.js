@@ -394,7 +394,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         if (!this.needsUpdate) { return this; }
 
         /* Call the renderer only if point is visible. */
-        if(this.visProp.visible) {
+        if(this.visProp.visible && this.visProp.size > 0) {
             var wasReal = this.isReal;
             this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
             this.isReal = (Math.abs(this.coords.usrCoords[0])>JXG.Math.eps)?this.isReal:false;  //Homogeneous coords: ideal point
