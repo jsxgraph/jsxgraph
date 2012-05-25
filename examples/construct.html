@@ -37,7 +37,7 @@
 <body id="body">
 <h1 id="x1">Playground</h1>
 <input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
-<div id='jxgbox' class='jxgbox' style='width:800px; height:700px; z-Index:20'></div>
+<div id='jxgbox' class='jxgbox' style='width:800px; height:200px;'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
@@ -48,17 +48,34 @@
 //JXG.Options.axis.visible = false;
 //JXG.Options.axis.ticks.drawLabels = true;
 //JXG.Options.axis.ticks.drawZero = true;
-JXG.Options.axis.withLabel = false;
+//JXG.Options.axis.withLabel = false;
 
+/*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
+*/
+
+var desiredTickHeight = 20;
+var boardA = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:true});
+var scaledHeightA = desiredTickHeight*Math.sqrt(boardA.unitX*boardA.unitX + boardA.unitY*boardA.unitY)/boardA.unitY;
+p = boardA.create('point', [1, 0,0], {name:'A'});
+q = boardA.create('point', [1,1, 0], {name:'B'});
+
+
+var axisA = boardA.create('line',[p,q]);
+boardA.createElement('ticks', [axisA,[-7.5,-2.5,2.5,7.5]],     {majorHeight: desiredTickHeight, drawLabels:true});
+var axisB = boardA.create('line',[[0,0],[1,-1]]);
+boardA.createElement('ticks', [axisB,[-7.5,-2.5,2.5,7.5]],     {majorHeight: desiredTickHeight, drawLabels:true});
+
+/*
 p = brd.create('point', [1, 1, 1], {name:'A'});
 q = brd.create('point', [1, 6, 3.5], {name:'B'});
 
 l = brd.create('segment', [p, q], {withLabel:true, name:'li', label:{position:'lft', fontSize:32}});
 
 brd.addHook(function(){ console.log(arguments[0].clientX); }, 'move');
+*/
 /*
 //border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});
 */

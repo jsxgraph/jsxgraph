@@ -168,8 +168,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             
             // the following variables are used to define ticks height and slope
             eps = JXG.Math.eps, pos, lb, ub,
-            distMaj = this.visProp.majorheight/2,
-            distMin = this.visProp.minorheight/2,
+            distMaj = this.visProp.majorheight * 0.5,
+            distMin = this.visProp.minorheight * 0.5,
             dxMaj, dyMaj,
             dxMin, dyMin;
         // END OF variable declaration
@@ -201,7 +201,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ub = distP1P2 - eps;
         }
 
-        // this piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
+        // This piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
         // and has been moved in here to clean up the renderers code.
         //
         // The code above only calculates the position of the ticks. The following code parts
@@ -212,11 +212,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         dyMaj = this.line.stdform[2];
         dxMin = dxMaj;
         dyMin = dyMaj;
-        d = Math.sqrt(dxMaj*dxMaj + dyMaj*dyMaj);
-        dxMaj *= distMaj/d;
-        dyMaj *= distMaj/d;
-        dxMin *= distMin/d;
-        dyMin *= distMin/d;
+        
+        // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
+        d = Math.sqrt(dxMaj*dxMaj*this.board.unitX*this.board.unitX + dyMaj*dyMaj*this.board.unitY*this.board.unitY);
+        dxMaj *= distMaj/d*this.board.unitX
+        dyMaj *= distMaj/d*this.board.unitY;
+        dxMin *= distMin/d*this.board.unitX;
+        dyMin *= distMin/d*this.board.unitY;
 
         // Begin cleanup
         this.removeTickLabels();
@@ -394,7 +396,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ch = this.board.canvasHeight,
             x = [-1000*cw, -1000*ch],
             y = [-1000*cw, -1000*ch], 
-            dx, dy, dxs, dys, d,
+            dx, dy, dxs, dys,
             s, style,
             count = 0,
             isInsideCanvas = false;
@@ -475,11 +477,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		}
 		// finite tick length
 		if (style=='finite') {
-			d = Math.sqrt(this.board.unitX*this.board.unitX+this.board.unitY*this.board.unitY);
-			x[0] = c[1] + dx*this.board.unitX/d;
-			y[0] = c[2] - dy*this.board.unitY/d;
-			x[1] = c[1] - dx*this.board.unitX/d;
-			y[1] = c[2] + dy*this.board.unitY/d;
+			x[0] = c[1] + dx;
+			y[0] = c[2] - dy;
+			x[1] = c[1] - dx;
+			y[1] = c[2] + dy;
 		}
         if (isInsideCanvas) {
             return [x,y];
