@@ -53,7 +53,7 @@ JXG.extend = function (object, extension, onlyOwn, toLower) {
             } else {
                 e2 = e;
             }
-             
+
             object[e2] = extension[e];
         }
     }
@@ -162,11 +162,11 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     ieVersion: (function() {
         var undef;
-        
+
         if (typeof document == 'undefined') {
             return undef;
         }
-    
+
         var v = 3,
             div = document.createElement('div'),
             all = div.getElementsByTagName('i');
@@ -540,12 +540,12 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         a = this.deepCopy(options.elements, null, true);       // default options from Options.elements
         len = arguments.length;
-        
+
         // Only the layer of the main element is set.
         if (len < 4 && this.exists(arguments[2]) && this.exists(options.layer[arguments[2]])) {
             a.layer = options.layer[arguments[2]];
         }
-        
+
         o = options;                                                // default options from specific elements
         isAvail = true;
         for (i = 2; i < len; i++) {
@@ -559,7 +559,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         if (isAvail) {
             a = this.deepCopy(a, o, true);
         }
-        
+
         o = attributes;                                             // options from attributes
         isAvail = true;
         for (i=3;i<len;i++) {
@@ -573,7 +573,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         if (isAvail) {
             this.extend(a, o, null, true);
         }
-        
+
         /**
          * Special treatment of labels
          */
@@ -591,10 +591,10 @@ JXG.extend(JXG, /** @lends JXG */ {
             a.label =  JXG.deepCopy(o.label, a.label);
         }
         a.label = JXG.deepCopy(options.label, a.label);
-        
+
         return a;
     },
-    
+
     /**
      * Reads the width and height of an HTML element.
      * @param {String} elementId The HTML id of an HTML DOM node.
@@ -603,7 +603,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     getDimensions: function (elementId) {
         var element, display, els, originalVisibility, originalPosition,
             originalDisplay, originalWidth, originalHeight;
-            
+
         if (typeof document == 'undefined' || elementId == null) {
             return {
                 width: 500,
@@ -730,11 +730,11 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     removeAllEvents: function(obj, type, owner) {
         var i, len;
-		if (owner['x_internal' + type]) {
+        if (owner['x_internal' + type]) {
             len = owner['x_internal' + type].length;
 
-        	for (i = len - 1; i >= 0; i--) {
-            	JXG.removeEvent(obj, type, owner['x_internal' + type][i].origin, owner);
+            for (i = len - 1; i >= 0; i--) {
+                JXG.removeEvent(obj, type, owner['x_internal' + type][i].origin, owner);
             }
 
             if (owner['x_internal' + type].length > 0) {
@@ -782,27 +782,28 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     getPosition: function (e, index) {
         var i, len, posx = 0, posy = 0,
-            evtTouches = e[JXG.touchProperty];
+            evtTouches;
 
         if (!e) {
             e = window.event;
         }
+        evtTouches = e[JXG.touchProperty];
 
-		if (JXG.exists(index)) {
+        if (JXG.exists(index)) {
 
-			if (index == -1) {
+            if (index == -1) {
 
-				len = evtTouches.length;
-				for (i=0; i<len; i++) {
-					if (evtTouches[i]) {
-						e = evtTouches[i];
-						break;
-					}
-				}
+                len = evtTouches.length;
+                for (i=0; i<len; i++) {
+                    if (evtTouches[i]) {
+                        e = evtTouches[i];
+                        break;
+                    }
+                }
 
-			} else
-				e = evtTouches[index];
-		}
+            } else
+                e = evtTouches[index];
+        }
 
         if (e.pageX || e.pageY) {
             posx = e.pageX;
@@ -825,7 +826,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             o2 = obj,
             l = o.offsetLeft - o.scrollLeft,
             t = o.offsetTop - o.scrollTop;
-        
+
         /*
          * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
          * if not to the body. In IE and if we are in an position:absolute environment 
@@ -899,7 +900,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
         return keys;
     },
-    
+
     /**
      * Search an array for a given value.
      * @param {Array} array
@@ -910,17 +911,17 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     indexOf: function (array, value, sub) {
         var i, s = JXG.exists(sub);
-        
+
         if (Array.indexOf && !s) {
             return array.indexOf(value);
         }
-        
+
         for (i = 0; i < array.length; i++) {
             if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
                 return i;
             }
         }
-        
+
         return -1;
     },
 
@@ -984,7 +985,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         var c, i, prop, j, i2;
 
         toLower = toLower || false;
-        
+
         if (typeof obj !== 'object' || obj == null) {
             return obj;
         }
@@ -1011,7 +1012,7 @@ JXG.extend(JXG, /** @lends JXG */ {
                     c[i2] = prop;
                 }
             }
-            
+
             for (i in obj2) {
                 i2 = toLower ? i.toLowerCase() : i;
 
@@ -1167,7 +1168,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             return val;
         }
     },
-    
+
     /**
      * Eliminates duplicate entries in an array.
      * @param {Array} a An array
@@ -1181,13 +1182,13 @@ JXG.extend(JXG, /** @lends JXG */ {
         for (i = 0; i < len; i++) {
             obj[a[i]] = 0;
         }
-        
+
         for (i in obj) {
             if (obj.hasOwnProperty(i)) {
                 result.push(i);
             }
         }
-        
+
         return result;
     },
 
@@ -1235,7 +1236,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         return n;
     },
-    
+
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
      * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
@@ -1275,10 +1276,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     JXG.addEvent(window, 'load', function () {
         var scripts = document.getElementsByTagName('script'), type,
             i, j, div, board, width, height, bbox, axis, grid;
-    
+
         for(i=0;i<scripts.length;i++) {
             type = scripts[i].getAttribute('type', false);
-	    	if (!JXG.exists(type)) continue;
+            if (!JXG.exists(type)) continue;
             if (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
                 width = scripts[i].getAttribute('width', false) || '500px';
                 height = scripts[i].getAttribute('height', false) || '500px';

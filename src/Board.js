@@ -1507,7 +1507,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.touch;
 
-        if (!this.touchOriginMove()) {
+        if (!this.touchOriginMove(evt)) {
 
             if (this.mode == this.BOARD_MODE_DRAG) {
                 // Runs over through all elements which are touched
