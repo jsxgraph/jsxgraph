@@ -1,6 +1,6 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
 
-    renderer: 'canvas',
+//  renderer: 'canvas', // the draftcurves look very ugly on windows ...
 
 	angle: {
 //		type: 'sector',
@@ -25,7 +25,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     point: {
         fillColor:   '#c00',
-		strokeColor: '#000'
+		strokeColor: '#000',
+        size: 4
     },
 
 	slider: {
