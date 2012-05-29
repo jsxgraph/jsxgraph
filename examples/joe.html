@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../distrib/jsxgraphcore.js"></script>
+        <script type="text/javascript">
+function nextLetter(s){
+    return s.replace(/([a-zA-Z])[^a-zA-Z]*$/, function(a){
+        var c= a.charCodeAt(0);
+        switch(c){
+            case 90: return 'A';
+            case 122: return 'a';
+            default: return String.fromCharCode(++c);
+        }
+    });
+}
+            </script>
+    </head>
+    <body>
+        <a href="" id="test">Link</a>
+        <h2 id=status></h2>
+        <div id="box" class="jxgbox" style="width:500px; height:500px; float:left; margin-right:10px"></div>
+        <div id="box2" class="jxgbox" style="width:500px; height:500px;"></div>
+        <script type="text/javascript">
+            var xmin = -10;
+            var ymin = -10;
+            var xmax = 10;
+            var ymax = 10;
+            var width = $('#box').width();
+            var height =$('#box').height();
+            var label = 'a';
+            var pArr = [];
+            var pArr2 = [];
+            var pArr3 = [];
+            var i = 0;
+            var board = JXG.JSXGraph.initBoard('box', {boundingbox: [xmin, ymin, xmax, ymax], axis:true});
+            var board2 = JXG.JSXGraph.initBoard('box2', {boundingbox: [xmin, ymin, xmax, ymax], axis:true});
+            board.addChild(board2);
+
+//jquery code
+            $(document).ready(function()
+            {
+
+                // do stuff when DOM is ready
+                $("a").click(function()
+                {
+                    alert("Hello world!");
+                });
+                $('#box').mouseup(function(e){
+                    if(e.which == 3){
+                        var x = e.pageX - this.offsetLeft;
+                        var y = e.pageY - this.offsetTop;
+                        var gx = (xmax - xmin) / width;
+                        var gy = (ymax - ymin) / height;
+                        x = (x - width/2.0)*gx;
+                        y = (y - height/2.0)*gy;
+                        $('#status').html(x +', '+ y);
+                        pArr[i] = board.create(
+                                    'point', 
+                                    [x,y], 
+                                    {name:label, strokecolor:'red'}
+                                    );
+                        pArr2[i] = board2.create(
+                            'point', 
+                            [0, function(){return pArr[i].Y()*-1}], 
+                            {withLabel:false}
+                            );
+                        pArr3[i] = board2.create(
+                            'point', 
+                            [1, function(){return (pArr[i].Y()*-1 + pArr[i].X())}], 
+                            {withLabel:false}
+                            );
+                        board2.create(
+                            'line', 
+                            [pArr2[i], pArr3[i] ],
+                            {name:label+'*',withLabel:true}
+                            );
+                            i++;
+                            label = nextLetter(label);
+                        }
+                });
+
+                });
+        </script>
+    </body>
+</html>
