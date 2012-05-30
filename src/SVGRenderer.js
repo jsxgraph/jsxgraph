@@ -204,12 +204,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
      * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
      * @param {Number} opacity
      */
-    _setArrowAtts: function (node, color, opacity) {
+    _setArrowAtts: function (node, color, opacity, width) {
         if (node) {
             node.setAttributeNS(null, 'stroke', color);
             node.setAttributeNS(null, 'stroke-opacity', opacity);
             node.setAttributeNS(null, 'fill', color);
             node.setAttributeNS(null, 'fill-opacity', opacity);
+            node.setAttributeNS(null, 'stroke-width', width);
         }
     },
 
@@ -842,13 +843,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 node.setAttributeNS(null, 'stroke-opacity', oo);
             }
             if (el.type === JXG.OBJECT_TYPE_ARROW) {
-                this._setArrowAtts(el.rendNodeTriangle, c, oo);
+                this._setArrowAtts(el.rendNodeTriangle, c, oo, el.visProp.strokewidth);
             } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
                 if (el.visProp.firstarrow) {
-                    this._setArrowAtts(el.rendNodeTriangleStart, c, oo);
+                    this._setArrowAtts(el.rendNodeTriangleStart, c, oo, el.visProp.strokewidth);
                 }
                 if (el.visProp.lastarrow) {
-                    this._setArrowAtts(el.rendNodeTriangleEnd, c, oo);
+                    this._setArrowAtts(el.rendNodeTriangleEnd, c, oo, el.visProp.strokewidth);
                 }
             }
         }
@@ -869,8 +870,18 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         node = el.rendNode;
         this.setPropertyPrim(node, 'stroked', 'true');
         if (JXG.exists(w)) {
-
             this.setPropertyPrim(node, 'stroke-width', w + 'px');
+
+            if (el.type === JXG.OBJECT_TYPE_ARROW) {
+                this._setArrowAtts(el.rendNodeTriangle, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+            } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
+                if (el.visProp.firstarrow) {
+                    this._setArrowAtts(el.rendNodeTriangleStart, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+                }
+                if (el.visProp.lastarrow) {
+                    this._setArrowAtts(el.rendNodeTriangleEnd, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+                }
+            }
         }
         el.visPropOld.strokewidth = w;
     },

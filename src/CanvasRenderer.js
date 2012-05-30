@@ -671,15 +671,17 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     makeArrows: function (el, scr1, scr2) {
         // not done yet for curves and arcs.
-        var arrowHead = [
+        var w = Math.min(el.visProp.strokewidth/2, 3),
+            arrowHead = [
             [ 2, 0 ],
-            [ -10, -4 ],
-            [ -10, 4]
+            [ -10, -4*w ],
+            [ -10, 4*w],
+            [ 2, 0 ]
         ],
             arrowTail = [
                 [ -2, 0 ],
-                [ 10, -4 ],
-                [ 10, 4]
+                [ 10, -4*w ],
+                [ 10, 4*w]
             ],
             x1, y1, x2, y2, ang,
             context = this.context;
