@@ -2579,7 +2579,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (el = 0; el < len; el++) {
             pEl = this.objectsList[el];
-            pEl.needsUpdate = !this.needsFullUpdate && !pEl.needsRegularUpdate;
+            pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
         }
         return this;
     },
