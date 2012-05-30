@@ -196,6 +196,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * for aligning text.
      */
     updateSize: function () {
+        var tmp;
+
         // Here comes a very crude estimation of the dimensions of
         // the textbox. It is only necessary for the IE.
 
@@ -206,7 +208,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         if (this.visProp.display=='html' && this.board.renderer.type!='vml') {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
         } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
-            this.size = [this.rendNode.getBBox().width, this.rendNode.getBBox().height];
+            tmp = this.rendNode.getBBox();
+            this.size = [tmp.width, tmp.height];
         } else if (this.board.renderer.type=='vml' || (this.visProp.display=='internal' && this.board.renderer.type=='canvas')) { 
             this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45, parseFloat(this.visProp.fontsize)*0.9]
         }
@@ -300,11 +303,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     updateTransform: function () {
+        var i;
+
         if (this.transformations.length==0) {
             return;
         }
 
-        for (var i=0;i<this.transformations.length;i++) {
+        for (i = 0; i < this.transformations.length; i++) {
             this.transformations[i].update();
         }
 

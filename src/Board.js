@@ -2011,13 +2011,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return elList;
     },
 
-     /**
+    /**
       * Moves the origin and initializes an update of all elements.
       * @params {Number} x
       * @params {Number} y
       * @returns {JXG.Board} Reference to this board.
       */
-     moveOrigin: function (x, y) {
+    moveOrigin: function (x, y) {
         var el, ob, len = this.objectsList.length;
 
         if (JXG.exists(x) && JXG.exists(y)) {
@@ -2036,8 +2036,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 el.elementClass==JXG.OBJECT_CLASS_CURVE ||
                 el.type==JXG.OBJECT_TYPE_AXIS ||
                 el.type==JXG.OBJECT_TYPE_TEXT)) {
-                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS)
+                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS) {
                     el.coords.usr2screen();
+                }
             }
         }
 
@@ -2578,8 +2579,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (el = 0; el < len; el++) {
             pEl = this.objectsList[el];
-            if (!this.needsFullUpdate && !pEl.needsRegularUpdate) { continue; }
-            pEl.needsUpdate = true;
+            pEl.needsUpdate = !this.needsFullUpdate && !pEl.needsRegularUpdate;
         }
         return this;
     },
@@ -2599,11 +2599,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // For updates of an element we distinguish if the dragged element is updated or
             // other elements are updated.
             // The difference lies in the treatment of gliders.
-            if (drag==null || pEl.id!=drag.id) {
-                pEl.update(true);   // an element following the dragged element is updated
-            } else {
-                pEl.update(false);  // the dragged object itself is updated
-            }
+            pEl.update(!JXG.exists(drag) || pEl.id !== drag.id);
         }
 
         return this;
