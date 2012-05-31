@@ -423,7 +423,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         var r, p,
             delay = 35,
             steps = Math.ceil(time/(delay * 1.0)),
-            i, self = this;
+            i, self = this, round = false;
 
         this.animationData = {};
 
@@ -440,7 +440,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     self.animationData[property][steps-i-1] = JXG.hsv2rgb(hsv1[0]+(i+1)*sh, hsv1[1]+(i+1)*ss, hsv1[2]+(i+1)*sv);
                 }
             },
-            animateFloat = function (start, end, property) {
+            animateFloat = function (start, end, property, round) {
+                var tmp;
+
                 start = parseFloat(start);
                 end = parseFloat(end);
 
@@ -453,7 +455,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 var s = (end - start)/(1.*steps);
                 self.animationData[property] = new Array(steps);
                 for (i=0; i<steps; i++) {
-                    self.animationData[property][steps-i-1] = start + (i+1)*s;
+                    tmp = start + (i+1)*s;
+                    self.animationData[property][steps-i-1] = round ? Math.floor(tmp) : tmp;
                 }
             };
 
@@ -464,10 +467,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                 case 'fillcolor':
                     animateColor(this.visProp[p], hash[r], p);
                     break;
+                case 'size':
+                    console.log('animate size');
+                    if (this.elementClass !== JXG.OBJECT_CLASS_POINT) {
+                        break;
+                    }
+                    round = true;
                 case 'strokeopacity':
                 case 'strokewidth':
                 case 'fillopacity':
-                    animateFloat(this.visProp[p], hash[r], p);
+                    animateFloat(this.visProp[p], hash[r], p, round);
                     break;
             }
         }
