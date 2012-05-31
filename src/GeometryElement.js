@@ -468,7 +468,6 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     animateColor(this.visProp[p], hash[r], p);
                     break;
                 case 'size':
-                    console.log('animate size');
                     if (this.elementClass !== JXG.OBJECT_CLASS_POINT) {
                         break;
                     }
