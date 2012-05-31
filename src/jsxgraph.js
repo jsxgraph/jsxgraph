@@ -318,6 +318,7 @@ JXG.JSXGraph = {
         }
 
         board.removeEventHandlers();
+        board.suspendUpdate();
 
         // Remove all objects from the board.
         for(el in board.objects) {
