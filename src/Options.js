@@ -701,6 +701,7 @@ JXG.Options = {
     },
 
     glider: {
+        label:{}
     },
 
     /* special grid options */

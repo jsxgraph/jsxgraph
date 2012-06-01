@@ -3,8 +3,8 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.93/jsxgraphcore.js"></script>-->
+    <!--<script type="text/javascript" src="../src/loadjsxgraph.js"></script>-->
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94/jsxgraphcore.js"></script>
     <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
     <script type="text/javascript" src="../src/GeonextReader.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
@@ -55,6 +55,10 @@ axis:false, keepaspectratio:true,
 grid:false, showNavigation:true});
 */
 
+JXG.Options.zoom.wheel = false;
+JXG.Options.glider = {label:{}};
+JXG.Options.point.label = {};
+
 var board = JXG.JSXGraph.initBoard('jxgbox', {
     boundingbox: [-5,5,5,-5],
     keepaspectratio: true, axis:false, grid:true
@@ -65,13 +69,12 @@ board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:20}});
 var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});
 var el1 = board.create('line',[[1,0],[1,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=1'});
  
-var gl1 = board.create('glider', [0,0, el0], {name:'b', size:10, fillOpacity:1, opacity:1, color:'black'});
-var gl2 = board.create('glider', [1,0, el1], {name:'a', size:10, fillOpacity:1, opacity:1, color:'black'});
-gl1.draggable = function() {return true; };
-gl2.draggable = function() {return true; };
+var gl1 = board.create('glider', [0,0, el0], {name:'b', withLabel:true});
+var gl2 = board.create('glider', [1,0, el1], {name:'a', label:{position:'top', offsets:[0,10]}, withLabel:true});
+//gl1.draggable = function() {return true; };
+//gl2.draggable = function() {return true; };
  
 var line = board.create('line', [gl1, gl2]);
-var line = board.create('line', [1,2,3]);
 
 var offset = gl2.Y() - gl1.Y();
  
@@ -82,6 +85,8 @@ gl2.on('drag', function() {
     offset = gl2.Y() - gl1.Y();
     });
     
+var x = board.create('point', [2,2], {name:'a', label:{position:'top', offsets:[0,10]}, withLabel:true});
+
 
 </script> 
 </body>
