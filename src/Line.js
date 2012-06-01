@@ -609,26 +609,23 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
     },
 
     /**
-     * Sets x and y coordinate and calls the circle's update() method.
+     * Moves the line by the difference of two coordinates.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units
      * @param {Array} oldcoords previous coordinates in screen/user units
      * @returns {JXG.Line}
      */
     setPositionDirectly: function (method, coords, oldcoords) {
-        var dc, dx, dy,
+        var dc, t, 
             c = new JXG.Coords(method, coords, this.board),
             oldc = new JXG.Coords(method, oldcoords, this.board);
-
-        dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
         if (!this.point1.draggable() || !this.point2.draggable()) {
             return this;
         }
 
-        dx = dc[1];
-        dy = dc[2];
-        var t = this.board.create('transform', [dx, dy, 0], {type:'translate'});
+        dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+        t = this.board.create('transform', dc.slice(1), {type:'translate'});
         t.applyOnce([this.point1, this.point2] );
         
         return this;

@@ -131,7 +131,7 @@ function jsxgraphOutput($input, $args, $parser) {
 	     $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
 	 } else {
         $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
-        $output .= "<script src='".$outputURICDN."/GeonextReader.js' type='text/javascript'></script>";
+        $output .= "<script src='".$outputURICDN."/GeonextReader.min.js' type='text/javascript'></script>";
     }
   }
 

@@ -36,8 +36,7 @@
 </head>
 <body id="body">
 <h1 id="x1">Playground</h1>
-<input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
-<div id='jxgbox' class='jxgbox' style='width:800px; height:200px;'></div>
+<div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
@@ -56,296 +55,33 @@ axis:false, keepaspectratio:true,
 grid:false, showNavigation:true});
 */
 
-var desiredTickHeight = 20;
-var boardA = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:true});
-var scaledHeightA = desiredTickHeight*Math.sqrt(boardA.unitX*boardA.unitX + boardA.unitY*boardA.unitY)/boardA.unitY;
-p = boardA.create('point', [1, 0,0], {name:'A'});
-q = boardA.create('point', [1,1, 0], {name:'B'});
+var board = JXG.JSXGraph.initBoard('jxgbox', {
+    boundingbox: [-5,5,5,-5],
+    keepaspectratio: true, axis:false, grid:true
+    });
+board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:20}});
+board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:20}});
+ 
+var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});
+var el1 = board.create('line',[[1,0],[1,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=1'});
+ 
+var gl1 = board.create('glider', [0,0, el0], {name:'b', size:10, fillOpacity:1, opacity:1, color:'black'});
+var gl2 = board.create('glider', [1,0, el1], {name:'a', size:10, fillOpacity:1, opacity:1, color:'black'});
+gl1.draggable = function() {return true; };
+gl2.draggable = function() {return true; };
+ 
+var line = board.create('line', [gl1, gl2]);
+var line = board.create('line', [1,2,3]);
 
-
-var axisA = boardA.create('line',[p,q]);
-boardA.createElement('ticks', [axisA,[-7.5,-2.5,2.5,7.5]],     {majorHeight: desiredTickHeight, drawLabels:true});
-var axisB = boardA.create('line',[[0,0],[1,-1]]);
-boardA.createElement('ticks', [axisB,[-7.5,-2.5,2.5,7.5]],     {majorHeight: desiredTickHeight, drawLabels:true});
-
-/*
-p = brd.create('point', [1, 1, 1], {name:'A'});
-q = brd.create('point', [1, 6, 3.5], {name:'B'});
-
-l = brd.create('segment', [p, q], {withLabel:true, name:'li', label:{position:'lft', fontSize:32}});
-
-brd.addHook(function(){ console.log(arguments[0].clientX); }, 'move');
-*/
-/*
-//border = brd.create('line', [[2.5, 10], [10, -3.5]], {color: 'red', dash: 2, withLabel: true, name: 'weirdness border'});
-*/
-/*
-brd.suspendUpdate();
-p0 = brd.create('point', [0, 0], {});
-var mytext = 'Right Here';
-var label5 =  brd.create('text', 
-        [function(){ 
-            var off = 0.0;
-            if (JXG.exists(this.size)) {
-                off = this.getSize()[0]/brd.unitX;
-            }
-            return p0.X() - off;
-         }, 
-         function(){ return p0.Y();}, 
-         mytext]); 
-
-brd.unsuspendUpdate();
-*/
-/*
-var sli = brd.create('slider',[[0,3],[2,3],[0,0,1]]); 
-var cp=brd.create('arrow',[[-1,0],[-1,2]],
-    {name:'X', highlight:false, dash:true, strokeOpacity: function(){return sli.Value();}});
-*/
-//alert(label5.getSize());
-
-/*
-var dataX = [-2, 1, 5];
-var dataY = [-1, 1, -1];
-var dataX = [-2, 1, NaN, 3, 5];
-var dataY = [-1, 1, NaN, 2, -1];
-
-var cur = brd.create('curve', [dataX, dataY]);
-var p = brd.create('glider', [0,0,cur]);
-*/
-/*
-A = brd.create('point', [0,2, 1], {});
-B = brd.create('point', [1,-1, 2], {label:{offsets:[10,10], fixed:false, position:'bot'}});
-//A = brd.create('point', [-1290406.182669789, -483608.26697892265], {});
-//B = brd.create('point', [0, 12.903981264637002, 4.836065573770491], {label:{offsets:[10,10], fixed:false, position:'bot'}});
-li = brd.create('line', [A, B], 
-    {withLabel:true, label:{offsets:[10,10], fixed:false, position:'bot'}, strokeWidth:3});
-C = brd.create('glider', [-1, -1, li], {name:"x", label:{offsets:[-30,-30]} });
-brd.create('text', [-3, 3, function(){ return C.position.toFixed(3)+ " " + ((1-C.position)/C.position).toFixed(3);}], {fontSize:32}  );
-C.position = 1.5;
-brd.update();
-*/
-/*
-D =  brd.create('point', [0, -1], {strokeWidth:50});
-t = brd.create('transform', [li], {type:'reflect'});
-E = brd.create('point', [D,t]);
-brd.create('angle', [D,C,E], {name:'&alpha;'});
-*/
-/*
-s5 = brd.create('point',[-1498738.789161728, -18632.701100762082]);
-s6 = brd.create('point',[0, 14.987298899237935, 0.18628281117696854]);
-s7 = brd.create('line',[s5, s6]);
-s8 = brd.create('point',[-1.2108382726502964, -5.215918712955123]);
-//s9 = brd.create('transform', [s7], {type:'reflect'});
-//s10 = brd.create('point', [s8, s9]);
-s10 = brd.create('reflection', [s8, s7]);
-*/
-/*
-*/
-/*
-B = brd.create('point', [8, 0]);
-C = brd.create('point', [4, 6]);
-pol = brd.create('polygon', [A,B,C]);
-
-C2 = brd.create('midpoint', [A, B]);
-B2 = brd.create('midpoint', [A, C]);
-mc = brd.create('perpendicular', [C2, pol.borders[0]]);
-mb = brd.create('perpendicular', [B2, pol.borders[2]]);
-M = brd.create('intersection', [mb,mc,0]);
-*/
-/*
-A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
-B = brd.create('point', [4, -1]);
-c = brd.create('circle', [A, B]);
-*/
-
-/*
-var t = "s5 = point(-946663.0736663843, 3.0990685859441154) <<id: 'GUI1', name: 'GUI1'>> ;\n";
-t += "s6 = point(0, 9.466553767993226, 0) <<id: 'GUI2', name: 'GUI2'>> ;";
-t += "s7 = line('GUI1', 'GUI2') <<id: 'GUI3', name: 'a'>> ; \t";
-t += "s8 = point(-1.551917770552033, 0.670078680643019) <<id: 'GUI4', name: 'A'>> ; \t";
-t += "s9 = circle('GUI4', 2.5) <<id: 'GUI5', name: 'k_{a}'>> ;\t ";
-t += "s10 = intersection('GUI3', 'GUI5', 1, 0) <<id: 'GUI7', name: 'B'>> ;\t";
-t += "s11 = intersection('GUI3', 'GUI5', 0, 0) <<id: 'GUI8', name: 'C'>> ;\t";
-t += "s12 = glider(-2.4912110176854245, -1.3236868583988772, 'GUI5') <<id: 'GUI10', snapwidth: -1, name: 'D'>> ;\t";
-t += "s13 = glider(-1.053686442561572, -1.4768117153926692, 'GUI5') <<id: 'GUI11', snapwidth: -1, name: 'E'>> ;\t";
-t += "s14 = polygon('GUI10', 'GUI7', 'GUI8', 'GUI11', 'GUI10') <<id: 'GUI57', name: 'P_{a}'>> ;\t";
-
-code = 'use jxgbox;\n' + t;
-
-(new JXG.JessieCode()).parse(code);
-*/
-
-//d = brd.create('line', [A, B]);
-/*
-brd.suspendUpdate();
-C = brd.create('point', [6, 2]);
-E = brd.create('point', [2, 1], {label:{fixed:false}});
-//f = brd.create('functiongraph', ["sin(x)"], {withLabel:true, label:{position:'lft'}});
-
-
-pol = brd.create('polygon', [A,B,C,E]);
-D = brd.create('glider', [3, 1, pol.borders[0]], {trace:false, color:'blue'});
-D.onPolygon = true;
-brd.unsuspendUpdate();
-*/
-/*
-brd.migratePoint(A, C);
-*/
-
-
-/*
-A = brd.create('point', [0, -1], {label:{fixed:false, position:'bot'}});
-brd.addHook(function() {
-    var x = A.X(), y = A.Y();
-	if (A.X()<0.0) {
-		A.setPosition(JXG.COORDS_BY_USER, 0.0, y);
-	}
-  }, 'update');
-*/	
-
-/*
-
-myPoint = function(board, x, y) {
-    var le = 0.2,
-    cu = board.create('curve', [ [x+0, x+le, x+le, x+0, x+0], 
-                                 [y+0, y+0, y+le, y+le, y+0]], 
-                      {fillColor:'red', fillOpacity:'0.4', fixed:false});
-    cu.isDraggable = true;
-    cu.coords = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], board);  
+var offset = gl2.Y() - gl1.Y();
+ 
+gl1.on('drag', function() {
+    gl2.moveTo([gl1.X(), gl1.Y() + offset]);
+    });
+gl2.on('drag', function() {
+    offset = gl2.Y() - gl1.Y();
+    });
     
-    cu.setPositionDirectly = function (method, x, y, oldx, oldy) {    
-        var dx = x - oldx, 
-            dy = y - oldy;
-
-        dx /= this.board.unitX;
-        dy /= -this.board.unitY;
-        len = this.dataX.length;
-        for (i=0; i<len; i++) {
-            this.dataX[i] += dx;
-            this.dataY[i] += dy;
-        }
-        return this;
-    };
-    return cu;
-}
-    
-p = myPoint(brd, 2, 1);
-*/
-
-/*
-var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}, snapToPoints:true, attractorDistance:0.4});
-var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}, snapToPoints:true, attractorDistance:0.4});
-*/
-/*
-var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});
-//var cu2 = brd.create('curve',[function(t){ return li1.X(t)/li1.Z(t); }, function(t){ return li1.Y(t)/li1.Z(t); }, 0.0, 1.0], {strokeColor:'black', strokeWidth:4});
-
-var C = brd.create('point',[-2,2], {});
-var D = brd.create('point',[0,2,2]);
-var li2 = brd.create('normal',[C,li1]);
-
-//var li2 = brd.create('line',[C,D]);
-var E = brd.create('glider',[-1,1,li2]);
-var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
-//var G = brd.create('orthogonalprojection',[C,li1]);
-var X = brd.create('midpoint',[C,F]);
-
-var cu = brd.create('tracecurve',[F,X], {dash:0, strokeColor:'red'});
-*/
-
-//
-/*
-var D = brd.create('point',[1,-2,2]);
-var li2 = brd.create('circle',[C,D]);
-
-var I = brd.create('intersection',[li1, li2, 0]);
-brd.create('circle',[B,I]);
-*/
-
-/*
-var k = brd.create('circle',[[0,0],2]);
-var g = brd.create('line',[1,1,1]);
-var A = brd.create('intersection',[k,g,0]);
-var B = brd.create('otherintersection',[k,g,A]);
-var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
-var p = brd.create('polygon',[A,B,C]);
-*/
-// x axis
-/*
-var pX0 = brd.create('point', 
-    [0, function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[3]+(bb[1]-bb[3])*0.1;
-        }
-    ], {visible:false, withLabel:false}); 
-var pX1 = brd.create('point', 
-    [1, function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[3]+(bb[1]-bb[3])*0.1;
-        }
-    ], {visible:false, withLabel:false}); 
-
-var xaxis = brd.create('axis', [pX0, pX1], {ticks:{label:{offsets:[4,10]}}});
-pX0.type = JXG.OBJECT_TYPE_CAS;   
-pX1.type = JXG.OBJECT_TYPE_CAS;    
-*/
-/*
-var xaxis2 = brd.create('axis', [[0,0],[1,0]], 
-    {ticks: {
-            label:{offsets:[4,-10]}, 
-            ticksDistance: 1,
-            insertTicks: false
-        }});
-*/
-/*
-// y axis
-var pX2 = brd.create('point', 
-    [function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[0]+(bb[2]-bb[0])*0.1;
-        }, 0
-    ], {visible:false, withLabel:false}); 
-var pX3 = brd.create('point', 
-    [function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[0]+(bb[2]-bb[0])*0.1;
-        }, 1
-    ], {visible:false, withLabel:false}); 
-
-var xaxis = brd.create('axis', [pX2, pX3]);
-pX2.type = JXG.OBJECT_TYPE_CAS;   
-pX3.type = JXG.OBJECT_TYPE_CAS;    
-*/
-
-/*
-var p = [];
-for (i=0;i<2;i++) {
-	//p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
-	p.push(brd.create('point', [2,2*i-1],{withLabel:true}));
-}
-var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
-*/
-/*
-var t = brd.create('turtle', [-1,0], {id:'NIX'});
-//t.fd(3); //
-t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
-t.setProperty({strokeWidth:5, strokeColor:'black'});
-t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
-t.setPenSize(1);
-t.setProperty({strokeColor:'black'});
-t.fd(3);
-
-*/
-
-/*
-var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;}], 
-    {cssClass:'fat', highlightCssClass:'fatHL',
-     fontSize:32, 
-     strokeColor:'red',
-     highlightStrokeColor:'blue'});
-*/
-
-//brd.update();
 
 </script> 
 </body>

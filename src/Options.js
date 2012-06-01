@@ -433,6 +433,7 @@ JXG.Options = {
         numlayers: 20, // only important in SVG
         text  : 9,
         point : 9,   
+        glider : 9,   
         arc   : 8,
         line  : 7,
         circle: 6, 
@@ -699,7 +700,8 @@ JXG.Options = {
         /**#@-*/
     },
 
-    glider: {},
+    glider: {
+    },
 
     /* special grid options */
     grid : {
