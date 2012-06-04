@@ -37,11 +37,11 @@ University of Bayreuth, Germany
 Website
 -------
 
-Project web site: http://jsxgraph.uni-bayreuth.de/
-Project wiki with hundreds of examples: http://jsxgraph.uni-bayreuth.de/wiki/
-SourceForge Project site: http://sf.net/projects/jsxgraph
-GitHub project site: https://github.com/jsxgraph/jsxgraph
-Mailing List/Google Group: http://groups.google.com/group/jsxgraph
+* Project web site: http://jsxgraph.uni-bayreuth.de/
+* Project wiki with hundreds of examples: http://jsxgraph.uni-bayreuth.de/wiki/
+* SourceForge project site: http://sf.net/projects/jsxgraph
+* GitHub project site: https://github.com/jsxgraph/jsxgraph
+* Mailing List/Google Group: http://groups.google.com/group/jsxgraph
 
 Please report bugs to our issue tracking system found at
 https://github.com/jsxgraph/jsxgraph/issues
