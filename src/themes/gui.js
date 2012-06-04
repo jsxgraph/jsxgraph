@@ -1,5 +1,6 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
 
+
 //  renderer: 'canvas', // the draftcurves look very ugly on windows ...
 
 	angle: {
