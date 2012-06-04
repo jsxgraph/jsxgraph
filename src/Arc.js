@@ -132,17 +132,24 @@ JXG.createArc = function(board, parents, attributes) {
         var A = this.radiuspoint,
             B = this.center,
             C = this.anglepoint,
-            beta, co, si, matrix,
-            phi = JXG.Math.Geometry.rad(A,B,C),
-            i,
-            n = Math.ceil(phi/Math.PI*90)+1,
-            delta = phi/n,
+            beta, co, si, matrix, phi,
+            i, n, delta,
             x = B.X(),
             y = B.Y(),
-            v,
-            det, p0c, p1c, p2c;
+            v, det, p0c, p1c, p2c;
+            
+        phi = JXG.Math.Geometry.rad(A,B,C);
+        n = Math.ceil(phi/Math.PI*90)+1;
+        delta = phi/n;
+        
+        if ((this.visProp.type=='minor' && phi>Math.PI) 
+            || (this.visProp.type=='major' && phi<Math.PI)) { 
+            phi = 2*Math.PI - phi; 
+            n = Math.ceil(phi/Math.PI*90)+1;
+            delta = -phi/n;
+        }
 
-        if (this.useDirection) {  // This is true for circumCircleArcs. In that case there is
+        if (this.useDirection) { // This is true for circumCircleArcs. In that case there is
                                   // a fourth parent element: [center, point1, point3, point2]
             p0c = parents[1].coords.usrCoords;
             p1c = parents[3].coords.usrCoords;
@@ -203,11 +210,20 @@ JXG.createArc = function(board, parents, attributes) {
             r = this.Radius(),
             dist = this.center.coords.distance(JXG.COORDS_BY_USER,checkPoint),
             has = (Math.abs(dist-r) < prec),
-            angle;
+            angle, alpha, beta;
             
-        if(has) {
+        if (has) {
             angle = JXG.Math.Geometry.rad(this.radiuspoint,this.center,checkPoint.usrCoords.slice(1));
-            if (angle>JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint)) { has = false; }
+            alpha = 0.0;
+            beta = JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint);
+            if ((this.visProp.type=='minor' && beta>Math.PI)
+                || (this.visProp.type=='major' && beta<Math.PI)) { 
+                alpha = 2*Math.PI - beta; 
+                beta = 2*Math.PI;
+            } 
+            if (angle<alpha || angle>beta) { 
+                has = false; 
+            }
         }
         return has;    
     };
@@ -226,11 +242,20 @@ JXG.createArc = function(board, parents, attributes) {
             r = this.Radius(),
             dist = this.center.coords.distance(JXG.COORDS_BY_USER,checkPoint),
             has = (dist<r),
-            angle;
+            angle, alpha, beta;
         
-        if(has) {
+        if (has) {
             angle = JXG.Math.Geometry.rad(this.radiuspoint,this.center,checkPoint.usrCoords.slice(1));
-            if (angle>JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint)) { has = false; }
+            alpha = 0.0;
+            beta = JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint);
+            if ((this.visProp.type=='minor' && beta>Math.PI) 
+                || (this.visProp.type=='major' && beta<Math.PI)) { 
+                alpha = 2*Math.PI - beta; 
+                beta = 2*Math.PI;
+            } 
+            if (angle<alpha || angle>beta) { 
+                has = false; 
+            }
         }
         return has;    
     };
@@ -242,7 +267,7 @@ JXG.createArc = function(board, parents, attributes) {
 
     // documented in geometry element
     el.getLabelAnchor = function() {
-        var angle = JXG.Math.Geometry.rad(this.radiuspoint, this.center, this.anglepoint),
+        var angle,
             dx = 10/(this.board.unitX),
             dy = 10/(this.board.unitY),
             p2c = this.point2.coords.usrCoords,
@@ -255,6 +280,12 @@ JXG.createArc = function(board, parents, attributes) {
             this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0],this.board);                      
         }  
 
+        angle = JXG.Math.Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+        if ((this.visProp.type=='minor' && angle>Math.PI)
+            || (this.visProp.type=='major' && angle<Math.PI)) { 
+            angle = -(2*Math.PI - angle); 
+        } 
+        
         coords = new JXG.Coords(JXG.COORDS_BY_USER, 
                         [pmc[1]+ Math.cos(angle*0.5)*bxminusax - Math.sin(angle*0.5)*byminusay, 
                         pmc[2]+ Math.sin(angle*0.5)*bxminusax + Math.cos(angle*0.5)*byminusay], 
@@ -431,3 +462,81 @@ JXG.createCircumcircleArc = function(board, parents, attributes) {
 };
 
 JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);
+
+/**
+ * @class A minor arc is a segment of the circumference of a circle having measure less than or equal to 
+ * 180 degrees (pi radians). It is defined by a center, one point that
+ * defines the radius, and a third point that defines the angle of the arc.
+ * @pseudo
+ * @name MinorArc
+ * @augments Curve
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor arc is an arc of a circle around p1 having measure less than or equal to 
+ * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3. 
+ * @example
+ * // Create an arc out of three free points
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [1.0, 0.5]);
+ * var p3 = board.create('point', [3.5, 1.0]);
+ *
+ * var a = board.create('arc', [p1, p2, p3]);
+ * </pre><div id="af27ddcc-265f-428f-90dd-d31ace945800" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('af27ddcc-265f-428f-90dd-d31ace945800', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [1.0, 0.5]),
+ *       p3 = board.create('point', [3.5, 1.0]),
+ *
+ *       a = board.create('minorarc', [p1, p2, p3]);
+ * })();
+ * </script><pre>
+ */
+
+JXG.createMinorArc = function(board, parents, attributes) {
+    attributes.type = 'minor';
+    return JXG.createArc(board, parents, attributes);
+};
+
+JXG.JSXGraph.registerElement('minorarc', JXG.createMinorArc);
+
+/**
+ * @class A major arc is a segment of the circumference of a circle having measure greater than or equal to 
+ * 180 degrees (pi radians). It is defined by a center, one point that
+ * defines the radius, and a third point that defines the angle of the arc.
+ * @pseudo
+ * @name MinorArc
+ * @augments Curve
+ * @constructor
+ * @type JXG.Curve
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Major arc is an arc of a circle around p1 having measure greater than or equal to 
+ * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3. 
+ * @example
+ * // Create an arc out of three free points
+ * var p1 = board.create('point', [2.0, 2.0]);
+ * var p2 = board.create('point', [1.0, 0.5]);
+ * var p3 = board.create('point', [3.5, 1.0]);
+ *
+ * var a = board.create('arc', [p1, p2, p3]);
+ * </pre><div id="83c6561f-7561-4047-b98d-036248a00932" style="width: 300px; height: 300px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *   var board = JXG.JSXGraph.initBoard('83c6561f-7561-4047-b98d-036248a00932', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+ *       p1 = board.create('point', [2.0, 2.0]),
+ *       p2 = board.create('point', [1.0, 0.5]),
+ *       p3 = board.create('point', [3.5, 1.0]),
+ *
+ *       a = board.create('majorarc', [p1, p2, p3]);
+ * })();
+ * </script><pre>
+ */
+JXG.createMajorArc = function(board, parents, attributes) {
+    attributes.type = 'major';
+    return JXG.createArc(board, parents, attributes);
+};
+
+JXG.JSXGraph.registerElement('majorarc', JXG.createMajorArc);
+ 
