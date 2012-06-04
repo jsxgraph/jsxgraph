@@ -37,13 +37,14 @@ University of Bayreuth, Germany
 Website
 -------
 
-Project web site: http://jsxgraph.uni-bayreuth.de/
-Project wiki with hundreds of examples: http://jsxgraph.uni-bayreuth.de/wiki/
-SourceForge Project site: http://sf.net/projects/jsxgraph
-Mailing List/Google Group: http://groups.google.com/group/jsxgraph
+* Project web site: http://jsxgraph.uni-bayreuth.de/
+* Project wiki with hundreds of examples: http://jsxgraph.uni-bayreuth.de/wiki/
+* SourceForge project site: http://sf.net/projects/jsxgraph
+* GitHub project site: https://github.com/jsxgraph/jsxgraph
+* Mailing List/Google Group: http://groups.google.com/group/jsxgraph
 
 Please report bugs to our issue tracking system found at
-http://www.sf.net/apps/trac/jsxgraph
+https://github.com/jsxgraph/jsxgraph/issues
 
 
 Build JSXGraph
@@ -65,17 +66,9 @@ Usage
 -----
 
 Include jsxgraphcore.js and, if required, one or more *Reader.js in your HTML
-file. For further usage instructions please consult our wiki
-
-    http://jsxgraph.uni-bayreuth.de/wiki/
-
-especially our tutorials located at
-
-    http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation
-
-or our reference docs at
-
-    http://jsxgraph.uni-bayreuth.de/docs/
+file. For further usage instructions please consult our [wiki](http://jsxgraph.uni-bayreuth.de/wiki/)
+especially our [tutorials](http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation)
+or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
 
 
 
