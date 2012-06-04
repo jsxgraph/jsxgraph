@@ -66,9 +66,9 @@ Usage
 -----
 
 Include jsxgraphcore.js and, if required, one or more *Reader.js in your HTML
-file. For further usage instructions please consult our wiki http://jsxgraph.uni-bayreuth.de/wiki/
-especially our tutorials located at http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation
-or our reference docs at http://jsxgraph.uni-bayreuth.de/docs/
+file. For further usage instructions please consult our [wiki](http://jsxgraph.uni-bayreuth.de/wiki/)
+especially our [tutorials](http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation)
+or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
 
 
 
