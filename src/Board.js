@@ -3150,7 +3150,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     migratePoint: function(src, dest) {
-        var child, childId, prop, found;
+        var child, childId, prop, found, i;
 
         src = JXG.getRef(this, src);
         dest = JXG.getRef(this, dest);
@@ -3168,6 +3168,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (found) {
                 delete src.childElements[childId];
             }
+
+            for (i = 0; i < child.parents.length; i++) {
+                if (child.parents[i] === src.id) {
+                    child.parents[i] = dest.id;
+                }
+            }
+
             dest.addChild(child);
             //child.prepareUpdate().update().updateRenderer();
         }
