@@ -722,6 +722,28 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Removes all events of the given type from a given DOM node; Use with caution and do not use it on a container div
+     * of a {@link JXG.Board} because this might corrupt the event handling system.
+     * @param {Object} obj Reference to a DOM node.
+     * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
+     * @param {Object} owner The scope in which the event trigger is called.
+     */
+    removeAllEvents: function(obj, type, fn, owner) {
+        var i, len;
+        if (owner['x_internal' + type]) {
+            len = owner['x_internal' + type].length;
+
+            for (i = len - 1; i >= 0; i--) {
+                JXG.removeEvent(obj, type, owner['x_internal' + type][i].origin, owner);
+            }
+
+            if (owner['x_internal' + type].length > 0) {
+                JXG.debug('removeAllEvents: Not all events could be removed.');
+            }
+        }
+    },
+
+    /**
      * Generates a function which calls the function fn in the scope of owner.
      * @param {Function} fn Function to call.
      * @param {Object} owner Scope in which fn is executed.
