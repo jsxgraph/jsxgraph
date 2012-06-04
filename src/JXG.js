@@ -682,28 +682,28 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {Object} owner The scope in which the event trigger is called.
      */
     removeEvent: function (obj, type, fn, owner) {
-        var em = 'JSXGraph: Can\'t remove event listener on' + type + ' : ' + owner['x_internal' + type],
-            i;
+        var i;
 
         if (!JXG.exists(owner)) {
-            JXG.debug(em + ' -- no such owner');
+            JXG.debug('no such owner');
+			alert("see console and recheck why!!!");
             return;
         }
 
         if (!JXG.exists(owner['x_internal' + type])) {
-            JXG.debug(em + ' -- no such type');
+            JXG.debug('no such type: ' + type);
             return;
         }
 
         if (!JXG.isArray(owner['x_internal' + type])) {
-            JXG.debug(em + ' -- not an array');
+            JXG.debug('owner[x_internal + ' + type + '] is not an array');
             return;
         }
 
         i = JXG.indexOf(owner['x_internal' + type], fn, 'origin');
 
         if (i === -1) {
-            JXG.debug(em + ' -- no such event function in internal list');
+            JXG.debug('no such event function in internal list: ' + fn);
             return;
         }
 
@@ -715,7 +715,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
 
         } catch(e) {
-            JXG.debug(em + ' -- event not registered in browser');
+            JXG.debug('event not registered in browser: (' + type + ' -- ' + fn + ')');
         }
 
         owner['x_internal' + type].splice(i, 1);
@@ -728,7 +728,8 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    removeAllEvents: function(obj, type, owner) {
+
+    removeAllEvents: function(obj, type, fn, owner) {
         var i, len;
         if (owner['x_internal' + type]) {
             len = owner['x_internal' + type].length;
