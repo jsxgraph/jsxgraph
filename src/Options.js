@@ -436,7 +436,7 @@ JXG.Options = {
         glider : 9,   
         arc   : 8,
         line  : 7,
-        perpendicular: 7,
+        perpendicular: 7, // This should be reduced to classes
         circle: 6, 
         curve : 5,
 		turtle : 5,
