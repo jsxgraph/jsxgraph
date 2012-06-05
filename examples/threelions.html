@@ -20,6 +20,9 @@
     B = brd.createElement('point',[-1,0],{strokeColor:'#901B77',fillColor:'#CA147A'});
     C = brd.createElement('point',[0.2,1.5],{strokeColor:'#901B77',fillColor:'#CA147A'});
 
+    l = brd.create('line', [A, B]);
+    p = brd.create('perpendicular', [l, C]);
+
     function foo() {
         console.log('foo');
     }

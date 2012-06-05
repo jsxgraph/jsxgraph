@@ -536,10 +536,16 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Object} The resulting attributes object
      */
     copyAttributes: function (attributes, options) {
-        var a, i, len, o, isAvail;
+        var a, i, len, o, isAvail,
+            primitives = {'point': 1, 'line': 1, 'circle': 1, 'curve': 1, 'text': 1};
 
-        a = this.deepCopy(options.elements, null, true);       // default options from Options.elements
+
         len = arguments.length;
+        if (len < 3 || primitives[arguments[2]]) {
+            a = this.deepCopy(options.elements, null, true);       // default options from Options.elements
+        } else {
+            a = {};
+        }
 
         // Only the layer of the main element is set.
         if (len < 4 && this.exists(arguments[2]) && this.exists(options.layer[arguments[2]])) {
