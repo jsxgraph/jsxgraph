@@ -748,9 +748,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
      * @param {Number} x Current mouse/touch coordinates
      * @param {Number} y current mouse/touch coordinates
+     * @param {Object} [evt] An event object
      * @returns {Array} A list of geometric elements.
      */
-    initMoveObject: function (x, y) {
+    initMoveObject: function (x, y, evt) {
         var pEl, el, collect = [], haspoint, len = this.objectsList.length,
             dragEl = {visProp:{layer:-10000}};
 
@@ -760,7 +761,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
             if (pEl.visProp.visible && haspoint) {
-                pEl.triggerEventHandlers('down');
+                pEl.triggerEventHandlers('down', evt);
                 this.downObjects.push(pEl);
             }
             if (
@@ -813,9 +814,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Moves an object.
      * @param {Number} x Coordinate
      * @param {Number} y Coordinate
-     * @param {object} o The touch object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
+     * @param {Object} o The touch object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
+     * @param {Object} [evt] The event object.
      */
-    moveObject: function (x, y, o) {
+    moveObject: function (x, y, o, evt) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
             drag = o.obj,
             oldCoords;
@@ -852,7 +854,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        drag.triggerEventHandlers('drag');
+        drag.triggerEventHandlers('drag', evt);
 
         this.updateInfobox(drag);
         this.update();
@@ -863,9 +865,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Moves elements in multitouch mode.
      * @param {Array} p1 x,y coordinates of first touch
      * @param {Array} p2 x,y coordinates of second touch
-     * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
+     * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
+     * @param {Object} evt The event object that lead to this movement.
      */
-    twoFingerMove: function(p1, p2, o) {
+    twoFingerMove: function(p1, p2, o, evt) {
         var np1c, np2c, drag;
 
         if (JXG.exists(o) && JXG.exists(o.obj)) {
@@ -883,7 +886,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (drag.elementClass===JXG.OBJECT_CLASS_CIRCLE) {
             this.moveCircle(np1c, np2c, o, drag);
         }
-        drag.triggerEventHandlers('drag');
+        drag.triggerEventHandlers('drag', evt);
 
         o.targets[0].Xprev = np1c.scrCoords[1];
         o.targets[0].Yprev = np1c.scrCoords[2];
@@ -1024,13 +1027,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                     this.highlightedObjects[pId] = pEl;
                     pEl.highlight();
-                    this.triggerEventHandlers('hit', pEl, evt, target);
+                    this.triggerEventHandlers('hit', evt, pEl, target);
                 }
 
                 if (pEl.mouseover) {
-                    pEl.triggerEventHandlers('move');
+                    pEl.triggerEventHandlers('move', evt);
                 } else {
-                    pEl.triggerEventHandlers('over');
+                    pEl.triggerEventHandlers('over', evt);
                     pEl.mouseover = true;
                 }
             }
@@ -1041,7 +1044,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pId = pEl.id;
             if (pEl.mouseover) {
                 if (!this.highlightedObjects[pId]) {
-                    pEl.triggerEventHandlers('out');
+                    pEl.triggerEventHandlers('out', evt);
                     pEl.mouseover = false;
                 }
             }
@@ -1396,7 +1399,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < evtTouches.length; i++) {
             if (!evtTouches[i].jxg_isused) {
                 pos = this.getMousePosition(evt, i);
-                elements = this.initMoveObject(pos[0], pos[1]);
+                elements = this.initMoveObject(pos[0], pos[1], evt);
 
                 if (elements.length != 0) {
                     obj = elements[elements.length-1];
@@ -1519,7 +1522,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
                             this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                             pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                            this.moveObject(pos[0], pos[1], this.touches[i]);
+                            this.moveObject(pos[0], pos[1], this.touches[i], evt);
                         }
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
@@ -1531,7 +1534,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.twoFingerMove(
                                 this.getMousePosition(evt, this.touches[i].targets[0].num),
                                 this.getMousePosition(evt, this.touches[i].targets[1].num),
-                                this.touches[i]
+                                this.touches[i],
+                                evt
                             );
                         }
                     }
@@ -1650,7 +1654,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
             if (!found) {
-                this.downObjects[i].triggerEventHandlers('up');
+                this.downObjects[i].triggerEventHandlers('up', evt);
                 this.downObjects.splice(i, 1);
             }
         }
@@ -1669,10 +1673,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * This method is called by the browser when the mouse is moved.
-     * @param {Event} Evt The browsers event object.
+     * @param {Event} evt The browsers event object.
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
-    mouseDownListener: function (Evt) {
+    mouseDownListener: function (evt) {
         var pos, elements, xy, r, i;
 
         // prevent accidental selection of text
@@ -1685,12 +1689,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
         this.hasMouseUp = true;
 
-        if (this.mouseOriginMoveStart(Evt)) {
+        if (this.mouseOriginMoveStart(evt)) {
             r = false;
         } else {
 
-            pos = this.getMousePosition(Evt);
-            elements = this.initMoveObject(pos[0], pos[1]);
+            pos = this.getMousePosition(evt);
+            elements = this.initMoveObject(pos[0], pos[1], evt);
 
             // if no draggable object can be found, get out here immediately
             if (elements.length == 0) {
@@ -1728,15 +1732,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 // prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text
                 // on the board don't work anymore.
-                if (Evt && Evt.preventDefault) {
-                    Evt.preventDefault();
+                if (evt && evt.preventDefault) {
+                    evt.preventDefault();
                 } else if (window.event) {
                     window.event.returnValue = false;
                 }
             }
         }
 
-        this.triggerEventHandlers(['mousedown', 'down'], Evt);
+        this.triggerEventHandlers(['mousedown', 'down'], evt);
         return r;
     },
 
@@ -1744,10 +1748,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * This method is called by the browser when the left mouse button is released.
      * @private
      */
-    mouseUpListener: function (Evt) {
+    mouseUpListener: function (evt) {
         var i;
 
-        this.triggerEventHandlers(['mouseup', 'up'], Evt);
+        this.triggerEventHandlers(['mouseup', 'up'], evt);
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -1757,7 +1761,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.update();
 
         for (i = 0; i < this.downObjects.length; i++) {
-            this.downObjects[i].triggerEventHandlers('up');
+            this.downObjects[i].triggerEventHandlers('up', evt);
         }
 
         this.downObjects.length = 0;
@@ -1771,13 +1775,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * This method is called by the browser when the left mouse button is clicked.
-     * @param {Event} Event The browsers event object.
+     * @param {Event} evt The browsers event object.
      * @private
      */
-    mouseMoveListener: function (Event) {
+    mouseMoveListener: function (evt) {
         var pos;
 
-        pos = this.getMousePosition(Event);
+        pos = this.getMousePosition(evt);
 
         this.updateQuality = this.BOARD_QUALITY_LOW;
 
@@ -1792,32 +1796,32 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //   * user just moves the mouse, here highlight all elements at
         //     the current mouse position
 
-        if (!this.mouseOriginMove(Event)) {
+        if (!this.mouseOriginMove(evt)) {
             if (this.mode == this.BOARD_MODE_DRAG) {
-                this.moveObject(pos[0], pos[1], this.mouse);
+                this.moveObject(pos[0], pos[1], this.mouse, evt);
             } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
-                this.highlightElements(pos[0], pos[1], Event, -1);
+                this.highlightElements(pos[0], pos[1], evt, -1);
             }
         }
 
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        this.triggerEventHandlers(['mousemove', 'move'], Event, this.mode);
+        this.triggerEventHandlers(['mousemove', 'move'], evt, this.mode);
     },
 
     /**
      * Handler for mouse wheel events. Used to zoom in and out of the board.
-     * @param {Event} Event
+     * @param {Event} evt
      * @returns {Boolean}
      */
-    mouseWheelListener: function (Event) {
+    mouseWheelListener: function (evt) {
         if (!this.options.zoom.wheel) {
             return true;
         }
 
-        Event = Event || window.event;
-        var wd = Event.detail ? Event.detail*(-1) : Event.wheelDelta/40,
-            pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(Event), this);
+        evt = evt || window.event;
+        var wd = evt.detail ? evt.detail*(-1) : evt.wheelDelta/40,
+            pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
         if (wd > 0) {
             this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
@@ -1825,7 +1829,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
         }
 
-        Event.preventDefault();
+        evt.preventDefault();
         return false;
     },
 
@@ -1963,12 +1967,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * In case of snapToGrid activated this method calculates the user coords of mouse "snapped to grid".
-     * @param {Event} Evt Event object containing the mouse coordinates.
+     * @param {Event} evt Event object containing the mouse coordinates.
      * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
      */
-    getUsrCoordsOfMouse: function (Evt) {
+    getUsrCoordsOfMouse: function (evt) {
         var cPos = this.getCoordsTopLeftCorner(),
-            absPos = JXG.getPosition(Evt),
+            absPos = JXG.getPosition(evt),
             x = absPos[0]-cPos[0],
             y = absPos[1]-cPos[1],
             newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
@@ -1978,24 +1982,24 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Collects all elements under current mouse position plus current user coordinates of mouse cursor.
-     * @param {Event} Evt Event object containing the mouse coordinates.
+     * @param {Event} evt Event object containing the mouse coordinates.
      * @returns {Array} Array of elements at the current mouse position plus current user coordinates of mouse.
      */
-    getAllUnderMouse: function (Evt) {
-        var elList = this.getAllObjectsUnderMouse(Evt);
-        elList.push(this.getUsrCoordsOfMouse(Evt));
+    getAllUnderMouse: function (evt) {
+        var elList = this.getAllObjectsUnderMouse(evt);
+        elList.push(this.getUsrCoordsOfMouse(evt));
 
         return elList;
     },
 
     /**
      * Collects all elements under current mouse position.
-     * @param {Event} Evt Event object containing the mouse coordinates.
+     * @param {Event} evt Event object containing the mouse coordinates.
      * @returns {Array} Array of elements at the current mouse position.
      */
-    getAllObjectsUnderMouse: function (Evt) {
+    getAllObjectsUnderMouse: function (evt) {
         var cPos = this.getCoordsTopLeftCorner(),
-            absPos = JXG.getPosition(Evt),
+            absPos = JXG.getPosition(evt),
             dx = absPos[0]-cPos[0],
             dy = absPos[1]-cPos[1],
             elList = [],
