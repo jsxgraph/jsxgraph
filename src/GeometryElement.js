@@ -743,7 +743,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
 
-        if (this.type == JXG.OBJECT_TYPE_AXIS || this.type == JXG.OBJECT_TYPE_GRID)
+        if (!this.visProp.needsRegularUpdate)
             this.board.fullUpdate();
 
         this.board.update(this);
