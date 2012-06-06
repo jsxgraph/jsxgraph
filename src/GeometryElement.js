@@ -1147,18 +1147,36 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @param {String} event
      */
     triggerEventHandlers: function (event) {
-        var i, h, args = Array.prototype.slice.call(arguments, 1);
+        var i, h, args = Array.prototype.slice.call(arguments, 1),
+            j, evt;
 
-        if (JXG.isArray(this.eventHandlers[event])) {
-            for (i = 0; i < this.eventHandlers[event].length; i++) {
-                h = this.eventHandlers[event][i];
-                h.handler.apply(h.context, args);
+        if (!JXG.isArray(event)) {
+            event = [event];
+        }
+
+        for (j = 0; j < event.length; j++) {
+            evt = event[j];
+            if (JXG.isArray(this.eventHandlers[evt])) {
+                for (i = 0; i < this.eventHandlers[evt].length; i++) {
+                    h = this.eventHandlers[evt][i];
+                    h.handler.apply(h.context, args);
+                }
             }
         }
     },
 
     /**
-     * Register a new event handler
+     * Register a new event handler. Possible events include
+     * <ul>
+     *     <li>over</li>
+     *     <li>out</li>
+     *     <li>move</li>
+     *     <li>drag</li>
+     *     <li>down</li>
+     *     <li>up</li>
+     * </ul>
+     * Every event is triggered both on touch and mouse devices. Prepend an event with
+     * <tt>mouse</tt> or <tt>touch</tt> to trigger them only on mouse resp. touch devices.
      * @param {String} event
      * @param {Function} handler
      * @param {Object} [context] The context the handler will be called in, default is the element itself.
