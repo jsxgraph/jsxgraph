@@ -748,10 +748,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * <ul><li>isDraggable</li><li>visible</li><li>not fixed</li><li>not frozen</li></ul>
      * @param {Number} x Current mouse/touch coordinates
      * @param {Number} y current mouse/touch coordinates
-     * @param {Object} [evt] An event object
+     * @param {Object} evt An event object
+     * @param {String} type What type of event? 'touch' or 'mouse'.
      * @returns {Array} A list of geometric elements.
      */
-    initMoveObject: function (x, y, evt) {
+    initMoveObject: function (x, y, evt, type) {
         var pEl, el, collect = [], haspoint, len = this.objectsList.length,
             dragEl = {visProp:{layer:-10000}};
 
@@ -761,7 +762,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
             if (pEl.visProp.visible && haspoint) {
-                pEl.triggerEventHandlers('down', evt);
+                pEl.triggerEventHandlers([type + 'down', 'down'], evt);
                 this.downObjects.push(pEl);
             }
             if (
@@ -815,9 +816,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} x Coordinate
      * @param {Number} y Coordinate
      * @param {Object} o The touch object that is dragged: {JXG.Board#mouse} or {JXG.Board#touches}.
-     * @param {Object} [evt] The event object.
+     * @param {Object} evt The event object.
+     * @param {String} type Mouse or touch event?
      */
-    moveObject: function (x, y, o, evt) {
+    moveObject: function (x, y, o, evt, type) {
         var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
             drag = o.obj,
             oldCoords;
@@ -854,7 +856,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        drag.triggerEventHandlers('drag', evt);
+        drag.triggerEventHandlers([type+  'drag', 'drag'], evt);
 
         this.updateInfobox(drag);
         this.update();
@@ -886,7 +888,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (drag.elementClass===JXG.OBJECT_CLASS_CIRCLE) {
             this.moveCircle(np1c, np2c, o, drag);
         }
-        drag.triggerEventHandlers('drag', evt);
+        drag.triggerEventHandlers(['touchdrag', 'drag'], evt);
 
         o.targets[0].Xprev = np1c.scrCoords[1];
         o.targets[0].Yprev = np1c.scrCoords[2];
@@ -1027,13 +1029,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                     this.highlightedObjects[pId] = pEl;
                     pEl.highlight();
-                    this.triggerEventHandlers('hit', evt, pEl, target);
+                    this.triggerEventHandlers(['mousehit', 'hit'], evt, pEl, target);
                 }
 
                 if (pEl.mouseover) {
-                    pEl.triggerEventHandlers('move', evt);
+                    pEl.triggerEventHandlers(['mousemove', 'move'], evt);
                 } else {
-                    pEl.triggerEventHandlers('over', evt);
+                    pEl.triggerEventHandlers(['mouseover', 'over'], evt);
                     pEl.mouseover = true;
                 }
             }
@@ -1044,7 +1046,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pId = pEl.id;
             if (pEl.mouseover) {
                 if (!this.highlightedObjects[pId]) {
-                    pEl.triggerEventHandlers('out', evt);
+                    pEl.triggerEventHandlers(['mouseout', 'out'], evt);
                     pEl.mouseover = false;
                 }
             }
@@ -1399,7 +1401,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < evtTouches.length; i++) {
             if (!evtTouches[i].jxg_isused) {
                 pos = this.getMousePosition(evt, i);
-                elements = this.initMoveObject(pos[0], pos[1], evt);
+                elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
 
                 if (elements.length != 0) {
                     obj = elements[elements.length-1];
@@ -1522,7 +1524,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
                             this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                             pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                            this.moveObject(pos[0], pos[1], this.touches[i], evt);
+                            this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
                         }
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
@@ -1654,7 +1656,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
             if (!found) {
-                this.downObjects[i].triggerEventHandlers('up', evt);
+                this.downObjects[i].triggerEventHandlers(['touchup', 'up'], evt);
                 this.downObjects.splice(i, 1);
             }
         }
@@ -1694,7 +1696,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else {
 
             pos = this.getMousePosition(evt);
-            elements = this.initMoveObject(pos[0], pos[1], evt);
+            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
 
             // if no draggable object can be found, get out here immediately
             if (elements.length == 0) {
@@ -1761,7 +1763,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.update();
 
         for (i = 0; i < this.downObjects.length; i++) {
-            this.downObjects[i].triggerEventHandlers('up', evt);
+            this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], evt);
         }
 
         this.downObjects.length = 0;
@@ -1798,7 +1800,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (!this.mouseOriginMove(evt)) {
             if (this.mode == this.BOARD_MODE_DRAG) {
-                this.moveObject(pos[0], pos[1], this.mouse, evt);
+                this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
             } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
                 this.highlightElements(pos[0], pos[1], evt, -1);
             }
