@@ -45,6 +45,7 @@ JXG.OBJECT_TYPE_INTERSECTION = 20;
 JXG.OBJECT_TYPE_TURTLE = 21;
 JXG.OBJECT_TYPE_VECTOR = 22;
 JXG.OBJECT_TYPE_OPROJECT = 23;
+JXG.OBJECT_TYPE_GRID = 24;
 
 
 JXG.OBJECT_CLASS_POINT = 1;
@@ -742,7 +743,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
 
-        if (this.type == JXG.OBJECT_TYPE_AXIS)
+        if (this.type == JXG.OBJECT_TYPE_AXIS || this.type == JXG.OBJECT_TYPE_GRID)
             this.board.fullUpdate();
 
         this.board.update(this);

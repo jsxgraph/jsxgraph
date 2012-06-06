@@ -2065,6 +2065,7 @@ JXG.createGrid = function (board, parents, attributes) {
 
     c.elType = 'grid';
     c.parents = [];
+    c.type = JXG.OBJECT_TYPE_GRID;
 
     c.updateDataArray = function () {
         var gridX = this.visProp.gridx,
