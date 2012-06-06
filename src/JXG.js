@@ -537,7 +537,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     copyAttributes: function (attributes, options) {
         var a, i, len, o, isAvail,
-            primitives = {'point': 1, 'line': 1, 'circle': 1, 'curve': 1, 'text': 1};
+            primitives = {'circle': 1, 'curve': 1, 'line': 1, 'point': 1, 'polygon': 1, 'text': 1};
 
 
         len = arguments.length;
