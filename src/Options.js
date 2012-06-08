@@ -1269,7 +1269,8 @@ JXG.Options = {
         display : 'html',                    //'html' or 'internal'
         cssClass : 'JXGtext',
         highlightCssClass : 'JXGtext',
-        withLabel: false
+        withLabel: false,
+		visible: true
 
         /**#@-*/
     },
