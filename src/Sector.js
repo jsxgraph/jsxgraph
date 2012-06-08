@@ -551,9 +551,9 @@ JXG.createAngle = function(board, parents, attributes) {
         // documented in GeometryElement
         el.getLabelAnchor = function() {
             var //angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-                dx = this.visProp.label.fontSize/(this.board.unitX),
-                dy = this.visProp.label.fontSize/(this.board.unitY),
                 //p2c = this.point2.coords.usrCoords,
+                dx = 12,
+                dy = 12,
                 pmc = this.point1.coords.usrCoords,
                 //bxminusax = p2c[1] - pmc[1],
                 //byminusay = p2c[2] - pmc[2],
@@ -565,6 +565,13 @@ JXG.createAngle = function(board, parents, attributes) {
                 this.label.content.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this.board);
             }
 
+            if (JXG.exists(this.visProp.label.fontSize)) {
+                dx = this.visProp.label.fontSize;
+                dy = this.visProp.label.fontSize;
+            } 
+            dx /= this.board.unitX;
+            dy /= this.board.unitY;
+
             this.rot.update();
             vec = JXG.Math.matVecMult(this.rot.matrix, this.point2.coords.usrCoords);
             vecx = vec[1] - pmc[1];
@@ -572,7 +579,6 @@ JXG.createAngle = function(board, parents, attributes) {
             len = Math.sqrt(vecx*vecx+vecy*vecy);
             vecx = vecx*(len+dx)/len;
             vecy = vecy*(len+dy)/len;
-
             return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx, pmc[2]+vecy], this.board);
             
             /*

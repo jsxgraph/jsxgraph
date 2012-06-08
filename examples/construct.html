@@ -97,7 +97,7 @@ var ar = board.create('arc', [a,b,c], {type:'major', withLabel:'true', name:'&al
 var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;'});
 var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-var pol = board.create('polygon', [a,b,c]);
+var pol = board.create('angle', [c,b,a], {name:'x'});
 </script> 
 </body>
 </html>
