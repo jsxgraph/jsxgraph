@@ -1,19 +1,29 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
+/*
+	slider: {
+		point1: { needsRegularUpdate: true },
+		point2: { needsRegularUpdate: true },
+		baseline: { needsRegularUpdate: true },
+		highline: { needsRegularUpdate: true },
+		ticks: { needsRegularUpdate: true }
+	},
+*/
 
-//	renderer: 'canvas', // the draftcurves look very ugly on windows ...
-
-	angle: {
-//		type: 'sector',
-//		radius: 0.6,
-		fillColor: '#ddd',
+	point: {
+		size: 4,
+		fillColor:   '#c00',
 		strokeColor: '#000'
 	},
 
     glider : {
         fillColor: '#ff0',
-		strokeColor: '#000',
-		fillOpacity: 1
+		strokeColor: '#000'
     },
+
+	angle: {
+		fillColor: '#ddd',
+		strokeColor: '#000'
+	},
 
     intersection: {
         fillColor: '#fff'
@@ -23,19 +33,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         strokeColor: '#f00'
     },
 
-    point: {
-        fillColor:   '#c00',
-		strokeColor: '#000',
- 		size: 4
-    },
-
-	slider: {
-		point1: { needsRegularUpdate: true },
-		point2: { needsRegularUpdate: true },
-		baseline: { needsRegularUpdate: true },
-		highline: { needsRegularUpdate: true },
-		ticks: { needsRegularUpdate: true }
-	},
-
 	precision: { touchMax: Infinity }
+
+	//, renderer: 'canvas' // the draftcurves look very ugly on windows ...
 });
