@@ -33,7 +33,14 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         strokeColor: '#f00'
     },
 
-	precision: { touchMax: Infinity }
+	precision: { touchMax: Infinity },
+
+    segment: {
+        label: {
+            position: 'bot',
+            offsets: [0,-12]
+        }
+    }
 
 	//, renderer: 'canvas' // the draftcurves look very ugly on windows ...
 });
