@@ -355,6 +355,10 @@ JXG.GeonextParser.replaceIdByObj = function(/** string */ term) /** string */ {
 
     expr = /Rad\(([\w_]+),([\w_]+),([\w_]+)\)/g;  // Suche Rad('gi23','gi24','gi25')
     term = term.replace(expr,'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
+
+    expr = /N\((.+)\)/g;  // 
+    term = term.replace(expr,'($1)');
+
     return term;
 };
 

@@ -324,7 +324,14 @@ JXG.extend(JXG, /** @lends JXG */ {
         if (typeof s == 'boolean') {
             return s;
         }
-        return (s.toLowerCase()=='true');
+        //return (s.toLowerCase()=='true');
+        
+        if (JXG.isString(s)) {
+            return (s.toLowerCase()=='true');
+        } else {
+            return false;
+        }
+        
     },
 
     /**

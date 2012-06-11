@@ -258,7 +258,8 @@ JXG.GeonextReader = {
 
         if (fileNode.getElementsByTagName('src')[0] != null) {  // Background image
             tag = 'src';
-        } else if (fileNode.getElementsByTagName('image')[0] != null) {
+        } else if (fileNode.getElementsByTagName('image')[0] != null 
+                       && this.gEBTN(fileNode, 'image') != 'null') {
             tag = 'image';
         } else {
             return null;
@@ -476,8 +477,10 @@ JXG.GeonextReader = {
             board.create('axis', [[0, 0], [1, 0]]);
             board.create('axis', [[0, 0], [0, 1]]);
         }
-
-        board.containerObj.style.backgroundColor = JXG.rgba2rgbo(this.gEBTN(this.gEBTN(boardData, 'background', 0, false), 'color'))[0];
+        
+        tmp = this.gEBTN(this.gEBTN(boardData, 'background', 0, false), 'color');
+        if (tmp.length==8) { tmp = '#'+tmp; }
+        board.containerObj.style.backgroundColor = JXG.rgba2rgbo(tmp)[0];
 
         elChildNodes = tree.getElementsByTagName("elements")[0].childNodes;
         for (s = 0; s < elChildNodes.length; s++) {
@@ -541,7 +544,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.visualProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
-
+                        
                         tmp = gxtReader.gEBTN(Data, 'data', 0, false);
                         gxtEl.center = gxtReader.changeOriginIds(board, gxtReader.gEBTN(tmp, 'midpoint'));
 
@@ -859,8 +862,8 @@ JXG.GeonextReader = {
                             gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                             gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
                             gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
-                            gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
-                            gxtEl.border[i].dash = JXG.str2Bool(xmlNode.getElementsByTagName('dash')[0].firstChild.data);
+                            gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('width')[0].firstChild.data;
+                            //gxtEl.border[i].dash = JXG.str2Bool(xmlNode.getElementsByTagName('dash')[0].firstChild.data);
                             gxtEl.border[i].visible = JXG.str2Bool(xmlNode.getElementsByTagName('visible')[0].firstChild.data);
                             gxtEl.border[i].draft = JXG.str2Bool(xmlNode.getElementsByTagName('draft')[0].firstChild.data);
                             gxtEl.border[i].trace = JXG.str2Bool(xmlNode.getElementsByTagName('trace')[0].firstChild.data);
@@ -988,7 +991,11 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
 
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
-                        gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
+                        try {
+                            gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
+                        } catch (e) {
+                            gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('content')[0]);
+                        }
                         gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
 						gxtEl.fixed = false;
                         try {
@@ -999,11 +1006,23 @@ JXG.GeonextReader = {
                         } catch (e) {
                         }
                         
-                        gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
+                        try {
+                            gxtEl.condition = Data.getElementsByTagName('condition')[0].firstChild.data;
+                        } catch (e) {
+                            gxtEl.condition = "";
+                        }
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
-                        gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
+                        try {
+                            gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
+                        } catch (e) {
+                            gxtEl.fix = false;
+                        }
                         // not used: gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
-                        gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
+                        try {
+                            gxtEl.autodigits = Data.getElementsByTagName('digits')[0].firstChild.data;
+                        } catch (e) {
+                            gxtEl.autodigits = 2;
+                        }
                         gxtEl.parent = gxtReader.changeOriginIds(board, gxtEl.parent);
                         
                         c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
