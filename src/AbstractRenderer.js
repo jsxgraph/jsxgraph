@@ -318,7 +318,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             c2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
             margin = null;
 
-        if (element.type===JXG.OBJECT_TYPE_AXIS) {
+        if (element.visProp.firstarrow || element.visProp.lastarrow) {
             margin = 0;
         }
         JXG.Math.Geometry.calcStraight(element, c1, c2, margin);
