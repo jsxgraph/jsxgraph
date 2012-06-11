@@ -563,7 +563,7 @@ JXG.Options = {
     /* special options for the 2 bisectors of 2 lines */
     bisectorlines : {
         line1 : {               // 
-            strokeColor: 'red'
+            strokeColor: 'black'
         },
         line2 : {               // 
             strokeColor: 'black'
