@@ -315,9 +315,13 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     updateLine: function (element) {
         var c1 = new JXG.Coords(JXG.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
-            c2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board);
+            c2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
+            margin = null;
 
-        JXG.Math.Geometry.calcStraight(element, c1, c2);
+        if (element.type===JXG.OBJECT_TYPE_AXIS) {
+            margin = 0;
+        }
+        JXG.Math.Geometry.calcStraight(element, c1, c2, margin);
         this.updateLinePrim(element.rendNode, 
                             c1.scrCoords[1], c1.scrCoords[2],
                             c2.scrCoords[1], c2.scrCoords[2], element.board);
