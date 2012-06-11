@@ -7,7 +7,8 @@
     border-style:solid;
     border-width:1px;
     border-color:#356AA0;
-    -moz-border-radius:10px;
+    border-radius:10px;
+    /*-moz-border-radius:10px;*/
     -webkit-border-radius:10px;
     /*
         -moz-box-shadow:black 2px 2px 2px -2px, #151A10 4px 4px;

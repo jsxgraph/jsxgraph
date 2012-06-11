@@ -40,7 +40,7 @@
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
 
 <script type='text/javascript'>
-//JXG.Options.text.display = 'internal';
+JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 
@@ -62,7 +62,7 @@ JXG.Options.point.label = {};
 */
 var board = JXG.JSXGraph.initBoard('jxgbox', {
     boundingbox: [-5,5,5,-5],
-    keepaspectratio: true, axis:false, grid:true
+    keepaspectratio: true, axis:true
     });
 /*    
 board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:20}});
@@ -91,7 +91,7 @@ var x = board.create('point', [2,2], {name:'a', label:{position:'top', offsets:[
 */
 
 var a = board.create('point', [1,0]);
-var b = board.create('point', [4,0]);
+var b = board.create('point', [4,1]);
 var c = board.create('point', [2,2]);
 var ar = board.create('arc', [a,b,c], {type:'major', withLabel:'true', name:'&alpha;'});
 var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;'});

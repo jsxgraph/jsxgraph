@@ -208,8 +208,11 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         if (this.visProp.display=='html' && this.board.renderer.type!='vml') {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
         } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
-            tmp = this.rendNode.getBBox();
-            this.size = [tmp.width, tmp.height];
+            try {
+                tmp = this.rendNode.getBBox();          // getBBox broken in FF 13?
+                this.size = [tmp.width, tmp.height];
+            } catch (e) {
+            }
         } else if (this.board.renderer.type=='vml' || (this.visProp.display=='internal' && this.board.renderer.type=='canvas')) { 
             this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45, parseFloat(this.visProp.fontsize)*0.9]
         }
