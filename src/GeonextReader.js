@@ -121,6 +121,9 @@ JXG.GeonextReader = {
         for (n = 0; n < arr.length; n++) {
             if (JXG.exists(arr[n].firstChild) && arr[n].nodeName !== 'data' && arr[n].nodeName !== 'straight') {
                 key = arr[n].nodeName;
+                if (key=='width') {
+                    key = 'strokewidth';
+                }
                 gxtEl[key] = arr[n].firstChild.data;
             }
         }
@@ -500,6 +503,7 @@ JXG.GeonextReader = {
                 gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName.toLowerCase, 'READ:');
                 switch (Data.nodeName.toLowerCase()) {
                     case "point":
+                        gxtEl.strokewidth = 1; // Old file format
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.visualProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
@@ -560,6 +564,7 @@ JXG.GeonextReader = {
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "slider":
+                        gxtEl.strokewidth = 1; // Old file format
                         gxtEl = gxtReader.colorProperties(gxtEl, Data);
                         gxtEl = gxtReader.visualProperties(gxtEl, Data);
                         gxtEl = gxtReader.firstLevelProperties(gxtEl, Data);
@@ -612,6 +617,7 @@ JXG.GeonextReader = {
                         gxtReader.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                         break;
                     case "intersection":
+                        gxtEl.strokewidth = 1; // Old file format
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         xmlNode = Data.getElementsByTagName('first')[1];
 
@@ -862,8 +868,14 @@ JXG.GeonextReader = {
                             gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
                             gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
                             gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
-                            gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('width')[0].firstChild.data;
-                            //gxtEl.border[i].dash = JXG.str2Bool(xmlNode.getElementsByTagName('dash')[0].firstChild.data);
+                            try {
+                                gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('strokewidth')[0].firstChild.data;
+                            } catch(e) {
+                                gxtEl.border[i].strokeWidth = xmlNode.getElementsByTagName('width')[0].firstChild.data;
+                            }
+                            try {
+                                gxtEl.border[i].dash = JXG.str2Bool(xmlNode.getElementsByTagName('dash')[0].firstChild.data);
+                            } catch(e) {}
                             gxtEl.border[i].visible = JXG.str2Bool(xmlNode.getElementsByTagName('visible')[0].firstChild.data);
                             gxtEl.border[i].draft = JXG.str2Bool(xmlNode.getElementsByTagName('draft')[0].firstChild.data);
                             gxtEl.border[i].trace = JXG.str2Bool(xmlNode.getElementsByTagName('trace')[0].firstChild.data);
@@ -1013,9 +1025,9 @@ JXG.GeonextReader = {
                         }
                         gxtEl.content = Data.getElementsByTagName('content')[0].firstChild.data;
                         try {
-                            gxtEl.fix = Data.getElementsByTagName('fix')[0].firstChild.data;
+                            gxtEl.fixed = Data.getElementsByTagName('fix')[0].firstChild.data;
                         } catch (e) {
-                            gxtEl.fix = false;
+                            gxtEl.fixed = false;
                         }
                         // not used: gxtEl.digits = Data.getElementsByTagName('cs')[0].firstChild.data;
                         try {
