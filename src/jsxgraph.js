@@ -42,7 +42,7 @@ JXG.JSXGraph = {
      * showCopyright is not set to false on board creation).
      * @type String
      */
-    licenseText: 'JSXGraph v0.94 Copyright (C) see http://jsxgraph.org',
+    licenseText: 'JSXGraph v0.95rc1 Copyright (C) see http://jsxgraph.org',
 
     /**
      * Associative array that keeps references to all boards.
