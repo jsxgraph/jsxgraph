@@ -352,7 +352,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
     updateRenderer: function () {
         if (this.needsUpdate && this.visProp.visible) {
             var wasReal = this.isReal;
-            this.isReal = (isNaN(this.center.coords.usrCoords[1]+this.center.coords.usrCoords[2]+this.Radius()))?false:true;
+            this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
             if (this.isReal) {
                 if (wasReal!=this.isReal) {
                     this.board.renderer.show(this);
