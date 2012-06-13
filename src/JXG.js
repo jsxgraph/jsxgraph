@@ -551,8 +551,9 @@ JXG.extend(JXG, /** @lends JXG */ {
                     'line': 1, 
                     'point': 1, 
                     'polygon': 1, 
-                    'text': 1
-                    };
+                    'text': 1,
+                    'ticks': 1
+                };
 
 
         len = arguments.length;
