@@ -336,10 +336,11 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} vname Identifier
      * @param {Boolean} [local=false] Don't resolve ids and names of elements
      */
-    getvarJS: function (vname, local) {
+    getvarJS: function (vname, local, withProps) {
         var s;
 
         local = JXG.def(local, false);
+        withProps = JXG.def(withProps, false);
 
         if (JXG.indexOf(this.pstack[this.pscope], vname) > -1) {
             return vname;
@@ -352,7 +353,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         // check for an element with this name
         if (this.isCreator(vname)) {
-            return '(function () { var a = Array.prototype.slice.call(arguments, 0); return $jc$.board.create.apply(this, [\'' + vname + '\'].concat(a)); })';
+            return '(function () { var a = Array.prototype.slice.call(arguments, 0), props = ' + (withProps ? 'a.pop()' : '{}') + '; return $jc$.board.create.apply($jc$.board, [\'' + vname + '\'].concat([a, props])); })';
         }
 
         if (this.isMathMethod(vname)) {
@@ -1230,7 +1231,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                         break;
                     case 'op_noassign':
-                        ret = this.compile(node.children[0], js);
+                        ret = this.compile(node.children[0], js) + ';\n';
                         break;
                     case 'op_if':
                         ret = ' if (' + this.compile(node.children[0], js) + ') ' + this.compile(node.children[1], js);
@@ -1275,7 +1276,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = node.children[0] + ': ' + this.compile(node.children[1], js);
                         break;
                     case 'op_proplst_val':
-                        ret = (js ? '{' : '<<') + this.compile(node.children[0], js) + (js ? '}' : '>>');
+                        ret = /*(js ? '{' : '<<') +*/ this.compile(node.children[0], js) /*+ (js ? '}' : '>>')*/;
                         break;
                     case 'op_array':
                         ret = '[' + this.compile(node.children[0], js) + ']';
@@ -1294,6 +1295,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         if (node.children[2]) {
                             e = (js ? '{' : '<<') + this.compile(node.children[2], js) + (js ? '}' : '>>');
                         }
+                        node.children[0].withProps = !!node.children[2];
                         ret = this.compile(node.children[0], js) + '(' + this.compile(node.children[1], js) + (node.children[2] ? ', ' + e : '') + ')';
 
                         // save us a function call when compiled to javascript
@@ -1417,7 +1419,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             case 'node_var':
                 if (js) {
                     //ret = '$jc$.getvar(\'' + node.value + '\')';
-                    ret = this.getvarJS(node.value);
+                    ret = this.getvarJS(node.value, false, node.withProps);
                 } else {
                     ret = node.value;
                 }
