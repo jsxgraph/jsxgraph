@@ -505,7 +505,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
         setView: 'setBoundingBox',
         setBoundingBox: 'setBoundingBox',
         migratePoint: 'migratePoint',
-        colorblind: 'emulateColorBlindness'
+        colorblind: 'emulateColorblindness'
     };
 };
 
