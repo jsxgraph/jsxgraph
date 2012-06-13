@@ -1139,83 +1139,81 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
       },
 
     addMouseEventHandlers: function () {
-        if (!this.hasMouseHandlers && typeof document != 'undefined') {
+
+	   if (!this.hasMouseHandlers && typeof document != 'undefined') {
+
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+
             // this is now added dynamically in mousedown
             //JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
 
-            JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-            // special treatment for firefox
-            JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+           	JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+           	JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
             this.hasMouseHandlers = true;
 
             // This one produces errors on IE
             //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
-            // this one works on IE, Firefox and Chromium with default configurations
-            // It's possible this doesn't work on some Safari or Opera versions by default, the user then has to allow the deactivation of the context menu.
-            this.containerObj.oncontextmenu = function (e) {if (JXG.exists(e)) e.preventDefault(); return false; };
+
+            // This one works on IE, Firefox and Chromium with default configurations. On some Safari
+            // or Opera versions the user must explicitly allow the deactivation of the context menu.
+            this.containerObj.oncontextmenu = function (e) { if (JXG.exists(e)) e.preventDefault(); return false; };
         }
     },
 
     addTouchEventHandlers: function () {
-        if (!this.hasTouchHandlers && typeof document != 'undefined') {
-             // To run JSXGraph on mobile touch devices we need these event listeners.
+
+		if (!this.hasTouchHandlers && typeof document != 'undefined') {
+
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+
             // this is now added dynamically in touchstart
             //JXG.addEvent(document, 'touchend', this.touchEndListener, this);
 
-               // special event for iOS devices to enable gesture based zooming
-            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+           	JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+           	JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
             this.hasTouchHandlers = true;
         }
     },
 
     removeMouseEventHandlers: function () {
+
         if (this.hasMouseHandlers && typeof document != 'undefined') {
+
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+
             if (this.hasMouseUp) {
                 JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = false;
             }
 
-            JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-            JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+           	JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+		    JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
-            this.hasMouseHandlers = false; // should not be set to false,
-            // because IMHO (and that's how I used it in the GUI) this variable should only reflect,
-            // if the device is capable to handle mouse operations -- and this is still the case even
-            // after removing the registered handlers
-            // --- reverted:
-            // hasMouseHandlers and hasTouchHandlers do NOT indicate whether or not the device is capable of
-            // handling mouse events or touch events. They indicate whether or not the board has registered its
-            // mouse or touch event handlers. This is their sole purpose and hence should NOT be set outside
-            // of the core. Those fields are _true_ by default, hence their significance is very, very close to zero if
-            // not set here.
-            // See http://sourceforge.net/apps/trac/jsxgraph/changeset/2715 for the full changeset that used to fix
-            // bug #75 (Coordinates of Gliders remain on Tablets) in the internal GUI bugtracker. Basically, these changes
-            // cause the mouse handlers to be deactivated on touch devices. And those fields help with the book keeping
-            // which type of event handlers are still attached (because they don't need to be detached multiple times).
+            this.hasMouseHandlers = false;
         }
     },
 
     removeTouchEventHandlers: function () {
+
         if (this.hasTouchHandlers && typeof document != 'undefined') {
+
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+
             if (this.hasTouchEnd) {
                 JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
                 this.hasTouchEnd = false;
             }
 
-            JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-            JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+			JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+			JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
-            this.hasTouchHandlers = false; // see above
+            this.hasTouchHandlers = false;
         }
     },
 
@@ -1316,7 +1314,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         if (this.hasMouseHandlers) {
-            this.removeMouseEventHandlers();
+			this.removeMouseEventHandlers();
         }
 
         //evt.preventDefault();
