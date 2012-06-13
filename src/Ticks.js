@@ -174,6 +174,12 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             dxMin, dyMin;
         // END OF variable declaration
 
+        // This will trap this update routine in an endless loop. Besides, there's not much we can show
+        // on such a tiny board, so we just get out of here immediately.
+        if (this.board.canvasWidth === 0 || this.board.canvasHeight === 0) {
+            return;
+        }
+
         // Grid-like ticks
         if (this.visProp.minorheight < 0)  {
             this.minStyle = 'infinite';
@@ -215,7 +221,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         
         // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
         d = Math.sqrt(dxMaj*dxMaj*this.board.unitX*this.board.unitX + dyMaj*dyMaj*this.board.unitY*this.board.unitY);
-        dxMaj *= distMaj/d*this.board.unitX
+        dxMaj *= distMaj/d*this.board.unitX;
         dyMaj *= distMaj/d*this.board.unitY;
         dxMin *= distMin/d*this.board.unitX;
         dyMin *= distMin/d*this.board.unitY;
