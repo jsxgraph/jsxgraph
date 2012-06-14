@@ -1005,10 +1005,11 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         try {
                             gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('mp')[0]);
+                            gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
                         } catch (e) {
                             gxtEl.mpStr = gxtReader.subtreeToString(Data.getElementsByTagName('data')[0].getElementsByTagName('content')[0]);
+                            gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?content>/g, '');
                         }
-                        gxtEl.mpStr = gxtEl.mpStr.replace(/<\/?mp>/g, '');
 						gxtEl.fixed = false;
                         try {
                             if (Data.getElementsByTagName('data')[0].getElementsByTagName('parent')[0].firstChild) {
