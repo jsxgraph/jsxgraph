@@ -552,7 +552,8 @@ JXG.extend(JXG, /** @lends JXG */ {
                     'point': 1, 
                     'polygon': 1, 
                     'text': 1,
-                    'ticks': 1
+                    'ticks': 1,
+                    'integral': 1
                 };
 
 
