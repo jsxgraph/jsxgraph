@@ -940,7 +940,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     moveAlong: function(path, time, options) {
         options = options || {};
         var interpath = [],
-            delay = 35,
+            delay = this.board.options.animationDelay,
             makeFakeFunction = function (i, j) {
                 return function() {
                     return path[i][j];
@@ -1007,7 +1007,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         options = options || {};
         
-    	var delay = 35,
+    	var delay = this.board.options.animationDelay,
     	    steps = Math.ceil(time/(delay * 1.0)),
     		coords = new Array(steps+1),
     		X = this.coords.usrCoords[1],
@@ -1057,7 +1057,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 options.repeat = 1;
         }
 
-        var delay = 35,
+        var delay = this.board.options.animationDelay,
             steps = Math.ceil(time/(delay*options.repeat)),
             coords = new Array(options.repeat*(steps+1)),
             X = this.coords.usrCoords[1],

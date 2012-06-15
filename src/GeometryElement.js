@@ -421,7 +421,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     animate: function (hash, time, options) {
         options = options || {};
         var r, p,
-            delay = 35,
+            delay = this.board.options.animationDelay,
             steps = Math.ceil(time/(delay * 1.0)),
             i, self = this, round = false;
 

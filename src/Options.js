@@ -34,6 +34,7 @@ JXG.Options = {
     renderer: 'svg',
     takeFirst : false, // if true the first element with hasPoint==true is taken.
     pan: true,
+    animationDelay: 35,
 
     /* zoom options */
     zoom : {
