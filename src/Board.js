@@ -1687,8 +1687,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             window.getSelection().removeAllRanges();
         }
 
-        JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
-        this.hasMouseUp = true;
+        if (!this.hasMouseUp) {
+            JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
+            this.hasMouseUp = true;
+        }
 
         if (this.mouseOriginMoveStart(evt)) {
             r = false;
@@ -1767,8 +1769,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.downObjects.length = 0;
 
-        JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
-        this.hasMouseUp = false;
+        if (this.hasMouseUp) {
+            JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+            this.hasMouseUp = false;
+        }
 
         // release dragged mouse object
         this.mouse = null;
