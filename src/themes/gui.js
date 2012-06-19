@@ -33,6 +33,11 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
         strokeColor: '#f00'
     },
 
+    polygon: {
+        fillColor: '#ffff00',
+        highlightFillColor: '#ffff00'
+    },
+
 	precision: { touchMax: Infinity },
 
     segment: {
