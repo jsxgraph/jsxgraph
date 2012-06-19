@@ -1303,7 +1303,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         for(i=0;i<scripts.length;i++) {
             type = scripts[i].getAttribute('type', false);
             if (!JXG.exists(type)) continue;
-            if (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase === 'jessiescript') {
+            if (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' || type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode') {
                 width = scripts[i].getAttribute('width', false) || '500px';
                 height = scripts[i].getAttribute('height', false) || '500px';
                 bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
@@ -1325,7 +1325,15 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
                 document.body.insertBefore(div, scripts[i]);
 
                 board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
-                board.construct(scripts[i].innerHTML);
+                if (type.toLowerCase().indexOf('script') > -1) {
+                    board.construct(scripts[i].innerHTML);
+                } else {
+                    try {
+                        board.jc.parse(scripts[i].innerHTML);
+                    } catch (e) {
+                        JXG.debug(e);
+                    }
+                }
             }
         }
     }, window);
