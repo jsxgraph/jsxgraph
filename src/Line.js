@@ -750,6 +750,12 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return ticks.id;
     },
 
+    // documented in GeometryElement.js
+    remove: function () {
+        this.removeAllTicks();
+        JXG.GeometryElement.prototype.remove.call(this);
+    },
+
     /**
      * Removes all ticks from a line.
      */
