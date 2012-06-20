@@ -361,7 +361,8 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         }
 
         if (this.isBuiltIn(vname)) {
-            return this.builtIn[vname].src;
+            // if src does not exist, it is a number. in that case, just return the value.
+            return this.builtIn[vname].src || this.builtIn[vname];
         }
 
         if (!local) {
