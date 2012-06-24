@@ -128,9 +128,23 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     hasPoint: function (x, y) {
         var dx = x-this.coords.scrCoords[1],
             dy = this.coords.scrCoords[2]-y,
+            dx2, dy2=0,
             r = this.board.options.precision.hasPoint;
 
-        return dx >= -r && dx <= 2 * r && dy >= -r && dy <= 2 * r;
+        if (this.visProp.anchorx === 'right') {
+            dx2 = dx + this.size[0];
+        } else if (this.visProp.anchorx === 'middle') {
+            dx2 = dx - 0.5*this.size[0];
+            dx += 0.5*this.size[0];
+        } else {
+            dx2 = dx - this.size[0];
+        }
+        
+        return ( dx >= -r && dx <= 2 * r 
+                      && dy >= -r && dy <= 2 * r) 
+                    ||
+                    ( dx2 >= -r && dx2 <= 2 * r 
+                      && dy2 >= -r && dy2 <= 2 * r);
     },
 
     /**
