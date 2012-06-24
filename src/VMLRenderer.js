@@ -200,6 +200,8 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
             if (el.visProp.anchorx === 'right') {
                 el.rendNode.style.right = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
+            } else if (el.visProp.anchorx === 'middle') {
+                el.rendNode.style.left = parseInt(el.coords.scrCoords[1]-0.5*el.size[0]) + 'px';
             } else {
                 el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
             }

@@ -301,6 +301,8 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             el.rendNode.setAttributeNS(null, 'x', el.coords.scrCoords[1] + 'px');
             if (el.visProp.anchorx === 'right') {
                 el.rendNode.setAttributeNS(null, 'text-anchor', 'end');
+            } else if (el.visProp.anchorx === 'middle') {
+                el.rendNode.setAttributeNS(null, 'text-anchor', 'middle');
             }
             el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText*0.5) + 'px');
         }
