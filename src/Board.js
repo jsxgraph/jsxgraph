@@ -1061,7 +1061,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
    initXYstart: function (obj) {
         var xy = [];
-
+        
+        /*
         if (obj.type == JXG.OBJECT_TYPE_LINE) {
             xy.push(obj.point1.coords.usrCoords);
             xy.push(obj.point2.coords.usrCoords);
@@ -1072,6 +1073,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else {
             xy.push(obj.coords.usrCoords);
         }
+        */
+        
+        if (obj.elementClass == JXG.OBJECT_CLASS_LINE) {
+            xy.push(obj.point1.coords.usrCoords);
+            xy.push(obj.point2.coords.usrCoords);
+        } else if (obj.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+            xy.push(obj.center.coords.usrCoords);
+        } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
+            xy.push([obj.position, obj.position, obj.position]);
+        } else {
+            xy.push(obj.coords.usrCoords);
+        }
+
 
         return xy;
     },
