@@ -209,7 +209,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
         } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
             try {
-                tmp = this.rendNode.getBBox();          // getBBox broken in FF 13?
+                tmp = this.rendNode.getBBox();          // getBBox broken in FF 13? No.
                 this.size = [tmp.width, tmp.height];
             } catch (e) {
             }
