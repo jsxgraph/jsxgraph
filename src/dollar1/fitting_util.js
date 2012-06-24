@@ -166,13 +166,15 @@ function findHittedObj(coords,board, sensitive_area)
 	var els = [];
 	var hasPoint = board.options.precision.hasPoint;
 	board.options.precision.hasPoint=sensitive_area*2;
-	for(var el in board.objects)
-		if(board.objects[el].hasPoint&&board.objects[el].visProp['visible']&&(board.objects[el].type ==JXG.OBJECT_TYPE_LINE||board.objects[el].type ==JXG.OBJECT_TYPE_CIRCLE))
-		{
-			if(board.objects[el].hasPoint(coords.scrCoords[1],coords.scrCoords[2]))
-			{
-					els.push(board.objects[el]);
-			}
+	for (var el in board.objects)
+		if (board.objects[el].hasPoint
+            && board.objects[el].visProp['visible']
+            && (board.objects[el].elementClass ==JXG.OBJECT_CLASS_LINE 
+                   || board.objects[el].elementClass ==JXG.OBJECT_CLASS_CIRCLE)
+            ) {
+            if (board.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
+                els.push(board.objects[el]);
+            }
 		}
 	board.options.precision.hasPoint = hasPoint;
 	return els;		
