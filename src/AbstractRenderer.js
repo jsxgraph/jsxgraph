@@ -550,34 +550,38 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateInternalText
      * @see JXG.AbstractRenderer#updateTextStyle
      */
-    updateText: function (element) {
-        var content = element.plaintext;
+    updateText: function (el) {
+        var content = el.plaintext;
 
-        if (element.visProp.visible) {
-            this.updateTextStyle(element);
+        if (el.visProp.visible) {
+            this.updateTextStyle(el);
 
-            if (element.visProp.display === 'html') {
-                if (!isNaN(element.coords.scrCoords[1] + element.coords.scrCoords[2])) {
-                    element.rendNode.style.left = parseInt(element.coords.scrCoords[1]) + 'px';
-                    element.rendNode.style.top = parseInt(element.coords.scrCoords[2] - parseInt(element.visProp.fontsize) + this.vOffsetText) + 'px';
+            if (el.visProp.display === 'html') {
+                if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                    if (el.visProp.anchorx === 'right') {
+                        el.rendNode.style.right = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
+                    } else {   // 'left'
+                        el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+                    }
+                    el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
                 }
 
-                if (element.htmlStr !== content) {
-                    element.rendNode.innerHTML = content;
-                    element.htmlStr = content;
+                if (el.htmlStr !== content) {
+                    el.rendNode.innerHTML = content;
+                    el.htmlStr = content;
                     
-                    if (element.visProp.usemathjax) {
+                    if (el.visProp.usemathjax) {
                         // typesetting directly might not work because mathjax was not loaded completely
                         // see http://www.mathjax.org/docs/1.1/typeset.html
-                        MathJax.Hub.Queue(['Typeset', MathJax.Hub, element.rendNode]);
-                        //MathJax.Hub.Typeset(element.rendNode);
-                    } else if (element.visProp.useasciimathml) {
-                        AMprocessNode(element.rendNode, false);
+                        MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNode]);
+                        //MathJax.Hub.Typeset(el.rendNode);
+                    } else if (el.visProp.useasciimathml) {
+                        AMprocessNode(el.rendNode, false);
                     }
                 }
-                this.transformImage(element, element.transformations);
+                this.transformImage(el, el.transformations);
             } else {
-                this.updateInternalText(element);
+                this.updateInternalText(el);
             }
         }
     },

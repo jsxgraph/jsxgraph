@@ -1267,7 +1267,8 @@ JXG.Options = {
         strokeColor : '#000000',
         useASCIIMathML : false,
         useMathJax : false,
-        display : 'html',                    //'html' or 'internal'
+        display : 'html',                    // 'html' or 'internal'
+        anchorX: 'left',                     //  'left' or 'right': alignment of the text.
         cssClass : 'JXGtext',
         highlightCssClass : 'JXGtext',
         withLabel: false,

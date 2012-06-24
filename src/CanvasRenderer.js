@@ -526,6 +526,9 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             }
 
             this.transformImage(el, el.transformations);
+            if (el.visProp.anchorx === 'right') {
+                context.textAlign = 'right';
+            }
             context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
         }
         context.restore();

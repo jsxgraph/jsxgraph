@@ -198,7 +198,11 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         }
         */
         if (!isNaN(el.coords.scrCoords[1]+el.coords.scrCoords[2])) {
-            el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+            if (el.visProp.anchorx === 'right') {
+                el.rendNode.style.right = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
+            } else {
+                el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+            }
             el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
         }
         
