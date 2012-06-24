@@ -205,7 +205,15 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             } else {
                 el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
             }
-            el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+            el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - el.visProp.fontsize + this.vOffsetText) + 'px';
+            if (el.visProp.anchory === 'top') {
+                el.rendNode.style.top = parseInt(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
+            } else if (el.visProp.anchory === 'middle') {
+                el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - 0.5*el.size[1] + this.vOffsetText) + 'px';
+            } else {
+                el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
+            }
+ 
         }
         
         if (el.htmlStr !== content) {

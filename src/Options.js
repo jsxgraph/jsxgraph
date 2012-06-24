@@ -1269,7 +1269,7 @@ JXG.Options = {
         useMathJax : false,
         display : 'html',                    // 'html' or 'internal'
         anchorX: 'left',                     //  'left', 'middle', or 'right': horizontal alignment of the text.
-        anchorY: 'bottom',                     //  'top', 'middle', or 'bottom': vertical alignment of the text.
+        anchorY: 'middle',                     //  'top', 'middle', or 'bottom': vertical alignment of the text.
         cssClass : 'JXGtext',
         highlightCssClass : 'JXGtext',
         withLabel: false,

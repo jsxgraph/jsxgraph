@@ -103,7 +103,7 @@ JXG.AbstractRenderer = function () {
      * @type number
      * @default 8
      */
-    this.vOffsetText = 3;
+    this.vOffsetText = 0;
 
     /**
      * If this property is set to <tt>true</tt> the visual properties of the elements are updated
@@ -565,7 +565,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     } else {   // 'left'
                         el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
                     }
-                    el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - parseInt(el.visProp.fontsize) + this.vOffsetText) + 'px';
+                    
+                    if (el.visProp.anchory === 'top') {
+                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
+                    } else if (el.visProp.anchory === 'middle') {
+                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - 0.5*el.size[1] + this.vOffsetText) + 'px';
+                    } else {
+                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
+                    }
                 }
 
                 if (el.htmlStr !== content) {

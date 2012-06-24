@@ -531,6 +531,11 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
             } else if (el.visProp.anchorx === 'middle') {
                 context.textAlign = 'center';
             }
+            if (el.visProp.anchory === 'top') {
+                context.textBaseline = 'top';
+            } else if (el.visProp.anchory === 'middle') {
+                context.textBaseline = 'middle';
+            }
             context.fillText(el.plaintext, el.coords.scrCoords[1], el.coords.scrCoords[2]);
         }
         context.restore();
