@@ -140,7 +140,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             dx2 = dx - this.size[0];
         }
         
-        return ( dx >= -r && dx <= 2 * r 
+        return (dx >= -r && dx <= 2 * r 
                       && dy >= -r && dy <= 2 * r) 
                     ||
                     ( dx2 >= -r && dx2 <= 2 * r 
