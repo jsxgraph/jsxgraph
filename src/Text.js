@@ -118,33 +118,40 @@ JXG.Text.prototype = new JXG.GeometryElement();
 JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     /**
      * @private
-     * Test if the distance between th screen coordinates (x,y) 
-     * and the lower left corner of the text is smaller than
-     * this.board.options.precision.hasPoint in maximum norm.
+     * Test if the the screen coordinates (x,y) are in a small stripe 
+     * at the left side or at the right side of the text.
+     * Sensitivity is set in this.board.options.precision.hasPoint.
      * @param {Number} x
      * @param {Number} y 
      * @return {Boolean} 
      */
     hasPoint: function (x, y) {
-        var dx = x-this.coords.scrCoords[1],
-            dy = this.coords.scrCoords[2]-y,
-            dx2, dy2=0,
+        var lft, rt, top, bot,
             r = this.board.options.precision.hasPoint;
-
+            
         if (this.visProp.anchorx === 'right') {
-            dx2 = dx + this.size[0];
+            lft = this.coords.scrCoords[1] - this.size[0];
         } else if (this.visProp.anchorx === 'middle') {
-            dx2 = dx - 0.5*this.size[0];
-            dx += 0.5*this.size[0];
-        } else {
-            dx2 = dx - this.size[0];
+            lft = this.coords.scrCoords[1] - 0.5*this.size[0];
+        } else { 
+            lft = this.coords.scrCoords[1];
         }
+        rt = lft + this.size[0];
+
+        if (this.visProp.anchory === 'top') {
+            bot = this.coords.scrCoords[2] + this.size[1];
+        } else if (this.visProp.anchorx === 'middle') {
+            bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
+        } else { 
+            bot = this.coords.scrCoords[2];
+        }
+        top = bot - this.size[1];
         
-        return (dx >= -r && dx <= 2 * r 
-                      && dy >= -r && dy <= 2 * r) 
+        return (y >= top-r && y <= bot + r)
+                && ((x >= lft - r  && x <= lft + 2*r) 
                     ||
-                    ( dx2 >= -r && dx2 <= 2 * r 
-                      && dy2 >= -r && dy2 <= 2 * r);
+                    (x >= rt - 2*r && x <= rt + r)
+                   );
     },
 
     /**
