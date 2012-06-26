@@ -6,6 +6,7 @@
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/MathJax/MathJax.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <script type="text/javascript" src="../src/JessieCode.js"></script>
+    <script type="text/javascript" src="../src/GeonextReader.js"></script>
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.js"></script>
 </head>
@@ -23,17 +24,18 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    var wrp = (function() {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true}),
-            p = board.create('point', [1, 2], {strokeColor: 'blue'});
+    var board, test,
+        wrp = (function() {
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true});
+            var p = board.create('point', [1, 2], {strokeColor: 'blue'});
 
-        $('#debug').html(JXG.Dump.toJessie(board));
-    })();
+            $('#debug').html(JXG.Dump.toJessie(board));
+        })();
 
     function exec() {
         var code = document.getElementById('debug').value,
-            board = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-5, 5, 5, -5], axis: false, keepaspectratio: true}),
             p;
+            test = JXG.JSXGraph.initBoard('jxgbox2', {boundingbox: [-5, 5, 5, -5], axis: false, keepaspectratio: true});
 
         code = 'use jxgbox2;\n' + code;
 
@@ -41,6 +43,50 @@
         p.parse(code);
     }
 
+    (function () {
+        var file_drop = document.getElementById('jxgbox');
+
+        function supportsFileAPI() {
+            return window.File && window.FileReader && window.FileList && window.Blob;
+        }
+
+        function playFile(f) {
+            var freader = new FileReader();
+
+            freader.onload = function(e) {
+                if (board) {
+                    JXG.JSXGraph.freeBoard(board);
+                }
+                
+                board = JXG.JSXGraph.loadBoardFromString('jxgbox', e.target.result, 'geonext');
+                $('#debug').html(JXG.Dump.toJessie(board));
+            };
+            freader.readAsText(f);
+        }
+
+        function handleDrop(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            var files = e.dataTransfer.files, // file list object
+                output = [], i, f;
+
+            if (files.length > 0) {
+                f = files[0];
+                
+                playFile(f);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        file_drop.addEventListener('dragover', handleDragOver, false);
+        file_drop.addEventListener('drop', handleDrop, false);
+    })();
+    
     /* ]]> */
 </script>
 </body>
