@@ -225,7 +225,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.methodMap = {
         setLabel: 'setLabelText',
-        getName: 'getName'
+        getName: 'getName',
+        addTransform: 'addTransform'
     };
 
     /**
@@ -383,6 +384,13 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     getName: function () {
         return this.name;
     },
+    
+    /**
+     * Add transformations to this element.
+     * @param {JXG.Transform|Array} transform Either one {@link JXG.Transform} or an array of {@link JXG.Transform}s.
+     * @returns {JXG.Curve} Reference to the element.
+     */
+    addTransform: function () {},
     
     /**
      * Decides whether an element can be dragged. This is used in setPositionDirectly methods
