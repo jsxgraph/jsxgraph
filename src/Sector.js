@@ -348,9 +348,9 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  */
 JXG.createAngle = function(board, parents, attributes) {
     var el, p, q, text, attr, attrsub,
-        possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta', '&theta;',
-                                '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
-                                '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
+        possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
+                         '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
+                         '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
         i = 0, j, x, pre, post, found, dot;
 
     // Test if three points are given
@@ -391,6 +391,7 @@ JXG.createAngle = function(board, parents, attributes) {
                     }
                     if(found) {
                         found= false;
+                        j++;
                     }
                     else {
                         found = true;
