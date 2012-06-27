@@ -544,24 +544,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         }
 
-        switch(object.type) {
-            case JXG.OBJECT_TYPE_POLYGON:
+        if (object.elementClass !== JXG.OBJECT_CLASS_POINT && object.elementClass != JXG.OBJECT_CLASS_LINE) {
+            if (object.type === JXG.OBJECT_TYPE_POLYGON) {
                 pre = 'P_{';
-                post = '}';
-                break;
-            case JXG.OBJECT_TYPE_CIRCLE:
-                pre = 'k_{';
-                post = '}';
-                break;
-            case JXG.OBJECT_TYPE_ANGLE:
+            } else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
                 pre = 'W_{';
-                post = '}';
-                break;
-            default:
-                if (object.elementClass != JXG.OBJECT_CLASS_POINT && object.elementClass != JXG.OBJECT_CLASS_LINE) {
-                    pre = 's_{';
-                    post = '}';
-                }
+            } else if (object.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                pre = 'k_{';
+            } else if (object.type === JXG.OBJECT_TYPE_TEXT) {
+                pre = 't_{';
+            } else {
+                pre = 's_{';
+            }
+            post = '}';
         }
 
         for (i=0; i<maxNameLength; i++) {

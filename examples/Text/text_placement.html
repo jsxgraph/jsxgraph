@@ -17,16 +17,17 @@
     JXG.Options.text.fontSize = 12;
     
     brd = JXG.JSXGraph.initBoard('jxgbox', 
-        {boundingbox:[-5,8,5,-8], axis:true, showNavigation:true, showCopyright:true});
+        {boundingbox:[-5,8,5,-8], axis:false, showNavigation:true, showCopyright:true});
 
     brd.suspendUpdate();
+    txt5 = brd.create('text',[0,2, "html text left"], {display:'html', anchorX:'middle'});
+    /*
     txt1 = brd.create('text',[2.5,4, "internal text right"], {display:'internal', anchorX:'right'});
     txt2 = brd.create('text',[2.5,2, "internal text left"], {display:'internal', anchorX:'middle'});
     txt3 = brd.create('text',[2.5,0, "internal text left"], {display:'internal', anchorX:'left', anchorY:'middle'});
     txt4 = brd.create('text',[0,4, "html text right"], {display:'html', anchorX:'right'});
-    txt5 = brd.create('text',[0,2, "html text left"], {display:'html', anchorX:'middle'});
     txt6 = brd.create('text',[0,0, "html text left"], {display:'html', anchorX:'left', anchorY:'middle'});
-    
+    */
     //alert(txt.rendNode.getBBox().width);
     
     brd.unsuspendUpdate();
