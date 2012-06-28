@@ -1322,17 +1322,28 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
                 div.setAttribute('id', 'jessiescript_autgen_jxg_'+i);
                 div.setAttribute('style', 'width:'+width+'; height:'+height+'; float:left');
                 div.setAttribute('class', 'jxgbox');
-                document.body.insertBefore(div, scripts[i]);
-
-                board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_'+i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
-                if (type.toLowerCase().indexOf('script') > -1) {
-                    board.construct(scripts[i].innerHTML);
-                } else {
-                    try {
-                        board.jc.parse(scripts[i].innerHTML);
-                    } catch (e) {
-                        JXG.debug(e);
+                try {
+                    document.body.insertBefore(div, scripts[i]);
+                } catch (e) {
+                    // there's probably jquery involved...
+                    if (typeof jQuery !== 'undefined') {
+                        jQuery(div).insertBefore(scripts[i]);
                     }
+                }
+                
+                if (document.getElementById('jessiescript_autgen_jxg_' + i)) {
+                    board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_' + i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
+                    if (type.toLowerCase().indexOf('script') > -1) {
+                        board.construct(scripts[i].innerHTML);
+                    } else {
+                        try {
+                            board.jc.parse(scripts[i].innerHTML);
+                        } catch (e) {
+                            JXG.debug(e);
+                        }
+                    }
+                } else {
+                    JXG.debug('JSXGraph: Apparently the div injection failed. Can\'t create a board, sorry.');
                 }
             }
         }

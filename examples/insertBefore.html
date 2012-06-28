@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+    window.onload =  function () {
+        var scripts = document.getElementsByTagName('script'), type,
+            i, j, div, board, width, height, bbox, axis, grid;
+
+        for(i=0;i<scripts.length;i++) {
+            type = scripts[i].getAttribute('type', false);
+            div = document.createElement('div');
+            div.setAttribute('id', 'test');
+            board = document.createTextNode(type);
+            div.appendChild(board);
+            try {
+                document.body.insertBefore(div, scripts[i]);
+            } catch (e) {
+                if (typeof jQuery !== 'undefined') {
+                    jQuery(div).insertBefore(scripts[i]);
+                }
+            }
+        }
+    };
+</script>
+
+</body>
+</html>
