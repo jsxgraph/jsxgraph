@@ -347,11 +347,7 @@ JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector)
  * </script><pre>
  */
 JXG.createAngle = function(board, parents, attributes) {
-    var el, p, q, text, attr, attrsub,
-        possibleNames = ['&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
-                         '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
-                         '&sigmaf;', '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'],
-        i = 0, j, x, pre, post, found, dot;
+    var el, p, q, text, attr, attrsub, i, dot;
 
     // Test if three points are given
     if ( (JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
@@ -359,46 +355,7 @@ JXG.createAngle = function(board, parents, attributes) {
         //  If empty, create a new name
         text = attr.name;
         if (typeof text =='undefined' || text == '') {
-            while(i < possibleNames.length) {
-                j=i;
-                x = possibleNames[i];
-                for(el in board.objects) {
-                    if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                        if(board.objects[el].name == x) {
-                            i++;
-                            break;
-                        }
-                    }
-                }
-                if(i==j) {
-                    text = x;
-                    i = possibleNames.length+1;
-                }
-            }
-            if (i == possibleNames.length) {
-                pre = '&alpha;_{';
-                post = '}';
-                found = false;
-                j=0;
-                while(!found) {
-                    for(el in board.objects) {
-                        if(board.objects[el].type == JXG.OBJECT_TYPE_ANGLE) {
-                            if(board.objects[el].name == (pre+j+post)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if(found) {
-                        found= false;
-                        j++;
-                    }
-                    else {
-                        found = true;
-                        text = (pre+j+post);
-                    }
-                }
-            }
+            text = board.generateName({type:JXG.OBJECT_TYPE_ANGLE});
             attr.name = text;
         }
         
@@ -551,14 +508,9 @@ JXG.createAngle = function(board, parents, attributes) {
 
         // documented in GeometryElement
         el.getLabelAnchor = function() {
-            var //angle = JXG.Math.Geometry.rad(this.point2, this.point1, this.point3),
-                //p2c = this.point2.coords.usrCoords,
-                dx = 12,
+            var dx = 12,
                 dy = 12,
                 pmc = this.point1.coords.usrCoords,
-                //bxminusax = p2c[1] - pmc[1],
-                //byminusay = p2c[2] - pmc[2],
-                //coords, 
                 vecx, vecy, len,
                 vec;
 
@@ -581,22 +533,6 @@ JXG.createAngle = function(board, parents, attributes) {
             vecx = vecx*(len+dx)/len;
             vecy = vecy*(len+dy)/len;
             return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx, pmc[2]+vecy], this.board);
-            
-            /*
-            coords = new JXG.Coords(JXG.COORDS_BY_USER,
-                            [pmc[1]+ Math.cos(angle*0.5*1.125)*bxminusax - Math.sin(angle*0.5*1.125)*byminusay,
-                             pmc[2]+ Math.sin(angle*0.5*1.125)*bxminusax + Math.cos(angle*0.5*1.125)*byminusay],
-                            this.board);
-
-            vecx = coords.usrCoords[1] - pmc[1];
-            vecy = coords.usrCoords[2] - pmc[2];
-        
-            len = Math.sqrt(vecx*vecx+vecy*vecy);
-            vecx = vecx*(len+dx)/len;
-            vecy = vecy*(len+dy)/len;
-
-            return new JXG.Coords(JXG.COORDS_BY_USER, [pmc[1]+vecx, pmc[2]+vecy], this.board);
-            */
         };
 
         el.Value = function () {

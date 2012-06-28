@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -527,7 +527,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         var possibleNames,
-            maxNameLength = 3,
+            maxNameLength = 2,
             pre = '',
             post = '',
             indices = [],
@@ -538,17 +538,26 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // points have capital letters
             possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+        } else if (object.type == JXG.OBJECT_TYPE_ANGLE) {
+            //possibleNames = ['', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
+            //    '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
+            //    '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;']; //'&sigmaf;', 
+            possibleNames = ['', 'α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ','ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 
+                'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω']; //'&sigmaf;', 
         } else {
             // all other elements get lowercase labels
             possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
                 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         }
 
-        if (object.elementClass !== JXG.OBJECT_CLASS_POINT && object.elementClass != JXG.OBJECT_CLASS_LINE) {
+        if (    object.elementClass !== JXG.OBJECT_CLASS_POINT 
+            && object.elementClass != JXG.OBJECT_CLASS_LINE
+            && object.type != JXG.OBJECT_TYPE_ANGLE) {
+            
             if (object.type === JXG.OBJECT_TYPE_POLYGON) {
                 pre = 'P_{';
-            } else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
-                pre = 'W_{';
+            //} else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
+            //    pre = 'W_{';
             } else if (object.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                 pre = 'k_{';
             } else if (object.type === JXG.OBJECT_TYPE_TEXT) {

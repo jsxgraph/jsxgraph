@@ -9,7 +9,9 @@
 <div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
 <script type="text/javascript">
 /* <![CDATA[ */   
-var max = 29;
+var max = 50;
+
+//JXG.Options.text.display = 'internal';
 
 var board = JXG.JSXGraph.initBoard('jxgbox', {
     axis: true,
@@ -19,11 +21,11 @@ board.suspendUpdate();
 var i, j, p=[];
 for (i=0; i<=30; i += 4) {
     for (j=0; j<=30; j += 4) {
-        p.push(board.create('point', [i, j], {withLabel:true, text:'.', name:'.'}));
+        p.push(board.create('point', [i, j], {}));
     }
 }
 for (i=1; i <= max; i++) {
-    board.create('angle', [p[i - 1], p[i], p[i + 1]], {});
+    board.create('angle', [p[i - 1], p[i], p[i + 1]], {name:''});
 }
 board.unsuspendUpdate();
 /* ]]> */
