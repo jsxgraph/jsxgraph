@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Angle</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:600px;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */   
+var max = 29;
+
+var board = JXG.JSXGraph.initBoard('jxgbox', {
+    axis: true,
+    boundingbox: [-1, -1, 31, 31]
+});
+board.suspendUpdate();
+var i, j, p=[];
+for (i=0; i<=30; i += 4) {
+    for (j=0; j<=30; j += 4) {
+        p.push(board.create('point', [i, j], {withLabel:true, text:'.', name:'.'}));
+    }
+}
+for (i=1; i <= max; i++) {
+    board.create('angle', [p[i - 1], p[i], p[i + 1]], {});
+}
+board.unsuspendUpdate();
+/* ]]> */
+</script>
+</body>
+</html>
