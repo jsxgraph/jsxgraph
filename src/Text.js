@@ -219,9 +219,6 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     updateSize: function () {
         var tmp;
 
-        // Here comes a very crude estimation of the dimensions of
-        // the textbox. It is only necessary for the IE.
-
         if (typeof document === 'undefined') {
             return this;
         }
@@ -235,6 +232,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             } catch (e) {
             }
         } else if (this.board.renderer.type=='vml' || (this.visProp.display=='internal' && this.board.renderer.type=='canvas')) { 
+            // Here comes a very crude estimation of the dimensions of the textbox. 
             this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45, parseFloat(this.visProp.fontsize)*0.9]
         }
         return this;
@@ -306,7 +304,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 this.updateCoords();
             }
             this.updateText();
-            //this.updateSize();
+            this.updateSize();
             this.updateTransform();
         }
         return this;
@@ -320,7 +318,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     updateRenderer: function () {
         if (this.needsUpdate) {
             this.board.renderer.updateText(this);
-            this.updateSize();
+            //this.updateSize();
             this.needsUpdate = false;
         }
         return this;
