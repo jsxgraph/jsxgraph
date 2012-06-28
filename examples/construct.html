@@ -36,6 +36,7 @@
 </head>
 <body id="body">
 <h1 id="x1">Playground</h1>
+<input type="button" onclick="newsize()" value="change">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <!--<div style='width:600px; height:600px; overflow:scroll;'></div>-->
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
@@ -99,6 +100,11 @@ var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true',
 var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
 var pol = board.create('angle', [c,b,a], {name:'x'});
+
+newsize = function() {
+    board.resizeContainer(300, 300);
+    board.setBoundingBox([-5,5,5,-5], true);
+};
 </script> 
 </body>
 </html>
