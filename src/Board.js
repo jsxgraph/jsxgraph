@@ -1905,11 +1905,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
 
                 this.highlightInfobox(x,y,el);
-            } else
+            } else {
                 this.highlightCustomInfobox(el.infoboxText, el);
+            }
 
             this.renderer.show(this.infobox);
-            this.renderer.updateText(this.infobox);
+            //this.renderer.updateText(this.infobox);
         }
         return this;
     },
@@ -2535,6 +2536,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         });
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;
+        this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
 
         this.infobox.dump = false;
 

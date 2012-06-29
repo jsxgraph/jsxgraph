@@ -544,9 +544,9 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 } else if (scr[2] < -maxSize) {
                     scr[2] = -maxSize;
                 }
-
                 // Attention: first coordinate may be inaccurate if far way
-                pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster on now (webkit and firefox)
                 nextSymb = symbl;
             }
         }

@@ -46,6 +46,7 @@ JXG.Text = function (board, content, coords, attributes) {
     this.plaintext = '';
 
     this.isDraggable = false;
+    this.needsSizeUpdate = false;
 
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
@@ -76,12 +77,14 @@ JXG.Text = function (board, content, coords, attributes) {
 
     if (typeof this.content === 'function') {
         this.updateText = function() { this.plaintext = this.content(); };
+        this.needsSizeUpdate = true;
     } else {
         if (JXG.isNumber(this.content)) {
             this.content = (this.content).toFixed(this.visProp.digits);
         } else {
             if (this.visProp.useasciimathml) {
                 this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
+                this.needsSizeUpdate = true;
             } else {
                 this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
             }
@@ -94,6 +97,7 @@ JXG.Text = function (board, content, coords, attributes) {
     
     this.id = this.board.setId(this, 'T');
     this.board.renderer.drawText(this);
+    this.updateSize();
 
     if(!this.visProp.visible) {
         this.board.renderer.hide(this);
@@ -196,11 +200,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                     this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
                 }
             }
-            this.updateText = new Function('this.plaintext = ' + this.content + ';');
+            this.updateText = new Function('this.plaintext = ' + this.content + '; ');
         }
 
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
+        //this.updateSize();
+//console.log("setText", this.id);        
         this.prepareUpdate().update().updateRenderer();
 
         return this;
@@ -304,7 +310,9 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
                 this.updateCoords();
             }
             this.updateText();
-            this.updateSize();
+            if (this.needsSizeUpdate) {
+                this.updateSize();
+            }
             this.updateTransform();
         }
         return this;
@@ -366,6 +374,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         i = contentStr.indexOf('<value>');
         var j = contentStr.indexOf('</value>');
         if (i>=0) {
+            this.needsSizeUpdate = true;
             while (i>=0) {
                 plaintext += ' + "'+ JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0,i))) + '"';
                 term = contentStr.slice(i+7,j);
