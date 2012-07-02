@@ -152,7 +152,9 @@ JXG.extend(JXG, /** @lends JXG */ {
             fillopacity: '',
             shadow: false,
             firstarrow: false,
-            lastarrow: false
+            lastarrow: false,
+            cssclass: '',
+            fontsize: -1
         };
     },
 

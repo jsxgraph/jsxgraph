@@ -606,17 +606,25 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateInternalText
      */
     updateTextStyle: function (element) {
-        var fs = JXG.evaluate(element.visProp.fontsize);
+        var fs;
 
         if (element.visProp.display === 'html' || this.type != 'canvas') {
         //if (element.visProp.display === 'html') {
             //element.rendNode.setAttribute("class", element.visProp.cssclass);
-            element.rendNode.className = element.visProp.cssclass;
-            try {
-                element.rendNode.style.fontSize = fs + 'px';
-            } catch (e) {
-                // IE needs special treatment.
-                element.rendNode.style.fontSize = fs;
+            if (element.visPropOld.cssclass != element.visProp.cssclass) {
+                element.rendNode.className = element.visProp.cssclass;
+                element.visPropOld.cssclass = element.visProp.cssclass;
+            }
+            
+            fs = JXG.evaluate(element.visProp.fontsize);
+            if (element.visPropOld.fontsize != fs) {
+                try {
+                    element.rendNode.style.fontSize = fs + 'px';
+                } catch (e) {
+                    // IE needs special treatment.
+                    element.rendNode.style.fontSize = fs;
+                }
+                element.visPropOld.fontsize = fs;
             }
         }
         this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
@@ -988,7 +996,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             }
             if (element.type === JXG.OBJECT_TYPE_TEXT) {
                 if (element.visProp.display === 'html') {    
-                    element.rendNode.className = element.visProp.highlightcssclass;
+                    if (element.visPropOld.cssclass!==element.visProp.highlightcssclass) {
+                        element.rendNode.className = element.visProp.highlightcssclass;
+                        element.visPropOld.cssclass = element.visProp.highlightcssclass;
+                    }
                 } 
             }
             if (ev.highlightstrokewidth) {
@@ -1026,7 +1037,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             }
             if (element.type === JXG.OBJECT_TYPE_TEXT) {
                 if (element.visProp.display === 'html') {    
-                    element.rendNode.className = element.visProp.cssclass;
+                    if (element.visPropOld.cssclass!==element.visProp.cssclass) {
+                        element.rendNode.className = element.visProp.cssclass;
+                        element.visPropOld.cssclass = element.visProp.cssclass;
+                    }
                 }
             }
             this.setObjectStrokeWidth(element, ev.strokewidth);
