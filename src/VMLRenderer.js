@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -515,6 +515,7 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
             mround = Math.round,
             symbm = ' m ',
             symbl = ' l ',
+            symbc = ' c ',
             nextSymb = symbm,
             isNotPlot = (el.visProp.curvetype !== 'plot'),
             len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
@@ -522,31 +523,54 @@ JXG.extend(JXG.VMLRenderer.prototype, /** @lends JXG.VMLRenderer */ {
         if (el.numberPoints <= 0) {
             return '';
         }
-        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 1.0);
-        }
         len = Math.min(len, el.points.length);
 
-        for (i = 0; i < len; i++) {
-            scr = el.points[i].scrCoords;
-            if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
-                nextSymb = symbm;
-            } else {
-                // IE has problems with values  being too far away.
-                if (scr[1] > 20000.0) {
-                    scr[1] = 20000.0;
-                } else if (scr[1] < -20000.0) {
-                    scr[1] = -20000.0;
-                }
+        if (el.bezierDegree == 1) {
+            if (isNotPlot && el.board.options.curve.RDPsmoothing) {
+                el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 1.0);
+            }
 
-                if (scr[2] > 20000.0) {
-                    scr[2] = 20000.0;
-                } else if (scr[2] < -20000.0) {
-                    scr[2] = -20000.0;
-                }
+            for (i = 0; i < len; i++) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    // IE has problems with values  being too far away.
+                    if (scr[1] > 20000.0) {
+                        scr[1] = 20000.0;
+                    } else if (scr[1] < -20000.0) {
+                        scr[1] = -20000.0;
+                    }
 
-                pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
-                nextSymb = symbl;
+                    if (scr[2] > 20000.0) {
+                        scr[2] = 20000.0;
+                    } else if (scr[2] < -20000.0) {
+                        scr[2] = -20000.0;
+                    }
+
+                    pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                    nextSymb = symbl;
+                }
+            }
+        } else if (el.bezierDegree==3) {
+            i = 0;
+            while (i < len) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    pStr.push([nextSymb, mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                    if (nextSymb==symbc){
+                        i++;
+                        scr = el.points[i].scrCoords;
+                        pStr.push([' ', mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                        i++;
+                        scr = el.points[i].scrCoords;
+                        pStr.push([' ', mround(r * scr[1]), ', ', mround(r * scr[2])].join(''));
+                    }
+                    nextSymb = symbc;
+                }
+                i++;
             }
         }
         pStr.push(' e');

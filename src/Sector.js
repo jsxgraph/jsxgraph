@@ -1,4 +1,4 @@
-/*
+﻿/*
     Copyright 2008-2011
         Matthias Ehmann,
         Michael Gerhaeuser,
@@ -115,12 +115,14 @@ JXG.createSector = function(board, parents, attributes) {
             beta, co, si, matrix,
             phi = JXG.Math.Geometry.rad(A,B,C),
             i,
-            n = Math.ceil(phi/Math.PI*90)+1,
-            delta = phi/n,
+            //n = Math.ceil(phi/Math.PI*90)+1,
+            //delta = phi/n,
             x = B.X(),
             y = B.Y(),
             v, 
-            det, p0c, p1c, p2c;
+            det, p0c, p1c, p2c,
+            p1, p2, p3, p4,
+            k, ax, ay, bx, by, d, r;
 
         if (this.useDirection) {  // This is true for circumCircleArcs. In that case there is
                                   // a fourth parent element: [midpoint, point1, point3, point2]
@@ -137,6 +139,55 @@ JXG.createSector = function(board, parents, attributes) {
                 this.point3 = parents[1];
             }
         }
+        
+        p1 = [A.X(), A.Y()];
+        r = B.Dist(A);
+        this.dataX = [x, x+0.333*(p1[0]-x), x+0.666*(p1[0]-x), p1[0]];
+        this.dataY = [y, y+0.333*(p1[1]-y), y+0.666*(p1[1]-y), p1[1]];
+        while (phi>JXG.Math.eps) {
+            if (phi>=Math.PI*0.5) {
+                beta = Math.PI*0.5;
+                phi -= Math.PI*0.5;
+            } else {
+                beta = phi;
+                phi = 0.0;
+            }
+
+            co = Math.cos(beta);
+            si = Math.sin(beta);
+            matrix = [[1,            0,   0],
+                    [x*(1-co)+y*si,co,-si],
+                    [y*(1-co)-x*si,si, co]];
+            v = JXG.Math.matVecMult(matrix,[1, p1[0], p1[1]]);
+            p4 = [v[1]/v[0], v[2]/v[0]];
+
+            ax = p1[0]-x;
+            ay = p1[1]-y;
+            bx = p4[0]-x;
+            by = p4[1]-y;
+
+            d = Math.sqrt((ax+bx)*(ax+bx) + (ay+by)*(ay+by));
+            if (beta>Math.PI) { d *= -1; }
+ 
+            if (Math.abs(by-ay)>JXG.Math.eps) {
+                k = (ax+bx)*(r/d-0.5)*8.0/3.0/(by-ay);
+            } else {
+                k = (ay+by)*(r/d-0.5)*8.0/3.0/(ax-bx);
+            }
+
+            p2 = [p1[0]-k*ay, p1[1]+k*ax ];
+            p3 = [p4[0]+k*by, p4[1]-k*bx ];
+        
+            this.dataX = this.dataX.concat([p2[0], p3[0], p4[0]]);
+            this.dataY = this.dataY.concat([p2[1], p3[1], p4[1]]);
+            p1 = p4.slice(0);
+        }
+        this.dataX = this.dataX.concat([ p4[0]+0.333*(x-p4[0]), p4[0]+0.666*(x-p4[0]), x]);
+        this.dataY = this.dataY.concat([ p4[1]+0.333*(y-p4[1]), p4[1]+0.666*(y-p4[1]), y]);
+        
+        this.bezierDegree = 3;
+        
+        /*
         this.dataX = [B.X(),A.X()];
         this.dataY = [B.Y(),A.Y()];
         for (beta=delta,i=1; i<=n; i++, beta+=delta) {
@@ -151,6 +202,7 @@ JXG.createSector = function(board, parents, attributes) {
         }
         this.dataX.push(B.X());
         this.dataY.push(B.Y());
+        */
     };
 
     /**
