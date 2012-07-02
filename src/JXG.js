@@ -300,9 +300,9 @@ JXG.extend(JXG, /** @lends JXG */ {
 
     /**
      * Handle default parameters.
-     * @param {%} v Given value
-     * @param {%} d Default value
-     * @returns {%} <tt>d</tt>, if <tt>v</tt> is undefined or null.
+     * @param {} v Given value
+     * @param {} d Default value
+     * @returns {} <tt>d</tt>, if <tt>v</tt> is undefined or null.
      */
     def: function (v, d) {
         if (JXG.exists(v)) {
