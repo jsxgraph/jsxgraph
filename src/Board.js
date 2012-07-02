@@ -1781,7 +1781,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        this.mouse.obj.snapToGrid();
+        if (this.mouse && this.mouse.obj) {
+            this.mouse.obj.snapToGrid();
+        }
 
         this.originMoveEnd();
         this.dehighlightAll();

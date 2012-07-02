@@ -133,23 +133,20 @@ JXG.createArc = function(board, parents, attributes) {
             B = this.center,
             C = this.anglepoint,
             beta, co, si, matrix, phi,
-            i, // n, delta,
+            i, 
             x = B.X(),
             y = B.Y(),
             v, det, p0c, p1c, p2c,
             p1, p2, p3, p4,
-            k, ax, ay, bx, by, d, r, sgn = 1.0;
+            k, ax, ay, bx, by, d, r, sgn = 1.0,
+            PI2 = Math.PI*0.5;
             
         phi = JXG.Math.Geometry.rad(A,B,C);
-        //n = Math.ceil(phi/Math.PI*90)+1;
-        //delta = phi/n;
         
         if ((this.visProp.type=='minor' && phi>Math.PI) 
             || (this.visProp.type=='major' && phi<Math.PI)) { 
             phi = 2*Math.PI - phi; 
             sgn = -1.0;
-            //n = Math.ceil(phi/Math.PI*90)+1;
-            //delta = -phi/n;
         }
 
         if (this.useDirection) { // This is true for circumCircleArcs. In that case there is
@@ -172,9 +169,9 @@ JXG.createArc = function(board, parents, attributes) {
         this.dataX = [p1[0]];
         this.dataY = [p1[1]];
         while (phi>JXG.Math.eps) {
-            if (phi>=Math.PI*0.5) {
-                beta = Math.PI*0.5;
-                phi -= Math.PI*0.5;
+            if (phi>=PI2) {
+                beta = PI2;
+                phi -= PI2;
             } else {
                 beta = phi;
                 phi = 0.0;
@@ -194,12 +191,12 @@ JXG.createArc = function(board, parents, attributes) {
             by = p4[1]-y;
 
             d = Math.sqrt((ax+bx)*(ax+bx) + (ay+by)*(ay+by));
-            if (beta>Math.PI) { d *= -1; }
+            //if (beta>Math.PI) { d *= -1; }
  
             if (Math.abs(by-ay)>JXG.Math.eps) {
-                k = (ax+bx)*(r/d-0.5)*8.0/3.0/(by-ay);
+                k = (ax+bx)*(r/d-0.5)/(by-ay)*8.0/3.0;
             } else {
-                k = (ay+by)*(r/d-0.5)*8.0/3.0/(ax-bx);
+                k = (ay+by)*(r/d-0.5)/(ax-bx)*8.0/3.0;
             }
 
             p2 = [p1[0]-k*ay, p1[1]+k*ax ];
@@ -211,23 +208,6 @@ JXG.createArc = function(board, parents, attributes) {
         }
         this.bezierDegree = 3;
 
-        
-        /*
-        this.dataX = [A.X()];
-        this.dataY = [A.Y()];
-
-        for (beta=delta,i=1; i<=n; i++, beta+=delta) {
-            co = Math.cos(beta);
-            si = Math.sin(beta);
-            matrix = [[1,            0,   0],
-                      [x*(1-co)+y*si,co,-si],
-                      [y*(1-co)-x*si,si, co]];
-            v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
-            this.dataX.push(v[1]/v[0]);
-            this.dataY.push(v[2]/v[0]);
-        }
-        */
-        
         this.updateStdform();
         this.updateQuadraticform();
     };

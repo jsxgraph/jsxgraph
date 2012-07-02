@@ -1006,7 +1006,23 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
                         // parse the properties only if given
                         if (typeof node.children[2] !== 'undefined') {
-                            attr = this.execute(node.children[2]);
+                            if (node.children[3]) {
+                                this.pstack.push([]);
+                                this.dpstack.push([]);
+                                this.pscope++;
+                                
+                                this.execute(node.children[2]);
+                                attr = {};
+                                for (i = 0; i < this.pstack[this.pscope].length; i++) {
+                                    attr = JXG.deepCopy(attr, this.execute(this.pstack[this.pscope][i]), true);
+                                }
+                                
+                                this.pscope--;
+                                this.pstack.pop();
+                                this.dpstack.pop();
+                            } else {
+                                attr = this.execute(node.children[2]);
+                            }
                         }
 
                         // look up the variables name in the variable table
@@ -1712,7 +1728,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                 start = pos;
 
                 if( PCB.src.length <= start )
-                    return 66;
+                    return 67;
 
                 do {
                     chr = PCB.src.charCodeAt( pos );
@@ -2460,7 +2476,9 @@ var pop_tab = new Array(
 	new Array( 56/* Param_Def_List */, 3 ),
 	new Array( 56/* Param_Def_List */, 1 ),
 	new Array( 56/* Param_Def_List */, 0 ),
-	new Array( 58/* Assign */, 3 ),
+	new Array( 57/* Attr_List */, 3 ),
+	new Array( 57/* Attr_List */, 1 ),
+	new Array( 60/* Assign */, 3 ),
 	new Array( 50/* Stmt */, 3 ),
 	new Array( 50/* Stmt */, 5 ),
 	new Array( 50/* Stmt */, 3 ),
@@ -2473,9 +2491,9 @@ var pop_tab = new Array(
 	new Array( 50/* Stmt */, 2 ),
 	new Array( 50/* Stmt */, 3 ),
 	new Array( 50/* Stmt */, 1 ),
-	new Array( 57/* Lhs */, 3 ),
-	new Array( 57/* Lhs */, 4 ),
-	new Array( 57/* Lhs */, 1 ),
+	new Array( 59/* Lhs */, 3 ),
+	new Array( 59/* Lhs */, 4 ),
+	new Array( 59/* Lhs */, 1 ),
 	new Array( 53/* Expression */, 3 ),
 	new Array( 53/* Expression */, 3 ),
 	new Array( 53/* Expression */, 3 ),
@@ -2484,37 +2502,37 @@ var pop_tab = new Array(
 	new Array( 53/* Expression */, 3 ),
 	new Array( 53/* Expression */, 3 ),
 	new Array( 53/* Expression */, 1 ),
-	new Array( 61/* LogExp */, 3 ),
-	new Array( 61/* LogExp */, 3 ),
-	new Array( 61/* LogExp */, 2 ),
-	new Array( 61/* LogExp */, 1 ),
-	new Array( 60/* AddSubExp */, 3 ),
-	new Array( 60/* AddSubExp */, 3 ),
-	new Array( 60/* AddSubExp */, 1 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 3 ),
-	new Array( 62/* MulDivExp */, 1 ),
-	new Array( 64/* ExpExp */, 3 ),
-	new Array( 64/* ExpExp */, 1 ),
-	new Array( 63/* NegExp */, 2 ),
-	new Array( 63/* NegExp */, 2 ),
-	new Array( 63/* NegExp */, 1 ),
-	new Array( 59/* ExtValue */, 4 ),
-	new Array( 59/* ExtValue */, 4 ),
-	new Array( 59/* ExtValue */, 5 ),
-	new Array( 59/* ExtValue */, 3 ),
-	new Array( 59/* ExtValue */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 7 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 3 ),
-	new Array( 65/* Value */, 1 ),
-	new Array( 65/* Value */, 1 )
+	new Array( 62/* LogExp */, 3 ),
+	new Array( 62/* LogExp */, 3 ),
+	new Array( 62/* LogExp */, 2 ),
+	new Array( 62/* LogExp */, 1 ),
+	new Array( 61/* AddSubExp */, 3 ),
+	new Array( 61/* AddSubExp */, 3 ),
+	new Array( 61/* AddSubExp */, 1 ),
+	new Array( 63/* MulDivExp */, 3 ),
+	new Array( 63/* MulDivExp */, 3 ),
+	new Array( 63/* MulDivExp */, 3 ),
+	new Array( 63/* MulDivExp */, 1 ),
+	new Array( 65/* ExpExp */, 3 ),
+	new Array( 65/* ExpExp */, 1 ),
+	new Array( 64/* NegExp */, 2 ),
+	new Array( 64/* NegExp */, 2 ),
+	new Array( 64/* NegExp */, 1 ),
+	new Array( 58/* ExtValue */, 4 ),
+	new Array( 58/* ExtValue */, 4 ),
+	new Array( 58/* ExtValue */, 5 ),
+	new Array( 58/* ExtValue */, 3 ),
+	new Array( 58/* ExtValue */, 1 ),
+	new Array( 66/* Value */, 1 ),
+	new Array( 66/* Value */, 1 ),
+	new Array( 66/* Value */, 1 ),
+	new Array( 66/* Value */, 3 ),
+	new Array( 66/* Value */, 1 ),
+	new Array( 66/* Value */, 7 ),
+	new Array( 66/* Value */, 3 ),
+	new Array( 66/* Value */, 3 ),
+	new Array( 66/* Value */, 1 ),
+	new Array( 66/* Value */, 1 )
 );
 
 /* Action-Table */
@@ -2536,7 +2554,7 @@ var act_tab = new Array(
 	/* State 14 */ new Array( 21/* "=" */,54 ),
 	/* State 15 */ new Array( 30/* "&&" */,55 , 29/* "||" */,56 ),
 	/* State 16 */ new Array( 44/* "." */,57 , 38/* "(" */,58 , 16/* "[" */,59 , 37/* "^" */,60 ),
-	/* State 17 */ new Array( 21/* "=" */,-30 ),
+	/* State 17 */ new Array( 21/* "=" */,-32 ),
 	/* State 18 */ new Array( 31/* "!" */,18 , 33/* "-" */,32 , 32/* "+" */,33 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
 	/* State 19 */ new Array( 32/* "+" */,62 , 33/* "-" */,63 ),
 	/* State 20 */ new Array(  ),
@@ -2615,7 +2633,7 @@ var act_tab = new Array(
 	/* State 93 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
 	/* State 94 */ new Array( 32/* "+" */,62 , 33/* "-" */,63 ),
 	/* State 95 */ new Array( 32/* "+" */,62 , 33/* "-" */,63 ),
-	/* State 96 */ new Array( 21/* "=" */,-28 ),
+	/* State 96 */ new Array( 21/* "=" */,-30 ),
 	/* State 97 */ new Array( 39/* ")" */,118 , 40/* "," */,112 ),
 	/* State 98 */ new Array( 17/* "]" */,119 , 32/* "+" */,62 , 33/* "-" */,63 ),
 	/* State 99 */ new Array(  ),
@@ -2638,39 +2656,42 @@ var act_tab = new Array(
 	/* State 116 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,127 ),
 	/* State 117 */ new Array( 31/* "!" */,18 , 33/* "-" */,32 , 32/* "+" */,33 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
 	/* State 118 */ new Array( 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 119 */ new Array( 21/* "=" */,-29 ),
-	/* State 120 */ new Array( 18/* "{" */,130 ),
-	/* State 121 */ new Array( 45/* "Identifier" */,131 ),
+	/* State 119 */ new Array( 21/* "=" */,-31 ),
+	/* State 120 */ new Array( 18/* "{" */,131 ),
+	/* State 121 */ new Array( 45/* "Identifier" */,132 ),
 	/* State 122 */ new Array(  ),
 	/* State 123 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
 	/* State 124 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 ),
 	/* State 125 */ new Array(  ),
 	/* State 126 */ new Array(  ),
 	/* State 127 */ new Array(  ),
-	/* State 128 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,132 ),
-	/* State 129 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
-	/* State 130 */ new Array(  ),
+	/* State 128 */ new Array( 24/* "~=" */,45 , 23/* "!=" */,46 , 26/* ">=" */,47 , 25/* "<=" */,48 , 27/* ">" */,49 , 28/* "<" */,50 , 22/* "==" */,51 , 20/* ";" */,133 ),
+	/* State 129 */ new Array( 40/* "," */,134 ),
+	/* State 130 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
 	/* State 131 */ new Array(  ),
-	/* State 132 */ new Array( 45/* "Identifier" */,17 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
-	/* State 133 */ new Array( 19/* "}" */,135 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,32 , 32/* "+" */,33 ),
-	/* State 134 */ new Array( 39/* ")" */,136 ),
-	/* State 135 */ new Array(  ),
-	/* State 136 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,32 , 32/* "+" */,33 ),
-	/* State 137 */ new Array(  )
+	/* State 132 */ new Array(  ),
+	/* State 133 */ new Array( 45/* "Identifier" */,17 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
+	/* State 134 */ new Array( 47/* "Integer" */,22 , 48/* "Float" */,23 , 45/* "Identifier" */,37 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 ),
+	/* State 135 */ new Array( 19/* "}" */,138 , 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,32 , 32/* "+" */,33 ),
+	/* State 136 */ new Array( 39/* ")" */,139 ),
+	/* State 137 */ new Array( 44/* "." */,77 , 38/* "(" */,58 , 16/* "[" */,78 ),
+	/* State 138 */ new Array(  ),
+	/* State 139 */ new Array( 3/* "IF" */,3 , 5/* "WHILE" */,4 , 6/* "DO" */,5 , 7/* "FOR" */,6 , 9/* "USE" */,7 , 11/* "DELETE" */,8 , 10/* "RETURN" */,9 , 18/* "{" */,12 , 20/* ";" */,13 , 45/* "Identifier" */,17 , 31/* "!" */,18 , 47/* "Integer" */,22 , 48/* "Float" */,23 , 38/* "(" */,24 , 46/* "String" */,25 , 8/* "FUNCTION" */,26 , 14/* "<<" */,27 , 16/* "[" */,28 , 12/* "TRUE" */,29 , 13/* "FALSE" */,30 , 33/* "-" */,32 , 32/* "+" */,33 ),
+	/* State 140 */ new Array(  )
 );
 
 /* Goto-Table */
 var goto_tab = new Array(
 	/* State 0 */ new Array( 49/* Program */,1 ),
-	/* State 1 */ new Array( 50/* Stmt */,2 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 1 */ new Array( 50/* Stmt */,2 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 2 */ new Array(  ),
-	/* State 3 */ new Array( 53/* Expression */,35 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 4 */ new Array( 53/* Expression */,38 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 5 */ new Array( 50/* Stmt */,39 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 3 */ new Array( 53/* Expression */,35 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 4 */ new Array( 53/* Expression */,38 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 5 */ new Array( 50/* Stmt */,39 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 6 */ new Array(  ),
 	/* State 7 */ new Array(  ),
 	/* State 8 */ new Array(  ),
-	/* State 9 */ new Array( 50/* Stmt */,43 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 9 */ new Array( 50/* Stmt */,43 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 10 */ new Array(  ),
 	/* State 11 */ new Array(  ),
 	/* State 12 */ new Array( 51/* Stmt_List */,53 ),
@@ -2679,55 +2700,55 @@ var goto_tab = new Array(
 	/* State 15 */ new Array(  ),
 	/* State 16 */ new Array(  ),
 	/* State 17 */ new Array(  ),
-	/* State 18 */ new Array( 61/* LogExp */,61 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 18 */ new Array( 62/* LogExp */,61 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 19 */ new Array(  ),
 	/* State 20 */ new Array(  ),
 	/* State 21 */ new Array(  ),
 	/* State 22 */ new Array(  ),
 	/* State 23 */ new Array(  ),
-	/* State 24 */ new Array( 53/* Expression */,67 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 24 */ new Array( 53/* Expression */,67 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 25 */ new Array(  ),
 	/* State 26 */ new Array(  ),
 	/* State 27 */ new Array( 54/* Prop_List */,69 , 55/* Prop */,70 ),
-	/* State 28 */ new Array( 52/* Param_List */,72 , 53/* Expression */,73 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 28 */ new Array( 52/* Param_List */,72 , 53/* Expression */,73 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 29 */ new Array(  ),
 	/* State 30 */ new Array(  ),
 	/* State 31 */ new Array(  ),
-	/* State 32 */ new Array( 64/* ExpExp */,74 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 33 */ new Array( 64/* ExpExp */,75 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 32 */ new Array( 65/* ExpExp */,74 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 33 */ new Array( 65/* ExpExp */,75 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 34 */ new Array(  ),
-	/* State 35 */ new Array( 50/* Stmt */,76 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 35 */ new Array( 50/* Stmt */,76 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 36 */ new Array(  ),
 	/* State 37 */ new Array(  ),
-	/* State 38 */ new Array( 50/* Stmt */,79 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 38 */ new Array( 50/* Stmt */,79 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 39 */ new Array(  ),
-	/* State 40 */ new Array( 58/* Assign */,81 , 57/* Lhs */,14 , 59/* ExtValue */,82 , 65/* Value */,20 ),
+	/* State 40 */ new Array( 60/* Assign */,81 , 59/* Lhs */,14 , 58/* ExtValue */,82 , 66/* Value */,20 ),
 	/* State 41 */ new Array(  ),
 	/* State 42 */ new Array(  ),
 	/* State 43 */ new Array(  ),
 	/* State 44 */ new Array(  ),
-	/* State 45 */ new Array( 61/* LogExp */,84 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 46 */ new Array( 61/* LogExp */,85 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 47 */ new Array( 61/* LogExp */,86 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 48 */ new Array( 61/* LogExp */,87 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 49 */ new Array( 61/* LogExp */,88 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 50 */ new Array( 61/* LogExp */,89 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 51 */ new Array( 61/* LogExp */,90 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 45 */ new Array( 62/* LogExp */,84 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 46 */ new Array( 62/* LogExp */,85 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 47 */ new Array( 62/* LogExp */,86 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 48 */ new Array( 62/* LogExp */,87 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 49 */ new Array( 62/* LogExp */,88 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 50 */ new Array( 62/* LogExp */,89 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 51 */ new Array( 62/* LogExp */,90 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 52 */ new Array(  ),
-	/* State 53 */ new Array( 50/* Stmt */,92 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
-	/* State 54 */ new Array( 53/* Expression */,93 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 55 */ new Array( 60/* AddSubExp */,94 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 56 */ new Array( 60/* AddSubExp */,95 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 53 */ new Array( 50/* Stmt */,92 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
+	/* State 54 */ new Array( 53/* Expression */,93 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 55 */ new Array( 61/* AddSubExp */,94 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 56 */ new Array( 61/* AddSubExp */,95 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 57 */ new Array(  ),
-	/* State 58 */ new Array( 52/* Param_List */,97 , 53/* Expression */,73 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 59 */ new Array( 60/* AddSubExp */,98 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 60 */ new Array( 64/* ExpExp */,99 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 58 */ new Array( 52/* Param_List */,97 , 53/* Expression */,73 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 59 */ new Array( 61/* AddSubExp */,98 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 60 */ new Array( 65/* ExpExp */,99 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 61 */ new Array(  ),
-	/* State 62 */ new Array( 62/* MulDivExp */,100 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 63 */ new Array( 62/* MulDivExp */,101 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 64 */ new Array( 63/* NegExp */,102 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 65 */ new Array( 63/* NegExp */,103 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 66 */ new Array( 63/* NegExp */,104 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 62 */ new Array( 63/* MulDivExp */,100 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 63 */ new Array( 63/* MulDivExp */,101 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 64 */ new Array( 64/* NegExp */,102 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 65 */ new Array( 64/* NegExp */,103 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 66 */ new Array( 64/* NegExp */,104 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 67 */ new Array(  ),
 	/* State 68 */ new Array( 56/* Param_Def_List */,106 ),
 	/* State 69 */ new Array(  ),
@@ -2739,9 +2760,9 @@ var goto_tab = new Array(
 	/* State 75 */ new Array(  ),
 	/* State 76 */ new Array(  ),
 	/* State 77 */ new Array(  ),
-	/* State 78 */ new Array( 60/* AddSubExp */,115 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 78 */ new Array( 61/* AddSubExp */,115 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 79 */ new Array(  ),
-	/* State 80 */ new Array( 53/* Expression */,116 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 80 */ new Array( 53/* Expression */,116 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 81 */ new Array(  ),
 	/* State 82 */ new Array(  ),
 	/* State 83 */ new Array(  ),
@@ -2771,15 +2792,15 @@ var goto_tab = new Array(
 	/* State 107 */ new Array(  ),
 	/* State 108 */ new Array(  ),
 	/* State 109 */ new Array( 55/* Prop */,122 ),
-	/* State 110 */ new Array( 53/* Expression */,123 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
+	/* State 110 */ new Array( 53/* Expression */,123 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
 	/* State 111 */ new Array(  ),
-	/* State 112 */ new Array( 53/* Expression */,124 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 113 */ new Array( 50/* Stmt */,125 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
+	/* State 112 */ new Array( 53/* Expression */,124 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 113 */ new Array( 50/* Stmt */,125 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
 	/* State 114 */ new Array(  ),
 	/* State 115 */ new Array(  ),
 	/* State 116 */ new Array(  ),
-	/* State 117 */ new Array( 53/* Expression */,128 , 61/* LogExp */,15 , 60/* AddSubExp */,19 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 , 59/* ExtValue */,36 , 65/* Value */,20 ),
-	/* State 118 */ new Array( 59/* ExtValue */,129 , 65/* Value */,20 ),
+	/* State 117 */ new Array( 53/* Expression */,128 , 62/* LogExp */,15 , 61/* AddSubExp */,19 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 , 58/* ExtValue */,36 , 66/* Value */,20 ),
+	/* State 118 */ new Array( 57/* Attr_List */,129 , 58/* ExtValue */,130 , 66/* Value */,20 ),
 	/* State 119 */ new Array(  ),
 	/* State 120 */ new Array(  ),
 	/* State 121 */ new Array(  ),
@@ -2791,14 +2812,17 @@ var goto_tab = new Array(
 	/* State 127 */ new Array(  ),
 	/* State 128 */ new Array(  ),
 	/* State 129 */ new Array(  ),
-	/* State 130 */ new Array( 51/* Stmt_List */,133 ),
-	/* State 131 */ new Array(  ),
-	/* State 132 */ new Array( 58/* Assign */,134 , 57/* Lhs */,14 , 59/* ExtValue */,82 , 65/* Value */,20 ),
-	/* State 133 */ new Array( 50/* Stmt */,92 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
-	/* State 134 */ new Array(  ),
-	/* State 135 */ new Array(  ),
-	/* State 136 */ new Array( 50/* Stmt */,137 , 58/* Assign */,10 , 53/* Expression */,11 , 57/* Lhs */,14 , 61/* LogExp */,15 , 59/* ExtValue */,16 , 60/* AddSubExp */,19 , 65/* Value */,20 , 62/* MulDivExp */,21 , 63/* NegExp */,31 , 64/* ExpExp */,34 ),
-	/* State 137 */ new Array(  )
+	/* State 130 */ new Array(  ),
+	/* State 131 */ new Array( 51/* Stmt_List */,135 ),
+	/* State 132 */ new Array(  ),
+	/* State 133 */ new Array( 60/* Assign */,136 , 59/* Lhs */,14 , 58/* ExtValue */,82 , 66/* Value */,20 ),
+	/* State 134 */ new Array( 58/* ExtValue */,137 , 66/* Value */,20 ),
+	/* State 135 */ new Array( 50/* Stmt */,92 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
+	/* State 136 */ new Array(  ),
+	/* State 137 */ new Array(  ),
+	/* State 138 */ new Array(  ),
+	/* State 139 */ new Array( 50/* Stmt */,140 , 60/* Assign */,10 , 53/* Expression */,11 , 59/* Lhs */,14 , 62/* LogExp */,15 , 58/* ExtValue */,16 , 61/* AddSubExp */,19 , 66/* Value */,20 , 63/* MulDivExp */,21 , 64/* NegExp */,31 , 65/* ExpExp */,34 ),
+	/* State 140 */ new Array(  )
 );
 
 /* Default-Actions-Table */
@@ -2816,38 +2840,38 @@ var defact_tab = new Array(
 	 /* State 10 */ -1 ,
 	 /* State 11 */ -1 ,
 	 /* State 12 */ 4 ,
-	 /* State 13 */ 27 ,
+	 /* State 13 */ 29 ,
 	 /* State 14 */ -1 ,
-	 /* State 15 */ 38 ,
-	 /* State 16 */ 51 ,
-	 /* State 17 */ 62 ,
+	 /* State 15 */ 40 ,
+	 /* State 16 */ 53 ,
+	 /* State 17 */ 64 ,
 	 /* State 18 */ -1 ,
-	 /* State 19 */ 42 ,
-	 /* State 20 */ 59 ,
-	 /* State 21 */ 45 ,
-	 /* State 22 */ 60 ,
-	 /* State 23 */ 61 ,
+	 /* State 19 */ 44 ,
+	 /* State 20 */ 61 ,
+	 /* State 21 */ 47 ,
+	 /* State 22 */ 62 ,
+	 /* State 23 */ 63 ,
 	 /* State 24 */ -1 ,
-	 /* State 25 */ 64 ,
+	 /* State 25 */ 66 ,
 	 /* State 26 */ -1 ,
 	 /* State 27 */ 10 ,
 	 /* State 28 */ 7 ,
-	 /* State 29 */ 68 ,
-	 /* State 30 */ 69 ,
-	 /* State 31 */ 49 ,
+	 /* State 29 */ 70 ,
+	 /* State 30 */ 71 ,
+	 /* State 31 */ 51 ,
 	 /* State 32 */ -1 ,
 	 /* State 33 */ -1 ,
-	 /* State 34 */ 54 ,
+	 /* State 34 */ 56 ,
 	 /* State 35 */ -1 ,
-	 /* State 36 */ 51 ,
-	 /* State 37 */ 62 ,
+	 /* State 36 */ 53 ,
+	 /* State 37 */ 64 ,
 	 /* State 38 */ -1 ,
 	 /* State 39 */ -1 ,
 	 /* State 40 */ -1 ,
 	 /* State 41 */ -1 ,
-	 /* State 42 */ 22 ,
-	 /* State 43 */ 23 ,
-	 /* State 44 */ 24 ,
+	 /* State 42 */ 24 ,
+	 /* State 43 */ 25 ,
+	 /* State 44 */ 26 ,
 	 /* State 45 */ -1 ,
 	 /* State 46 */ -1 ,
 	 /* State 47 */ -1 ,
@@ -2855,7 +2879,7 @@ var defact_tab = new Array(
 	 /* State 49 */ -1 ,
 	 /* State 50 */ -1 ,
 	 /* State 51 */ -1 ,
-	 /* State 52 */ 25 ,
+	 /* State 52 */ 27 ,
 	 /* State 53 */ -1 ,
 	 /* State 54 */ -1 ,
 	 /* State 55 */ -1 ,
@@ -2864,7 +2888,7 @@ var defact_tab = new Array(
 	 /* State 58 */ 7 ,
 	 /* State 59 */ -1 ,
 	 /* State 60 */ -1 ,
-	 /* State 61 */ 41 ,
+	 /* State 61 */ 43 ,
 	 /* State 62 */ -1 ,
 	 /* State 63 */ -1 ,
 	 /* State 64 */ -1 ,
@@ -2877,70 +2901,73 @@ var defact_tab = new Array(
 	 /* State 71 */ -1 ,
 	 /* State 72 */ -1 ,
 	 /* State 73 */ 6 ,
-	 /* State 74 */ 52 ,
-	 /* State 75 */ 53 ,
-	 /* State 76 */ 16 ,
+	 /* State 74 */ 54 ,
+	 /* State 75 */ 55 ,
+	 /* State 76 */ 18 ,
 	 /* State 77 */ -1 ,
 	 /* State 78 */ -1 ,
-	 /* State 79 */ 18 ,
+	 /* State 79 */ 20 ,
 	 /* State 80 */ -1 ,
 	 /* State 81 */ -1 ,
 	 /* State 82 */ -1 ,
-	 /* State 83 */ 21 ,
-	 /* State 84 */ 37 ,
-	 /* State 85 */ 36 ,
-	 /* State 86 */ 35 ,
-	 /* State 87 */ 34 ,
-	 /* State 88 */ 33 ,
-	 /* State 89 */ 32 ,
-	 /* State 90 */ 31 ,
-	 /* State 91 */ 26 ,
+	 /* State 83 */ 23 ,
+	 /* State 84 */ 39 ,
+	 /* State 85 */ 38 ,
+	 /* State 86 */ 37 ,
+	 /* State 87 */ 36 ,
+	 /* State 88 */ 35 ,
+	 /* State 89 */ 34 ,
+	 /* State 90 */ 33 ,
+	 /* State 91 */ 28 ,
 	 /* State 92 */ 3 ,
-	 /* State 93 */ 15 ,
-	 /* State 94 */ 40 ,
-	 /* State 95 */ 39 ,
-	 /* State 96 */ 58 ,
+	 /* State 93 */ 17 ,
+	 /* State 94 */ 42 ,
+	 /* State 95 */ 41 ,
+	 /* State 96 */ 60 ,
 	 /* State 97 */ -1 ,
 	 /* State 98 */ -1 ,
-	 /* State 99 */ 50 ,
-	 /* State 100 */ 44 ,
-	 /* State 101 */ 43 ,
-	 /* State 102 */ 48 ,
-	 /* State 103 */ 47 ,
-	 /* State 104 */ 46 ,
-	 /* State 105 */ 63 ,
+	 /* State 99 */ 52 ,
+	 /* State 100 */ 46 ,
+	 /* State 101 */ 45 ,
+	 /* State 102 */ 50 ,
+	 /* State 103 */ 49 ,
+	 /* State 104 */ 48 ,
+	 /* State 105 */ 65 ,
 	 /* State 106 */ -1 ,
 	 /* State 107 */ 13 ,
-	 /* State 108 */ 66 ,
+	 /* State 108 */ 68 ,
 	 /* State 109 */ -1 ,
 	 /* State 110 */ -1 ,
-	 /* State 111 */ 67 ,
+	 /* State 111 */ 69 ,
 	 /* State 112 */ -1 ,
 	 /* State 113 */ -1 ,
-	 /* State 114 */ 58 ,
+	 /* State 114 */ 60 ,
 	 /* State 115 */ -1 ,
 	 /* State 116 */ -1 ,
 	 /* State 117 */ -1 ,
-	 /* State 118 */ 56 ,
-	 /* State 119 */ 55 ,
+	 /* State 118 */ 58 ,
+	 /* State 119 */ 57 ,
 	 /* State 120 */ -1 ,
 	 /* State 121 */ -1 ,
 	 /* State 122 */ 8 ,
 	 /* State 123 */ 11 ,
 	 /* State 124 */ 5 ,
-	 /* State 125 */ 17 ,
-	 /* State 126 */ 55 ,
-	 /* State 127 */ 19 ,
+	 /* State 125 */ 19 ,
+	 /* State 126 */ 57 ,
+	 /* State 127 */ 21 ,
 	 /* State 128 */ -1 ,
-	 /* State 129 */ 57 ,
-	 /* State 130 */ 4 ,
-	 /* State 131 */ 12 ,
-	 /* State 132 */ -1 ,
+	 /* State 129 */ 59 ,
+	 /* State 130 */ 16 ,
+	 /* State 131 */ 4 ,
+	 /* State 132 */ 12 ,
 	 /* State 133 */ -1 ,
 	 /* State 134 */ -1 ,
-	 /* State 135 */ 65 ,
+	 /* State 135 */ -1 ,
 	 /* State 136 */ -1 ,
-	 /* State 137 */ 20 
+	 /* State 137 */ 15 ,
+	 /* State 138 */ 67 ,
+	 /* State 139 */ -1 ,
+	 /* State 140 */ 22 
 );
 
 
@@ -3004,9 +3031,10 @@ var labels = new Array(
 	"Prop_List" /* Non-terminal symbol */,
 	"Prop" /* Non-terminal symbol */,
 	"Param_Def_List" /* Non-terminal symbol */,
+	"Attr_List" /* Non-terminal symbol */,
+	"ExtValue" /* Non-terminal symbol */,
 	"Lhs" /* Non-terminal symbol */,
 	"Assign" /* Non-terminal symbol */,
-	"ExtValue" /* Non-terminal symbol */,
 	"AddSubExp" /* Non-terminal symbol */,
 	"LogExp" /* Non-terminal symbol */,
 	"MulDivExp" /* Non-terminal symbol */,
@@ -3031,7 +3059,7 @@ var labels = new Array(
         PCB.la = this._lex(PCB);
             
         while( true ) {
-            PCB.act = 139;
+            PCB.act = 142;
             for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 ) {
                 if( act_tab[sstack[sstack.length-1]][i] == PCB.la ) {
                     PCB.act = act_tab[sstack[sstack.length-1]][i+1];
@@ -3039,15 +3067,15 @@ var labels = new Array(
                 }
             }
         
-            if( PCB.act == 139 ) {
+            if( PCB.act == 142 ) {
                 if( ( PCB.act = defact_tab[ sstack[sstack.length-1] ] ) < 0 )
-                    PCB.act = 139;
+                    PCB.act = 142;
                 else
                     PCB.act *= -1;
             }
 
             //Parse error? Try to recover!
-            if( PCB.act == 139 )
+            if( PCB.act == 142 )
             {
                 //Report errors only when error_step is 0, and this is not a
                 //subsequent error from a previous parse
@@ -3062,7 +3090,7 @@ var labels = new Array(
                 }
             
                 //Perform error recovery
-                while( sstack.length > 1 && PCB.act == 139 )
+                while( sstack.length > 1 && PCB.act == 142 )
                 {
                     sstack.pop();
                     vstack.pop();
@@ -3083,12 +3111,12 @@ var labels = new Array(
                 }
             
                 //Is it better to leave the parser now?
-                if( sstack.length > 1 && PCB.act != 139 )
+                if( sstack.length > 1 && PCB.act != 142 )
                 {
                     //Ok, now try to shift on the next tokens
-                    while( PCB.la != 66 )
+                    while( PCB.la != 67 )
                     {
-                        PCB.act = 139;
+                        PCB.act = 142;
                     
                         for( i = 0; i < act_tab[sstack[sstack.length-1]].length; i+=2 )
                         {
@@ -3099,16 +3127,16 @@ var labels = new Array(
                             }
                         }
                     
-                        if( PCB.act != 139 )
+                        if( PCB.act != 142 )
                             break;
                         
                         while( ( PCB.la = this._lex( PCB ) ) < 0 )
                             PCB.offset++;
                     }
-                    while( PCB.la != 66 && PCB.act == 139 ) {}
+                    while( PCB.la != 67 && PCB.act == 142 ) {}
                 }
             
-                if( PCB.act == 139 || PCB.la == 66 )
+                if( PCB.act == 142 || PCB.la == 67 )
                 {
                     break;
                 }
@@ -3215,182 +3243,182 @@ switch( act )
 	break;
 	case 15:
 	{
-		 rval = this.createNode('node_op', 'op_assign', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_param', vstack[ vstack.length - 1 ], vstack[ vstack.length - 3 ] ); 
 	}
 	break;
 	case 16:
 	{
-		 rval = this.createNode('node_op', 'op_if', vstack[ vstack.length - 2 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_param', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 17:
 	{
-		 rval = this.createNode('node_op', 'op_if_else', vstack[ vstack.length - 4 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_assign', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 18:
 	{
-		 rval = this.createNode('node_op', 'op_while', vstack[ vstack.length - 2 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_if', vstack[ vstack.length - 2 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 19:
 	{
-		 rval = this.createNode('node_op', 'op_do', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ] ); 
+		 rval = this.createNode('node_op', 'op_if_else', vstack[ vstack.length - 4 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 20:
 	{
-		 rval = this.createNode('node_op', 'op_for', vstack[ vstack.length - 7 ], vstack[ vstack.length - 5 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_while', vstack[ vstack.length - 2 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 21:
 	{
-		 rval = this.createNode('node_op', 'op_use', vstack[ vstack.length - 2 ] ); 
+		 rval = this.createNode('node_op', 'op_do', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ] ); 
 	}
 	break;
 	case 22:
 	{
-		 rval = this.createNode('node_op', 'op_delete', vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_for', vstack[ vstack.length - 7 ], vstack[ vstack.length - 5 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 23:
 	{
-		 rval = this.createNode('node_op', 'op_return', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_use', vstack[ vstack.length - 2 ] ); 
 	}
 	break;
 	case 24:
 	{
-		rval = vstack[ vstack.length - 2 ];
+		 rval = this.createNode('node_op', 'op_delete', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 25:
 	{
-		 rval = this.createNode('node_op', 'op_noassign', vstack[ vstack.length - 2 ] ); 
+		 rval = this.createNode('node_op', 'op_return', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 26:
 	{
-		 rval = vstack[ vstack.length - 2 ]; rval.needsBrackets = true; 
+		rval = vstack[ vstack.length - 2 ];
 	}
 	break;
 	case 27:
 	{
-		 rval = this.createNode('node_op', 'op_none' ); 
+		 rval = this.createNode('node_op', 'op_noassign', vstack[ vstack.length - 2 ] ); 
 	}
 	break;
 	case 28:
 	{
-		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 1 ], vstack[ vstack.length - 3 ], 'dot'); 
+		 rval = vstack[ vstack.length - 2 ]; rval.needsBrackets = true; 
 	}
 	break;
 	case 29:
 	{
-		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 2 ], vstack[ vstack.length - 4 ], 'bracket'); 
+		 rval = this.createNode('node_op', 'op_none' ); 
 	}
 	break;
 	case 30:
 	{
-		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 1 ], vstack[ vstack.length - 3 ], 'dot'); 
 	}
 	break;
 	case 31:
 	{
-		 rval = this.createNode('node_op', 'op_equ', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 2 ], vstack[ vstack.length - 4 ], 'bracket'); 
 	}
 	break;
 	case 32:
 	{
-		 rval = this.createNode('node_op', 'op_lot', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_lhs', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 33:
 	{
-		 rval = this.createNode('node_op', 'op_grt', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_equ', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 34:
 	{
-		 rval = this.createNode('node_op', 'op_loe', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_lot', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 35:
 	{
-		 rval = this.createNode('node_op', 'op_gre', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_grt', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 36:
 	{
-		 rval = this.createNode('node_op', 'op_neq', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_loe', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 37:
 	{
-		 rval = this.createNode('node_op', 'op_approx', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_gre', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 38:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_neq', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 39:
 	{
-		 rval = this.createNode('node_op', 'op_or', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_approx', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 40:
 	{
-		 rval = this.createNode('node_op', 'op_and', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 41:
 	{
-		 rval = this.createNode('node_op', 'op_not', vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_or', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 42:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_and', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 43:
 	{
-		 rval = this.createNode('node_op', 'op_sub', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_not', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 44:
 	{
-		 rval = this.createNode('node_op', 'op_add', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 45:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_sub', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 46:
 	{
-		 rval = this.createNode('node_op', 'op_mul', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_add', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 47:
 	{
-		 rval = this.createNode('node_op', 'op_div', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 48:
 	{
-		 rval = this.createNode('node_op', 'op_mod', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_mul', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 49:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_div', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 50:
 	{
-		 rval = this.createNode('node_op', 'op_exp', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_mod', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 51:
@@ -3400,90 +3428,100 @@ switch( act )
 	break;
 	case 52:
 	{
-		 rval = this.createNode('node_op', 'op_neg', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_exp', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 53:
 	{
-		 rval = vstack[ vstack.length - 1 ]; 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 54:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_neg', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 55:
 	{
-		 rval = this.createNode('node_op', 'op_extvalue', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ]); 
+		 rval = vstack[ vstack.length - 1 ]; 
 	}
 	break;
 	case 56:
 	{
-		 rval = this.createNode('node_op', 'op_execfun', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ]); 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 57:
 	{
-		 rval = this.createNode('node_op', 'op_execfun', vstack[ vstack.length - 5 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_extvalue', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ]); 
 	}
 	break;
 	case 58:
 	{
-		 rval = this.createNode('node_op', 'op_property', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_op', 'op_execfun', vstack[ vstack.length - 4 ], vstack[ vstack.length - 2 ]); 
 	}
 	break;
 	case 59:
 	{
-		rval = vstack[ vstack.length - 1 ];
+		 rval = this.createNode('node_op', 'op_execfun', vstack[ vstack.length - 5 ], vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ], true); 
 	}
 	break;
 	case 60:
 	{
-		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_property', vstack[ vstack.length - 3 ], vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 61:
 	{
-		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
+		rval = vstack[ vstack.length - 1 ];
 	}
 	break;
 	case 62:
 	{
-		 rval = this.createNode('node_var', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 63:
 	{
-		 rval = vstack[ vstack.length - 2 ]; 
+		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 64:
 	{
-		 rval = this.createNode('node_str', vstack[ vstack.length - 1 ]); 
+		 rval = this.createNode('node_var', vstack[ vstack.length - 1 ] ); 
 	}
 	break;
 	case 65:
 	{
-		 rval = this.createNode('node_op', 'op_function', vstack[ vstack.length - 5 ], vstack[ vstack.length - 2 ]); 
+		 rval = vstack[ vstack.length - 2 ]; 
 	}
 	break;
 	case 66:
 	{
-		 rval = this.createNode('node_op', 'op_proplst_val', vstack[ vstack.length - 2 ]); 
+		 rval = this.createNode('node_str', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 67:
 	{
-		 rval = this.createNode('node_op', 'op_array', vstack[ vstack.length - 2 ]); 
+		 rval = this.createNode('node_op', 'op_function', vstack[ vstack.length - 5 ], vstack[ vstack.length - 2 ]); 
 	}
 	break;
 	case 68:
 	{
-		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_op', 'op_proplst_val', vstack[ vstack.length - 2 ]); 
 	}
 	break;
 	case 69:
+	{
+		 rval = this.createNode('node_op', 'op_array', vstack[ vstack.length - 2 ]); 
+	}
+	break;
+	case 70:
+	{
+		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ] ); 
+	}
+	break;
+	case 71:
 	{
 		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ] ); 
 	}
@@ -3499,7 +3537,7 @@ switch( act )
                 }
 
                 //Get goto-table entry
-                PCB.act = 139;
+                PCB.act = 142;
                 for( i = 0; i < goto_tab[sstack[sstack.length-1]].length; i+=2 )
                 {
                     if( goto_tab[sstack[sstack.length-1]][i] == pop_tab[act][0] )

@@ -115,14 +115,13 @@ JXG.createSector = function(board, parents, attributes) {
             beta, co, si, matrix,
             phi = JXG.Math.Geometry.rad(A,B,C),
             i,
-            //n = Math.ceil(phi/Math.PI*90)+1,
-            //delta = phi/n,
             x = B.X(),
             y = B.Y(),
             v, 
             det, p0c, p1c, p2c,
             p1, p2, p3, p4,
-            k, ax, ay, bx, by, d, r;
+            k, ax, ay, bx, by, d, r,
+            PI2 = Math.PI*0.5;
 
         if (this.useDirection) {  // This is true for circumCircleArcs. In that case there is
                                   // a fourth parent element: [midpoint, point1, point3, point2]
@@ -140,14 +139,14 @@ JXG.createSector = function(board, parents, attributes) {
             }
         }
         
-        p1 = [A.X(), A.Y()];
         r = B.Dist(A);
+        p1 = [A.X(), A.Y()];
         this.dataX = [x, x+0.333*(p1[0]-x), x+0.666*(p1[0]-x), p1[0]];
         this.dataY = [y, y+0.333*(p1[1]-y), y+0.666*(p1[1]-y), p1[1]];
         while (phi>JXG.Math.eps) {
-            if (phi>=Math.PI*0.5) {
-                beta = Math.PI*0.5;
-                phi -= Math.PI*0.5;
+            if (phi>=PI2) {
+                beta = PI2;
+                phi -= PI2;
             } else {
                 beta = phi;
                 phi = 0.0;
@@ -167,12 +166,12 @@ JXG.createSector = function(board, parents, attributes) {
             by = p4[1]-y;
 
             d = Math.sqrt((ax+bx)*(ax+bx) + (ay+by)*(ay+by));
-            if (beta>Math.PI) { d *= -1; }
+            //if (beta>Math.PI) { d *= -1; }
  
             if (Math.abs(by-ay)>JXG.Math.eps) {
-                k = (ax+bx)*(r/d-0.5)*8.0/3.0/(by-ay);
+                k = (ax+bx)*(r/d-0.5)/(by-ay)*8.0/3.0;
             } else {
-                k = (ay+by)*(r/d-0.5)*8.0/3.0/(ax-bx);
+                k = (ay+by)*(r/d-0.5)/(ax-bx)*8.0/3.0;
             }
 
             p2 = [p1[0]-k*ay, p1[1]+k*ax ];
@@ -186,23 +185,6 @@ JXG.createSector = function(board, parents, attributes) {
         this.dataY = this.dataY.concat([ p4[1]+0.333*(y-p4[1]), p4[1]+0.666*(y-p4[1]), y]);
         
         this.bezierDegree = 3;
-        
-        /*
-        this.dataX = [B.X(),A.X()];
-        this.dataY = [B.Y(),A.Y()];
-        for (beta=delta,i=1; i<=n; i++, beta+=delta) {
-            co = Math.cos(beta); 
-            si = Math.sin(beta); 
-            matrix = [[1,            0,   0],
-                      [x*(1-co)+y*si,co,-si],
-                      [y*(1-co)-x*si,si, co]];    
-            v = JXG.Math.matVecMult(matrix,A.coords.usrCoords);
-            this.dataX.push(v[1]/v[0]);
-            this.dataY.push(v[2]/v[0]);
-        }
-        this.dataX.push(B.X());
-        this.dataY.push(B.Y());
-        */
     };
 
     /**

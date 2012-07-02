@@ -25,7 +25,7 @@ for (i=0; i<=30; i += 4) {
     }
 }
 for (i=1; i <= max; i++) {
-    board.create('angle', [p[i - 1], p[i], p[i + 1]], {name:''});
+    board.create('angle', [p[i - 1], p[i], p[i + 1]], {withLabel:true, name:''});
 }
 board.unsuspendUpdate();
 /* ]]> */
