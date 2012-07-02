@@ -631,6 +631,16 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
+    // see geometryelement.js
+    snapToGrid: function () {
+        if (this.visProp.snaptogrid) {
+            this.point1.snapToGrid();
+            this.point2.snapToGrid();
+        }
+
+        return this;
+    },
+
     /**
      * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
      * First we transform the interval [0,1] to [-1,1].

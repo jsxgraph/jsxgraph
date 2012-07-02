@@ -508,6 +508,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         return Math.sqrt(sum);
     },
 
+    snapToGrid: function () {
+        return this.handleSnapToGrid();
+    },
+
     /**
      * Move a point to its nearest grid point.
      * The function uses the coords object of the point as
