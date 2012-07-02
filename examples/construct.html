@@ -43,7 +43,7 @@
 
 <script type='text/javascript'>
 //JXG.Options.text.display = 'internal';
-JXG.Options.renderer = 'canvas';
+//JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 
 //JXG.Options.axis.visible = false;
@@ -94,13 +94,13 @@ var x = board.create('point', [2,2], {name:'a', label:{position:'top', offsets:[
 
 var a = board.create('point', [0,0]);
 var b = board.create('point', [2,0], {name:'B'});
-var c = board.create('point', [0,-2], {name:'C'});
+var c = board.create('point', [0,2], {name:'C'});
 var ar = board.create('arc', [a,b,c], {type:'major',withLabel:'true', name:'&alpha;', strokeWidth:8});
 var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;', strokeWidth:8});
 var br = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
 //var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 //var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-//var pol = board.create('angle', [c,b,a], {name:'x'});
+var pol = board.create('angle', [c,b,a], {name:'x'});
 
 newsize = function() {
     board.resizeContainer(300, 300);
