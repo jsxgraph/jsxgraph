@@ -1,0 +1,22 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script src="../src/loadjsxgraph.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        JXG.Options.grid.snapToGrid = true;
+    </script>
+</head>
+
+<body>
+<script type="text/jessiecode" grid="true">
+    snap = << snapToGrid: true>>;
+    P = point(1, 2) snap;
+    Q = point(4, 3) snap;
+    
+    line(P, Q) <<snapToGrid: true>>;
+    
+    circle(P, Q);
+</script>
+</body>
+</html>

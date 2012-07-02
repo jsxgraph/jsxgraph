@@ -308,6 +308,16 @@ JXG.Options = {
          */
         needsRegularUpdate: true,
 
+        /**
+         * Snaps the element or its parents to the grid. Currently only relevant for points, circles,
+         * and lines. Points are snapped to grid directly, on circles and lines it's only the parent
+         * points that are snapped
+         * @type Boolean
+         * @default false
+         * @name JXG.GeometryElement#snapToGrid
+         */
+        snapToGrid: false,
+
         /*draft options */
         draft : {
             /**
