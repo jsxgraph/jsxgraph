@@ -48,6 +48,8 @@ JXG.Curve = function (board, parents, attributes) {
      * It is set in {@link JXG.Curve#updateCurve}.
      */
     this.numberPoints = this.visProp.numberpointshigh; 
+    
+    this.bezierDegree = 1;
 
     this.dataX = null;
     this.dataY = null;

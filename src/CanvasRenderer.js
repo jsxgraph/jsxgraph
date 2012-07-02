@@ -725,9 +725,10 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     updatePathStringPrim: function (el) {
         var symbm = 'M',
             symbl = 'L',
+            symbc = 'C',
             nextSymb = symbm,
             maxSize = 5000.0,
-            i, scr,
+            i, scr, scr1, scr2,
             isNotPlot = (el.visProp.curvetype !== 'plot'),
             len,
             context = this.context;
@@ -735,38 +736,60 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
         if (el.numberPoints <= 0) {
             return;
         }
-
-        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
-        }
         len = Math.min(el.points.length, el.numberPoints);
-
         context.beginPath();
-        for (i = 0; i < len; i++) {
-            scr = el.points[i].scrCoords;
+        
+        if (el.bezierDegree == 1) {
+            if (isNotPlot && el.board.options.curve.RDPsmoothing) {
+                el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+            }
 
-            if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
-                nextSymb = symbm;
-            } else {
-                // Chrome has problems with values  being too far away.
-                if (scr[1] > maxSize) {
-                    scr[1] = maxSize;
-                } else if (scr[1] < -maxSize) {
-                    scr[1] = -maxSize;
-                }
+            for (i = 0; i < len; i++) {
+                scr = el.points[i].scrCoords;
 
-                if (scr[2] > maxSize) {
-                    scr[2] = maxSize;
-                } else if (scr[2] < -maxSize) {
-                    scr[2] = -maxSize;
-                }
-
-                if (nextSymb === symbm) {
-                    context.moveTo(scr[1], scr[2]);
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
                 } else {
-                    context.lineTo(scr[1], scr[2]);
+                    // Chrome has problems with values  being too far away.
+                    if (scr[1] > maxSize) {
+                        scr[1] = maxSize;
+                    } else if (scr[1] < -maxSize) {
+                        scr[1] = -maxSize;
+                    }
+
+                    if (scr[2] > maxSize) {
+                        scr[2] = maxSize;
+                    } else if (scr[2] < -maxSize) {
+                        scr[2] = -maxSize;
+                    }
+
+                    if (nextSymb === symbm) {
+                        context.moveTo(scr[1], scr[2]);
+                    } else {
+                        context.lineTo(scr[1], scr[2]);
+                    }
+                    nextSymb = symbl;
                 }
-                nextSymb = symbl;
+            }
+        } else if (el.bezierDegree==3) {
+            i = 0;
+            while (i < len) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    if (nextSymb === symbm) {
+                        context.moveTo(scr[1], scr[2]);
+                    } else {
+                        i++; scr1 = el.points[i].scrCoords;
+                        i++; scr2 = el.points[i].scrCoords;
+                        context.bezierCurveTo(scr[1], scr[2], scr1[1], scr1[2], scr2[1], scr2[2]);
+                                              
+//console.log(scr[1], scr[2], scr1[1], scr1[2], scr2[1], scr2[2]);                        
+                    }
+                    nextSymb = symbc;
+                }
+                i++;
             }
         }
         this._fill(el);

@@ -511,6 +511,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updatePathStringPrim: function (el) {
         var symbm = ' M ',
             symbl = ' L ',
+            symbc = ' C ', 
             nextSymb = symbm,
             maxSize = 5000.0,
             pStr = '',
@@ -521,33 +522,55 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         if (el.numberPoints <= 0) {
             return '';
         }
-
-        if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-            el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
-        }
-
         len = Math.min(el.points.length, el.numberPoints);
-        for (i = 0; i < len; i++) {
-            scr = el.points[i].scrCoords;
-            if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
-                nextSymb = symbm;
-            } else {
-                // Chrome has problems with values being too far away.
-                if (scr[1] > maxSize) {
-                    scr[1] = maxSize;
-                } else if (scr[1] < -maxSize) {
-                    scr[1] = -maxSize;
-                }
 
-                if (scr[2] > maxSize) {
-                    scr[2] = maxSize;
-                } else if (scr[2] < -maxSize) {
-                    scr[2] = -maxSize;
+        if (el.bezierDegree == 1) {
+            if (isNotPlot && el.board.options.curve.RDPsmoothing) {
+                el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+            }
+
+            for (i = 0; i < len; i++) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    // Chrome has problems with values being too far away.
+                    if (scr[1] > maxSize) {
+                        scr[1] = maxSize;
+                    } else if (scr[1] < -maxSize) {
+                        scr[1] = -maxSize;
+                    }
+
+                    if (scr[2] > maxSize) {
+                        scr[2] = maxSize;
+                    } else if (scr[2] < -maxSize) {
+                        scr[2] = -maxSize;
+                    }
+                    // Attention: first coordinate may be inaccurate if far way
+                    //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                    pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster on now (webkit and firefox)
+                    nextSymb = symbl;
                 }
-                // Attention: first coordinate may be inaccurate if far way
-                //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster on now (webkit and firefox)
-                nextSymb = symbl;
+            }
+        } else if (el.bezierDegree==3) {
+            i = 0;
+            while (i < len) {
+                scr = el.points[i].scrCoords;
+                if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
+                    nextSymb = symbm;
+                } else {
+                    pStr += nextSymb + scr[1] + ' ' + scr[2];   
+                    if (nextSymb==symbc){
+                        i++;
+                        scr = el.points[i].scrCoords;
+                        pStr += ' ' + scr[1] + ' ' + scr[2];   
+                        i++;
+                        scr = el.points[i].scrCoords;
+                        pStr += ' ' + scr[1] + ' ' + scr[2];   
+                    }
+                    nextSymb = symbc;
+                }
+                i++;
             }
         }
         return pStr;
