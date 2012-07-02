@@ -226,7 +226,9 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.methodMap = {
         setLabel: 'setLabelText',
         getName: 'getName',
-        addTransform: 'addTransform'
+        addTransform: 'addTransform',
+        setProperty: 'setProperty',
+        setAttribute: 'setAttribute'
     };
 
     /**
