@@ -1120,6 +1120,15 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
+     * Snaps the element to the grid. Only works for points, lines and circles. Points will snap to the grid
+     * as defined in their properties {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}. Lines and circles
+     * will snap their parent points to the grid, if they have {@link JXG.Point#snapToGrid} set to true.
+     * @returns {JXG.GeometryElement} Reference to the element.
+     */
+    snapToGrid: function () {
+        return this;    },
+
+    /**
      * Retrieve a copy of the current visProp.
      * @returns {Object}
      */

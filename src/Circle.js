@@ -514,6 +514,19 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         return this;
     },
 
+    // see geometryelement.js
+    snapToGrid: function () {
+        if (this.visProp.snaptogrid) {
+            this.center.snapToGrid();
+
+            if (this.method === 'twoPoints') {
+                this.point2.snapToGrid();
+            }
+        }
+        
+        return this;
+    },
+
     /**
      * TODO description
      * @param method TODO
@@ -552,7 +565,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         
         for (i = 0; i < len; i++) {
             p = JXG.getRef(this.board, this.parents[i]);
-            p.setPositionDirectly(JXG.COORDS_BY_USER, JXG.Math.Statistics.add(p.coords.usrCoords, diffc));
+            p.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Statistics.add(p.coords.usrCoords, diffc));
         }
         
         this.update();

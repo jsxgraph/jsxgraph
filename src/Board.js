@@ -1677,6 +1677,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
             if (!found) {
                 this.downObjects[i].triggerEventHandlers(['touchup', 'up'], evt);
+                this.downObjects[i].snapToGrid();
                 this.downObjects.splice(i, 1);
             }
         }
@@ -1779,6 +1780,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+        this.mouse.obj.snapToGrid();
 
         this.originMoveEnd();
         this.dehighlightAll();
@@ -1975,27 +1978,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * In case of snapToGrid activated this method caclulates the screen coords of mouse "snapped to grid".
+     * Returns the input parameters in an array. This method looks pointless and it really is, but it had a purpose
+     * once.
      * @param {Number} x X coordinate in screen coordinates
      * @param {Number} y Y coordinate in screen coordinates
-     * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
+     * @returns {Array} Coordinates of the mouse in screen coordinates.
      */
     getScrCoordsOfMouse: function (x, y) {
-        if (this.options.grid.snapToGrid) {
-            var newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
-            newCoords.setCoordinates(JXG.COORDS_BY_USER,
-                [Math.round((newCoords.usrCoords[1])*this.options.grid.snapSizeX)/this.options.grid.snapSizeX,
-                    Math.round((newCoords.usrCoords[2])*this.options.grid.snapSizeY)/this.options.grid.snapSizeY]);
-            return [newCoords.scrCoords[1], newCoords.scrCoords[2]];
-        } else {
-            return [x,y];
-        }
+        return [x, y];
     },
 
     /**
-     * In case of snapToGrid activated this method calculates the user coords of mouse "snapped to grid".
+     * This method calculates the user coords of the current mouse coordinates.
      * @param {Event} evt Event object containing the mouse coordinates.
-     * @returns {Array} Coordinates of the mouse in screen coordinates, snapped to grid.
+     * @returns {Array} Coordinates of the mouse in screen coordinates.
      */
     getUsrCoordsOfMouse: function (evt) {
         var cPos = this.getCoordsTopLeftCorner(),
