@@ -80,7 +80,7 @@ Bug fixes
  * Ticks are now deleted when their line is removed (bda7e7f)
  * Text rendering speed improved (d4c0bf2, b955052)
  * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123)
-
+ * If no element is dragged or found, don't stop the event propagation (324f7c6)
 
 
 0.94
