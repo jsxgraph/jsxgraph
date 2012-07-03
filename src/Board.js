@@ -1338,9 +1338,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 			this.removeMouseEventHandlers();
         }
 
-        //evt.preventDefault();
-        evt.stopPropagation();
-
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
             document.selection.empty();
@@ -1492,6 +1489,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 evtTouches[i].jxg_isused = true;
             }
         }
+        
+        if (this.touches.length > 0) {
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
 
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
@@ -1502,15 +1504,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.triggerEventHandlers(['touchstart', 'down'], evt);
 
-        return false;
+        return this.touches.length > 0;
     },
 
     touchMoveListener: function (evt) {
         var i, count = 0, pos,
             evtTouches = evt[JXG.touchProperty];
 
-        evt.preventDefault();
-        evt.stopPropagation();
+        if (this.mode !== this.BOARD_MODE_NONE) {
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
 
         // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
@@ -1572,7 +1576,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.options.precision.hasPoint = this.options.precision.mouse;
         this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
 
-        return false;
+        return this.mode === this.BOARD_MODE_NONE;
     },
 
     touchEndListener: function (evt) {
@@ -1692,6 +1696,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.originMoveEnd();
             this.update();
         }
+        
+        return true;
     },
 
     /**
