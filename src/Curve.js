@@ -439,8 +439,12 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             distOK = this.isDistOK(x-x0, y-y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0,y0,x,y);
             while (depth < MAX_DEPTH 
                    && (!distOK || depth < 3) 
-                   && (this.isSegmentDefined(x0, y0, x, y) || depth <= 7) ) {
-
+                   && (depth <= 7 || this.isSegmentDefined(x0, y0, x, y)) ) {
+                // We jump out of the loop if
+                // * depth>=MAX_DEPTH or
+                // * (depth>=3 and distOK) or
+                // * (depth>7 and segment is not defined)
+                
                 dyadicStack[top] = i;
                 depthStack[top] = depth;
                 pointStack[top] = [x,y];
