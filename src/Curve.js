@@ -488,7 +488,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     },
 
     /**
-     * Determines if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
+     * Crude and cheap test if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
      * outside the viewport of the board. All parameters have to be given in screen coordinates.
      * @param {Number} x0
      * @param {Number} y0
