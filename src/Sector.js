@@ -117,6 +117,7 @@ JXG.createSector = function(board, parents, attributes) {
             i,
             x = B.X(),
             y = B.Y(),
+            z = B.Z(),
             v, 
             det, p0c, p1c, p2c,
             p1, p2, p3, p4,
@@ -140,9 +141,14 @@ JXG.createSector = function(board, parents, attributes) {
         }
         
         r = B.Dist(A);
-        p1 = [A.X(), A.Y()];
-        this.dataX = [x, x+0.333*(p1[0]-x), x+0.666*(p1[0]-x), p1[0]];
-        this.dataY = [y, y+0.333*(p1[1]-y), y+0.666*(p1[1]-y), p1[1]];
+        p1 = [A.Z(), A.X(), A.Y()];
+        p1[1] /= p1[0];
+        p1[2] /= p1[0];
+        p1[0] /= p1[0];
+        x /= z;
+        y /= z;
+        this.dataX = [x, x+0.333*(p1[1]-x), x+0.666*(p1[1]-x), p1[1]];
+        this.dataY = [y, y+0.333*(p1[2]-y), y+0.666*(p1[2]-y), p1[2]];
         while (phi>JXG.Math.eps) {
             if (phi>=PI2) {
                 beta = PI2;
@@ -154,16 +160,16 @@ JXG.createSector = function(board, parents, attributes) {
 
             co = Math.cos(beta);
             si = Math.sin(beta);
-            matrix = [[1,            0,   0],
+            matrix = [[1,          0,   0],
                     [x*(1-co)+y*si,co,-si],
                     [y*(1-co)-x*si,si, co]];
-            v = JXG.Math.matVecMult(matrix,[1, p1[0], p1[1]]);
-            p4 = [v[1]/v[0], v[2]/v[0]];
+            v = JXG.Math.matVecMult(matrix, p1);
+            p4 = [v[0]/v[0], v[1]/v[0], v[2]/v[0]];
 
-            ax = p1[0]-x;
-            ay = p1[1]-y;
-            bx = p4[0]-x;
-            by = p4[1]-y;
+            ax = p1[1]-x;
+            ay = p1[2]-y;
+            bx = p4[1]-x;
+            by = p4[2]-y;
 
             d = Math.sqrt((ax+bx)*(ax+bx) + (ay+by)*(ay+by));
             //if (beta>Math.PI) { d *= -1; }
@@ -174,15 +180,15 @@ JXG.createSector = function(board, parents, attributes) {
                 k = (ay+by)*(r/d-0.5)/(ax-bx)*8.0/3.0;
             }
 
-            p2 = [p1[0]-k*ay, p1[1]+k*ax ];
-            p3 = [p4[0]+k*by, p4[1]-k*bx ];
+            p2 = [1, p1[1]-k*ay, p1[2]+k*ax ];
+            p3 = [1, p4[1]+k*by, p4[2]-k*bx ];
         
-            this.dataX = this.dataX.concat([p2[0], p3[0], p4[0]]);
-            this.dataY = this.dataY.concat([p2[1], p3[1], p4[1]]);
+            this.dataX = this.dataX.concat([p2[1], p3[1], p4[1]]);
+            this.dataY = this.dataY.concat([p2[2], p3[2], p4[2]]);
             p1 = p4.slice(0);
         }
-        this.dataX = this.dataX.concat([ p4[0]+0.333*(x-p4[0]), p4[0]+0.666*(x-p4[0]), x]);
-        this.dataY = this.dataY.concat([ p4[1]+0.333*(y-p4[1]), p4[1]+0.666*(y-p4[1]), y]);
+        this.dataX = this.dataX.concat([ p4[1]+0.333*(x-p4[1]), p4[1]+0.666*(x-p4[1]), x]);
+        this.dataY = this.dataY.concat([ p4[2]+0.333*(y-p4[2]), p4[2]+0.666*(y-p4[2]), y]);
         
         this.bezierDegree = 3;
     };

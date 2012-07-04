@@ -132,10 +132,10 @@ JXG.createArc = function(board, parents, attributes) {
         var A = this.radiuspoint,
             B = this.center,
             C = this.anglepoint,
-            beta, co, si, matrix, phi,
-            i, 
+            beta, co, si, matrix, phi, i,
             x = B.X(),
             y = B.Y(),
+            z = B.Z(),
             v, det, p0c, p1c, p2c,
             p1, p2, p3, p4,
             k, ax, ay, bx, by, d, r, sgn = 1.0,
@@ -164,10 +164,12 @@ JXG.createArc = function(board, parents, attributes) {
             }
         }
 
-        p1 = [A.X(), A.Y()];
+        p1 = [A.Z(), A.X(), A.Y()];
         r = B.Dist(A);
-        this.dataX = [p1[0]];
-        this.dataY = [p1[1]];
+        x /= z;
+        y /= z;
+        this.dataX = [p1[1]/p1[0]];
+        this.dataY = [p1[2]/p1[0]];
         while (phi>JXG.Math.eps) {
             if (phi>=PI2) {
                 beta = PI2;
@@ -179,16 +181,16 @@ JXG.createArc = function(board, parents, attributes) {
 
             co = Math.cos(sgn*beta);
             si = Math.sin(sgn*beta);
-            matrix = [[1,            0,   0],
+            matrix = [[1,        0,   0],  // z missing
                     [x*(1-co)+y*si,co,-si],
                     [y*(1-co)-x*si,si, co]];
-            v = JXG.Math.matVecMult(matrix,[1, p1[0], p1[1]]);
-            p4 = [v[1]/v[0], v[2]/v[0]];
+            v = JXG.Math.matVecMult(matrix, p1);
+            p4 = [v[0]/v[0], v[1]/v[0], v[2]/v[0]];
 
-            ax = p1[0]-x;
-            ay = p1[1]-y;
-            bx = p4[0]-x;
-            by = p4[1]-y;
+            ax = p1[1]-x;
+            ay = p1[2]-y;
+            bx = p4[1]-x;
+            by = p4[2]-y;
 
             d = Math.sqrt((ax+bx)*(ax+bx) + (ay+by)*(ay+by));
             //if (beta>Math.PI) { d *= -1; }
@@ -199,11 +201,11 @@ JXG.createArc = function(board, parents, attributes) {
                 k = (ay+by)*(r/d-0.5)/(ax-bx)*8.0/3.0;
             }
 
-            p2 = [p1[0]-k*ay, p1[1]+k*ax ];
-            p3 = [p4[0]+k*by, p4[1]-k*bx ];
+            p2 = [1, p1[1]-k*ay, p1[2]+k*ax ];
+            p3 = [1, p4[1]+k*by, p4[2]-k*bx ];
         
-            this.dataX = this.dataX.concat([p2[0], p3[0], p4[0]]);
-            this.dataY = this.dataY.concat([p2[1], p3[1], p4[1]]);
+            this.dataX = this.dataX.concat([p2[1], p3[1], p4[1]]);
+            this.dataY = this.dataY.concat([p2[2], p3[2], p4[2]]);
             p1 = p4.slice(0);
         }
         this.bezierDegree = 3;
