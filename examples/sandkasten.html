@@ -66,6 +66,8 @@
         var r = board.create('point', [0, 1], {label: {offsets: [10,10]}});
 
         var a = board.create('angle', [p, q, r]);
+        
+        var t = board.create('text', [2, 2, '<button onclick="alert(\'Hello!\');">Click</button>'], {fixed: true});
     })();
 
     var drei = (function () {

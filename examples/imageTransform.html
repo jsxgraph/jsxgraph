@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <!--<script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+</head>
+<body>
+<h1>Text and transformations</h1>
+<div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
+<script type='text/javascript'>
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:true});
+  var urlImg = "http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg";
+ 
+  var p0 = brd.create('point', [-2,-1], {size:8, name:'offset', opacity:0.3}); 
+ 
+  // Initially we put the lower left corner of the image to (0,0) and
+  // p1 to (3,0)
+  // After applying the transformation tOff to the image and the point p1, they are moved to
+  // (-2,-1) and (1,-1), respectively.
+  var p1 = brd.create('point', [3,-1], {size:8, name:'rotate+scale', opacity:0.3}); 
+  var im = brd.create('image',[urlImg, [0,0], [3,3]]);
+  var li = brd.create('segment', [p0,p1], {dash:2});           // Just for illustration
+  // 
+  // Translate image and point "rotate+scale" by dragging point "offset"
+  var tOff = brd.create('transform', [function(){return p0.X()},function(){return p0.Y()}], {type:'translate'}); 
+  tOff.bindTo(im);
+  tOff.bindTo(p1);
+ 
+  // Rotate image around point "offset" by dragging point "rot+scale"
+  var tRot = brd.create('transform', [function(){return Math.atan2(p1.Y()-p0.Y(),p1.X()-p0.X())}, p0], {type:'rotate'}); 
+  tRot.bindTo(im);
+ 
+  // Scale image by dragging point "rot+scale"
+  // We do this by moving the image back to the origin (inverse of transformation tOff),
+  // then scale the image (because scaling "starts from (0,0))
+  // Finally, we move the image back to point "Offset"
+  // The scaling factor is divided by three, because the original image size is (3,3).
+  var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
+  var tScale = brd.create('transform', [function(){return p1.Dist(p0)/3;},
+                                        function(){return p1.Dist(p0)/3;}], {type:'scale'}); 
+  tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
+
+brd.update();  
+</script> 
+</body>
+</html>
