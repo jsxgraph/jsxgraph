@@ -744,6 +744,11 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     this.hasLabel = value;
                     break;
+                case 'rotate':
+                    if (this.type===JXG.OBJECT_TYPE_TEXT && this.visProp.display=='internal') {
+                        this.addRotation(value);
+                    }
+                    break;
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)) || (JXG.Validator[key] && JXG.isFunction(value) && JXG.Validator[key](value())))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;

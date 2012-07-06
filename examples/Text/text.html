@@ -50,13 +50,16 @@
     brd.update();
 
     txt2 = brd.create('text',[2.5,-2, "Input element: <input type='checkbox' onclick='txt.setProperty({visible:false})'>"], {display:'html', anchorX:'right'});
-    txt3 = brd.create('text',[2.5,-6, "internal text right"], {display:'internal', anchorX:'right'});
+    txt3 = brd.create('text',[2.5,-6, "internal text right"], {display:'internal', anchorX:'right', rotate:0});
     txt4 = brd.create('text',[2.5,-8, "internal text left"], {display:'internal', anchorX:'middle'});
-    txt5 = brd.create('text',[2.5,-10, "internal text left"], {display:'internal', anchorX:'left'});
+    txt5 = brd.create('text',[2.5,-10, "internal text left"], {display:'internal', anchorX:'left', rotate:45});
     txt6 = brd.create('text',[0,-6, "html text right"], {display:'html', anchorX:'right'});
     txt7 = brd.create('text',[0,-8, "html text left"], {display:'html', anchorX:'middle'});
     txt8 = brd.create('text',[0,-10, "html text left"], {display:'html', anchorX:'left'});
     
+    txt3.setProperty({rotate:180});
+    //brd.update();
+    //brd.setBoundingBox([-5,10,5,-10], false);
     //alert(txt.rendNode.getBBox().width);
 </script> 
 </body>

@@ -1283,6 +1283,7 @@ JXG.Options = {
         cssClass : 'JXGtext',
         highlightCssClass : 'JXGtext',
         withLabel: false,
+        rotate: 0,                        // works for non-zero values only in combination with display=='internal'
 		visible: true
 
         /**#@-*/
