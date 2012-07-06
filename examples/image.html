@@ -29,7 +29,7 @@
         var li = board.create('line', [p0,p1]); 
         */
         var im = board.create('image',[picStr, [0,0], [3,2]],
-            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);} }); 
+            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);}, rotate:90 }); 
 
         /*
         // 

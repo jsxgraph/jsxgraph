@@ -749,9 +749,10 @@ JXG.Options = {
     },
 
     /* special grid options */
-    image: {
+    image : {
         imageString : null,
-        fillOpacity: 1.0
+        fillOpacity: 1.0,
+        rotate: 0,        
     },
     
     /* special options for incircle of 3 points */

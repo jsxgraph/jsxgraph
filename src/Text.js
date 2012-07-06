@@ -468,39 +468,6 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         }
 
         return this;
-    },
-    
-    /**
-     * Rotate text by a given degree. Works only for JXG.Text#display equal to "internal".
-     * @param {number} angle The degree of the rotation (90 means vertical text).
-     */
-    addRotation: function(angle) {
-        var tOffInv, tOff, tS, tSInv, tRot, that = this;
-        
-        if (this.type===JXG.OBJECT_TYPE_TEXT && this.visProp.display==='internal' && angle!=0) {
-            var tOffInv, tOff, tS, tSInv, tRot, that = this;
-
-            tOffInv = this.board.create('transform', [function(){return -that.X()}, function(){return -that.Y()}], {type:'translate'});
-            tOff = this.board.create('transform', [function(){return that.X()}, function(){return that.Y()}], {type:'translate'});
-       
-            tS = this.board.create('transform', [
-                    function() { return that.board.unitX/that.board.unitY; },                
-                    function() { return 1; }
-                ], {type:'scale'});
-            tSInv = this.board.create('transform', [
-                    function() { return that.board.unitY/that.board.unitX; },                
-                    function() { return 1; }
-                ], {type:'scale'});
-            tRot = this.board.create('transform', [angle*Math.PI/180.0], {type:'rotate'});
-        
-            tOffInv.bindTo(this);                                                   
-            tS.bindTo(this);
-            tRot.bindTo(this);
-            tSInv.bindTo(this);
-            tOff.bindTo(this);
-        }
-        
-        return this;
     }
     
 });
