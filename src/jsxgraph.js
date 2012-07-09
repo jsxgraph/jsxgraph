@@ -116,6 +116,17 @@ JXG.JSXGraph = {
     /**
      * Initialise a new board.
      * @param {String} box Html-ID to the Html-element in which the board is painted.
+     * @param {Object} attributes An object that sets some of the board properties. Most of these properties can be set via JXG.Options. Valid properties are
+     * <ul>
+     *     <li><b>boundingbox</b>: An array containing four numbers describing the left, top, right and bottom boundary of the board in user coordinates</li>
+     *     <li><b>keepaspectratio</b>: If <tt>true</tt>, the bounding box is adjusted to the same aspect ratio as the aspect ratio of the div containing the board.</li>
+     *     <li><b>showCopyright</b>: Show the copyright string in the top left corner.</li>
+     *     <li><b>showNavigation</b>: Show the navigation buttons in the bottom right corner.</li>
+     *     <li><b>zoom</b>: Allow the user to zoom with the mouse wheel or the two-fingers-zoom gesture.</li>
+     *     <li><b>pan</b>: Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.</li>
+     *     <li><b>axis</b>: If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.</li>
+     *     <li><b>grid</b>: If set to true, shows the grid. Can also bet set to an object that is given to the grid as its attribute object.</li>
+     * </ul>
      * @returns {JXG.Board} Reference to the created board.
      */
     initBoard: function (box, attributes) {
