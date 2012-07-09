@@ -167,9 +167,15 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
  * </script><pre>
  */
 JXG.createImage = function(board, parents, attributes) {
-    var url, attr;
+    var url, attr, im;
     attr = JXG.copyAttributes(attributes, board.options, 'image');
-    return new JXG.Image(board, parents[0], parents[1], parents[2], attr);
+    im = new JXG.Image(board, parents[0], parents[1], parents[2], attr);
+    
+    if (JXG.evaluate(attr.rotate) != 0) {
+        im.addRotation(JXG.evaluate(attr.rotate));
+    }
+    
+    return im;
 };
 
 JXG.JSXGraph.registerElement('image', JXG.createImage);

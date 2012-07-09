@@ -92,7 +92,7 @@ gl2.on('drag', function() {
 var x = board.create('point', [2,2], {name:'a', label:{position:'top', offsets:[0,10]}, withLabel:true});
 */
 
-var t = board.create('text', [-2.5,2,'Hallo'], {cssClass:'fat', highlightCssClass:'fatHL', fontSize:64});
+var t = board.create('text', [-4,3,'Hallo'], {cssClass:'fat', highlightCssClass:'fatHL', fontSize:32});
 
 var a = board.create('point', [1, 0, 0]);
 var b = board.create('point', [1, 2, 0], {name:'B'});
@@ -102,7 +102,7 @@ var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true',
 var br = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
 //var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 //var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-var pol = board.create('angle', [c,b,a], {name:'x'});
+var pol = board.create('angle', [c,b,a], {name:'x', radius:0.5});
 
 newsize = function() {
     board.resizeContainer(300, 300);

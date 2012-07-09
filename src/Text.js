@@ -206,7 +206,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
         //this.updateSize();
-//console.log("setText", this.id);        
+        
         this.prepareUpdate().update().updateRenderer();
 
         return this;
@@ -515,7 +515,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  * </script><pre>
  */
 JXG.createText = function(board, parents, attributes) {
-    var attr, t;
+    var attr, t, 
+        
 
     attr = JXG.copyAttributes(attributes, board.options, 'text');
 
@@ -526,6 +527,10 @@ JXG.createText = function(board, parents, attributes) {
 
     if (typeof parents[parents.length-1] !== 'function') {
         t.parents = parents;
+    }
+
+    if (JXG.evaluate(attr.rotate) != 0 && attr.display=='internal') {
+        t.addRotation(JXG.evaluate(attr.rotate));
     }
 
     return t;

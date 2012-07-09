@@ -749,9 +749,10 @@ JXG.Options = {
     },
 
     /* special grid options */
-    image: {
+    image : {
         imageString : null,
-        fillOpacity: 1.0
+        fillOpacity: 1.0,
+        rotate: 0,        
     },
     
     /* special options for incircle of 3 points */
@@ -1283,6 +1284,7 @@ JXG.Options = {
         cssClass : 'JXGtext',
         highlightCssClass : 'JXGtext',
         withLabel: false,
+        rotate: 0,                        // works for non-zero values only in combination with display=='internal'
 		visible: true
 
         /**#@-*/

@@ -7,7 +7,7 @@
         Alfred Wassermann,
         Peter Wilfahrt
 
-    This file is part of JSXGraph.
+    This file is part of JrotSXGraph.
 
     JSXGraph is free software: you can redistribute it and/or modify
     it under the terms of the GNU Lesser General Public License as published by
@@ -744,6 +744,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     this.hasLabel = value;
                     break;
+                case 'rotate':
+                    if ((this.type===JXG.OBJECT_TYPE_TEXT && this.visProp.display=='internal')
+                        || this.type===JXG.OBJECT_TYPE_IMAGE) {
+                        this.addRotation(value);
+                    }
+                    break;
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)) || (JXG.Validator[key] && JXG.isFunction(value) && JXG.Validator[key](value())))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
@@ -1014,6 +1020,44 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         return json;
     },
 
+    
+    /**
+     * Rotate texts or images by a given degree. Works only for texts where JXG.Text#display equal to "internal".
+     * @param {number} angle The degree of the rotation (90 means vertical text).
+     * @see JXG.GeometryElement#rotate
+     */
+    addRotation: function(angle) {
+        var tOffInv, tOff, tS, tSInv, tRot, that = this;
+        
+        if (((this.type===JXG.OBJECT_TYPE_TEXT && this.visProp.display==='internal')
+              || this.type===JXG.OBJECT_TYPE_IMAGE
+             )
+            && angle!=0) {
+            var tOffInv, tOff, tS, tSInv, tRot, that = this;
+
+            tOffInv = this.board.create('transform', [function(){return -that.X()}, function(){return -that.Y()}], {type:'translate'});
+            tOff = this.board.create('transform', [function(){return that.X()}, function(){return that.Y()}], {type:'translate'});
+       
+            tS = this.board.create('transform', [
+                    function() { return that.board.unitX/that.board.unitY; },                
+                    function() { return 1; }
+                ], {type:'scale'});
+            tSInv = this.board.create('transform', [
+                    function() { return that.board.unitY/that.board.unitX; },                
+                    function() { return 1; }
+                ], {type:'scale'});
+            tRot = this.board.create('transform', [angle*Math.PI/180.0], {type:'rotate'});
+        
+            tOffInv.bindTo(this);                                                   
+            tS.bindTo(this);
+            tRot.bindTo(this);
+            tSInv.bindTo(this);
+            tOff.bindTo(this);
+        }
+        
+        return this;
+    },
+    
     /**
      * Set the highlightStrokeColor of an element
      * @param {String} sColor String which determines the stroke color of an object when its highlighted.
