@@ -753,7 +753,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @param {String} type The event to catch, without leading 'on', e.g. 'mousemove' instead of 'onmousemove'.
      * @param {Object} owner The scope in which the event trigger is called.
      */
-    removeAllEvents: function(obj, type, fn, owner) {
+    removeAllEvents: function(obj, type, owner) {
         var i, len;
         if (owner['x_internal' + type]) {
             len = owner['x_internal' + type].length;
