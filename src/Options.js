@@ -413,6 +413,16 @@ JXG.Options = {
         scaleSymbol: '',
 
         /**
+         * User defined labels for special ticks. Instead of the i-th tick's position, the i-th string stored in this array
+         * is shown. If the number of strings in this array is less than the number of special ticks, the tick's position is
+         * shown as a fallback.
+         * @type Array
+         * @name JXG.Ticks#labels
+         * @default []
+         */
+        labels: [],
+
+        /**
          * The default distance between two ticks. Please be aware that this value does not have
          * to be used if {@link JXG.Ticks#insertTicks} is set to true.
          * @type Boolean

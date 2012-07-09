@@ -250,7 +250,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 if (ti.length==2 && this.fixedTicks[i]>=lb && this.fixedTicks[i]<ub) {
                     this.ticks.push(ti);
                 }
-                this.labels.push(this._makeLabel(this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                this.labels.push(this._makeLabel(this.visProp.labels[i] || this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                 // visibility test missing
             }
             return;
@@ -500,7 +500,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      * @private
      **/
     _makeLabel: function(pos, newTick, board, drawLabels, id, i) {
-        var labelText, label, attr;
+        var labelText, label, attr, num = typeof pos === 'number';
 
         if (!drawLabels) {
             return null;
@@ -511,10 +511,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             labelText = '0';
         }
 
-        if(labelText.length > 5 || labelText.indexOf('e') != -1) {
+        if(num && (labelText.length > 5 || labelText.indexOf('e') != -1)) {
             labelText = pos.toPrecision(3).toString();
         }
-        if (labelText.indexOf('.') > -1) {
+        if (num && labelText.indexOf('.') > -1) {
             // trim trailing zeros
             labelText = labelText.replace(/0+$/, '');
             // trim trailing .
