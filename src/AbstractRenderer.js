@@ -991,16 +991,12 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor, element.borders[i].visProp.highlightstrokeopacity);
                 }
             } else {
-                this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-                this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
-            }
-            if (element.type === JXG.OBJECT_TYPE_TEXT) {
-                if (element.visProp.display === 'html') {    
-                    if (element.visPropOld.cssclass!==element.visProp.highlightcssclass) {
-                        element.rendNode.className = element.visProp.highlightcssclass;
-                        element.visPropOld.cssclass = element.visProp.highlightcssclass;
-                    }
-                } 
+                if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                    this.highlightText(element, ev);
+                } else {
+                    this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+                    this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
+                }
             }
             if (ev.highlightstrokewidth) {
                 this.setObjectStrokeWidth(element, Math.max(ev.highlightstrokewidth, ev.strokewidth));
@@ -1032,15 +1028,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor, element.borders[i].visProp.strokeopacity);
                 }
             } else {
-                this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
-                this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
-            }
-            if (element.type === JXG.OBJECT_TYPE_TEXT) {
-                if (element.visProp.display === 'html') {    
-                    if (element.visPropOld.cssclass!==element.visProp.cssclass) {
-                        element.rendNode.className = element.visProp.cssclass;
-                        element.visPropOld.cssclass = element.visProp.cssclass;
-                    }
+                if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                    this.noHighlightText(element, ev);
+                } else {
+                    this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
+                    this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                 }
             }
             this.setObjectStrokeWidth(element, ev.strokewidth);
@@ -1049,7 +1041,38 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         return this;
     },
 
+    highlightText: function(el, ev) {
+        if (el.visProp.display === 'internal') {
+            this.setObjectFillColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+        } else {
+            this.setObjectStrokeColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
+            this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
+        }
+        if (el.visProp.display === 'html') {    
+            if (el.visPropOld.cssclass!==el.visProp.highlightcssclass) {
+                el.rendNode.className = el.visProp.highlightcssclass;
+                el.visPropOld.cssclass = el.visProp.highlightcssclass;
+            }
+        }
+        return this;
+    },
 
+    noHighlightText: function(el, ev) {
+        if (el.visProp.display === 'internal') {
+            this.setObjectFillColor(el, ev.strokecolor, ev.strokeopacity);
+        } else {
+            this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
+            this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+        }
+        if (el.visProp.display === 'html') {    
+            if (el.visPropOld.cssclass!==el.visProp.cssclass) {
+                el.rendNode.className = el.visProp.cssclass;
+                el.visPropOld.cssclass = el.visProp.cssclass;
+            }
+        }
+        return this;
+    },
+    
     /* **************************
      * renderer control
      * **************************/

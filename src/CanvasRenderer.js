@@ -937,19 +937,27 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
     // documented in AbstractRenderer
     highlight: function (obj) {
-        obj.board.prepareUpdate();
-        obj.board.renderer.suspendRedraw(obj.board);
-        obj.board.updateRenderer();
-        obj.board.renderer.unsuspendRedraw();
+        if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            this.highlightText(obj, obj.visProp);
+        } else {
+            obj.board.prepareUpdate();
+            obj.board.renderer.suspendRedraw(obj.board);
+            obj.board.updateRenderer();
+            obj.board.renderer.unsuspendRedraw();
+        }
         return this;
     },
 
     // documented in AbstractRenderer
     noHighlight: function (obj) {
-        obj.board.prepareUpdate();
-        obj.board.renderer.suspendRedraw(obj.board);
-        obj.board.updateRenderer();
-        obj.board.renderer.unsuspendRedraw();
+        if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            this.highlightText(obj, obj.visProp);
+        } else {
+            obj.board.prepareUpdate();
+            obj.board.renderer.suspendRedraw(obj.board);
+            obj.board.updateRenderer();
+            obj.board.renderer.unsuspendRedraw();
+        }
         return this;
     },
 
