@@ -627,6 +627,15 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 element.visPropOld.fontsize = fs;
             }
         }
+        if (element.visProp.display === 'html') {
+            this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
+            //this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);        
+        } else {
+            this.updateInternalTextStyle(element);
+        }
+    },
+    
+    updateInternalTextStyle: function(element) {
         this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
     },
 
@@ -1046,7 +1055,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             this.setObjectFillColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
         } else {
             this.setObjectStrokeColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-            this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
+            //this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
         }
         if (el.visProp.display === 'html') {    
             if (el.visPropOld.cssclass!==el.visProp.highlightcssclass) {
@@ -1062,7 +1071,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             this.setObjectFillColor(el, ev.strokecolor, ev.strokeopacity);
         } else {
             this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
-            this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
+            //this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
         }
         if (el.visProp.display === 'html') {    
             if (el.visPropOld.cssclass!==el.visProp.cssclass) {

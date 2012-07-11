@@ -317,6 +317,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
         this.transformImage(el, el.transformations);
     },
+    
+    updateInternalTextStyle: function(element) {
+        this.setObjectFillColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
+    },
 	
     /* **************************
      *    Image related stuff

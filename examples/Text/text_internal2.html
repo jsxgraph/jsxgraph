@@ -38,9 +38,9 @@
     //JXG.Options.text.display = 'internal';
     
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,5,5,-5], axis:false, showNavigation:true, showCopyright:true});
-    txt = brd.create('text',[0, 0, JXG.JSXGraph.rendererType + ' internal'], 
+    txt = brd.create('text',[-2, 0, JXG.JSXGraph.rendererType + ' internal'], 
 		{display:'internal', fontSize:'64', strokeColor:'blue', highlightStrokeColor:'#DDDD00'});
-    txt2 = brd.create('text',[0, 2, JXG.JSXGraph.rendererType + ' <i>html</i>'], 
+    txt2 = brd.create('text',[-2, 2, JXG.JSXGraph.rendererType + ' <i>html</i>'], 
 		{display:'html', /*cssClass:'fat', highlightCssClass:'fatHL', fontSize:32*/
         fontSize:'64', strokeColor:'blue', highlightStrokeColor:'#DDDD00'});
 </script> 
