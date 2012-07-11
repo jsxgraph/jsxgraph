@@ -14,7 +14,6 @@ Important Notes
 
 New Features
 ------------
- * New attribute **priv** for all elements for internal use (r2827)
  * Attributes for grid and axis can be given on initBoard (r2841)
  * Scale ticks and represent the scale by appending a string to each tick label (r2842)
  * JSXGraph can now be used inside WebWorkers (r2807, r2811 & r2874)
@@ -28,8 +27,10 @@ New Features
  * New input specific events (877d5ac)
  * New board option *animationDelay* which controls the animation fps (d093a9e)
  * New options for texts: **anchorX** 'left', 'middle', or 'right' and **anchorY** 'top', or 'bottom' (78608c0, f1aa9de, 8d7f467, bc8cbd6, bbb607b, 7e69d11)
+   and **rotate** (181ee73)
  * Circles and lines have a new property **snapToGrid**. Whenever a line or circle is moved and this property is set, the parent points with the snapToGrid 
    set to true will snap to grid once the users releases the circle or line (#3, 2a774e1)
+ * New option **labels** for Ticks. In case of special ticks the *n* strings given in **labels** are taken as labels for the first *n* ticks (c188efe)
 
 Bug fixes
 ---------
@@ -79,7 +80,7 @@ Bug fixes
  * Various fixes in GeonextReader (006c5da, 59ac4c2, 1fecf7a)
  * Ticks are now deleted when their line is removed (bda7e7f)
  * Text rendering speed improved (d4c0bf2, b955052)
- * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123)
+ * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123, fdabf15)
  * If no element is dragged or found, don't stop the event propagation (324f7c6)
 
 
