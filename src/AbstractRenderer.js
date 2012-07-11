@@ -611,10 +611,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         if (element.visProp.display === 'html' || this.type != 'canvas') {
         //if (element.visProp.display === 'html') {
             //element.rendNode.setAttribute("class", element.visProp.cssclass);
-            if (element.visPropOld.cssclass != element.visProp.cssclass) {
-                element.rendNode.className = element.visProp.cssclass;
-                element.visPropOld.cssclass = element.visProp.cssclass;
-            }
             
             fs = JXG.evaluate(element.visProp.fontsize);
             if (element.visPropOld.fontsize != fs) {
@@ -625,6 +621,11 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                     element.rendNode.style.fontSize = fs;
                 }
                 element.visPropOld.fontsize = fs;
+            }
+            
+            if (element.visPropOld.cssclass != element.visProp.cssclass) {
+                element.rendNode.className = element.visProp.cssclass;
+                element.visPropOld.cssclass = element.visProp.cssclass;
             }
         }
         if (element.visProp.display === 'html') {
