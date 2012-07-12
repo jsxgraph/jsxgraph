@@ -557,6 +557,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             this.updateTextStyle(el, false);
 
             if (el.visProp.display === 'html') {
+                // Set the position
                 if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                     if (el.visProp.anchorx === 'right') {
                         el.rendNode.style.right = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
@@ -574,7 +575,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                         el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
                     }
                 }
-
+                
+                // Set the content
                 if (el.htmlStr !== content) {
                     el.rendNode.innerHTML = content;
                     el.htmlStr = content;
@@ -596,7 +598,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     },
 
     /**
-     * Updates CSS style properties of a {@link JXG.Text} node.
+     * Updates font-size, color and opacity propertiey and CSS style properties of a {@link JXG.Text} node.
+     * This function is also called by highlight() and nohighlight().
      * @param {JXG.Text} element Reference to the {@link JXG.Text} object, that has to be updated.
      * @see Text
      * @see JXG.Text
@@ -604,6 +607,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#drawInternalText
      * @see JXG.AbstractRenderer#updateText
      * @see JXG.AbstractRenderer#updateInternalText
+     * @see JXG.AbstractRenderer#updateInternalTextStyle
      */
     updateTextStyle: function (element, doHighlight) {
         var fs, so, sc, css,
@@ -619,6 +623,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             css = ev.cssclass;
         }
        
+        /*
+         * This part is executed for all text elements except internal texts in canvas.
+         */
         if (element.visProp.display === 'html' || this.type != 'canvas') {
             fs = JXG.evaluate(element.visProp.fontsize);
             if (element.visPropOld.fontsize != fs) {
@@ -644,6 +651,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         return this;
     },
     
+    /**
+     * Set color and opacity of internal texts. 
+     * This method is used for Canvas and VML.
+     * SVG needs its own version.
+     * @private
+     * @see JXG.AbstractRenderer#updateTextStyle
+     * @see JXG.SVGRenderer#updateInternalTextStyle
+     */
     updateInternalTextStyle: function(element, strokeColor, strokeOpacity) {
         this.setObjectStrokeColor(element, strokeColor, strokeOpacity);        
     },
@@ -991,6 +1006,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * Highlights an object, i.e. changes the current colors of the object to its highlighting colors
      * @param {JXG.GeometryElement} element Reference of the object that will be highlighted.
      * @returns {JXG.AbstractRenderer} Reference to the renderer
+     * @see JXG.AbstractRenderer#updateTextStyle
      */
     highlight: function (element) {
         var i, ev = element.visProp;
@@ -1011,7 +1027,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
                     this.updateTextStyle(element, true);
-                    //this.highlightText(element, ev);
                 } else {
                     this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                     this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
@@ -1029,6 +1044,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * Uses the normal colors of an object, i.e. the opposite of {@link JXG.AbstractRenderer#highlight}.
      * @param {JXG.GeometryElement} element Reference of the object that will get its normal colors.
      * @returns {JXG.AbstractRenderer} Reference to the renderer
+     * @see JXG.AbstractRenderer#updateTextStyle
      */
     noHighlight: function (element) {
         var i, ev = element.visProp;
@@ -1049,7 +1065,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
                     this.updateTextStyle(element, false);
-                    //this.noHighlightText(element, ev);
                 } else {
                     this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                     this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);

@@ -938,7 +938,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     highlight: function (obj) {
         if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
-            this.highlightText(obj, obj.visProp);
+            this.updateTextStyle(obj, true);
         } else {
             obj.board.prepareUpdate();
             obj.board.renderer.suspendRedraw(obj.board);
@@ -951,7 +951,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     noHighlight: function (obj) {
         if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
-            this.highlightText(obj, obj.visProp);
+            this.updateTextStyle(obj, false);
         } else {
             obj.board.prepareUpdate();
             obj.board.renderer.suspendRedraw(obj.board);
