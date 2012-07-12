@@ -762,7 +762,7 @@ JXG.Options = {
     image : {
         imageString : null,
         fillOpacity: 1.0,
-        rotate: 0,        
+        rotate: 0
     },
     
     /* special options for incircle of 3 points */
