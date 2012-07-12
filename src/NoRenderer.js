@@ -285,7 +285,7 @@ JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype *
      * @see JXG.AbstractRenderer#updateText
      * @see JXG.AbstractRenderer#updateInternalText
      */
-    updateTextStyle: function (element) { },
+    updateTextStyle: function (element, doHighlight) { },
 
     /* **************************
      *    Image related stuff

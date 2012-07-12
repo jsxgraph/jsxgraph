@@ -554,7 +554,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         var content = el.plaintext;
 
         if (el.visProp.visible) {
-            this.updateTextStyle(el);
+            this.updateTextStyle(el, false);
 
             if (el.visProp.display === 'html') {
                 if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
@@ -605,13 +605,21 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateText
      * @see JXG.AbstractRenderer#updateInternalText
      */
-    updateTextStyle: function (element) {
-        var fs;
+    updateTextStyle: function (element, doHighlight) {
+        var fs, so, sc, css,
+            ev = element.visProp;
 
+        if (doHighlight) {
+            sc = ev.highlightstrokecolor;
+            so = ev.highlightstrokeopacity;
+            css = ev.highlightcssclass;
+        } else {
+            sc = ev.strokecolor;
+            so = ev.strokeopacity;
+            css = ev.cssclass;
+        }
+       
         if (element.visProp.display === 'html' || this.type != 'canvas') {
-        //if (element.visProp.display === 'html') {
-            //element.rendNode.setAttribute("class", element.visProp.cssclass);
-            
             fs = JXG.evaluate(element.visProp.fontsize);
             if (element.visPropOld.fontsize != fs) {
                 try {
@@ -623,21 +631,21 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 element.visPropOld.fontsize = fs;
             }
             
-            if (element.visPropOld.cssclass != element.visProp.cssclass) {
-                element.rendNode.className = element.visProp.cssclass;
-                element.visPropOld.cssclass = element.visProp.cssclass;
+            if (element.visPropOld.cssclass != css) {
+                element.rendNode.className = css;
+                element.visPropOld.cssclass = css;
             }
         }
         if (element.visProp.display === 'html') {
-            this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
-            //this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);        
+            this.setObjectStrokeColor(element, sc, so);        
         } else {
-            this.updateInternalTextStyle(element);
+            this.updateInternalTextStyle(element, sc, so);
         }
+        return this;
     },
     
-    updateInternalTextStyle: function(element) {
-        this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);        
+    updateInternalTextStyle: function(element, strokeColor, strokeOpacity) {
+        this.setObjectStrokeColor(element, strokeColor, strokeOpacity);        
     },
 
     /* **************************
@@ -1002,7 +1010,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 }
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
-                    this.highlightText(element, ev);
+                    this.updateTextStyle(element, true);
+                    //this.highlightText(element, ev);
                 } else {
                     this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                     this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
@@ -1039,7 +1048,8 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 }
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
-                    this.noHighlightText(element, ev);
+                    this.updateTextStyle(element, false);
+                    //this.noHighlightText(element, ev);
                 } else {
                     this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                     this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
@@ -1051,38 +1061,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         return this;
     },
 
-    highlightText: function(el, ev) {
-        if (el.visProp.display === 'internal') {
-            this.setObjectFillColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-        } else {
-            this.setObjectStrokeColor(el, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-            //this.setObjectFillColor(el, ev.highlightfillcolor, ev.highlightfillopacity);
-        }
-        if (el.visProp.display === 'html') {    
-            if (el.visPropOld.cssclass!==el.visProp.highlightcssclass) {
-                el.rendNode.className = el.visProp.highlightcssclass;
-                el.visPropOld.cssclass = el.visProp.highlightcssclass;
-            }
-        }
-        return this;
-    },
-
-    noHighlightText: function(el, ev) {
-        if (el.visProp.display === 'internal') {
-            this.setObjectFillColor(el, ev.strokecolor, ev.strokeopacity);
-        } else {
-            this.setObjectStrokeColor(el, ev.strokecolor, ev.strokeopacity);
-            //this.setObjectFillColor(el, ev.fillcolor, ev.fillopacity);
-        }
-        if (el.visProp.display === 'html') {    
-            if (el.visPropOld.cssclass!==el.visProp.cssclass) {
-                el.rendNode.className = el.visProp.cssclass;
-                el.visPropOld.cssclass = el.visProp.cssclass;
-            }
-        }
-        return this;
-    },
-    
     /* **************************
      * renderer control
      * **************************/
