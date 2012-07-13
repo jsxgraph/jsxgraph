@@ -79,7 +79,7 @@ Bug fixes
  * Don't update ticks if board height or width equals zero (c7c2e23)
  * Various fixes in GeonextReader (006c5da, 59ac4c2, 1fecf7a)
  * Ticks are now deleted when their line is removed (bda7e7f)
- * Text rendering speed improved (d4c0bf2, b955052)
+ * Text rendering speed improved (d4c0bf2, b955052, fa91ce0, 434c87b)
  * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123, fdabf15)
  * If no element is dragged or found, don't stop the event propagation (324f7c6)
 
