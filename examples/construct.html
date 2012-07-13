@@ -97,12 +97,17 @@ var t = board.create('text', [-4,3,'Hallo'], {cssClass:'fat', highlightCssClass:
 var a = board.create('point', [1, 0, 0]);
 var b = board.create('point', [1, 2, 0], {name:'B'});
 var c = board.create('point', [1, 0, 2], {name:'C'});
-var ar = board.create('arc', [a,b,c], {type:'major',withLabel:'true', name:'&alpha;', strokeWidth:8});
-var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;', strokeWidth:8});
-var br = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
+var ar = board.create('arc', [a,b,c], {type:'major',withLabel:'true', name:'&alpha;', strokeWidth:2});
+//var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;', strokeWidth:8});
+//var br2 = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
 //var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 //var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-var pol = board.create('angle', [c,b,a], {name:'x', radius:0.5});
+//var pol = board.create('angle', [c,b,a], {name:'x', radius:0.5});
+
+var x = board.create('glider',[-1,2, ar]);
+var y = board.create('segment',[x,a]);
+x.free();
+
 
 newsize = function() {
     board.resizeContainer(300, 300);
