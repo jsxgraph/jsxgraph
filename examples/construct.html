@@ -108,7 +108,7 @@ var x = board.create('glider',[-3, 6, ar]);
 var y = board.create('segment',[x,a]);
 //x.free();
 //board.update();
-pol.setProperty({radius:function(){return 1.0+a.X();}});
+pol.setProperty({radius:function(){return 1.0;}});
 
 newsize = function() {
     board.resizeContainer(300, 300);

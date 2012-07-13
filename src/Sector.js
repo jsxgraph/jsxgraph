@@ -148,6 +148,7 @@ JXG.createSector = function(board, parents, attributes) {
         p1[1] /= p1[0];
         p1[2] /= p1[0];
         p1[0] /= p1[0];
+        p4 = p1.slice(0);
         x /= z;
         y /= z;
         this.dataX = [x, x+0.333*(p1[1]-x), x+0.666*(p1[1]-x), p1[1]];

@@ -165,6 +165,7 @@ JXG.createArc = function(board, parents, attributes) {
         }
 
         p1 = [A.Z(), A.X(), A.Y()];
+        p4 = p1.slice(0);
         r = B.Dist(A);
         x /= z;
         y /= z;
