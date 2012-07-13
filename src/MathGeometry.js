@@ -1138,9 +1138,9 @@ JXG.extend(JXG.Math.Geometry, {
             M = circle.center.coords.usrCoords,
             x, y, factor;
 
-        if (!JXG.exists(board))
+        if (!JXG.exists(board)) {
             board = point.board;
-
+        }
         if (Math.abs(dist) < JXG.Math.eps) {
             dist = JXG.Math.eps;
         }

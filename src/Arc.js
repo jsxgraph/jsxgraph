@@ -241,7 +241,7 @@ JXG.createArc = function(board, parents, attributes) {
         var prec = this.board.options.precision.hasPoint/(this.board.unitX),
             checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
             r = this.Radius(),
-            dist = this.center.coords.distance(JXG.COORDS_BY_USER,checkPoint),
+            dist = this.center.coords.distance(JXG.COORDS_BY_USER, checkPoint),
             has = (Math.abs(dist-r) < prec),
             angle, alpha, beta;
             
@@ -251,7 +251,7 @@ JXG.createArc = function(board, parents, attributes) {
             beta = JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint);
             if ((this.visProp.type=='minor' && beta>Math.PI)
                 || (this.visProp.type=='major' && beta<Math.PI)) { 
-                alpha = 2*Math.PI - beta; 
+                alpha = beta; 
                 beta = 2*Math.PI;
             } 
             if (angle<alpha || angle>beta) { 
@@ -283,7 +283,7 @@ JXG.createArc = function(board, parents, attributes) {
             beta = JXG.Math.Geometry.rad(this.radiuspoint,this.center,this.anglepoint);
             if ((this.visProp.type=='minor' && beta>Math.PI) 
                 || (this.visProp.type=='major' && beta<Math.PI)) { 
-                alpha = 2*Math.PI - beta; 
+                alpha = beta; 
                 beta = 2*Math.PI;
             } 
             if (angle<alpha || angle>beta) { 

@@ -80,6 +80,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point1 = JXG.getReference(board, parents[0]);
+    el.center = el.point1;
 
     /**
      * This point together with {@link Sector#point1} defines the radius..
@@ -88,6 +89,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point2 = JXG.getReference(board, parents[1]);
+    el.radiuspoint = el.point2;
 
     /**
      * Defines the sector's angle.
@@ -96,6 +98,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point3 = JXG.getReference(board, parents[2]);
+    el.anglepoint = el.point3;
     
     /* Add arc as child to defining points */
     el.point1.addChild(el);
@@ -210,6 +213,26 @@ JXG.createSector = function(board, parents, attributes) {
      */
     el.getRadius = function() {
         return this.Radius();
+    };
+
+    // documented in geometry element
+    el.hasPoint = function (x, y) {
+        var prec = this.board.options.precision.hasPoint/(this.board.unitX),
+            checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+            r = this.Radius(),
+            dist = this.center.coords.distance(JXG.COORDS_BY_USER, checkPoint),
+            has = (Math.abs(dist-r) < prec),
+            angle, alpha, beta;
+            
+        if (has) {
+            angle = JXG.Math.Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
+            alpha = 0.0;
+            beta = JXG.Math.Geometry.rad(this.point2, this.center, this.point3);
+            if (angle<alpha || angle>beta) { 
+                has = false; 
+            }
+        }
+        return has;    
     };
 
     /**
