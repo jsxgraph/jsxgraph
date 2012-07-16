@@ -480,10 +480,40 @@ JXG.Options = {
         /**
          * Radius of the sector, displaying the angle.
          * @type Number
+         * @default 0.5
          * @name Angle#radius
          */
-        radius : 1.0,
-        type : 'auto',  // 'square' or 'sector' or 'auto'
+        radius : 0.5,
+        
+        /**
+         * Display type of the angle field. Possible values are 
+         * 'sector' or 'sectordot' or 'square' or 'none'.
+         * @type String
+         * @default sector
+         * @name Angle#type
+         */
+        type : 'sector',  
+                
+        /**
+         * Display type of the angle field in case of a right angle. Possible values are 
+         * 'sector' or 'sectordot' or 'square' or 'none'.
+         * @type String
+         * @default square
+         * @name Angle#orthoType
+         * @see Angle#orthoSensitivity
+         */
+        orthoType: 'square',         
+
+        /**
+         * Sensitivity (in degrees) to declare an angle as right angle.
+         * If the angle measure is inside this distance from a rigth angle, the orthoType
+         * of the angle is used for display.
+         * @type Number
+         * @default 1.0
+         * @name Angle#orthoSensitivity
+         * @see Angle#orthoType
+         */
+        orthoSensitivity: 1.0,     
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
