@@ -38,14 +38,14 @@
 <div id="box" class="jxgbox" style="width:300px; height:300px; margin: 0 4em 1em 0; float: left;"></div>
 
 <script type="text/javascript">
-JXG.Options.sector.label = {offsets:[0,0]};    
+JXG.Options.sector.label = {offset:[0,0]};    
 var board = JXG.JSXGraph.initBoard('box', {
         boundingbox: [-4,4,4,-4], 
         keepaspectratio: true, 
     });
 var cirkel = board.create('circle',[[0,0],[3,0]]);
 var M = board.create('point',[0,0],{name:'M',fixed:true});
-var A = board.create('glider',[-2,-1,cirkel],{name:'A', label: {offsets:[-10,-10]}});
+var A = board.create('glider',[-2,-1,cirkel],{name:'A', label: {offset:[-10,-10]}});
 var B = board.create('glider',[2,-1,cirkel],{name:'B'});
 var boogAB = board.create('arc', [M, B, A],{visible:false});
 var C = board.create('glider',[1,3,boogAB],{name:'C'});
@@ -55,7 +55,7 @@ board.create('segment', [B, C]);
 board.create('segment', [A, C]);
 board.create('angle',[A,C,B],{radius:1.5, name:function() { 
    return JXG.Math.Geometry.trueAngle(A,C,B).toFixed(1) + "&deg;"; 
-}, label:{fontSize:30, offsets:[-10,0]}});
+}, label:{fontSize:30, offset:[-10,0]}});
 //board.create('angle',[A,M,B],{radius:.5, color: 'blue', name: function() { 
 //   return JXG.Math.Geometry.trueAngle(A,M,B).toFixed(1) + "&deg;"; }});
  

@@ -552,8 +552,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
          */
         //label.distanceX = 4;
         //label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
-        label.distanceX = this.visProp.label.offsets[0];
-        label.distanceY = this.visProp.label.offsets[1];
+        label.distanceX = this.visProp.label.offset[0];
+        label.distanceY = this.visProp.label.offset[1];
         label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
             newTick.usrCoords[2] + label.distanceY / (board.unitY));
 

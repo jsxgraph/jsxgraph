@@ -540,7 +540,7 @@ JXG.Options = {
         },
         label: {
             position: 'top',
-            offsets: [0,0],
+            offset: [0,0],
             strokeColor: '#0000FF'
         }
     },
@@ -572,7 +572,7 @@ JXG.Options = {
         /* line ticks options */
         ticks : {
             label: { 
-                offsets:[4,-12+3]     // This seems to be a good offset for 12 point fonts
+                offset:[4,-12+3]     // This seems to be a good offset for 12 point fonts
             },
             needsRegularUpdate : false,            
             strokeWidth: 1,
@@ -596,7 +596,7 @@ JXG.Options = {
         },
         label: {
             position: 'lft',
-            offsets: [10,-20]
+            offset: [10,-20]
         }
     },
     
@@ -857,13 +857,13 @@ JXG.Options = {
         position: 'urt',
         
         /**
-        *  Label offsets from label anchor 
+        *  Label offset from label anchor 
         *  The label anchor is determined by JXG.GeometryElement#label.position
         * @type Array
         * @default [10,10]
-        * @name JXG.GeometryElement#label.offsets
+        * @name JXG.GeometryElement#label.offset
         **/
-        offsets: [10, 10]
+        offset: [10, 10]
     },
         
     /* special legend options */
@@ -909,7 +909,7 @@ JXG.Options = {
         ticks : {
             drawLabels : true,
             label: { 
-                offsets:[4,-12+3] // This seems to be a good offset for 12 point fonts
+                offset: [4,-12+3] // This seems to be a good offset for 12 point fonts
             },
             drawZero : false,
             insertTicks : false,
@@ -1188,7 +1188,7 @@ JXG.Options = {
         },
         
         label: {
-            offsets: [0,0]
+            offset: [0,0]
         }
     },
 
@@ -1206,7 +1206,7 @@ JXG.Options = {
         fillOpacity: 0.3,
         highlightFillOpacity: 0.3,
         label: {
-            offsets:[0,0]
+            offset:[0,0]
         }
     },
 

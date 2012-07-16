@@ -1184,7 +1184,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         var attributes = JXG.deepCopy(this.visProp),
             cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
                 'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
-                'needsregularupdate', 'zoom', 'layer', 'labeloffsets'],
+                'needsregularupdate', 'zoom', 'layer', 'offset'],
             i;
 
         attributes.id = this.id;

@@ -525,7 +525,7 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         line = [];
         var get_anchor =  function() {
             var x1, x2, y1, y2,
-                relCoords = this.visProp.label.offsets.slice(0);
+                relCoords = this.visProp.label.offset.slice(0);
                 
             x1 = this.point1.X();
             x2 = this.point2.X();
@@ -817,7 +817,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
         this.myAtts['strokecolor'] = this.color_array[i];
         this.myAtts['highlightstrokecolor'] = this.color_array[i];
         this.myAtts['name'] = this.label_array[i];
-        this.myAtts['label'] = {offsets:[40, 0], strokeColor: this.color_array[i], strokeWidth: this.myAtts.strokewidth};
+        this.myAtts['label'] = {offset:[40, 0], strokeColor: this.color_array[i], strokeWidth: this.myAtts.strokewidth};
         
         this.lines[i] = board.create('line', 
                 [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],
@@ -825,7 +825,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
                 this.myAtts
                 );
         this.lines[i].getLabelAnchor = function() {
-            this.setLabelRelativeCoords(this.visProp.label.offsets);
+            this.setLabelRelativeCoords(this.visProp.label.offset);
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
         }
     }

@@ -60,8 +60,8 @@ JXG.Text = function (board, content, coords, attributes) {
         this.element.addChild(this);
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this.board);
-            //[parseFloat(this.visProp.offsets[0]) + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-            // parseFloat(this.visProp.offsets[1]) + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
+            //[parseFloat(this.visProp.offset[0]) + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
+            // parseFloat(this.visProp.offset[1]) + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
         this.isDraggable = true;
     } else {
         if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
@@ -293,8 +293,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         if (this.needsUpdate) {
             if (this.relativeCoords) {
                 if (this.visProp.islabel) {
-                    sx =  parseFloat(this.visProp.offsets[0]);
-                    sy = -parseFloat(this.visProp.offsets[1]);
+                    sx =  parseFloat(this.visProp.offset[0]);
+                    sy = -parseFloat(this.visProp.offset[1]);
                     anchor = this.element.getLabelAnchor();
 
                     this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
