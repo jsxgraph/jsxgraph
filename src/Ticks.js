@@ -536,7 +536,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             highlightStrokeColor: board.options.text.strokeColor,
             highlightStrokeWidth: board.options.text.strokeWidth,
             highlightStrokeOpacity: board.options.text.strokeOpacity,
-            visible: this.visProp.visible
+            visible: this.visProp.visible,
+            priv: this.visProp.priv
         };
         attr = JXG.deepCopy(attr, this.visProp.label);
         label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
