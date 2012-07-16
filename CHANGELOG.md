@@ -11,6 +11,7 @@ Important Notes
  * Hooks have been refactored and improved. Please use on/addEvent resp off/removeEvent now to add or remove events to the board. The addHook, removeHook and updateHooks functions have been marked as deprecated and might be dropped in a future release (r2864, r2866 & r2867)
  * The behaviour of board event handlers have been changed. mousedown and touchstart events started outside a board do no longer trigger any mouseup resp. touchend events (r2886 & r2887)
  * Default names for texts, angles (af4701e, 18ac2ae)
+ * The **offsets** property has been renamed to **offset** (5ea97f5)
 
 New Features
 ------------
@@ -31,6 +32,7 @@ New Features
  * Circles and lines have a new property **snapToGrid**. Whenever a line or circle is moved and this property is set, the parent points with the snapToGrid 
    set to true will snap to grid once the users releases the circle or line (#3, 2a774e1)
  * New option **labels** for Ticks. In case of special ticks the *n* strings given in **labels** are taken as labels for the first *n* ticks (c188efe)
+ * New options **type**, **orthoType** and **orthoSensitivity** for *angles*. See the docs for their meaning (8f0ed8c)
 
 Bug fixes
 ---------
@@ -79,9 +81,10 @@ Bug fixes
  * Don't update ticks if board height or width equals zero (c7c2e23)
  * Various fixes in GeonextReader (006c5da, 59ac4c2, 1fecf7a)
  * Ticks are now deleted when their line is removed (bda7e7f)
- * Text rendering speed improved (d4c0bf2, b955052, fa91ce0, 434c87b)
- * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123, fdabf15)
+ * Text rendering speed improved (d4c0bf2, b955052, fa91ce0, 434c87b, 12b9922)
+ * Speed improvements for arcs and sectors (d2fdee1, e0ee6c9, 572d123, fdabf15, c6a70a4, 8acbb60)
  * If no element is dragged or found, don't stop the event propagation (324f7c6)
+ * The radius of an *angle* can be set via *setProperty()* (bc0e21c)
 
 
 0.94
