@@ -759,10 +759,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             }
         }
 
-        if (!this.visProp.needsRegularUpdate)
+        if (!this.visProp.needsregularupdate) {
             this.board.fullUpdate();
-
-        this.board.update(this);
+        } else {
+            this.board.update(this);
+        }
+        
         return this;
     },
 
