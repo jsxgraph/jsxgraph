@@ -903,6 +903,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         attr.isLabel = true;
         attr.visible = this.visProp.visible;
         attr.anchor = this;
+        attr.priv = this.visProp.priv;
         
         this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
         this.label = {};
