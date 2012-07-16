@@ -80,6 +80,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point1 = JXG.getReference(board, parents[0]);
+    el.center = el.point1;
 
     /**
      * This point together with {@link Sector#point1} defines the radius..
@@ -88,6 +89,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point2 = JXG.getReference(board, parents[1]);
+    el.radiuspoint = el.point2;
 
     /**
      * Defines the sector's angle.
@@ -96,6 +98,7 @@ JXG.createSector = function(board, parents, attributes) {
      * @type JXG.Point
      */
     el.point3 = JXG.getReference(board, parents[2]);
+    el.anglepoint = el.point3;
     
     /* Add arc as child to defining points */
     el.point1.addChild(el);
@@ -145,6 +148,7 @@ JXG.createSector = function(board, parents, attributes) {
         p1[1] /= p1[0];
         p1[2] /= p1[0];
         p1[0] /= p1[0];
+        p4 = p1.slice(0);
         x /= z;
         y /= z;
         this.dataX = [x, x+0.333*(p1[1]-x), x+0.666*(p1[1]-x), p1[1]];
@@ -210,6 +214,26 @@ JXG.createSector = function(board, parents, attributes) {
      */
     el.getRadius = function() {
         return this.Radius();
+    };
+
+    // documented in geometry element
+    el.hasPoint = function (x, y) {
+        var prec = this.board.options.precision.hasPoint/(this.board.unitX),
+            checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
+            r = this.Radius(),
+            dist = this.center.coords.distance(JXG.COORDS_BY_USER, checkPoint),
+            has = (Math.abs(dist-r) < prec),
+            angle, alpha, beta;
+            
+        if (has) {
+            angle = JXG.Math.Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
+            alpha = 0.0;
+            beta = JXG.Math.Geometry.rad(this.point2, this.center, this.point3);
+            if (angle<alpha || angle>beta) { 
+                has = false; 
+            }
+        }
+        return has;    
     };
 
     /**
@@ -400,26 +424,18 @@ JXG.createAngle = function(board, parents, attributes) {
         }
         
         attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
-        p = board.create('point', [
-            function(){
-                var A = parents[0], S = parents[1],
-                    r = JXG.evaluate(attr.radius),
-                    d = S.Dist(A);
-                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attrsub);
 
+        // Helper point: radius point
+        // Start with dummy values until the sector has been created.
+        p = board.create('point', [0,1,0], attrsub);
+        
         p.dump = false;
 
         attrsub = JXG.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
-        // Second helper point for square
-        q = board.create('point', [
-            function(){
-                var A = parents[2], S = parents[1],
-                    r = JXG.evaluate(attr.radius),
-                    d = S.Dist(A);
-                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
-            }], attrsub);
 
+        // Second helper point for square
+        // Start with dummy values until the sector has been created.
+        q = board.create('point', [0,1,1], attrsub);
         q.dump = false;
 
         // Sector is just a curve with its own updateDataArray method
@@ -473,7 +489,25 @@ JXG.createAngle = function(board, parents, attributes) {
                 }
             }
         };
-        
+
+        /* 
+         * Supply the helper points with the correct function, which depends
+         * on the visProp.radius property of the sector.
+         * With this trick, setPropertyy({radius:...}) works.
+         */
+        p.addConstraint([function(){
+                var A = parents[0], S = parents[1],
+                    r = JXG.evaluate(el.visProp.radius),
+                    d = S.Dist(A);
+                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
+            }]);
+        q.addConstraint([function(){
+                var A = parents[2], S = parents[1],
+                    r = JXG.evaluate(el.visProp.radius),
+                    d = S.Dist(A);
+                return [S.X()+(A.X()-S.X())*r/d, S.Y()+(A.Y()-S.Y())*r/d];
+            }]);
+            
         /**
          * The point defining the radius of the angle element.
          * @type JXG.Point

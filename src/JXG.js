@@ -1300,7 +1300,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     JXG.addEvent(window, 'load', function () {
         var scripts = document.getElementsByTagName('script'), type,
-            i, j, div, board, width, height, bbox, axis, grid;
+            i, j, div, board, width, height, bbox, axis, grid, code;
 
         for(i=0;i<scripts.length;i++) {
             type = scripts[i].getAttribute('type', false);
@@ -1335,11 +1335,15 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
                 
                 if (document.getElementById('jessiescript_autgen_jxg_' + i)) {
                     board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_' + i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
+                    
+                    code = scripts[i].innerHTML;
+                    code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
+                    scripts[i].innerHTML = code;
                     if (type.toLowerCase().indexOf('script') > -1) {
-                        board.construct(scripts[i].innerHTML);
+                        board.construct(code);
                     } else {
                         try {
-                            board.jc.parse(scripts[i].innerHTML);
+                            board.jc.parse(code);
                         } catch (e) {
                             JXG.debug(e);
                         }

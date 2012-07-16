@@ -317,6 +317,17 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
         this.transformImage(el, el.transformations);
     },
+    
+     /**
+     * Set color and opacity of internal texts. 
+     * SVG needs its own version.
+     * @private
+     * @see JXG.AbstractRenderer#updateTextStyle
+     * @see JXG.AbstractRenderer#updateInternalTextStyle
+     */
+    updateInternalTextStyle: function(element, strokeColor, strokeOpacity) {
+        this.setObjectFillColor(element, strokeColor, strokeOpacity);        
+    },
 	
     /* **************************
      *    Image related stuff

@@ -285,7 +285,16 @@ JXG.extend(JXG.NoRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype *
      * @see JXG.AbstractRenderer#updateText
      * @see JXG.AbstractRenderer#updateInternalText
      */
-    updateTextStyle: function (element) { },
+    updateTextStyle: function (element, doHighlight) { },
+
+     /**
+     * Set color and opacity of internal texts. 
+     * SVG needs its own version.
+     * @private
+     * @see JXG.AbstractRenderer#updateTextStyle
+     * @see JXG.AbstractRenderer#updateInternalTextStyle
+     */
+    updateInternalTextStyle: function(element, strokeColor, strokeOpacity) { /* stub */ },
 
     /* **************************
      *    Image related stuff

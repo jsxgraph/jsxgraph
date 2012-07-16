@@ -817,7 +817,7 @@ JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
         this.myAtts['strokecolor'] = this.color_array[i];
         this.myAtts['highlightstrokecolor'] = this.color_array[i];
         this.myAtts['name'] = this.label_array[i];
-        this.myAtts['label'] = {offsets:[10, 0]};
+        this.myAtts['label'] = {offsets:[40, 0], strokeColor: this.color_array[i], strokeWidth: this.myAtts.strokewidth};
         
         this.lines[i] = board.create('line', 
                 [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],

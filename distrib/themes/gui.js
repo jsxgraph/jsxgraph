@@ -12,11 +12,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 	point: {
 		size: 4,
 		fillColor:   '#c00',
-		strokeColor: '#000',
-
-		// snap on majorTicks
-		snapX: -1,
-		snapY: -1
+		strokeColor: '#000'
 	},
 
     glider : {
