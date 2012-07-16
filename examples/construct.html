@@ -74,7 +74,7 @@ var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '
 var el1 = board.create('line',[[1,0],[1,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=1'});
  
 var gl1 = board.create('glider', [0,0, el0], {name:'b', withLabel:true});
-var gl2 = board.create('glider', [1,0, el1], {name:'a', label:{position:'top', offsets:[0,10]}, withLabel:true});
+var gl2 = board.create('glider', [1,0, el1], {name:'a', label:{position:'top', offset:[0,10]}, withLabel:true});
 //gl1.draggable = function() {return true; };
 //gl2.draggable = function() {return true; };
  
@@ -89,26 +89,26 @@ gl2.on('drag', function() {
     offset = gl2.Y() - gl1.Y();
     });
     
-var x = board.create('point', [2,2], {name:'a', label:{position:'top', offsets:[0,10]}, withLabel:true});
+var x = board.create('point', [2,2], {name:'a', label:{position:'top', offset:[0,10]}, withLabel:true});
 */
 
 var t = board.create('text', [-4,3,'Hallo'], {cssClass:'fat', highlightCssClass:'fatHL', fontSize:32});
 
 var a = board.create('point', [1, 0, 0]);
-var b = board.create('point', [1, 2, 1], {name:'B'});
+var b = board.create('point', [1, 2, 0.2], {name:'B'});
 var c = board.create('point', [1, 0, 2], {name:'C'});
 var ar = board.create('arc', [a,b,c], {type:'major', withLabel:'true', name:'&alpha;', strokeWidth:2});
 var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;', strokeWidth:8});
 //var br2 = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
 //var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
 //var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-var pol = board.create('angle', [c,b,a], {name:'x', radius:0.5});
+var pol = board.create('angle', [b,a,c], {name:'x'});
 //var ci = board.create('circle', [a, b]);
 var x = board.create('glider',[-3, 6, ar]);
 var y = board.create('segment',[x,a]);
 //x.free();
 //board.update();
-pol.setProperty({radius:function(){return 1.0;}});
+//pol.setProperty({radius:function(){return 1.0;}});
 
 newsize = function() {
     board.resizeContainer(300, 300);

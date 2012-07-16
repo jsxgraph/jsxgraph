@@ -505,8 +505,8 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
         if (this.visProp.straightfirst || this.visProp.straightlast) {
             if (JXG.exists(this.label.content)) {  // Does not exist during createLabel
-                sx = parseFloat(this.label.content.visProp.offsets[0]);
-                sy = parseFloat(this.label.content.visProp.offsets[1]);
+                sx = parseFloat(this.label.content.visProp.offset[0]);
+                sy = parseFloat(this.label.content.visProp.offset[1]);
                 fs = this.label.content.visProp.fontsize;
             }
 

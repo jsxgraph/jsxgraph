@@ -462,31 +462,39 @@ JXG.createAngle = function(board, parents, attributes) {
             
             this.dataX = [S.X(), p.X(), r[1], q.X(), S.X()];
             this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
+            this.bezierDegree = 1;
+        };
+
+        el.updateDataArrayNone = function() {
+            this.dataX = [NaN];
+            this.dataY = [NaN];
+            this.bezierDegree = 1;
         };
         
         el.updateDataArraySector = el.updateDataArray;
         el.updateDataArray = function() {
-            var rad = JXG.Math.Geometry.rad(parents[0], parents[1], parents[2]);
+            var type = this.visProp.type,
+                deg = JXG.Math.Geometry.trueAngle(parents[0], parents[1], parents[2]);
+                
+            if (Math.abs(deg-90.0)<this.visProp.orthosensitivity) {
+                type = this.visProp.orthotype;
+            }
 
-            if (this.visProp.type=='square') {
+            if (type=='none') {
+                this.updateDataArrayNone();
+            } else if (type==='square') {
                 this.updateDataArraySquare();
-            } else if (this.visProp.type=='sector') {
+            } else if (type==='sector') {
                 this.updateDataArraySector();
-                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
-                    if (this.dot.visProp.visible === false) {
-                        this.dot.setProperty({visible: true});
-                    }
-                } else {
-                    if (this.dot.visProp.visible) {
-                        this.dot.setProperty({visible: false});
-                    }
+            } else if (type==='sectordot') {
+                this.updateDataArraySector();
+                if (this.dot.visProp.visible === false) {
+                    this.dot.setProperty({visible: true});
                 }
-            } else {
-                if (Math.abs(rad-Math.PI*0.5)<0.0025) {
-                    this.updateDataArraySquare();
-                } else {
-                    this.updateDataArraySector();
-                }
+            }
+            
+            if (type!=='sectordot' && this.dot.visProp.visible === true) {
+                    this.dot.setProperty({visible: false});
             }
         };
 

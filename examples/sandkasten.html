@@ -61,9 +61,9 @@
     var simple = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});
 
-        var p = board.create('point', [0, 0], {label: {offsets: [10,10]}});
-        var q = board.create('point', [3.14, 0], {label: {offsets: [10,10]}});
-        var r = board.create('point', [0, 1], {label: {offsets: [10,10]}});
+        var p = board.create('point', [0, 0], {label: {offset: [10,10]}});
+        var q = board.create('point', [3.14, 0], {label: {offset: [10,10]}});
+        var r = board.create('point', [0, 1], {label: {offset: [10,10]}});
 
         var a = board.create('angle', [p, q, r]);
         

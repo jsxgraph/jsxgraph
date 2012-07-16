@@ -480,10 +480,40 @@ JXG.Options = {
         /**
          * Radius of the sector, displaying the angle.
          * @type Number
+         * @default 0.5
          * @name Angle#radius
          */
-        radius : 1.0,
-        type : 'auto',  // 'square' or 'sector' or 'auto'
+        radius : 0.5,
+        
+        /**
+         * Display type of the angle field. Possible values are 
+         * 'sector' or 'sectordot' or 'square' or 'none'.
+         * @type String
+         * @default sector
+         * @name Angle#type
+         */
+        type : 'sector',  
+                
+        /**
+         * Display type of the angle field in case of a right angle. Possible values are 
+         * 'sector' or 'sectordot' or 'square' or 'none'.
+         * @type String
+         * @default square
+         * @name Angle#orthoType
+         * @see Angle#orthoSensitivity
+         */
+        orthoType: 'square',         
+
+        /**
+         * Sensitivity (in degrees) to declare an angle as right angle.
+         * If the angle measure is inside this distance from a rigth angle, the orthoType
+         * of the angle is used for display.
+         * @type Number
+         * @default 1.0
+         * @name Angle#orthoSensitivity
+         * @see Angle#orthoType
+         */
+        orthoSensitivity: 1.0,     
         fillColor : '#FF7F00',
         highlightFillColor : '#FF7F00',
         strokeColor : '#FF7F00',
@@ -510,7 +540,7 @@ JXG.Options = {
         },
         label: {
             position: 'top',
-            offsets: [0,0],
+            offset: [0,0],
             strokeColor: '#0000FF'
         }
     },
@@ -542,7 +572,7 @@ JXG.Options = {
         /* line ticks options */
         ticks : {
             label: { 
-                offsets:[4,-12+3]     // This seems to be a good offset for 12 point fonts
+                offset:[4,-12+3]     // This seems to be a good offset for 12 point fonts
             },
             needsRegularUpdate : false,            
             strokeWidth: 1,
@@ -566,7 +596,7 @@ JXG.Options = {
         },
         label: {
             position: 'lft',
-            offsets: [10,-20]
+            offset: [10,-20]
         }
     },
     
@@ -827,13 +857,13 @@ JXG.Options = {
         position: 'urt',
         
         /**
-        *  Label offsets from label anchor 
+        *  Label offset from label anchor 
         *  The label anchor is determined by JXG.GeometryElement#label.position
         * @type Array
         * @default [10,10]
-        * @name JXG.GeometryElement#label.offsets
+        * @name JXG.GeometryElement#label.offset
         **/
-        offsets: [10, 10]
+        offset: [10, 10]
     },
         
     /* special legend options */
@@ -879,7 +909,7 @@ JXG.Options = {
         ticks : {
             drawLabels : true,
             label: { 
-                offsets:[4,-12+3] // This seems to be a good offset for 12 point fonts
+                offset: [4,-12+3] // This seems to be a good offset for 12 point fonts
             },
             drawZero : false,
             insertTicks : false,
@@ -1158,7 +1188,7 @@ JXG.Options = {
         },
         
         label: {
-            offsets: [0,0]
+            offset: [0,0]
         }
     },
 
@@ -1176,7 +1206,7 @@ JXG.Options = {
         fillOpacity: 0.3,
         highlightFillOpacity: 0.3,
         label: {
-            offsets:[0,0]
+            offset:[0,0]
         }
     },
 
