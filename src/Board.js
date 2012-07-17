@@ -2990,11 +2990,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     clearTraces: function () {
-        var el, len = this.objectsList.length;
+        var el, len;
 
-        for (el = 0; el < len; el++) {
+		if (this.objectsList)
+			len = this.objectsList.length;
+		else
+			len = 0;
+
+        for (el = 0; el < len; el++)
             this.objectsList[el].clearTrace();
-        }
+
         this.numTraces = 0;
         return this;
     },
