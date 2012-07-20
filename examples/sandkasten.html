@@ -7,8 +7,8 @@
     <!--script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script-->
     <!--script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script-->
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-    <script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script>
-    <script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script>
+    <!--script type="text/javascript" src="../../JessieCode/jessiecode.par.js"></script-->
+    <!--script type="text/javascript" src="../../JessieCode/jessiecode.bnf.js"></script-->
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
     <script type="text/javascript" src="../src/Square.js"></script>
 
@@ -49,7 +49,7 @@
 
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left;"></div>
-  <div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+  <!--div id="jxgbox2" class="jxgbox" style="width:800px; height:800px; float:left"></div-->
 </div>
 
 <div id="debug" style="display:block;">DEBUG</div>
@@ -57,6 +57,15 @@
 <img id="snapshot" />
 <script type="text/javascript">
     /* <![CDATA[ */
+
+    var alex_integral = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});
+
+        var p = board.create('plot', [Math.sin]);
+
+        var i = board.create('integral', [p, [-2, 2]], {label: {visible: false}, curveLeft: {color: 'green', size: 20, strokeWidth: 7}, color: 'blue'});
+
+    })();
 
     var simple = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});
@@ -68,7 +77,7 @@
         var a = board.create('angle', [p, q, r]);
         
         var t = board.create('text', [2, 2, '<button onclick="alert(\'Hello!\');">Click</button>'], {fixed: true});
-    })();
+    });
 
     var drei = (function () {
         JXG.Options.renderer = 'svg';
