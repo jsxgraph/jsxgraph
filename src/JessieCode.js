@@ -948,8 +948,12 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                                 };
                                 f;   // the return value of eval()
                                 */
-
-                                return eval(str);
+                                try{
+                                    return eval(str);
+                                } catch(e) {
+                                    this._error('catch errors. super simple stuff.', str, e.toString());
+                                    return function () {};
+                                }
                             })(this);
 
                             // clean up scope
