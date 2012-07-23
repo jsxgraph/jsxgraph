@@ -106,9 +106,15 @@ var pol = board.create('angle', [b,a,c], {name:'x'});
 //var ci = board.create('circle', [a, b]);
 var x = board.create('glider',[-3, 6, ar]);
 var y = board.create('segment',[x,a]);
-//x.free();
+x.free();
+
+x.makeGlider(ar);
+x.free();
+x.makeGlider(ar);
+x.free();
 //board.update();
 //pol.setProperty({radius:function(){return 1.0;}});
+var ss = board.create('slider', [[-4,1],[-2,1],[-2,0,2]], {name:'x'});
 
 newsize = function() {
     board.resizeContainer(300, 300);

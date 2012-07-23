@@ -207,7 +207,6 @@ JXG.JSXGraph = {
         board.options.zoom.wheel = wheelzoom;
         board.options.pan = shiftpan;
 
-
         // create elements like axes, grid, navigation, ...
         board.suspendUpdate();
         board.initInfobox();

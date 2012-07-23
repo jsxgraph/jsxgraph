@@ -1263,6 +1263,25 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Truncate a number <tt>val</tt> automatically.
+     * @param val
+     * @returns {Number}
+     */
+    autoDigits: function(val) {
+        var x = Math.abs(val);
+        if (x>0.1) {
+            x = val.toFixed(2);
+        } else if (x>=0.01) {
+            x = val.toFixed(4);
+        } else if (x>=0.0001) {
+            x = val.toFixed(6);
+        } else {
+            x = val;
+        }
+        return x;
+    },
+    
+    /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
      * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
      * @param {%} An arbitrary number of parameters.

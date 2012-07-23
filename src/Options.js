@@ -1055,6 +1055,17 @@ JXG.Options = {
          */
         showInfobox: true,
 
+        /**
+         * Truncating rule for the digits in the infobox.
+         * 'auto': done automatically by JXG#autoDigits
+         * 'none': no truncation
+         * number: use String.toFixed();
+         * @name JXG.Point#showInfobox
+         * @type String, Number
+         * @default true
+         */
+        infoboxDigits: 'auto',
+
         draft: false,
         
         /**

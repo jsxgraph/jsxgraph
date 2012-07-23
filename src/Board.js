@@ -1893,28 +1893,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             this.infobox.setCoords(xc+this.infobox.distanceX/(this.unitX),
                 yc+this.infobox.distanceY/(this.unitY));
+                
             if (typeof(el.infoboxText)!="string") {
-                x = Math.abs(xc);
-                if (x>0.1) {
-                    x = xc.toFixed(2);
-                } else if (x>=0.01) {
-                    x = xc.toFixed(4);
-                } else if (x>=0.0001) {
-                    x = xc.toFixed(6);
+                if (el.visProp.infoboxdigits==='auto') {
+                    x = JXG.autoDigits(xc);
+                    y = JXG.autoDigits(yc);
+                } else if (JXG.isNumber(el.visProp.infoboxdigits)) {
+                    x = xc.toFixed(el.visProp.infoboxdigits);
+                    y = yc.toFixed(el.visProp.infoboxdigits);
                 } else {
                     x = xc;
-                }
-                y = Math.abs(yc);
-                if (y>0.1) {
-                    y = yc.toFixed(2);
-                } else if (y>=0.01) {
-                    y = yc.toFixed(4);
-                } else if (y>=0.0001) {
-                    y = yc.toFixed(6);
-                } else {
                     y = yc;
                 }
-
+                
                 this.highlightInfobox(x,y,el);
             } else {
                 this.highlightCustomInfobox(el.infoboxText, el);
