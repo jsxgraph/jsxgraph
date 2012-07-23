@@ -26,6 +26,12 @@
     /*border-width:0.4px;*/
 }
 
+.JXGinfobox {
+    border-style:none;
+    border-width:1px;
+    border-color:black;
+}
+
 .navbar {
     color: #aaaaaa;
     background-color: #f5f5f5;

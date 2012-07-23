@@ -1923,7 +1923,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board.
      */
     highlightCustomInfobox: function (text) {
-        this.infobox.setText('<span style="color:#bbbbbb;">' + text + '<'+'/span>');
+        //this.infobox.setText('<span style="color:#bbbbbb;">' + text + '<'+'/span>');
+        this.infobox.setText(text);
         return this;
     },
 
@@ -2524,11 +2525,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     initInfobox: function () {
-        this.infobox = this.create('text', [0, 0, '0,0'], {
-            id: this.id + '_infobox',
-            display: 'html',
-            fixed: true
-        });
+        var  attr = JXG.copyAttributes({}, this.options, 'infobox');
+
+        attr.id = this.id + '_infobox';
+
+        this.infobox = this.create('text', [0, 0, '0,0'], attr);
+
         this.infobox.distanceX = -20;
         this.infobox.distanceY = 25;
         this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
