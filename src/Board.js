@@ -3070,7 +3070,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!this.animationIntervalCode) {
             this.animationIntervalCode = setInterval(function () {
                 JXG.JSXGraph.boards[that.id].animate();
-            }, this.board.options.animationDelay);
+            }, element.board.options.animationDelay);
         }
 
         return this;

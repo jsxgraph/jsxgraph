@@ -271,7 +271,6 @@ def makeDocs(afterCore = False):
     os.system("cd tmp && zip -r docs-" + version + ".zip docs/ && cd ..")
     shutil.move("tmp/docs-" + version + ".zip", output + "/docs-" + version + ".zip")
     
-
 '''
     Make targets Readers and place them in <output>
 '''
@@ -312,7 +311,8 @@ def makeRelease():
     
     shutil.copy(output + "/jsxgraphcore.js", "tmp/jsxgraphcore.js")
     shutil.copy(output + "/jsxgraphsrc.js", "tmp/jsxgraphsrc.js")
-    shutil.copy("README", "tmp/README")
+    shutil.copy("README.md", "tmp/README.md")
+    shutil.copy("CHANGELOG.md", "tmp/CHANGELOG.md")
     shutil.copy("LICENSE", "tmp/LICENSE")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
     
@@ -322,7 +322,6 @@ def makeRelease():
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
     os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
-
 
 '''
     Make JSXCompressor, a JSXGraph subproject
