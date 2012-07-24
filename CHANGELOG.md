@@ -33,6 +33,7 @@ New Features
    set to true will snap to grid once the users releases the circle or line (#3, 2a774e1)
  * New option **labels** for Ticks. In case of special ticks the *n* strings given in **labels** are taken as labels for the first *n* ticks (c188efe)
  * New options **type**, **orthoType** and **orthoSensitivity** for *angles*. See the docs for their meaning (8f0ed8c)
+ * New options for infobox which shows the coordinates of a point. Beside the text options, the number of digits can be adjusted. Default css class is JXGinfobox.
 
 Bug fixes
 ---------
