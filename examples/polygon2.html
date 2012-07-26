@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1 onclick="brd.clearTraces();">Playground</h1>
+from <a href="http://tracenpoche.sesamath.net/">http://tracenpoche.sesamath.net/</a>
+<form><input type="text"></form>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 25, unitY: 25});
+var A = brd.create('point', [-9,5], {name:'A_0', visible:false});
+var B = brd.create('point', [8,8], {name:'B_0', visible:false});
+var C = brd.create('point', [-8,-3], {name:'C_0', visible:false});
+var p1 = brd.create('polygon', [A, B, C], 
+    {borders:{visible:false}, 
+     withLabel:false, hasInnerPoints:true});
+
+var p1 = brd.create('regularpolygon', [C, A, 5], 
+    {borders:{visible:false}, 
+     vertices:{visible:false, size:2},
+     withLabel:false, 
+     hasInnerPoints:true,
+     fillColor:'yellow',
+     highlightFillColor:'blue',
+     });
+     
+/* ]]> */
+</script>
+</body>
+</html>

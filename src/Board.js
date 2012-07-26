@@ -775,7 +775,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
             if (
                 ((this.geonextCompatibilityMode
-                  &&(pEl.elementClass==JXG.OBJECT_CLASS_POINT
+                  && (pEl.elementClass==JXG.OBJECT_CLASS_POINT
                      || pEl.type==JXG.OBJECT_TYPE_TEXT)
                  )
                  ||
@@ -1067,7 +1067,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Array} The starting point in usr coords
      */
    initXYstart: function (obj) {
-        var xy = [];
+        var xy = [], i, len;
         
         /*
         if (obj.type == JXG.OBJECT_TYPE_LINE) {
@@ -1089,6 +1089,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             xy.push(obj.center.coords.usrCoords);
         } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
             xy.push([obj.position, obj.position, obj.position]);
+        } else if (obj.type == JXG.OBJECT_TYPE_POLYGON) {
+            len = obj.vertices.length-1;
+            for (i=0; i<len; i++) {
+                xy.push(obj.vertices[i].coords.usrCoords);
+            }
         } else {
             xy.push(obj.coords.usrCoords);
         }

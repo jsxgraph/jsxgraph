@@ -477,7 +477,34 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         }
 
         return attr;
+    },
+
+    /**
+     * Moves the line by the difference of two coordinates.
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
+     * @returns {JXG.Line}
+     */
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var dc, t, i, len,
+            c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board);
+
+        len = this.vertices.length-1;
+        for (i=0; i<len; i++) {
+            if (!this.vertices[i].draggable()) {
+                return this;
+            }
+        }
+
+        dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+        t = this.board.create('transform', dc.slice(1), {type:'translate'});
+        t.applyOnce(this.vertices.slice(0,-1));
+        
+        return this;
     }
+    
 });
 
 
@@ -522,6 +549,7 @@ JXG.createPolygon = function(board, parents, attributes) {
     }
 
     el = new JXG.Polygon(board, parents, attr);
+    el.isDraggable = true;
 
     return el;
 };
@@ -610,6 +638,10 @@ JXG.createRegularPolygon = function(board, parents, attributes) {
             }
             p[i] = board.create('point',[p[i-2],rot], attr);
 			p[i].type = JXG.OBJECT_TYPE_CAS;
+            
+            // The next two lines are need to make regular polgonmes draggable
+			p[i].isDraggable = true;
+			p[i].visProp.fixed = false;
         }
     }
     attr = JXG.copyAttributes(attributes, board.options, 'polygon');
