@@ -1225,7 +1225,7 @@ JXG.createAxis = function(board, parents, attributes) {
         };
     }
     else
-        throw new Error("JSXGraph: Can't create point with parent types '" + 
+        throw new Error("JSXGraph: Can't create axis with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                         "\nPossible parent types: [point,point], [[x1,y1],[x2,y2]]");
 
