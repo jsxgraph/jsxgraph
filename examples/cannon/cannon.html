@@ -36,11 +36,11 @@
             },
 
             fAnim = function (t) {
-                var x = 3 + 17*t/animTime(),
-                    y = solution.Y(x), s = NaN;
+                var i = Math.floor(solution.points.length*t/animTime())/*3 + 17*t/animTime()*/,
+                    s = NaN;
 
-                if (y > 0) {
-                    s = [x, y];
+                if (JXG.exists(solution.points[i]) && solution.points[i].usrCoords[2] > 0) {
+                    s = solution.points[i].usrCoords.slice(1);
                 }
 
                 return s;
@@ -60,7 +60,7 @@
         cannonball = board.create('point', [3, 1.4], {size: 8, strokeColor: 'black', fillColor: 'gray', withLabel: false, fixed: true});
         cbanim = board.create('point', [3, 1.4], {size: 8, strokeColor: 'black', fillColor: 'gray', withLabel: false, fixed: true, visible: false});
         rot.bindTo(cannonball);
-        solution = board.create('plot', [fSolution, function () { return cannonball.X(); }, 20], {visible: true});
+        solution = board.create('plot', [fSolution, function () { return cannonball.X(); }, 20], {visible: true, doAdvancedPlot: false});
 
 
         $('#shoot').click(function () {
