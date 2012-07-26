@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shoot a cannon</title>
+    <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>
+</head>
+<body>
+<div id="cannon" class="_jxgbox" style="width: 800px; height: 400px;"></div>
+
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function () {
+        var board = JXG.JSXGraph.initBoard('cannon', {boundingbox: [0, 10, 20, 0], showCopyright: false, showNavigation: false}),
+            bottom = board.create('image', ['img/cannon_bottom.png', [0, 0.3], [2, 1]], {layer: 1}),
+            muzzle = board.create('image', ['img/cannon_muzzle.png', [0, 1.05], [3, 0.75]], {layer: 0}),
+            shoot = board.create('text', [9, 9.5, '<button id="shoot">Shoot</button>']),
+            reset = board.create('text', [11, 9.5, '<button id="reset">Reset</button>']),
+            rot, rp, cp, cc, cannonball, cbanim, solution, velocity,
+
+            animTime = function () {
+                return 3000;
+            },
+
+            fAngle = function () {
+                return Math.atan2(cp.Y()-rp.Y(),cp.X()-rp.X());
+            },
+
+            fSolution = function (x) {
+                var b = fAngle(),
+                    g = 9.81/2;
+
+                return Math.tan(b)*(x - cannonball.X()) - g*(Math.pow((x - cannonball.X())/(velocity.Value()*Math.cos(b)), 2)) + cannonball.Y();
+            },
+
+            fAnim = function (t) {
+                var x = 3 + 17*t/animTime(),
+                    y = solution.Y(x), s = NaN;
+
+                if (y > 0) {
+                    s = [x, y];
+                }
+
+                return s;
+            };
+
+        board.options.animationDelay = 50;
+
+        velocity = board.create('slider', [[1, 9.5], [6, 9.5], [0, 5, 15]], {name: 'Velocity'});
+
+        cp = board.create('point', [1.4, 1.4], {fixed: true, visible: false});
+        cc = board.create('circle', [cp, 1.25], {visible: false});
+        rp = board.create('glider', [0, 1.4, cc], {withLabel: false, showInfobox: false, color: 'black'});
+
+        rot = board.create('transform', [fAngle, cp], {type: 'rotate'});
+        rot.bindTo(muzzle);
+
+        cannonball = board.create('point', [3, 1.4], {size: 8, strokeColor: 'black', fillColor: 'gray', withLabel: false, fixed: true});
+        cbanim = board.create('point', [3, 1.4], {size: 8, strokeColor: 'black', fillColor: 'gray', withLabel: false, fixed: true, visible: false});
+        rot.bindTo(cannonball);
+        solution = board.create('plot', [fSolution, function () { return cannonball.X(); }, 20], {visible: true});
+
+
+        $('#shoot').click(function () {
+            cannonball.setProperty({
+                visible: false
+            });
+            cbanim.setProperty({
+                visible: true
+            });
+            cbanim.moveTo([cannonball.X(), cannonball.Y()]);
+
+            cbanim.moveAlong(fAnim, animTime(), {
+                callback: function () {
+                    // this is executed when the animation is finished
+                }
+            });
+        });
+
+        $('#reset').click(function () {
+            board.stopAllAnimation();
+            //rp.moveTo([0, 1.4]);
+            //cannonball.moveTo([3, 1.4]);
+            cbanim.setProperty({visible: false});
+            cannonball.setProperty({visible: true});
+        });
+
+    })();
+
+    /* ]]> */
+</script>
+<br /><h3>License</h3>
+This example was created with JSXGraph and is licensed CC-BY-SA. Please attribute "Michael Gerhaeuser, jsxgraph.org".<br />
+The picture of the cannon is licensed CC-BY-SA. Original image is from John Wetzel, an author at wikipremed.com.
+</body>
+</html>
