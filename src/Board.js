@@ -2412,6 +2412,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (JXG.isArray(object)) {
             for (i=0; i<object.length; i++)
                 this.removeObject(object[i]);
+
+            return this;
         }
 
         object = JXG.getReference(this, object);
