@@ -814,13 +814,19 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 return;
             }
         }
+/*
+		// Deleting the ancestors is a bug!!! (see: http://dev.sketchometry.com/issues/208)
 
         for (anc in this.ancestors) {
-            delete this.ancestors[anc].descendants[this.id];
-            delete this.ancestors[anc].childElements[this.id];
-        }
+			if (this.ancestors[anc].descendants[this.id])
+            	delete this.ancestors[anc].descendants[this.id];
 
-        this.ancestors = [];
+			if (this.ancestors[anc].childElements[this.id])
+            	delete this.ancestors[anc].childElements[this.id];
+        }
+*/
+        this.ancestors = []; // only remove the reference
+
         this.slideObject = null;
         this.elType = 'point';
         this.type = JXG.OBJECT_TYPE_POINT;
