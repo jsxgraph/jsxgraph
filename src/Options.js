@@ -318,6 +318,15 @@ JXG.Options = {
          */
         snapToGrid: false,
 
+        /**
+         * Determines whether two-finger manipulation of this object may change its size.
+         * If set to false, the object is only rotated and translated.
+         * @type Boolean
+         * @default true
+         * @name JXG.GeometryElement#scalable
+         */
+        scalable: true,
+
         /*draft options */
         draft : {
             /**

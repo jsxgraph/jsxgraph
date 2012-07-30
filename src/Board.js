@@ -891,11 +891,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
         np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
 
-        if (drag.elementClass===JXG.OBJECT_CLASS_LINE) {
-            this.moveLine(np1c, np2c, o, drag);
+        if (drag.elementClass===JXG.OBJECT_CLASS_LINE
+            || drag.type===JXG.OBJECT_TYPE_POLYGON) {
+            this.twoFingerTouchObject(np1c, np2c, o, drag);
         } else if (drag.elementClass===JXG.OBJECT_CLASS_CIRCLE) {
-            this.moveCircle(np1c, np2c, o, drag);
-        }
+            this.twoFingerTouchCircle(np1c, np2c, o, drag);
+        } 
         drag.triggerEventHandlers(['touchdrag', 'drag'], evt);
 
         o.targets[0].Xprev = np1c.scrCoords[1];
@@ -911,7 +912,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      * @param {object} drag The object that is dragged:
      */
-    moveLine: function(np1c, np2c, o, drag) {
+    twoFingerTouchObject: function(np1c, np2c, o, drag) {
         var np1, np2, op1, op2,
             nmid, omid, nd, od,
             d,
@@ -955,30 +956,37 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // Shift to the new mid point
             t2 = this.create('transform', [nmid[1]-omid[1], nmid[2]-omid[2]], {type:'translate'});
             t2.update();
-            omid = JXG.Math.matVecMult(t2.matrix, omid);
+            //omid = JXG.Math.matVecMult(t2.matrix, omid);
 
-            d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
-            // Scale
-            t3 = this.create('transform', [-nmid[1], -nmid[2]], {type:'translate'});
-            t4 = this.create('transform', [d, d], {type:'scale'});
-            t5 = this.create('transform', [nmid[1], nmid[2]], {type:'translate'});
+            t1.melt(t2);
+            if (drag.visProp.scalable) {
+                // Scale
+                d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+                t3 = this.create('transform', [-nmid[1], -nmid[2]], {type:'translate'});
+                t4 = this.create('transform', [d, d], {type:'scale'});
+                t5 = this.create('transform', [nmid[1], nmid[2]], {type:'translate'});
+                t1.melt(t3).melt(t4).melt(t5);
+            }
 
-            t1.melt(t2).melt(t3).melt(t4).melt(t5);
-            t1.applyOnce([drag.point1, drag.point2]);
+            if (drag.elementClass===JXG.OBJECT_CLASS_LINE) {
+                t1.applyOnce([drag.point1, drag.point2]);
+            } else if (drag.type===JXG.OBJECT_TYPE_POLYGON) {
+                t1.applyOnce(drag.vertices.slice(0,-1));
+            }
 
-            this.update(drag.point1);
+            this.update();
             drag.highlight(true);
         }
     },
 
-    /**
+    /*
      * Moves a circle with two fingers
      * @param {JXG.Coords} np1c x,y coordinates of first touch
      * @param {JXG.Coords} np2c x,y coordinates of second touch
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      * @param {object} drag The object that is dragged:
      */
-    moveCircle: function(np1c, np2c, o, drag) {
+    twoFingerTouchCircle: function(np1c, np2c, o, drag) {
         var np1, np2, op1, op2,
             d, alpha, t1, t2, t3, t4, t5;
 
@@ -1002,13 +1010,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             alpha = JXG.Math.Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
 
             // Rotate and scale by the movement of the second finger
-            d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
             t2 = this.create('transform', [-np1[1], -np1[2]], {type:'translate'});
             t3 = this.create('transform', [alpha], {type:'rotate'});
-            t4 = this.create('transform', [d, d], {type:'scale'});
-            t5 = this.create('transform', [ np1[1], np1[2]], {type:'translate'});
+            t1.melt(t2).melt(t3);
 
-            t1.melt(t2).melt(t3).melt(t4).melt(t5);
+            if (drag.visProp.scalable) {
+                d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+                t4 = this.create('transform', [d, d], {type:'scale'});
+                t1.melt(t4);
+            }
+            t5 = this.create('transform', [ np1[1], np1[2]], {type:'translate'});
+            t1.melt(t5);
+
             t1.applyOnce([drag.center]);
 
             if (drag.method==='twoPoints') {
