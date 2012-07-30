@@ -1075,25 +1075,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Helper function which returns a reasonable starting point for the object being dragged
+     * Helper function which returns a reasonable starting point for the object being dragged.
+     * Formerly known as initXYstart().
+     * @private
      * @param {JXG.GeometryElement} obj The object to be dragged
-     * @returns {Array} The starting point in usr coords
+     * @param {Array} targets Array of targets. It is changed by this function.
      */
-   initXYstart: function (obj) {
+    saveStartPos: function (obj, targ) {
         var xy = [], i, len;
-        
-        /*
-        if (obj.type == JXG.OBJECT_TYPE_LINE) {
-            xy.push(obj.point1.coords.usrCoords);
-            xy.push(obj.point2.coords.usrCoords);
-        } else if (obj.type == JXG.OBJECT_TYPE_CIRCLE) {
-            xy.push(obj.midpoint.coords.usrCoords);
-        } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
-            xy.push([obj.position, obj.position, obj.position]);
-        } else {
-            xy.push(obj.coords.usrCoords);
-        }
-        */
         
         if (obj.elementClass == JXG.OBJECT_CLASS_LINE) {
             xy.push(obj.point1.coords.usrCoords);
@@ -1107,12 +1096,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             for (i=0; i<len; i++) {
                 xy.push(obj.vertices[i].coords.usrCoords);
             }
-        } else {
+        } else if (obj.elementClass == JXG.OBJECT_CLASS_POINT) {
             xy.push(obj.coords.usrCoords);
+        } else {
+            // do nothing
         }
 
-
-        return xy;
+        len = xy.length;
+        for (i=0; i<len; i++) {
+            targ.Zstart.push(xy[i][0]);
+            targ.Xstart.push(xy[i][1]);
+            targ.Ystart.push(xy[i][2]);
+        }
     },
 
     mouseOriginMoveStart: function (evt) {
@@ -1342,9 +1337,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Touch-Events
      */
     touchStartListener: function (evt) {
-        var i, pos, elements, j, k, l,
+        var i, pos, elements, j, k,
             eps = this.options.precision.touch,
-            obj, xy = [], found, targets,
+            obj, found, targets,
             evtTouches = evt[JXG.touchProperty];
 
         if (!this.hasTouchEnd) {
@@ -1447,13 +1442,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                         // For the UNDO/REDO of object moves
-                        xy = this.initXYstart(obj);
-                        for (l=0; l<xy.length; l++) {
-                            targets[0].Xstart.push(xy[l][1]);
-                            targets[0].Ystart.push(xy[l][2]);
-                            targets[0].Zstart.push(xy[l][0]);
-                        }
-
+                        this.saveStartPos(obj, targets[0]);
                         this.touches.push({ obj: obj, targets: targets });
                         this.highlightedObjects[obj.id] = obj;
                         obj.highlight(true);
@@ -1472,13 +1461,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                     var target = { num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
 
                                     // For the UNDO/REDO of object moves
-                                    xy = this.initXYstart(obj);
-                                    for (l=0; l<xy.length; l++) {
-                                        target.Xstart.push(xy[l][1]);
-                                        target.Ystart.push(xy[l][2]);
-                                        target.Zstart.push(xy[l][0]);
-                                    }
-
+                                    this.saveStartPos(obj, target);
                                     this.touches[j].targets.push(target);
                                 }
 
@@ -1493,13 +1476,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
-                            xy = this.initXYstart(obj);
-                            for (l=0; l<xy.length; l++) {
-                                targets[0].Xstart.push(xy[l][1]);
-                                targets[0].Ystart.push(xy[l][2]);
-                                targets[0].Zstart.push(xy[l][0]);
-                            }
-
+                            this.saveStartPos(obj, targets[0]);
                             this.touches.push({ obj: obj, targets: targets });
                             this.highlightedObjects[obj.id] = obj;
                             obj.highlight(true);
