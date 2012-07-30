@@ -1444,9 +1444,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         this.touches.push({ obj: obj, targets: targets });
                         this.highlightedObjects[obj.id] = obj;
                         obj.highlight(true);
-                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE 
+                                || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE
+                                || obj.type === JXG.OBJECT_TYPE_POLYGON
+                                ) {
                         found = false;
-                        // first check if this line is already capture in this.touches
+                        // first check if this geometric object is already capture in this.touches
                         for (j = 0; j < this.touches.length; j++) {
                             if (obj.id === this.touches[j].obj.id) {
                                 found = true;
