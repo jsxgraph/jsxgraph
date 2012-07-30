@@ -63,11 +63,11 @@ JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
 var board = JXG.JSXGraph.initBoard('jxgbox', {
-    boundingbox: [-5,5,5,-5],
-    keepaspectratio: true
+    boundingbox: [-5,5,10,-5],
+    keepaspectratio: false
     });
-board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:-20, minorHeight:10}});
-board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:-20, minorHeight:10}});
+board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:0, minorHeight:0}});
+board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:0, minorHeight:0}});
  
 /*    
 var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});

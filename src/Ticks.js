@@ -170,8 +170,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             eps = JXG.Math.eps, pos, lb, ub,
             distMaj = this.visProp.majorheight * 0.5,
             distMin = this.visProp.minorheight * 0.5,
+            // ticks width and height in screen units
             dxMaj, dyMaj,
-            dxMin, dyMin;
+            dxMin, dyMin,
+            // ticks width and height in user units
+            dx, dy;
         // END OF variable declaration
 
         // This will trap this update routine in an endless loop. Besides, there's not much we can show
@@ -218,6 +221,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         dyMaj = this.line.stdform[2];
         dxMin = dxMaj;
         dyMin = dyMaj;
+        dx = dxMaj;
+        dy = dyMaj;
         
         // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
         d = Math.sqrt(dxMaj*dxMaj*this.board.unitX*this.board.unitX + dyMaj*dyMaj*this.board.unitY*this.board.unitY);
@@ -228,6 +233,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 
         // Begin cleanup
         this.removeTickLabels();
+        
+        // If the parent line is not finite, we can stop here.
+        if (Math.abs(dx)<JXG.Math.eps && Math.abs(dy)<JXG.Math.eps) {
+            return;
+        }
 
         // initialize storage arrays
         // ticks stores the ticks coordinates
@@ -244,7 +254,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 ny = p1.coords.usrCoords[2] + this.fixedTicks[i]*deltaY;
                 tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
                 
-                ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
+                ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
 				// Compute the start position and the end position of a tick.
 				// If both positions are out of the canvas, ti is empty.
                 if (ti.length==2 && this.fixedTicks[i]>=lb && this.fixedTicks[i]<ub) {
@@ -336,7 +346,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             
 			// Compute the start position and the end position of a tick.
 			// If both positions are out of the canvas, ti is empty.
-            ti = this._tickEndings(tickCoords, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
+            ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
             if (ti.length==2) {  // The tick has an overlap with the board
                 pos = dir*symbTickPosition+symbStartTick;
                 if ( (Math.abs(pos)<=eps && this.visProp.drawzero)
@@ -396,44 +406,44 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         return f;
     },
     
-    _tickEndings: function(coords, dxMaj, dyMaj, dxMin, dyMin, major) {
+    _tickEndings: function(coords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, major) {
         var i, c, 
             cw = this.board.canvasWidth,
             ch = this.board.canvasHeight,
             x = [-1000*cw, -1000*ch],
             y = [-1000*cw, -1000*ch], 
-            dx, dy, dxs, dys,
+            dxs, dys,
             s, style,
             count = 0,
             isInsideCanvas = false;
 
 		c = coords.scrCoords;
 		if (major) {
-			dx = dxMaj;
-			dy = dyMaj;
+			dxs = dxMaj;
+			dys = dyMaj;
 			style = this.majStyle;
 		} else {
-			dx = dxMin;
-			dy = dyMin;
+			dxs = dxMin;
+			dys = dyMin;
 			style = this.minStyle;
 		}
         
 		// This is necessary to compute the correct direction of infinite grid lines
 		// if unitX!=unitY.
-		dxs = dx; //*this.board.unitX;
-		dys = dy; //*this.board.unitY;
+		//dxs = dx; //*this.board.unitX;
+		//dys = dy; //*this.board.unitY;
 
 		// For all ticks regardless if of finite or infinite
 		// tick length the intersection with the canvas border is 
 		// computed. 
 		
-		// vertical tick 
+		// horizontal line and vertical tick 
 		if (Math.abs(dx)<JXG.Math.eps) {
 			x[0] = c[1];
 			x[1] = c[1];
 			y[0] = 0;
 			y[1] = ch;
-		// horizontal tick
+		// vertical line and horizontal tick
 		} else if (Math.abs(dy)<JXG.Math.eps) {
 			x[0] = 0;
 			x[1] = cw;
@@ -484,10 +494,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		}
 		// finite tick length
 		if (style=='finite') {
-			x[0] = c[1] + dx;
-			y[0] = c[2] - dy;
-			x[1] = c[1] - dx;
-			y[1] = c[2] + dy;
+			x[0] = c[1] + dxs;
+			y[0] = c[2] - dys;
+			x[1] = c[1] - dxs;
+			y[1] = c[2] + dys;
 		}
         if (isInsideCanvas) {
             return [x,y];
