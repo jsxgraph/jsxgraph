@@ -238,7 +238,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         // END cleanup
         
         // we have an array of fixed ticks we have to draw
-        if(!this.equidistant) {
+        if (!this.equidistant) {
             for (i = 0; i < this.fixedTicks.length; i++) {
                 nx = p1.coords.usrCoords[1] + this.fixedTicks[i]*deltaX;
                 ny = p1.coords.usrCoords[2] + this.fixedTicks[i]*deltaY;
@@ -417,10 +417,11 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			dy = dyMin;
 			style = this.minStyle;
 		}
+        
 		// This is necessary to compute the correct direction of infinite grid lines
 		// if unitX!=unitY.
-		dxs = dx*this.board.unitX;
-		dys = dy*this.board.unitY;
+		dxs = dx; //*this.board.unitX;
+		dys = dy; //*this.board.unitY;
 
 		// For all ticks regardless if of finite or infinite
 		// tick length the intersection with the canvas border is 
@@ -438,7 +439,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			x[1] = cw;
 			y[0] = c[2];
 			y[1] = c[2];
-		// other
+        // other
 		} else {
 			count = 0;
 			s = JXG.Math.crossProduct([0,0,1], [-dys*c[1]-dxs*c[2], dys, dxs]); // intersect with top

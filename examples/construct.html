@@ -64,12 +64,12 @@ JXG.Options.point.label = {};
 */
 var board = JXG.JSXGraph.initBoard('jxgbox', {
     boundingbox: [-5,5,5,-5],
-    keepaspectratio: true, axis:true
+    keepaspectratio: true
     });
-/*    
-board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:20}});
-board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:20}});
+board.create('axis',[[0,0],[1,0]], {ticks: {majorHeight:-20, minorHeight:10}});
+board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:-20, minorHeight:10}});
  
+/*    
 var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});
 var el1 = board.create('line',[[1,0],[1,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=1'});
  
@@ -114,7 +114,7 @@ x.makeGlider(ar);
 x.free();
 //board.update();
 //pol.setProperty({radius:function(){return 1.0;}});
-var ss = board.create('slider', [[-4,1],[-2,1],[-2,0,2]], {name:'x'});
+var ss = board.create('slider', [[-4,1],[-2,-3],[-2,0,2]], {name:'x'});
 
 newsize = function() {
     board.resizeContainer(300, 300);
