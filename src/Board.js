@@ -1099,7 +1099,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (obj.elementClass == JXG.OBJECT_CLASS_POINT) {
             xy.push(obj.coords.usrCoords);
         } else {
-            // do nothing
+            try {
+                xy.push(obj.coords.usrCoords);
+            } catch(e) {
+                JXG.debug('JSXGraph+ saveStartPos: obj.coords.usrCoords not available: ' + e);
+            }
         }
 
         len = xy.length;
