@@ -1129,7 +1129,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (r) {
             var pos = this.getMousePosition(evt);
-            this.moveOrigin(pos[0], pos[1]);
+            this.moveOrigin(pos[0], pos[1], true);
         }
 
         return r;
@@ -1152,7 +1152,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (r) {
             var pos = this.getMousePosition(evt, 0);
-            this.moveOrigin(pos[0], pos[1]);
+            this.moveOrigin(pos[0], pos[1], true);
         }
 
         return r;
@@ -2035,19 +2035,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-      * Moves the origin and initializes an update of all elements.
-      * @params {Number} x
-      * @params {Number} y
-      * @returns {JXG.Board} Reference to this board.
-      */
-    moveOrigin: function (x, y) {
+     * Moves the origin and initializes an update of all elements.
+     * @params {Number} x
+     * @params {Number} y
+     * @params {Boolean} [diff=false]
+     * @returns {JXG.Board} Reference to this board.
+     */
+    moveOrigin: function (x, y, diff) {
         var el, ob, len = this.objectsList.length;
 
         if (JXG.exists(x) && JXG.exists(y)) {
             this.origin.scrCoords[1] = x;
             this.origin.scrCoords[2] = y;
 
-            if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+            if (diff) {
                 this.origin.scrCoords[1] -= this.drag_dx;
                 this.origin.scrCoords[2] -= this.drag_dy;
             }
