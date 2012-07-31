@@ -650,6 +650,7 @@ JXG.createPrescribedAngle = function(board, parents, attributes) {
     }
     
     el.parents = [parents[0].id, parents[1].id];
+    el.point = p;
     return el;
 };
 
