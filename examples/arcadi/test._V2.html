@@ -1,0 +1,167 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><style type="text/css">
+		       .jxgbox {
+                position:relative; /* for IE 7 */
+                overflow:hidden;
+                background-color:#ffffff;
+                border-style:solid;
+                border-width:1px;
+                border-color:#356AA0;
+                -moz-border-radius:10px;
+                -webkit-border-radius:10px;
+                /*
+                    -moz-box-shadow:black 2px 2px 2px -2px, #151A10 4px 4px;
+                    -webkit-box-shadow:4px 4px 3px #151A10;
+                    */
+            }
+
+            .JXGtext {
+                background-color: transparent; /* May produce artefacts in IE. Solution: setting a color explicitly. */
+                font-family: Arial, Helvetica, Geneva;
+                padding: 0px;
+                margin: 0px;
+                /*line-height:100%;*/ /* This has to be commented out. Otherwise subscripts are not visible in IE */
+                /*border-style:dotted;*/
+                /*border-width:0.4px;*/
+            }
+
+            .navbar {
+                color: #aaaaaa;
+                background-color: #f5f5f5;
+                padding: 2px;
+                position: absolute;
+                font-size: 10px;
+                cursor: pointer;
+                z-index: 100;
+                right: 5px;
+                bottom: 5px;
+            }
+      </style>
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+      
+      </head>
+   <body onLoad="plotData()" style="font-family: Calibri;">
+      <br><script type="text/javascript">
+            
+          var screenWidth= (1680*85)/100;
+          var screenHeight=(1050*60)/100;
+          document.write( '<div id="box" class="jxgbox" style="width:'+ screenWidth +'px; height:'+ screenHeight +'px; align:center valign=center"></div>');
+          
+        </script><script type="text/javascript">
+
+          var defaultAxis;
+          var prevAxis;
+          var actual;
+          var numOfTimes =0;
+          var maxX = 0.0;
+          var maxY = 0.0;
+          var minY = 100000.0;
+
+          JXG.Options.precision.hasPoint = 0;
+          JXG.Options.zoom.wheel=true;          
+
+          var board = JXG.JSXGraph.initBoard('box',{boundingbox:[0,0,0,0],axis:false,showCopyright:false});
+
+          var plotData = function() {
+
+          var dataSplit, timeSplit, failTimeSplit, failDataSplit, x=[], y=[], d;
+          var rawTime='0;1.525;1.525;1.53;1.53;1.95;1.95;2.3;2.3;2.305;2.305;3.4;3.4;4.2;4.2;4.6;4.6;60;';
+          var rawData='0;0;2048;2048;3072;3072;16;16;2064;2064;3088.155;3088.155;0;0;2048;2048;16;16;';
+          dataSplit = rawData.split(';');
+          timeSplit = rawTime.split(';');
+
+          for (i=0;i<dataSplit.length-1;i++) {
+
+                    x[i] = timeSplit[i]*1.0;
+                    y[i] = dataSplit[i]*1.0;
+                    
+                    var p = board.create('point',[x[i],y[i]],{fixed:true ,name:' ',face:'x',size:1,strokeColor:'blue'});
+                  
+                    if (x[i]>maxX) maxX = x[i];
+                    if (y[i]>maxY) maxY = y[i];
+                    if (y[i]<minY) minY = y[i];
+                }
+                                   
+                  var c = board.create('curve',[x,y],{strokeColor:'blue',strokeWidth:2});                               
+               
+                  var YValue = 0;
+                  var Ybound = 0;                
+                                   
+                  if (maxY==0 && minY==0){
+                      defaultAxis=[-0.01*maxX,1,maxX*1.01,-1*0.036];
+                      board.setBoundingBox(defaultAxis);
+                  }
+                 else{
+                    if (-minY>maxY){
+                      YValue = -minY;
+                     }
+                   else{
+                      YValue = maxY;
+                    }
+                    if (minY==0 || minY>0){
+                      defaultAxis=[-0.01*maxX,YValue*1.1,maxX*1.01,-YValue*0.04];
+                    }
+                    else{
+                      defaultAxis=[-0.01*maxX,YValue*1.1,maxX*1.01,-YValue*1.2];
+                     }
+                  
+                  board.setBoundingBox(defaultAxis);
+                }                                                                                                                                                  
+          };
+
+      
+          hook = function (){
+            
+            var actualBB= board.getBoundingBox();   
+            <!--if the setBoundingBox is remove it works!!!-->
+            if (actualBB[0]>-10000000000) {
+                board.setBoundingBox(actualBB, false );
+            }
+            //board.setBoundingBox(actualBB);
+            
+          };
+                                                  
+          // x axis
+          var pX0 = board.create('point',[0, function(){          
+                var bb = board.getBoundingBox();
+                return bb[3]+(bb[1]-bb[3])*0.035; // 10% above the bottom border
+                }
+            ], {visible:false, withLabel:false});
+          var pX1 = board.create('point',
+            [1, function(){
+                var bb = board.getBoundingBox();
+                return bb[3]+(bb[1]-bb[3])*0.035;
+                }
+            ], {visible:false, withLabel:false});
+
+          var xaxis = board.create('axis', [pX0, pX1]);
+          //pX0.type = JXG.OBJECT_TYPE_CAS;
+          //pX1.type = JXG.OBJECT_TYPE_CAS;
+
+          // y axis
+          var pX2 = board.create('point',
+            [function(){
+                var bb = board.getBoundingBox();
+                return bb[0]+(bb[2]-bb[0])*0.01;   // 10% beneath the left border
+                }, 0
+            ], {visible:false, withLabel:false});
+          var pX3 = board.create('point',
+            [function(){
+                var bb = board.getBoundingBox();
+                return bb[0]+(bb[2]-bb[0])*0.01;
+                }, 1
+            ], {visible:false, withLabel:false});
+
+          var xaxis = board.create('axis', [pX2, pX3]);
+          pX2.type = JXG.OBJECT_TYPE_CAS;
+          pX3.type = JXG.OBJECT_TYPE_CAS;
+
+          //board.addHook(hook, "update", board);
+          board.on("update", hook, board);
+                  
+          </script>
+        </body>
+</html>
