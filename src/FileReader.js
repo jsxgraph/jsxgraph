@@ -200,7 +200,7 @@ JXG.FileReader = {
                 str = JXG.GraphReader.readGraph(str, board, false);
                 break;
             case 'digraph':
-                str = JXG.GraphReader.readGraph(str, updateboard, true);
+                str = JXG.GraphReader.readGraph(str, board, true);
                 break;
             case 'geonext':
                 // str is a string containing the XML code of the construction
