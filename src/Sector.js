@@ -642,8 +642,17 @@ JXG.createAngle = function(board, parents, attributes) {
             t = this.board.create('transform', [val, this.center], {type:'rotate'});
             p.addTransform(q, t);
             p.isDraggable = false;
-            p.parents = [q, t.id];
+            p.parents = [q];
         } 
+    };
+    
+    el.free = function() {
+        var p = this.anglepoint;
+        if (p.transformations.length>0) {
+            p.transformations.pop();
+            p.isDraggable = true;
+            p.parents = [];
+        }
     };
     
     return el;

@@ -1430,10 +1430,11 @@ JXG.createPoint = function(board, parents, attributes) {
             el.isDraggable = true;
         } else if ( (typeof parents[0]=='object') && (typeof parents[1]=='object') ) { // Transformation
             el = new JXG.Point(board, [0,0], attr);
-            el.addTransform(parents[0],parents[1]);
+            el.addTransform(parents[0], parents[1]);
             el.isDraggable = false;
 
-            el.parents = [parents[0].id, parents[1].id];
+            //el.parents = [parents[0].id, parents[1].id];
+            el.parents = [parents[0].id];
         }
         else {// Failure
             throw new Error("JSXGraph: Can't create point with parent types '" + 
