@@ -1750,13 +1750,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.mouse.targets[0].Ystart = [];
                 this.mouse.targets[0].Zstart = [];
 
-                xy = this.initXYstart(this.mouse.obj);
-
-                for (i = 0; i < xy.length; i++) {
-                  this.mouse.targets[0].Xstart.push(xy[i][1]);
-                  this.mouse.targets[0].Ystart.push(xy[i][2]);
-                  this.mouse.targets[0].Zstart.push(xy[i][0]);
-                }
+                this.saveStartPos(this.mouse.obj, this.mouse.targets[0]);
 
                 // prevent accidental text selection
                 // this could get us new trouble: input fields, links and drop down boxes placed as text

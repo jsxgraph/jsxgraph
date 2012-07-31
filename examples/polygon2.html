@@ -21,10 +21,10 @@ var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, 
 var A = brd.create('point', [-9,5], {name:'A_0', visible:true, size:20});
 var B = brd.create('point', [8,8], {name:'B_0', visible:true});
 var C = brd.create('point', [-8,-3], {name:'C_0', visible:false});
-/*
+
 var p1 = brd.create('polygon', [A, B, C], 
     {borders:{visible:false}, 
-     withLabel:false, hasInnerPoints:true});
+     hasInnerPoints:true});
 
 var p2 = brd.create('regularpolygon', [C, A, 5], 
     {borders:{visible:false}, 
@@ -35,7 +35,7 @@ var p2 = brd.create('regularpolygon', [C, A, 5],
      highlightFillColor:'blue',
      scalable: false
      });
-*/
+
 brd.create('line', [A, B]);     
 //brd.create('circle', [A, B], {scalable:false});     
 /* ]]> */
