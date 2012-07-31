@@ -630,6 +630,22 @@ JXG.createAngle = function(board, parents, attributes) {
                          (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     }
 
+    /**
+     * TODO
+     */
+    el.setAngle = function(val) {
+        var p, q, t;
+        p = this.anglepoint;
+        q = this.radiuspoint;
+        
+        if (p.draggable()) {
+            t = this.board.create('transform', [val, this.center], {type:'rotate'});
+            p.addTransform(q, t);
+            p.isDraggable = false;
+            p.parents = [q, t.id];
+        } 
+    };
+    
     return el;
 };
 
@@ -640,7 +656,7 @@ JXG.createPrescribedAngle = function(board, parents, attributes) {
 
     // Test if two points are given
     if ( JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
-        attr = JXG.copyAttributes(attributes, board.options, 'prescribedangle', 'point');
+        attr = JXG.copyAttributes(attributes, board.options, 'prescribedangle', 'anglepoint');
         t = board.create('transform', [parents[2], parents[0]], {type:'rotate'});
         p = board.create('point', [parents[1], t], attr);
         el = board.create('angle', [parents[1], parents[0], p], attributes);
@@ -650,7 +666,6 @@ JXG.createPrescribedAngle = function(board, parents, attributes) {
     }
     
     el.parents = [parents[0].id, parents[1].id];
-    el.point = p;
     return el;
 };
 

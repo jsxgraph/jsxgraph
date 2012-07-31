@@ -1233,7 +1233,7 @@ JXG.Options = {
 
     /* special prescribed angle options */
     prescribedangle : {
-        point: {
+        anglepoint: {
             size: 2,
             visible: false,
             withLabel: false
