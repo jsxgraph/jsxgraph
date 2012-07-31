@@ -1231,6 +1231,15 @@ JXG.Options = {
         }
     },
 
+    /* special prescribed angle options */
+    prescribedangle : {
+        point: {
+            size: 2,
+            visible: false,
+            withLabel: false
+        }
+    },
+    
     /* special options for riemann sums */
     riemannsum: {
         withLabel:false,
