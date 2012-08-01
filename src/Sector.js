@@ -631,7 +631,13 @@ JXG.createAngle = function(board, parents, attributes) {
     }
 
     /**
-     * TODO
+     * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
+     * the anglepoint is a free point.
+     * @name setAngle
+     * @function
+     * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
+     * @returns {Object} Pointer to the angle element..
+     * 
      */
     el.setAngle = function(val) {
         var p, q, t;
@@ -644,8 +650,17 @@ JXG.createAngle = function(board, parents, attributes) {
             p.isDraggable = false;
             p.parents = [q];
         } 
+        return this;
     };
     
+    /**
+     * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by 
+     * setAngle() previously. The anglepoint is set to a free point.
+     * @name free
+     * @function
+     * @returns {Object} Pointer to the angle element..
+     * 
+     */
     el.free = function() {
         var p = this.anglepoint;
         if (p.transformations.length>0) {
@@ -653,6 +668,7 @@ JXG.createAngle = function(board, parents, attributes) {
             p.isDraggable = true;
             p.parents = [];
         }
+        return this;
     };
     
     return el;
