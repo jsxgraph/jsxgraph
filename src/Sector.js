@@ -660,23 +660,3 @@ JXG.createAngle = function(board, parents, attributes) {
 
 JXG.JSXGraph.registerElement('angle', JXG.createAngle);
 
-JXG.createPrescribedAngle = function(board, parents, attributes) {
-    var t, p, el, attr;
-
-    // Test if two points are given
-    if ( JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
-        attr = JXG.copyAttributes(attributes, board.options, 'prescribedangle', 'anglepoint');
-        t = board.create('transform', [parents[2], parents[0]], {type:'rotate'});
-        p = board.create('point', [parents[1], t], attr);
-        el = board.create('angle', [parents[1], parents[0], p], attributes);
-    } else {
-        throw new Error("JSXGraph: Can't create prescribed angle with parent types '" +
-                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
-    }
-    
-    el.parents = [parents[0].id, parents[1].id];
-    return el;
-};
-
-JXG.JSXGraph.registerElement('prescribedangle', JXG.createPrescribedAngle);
-
