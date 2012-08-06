@@ -44,6 +44,7 @@ JXG.Image = function (board, url, coords, size, attributes) {
     }
     this.X = JXG.createFunction(coords[0],this.board,'');
     this.Y = JXG.createFunction(coords[1],this.board,'');
+    this.Z = JXG.createFunction(1.0,this.board,'');
     this.W = JXG.createFunction(size[0],this.board,'');
     this.H = JXG.createFunction(size[1],this.board,'');
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
@@ -71,15 +72,17 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * Checks whether (x,y) is over or near the image;
      * @param {int} x Coordinate in x direction, screen coordinates.
      * @param {int} y Coordinate in y direction, screen coordinates.
-     * @return Always returns false
+     * @return {Boolean} True if (x,y) is over the image, False otherwise.
      */
     hasPoint: function (x,y) {
         var dx = x-this.coords.scrCoords[1],
             dy = this.coords.scrCoords[2]-y,
             r = this.board.options.precision.hasPoint;
 
-        if (dx>=-r && dx/*-this.size[0]*/<=2*r && 
-            dy>=-r && dy/*-this.size[1]*/<=r) {
+        //if (dx>=-r && dx<=2*r && 
+        //    dy>=-r && dy<=r) {
+        if (dx>=-r && dx-this.size[0]<=r && 
+            dy>=-r && dy-this.size[1]<=r) {
             return true;
         } else {
             return false;
@@ -133,14 +136,19 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
     /**
      * Sets x and y coordinate of the image.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords coordinate in screen/user units
+     * @param {Array} coords coordinates in screen/user units of the mouse/touch position
+     * @param {Array} oldcoords coordinates in screen/user units of the previous mouse/touch position
      * @returns {JXG.Image}
      */
-    setPositionDirectly: function (method, coords) {
-        var coords = new JXG.Coords(method, coords, this.board);
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board),
+            dc,  v = [this.Z(), this.X(), this.Y()];
             
-        this.X = JXG.createFunction(coords.usrCoords[1], this.board, '');
-        this.Y = JXG.createFunction(coords.usrCoords[2], this.board, '');
+        dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+
+        this.X = JXG.createFunction(v[1]+dc[1], this.board, '');
+        this.Y = JXG.createFunction(v[2]+dc[2], this.board, '');
 
         return this;
     }
