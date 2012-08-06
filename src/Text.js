@@ -74,6 +74,7 @@ JXG.Text = function (board, content, coords, attributes) {
         var fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.X(),this.Y()]);';
         this.updateCoords = new Function('',fs);
     }
+    this.Z = JXG.createFunction(1.0, this.board, '');
 
     if (typeof this.content === 'function') {
         this.updateText = function() { this.plaintext = this.content(); };
@@ -442,29 +443,25 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * @param {Array} oldcoords previous coordinates in screen/user units
      */
     setPositionDirectly: function (method, coords, oldcoords) {
-        var dx, dy,
-            newCoords, oldCoords;
+        var c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board),
+            dc,  v;
             
         if (this.relativeCoords) {
             if (this.visProp.islabel) {
-                oldCoords = new JXG.Coords(method, oldcoords, this.board);
-                newCoords = new JXG.Coords(method, coords, this.board);
-                dx = newCoords.scrCoords[1]-oldCoords.scrCoords[1];
-                dy = newCoords.scrCoords[2]-oldCoords.scrCoords[2];
-                this.relativeCoords.scrCoords[1] += dx;
-                this.relativeCoords.scrCoords[2] += dy;
+                dc = JXG.Math.Statistics.subtract(c.scrCoords, oldc.scrCoords);        
+                this.relativeCoords.scrCoords[1] += dc[1];
+                this.relativeCoords.scrCoords[2] += dc[2];
             } else {
-                oldCoords = new JXG.Coords(method, oldcoords, this.board);
-                newCoords = new JXG.Coords(method, coords, this.board);
-                dx = newCoords.usrCoords[1]-oldCoords.usrCoords[1];
-                dy = newCoords.usrCoords[2]-oldCoords.usrCoords[2];
-                this.relativeCoords.usrCoords[1] += dx;
-                this.relativeCoords.usrCoords[2] += dy;
+                dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);        
+                this.relativeCoords.usrCoords[1] += dc[1];
+                this.relativeCoords.usrCoords[2] += dc[2];
             }
         } else {
-            newCoords = new JXG.Coords(method, coords, this.board);
-            this.X = JXG.createFunction(newCoords.usrCoords[1], this.board, '');
-            this.Y = JXG.createFunction(newCoords.usrCoords[2], this.board, '');
+            dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);    
+            v = [this.Z(), this.X(), this.Y()];            
+            this.X = JXG.createFunction(v[1]+dc[1], this.board, '');
+            this.Y = JXG.createFunction(v[2]+dc[2], this.board, '');
         }
 
         return this;
