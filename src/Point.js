@@ -886,13 +886,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         } else if (terms.length==2) { // Euclidean coordinates
             this.XEval = newfuncs[0];
             this.YEval = newfuncs[1];
-            fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.XEval(),this.YEval()]);';
+            fs = 'this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.XEval(),this.YEval()]);';
             this.updateConstraint = new Function('',fs);
         } else { // Homogeneous coordinates
             this.ZEval = newfuncs[0];
             this.XEval = newfuncs[1];
             this.YEval = newfuncs[2];
-            fs = 'this.coords.setCoordinates(JXG.COORDS_BY_USER,[this.ZEval(),this.XEval(),this.YEval()]);';
+            fs = 'this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.ZEval(),this.XEval(),this.YEval()]);';
             this.updateConstraint = new Function('',fs);
         }
 

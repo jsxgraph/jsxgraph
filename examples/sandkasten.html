@@ -58,6 +58,17 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var spline = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 10, 7, -5], axis:true});
+        var p = [];
+        p[0] = board.create('point', [-1,2], {size: 4, face: 'o'});
+        p[1] = board.create('point', [0,-1], {size: 4, face: 'o'});
+        p[2] = board.create('point', [1,0], {size: 4, face: 'o'});
+        p[3] = board.create('point', [2,1], {size: 4, face: 'o'});
+
+        var c = board.create('spline', p, {strokeWidth:3});
+    })();
+
     var alex_integral = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});
 
@@ -65,7 +76,7 @@
 
         var i = board.create('integral', [p, [-2, 2]], {label: {visible: false}, curveLeft: {color: 'green', size: 20, strokeWidth: 7}, color: 'blue'});
 
-    })();
+    });
 
     var simple = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});

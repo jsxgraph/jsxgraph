@@ -52,4 +52,9 @@ var JXG = {};
         }
     }
 JXG.serverBase = JXG.requirePath + 'server/';
+
+if (typeof module !== 'undefined') {
+    module.exports = JXG;
+}
+
 })();

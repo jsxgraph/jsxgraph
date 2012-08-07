@@ -112,7 +112,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean}
      */
     isAndroid: function () {
-        return navigator.userAgent.toLowerCase().search("android") > -1;
+        return JXG.exists(navigator) && navigator.userAgent.toLowerCase().search("android") > -1;
     },
 
     /**
@@ -128,7 +128,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean}
      */
     isApple: function () {
-        return (navigator.userAgent.search(/iPad/) != -1 || navigator.userAgent.search(/iPhone/) != -1);
+        return JXG.exists(navigator) && (navigator.userAgent.search(/iPad/) != -1 || navigator.userAgent.search(/iPhone/) != -1);
     },
 
     /**
