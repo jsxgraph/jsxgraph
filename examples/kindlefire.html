@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <title>Kindle fire test</title>
+</head>
+<body>
+<div id="jxgbox" style="width: 500px; height: 500px;"></div>
+<script type="text/javascript">
+    window.onload = function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10]}),
+            nopoints = 50, points = [], i, c;
+
+        /*
+        board.suspendUpdate();
+        for (i = 0; i < nopoints; i++) {
+            points.push(board.create('point', [Math.random()*20 - 10, Math.random()*20 - 10]));
+        }
+
+        for (i = 0; i < nopoints; i++) {
+            points[i].moveTo([Math.random()*20 - 10, Math.random()*20 - 10], 3000);
+        }
+        board.unsuspendUpdate();*/
+
+        points = board.create('point', [5, 5]);
+
+        c = board.create('curve', [[], []], {type: 'plot'});
+        c.updateDataArray = function () {
+            if (points.X() < -9 && points.Y() < -9) {
+                this.dataX.length = this.dataY.length = 0;
+            }
+
+            this.dataX.push(Math.random()*20 - 10);
+            this.dataY.push(Math.random()*20 - 10);
+
+            points.label.content.setText(this.dataX.length);
+        };
+    };
+</script>
+</body>
+</html>
