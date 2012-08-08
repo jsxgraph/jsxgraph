@@ -870,7 +870,12 @@ JXG.Options = {
 
     /* special legend options */
     label: {
-        strokeColor: 'black',
+        /**#@+
+         * @visprop
+         */
+        strokeColor : '#552222',
+        highlightStrokeOpacity:1,
+        highlightStrokeColor: '#C3D9FF',
         
         fixed: true,
         /**
@@ -892,6 +897,8 @@ JXG.Options = {
         * @name JXG.GeometryElement#label.offset
         **/
         offset: [10, 10]
+
+        /**#@-*/
     },
         
     /* special legend options */
@@ -1363,7 +1370,7 @@ JXG.Options = {
         fontSize : 12,
         digits: 2,
         isLabel: false,
-        strokeColor : '#000000',
+        strokeColor : '#552222',
         useASCIIMathML : false,
         useMathJax : false,
         display : 'html',                    // 'html' or 'internal'
