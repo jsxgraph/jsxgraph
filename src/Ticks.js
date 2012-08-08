@@ -118,6 +118,19 @@ JXG.Ticks.prototype = new JXG.GeometryElement();
 JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     // documented in JXG.GeometryElement
     hasPoint: function (x, y) {
+        var i, t,
+            len = this.ticks.length,
+            r = this.board.options.precision.hasPoint;
+            
+        for (i=0; i<len; i++) {
+            t = this.ticks[i];
+            if (Math.abs(t[0][0]-t[0][1])>=1 || Math.abs(t[1][0]-t[1][1])>=1) { // not a zero length tick
+                if (t[0][0]-r<x && x < t[0][1]+r && t[1][0]-r<y && y < t[1][1]+r) {
+                    return true;
+                }
+            }
+        }
+        
        return false;
     },
 
