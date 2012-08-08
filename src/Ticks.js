@@ -116,7 +116,12 @@ JXG.Ticks = function (line, ticks, attributes) {
 JXG.Ticks.prototype = new JXG.GeometryElement();
 
 JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
-    // documented in JXG.GeometryElement
+    /**
+     * Checks whether (x,y) is near the line.
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
+     * @return {Boolean} True if (x,y) is near the line, False otherwise.
+     */
     hasPoint: function (x, y) {
         var i, t,
             len = this.ticks.length,
@@ -398,6 +403,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         this.updateRenderer();
     },
     
+    /**
+     * @private
+     */
     _adjustTickDistance: function(ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
         var nx, ny, f = 1;
         
@@ -418,7 +426,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         }
         return f;
     },
-    
+
+    /**
+     * @private
+     */
     _tickEndings: function(coords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, major) {
         var i, c, 
             cw = this.board.canvasWidth,
@@ -589,6 +600,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     /**
      * Removes the HTML divs of the tick labels
      * before repositioning
+     * @private
      */
     removeTickLabels: function () {
         var j;
