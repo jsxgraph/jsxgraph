@@ -7,10 +7,13 @@
 </head>
 <body>
 <div id="jxgbox" style="width: 500px; height: 500px;"></div>
+<div id="result"></div>
+
 <script type="text/javascript">
     window.onload = function () {
+        JXG.Options.renderer = 'canvas';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10]}),
-            nopoints = 50, points = [], i, c;
+            nopoints = 50, points = [], i, c, start, result;
 
         /*
         board.suspendUpdate();
@@ -23,7 +26,9 @@
         }
         board.unsuspendUpdate();*/
 
-        points = board.create('point', [5, 5]);
+        start = new Date().getTime();
+
+        points = board.create('point', [5, 5], {withLabel: true});
 
         c = board.create('curve', [[], []], {type: 'plot'});
         c.updateDataArray = function () {
@@ -34,8 +39,17 @@
             this.dataX.push(Math.random()*20 - 10);
             this.dataY.push(Math.random()*20 - 10);
 
-            points.label.content.setText(this.dataX.length);
+            if (this.dataX.length % 50 === 0 && points.label.content) {
+                points.label.content.setText(this.dataX.length);
+            }
         };
+
+        /*for (i = 0; i < nopoints; i++) {
+            board.update();
+        }
+
+        result = new Date().getTime() - start;
+        document.getElementById('result').innerHTML = result;*/
     };
 </script>
 </body>
