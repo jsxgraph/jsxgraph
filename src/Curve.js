@@ -228,14 +228,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * @see JXG.Curve#updateCurve
      */
     update: function () {
-        if (this.needsUpdate && !this.board.needsFullUpdate && this.Y && this.Y.toJS) {
-            if (this.Y.toJS() == this.YtoJS && this.Y.deps && JXG.keys(this.Y.deps, true).length === 0) {
-                return this;
-            }
-
-            this.YtoJS = this.Y.toJS();
-        }
-
         if (this.needsUpdate) {
             if (this.visProp.trace) {
                 this.cloneToBackground(true);
