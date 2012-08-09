@@ -2208,12 +2208,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
-            if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
-                el.elementClass==JXG.OBJECT_CLASS_CURVE ||
-                el.type==JXG.OBJECT_TYPE_AXIS ||
-                el.type==JXG.OBJECT_TYPE_TEXT)) {
-                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS)
+            if (!el.visProp.frozen
+                 && (el.elementClass==JXG.OBJECT_CLASS_POINT
+                 || el.elementClass==JXG.OBJECT_CLASS_CURVE
+                 || el.type==JXG.OBJECT_TYPE_AXIS
+                 || el.type==JXG.OBJECT_TYPE_TEXT)) {
+                
+                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE 
+                    && el.type!=JXG.OBJECT_TYPE_AXIS) {
                     el.coords.usr2screen();
+                }
             }
         }
         this.calculateSnapSizes();

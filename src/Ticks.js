@@ -166,6 +166,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             bb[1] *= dy;
             this.board.setBoundingBox(bb, false);
         }
+        //this.board.mode = this.board.BOARD_MODE_DRAG;
+        //this.board.needsFullUpdate = true;
+        
         return this;
     },
     
