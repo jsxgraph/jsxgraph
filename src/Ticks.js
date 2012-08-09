@@ -152,22 +152,18 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         if (!this.line.visProp.scalable) {
             return this;
         }
-        if (Math.abs(this.line.stdform[1])<JXG.Math.eps) {  // horizontal line
-            dx =oldc.usrCoords[1]/ c.usrCoords[1];
-            if ( c.usrCoords[1]<0) {
-                bb[0] *= dx;
-            } else {
-                bb[2] *= dx;
-            }
+        
+        if (Math.abs(this.line.stdform[1])<JXG.Math.eps         // horizontal line     
+            && Math.abs(c.usrCoords[1]*oldc.usrCoords[1])>JXG.Math.eps) {  
+            dx =oldc.usrCoords[1] / c.usrCoords[1];
+            bb[0] *= dx;
+            bb[2] *= dx;
             this.board.setBoundingBox(bb, false);
-        } else if (Math.abs(this.line.stdform[2])<JXG.Math.eps) {
+        } else if (Math.abs(this.line.stdform[2])<JXG.Math.eps // vertical line
+            && Math.abs(c.usrCoords[2]*oldc.usrCoords[2])>JXG.Math.eps) { 
             dy = oldc.usrCoords[2] / c.usrCoords[2];
-            if ( c.usrCoords[2]<0) {
-                bb[3] *= dy;
-            } else {
-                bb[1] *= dy;
-            }
-        //dy = c.usrCoords[2] / oldc.usrCoords[2];
+            bb[3] *= dy;
+            bb[1] *= dy;
             this.board.setBoundingBox(bb, false);
         }
         return this;
