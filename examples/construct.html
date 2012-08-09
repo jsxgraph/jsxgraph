@@ -69,12 +69,14 @@ var board = JXG.JSXGraph.initBoard('jxgbox', {
 board.create('axis',[[0,0],[1,0]], 
     {strokeColor:'#000000', 
       strokeOpacity:1,
+      scalable:true
+      /*,
     ticks: {
     majorHeight:50, minorHeight:10, 
     strokeColor:'red', strokeOpacity:1, strokeWidth:3,
     highlightStrokeColor:'blue'
-    }});
-//board.create('axis',[[0,0],[0,1]], {ticks: {majorHeight:0, minorHeight:0}});
+    }*/});
+board.create('axis',[[0,0],[0,1]], {scalable:true/*, ticks: {majorHeight:20, minorHeight:0}*/});
  
 /*    
 var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});
@@ -129,6 +131,7 @@ newsize = function() {
     board.setBoundingBox([-5,5,5,-5], true);
 };
 */
+var x = board.create('functiongraph', ["sin(x)"]); 
 </script> 
 </body>
 </html>

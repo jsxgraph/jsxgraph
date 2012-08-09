@@ -127,6 +127,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             len = this.ticks.length,
             r = this.board.options.precision.hasPoint;
             
+        if (!this.line.visProp.scalable) {
+            return false;
+        }
         for (i=0; i<len; i++) {
             t = this.ticks[i];
             if (Math.abs(t[0][0]-t[0][1])>=1 || Math.abs(t[1][0]-t[1][1])>=1) { // not a zero length tick
@@ -138,6 +141,38 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         
        return false;
     },
+
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var dx, dy, i, 
+            c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board),
+            bb = this.board.getBoundingBox();
+
+        
+        if (!this.line.visProp.scalable) {
+            return this;
+        }
+        if (Math.abs(this.line.stdform[1])<JXG.Math.eps) {  // horizontal line
+            dx =oldc.usrCoords[1]/ c.usrCoords[1];
+            if ( c.usrCoords[1]<0) {
+                bb[0] *= dx;
+            } else {
+                bb[2] *= dx;
+            }
+            this.board.setBoundingBox(bb, false);
+        } else if (Math.abs(this.line.stdform[2])<JXG.Math.eps) {
+            dy = oldc.usrCoords[2] / c.usrCoords[2];
+            if ( c.usrCoords[2]<0) {
+                bb[3] *= dy;
+            } else {
+                bb[1] *= dy;
+            }
+        //dy = c.usrCoords[2] / oldc.usrCoords[2];
+            this.board.setBoundingBox(bb, false);
+        }
+        return this;
+    },
+    
 
     /**
      * (Re-)calculates the ticks coordinates.
@@ -711,8 +746,11 @@ JXG.createTicks = function(board, parents, attributes) {
 
     if ( (parents[0].elementClass == JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
         el = new JXG.Ticks(parents[0], dist, attr);
-    } else
+    } else {
         throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+    }
+    
+    el.isDraggable = true;
 
     return el;
 };
