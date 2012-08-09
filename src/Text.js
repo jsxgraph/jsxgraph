@@ -230,15 +230,15 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             return this;
         }
 
-        if (this.visProp.display=='html' && this.board.renderer.type!='vml') {
+        if (this.visProp.display=='html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
             this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-        } else if (this.visProp.display=='internal' && this.board.renderer.type=='svg') {
+        } else if (this.visProp.display === 'internal' && this.board.renderer.type === 'svg') {
             try {
                 tmp = this.rendNode.getBBox();          // getBBox broken in FF 13? No.
                 this.size = [tmp.width, tmp.height];
             } catch (e) {
             }
-        } else if (this.board.renderer.type=='vml' || (this.visProp.display=='internal' && this.board.renderer.type=='canvas')) { 
+        } else if (this.board.renderer.type === 'vml' || (this.visProp.display === 'internal' && this.board.renderer.type === 'canvas')) {
             // Here comes a very crude estimation of the dimensions of the textbox. 
             this.size = [parseFloat(this.visProp.fontsize)*this.plaintext.length*0.45, parseFloat(this.visProp.fontsize)*0.9]
         }
