@@ -131,8 +131,12 @@ newsize = function() {
     board.setBoundingBox([-5,5,5,-5], true);
 };
 */
-var ss = board.create('slider', [[-4,1],[2,1],[-4,1,4]], {name:'x'});
-var x = board.create('functiongraph', [function(x){ return Math.sin(x)*ss.Value();}]); 
+// 
+//var ss = board.create('slider', [[-4,1],[2,1],[-4,1,4]], {name:'x'});
+//var x = board.create('functiongraph', [function(x){ return Math.sin(x);}]); 
+
+var x = board.create('functiongraph', ["sin(x)"]); 
+
 </script> 
 </body>
 </html>
