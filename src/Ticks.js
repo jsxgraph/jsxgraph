@@ -130,11 +130,50 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         if (!this.line.visProp.scalable) {
             return false;
         }
+        
+        // Ignore non-axes and axes that are not horizontal or vertical
+        if (this.line.stdform[1]!=0 
+            && this.line.stdform[2]!=0
+            && this.line.type!=JXG.OBJECT_TYPE_AXIS) {  
+            
+            return false;
+        }
+
         for (i=0; i<len; i++) {
             t = this.ticks[i];
-            if (Math.abs(t[0][0]-t[0][1])>=1 || Math.abs(t[1][0]-t[1][1])>=1) { // not a zero length tick
-                if (t[0][0]-r<x && x < t[0][1]+r && t[1][0]-r<y && y < t[1][1]+r) {
+            if (!t[2]) continue;       // Skip minor ticks
+            
+            // Ignore ticks at zero
+            if (this.line.stdform[1]==0 && Math.abs(t[0][0]-this.line.point1.coords.scrCoords[1])<JXG.Math.eps) {
+                continue;
+            } else if (this.line.stdform[2]==0 && Math.abs(t[1][0]-this.line.point1.coords.scrCoords[2])<JXG.Math.eps) {
+                continue;
+            }
+                
+            if (Math.abs(t[0][0]-t[0][1])>=1 || Math.abs(t[1][0]-t[1][1])>=1) {    // tick length is not zero, ie. at least one pixel
+                /*
+                if (t[0][0]-r < x 
+                    && x < t[0][1]+r 
+                    && t[1][0]-r < y 
+                    && y < t[1][1]+r) {
+                
                     return true;
+                }
+                */
+                if (this.line.stdform[1]==0) {
+                    if (Math.abs(y - (t[1][0]+t[1][1])*0.5) < 2*r    // Allow dragging near axes only.
+                        && t[0][0]-r < x
+                        && x < t[0][1]+r) {
+                
+                        return true;
+                    }
+                } else if  (this.line.stdform[2]==0) {
+                    if (Math.abs(x - (t[0][0]+t[0][1])*0.5) < 2*r  
+                        && t[1][0]-r < y
+                        && y < t[1][1]+r) {
+                
+                        return true;
+                    }
                 }
             }
         }
@@ -399,7 +438,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			// Compute the start position and the end position of a tick.
 			// If both positions are out of the canvas, ti is empty.
             ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
-            if (ti.length==2) {  // The tick has an overlap with the board
+            if (ti.length==3) {  // The tick has an overlap with the board
                 pos = dir*symbTickPosition+symbStartTick;
                 if ( (Math.abs(pos)<=eps && this.visProp.drawzero)
                      || (pos>lb && pos<ub)
@@ -462,6 +501,17 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
     },
 
     /**
+     * @param {JXG.Coords} coords Coordinates of the tick on the line.
+     * @param {Number} dx horizontal tick extension in user coordinates.
+     * @param {Number} dy vertical tick extension in user coordinates.
+     * @param {Number} dxMaj horizontal tick direction in screen coordinates.
+     * @param {Number} dyMaj vertical tick direction in screen coordinates.
+     * @param {Number} dxMin horizontal tick direction in screen coordinates.
+     * @param {Number} dyMin vertical tick direction in screen coordinates.
+     * @param {Boolean} major True if tick is major tick.
+     * @return {Array} Array of length 3 containing start and end coordinates in screen coordinates
+     *                 of the tick (arrays of length 2). 3rd entry is true if major tick otherwise false.
+     *                 If the tick is outside of the canvas, the return array is empty.
      * @private
      */
     _tickEndings: function(coords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, major) {
@@ -558,7 +608,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			y[1] = c[2] + dys;
 		}
         if (isInsideCanvas) {
-            return [x,y];
+            return [x,y, major];
         } else { 
             return [];
         }
