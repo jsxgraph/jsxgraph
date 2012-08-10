@@ -906,7 +906,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Moves a line with two fingers
+     * Moves a line or polygon with two fingers
      * @param {JXG.Coords} np1c x,y coordinates of first touch
      * @param {JXG.Coords} np2c x,y coordinates of second touch
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
@@ -1440,7 +1440,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (elements.length != 0) {
                     obj = elements[elements.length-1];
 
-                    if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT) {
+                    if (JXG.isPoint(obj) 
+                        || obj.type === JXG.OBJECT_TYPE_TEXT
+                        || obj.type === JXG.OBJECT_TYPE_TICKS) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
                         targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];

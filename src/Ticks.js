@@ -161,14 +161,14 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 }
                 */
                 if (this.line.stdform[1]==0) {
-                    if (Math.abs(y - (t[1][0]+t[1][1])*0.5) < 10  
+                    if (Math.abs(y - (t[1][0]+t[1][1])*0.5) < 2*r    // Allow dragging near axes only.
                         && t[0][0]-r < x
                         && x < t[0][1]+r) {
                 
                         return true;
                     }
                 } else if  (this.line.stdform[2]==0) {
-                    if (Math.abs(x - (t[0][0]+t[0][1])*0.5) < 10  
+                    if (Math.abs(x - (t[0][0]+t[0][1])*0.5) < 2*r  
                         && t[1][0]-r < y
                         && y < t[1][1]+r) {
                 
