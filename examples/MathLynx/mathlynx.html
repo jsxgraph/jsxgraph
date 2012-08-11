@@ -1,0 +1,187 @@
+﻿<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+
+  <style type="text/css" media="all">@import url("http://www.mathlynx.com/QA/modules/system/system.base.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/system/system.menus.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/system/system.messages.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/system/system.theme.css?m8fxcy");</style>
+<style type="text/css" media="all">@import url("http://www.mathlynx.com/QA/modules/book/book.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/modules/date/date_api/date.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/modules/date/date_popup/themes/datepicker.1.7.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/modules/date/date_repeat_field/date_repeat_field.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/field/theme/field.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/node/node.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/search/search.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/modules/user/user.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/modules/views/css/views.css?m8fxcy");</style>
+<style type="text/css" media="all">@import url("http://www.mathlynx.com/QA/sites/all/modules/ctools/css/ctools.css?m8fxcy");</style>
+<style type="text/css" media="all">@import url("http://www.mathlynx.com/QA/sites/all/themes/bartikML/css/layout.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/themes/bartikML/css/style.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/themes/bartikML/graphic/collapsable.css?m8fxcy");
+@import url("http://www.mathlynx.com/QA/sites/all/themes/bartikML/Jsxg/jsxgraph.css?m8fxcy");
+</style>
+    
+</head>
+<body  class="html not-front not-logged-in no-sidebars page-node page-node- page-node-370 node-type-book footer-columns footer-columns" >
+
+<div id="page-wrapper"><div id="page">
+
+<div class="mcb">
+  <h2>Minimize distance from curve to fixed point</h2>
+  <div class="text">
+	<p>
+	  Find the point of the parabola &nbsp; $\displaystyle{ x =y^2 }$ &nbsp; nearest to the point &nbsp; $(3,-3)\;$ .
+	  &nbsp; This is illustrated by the illustrated diagram below. &nbsp; Note that this example is algebraically somewhat
+	  more involved than the preceding two.
+	</p>
+	<p align="center">
+
+<div class="figbox" style="width:600px; margin:auto;">
+<div class="mapleAnimation" style="border:5px">
+
+<div id="jxgbox4" class="jxgbox" style="width:600px; height:400px;border:0px solid gray;padding:0;font-family:'Times New Roman', Times, serif;position:relative"></div>
+<br/>
+<script type='text/javascript'>
+var xFP4 = 3;
+var yFP4 = -3;
+var xMinMarg4 = 2;
+var xMaxMarg4 = 12;
+var yMinMarg4 = 2;
+var yMaxMarg4 = 2;
+var xMin4 = -1;
+var xMax4 = 9;
+var yMin4 = -5;
+var yMax4 = 5;
+brd4 = JXG.JSXGraph.initBoard('jxgbox4', {axis:false, boundingbox:[xMin4-xMinMarg4,yMax4+yMaxMarg4,xMax4+xMaxMarg4,yMin4-yMinMarg4],showCopyright:false,showNavigation:false});
+var xAxis = brd4.create('segment',[[xMin4,0],[xMax4,0]],{strokeWidth:1, strokeOpacity:1, strokeColor:'gray', lastArrow:true});
+brd4.createElement('ticks',[xAxis, 5], {minorTicks:4, majorTickHeight:10, minorTickHeight:4, drawLabels:false});
+var yAxis = brd4.create('segment',[[0,yMin4],[0,yMax4]],{strokeWidth:2, strokeOpacity:1, strokeColor:'gray', lastArrow:true});
+brd4.createElement('ticks',[yAxis, 5], {minorTicks:4, majorTickHeight:10, minorTickHeight:4, drawLabels:false});
+
+
+var fixedPt4 = brd4.create('point',[xFP4,yFP4],
+    {fixed:true, size:2, strokeOpacity:0.1, 
+      withLabel:false,strokeColor:'red', fillColor:'black', 
+      showInfobox:false});
+var parabola= brd4.createElement('curve', [function(t){return t*t;},function(t){return t;},-3,3],{strokeColor:'red'});
+var glide = brd4.createElement('glider', [4,2, parabola],
+    {
+        size:2, strokeOpacity:0.1,
+        withLabel:false, strokeColor:'red', fillColor:'black', 
+        showInfobox:false
+    });
+brd4.create('segment',[fixedPt4, glide],{strokeWidth:1, strokeOpacity:1, strokeColor:'black', dash:2});
+brd4.create('text',[xMax4+xMaxMarg4-8,1,function(){return "$y =$ " + glide.Y().toFixed(4);}], {fontSize:14});
+brd4.create('text',[xMax4+xMaxMarg4-8,-1,function(){return "${\\rm dist}(A , B) =$ " + fixedPt4.Dist(glide).toFixed(4);}], {fontSize:14});
+
+
+//slider4 = brd4.createElement('slider', [[xMax4+xMaxMarg4-10,-3],[xMax4+xMaxMarg4-10,3],[-3,3,3]],{withTicks:true,withLabel:false});
+
+
+brd4.addHook(setInterval4);
+
+</script>
+
+</div> <!-- END mapleAnimation -->
+</div> <!-- END figbox -->
+	</p>
+	<p>
+	  Experimentation suggests that the distance is minimized when &nbsp; $y$ &nbsp; is about &nbsp;
+	  $-1.83\,$ , and this minimal distance is approximately &nbsp; $1.22\;$ . &nbsp; There is also
+	  an unusual dip in the distance function when &nbsp; $y$ &nbsp; is approximately &nbsp; $1\;$ .
+	  &nbsp; As &nbsp; $y$ &nbsp; increases from &nbsp; $0\,$ , when the distance increases to about
+	  &nbsp; $4.473\,$ , hovers there for a bit, then dips slightly when &nbsp; $y$ &nbsp; is about
+	  &nbsp; $1\,$ , and then increases rapidly as &nbsp; $y$ &nbsp; continues to get larger.
+	</p>
+	<p>
+	  Letting the second name ( $\,y\,$ ) of a point on the curve serve as our variable, we wish to
+	  minimize
+	</p>
+	<p align="center">
+	  $\displaystyle{
+	    \text{dist}=\sqrt{(x-3)^2+(y-(-3))^2}=\sqrt{\left(y^2-3\right)^2+(y-(-3))^2}\; {\rm .}
+	  }$
+	</p>
+	<p>
+	  In fact, as this function is strictly positive, and squaring is an increasing function for
+	  positive real numbers, the minimum of this occurs for precisely the same &nbsp; $y$ &nbsp;
+	  value as the minimum of its square. &nbsp; Thus we instead minimize
+	</p>
+	<p align="center">
+	  $\displaystyle{ \text{dist}^2=(x-3)^2+(y-(-3))^2=\left(y^2-3\right)^2+(y-(-3))^2 \; {\rm .} }$
+	</p>
+	<p>
+	  This is a common simplification of a problem &nbsp; &ndash; &nbsp; optimize a related but
+	  easier function.
+	</p>
+	<p>
+	  This new function, $\displaystyle{ \, \text{dist}^2(y)\, }$ , is defined for all &nbsp; $y$
+	  &nbsp; values. &nbsp; We cannot directly apply the Extreme Value Theorem. &nbsp; Nevertheless,
+	  let us consider the derivative of this function.
+	</p>
+	<p align="center">
+	  $\displaystyle{ \frac{\mathrm{d}\phantom{y}}{\mathrm{d}y}\,\left(\text{dist}^2(y)\right)
+	  =2\, \left(2\, y\, \left(y^2-3\right)  +(y+3)\right) \; {\rm .} }$
+	</p>
+	<p>
+	  This exists for all &nbsp; $y\in \mathbb{R}\; $ . &nbsp; So if we have a minimum, it will be at
+	  a place where the derivative &nbsp; $=0\;$ . &nbsp; We proceed to solve this equation.
+	</p>
+	<p>
+	  As &nbsp; $\displaystyle{ \frac{\mathrm{d}\phantom{y}}{\mathrm{d}y}\,\left(\text{dist}^2(y)\right)
+	  =2\, \left(2\, y\, \left(y^2-3\right)  +(y+3)\right) =0 }$ &nbsp; when &nbsp;
+	  $\displaystyle{ 2\, y\, \left(y^2-3\right)  +(y+3) =0\, }$ , or &nbsp;
+	  $\displaystyle{ 2\, y^3 -5\, y +3 =0\, }$ , we study this cubic equation. &nbsp; It factors to
+	  &nbsp; $\displaystyle{ (y-1)\,\left( 2\, y^2 +2\, y -3 \right) =0\, }$ , and thus &nbsp;
+	  $\displaystyle{ \frac{\mathrm{d}\phantom{y}}{\mathrm{d}y}\,\left(\text{dist}^2(y)\right) =0 }$ &nbsp; when either
+	  &nbsp; $y=1\,$ , or &nbsp; $\displaystyle{ 2\, y^2 +2\, y -3 =0\; }$ . &nbsp; This last
+	  quadratic equation has the two solutions &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} +\frac{1}{2}\,\sqrt{7} \sim .8229 }$ &nbsp; and &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \sim -1.8229\; }$ .
+	</p>
+	<p>
+	  Consider the derivative &nbsp;
+	  $\displaystyle{ \frac{\mathrm{d}\phantom{y}}{\mathrm{d}y}\,\left(\text{dist}^2(y)\right)
+	  =2\, \left(2\, y\, \left(y^2-3\right)  +(y+3)\right) = 4\, y^3 -10\, y +6\, }$ , for &nbsp;
+	  $y\in \mathbb{R}\;$ . &nbsp; We have seen that it &nbsp; $=0$ &nbsp; for &nbsp; $y=1\,$ ,
+	  $\displaystyle{ \, y =-\frac{1}{2} +\frac{1}{2}\,\sqrt{7}\, }$ , and &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7}\; }$ . &nbsp; On the remaining intervals
+	  of &nbsp; $\mathbb{R}\,$ , that is on &nbsp; $\displaystyle{ \left( -\infty,
+	  -\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \right)\, }$ , $\displaystyle{ \, \left(
+	  -\frac{1}{2} -\frac{1}{2}\,\sqrt{7} , -\frac{1}{2} +\frac{1}{2}\,\sqrt{7} \right)\, }$ ,
+	  $\displaystyle{ \, \left( -\frac{1}{2} +\frac{1}{2}\,\sqrt{7} , 1 \right)\, }$ , and
+	  $(1,\infty)\,$ , this derivative is negative, positive, negative and positive
+	  respectively. &nbsp; We see that &nbsp; $\displaystyle{ y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} }$
+	  &nbsp; and &nbsp; $y=1$ &nbsp; are local minima, and &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} +\frac{1}{2}\,\sqrt{7} }$ &nbsp; is a local maximum, of the
+	  function &nbsp; $\displaystyle{ \text{dist}^2=\left(y^2-3\right)^2+(y+3)^2 \; }$ . &nbsp; The
+	  function has a minimum and it must occur at one of &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} }$ &nbsp; and &nbsp; $y=1\;$ .
+	</p>
+	<p>
+	  Since &nbsp; $\displaystyle{ \text{dist}^2\left( y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \right) }$
+	  &nbsp; is &nbsp; $\displaystyle{ \frac{43}{4} -\frac{7}{2}\,\sqrt{7} \sim 1.4897\, }$ , so that
+	  &nbsp; $\displaystyle{ \text{dist}\left( y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \right) =
+	  \sqrt{ \frac{43}{4} -\frac{7}{2}\,\sqrt{7} } \sim 1.2205\, }$ , and &nbsp;
+	  $\displaystyle{ \text{dist}^2 ( y =1 ) }$
+	  &nbsp; is &nbsp; $20\,$ , so that &nbsp; $\displaystyle{ \text{dist}(y=1) =\sqrt{2\,\sqrt{7} }
+	  \sim 4.4722\, }$ , the distance &nbsp; $\text{dist}(y)$ &nbsp; is minimized when &nbsp;
+	  $\displaystyle{ y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \sim -1.8229\, }$ , and the minimum
+	  distance is
+	</p>
+	<p align="center">
+	  $\displaystyle{ \text{dist}\left( y =-\frac{1}{2} -\frac{1}{2}\,\sqrt{7} \right) =
+	  \sqrt{ \frac{43}{4} -\frac{7}{2}\,\sqrt{7} } \sim 1.2205\; }$ .
+	</p>
+	<p>
+	  This analysis gives firm support to our experimental observations.
+	</p>
+  </div>
+</div> <!-- END Min distance from curve to fixed point -->
+
+
+</div></div>
+</body>
+</html>
