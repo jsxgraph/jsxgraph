@@ -31,7 +31,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
 	polygon: {
 		fillColor: '#ffff00',
-		highlightFillColor: '#ffff00'
+		highlightFillColor: '#ffff00',
+		hasInnerPoints: false
 	},
 
 	precision: {
