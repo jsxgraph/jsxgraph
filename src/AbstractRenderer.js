@@ -749,6 +749,26 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     updateImageURL: function (element) { /* stub */ },
 
+    /**
+     * Updates CSS style properties of a {@link JXG.Image} node.
+     * In SVGRenderer opacity is the only available style element.
+     * This function is called by highlight() and nohighlight().
+     * This function works for VML. 
+     * It does not work for Canvas.
+     * SVGRenderer overwrites this method.
+     * @param {JXG.Text} element Reference to the {@link JXG.Image} object, that has to be updated.
+     * @see Image
+     * @see JXG.Image
+     * @see JXG.AbstractRenderer#highlight
+     * @see JXG.AbstractRenderer#nohighlight
+     */
+    updateImageStyle: function(element, doHighlight) { 
+        var css = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
+        
+        element.rendNode.className = css;
+    },
+
+
     /* **************************
      * Render primitive objects
      * **************************/
@@ -1027,6 +1047,10 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
                     this.updateTextStyle(element, true);
+                } else if (element.type === JXG.OBJECT_TYPE_IMAGE) {
+                    this.updateImageStyle(element, true);
+                    //element.rendNode.className = 'JXGimageHighlight';
+                    //element.rendNode.setAttributeNS(null, 'class', 'JXGimageHighlight');
                 } else {
                     this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                     this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
@@ -1065,6 +1089,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
             } else {
                 if (element.type === JXG.OBJECT_TYPE_TEXT) {
                     this.updateTextStyle(element, false);
+                } else if (element.type === JXG.OBJECT_TYPE_IMAGE) {
+                    this.updateImageStyle(element, false);
+                    //element.rendNode.setAttributeNS(null, 'class', 'JXGimage');
                 } else {
                     this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                     this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);

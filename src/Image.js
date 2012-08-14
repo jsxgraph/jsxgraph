@@ -62,6 +62,12 @@ JXG.Image = function (board, url, coords, size, attributes) {
     if(!this.visProp.visible) {
        this.board.renderer.hide(this);
     }
+    
+    if (this.board.options.renderer=='canvas') {
+        this._hasPoint = false;  // used in Image.hasPoint()
+        JXG.addEvent(this.rendNode, 'mousemove', (function(im){ return function(){im._hasPoint = true;};})(this), this);
+        JXG.addEvent(this.rendNode, 'mouseout', (function(im){ return function(){im._hasPoint = false;};})(this), this);
+    }
 };
 
 JXG.Image.prototype = new JXG.GeometryElement;
@@ -75,17 +81,20 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * @return {Boolean} True if (x,y) is over the image, False otherwise.
      */
     hasPoint: function (x,y) {
-        var dx = x-this.coords.scrCoords[1],
-            dy = this.coords.scrCoords[2]-y,
-            r = this.board.options.precision.hasPoint;
+        if (this.board.options.renderer=='canvas') {
+            var dx = x-this.coords.scrCoords[1],
+                dy = this.coords.scrCoords[2]-y,
+                r = this.board.options.precision.hasPoint;
 
-        //if (dx>=-r && dx<=2*r && 
-        //    dy>=-r && dy<=r) {
-        if (dx>=-r && dx-this.size[0]<=r && 
-            dy>=-r && dy-this.size[1]<=r) {
-            return true;
+            if (dx>=-r && dx-this.size[0]<=r && 
+                dy>=-r && dy-this.size[1]<=r) {
+                    
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return this._hasPoint;
         }
     },
 

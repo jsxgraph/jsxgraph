@@ -364,6 +364,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
     },
 
+    // already documented in JXG.AbstractRenderer
+    updateImageStyle: function(el, doHighlight) { 
+        var css = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
+         
+        el.rendNode.setAttributeNS(null, 'class', css);
+    },
+
     /* **************************
      * Render primitive objects
      * **************************/
