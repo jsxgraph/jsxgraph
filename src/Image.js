@@ -63,9 +63,10 @@ JXG.Image = function (board, url, coords, size, attributes) {
        this.board.renderer.hide(this);
     }
     
-    if (this.board.options.renderer=='canvas') {
+    // This is experimental
+    if (false && this.board.options.renderer!='canvas') {
         this._hasPoint = false;  // used in Image.hasPoint()
-        JXG.addEvent(this.rendNode, 'mousemove', (function(im){ return function(){im._hasPoint = true;};})(this), this);
+        JXG.addEvent(this.rendNode, 'mouseover', (function(im){ return function(){im._hasPoint = true;};})(this), this);
         JXG.addEvent(this.rendNode, 'mouseout', (function(im){ return function(){im._hasPoint = false;};})(this), this);
     }
 };
@@ -81,7 +82,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * @return {Boolean} True if (x,y) is over the image, False otherwise.
      */
     hasPoint: function (x,y) {
-        if (this.board.options.renderer=='canvas') {
+        if (true || this.board.options.renderer=='canvas') {
             var dx = x-this.coords.scrCoords[1],
                 dy = this.coords.scrCoords[2]-y,
                 r = this.board.options.precision.hasPoint;
@@ -94,6 +95,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
                 return false;
             }
         } else {
+            // This is experimental
             return this._hasPoint;
         }
     },
