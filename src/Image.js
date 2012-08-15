@@ -53,6 +53,12 @@ JXG.Image = function (board, url, coords, size, attributes) {
     this.usrSize = [this.W(), this.H()];
     this.size = [this.usrSize[0]*board.unitX,this.usrSize[1]*board.unitY];
     this.url = url;
+    
+    // span contains the anchor point and the two vectors
+    // spanning the image rectangle.
+    this.span = [[this.Z(), this.X(), this.Y()], 
+                  [this.Z(), this.W(), 0], 
+                  [this.Z(), 0, this.H()]];
 
     this.parent = JXG.getRef(attributes.anchor);
 
@@ -63,12 +69,6 @@ JXG.Image = function (board, url, coords, size, attributes) {
        this.board.renderer.hide(this);
     }
     
-    // This is experimental
-    if (false && this.board.options.renderer!='canvas') {
-        this._hasPoint = false;  // used in Image.hasPoint()
-        JXG.addEvent(this.rendNode, 'mouseover', (function(im){ return function(){im._hasPoint = true;};})(this), this);
-        JXG.addEvent(this.rendNode, 'mouseout', (function(im){ return function(){im._hasPoint = false;};})(this), this);
-    }
 };
 
 JXG.Image.prototype = new JXG.GeometryElement;
@@ -82,11 +82,15 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * @return {Boolean} True if (x,y) is over the image, False otherwise.
      */
     hasPoint: function (x,y) {
-        if (true || this.board.options.renderer=='canvas') {
-            var dx = x-this.coords.scrCoords[1],
-                dy = this.coords.scrCoords[2]-y,
-                r = this.board.options.precision.hasPoint;
+        var len = this.transformations.length,
+            dx, dy, r, // No transformations
+            c, v, p, dot;  // Transformed image
 
+        // Easy case: no transformation
+        if (len==0) {
+            dx = x-this.coords.scrCoords[1];
+            dy = this.coords.scrCoords[2]-y;
+            r = this.board.options.precision.hasPoint;
             if (dx>=-r && dx-this.size[0]<=r && 
                 dy>=-r && dy-this.size[1]<=r) {
                     
@@ -95,8 +99,24 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
                 return false;
             }
         } else {
-            // This is experimental
-            return this._hasPoint;
+            // Image is transformed
+            c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+            // v is the vector from anchor poit to the drag point
+            c = c.usrCoords;
+            v = [c[0]-this.span[0][0], 
+                 c[1]-this.span[0][1], 
+                 c[2]-this.span[0][2]];
+            dot = JXG.Math.innerProduct;   // shortcut
+            
+            // Project the drag point to the sides.
+            p = dot(v, this.span[1]);
+            if ( 0.0<=p && p <= dot(this.span[1], this.span[1])) {
+                p = dot(v, this.span[2]);
+                if ( 0.0<=p && p <= dot(this.span[2], this.span[2])) {
+                    return true;
+                }
+            }
+            return false;
         }
     },
 
@@ -110,6 +130,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
             this.usrSize = [this.W(), this.H()];
             this.size = [this.usrSize[0]*this.board.unitX,this.usrSize[1]*this.board.unitY];
             this.updateTransform();
+            this.updateSpan();
         }
         return this;
     },
@@ -126,12 +147,53 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
     },
 
     updateTransform: function () {
-        if (this.transformations.length==0) {
-            return;
+        var i, len = this.transformations.length;
+        if (len>0) {
+            for (i=0; i<len; i++) {
+                this.transformations[i].update();
+            }
         }
-        for (var i=0;i<this.transformations.length;i++) {
-            this.transformations[i].update();
+        return this;
+    },
+
+    /**
+     * Update the anchor point of the image, i.e. the lower left corner
+     * and the two vectors which span the rectangle.
+     */
+    updateSpan: function () {
+        var i, j, len = this.transformations.length, v = [];
+
+        if (len==0) {
+            this.span = [[this.Z(), this.X(), this.Y()], 
+                          [this.Z(), this.W(), 0], 
+                          [this.Z(), 0, this.H()]];
+        } else {
+            // v contains the three defining corners of the rectangle/image
+            v[0] = [this.Z(), this.X(), this.Y()];
+            v[1] = [this.Z(), this.X()+this.W(), this.Y()];
+            v[2] = [this.Z(), this.X(), this.Y()+this.H()];
+            // Transform the three corners
+            for (i=0; i<len; i++) {
+                for (j=0; j<3; j++) {
+                    v[j] = JXG.Math.matVecMult(this.transformations[i].matrix, v[j]);
+                }
+            }
+            // Normalize the vectors
+            for (j=0; j<3; j++) {
+                v[j][1] /= v[j][0];
+                v[j][2] /= v[j][0];
+                v[j][0] /= v[j][0];
+            }
+            // Compute the two vectors spanning the rectangle
+            // by subtracting the anchor point.
+            for (j=1; j<3; j++) {
+                v[j][0] -= v[0][0];
+                v[j][1] -= v[0][1];
+                v[j][2] -= v[0][2];
+            }
+            this.span = v;
         }
+        return this;
     },
 
     addTransform: function (transform) {
