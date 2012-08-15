@@ -1057,12 +1057,11 @@ JXG.extend(JXG.Math.Geometry, {
      * the ideal point [0,1,0] is returned.
      */
     meetCurveLine: function(el1, el2, nr, board) {
-        var v = [0, NaN, NaN];
+        var v = [0, NaN, NaN], i, cu, li;
 
         if (!JXG.exists(board))
             board = el1.board;
 
-        //for (i=0;i<arguments.length-1;i++) {
         for (i = 0; i <= 1; i++) {
             if (arguments[i].elementClass == JXG.OBJECT_CLASS_CURVE) {
                 cu = arguments[i];
