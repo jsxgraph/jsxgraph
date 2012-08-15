@@ -62,83 +62,10 @@ JXG.Options.zoom.wheel = false;
 JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
-var board = JXG.JSXGraph.initBoard('jxgbox', {
-    boundingbox: [-5,5,5,-5],
-    keepaspectratio: true
-    });
-if (true) {    
-board.create('axis',[[0,0],[1,0]], 
-    {strokeColor:'#000000', 
-      strokeOpacity:1,
-      scalable:true
-      /*,
-    ticks: {
-    majorHeight:50, minorHeight:10, 
-    strokeColor:'red', strokeOpacity:1, strokeWidth:3,
-    highlightStrokeColor:'blue'
-    }*/});
-}    
-board.create('axis',[[0,0],[0,1]], {scalable:true/*, ticks: {majorHeight:20, minorHeight:0}*/});
- 
-/*    
-var el0 = board.create('line',[[0,0], [0,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=0'});
-var el1 = board.create('line',[[1,0],[1,1]], {strokeOpacity: .2, strokeColor: '#000000', fixed: true, name: 'x=1'});
- 
-var gl1 = board.create('glider', [0,0, el0], {name:'b', withLabel:true});
-var gl2 = board.create('glider', [1,0, el1], {name:'a', label:{position:'top', offset:[0,10]}, withLabel:true});
-//gl1.draggable = function() {return true; };
-//gl2.draggable = function() {return true; };
- 
-var line = board.create('line', [gl1, gl2]);
-
-var offset = gl2.Y() - gl1.Y();
- 
-gl1.on('drag', function() {
-    gl2.moveTo([gl1.X(), gl1.Y() + offset]);
-    });
-gl2.on('drag', function() {
-    offset = gl2.Y() - gl1.Y();
-    });
-    
-var x = board.create('point', [2,2], {name:'a', label:{position:'top', offset:[0,10]}, withLabel:true});
-*/
-
-/*
-var t = board.create('text', [-4,3,'Hallo'], {cssClass:'fat', highlightCssClass:'fatHL', fontSize:32});
-
-var a = board.create('point', [1, 0, 0]);
-var b = board.create('point', [1, 2, 0.2], {name:'B'});
-var c = board.create('point', [1, 0, 2], {name:'C'});
-var ar = board.create('arc', [a,b,c], {type:'major', withLabel:'true', name:'&alpha;', strokeWidth:2});
-var br = board.create('minorarc', [a,b,c], {strokeColor:'red', withLabel:'true', name:'&beta;', strokeWidth:8});
-//var br2 = board.create('arc', [a,b,c], {strokeColor:'yellow', strokeWidth:1});
-//var li1 = board.create('line', [a,b], {color:'yellow', strokeWidth:5});
-//var li2 = board.create('perpendicular', [c, li1], {strokeWidth:5});
-var pol = board.create('angle', [b,a,c], {name:'x'});
-//var ci = board.create('circle', [a, b]);
-var x = board.create('glider',[-3, 6, ar]);
-var y = board.create('segment',[x,a]);
-x.free();
-
-x.makeGlider(ar);
-x.free();
-x.makeGlider(ar);
-x.free();
-//board.update();
-//pol.setProperty({radius:function(){return 1.0;}});
-var ss = board.create('slider', [[-4,1],[-2,-3],[-2,0,2]], {name:'x'});
-
-newsize = function() {
-    board.resizeContainer(300, 300);
-    board.setBoundingBox([-5,5,5,-5], true);
-};
-*/
-// 
-//var ss = board.create('slider', [[-4,1],[2,1],[-4,1,4]], {name:'x'});
-//var x = board.create('functiongraph', [function(x){ return Math.sin(x);}]); 
-
-var x = board.create('functiongraph', ["sin(x)"]); 
-
+var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox: [-5,15,15,-5]});
+var cu = brd.create('curve',[ [0,2,4,6,12],[10,12,8,6,4] ] );
+var li = brd.create('line',[[0,11],[10,11]] );
+var i = brd.create('intersection', [li, cu, 0]);
 </script> 
 </body>
 </html>

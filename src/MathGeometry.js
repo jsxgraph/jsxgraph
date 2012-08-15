@@ -1047,16 +1047,17 @@ JXG.extend(JXG.Math.Geometry, {
     },
 
     /**
-     * order of input does not matter for el1 and el2.
+     * Intersection of curve with line,
+     * Order of input does not matter for el1 and el2.
      * @param {JXG.Curve,JXG.Line} el1 Curve or Line
      * @param {JXG.Curve,JXG.Line} el2 Curve or Line
-     * @param {?} nr
+     * @param {Number} nr the nr-th intersection point will be returned.
      * @param {JXG.Board} [board=el1.board] Reference to a board object.
-     * @returns {JXG.Coords} Intersection point
+     * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+     * the ideal point [0,1,0] is returned.
      */
     meetCurveLine: function(el1, el2, nr, board) {
-        var t, t2, i, cu, li, func, z,
-            tnew, steps, delta, tstart, tend, cux, cuy;
+        var v = [0,1,0];
 
         if (!JXG.exists(board))
             board = el1.board;
@@ -1071,10 +1072,33 @@ JXG.extend(JXG.Math.Geometry, {
                 throw new Error("JSXGraph: Can't call meetCurveLine with parent class " + (arguments[i].elementClass) + ".");
         }
 
+        if (cu.visProp.curvetype==='plot') {
+            v = this.meetCurveLineDiscrete(cu, li, nr, board);
+        } else {
+            v = this.meetCurveLineContinuous(cu, li, nr, board);
+        }
+
+        return v;
+    },
+    
+    /**
+     * Intersection of line and curve, continuous case.
+     * Segments are treated as lines. Finding the nr-the intersection point
+     * works for nr=0,1 only.
+     * 
+     * BUG: does not respect cu.minX() and cu.maxX() 
+     */
+    meetCurveLineContinuous: function(cu, li, nr, board) {
+        var t, t2, i, cu, li, func, z,
+            tnew, steps, delta, tstart, tend, cux, cuy;
+
         func = function(t) {
             return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
         };
-
+        
+        /**
+         * Find some interstion point
+         */
         if (arguments.callee.t1memo) {
             tstart = arguments.callee.t1memo;
             t = JXG.Math.Numerics.root(func, tstart);
@@ -1087,6 +1111,9 @@ JXG.extend(JXG.Math.Geometry, {
         cux = cu.X(t);
         cuy = cu.Y(t);
 
+        /**
+         * Find second intersection point
+         */
         if (nr == 1) {
             if (arguments.callee.t2memo) {
                 tstart = arguments.callee.t2memo;
@@ -1113,10 +1140,53 @@ JXG.extend(JXG.Math.Geometry, {
         } else {
             z = 1.0;
         }
-
-        return (new JXG.Coords(JXG.COORDS_BY_USER, [z, cu.X(t),cu.Y(t)], board));
+        return (new JXG.Coords(JXG.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
     },
 
+    /**
+     * Intersection of line and curve, continuous case.
+     * Segments are treated as lines. 
+     * Finding the nr-the intersection point should work for all nr.
+     */
+    meetCurveLineDiscrete: function(cu, li, nr, board) {
+        var len, i, p1, p2, seg, q, q_fin,
+            d, pos, j,
+            cnt = 0;
+
+        len = cu.numberPoints; 
+    
+        // In case, no intersection will be found we will take this
+        q_fin = new JXG.Coords(JXG.COORDS_BY_USER, [0,1,0], board);
+        
+        p2 = [1, cu.X(0), cu.Y(0)];
+        for (i=1;i<len;i++) {
+            p1 = p2.slice(0);
+            p2 = [1, cu.X(i), cu.Y(i)];
+            d = this.distance(p1, p2);
+            if (d<JXG.Math.eps) {    // The defining points are identical
+                continue;
+            }
+            seg = JXG.Math.crossProduct(p1,p2);
+            q = this.meetLineLine(seg, li.stdform, 0, board);
+            
+            j = 1;
+            d = p2[j] - p1[j];
+            if (Math.abs(d)<JXG.Math.eps) { 
+                j = 2; 
+                d = p2[j] - p1[j];
+            }
+            pos = (q.usrCoords[j] - p1[j]) / d;
+            if (pos>=0.0 && pos<=1) {  // Intersection found
+                if (cnt==nr) {
+                    q_fin = q;
+                    break;
+                }
+                cnt++;
+            }
+        }
+
+        return q_fin;
+    },
 
 
     /****************************************/
