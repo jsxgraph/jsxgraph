@@ -66,6 +66,7 @@ var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox: [-5,15,15,-
 var cu = brd.create('curve',[ [0,2,4,6,12],[10,12,8,6,4] ] );
 var li = brd.create('line',[[0,11],[10,11]] );
 var i = brd.create('intersection', [li, cu, 0]);
+var li2 = brd.create('line',[[0,0],i] );
 </script> 
 </body>
 </html>

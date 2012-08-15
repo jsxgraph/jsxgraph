@@ -1057,7 +1057,7 @@ JXG.extend(JXG.Math.Geometry, {
      * the ideal point [0,1,0] is returned.
      */
     meetCurveLine: function(el1, el2, nr, board) {
-        var v = [0,1,0];
+        var v = [0, NaN, NaN];
 
         if (!JXG.exists(board))
             board = el1.board;
@@ -1136,7 +1136,7 @@ JXG.extend(JXG.Math.Geometry, {
         }
 
         if (Math.abs(func(t)) > JXG.Math.eps) {
-            z = 0.0;
+            z = NaN;
         } else {
             z = 1.0;
         }
@@ -1156,7 +1156,7 @@ JXG.extend(JXG.Math.Geometry, {
         len = cu.numberPoints; 
     
         // In case, no intersection will be found we will take this
-        q_fin = new JXG.Coords(JXG.COORDS_BY_USER, [0,1,0], board);
+        q_fin = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
         
         p2 = [1, cu.X(0), cu.Y(0)];
         for (i=1;i<len;i++) {
