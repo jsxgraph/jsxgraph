@@ -977,6 +977,7 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
 
 /**
  * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve. 
+ * The returned element has the method Value() which returns the sum of the areas of the rectangles.
  * @pseudo
  * @description
  * @name Riemannsum
@@ -1005,6 +1006,7 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  *               {fillOpacity:0.4}
  *               );
  *   var g = board.create('functiongraph',[f, -2, 5]);
+ *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
  * </pre><div id="940f40cc-2015-420d-9191-c5d83de988cf" style="width: 300px; height: 300px;"></div>
  * <script type="text/javascript">
  *   var rs1_board = JXG.JSXGraph.initBoard('940f40cc-2015-420d-9191-c5d83de988cf', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
@@ -1012,6 +1014,7 @@ JXG.JSXGraph.registerElement('spline', JXG.createSpline);
  *   var s = rs1_board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
  *   var r = rs1_board.create('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
  *   var g = rs1_board.create('functiongraph', [f, -2, 5]);
+ *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
  * </script><pre>
  */
 JXG.createRiemannsum = function(board, parents, attributes) {
@@ -1036,10 +1039,17 @@ JXG.createRiemannsum = function(board, parents, attributes) {
     par = [[0], [0]].concat(parents.slice(3));
     
     c = board.create('curve', par, attr);
+    
+    // Value(): Return the "Riemann sum"
+    c.sum = 0.0;
+    c.Value = function() { return this.sum; };
+    
     c.updateDataArray = function() {
         var u = JXG.Math.Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
         this.dataX = u[0];
         this.dataY = u[1];
+        // Update "Riemann sum"
+        this.sum = u[2];
     };
 
     return c;

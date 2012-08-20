@@ -44,6 +44,10 @@ brd.create('text',[-6,-3,function(){
     return 'Sum=' +(brd.riemannsum(f,s.Value(),document.getElementById('sumtype').value,a.Value(),b.Value())).toFixed(4); }
     ],{fontSize:40});
 
+brd.create('text',[1,-3,function(){ 
+    return 'Sum=' + os.Value().toFixed(4); }
+    ],{fontSize:40});
+
 //brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),'trapezodial',a.Value(),b.Value())).toFixed(2); }],{fontSize:40});
 /* ]]> */
 </script>
