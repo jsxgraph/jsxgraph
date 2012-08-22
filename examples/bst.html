@@ -1,0 +1,23 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../src/Bst.js"></script>
+</head>
+<body>
+<h1>BST</h1>
+<script type="text/javascript">
+    var b = new JXG.BST();
+    b.init();
+    
+    var i, s = "Hallo, dies ist ein Text";
+    for (i=0; i<s.length; i++) {
+        b.insert(s[i]);
+    }
+    
+    //b.traverse(b.head, function(node){console.log(node.item);});
+    b.show();
+    
+</script>
+</body>
+</html>
