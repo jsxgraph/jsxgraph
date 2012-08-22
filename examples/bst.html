@@ -1,6 +1,7 @@
 <html>
 <head>
    <title>JSXGraph example</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="../src/Bst.js"></script>
 </head>
@@ -11,9 +12,14 @@
     b.init();
     
     var i, s = "Hallo, dies ist ein Text";
+    s = "Hal";
     for (i=0; i<s.length; i++) {
         b.insert(s[i]);
     }
+    
+    //b.insertHead('A');
+    //b.deleteNode('A');
+    //b.balanceR(b.head);
     
     //b.traverse(b.head, function(node){console.log(node.item);});
     b.show();
