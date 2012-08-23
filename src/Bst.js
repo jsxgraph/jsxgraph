@@ -89,7 +89,7 @@ JXG.BST.prototype.joinRand = function(a, b) {
 };
 
 /**
- * privat
+ * private
  */
 JXG.BST.prototype.fixN = function(h) {
     h.N = h.l.N + h.r.N + 1;
@@ -305,8 +305,9 @@ JXG.BST.prototype.joinRandLR = function(a, b) {
     }
 };
 
-// ------------------------------------
-
+/**
+ * Test output
+ */
 JXG.BST.prototype.printnode = function(node, hgt) {
     var i, t='';
     for (i=0; i<hgt; i++) {

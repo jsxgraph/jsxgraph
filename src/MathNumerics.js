@@ -1137,7 +1137,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                             y1 = f(x1);
                             if (y1 < y) {
                                 y = y1;
-                            }@see JXG.Board#generateName
+                            }
                         }
                     } else if (type === 'upper') {
                         y = f(x);
