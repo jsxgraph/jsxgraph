@@ -12,16 +12,20 @@
     b.init();
     
     var i, s = "Hallo, dies ist ein Text";
-    s = "Hal";
+    s = "Hala";
     for (i=0; i<s.length; i++) {
         b.insert(s[i]);
     }
     
     //b.insertHead('A');
     //b.deleteNode('A');
-    //b.balanceR(b.head);
+
+    b.balance();
+    b.deleteNode('H');
+    //b.head = b.rotL(b.head);
     
     //b.traverse(b.head, function(node){console.log(node.item);});
+console.log("RESULT");    
     b.show();
     
 </script>
