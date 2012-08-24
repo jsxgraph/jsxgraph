@@ -88,6 +88,79 @@ JXG.BST.prototype.joinRand = function(a, b) {
     }
 };
 
+JXG.BST.prototype.minimum = function(h) {
+    if (this.isNil(h)) {
+        return h;
+    }
+    while (!this.isNil(h.l)) {
+        h = h.l;
+    }
+    return h;
+};
+
+JXG.BST.prototype.maximum = function(h) {
+    if (this.isNil(h)) {
+        return h;
+    }
+    while (!this.isNil(h.r)) {
+        h = h.r;
+    }
+    return h;
+};
+
+JXG.BST.prototype.next = function(node) {
+    var nxt, h = this.head;
+    
+    // Trivial case
+    if (this.isNil(h)) {
+        return h;
+    }
+
+    if (!this.isNil(node.r)) {
+        return this.minimum(node.r);
+    } else {
+        while (!this.isNil(h)) {
+            if (node.item < h.item) {  // <-------------
+                nxt = h;
+                h = h.l;
+            } else if (h.item < node.item) { // <-------------
+                h = h.r;
+            } else {
+                break;
+            }
+        }
+    }
+ 
+    return nxt;
+};
+
+JXG.BST.prototype.prev = function(node) {
+    var nxt, h = this.head;
+    
+    // Trivial case
+    if (this.isNil(h)) {
+        return h;
+    }
+
+    if (!this.isNil(node.l)) {
+        return this.maximum(node.l);
+    } else {
+        while (!this.isNil(h)) {
+            if (node.item < h.item) {  // <-------------
+                h = h.l;
+            } else if (h.item < node.item) { // <-------------
+                nxt = h;
+                h = h.r;
+            } else {
+                break;
+            }
+        }
+    }
+ 
+    return nxt;
+};
+
+    
 /**
  * private
  */
@@ -106,10 +179,10 @@ JXG.BST.prototype.isNil = function(h) {
 JXG.BST.prototype.searchR = function(h, val) {
     var t = h.item;         // <-------
     if (this.isNil(h)) {
-        return null;
+        return this.z;
     }
     if (val == t) {         // <-------
-        return h.item;
+        return h;
     }
     if (val < t) {          // <-------
         return this.searchR(h.l, val);

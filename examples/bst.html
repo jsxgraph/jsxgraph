@@ -8,16 +8,16 @@
 <body>
 <h1>BST</h1>
 <script type="text/javascript">
-/*    
+
     var b = new JXG.BST(),
         a = new JXG.BST(),
         c = new JXG.BST();
-    b.init();
+    b.init(false);
     a.init();
     c.init();
     
     var i, s = "Hallo, dies ist ein Text";
-    //s = "H"; //ela";
+    s = "24135";
     for (i=0; i<s.length; i++) {
         b.insert(s[i]);
     }
@@ -31,28 +31,33 @@
     //b.deleteNode('A');
 
     //b.balance();
-    b.deleteNode('H');
+    //b.deleteNode('H');
     //b.head = b.rotL(b.head);
     
     //b.traverse(b.head, function(node){console.log(node.item);});
 //console.log("RESULT");    
     b.show();
+    
+    var n = b.search('3')
+    console.log(n);
+    console.log(b.next(n));
+    console.log(b.prev(n));
+    
 //console.log("--------------");    
     //a.show()
     //console.log(b.select(0));
 //console.log("############");    
 //    c.head = b.joinRand(b.head,a.head);
 //c.show();
-*/
 
-    var h = new JXG.Heap();
+/*    var h = new JXG.Heap();
     var i, s = "hallo ein xyz"; //, dies ist ein Text";
     for (i=0; i<s.length; i++) {
         h.insert(s[i]);
     }
 
     console.log(h.pq);
-    
+*/    
 </script>
 </body>
 </html>
