@@ -802,6 +802,8 @@ JXG.Options = {
     image : {
         imageString : null,
         fillOpacity: 1.0,
+        cssClass : 'JXGimage',
+        highlightCssClass : 'JXGimageHighlight',
         rotate: 0
     },
     

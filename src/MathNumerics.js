@@ -1030,11 +1030,12 @@ JXG.Math.Numerics = (function(JXG, Math) {
          * Compute coordinates for the rectangles showing the Riemann sum.
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', or 'trapezodial'.
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
-         * array may be used as parent array of a {@link JXG.Curve}.
+         * array may be used as parent array of a {@link JXG.Curve}. The third parameteris the riemann sum, i.e. the sum of the volumes of all
+         * rectangles.
          */
         riemann: function(f, n, type, start, end) {
             var xarr = [],
@@ -1042,7 +1043,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 i, j = 0,
                 delta,
                 x = start, y,
-                x1, y1, delta1;
+                x1, y1, delta1, 
+                sum = 0;
 
             n = Math.round(n);
 
@@ -1068,7 +1070,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                                 y = y1;
                             }
                         }
-                    } else { // (type=='upper')
+                    } else if (type === 'upper') {
                         y = f(x);
                         for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
@@ -1076,6 +1078,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
                                 y = y1;
                             }
                         }
+                    } else {  // if (type === 'random')
+                        y = f(x + delta * Math.random());
                     }
 
                     j++;
@@ -1091,17 +1095,19 @@ JXG.Math.Numerics = (function(JXG, Math) {
                     j++;
                     xarr[j] = x;
                     yarr[j] = 0.0;
+                    sum += y*delta;
                 }
             }
-            return [xarr,yarr];
+            return [xarr,yarr,sum];
         },
 
         /**
          * Approximate the integral by Riemann sums.
          * Compute the area described by the riemann sum rectangles.
+         * @deprecated Replaced by JXG.Curve.Value(), @see JXG.Curve#riemannsum
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random'. or 'trapezodial'.
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Number} The sum of the areas of the rectangles.
@@ -1133,7 +1139,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                                 y = y1;
                             }
                         }
-                    } else { // (type=='upper')
+                    } else if (type === 'upper') {
                         y = f(x);
                         for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
@@ -1141,6 +1147,8 @@ JXG.Math.Numerics = (function(JXG, Math) {
                                 y = y1;
                             }
                         }
+                    } else {  // if (type === 'random')
+                        y = f(x + delta * Math.random());
                     }
                     sum += delta * y;
                     x += delta;

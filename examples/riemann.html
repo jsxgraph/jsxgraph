@@ -14,6 +14,7 @@
 <option value='trapezodial'> trapezodial
 <option value='lower'> lower
 <option value='upper'> upper
+<option value='random'> random
 </select></form>
 <!-- Drawing area -->
 <div id="box" class="jxgbox" style="width:800px; height:400px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
@@ -41,6 +42,10 @@ var os = brd.create('riemannsum',[f,
 
 brd.create('text',[-6,-3,function(){ 
     return 'Sum=' +(brd.riemannsum(f,s.Value(),document.getElementById('sumtype').value,a.Value(),b.Value())).toFixed(4); }
+    ],{fontSize:40});
+
+brd.create('text',[1,-3,function(){ 
+    return 'Sum=' + os.Value().toFixed(4); }
     ],{fontSize:40});
 
 //brd.createElement('text',[-6,-3,function(){ return 'Sum='+(brd.riemannsum(f,s.Value(),'trapezodial',a.Value(),b.Value())).toFixed(2); }],{fontSize:40});

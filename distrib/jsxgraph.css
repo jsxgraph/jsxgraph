@@ -32,6 +32,19 @@
     border-color:black;
 }
 
+.JXGimage {
+    opacity:1.0;
+}
+
+.JXGimageHighlight {
+    opacity:0.6;
+    /*
+    border-style:solid;
+    border-width:10px;
+    border-color:#A0A0A0;
+    */
+}
+
 .navbar {
     color: #aaaaaa;
     background-color: #f5f5f5;
