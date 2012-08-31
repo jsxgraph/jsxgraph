@@ -63,16 +63,13 @@ JXG.Group = function(board, id, name) {
     }
     delete(this.type);
 
-    if ( (arguments.length == 4) && (JXG.isArray(arguments[3])) )
+    if ( (arguments.length == 4) && (JXG.isArray(arguments[3])) ) {
         objArray = arguments[3];
-    else {
-        objArray = [];
-        for (i=3; i<arguments.length; i++) {
-            objArray.push(arguments[i]);
-        }
+    } else {
+        objArray = Array.prototype.slice.call(arguments, 3);
     }
 
-    for (i=0; i<objArray.length; i++) {
+    for (i = 0; i < objArray.length; i++) {
         obj = JXG.getReference(this.board, objArray[i]);
         if( (!obj.visProp.fixed) && ( (obj.type == JXG.OBJECT_TYPE_POINT) || (obj.type == JXG.OBJECT_TYPE_GLIDER) ) ) {
             if (obj.group.length != 0) {
@@ -98,7 +95,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     ungroup: function() {
         var el;
         for (el in this.objects) {
-            if (this.objects[el].group[this.objects[el].group.length-1] == this) {
+            if (JXG.isArray(this.objects[el].group) && this.objects[el].group[this.objects[el].group.length-1] == this) {
                 this.objects[el].group.pop();
             }
             delete(this.objects[el]);
@@ -111,27 +108,25 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      * Sends an update to all group members.
      * @param {JXG.Point} point The point that caused the update.
      */
-    update: function(point) {
+    update: function(point, dX, dY, dZ) {
         var obj = null,
             el;
-        
+
         for (el in this.objects) {
-            obj = this.objects[el];
-            if (obj.id != point.id) {
-                obj.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [obj.coords.scrCoords[1] + this.dX, 
-                                                                   obj.coords.scrCoords[2] + this.dY], obj.board);
-            }
-        }
-        
-        for (el in this.objects) {
-            /* Wurde das Element vielleicht geloescht? */
             if (JXG.exists(this.board.objects[el])) {
-                /* Nein, wurde es nicht, also updaten */
-                this.objects[el].update(false);
+                obj = this.objects[el];
+                if (obj.id != point.id) {
+                    obj.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
+                        obj.coords.usrCoords[1] + dX,
+                        obj.coords.usrCoords[2] + dY
+                    ], obj.board);
+                }
+                this.objects[el].prepareUpdate().update(false).updateRenderer();
             } else { /* es wurde geloescht, also aus dem Array entfernen */
                 delete(this.objects[el]);
             }
         }
+        
         return this;
     },
 
@@ -141,6 +136,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      */
     addPoint: function(object) {
         this.objects[object.id] = object;
+        object.group.push(this);
     },
 
     /**
@@ -149,8 +145,10 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      */
     addPoints: function(objects) {
         var p;
-        for (p in objects)
-            this.objects[p.id] = p;
+        for (p = 0; p < objects.length; p++) {
+            this.objects[objects[p].id] = objects[p];
+            objects[p].group.push(this);
+        }
     },
 
     /**
