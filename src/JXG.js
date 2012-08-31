@@ -106,6 +106,11 @@ JXG.extend(JXG, /** @lends JXG */ {
     supportsCanvas: function () {
         return typeof document != 'undefined' && !!document.createElement('canvas').getContext;
     },
+    
+    isNode: function () {
+        // this is not a 100% sure but should be valid in most cases
+        return typeof document === 'undefined' && typeof window === 'undefined' && module && module.exports;
+    },
 
     /**
      * Detects if the user is using an Android powered device.

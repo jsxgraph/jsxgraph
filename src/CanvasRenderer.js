@@ -46,17 +46,23 @@ JXG.CanvasRenderer = function (container) {
 
     this.canvasNamespace = null;
 
-    this.container = container;
-    this.container.style.MozUserSelect = 'none';
+    if (typeof document !== 'undefined') {
+        this.container = container;
+        this.container.style.MozUserSelect = 'none';
 
-    this.container.style.overflow = 'hidden';
-    if (this.container.style.position === '') {
-        this.container.style.position = 'relative';
+        this.container.style.overflow = 'hidden';
+        if (this.container.style.position === '') {
+            this.container.style.position = 'relative';
+        }
+
+        this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', JXG.getStyle(this.container, 'width'), '" height="', JXG.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
+        this.canvasRoot = document.getElementById(this.canvasId);
+        this.context =  this.canvasRoot.getContext('2d');
+    } else if (JXG.isNode()) {
+        this.canvasId = require('canvas');
+        this.canvasRoot = new this.canvasId(500, 500);
+        this.context = this.canvasRoot.getContext('2d');
     }
-
-    this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', JXG.getStyle(this.container, 'width'), '" height="', JXG.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
-    this.canvasRoot = document.getElementById(this.canvasId);
-    this.context =  this.canvasRoot.getContext('2d');
 
     this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
 };
@@ -968,6 +974,7 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
     // documented in AbstractRenderer
     suspendRedraw: function (board) {
         this.context.save();
+
         this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
         if (board && board.showCopyright) {
@@ -982,11 +989,16 @@ JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype
 
     // document in AbstractRenderer
     resize: function (w, h) {
-        this.canvasRoot.style.width = parseFloat(w) + 'px';
-        this.canvasRoot.style.height = parseFloat(h) + 'px';
+        if (this.container) {
+            this.canvasRoot.style.width = parseFloat(w) + 'px';
+            this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-        this.canvasRoot.setAttribute('width', parseFloat(w) + 'px');
-        this.canvasRoot.setAttribute('height', parseFloat(h) + 'px');
+            this.canvasRoot.setAttribute('width', parseFloat(w) + 'px');
+            this.canvasRoot.setAttribute('height', parseFloat(h) + 'px');
+        } else {
+            this.canvasRoot.width = parseFloat(w);
+            this.canvasRoot.height = parseFloat(h);
+        }
     }
 
 });

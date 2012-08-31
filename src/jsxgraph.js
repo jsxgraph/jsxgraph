@@ -109,6 +109,12 @@ JXG.JSXGraph = {
             JXG.Options.renderer = 'svg';
             loadRenderer('svg');
         }
+        
+        // we are inside node
+        if (JXG.isNode()) {
+            JXG.Options.renderer = 'canvas';
+            loadRenderer('canvas');
+        }
 
         return JXG.Options.renderer;
     })(),
@@ -137,9 +143,15 @@ JXG.JSXGraph = {
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
             board,
-            wheelzoom, shiftpan, attr;
+            wheelzoom, shiftpan, attr, boxid;
 
         dimensions = JXG.getDimensions(box);
+        
+        if (typeof document !== 'undefined' && box !== null) {
+            boxid = document.getElementById(box);
+        } else {
+            boxid = box;
+        }
 
         // parse attributes
         if (typeof attributes == 'undefined') {
@@ -188,13 +200,13 @@ JXG.JSXGraph = {
 
         // create the renderer
         if(JXG.Options.renderer == 'svg') {
-            renderer = new JXG.SVGRenderer(document.getElementById(box));
+            renderer = new JXG.SVGRenderer(boxid);
         } else if(JXG.Options.renderer == 'vml') {
-            renderer = new JXG.VMLRenderer(document.getElementById(box));
+            renderer = new JXG.VMLRenderer(boxid);
         } else if(JXG.Options.renderer == 'silverlight') {
-            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
+            renderer = new JXG.SilverlightRenderer(boxid, dimensions.width, dimensions.height);
         } else if (JXG.Options.renderer == 'canvas') {
-            renderer = new JXG.CanvasRenderer(document.getElementById(box));
+            renderer = new JXG.CanvasRenderer(boxid);
         } else {
             renderer = new JXG.NoRenderer();
         }
