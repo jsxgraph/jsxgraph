@@ -80,10 +80,6 @@ JXG.Group = function(board, id, name) {
         }
     }
     
-    for (el in this.objects) {
-        this.objects[el].group.push(this);
-    }
-
     this.dX = 0;
     this.dY = 0;
 };
@@ -153,13 +149,27 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
 
     /**
      * Adds an Point to this group.
-     * @param {JXG.Point} object The object added to the group.
+     * @param {JXG.Point} group The group added to this group.
      */
     addGroup: function(group) {
         var el;
         for (el in group.objects) {
             this.addPoint(group.objects[el]);
         }
+    },
+
+    /**
+     * Removes a point from the group.
+     * @param {JXG.Point} point
+     */
+    removePoint: function (point) {
+        var i;
+
+        while ((i = JXG.indexOf(point.group, this)) > -1) {
+            point.group.splice(i, 1);
+        }
+
+        delete this.objects[point.id];
     },
 
     setProperty: function () {
