@@ -132,6 +132,7 @@
                 coords = getMouseCoords(e),
                 el;
     
+            clearSelection();
     
             if (canCreate) {
                 rectStart = board.create('point', [coords.usrCoords[1], coords.usrCoords[2]], rectPointStyle);
@@ -179,22 +180,22 @@
     
                 }
     
+                
+                board.removeObject(rect);
+                board.removeObject(rectCorner1);
+                board.removeObject(rectCorner2);
+                board.removeObject(rectStart);
+                board.removeObject(rectEnd);
                
                 for (var i = 0; i < selectedPts.length; i++) {
                     selectedPts[i].pt.setAttribute(selectedStyle);
                     polyPoints.push(selectedPts[i].pt)
                 
                 }
-                
                 polygon = board.create('polygon', polyPoints);
                 group.addPoints(polyPoints);
-                
+
                 selecting = false;
-                board.removeObject(rect);
-                board.removeObject(rectCorner1);
-                board.removeObject(rectCorner2);
-                board.removeObject(rectStart);
-                board.removeObject(rectEnd);
             }
         };
     

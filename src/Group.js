@@ -118,11 +118,11 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
                     ], obj.board);
                 }
                 this.objects[el].prepareUpdate().update(false).updateRenderer();
-            } else { /* es wurde geloescht, also aus dem Array entfernen */
+            } else {
                 delete(this.objects[el]);
             }
         }
-        
+
         return this;
     },
 
