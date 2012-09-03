@@ -16,12 +16,18 @@
             group;
 
         for (i = 0; i < no; i++) {
-            points.push(board.create('point', [i, i]));//[Math.random()*8-4, Math.random()*8-4]));
+            points.push(board.create('point', [Math.random()*8-4, Math.random()*8-4]));
         }
+        
+        var test = board.create('polygon', points);
+        
+        board.create('polygon', points);
 
         group = board.create('group', points);
         //group.addPoints(points);
-        group.removePoint(points[1]);
+        //group.removePoint(points[1]);
+        
+        board.removeObject(test);
     })();
 </script>
 
