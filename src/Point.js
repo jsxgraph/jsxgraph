@@ -668,30 +668,19 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             newCoords;
 
         this.coords = new JXG.Coords(method, coords, this.board);
-        
         this.handleSnapToGrid();
         this.handleSnapToPoints();
         this.handleAttractors();
         
-        if(this.group.length != 0) {
+        if(this.group.length > 0) {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
             dx = this.coords.usrCoords[1] - oldCoords.usrCoords[1];
             dy = this.coords.usrCoords[2] - oldCoords.usrCoords[2];
-            dz = this.coords.usrCoords[0] = oldCoords.usrCoords[0];
+            dz = this.coords.usrCoords[0] - oldCoords.usrCoords[0];
             for (i = 0; i < this.group.length; i++) {
-                for (el in this.group[i].objects) {
-                    p = this.group[i].objects[el];
-                    p.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                        [p.initialCoords.usrCoords[0]+dz, p.initialCoords.usrCoords[1]+dx,p.initialCoords.usrCoords[2]+dy],
-                        this.board);
-                }
+                this.group[i].update(this, dx, dy, dz);
             }
-
-            this.group[this.group.length-1].dX = dx;
-            this.group[this.group.length-1].dY = dy;
-            this.group[this.group.length-1].dZ = dz;
-            this.group[this.group.length-1].update(this);
         } else {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
@@ -732,9 +721,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.addTransform(this, t);
         }
 
-        if (this.group.length == 0) {
-            this.update();
-        }
+        //if (this.group.length == 0) {
+        this.update();
+        //}
         return this;
     },
 
