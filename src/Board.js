@@ -3261,6 +3261,121 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         return this;
     },
+    
+    
+    /* **************************
+     *     EVENT DEFINITION
+     * for documentation purposes
+     * ************************** */
+
+    //region Event handler documentation
+    
+    /**
+     * @event
+     * @description Whenever the user starts to touch or click the board.
+     * @name JXG.Board#down
+     * @param {Event} e The browser's event object.
+     */
+    __evt_down: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to click on the board.
+     * @name JXG.Board#mousedown
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mousedown: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch the board.
+     * @name JXG.Board#touchstart
+     * @param {Event} e The browser's event object.
+     */
+    __evt_touchstart: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops to touch or click the board.
+     * @name JXG.Board#up
+     * @param {Event} e The browser's event object.
+     */
+    __evt_up: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user releases the mousebutton over the board.
+     * @name JXG.Board#mouseup
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mouseup: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops touching the board.
+     * @name JXG.Board#touchend
+     * @param {Event} e The browser's event object.
+     */
+    __evt_touchend: function (e) { },
+    
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the finger or mouse pointer over the board.
+     * @name JXG.Board#move
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_move: function (e, mode) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the mouse over the board.
+     * @name JXG.Board#mousemove
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_mousemove: function (e, mode) { },
+    
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the finger over the board.
+     * @name JXG.Board#touchmove
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_touchmove: function (e, mode) { },
+
+    /**
+     * @event
+     * @description Whenever an element is highlighted this event is fired.
+     * @name JXG.Board#hit
+     * @param {Event} e The browser's event object.
+     * @param {JXG.GeoemtryElement} el The hit element.
+     * @param {%} target ?
+     */
+    __evt_hit: function (e, el, target) { },
+
+    /**
+     * @event
+     * @description Whenever an element is highlighted this event is fired.
+     * @name JXG.Board#mousehit
+     * @param {Event} e The browser's event object.
+     * @param {JXG.GeoemtryElement} el The hit element.
+     * @param {%} target ?
+     */
+    __evt_mousehit: function (e, el, target) { },
+    
+    /**
+     * @event
+     * @description This board is updated.
+     * @name JXG.Board#update
+     */
+    __evt_update: function () { },
+        
+    //endregion
 
     /**
      * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.

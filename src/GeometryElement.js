@@ -1330,30 +1330,16 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @description This event is fired whenever the user is moving over an element.
      * @name JXG.GeometryElement#move
      * @param {Event} e The browser's event object.
-     * @param {Number} mode The mode the board currently is in
-     * @see {JXG.Board#mode}
      */
-    __evt_move: function (e, mode) { },
+    __evt_move: function (e) { },
 
     /**
      * @event
      * @description This event is fired whenever the user is moving the mouse over an element.
      * @name JXG.GeometryElement#mousemove
      * @param {Event} e The browser's event object.
-     * @param {Number} mode The mode the board currently is in
-     * @see {JXG.Board#mode}
      */
-    __evt_mousemove: function (e, mode) { },
-
-    /**
-     * @event
-     * @description This event is fired whenever the user is moving the finger over an element.
-     * @name JXG.GeometryElement#touchmove
-     * @param {Event} e The browser's event object.
-     * @param {Number} mode The mode the board currently is in
-     * @see {JXG.Board#mode}
-     */
-    __evt_touchmove: function (e, mode) { },
+    __evt_mousemove: function (e) { },
 
     /**
      * @event
@@ -1398,10 +1384,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * @event
      * @description Whenever the user starts to touch an element.
-     * @name JXG.GeometryElement#touchstart
+     * @name JXG.GeometryElement#touchdown
      * @param {Event} e The browser's event object.
      */
-    __evt_touchstart: function (e) { },
+    __evt_touchdown: function (e) { },
 
     /**
      * @event
@@ -1422,30 +1408,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * @event
      * @description Whenever the user stops touching an element.
-     * @name JXG.GeometryElement#touchend
+     * @name JXG.GeometryElement#touchup
      * @param {Event} e The browser's event object.
      */
-    __evt_touchend: function (e) { },
-    
-    /**
-     * @event
-     * @description Whenever the element is highlighted this event is fired.
-     * @name JXG.GeometryElement#hit
-     * @param {Event} e The browser's event object.
-     * @param {JXG.GeoemtryElement} el The hit element.
-     * @param {%} target ?
-     */
-    __evt_hit: function (e, el, target) { },
-
-    /**
-     * @event
-     * @description Whenever the element is highlighted this event is fired.
-     * @name JXG.GeometryElement#mouseup
-     * @param {Event} e The browser's event object.
-     * @param {JXG.GeoemtryElement} el The hit element.
-     * @param {%} target ?
-     */
-    __evt_mousehit: function (e, el, target) { }
+    __evt_touchup: function (e) { }
     
     //endregion
 
