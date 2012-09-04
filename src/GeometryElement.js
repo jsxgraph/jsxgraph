@@ -59,7 +59,10 @@ JXG.OBJECT_CLASS_OTHER = 6;
  * Constructs a new GeometryElement object.
  * @class This is the basic class for geometry elements like points, circles and lines.
  * @constructor
- * of identical elements on the board. Is not yet implemented for all elements, only points, lines and circle can be traced.
+ * @param {JXG.Board} board Reference to the board the element is constructed on.
+ * @param {Object} attributes Hash of attributes and their values.
+ * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
+ * @param {oclass} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
  */
 JXG.GeometryElement = function (board, attributes, type, oclass) {
     var name, key;
@@ -861,6 +864,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * TODO
      * Was hat das hier verloren? "Straights" gibts doch nur fuer Lines oder?
      * Sollte das dann nicht nur in Line.js zu finden sein? --michael
+     * @description none yet
      * @private
      */
     setStraight: function (x,y) {
@@ -1232,17 +1236,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Register a new event handler. Possible events include
-     * <ul>
-     *     <li>over</li>
-     *     <li>out</li>
-     *     <li>move</li>
-     *     <li>drag</li>
-     *     <li>down</li>
-     *     <li>up</li>
-     * </ul>
-     * Every event is triggered both on touch and mouse devices. Prepend an event with
-     * <tt>mouse</tt> or <tt>touch</tt> to trigger them only on mouse resp. touch devices.
+     * Register a new event handler. For a list of possible events see documentation of the elements and classes derivec
+     * from {@link JXG.GeometryElement}.
      * @param {String} event
      * @param {Function} handler
      * @param {Object} [context] The context the handler will be called in, default is the element itself.
@@ -1290,5 +1285,168 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Alias of {@link JXG.GeometryElement#off}.
      */
-    removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off')
+    removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
+    
+    /* **************************
+     *     EVENT DEFINITION
+     * for documentation purposes
+     * ************************** */
+
+    //region Event handler documentation
+    /**
+     * @event
+     * @description This event is fired whenever the user is hovering over an element.
+     * @name JXG.GeometryElement#over
+     * @param {Event} e The browser's event object.
+     */
+    __evt_over: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse over an element.
+     * @name JXG.GeometryElement#mouseover
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mouseover: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is leaving an element.
+     * @name JXG.GeometryElement#out
+     * @param {Event} e The browser's event object.
+     */
+    __evt_out: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse away from an element.
+     * @name JXG.GeometryElement#mouseout
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mouseout: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving over an element.
+     * @name JXG.GeometryElement#move
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_move: function (e, mode) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the mouse over an element.
+     * @name JXG.GeometryElement#mousemove
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_mousemove: function (e, mode) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the finger over an element.
+     * @name JXG.GeometryElement#touchmove
+     * @param {Event} e The browser's event object.
+     * @param {Number} mode The mode the board currently is in
+     * @see {JXG.Board#mode}
+     */
+    __evt_touchmove: function (e, mode) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags an element.
+     * @name JXG.GeometryElement#drag
+     * @param {Event} e The browser's event object.
+     */
+    __evt_drag: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element with a mouse.
+     * @name JXG.GeometryElement#mousedrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mousedrag: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element on a touch device.
+     * @name JXG.GeometryElement#touchdrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt_touchdrag: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch or click an element.
+     * @name JXG.GeometryElement#down
+     * @param {Event} e The browser's event object.
+     */
+    __evt_down: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to click an element.
+     * @name JXG.GeometryElement#mousedown
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mousedown: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch an element.
+     * @name JXG.GeometryElement#touchstart
+     * @param {Event} e The browser's event object.
+     */
+    __evt_touchstart: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops to touch or click an element.
+     * @name JXG.GeometryElement#up
+     * @param {Event} e The browser's event object.
+     */
+    __evt_up: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user releases the mousebutton over an element.
+     * @name JXG.GeometryElement#mouseup
+     * @param {Event} e The browser's event object.
+     */
+    __evt_mouseup: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops touching an element.
+     * @name JXG.GeometryElement#touchend
+     * @param {Event} e The browser's event object.
+     */
+    __evt_touchend: function (e) { },
+    
+    /**
+     * @event
+     * @description Whenever the element is highlighted this event is fired.
+     * @name JXG.GeometryElement#hit
+     * @param {Event} e The browser's event object.
+     * @param {JXG.GeoemtryElement} el The hit element.
+     * @param {%} target ?
+     */
+    __evt_hit: function (e, el, target) { },
+
+    /**
+     * @event
+     * @description Whenever the element is highlighted this event is fired.
+     * @name JXG.GeometryElement#mouseup
+     * @param {Event} e The browser's event object.
+     * @param {JXG.GeoemtryElement} el The hit element.
+     * @param {%} target ?
+     */
+    __evt_mousehit: function (e, el, target) { }
+    
+    //endregion
+
 });
