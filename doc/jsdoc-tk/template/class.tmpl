@@ -731,7 +731,7 @@
 					Event Detail
 				</div>
 				<for each="member" in="ownEvents">
-					<a name="event:event:{+Link.symbolNameToLinkName(member)+}"> </a>
+					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
 					<div class="fixedFont">{!
 						if (member.isPrivate) output += "&lt;private&gt; ";
 						if (member.isInner) output += "&lt;inner&gt; ";
