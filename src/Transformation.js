@@ -187,7 +187,7 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
      */
     apply: function(p){
         this.update();
-        if (arguments[1]!=null) {
+        if (arguments[1] != null) {
             return JXG.Math.matVecMult(this.matrix,p.initialCoords.usrCoords);
         } else {
             return JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
@@ -198,21 +198,22 @@ JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype
      * Apply a transformation once to a GeometryElement.
      * If it is a free point, then it can be dragged around later
      * and will overwrite the transformed coordinates.
+     * @param {JXG.Point|Array} p
      */
     applyOnce: function(p){
         var c, len, i;
-        if (!JXG.isArray(p)) {   
-            this.update();
-            c = JXG.Math.matVecMult(this.matrix,p.coords.usrCoords);
-            p.coords.setCoordinates(JXG.COORDS_BY_USER, c);
-        } else {
-            len = p.length;
-            for (i=0; i<len; i++) {
-                this.update();
-                c = JXG.Math.matVecMult(this.matrix,p[i].coords.usrCoords);
-                p[i].coords.setCoordinates(JXG.COORDS_BY_USER, c);
-            }
+        
+        if (!JXG.isArray(p)) {
+            p = [p];
         }
+        
+        len = p.length;
+        for (i = 0; i < len; i++) {
+            this.update();
+            c = JXG.Math.matVecMult(this.matrix, p[i].coords.usrCoords);
+            p[i].coords.setCoordinates(JXG.COORDS_BY_USER, c);
+        }
+        
     },
 
     /**
