@@ -47,6 +47,10 @@
  * @param {Number} canvasWidth  The width of canvas
  * @param {Number} canvasHeight The height of canvas
  * @param {Boolean} showCopyright Display the copyright text
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright) {
     /**
@@ -261,15 +265,8 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
         this.id = this.generateId();
     }
 
-    /**
-     * An array containing all hook functions.
-     * @type Object
-     * @see JXG.Board#on
-     * @see JXG.Board#off
-     * @see JXG.Board#triggerEventHandlers
-     */
-    this.eventHandlers = {};
-
+    JXG.EventEmitter.eventify(this);
+    
     this.hooks = [];
 
     /**
@@ -2711,29 +2708,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Attaches an event to the board.
-     * @param {String} event Specifies the event, possible values are <ul><li>update</li><li>{mouse,touch,}{down,up,move}</li><li>hit</li></ul>.
-     * @param {function} handler A function to be called by the board after a specific event occured
-     * @param {Object} [context] Determines the execution context the hook is called. This parameter is optional, default is the
-     * board object the hook is attached to.
-     * @returns {Number} An id to identify the event handler, can be used to remove the event handler.
-     */
-    on: function (event, handler, context) {
-        context = JXG.def(context, this);
-
-        if (!JXG.isArray(this.eventHandlers[event])) {
-            this.eventHandlers[event] = [];
-        }
-
-        this.eventHandlers[event].push({
-            handler: handler,
-            context: context
-        });
-
-        return this;
-    },
-
-    /**
      * Alias of {@link JXG.Board#on}.
      */
     addEvent: JXG.shortcut(JXG.Board.prototype, 'on'),
@@ -2754,30 +2728,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Removes an event handler
-     * @param handler
-     */
-    off: function (event, handler) {
-        var i;
-
-        if (!event || !JXG.isArray(this.eventHandlers[event])) {
-            return;
-        }
-
-        if (handler) {
-            i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
-
-            if (i > -1) {
-                this.eventHandlers[event].splice(i, 1);
-            }
-        } else {
-            this.eventHandlers[event].length = 0;
-        }
-
-        return this;
-    },
-
-    /**
      * Alias of {@link JXG.Board#off}.
      */
     removeEvent: JXG.shortcut(JXG.Board.prototype, 'off'),
@@ -2790,31 +2740,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     updateHooks: function (m) {
         arguments[0] = JXG.def(arguments[0], 'update');
         this.triggerEventHandlers.apply(this, arguments);
-
-        return this;
-    },
-
-    /**
-     * Trigger all event handlers attached to the given event.
-     * @param {String|Array} event A single event or an array of events that occurred.
-     * @returns {JXG.Board}
-     */
-    triggerEventHandlers: function (event) {
-        var i, j, h, evt, args = Array.prototype.slice.call(arguments, 1);
-
-        if (!JXG.isArray(event)) {
-            event = [event];
-        }
-
-        for (j = 0; j < event.length; j++) {
-            evt = event[j];
-            if (JXG.isArray(this.eventHandlers[evt])) {
-                for (i = 0; i < this.eventHandlers[evt].length; i++) {
-                    h = this.eventHandlers[evt][i];
-                    h.handler.apply(h.context, args);
-                }
-            }
-        }
 
         return this;
     },
@@ -3374,6 +3299,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#update
      */
     __evt__: function () { },
+
+    /**
+     * @ignore
+     */
+    __evt__: function () {},
         
     //endregion
 

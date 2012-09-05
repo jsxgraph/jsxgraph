@@ -63,6 +63,10 @@ JXG.OBJECT_CLASS_OTHER = 6;
  * @param {Object} attributes Hash of attributes and their values.
  * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
  * @param {oclass} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.GeometryElement = function (board, attributes, type, oclass) {
     var name, key;
@@ -248,12 +252,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.visProp = {};
 
-    /**
-     * Stores the eventhandlers attached to the element.
-     * @type Object
-     */
-    this.eventHandlers = {};
-
+    JXG.EventEmitter.eventify(this);
+    
     /**
      * Is the mouse over this element?
      * @type Boolean
@@ -1213,74 +1213,9 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Triggers all event handlers of this element for a given event.
-     * @param {String} event
-     */
-    triggerEventHandlers: function (event) {
-        var i, h, args = Array.prototype.slice.call(arguments, 1),
-            j, evt;
-
-        if (!JXG.isArray(event)) {
-            event = [event];
-        }
-
-        for (j = 0; j < event.length; j++) {
-            evt = event[j];
-            if (JXG.isArray(this.eventHandlers[evt])) {
-                for (i = 0; i < this.eventHandlers[evt].length; i++) {
-                    h = this.eventHandlers[evt][i];
-                    h.handler.apply(h.context, args);
-                }
-            }
-        }
-    },
-
-    /**
-     * Register a new event handler. For a list of possible events see documentation of the elements and classes derivec
-     * from {@link JXG.GeometryElement}.
-     * @param {String} event
-     * @param {Function} handler
-     * @param {Object} [context] The context the handler will be called in, default is the element itself.
-     */
-    on: function (event, handler, context) {
-        if (!JXG.isArray(this.eventHandlers[event])) {
-            this.eventHandlers[event] = [];
-        }
-
-        context = JXG.def(context, this);
-
-        this.eventHandlers[event].push({
-            handler: handler,
-            context: context
-        });
-    },
-
-    /**
      * Alias of {@link JXG.GeometryElement#on}.
      */
     addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
-
-    /**
-     * Unregister an event handler.
-     * @param {String} event
-     * @param {Function} handler The same function used in {@link JXG.GeometryElement#on}.
-     */
-    off: function (event, handler) {
-        var i;
-
-        if (!event || !JXG.isArray(this.eventHandlers[event])) {
-            return;
-        }
-
-        if (handler) {
-            i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
-            if (i > -1) {
-                this.eventHandlers[event].splice(i, 1);
-            }
-        } else {
-            this.eventHandlers[event].length = 0;
-        }
-    },
 
     /**
      * Alias of {@link JXG.GeometryElement#off}.
@@ -1411,8 +1346,12 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#touchup
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { }
-    
+    __evt__: function (e) {},
+
+    /**
+     * @ignore
+     */
+    __evt__: function () {}
     //endregion
 
 });
