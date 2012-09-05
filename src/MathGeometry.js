@@ -37,7 +37,7 @@ JXG.Math.Geometry = {};
 
 // the splitting is necessary due to the shortcut for the circumcircleMidpoint method to circumcenter.
 
-JXG.extend(JXG.Math.Geometry, {
+JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
 
     /****************************************/
     /**** GENERAL GEOMETRIC CALCULATIONS ****/
