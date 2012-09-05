@@ -1299,7 +1299,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#over
      * @param {Event} e The browser's event object.
      */
-    __evt_over: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1307,7 +1307,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mouseover
      * @param {Event} e The browser's event object.
      */
-    __evt_mouseover: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1315,7 +1315,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#out
      * @param {Event} e The browser's event object.
      */
-    __evt_out: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1323,7 +1323,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mouseout
      * @param {Event} e The browser's event object.
      */
-    __evt_mouseout: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1331,7 +1331,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#move
      * @param {Event} e The browser's event object.
      */
-    __evt_move: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1339,7 +1339,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mousemove
      * @param {Event} e The browser's event object.
      */
-    __evt_mousemove: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1347,7 +1347,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#drag
      * @param {Event} e The browser's event object.
      */
-    __evt_drag: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1355,7 +1355,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mousedrag
      * @param {Event} e The browser's event object.
      */
-    __evt_mousedrag: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1363,7 +1363,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#touchdrag
      * @param {Event} e The browser's event object.
      */
-    __evt_touchdrag: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1371,7 +1371,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#down
      * @param {Event} e The browser's event object.
      */
-    __evt_down: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1379,7 +1379,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mousedown
      * @param {Event} e The browser's event object.
      */
-    __evt_mousedown: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1387,7 +1387,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#touchdown
      * @param {Event} e The browser's event object.
      */
-    __evt_touchdown: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1395,7 +1395,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#up
      * @param {Event} e The browser's event object.
      */
-    __evt_up: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1403,7 +1403,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#mouseup
      * @param {Event} e The browser's event object.
      */
-    __evt_mouseup: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -1411,7 +1411,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @name JXG.GeometryElement#touchup
      * @param {Event} e The browser's event object.
      */
-    __evt_touchup: function (e) { }
+    __evt__: function (e) { }
     
     //endregion
 

@@ -3276,7 +3276,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#down
      * @param {Event} e The browser's event object.
      */
-    __evt_down: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -3284,7 +3284,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#mousedown
      * @param {Event} e The browser's event object.
      */
-    __evt_mousedown: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -3292,7 +3292,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#touchstart
      * @param {Event} e The browser's event object.
      */
-    __evt_touchstart: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -3300,7 +3300,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#up
      * @param {Event} e The browser's event object.
      */
-    __evt_up: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -3308,7 +3308,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#mouseup
      * @param {Event} e The browser's event object.
      */
-    __evt_mouseup: function (e) { },
+    __evt__: function (e) { },
 
     /**
      * @event
@@ -3316,7 +3316,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#touchend
      * @param {Event} e The browser's event object.
      */
-    __evt_touchend: function (e) { },
+    __evt__: function (e) { },
     
     /**
      * @event
@@ -3326,7 +3326,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt_move: function (e, mode) { },
+    __evt__: function (e, mode) { },
 
     /**
      * @event
@@ -3336,7 +3336,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt_mousemove: function (e, mode) { },
+    __evt__: function (e, mode) { },
     
     /**
      * @event
@@ -3346,7 +3346,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt_touchmove: function (e, mode) { },
+    __evt__: function (e, mode) { },
 
     /**
      * @event
@@ -3356,7 +3356,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {JXG.GeoemtryElement} el The hit element.
      * @param {%} target ?
      */
-    __evt_hit: function (e, el, target) { },
+    __evt__: function (e, el, target) { },
 
     /**
      * @event
@@ -3366,14 +3366,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {JXG.GeoemtryElement} el The hit element.
      * @param {%} target ?
      */
-    __evt_mousehit: function (e, el, target) { },
+    __evt__: function (e, el, target) { },
     
     /**
      * @event
      * @description This board is updated.
      * @name JXG.Board#update
      */
-    __evt_update: function () { },
+    __evt__: function () { },
         
     //endregion
 
