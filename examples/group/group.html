@@ -195,6 +195,15 @@
                 polygon = board.create('polygon', polyPoints);
                 group.addPoints(polyPoints);
 
+                for (i = 0; i < polygon.borders.length; i++) {
+                    polygon.borders[i].on('down', function(e) {
+                        isSelectMode = false;
+                    }, polygon.borders[i]);
+                    polygon.borders[i].on('up', function(e) {
+                        isSelectMode = true;
+                    }, polygon.borders[i]);
+                }
+                
                 selecting = false;
             }
         };

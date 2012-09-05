@@ -79,7 +79,8 @@ JXG.Group = function(board, id, name) {
             }
         }
     }
-    
+
+    this.suspendUpdate = false;
     this.dX = 0;
     this.dY = 0;
 };
@@ -108,19 +109,22 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         var obj = null,
             el;
 
-        for (el in this.objects) {
-            if (JXG.exists(this.board.objects[el])) {
-                obj = this.objects[el];
-                if (obj.id != point.id) {
-                    obj.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
-                        obj.coords.usrCoords[1] + dX,
-                        obj.coords.usrCoords[2] + dY
-                    ], obj.board);
+        if (!this.suspendUpdate) {
+            this.suspendUpdate = true;
+
+            for (el in this.objects) {
+                if (JXG.exists(this.board.objects[el])) {
+                    obj = this.objects[el];
+                    if (obj.id != point.id) {
+                        obj.coords.setCoordinates(JXG.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
+                    }
+                    this.objects[el].prepareUpdate().update(false).updateRenderer();
+                } else {
+                    delete(this.objects[el]);
                 }
-                this.objects[el].prepareUpdate().update(false).updateRenderer();
-            } else {
-                delete(this.objects[el]);
             }
+
+            this.suspendUpdate = false;
         }
 
         return this;
@@ -128,11 +132,14 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
 
     /**
      * Adds an Point to this group.
-     * @param {JXG.Point} object The object added to the group.
+     * @param {JXG.Point} object The point added to the group.
      */
     addPoint: function(object) {
         this.objects[object.id] = object;
-        object.group.push(this);
+        object.coords.on('update', function (ou, os) {
+            this.update(object, object.coords.usrCoords[1] - ou[1], object.coords.usrCoords[2] - ou[2], object.coords.usrCoords[0] - ou[0]);
+        }, this);
+        //object.group.push(this);
     },
 
     /**
@@ -141,18 +148,19 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      */
     addPoints: function(objects) {
         var p;
+        
         for (p = 0; p < objects.length; p++) {
-            this.objects[objects[p].id] = objects[p];
-            objects[p].group.push(this);
+            this.addPoint(objects[p]);
         }
     },
 
     /**
-     * Adds an Point to this group.
+     * Adds all points in a group to this group.
      * @param {JXG.Point} group The group added to this group.
      */
     addGroup: function(group) {
         var el;
+        
         for (el in group.objects) {
             this.addPoint(group.objects[el]);
         }

@@ -41,6 +41,10 @@ JXG.COORDS_BY_SCREEN = 0x0002;
  * @param {int} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
  * @param {Array} coordinates An array of affine coordinates.
  * @param {JXG.AbstractRenderer} renderer A reference to a Renderer.
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  * @constructor
  */
 JXG.Coords = function (method, coordinates, board) {
@@ -61,6 +65,7 @@ JXG.Coords = function (method, coordinates, board) {
      */
     this.scrCoords = [];
     
+    JXG.EventEmitter.eventify(this);
     this.setCoordinates(method, coordinates);
 };
 
@@ -159,7 +164,8 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
      */
     setCoordinates: function (coord_type, coordinates, doRound) {
         var uc = this.usrCoords,
-            sc = this.scrCoords;
+            sc = this.scrCoords,
+            ou = this.usrCoords.slice(0), os = this.scrCoords.slice(0);
 
         if (coord_type === JXG.COORDS_BY_USER) {
             if (coordinates.length === 2) { // Euclidean coordinates
@@ -178,7 +184,23 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             sc[2] = coordinates[1];
             this.screen2usr();
         }
+        
+        this.triggerEventHandlers('update', ou, os);
 
         return this;
-    }
+    },
+
+    /**
+     * Triggered whenever the coordinates change.
+     * @name JXG.Coords#update
+     * @param {Array} ou Old user coordinates
+     * @param {Array} os Old screen coordinates
+     * @event
+     */
+    __evt__: function (ou, os) { },
+
+    /**
+     * @ignore
+     */
+    __evt__: function () {}
 });
