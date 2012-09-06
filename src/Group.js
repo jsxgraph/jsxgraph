@@ -92,13 +92,21 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     ungroup: function() {
         var el;
         for (el in this.objects) {
-            if (JXG.isArray(this.objects[el].group) && this.objects[el].group[this.objects[el].group.length-1] == this) {
-                this.objects[el].group.pop();
+            if (JXG.isArray(this.objects[el].point.group) && this.objects[el].point.group[this.objects[el].point.group.length-1] == this) {
+                this.objects[el].point.group.pop();
             }
-            delete(this.objects[el]);
+            this.removePoint(this.objects[el].point);
         }
         // Unregister the group from board
         // delete(this.board.groups[this.id]);  // Not sure if we should delete the group
+    },
+    
+    suspendUpdate: function () {
+        this.suspendUpdate = true;
+    },
+    
+    unsuspendUpdate: function () {
+        this.suspendUpdate = false;
     },
 
     /**
@@ -114,11 +122,11 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
 
             for (el in this.objects) {
                 if (JXG.exists(this.board.objects[el])) {
-                    obj = this.objects[el];
+                    obj = this.objects[el].point;
                     if (obj.id != point.id) {
                         obj.coords.setCoordinates(JXG.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
                     }
-                    this.objects[el].prepareUpdate().update(false).updateRenderer();
+                    this.objects[el].point.prepareUpdate().update(false).updateRenderer();
                 } else {
                     delete(this.objects[el]);
                 }
@@ -135,11 +143,13 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      * @param {JXG.Point} object The point added to the group.
      */
     addPoint: function(object) {
-        this.objects[object.id] = object;
-        object.coords.on('update', function (ou, os) {
-            this.update(object, object.coords.usrCoords[1] - ou[1], object.coords.usrCoords[2] - ou[2], object.coords.usrCoords[0] - ou[0]);
-        }, this);
-        //object.group.push(this);
+        this.objects[object.id] = {
+            point: object,
+            handler: function (ou, os) {
+                this.update(object, object.coords.usrCoords[1] - ou[1], object.coords.usrCoords[2] - ou[2], object.coords.usrCoords[0] - ou[0]);
+            }
+        };
+        object.coords.on('update', this.objects[object.id].handler, this);
     },
 
     /**
@@ -162,7 +172,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         var el;
         
         for (el in group.objects) {
-            this.addPoint(group.objects[el]);
+            this.addPoint(group.objects[el].point);
         }
     },
 
@@ -173,10 +183,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     removePoint: function (point) {
         var i;
 
-        while ((i = JXG.indexOf(point.group, this)) > -1) {
-            point.group.splice(i, 1);
-        }
-
+        this.objects[point.id].point.coords.off('update', this.objects[point.id].handler);
         delete this.objects[point.id];
     },
 
@@ -184,7 +191,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         var el;
 
         for (el in this.objects) {
-            this.objects[el].setProperty.apply(this.objects[el], arguments);
+            this.objects[el].point.setProperty.apply(this.objects[el].point, arguments);
         }
     }
 });
