@@ -267,7 +267,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         this.X = function() { return x; };
         this.Y = function() { return y; };
-        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], this.board);
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [x, y]);
 
         // this should be a local update, otherwise there might be problems
         // with the tick update routine resulting in orphaned tick labels

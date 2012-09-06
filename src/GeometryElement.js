@@ -59,7 +59,14 @@ JXG.OBJECT_CLASS_OTHER = 6;
  * Constructs a new GeometryElement object.
  * @class This is the basic class for geometry elements like points, circles and lines.
  * @constructor
- * of identical elements on the board. Is not yet implemented for all elements, only points, lines and circle can be traced.
+ * @param {JXG.Board} board Reference to the board the element is constructed on.
+ * @param {Object} attributes Hash of attributes and their values.
+ * @param {Number} type Element type (a <tt>JXG.OBJECT_TYPE_</tt> value).
+ * @param {oclass} oclass The element's class (a <tt>JXG.OBJECT_CLASS_</tt> value).
+ * @borrows JXG.EventEmitter#on as this.on
+ * @borrows JXG.EventEmitter#off as this.off
+ * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
+ * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
  */
 JXG.GeometryElement = function (board, attributes, type, oclass) {
     var name, key;
@@ -245,12 +252,8 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
      */
     this.visProp = {};
 
-    /**
-     * Stores the eventhandlers attached to the element.
-     * @type Object
-     */
-    this.eventHandlers = {};
-
+    JXG.EventEmitter.eventify(this);
+    
     /**
      * Is the mouse over this element?
      * @type Boolean
@@ -861,6 +864,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * TODO
      * Was hat das hier verloren? "Straights" gibts doch nur fuer Lines oder?
      * Sollte das dann nicht nur in Line.js zu finden sein? --michael
+     * @description none yet
      * @private
      */
     setStraight: function (x,y) {
@@ -1209,86 +1213,145 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     },
 
     /**
-     * Triggers all event handlers of this element for a given event.
-     * @param {String} event
-     */
-    triggerEventHandlers: function (event) {
-        var i, h, args = Array.prototype.slice.call(arguments, 1),
-            j, evt;
-
-        if (!JXG.isArray(event)) {
-            event = [event];
-        }
-
-        for (j = 0; j < event.length; j++) {
-            evt = event[j];
-            if (JXG.isArray(this.eventHandlers[evt])) {
-                for (i = 0; i < this.eventHandlers[evt].length; i++) {
-                    h = this.eventHandlers[evt][i];
-                    h.handler.apply(h.context, args);
-                }
-            }
-        }
-    },
-
-    /**
-     * Register a new event handler. Possible events include
-     * <ul>
-     *     <li>over</li>
-     *     <li>out</li>
-     *     <li>move</li>
-     *     <li>drag</li>
-     *     <li>down</li>
-     *     <li>up</li>
-     * </ul>
-     * Every event is triggered both on touch and mouse devices. Prepend an event with
-     * <tt>mouse</tt> or <tt>touch</tt> to trigger them only on mouse resp. touch devices.
-     * @param {String} event
-     * @param {Function} handler
-     * @param {Object} [context] The context the handler will be called in, default is the element itself.
-     */
-    on: function (event, handler, context) {
-        if (!JXG.isArray(this.eventHandlers[event])) {
-            this.eventHandlers[event] = [];
-        }
-
-        context = JXG.def(context, this);
-
-        this.eventHandlers[event].push({
-            handler: handler,
-            context: context
-        });
-    },
-
-    /**
      * Alias of {@link JXG.GeometryElement#on}.
      */
     addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
 
     /**
-     * Unregister an event handler.
-     * @param {String} event
-     * @param {Function} handler The same function used in {@link JXG.GeometryElement#on}.
-     */
-    off: function (event, handler) {
-        var i;
-
-        if (!event || !JXG.isArray(this.eventHandlers[event])) {
-            return;
-        }
-
-        if (handler) {
-            i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
-            if (i > -1) {
-                this.eventHandlers[event].splice(i, 1);
-            }
-        } else {
-            this.eventHandlers[event].length = 0;
-        }
-    },
-
-    /**
      * Alias of {@link JXG.GeometryElement#off}.
      */
-    removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off')
+    removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
+    
+    /* **************************
+     *     EVENT DEFINITION
+     * for documentation purposes
+     * ************************** */
+
+    //region Event handler documentation
+    /**
+     * @event
+     * @description This event is fired whenever the user is hovering over an element.
+     * @name JXG.GeometryElement#over
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse over an element.
+     * @name JXG.GeometryElement#mouseover
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is leaving an element.
+     * @name JXG.GeometryElement#out
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user puts the mouse away from an element.
+     * @name JXG.GeometryElement#mouseout
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving over an element.
+     * @name JXG.GeometryElement#move
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user is moving the mouse over an element.
+     * @name JXG.GeometryElement#mousemove
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags an element.
+     * @name JXG.GeometryElement#drag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element with a mouse.
+     * @name JXG.GeometryElement#mousedrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description This event is fired whenever the user drags the element on a touch device.
+     * @name JXG.GeometryElement#touchdrag
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch or click an element.
+     * @name JXG.GeometryElement#down
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to click an element.
+     * @name JXG.GeometryElement#mousedown
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user starts to touch an element.
+     * @name JXG.GeometryElement#touchdown
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops to touch or click an element.
+     * @name JXG.GeometryElement#up
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user releases the mousebutton over an element.
+     * @name JXG.GeometryElement#mouseup
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) { },
+
+    /**
+     * @event
+     * @description Whenever the user stops touching an element.
+     * @name JXG.GeometryElement#touchup
+     * @param {Event} e The browser's event object.
+     */
+    __evt__: function (e) {},
+
+    /**
+     * @ignore
+     */
+    __evt__: function () {}
+    //endregion
+
 });

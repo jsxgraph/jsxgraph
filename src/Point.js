@@ -57,7 +57,7 @@ JXG.Point = function (board, coordinates, attributes) {
      */
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
     this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coordinates, this.board);
-
+    
     /**
      * Relative position on a line if point is a glider on a line.
      * @type Number
@@ -571,7 +571,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
             // if no valid snap sizes are available, don't change the coords.
             if (sX > 0 && sY > 0) {
-                this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY], this.board);
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, [Math.round(x/sX)*sX, Math.round(y/sY)*sY]);
             }
         }
         return this;
@@ -667,20 +667,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             oldCoords = this.coords,
             newCoords;
 
-        this.coords = new JXG.Coords(method, coords, this.board);
+        this.coords.setCoordinates(method, coords);
         this.handleSnapToGrid();
         this.handleSnapToPoints();
         this.handleAttractors();
         
         if(this.group.length > 0) {
-            // Update the initial coordinates. This is needed for free points
-            // that have a transformation bound to it.
-            dx = this.coords.usrCoords[1] - oldCoords.usrCoords[1];
-            dy = this.coords.usrCoords[2] - oldCoords.usrCoords[2];
-            dz = this.coords.usrCoords[0] - oldCoords.usrCoords[0];
-            for (i = 0; i < this.group.length; i++) {
-                this.group[i].update(this, dx, dy, dz);
-            }
+            // Here used to be the udpate of the groups. I'm not sure why we don't need to execute
+            // the else branch if there are groups defined on this point, hence I'll let the if live.
         } else {
             // Update the initial coordinates. This is needed for free points
             // that have a transformation bound to it.
@@ -693,9 +687,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     }
                     newCoords = coords;
                 }
-                this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, 
-                        JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords), 
-                        this.board);      
+                this.initialCoords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords));
             }
             this.update();
         }

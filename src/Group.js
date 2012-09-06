@@ -79,7 +79,8 @@ JXG.Group = function(board, id, name) {
             }
         }
     }
-    
+
+    this.suspendUpdate = false;
     this.dX = 0;
     this.dY = 0;
 };
@@ -91,13 +92,21 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     ungroup: function() {
         var el;
         for (el in this.objects) {
-            if (JXG.isArray(this.objects[el].group) && this.objects[el].group[this.objects[el].group.length-1] == this) {
-                this.objects[el].group.pop();
+            if (JXG.isArray(this.objects[el].point.group) && this.objects[el].point.group[this.objects[el].point.group.length-1] == this) {
+                this.objects[el].point.group.pop();
             }
-            delete(this.objects[el]);
+            this.removePoint(this.objects[el].point);
         }
         // Unregister the group from board
         // delete(this.board.groups[this.id]);  // Not sure if we should delete the group
+    },
+    
+    suspendUpdate: function () {
+        this.suspendUpdate = true;
+    },
+    
+    unsuspendUpdate: function () {
+        this.suspendUpdate = false;
     },
 
     /**
@@ -108,19 +117,22 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         var obj = null,
             el;
 
-        for (el in this.objects) {
-            if (JXG.exists(this.board.objects[el])) {
-                obj = this.objects[el];
-                if (obj.id != point.id) {
-                    obj.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
-                        obj.coords.usrCoords[1] + dX,
-                        obj.coords.usrCoords[2] + dY
-                    ], obj.board);
+        if (!this.suspendUpdate) {
+            this.suspendUpdate = true;
+
+            for (el in this.objects) {
+                if (JXG.exists(this.board.objects[el])) {
+                    obj = this.objects[el].point;
+                    if (obj.id != point.id) {
+                        obj.coords.setCoordinates(JXG.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
+                    }
+                    this.objects[el].point.prepareUpdate().update(false).updateRenderer();
+                } else {
+                    delete(this.objects[el]);
                 }
-                this.objects[el].prepareUpdate().update(false).updateRenderer();
-            } else {
-                delete(this.objects[el]);
             }
+
+            this.suspendUpdate = false;
         }
 
         return this;
@@ -128,11 +140,16 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
 
     /**
      * Adds an Point to this group.
-     * @param {JXG.Point} object The object added to the group.
+     * @param {JXG.Point} object The point added to the group.
      */
     addPoint: function(object) {
-        this.objects[object.id] = object;
-        object.group.push(this);
+        this.objects[object.id] = {
+            point: object,
+            handler: function (ou, os) {
+                this.update(object, object.coords.usrCoords[1] - ou[1], object.coords.usrCoords[2] - ou[2], object.coords.usrCoords[0] - ou[0]);
+            }
+        };
+        object.coords.on('update', this.objects[object.id].handler, this);
     },
 
     /**
@@ -141,20 +158,21 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
      */
     addPoints: function(objects) {
         var p;
+        
         for (p = 0; p < objects.length; p++) {
-            this.objects[objects[p].id] = objects[p];
-            objects[p].group.push(this);
+            this.addPoint(objects[p]);
         }
     },
 
     /**
-     * Adds an Point to this group.
+     * Adds all points in a group to this group.
      * @param {JXG.Point} group The group added to this group.
      */
     addGroup: function(group) {
         var el;
+        
         for (el in group.objects) {
-            this.addPoint(group.objects[el]);
+            this.addPoint(group.objects[el].point);
         }
     },
 
@@ -165,10 +183,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
     removePoint: function (point) {
         var i;
 
-        while ((i = JXG.indexOf(point.group, this)) > -1) {
-            point.group.splice(i, 1);
-        }
-
+        this.objects[point.id].point.coords.off('update', this.objects[point.id].handler);
         delete this.objects[point.id];
     },
 
@@ -176,7 +191,7 @@ JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         var el;
 
         for (el in this.objects) {
-            this.objects[el].setProperty.apply(this.objects[el], arguments);
+            this.objects[el].point.setProperty.apply(this.objects[el].point, arguments);
         }
     }
 });

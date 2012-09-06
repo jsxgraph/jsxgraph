@@ -278,7 +278,7 @@
 				</table>
 				</if>
 				
-				<if test="data.inheritsFrom.length && !data.isPseudo">
+				<if test="data.inheritsFrom.length">
 				<dl class="inheritsList">
 				{!
 					var borrowedMembers = data.methods.filter(function($) {return $.memberOf != data.alias});
@@ -731,7 +731,7 @@
 					Event Detail
 				</div>
 				<for each="member" in="ownEvents">
-					<a name="event:{+Link.symbolNameToLinkName(member)+}"> </a>
+					<a name="{+Link.symbolNameToLinkName(member)+}"> </a>
 					<div class="fixedFont">{!
 						if (member.isPrivate) output += "&lt;private&gt; ";
 						if (member.isInner) output += "&lt;inner&gt; ";
@@ -924,6 +924,39 @@
 				!}
 				</dl>
 				</if>
+                
+                <hr />
+                <if test="data.inheritsFrom.length">
+   				<div class="sectionTitle">
+    				Events borrowed from other Elements
+                </div>
+                <dl class="inheritsList">
+                {!
+                    var borrowedMembers = data.events.filter(function($) {return $.memberOf != data.alias});
+                    var contributers = [];
+                    borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+                    for (var i = 0, l = contributers.length; i < l; i++) {
+                        output +=
+                            "<dt>Events borrowed from class "+new Link().toSymbol(contributers[i])+": </dt>"
+                            +
+                            "<dd>" +
+                            borrowedMembers
+                            .filter(
+                                function($) { return $.memberOf == contributers[i] }
+                            )
+                            .sort(makeSortby("name"))
+                            .map(
+                                function($) { return new Link().toSymbol($.alias).withText($.name) }
+                            )
+                            .join(", ")
+                            +
+                            "</dd>";
+                    }
+
+                !}
+                </dl>
+                </if>
+                
             </if>
 
 		</div>
