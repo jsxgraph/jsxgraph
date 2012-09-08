@@ -109,7 +109,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     
     isNode: function () {
         // this is not a 100% sure but should be valid in most cases
-        return typeof document === 'undefined' && typeof window === 'undefined' && module && module.exports;
+        return typeof document === 'undefined' && typeof window === 'undefined' && typeof module !== 'undefined' && module.exports;
     },
 
     /**
