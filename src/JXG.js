@@ -145,6 +145,14 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Returns true if the run inside a Windows 8 "Metro" App.
+     * @return {Boolean}
+     */
+    isMetroApp: function () {
+        return typeof window !== 'undefined' && window.clientInformation && window.clientInformation.appName && window.clientInformation.appName.indexOf('MSAppHost') > -1;
+    },
+
+    /**
      * Resets visPropOld of <tt>el</tt>
      * @param {JXG.GeometryElement} el
      */

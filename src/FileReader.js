@@ -256,8 +256,7 @@ JXG.FileReader = {
 
 // The following code is vbscript. This is a workaround to enable binary data downloads via AJAX in
 // Microsoft Internet Explorer.
-
-if(typeof navigator !== 'undefined' && /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent && document && document.write)) {
+if(!JXG.isMetroApp() && typeof navigator !== 'undefined' && /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent && document && document.write)) {
 document.write('<script type="text/vbscript">\n\
 Function Base64Encode(inData)\n\
   Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"\n\
