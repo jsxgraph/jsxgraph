@@ -596,7 +596,7 @@ JXG.Options = {
             majorHeight : -1,         // if <0: full width and height
             minorTicks : 4,
             ticksDistance: 1,         // TODO doc
-            strokeOpacity : 0.25,
+            strokeOpacity : 0.25
         },
         point1 : {                  // Default values for point1 if created by line
             needsRegularUpdate : false
