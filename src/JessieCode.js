@@ -550,14 +550,16 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         this.countLines = false;
 
         c = vname + ' = ' + (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
-        this.parse(c, geonext);
 
-        result = this.sstack[0][vname];
-        if (JXG.exists(tmp)) {
-            this.sstack[0][vname] = tmp;
-        } else {
-            delete this.sstack[0][vname];
-        }
+        try {
+            this.parse(c, geonext);
+            result = this.sstack[0][vname];
+            if (JXG.exists(tmp)) {
+                this.sstack[0][vname] = tmp;
+            } else {
+                delete this.sstack[0][vname];
+            }
+        } catch (e) { result = ""; }
 
         this.countLines = true;
 
