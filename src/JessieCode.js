@@ -551,15 +551,13 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         c = vname + ' = ' + (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
 
-        try {
-            this.parse(c, geonext);
-            result = this.sstack[0][vname];
-            if (JXG.exists(tmp)) {
-                this.sstack[0][vname] = tmp;
-            } else {
-                delete this.sstack[0][vname];
-            }
-        } catch (e) { result = ""; }
+        this.parse(c, geonext);
+        result = this.sstack[0][vname];
+        if (JXG.exists(tmp)) {
+            this.sstack[0][vname] = tmp;
+        } else {
+            delete this.sstack[0][vname];
+        }
 
         this.countLines = true;
 
