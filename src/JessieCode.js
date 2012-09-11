@@ -551,13 +551,18 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
 
         c = vname + ' = ' + (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
 
-        this.parse(c, geonext);
-        result = this.sstack[0][vname];
-        if (JXG.exists(tmp)) {
-            this.sstack[0][vname] = tmp;
-        } else {
-            delete this.sstack[0][vname];
-        }
+        // Please leave this! It is needed for function plots in the GUI!
+        // If you don't like it please uncomment and comment at first!!!
+
+        try {
+            this.parse(c, geonext);
+            result = this.sstack[0][vname];
+            if (JXG.exists(tmp)) {
+                this.sstack[0][vname] = tmp;
+            } else {
+                delete this.sstack[0][vname];
+            }
+        } catch (e) { result = ""; }
 
         this.countLines = true;
 
