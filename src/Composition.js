@@ -2130,6 +2130,32 @@ JXG.createGrid = function (board, parents, attributes) {
     return c;
 };
 
+/**
+ * @class Creates an area indicating the solution of a linear inequality.
+ * @pseudo
+ * @description Display the solution set of a linear inequality (less than or equal to).
+ * @param {JXG.Line} l The area drawn will be the area below this line.
+ * @constructor
+ * @name Inequality
+ * @type JXG.Curve
+ * @augments JXG.Curve
+ * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+ * @example
+ * p = board.create('point', [1, 3]);
+ * q = board.create('point', [-2, -4]);
+ * l = board.create('line', [p, q]);
+ * ineq = board.create('inequality', [l]);
+ * </pre><div id="2b703006-fd98-11e1-b79e-ef9e591c002e" style="width: 400px; height: 400px;"></div>
+ * <script type="text/javascript">
+ * (function () {
+ *  board = JXG.JSXGraph.initBoard('2b703006-fd98-11e1-b79e-ef9e591c002e', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true});
+ *  p = board.create('point', [1, 3]);
+ *  q = board.create('point', [-2, -4]);
+ *  l = board.create('line', [p, q]);
+ *  ineq = board.create('inequality', [l]);
+ * })();
+ * </script><pre>
+ */
 JXG.createInequality = function (board, parents, attributes) {
     var f, a, attr;
     
@@ -2147,7 +2173,7 @@ JXG.createInequality = function (board, parents, attributes) {
                 expansion = 1.5,
                 w = expansion*Math.max(bb[2] - bb[0], bb[1] - bb[3]),
                 // this will be the height of the area. We mustn't rely upon the board height because if we pan the view
-                // such that the line is not visible anymore, the borders will get visible in some cases.
+                // such that the line is not visible anymore, the borders of the area will get visible in some cases.
                 h,
                 // fake a point (for Math.Geometry.perpendicular)
                 dp = {coords: {usrCoords: [1, (bb[0] + bb[2])/2, attr.inverse ? bb[1] : bb[3]]}},
@@ -2155,17 +2181,13 @@ JXG.createInequality = function (board, parents, attributes) {
                 slope1 = parents[0].stdform.slice(1),
                 slope2 = slope1,
                 
-                // the two board boundaries in hom. coords, a little to the left and to the right 
-                //l1 = [bb[0] - w, -1, 0],
-                //l2 = [bb[2] + w - 2, -1, 0],
-                
                 i1, i2;
 
             if (slope1[1] > 0) {
                 slope1 = JXG.Math.Statistics.multiply(slope1, -1);
                 slope2 = slope1;
             }
-            //console.log(slope1.join(', '), slope2.join(', '));
+
             // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
             h = expansion*Math.max(JXG.Math.Geometry.perpendicular(parents[0], dp, board)[0].distance(JXG.COORDS_BY_USER, dp.coords), w);
             h *= factor;
@@ -2179,8 +2201,6 @@ JXG.createInequality = function (board, parents, attributes) {
             // One of the vectors based in i1 and orthogonal to the parent line has the direction d1 = (slope1, -1)
             // We will go from i1 to to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
             // end up in i2.
-            //this.dataX = [i1.usrCoords[1], i1.usrCoords[1] + slope1*h, i2.usrCoords[1] + slope2*h, i2.usrCoords[1]];
-            //this.dataY = [i1.usrCoords[2], i1.usrCoords[2] - h, i2.usrCoords[2] - h, i2.usrCoords[2]];
             this.dataX = [i1[1], i1[1] + slope1[0]*h, i2[1] + slope2[0]*h, i2[1], i1[1]];
             this.dataY = [i1[2], i1[2] + slope1[1]*h, i2[2] + slope2[1]*h, i2[2], i1[2]];
         };
