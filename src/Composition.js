@@ -2144,62 +2144,45 @@ JXG.createInequality = function (board, parents, attributes) {
         a.updateDataArray = function () {
             var bb = board.getBoundingBox(),
                 factor = attr.inverse ? -1 : 1,
-                expansion = 1.3,
-                w = Math.max(bb[2] - bb[0], bb[1] - bb[3]),
+                expansion = 1.5,
+                w = expansion*Math.max(bb[2] - bb[0], bb[1] - bb[3]),
                 // this will be the height of the area. We mustn't rely upon the board height because if we pan the view
                 // such that the line is not visible anymore, the borders will get visible in some cases.
                 h,
                 // fake a point (for Math.Geometry.perpendicular)
                 dp = {coords: {usrCoords: [1, (bb[0] + bb[2])/2, attr.inverse ? bb[1] : bb[3]]}},
                 
-                slope1 = parents[0].getSlope(),
+                slope1 = parents[0].stdform.slice(1),
                 slope2 = slope1,
                 
                 // the two board boundaries in hom. coords, a little to the left and to the right 
-                l1 = [bb[0] - w, -1, 0],
-                l2 = [bb[2] + w - 2, -1, 0],
+                //l1 = [bb[0] - w, -1, 0],
+                //l2 = [bb[2] + w - 2, -1, 0],
                 
                 i1, i2;
 
+            if (slope1[1] > 0) {
+                slope1 = JXG.Math.Statistics.multiply(slope1, -1);
+                slope2 = slope1;
+            }
+            //console.log(slope1.join(', '), slope2.join(', '));
             // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
             h = expansion*Math.max(JXG.Math.Geometry.perpendicular(parents[0], dp, board)[0].distance(JXG.COORDS_BY_USER, dp.coords), w);
             h *= factor;
             
-            // use the coords object to normalize the coordinates
-            //i1 = new JXG.Coords(JXG.COORDS_BY_USER, JXG.Math.crossProduct(l1, parents[0].stdform), this.board);
-            //i2 = new JXG.Coords(JXG.COORDS_BY_USER, JXG.Math.crossProduct(l2, parents[0].stdform), this.board);
-            // pimp i1 and i2 calculation to prevent rounding errors for very steep curves:
-            
             // reuse dp
             dp = {coords: {usrCoords: [1, (bb[0] + bb[2])/2, (bb[1] + bb[3])/2]}};
             dp = JXG.Math.Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
-            i1 = [1, dp[1] + w, dp[2] + slope1*w];
-            i2 = [1, dp[1] - w, dp[2] - slope2*w];
+            i1 = [1, dp[1] + slope1[1]*w, dp[2] - slope1[0]*w];
+            i2 = [1, dp[1] - slope2[1]*w, dp[2] + slope2[0]*w];
             
             // One of the vectors based in i1 and orthogonal to the parent line has the direction d1 = (slope1, -1)
             // We will go from i1 to to i1 + h*d1, from there to i2 + h*d2 (with d2 calculated equivalent to d1) and
             // end up in i2.
             //this.dataX = [i1.usrCoords[1], i1.usrCoords[1] + slope1*h, i2.usrCoords[1] + slope2*h, i2.usrCoords[1]];
             //this.dataY = [i1.usrCoords[2], i1.usrCoords[2] - h, i2.usrCoords[2] - h, i2.usrCoords[2]];
-            this.dataX = [i1[1], i1[1] + slope1*h, i2[1] + slope2*h, i2[1], i1[1]];
-            this.dataY = [i1[2], i1[2] - h, i2[2] - h, i2[2], i1[2]];
-            
-            /*if (this.testline) {
-                board.removeObject(this.testline);
-            }
-            this.testline = board.create('line', [[this.dataX[0], this.dataY[0]], [this.dataX[3], this.dataY[3]]], {color: 'yellow', strokeOpacity: 0.3, strokeWidth: 15});
-            
-            if (this.borders) {
-                for (h = 0; h < this.borders.length; h++) {
-                    board.removeObject(this.borders[h]);
-                }
-            }
-            this.borders = [];
-            for (h = 0; h < this.dataX.length-1; h++) {
-                this.borders[h] = board.create('line', [[this.dataX[h], this.dataY[h]], [this.dataX[h+1], this.dataY[h+1]]], {color: JXG.hsv2rgb(h/this.dataX.length*360, 1, 1), strokeOpacity: 0.3, strokeWidth: 15});
-            }
-            
-            console.log('x', this.dataX.join(', '), 'y', this.dataY.join(', '));*/
+            this.dataX = [i1[1], i1[1] + slope1[0]*h, i2[1] + slope2[0]*h, i2[1], i1[1]];
+            this.dataY = [i1[2], i1[2] + slope1[1]*h, i2[2] + slope2[1]*h, i2[2], i1[2]];
         };
     } else {
         f = JXG.createFunction(parents[0]);
