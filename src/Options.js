@@ -491,6 +491,7 @@ JXG.Options = {
          * @type Number
          * @default 0.5
          * @name Angle#radius
+         * @visprop
          */
         radius : 0.5,
         
@@ -500,6 +501,7 @@ JXG.Options = {
          * @type String
          * @default sector
          * @name Angle#type
+         * @visprop
          */
         type : 'sector',  
                 
@@ -510,6 +512,7 @@ JXG.Options = {
          * @default square
          * @name Angle#orthoType
          * @see Angle#orthoSensitivity
+         * @visprop
          */
         orthoType: 'square',         
 
@@ -521,6 +524,7 @@ JXG.Options = {
          * @default 1.0
          * @name Angle#orthoSensitivity
          * @see Angle#orthoType
+         * @visprop
          */
         orthoSensitivity: 1.0,     
         fillColor : '#FF7F00',
@@ -564,6 +568,22 @@ JXG.Options = {
         strokeColor : '#0000ff',
         highlightStrokeColor : '#C3D9FF',
         useDirection: false
+    },
+    
+    inequality: {
+        fillColor: 'red',
+        fillOpacity: 0.2,
+        strokeColor: 'none',
+
+        /**
+         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
+         * greater (or equal) than.
+         * @type Boolean
+         * @default false
+         * @name Inequality#inverse
+         * @visprop
+         */
+        inverse: false
     },
 
     /* special axis options */
