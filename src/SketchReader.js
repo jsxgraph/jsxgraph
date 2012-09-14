@@ -1,4 +1,8 @@
 
+var GUI = {
+    generateJCode: function (step, board) { }
+};
+
 JXG.extend(JXG, {
 
     /**
