@@ -181,10 +181,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         node2.setAttributeNS(null, 'markerHeight', '12');
         node2.setAttributeNS(null, 'markerWidth', '10');
         node2.setAttributeNS(null, 'orient', 'auto');
-        node2.setAttributeNS(null, 'stroke', element.visProp.strokecolor);
-        node2.setAttributeNS(null, 'stroke-opacity', element.visProp.strokeopacity);
-        node2.setAttributeNS(null, 'fill', element.visProp.strokecolor);
-        node2.setAttributeNS(null, 'fill-opacity', element.visProp.strokeopacity);
+        node2.setAttributeNS(null, 'stroke', JXG.evaluate(element.visProp.strokecolor));
+        node2.setAttributeNS(null, 'stroke-opacity', JXG.evaluate(element.visProp.strokeopacity));
+        node2.setAttributeNS(null, 'fill', JXG.evaluate(element.visProp.strokecolor));
+        node2.setAttributeNS(null, 'fill-opacity', JXG.evaluate(element.visProp.strokeopacity));
         node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
 
         if (idAppendix === 'End') {
