@@ -682,7 +682,7 @@ JXG.SketchReader = {
                     console.log(step.args.steps[i]);
 
                     if (step_log[step.args.steps[i]].type > 50)
-                        arr = GUI.generateJCode(step_log[step.args.steps[i]], board, step_log);
+                        arr = GUI.generateJCode(step_log[step.args.steps[i]], board);
                     else
                         arr = JXG.SketchReader.generateJCode(step_log[step.args.steps[i]], board, step_log);
 
@@ -727,7 +727,7 @@ JXG.SketchReader = {
                 for (i=0; i<copy_log.length; i++) {
 
                     if (copy_log[i].type > 50)
-                        arr = GUI.generateJCode(copy_log[i], board, step_log);
+                        arr = GUI.generateJCode(copy_log[i], board);
                     else
                         arr = JXG.SketchReader.generateJCode(copy_log[i], board, step_log);
 
