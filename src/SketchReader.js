@@ -1,64 +1,30 @@
+/*
+    Copyright 2008-2012
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
 
-var GUI = {
-    generateJCode: function (step, board) { }
-};
+    This file is part of JSXGraph.
 
+    JSXGraph is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// some constants
 JXG.extend(JXG, {
-
-    /**
-     * Generates a deep copy of an array,
-     * removes the duplicate entries and returns it.
-     * @param arr Array
-     */
-    uniqueArray: function(arr) {
-
-        var i, j, isArray, ret = [];
-
-        if (arr.length === 0) {
-            return new Array();
-        }
-
-        isArray = GUI.isArray(arr[0]);
-
-        for (i=0; i<arr.length; i++) {
-            for (j=i+1; j<arr.length; j++) {
-
-                if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
-                    arr[i] = [];
-                } else if (!isArray && arr[i] === arr[j]) {
-                    arr[i] = "";
-                }
-            }
-        }
-
-        j = 0;
-
-        for (i=0; i<arr.length; i++) {
-            if (!isArray && arr[i] !== "") {
-                ret[j] = arr[i];
-                j++;
-            } else if (isArray && arr[i].length !== 0) {
-                ret[j] = (arr[i].slice(0));
-                j++;
-            }
-        }
-
-        return ret;
-    },
-
-    /**
-     * Checks if an array contains an element, which equals to val
-     */
-
-    isInArray: function(arr, val) {
-
-        for (var i=0; i<arr.length; i++)
-            if (arr[i] == val)
-                return true;
-
-        return false;
-    },
-
     GENTYPE_ABC: 1, // unused
     GENTYPE_AXIS: 2,
     GENTYPE_MID: 3,
@@ -134,7 +100,7 @@ JXG.extend(JXG, {
     GENTYPE_CTX_TEXT: 69,
     GENTYPE_CTX_ANGLERADIUS: 70,
     GENTYPE_CTX_DOTVISIBILITY: 71,
-    GENTYPE_CTX_FILLOPACITY: 72,
+    GENTYPE_CTX_FILLOPACITY: 72
 });
 
 JXG.SketchReader = {
@@ -145,6 +111,12 @@ JXG.SketchReader = {
         freeLine: false,
         useGlider: false,
         useSymbols: false
+    },
+    
+    generateJCodeMeta: function () { },
+    
+    id: function () {
+        return JXG.Util.genUUID();
     },
 
     generateJCode: function (step, board, step_log) {
@@ -682,28 +654,29 @@ JXG.SketchReader = {
                 ctx_reset_str = [];
 
                 for (i=0; i<step.args.steps.length; i++) {
+                    if (step_log[step.args.steps[i]].type > 50) {
+                        arr = this.generateJCodeMeta(step_log[step.args.steps[i]], board);
+                    } else {
+                        arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
+                    }
 
-                    console.log(step.args.steps[i]);
-
-                    if (step_log[step.args.steps[i]].type > 50)
-                        arr = GUI.generateJCode(step_log[step.args.steps[i]], board);
-                    else
-                        arr = JXG.SketchReader.generateJCode(step_log[step.args.steps[i]], board, step_log);
-
-                    if (arr[2].trim() !== '')
+                    if (arr[2].trim() !== '') {
                         set_str = arr[2] + set_str;
-                    if (JXG.isFunction(arr[3]))
+                    }
+                    if (JXG.isFunction(arr[3])) {
                         ctx_set_str.unshift(arr[3]);
-                    if (arr[0].trim() !== '')
+                    }
+                    if (arr[0].trim() !== '') {
                         reset_str += arr[0];
-                    if (JXG.isFunction(arr[1]))
+                    }
+                    if (JXG.isFunction(arr[1])) {
                         ctx_reset_str.push(arr[1]);
+                    }
                 }
 
                 break;
 
             case JXG.GENTYPE_COPY:
-
                 copy_log = [];
 
                 // Adapt the steps to the new IDs
@@ -731,9 +704,9 @@ JXG.SketchReader = {
                 for (i=0; i<copy_log.length; i++) {
 
                     if (copy_log[i].type > 50)
-                        arr = GUI.generateJCode(copy_log[i], board);
+                        arr = this.generateJCodeMeta(copy_log[i], board);
                     else
-                        arr = JXG.SketchReader.generateJCode(copy_log[i], board, step_log);
+                        arr = this.generateJCode(copy_log[i], board, step_log);
 
                     if (arr[0].trim() !== '')
                         set_str += arr[0];
@@ -825,9 +798,7 @@ JXG.SketchReader = {
                 break;
 
             case JXG.GENTYPE_MOVEMENT:
-
                 if (step.args.obj_type == JXG.OBJECT_TYPE_LINE) {
-
                     set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
                     set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
                     reset_str = step.src_ids[0] + '.move([' + step.args.zstart[0] + ', ' + step.args.xstart[0] + ', ';
@@ -855,9 +826,7 @@ JXG.SketchReader = {
                     reset_str = step.src_ids[0] + '.setPosition(' + step.args.xstart + '); ';
 
                 } else if (step.args.obj_type == JXG.OBJECT_TYPE_POLYGON) {
-
                     set_str = reset_str = "";
-                    console.log(step.src_ids.length);
 
                     for (i=0; i<step.src_ids.length; i++) {
                         set_str += step.src_ids[i] + '.move([' + pn(step.args.coords[i].usrCoords[1]) + ', ';
@@ -881,7 +850,6 @@ JXG.SketchReader = {
     },
 
     replaceStepDestIds: function (step, id_map) {
-
         var i, j, copy_ids = [];
 
         for (i=0; i<id_map.length; i++) {
@@ -890,19 +858,24 @@ JXG.SketchReader = {
             if (step.dest_id == id_map[i].orig)
                 step.dest_id = id_map[i].copy;
 
-            for (j=0; j<step.dest_sub_ids.length; j++)
-                if (step.dest_sub_ids[j] == id_map[i].orig)
+            for (j=0; j<step.dest_sub_ids.length; j++) {
+                if (step.dest_sub_ids[j] == id_map[i].orig) {
                     step.dest_sub_ids[j] = id_map[i].copy;
+                }
+            }
 
-            for (j=0; j<step.src_ids.length; j++)
-                if (step.src_ids[j] == id_map[i].orig)
+            for (j=0; j<step.src_ids.length; j++) {
+                if (step.src_ids[j] == id_map[i].orig) {
                     step.src_ids[j] = id_map[i].copy;
+                }
+            }
         }
 
-        for (j=0; j<step.dest_sub_ids.length; j++)
-            if (!JXG.isInArray(copy_ids, step.dest_sub_ids[j]))
-                step.dest_sub_ids[j] = GUI.id();
-
+        for (j=0; j<step.dest_sub_ids.length; j++) {
+            if (!JXG.isInArray(copy_ids, step.dest_sub_ids[j])) {
+                step.dest_sub_ids[j] = this.id();
+            }
+        }
 
         step.src_ids = JXG.uniqueArray(step.src_ids);
         step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);

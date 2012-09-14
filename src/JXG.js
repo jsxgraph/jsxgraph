@@ -1325,7 +1325,64 @@ JXG.extend(JXG, /** @lends JXG */ {
                 console.log(e.stack.split('\n').slice(1).join('\n'));
             }
         }
-    }
+    },
+    
+    /**
+     * Generates a deep copy of an array and removes the duplicate entries.
+     * @param {Array} arr
+     * @returns {Array}
+     */
+    uniqueArray: function(arr) {
+        var i, j, isArray, ret = [];
+
+        if (arr.length === 0) {
+            return [];
+        }
+
+        isArray = JXG.isArray(arr[0]);
+
+        for (i=0; i<arr.length; i++) {
+            for (j=i+1; j<arr.length; j++) {
+                if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
+                    arr[i] = [];
+                } else if (!isArray && arr[i] === arr[j]) {
+                    arr[i] = '';
+                }
+            }
+        }
+
+        j = 0;
+
+        for (i=0; i<arr.length; i++) {
+            if (!isArray && arr[i] !== "") {
+                ret[j] = arr[i];
+                j++;
+            } else if (isArray && arr[i].length !== 0) {
+                ret[j] = (arr[i].slice(0));
+                j++;
+            }
+        }
+
+        return ret;
+    },
+
+    /**
+     * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
+     * @param {Array} arr
+     * @param {%} val
+     * @returns {Boolean}
+     */
+    isInArray: function(arr, val) {
+        var i;
+        
+        for (i=0; i<arr.length; i++) {
+            if (arr[i] == val) {
+                return true;
+            }
+        }
+
+        return false;
+    }    
 });
 
 // JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
