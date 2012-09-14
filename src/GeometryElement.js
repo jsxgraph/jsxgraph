@@ -628,7 +628,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
      */
     setProperty: function () {
-        var i, key, value, arg, opacity, pair, properties = {};
+        var i, key, value, arg, opacity, pair, properties = {}, oldvalue;
 
         // normalize the user input
         for (i = 0; i < arguments.length; i++) {
@@ -652,7 +652,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         for (i in properties) {
             key = i.replace(/\s+/g, '').toLowerCase();
             value = properties[i];
-
+            oldvalue = this.visProp[key];
+            
             switch(key) {
                 case 'name':
                     delete this.board.elementsByName[this.name];
@@ -760,7 +761,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
             }
+            this.triggerEventHandlers('attribute:' + key, oldvalue);
         }
+        
+        this.triggerEventHandlers('attribute', properties);
 
         if (!this.visProp.needsregularupdate) {
             this.board.fullUpdate();
@@ -1347,6 +1351,24 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @param {Event} e The browser's event object.
      */
     __evt__: function (e) {},
+
+    /**
+     * @event
+     * @description Notify everytime an attribute is changed.
+     * @name JXG.GeometryElement#attribute
+     * @param {Object} o A list of changed attributes and their new value.
+     */
+    __evt__: function (o) {},
+
+    /**
+     * @event
+     * @description This is a generic event handler. It exists for every possible attribute that can be set for
+     * any element, e.g. if you want to be notified everytime an element's strokecolor is changed, is the event
+     * <tt>attribute:strokecolor</tt>.
+     * @name JXG.GeometryElement#attribute:&lt;attribute&gt;
+     * @param {%} val The old value.
+     */
+    __evt__: function (val) {},
 
     /**
      * @ignore
