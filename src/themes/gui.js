@@ -1,6 +1,12 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
 
-	angle: {
+    axisScaleX: 1,
+
+    axisScaleY: 1,
+
+    opacityLevel: 0.5,
+
+    angle: {
 		fillColor: '#ddd',
 		strokeColor: '#000'
 	},
@@ -13,11 +19,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 	intersection: {
 		fillColor: '#fff'
 	},
-/*
-	line: {
-		strokeColor: '#f00' // can't see red lines anymore for NOW ...
-	},
-*/
+
 	point: {
 		size: 4,
 		fillColor:   '#c00',
@@ -46,6 +48,10 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 		}
 	}
 /*
+    line: {
+        strokeColor: '#f00' // can't see red lines anymore for NOW ...
+    },
+
 	slider: {
 		point1: { needsRegularUpdate: true },
 		point2: { needsRegularUpdate: true },
