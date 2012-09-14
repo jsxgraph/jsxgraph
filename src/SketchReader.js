@@ -881,6 +881,85 @@ JXG.SketchReader = {
         step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);
 
         return step;
-    }
+    },
+    
+    readSketch: function (str, board) {
+        var i, j, arr, json_obj, unzipped, meta, constr;
 
+        unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
+
+        if (!JXG.exists(unzipped[0])) {
+            return ''; 
+        }
+
+        unzipped = JXG.Util.utf8Decode(unzipped[0][0]);
+        constr = JSON.parse(unzipped);
+
+        for (i=0; i<constr.length-1; i++) {
+
+            if (constr[i].type == 0)
+                continue;
+
+            // fix for files created with the beta version
+            if (constr[i].type == JXG.GENTYPE_CTX_VISIBILITY && constr[i].args.isGrid) {
+                //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                continue;
+            }
+
+            if (constr[i].type == JXG.GENTYPE_GRID) {
+                //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                continue;
+            }
+            // end of fix
+
+            /*if (constr[i].type == 100) // Obsolete fix
+                constr[i].type = JXG.GENTYPE_MOVEMENT;
+
+            if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
+
+                for (j=i+1; j<constr.length-1; j++) {
+                    if (constr[j].type == JXG.GENTYPE_MOVEMENT && GUI.areEqual(constr[i].src_ids,
+                        constr[j].src_ids)) {
+                        constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                        break;
+                    }
+                }
+
+                if (j < constr.length-1)
+                    continue;
+            }*/
+
+            if (constr[i].type == 27) // Obsolete fix
+                constr[i].type = JXG.GENTYPE_DELETE;
+
+            if (constr[i].type == 31) // Obsolete fix
+                constr[i].type = JXG.GENTYPE_TRANSLATE;
+
+            if (constr[i] > 50)
+                arr = this.generateJCodeMeta(constr[i], board);
+            else
+                arr = this.generateJCode(constr[i], board, constr);
+
+            board.jc.parse(arr[0], true);
+        }
+
+        meta = constr.pop();
+
+        // not yet :(
+        //if (meta.axisVisible)
+        //if (meta.gridVisible)
+
+        arr = meta.boundingBox; // bounding box
+        board.setBoundingBox(arr);
+
+        // these might be important in the future
+        //GUI.transformation = meta.transformation; // transformation matrices (rotations, ...)
+        //GUI.restore_state = meta.restoreState; // restore states
+
+        board.options.grid.snapToGrid = !meta.snapToGrid;
+        board.options.point.snapToGrid = !meta.snapToGrid;
+        board.options.point.snapToPoints = !meta.snapToPoints;
+        
+        return '';
+    }
 };

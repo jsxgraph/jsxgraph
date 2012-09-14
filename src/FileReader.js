@@ -222,6 +222,9 @@ JXG.FileReader = {
                 str = JXG.IntergeoReader.prepareString(str);
                 xml = true;
                 break;
+            case 'sketch':
+                str = JXG.SketchReader.readSketch(str, board);
+                break;
         }
 
         if (xml) {
