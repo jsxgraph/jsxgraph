@@ -161,7 +161,11 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 /*
                 * Handle the cases, where one of the defining points is an ideal point.
                 * d is set to something close to infinity, namely 1/eps.
-                * Then d is divided by the length of the vector directing to the ideal point.
+                * The ideal point is (temporarily) replaced by a finite point which has
+                * distance d from the other point. 
+                * This is accomplishrd by extracting the x- and y-coordinates (x,y)=:v of the ideal point.
+                * v determines the direction of the line. v is normalized, i.e. set to length 1 by deividing through its length.
+                * Finally, the new point is the sum of the other point and v*d.
                 * 
                 */
                 if (d==Number.POSITIVE_INFINITY) {                       // At least one point is an ideal point
