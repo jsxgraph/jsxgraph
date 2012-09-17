@@ -6,6 +6,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     opacityLevel: 0.5,
 
+    sensitive_area: 20,
+
     angle: {
 		fillColor: '#ddd',
 		strokeColor: '#000'

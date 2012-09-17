@@ -1,27 +1,27 @@
 /*
-    Copyright 2008-2011
-         Matthias Ehmann,
-         Michael Gerhaeuser,
-         Carsten Miller,
-         Bianca Valentin,
-         Alfred Wassermann,
-         Peter Wilfahrt
+ Copyright 2008-2011
+ Matthias Ehmann,
+ Michael Gerhaeuser,
+ Carsten Miller,
+ Bianca Valentin,
+ Alfred Wassermann,
+ Peter Wilfahrt
 
-    This file is part of JSXGraph.
+ This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ JSXGraph is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+ JSXGraph is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU Lesser General Public License
+ along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
@@ -106,7 +106,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     supportsCanvas: function () {
         return typeof document != 'undefined' && !!document.createElement('canvas').getContext;
     },
-    
+
     isNode: function () {
         // this is not a 100% sure but should be valid in most cases
         return typeof document === 'undefined' && typeof window === 'undefined' && typeof module !== 'undefined' && module.exports;
@@ -340,13 +340,13 @@ JXG.extend(JXG, /** @lends JXG */ {
             return s;
         }
         //return (s.toLowerCase()=='true');
-        
+
         if (JXG.isString(s)) {
             return (s.toLowerCase()=='true');
         } else {
             return false;
         }
-        
+
     },
 
     /**
@@ -441,14 +441,14 @@ JXG.extend(JXG, /** @lends JXG */ {
         // some running variables
         var i, j, k, len,
 
-            // collects the parent elements that already got verified
+        // collects the parent elements that already got verified
             new_parents = [],
 
-            // in case of multiple parent array type combinations we may have to start over again
-            // so hold the parents array in an temporary array in case we need the original one back
+        // in case of multiple parent array type combinations we may have to start over again
+        // so hold the parents array in an temporary array in case we need the original one back
             tmp_parents = parents.slice(0),
 
-            // test the given parent element against what we expect
+        // test the given parent element against what we expect
             is = function (expect, parent) {
                 // we basically got three cases:
                 // expect is of type
@@ -560,16 +560,16 @@ JXG.extend(JXG, /** @lends JXG */ {
     copyAttributes: function (attributes, options) {
         var a, i, len, o, isAvail,
             primitives = {
-                    'circle': 1, 
-                    'curve': 1, 
-                    'image': 1, 
-                    'line': 1, 
-                    'point': 1, 
-                    'polygon': 1, 
-                    'text': 1,
-                    'ticks': 1,
-                    'integral': 1
-                };
+                'circle': 1,
+                'curve': 1,
+                'image': 1,
+                'line': 1,
+                'point': 1,
+                'polygon': 1,
+                'text': 1,
+                'ticks': 1,
+                'integral': 1
+            };
 
 
         len = arguments.length;
@@ -615,7 +615,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         /**
          * Special treatment of labels
          */
-        o = options;                   
+        o = options;
         isAvail = true;
         for (i = 2; i < len; i++) {
             if (JXG.exists(o[arguments[i]])) {
@@ -698,8 +698,8 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     addEvent: function (obj, type, fn, owner) {
         var el = function () {
-                return fn.apply(owner, arguments);
-            };
+            return fn.apply(owner, arguments);
+        };
 
         el.origin = fn;
         owner['x_internal'+type] = owner['x_internal'+type] || [];
@@ -724,7 +724,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         if (!JXG.exists(owner)) {
             JXG.debug('no such owner');
-			alert("see console and recheck why!!!");
+            alert("see console and recheck why!!!");
             return;
         }
 
@@ -1293,7 +1293,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
         return x;
     },
-    
+
     /**
      * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
      * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
@@ -1326,7 +1326,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             }
         }
     },
-    
+
     /**
      * Generates a deep copy of an array and removes the duplicate entries.
      * @param {Array} arr
@@ -1369,12 +1369,12 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
      * @param {Array} arr
-     * @param {%} val
+     * @param {} val
      * @returns {Boolean}
      */
     isInArray: function(arr, val) {
         var i;
-        
+
         for (i=0; i<arr.length; i++) {
             if (arr[i] == val) {
                 return true;
@@ -1382,7 +1382,46 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
 
         return false;
-    }    
+    },
+
+    /**
+     * Tests if the input variable is an Array
+     * @param input
+     */
+    isArray2: function(input) {
+        return typeof(input) == 'object' && (input instanceof Array);
+    },
+
+    /**
+     * Tests if the input variable is an Object
+     * @param input
+     */
+    isObject: function(input) {
+        return typeof(input) == 'object' && (input instanceof Object) && !(input instanceof Array);
+    },
+
+    /**
+     * Checks if an object contains a key, whose value equals to val
+     */
+    isInObject: function(lit, val) {
+
+        for (var el in lit)
+            if (lit.hasOwnProperty(el))
+                if (lit[el] == val)
+                    return true;
+
+        return false;
+    },
+
+    collectionContains: function(arr, val) {
+
+        if (JXG.isArray2(arr))
+            return JXG.isInArray(arr, val);
+        else if (JXG.isObject(arr))
+            return JXG.isInObject(arr, val);
+        else
+            return arr == val;
+    }
 });
 
 // JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
@@ -1421,10 +1460,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
                         jQuery(div).insertBefore(scripts[i]);
                     }
                 }
-                
+
                 if (document.getElementById('jessiescript_autgen_jxg_' + i)) {
                     board = JXG.JSXGraph.initBoard('jessiescript_autgen_jxg_' + i, {boundingbox: bbox, keepaspectratio:true, grid: grid, axis: axis});
-                    
+
                     code = scripts[i].innerHTML;
                     code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
                     scripts[i].innerHTML = code;
