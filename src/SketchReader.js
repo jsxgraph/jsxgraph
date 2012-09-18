@@ -1,30 +1,30 @@
 /*
-    Copyright 2008-2012
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+ Copyright 2008-2012
+ Matthias Ehmann,
+ Michael Gerhaeuser,
+ Carsten Miller,
+ Bianca Valentin,
+ Alfred Wassermann,
+ Peter Wilfahrt
 
-    This file is part of JSXGraph.
+ This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ JSXGraph is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+ JSXGraph is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU Lesser General Public License
+ along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-// some constants
 JXG.extend(JXG, {
+
     GENTYPE_ABC: 1, // unused
     GENTYPE_AXIS: 2,
     GENTYPE_MID: 3,
@@ -70,14 +70,14 @@ JXG.extend(JXG, {
 
     // 47 ... 50 // unused ...
 
-/*
+    /*
      Important:
      ==========
 
      For being able to differentiate between the (GUI-specific) CTX and
      (CORE-specific) non-CTX steps, the non-CTX steps must not be changed
      to values > 50 !!!
-*/
+     */
 
     GENTYPE_CTX_TYPE_G: 51,
     GENTYPE_CTX_TYPE_P: 52,
@@ -100,866 +100,1085 @@ JXG.extend(JXG, {
     GENTYPE_CTX_TEXT: 69,
     GENTYPE_CTX_ANGLERADIUS: 70,
     GENTYPE_CTX_DOTVISIBILITY: 71,
-    GENTYPE_CTX_FILLOPACITY: 72
-});
+    GENTYPE_CTX_FILLOPACITY: 72,
 
-JXG.SketchReader = {
+    SketchReader: {
 
-    // configure the generator below
-    generator: {
-        toFixed: 0,
-        freeLine: false,
-        useGlider: false,
-        useSymbols: false
-    },
-    
-    generateJCodeMeta: function () { },
-    
-    id: function () {
-        return JXG.Util.genUUID();
-    },
+        generator: {
+            toFixed: 0,
+            freeLine: false,
+            useGlider: false,
+            useSymbols: false
+        },
+        // configure the generator below
 
-    generateJCode: function (step, board, step_log) {
+        generateJCodeMeta: function () { },
 
-        // step has to be an objectliteral of the form: { type, args, src_ids, dest_sub_ids, dest_id }
+        id: function () {
+            return JXG.Util.genUUID();
+        },
 
-        var options, assign, attrid, obj, type;
+        generateJCode: function (step, board, step_log) {
 
-        var	i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, xstart, ystart, el, bo, arr,
-            xy, sxy, sxyc, step2, copy_log = [];
+            // step has to be an objectliteral of the form: { type, args, src_ids, dest_sub_ids, dest_id }
 
-        var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
+            var options, assign, attrid, obj, type;
 
-        options = JXG.SketchReader.generator;
+            var	i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, xstart, ystart, el, bo, arr,
+                xy, sxy, sxyc, step2, copy_log = [];
 
-        objects = board.objects;
+            var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
 
-        // print number -- helper to prepare numbers
-        // for printing, e.g. trim them with toFixed()
+            options = JXG.SketchReader.generator;
 
-        var pn = function (v) {
-            if (options.toFixed > 0)
-                v = v.toFixed(options.toFixed);
-            return v;
-        };
+            objects = board.objects;
 
-        var getObject = function(v) {
-            var o;
+            // print number -- helper to prepare numbers
+            // for printing, e.g. trim them with toFixed()
 
-            if (options.useSymbols) {
-                if (board.jc.sstack[0][v]) {
-                    o = board.jc.sstack[0][v];
+            var pn = function (v) {
+                if (options.toFixed > 0)
+                    v = v.toFixed(options.toFixed);
+                return v;
+            };
+
+            var getObject = function(v) {
+                var o;
+
+                if (options.useSymbols) {
+                    if (board.jc.sstack[0][v]) {
+                        o = board.jc.sstack[0][v];
+                    } else {
+                        o = objects[v];
+                    }
                 } else {
                     o = objects[v];
                 }
-            } else {
-                o = objects[v];
-            }
 
-            return o;
-        };
+                return o;
+            };
 
-        /* SKETCHBIN begin */
+            /* SKETCHBIN begin */
 
-        assign = '';
-        attrid = 'id: \'' + step.dest_id + '\', ';
+            assign = '';
+            attrid = 'id: \'' + step.dest_id + '\', ';
 
-        if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_TRANSLATE) {
-            attrid = '';
-            assign = step.dest_id + ' = ';
+            if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_TRANSLATE) {
+                attrid = '';
+                assign = step.dest_id + ' = ';
 
-            for (i = 0; i < step.src_ids.length; i++) {
-                str = board.jc.findSymbol(getObject(step.src_ids[i]), 0); // Das Board wird hier immer benötigt!!!
+                for (i = 0; i < step.src_ids.length; i++) {
+                    str = board.jc.findSymbol(getObject(step.src_ids[i]), 0); // Das Board wird hier immer benötigt!!!
 
-                if (str.length > 0) {
-                    step.src_ids[i] = str[0];
+                    if (str.length > 0) {
+                        step.src_ids[i] = str[0];
+                    }
                 }
             }
-        }
 
-        /* SKETCHBIN end */
+            /* SKETCHBIN end */
 
-        if (step.type > 50 && withCtxSetters == false)
-            return;
+            if (step.type > 50 && withCtxSetters == false)
+                return;
 
-        switch (step.type) {
+            switch (step.type) {
 
-            case JXG.GENTYPE_JCODE:
-                set_str = step.args.code;
-                break;
+                case JXG.GENTYPE_JCODE:
+                    set_str = step.args.code;
+                    break;
 
-            case JXG.GENTYPE_AXIS:
-                set_str = step.args.name[0] + ' = point(' + pn(step.args.coords[0].usrCoords[1]) + ', ';
-                set_str += pn(step.args.coords[0].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
-                set_str += step.args.name[0] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[1];
-                set_str += ' = point(' + pn(step.args.coords[1].usrCoords[1]) + ', ';
-                set_str += pn(step.args.coords[1].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
-                set_str += step.args.name[1] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[2];
-                set_str += ' = point(' + pn(step.args.coords[2].usrCoords[1]) + ', ';
-                set_str += pn(step.args.coords[2].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[2] + '\', name: \'';
-                set_str += step.args.name[2] + '\', fixed: true, priv: true, visible: false>>; ';
+                case JXG.GENTYPE_AXIS:
+                    set_str = step.args.name[0] + ' = point(' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+                    set_str += pn(step.args.coords[0].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
+                    set_str += step.args.name[0] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[1];
+                    set_str += ' = point(' + pn(step.args.coords[1].usrCoords[1]) + ', ';
+                    set_str += pn(step.args.coords[1].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
+                    set_str += step.args.name[1] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[2];
+                    set_str += ' = point(' + pn(step.args.coords[2].usrCoords[1]) + ', ';
+                    set_str += pn(step.args.coords[2].usrCoords[2]) +') <<id: \'' + step.dest_sub_ids[2] + '\', name: \'';
+                    set_str += step.args.name[2] + '\', fixed: true, priv: true, visible: false>>; ';
 
-                set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
-                set_str += '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
-                set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleX;
-                set_str += ', drawLabels: true>>>>; ';
-                set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
-                set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
-                set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleY;
-                set_str += ', drawLabels: true, drawZero: false>>>>; ';
+                    set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
+                    set_str += '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
+                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleX;
+                    set_str += ', drawLabels: true>>>>; ';
+                    set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
+                    set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
+                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleY;
+                    set_str += ', drawLabels: true, drawZero: false>>>>; ';
 
-                set_str += step.dest_sub_ids[3] + '.visible = false; ';
-                set_str += step.dest_sub_ids[4] + '.visible = false; ';
+                    set_str += step.dest_sub_ids[3] + '.visible = false; ';
+                    set_str += step.dest_sub_ids[4] + '.visible = false; ';
 
-                set_str += 'delete jxgBoard1_infobox; ';
+                    set_str += 'delete jxgBoard1_infobox; ';
 
-                reset_str = 'delete ' + step.dest_sub_ids[4] + '; delete ' + step.dest_sub_ids[3];
-                reset_str += '; delete ' + step.dest_sub_ids[2] + '; ';
-                reset_str += 'delete '+ step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'delete ' + step.dest_sub_ids[4] + '; delete ' + step.dest_sub_ids[3];
+                    reset_str += '; delete ' + step.dest_sub_ids[2] + '; ';
+                    reset_str += 'delete '+ step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
 
-                break;
+                    break;
 
-            case JXG.GENTYPE_MID:
-                set_str = assign + 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
+                case JXG.GENTYPE_MID:
+                    set_str = assign + 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
 
-            case JXG.GENTYPE_REFLECTION:
-                set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
+                case JXG.GENTYPE_REFLECTION:
+                    set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
 
-            case JXG.GENTYPE_MIRRORPOINT:
-                set_str = assign + 'mirrorpoint(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
+                case JXG.GENTYPE_MIRRORPOINT:
+                    set_str = assign + 'mirrorpoint(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
 
-            case JXG.GENTYPE_TANGENT:
-                if (step.args.create_point === true) {
-                    sub_id = step.dest_sub_ids[2];
-                    set_str = 'point(' + pn(step.args.usrCoords[1]) + ',' + pn(step.args.usrCoords[2]) + ') <<id: \'';
-                    set_str += sub_id + '\', fillColor: \'' + step.args.fillColor + '\'>>; ' + sub_id + '.glide(';
-                    set_str += step.src_ids[0] + '); ';
-                    reset_str = 'delete ' + sub_id + '; ';
-                } else
-                    sub_id = step.src_ids[0];
-
-                set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'' + step.dest_sub_ids[0];
-                set_str += '\', id: \'' + step.dest_sub_ids[0] + '\'>>, point2: <<name: \'' + step.dest_sub_ids[1];
-                set_str += '\', id: \'' + step.dest_sub_ids[1] + '\'>> >>; ';
-                reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
-                break;
-
-            case JXG.GENTYPE_PARALLEL:
-                if (step.args.create_point === true) {
-                    sub_id =  step.dest_sub_ids[1];
-                    set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') <<id: \'';
-                    set_str += sub_id + '\', name: \'\', visible: false, priv: true>>; ';
-                    reset_str = 'delete ' + sub_id + '; ';
-                } else
-                    sub_id = step.src_ids[1];
-
-                set_str += assign + 'parallel(' + step.src_ids[0] + ', ' + sub_id + ') <<' + attrid + 'point: <<id: \'';
-                set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>> >>; ';
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                break;
-
-            case JXG.GENTYPE_BISECTORLINES:
-                set_str = 'bisectorlines(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<line1: <<id: \'';
-                set_str = set_str + step.dest_sub_ids[2] + '\', point1: <<id: \'' + step.dest_sub_ids[1];
-                set_str += '\', name: \'' + step.dest_sub_ids[1] + '\'>>, point2: <<id: \'' + step.dest_sub_ids[0];
-                set_str += '\', name: \'' + step.dest_sub_ids[0] + '\'>>>>, line2: <<id: \'' + step.dest_sub_ids[5];
-                set_str += '\', point1: <<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4];
-                set_str += '\'>>, point2: <<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3];
-                set_str += '\'>>>>>>; ';
-                reset_str = 'delete ' + step.dest_sub_ids[5] + '; delete ' + step.dest_sub_ids[4] + '; delete ';
-                reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
-                reset_str += step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
-                break;
-
-            case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
-                if (step.args.create_line === true) {
-                    sub_id = step.dest_sub_ids[2];
-                    set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
-                    set_str += '\', visible: true>>; ';
-                    reset_str = 'delete ' + sub_id + '; ';
-                } else
-                    sub_id = step.src_ids[2];
-
-                set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
-                set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
-                set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
-                set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
-                set_str += '\'>> >>; ';
-                reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
-                break;
-
-            case JXG.GENTYPE_BISECTOR:
-                set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
-                set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
-                set_str += step.dest_sub_ids[0] + '\'>>>>; ';
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
-                break;
-
-            case JXG.GENTYPE_NORMAL:
-                if (step.args.create_point === true) {
-                    sub_id = step.dest_sub_ids[1];
-                    set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                    set_str += ') <<id: \'' + sub_id + '\', name: \'\', visible: false, priv: true>>; ';
-                    reset_str = 'delete ' + sub_id + '; ';
-                } else
-                    sub_id = step.src_ids[1];
-
-                set_str += assign + 'normal(' + sub_id + ', ' + step.src_ids[0] + ') <<' + attrid;
-                set_str += 'point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                set_str += '\'>> >>; ';
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                break;
-
-            case JXG.GENTYPE_POINT:
-                set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                set_str += ')' + ( options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\'>>') + ';';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_GLIDER:
-                if (options.useGlider) {
-                    set_str = assign + 'glider(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                    set_str += ', ' + step.src_ids[0] + ')';
-                    set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
-                } else {
-                    set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                    set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
-                    set_str += '.glide(' + step.src_ids[0] + '); ';
-                }
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_INTERSECTION:
-                set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
-                set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_CIRCLE:
-                reset_str = 'delete ' + step.dest_sub_ids[0] + '; ';
-
-                if (step.args.create_point === true || step.args.create_midpoint === true) {
-
+                case JXG.GENTYPE_TANGENT:
                     if (step.args.create_point === true) {
+                        sub_id = step.dest_sub_ids[2];
+                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ',' + pn(step.args.usrCoords[2]) + ') <<id: \'';
+                        set_str += sub_id + '\', fillColor: \'' + step.args.fillColor + '\'>>; ' + sub_id + '.glide(';
+                        set_str += step.src_ids[0] + '); ';
+                        reset_str = 'delete ' + sub_id + '; ';
+                    } else
+                        sub_id = step.src_ids[0];
+
+                    set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'' + step.dest_sub_ids[0];
+                    set_str += '\', id: \'' + step.dest_sub_ids[0] + '\'>>, point2: <<name: \'' + step.dest_sub_ids[1];
+                    set_str += '\', id: \'' + step.dest_sub_ids[1] + '\'>> >>; ';
+                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_PARALLEL:
+                    if (step.args.create_point === true) {
+                        sub_id =  step.dest_sub_ids[1];
+                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') <<id: \'';
+                        set_str += sub_id + '\', name: \'\', visible: false, priv: true>>; ';
+                        reset_str = 'delete ' + sub_id + '; ';
+                    } else
+                        sub_id = step.src_ids[1];
+
+                    set_str += assign + 'parallel(' + step.src_ids[0] + ', ' + sub_id + ') <<' + attrid + 'point: <<id: \'';
+                    set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>> >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_BISECTORLINES:
+                    set_str = 'bisectorlines(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<line1: <<id: \'';
+                    set_str = set_str + step.dest_sub_ids[2] + '\', point1: <<id: \'' + step.dest_sub_ids[1];
+                    set_str += '\', name: \'' + step.dest_sub_ids[1] + '\'>>, point2: <<id: \'' + step.dest_sub_ids[0];
+                    set_str += '\', name: \'' + step.dest_sub_ids[0] + '\'>>>>, line2: <<id: \'' + step.dest_sub_ids[5];
+                    set_str += '\', point1: <<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4];
+                    set_str += '\'>>, point2: <<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3];
+                    set_str += '\'>>>>>>; ';
+                    reset_str = 'delete ' + step.dest_sub_ids[5] + '; delete ' + step.dest_sub_ids[4] + '; delete ';
+                    reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
+                    reset_str += step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
+                    if (step.args.create_line === true) {
+                        sub_id = step.dest_sub_ids[2];
+                        set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
+                        set_str += '\', visible: true>>; ';
+                        reset_str = 'delete ' + sub_id + '; ';
+                    } else
+                        sub_id = step.src_ids[2];
+
+                    set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
+                    set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
+                    set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                    set_str += '\'>> >>; ';
+                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_BISECTOR:
+                    set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
+                    set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
+                    set_str += step.dest_sub_ids[0] + '\'>>>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_NORMAL:
+                    if (step.args.create_point === true) {
+                        sub_id = step.dest_sub_ids[1];
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
+                        set_str += ') <<id: \'' + sub_id + '\', name: \'\', visible: false, priv: true>>; ';
+                        reset_str = 'delete ' + sub_id + '; ';
+                    } else
+                        sub_id = step.src_ids[1];
+
+                    set_str += assign + 'normal(' + sub_id + ', ' + step.src_ids[0] + ') <<' + attrid;
+                    set_str += 'point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += '\'>> >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_POINT:
+                    set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
+                    set_str += ')' + ( options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\'>>') + ';';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_GLIDER:
+                    if (options.useGlider) {
+                        set_str = assign + 'glider(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
+                        set_str += ', ' + step.src_ids[0] + ')';
+                        set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
                     } else {
-                        set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'';
-                        set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: false>>; ';
+                        set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
+                        set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += '.glide(' + step.src_ids[0] + '); ';
+                    }
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_INTERSECTION:
+                    set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
+                    set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_CIRCLE:
+                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ';
+
+                    if (step.args.create_point === true || step.args.create_midpoint === true) {
+
+                        if (step.args.create_point === true) {
+                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
+                            set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
+                        } else {
+                            set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'';
+                            set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: false>>; ';
+                        }
+
+                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    } else if (step.args.create_by_radius === true) {
+                        set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
+                        set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
+                        set_str += step.dest_sub_ids[0] + '.visible = false; ';
+                        set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    } else {
+                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
+                        set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                        set_str += '\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                     }
 
-                    set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    break;
 
-                } else if (step.args.create_by_radius === true) {
-                    set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
-                    set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
-                    set_str += step.dest_sub_ids[0] + '.visible = false; ';
-                    set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
-                } else {
-                    set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                    set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                    set_str += '\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-                }
-
-                break;
-
-            case JXG.GENTYPE_CIRCLE2POINTS:
-                if (step.args.create_two_points === true) {
-                    set_str = 'point(' + pn(step.args.x1) + ', ' + pn(step.args.y1) + ') <<id: \''+ step.dest_sub_ids[0];
-                    set_str += '\'>>; ';
-                    set_str += 'point(' + pn(step.args.x2) + ', ' + pn(step.args.y2) + ') <<id: \'';
-                    set_str += step.dest_sub_ids[1] + '\'>>; ';
-                    set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.dest_sub_ids[1] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
-                    reset_str += step.dest_sub_ids[0] + '; ';
-                } else if (step.args.create_point === true) {
-                    set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \''+ step.dest_sub_ids[0];
-                    set_str += '\'>>; ';
-                    set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
-                } else if (step.args.create_by_radius === true) {
-                    set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.args.r + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                } else {
-                    set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                }
-
-                break;
-
-            case JXG.GENTYPE_LINE:
-                k = 0;
-                j = 0;
-
-                if (step.args.create_point1 ) {
-                    pid1 = step.dest_sub_ids[k++];
-                    str1 = [];
-                    for (i = 0; i < step.args.p1.length; i++)
-                        str1[i] = pn(step.args.p1[i]);
-
-                    set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
-                    set_str += 'priv: true>>; ';
-                    reset_str = 'delete ' + pid1 + '; ';
-                } else
-                    pid1 = step.src_ids[j++];
-
-                if (step.args.create_point2) {
-                    pid2 = step.dest_sub_ids[k++];
-                    str1 = [];
-                    for (i = 0; i < step.args.p2.length; i++)
-                        str1[i] = pn(step.args.p2[i]);
-
-                    set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
-                    set_str += 'priv: true>>; ';
-                    reset_str = 'delete ' + pid2 + '; ' + reset_str;
-                } else
-                    pid2 = step.src_ids[j++];
-
-                str = 'line';
-                str1 = '';
-
-                // the line's parents
-                str2 = pid1 + ', ' + pid2;
-
-                // if we want a truly free line
-                if (step.args.create_point1 && step.args.create_point2 && options.freeLine) {
-                    // forget the points
-                    set_str = '';
-                    reset_str = '';
-
-                    // use the stdform instead
-                    if (step.args.p1.length === 2)
-                        step.args.p1.unshift(1);
-
-                    if (step.args.p2.length === 2)
-                        step.args.p2.unshift(1);
-
-                    str2 = JXG.Math.crossProduct(step.args.p1, step.args.p2);
-                    for (i = 0; i < str2.length; i++)
-                        str2[i] = pn(str2[i]);
-
-                    str2 = str2.join(', ');
-                }
-
-                if (!step.args.first && !step.args.last)
-                    str = 'segment';
-                else {
-                    if (!step.args.first)
-                        str1 = 'straightFirst: ' + step.args.first;
-
-                    if (!step.args.last)
-                        str1 = 'straightLast: ' + step.args.last;
-
-                    if (str1.length > 0 && !options.useSymbols)
-                        str1 += ', ';
-                }
-
-                // this is a corner case, we have to get rid of the ',' at the end
-                // simple solution: rebuild attrid
-                if (!options.useSymbols)
-                    attrid = ' id: \'' + step.dest_id + '\' ';
-
-                set_str += assign + str + '(' + str2 + ')';
-                set_str += (str1.length + attrid.length > 0 ? ' <<' + str1 + attrid + '>>' : '') + ';';
-                reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-
-                break;
-
-            case JXG.GENTYPE_TRIANGLE:
-                for (i=0; i<step.args.create_point.length; i++)
-                    if (step.args.create_point[i] === true) {
-                        set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
-                        set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
+                case JXG.GENTYPE_CIRCLE2POINTS:
+                    if (step.args.create_two_points === true) {
+                        set_str = 'point(' + pn(step.args.x1) + ', ' + pn(step.args.y1) + ') <<id: \''+ step.dest_sub_ids[0];
                         set_str += '\'>>; ';
+                        set_str += 'point(' + pn(step.args.x2) + ', ' + pn(step.args.y2) + ') <<id: \'';
+                        set_str += step.dest_sub_ids[1] + '\'>>; ';
+                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.dest_sub_ids[1] + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
+                        reset_str += step.dest_sub_ids[0] + '; ';
+                    } else if (step.args.create_point === true) {
+                        set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \''+ step.dest_sub_ids[0];
+                        set_str += '\'>>; ';
+                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    } else if (step.args.create_by_radius === true) {
+                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.args.r + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ';
+                    } else {
+                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ';
                     }
 
-                for (i=0; i<step.dest_sub_ids.length; i++)
-                    if (step.dest_sub_ids[i] !== 0)
-                        reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                    break;
 
-                reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                case JXG.GENTYPE_LINE:
+                    k = 0;
+                    j = 0;
 
-                set_str += assign + 'polygon(';
+                    if (step.args.create_point1 ) {
+                        pid1 = step.dest_sub_ids[k++];
+                        str1 = [];
+                        for (i = 0; i < step.args.p1.length; i++)
+                            str1[i] = pn(step.args.p1[i]);
 
-                for (i=0; i<step.src_ids.length; i++) {
-                    set_str += step.src_ids[i];
-                    if (i < step.src_ids.length-1)
-                        set_str += ', ';
-                }
+                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
+                        set_str += 'priv: true>>; ';
+                        reset_str = 'delete ' + pid1 + '; ';
+                    } else
+                        pid1 = step.src_ids[j++];
 
-                for (i=0; i<3; i++) {
-                    if (step.dest_sub_ids[i] !== 0) {
-                        if (step.src_ids.length > 0 || i > 0)
+                    if (step.args.create_point2) {
+                        pid2 = step.dest_sub_ids[k++];
+                        str1 = [];
+                        for (i = 0; i < step.args.p2.length; i++)
+                            str1[i] = pn(step.args.p2[i]);
+
+                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
+                        set_str += 'priv: true>>; ';
+                        reset_str = 'delete ' + pid2 + '; ' + reset_str;
+                    } else
+                        pid2 = step.src_ids[j++];
+
+                    str = 'line';
+                    str1 = '';
+
+                    // the line's parents
+                    str2 = pid1 + ', ' + pid2;
+
+                    // if we want a truly free line
+                    if (step.args.create_point1 && step.args.create_point2 && options.freeLine) {
+                        // forget the points
+                        set_str = '';
+                        reset_str = '';
+
+                        // use the stdform instead
+                        if (step.args.p1.length === 2)
+                            step.args.p1.unshift(1);
+
+                        if (step.args.p2.length === 2)
+                            step.args.p2.unshift(1);
+
+                        str2 = JXG.Math.crossProduct(step.args.p1, step.args.p2);
+                        for (i = 0; i < str2.length; i++)
+                            str2[i] = pn(str2[i]);
+
+                        str2 = str2.join(', ');
+                    }
+
+                    if (!step.args.first && !step.args.last)
+                        str = 'segment';
+                    else {
+                        if (!step.args.first)
+                            str1 = 'straightFirst: ' + step.args.first;
+
+                        if (!step.args.last)
+                            str1 = 'straightLast: ' + step.args.last;
+
+                        if (str1.length > 0 && !options.useSymbols)
+                            str1 += ', ';
+                    }
+
+                    // this is a corner case, we have to get rid of the ',' at the end
+                    // simple solution: rebuild attrid
+                    if (!options.useSymbols)
+                        attrid = ' id: \'' + step.dest_id + '\' ';
+
+                    set_str += assign + str + '(' + str2 + ')';
+                    set_str += (str1.length + attrid.length > 0 ? ' <<' + str1 + attrid + '>>' : '') + ';';
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    break;
+
+                case JXG.GENTYPE_TRIANGLE:
+                    for (i=0; i<step.args.create_point.length; i++)
+                        if (step.args.create_point[i] === true) {
+                            set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
+                            set_str += '\'>>; ';
+                        }
+
+                    for (i=0; i<step.dest_sub_ids.length; i++)
+                        if (step.dest_sub_ids[i] !== 0)
+                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    set_str += assign + 'polygon(';
+
+                    for (i=0; i<step.src_ids.length; i++) {
+                        set_str += step.src_ids[i];
+                        if (i < step.src_ids.length-1)
                             set_str += ', ';
-                        set_str += step.dest_sub_ids[i];
-                    }
-                }
-
-                set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
-                set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]>>, ' + attrid + ' fillOpacity: ';
-                set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
-                break;
-
-            case JXG.GENTYPE_QUADRILATERAL:
-                for (i=0; i<step.args.create_point.length; i++)
-                    if (step.args.create_point[i] === true) {
-                        set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
-                        set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                        set_str += '\'>>; ';
                     }
 
-                for (i=0; i<step.dest_sub_ids.length; i++)
-                    if (step.dest_sub_ids[i] !== 0)
-                        reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
-
-                reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-
-                set_str += assign + 'polygon(';
-
-                for (i=0; i<step.src_ids.length; i++) {
-                    set_str += step.src_ids[i];
-                    if (i < step.src_ids.length-1)
-                        set_str += ', ';
-                }
-
-                set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5];
-                set_str += '\', \'';
-                set_str += step.dest_sub_ids[6] + '\', \'' + step.dest_sub_ids[7] + '\' ]>>, ' + attrid;
-                set_str += ' fillOpacity: ';
-                set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
-                break;
-
-            case JXG.GENTYPE_TEXT:
-                set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
-                set_str += attrid + ' name: \'' + step.dest_id + '\'>>; ' + step.dest_id + '.setText(' + step.args.str;
-                set_str += '); ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_POLYGON:
-                set_str = assign + 'polygon(';
-
-                for (i=0; i<step.src_ids.length; i++) {
-                    set_str += step.src_ids[i];
-                    if (i != step.src_ids.length-1)
-                        set_str += ', ';
-                }
-
-                set_str += ') <<borders: <<ids: [ \'';
-
-                for (i=0; i<step.dest_sub_ids.length; i++) {
-                    set_str += step.dest_sub_ids[i];
-                    if (i < step.dest_sub_ids.length-1)
-                        set_str += '\', \'';
-                }
-
-                set_str += '\' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_REGULARPOLYGON:
-                set_str = assign + 'regularpolygon(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ';
-                set_str += step.args.corners + ') <<borders: <<ids: [ ';
-
-                for (i=0; i<step.args.corners; i++) {
-                    set_str += '\'' + step.dest_sub_ids[i] + '\'';
-                    if (i != step.args.corners-1)
-                        set_str += ', ';
-                    reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
-                }
-
-                set_str += ' ]>>, vertices: <<ids: [ ';
-
-                for (i=0; i<step.args.corners-2; i++) {
-                    set_str += '\'' + step.dest_sub_ids[i + parseInt(step.args.corners)] + '\'';
-                    if (i != step.args.corners-3)
-                        set_str += ', ';
-                    reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners)] + '; ' + reset_str;
-                }
-
-                set_str += ' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
-                reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-                break;
-
-            case JXG.GENTYPE_SECTOR:
-                set_str = assign + 'sector(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                set_str += ') <<';
-                set_str += attrid + ' name: \'' + step.dest_id + '\', fillOpacity: ' + JXG.Options.opacityLevel;
-                set_str += '>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_ANGLE:
-                set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                set_str += ') <<radiuspoint: << id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                set_str += '\'>>, pointsquare: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
-                set_str += '\'>>, dot: <<id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
-                set_str += '\'>>, ';
-                set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[2] + '; delete ';
-                reset_str += step.dest_sub_ids[1];
-                reset_str += '; delete ' + step.dest_sub_ids[0] + '; ';
-                break;
-
-            case JXG.GENTYPE_PLOT:
-                set_str = assign + step.args.plot_type + '(' + step.args.func + ') <<';
-
-                if (step.args.isPolar)
-                    set_str += 'curveType: \'polar\', ';
-
-                set_str += attrid + ' name:\'' + step.dest_id + '\'>>; ';
-                reset_str = 'delete ' + step.dest_id + '; ';
-                break;
-
-            case JXG.GENTYPE_SLIDER:
-                set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
-                set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';
-                set_str += pn(step.args.end) + ']) <<' + attrid + ' name: \'' + step.dest_id + '\', baseline: <<id: \'';
-                set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, highline: <<id: \'';
-                set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\'>>, point1: <<id: \'';
-                set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\'>>, point2: <<id: \'';
-                set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\'>>, label: <<id: \'';
-                set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\'>>>>; ';
-
-                reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[4] + '; delete ';
-                reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
-                reset_str += step.dest_sub_ids[1] + '; delete ';
-                reset_str += step.dest_sub_ids[0] + '; ';
-                break;
-
-            case JXG.GENTYPE_DELETE:
-
-                arr = [];
-                ctx_set_str = [];
-                ctx_reset_str = [];
-
-                for (i=0; i<step.args.steps.length; i++) {
-                    if (step_log[step.args.steps[i]].type > 50) {
-                        arr = this.generateJCodeMeta(step_log[step.args.steps[i]], board);
-                    } else {
-                        arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
-                    }
-
-                    if (arr[2].trim() !== '') {
-                        set_str = arr[2] + set_str;
-                    }
-                    if (JXG.isFunction(arr[3])) {
-                        ctx_set_str.unshift(arr[3]);
-                    }
-                    if (arr[0].trim() !== '') {
-                        reset_str += arr[0];
-                    }
-                    if (JXG.isFunction(arr[1])) {
-                        ctx_reset_str.push(arr[1]);
-                    }
-                }
-
-                break;
-
-            case JXG.GENTYPE_COPY:
-                copy_log = [];
-
-                // Adapt the steps to the new IDs
-
-                for (el in step.args.steps) {
-
-                    if (step.args.steps.hasOwnProperty(el)) {
-                        step2 = JXG.deepCopy(step_log[step.args.steps[el]]);
-
-                        if (step2.type == JXG.GENTYPE_COPY) {
-
-                            for (i=0; i<step2.args.map.length; i++)
-                                for (j=0; j<step.args.map.length; j++)
-                                    if (step2.args.map[i].copy == step.args.map[j].orig)
-                                        step2.args.map[i].copy = step.args.map[j].copy;
-
-                            step2 = JXG.SketchReader.replaceStepDestIds(step2, step2.args.map);
-                        } else
-                            step2 = JXG.SketchReader.replaceStepDestIds(step2, step.args.map);
-
-                        copy_log.push(step2);
-                    }
-                }
-
-                for (i=0; i<copy_log.length; i++) {
-
-                    if (copy_log[i].type > 50)
-                        arr = this.generateJCodeMeta(copy_log[i], board);
-                    else
-                        arr = this.generateJCode(copy_log[i], board, step_log);
-
-                    if (arr[0].trim() !== '')
-                        set_str += arr[0];
-                    if (JXG.isFunction(arr[1]))
-                        ctx_set_str.push(arr[1]);
-                    if (arr[2].trim() !== '')
-                        reset_str = arr[2] + reset_str;
-                    if (JXG.isFunction(arr[3]))
-                        ctx_reset_str.unshift(arr[3]);
-                }
-
-                // Apply the offset-translation to the free points of the copy
-
-                if (step.args.dep_copy) {
-
-                    for (i=0; i<step.args.map.length; i++) {
-                        if (getObject(step.args.map[i].orig).elementClass == JXG.OBJECT_CLASS_POINT) {
-                            set_str += step.args.map[i].copy;
-                            set_str += '.X = function() { return (' + step.args.map[i].orig + '.X() - ';
-                            set_str += pn(step.args.x) + '); }; ';
-                            set_str += step.args.map[i].copy;
-                            set_str += '.Y = function() { return (' + step.args.map[i].orig + '.Y() - ';
-                            set_str += pn(step.args.y) + '); }; ';
+                    for (i=0; i<3; i++) {
+                        if (step.dest_sub_ids[i] !== 0) {
+                            if (step.src_ids.length > 0 || i > 0)
+                                set_str += ', ';
+                            set_str += step.dest_sub_ids[i];
                         }
                     }
 
-                } else {
+                    set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
+                    set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]>>, ' + attrid + ' fillOpacity: ';
+                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
+                    break;
 
-                    for (i=0; i<step.args.free_points.length; i++) {
-                        xstart = getObject(step.args.free_points[i].orig).coords.usrCoords[1];
-                        ystart = getObject(step.args.free_points[i].orig).coords.usrCoords[2];
+                case JXG.GENTYPE_QUADRILATERAL:
+                    for (i=0; i<step.args.create_point.length; i++)
+                        if (step.args.create_point[i] === true) {
+                            set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
+                            set_str += '\'>>; ';
+                        }
 
-                        set_str += step.args.free_points[i].copy + '.X = function() { return ';
-                        set_str += pn(xstart - step.args.x) + '; }; ';
-                        set_str += step.args.free_points[i].copy + '.Y = function() { return ';
-                        set_str += pn(ystart - step.args.y) + '; }; ';
-                        set_str += step.args.free_points[i].copy + '.free(); ';
-                    }
-                }
+                    for (i=0; i<step.dest_sub_ids.length; i++)
+                        if (step.dest_sub_ids[i] !== 0)
+                            reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
 
-                for (j=0; j<step.args.map.length; j++) {
-                    el = getObject(step.args.map[j].orig);
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
 
-                    // Check if a radius-defined circle should be copied
-                    if (el.type == JXG.OBJECT_TYPE_CIRCLE && el.point2 == null) {
-                        // Make the radius of the circle copy depend on the original circle's radius
-                        set_str += step.args.map[j].copy + '.setRadius(function () { return ';
-                        set_str += step.args.map[j].orig + '.radius(); }); ';
-                    }
-                }
-
-                break;
-
-            case JXG.GENTYPE_TRANSLATE:
-
-                xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
-                ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
-
-                set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
-                set_str += step.dest_sub_ids[0] + '\'>>; ';
-                set_str += 'circle(' + step.dest_sub_ids[0] + ', 1) <<id: \'' + step.dest_sub_ids[1];
-                set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', visible: true>>; ' ;
-
-                if (step.args.fids.length == 1)
-                    step.args.func = step.args.fids[0] + '.radius()';
-                else
-                    step.args.func = 'dist(' + step.args.fids[0] + ', ' + step.args.fids[1] + ')';
-
-                set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ' ;
-
-                if (step.args.migrate != 0)
-                    set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
-                else
-                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
-
-                reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
-
-                break;
-
-            case JXG.GENTYPE_TRANSFORM:
-
-                set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
-                set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
-                set_str += '\', visible: true>>; ';
-
-                reset_str = 'delete ' + step.dest_id + '; ';
-                reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
-
-                break;
-
-            case JXG.GENTYPE_MOVEMENT:
-                if (step.args.obj_type == JXG.OBJECT_TYPE_LINE) {
-                    set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
-                    set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
-                    reset_str = step.src_ids[0] + '.move([' + step.args.zstart[0] + ', ' + step.args.xstart[0] + ', ';
-                    reset_str += step.args.ystart[0] + ']); ';
-
-                    set_str += step.src_ids[1] + '.move([' + pn(step.args.coords[1].usrCoords[0]) + ', ';
-                    set_str += pn(step.args.coords[1].usrCoords[1]) + ', ' + pn(step.args.coords[1].usrCoords[2]) + ']); ';
-                    reset_str += step.src_ids[1] + '.move([' + step.args.zstart[1] + ', ' + step.args.xstart[1] + ', ';
-                    reset_str += step.args.ystart[1] + ']); ';
-
-                } else if (step.args.obj_type == JXG.OBJECT_TYPE_CIRCLE) {
-                    set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
-                    set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-                    reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
-
-                    if (step.args.has_point2) {
-                        set_str += step.src_ids[1] + '.move([' + pn(step.args.coords[1].usrCoords[1]) + ', ';
-                        set_str += pn(step.args.coords[1].usrCoords[2]) + ']); ';
-                        reset_str += step.src_ids[1] + '.move([' + step.args.old_p2x + ', ' + step.args.old_p2y;
-                        reset_str += ']); ';
-                    }
-
-                } else if (step.args.obj_type == JXG.OBJECT_TYPE_GLIDER) {
-                    set_str = step.src_ids[0] + '.setPosition(' + pn(step.args.position) + '); ';
-                    reset_str = step.src_ids[0] + '.setPosition(' + step.args.xstart + '); ';
-
-                } else if (step.args.obj_type == JXG.OBJECT_TYPE_POLYGON) {
-                    set_str = reset_str = "";
+                    set_str += assign + 'polygon(';
 
                     for (i=0; i<step.src_ids.length; i++) {
-                        set_str += step.src_ids[i] + '.move([' + pn(step.args.coords[i].usrCoords[1]) + ', ';
-                        set_str += pn(step.args.coords[i].usrCoords[2]) + ']); ';
-                        reset_str += step.src_ids[i] + '.move([' + step.args.xstart[i] + ', ' + step.args.ystart[i];
-                        reset_str += ']); ';
+                        set_str += step.src_ids[i];
+                        if (i < step.src_ids.length-1)
+                            set_str += ', ';
                     }
-                } else {
-                    set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
-                    set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-                    reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+
+                    set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5];
+                    set_str += '\', \'';
+                    set_str += step.dest_sub_ids[6] + '\', \'' + step.dest_sub_ids[7] + '\' ]>>, ' + attrid;
+                    set_str += ' fillOpacity: ';
+                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
+                    break;
+
+                case JXG.GENTYPE_TEXT:
+                    set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
+                    set_str += attrid + ' name: \'' + step.dest_id + '\'>>; ' + step.dest_id + '.setText(' + step.args.str;
+                    set_str += '); ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_POLYGON:
+                    set_str = assign + 'polygon(';
+
+                    for (i=0; i<step.src_ids.length; i++) {
+                        set_str += step.src_ids[i];
+                        if (i != step.src_ids.length-1)
+                            set_str += ', ';
+                    }
+
+                    set_str += ') <<borders: <<ids: [ \'';
+
+                    for (i=0; i<step.dest_sub_ids.length; i++) {
+                        set_str += step.dest_sub_ids[i];
+                        if (i < step.dest_sub_ids.length-1)
+                            set_str += '\', \'';
+                    }
+
+                    set_str += '\' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_REGULARPOLYGON:
+                    set_str = assign + 'regularpolygon(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ';
+                    set_str += step.args.corners + ') <<borders: <<ids: [ ';
+
+                    for (i=0; i<step.args.corners; i++) {
+                        set_str += '\'' + step.dest_sub_ids[i] + '\'';
+                        if (i != step.args.corners-1)
+                            set_str += ', ';
+                        reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
+                    }
+
+                    set_str += ' ]>>, vertices: <<ids: [ ';
+
+                    for (i=0; i<step.args.corners-2; i++) {
+                        set_str += '\'' + step.dest_sub_ids[i + parseInt(step.args.corners)] + '\'';
+                        if (i != step.args.corners-3)
+                            set_str += ', ';
+                        reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners)] + '; ' + reset_str;
+                    }
+
+                    set_str += ' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_SECTOR:
+                    set_str = assign + 'sector(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
+                    set_str += ') <<';
+                    set_str += attrid + ' name: \'' + step.dest_id + '\', fillOpacity: ' + JXG.Options.opacityLevel;
+                    set_str += '>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_ANGLE:
+                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
+                    set_str += ') <<radiuspoint: << id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += '\'>>, pointsquare: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                    set_str += '\'>>, dot: <<id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
+                    set_str += '\'>>, ';
+                    set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[2] + '; delete ';
+                    reset_str += step.dest_sub_ids[1];
+                    reset_str += '; delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_PLOT:
+                    set_str = assign + step.args.plot_type + '(' + step.args.func + ') <<';
+
+                    if (step.args.isPolar)
+                        set_str += 'curveType: \'polar\', ';
+
+                    set_str += attrid + ' name:\'' + step.dest_id + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
+                case JXG.GENTYPE_SLIDER:
+                    set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
+                    set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';
+                    set_str += pn(step.args.end) + ']) <<' + attrid + ' name: \'' + step.dest_id + '\', baseline: <<id: \'';
+                    set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, highline: <<id: \'';
+                    set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\'>>, point1: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\'>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\'>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\'>>>>; ';
+
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[4] + '; delete ';
+                    reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
+                    reset_str += step.dest_sub_ids[1] + '; delete ';
+                    reset_str += step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_DELETE:
+
+                    arr = [];
+                    ctx_set_str = [];
+                    ctx_reset_str = [];
+
+                    for (i=0; i<step.args.steps.length; i++) {
+                        if (step_log[step.args.steps[i]].type > 50) {
+                            arr = this.generateJCodeMeta(step_log[step.args.steps[i]], board);
+                        } else {
+                            arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
+                        }
+
+                        if (arr[2].trim() !== '') {
+                            set_str = arr[2] + set_str;
+                        }
+                        if (JXG.isFunction(arr[3])) {
+                            ctx_set_str.unshift(arr[3]);
+                        }
+                        if (arr[0].trim() !== '') {
+                            reset_str += arr[0];
+                        }
+                        if (JXG.isFunction(arr[1])) {
+                            ctx_reset_str.push(arr[1]);
+                        }
+                    }
+
+                    break;
+
+                case JXG.GENTYPE_COPY:
+                    copy_log = [];
+
+                    // Adapt the steps to the new IDs
+
+                    for (el in step.args.steps) {
+
+                        if (step.args.steps.hasOwnProperty(el)) {
+                            step2 = JXG.deepCopy(step_log[step.args.steps[el]]);
+
+                            if (step2.type == JXG.GENTYPE_COPY) {
+
+                                for (i=0; i<step2.args.map.length; i++)
+                                    for (j=0; j<step.args.map.length; j++)
+                                        if (step2.args.map[i].copy == step.args.map[j].orig)
+                                            step2.args.map[i].copy = step.args.map[j].copy;
+
+                                step2 = JXG.SketchReader.replaceStepDestIds(step2, step2.args.map);
+                            } else
+                                step2 = JXG.SketchReader.replaceStepDestIds(step2, step.args.map);
+
+                            copy_log.push(step2);
+                        }
+                    }
+
+                    for (i=0; i<copy_log.length; i++) {
+
+                        if (copy_log[i].type > 50)
+                            arr = this.generateJCodeMeta(copy_log[i], board);
+                        else
+                            arr = this.generateJCode(copy_log[i], board, step_log);
+
+                        if (arr[0].trim() !== '')
+                            set_str += arr[0];
+                        if (JXG.isFunction(arr[1]))
+                            ctx_set_str.push(arr[1]);
+                        if (arr[2].trim() !== '')
+                            reset_str = arr[2] + reset_str;
+                        if (JXG.isFunction(arr[3]))
+                            ctx_reset_str.unshift(arr[3]);
+                    }
+
+                    // Apply the offset-translation to the free points of the copy
+
+                    if (step.args.dep_copy) {
+
+                        for (i=0; i<step.args.map.length; i++) {
+                            if (getObject(step.args.map[i].orig).elementClass == JXG.OBJECT_CLASS_POINT) {
+                                set_str += step.args.map[i].copy;
+                                set_str += '.X = function() { return (' + step.args.map[i].orig + '.X() - ';
+                                set_str += pn(step.args.x) + '); }; ';
+                                set_str += step.args.map[i].copy;
+                                set_str += '.Y = function() { return (' + step.args.map[i].orig + '.Y() - ';
+                                set_str += pn(step.args.y) + '); }; ';
+                            }
+                        }
+
+                    } else {
+
+                        for (i=0; i<step.args.free_points.length; i++) {
+                            xstart = getObject(step.args.free_points[i].orig).coords.usrCoords[1];
+                            ystart = getObject(step.args.free_points[i].orig).coords.usrCoords[2];
+
+                            set_str += step.args.free_points[i].copy + '.X = function() { return ';
+                            set_str += pn(xstart - step.args.x) + '; }; ';
+                            set_str += step.args.free_points[i].copy + '.Y = function() { return ';
+                            set_str += pn(ystart - step.args.y) + '; }; ';
+                            set_str += step.args.free_points[i].copy + '.free(); ';
+                        }
+                    }
+
+                    for (j=0; j<step.args.map.length; j++) {
+                        el = getObject(step.args.map[j].orig);
+
+                        // Check if a radius-defined circle should be copied
+                        if (el.type == JXG.OBJECT_TYPE_CIRCLE && el.point2 == null) {
+                            // Make the radius of the circle copy depend on the original circle's radius
+                            set_str += step.args.map[j].copy + '.setRadius(function () { return ';
+                            set_str += step.args.map[j].orig + '.radius(); }); ';
+                        }
+                    }
+
+                    break;
+
+                case JXG.GENTYPE_TRANSLATE:
+
+                    xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                    ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                    set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
+                    set_str += step.dest_sub_ids[0] + '\'>>; ';
+                    set_str += 'circle(' + step.dest_sub_ids[0] + ', 1) <<id: \'' + step.dest_sub_ids[1];
+                    set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', visible: true>>; ' ;
+
+                    if (step.args.fids.length == 1)
+                        step.args.func = step.args.fids[0] + '.radius()';
+                    else
+                        step.args.func = 'dist(' + step.args.fids[0] + ', ' + step.args.fids[1] + ')';
+
+                    set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ' ;
+
+                    if (step.args.migrate != 0)
+                        set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
+                    else
+                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+
+                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+
+                    break;
+
+                case JXG.GENTYPE_TRANSFORM:
+
+                    set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
+                    set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
+                    set_str += '\', visible: true>>; ';
+
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_MOVEMENT:
+                    if (step.args.obj_type == JXG.OBJECT_TYPE_LINE) {
+                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
+                        set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
+                        reset_str = step.src_ids[0] + '.move([' + step.args.zstart[0] + ', ' + step.args.xstart[0] + ', ';
+                        reset_str += step.args.ystart[0] + ']); ';
+
+                        set_str += step.src_ids[1] + '.move([' + pn(step.args.coords[1].usrCoords[0]) + ', ';
+                        set_str += pn(step.args.coords[1].usrCoords[1]) + ', ' + pn(step.args.coords[1].usrCoords[2]) + ']); ';
+                        reset_str += step.src_ids[1] + '.move([' + step.args.zstart[1] + ', ' + step.args.xstart[1] + ', ';
+                        reset_str += step.args.ystart[1] + ']); ';
+
+                    } else if (step.args.obj_type == JXG.OBJECT_TYPE_CIRCLE) {
+                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+                        set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
+                        reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+
+                        if (step.args.has_point2) {
+                            set_str += step.src_ids[1] + '.move([' + pn(step.args.coords[1].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[1].usrCoords[2]) + ']); ';
+                            reset_str += step.src_ids[1] + '.move([' + step.args.old_p2x + ', ' + step.args.old_p2y;
+                            reset_str += ']); ';
+                        }
+
+                    } else if (step.args.obj_type == JXG.OBJECT_TYPE_GLIDER) {
+                        set_str = step.src_ids[0] + '.setPosition(' + pn(step.args.position) + '); ';
+                        reset_str = step.src_ids[0] + '.setPosition(' + step.args.xstart + '); ';
+
+                    } else if (step.args.obj_type == JXG.OBJECT_TYPE_POLYGON) {
+                        set_str = reset_str = "";
+
+                        for (i=0; i<step.src_ids.length; i++) {
+                            set_str += step.src_ids[i] + '.move([' + pn(step.args.coords[i].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[i].usrCoords[2]) + ']); ';
+                            reset_str += step.src_ids[i] + '.move([' + step.args.xstart[i] + ', ' + step.args.ystart[i];
+                            reset_str += ']); ';
+                        }
+                    } else {
+                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+                        set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
+                        reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+                    }
+
+                    break;
+
+                default:
+                    return;
+            }
+
+            return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
+        },
+
+        replaceStepDestIds: function (step, id_map) {
+            var i, j, copy_ids = [];
+
+            for (i=0; i<id_map.length; i++) {
+                copy_ids.push(id_map[i].copy);
+
+                if (step.dest_id == id_map[i].orig)
+                    step.dest_id = id_map[i].copy;
+
+                for (j=0; j<step.dest_sub_ids.length; j++) {
+                    if (step.dest_sub_ids[j] == id_map[i].orig) {
+                        step.dest_sub_ids[j] = id_map[i].copy;
+                    }
                 }
 
-                break;
-
-            default:
-                return;
-        }
-
-        return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
-    },
-
-    replaceStepDestIds: function (step, id_map) {
-        var i, j, copy_ids = [];
-
-        for (i=0; i<id_map.length; i++) {
-            copy_ids.push(id_map[i].copy);
-
-            if (step.dest_id == id_map[i].orig)
-                step.dest_id = id_map[i].copy;
+                for (j=0; j<step.src_ids.length; j++) {
+                    if (step.src_ids[j] == id_map[i].orig) {
+                        step.src_ids[j] = id_map[i].copy;
+                    }
+                }
+            }
 
             for (j=0; j<step.dest_sub_ids.length; j++) {
-                if (step.dest_sub_ids[j] == id_map[i].orig) {
-                    step.dest_sub_ids[j] = id_map[i].copy;
+                if (!JXG.isInArray(copy_ids, step.dest_sub_ids[j])) {
+                    step.dest_sub_ids[j] = this.id();
                 }
             }
 
-            for (j=0; j<step.src_ids.length; j++) {
-                if (step.src_ids[j] == id_map[i].orig) {
-                    step.src_ids[j] = id_map[i].copy;
+            step.src_ids = JXG.uniqueArray(step.src_ids);
+            step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);
+
+            return step;
+        },
+
+        readSketch: function (str, board) {
+            var i, j, arr, json_obj, unzipped, meta, constr;
+
+            unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
+
+            if (!JXG.exists(unzipped[0])) {
+                return '';
+            }
+
+            unzipped = JXG.Util.utf8Decode(unzipped[0][0]);
+            constr = JSON.parse(unzipped);
+
+            for (i=0; i<constr.length-1; i++) {
+
+                if (constr[i].type == 0)
+                    continue;
+
+                // fix for files created with the beta version
+                if (constr[i].type == JXG.GENTYPE_CTX_VISIBILITY && constr[i].args.isGrid) {
+                    //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                    continue;
                 }
+
+                if (constr[i].type == JXG.GENTYPE_GRID) {
+                    //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                    continue;
+                }
+                // end of fix
+
+                /*if (constr[i].type == 100) // Obsolete fix
+                 constr[i].type = JXG.GENTYPE_MOVEMENT;
+
+                 if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
+
+                 for (j=i+1; j<constr.length-1; j++) {
+                 if (constr[j].type == JXG.GENTYPE_MOVEMENT && GUI.areEqual(constr[i].src_ids,
+                 constr[j].src_ids)) {
+                 constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                 break;
+                 }
+                 }
+
+                 if (j < constr.length-1)
+                 continue;
+                 }*/
+
+                if (constr[i].type == 27) // Obsolete fix
+                    constr[i].type = JXG.GENTYPE_DELETE;
+
+                if (constr[i].type == 31) // Obsolete fix
+                    constr[i].type = JXG.GENTYPE_TRANSLATE;
+
+                if (constr[i] > 50)
+                    arr = this.generateJCodeMeta(constr[i], board);
+                else
+                    arr = this.generateJCode(constr[i], board, constr);
+
+                board.jc.parse(arr[0], true);
             }
+
+            meta = constr.pop();
+
+            // not yet :(
+            //if (meta.axisVisible)
+            //if (meta.gridVisible)
+
+            arr = meta.boundingBox; // bounding box
+            board.setBoundingBox(arr);
+
+            // these might be important in the future
+            //GUI.transformation = meta.transformation; // transformation matrices (rotations, ...)
+            //GUI.restore_state = meta.restoreState; // restore states
+
+            board.options.grid.snapToGrid = !meta.snapToGrid;
+            board.options.point.snapToGrid = !meta.snapToGrid;
+            board.options.point.snapToPoints = !meta.snapToPoints;
+
+            return '';
         }
-
-        for (j=0; j<step.dest_sub_ids.length; j++) {
-            if (!JXG.isInArray(copy_ids, step.dest_sub_ids[j])) {
-                step.dest_sub_ids[j] = this.id();
-            }
-        }
-
-        step.src_ids = JXG.uniqueArray(step.src_ids);
-        step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);
-
-        return step;
     },
-    
-    readSketch: function (str, board) {
-        var i, j, arr, json_obj, unzipped, meta, constr;
 
-        unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
+    Draw: {
 
-        if (!JXG.exists(unzipped[0])) {
-            return ''; 
-        }
+        recordStepMeta: function (step, evaluate) { },
 
-        unzipped = JXG.Util.utf8Decode(unzipped[0][0]);
-        constr = JSON.parse(unzipped);
+        /**
+         *	This function finds visible objects in the board hitted by the submitted coords
+         *	(within the desired sensitivity),
+         *  with an elementClass which IS included in class_in_arr and a type which is NOT
+         *  included in type_ex_arr.
+         *  As soon as #count objects have been found, the function returns.
+         *  If invisible objects shall also be included, the
+         *  boolean variable invisible has to be set.
+         */
+        findHittedObjs: function(coords, board, sensitive_area, class_in_arr, type_ex_arr, count, invisible) {
 
-        for (i=0; i<constr.length-1; i++) {
+            var hasPoint = board.options.precision.hasPoint, els = [];
 
-            if (constr[i].type == 0)
-                continue;
+            if (typeof invisible == 'undefined')
+                invisible = false;
 
-            // fix for files created with the beta version
-            if (constr[i].type == JXG.GENTYPE_CTX_VISIBILITY && constr[i].args.isGrid) {
-                //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                continue;
-            }
+            board.options.precision.hasPoint = sensitive_area;
 
-            if (constr[i].type == JXG.GENTYPE_GRID) {
-                //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                continue;
-            }
-            // end of fix
+            for (var el in board.objects) {
 
-            /*if (constr[i].type == 100) // Obsolete fix
-                constr[i].type = JXG.GENTYPE_MOVEMENT;
+                if(board.objects.hasOwnProperty(el)) {
+                    // Private objects shall not be counted
+                    if (board.objects[el].visProp.priv && board.objects[el].visProp.priv === true)
+                        continue;
 
-            if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
+                    if (typeof type_ex_arr != 'undefined'
+                        // Excluded types shall not be counted
+                        && JXG.collectionContains(type_ex_arr, board.objects[el].type))
+                        continue;
 
-                for (j=i+1; j<constr.length-1; j++) {
-                    if (constr[j].type == JXG.GENTYPE_MOVEMENT && GUI.areEqual(constr[i].src_ids,
-                        constr[j].src_ids)) {
-                        constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                        break;
+                    if (board.objects[el].hasPoint && (board.objects[el].visProp['visible'] || invisible)
+                        && JXG.collectionContains(class_in_arr, board.objects[el].elementClass)) {
+
+                        if (sensitive_area === 0
+                            || board.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
+                            els.push(board.objects[el]);
+                            if (typeof count != 'undefined' && count == els.length)
+                                break;
+                        }
                     }
                 }
+            }
 
-                if (j < constr.length-1)
-                    continue;
-            }*/
+            board.options.precision.hasPoint = hasPoint;
+            return els;
+        },
 
-            if (constr[i].type == 27) // Obsolete fix
-                constr[i].type = JXG.GENTYPE_DELETE;
+        /**
+         *	Function which finds board objects hitted by the point segment ranging
+         *	from indices [seg_start, seg_end].
+         * 	@array The hitted objects
+         */
+        findHittedObjsBySegment: function(point_segment, seg_start, seg_end, board, sensitive_area,
+                                          class_in_arr, type_ex_arr, count) {
 
-            if (constr[i].type == 31) // Obsolete fix
-                constr[i].type = JXG.GENTYPE_TRANSLATE;
+            var c, dir, pt, obj = [];
 
-            if (constr[i] > 50)
-                arr = this.generateJCodeMeta(constr[i], board);
+            if (typeof count == 'undefined')
+                c = Infinity;
             else
-                arr = this.generateJCode(constr[i], board, constr);
+                c = count;
 
-            board.jc.parse(arr[0], true);
+            if (seg_start > seg_end) {
+                dir = -1;
+            } else
+                dir = 1;
+
+            if (seg_start >= point_segment.length)
+                seg_start = point_segment.length - 1;
+
+            if (seg_end >= point_segment.length)
+                seg_end = point_segment.length - 1;
+
+            pt = seg_start;
+
+            do {
+                obj = obj.concat(JXG.Draw.findHittedObjs(point_segment[pt], board, sensitive_area,
+                    class_in_arr, type_ex_arr));
+                pt += dir;
+
+            } while (obj.length < c && dir * pt < dir * seg_end);
+
+            return JXG.uniqueArray(obj);
+        },
+
+        /**
+         * Counts how many data points are in the board objects range within the sensitive area
+         * @param {Array} data Array with JXG.Coords
+         * @param {JXG.GeometryElement} obj
+         * @param {Number} sensitive_area The tolerance range
+         * @param {JXG.Board} board The board object
+         * @returns {Number} the amount of data points in range
+         */
+        countContainedPoints: function(data, obj, sensitive_area, board) {
+
+            var count = 0, hasPoint = board.options.precision.hasPoint;
+            board.options.precision.hasPoint = sensitive_area;
+
+            if (obj.hasPoint) {
+                for (var i = 0; i < data.length; i++)
+                    if (obj.hasPoint(data[i].scrCoords[1], data[i].scrCoords[2]))
+                        count++;
+            }
+
+            board.options.precision.hasPoint = hasPoint;
+            return count;
+        },
+
+        /**
+         * Find a point in the reference (array), which is closest
+         * to the given point's usrCoords and in range of the sensitive area.
+         * @return {JXG.Point} point from the reference array or null
+         */
+        findPointNextTo: function(point, reference, sensitive_area) {
+
+            var i, p, r, dist2, min = Infinity, pp = null;
+
+            if (JXG.exists(point.coords))
+                p = point.coords;
+            else
+                p = point;
+
+            for (i=0; i<reference.length; i++) {
+
+                if (reference[i].coords != null)
+                    r = reference[i].coords;
+                else
+                    r = reference[i];
+
+                dist2 = (p.scrCoords[1] - r.scrCoords[1]) * (p.scrCoords[1] - r.scrCoords[1])
+                    + (p.scrCoords[2] - r.scrCoords[2]) * (p.scrCoords[2] - r.scrCoords[2]);
+
+                if (dist2 < min && (dist2 < sensitive_area || sensitive_area === 0)) {
+                    min = dist2;
+                    pp = reference[i];
+                }
+            }
+
+            return pp;
+        },
+
+        drawMidPoint: function (curvepoints) {
+
+            if (curvepoints.length >= 2) {
+                var step = { type: JXG.GENTYPE_MID, args: { fillColor: '#ffffff'},
+                    src_ids: [ curvepoints[0].id, curvepoints[curvepoints.length - 1].id],
+                    dest_sub_ids: [], dest_id: JXG.SketchReader.id() };
+
+                this.recordStepMeta(step, true);
+
+                return step.dest_id;
+            } else
+                return 0;
+        },
+
+        drawReflection: function(board, points, curvepoints) {
+
+            var i, lcount, pcount, lmax = 0, pmax = 0, lidx, pidx, obj;
+
+            obj = JXG.Draw.findHittedObjsBySegment(points, points.length, points.length - points.length/3,
+                board, JXG.Options.sensitive_area, [ JXG.OBJECT_CLASS_LINE, JXG.OBJECT_CLASS_CIRCLE,
+                    JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_CURVE, JXG.OBJECT_CLASS_AREA,
+                    JXG.OBJECT_CLASS_OTHER ], [ JXG.OBJECT_TYPE_TICKS, JXG.OBJECT_TYPE_TEXT ]);
+
+            for (i=0; i<obj.length; i++) {
+                if (obj[i].elementClass == JXG.OBJECT_CLASS_LINE) {
+                    if ((lcount = JXG.Draw.countContainedPoints(points, obj[i],
+                        JXG.Options.sensitive_area, board)) > lmax) {
+                        lmax = lcount;
+                        lidx = i;
+                    }
+
+                } else if (obj[i].elementClass == JXG.OBJECT_CLASS_POINT) {
+                    if ((pcount = JXG.Draw.countContainedPoints(points, obj[i],
+                            JXG.Options.sensitive_area, board)) > pmax) {
+                        pmax = pcount;
+                        pidx = i;
+                    }
+                }
+            }
+
+            if (pmax === 0) { // no reflection point found
+                if (lmax === 0) { // no reflection line found
+                    return;
+                } else
+                    i = lidx;
+            } else
+                i = pidx;
+
+            if (curvepoints.length === 0 ||
+                    (curvepoints.length == 1 && obj[i].elementClass == JXG.OBJECT_CLASS_POINT))
+                return;
+
+            var p, step = {};
+
+            p = JXG.Draw.findPointNextTo(points[0], curvepoints, 0);
+
+            step.args = {};
+            step.dest_sub_ids = [];
+
+            step.src_ids = [ p.id, obj[i].id ];
+            step.dest_id = JXG.SketchReader.id();
+
+            step.args.fillColor = '#ffffff';
+
+            if (obj[i].elementClass == JXG.OBJECT_CLASS_LINE)
+                step.type = JXG.GENTYPE_REFLECTION;
+            else
+                step.type = JXG.GENTYPE_MIRRORPOINT;
+
+            this.recordStepMeta(step, true);
         }
-
-        meta = constr.pop();
-
-        // not yet :(
-        //if (meta.axisVisible)
-        //if (meta.gridVisible)
-
-        arr = meta.boundingBox; // bounding box
-        board.setBoundingBox(arr);
-
-        // these might be important in the future
-        //GUI.transformation = meta.transformation; // transformation matrices (rotations, ...)
-        //GUI.restore_state = meta.restoreState; // restore states
-
-        board.options.grid.snapToGrid = !meta.snapToGrid;
-        board.options.point.snapToGrid = !meta.snapToGrid;
-        board.options.point.snapToPoints = !meta.snapToPoints;
-        
-        return '';
     }
-};
+
+});
