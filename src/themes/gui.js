@@ -4,6 +4,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     axisScaleY: 1,
 
+    device: 'tablet',
+
     opacityLevel: 0.5,
 
     sensitive_area: 20,
