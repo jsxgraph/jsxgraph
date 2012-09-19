@@ -485,6 +485,10 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         c1 = c1.scrCoords;
         c2 = c2.scrCoords;
         
+        if (!JXG.exists(this.label.content)) {
+            return new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
+        }
+        
         switch (this.label.content.visProp.position) {
             case 'lft':
             case 'llft':

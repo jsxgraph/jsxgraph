@@ -4,17 +4,23 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     axisScaleY: 1,
 
+    device: 'tablet',
+
     opacityLevel: 0.5,
+
+    sensitive_area: 20,
+
+    lastRegPolCorners: 3,
 
     angle: {
 		fillColor: '#ddd',
 		strokeColor: '#000'
 	},
 
-	glider : {
-		fillColor: '#ff0',
-		strokeColor: '#000'
-	},
+    glider : {
+   		fillColor: '#ff0',
+   		strokeColor: '#000'
+   	},
 
 	intersection: {
 		fillColor: '#fff'

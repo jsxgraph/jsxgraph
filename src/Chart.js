@@ -600,8 +600,9 @@ JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
                 var lxoff = attributes['legendleftoffset'] || 2;
                 var lyoff = attributes['legendtopoffset'] || 1;
                 this.legend = board.create('legend', [xc+radius+lxoff,yc+radius-lyoff],
-                {labelArray:labelArray,
-                    colorArray: colorArray
+                {
+                    labels: labelArray,
+                    colors: colorArray
                 });
                 break;
             case 'none':
@@ -817,17 +818,19 @@ JXG.Legend.prototype.drawVerticalLegend = function(board, attributes) {
         this.myAtts['strokecolor'] = this.color_array[i];
         this.myAtts['highlightstrokecolor'] = this.color_array[i];
         this.myAtts['name'] = this.label_array[i];
-        this.myAtts['label'] = {offset:[40, 0], strokeColor: this.color_array[i], strokeWidth: this.myAtts.strokewidth};
+        this.myAtts['label'] = {offset:[10, 0], strokeColor: this.color_array[i], strokeWidth: this.myAtts.strokewidth};
         
         this.lines[i] = board.create('line', 
                 [[this.coords.usrCoords[1],this.coords.usrCoords[2] - i*offy],
                 [this.coords.usrCoords[1] + line_length,this.coords.usrCoords[2] - i*offy]],
                 this.myAtts
                 );
+
         this.lines[i].getLabelAnchor = function() {
             this.setLabelRelativeCoords(this.visProp.label.offset);
             return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(),this.point2.Y()],this.board);
         }
+
     }
 };
 
