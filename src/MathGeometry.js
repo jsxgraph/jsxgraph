@@ -1005,21 +1005,28 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             t1 = t1ini;
             t2 = t2ini;
         }
+
         /*
          if (t1>c1.maxX()) { t1 = c1.maxX(); }
          if (t1<c1.minX()) { t1 = c1.minX(); }
          if (t2>c2.maxX()) { t2 = c2.maxX(); }
          if (t2<c2.minX()) { t2 = c2.minX(); }
          */
+
+        c1X = function(t) { return c1.X.apply(c1, [t]); };
+        c1Y = function(t) { return c1.Y.apply(c1, [t]); };
+        c2X = function(t) { return c2.X.apply(c2, [t]); };
+        c2Y = function(t) { return c2.Y.apply(c2, [t]); };
+         
         e = c1.X(t1) - c2.X(t2);
         f = c1.Y(t1) - c2.Y(t2);
         F = e * e + f * f;
-
-        D00 = c1.board.D(c1.X, c1);
-        D01 = c2.board.D(c2.X, c2);
-        D10 = c1.board.D(c1.Y, c1);
-        D11 = c2.board.D(c2.Y, c2);
-
+        
+        D00 = board.D(c1.X, c1);
+        D01 = board.D(c2.X, c2);
+        D10 = board.D(c1.Y, c1);
+        D11 = board.D(c2.Y, c2);
+        
         while (F > JXG.Math.eps && count < 10) {
             a = D00(t1);
             b = -D01(t2);
