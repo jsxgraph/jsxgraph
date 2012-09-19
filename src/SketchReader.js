@@ -909,24 +909,24 @@ JXG.extend(JXG, {
                     continue;
                 }
                 // end of fix
+/*
+                if (constr[i].type == 100) // Obsolete fix
+                    constr[i].type = JXG.GENTYPE_MOVEMENT;
 
-                /*if (constr[i].type == 100) // Obsolete fix
-                 constr[i].type = JXG.GENTYPE_MOVEMENT;
+                if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
 
-                 if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
+                    for (j=i+1; j<constr.length-1; j++) {
+                        if (constr[j].type == JXG.GENTYPE_MOVEMENT && JXG.Draw.areEqual(constr[i].src_ids,
+                            constr[j].src_ids)) {
+                            constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
+                            break;
+                        }
+                    }
 
-                 for (j=i+1; j<constr.length-1; j++) {
-                 if (constr[j].type == JXG.GENTYPE_MOVEMENT && GUI.areEqual(constr[i].src_ids,
-                 constr[j].src_ids)) {
-                 constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                 break;
-                 }
-                 }
-
-                 if (j < constr.length-1)
-                 continue;
-                 }*/
-
+                    if (j < constr.length-1)
+                        continue;
+                }
+*/
                 if (constr[i].type == 27) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_DELETE;
 
@@ -966,6 +966,60 @@ JXG.extend(JXG, {
 
         recordStepMeta: function (step, evaluate) {},
 
+        areEqual: function(obj1, obj2) {
+
+            if (JXG.isArray2(obj1)) {
+                if (JXG.isArray2(obj2))
+                    return JXG.Draw.areEqualArrays(obj1, obj2);
+                else
+                    return false;
+            }
+
+            if (JXG.isArray2(obj2))
+                return false;
+
+            if (JXG.isObject(obj1)) {
+                if (JXG.isObject(obj2))
+                    return JXG.Draw.areEqualObjects(obj1, obj2);
+                else
+                    return false;
+            }
+
+            if (JXG.isObject(obj2))
+                return false;
+
+            return obj1 === obj2;
+        },
+
+        areEqualArrays: function(obj1, obj2) {
+
+            if (obj1.length != obj2.length)
+                return false;
+
+            for (var i=0; i<obj1.length; i++)
+                if (!JXG.Draw.areEqual(obj1[i], obj2[i]))
+                    return false;
+
+            return true;
+        },
+
+        areEqualObjects: function(obj1, obj2) {
+
+            console.log("test1");
+
+            for (var el1 in obj1)
+                if (obj1.hasOwnProperty(el1))
+                    if (!JXG.Draw.areEqual(obj1[el1], obj2[el1]))
+                        return false;
+
+            for (var el2 in obj2)
+                if (obj2.hasOwnProperty(el2))
+                    if (!JXG.Draw.areEqual(obj2[el2], obj1[el2]))
+                        return false;
+
+            return true;
+        },
+
         /**
          * This function computes the distance between two points.
          * The points can have the type JXG.Coords or JXG.Point.
@@ -983,7 +1037,7 @@ JXG.extend(JXG, {
                 usr1.push(coord_or_point1.usrCoords[1]);
                 usr1.push(coord_or_point1.usrCoords[2]);
             } else
-                console.log("inconsistency in GUI.dist");
+                console.log("inconsistency in dist");
 
             if (coord_or_point2.coords != null) {
                 usr2.push(coord_or_point2.coords.usrCoords[1]);
@@ -992,7 +1046,7 @@ JXG.extend(JXG, {
                 usr2.push(coord_or_point2.usrCoords[1]);
                 usr2.push(coord_or_point2.usrCoords[2]);
             } else
-                console.log("inconsistency in GUI.dist");
+                console.log("inconsistency in dist");
 
             return (usr1[0] - usr2[0]) * (usr1[0] - usr2[0]) + (usr1[1] - usr2[1]) * (usr1[1] - usr2[1]);
         },
@@ -1400,6 +1454,435 @@ JXG.extend(JXG, {
             }
 
             return null;
+        },
+
+        visualize: function (points) {
+
+            var i, n = points.length;
+
+            if (points[0] != points[n - 1])
+                board.create('line', [
+                    [points[n - 1].usrCoords[1], points[n - 1].usrCoords[2]],
+                    [points[0].usrCoords[1], points[0].usrCoords[2]]
+                ], {straightFirst:false, straightLast:false});
+
+            for (i = 0; i < n - 1; i++)
+                board.create('line', [
+                    [points[i].usrCoords[1], points[i].usrCoords[2]],
+                    [points[i + 1].usrCoords[1], points[i + 1].usrCoords[2]]
+                ], {straightFirst:false, straightLast:false});
+        },
+
+        /**
+       	 * Checks if a board point already exists,
+       	 * which has the same coords, ancenstors and dependencies as the submitted point,
+       	 * but is not the same.
+       	 *
+       	 * @param {JXG.Point} point The point to be checked
+       	 * @return {JXG.Point} an equal board point or null if none could be found
+       	 */
+       	pointAlreadyExists: function(board, point) {
+       
+       		var el, an, equal;
+       
+       		for (el in board.objects) {
+       			if (board.objects.hasOwnProperty(el)) {
+       
+       				equal = true;
+       
+       				if (board.objects[el].elementClass == JXG.OBJECT_CLASS_POINT && board.objects[el] != point) {
+       
+       					for (an in board.objects[el].ancestors)
+       						if (board.objects[el].ancestors.hasOwnProperty(an)) {
+       							if (!JXG.collectionContains(point.ancestors, board.objects[el].ancestors[an])) {
+       								equal = false;
+       								break;
+       							}
+       						}
+       
+       					if (equal) {
+       						for (an in point.ancestors)
+       							if (point.ancestors.hasOwnProperty(an)) {
+       								if (!JXG.collectionContains(board.objects[el].ancestors, point.ancestors[an])) {
+       									equal = false;
+       									break;
+       								}
+       							}
+       					}
+       
+       					if (equal) {
+       						equal = (Math.abs(point.coords.usrCoords[1] - board.objects[el].coords.usrCoords[1])
+       							+ Math.abs(point.coords.usrCoords[2] - board.objects[el].coords.usrCoords[2]) < 0.1);
+       					}
+       
+       					if (equal) {
+       						return board.objects[el];
+       					}
+       				}
+       			}
+       		}
+       
+       		return null;
+       	},
+
+        /*
+         * Sorts points such that points with lower x-values
+         * come first. If the x values are equal, sort the points
+         * such that those with smaller y values come first.
+         */
+        sortXY: function (points) {
+
+            var tmp, i, j;
+
+            for (i = 0; i < points.length; i++) {
+                for (j = i + 1; j < points.length; j++) {
+
+                    if (points[j].usrCoords[1] < points[i].usrCoords[1]
+                        || (points[j].usrCoords[1] == points[i].usrCoords[1]
+                        && points[j].usrCoords[2] < points[i].usrCoords[2])) {
+
+                        tmp = points[j];
+                        points[j] = points[i];
+                        points[i] = tmp;
+                    }
+                }
+            }
+        },
+
+        /**
+         * Computes and return the points, which define the convex hull of a given points array.
+         * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+         * @param points -- an array containing JXG.points
+         * @param vis -- a boolean which reflects if the convex hull shall be visualized
+         */
+        convexHull: function (points, vis) {
+            var cross = function (O, A, B) {
+                return ((A.usrCoords[1] - O.usrCoords[1]) * (B.usrCoords[2] - O.usrCoords[2])
+                    - (A.usrCoords[2] - O.usrCoords[2]) * (B.usrCoords[1] - O.usrCoords[1]));
+            };
+            var i, t, k = 0, H = [];
+
+            JXG.Draw.sortXY(points); // Remember: this changes the points array!
+
+            for (i = 0; i < points.length; i++) {
+                while (k >= 2 && cross(H[k - 2], H[k - 1], points[i]) <= 0)
+                    k--;
+                H[k++] = points[i];
+            }
+
+            for (i = points.length - 2, t = k + 1; i >= 0; i--) {
+                while (k >= t && cross(H[k - 2], H[k - 1], points[i]) <= 0)
+                    k--;
+                H[k++] = points[i];
+            }
+
+            H.length = k;
+
+            if (typeof vis != 'undefined' && vis)
+                JXG.Draw.visualize(H);
+
+            return H;
+        },
+
+        /**
+       	 * This function generates all possible k-tupels
+       	 * from the submitted points array and returns
+       	 * the tupels as an array of tupel-arrays
+       	 * @param points
+       	 * @param k
+       	 */
+       	buildTupels: function (points, k, respectSorting) {
+
+       		var start, i, j, points2, tupels = [], ret = [];
+
+       		if (k === 0 || points.length < k)
+       			return ret;
+
+       		if (k == 1) {
+       			for (i=0; i<points.length; i++)
+       				ret.push([ points[i] ]);
+       			return ret;
+       		}
+
+       		if (typeof respectSorting == 'undefined')
+       			respectSorting = true;
+
+       		for (i=0; i<points.length; i++) {
+       			points2 = [];
+
+       			if (respectSorting)
+       				start = i+1;
+       			else
+       				start = 0;
+
+       			for (j=start; j<points.length; j++) {
+       				if (j == i)
+       					continue;
+       				points2.push(points[j]);
+       			}
+
+       			tupels = JXG.Draw.buildTupels(points2, k-1, respectSorting);
+
+       			for (j=0; j<tupels.length; j++) {
+       				JXG.Draw.sortXY(tupels[j].push(points[i]));
+       				ret.push(tupels[j]);
+
+       				// If we really want the BEST FIT polygon, the next two lines have to be omitted,
+       				// ==> but then the computation time increases too much ...
+
+       				if (ret.length > 2)
+       					return JXG.uniqueArray(ret);
+
+       				// The question is: fast OR exact?
+       			}
+       		}
+
+       		return JXG.uniqueArray(ret);
+       	},
+
+        /**
+         * This function picks out of the points array a subset of k points,
+         * such that the resulting polygon's area is maximal and contains
+         * a pre-defined set of required points (see: drawTri/Quadrangle).
+         * @param points
+         * @param k
+         */
+        findMaxAreaPoints: function (board, points, k) {
+
+            var i, j, a, pol, idx = -1, max = -Infinity, n = points.length;
+            var required = [], optional = [], p = [], tupels;
+
+            for (i = 0; i < n; i++)
+                if (typeof points[i].elementClass != 'undefined')
+                    required.push(points[i]);
+                else
+                    optional.push(points[i]);
+
+            while (required.length > k)
+                required.pop();
+
+            if (required.length == k)
+                return { req:required, status:true };
+
+            if (optional.length < k - required.length) {
+                console.log("too few optional points!");
+                console.log("k: " + k);
+                console.log("n: " + n);
+                console.log("optional: " + optional.length);
+                console.log("required: " + required.length);
+
+                return { req:required, status:false };
+            }
+
+            if (optional.length > k - required.length) {
+
+                console.log("too much optional points!");
+
+                tupels = JXG.Draw.buildTupels(optional, k - required.length, true);
+
+                for (i = 0; i < tupels.length; i++) {
+
+                    p = [];
+                    for (j = 0; j < tupels[i].length; j++)
+                        p[j] = board.create('point', [ tupels[i][j].usrCoords[1], tupels[i][j].usrCoords[2] ],
+                            {visible:false});
+                    p.push(p[0]);
+
+                    pol = board.create('polygon', p, {visible:false});
+
+                    board.removeObject(pol);
+                    for (j = 0; j < p.length; j++)
+                        board.removeObject(p[j]);
+
+                    a = pol.Area();
+
+                    if (a >= max) {
+                        max = a;
+                        idx = i;
+                    }
+                }
+
+                if (idx != -1)
+                    for (i = 0; i < tupels[idx].length; i++)
+                        required.push(tupels[idx][i]);
+                else {
+                    console.log("Tupels: " + tupels.length);
+                    console.log("k: " + k);
+                    console.log("n: " + n);
+                    console.log("optional: " + optional.length);
+                    console.log("required: " + required.length);
+                    console.log("max area error");
+
+                    return { req:[], status:false };
+                }
+
+            } else {
+                for (i = 0; i < optional.length; i++)
+                    required.push(optional[i]);
+            }
+
+            return { req:required, status:true };
+        },
+
+        /**
+         * Fit data points to a reference array of board points.
+         */
+        fitPoints: function (data, reference) {
+
+            var i, p, ret = [];
+
+            if (reference.length === 0)
+                return data;
+
+            for (i = 0; i < reference.length; i++) {
+                p = JXG.Draw.findPointNextTo(reference[i], data, 0);
+
+                if (p == null) {
+                    console.log('inconsistency in fitPoints: data.len is smaller than ref.len');
+                    break;
+                } else {
+                    JXG.removeElementFromArray(data, p);
+                    ret.push(reference[i]);
+                }
+            }
+
+            for (i = 0; i < data.length; i++)
+                ret.push(data[i]);
+
+            return ret;
+        },
+
+        drawPoint: function (board, points) {
+            var i, j, p, obj, i_obj = [], ex = [ JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_TYPE_POLYGON ];
+    
+            obj = JXG.Draw.findHittedObjs(points[0], board, JXG.Options.sensitive_area,
+                [ JXG.OBJECT_CLASS_LINE, JXG.OBJECT_CLASS_CIRCLE, JXG.OBJECT_CLASS_POINT,
+                    JXG.OBJECT_CLASS_CURVE, JXG.OBJECT_CLASS_AREA, JXG.OBJECT_CLASS_OTHER ], ex);
+    
+            // Remove points and gliders from the hitted object array
+    
+            for (i=0; i<obj.length; i++) {
+                if (obj[i].elementClass == JXG.OBJECT_CLASS_POINT) {
+                    JXG.removeElementFromArray(obj, obj[i]);
+                    i--;
+                }
+            }
+    
+            var step = {};
+    
+            step.args = {};
+            step.src_ids = [];
+            step.dest_sub_ids = [];
+            step.dest_id = 0;
+    
+            if (obj.length <= 1) {
+    
+                step.dest_id = JXG.SketchReader.id();
+                step.args.usrCoords = JXG.deepCopy(points[0].usrCoords);
+    
+                if (obj.length !== 0) {
+                    step.type = JXG.GENTYPE_GLIDER;
+                    step.args.fillColor = JXG.options.glider.fillColor;
+                    step.src_ids = [ obj[0].id ];
+                } else
+                    step.type = JXG.GENTYPE_POINT;
+    
+                this.recordStepMeta(step, true);
+    
+            } else { // obj.length >= 2
+    
+                var name, nameHTML, i1, i2, intersect = [], dialog_needed = false,
+                    zoom_sens_area = 2*JXG.Options.sensitive_area / (board.unitX + board.unitY);
+    
+                if (JXG.Options.device == 'tablet')
+                    zoom_sens_area *= 2;
+    
+                board.suspendUpdate();
+    
+                // Build all possible intersections of pairs of hitted objects
+    
+                for (i=0; i<obj.length; i++) {
+                    for (j=i+1; j<obj.length; j++) {
+                        i1 = board.create('intersection', [obj[i], obj[j], 0],
+                            {id: JXG.SketchReader.id(), fillColor: "#ffffff"});
+                        i2 = board.create('intersection', [obj[i], obj[j], 1],
+                            {id: JXG.SketchReader.id(), fillColor: "#ffffff"});
+    
+                        intersect.push([i1, i, j, 0]);
+                        if (i1.coords.usrCoords[0] == i2.coords.usrCoords[0]
+                            && i1.coords.usrCoords[1] == i2.coords.usrCoords[1]
+                            && i1.coords.usrCoords[2] == i2.coords.usrCoords[2])
+                            board.removeObject(i2);
+                        else
+                            intersect.push([i2, i, j, 1]);
+                    }
+                }
+    
+                p = board.create('point', points[0].usrCoords);
+    
+                nameHTML = intersect[0][0].nameHTML;
+                name = intersect[0][0].name;
+    
+                // Locate intersections which are close to the click / touch
+                // and don't already exist as points in the construction ...
+    
+                for (i=0; i<intersect.length; i++) {
+                    if (p.Dist(intersect[i][0]) < zoom_sens_area
+                        && JXG.Draw.pointAlreadyExists(board, intersect[i][0]) == null) {
+                        i_obj.push([i, intersect[i]]);
+                        JXG.removeElementFromArray(intersect, intersect[i]);
+                        i--;
+                    }
+                }
+    
+                board.removeObject(p);
+    
+                for (i=0; i<intersect.length; i++)
+                    board.removeObject(intersect[i][0]);
+    
+                if (i_obj.length === 0 || i_obj.length > 1) {
+                    dialog_needed = true;
+                } else {
+    
+                    if (i_obj[0][0] !== 0) {
+                        i_obj[0][1][0].nameHTML = nameHTML;
+                        i_obj[0][1][0].setAttribute({name: name});
+                        i_obj[0][1][0].label.content.setText(name);
+                    }
+    
+                    step.type = JXG.GENTYPE_INTERSECTION;
+    
+                    step.src_ids = [ obj[i_obj[0][1][1]].id, obj[i_obj[0][1][2]].id ];
+                    step.args.choice = i_obj[0][1][3];
+                    step.args.fillColor = '#ffffff';
+    
+                    step.dest_id = i_obj[0][1][0].id;
+    
+                    this.recordStepMeta(step, false);
+                }
+    
+                board.unsuspendUpdate();
+    
+                if (GUI && dialog_needed) {
+    
+                    var x, y, html;
+    
+                    if (i_obj.length > 0) {
+                        html = GUI.Lang.std.drawIntersection + '<br><br>' + GUI.createIssHTML(i_obj, obj);
+                    } else {
+    
+                        x = points[0].usrCoords[1];
+                        y = points[0].usrCoords[2];
+    
+                        html = GUI.Lang.std.drawGlider + '<br><br>'
+                            + GUI.createSelectHTML(obj,
+                            '(function(id) { JXG.Draw.drawGlider(board.objects[id], '
+                                + x + ', ' + y + ', board); })');
+                    }
+    
+                    new GUI.Dialog('objectselect', html, GUI.Lang.std.placement, [0, 0], [0, 0], 0, GUI.iss_delight);
+                }
+            }
         },
 
         drawMidPoint: function (curvepoints) {
@@ -2103,195 +2586,117 @@ JXG.extend(JXG, {
             this.recordStepMeta(step, true);
         },
 
+        drawCircle: function (points, curvepoints) {
 
-        visualize: function (points) {
+                var i, M = [], y = [], MT, B, c, z, xm, ym, r;
+                var step = {};
 
-            var i, n = points.length;
+                step.type = JXG.GENTYPE_CIRCLE;
 
-            if (points[0] != points[n - 1])
-                board.create('line', [
-                    [points[n - 1].usrCoords[1], points[n - 1].usrCoords[2]],
-                    [points[0].usrCoords[1], points[0].usrCoords[2]]
-                ], {straightFirst:false, straightLast:false});
+                step.args = {};
+                step.src_ids = [];
+                step.dest_sub_ids = [];
+                step.dest_id = 0;
 
-            for (i = 0; i < n - 1; i++)
-                board.create('line', [
-                    [points[i].usrCoords[1], points[i].usrCoords[2]],
-                    [points[i + 1].usrCoords[1], points[i + 1].usrCoords[2]]
-                ], {straightFirst:false, straightLast:false});
-        },
+                step.args.create_midpoint = step.args.create_point = step.args.create_by_radius = false;
 
-        /*
-         * Sorts points such that points with lower x-values
-         * come first. If the x values are equal, sort the points
-         * such that those with smaller y values come first.
-         */
-        sortXY: function (points) {
+                step.dest_sub_ids = [ JXG.SketchReader.id() ];
+                step.dest_id = JXG.SketchReader.id();
 
-            var tmp, i, j;
+                if (curvepoints.length == 1) {
 
-            for (i = 0; i < points.length; i++) {
-                for (j = i + 1; j < points.length; j++) {
+                    var mid = points[0].usrCoords;
 
-                    if (points[j].usrCoords[1] < points[i].usrCoords[1]
-                        || (points[j].usrCoords[1] == points[i].usrCoords[1]
-                        && points[j].usrCoords[2] < points[i].usrCoords[2])) {
+                    mid[1] += points[parseInt((points.length - 1) / 2)].usrCoords[1];
+                    mid[2] += points[parseInt((points.length - 1) / 2)].usrCoords[2];
 
-                        tmp = points[j];
-                        points[j] = points[i];
-                        points[i] = tmp;
+                    mid[1] /= 2;
+                    mid[2] /= 2;
+
+                    step.args.create_point = true;
+                    step.args.usrCoords = JXG.deepCopy(mid);
+                    step.src_ids = [ curvepoints[0].id ];
+
+                } else if (curvepoints.length == 2) {
+                    step.args.create_midpoint = true;
+                    step.src_ids = [ curvepoints[0].id, curvepoints[1].id ];
+
+                } else if (curvepoints.length == 3) {
+
+                    JXG.Draw.drawOutcircle(curvepoints);
+                    return;
+                   
+                } else if (curvepoints.length === 0) {
+
+                    // Having constructed the points, we can fit a circle
+                    // through the point set, consisting of n points.
+                    // The (n times 3) matrix consists of
+                    //      x_1, y_1, 1
+                    //      x_2, y_2, 1
+                    //          ...
+                    //      x_n, y_n, 1
+                    // where x_i, y_i is the position of point p_i
+
+                    // The vector y of length n consists of
+                    //      x_i*x_i+y_i*y_i
+                    // for i=1,...n.
+
+                    for (i = 0; i < points.length; i++) {
+                        M.push([points[i].usrCoords[1], points[i].usrCoords[2], 1.0]);
+                        y.push(M[i][0] * M[i][0] + M[i][1] * M[i][1]);
                     }
-                }
-            }
-        },
 
+                    // Now, the general linear least-square fitting problem
+                    //
+                    //      min_z || M*z - y ||_2^2
+                    // is solved by solving the system of linear equations
+                    //      (M^T*M) * z = (M^T*y)
+                    // with Gauss elimination.
+                    //
+                    // [ see: http://JSXGraph.uni-bayreuth.de/wiki/index.php/Least-squares_circle_fitting ]
 
-        /**
-         * Computes and return the points, which define the convex hull of a given points array.
-         * Reference: http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
-         * @param points -- an array containing JXG.points
-         * @param vis -- a boolean which reflects if the convex hull shall be visualized
-         */
-        convexHull: function (points, vis) {
-            var cross = function (O, A, B) {
-                return ((A.usrCoords[1] - O.usrCoords[1]) * (B.usrCoords[2] - O.usrCoords[2])
-                    - (A.usrCoords[2] - O.usrCoords[2]) * (B.usrCoords[1] - O.usrCoords[1]));
-            };
-            var i, t, k = 0, H = [];
+                    MT = JXG.Math.transpose(M);
+                    B = JXG.Math.matMatMult(MT, M);
+                    c = JXG.Math.matVecMult(MT, y);
 
-            JXG.Draw.sortXY(points); // Remember: this changes the points array!
+                    z = JXG.Math.Numerics.Gauss(B, c);
 
-            for (i = 0; i < points.length; i++) {
-                while (k >= 2 && cross(H[k - 2], H[k - 1], points[i]) <= 0)
-                    k--;
-                H[k++] = points[i];
-            }
+                    xm = z[0] * 0.5;
+                    ym = z[1] * 0.5; // xm, ym : center of the circle
 
-            for (i = points.length - 2, t = k + 1; i >= 0; i--) {
-                while (k >= t && cross(H[k - 2], H[k - 1], points[i]) <= 0)
-                    k--;
-                H[k++] = points[i];
-            }
+                    r = Math.sqrt(z[2] + xm * xm + ym * ym); // r: radius
 
-            H.length = k;
+                    step.args.create_by_radius = true;
+                    step.args.x = xm;
+                    step.args.y = ym;
+                    step.args.r = r;
 
-            if (typeof vis != 'undefined' && vis)
-                JXG.Draw.visualize(H);
-
-            return H;
-        },
-        /**
-         * This function picks out of the points array a subset of k points,
-         * such that the resulting polygon's area is maximal and contains
-         * a pre-defined set of required points (see: drawTri/Quadrangle).
-         * @param points
-         * @param k
-         */
-        findMaxAreaPoints: function (points, k) {
-
-            var i, j, a, pol, idx = -1, max = -Infinity, n = points.length;
-            var required = [], optional = [], p = [], tupels;
-
-            for (i = 0; i < n; i++)
-                if (typeof points[i].elementClass != 'undefined')
-                    required.push(points[i]);
-                else
-                    optional.push(points[i]);
-
-            while (required.length > k)
-                required.pop();
-
-            if (required.length == k)
-                return { req:required, status:true };
-
-            if (optional.length < k - required.length) {
-                console.log("too few optional points!");
-                console.log("k: " + k);
-                console.log("n: " + n);
-                console.log("optional: " + optional.length);
-                console.log("required: " + required.length);
-
-                return { req:required, status:false };
-            }
-
-            if (optional.length > k - required.length) {
-
-                console.log("too much optional points!");
-
-                tupels = GUI.buildTupels(optional, k - required.length, true);
-
-                for (i = 0; i < tupels.length; i++) {
-
-                    p = [];
-                    for (j = 0; j < tupels[i].length; j++)
-                        p[j] = board.create('point', [ tupels[i][j].usrCoords[1], tupels[i][j].usrCoords[2] ],
-                            {visible:false});
-                    p.push(p[0]);
-
-                    pol = board.create('polygon', p, {visible:false});
-
-                    board.removeObject(pol);
-                    for (j = 0; j < p.length; j++)
-                        board.removeObject(p[j]);
-
-                    a = pol.Area();
-
-                    if (a >= max) {
-                        max = a;
-                        idx = i;
-                    }
-                }
-
-                if (idx != -1)
-                    for (i = 0; i < tupels[idx].length; i++)
-                        required.push(tupels[idx][i]);
-                else {
-                    console.log("Tupels: " + tupels.length);
-                    console.log("k: " + k);
-                    console.log("n: " + n);
-                    console.log("optional: " + optional.length);
-                    console.log("required: " + required.length);
-                    console.log("max area error");
-
-                    return { req:[], status:false };
-                }
-
-            } else {
-                for (i = 0; i < optional.length; i++)
-                    required.push(optional[i]);
-            }
-
-            return { req:required, status:true };
-        },
-
-        /**
-         * Fit data points to a reference array of board points.
-         */
-        fitPoints: function (data, reference) {
-
-            var i, p, ret = [];
-
-            if (reference.length === 0)
-                return data;
-
-            for (i = 0; i < reference.length; i++) {
-                p = JXG.Draw.findPointNextTo(reference[i], data, 0);
-
-                if (p == null) {
-                    console.log('inconsistency in fitPoints: data.len is smaller than ref.len');
-                    break;
                 } else {
-                    JXG.removeElementFromArray(data, p);
-                    ret.push(reference[i]);
+                    JXG.Draw.drawPolygon(curvepoints);
+                    return;
                 }
-            }
 
-            for (i = 0; i < data.length; i++)
-                ret.push(data[i]);
-
-            return ret;
+                this.recordStepMeta(step, true);
         },
 
+        drawOutcircle: function (curvepoints) {
+            var step = {};
+
+            step.type = JXG.GENTYPE_CIRCLE;
+
+            step.args = {};
+            step.args.create_midpoint = step.args.create_point = step.args.create_by_radius = false;
+
+            step.dest_sub_ids = [ JXG.SketchReader.id() ];
+            step.dest_id = JXG.SketchReader.id();
+
+            step.src_ids = [ curvepoints[0].id, curvepoints[1].id, curvepoints[2].id ];
+
+            this.recordStepMeta(step, true);
+
+            if (GUI && GUI.dialog && GUI.dialog['objectselect'] != null)
+                GUI.dialog['objectselect'].removeDialog();
+        },
 
         drawTriangle: function (board, points, curvepoints) {
 
@@ -2307,7 +2712,7 @@ JXG.extend(JXG, {
 
             fitted_points = JXG.uniqueArray(JXG.Draw.fitPoints(corners, curvepoints));
 
-            res = JXG.Draw.findMaxAreaPoints(fitted_points, 3);
+            res = JXG.Draw.findMaxAreaPoints(board, fitted_points, 3);
             if (!res.status)
                 return;
 
@@ -2416,7 +2821,7 @@ JXG.extend(JXG, {
 
                 fitted_points = JXG.uniqueArray(JXG.Draw.fitPoints(corners, curvepoints));
 
-                res = JXG.Draw.findMaxAreaPoints(fitted_points, 4);
+                res = JXG.Draw.findMaxAreaPoints(board, fitted_points, 4);
                 if (!res.status)
                     return;
 
@@ -2492,7 +2897,42 @@ JXG.extend(JXG, {
             step.dest_id = JXG.SketchReader.id();
 
             this.recordStepMeta(step, true);
-        }
+        },
+        
+        drawCircleSector: function (cpoint_ids) {
+            this.recordStepMeta({ type: JXG.GENTYPE_SECTOR, src_ids: [ cpoint_ids[0], cpoint_ids[2], cpoint_ids[1] ],
+                dest_sub_ids: [], dest_id: JXG.SketchReader.id() }, true);
+    
+            if (GUI && GUI.dialog && GUI.dialog['objectselect'] != null)
+                GUI.dialog['objectselect'].removeDialog();
+        },
+    
+        drawAngleSector: function (cpoint_ids) {
+            this.recordStepMeta({ type: JXG.GENTYPE_ANGLE, src_ids: [ cpoint_ids[0], cpoint_ids[2], cpoint_ids[1] ],
+                dest_sub_ids: [ JXG.SketchReader.id(), JXG.SketchReader.id(), JXG.SketchReader.id() ], dest_id: JXG.SketchReader.id() }, true);
+    
+            if (GUI && GUI.dialog && GUI.dialog['objectselect'] != null)
+                GUI.dialog['objectselect'].removeDialog();
+        },
+    
+        drawSlider: function (points) {
+            this.recordStepMeta({ type: JXG.GENTYPE_SLIDER,
+                dest_sub_ids: [ JXG.SketchReader.id(), JXG.SketchReader.id(), JXG.SketchReader.id(), JXG.SketchReader.id(), JXG.SketchReader.id() ], dest_id: JXG.SketchReader.id(),
+                args: { x1: points[0].usrCoords[1], y1: points[0].usrCoords[2],
+                    x2: points[1].usrCoords[1], y2: points[1].usrCoords[2],
+    
+                    start: $('div.dialog#slider input#start').attr('value'),
+                    ini: $('div.dialog#slider input#ini').attr('value'),
+                    end: $('div.dialog#slider input#end').attr('value') }}, true);
+        },
+    
+        drawText: function (coords) {
+    
+            var pid = JXG.SketchReader.id();
+            this.recordStepMeta({ type: JXG.GENTYPE_TEXT, src_ids: [], dest_sub_ids: [], dest_id: pid,
+                args: {x: coords.usrCoords[1], y: coords.usrCoords[2], str: '\'Text\'' }}, true);
 
+            return pid;
+        }
     }
 });
