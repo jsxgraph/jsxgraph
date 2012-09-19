@@ -881,58 +881,6 @@ JXG.extend(JXG, {
             return step;
         },
 
-        areEqualArrays: function(obj1, obj2) {
-
-            if (obj1.length != obj2.length)
-                return false;
-
-            for (var i=0; i<obj1.length; i++)
-                if (!JXG.Draw.areEqual(obj1[i], obj2[i]))
-                    return false;
-
-            return true;
-        },
-
-        areEqualObjects: function(obj1, obj2) {
-
-            for (var el1 in obj1)
-                if (obj1.hasOwnProperty(el1))
-                    if (!JXG.Draw.areEqual(obj1[el1], obj2[el1]))
-                        return false;
-
-            for (var el2 in obj2)
-                if (obj2.hasOwnProperty(el2))
-                    if (!JXG.Draw.areEqual(obj2[el2], obj1[el2]))
-                        return false;
-
-            return true;
-        },
-
-        areEqual: function(obj1, obj2) {
-
-            if (JXG.isArray2(obj1)) {
-                if (JXG.isArray2(obj2))
-                    return JXG.Draw.areEqualArrays(obj1, obj2);
-                else
-                    return false;
-            }
-
-            if (JXG.isArray2(obj2))
-                return false;
-
-            if (JXG.isObject(obj1)) {
-                if (JXG.isObject(obj2))
-                    return JXG.Draw.areEqualObjects(obj1, obj2);
-                else
-                    return false;
-            }
-
-            if (JXG.isObject(obj2))
-                return false;
-
-            return obj1 === obj2;
-        },
-
         readSketch: function (str, board) {
             var i, j, arr, json_obj, unzipped, meta, constr;
 
@@ -1017,6 +965,60 @@ JXG.extend(JXG, {
     Draw: {
 
         recordStepMeta: function (step, evaluate) {},
+
+        areEqual: function(obj1, obj2) {
+
+            if (JXG.isArray2(obj1)) {
+                if (JXG.isArray2(obj2))
+                    return JXG.Draw.areEqualArrays(obj1, obj2);
+                else
+                    return false;
+            }
+
+            if (JXG.isArray2(obj2))
+                return false;
+
+            if (JXG.isObject(obj1)) {
+                if (JXG.isObject(obj2))
+                    return JXG.Draw.areEqualObjects(obj1, obj2);
+                else
+                    return false;
+            }
+
+            if (JXG.isObject(obj2))
+                return false;
+
+            return obj1 === obj2;
+        },
+
+        areEqualArrays: function(obj1, obj2) {
+
+            if (obj1.length != obj2.length)
+                return false;
+
+            for (var i=0; i<obj1.length; i++)
+                if (!JXG.Draw.areEqual(obj1[i], obj2[i]))
+                    return false;
+
+            return true;
+        },
+
+        areEqualObjects: function(obj1, obj2) {
+
+            console.log("test1");
+
+            for (var el1 in obj1)
+                if (obj1.hasOwnProperty(el1))
+                    if (!JXG.Draw.areEqual(obj1[el1], obj2[el1]))
+                        return false;
+
+            for (var el2 in obj2)
+                if (obj2.hasOwnProperty(el2))
+                    if (!JXG.Draw.areEqual(obj2[el2], obj1[el2]))
+                        return false;
+
+            return true;
+        },
 
         /**
          * This function computes the distance between two points.
