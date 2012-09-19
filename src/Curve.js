@@ -291,10 +291,12 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 x = i;
                 if (this.dataY!=null) { // y-coordinates are in an array
                     y = i;
+                    this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.dataX[i],this.dataY[i]], false); // The last parameter prevents rounding in usr2screen().
                 } else {
                     y = this.X(x); // discrete x data, continuous y data
+                    this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.dataX[i],this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
                 }
-                this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
+                //this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(x,suspendUpdate),this.Y(y,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
                 this.updateTransform(this.points[i]);
                 suspendUpdate = true;
             }
@@ -566,6 +568,75 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return this;
     },
 
+    interpolationFunctionFromArray: function(which) {
+        var data = 'data' + which;
+        return function(t, suspendedUpdate) { 
+                var i, f1, f2, 
+                    arr = this[data],
+                    len = arr.length,
+                    z, t0, t1, 
+                    f=[], j;
+
+                if (isNaN(t)) {
+                    return NaN;
+                }
+                
+                if (t < 0) {
+                    if (JXG.isFunction(arr[0])) {
+                       return arr[0]();
+                    } else {
+                       return arr[0];
+                    }
+                }
+ 
+                if (this.bezierDegree==3) {
+                    len /=3;
+                    if (t >= len) {
+                        if (JXG.isFunction(arr[arr.length-1])) {
+                            return arr[arr.length-1]();
+                        } else {
+                            return arr[arr.length-1];
+                        }
+                    }
+                           
+                    i = Math.floor(t) * 3,
+                    t0 = t % 1,
+                    t1 = 1 - t0;             
+                    
+                    for (j=0;j<4;j++) {
+                        if (JXG.isFunction(arr[i+j])) {
+                            f[j] = arr[i+j]();
+                        } else {
+                            f[j] = arr[i+j];
+                        }
+                    }
+                    return t1*t1*(t1*f[0] + 3*t0*f[1]) + (3*t1*f[2] + t0*f[3])*t0*t0;
+                } else {
+                    if (t>len-2) {
+                        i = len-2;
+                    } else {
+                        i = parseInt(Math.floor(t));
+                    }
+                        
+                    if (i==t) {
+                        if (JXG.isFunction(arr[i])) {
+                            return arr[i](); 
+                        } else {
+                            return arr[i]; 
+                        }
+                    } else {
+                        for (j=0;j<2;j++) {
+                            if (JXG.isFunction(arr[i+j])) {
+                                f[j] = arr[i+j]();
+                            } else {
+                                f[j] = arr[i+j];
+                            }
+                        }
+                        return f[0]+(f[1]-f[0])*(t-i);
+                    }
+                }
+            };
+    },
     /**
      * Converts the GEONExT syntax of the defining function term into JavaScript.
      * New methods X() and Y() for the Curve object are generated, further
@@ -578,20 +649,10 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         // Generate the methods X() and Y()
         if (JXG.isArray(xterm)) {
             this.dataX = xterm;
-            this.X = function(t) { 
-                var i = parseInt(Math.floor(t)), f1, f2;
-                if (t<0) i = 0;
-                else if (t>this.dataX.length-2) i = this.dataX.length-2;
-                if (i==t) {
-                    return this.dataX[i]; 
-                } else {
-                    f1 = this.dataX[i]; 
-                    f2 = this.dataX[i+1]; 
-                    return f1+(f2-f1)*(t-i);
-                }
-            };
-            this.visProp.curvetype = 'plot';
+            
             this.numberPoints = this.dataX.length;
+            this.X = this.interpolationFunctionFromArray('X');
+            this.visProp.curvetype = 'plot';
         } else {
             this.X = JXG.createFunction(xterm, this.board, varname);
             if (JXG.isString(xterm)) {
@@ -603,6 +664,8 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         if (JXG.isArray(yterm)) {
             this.dataY = yterm;
+            this.Y = this.interpolationFunctionFromArray('Y');
+            /*
             this.Y = function(t) {
                 var i = parseInt(Math.floor(t)), f1, f2;
                 if (t<0) i = 0;
@@ -627,6 +690,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                     return f1+(f2-f1)*(t-i);
                 }
             };
+            */
         } else {
             this.Y = JXG.createFunction(yterm,this.board,varname);
         }
