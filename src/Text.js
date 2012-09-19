@@ -42,7 +42,7 @@ JXG.Text = function (board, content, coords, attributes) {
 
     var i;
 
-    this.content = content;
+    this.content = '';
     this.plaintext = '';
 
     this.isDraggable = false;
@@ -76,28 +76,12 @@ JXG.Text = function (board, content, coords, attributes) {
     }
     this.Z = JXG.createFunction(1.0, this.board, '');
 
-    if (typeof this.content === 'function') {
-        this.updateText = function() { this.plaintext = this.content(); };
-        this.needsSizeUpdate = true;
-    } else {
-        if (JXG.isNumber(this.content)) {
-            this.content = (this.content).toFixed(this.visProp.digits);
-        } else {
-            if (this.visProp.useasciimathml) {
-                this.content = "'`" + this.content + "`'";              // Convert via ASCIIMathML
-                this.needsSizeUpdate = true;
-            } else {
-                this.content = this.generateTerm(this.content);   // Converts GEONExT syntax into JavaScript string
-            }
-        }
-        this.updateText = new Function('this.plaintext = ' + this.content + ';');
-    }
-
     this.size = [1.0, 1.0];
-    this.updateText();                    // First evaluation of the content.
-    
+
     this.id = this.board.setId(this, 'T');
     this.board.renderer.drawText(this);
+
+    this.setText(content);
     this.updateSize();
 
     if(!this.visProp.visible) {
@@ -180,7 +164,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             }
         }
         
-        return this.setText(s);
+        // In JessieCode the setText function will be backed up in _setText and replaced by setTextJessieCode
+        // before parsing to ensure filtering of text if created in a JC script.
+        if (this._setText) {
+            return this._setText(s);
+        } else {
+            return this.setText(s);
+        }
     },
 
     /**
@@ -189,14 +179,18 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * @return {JXG.Text} Reference to the text object.
      */
     setText: function(text) {
+        this.needsSizeUpdate = false;
+        
         if (typeof text === 'function') {
             this.updateText = function() { this.plaintext = text(); };
+            this.needsSizeUpdate = true;
         } else {
             if (JXG.isNumber(text)) {
                 this.content = (text).toFixed(this.visProp.digits);
             } else {
                 if (this.visProp.useasciimathml) {
                     this.content = "'`" + text + "`'";              // Convert via ASCIIMathML
+                    this.needsSizeUpdate = true;
                 } else {
                     this.content = this.generateTerm(text);   // Converts GEONExT syntax into JavaScript string
                 }
@@ -206,13 +200,11 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
 
         this.updateText();                    // First evaluation of the string.
                                               // Needed for display='internal' and Canvas
-        //this.updateSize();
-        
         this.prepareUpdate().update().updateRenderer();
 
         return this;
     },
-
+    
     /**
      * Recompute the width and the height of the text box.
      * Update array this.size with pixel values.
