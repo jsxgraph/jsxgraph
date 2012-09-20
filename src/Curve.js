@@ -568,6 +568,14 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         return this;
     },
 
+    /**
+     * Generate the method curve.X() in case curve.dataX is an array
+     * and generate the method curve.Y() in case curve.dataY is an array.
+     * @see JXG.Math.Geometry#generateTerm.
+     * @private
+     * @param {String} which Either 'X' or 'Y'
+     * @return {Function} 
+     **/
     interpolationFunctionFromArray: function(which) {
         var data = 'data' + which;
         return function(t, suspendedUpdate) { 

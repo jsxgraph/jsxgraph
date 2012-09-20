@@ -47,16 +47,18 @@ JXG.EventEmitter = {
      */
     triggerEventHandlers: function (event) {
         var i, h, args = Array.prototype.slice.call(arguments, 1),
-            j, evt;
+            j, evt, len1, len2;
 
         if (!JXG.isArray(event)) {
             event = [event];
         }
 
-        for (j = 0; j < event.length; j++) {
+        len1 = event.length;
+        for (j = 0; j < len1; j++) {
             evt = event[j];
             if (JXG.isArray(this.eventHandlers[evt])) {
-                for (i = 0; i < this.eventHandlers[evt].length; i++) {
+                len2 = this.eventHandlers[evt].length;
+                for (i = 0; i < len2; i++) {
                     h = this.eventHandlers[evt][i];
                     h.handler.apply(h.context, args);
                 }
