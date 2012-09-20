@@ -84,6 +84,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if ((el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_LINE)||
                    (el2.elementClass==JXG.OBJECT_CLASS_CURVE && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
             return function(){return JXG.Math.Geometry.meetCurveLine(el1,el2,i,el1.board); };
+        // segment - segment
+        } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE && el2.elementClass==JXG.OBJECT_CLASS_LINE
+                   && el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
+                   && el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
+            return function(){
+                return JXG.Math.Geometry.meetSegmentSegment(
+                    el1.point1.coords.usrCoords, el1.point2.coords.usrCoords,
+                    el2.point1.coords.usrCoords, el2.point2.coords.usrCoords, 
+                    el1.board); 
+                };
         // All other combinations of circles and lines
         } else {
             return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };

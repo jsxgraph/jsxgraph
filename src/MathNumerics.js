@@ -228,7 +228,12 @@ JXG.Math.Numerics = (function(JXG, Math) {
                              The empty matrix returns 0.
          */ 
         det: function(mat) {
-            return this.gaussBareiss(mat);
+            var n = mat.length;
+            if (n==2 && mat[0].length==2) {
+                return mat[0][0]*mat[1][1] - mat[1][0]*mat[0][1];
+            } else {
+                return this.gaussBareiss(mat);
+            }
         },
         
         /**

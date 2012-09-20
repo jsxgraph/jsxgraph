@@ -1194,7 +1194,37 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         return q_fin;
     },
 
+    /**
+     * Intersection of two segments.
+     * @param {Array} p1 First point of segment 1
+     * @param {Array} p2 Second point of segment 1
+     * @param {Array} q1 First point of segment 2
+     * @param {Array} q2 Second point of segment 2
+     * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+     * the ideal point [0,1,0] is returned.
+     **/
+    meetSegmentSegment: function(p1, p2, q1, q2, board) {
+        var li1 = JXG.Math.crossProduct(p1, p2),
+            li2 = JXG.Math.crossProduct(q1, q2),
+            c = JXG.Math.crossProduct(li1, li2),
+            denom = c[0],
+            t, u, diff;
+        
+        if (Math.abs(denom)<Math.eps) 
+            return c;
 
+        diff = [q1[1]-p1[1], q1[2]-p1[2]];
+        t = JXG.Math.Numerics.det([diff, [p2[1]-p1[1], p2[2]-p1[2]] ]) / denom;
+        u = JXG.Math.Numerics.det([diff, [q2[1]-q1[1], q2[2]-q1[2]] ]) / denom;
+
+        if (!(0<=t && t<=1 && 0<=u && u<=1)) {
+            c = [0,1,0];
+        }
+         
+        // Better: return [c, t, u];
+        return (new JXG.Coords(JXG.COORDS_BY_USER, c, board)); 
+    },
+    
     /****************************************/
     /****           PROJECTIONS          ****/
     /****************************************/

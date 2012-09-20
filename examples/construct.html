@@ -62,6 +62,8 @@ JXG.Options.zoom.wheel = false;
 JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
+
+/*
                 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
                 var p1 = brd.create('point', [1,1]);
                 var p2 = brd.create('point', [3,0]);
@@ -74,6 +76,17 @@ JXG.Options.point.label = {};
                 var a2 = brd.create('arc', [p4,p6,p5]);
                 var i = brd.create('intersection', [a1,a2,1]);
                 //var f = brd.create('functiongraph', ["sin(x)"]);
+*/                
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10,10,10,-10], axis:false});
+var p1 = board.create('point', [-5,-5]);
+var p2 = board.create('point', [5,5]);
+var p3 = board.create('point', [-8, 8]);
+var p4 = board.create('point', [-2,2]);
+var l = board.create('segment', [p1,p2]);
+var s = board.create('segment', [p3,p4]);
+board.create('intersection', [s,l]);
+
+                                 
                 
 /*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox: [-5,15,15,-5]});
