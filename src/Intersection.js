@@ -29,8 +29,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // curve - curve, but not both are arcs TEMPORARY FIX!!!
         if (el1.elementClass==JXG.OBJECT_CLASS_CURVE 
             && el2.elementClass==JXG.OBJECT_CLASS_CURVE
-            && (el1.type!=JXG.OBJECT_TYPE_ARC
-                || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
+            && (el1.type!=JXG.OBJECT_TYPE_ARC || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
             return function(){return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); };
         // arc - line   (arcs are of class curve, but are intersected like circles)
         } else if ((el1.type==JXG.OBJECT_TYPE_ARC && el2.elementClass==JXG.OBJECT_CLASS_LINE) ||

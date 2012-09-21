@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 <head>
    <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94/jsxgraphcore.js"></script>-->
     <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
@@ -76,7 +77,49 @@ JXG.Options.point.label = {};
                 var a2 = brd.create('arc', [p4,p6,p5]);
                 var i = brd.create('intersection', [a1,a2,1]);
                 //var f = brd.create('functiongraph', ["sin(x)"]);
-*/                
+*/  
+
+    var exportRoot;
+    window.onload = init;
+
+    function init() {
+        var divTag = document.createElement("div");
+        divTag.id = "box";
+        divTag.className = "jxgbox";
+        divTag.style.width = '300px';
+        divTag.style.height = '300px';
+
+        divTag.style.border = '5px solid black';
+
+        document.body.appendChild(divTag);  
+
+        //create DOMELement and append to export Root
+        var formDOMElement = new DOMElement(document.getElementById("box"));    
+        exportRoot = divTag;
+        //exportRoot.addChild(formDOMElement);
+    
+        //position the form DOM to a container element in my exportRoot
+        //formDOMElement.x = exportRoot.boardMC.x;
+        //formDOMElement.y = exportRoot.boardMC.y;
+
+        board = JXG.JSXGraph.initBoard('box', {boundingbox: [-1, 6, 6, -1], grid: true, axis: true});
+        ax3 = board.createElement('axis', [[0,0],[1,0]]);
+
+        p1 = board.create('point',[0,0],{name:'p1'});   
+        p2 = board.create('point',[5,2],{name:'p2'});
+        p3 = board.create('point',[1,4],{name:'p3'});
+        board.create('polygon',[p1,p2,p3]);
+        /* create the incircle */
+
+        var retArray = board.create('incircle',[p1,p2,p3],{color:'green', strokeColor:'purple'});
+        /* create the three angle bisectors,
+        to show that they intersect at center of the incircle */
+        board.create('bisector',[p3,p2,p1],{dash:1,strokeOpacity:0.3});
+        board.create('bisector',[p2,p1,p3],{dash:1,strokeOpacity:0.3});
+        board.create('bisector',[p1,p3,p2],{dash:1,strokeOpacity:0.3});
+    };
+
+/*              
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10,10,10,-10], axis:false});
 var p1 = board.create('point', [-5,-5]);
 var p2 = board.create('point', [5,5]);
@@ -85,7 +128,7 @@ var p4 = board.create('point', [-2,2]);
 var l = board.create('segment', [p1,p2]);
 var s = board.create('segment', [p3,p4]);
 board.create('intersection', [s,l]);
-
+*/
                                  
                 
 /*
