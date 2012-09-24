@@ -891,6 +891,15 @@ JXG.Options = {
         }
     },
 
+    /* special intersection point options */
+    intersection: {
+        /**#@+
+         * @visprop
+         */
+         alwaysIntersect: true
+        /**#@-*/
+    },
+    
     /* special legend options */
     label: {
         /**#@+
