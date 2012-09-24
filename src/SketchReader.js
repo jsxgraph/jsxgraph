@@ -177,8 +177,8 @@ JXG.extend(JXG, {
 
             /* SKETCHBIN end */
 
-            if (step.type > 50 && withCtxSetters == false)
-                return;
+            if (step.type > 50)
+                return JXG.SketchReader.generateJCodeMeta(step, board);
 
             switch (step.type) {
 
