@@ -1528,9 +1528,10 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
 
     // make sure we definitely have the indices
     parents.push(0, 0);
-    func = board.intersection(parents[0], parents[1], parents[2], parents[3]);
-    el = board.create('point', [func], attr);
-
+    el = board.create('point', [0,0,0], attr);
+    func = new board.intersection(parents[0], parents[1], parents[2], parents[3], {point:el});
+    el.addConstraint([func]);
+    
     try {
         parents[0].addChild(el);
         parents[1].addChild(el);
@@ -1596,10 +1597,10 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
  */
 JXG.createOtherIntersectionPoint = function(board, parents, attributes) {
     var el;
-    if (parents.length!=3 || 
-        !JXG.isPoint(parents[2]) ||
-        (parents[0].elementClass != JXG.OBJECT_CLASS_LINE && parents[0].elementClass != JXG.OBJECT_CLASS_CIRCLE) ||
-        (parents[1].elementClass != JXG.OBJECT_CLASS_LINE && parents[1].elementClass != JXG.OBJECT_CLASS_CIRCLE) ) {
+    if (parents.length!=3 
+        || !JXG.isPoint(parents[2]) 
+        || (parents[0].elementClass != JXG.OBJECT_CLASS_LINE && parents[0].elementClass != JXG.OBJECT_CLASS_CIRCLE)
+        || (parents[1].elementClass != JXG.OBJECT_CLASS_LINE && parents[1].elementClass != JXG.OBJECT_CLASS_CIRCLE) ) {
         // Failure
         throw new Error("JSXGraph: Can't create 'other intersection point' with parent types '" + 
                         (typeof parents[0]) + "',  '" + (typeof parents[1])+ "'and  '" + (typeof parents[2]) + "'." +

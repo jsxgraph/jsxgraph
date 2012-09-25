@@ -896,6 +896,15 @@ JXG.Options = {
         /**#@+
          * @visprop
          */
+        /**
+         * Used in {@link JXG.Intersection}.
+         * This flag sets the behaviour of intersection points of e.g.
+         * two segments. If true, the intersection is treated as intersection of lines. If false
+         * the intersection point exists if the segments intersect setwise.
+         * @name JXG.Intersection.alwaysIntersect
+         * @type Boolean
+         * @default true       
+         */  
          alwaysIntersect: true
         /**#@-*/
     },

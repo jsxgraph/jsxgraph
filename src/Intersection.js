@@ -22,9 +22,17 @@
 */
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
-    intersection: function(el1,el2,i,j){ 
+    intersection: function(el1, el2, i, j, pointObj){ 
+        var p;
+        
         el1 = JXG.getReference(this,el1);
         el2 = JXG.getReference(this,el2);
+        
+        // Get access to the intersection point object
+        // This is necessary to read the property alwaysIntersect
+        if (pointObj!=null) {
+            p = pointObj.point;
+        }
         
         // curve - curve, but not both are arcs TEMPORARY FIX!!!
         if (el1.elementClass==JXG.OBJECT_CLASS_CURVE 
@@ -43,8 +51,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE && el2.elementClass==JXG.OBJECT_CLASS_LINE
                    && el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
                    && el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
-            return function(){  
-                if (JXG.exists(this.point) && this.point.visProp.alwaysintersect) {
+            
+            return function(){ 
+                if (JXG.exists(p) && p.visProp.alwaysintersect) {
                     return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board);
                 } else {
                     return JXG.Math.Geometry.meetSegmentSegment(
