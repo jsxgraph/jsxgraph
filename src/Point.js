@@ -1521,11 +1521,15 @@ JXG.createGlider = function(board, parents, attributes) {
  * </script><pre>
  */
 JXG.createIntersectionPoint = function(board, parents, attributes) {
-    var el;
+    var el,
+        attr = JXG.copyAttributes(attributes, board.options, 'intersection'),
+        func;
+
 
     // make sure we definitely have the indices
     parents.push(0, 0);
-    el = board.create('point', [board.intersection(parents[0], parents[1], parents[2], parents[3])], attributes);
+    func = board.intersection(parents[0], parents[1], parents[2], parents[3]);
+    el = board.create('point', [func], attr);
 
     try {
         parents[0].addChild(el);

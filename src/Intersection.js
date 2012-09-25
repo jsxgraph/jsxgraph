@@ -29,8 +29,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // curve - curve, but not both are arcs TEMPORARY FIX!!!
         if (el1.elementClass==JXG.OBJECT_CLASS_CURVE 
             && el2.elementClass==JXG.OBJECT_CLASS_CURVE
-            && (el1.type!=JXG.OBJECT_TYPE_ARC
-                || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
+            && (el1.type!=JXG.OBJECT_TYPE_ARC || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
             return function(){return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); };
         // arc - line   (arcs are of class curve, but are intersected like circles)
         } else if ((el1.type==JXG.OBJECT_TYPE_ARC && el2.elementClass==JXG.OBJECT_CLASS_LINE) ||
@@ -44,12 +43,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE && el2.elementClass==JXG.OBJECT_CLASS_LINE
                    && el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
                    && el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
-            return function(){
-                return JXG.Math.Geometry.meetSegmentSegment(
-                    el1.point1.coords.usrCoords, el1.point2.coords.usrCoords,
-                    el2.point1.coords.usrCoords, el2.point2.coords.usrCoords, 
-                    el1.board); 
-                };
+            return function(){  
+                if (JXG.exists(this.point) && this.point.visProp.alwaysintersect) {
+                    return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board);
+                } else {
+                    return JXG.Math.Geometry.meetSegmentSegment(
+                        el1.point1.coords.usrCoords, el1.point2.coords.usrCoords,
+                        el2.point1.coords.usrCoords, el2.point2.coords.usrCoords, 
+                        el1.board); 
+                }
+            };
         // All other combinations of circles and lines
         } else {
             return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };
