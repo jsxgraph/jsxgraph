@@ -1528,6 +1528,7 @@ JXG.createIntersectionPoint = function(board, parents, attributes) {
 
     // make sure we definitely have the indices
     parents.push(0, 0);
+    
     el = board.create('point', [0,0,0], attr);
     func = new board.intersection(parents[0], parents[1], parents[2], parents[3], {point:el});
     el.addConstraint([func]);
