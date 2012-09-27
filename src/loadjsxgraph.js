@@ -68,7 +68,7 @@ var JXG = {};
             JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
             arr = JXG.baseFiles.split(',');
             for (n=0;n<arr.length;n++) {
-                (function(include) { JXG.require(JXG.requirePath+include+'.lib');})(arr[n]);
+                (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
             }
         }
     }

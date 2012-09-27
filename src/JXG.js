@@ -284,7 +284,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is of type array.
      */
     isArray: function (v) {
-        // Borrowed from prototype.lib
+        // Borrowed from prototype.js
         return v !== null && typeof v === "object" && 'splice' in v && 'join' in v;
     },
 
@@ -357,7 +357,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
-     * Convert a String, a number or a function into a function. This method is used in Transformation.lib
+     * Convert a String, a number or a function into a function. This method is used in Transformation.js
      * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
      * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
      * values is of type string.
@@ -649,7 +649,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             };
         }
 
-        // Borrowed from prototype.lib
+        // Borrowed from prototype.js
         element = document.getElementById(elementId);
         if (!JXG.exists(element)) {
             throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");

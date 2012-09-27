@@ -1456,7 +1456,7 @@ JXG.Options = {
       * to the same value.
       * It is used in JXG.GeometryElement#setProperty and in
       * the constructor JXG.GeometryElement.
-      * Attention: In Options.lib abbreviations are not allowed.
+      * Attention: In Options.js abbreviations are not allowed.
       */
     shortcuts : {
         color: ['strokeColor', 'fillColor'],

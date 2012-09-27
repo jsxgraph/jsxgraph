@@ -71,7 +71,7 @@ JXG.JSXGraph = {
 
                 for (i = 0; i < arr.length; i++) {
                     (function(include) {
-                        JXG.require(JXG.requirePath + include + '.lib');
+                        JXG.require(JXG.requirePath + include + '.js');
                     })(arr[i]);
                 }
 
