@@ -1,23 +1,31 @@
 JXG.Options = JXG.deepCopy(JXG.Options, {
 
-	angle: {
+    axisScaleX: 1,
+
+    axisScaleY: 1,
+
+    device: 'tablet',
+
+    opacityLevel: 0.5,
+
+    sensitive_area: 20,
+
+    lastRegPolCorners: 3,
+
+    angle: {
 		fillColor: '#ddd',
 		strokeColor: '#000'
 	},
 
-	glider : {
-		fillColor: '#ff0',
-		strokeColor: '#000'
-	},
+    glider : {
+   		fillColor: '#ff0',
+   		strokeColor: '#000'
+   	},
 
 	intersection: {
 		fillColor: '#fff'
 	},
-/*
-	line: {
-		strokeColor: '#f00' // can't see red lines anymore for NOW ...
-	},
-*/
+
 	point: {
 		size: 4,
 		fillColor:   '#c00',
@@ -31,7 +39,8 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
 	polygon: {
 		fillColor: '#ffff00',
-		highlightFillColor: '#ffff00'
+		highlightFillColor: '#ffff00',
+		hasInnerPoints: false
 	},
 
 	precision: {
@@ -45,6 +54,10 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 		}
 	}
 /*
+    line: {
+        strokeColor: '#f00' // can't see red lines anymore for NOW ...
+    },
+
 	slider: {
 		point1: { needsRegularUpdate: true },
 		point2: { needsRegularUpdate: true },
@@ -57,7 +70,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 */
 });
 
-if (JXG.isAndroid() || JXG.isApple()) {
+if (JXG.isAndroid || JXG.isApple()) {
     JXG.Options.curve.RDPsmoothing = false;
     JXG.Options.curve.numberPointsHigh = 600;
     JXG.Options.curve.numberPointsLow = 100;
