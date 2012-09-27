@@ -871,7 +871,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * TODO
      * Was hat das hier verloren? "Straights" gibts doch nur fuer Lines oder?
-     * Sollte das dann nicht nur in Line.js zu finden sein? --michael
+     * Sollte das dann nicht nur in Line.lib zu finden sein? --michael
      * @description none yet
      * @private
      */

@@ -645,7 +645,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
-    // see geometryelement.js
+    // see geometryelement.lib
     snapToGrid: function () {
         if (this.visProp.snaptogrid) {
             this.point1.snapToGrid();
@@ -774,7 +774,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return ticks.id;
     },
 
-    // documented in GeometryElement.js
+    // documented in GeometryElement.lib
     remove: function () {
         this.removeAllTicks();
         JXG.GeometryElement.prototype.remove.call(this);

@@ -514,7 +514,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         return this;
     },
 
-    // see geometryelement.js
+    // see geometryelement.lib
     snapToGrid: function () {
         if (this.visProp.snaptogrid) {
             this.center.snapToGrid();

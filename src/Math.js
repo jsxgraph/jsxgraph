@@ -43,7 +43,7 @@ JXG.Math = (function(JXG, Math, undefined) {
      * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
      *
      * This method is hidden, because it is only used in JXG.Math. If someone wants
-     * to use it in JSXGraph outside of JXG.Math, it should be moved to jsxgraph.js
+     * to use it in JSXGraph outside of JXG.Math, it should be moved to jsxgraph.lib
      */
     var memoizer = function (f) {
         var cache, join;
