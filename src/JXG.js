@@ -925,10 +925,23 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Array} The corrected position.
      */
     getCSSTransform: function(cPos, obj) {
-        var str, len, arr, mat;
+        var t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
+            i, str, len, arr, mat;
+            
+        // Take the first transformation matrix
+        len = t.length;
+        for (i=0, str=''; i<len; i++) {
+            if (JXG.exists(obj.style[t[i]])) {
+                str = obj.style[t[i]];
+                break;
+            }
+        }
         
-        if (JXG.exists(obj.style.msTransform)) {
-            str = obj.style.msTransform;
+        /**
+        * Extract the coordinates and apply the transformation
+        * to cPos
+        */
+        if (str!='' && str.substr(0,6)==='matrix') {
             len = str.length;
             str = str.substring(7,len-1);
             arr = str.split(',');
@@ -942,7 +955,6 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
         return cPos;
     },
-    
     
     /**
      * Extracts the keys of a given object.
