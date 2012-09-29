@@ -918,6 +918,33 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Correct position of upper left corner in case of 
+     * a CSS transformation.
+     * @param {Array} cPos Previously determined position
+     * @param {Object} obj A DOM element
+     * @returns {Array} The corrected position.
+     */
+    getCSSTransform: function(cPos, obj) {
+        var str, len, arr, mat;
+        
+        if (JXG.exists(obj.style.msTransform)) {
+            str = obj.style.msTransform;
+            len = str.length;
+            str = str.substring(7,len-1);
+            arr = str.split(',');
+
+            mat = [[parseFloat(arr[0]), parseFloat(arr[1])],
+                   [parseFloat(arr[2]), parseFloat(arr[3])]];
+               
+            cPos = JXG.Math.matVecMult(mat, cPos);
+            cPos[0] += parseFloat(arr[4]);
+            cPos[1] += parseFloat(arr[5]);
+        }
+        return cPos;
+    },
+    
+    
+    /**
      * Extracts the keys of a given object.
      * @param object The object the keys are to be extracted
      * @param onlyOwn If true, hasOwnProperty() is used to verify that only keys are collected
