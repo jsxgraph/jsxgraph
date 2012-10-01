@@ -1,5 +1,8 @@
 JXG = {};
 
+/**
+ * Balanced binary search tree
+ */
 JXG.BST = function() {
     this.head = null;
     this.z = null;
