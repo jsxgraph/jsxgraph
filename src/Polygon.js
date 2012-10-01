@@ -82,18 +82,19 @@ JXG.Polygon = function (board, vertices, attributes) {
         vertex.addChild(this);
     }
 
-    // create label
-    this.createLabel();
 
     /* Register polygon at board */
     this.id = this.board.setId(this, 'Py');
     this.board.renderer.drawPolygon(this);
     this.board.finalizeAdding(this);
+    this.elType = 'polygon';
+
+    // create label
+    this.createLabel();
 
     this.methodMap.borders = 'borders';
     this.methodMap.vertices = 'vertices';
 
-    this.elType = 'polygon';
 };
 JXG.Polygon.prototype = new JXG.GeometryElement;
 
