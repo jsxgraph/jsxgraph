@@ -63,7 +63,7 @@ JXG.Options.zoom.wheel = false;
 JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
-
+/*
                 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
                 var p1 = brd.create('point', [1,1]);
                 var p2 = brd.create('point', [3,0]);
@@ -76,6 +76,7 @@ JXG.Options.point.label = {};
                 var a2 = brd.create('arc', [p4,p6,p5]);
                 var i = brd.create('intersection', [a1,a2,1]);
                 //var f = brd.create('functiongraph', ["sin(x)"]);
+*/
 
 /*
     var exportRoot;
@@ -119,16 +120,26 @@ JXG.Options.point.label = {};
     };
 */
       
-              /*
-var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10,10,10,-10], axis:false});
-var p1 = board.create('point', [-5,-5]);
-var p2 = board.create('point', [5,5]);
-var p3 = board.create('point', [-8, 8]);
-var p4 = board.create('point', [-2,2]);
-var l = board.create('segment', [p1,p2]);
-var s = board.create('segment', [p3,p4]);
-board.create('intersection', [s,l], {});
-*/
+var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10,10,10,-10], axis:true});
+var p1 = brd.create('point', [-5,-5]);
+var p2 = brd.create('point', [5,5]);
+var p3 = brd.create('point', [-8, 8]);
+var p4 = brd.create('point', [-2,2]);
+var p5 = brd.create('point', [-3,0]);
+//var el = brd.create('ellipse',[p1,p2,p5]);
+el = brd.create('curve',[[0],[0]]);
+el.updateDataArray = function() {
+    this.dataX = [p1.X(),p2.X(),p5.X()];
+    this.dataY = [p1.Y(),p2.Y(),p5.Y()];
+    return;
+};
+
+//var l = brd.create('segment', [p1,p2]);
+var s = brd.create('line', [p3,p4]);
+brd.update();    
+
+brd.create('intersection', [el,s,0], {alwaysIntersect:true, withLabel:false});
+brd.create('intersection', [el,s,1], {alwaysIntersect:true, withLabel:false});
                                  
                 
 /*

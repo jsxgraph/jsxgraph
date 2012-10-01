@@ -816,7 +816,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     /**
      * Convert the point to CAS point and call update().
      * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
-     * The z-coordinate is optional and it is used for homogeneaous coordinates.
+     * The z-coordinate is optional and it is used for homogeneous coordinates.
      * The coordinates may be either <ul>
      *   <li>a JavaScript function,</li>
      *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript 

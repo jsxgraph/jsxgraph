@@ -1155,14 +1155,13 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
      * Finding the nr-the intersection point should work for all nr.
      */
     meetCurveLineDiscrete: function(cu, li, nr, board) {
-        var len, i, p1, p2, seg, q, q_fin,
-            d, pos, j,
-            cnt = 0;
+        var len, i, p1, p2, q,
+            d, cnt = 0, res;
 
         len = cu.numberPoints; 
     
         // In case, no intersection will be found we will take this
-        q_fin = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
+        q = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
         
         p2 = [1, cu.X(0), cu.Y(0)];
         for (i=1;i<len;i++) {
@@ -1172,36 +1171,28 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             if (d<JXG.Math.eps) {    // The defining points are identical
                 continue;
             }
-            seg = JXG.Math.crossProduct(p1,p2);
-            q = this.meetLineLine(seg, li.stdform, 0, board);
-            
-            j = 1;
-            d = p2[j] - p1[j];
-            if (Math.abs(d)<JXG.Math.eps) { 
-                j = 2; 
-                d = p2[j] - p1[j];
-            }
-            pos = (q.usrCoords[j] - p1[j]) / d;
-            if (pos>=0.0 && pos<=1) {  // Intersection found
+            res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords, board);
+            if (0<=res[1] && res[1]<=1) {
                 if (cnt==nr) {
-                    q_fin = q;
+                    q = new JXG.Coords(JXG.COORDS_BY_USER, res[0], board);
                     break;
                 }
                 cnt++;
             }
         }
 
-        return q_fin;
+        return q;
     },
 
     /**
      * Intersection of two segments.
-     * @param {Array} p1 First point of segment 1
-     * @param {Array} p2 Second point of segment 1
-     * @param {Array} q1 First point of segment 2
-     * @param {Array} q2 Second point of segment 2
-     * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
-     * the ideal point [0,1,0] is returned.
+     * @param {Array} p1 First point of segment 1 using homogeneous coordinates [z,x,y]
+     * @param {Array} p2 Second point of segment 1 using homogeneous coordinates [z,x,y]
+     * @param {Array} q1 First point of segment 2 using homogeneous coordinates [z,x,y]
+     * @param {Array} q2 Second point of segment 2 using homogeneous coordinates [z,x,y]
+     * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates 
+     * of the intersection point. The second and third entry gives the position of the intersection between the two defining points.
+     * For example, the second entry t is defined by: interestion point = t*p1 + (1-t)*p2.
      **/
     meetSegmentSegment: function(p1, p2, q1, q2, board) {
         var li1 = JXG.Math.crossProduct(p1, p2),
@@ -1210,19 +1201,18 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             denom = c[0],
             t, u, diff;
         
-        if (Math.abs(denom)<Math.eps) 
-            return c;
+        if (Math.abs(denom)<Math.eps) {
+            return [c, Number.Infinity, Number.Infinity];
+        }
 
         diff = [q1[1]-p1[1], q1[2]-p1[2]];
-        t = JXG.Math.Numerics.det([diff, [p2[1]-p1[1], p2[2]-p1[2]] ]) / denom;
-        u = JXG.Math.Numerics.det([diff, [q2[1]-q1[1], q2[2]-q1[2]] ]) / denom;
-
-        if (!(0<=t && t<=1 && 0<=u && u<=1)) {
-            c = [0,1,0];
-        }
-         
-        // Better: return [c, t, u];
-        return (new JXG.Coords(JXG.COORDS_BY_USER, c, board)); 
+        // Because of speed issues, evalute the determinants directly
+        //t = JXG.Math.Numerics.det([diff, [p2[1]-p1[1], p2[2]-p1[2]] ]) / denom;
+        //u = JXG.Math.Numerics.det([diff, [q2[1]-q1[1], q2[2]-q1[2]] ]) / denom;
+        t = (diff[0]*(q2[2]-q1[2]) - diff[1]*(q2[1]-q1[1])) / denom;
+        u = (diff[0]*(p2[2]-p1[2]) - diff[1]*(p2[1]-p1[1])) / denom;
+        
+        return [c, t, u];
     },
     
     /****************************************/

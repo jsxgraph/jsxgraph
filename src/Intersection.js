@@ -53,13 +53,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                    && el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
             
             return function(){ 
+                var res, c;
+                
                 if (JXG.exists(p) && p.visProp.alwaysintersect) {
                     return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board);
                 } else {
-                    return JXG.Math.Geometry.meetSegmentSegment(
+                    res = JXG.Math.Geometry.meetSegmentSegment(
                         el1.point1.coords.usrCoords, el1.point2.coords.usrCoords,
                         el2.point1.coords.usrCoords, el2.point2.coords.usrCoords, 
                         el1.board); 
+                    if (0<=res[1] && res[1]<=1 && 0<=res[2] && res[2]<=1) {
+                        c = res[0];
+                    } else {
+                        c = [0,1,0];
+                    }
+                    return (new JXG.Coords(JXG.COORDS_BY_USER, c, el1.board));
                 }
             };
         // All other combinations of circles and lines
