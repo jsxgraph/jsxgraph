@@ -86,8 +86,8 @@ JXG.JSXGraph = {
             // Ok, this is some real magic going on here. IE/VML always was so
             // terribly slow, except in one place: Examples placed in a moodle course
             // was almost as fast as in other browsers. So i grabbed all the css and
-            // js scripts from our moodle, added them to a jsxgraph example and it
-            // worked. next step was to strip all the css/js code which didn't affect
+            // lib scripts from our moodle, added them to a jsxgraph example and it
+            // worked. next step was to strip all the css/lib code which didn't affect
             // the VML update speed. The following five lines are what was left after
             // the last step and yes - it basically does nothing but reads two
             // properties of document.body on every mouse move. why? we don't know. if

@@ -1298,7 +1298,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
                         ret = node.children[0] + ': ' + this.compile(node.children[1], js);
                         break;
                     case 'op_proplst_val':
-                        ret = /*(js ? '{' : '<<') +*/ this.compile(node.children[0], js) /*+ (js ? '}' : '>>')*/;
+                        ret = /*(lib ? '{' : '<<') +*/ this.compile(node.children[0], js) /*+ (lib ? '}' : '>>')*/;
                         break;
                     case 'op_array':
                         ret = '[' + this.compile(node.children[0], js) + ']';
