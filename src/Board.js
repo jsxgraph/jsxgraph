@@ -707,8 +707,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             cPos[1] += getProp('padding-top');
         }
 
-        cPos = JXG.getCSSTransform(cPos, pCont);
-        
         this.cPos = cPos;
 
         return cPos;

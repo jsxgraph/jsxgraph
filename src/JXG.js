@@ -863,7 +863,12 @@ JXG.extend(JXG, /** @lends JXG */ {
         var o = obj,
             o2 = obj,
             l = o.offsetLeft - o.scrollLeft,
-            t = o.offsetTop - o.scrollTop;
+            t = o.offsetTop - o.scrollTop,
+            cPos;
+
+        cPos = this.getCSSTransform([l,t],o);
+        l = cPos[0];
+        t = cPos[1];
 
         /*
          * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -879,12 +884,23 @@ JXG.extend(JXG, /** @lends JXG */ {
                 l+=o.clientLeft - o.scrollLeft;
                 t+=o.clientTop - o.scrollTop;
             }
+            
+            cPos = this.getCSSTransform([l,t],o);
+            l = cPos[0];
+            t = cPos[1];
+            
             o2 = o2.parentNode;
             while (o2!=o) {
                 l += o2.clientLeft - o2.scrollLeft;
                 t += o2.clientTop - o2.scrollTop;
+                
+                cPos = this.getCSSTransform([l,t],o2);
+                l = cPos[0];
+                t = cPos[1];
+
                 o2 = o2.parentNode;
             }
+
         }
         return [l,t];
     },
@@ -926,7 +942,9 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     getCSSTransform: function(cPos, obj) {
         var t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
-            i, str, len, arr, mat;
+            i, j, str, arrStr, 
+            start, len, len2,
+            arr, mat;
             
         // Take the first transformation matrix
         len = t.length;
@@ -936,22 +954,51 @@ JXG.extend(JXG, /** @lends JXG */ {
                 break;
             }
         }
-        
+
         /**
         * Extract the coordinates and apply the transformation
         * to cPos
         */
-        if (str!='' && str.substr(0,6)==='matrix') {
-            len = str.length;
-            str = str.substring(7,len-1);
-            arr = str.split(',');
-
-            mat = [[parseFloat(arr[0]), parseFloat(arr[1])],
-                   [parseFloat(arr[2]), parseFloat(arr[3])]];
-               
-            cPos = JXG.Math.matVecMult(mat, cPos);
-            cPos[0] += parseFloat(arr[4]);
-            cPos[1] += parseFloat(arr[5]);
+        if (str!='') {
+            start = str.indexOf('(');
+            if (start>0) {
+                len = str.length;
+                arrstr = str.substring(start+1,len-1);
+                arr = arrstr.split(',');
+                for (j=0, len2=arr.length; j<len2; j++) {
+                    arr[j] = parseFloat(arr[j]);
+                }
+            
+                if (0==str.indexOf('matrix')) {    
+                    mat = [[arr[0], arr[1]],
+                           [arr[2], arr[3]]];
+                    cPos = JXG.Math.matVecMult(mat, cPos);
+                    cPos[0] += arr[4];
+                    cPos[1] += arr[5];
+                } else if (0==str.indexOf('translateX')) {    
+                    cPos[0] += arr[0];
+                } else if (0==str.indexOf('translateY')) {    
+                    cPos[1] += arr[0];
+                } else if (0==str.indexOf('translate')) {    
+                    cPos[0] += arr[0];
+                    cPos[1] += arr[1];
+                // The following trannsformations do not work
+                // and require more tests.
+                // Missing are rotate, skew, skewX, skewY
+                } else if (0==str.indexOf('scaleX')) {    
+                    mat = [[arr[0], 0],
+                           [0, 1]];
+                    cPos = JXG.Math.matVecMult(mat, cPos);
+                } else if (0==str.indexOf('scaleY')) {    
+                    mat = [[1, 0],
+                           [0, arr[0]]];
+                    cPos = JXG.Math.matVecMult(mat, cPos);
+                } else if (0==str.indexOf('scale')) {    
+                    mat = [[arr[0], 0],
+                           [0, arr[1]]];
+                    cPos = JXG.Math.matVecMult(mat, cPos);
+                }
+            }
         }
         return cPos;
     },
