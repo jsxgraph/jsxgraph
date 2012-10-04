@@ -972,7 +972,7 @@ JXG.extend(JXG, /** @lends JXG */ {
                 if (0==str.indexOf('matrix')) {    
                     mat = [[arr[0], arr[1]],
                            [arr[2], arr[3]]];
-                    cPos = JXG.Math.matVecMult(mat, cPos);
+                    //cPos = JXG.Math.matVecMult(mat, cPos);
                     cPos[0] += arr[4];
                     cPos[1] += arr[5];
                 } else if (0==str.indexOf('translateX')) {    
