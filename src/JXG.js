@@ -850,7 +850,7 @@ JXG.extend(JXG, /** @lends JXG */ {
             posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
             posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
-
+    
         return [posx,posy];
     },
 
