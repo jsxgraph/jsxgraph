@@ -722,7 +722,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     getMousePosition: function (e, i) {
         var cPos = this.getCoordsTopLeftCorner(),
-            absPos;
+            absPos, v;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
         // Seems to be obsolete now
@@ -733,6 +733,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(e, i);
+        
+        /*
+        v = [1, absPos[0], absPos[1]];
+        v = JXG.Math.matVecMult(this.cssTransMat, v);
+        v[1] /= v[0];
+        v[2] /= v[1];
+        return [v[1]-cPos[0], v[2]-cPos[1]];
+        */
         return [absPos[0]-cPos[0], absPos[1]-cPos[1]];
     },
 
@@ -3183,6 +3191,38 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
         this.currentCBDef = deficiency;
         this.update();
+
+        return this;
+    },
+    
+    /**
+     * TODO
+     */
+    updateCSSTransforms: function () {
+        var obj = this.containerObj,
+            o = obj,
+            o2 = obj;
+
+        this.cssTransMat = JXG.getCSSTransformMatrix(o);
+
+        /*
+         * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
+         * if not to the body. In IE and if we are in an position:absolute environment 
+         * offsetParent walks up the DOM hierarchy.
+         * In order to walk up the DOM hierarchy also in Mozilla and Webkit
+         * we need the parentNode steps.
+         */
+        while (o=o.offsetParent) {
+            this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
+            
+            o2 = o2.parentNode;
+            while (o2!=o) {
+                this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
+                o2 = o2.parentNode;
+            }
+
+        }
+        this.cssTransMat = JXG.Math.inverse(this.cssTransMat);
 
         return this;
     },
