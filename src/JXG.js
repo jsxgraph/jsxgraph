@@ -1002,6 +1002,63 @@ JXG.extend(JXG, /** @lends JXG */ {
         }
         return cPos;
     },
+
+    /**
+     * TODO
+     */
+    getCSSTransformMatrix: function(obj) {
+        var t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
+            i, j, str, arrStr, 
+            start, len, len2,
+            arr, mat;
+
+        mat = [[1, 0, 0],
+               [0, 1, 0],
+               [0, 0, 1]];
+               
+       // Take the first transformation matrix
+        len = t.length;
+        for (i=0, str=''; i<len; i++) {
+            if (JXG.exists(obj.style[t[i]])) {
+                str = obj.style[t[i]];
+                break;
+            }
+        }
+        
+        if (str!='') {
+            start = str.indexOf('(');
+            if (start>0) {
+                len = str.length;
+                arrstr = str.substring(start+1,len-1);
+                arr = arrstr.split(',');
+                for (j=0, len2=arr.length; j<len2; j++) {
+                    arr[j] = parseFloat(arr[j]);
+                }
+            
+                if (0==str.indexOf('matrix')) {  
+                    mat = [[1, 0, 0],
+                           [arr[4], arr[0], arr[1]],
+                           [arr[5], arr[2], arr[3]]];
+                } else if (0==str.indexOf('translateX')) {    
+                    mat[1][0] = arr[0];
+                } else if (0==str.indexOf('translateY')) {    
+                    mat[2][0] = arr[0];
+                } else if (0==str.indexOf('translate')) {    
+                    mat[1][0] = arr[0];
+                    mat[2][0] = arr[1];
+                // Missing are rotate, skew, skewX, skewY
+                } else if (0==str.indexOf('scaleX')) { 
+                    mat[1][1] = arr[0];
+                } else if (0==str.indexOf('scaleY')) {    
+                    mat[2][2] = arr[0];
+                } else if (0==str.indexOf('scale')) {    
+                    mat[1][1] = arr[0];
+                    mat[2][2] = arr[1];
+                }
+            }
+        }
+        return mat;
+    },
     
     /**
      * Extracts the keys of a given object.
