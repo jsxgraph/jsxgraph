@@ -299,7 +299,7 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_BISECTOR:
                     set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
-                    set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
+                    set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
                     set_str += step.dest_sub_ids[0] + '\'>>>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                     break;
