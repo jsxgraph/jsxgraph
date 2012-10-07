@@ -1377,8 +1377,8 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             } else if (curve.numberPoints==1) {
                 newCoords = [curve.Z(0), curve.X(0), curve.Y(0)]; 
             } else {
+                p1 = [curve.Z(0), curve.X(0), curve.Y(0)];
                 for (i=0; i<curve.numberPoints-1; i++) {
-                    p1 = [curve.Z(i), curve.X(i), curve.Y(i)];
                     p2 = [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)];
                     v = [1, x, y];
                     res = this.projectCoordsToSegment(v, p1, p2);
@@ -1438,6 +1438,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
                         t = d;
                         newCoords = coords;
                     }
+                    p1 = p2;  // Moving on.
                 }
             }
             newCoords = new JXG.Coords(JXG.COORDS_BY_USER, newCoords, board);
