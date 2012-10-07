@@ -1268,6 +1268,34 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
     },
 
     /**
+     * Calculates the coordinates of the orthogonal projection of a given coordinate array on a given line
+     * segment defined by two coordinate arrays. 
+     * @param {Array} p1 Point to project.
+     * @param {Array} q1 Start point of the line segment on that the point is projected.
+     * @param {Array} q2 End point of the line segment on that the point is projected.
+     * @returns {Array} The coordinates of the projection of the given point on the given segment 
+     * and the factor that determines the projected point as a convex combination of the 
+     * two endpoints q1 and q2 of the segment.     
+     */
+    projectCoordsToSegment: function(p, q1, q2) {
+        var s = [q2[1]-q1[1], q2[2]-q1[2]],
+            v = [p[1]-q1[1], p[2]-q1[2]],
+            t, denom, c;
+            
+        /**
+         * If the segment has length 0, i.e. is a point,
+         * the projection is equal to that point.
+         */
+        if (Math.abs(s[0])<JXG.Math.eps && Math.abs(s[1])<JXG.Math.eps) {
+            return q1;
+        }
+        t = JXG.Math.innerProduct(v,s);
+        denom = JXG.Math.innerProduct(s,s);
+        t /= denom;
+        return [ [1, t*s[0]+q1[1], t*s[1]+q1[2]], t]
+    },
+    
+    /**
      * Calculates the coordinates of the projection of a given point on a given curve.
      * Uses {@link #projectCoordsToCurve}.
      * @param {JXG.Point} point Point to project.
@@ -1305,7 +1333,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
     projectCoordsToCurve: function(x, y, t, curve, board) {
         var newCoords, i, 
             x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
-            p1, p2, q1, q2,
+            p1, p2, q1, q2, res,
             infty = Number.POSITIVE_INFINITY, 
             minfunc, tnew, fnew, fold, delta, steps;
 
@@ -1345,15 +1373,31 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             t = 0;
             mindist = infty;
             if (curve.numberPoints==0) {
-                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [0,1,1], board);
+                newCoords = [0,1,1]; //new JXG.Coords(JXG.COORDS_BY_USER, [0,1,1], board);
             } else if (curve.numberPoints==1) {
-                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(0), curve.X(0), curve.Y(0)], board);
+                newCoords = [curve.Z(0), curve.X(0), curve.Y(0)]; 
             } else {
                 for (i=0; i<curve.numberPoints-1; i++) {
-                    
                     p1 = [curve.Z(i), curve.X(i), curve.Y(i)];
                     p2 = [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)];
+                    v = [1, x, y];
+                    res = this.projectCoordsToSegment(v, p1, p2);
+                    lbda = res[1];
+                    coords = res[0];
+                    if (0.0<=lbda && lbda<=1.0) {     
+                        dist = this.distance(coords, v);
+                        d = i + lbda;
+                    } else if (lbda<0.0) {
+                        coords = p1; 
+                        dist = this.distance(p1, v);
+                        d = i;
+                    } else if (lbda>1.0 && i+1== curve.numberPoints-1) {
+                        coords = p2;
+                        dist = this.distance(coords, v);
+                        d = curve.numberPoints-1;
+                    }
                     
+                    /*
                     // li: line through points i, i+1 of curve
                     li = JXG.Math.crossProduct(p2, p1);
                     // ideal point of perpendicular to li
@@ -1388,6 +1432,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
                         dist = this.distance(coords.usrCoords, [1, x, y]);
                         d = curve.numberPoints-1;
                     }
+                    */
                     if (dist < mindist) {
                         mindist = dist;
                         t = d;
@@ -1395,6 +1440,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
                     }
                 }
             }
+            newCoords = new JXG.Coords(JXG.COORDS_BY_USER, newCoords, board);
         } else {             // functiongraph
             t = x;
             x = t; //curve.X(t);
