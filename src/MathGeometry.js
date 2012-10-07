@@ -532,7 +532,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         }
 
         /*
-         * If at least one of the definng points is outside of the board
+         * If at least one of the defining points is outside of the board
          * we take intersect1 or intersect2 as one of the end points
          * The order is also important for arrows of axes
          */
@@ -1305,6 +1305,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
     projectCoordsToCurve: function(x, y, t, curve, board) {
         var newCoords, i, 
             x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
+            p1, p2, q1, q2,
             infty = Number.POSITIVE_INFINITY, 
             minfunc, tnew, fnew, fold, delta, steps;
 
@@ -1348,11 +1349,13 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             } else if (curve.numberPoints==1) {
                 newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.Z(0), curve.X(0), curve.Y(0)], board);
             } else {
-                for (i = 0; i < curve.numberPoints-1; i++) {
+                for (i=0; i<curve.numberPoints-1; i++) {
+                    
+                    p1 = [curve.Z(i), curve.X(i), curve.Y(i)];
+                    p2 = [curve.Z(i+1), curve.X(i+1), curve.Y(i+1)];
+                    
                     // li: line through points i, i+1 of curve
-                    li = JXG.Math.crossProduct([curve.Z(i+1), curve.X(i+1), curve.Y(i+1)],
-                                            [curve.Z(i), curve.X(i), curve.Y(i)]);
-                                            
+                    li = JXG.Math.crossProduct(p2, p1);
                     // ideal point of perpendicular to li
                     v = [0, li[1], li[2]];
                     //  perpendicular to li through (x,y)
@@ -1360,8 +1363,8 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
                     // orthogonal projection (intersection of li and perp 
                     coords = this.meetLineLine(v, li, 0, board);
 
-                    x1 = curve.X(i+1) - curve.X(i);
-                    y1 = curve.Y(i+1) - curve.Y(i);
+                    x1 = p2[1] - p1[1]; // curve.X(i+1) - curve.X(i);
+                    y1 = p2[2] - p1[2]; // curve.Y(i+1) - curve.Y(i);
                     if (Math.abs(x1)>JXG.Math.eps) {
                         x0 = coords.usrCoords[1] - curve.X(i);
                         lbda = x0 / x1;

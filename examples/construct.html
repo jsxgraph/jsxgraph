@@ -133,14 +133,21 @@ el.updateDataArray = function() {
     this.dataY = [p1.Y(),p2.Y(),p5.Y()];
     return;
 };
+brd.update();
 
 //var l = brd.create('segment', [p1,p2]);
 var s = brd.create('line', [p3,p4]);
-brd.update();    
 
 brd.create('intersection', [el,s,0], {alwaysIntersect:true, withLabel:false});
 brd.create('intersection', [el,s,1], {alwaysIntersect:true, withLabel:false});
-                                 
+
+var g1 = brd.create('glider', [-4,-3,el]);
+                          
+var pp = brd.create('point', [0,4]);
+brd.on('update', function() {
+        var x = pp.X();
+        pp.moveTo([x, 4]);
+    });
                 
 /*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox: [-5,15,15,-5]});
