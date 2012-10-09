@@ -136,7 +136,8 @@ el.updateDataArray = function() {
 brd.update();
 
 //var l = brd.create('segment', [p1,p2]);
-var s = brd.create('line', [p3,p4]);
+var s = brd.create('segment', [p3,p4]);
+brd.create('line', [1,2,3]);
 
 brd.create('intersection', [el,s,0], {alwaysIntersect:true, withLabel:false});
 brd.create('intersection', [el,s,1], {alwaysIntersect:true, withLabel:false});

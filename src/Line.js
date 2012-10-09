@@ -129,20 +129,15 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         c[1] = this.stdform[1]/this.board.unitX;
         c[2] = this.stdform[2]/(-this.board.unitY);
 
-        // Project the point orthogonally onto the line 
-        vnew = [0, c[1], c[2]];
-        vnew = JXG.Math.crossProduct(vnew, v); // Orthogonal line to c through v
-        vnew = JXG.Math.crossProduct(vnew, c); // Intersect orthogonal line with line
-
-        // Normalize the projected point
-        vnew[1] /= vnew[0];
-        vnew[2] /= vnew[0];
-        vnew[0] = 1.0;
+        /*
         
         // The point is too far away from the line
         // dist(v,vnew)^2 projective
-        s = /*(v[0]-vnew[0])*(v[0]-vnew[0])+*/ (v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
-        if (isNaN(s) || s>this.board.options.precision.hasPoint*this.board.options.precision.hasPoint) {
+        s = (v[1]-vnew[1])*(v[1]-vnew[1])+(v[2]-vnew[2])*(v[2]-vnew[2]);
+        */
+
+        s = JXG.Math.Geometry.distPointLine(v, c);
+        if (isNaN(s) || s>this.board.options.precision.hasPoint) {
             return false;
         }
 
@@ -151,11 +146,21 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } else { // If the line is a ray or segment we have to check if the projected point is between P1 and P2.
             p1c = this.point1.coords;
             p2c = this.point2.coords;
+            // Project the point orthogonally onto the line 
+            vnew = [0, c[1], c[2]];
+            vnew = JXG.Math.crossProduct(vnew, v); // Orthogonal line to c through v
+            vnew = JXG.Math.crossProduct(vnew, c); // Intersect orthogonal line with line
+
+            // Normalize the projected point
+            vnew[1] /= vnew[0];
+            vnew[2] /= vnew[0];
+            vnew[0] = 1.0;
+            
             vnew = (new JXG.Coords(JXG.COORDS_BY_SCREEN, vnew.slice(1), this.board)).usrCoords;
             d = p1c.distance(JXG.COORDS_BY_USER, p2c);
             p1c = p1c.usrCoords.slice(0);
             p2c = p2c.usrCoords.slice(0);
-            if (d<JXG.Math.eps) {                                        // The defining points are identical
+            if (d<JXG.Math.eps) {                  // The defining points are identical
                 pos = 0.0;
             } else {
                 /*

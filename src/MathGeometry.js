@@ -1292,7 +1292,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         t = JXG.Math.innerProduct(v,s);
         denom = JXG.Math.innerProduct(s,s);
         t /= denom;
-        return [ [1, t*s[0]+q1[1], t*s[1]+q1[2]], t]
+        return [ [1, t*s[0]+q1[1], t*s[1]+q1[2]], t];
     },
     
     /**
@@ -1500,6 +1500,29 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
      */
     projectPointToPoint: function(point, dest, board) {
         return dest.coords;
+    },
+    
+    /**
+     * Calculates the distance of a point to a line. The point and the line are given by homogeneous 
+     * coordinates. For lines this can be line.stdform.
+     * @param {Array} point Homogeneous coordinates of a point.
+     * @param {Array} line Homogeneous coordinates of a line ([C,A,B] where A*x+B*y+C*z=0).
+     * @returns {Number} Distance of the point to the line.
+     */
+    distPointLine: function(point, line) {
+        var a = line[1],
+            b = line[2],
+            c = line[0],
+            nom;
+        
+        if (Math.abs(a)+Math.abs(b) < JXG.Math.eps) {
+            return Number.POSITIVE_INFINITY;
+        }
+        
+        nom = a*point[1] + b*point[2] + c*1;
+        a *= a;
+        b *= b;
+        return Math.abs(nom) / Math.sqrt(a+b);
     }
     
 });
