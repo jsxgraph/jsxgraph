@@ -30,44 +30,88 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         
         // Get access to the intersection point object
         // This is necessary to read the property alwaysIntersect
+        // see JXG.createIntersectionPoint() (Point.js)
         if (pointObj!=null) {
             p = pointObj.point;
         }
         
-        // curve - curve, but not both are arcs TEMPORARY FIX!!!
         if (el1.elementClass==JXG.OBJECT_CLASS_CURVE 
             && el2.elementClass==JXG.OBJECT_CLASS_CURVE
-            && (el1.type!=JXG.OBJECT_TYPE_ARC || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
-            return function(){return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); };
-        // arc - line   (arcs are of class curve, but are intersected like circles)
-        } else if ((el1.type==JXG.OBJECT_TYPE_ARC && el2.elementClass==JXG.OBJECT_CLASS_LINE) ||
-                   (el2.type==JXG.OBJECT_TYPE_ARC && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
-            return function(){return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); };
-        // curve - line (this includes intersections between conic sections and lines
-        } else if ((el1.elementClass==JXG.OBJECT_CLASS_CURVE && el2.elementClass==JXG.OBJECT_CLASS_LINE)||
-                   (el2.elementClass==JXG.OBJECT_CLASS_CURVE && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
-            return function(){return JXG.Math.Geometry.meetCurveLine(el1,el2,i,el1.board); };
-        // segment - segment
-        } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE && el2.elementClass==JXG.OBJECT_CLASS_LINE
-                   && el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
-                   && el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
+            && (el1.type!=JXG.OBJECT_TYPE_ARC 
+                || el2.type!=JXG.OBJECT_TYPE_ARC) ) {
+                    
+            // curve - curve, but not both are arcs 
+            // TEMPORARY FIX!!!
+            return function(){
+                        return JXG.Math.Geometry.meetCurveCurve(el1,el2,i,j,el1.board); 
+                    };
             
+        } else if ( (el1.type==JXG.OBJECT_TYPE_ARC 
+                      && el2.elementClass==JXG.OBJECT_CLASS_LINE) 
+                    ||
+                     (el2.type==JXG.OBJECT_TYPE_ARC 
+                      && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
+                          
+            // arc - line   (arcs are of class curve, but are intersected like circles)
+            // TEMPORARY FIX!!!
+            return function(){
+                        return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board); 
+                    };
+                    
+        } else if ( (el1.elementClass==JXG.OBJECT_CLASS_CURVE 
+                      && el2.elementClass==JXG.OBJECT_CLASS_LINE)
+                    ||
+                     (el2.elementClass==JXG.OBJECT_CLASS_CURVE 
+                      && el1.elementClass==JXG.OBJECT_CLASS_LINE)) {
+                          
+            // curve - line (this includes intersections between conic sections and lines
+            return function(){
+                        return JXG.Math.Geometry.meetCurveLine(el1,el2,i,el1.board, pointObj); 
+                    };
+                    
+        } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE 
+                    && el2.elementClass==JXG.OBJECT_CLASS_LINE
+                   //&& el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
+                   //&& el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
+                 )  {
+                     
+            // line - line, lines may also be segments.
             return function(){ 
-                var res, c;
-                
-                if (JXG.exists(p) && p.visProp.alwaysintersect) {
-                    return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board);
-                } else {
+                var res, c,
+                    first1 = el1.visProp.straightfirst;
+                    first2 = el2.visProp.straightfirst;
+                    last1 = el1.visProp.straightlast;
+                    last2 = el2.visProp.straightlast;
+
+                /** 
+                 * If one of the lines is a segment or ray and
+                 * the the intersection point shpould disappear if outside 
+                 * of the segment or ray we call
+                 * meetSegmentSegment 
+                 */
+                if (JXG.exists(p) && !p.visProp.alwaysintersect
+                    && (first1==false
+                        || last1==false
+                        || first2==false
+                        || last2==false)
+                    ) {
+
                     res = JXG.Math.Geometry.meetSegmentSegment(
                         el1.point1.coords.usrCoords, el1.point2.coords.usrCoords,
                         el2.point1.coords.usrCoords, el2.point2.coords.usrCoords, 
                         el1.board); 
-                    if (0<=res[1] && res[1]<=1 && 0<=res[2] && res[2]<=1) {
-                        c = res[0];
+                        
+                    if ( (!first1 && res[1]<0)
+                         || (!last1 && res[1]>1)
+                         || (!first2 && res[2]<0)
+                         || (!last2 && res[2]>1) ) {
+                        c = [0,NaN,NaN];  // Non-existent
                     } else {
-                        c = [0,1,0];
+                        c = res[0];
                     }
                     return (new JXG.Coords(JXG.COORDS_BY_USER, c, el1.board));
+                } else {
+                    return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,i,el1.board);
                 }
             };
         // All other combinations of circles and lines

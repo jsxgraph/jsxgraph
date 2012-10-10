@@ -1063,11 +1063,12 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
      * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
      * the ideal point [0,1,0] is returned.
      */
-    meetCurveLine: function(el1, el2, nr, board) {
+    meetCurveLine: function(el1, el2, nr, board, pointObj) {
         var v = [0, NaN, NaN], i, cu, li;
 
-        if (!JXG.exists(board))
+        if (!JXG.exists(board)) {
             board = el1.board;
+        }
 
         for (i = 0; i <= 1; i++) {
             if (arguments[i].elementClass == JXG.OBJECT_CLASS_CURVE) {
@@ -1079,7 +1080,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         }
 
         if (cu.visProp.curvetype==='plot') {
-            v = this.meetCurveLineDiscrete(cu, li, nr, board);
+            v = this.meetCurveLineDiscrete(cu, li, nr, board, pointObj);
         } else {
             v = this.meetCurveLineContinuous(cu, li, nr, board);
         }
@@ -1154,11 +1155,19 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
      * Segments are treated as lines. 
      * Finding the nr-the intersection point should work for all nr.
      */
-    meetCurveLineDiscrete: function(cu, li, nr, board) {
+    meetCurveLineDiscrete: function(cu, li, nr, board, pointObj) {
         var len, i, p1, p2, q,
-            d, cnt = 0, res;
+            d, cnt = 0, res, 
+            p, testSegment = false;
 
         len = cu.numberPoints; 
+        if (pointObj!=null) {
+            p = pointObj.point;
+            if (JXG.exists(p) && !p.visProp.alwaysintersect) {
+                testSegment = true;
+            }
+            
+        }
     
         // In case, no intersection will be found we will take this
         q = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -1174,6 +1183,20 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords, board);
             if (0<=res[1] && res[1]<=1) {
                 if (cnt==nr) {
+                    
+                    /**
+                     * If the intersection point is not part of the segment, 
+                     * this intersection point is set to non-existent.
+                     * This prevents jumping of the intersection points.
+                     * But it may be discussed if it is the desired behavior.
+                     */
+                    if (testSegment 
+                        && ( li.visProp.straightfirst==false && res[2]<0 
+                             || li.visProp.straightlast==false && res[2]>1 )
+                        ) {
+                        break;
+                    }
+                        
                     q = new JXG.Coords(JXG.COORDS_BY_USER, res[0], board);
                     break;
                 }

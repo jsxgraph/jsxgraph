@@ -136,11 +136,13 @@ el.updateDataArray = function() {
 brd.update();
 
 //var l = brd.create('segment', [p1,p2]);
-var s = brd.create('segment', [p3,p4]);
-brd.create('line', [1,2,3]);
 
-brd.create('intersection', [el,s,0], {alwaysIntersect:true, withLabel:false});
-brd.create('intersection', [el,s,1], {alwaysIntersect:true, withLabel:false});
+var s = brd.create('segment', [p3,p4]);
+var s2 = brd.create('line', [1,2,3]);
+
+brd.create('intersection', [s2,s,0], {alwaysIntersect:false, withLabel:false});
+brd.create('intersection', [el,s,0], {alwaysIntersect:false, withLabel:true});
+brd.create('intersection', [el,s,1], {alwaysIntersect:false, withLabel:true});
 
 var g1 = brd.create('glider', [-4,-3,el]);
                           
