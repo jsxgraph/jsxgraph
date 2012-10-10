@@ -887,7 +887,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         d = lin[0];
         n = lin.slice(1, 3);
 
-        // Line is normalized, therefore nn==1 and we can skip some operations:
+        // Line is assumed to be normalized. Therefore, nn==1 and we can skip some operations:
         /*
          var nn = n[0]*n[0]+n[1]*n[1];
          A = a*nn;
@@ -1104,7 +1104,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
         };
         
         /**
-         * Find some interstion point
+         * Find some intersection point
          */
         if (arguments.callee.t1memo) {
             tstart = arguments.callee.t1memo;

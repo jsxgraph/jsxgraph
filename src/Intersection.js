@@ -71,9 +71,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     
         } else if (el1.elementClass==JXG.OBJECT_CLASS_LINE 
                     && el2.elementClass==JXG.OBJECT_CLASS_LINE
-                   //&& el1.visProp.straightfirst==false && el1.visProp.straightlast==false 
-                   //&& el2.visProp.straightfirst==false && el2.visProp.straightlast==false) {
-                 )  {
+                   )  {
                      
             // line - line, lines may also be segments.
             return function(){ 
