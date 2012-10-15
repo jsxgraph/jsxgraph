@@ -63,63 +63,53 @@ JXG.Options.zoom.wheel = false;
 JXG.Options.glider = {label:{}};
 JXG.Options.point.label = {};
 */
-/*
-                var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
-                var p1 = brd.create('point', [1,1]);
-                var p2 = brd.create('point', [3,0]);
-                var p3 = brd.create('point', [2,3]);
-                var a1 = brd.create('arc', [p1,p2,p3]);
-
-                var p4 = brd.create('point', [4,1]);
-                var p5 = brd.create('point', [2,0]);
-                var p6 = brd.create('point', [3,3]);
-                var a2 = brd.create('arc', [p4,p6,p5]);
-                var i = brd.create('intersection', [a1,a2,1]);
-                //var f = brd.create('functiongraph', ["sin(x)"]);
-*/
-
-/*
-    var exportRoot;
-    window.onload = init;
-
-    function init() {
-        var divTag = document.createElement("div");
-        divTag.id = "box";
-        divTag.className = "jxgbox";
-        divTag.style.width = '300px';
-        divTag.style.height = '300px';
-
-        divTag.style.border = '5px solid black';
-
-        document.body.appendChild(divTag);  
-
-        //create DOMELement and append to export Root
-        var formDOMElement = new DOMElement(document.getElementById("box"));    
-        exportRoot = divTag;
-        //exportRoot.addChild(formDOMElement);
-    
-        //position the form DOM to a container element in my exportRoot
-        //formDOMElement.x = exportRoot.boardMC.x;
-        //formDOMElement.y = exportRoot.boardMC.y;
-
-        board = JXG.JSXGraph.initBoard('box', {boundingbox: [-1, 6, 6, -1], grid: true, axis: true});
-        ax3 = board.createElement('axis', [[0,0],[1,0]]);
-
-        p1 = board.create('point',[0,0],{name:'p1'});   
-        p2 = board.create('point',[5,2],{name:'p2'});
-        p3 = board.create('point',[1,4],{name:'p3'});
-        board.create('polygon',[p1,p2,p3]);
+    JXG.joinCurves = function(board, parents, attributes) {
+        var cu1 = parents[0], 
+            cu2 = parents[1],
+            attr = JXG.copyAttributes(attributes, board.options, 'curve'),
+            c = board.create('curve', [[0], [0]], attr);
         
-        // create the incircle 
-
-        var retArray = board.create('incircle',[p1,p2,p3],{color:'green', strokeColor:'purple'});
-        // create the three angle bisectors, to show that they intersect at center of the incircle 
-        board.create('bisector',[p3,p2,p1],{dash:1,strokeOpacity:0.3});
-        board.create('bisector',[p2,p1,p3],{dash:1,strokeOpacity:0.3});
-        board.create('bisector',[p1,p3,p2],{dash:1,strokeOpacity:0.3});
+        c.updateDataArray = function() {
+            // The two paths have to be connected
+            this.dataX = cu1.dataX.slice(0,-1).concat(cu2.dataX);
+            this.dataY = cu1.dataY.slice(0,-1).concat(cu2.dataY);
+            if (this.dataX.length<4) {
+                this.bezierDegree = 1;
+            } else {
+                this.bezierDegree = cu1.bezierDegree;
+            }
+        };
+        c.prepareUpdate().update().updateRenderer();
+        return c;
     };
-*/
-      
+
+    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
+    // Create two arcs
+    var p1 = brd.create('point', [1,1]);
+    var p2 = brd.create('point', [3,0]);
+    var p3 = brd.create('point', [2,3]);
+    var a1 = brd.create('arc', [p1,p2,p3]);
+
+    var p4 = brd.create('point', [4,1]);
+    var p5 = brd.create('point', [2,0]);
+    var p6 = brd.create('point', [3,3]);
+    var a2 = brd.create('arc', [p4,p6,p5]);
+
+    var i1 = brd.create('intersection', [a1,a2,0], {visible:false});
+    var i2 = brd.create('intersection', [a1,a2,1], {visible:false});
+
+    // Create two arcs surroundng the intersection area
+    var c1 = brd.create('arc', [p1, i1, i2], {visible:false});
+    var c2 = brd.create('arc', [p4, i2, i1], {visible:false});
+    // Join the two arcs.
+    var c3 = JXG.joinCurves(brd, [c1,c2], 
+        {   strokeColor:'black', 
+            strokeWidth:3, 
+            fillColor:'yellow', fillOpacity:0.2
+        });
+
+    
+/*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10,10,10,-10], axis:true});
 var p1 = brd.create('point', [-5,-5]);
 var p2 = brd.create('point', [5,5]);
@@ -151,7 +141,7 @@ brd.on('update', function() {
         var x = pp.X();
         pp.moveTo([x, 4]);
     });
-                
+*/                
 /*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {axis: true, boundingbox: [-5,15,15,-5]});
 var cu = brd.create('curve',[ [0,2,4,6,12],[10,12,8,6,4] ], 
