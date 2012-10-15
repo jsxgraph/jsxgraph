@@ -144,41 +144,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
     },
 
     /**
-     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
-     * @param {String|function} text
+     * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
+     * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+     * @param text
+     * @return {JXG.Text}
+     * @private
      */
-    setTextJessieCode: function (text) {
-        var s;
-
-        this.visProp.castext = text;
-
-        if (typeof text === 'function') {
-            s = function () {
-                return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            };
-        } else {
-            if (JXG.isNumber(text)) {
-                s = text;
-            } else {
-                s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            }
-        }
-        
-        // In JessieCode the setText function will be backed up in _setText and replaced by setTextJessieCode
-        // before parsing to ensure filtering of text if created in a JC script.
-        if (this._setText) {
-            return this._setText(s);
-        } else {
-            return this.setText(s);
-        }
-    },
-
-    /**
-     * Defines new content.
-     * @param {String|function} text
-     * @return {JXG.Text} Reference to the text object.
-     */
-    setText: function(text) {
+    _setText: function (text) {
         this.needsSizeUpdate = false;
         
         if (typeof text === 'function') {
@@ -203,6 +175,39 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         this.prepareUpdate().update().updateRenderer();
 
         return this;
+    },
+
+    /**
+     * Defines new content but converts &lt; and &gt; to HTML entities before updating the DOM.
+     * @param {String|function} text
+     */
+    setTextJessieCode: function (text) {
+        var s;
+
+        this.visProp.castext = text;
+
+        if (typeof text === 'function') {
+            s = function () {
+                return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            };
+        } else {
+            if (JXG.isNumber(text)) {
+                s = text;
+            } else {
+                s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+        }
+        
+        return this._setText(s);
+    },
+
+    /**
+     * Defines new content.
+     * @param {String|function} text
+     * @return {JXG.Text} Reference to the text object.
+     */
+    setText: function(text) {
+        this._setText(text);
     },
     
     /**
