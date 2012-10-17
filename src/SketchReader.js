@@ -354,7 +354,7 @@ JXG.extend(JXG, {
                             set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
                         } else {
                             set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'';
-                            set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: false>>; ';
+                            set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: true>>; ';
                         }
 
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
@@ -364,7 +364,7 @@ JXG.extend(JXG, {
                     } else if (step.args.create_by_radius === true) {
                         set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
-                        set_str += step.dest_sub_ids[0] + '.visible = false; ';
+                        set_str += step.dest_sub_ids[0] + '.visible = true; ';
                         set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
                         set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
