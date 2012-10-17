@@ -9,6 +9,9 @@
     <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
     <script type="text/javascript" src="../src/GeonextReader.js"></script>
     <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+    
+<link href='http://fonts.googleapis.com/css?family=Montserrat+Alternates:400,700' rel='stylesheet' type='text/css'>
+    
 <style type="text/css">
 .fat {
     font-size:64px;
@@ -32,6 +35,25 @@
     color: white;
 }
     
+
+.myDefaultFont {
+font-family: 'Montserrat Alternates', sans-serif; 
+border: 0px solid black;
+padding: 0px;
+border-radius: 3px;
+}
+
+.myMachineFont {
+font-family: 'Montserrat Alternates', sans-serif;
+border: 0px solid red;
+font-weight:bold;
+padding: 0px;
+border-radius:3px;
+}
+
+
+
+
     
 </style>    
 </head>
@@ -107,6 +129,13 @@ JXG.Options.point.label = {};
             strokeWidth:3, 
             fillColor:'yellow', fillOpacity:0.2
         });
+
+t4a = brd.create('text',[-0.5,1.78,"12% Tax($)"],{ fontSize:16, strokeColor:'#DA1B5C', cssClass:'myDefaultFont',  highlight:false, fixed:true}); //medium font
+
+t1 = brd.create('text',[-0.5,4, 241], {fontSize:16, strokeColor:'#DA1B5C', cssClass: 'myMachineFont',  highlight:false, fixed:true}); //bold font
+
+
+
 
     
 /*
