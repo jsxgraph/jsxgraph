@@ -123,7 +123,7 @@ JXG.extend(JXG, {
 
             var options, assign, attrid, obj, type;
 
-            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, xstart, ystart, el, bo, arr,
+            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, bo, arr,
                 xy, sxy, sxyc, step2, copy_log = [];
 
             var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
@@ -298,10 +298,45 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_BISECTOR:
-                    set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
-                    set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
-                    set_str += step.dest_sub_ids[0] + '\'>>>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    if (step.args.create_point === true) {
+                        // TODO: use "if (options.useGlider) {"
+                        
+                        // Projection to first line
+                        pid1 = step.dest_sub_ids[1];
+                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                        set_str += '<<id:\'' + pid1 + '\', ';
+                        set_str += 'name:\'\', priv:true, visible:false >>; ';
+                        set_str += pid1 + '.glide(' + step.src_ids[0] + ');\n';
+                        reset_str = 'delete ' + pid1 + '; ';
+
+                        // Projection to second line
+                        pid2 = step.dest_sub_ids[2];
+                        set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
+                        set_str += '<<id:\'' + pid2 + '\', ';
+                        set_str += 'name:\'\', priv:true, visible:false >>; ';
+                        set_str += pid2 + '.glide(' + step.src_ids[1] + ');\n';
+                        reset_str += 'delete ' + pid2 + '; ';
+
+                        if (step.args.create_intersection) {
+                            // intersection point
+                            pid3 = step.dest_sub_ids[3];
+                            set_str += 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', 0) ';
+                            set_str += '<<id:\'' + pid3 + '\', fillColor: \'' + step.args.fillColor + '\', ';
+                            set_str += 'priv:false, visible:true >>; \n';
+                            reset_str += 'delete ' + pid3 + '; ';
+                        } else {
+                            pid3 = step.src_ids[2];
+                        }
+                        set_str += assign + 'bisector(' + pid1 + ', ' + pid3 + ', ' + pid2 + ') ';
+                        set_str += '<<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
+                        set_str += step.dest_sub_ids[0] + '\'>> >>; ';
+                        reset_str += 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    } else {
+                        set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
+                        set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
+                        set_str += step.dest_sub_ids[0] + '\'>>>>; ';
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    }
                     break;
 
                 case JXG.GENTYPE_NORMAL:

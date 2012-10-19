@@ -13,6 +13,21 @@
 <link href='http://fonts.googleapis.com/css?family=Montserrat+Alternates:400,700' rel='stylesheet' type='text/css'>
     
 <style type="text/css">
+		@font-face {
+		font-family: MyBryantB;
+		src: local("☺"),
+		url("JimReed/BryantWebBold.eot") format("eot"),
+		url("JimReed/BryantWebBold.woff") format("woff");
+		}
+		
+		@font-face {
+		font-family: MyBryantM;
+        font-weight:400;
+		src: local("☺"),
+		url("JimReed/BryantWebMedium.eot") format("eot"),
+		url("JimReed/BryantWebMedium.woff") format("woff");
+		}
+
 .fat {
     font-size:64px;
     font-family: Arial, Helvetica;
@@ -36,29 +51,34 @@
 }
     
 
-.myDefaultFont {
-font-family: 'Montserrat Alternates', sans-serif; 
-border: 0px solid black;
-padding: 0px;
-border-radius: 3px;
-}
 
 .myMachineFont {
-font-family: 'Montserrat Alternates', sans-serif;
-border: 0px solid red;
-font-weight:bold;
+/*font-family: 'Montserrat Alternates', sans-serif;*/
+font-family: "MyBryantB", serif;
+font-weight:600;
+font-size:64px;
+color:red;
+border: 1px solid red;
 padding: 0px;
 border-radius:3px;
 }
 
+.myDefaultFont {
+/*font-family: "MyBryantM", 'Montserrat Alternates', sans-serif; */
+font-family: MyBryantM, serif; 
+font-size:64px;
+font-weight:600;
+color:blue;
+border: 1px solid black;
+padding: 0px;
+border-radius: 3px;
+}
 
-
-
-    
 </style>    
 </head>
 <body id="body">
-<h1 id="x1">Playground</h1>
+<h1 class="myMachineFont">Playground</h1>
+<h1 class="myDefaultFont">Playground</h1>
 <input type="button" onclick="newsize()" value="change">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <!--<div style='width:600px; height:600px; overflow:scroll;'></div>-->
@@ -130,9 +150,10 @@ JXG.Options.point.label = {};
             fillColor:'yellow', fillOpacity:0.2
         });
 
-t4a = brd.create('text',[-0.5,1.78,"12% Tax($)"],{ fontSize:16, strokeColor:'#DA1B5C', cssClass:'myDefaultFont',  highlight:false, fixed:true}); //medium font
+t1 = brd.create('text',[-0.5,4, "Playground"], {id:"tt1", fontSize:64, strokeColor:'red', cssClass: 'myMachineFont',  highlight:true, fixed:false});
+t4a = brd.create('text',[-0.5,3.5,"Playground"],{id:"tt2", fontSize:64, strokeColor:'blue', cssClass:'myDefaultFont',  highlight:false, fixed:true}); //medium font
 
-t1 = brd.create('text',[-0.5,4, 241], {fontSize:16, strokeColor:'#DA1B5C', cssClass: 'myMachineFont',  highlight:false, fixed:true}); //bold font
+ //bold font
 
 
 
