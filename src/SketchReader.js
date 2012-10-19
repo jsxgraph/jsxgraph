@@ -322,7 +322,7 @@ JXG.extend(JXG, {
                             pid3 = step.dest_sub_ids[3];
                             set_str += 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', 0) ';
                             set_str += '<<id:\'' + pid3 + '\', fillColor: \'' + step.args.fillColor + '\', ';
-                            set_str += 'priv:false, visible:true >>; \n';
+                            set_str += 'name:\'\', priv:true, visible:false >>; \n';
                             reset_str += 'delete ' + pid3 + '; ';
                         } else {
                             pid3 = step.src_ids[2];
