@@ -126,6 +126,9 @@ JXG.Options.point.label = {};
     };
 
 
+//
+// Momory stress test
+/*
 var brd = null;
 function doit() {
     if(brd != undefined){
@@ -136,13 +139,22 @@ function doit() {
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 90, 380, -10], axis:false, grid:false, showCopyright:false, showNavigation:false});
     
     var p = [], i;
-    for (i=0; i<10; i++) {
+    for (i=0; i<1500; i++) {
         p[i] = brd.create('point', [Math.random()*370, Math.random()*80], {name:'', withLabel:false});
     }
     var pol = brd.create('polygon', p, {highlight:false, name:'XXXXXXXX'});
+    
+    cnt++;
+    if (cnt<100) {
+        setTimeout(doit, 500);
+    } else {
+        alert("DONE");
+    }
 }    
 
-doit();
+cnt = 0;
+setTimeout(doit, 1000);
+*/
 
 /*
     var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
