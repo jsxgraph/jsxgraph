@@ -17,7 +17,11 @@ from <a href="http://tracenpoche.sesamath.net/">http://tracenpoche.sesamath.net/
 
 <script type="text/javascript">
 /* <![CDATA[ */
-var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 25, unitY: 25});
+
+var brd;
+function doit() {
+brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 25, unitY: 25});
+
 var A = [];
 var B = [];
 var C = [];
@@ -55,6 +59,11 @@ brd.create('line',[C[0],D[0]],{straightFirst:false,straightLast:false,strokeWidt
 for (i=0;i<p1.borders.length;i++) p1.borders[i].setProperty({strokeWidth:1});
 for (i=0;i<p2.borders.length;i++) p2.borders[i].setProperty({strokeWidth:1});
      
+};
+doit();   
+JXG.JSXGraph.freeBoard(brd);  
+doit();   
+
 /* ]]> */
 </script>
 </body>

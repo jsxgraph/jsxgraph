@@ -259,11 +259,11 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      */
     remove: function () {
         var i;
-
         for (i = 0; i < this.borders.length; i++) {
             this.board.removeObject(this.borders[i]);
         }
-        this.board.renderer.remove(this.rendNode);
+        //this.board.renderer.remove(this.rendNode);
+        JXG.GeometryElement.prototype.remove.call(this);
     },
 
     /**

@@ -2431,8 +2431,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el, i;
 
         if (JXG.isArray(object)) {
-            for (i=0; i<object.length; i++)
+            for (i=0; i<object.length; i++) {
                 this.removeObject(object[i]);
+            }
 
             return this;
         }

@@ -38,20 +38,20 @@
     var cb = function (data) {
         try {
             if(data.mean) {
-                mean.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mean);
-                mean.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mean);
+                mean.point1.setPositionDirectly(JXG.COORDS_BY_USER, [0, data.mean]);
+                mean.point2.setPositionDirectly(JXG.COORDS_BY_USER, [1, data.mean]);
             }
             if(data.sd) {
-                sd.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.sd);
-                sd.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.sd);
+                sd.point1.setPositionDirectly(JXG.COORDS_BY_USER, [0, data.sd]);
+                sd.point2.setPositionDirectly(JXG.COORDS_BY_USER, [1, data.sd]);
             }
             if(data.median) {
-                median.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.median);
-                median.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.median);
+                median.point1.setPositionDirectly(JXG.COORDS_BY_USER, [0, data.median]);
+                median.point2.setPositionDirectly(JXG.COORDS_BY_USER, [1, data.median]);
             }
             if(data.mad) {
-                mad.point1.setPositionDirectly(JXG.COORDS_BY_USER, 0, data.mad);
-                mad.point2.setPositionDirectly(JXG.COORDS_BY_USER, 1, data.mad);
+                mad.point1.setPositionDirectly(JXG.COORDS_BY_USER, [0, data.mad]);
+                mad.point2.setPositionDirectly(JXG.COORDS_BY_USER, [1, data.mad]);
             }
         } catch (e) { $('#debug').html(e); }
         board.update();

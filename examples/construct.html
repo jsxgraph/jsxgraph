@@ -79,7 +79,7 @@ border-radius: 3px;
 <body id="body">
 <h1 class="myMachineFont">Playground</h1>
 <h1 class="myDefaultFont">Playground</h1>
-<input type="button" onclick="newsize()" value="change">
+<input type="button" onclick="doit()" value="change">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 <!--<div style='width:600px; height:600px; overflow:scroll;'></div>-->
 <div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
@@ -125,6 +125,26 @@ JXG.Options.point.label = {};
         return c;
     };
 
+
+var brd = null;
+function doit() {
+    if(brd != undefined){
+        JXG.JSXGraph.freeBoard(brd);
+    } 
+
+    JXG.Options.precision.hasPoint = 0; 
+    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 90, 380, -10], axis:false, grid:false, showCopyright:false, showNavigation:false});
+    
+    var p = [], i;
+    for (i=0; i<10; i++) {
+        p[i] = brd.create('point', [Math.random()*370, Math.random()*80], {name:'', withLabel:false});
+    }
+    var pol = brd.create('polygon', p, {highlight:false, name:'XXXXXXXX'});
+}    
+
+doit();
+
+/*
     var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
     // Create two arcs
     var p1 = brd.create('point', [1,1]);
@@ -154,7 +174,7 @@ t1 = brd.create('text',[-0.5,4, "Playground"], {id:"tt1", fontSize:64, strokeCol
 t4a = brd.create('text',[-0.5,3.5,"Playground"],{id:"tt2", fontSize:64, strokeColor:'blue', cssClass:'myDefaultFont',  highlight:false, fixed:true}); //medium font
 
  //bold font
-
+*/
 
 
 

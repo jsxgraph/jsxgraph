@@ -344,7 +344,8 @@ JXG.JSXGraph = {
 
         // Remove all objects from the board.
         for(el in board.objects) {
-            board.removeObject(board.objects[el]);
+            //board.removeObject(board.objects[el]);
+            board.objects[el].remove();
         }
 
         // Remove all the other things, left on the board, XHTML save
