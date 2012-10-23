@@ -1345,7 +1345,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     /**
      * Touch-Events
      */
-    touchStartListener: function (evt) {
+
+    /**
+     * This method is called by the browser when a finger touches the surface of the touch-device.
+     * @param {Event} evt The browsers event object.
+     * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
+     * @returns {Boolean} ...
+     */
+    touchStartListener: function (evt, object) {
         var i, pos, elements, j, k,
             eps = this.options.precision.touch,
             obj, found, targets,
@@ -1376,6 +1383,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
 
+        // TODO: Is the following TODO still relevant? Or has it been done already? If so, this comment should be updated ...
         // assuming only points are getting dragged
         // todo: this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
         // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
@@ -1438,9 +1446,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
         for (i = 0; i < evtTouches.length; i++) {
-            if (!evtTouches[i].jxg_isused) {
+            if (object || !evtTouches[i].jxg_isused) {
                 pos = this.getMousePosition(evt, i);
-                elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
+
+                if (object) {
+                    elements = [ object ];
+                    this.mode = this.BOARD_MODE_DRAG;
+                } else
+                    elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
 
                 if (elements.length != 0) {
                     obj = elements[elements.length-1];
@@ -1710,11 +1723,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the mouse is moved.
+     * This method is called by the browser when the mouse button gets pressed down.
      * @param {Event} evt The browsers event object.
+     * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
-    mouseDownListener: function (evt) {
+    mouseDownListener: function (evt, object) {
         var pos, elements, xy, r, i;
 
         // prevent accidental selection of text
@@ -1732,9 +1746,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mouseOriginMoveStart(evt)) {
             r = false;
         } else {
-
             pos = this.getMousePosition(evt);
-            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+
+            if (object) {
+                elements = [ object ];
+                this.mode = this.BOARD_MODE_DRAG;
+            } else
+                elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
 
             // if no draggable object can be found, get out here immediately
             if (elements.length == 0) {
