@@ -129,6 +129,8 @@ JXG.JessieCode = function(code, geonext) {
     this.parCurColumn = 0;
     this.line = 1;
     this.col = 1;
+    
+    this.code = '';
 
     if (typeof code === 'string') {
         this.parse(code);
@@ -482,7 +484,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
      * @param {String} code
      * @param {Boolean} [geonext=false] Geonext compatibility mode.
      */
-    parse: function (code, geonext) {
+    parse: function (code, geonext, dontstore) {
         var error_cnt = 0,
             error_off = [],
             error_la = [],
@@ -491,6 +493,10 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             replacegxt = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc', 'If', 'Deg', 'Rad', 'Dist'],
             regex, setTextBackup = JXG.Text.prototype.setText,
             ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
+        
+        if (!dontstore) {
+            this.code += code + '\n';
+        }
         
         JXG.Text.prototype.setText = JXG.Text.prototype.setTextJessieCode;
 
@@ -555,7 +561,7 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         this.countLines = false;
 
         c = vname + ' = ' + (funwrap ? ' function (' + varname + ') { return ' : '') + code + (funwrap ? '; }' : '') + ';';
-        this.parse(c, geonext);
+        this.parse(c, geonext, true);
 
         result = this.sstack[0][vname];
         if (JXG.exists(tmp)) {
