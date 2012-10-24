@@ -801,7 +801,7 @@ JXG.extend(JXG, {
                     set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\'>>; ';
                     set_str += 'circle(' + step.dest_sub_ids[0] + ', 1) <<id: \'' + step.dest_sub_ids[1];
-                    set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', visible: true>>; ';
+                    set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', strokeColor: \'#888888\', visible: true>>; ';
 
                     if (step.args.fids.length == 1)
                         step.args.func = step.args.fids[0] + '.radius()';
