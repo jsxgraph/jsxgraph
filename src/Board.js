@@ -1,4 +1,4 @@
-﻿/*
+/*
     Copyright 2008-2012
         Matthias Ehmann,
         Michael Gerhaeuser,
