@@ -65,7 +65,7 @@ JXG.extend(JXG, {
     GENTYPE_MIRROR: 43,
     GENTYPE_ROTATE: 44,
     GENTYPE_TRANSLATE: 45,
-    GENTYPE_MIGRATE: 4,
+    GENTYPE_MIGRATE: 46,
     GENTYPE_TRANSFORM: 47,
 
     // 48 ... 50 // unused ...
