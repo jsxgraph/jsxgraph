@@ -222,7 +222,7 @@ def makeCore():
     Generate slim jsxplotcore.js and place it in <output>
 '''
 def makePlot():
-    global yui, jsdoc, version, output, license
+    global yuglify, yui, jsdoc, version, output, license
 
     print "Making Plot..."
 
@@ -258,8 +258,8 @@ def makePlot():
     fout.write(license)
     fout.close()
 
-    # Minify; YUI compressor from Yahoo
-    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + tmpfilename + " >> " + coreFilename
     print s
     os.system(s)
     os.remove(tmpfilename)
@@ -335,7 +335,8 @@ def makeReaders():
         fout.write(lic)
         fout.close()
         
-        s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + srcFilename + " >>" + coreFilename
+        # Minify: Yuglify
+        s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
         print s
         os.system(s)
 
@@ -397,12 +398,11 @@ def makeCompressor(afterCore = False):
     fout.write(duallicense)
     fout.close()
 
-    # Minify 
-    # YUI compressor from Yahoo
-    s = 'java -jar ' + yui + '/build/yuicompressor*.jar --type js ' + srcFilename + ' >>' + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
     print s
     os.system(s)
-     
+
     os.system("cp %s %s" % (srcFilename, 'JSXCompressor/'))
     os.system("cp %s %s" % (coreFilename, 'JSXCompressor/'))
     # If makeCore has been called just befure, make sure you grab the newest version
