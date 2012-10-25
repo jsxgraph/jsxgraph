@@ -59,12 +59,15 @@ import re
 import tempfile
 import shutil
 
+import codecs
+
 # Used for JSHint
 import urllib
 
 
 # Default values for options. May be overridden via command line options
 yui = "~/Tools/yuicompressor"
+yuglify = "~/node_modules/yuglify/bin/yuglify"
 jsdoc = "~/Tools/jsdoc-toolkit"
 jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.4-a.jar"
 output = "distrib"
@@ -127,11 +130,61 @@ def findFilenames(filename):
             return files  # return all files in loadjsxgraph.js
     return []
 
+
+'''
+   Read a file and remove the BOM. unused
+'''
+def removeBOM(s):
+    #if s[0] == unicode((codecs.BOM_UTF8), "utf8"):
+    if s.startswith(codecs.BOM_UTF8):
+        print "found bom"
+        s = s[1:]
+    
+    if s.startswith(codecs.BOM_UTF8):
+        print "STILL A BOM"
+        
+    return s;
+
+'''
+   Read a file. unused
+'''
+def readFile(filename, mode='r', encoding=None):
+    if os.path.isfile(filename):
+        fi = file(filename,'rb')
+        header = fi.read(4) # Read just the first four bytes.
+        fi.close()
+
+        encodings = [ ( codecs.BOM_UTF32, 'utf-32' ),
+                ( codecs.BOM_UTF16, 'utf-16' ),
+                ( codecs.BOM_UTF8, 'utf-8' ) ]
+
+        for h,e in encodings:
+            if header.find(h) == 0:
+                encoding = e
+                break
+        return codecs.open(filename, mode, encoding)
+
+
+'''
+   Go through a list of files, remove all BOMs and concatenate the files into
+   one string
+'''
+def catFiles(l):
+    jstxt = '';
+
+    for f in l:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js').read()
+        jstxt += '\n\n'
+
+    return jstxt
+
+
 '''
     Generate jsxgraphcore.js and place it in <output>
 '''
 def makeCore():
-    global yui, jsdoc, version, output, license
+    global yui, yuglify, jsdoc, version, output, license
 
     print "Making Core..."
     
@@ -139,22 +192,8 @@ def makeCore():
     license = ("/* Version %s */\n" % version) + license
 
     # Take the source files and write them into jstxt
-    loader = ['loadjsxgraphInOneFile']
-    for f in loader:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
-
-    files = findFilenames('src/loadjsxgraph.js')
-    for f in files:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
-    renderer = ['SVGRenderer','VMLRenderer','CanvasRenderer']
-    for f in renderer:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
+    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js') + ['SVGRenderer','VMLRenderer','CanvasRenderer']
+    jstxt = catFiles(files)
 
     # tmpfilename = tempfile.mktemp()
     srcFilename = output + '/jsxgraphsrc.js'
@@ -169,8 +208,8 @@ def makeCore():
     fout.write(license)
     fout.close()
 
-    # Minify; YUI compressor from Yahoo
-    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + srcFilename + " >>" + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
     print s
     os.system(s)
     # os.remove(tmpfilename)
