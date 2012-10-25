@@ -65,9 +65,10 @@ JXG.extend(JXG, {
     GENTYPE_MIRROR: 43,
     GENTYPE_ROTATE: 44,
     GENTYPE_TRANSLATE: 45,
-    GENTYPE_TRANSFORM: 46,
+    GENTYPE_MIGRATE: 4,
+    GENTYPE_TRANSFORM: 47,
 
-    // 47 ... 50 // unused ...
+    // 48 ... 50 // unused ...
 
     /*
      Important:
@@ -810,12 +811,19 @@ JXG.extend(JXG, {
 
                     set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ';
 
-                    if (step.args.migrate != 0)
+                    if (step.args.migrate != 0 && step.args.migrate != -1)
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     else
-                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; '; // a de-migration function is missing ...
 
                     reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+
+                    break;
+
+                case JXG.GENTYPE_MIGRATE:
+
+                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+                    reset_str += 'delete ' + step.dest_id + '; '; // as above: missing de-migration ...
 
                     break;
 
