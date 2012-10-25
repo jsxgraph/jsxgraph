@@ -66,7 +66,6 @@ import urllib
 
 
 # Default values for options. May be overridden via command line options
-yui = "~/Tools/yuicompressor"
 yuglify = "~/node_modules/yuglify/bin/yuglify"
 jsdoc = "~/Tools/jsdoc-toolkit"
 jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.4-a.jar"
@@ -96,7 +95,7 @@ def usage():
     print "  -s, --server=URL       Overrides the server option in the JsTestDriver config."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
-    print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
+    print "  -y, --yuglify=PATH     Search for YUI yuglify in PATH."
     print
     print "Targets:"
     print "  Core                   Concatenates and minifies JSXGraph source files into"
@@ -184,7 +183,7 @@ def catFiles(l):
     Generate jsxgraphcore.js and place it in <output>
 '''
 def makeCore():
-    global yui, yuglify, jsdoc, version, output, license
+    global yuglify, jsdoc, version, output, license
 
     print "Making Core..."
     
@@ -222,7 +221,7 @@ def makeCore():
     Generate slim jsxplotcore.js and place it in <output>
 '''
 def makePlot():
-    global yuglify, yui, jsdoc, version, output, license
+    global yuglify, jsdoc, version, output, license
 
     print "Making Plot..."
 
@@ -268,7 +267,7 @@ def makePlot():
     Generate JSXGraph HTML reference, zip it and place the archive in <output>
 '''
 def makeDocs(afterCore = False):
-    global yui, jsdoc, version, output
+    global yuglify, jsdoc, version, output
     
     jsd = os.path.expanduser(jsdoc)
     if afterCore:
@@ -314,7 +313,7 @@ def makeDocs(afterCore = False):
     Make targets Readers and place them in <output>
 '''
 def makeReaders():
-    global yui, output, version, license
+    global yuglify, output, version, license
 
     print "Making Readers..."
     
@@ -325,7 +324,7 @@ def makeReaders():
         shutil.copy("src/" + fname + ".js", "tmp/")
         shutil.copy("src/" + fname + ".js", output)
 
-        # Minify; YUI compressor from Yahoo
+        # Minify; yuglify from Yahoo
         srcFilename = "tmp/" + fname + ".js"
         
         # Prepend license text
@@ -367,7 +366,7 @@ def makeRelease():
     Make JSXCompressor, a JSXGraph subproject
 '''
 def makeCompressor(afterCore = False):
-    global yui, jsdoc, version, output
+    global yuglify, jsdoc, version, output
 
     print "Make JSXCompressor"
 
@@ -467,10 +466,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest, reset, port, server
+    global yuglify, jsdoc, version, output, hint, jstest, reset, port, server
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yuglify=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -484,8 +483,8 @@ def main(argv):
             output = os.path.expanduser(arg)
         elif opt in ("-v", "--version"):
             version = arg
-        elif opt in ("-y", "--yui"):
-            yui = arg
+        elif opt in ("-y", "--yuglify"):
+            yuglify = arg
         elif opt in ("-l", "--hint"):
             hint = arg
         elif opt in ("-t", "--test"):
