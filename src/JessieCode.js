@@ -491,43 +491,47 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             that = this,
             to,
             replacegxt = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc', 'If', 'Deg', 'Rad', 'Dist'],
-            regex, setTextBackup = JXG.Text.prototype.setText,
-            ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
+            regex, setTextBackup, ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
         
         if (!dontstore) {
             this.code += code + '\n';
         }
-        
+
+        setTextBackup = JXG.Text.prototype.setText;
         JXG.Text.prototype.setText = JXG.Text.prototype.setTextJessieCode;
 
-        if (!JXG.exists(geonext)) {
-            geonext = false;
-        }
+        try {
 
-        for (i = 0; i < ccode.length; i++) {
-            if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
-                if (geonext) {
-                    for (j = 0; j < replacegxt.length; j++) {
-                        regex = new RegExp(replacegxt[j] + "\\(", 'g');
-                        ccode[i] = ccode[i].replace(regex, replacegxt[j].toLowerCase() + '(');
+            if (!JXG.exists(geonext)) {
+                geonext = false;
+            }
+
+            for (i = 0; i < ccode.length; i++) {
+                if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
+                    if (geonext) {
+                        for (j = 0; j < replacegxt.length; j++) {
+                            regex = new RegExp(replacegxt[j] + "\\(", 'g');
+                            ccode[i] = ccode[i].replace(regex, replacegxt[j].toLowerCase() + '(');
+                        }
                     }
+
+                    cleaned.push(ccode[i]);
+                } else {
+                    cleaned.push('');
                 }
-
-                cleaned.push(ccode[i]);
-            } else {
-                cleaned.push('');
             }
-        }
-        code = cleaned.join('\n');
-        code = this.utf8_encode(code);
+            code = cleaned.join('\n');
+            code = this.utf8_encode(code);
 
-        if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
-            for(i = 0; i < error_cnt; i++) {
-                this.line = error_off[i].line;
-                this._error("Parse error in line " + error_off[i].line + " near >"  + code.substr( error_off[i].offset, 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
+            if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
+                for(i = 0; i < error_cnt; i++) {
+                    this.line = error_off[i].line;
+                    this._error("Parse error in line " + error_off[i].line + " near >"  + code.substr( error_off[i].offset, 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
+                }
             }
-        }
-        
+
+        } catch (e) { }
+
         JXG.Text.prototype.setText = setTextBackup;
     },
 

@@ -307,7 +307,7 @@ JXG.extend(JXG, {
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
                         set_str += '<<id:\'' + pid1 + '\', ';
                         set_str += 'name:\'\', priv:true, visible:false >>; ';
-                        set_str += pid1 + '.glide(' + step.src_ids[0] + ');\n';
+                        set_str += pid1 + '.glide(' + step.src_ids[0] + '); ';
                         reset_str = 'delete ' + pid1 + '; ';
 
                         // Projection to second line
@@ -315,7 +315,7 @@ JXG.extend(JXG, {
                         set_str += 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]) + ') ';
                         set_str += '<<id:\'' + pid2 + '\', ';
                         set_str += 'name:\'\', priv:true, visible:false >>; ';
-                        set_str += pid2 + '.glide(' + step.src_ids[1] + ');\n';
+                        set_str += pid2 + '.glide(' + step.src_ids[1] + '); ';
                         reset_str += 'delete ' + pid2 + '; ';
 
                         if (step.args.create_intersection) {
@@ -323,20 +323,20 @@ JXG.extend(JXG, {
                             pid3 = step.dest_sub_ids[3];
                             set_str += 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', 0) ';
                             set_str += '<<id:\'' + pid3 + '\', fillColor: \'' + step.args.fillColor + '\', ';
-                            set_str += 'name:\'\', priv:true, visible:false >>; \n';
+                            set_str += 'name:\'\', priv:true, visible:false >>; ';
                             reset_str += 'delete ' + pid3 + '; ';
                         } else {
                             pid3 = step.src_ids[2];
                         }
                         set_str += assign + 'bisector(' + pid1 + ', ' + pid3 + ', ' + pid2 + ') ';
                         set_str += '<<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
-                        set_str += step.dest_sub_ids[0] + '\'>> >>; ';
-                        reset_str += 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        set_str += step.dest_sub_ids[0] + '\'>> >>;';
+                        reset_str += 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + ';';
                     } else {
                         set_str = assign + 'bisector(' + step.src_ids[1] + ', ' + step.src_ids[2] + ', ' + step.src_ids[0];
                         set_str += ') <<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
-                        set_str += step.dest_sub_ids[0] + '\'>>>>; ';
-                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
+                        set_str += step.dest_sub_ids[0] + '\'>>>>;';
+                        reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + ';';
                     }
                     break;
 
