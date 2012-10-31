@@ -58,6 +58,26 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var setprop = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true});
+        
+        
+        var yaxis = board.create('axis', [[0, 0], [0, 1]], {ticks: {insertTicks: false, ticksDistance: 3, label: {offset: [-20, -20]}}});
+        board.create('point', [1, 1]);
+        
+        // change distance to 4, have to do it the hacky way.
+        yaxis.defaultTicks.setProperty({ticksDistance: 4});
+        
+        // full update is required because axis elements have the needsRegularUpdate attribute set to false and won't update on regular updates.
+        board.fullUpdate();
+        
+        /*board.suspendUpdate();
+        board.setBoundingBox([-100, 100, 100, -100]);
+        yaxis.defaultTicks.setProperty({ticksDistance: 25});
+        board.unsuspendUpdate();
+        board.fullUpdate();*/
+    })();
+    
     var spline = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 10, 7, -5], axis:true});
         var p = [];
@@ -67,7 +87,7 @@
         p[3] = board.create('point', [2,1], {size: 4, face: 'o'});
 
         var c = board.create('spline', p, {strokeWidth:3});
-    })();
+    });
 
     var alex_integral = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});

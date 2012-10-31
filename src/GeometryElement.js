@@ -758,6 +758,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.addRotation(value);
                     }
                     break;
+                case 'ticksdistance':
+                    if (this.type === JXG.OBJECT_TYPE_TICKS && typeof value === 'number') {
+                        this.ticksFunction = (function (_value) { return function (i) {
+                                return _value;
+                            };
+                        })(value);
+                    }
+                    break;
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)) || (JXG.Validator[key] && JXG.isFunction(value) && JXG.Validator[key](value())))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
