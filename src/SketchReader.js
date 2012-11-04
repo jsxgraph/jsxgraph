@@ -651,10 +651,10 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_ANGLE:
-                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                    set_str += ') <<radiuspoint: << id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                    set_str += '\'>>, pointsquare: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
-                    set_str += '\'>>, dot: <<id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
+                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2] + ') ';
+                    set_str += '<<radiuspoint: << priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += '\'>>, pointsquare: << priv:true, id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                    set_str += '\'>>, dot: << priv:true, id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
                     set_str += '\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[2] + '; delete ';
