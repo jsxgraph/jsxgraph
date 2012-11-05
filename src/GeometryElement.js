@@ -932,7 +932,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.relativeCoords = [0, 0];
 
             this.label.content = JXG.createText(this.board, 
-                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], 
+                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name], 
                 attr);
 
             this.label.content.dump = false;
