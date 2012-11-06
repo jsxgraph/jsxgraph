@@ -2080,9 +2080,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Moves the origin and initializes an update of all elements.
-     * @params {Number} x
-     * @params {Number} y
-     * @params {Boolean} [diff=false]
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Boolean} [diff=false]
      * @returns {JXG.Board} Reference to this board.
      */
     moveOrigin: function (x, y, diff) {
