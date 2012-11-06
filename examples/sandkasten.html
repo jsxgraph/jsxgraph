@@ -59,23 +59,16 @@
     /* <![CDATA[ */
 
     var setprop = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
+            line, lines = ['Math.sin(x)', 'Math.cos(x)', 'Math.tan(x)'], funcs = {};
         
-        
-        var yaxis = board.create('axis', [[0, 0], [0, 1]], {ticks: {insertTicks: false, ticksDistance: 3, label: {offset: [-20, -20]}}});
-        board.create('point', [1, 1]);
-        
-        // change distance to 4, have to do it the hacky way.
-        yaxis.defaultTicks.setProperty({ticksDistance: 4});
-        
-        // full update is required because axis elements have the needsRegularUpdate attribute set to false and won't update on regular updates.
-        board.fullUpdate();
-        
-        /*board.suspendUpdate();
-        board.setBoundingBox([-100, 100, 100, -100]);
-        yaxis.defaultTicks.setProperty({ticksDistance: 25});
-        board.unsuspendUpdate();
-        board.fullUpdate();*/
+        for (line in lines) {
+            var fname = 'f_'.concat(line);
+            funcs[fname] = (function (fun) {
+                return new Function ('x', 'return (' + fun + ');');
+            })(lines[line]);
+            board.create('functiongraph', [funcs['f_'.concat(line)]],{name: fname, strokeWidth: 2, dash:2, strokeColor  : 'green', doAdvancedPlot:false});
+        }   
     })();
     
     var spline = (function () {
