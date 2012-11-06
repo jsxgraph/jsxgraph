@@ -1723,7 +1723,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the mouse button gets pressed down.
+     * This method is called by the browser when the left mouse button is clicked.
      * @param {Event} evt The browsers event object.
      * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
@@ -1832,7 +1832,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the left mouse button is clicked.
+     * This method is called is called by the browser when the mouse is moved.
      * @param {Event} evt The browsers event object.
      * @private
      */
