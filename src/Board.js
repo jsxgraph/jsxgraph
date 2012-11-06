@@ -1832,7 +1832,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the left mouse button is clicked.
+     * This method is called by the browser when the user moves the mouse over the board.
      * @param {Event} evt The browsers event object.
      * @private
      */
