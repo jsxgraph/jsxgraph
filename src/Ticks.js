@@ -438,12 +438,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			// Compute the start position and the end position of a tick.
 			// If both positions are out of the canvas, ti is empty.
             ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
-            if (ti.length==3) {  // The tick has an overlap with the board
+            
+            // The tick has an overlap with the board?
+            if (ti.length === 3) {
                 pos = dir*symbTickPosition+symbStartTick;
-                if ( (Math.abs(pos)<=eps && this.visProp.drawzero)
-                     || (pos>lb && pos<ub)
-                    ) {
+                if ((Math.abs(pos) >= eps || this.visProp.drawzero) && (pos > lb && pos < ub)) {
                     this.ticks.push(ti);
+                    
                     if (tickCoords.major) {
                         this.labels.push(this._makeLabel(pos, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
                     } else {

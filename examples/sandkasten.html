@@ -69,6 +69,8 @@
             })(lines[line]);
             board.create('functiongraph', [funcs['f_'.concat(line)]],{name: fname, strokeWidth: 2, dash:2, strokeColor  : 'green', doAdvancedPlot:false});
         }   
+        
+        board.create('axis', [[0, 0], [1, 0]], {ticks: {drawZero: false}});
     })();
     
     var spline = (function () {
