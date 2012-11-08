@@ -14,6 +14,7 @@
 
 <h2>WRP Playground</h2>
 
+<input type="radio" name="export" id="type-js" /> JavaScript <input type="radio" name="export" id="type-jc" checked="checked" /> JessieCode
 <div style="width:800px">
   <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float: left;"></div>
 </div>
@@ -29,7 +30,13 @@
             board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true, keepaspectratio: true});
             var p = board.create('point', [1, 2], {strokeColor: 'blue'});
 
-            $('#debug').html(JXG.Dump.toJessie(board));
+            if ($('#type-jc').is(':checked')) {
+                console.log('dumping jessie');
+                $('#debug').html(JXG.Dump.toJessie(board));
+            } else {
+                console.log('dumping js');
+                $('#debug').html(JXG.Dump.toJavaScript(board));
+            }
         })();
 
     function exec() {
@@ -59,7 +66,13 @@
                 }
                 
                 board = JXG.JSXGraph.loadBoardFromString('jxgbox', e.target.result, 'geonext');
-                $('#debug').html(JXG.Dump.toJessie(board));
+                if ($('#type-jc').is(':checked')) {
+                    console.log('dumping jessie');
+                    $('#debug').html(JXG.Dump.toJessie(board));
+                } else {
+                    console.log('dumping js');
+                    $('#debug').html(JXG.Dump.toJavaScript(board));
+                }
             };
             freader.readAsText(f);
         }
