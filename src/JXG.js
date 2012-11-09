@@ -113,6 +113,14 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Determine if the current browser supports touch events
+     * @returns {Boolean} True, if the browser supports touch events.
+     */
+    isTouchDevice: function () {
+        return 'ontouchstart' in document.documentElement;
+    },
+
+    /**
      * Detects if the user is using an Android powered device.
      * @returns {Boolean}
      */

@@ -396,8 +396,15 @@ JXG.extend(JXG, {
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
                         set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
                         reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+*/                        
+                    if (step.args.create_point === true) {
+                        set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
+                        set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
 
-                    } else*/ if (step.args.create_by_radius === true) {
+                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
+                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    } else if (step.args.create_by_radius === true) {
                         set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
                         set_str += step.dest_sub_ids[0] + '.visible = true; ';
@@ -644,10 +651,10 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_ANGLE:
-                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                    set_str += ') <<radiuspoint: << id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                    set_str += '\'>>, pointsquare: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
-                    set_str += '\'>>, dot: <<id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
+                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2] + ') ';
+                    set_str += '<<radiuspoint: << priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += '\'>>, pointsquare: << priv:true, id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                    set_str += '\'>>, dot: << priv:true, id: \'' + step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2];
                     set_str += '\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[2] + '; delete ';

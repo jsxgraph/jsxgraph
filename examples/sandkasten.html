@@ -58,6 +58,21 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var setprop = (function () {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
+            line, lines = ['Math.sin(x)', 'Math.cos(x)', 'Math.tan(x)'], funcs = {};
+        
+        for (line in lines) {
+            var fname = 'f_'.concat(line);
+            funcs[fname] = (function (fun) {
+                return new Function ('x', 'return (' + fun + ');');
+            })(lines[line]);
+            board.create('functiongraph', [funcs['f_'.concat(line)]],{name: fname, strokeWidth: 2, dash:2, strokeColor  : 'green', doAdvancedPlot:false});
+        }   
+        
+        board.create('axis', [[0, 0], [1, 0]], {ticks: {drawZero: false}});
+    })();
+    
     var spline = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 10, 7, -5], axis:true});
         var p = [];
@@ -67,7 +82,7 @@
         p[3] = board.create('point', [2,1], {size: 4, face: 'o'});
 
         var c = board.create('spline', p, {strokeWidth:3});
-    })();
+    });
 
     var alex_integral = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis: {ticks: {scale: 3.14, scaleSymbol: '&pi;'}}, zoom: false, /*pan: false,*/ grid: false});

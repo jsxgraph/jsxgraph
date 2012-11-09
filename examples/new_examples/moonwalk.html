@@ -109,12 +109,12 @@
         }
 
         // earth
-        earth = board.create('point', [0, 0], {
+        earth = board.create('point', [-mu, 0], {
             withLabel: false,
             strokeWidth: 0,
             strokeColor: 'none',
             fillColor: '#4096EE',
-            size: 40
+            size: 10
         });
 
         earth.setProperty({
@@ -146,23 +146,11 @@
             fixed: true
         });
 
-        // the moon
-        moonPath = board.create('curve', circle(1-mu, apolloPath.dataX.length), {
-            strokeColor: 'gray',
-            strokeOpacity: 0.3,
-            strokeWidth: 3,
-            visible: true,
-            needsRegularUpdate: false
-        });
-        moonPath.hasPoint = function () {
-            return false;
-        };
-
-        moon = board.create('point', [1, 0], {
+        moon = board.create('point', [1-mu, 0], {
             withLabel: false,
             strokeColor: 'gray',
             fillColor: 'gray',
-            size: 8,
+            size: 2,
             fixed: true
         });
 
@@ -179,11 +167,6 @@
             board.stopAllAnimation();
         });
 
-        // start the animation
-        moon.moveAlong(function (i) {
-            return [moonPath.dataX[i%moonPath.dataX.length], moonPath.dataY[i%moonPath.dataY.length]];
-        }, 2000);
-
         apollo.moveAlong(function (i) {
             return [apolloPath.dataX[i%apolloPath.dataX.length], apolloPath.dataY[i%apolloPath.dataY.length]];
         }, 2000);
@@ -192,7 +175,8 @@
 </div>
 
 <div id="explanation" class="content-block">
-
+    <h3>Acknowledgements</h3>
+    Thanks to Marshall Hampton for his revision of this example.
 </div>
 
 

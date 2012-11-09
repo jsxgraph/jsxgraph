@@ -758,6 +758,14 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                         this.addRotation(value);
                     }
                     break;
+                case 'ticksdistance':
+                    if (this.type === JXG.OBJECT_TYPE_TICKS && typeof value === 'number') {
+                        this.ticksFunction = (function (_value) { return function (i) {
+                                return _value;
+                            };
+                        })(value);
+                    }
+                    break;
                 default:
                     if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] && JXG.Validator[key](value)) || (JXG.Validator[key] && JXG.isFunction(value) && JXG.Validator[key](value())))) {
                         value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
@@ -924,7 +932,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.relativeCoords = [0, 0];
 
             this.label.content = JXG.createText(this.board, 
-                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.nameHTML], 
+                [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name], 
                 attr);
 
             this.label.content.dump = false;

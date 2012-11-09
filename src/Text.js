@@ -509,10 +509,8 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
  * </script><pre>
  */
 JXG.createText = function(board, parents, attributes) {
-    var attr, t, 
-        
-
-    attr = JXG.copyAttributes(attributes, board.options, 'text');
+    var t, 
+        attr = JXG.copyAttributes(attributes, board.options, 'text');
 
     // downwards compatibility
     attr.anchor = attr.parent || attr.anchor;

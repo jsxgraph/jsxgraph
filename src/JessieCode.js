@@ -491,17 +491,16 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             that = this,
             to,
             replacegxt = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc', 'If', 'Deg', 'Rad', 'Dist'],
-            regex, setTextBackup, ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
+            regex, setTextBackup = JXG.Text.prototype.setText,
+            ccode = code.replace(/\r\n/g,'\n').split('\n'), i, j, cleaned = [];
         
         if (!dontstore) {
             this.code += code + '\n';
         }
-
-        setTextBackup = JXG.Text.prototype.setText;
+        
         JXG.Text.prototype.setText = JXG.Text.prototype.setTextJessieCode;
 
         try {
-
             if (!JXG.exists(geonext)) {
                 geonext = false;
             }
@@ -523,15 +522,20 @@ JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
             code = cleaned.join('\n');
             code = this.utf8_encode(code);
 
-            if((error_cnt = this._parse(code, error_off, error_la)) > 0) {
-                for(i = 0; i < error_cnt; i++) {
+            if ((error_cnt = this._parse(code, error_off, error_la)) > 0) {
+                for (i = 0; i < error_cnt; i++) {
                     this.line = error_off[i].line;
                     this._error("Parse error in line " + error_off[i].line + " near >"  + code.substr( error_off[i].offset, 30 ) + "<, expecting \"" + error_la[i].join() + "\"");
                 }
             }
-
-        } catch (e) { }
-
+        } catch (e) {
+            // make sure the original text method is back in place
+            JXG.Text.prototype.setText = setTextBackup;
+            
+            // rethrow
+            throw e;
+        }
+        
         JXG.Text.prototype.setText = setTextBackup;
     },
 

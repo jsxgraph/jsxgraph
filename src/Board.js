@@ -1304,6 +1304,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return this;
     },
 
+    /**
+     * Triggered on iOS/Safari while the user inputs a gesture (e.g. pinch) and is used to zoom into the board. Only works on iOS/Safari.
+     * @param {Event} evt Browser event object
+     * @return {Boolean}
+     */
     gestureChangeListener: function (evt) {
         var c,
             zx = this.options.zoom.factorX,
@@ -1331,6 +1336,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return false;
     },
 
+    /**
+     * Called by iOS/Safari as soon as the user starts a gesture (only works on iOS/Safari).
+     * @param {Event} evt
+     * @return {Boolean}
+     */
     gestureStartListener: function (evt) {
         if (!this.options.zoom.wheel) {
             return true;
@@ -1529,6 +1539,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return this.touches.length > 0;
     },
 
+    /**
+     * Called periodically by the browser while the user moves his fingers across the device.
+     * @param {Event} evt
+     * @return {Boolean}
+     */
     touchMoveListener: function (evt) {
         var i, count = 0, pos,
             evtTouches = evt[JXG.touchProperty];
@@ -1601,6 +1616,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return this.mode === this.BOARD_MODE_NONE;
     },
 
+    /**
+     * Triggered as soon as the user stops touching the device with at least one finger.
+     * @param {Event} evt
+     * @return {Boolean}
+     */
     touchEndListener: function (evt) {
         var i, j, k,
             eps = this.options.precision.touch,
@@ -1723,7 +1743,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the mouse button gets pressed down.
+     * This method is called by the browser when the mouse button is clicked.
      * @param {Event} evt The browsers event object.
      * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
@@ -1797,8 +1817,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the left mouse button is released.
-     * @private
+     * This method is called by the browser when the mouse button is released.
+     * @param {Event} evt
      */
     mouseUpListener: function (evt) {
         var i;
@@ -1832,9 +1852,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * This method is called by the browser when the left mouse button is clicked.
+     * This method is called by the browser when the mouse is moved.
      * @param {Event} evt The browsers event object.
-     * @private
      */
     mouseMoveListener: function (evt) {
         var pos;
@@ -2061,9 +2080,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     /**
      * Moves the origin and initializes an update of all elements.
-     * @params {Number} x
-     * @params {Number} y
-     * @params {Boolean} [diff=false]
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Boolean} [diff=false]
      * @returns {JXG.Board} Reference to this board.
      */
     moveOrigin: function (x, y, diff) {
