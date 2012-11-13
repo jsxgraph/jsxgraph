@@ -370,6 +370,21 @@ JXG.GeonextReader = {
         return conditions;
     },
 
+    readViewPort: function(node) {
+        var no, arr=[];
+        no = this.gEBTN(node, 'viewport', 0, false);
+
+        if (no) {
+            arr[0] = parseFloat(this.gEBTN(no, 'left'));
+            arr[1] = parseFloat(this.gEBTN(no, 'top'));
+            arr[2] = parseFloat(this.gEBTN(no, 'right'));
+            arr[3] = parseFloat(this.gEBTN(no, 'bottom'));
+            return arr;
+        } else {
+            return [];
+        }
+    },
+    
     printDebugMessage: function(outputEl,gxtEl,nodetyp,success) {
         JXG.debug("* " + success + ":  " + nodetyp + " " + gxtEl.name + " " + gxtEl.id + "<br>\n");
     },
@@ -394,29 +409,39 @@ JXG.GeonextReader = {
         boardData = this.gEBTN(tree, 'board', 0, false);
         conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);
 
-        // set the origin
-        xmlNode = this.gEBTN(boardData, 'coordinates', 0, false);
-        tmp = this.gEBTN(xmlNode, 'origin', 0, false);
-        board.origin = {
-            usrCoords: [1, 0, 0],
-            scrCoords: [1, parseFloat(this.gEBTN(tmp, 'x')), parseFloat(this.gEBTN(tmp, 'y'))]
-        };
-
-        // zoom level
-        tmp = this.gEBTN(xmlNode, 'zoom', 0, false);
-        board.zoomX = parseFloat(this.gEBTN(tmp, 'x'));
-        board.zoomY = parseFloat(this.gEBTN(tmp, 'y'));
-
-        // screen to user coordinates conversion
-        tmp = this.gEBTN(xmlNode, 'unit', 0, false);
-        board.unitX = parseFloat(this.gEBTN(tmp, 'x'));
-        board.unitY = parseFloat(this.gEBTN(tmp, 'y'));
-
         // resize board
         if (board.options.takeSizeFromFile) {
             board.resizeContainer(this.gEBTN(boardData, 'width'), this.gEBTN(boardData, 'height'));
         }
 
+        xmlNode = this.gEBTN(boardData, 'coordinates', 0, false);
+
+        tmp = this.readViewPort(xmlNode);
+        if (tmp.length==4) {
+            board.setBoundingBox(tmp, false);
+        } else {
+            // zoom level
+            tmp = this.gEBTN(xmlNode, 'zoom', 0, false);
+            board.zoomX = parseFloat(this.gEBTN(tmp, 'x'));
+            board.zoomY = parseFloat(this.gEBTN(tmp, 'y'));
+
+            // set the origin
+            tmp = this.gEBTN(xmlNode, 'origin', 0, false);
+            board.origin = {
+                usrCoords: [1, 0, 0],
+                scrCoords: [1, parseFloat(this.gEBTN(tmp, 'x'))*board.zoomX, parseFloat(this.gEBTN(tmp, 'y'))*board.zoomY]
+            };
+
+            // screen to user coordinates conversion
+            tmp = this.gEBTN(xmlNode, 'unit', 0, false);
+            board.unitX = parseFloat(this.gEBTN(tmp, 'x'))*board.zoomX;
+            board.unitY = parseFloat(this.gEBTN(tmp, 'y'))*board.zoomY;
+        }
+
+        if (board.options.takeSizeFromFile) {
+            board.resizeContainer(this.gEBTN(boardData, 'width'), this.gEBTN(boardData, 'height'));
+        }
+        
         // check and set fontSize
         if (!(parseFloat(board.options.text.fontSize) > 0)) {
             board.options.text.fontSize = 12;
