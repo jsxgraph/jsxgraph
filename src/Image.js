@@ -51,7 +51,7 @@ JXG.Image = function (board, url, coords, size, attributes) {
     this.updateCoords = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.X(),this.Y()]);');
     this.updateSize = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.W(),this.H()]);');
     this.usrSize = [this.W(), this.H()];
-    this.size = [this.usrSize[0]*board.unitX,this.usrSize[1]*board.unitY];
+    this.size = [Math.abs(this.usrSize[0]*board.unitX),Math.abs(this.usrSize[1]*board.unitY)];
     this.url = url;
     
     // span contains the anchor point and the two vectors
@@ -128,7 +128,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         if (this.needsUpdate) {
             this.updateCoords();
             this.usrSize = [this.W(), this.H()];
-            this.size = [this.usrSize[0]*this.board.unitX,this.usrSize[1]*this.board.unitY];
+            this.size = [Math.abs(this.usrSize[0]*this.board.unitX),Math.abs(this.usrSize[1]*this.board.unitY)];
             this.updateTransform();
             this.updateSpan();
         }
