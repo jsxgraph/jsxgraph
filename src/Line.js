@@ -813,9 +813,12 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if(this.ticks[t-1] == tick) {
                 this.board.removeObject(this.ticks[t-1]);
 
-                for(j=0; j<this.ticks[t-1].ticks.length; j++) {
-                    if(this.ticks[t-1].labels[j] != null)
-                        this.board.removeObject(this.ticks[t-1].labels[j]);
+                if (this.ticks[t-1].ticks) {
+                    for(j = 0; j < this.ticks[t-1].ticks.length; j++) {
+                        if(this.ticks[t-1].labels[j] != null) {
+                            this.board.removeObject(this.ticks[t-1].labels[j]);
+                        }
+                    }
                 }
                 delete(this.ticks[t-1]);
                 break;

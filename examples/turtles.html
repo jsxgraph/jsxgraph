@@ -2,7 +2,6 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -16,12 +15,16 @@
 /* <![CDATA[ */
 var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, unitX: 1, unitY: 1});
 var t1 = brd.createElement('turtle');
-var t2 = brd.createElement('turtle',[],{strokeColor:'#000000'});
+var t2 = brd.createElement('turtle',[],{strokeColor:'#0000aa'});
 
+t1.hideTurtle();
 t1.cs();
-t2.cs();
 t1.setPos(200,0);
+
+t2.hideTurtle();
+t2.cs();
 t2.setPos(0,0);
+
 var n = 64;
 var delta = 360.0/n;
 function run() {
@@ -33,6 +36,8 @@ function run() {
 }
 function clearturtle() {
  clearTimeout(active);
+ t1.hideTurtle();
+ t2.hideTurtle();
  t1.cs();
  t2.cs();
  t1.setPos(200,0);
