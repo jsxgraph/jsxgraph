@@ -3001,6 +3001,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         var h, w,
             dim = JXG.getDimensions(this.container);
+        
+        this.plainBB = bbox;
 
         this.canvasWidth = parseInt(dim.width);
         this.canvasHeight = parseInt(dim.height);
