@@ -292,8 +292,16 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is of type array.
      */
     isArray: function (v) {
-        // Borrowed from prototype.js
-        return v !== null && typeof v === "object" && 'splice' in v && 'join' in v;
+        var r;
+
+        // use the ES5 isArray() method and if that doesn't exist use a fallback.
+        if (Array.isArray) {
+            r = Array.isArray(v);
+        } else {
+            r = (v !== null && typeof v === "object" && 'splice' in v && 'join' in v);
+        }
+
+        return r;
     },
 
     /**
