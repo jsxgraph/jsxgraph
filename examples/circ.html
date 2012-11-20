@@ -17,8 +17,11 @@
 
 //JXG.Options.renderer = 'canvas';
 brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -1], keepaspectratio:true});
+
  
 A = brd.createElement('point',[1,1],{strokeColor:'#901B77',fillColor:'#CA147A'});
+brd.createElement('circle', [A, 3], {hasInnerPoints:true});
+
 B = brd.createElement('point',[-1,1],{strokeColor:'#901B77',fillColor:'#CA147A'});
 l = brd.createElement('line', [A, B]);
 

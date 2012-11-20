@@ -663,6 +663,7 @@ JXG.Options = {
 
     /*special circle options */
     circle : {
+        hasInnerPoints: false,
         fillColor : 'none',
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
