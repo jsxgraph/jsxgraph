@@ -844,7 +844,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 oo = o*rgbo[1];
             }
             node = el.rendNode;
-            node.setAttributeNS(null, 'fill', c);
+            if (c!='none') {               // problem in firefox 17
+                node.setAttributeNS(null, 'fill', c);
+            } else {
+                oo = 0;
+            }
+            
             if (el.type === JXG.OBJECT_TYPE_IMAGE) {
                 node.setAttributeNS(null, 'opacity', oo);
             } else {
