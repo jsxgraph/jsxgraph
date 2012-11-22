@@ -40,7 +40,8 @@ JXG.Options = {
     zoom : {
         factorX : 1.25,
         factorY : 1.25,
-        wheel: false
+        wheel: false,
+        eps: 0.1
     },
 
     jc : {

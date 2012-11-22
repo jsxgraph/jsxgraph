@@ -2310,6 +2310,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             dY = (bb[1]-bb[3])*(1.0-zY),
             lr = 0.5, tr = 0.5;
 
+        if (this.zoomX < JXG.Options.zoom.eps || this.zoomY < JXG.Options.zoom.eps)
+            return this;
+
         if (typeof x === 'number' && typeof y === 'number') {
             lr = (x - bb[0])/(bb[2] - bb[0]);
             tr = (bb[1] - y)/(bb[1] - bb[3]);
@@ -2318,6 +2321,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.setBoundingBox([bb[0]+dX*lr, bb[1]-dY*tr, bb[2]-dX*(1-lr), bb[3]+dY*(1-tr)], false);
         this.zoomX /= zX;
         this.zoomY /= zY;
+
         this.applyZoom();
         return this;
     },
