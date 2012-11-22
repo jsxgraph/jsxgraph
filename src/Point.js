@@ -200,7 +200,8 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     */
     updateGlider: function() {
         var i, p1c, p2c, d, v, poly, cc, pos, sgn,
-            slide = this.slideObject, alpha, beta, angle;
+            slide = this.slideObject, alpha, beta, angle,
+            cp, c, invMat;
 
         if (slide.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
             this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
@@ -319,7 +320,9 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board);  // side-effect: this.position is overwritten
         } else if(slide.elementClass == JXG.OBJECT_CLASS_CURVE) {
             
-            if (slide.type == JXG.OBJECT_TYPE_ARC || slide.type == JXG.OBJECT_TYPE_SECTOR) {
+            if (slide.type == JXG.OBJECT_TYPE_ARC 
+                || slide.type == JXG.OBJECT_TYPE_SECTOR) {
+                
                 this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
                 angle = JXG.Math.Geometry.rad(slide.radiuspoint, slide.center, this);
                 alpha = 0.0;
@@ -341,7 +344,20 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 } 
             } else {
                 this.updateConstraint(); // In case, the point is a constrained glider.
-                this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  // side-effect: this.position is overwritten
+
+                if (slide.transformations.length>0) {
+                    slide.updateTransformMatrix();
+                    invMat = JXG.Math.inverse(slide.transformMat);
+                    c = JXG.Math.matVecMult(invMat, this.coords.usrCoords);
+                    
+                    cp = (new JXG.Coords(JXG.COORDS_BY_USER, c, this.board)).usrCoords;
+                    c = JXG.Math.Geometry.projectCoordsToCurve(cp[1], cp[2], this.position||0.0, slide, this.board);
+                    this.position = c[1];      // side effect !
+                    this.coords = c[0];
+                } else {
+                    this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  
+                    // side-effect: this.position is overwritten
+                }
             }
             
         } else if(slide.elementClass == JXG.OBJECT_CLASS_POINT) {

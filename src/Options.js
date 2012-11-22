@@ -744,6 +744,7 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
+        fixed: true,
         
         /**#@+
          * @visprop
