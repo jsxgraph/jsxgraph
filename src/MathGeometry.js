@@ -1246,20 +1246,28 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
      * Calculates the coordinates of the projection of a given point on a given circle. I.o.w. the
      * nearest one of the two intersection points of the line through the given point and the circles
      * center.
-     * @param {JXG.Point} point Point to project.
+     * @param {JXG.Point_JXG.Coords} point Point to project or coords object to project.
      * @param {JXG.Circle} circle Circle on that the point is projected.
      * @param {JXG.Board} [board=point.board] Reference to the board
      * @returns {JXG.Coords} The coordinates of the projection of the given point on the given circle.
      */
     projectPointToCircle: function(point, circle, board) {
-        var dist = point.coords.distance(JXG.COORDS_BY_USER, circle.center.coords),
-            P = point.coords.usrCoords,
+        var dist, P,
             M = circle.center.coords.usrCoords,
             x, y, factor;
 
         if (!JXG.exists(board)) {
             board = point.board;
         }
+
+        if (JXG.isPoint(point))  {
+            dist = point.coords.distance(JXG.COORDS_BY_USER, circle.center.coords);
+            P = point.coords.usrCoords;
+        } else {  // coords
+            dist = point.distance(JXG.COORDS_BY_USER, circle.center.coords);
+            P = point.usrCoords;
+        }
+        
         if (Math.abs(dist) < JXG.Math.eps) {
             dist = JXG.Math.eps;
         }

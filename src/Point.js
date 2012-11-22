@@ -320,10 +320,26 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board);  // side-effect: this.position is overwritten
         } else if(slide.elementClass == JXG.OBJECT_CLASS_CURVE) {
             
-            if (slide.type == JXG.OBJECT_TYPE_ARC 
-                || slide.type == JXG.OBJECT_TYPE_SECTOR) {
+            if ((slide.type == JXG.OBJECT_TYPE_ARC 
+                || slide.type == JXG.OBJECT_TYPE_SECTOR)) {
                 
-                this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
+                if (slide.transformations.length>0) {
+               
+                    slide.updateTransformMatrix();
+                    /*
+                    invMat = JXG.Math.inverse(slide.transformMat);
+                    c = JXG.Math.matVecMult(invMat, this.coords.usrCoords);
+                    
+                    cp = new JXG.Coords(JXG.COORDS_BY_USER, c, this.board);
+                    */
+                    this.coords = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
+                    
+                    c = JXG.Math.matVecMult(slide.transformMat, this.coords.usrCoords);
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, c);
+                } else {
+                    this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
+                }
+
                 angle = JXG.Math.Geometry.rad(slide.radiuspoint, slide.center, this);
                 alpha = 0.0;
                 beta = JXG.Math.Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
@@ -342,6 +358,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     }
                     this.updateGliderFromParent();
                 } 
+                
             } else {
                 this.updateConstraint(); // In case, the point is a constrained glider.
 
@@ -371,7 +388,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     * @private
     */
     updateGliderFromParent: function() {
-        var p1c, p2c, r, lbda,
+        var p1c, p2c, r, lbda, c,
             slide = this.slideObject, alpha;
 
         if(slide.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
@@ -429,9 +446,17 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                         slide.center.X() + r*Math.cos(this.position+alpha),
                         slide.center.Y() + r*Math.sin(this.position+alpha)
                     ]);
+
+                if (slide.transformations.length>0) {
+                    slide.updateTransformMatrix();
+                    c = JXG.Math.matVecMult(slide.transformMat, this.coords.usrCoords);
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, c);
+                }
+                    
             } else {
                 this.updateConstraint(); // In case, the point is a constrained glider.
-                this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  // side-effect: this.position is overwritten
+                this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  
+                // side-effect: this.position is overwritten
             }
             
         } else if(slide.elementClass == JXG.OBJECT_CLASS_POINT) {
