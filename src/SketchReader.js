@@ -64,7 +64,7 @@ JXG.extend(JXG, {
     GENTYPE_COPY: 42,
     GENTYPE_MIRROR: 43,
     GENTYPE_ROTATE: 44,
-    GENTYPE_TRANSLATE: 45,
+    GENTYPE_ABLATION: 45,
     GENTYPE_MIGRATE: 46,
     GENTYPE_TRANSFORM: 47,
 
@@ -163,7 +163,7 @@ JXG.extend(JXG, {
             assign = '';
             attrid = 'id: \'' + step.dest_id + '\', ';
 
-            if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_TRANSLATE) {
+            if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_ABLATION) {
                 attrid = '';
                 assign = step.dest_id + ' = ';
 
@@ -201,11 +201,11 @@ JXG.extend(JXG, {
                     set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
                     set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleX;
-                    set_str += ', drawLabels: true>>>>; ';
+                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
                     set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
                     set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleY;
-                    set_str += ', drawLabels: true, drawZero: false>>>>; ';
+                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
 
                     set_str += step.dest_sub_ids[3] + '.visible = false; ';
                     set_str += step.dest_sub_ids[4] + '.visible = false; ';
@@ -801,7 +801,7 @@ JXG.extend(JXG, {
 
                     break;
 
-                case JXG.GENTYPE_TRANSLATE:
+                case JXG.GENTYPE_ABLATION:
 
                     xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
                     ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
@@ -981,7 +981,7 @@ JXG.extend(JXG, {
                     constr[i].type = JXG.GENTYPE_DELETE;
 
                 if (constr[i].type == 31) // Obsolete fix
-                    constr[i].type = JXG.GENTYPE_TRANSLATE;
+                    constr[i].type = JXG.GENTYPE_ABLATION;
 
                 if (constr[i] > 50)
                     arr = this.generateJCodeMeta(constr[i], board);
