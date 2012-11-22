@@ -1812,7 +1812,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        this.triggerEventHandlers(['mousedown', 'down'], evt);
+        if (!object)
+            this.triggerEventHandlers(['mousedown', 'down'], evt);
+
         return r;
     },
 
