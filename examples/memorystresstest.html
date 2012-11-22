@@ -31,7 +31,12 @@ function doit() {
     } 
 
     JXG.Options.precision.hasPoint = 0; 
-    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 90, 380, -10], axis:false, grid:false, showCopyright:false, showNavigation:false});
+    brd = JXG.JSXGraph.initBoard('jxgbox', {
+                boundingbox: [-10, 90, 380, -10], 
+                axis:false, 
+                grid:false, 
+                showCopyright:true, 
+                showNavigation:true});
     
     var p = [], i;
     for (i=0; i<1500; i++) {
@@ -40,7 +45,7 @@ function doit() {
     var pol = brd.create('polygon', p, {highlight:false, name:'XXXXXXXX'});
     
     cnt++;
-    if (cnt<10) {
+    if (cnt<100) {
         setTimeout(doit, 500);
     } else {
         alert("DONE");

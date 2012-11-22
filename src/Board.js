@@ -839,7 +839,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
             if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) {
-                 drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
+                 drag.setPositionDirectly(
+                    JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), 
+                    [o.targets[0].Xprev, o.targets[0].Yprev]);
             }
             // Remember the actual position for the next move event. Then we are able to
             // compute the difference vector.

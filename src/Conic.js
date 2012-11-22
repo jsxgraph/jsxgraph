@@ -132,7 +132,11 @@ JXG.createEllipse = function(board, parents, attributes) {
             return m;
         };
 
-    var curve = board.create('curve', [function(x) {return 0;}, function(x) {return 0;}, parents[3], parents[4]], attr_curve);
+    var curve = board.create('curve', [
+            function(x) {return 0;}, 
+            function(x) {return 0;}, 
+            parents[3], 
+            parents[4]], attr_curve);
 
     var polarForm = function(phi,suspendUpdate) {
                 var a = majorAxis()*0.5,
