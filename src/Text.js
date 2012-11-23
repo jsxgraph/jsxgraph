@@ -71,8 +71,9 @@ JXG.Text = function (board, content, coords, attributes) {
         this.Y = JXG.createFunction(coords[1], this.board, null, true);
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
-        var fs = 'this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.X(),this.Y()]);';
-        this.updateCoords = new Function('',fs);
+        this.updateCoords = function () {
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
+        };
     }
     this.Z = JXG.createFunction(1.0, this.board, '');
 
