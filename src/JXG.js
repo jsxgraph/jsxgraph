@@ -82,6 +82,13 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     touchProperty: 'touches',
 
+
+    /**
+     * Represents the currently used JSXGraph version.
+     * @type {String}
+     */
+    version: '0.96.01',
+
     /**
      * Detect browser support for VML.
      * @returns {Boolean} True, if the browser supports VML.
