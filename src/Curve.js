@@ -582,6 +582,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         if (JXG.exists(this.parents)) {
             len = this.parents.length;
         }
+        
         for (i=0; i<len; i++) {
             obj = JXG.getRef(this.board, this.parents[i]);
             

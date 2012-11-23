@@ -79,6 +79,7 @@ JXG.createEllipse = function(board, parents, attributes) {
                             (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                             "\nPossible parent types: [point,point,point], [point,point,number|function]");
     }
+    
     if (JXG.isNumber(parents[2])) { // length of major axis
         majorAxis = JXG.createFunction(parents[2],board);
     } else if ((typeof parents[2] == 'function') && (JXG.isNumber(parents[2]()))){
@@ -177,6 +178,23 @@ JXG.createEllipse = function(board, parents, attributes) {
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
     curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
+
+    M.addChild(curve);
+    for (i=0; i<2; i++) {
+        if (JXG.isPoint(F[i])) {
+            F[i].addChild(curve);
+        }
+    }
+    if (JXG.isPoint(C)) {
+        C.addChild(curve);
+    }
+    curve.parents = [];
+    for (i=0; i < parents.length; i++) {
+        if (parents[i].id) {
+            curve.parents.push(parents[i].id);
+        }
+    }
+    
     return curve;
 };
 
@@ -328,6 +346,23 @@ JXG.createHyperbola = function(board, parents, attributes) {
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
     curve.midpoint = M;
     curve.type = JXG.OBJECT_TYPE_CONIC;
+    
+    M.addChild(curve);
+    for (i=0; i<2; i++) {
+        if (JXG.isPoint(F[i])) {
+            F[i].addChild(curve);
+        }
+    }
+    if (JXG.isPoint(C)) {
+        C.addChild(curve);
+    }
+    curve.parents = [];
+    for (i=0; i < parents.length; i++) {
+        if (parents[i].id) {
+            curve.parents.push(parents[i].id);
+        }
+    }
+    
     return curve;
 };
 
@@ -439,6 +474,19 @@ JXG.createParabola = function(board, parents, attributes) {
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
     curve.type = JXG.OBJECT_TYPE_CONIC;
+    
+    M.addChild(curve);
+    if (JXG.isPoint(F[1])) {
+        F[1].addChild(curve);
+    }
+    l.addChild(curve);
+    curve.parents = [];
+    for (i=0; i < parents.length; i++) {
+        if (parents[i].id) {
+            curve.parents.push(parents[i].id);
+        }
+    }
+    
     return curve;
 };
 
@@ -637,7 +685,6 @@ JXG.createConic = function(board, parents, attributes) {
     curve.X = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[1];};
     curve.Y = function(phi,suspendUpdate) {return polarForm(phi,suspendUpdate)[2];};
 
-
     // Center coordinates see http://en.wikipedia.org/wiki/Matrix_representation_of_conic_sections
     curve.midpoint = board.create('point',
         [
@@ -652,6 +699,22 @@ JXG.createConic = function(board, parents, attributes) {
         ], attr_foci);
 
     curve.type = JXG.OBJECT_TYPE_CONIC;
+    
+    if (givenByPoints) {
+        for (i=0;i<5;i++) {
+            if(JXG.isPoint(points[i])) {
+                points[i].addChild(curve);
+            }
+        }
+        curve.parents = [];
+        for (i=0; i<parents.length; i++) {
+            if (parents[i].id) {
+                curve.parents.push(parents[i].id);
+            }
+        }
+    }
+    curve.addChild(curve.midpoint);
+    
     return curve;
 };
 
