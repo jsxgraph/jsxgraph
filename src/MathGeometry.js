@@ -1267,7 +1267,7 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             dist = point.distance(JXG.COORDS_BY_USER, circle.center.coords);
             P = point.usrCoords;
         }
-        
+
         if (Math.abs(dist) < JXG.Math.eps) {
             dist = JXG.Math.eps;
         }

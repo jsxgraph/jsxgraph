@@ -436,7 +436,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name midpoint
          * @type Midpoint
          */
-        el.midpoint = mp;
+        el.midpoint = el.center = mp;
     } else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

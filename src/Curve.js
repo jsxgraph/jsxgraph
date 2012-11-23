@@ -577,19 +577,45 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      * @returns {JXG.Curve} Reference to the curve object.
      */
     setPosition: function (method, coords) {
-        var t;
+        var t, obj, len=0, i;
+        
+        if (JXG.exists(this.parents)) {
+            len = this.parents.length;
+        }
+        for (i=0; i<len; i++) {
+            obj = JXG.getRef(this.board, this.parents[i]);
+            
+            if (!obj.draggable()) {
+                return this;
+            }
+        }
+
+        /**
+         * We distinguish two cases:
+         * 1) curves which depend on free elements, i.e. arcs and sectors
+         * 2) other curves
+         *
+         * In the first case we simply transform the parents elements
+         * In the second case we add a transform to the curve.
+         */
 
         coords = new JXG.Coords(method, coords, this.board);
         t = this.board.create('transform', coords.usrCoords.slice(1),{type:'translate'});
         
-        if (this.transformations.length > 0 
-            && this.transformations[this.transformations.length-1].isNumericMatrix) {
+        if (len>0) {   // First case
+            for (i=0; i<len; i++) {
+                obj = JXG.getRef(this.board, this.parents[i]);
+                t.applyOnce(obj);
+            }
+        } else {      // Second case
+            if (this.transformations.length > 0 
+                && this.transformations[this.transformations.length-1].isNumericMatrix) {
             
-            this.transformations[this.transformations.length-1].melt(t);
-        } else {
-            this.addTransform(t);
+                this.transformations[this.transformations.length-1].melt(t);
+            } else {
+                this.addTransform(t);
+            }
         }
-        
         return this;
     },
 

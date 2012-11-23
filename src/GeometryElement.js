@@ -368,7 +368,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
         return this;
     },
-
+    
     /**
      * Counts the direct children of an object without counting labels.
      * @private
