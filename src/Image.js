@@ -48,8 +48,6 @@ JXG.Image = function (board, url, coords, size, attributes) {
     this.W = JXG.createFunction(size[0],this.board,'');
     this.H = JXG.createFunction(size[1],this.board,'');
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
-    this.updateCoords = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.X(),this.Y()]);');
-    this.updateSize = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.W(),this.H()]);');
     this.usrSize = [this.W(), this.H()];
     this.size = [Math.abs(this.usrSize[0]*board.unitX),Math.abs(this.usrSize[1]*board.unitY)];
     this.url = url;
@@ -156,6 +154,20 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         return this;
     },
 
+    /**
+     * Updates the coordinates of the top left corner of the image.
+     */
+    updateCoords: function () {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
+    },
+
+    /**
+     * Updates the size of the image.
+     */
+    updateSize: function () {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.W(), this.H()]);
+    },
+    
     /**
      * Update the anchor point of the image, i.e. the lower left corner
      * and the two vectors which span the rectangle.

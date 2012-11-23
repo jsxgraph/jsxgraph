@@ -51,17 +51,45 @@ JXG.Text = function (board, content, coords, attributes) {
     if ((this.element = JXG.getRef(this.board, attributes.anchor))) {
         var anchor;
         if (this.visProp.islabel) {
-            //anchor = this.element.getLabelAnchor();
             this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
         } else {
-            //anchor = this.element.getTextAnchor();
             this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
         }
         this.element.addChild(this);
+        
+        this.X = function () {
+            var sx, coords;
+
+            if (this.visProp.islabel) {
+                sx =  parseFloat(this.visProp.offset[0]);
+                anchor = this.element.getLabelAnchor();
+                coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
+                
+                return coords.usrCoords[1];
+            } else {
+                anchor = this.element.getTextAnchor();
+                
+                return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
+            }
+        };
+        
+        this.Y = function () {
+            var sy, coords;
+            
+            if (this.visProp.islabel) {
+                sy = -parseFloat(this.visProp.offset[1]);
+                anchor = this.element.getLabelAnchor();
+                coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
+                
+                return coords.usrCoords[2];
+            } else {
+                anchor = this.element.getTextAnchor();
+                
+                return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
+            }
+        };
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this.board);
-            //[parseFloat(this.visProp.offset[0]) + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-            // parseFloat(this.visProp.offset[1]) + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
         this.isDraggable = true;
     } else {
         if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
@@ -71,9 +99,6 @@ JXG.Text = function (board, content, coords, attributes) {
         this.Y = JXG.createFunction(coords[1], this.board, null, true);
 
         this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
-        this.updateCoords = function () {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
-        };
     }
     this.Z = JXG.createFunction(1.0, this.board, '');
 
@@ -257,7 +282,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
      * @param {number} y
      * @return {object} reference to the text object.
      */
-    setCoords: function (x,y) {
+    setCoords: function (x, y) {
         if (JXG.isArray(x) && x.length > 1) {
             y = x[1];
             x = x[0];
@@ -290,24 +315,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         var anchor, sx, sy;
 
         if (this.needsUpdate) {
-            if (this.relativeCoords) {
-                if (this.visProp.islabel) {
-                    sx =  parseFloat(this.visProp.offset[0]);
-                    sy = -parseFloat(this.visProp.offset[1]);
-                    anchor = this.element.getLabelAnchor();
-
-                    this.coords.setCoordinates(JXG.COORDS_BY_SCREEN,
-                        [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1],
-                         sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]]);
-                } else {
-                    anchor = this.element.getTextAnchor();
-                    this.coords.setCoordinates(JXG.COORDS_BY_USER,
-                        [this.relativeCoords.usrCoords[1] + anchor.usrCoords[1],
-                         this.relativeCoords.usrCoords[2] + anchor.usrCoords[2]]);
-                }
-            } else {
-                this.updateCoords();
-            }
+            this.updateCoords();
             this.updateText();
             if (this.needsSizeUpdate) {
                 this.updateSize();
@@ -315,6 +323,13 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             this.updateTransform();
         }
         return this;
+    },
+
+    /**
+     * Updates the coordinates of the text element.
+     */
+    updateCoords: function () {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
     },
 
     /**

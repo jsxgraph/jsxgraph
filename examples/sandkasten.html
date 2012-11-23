@@ -58,6 +58,20 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
+    var rotate = (function () {
+        JXG.Options.text.display = 'internal';
+        
+        var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
+            p = board.create('point', [1, 2]);
+        
+        //p.label.content.addRotation(30);
+        //board.update();
+        
+        // OR
+        
+        p.label.content.setProperty({rotate: 30});
+    }());
+    
     var setprop = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {axis: false, boundingbox: [-10,10,10,-10], grid: true, keepaspectratio: true}),
             line, lines = ['Math.sin(x)', 'Math.cos(x)', 'Math.tan(x)'], funcs = {};
@@ -71,7 +85,7 @@
         }   
         
         board.create('axis', [[0, 0], [1, 0]], {ticks: {drawZero: false}});
-    })();
+    });
     
     var spline = (function () {
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 10, 7, -5], axis:true});
