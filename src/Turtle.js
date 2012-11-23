@@ -248,7 +248,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
             el = this.objects[i];
             this.board.removeObject(el);
         }
-        this.init(0,0,90);
+        this.init(0,0, 90);
         return this;
     },
 
@@ -380,7 +380,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         this.turtleIsHidden = true;
         this.arrow.setProperty({visible:false});
         this.visProp.arrow['visible'] = false;
-        this.setPos(this.pos[0],this.pos[1]);
+        //this.setPos(this.pos[0],this.pos[1]);
         this.board.update();
         return this;
     },
