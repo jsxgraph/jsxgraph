@@ -1110,11 +1110,13 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * 
  */
 JXG.createSegment = function(board, parents, attributes) {
-    var el, i;
+    var el, i, attr;
 
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    el = board.create('line', parents.slice(0,2), attributes);
+    attr = JXG.copyAttributes(attributes, board.options, 'segment');
+    
+    el = board.create('line', parents.slice(0,2), attr);
     
     if (parents.length==3) {
         el.hasFixedLength = true;

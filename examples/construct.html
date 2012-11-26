@@ -60,6 +60,7 @@ JXG.Options.point.label = {};
     //var l = brd.create('line', [-1,1,0]);
     var p1 = brd.create('point', [1,1]);
     var p2 = brd.create('point', [3,0]);
+    var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
     var a1 = brd.create('arc', [p1,p2,p3], {fixed:false});
 

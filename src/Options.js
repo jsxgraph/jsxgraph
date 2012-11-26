@@ -1315,6 +1315,13 @@ JXG.Options = {
         }
     },
 
+    /* special segment options */
+    segment: {
+        label: {
+            position: 'top'
+        }
+    },
+    
     semicircle : {
         midpoint: {
             visible: false,
