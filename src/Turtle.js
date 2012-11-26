@@ -358,7 +358,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
-    *  Sets the visibility of the turtle head to true,
+    * Sets the visibility of the turtle head to true,
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -372,7 +372,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
-    *  Sets the visibility of the turtle head to false,
+    * Sets the visibility of the turtle head to false,
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -386,7 +386,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
-    *  Moves the turtle to position [0,0].
+    * Moves the turtle to position [0,0].
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */

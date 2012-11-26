@@ -394,7 +394,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         } else {
             this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
         }
-        this.makeArrows(element);
+        if (element.numberPoints>1) {
+            this.makeArrows(element);
+        }
     },
 
     /* **************************
