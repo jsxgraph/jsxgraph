@@ -1122,7 +1122,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     mouseOriginMoveStart: function (evt) {
-        var r = this.options.pan && evt.shiftKey;
+        var r = this.options.pan.enabled && (!this.options.pan.needShift || evt.shiftKey);
+        
         if (r) {
             var pos = this.getMousePosition(evt);
             this.initMoveOrigin(pos[0], pos[1]);
@@ -1132,7 +1133,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     mouseOriginMove: function (evt) {
-        var r = this.mode == this.BOARD_MODE_MOVE_ORIGIN;
+        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN);
 
         if (r) {
             var pos = this.getMousePosition(evt);
@@ -1144,7 +1145,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     touchOriginMoveStart: function (evt) {
         var touches = evt[JXG.touchProperty],
-            r = this.options.pan && touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80;
+            twoFingersCondition = (touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
+            r = this.options.pan.enabled && (!this.options.pan.needTwoFingers || twoFingersCondition);
 
         if (r) {
             var pos = this.getMousePosition(evt, 0);
@@ -1155,7 +1157,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     touchOriginMove: function(evt) {
-        var r = this.mode == this.BOARD_MODE_MOVE_ORIGIN;
+        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN);
 
         if (r) {
             var pos = this.getMousePosition(evt, 0);
@@ -1386,12 +1388,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             window.getSelection().removeAllRanges();
         }
 
-        // move origin - but only if we're not in drag mode
-        if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            this.triggerEventHandlers(['touchstart', 'down'], evt);
-            return false;
-        }
-
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
 
@@ -1528,6 +1524,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             evt.preventDefault();
             evt.stopPropagation();
         }
+        
+        // move origin - but only if we're not in drag mode
+        if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+            this.triggerEventHandlers(['touchstart', 'down'], evt);
+            return false;
+        }
+        
 
         if (JXG.isWebkitAndroid()) {
             var ti = new Date();
@@ -1751,7 +1754,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
      */
     mouseDownListener: function (evt, object) {
-        var pos, elements, xy, r, i;
+        var pos, elements, xy, result, i;
 
         // prevent accidental selection of text
         if (document.selection && typeof document.selection.empty == 'function') {
@@ -1765,59 +1768,59 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.hasMouseUp = true;
         }
 
-        if (this.mouseOriginMoveStart(evt)) {
-            r = false;
+        pos = this.getMousePosition(evt);
+
+        if (object) {
+            elements = [ object ];
+            this.mode = this.BOARD_MODE_DRAG;
+        } else
+            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+
+        // if no draggable object can be found, get out here immediately
+        if (elements.length == 0) {
+            this.mode = this.BOARD_MODE_NONE;
+            result = true;
         } else {
-            pos = this.getMousePosition(evt);
-
-            if (object) {
-                elements = [ object ];
-                this.mode = this.BOARD_MODE_DRAG;
-            } else
-                elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
-
-            // if no draggable object can be found, get out here immediately
-            if (elements.length == 0) {
-                this.mode = this.BOARD_MODE_NONE;
-                r = true;
-            } else {
-                this.mouse = {
-                    obj: null,
-                    targets: [{
-                            X: pos[0],
-                            Y: pos[1],
-                            Xprev: NaN,
-                            Yprev: NaN
-                        }
-                    ]
-                };
-                this.mouse.obj = elements[elements.length-1];
-
-                this.dehighlightAll();
-                this.highlightedObjects[this.mouse.obj.id] = this.mouse.obj;
-                this.mouse.obj.highlight(true);
-
-                this.mouse.targets[0].Xstart = [];
-                this.mouse.targets[0].Ystart = [];
-                this.mouse.targets[0].Zstart = [];
-
-                this.saveStartPos(this.mouse.obj, this.mouse.targets[0]);
-
-                // prevent accidental text selection
-                // this could get us new trouble: input fields, links and drop down boxes placed as text
-                // on the board don't work anymore.
-                if (evt && evt.preventDefault) {
-                    evt.preventDefault();
-                } else if (window.event) {
-                    window.event.returnValue = false;
+            this.mouse = {
+                obj: null,
+                targets: [{
+                    X: pos[0],
+                    Y: pos[1],
+                    Xprev: NaN,
+                    Yprev: NaN
                 }
+                ]
+            };
+            this.mouse.obj = elements[elements.length-1];
+
+            this.dehighlightAll();
+            this.highlightedObjects[this.mouse.obj.id] = this.mouse.obj;
+            this.mouse.obj.highlight(true);
+
+            this.mouse.targets[0].Xstart = [];
+            this.mouse.targets[0].Ystart = [];
+            this.mouse.targets[0].Zstart = [];
+
+            this.saveStartPos(this.mouse.obj, this.mouse.targets[0]);
+
+            // prevent accidental text selection
+            // this could get us new trouble: input fields, links and drop down boxes placed as text
+            // on the board don't work anymore.
+            if (evt && evt.preventDefault) {
+                evt.preventDefault();
+            } else if (window.event) {
+                window.event.returnValue = false;
             }
+        }
+        
+        if (this.mode === this.BOARD_MODE_NONE) {
+            result = this.mouseOriginMoveStart(evt);
         }
 
         if (!object)
             this.triggerEventHandlers(['mousedown', 'down'], evt);
 
-        return r;
+        return result;
     },
 
     /**
@@ -1896,7 +1899,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean}
      */
     mouseWheelListener: function (evt) {
-        if (!this.options.zoom.wheel) {
+        if (!this.options.zoom.wheel || (this.options.zoom.needShift && !evt.shiftKey)) {
             return true;
         }
 

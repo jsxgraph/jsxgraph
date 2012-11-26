@@ -33,7 +33,6 @@ JXG.Options = {
     takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
     takeFirst : false, // if true the first element with hasPoint==true is taken.
-    pan: true,
     animationDelay: 35,
 
     /* zoom options */
@@ -41,7 +40,14 @@ JXG.Options = {
         factorX : 1.25,
         factorY : 1.25,
         wheel: false,
+        needShift: false,
         eps: 0.1
+    },
+    
+    pan: {
+        needShift: true,
+        needTwoFingers: true,
+        enabled: true
     },
 
     jc : {
