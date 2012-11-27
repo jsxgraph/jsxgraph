@@ -55,9 +55,13 @@ TestCase("AbstractRenderer", {
                     useasciimathmL: false,
                     usemathjax: false
                 },
+                visPropOld: {
+                    fontsize: '9px'
+                },
                 id: id,
                 transformations: [],
                 plaintext: 'text',
+                size: [10, 10],
                 board: {
                     options: {
                         layer: {
