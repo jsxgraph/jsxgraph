@@ -27,6 +27,12 @@ New Features
  * The distance of ticks can be set via setAttribute/setProperty now (cb80999)
  * GeonextReader now uses the viewport tag if available (d06a020)
  * Implement boolean attribute *hasInnerPoints* for circles (84e0d58)
+ * Curves can be dragged (a729000)
+ * Restrict zoom with ```JXG.Options.zoom.eps``` (d63c8de)
+ * Get current JSXGraph version with ```JXG.version``` (c46d563)
+ * Implemented X() and Y() methods for labels (#17, 8acaa51)
+ * Zooming and panning can now be configured (#5, f7e7799)
+ * Segment labels are placed on 'top' (1b53f3a)
 
 Bug fixes
 ---------
@@ -49,6 +55,8 @@ Bug fixes
  * Fixing turtle.hideTurtle(), turtle.showTurtle() (bc549a1)
  * Remove ticks only of they exist (e74a68a)
  * Work around a FF17 bug regarding SVG fill attribute with value 'none' (1760350)
+ * Bugfix turtle (b09af0e)
+ * Arrows can't be set on curves with less than two datapoints (75faf54)
 
 
 0.95
