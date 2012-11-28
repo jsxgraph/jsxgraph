@@ -70,7 +70,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 */
 });
 
-if (JXG.isAndroid || JXG.isApple()) {
+if (JXG.isAndroid() || JXG.isApple()) {
     JXG.Options.curve.RDPsmoothing = false;
     JXG.Options.curve.numberPointsHigh = 600;
     JXG.Options.curve.numberPointsLow = 100;
