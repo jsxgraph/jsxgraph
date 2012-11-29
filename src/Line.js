@@ -92,8 +92,6 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.board.finalizeAdding(this);
 
     this.elType = 'line';
-    // create Label
-    this.createLabel();
 
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
@@ -104,6 +102,9 @@ JXG.Line = function (board, p1, p2, attributes) {
                           // * the line is defined by three coordinates
                           // * and it will have a glider 
                           // * and board.suspendUpdate() has been called.
+
+    // create Label
+    this.createLabel();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -477,7 +478,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var x, y, 
+        var x, y,
             fs = 0,
             sx = 0, 
             sy = 0,
@@ -489,11 +490,11 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } 
         c1 = c1.scrCoords;
         c2 = c2.scrCoords;
-        
+
         if (!JXG.exists(this.label.content)) {
             return new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
         }
-        
+
         switch (this.label.content.visProp.position) {
             case 'lft':
             case 'llft':

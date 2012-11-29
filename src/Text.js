@@ -58,7 +58,7 @@ JXG.Text = function (board, content, coords, attributes) {
         this.element.addChild(this);
         
         this.X = function () {
-            var sx, coords;
+            var sx, coords, anchor;
 
             if (this.visProp.islabel) {
                 sx =  parseFloat(this.visProp.offset[0]);
@@ -74,13 +74,13 @@ JXG.Text = function (board, content, coords, attributes) {
         };
         
         this.Y = function () {
-            var sy, coords;
+            var sy, coords, anchor;
             
             if (this.visProp.islabel) {
                 sy = -parseFloat(this.visProp.offset[1]);
                 anchor = this.element.getLabelAnchor();
                 coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
-                
+
                 return coords.usrCoords[2];
             } else {
                 anchor = this.element.getTextAnchor();
@@ -357,7 +357,7 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
             this.transformations[i].update();
         }
 
-	    return this;
+        return this;
     },
 
     /**

@@ -324,7 +324,7 @@ def makeReaders():
     print "Making Readers..."
     
     lic = ("/* Version %s */\n" % version) + license
-    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella']
+    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella', 'Sketch']
     for f in reader:
         fname = f + "Reader"
         shutil.copy("src/" + fname + ".js", "tmp/")
