@@ -93,8 +93,10 @@ JXG.JSXGraph = {
             // properties of document.body on every mouse move. why? we don't know. if
             // you know, please let us know.
             function MouseMove() {
-                document.body.scrollLeft;
-                document.body.scrollTop;
+                if (document.body) {
+                    document.body.scrollLeft;
+                    document.body.scrollTop;
+                }
             }
             document.onmousemove = MouseMove;
             loadRenderer('vml');
