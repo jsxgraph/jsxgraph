@@ -747,7 +747,6 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         if (!JXG.exists(owner)) {
             JXG.debug('no such owner');
-            alert("see console and recheck why!!!");
             return;
         }
 
