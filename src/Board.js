@@ -2807,8 +2807,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     addChild: function (board) {
-        this.dependentBoards.push(board);
-        this.update();
+        if (board!==null && JXG.exists(board.containerObj)) {
+            this.dependentBoards.push(board);
+            this.update();
+        }
         return this;
     },
 
