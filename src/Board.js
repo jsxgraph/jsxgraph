@@ -2852,8 +2852,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //for (var board in JXG.JSXGraph.boards) {
         len = this.dependentBoards.length;
         for (i=0; i<len; i++) {
-            boardId = this.dependentBoards[i].id;
-            b = JXG.JSXGraph.boards[boardId];
+            // boardId = this.dependentBoards[i].id;
+            // b = JXG.JSXGraph.boards[boardId];
+            b = this.dependentBoards[i];
             if ( b != this) {
                 b.updateQuality = this.updateQuality;
                 b.prepareUpdate().updateElements().updateConditions();
