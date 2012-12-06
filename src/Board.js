@@ -23,12 +23,16 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, init: true, translateASCIIMath: true */
+
 /**
  * @fileoverview The JXG.Board class is defined in this file. JXG.Board controls all properties and methods
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
  * @author graphjs
  * @version 0.1
  */
+
+'use strict';
 
 /**
  * Constructs a new Board object.
@@ -78,7 +82,7 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.BOARD_MODE_MOVE_ORIGIN = 0x0002;
 
     /**
-     /* Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
+     * Update is made with low quality, e.g. graphs are evaluated at a lesser amount of points.
      * @type Number
      * @constant
      * @see JXG.Board#updateQuality
@@ -101,73 +105,6 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      */
     this.BOARD_MODE_ZOOM = 0x0011;
 
-    // TODO: Do we still need the CONSTRUCTIOIN_TYPE_* properties?!? -- Haaner says: NO
-    // BEGIN CONSTRUCTION_TYPE_* stuff
-
-    /**
-     * Board is in construction mode, objects are highlighted on mouse over and the behaviour of the board
-     * is determined by the construction type stored in the field constructionType.
-     * @type Number
-     * @constant
-     */
-    this.BOARD_MODE_CONSTRUCT = 0x0010;
-
-    /**
-     * When the board is in construction mode this construction type says we want to construct a point.
-     * @type Number
-     * @constant
-     */
-    this.CONSTRUCTION_TYPE_POINT         = 0x43545054;       // CTPT
-    /**
-     * When the board is in construction mode this construction type says we want to construct a circle.
-     * @type Number
-     * @constant
-     */
-    this.CONSTRUCTION_TYPE_CIRCLE        = 0x4354434C;       // CTCL
-    /**
-     * When the board is in construction mode this construction type says we want to construct a line.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_LINE          = 0x43544C4E;       // CTLN
-    /**
-     * When the board is in construction mode this construction type says we want to construct a glider.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_GLIDER        = 0x43544744;       // CTSD
-    /**
-     * When the board is in construction mode this construction type says we want to construct a midpoint.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_MIDPOINT      = 0x43544D50;       // CTMP
-    /**
-     * When the board is in construction mode this construction type says we want to construct a perpendicular.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_PERPENDICULAR = 0x43545044;       // CTPD
-    /**
-     * When the board is in construction mode this construction type says we want to construct a parallel.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_PARALLEL      = 0x4354504C;       // CTPL
-    /**
-     * When the board is in construction mode this construction type says we want to construct a intersection.
-     * @type int
-     * @private
-     * @final
-     */
-    this.CONSTRUCTION_TYPE_INTERSECTION  = 0x43544953;       // CTIS
-    // END CONSTRUCTION_TYPE_* stuff
-
     /**
      * The html-id of the html element containing the board.
      * @type String
@@ -178,8 +115,9 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * Pointer to the html element containing the board.
      * @type Object
      */
-    this.containerObj = typeof document != 'undefined' ? document.getElementById(this.container) : null;
-    if (typeof document != 'undefined' && this.containerObj == null) {
+    this.containerObj = (JXG.isBrowser ? document.getElementById(this.container) : null);
+
+    if (JXG.isBrowser && this.containerObj === null) {
         throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
     }
 
@@ -238,13 +176,13 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * The number of pixels which represent one unit in user-coordinates in x direction.
      * @type Number
      */
-    this.unitX = unitX*this.zoomX;
+    this.unitX = unitX * this.zoomX;
 
     /**
      * The number of pixels which represent one unit in user-coordinates in y direction.
      * @type Number
      */
-    this.unitY = unitY*this.zoomY;
+    this.unitY = unitY * this.zoomY;
 
     /**
      * Canvas width.
@@ -259,14 +197,14 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
     this.canvasHeight = canvasHeight;
 
     // If the given id is not valid, generate an unique id
-    if (JXG.exists(id) && id !== '' && typeof document != 'undefined' && !JXG.exists(document.getElementById(id))) {
+    if (JXG.exists(id) && id !== '' && JXG.isBrowser && !JXG.exists(document.getElementById(id))) {
         this.id = id;
     } else {
         this.id = this.generateId();
     }
 
     JXG.EventEmitter.eventify(this);
-    
+
     this.hooks = [];
 
     /**
@@ -331,7 +269,6 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * <ul>
      * <li>JXG.Board.BOARD_MODE_NONE</li>
      * <li>JXG.Board.BOARD_MODE_DRAG</li>
-     * <li>JXG.Board.BOARD_MODE_CONSTRUCT</li>
      * <li>JXG.Board.BOARD_MODE_MOVE_ORIGIN</li>
      * </ul>
      * @type Number
@@ -422,9 +359,9 @@ JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unit
      * @see JXG.JSXGraph#initBoard
      */
     this.showCopyright = false;
-    if ((showCopyright!=null && showCopyright) || (showCopyright==null && this.options.showCopyright)) {
+    if ((showCopyright !== null && showCopyright) || (showCopyright === null && this.options.showCopyright)) {
         this.showCopyright = true;
-        this.renderer.displayCopyright(JXG.JSXGraph.licenseText, parseInt(this.options.text.fontSize));
+        this.renderer.displayCopyright(JXG.JSXGraph.licenseText, parseInt(this.options.text.fontSize, 10));
     }
 
     /**
@@ -519,45 +456,36 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {String} Unique name for the object.
      */
     generateName: function (object) {
-        if (object.type == JXG.OBJECT_TYPE_TICKS) {
-            return '';
-        }
-
-        var possibleNames,
+        var possibleNames, i, j, length,
             maxNameLength = 2,
             pre = '',
             post = '',
             indices = [],
-            name = '',
-            i, j;
+            name = '';
 
-        if (object.elementClass == JXG.OBJECT_CLASS_POINT) {
+        if (object.type === JXG.OBJECT_TYPE_TICKS) {
+            return '';
+        }
+
+        if (object.elementClass === JXG.OBJECT_CLASS_POINT) {
             // points have capital letters
             possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        } else if (object.type == JXG.OBJECT_TYPE_ANGLE) {
-            if (false) {
-                possibleNames = ['', 'α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ','ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'ο', 'π', 'ρ', 
-                    'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω']; //'&sigmaf;', 
-            } else {
-                possibleNames = ['', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
-                    '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;', 
-                    '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;']; //'&sigmaf;', 
-            }
+        } else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
+            possibleNames = ['', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
+                '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;',
+                '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'];
         } else {
             // all other elements get lowercase labels
             possibleNames = ['', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
                 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
         }
 
-        if (    object.elementClass !== JXG.OBJECT_CLASS_POINT 
-            && object.elementClass != JXG.OBJECT_CLASS_LINE
-            && object.type != JXG.OBJECT_TYPE_ANGLE) {
-            
+        if (object.elementClass !== JXG.OBJECT_CLASS_POINT &&
+                object.elementClass !== JXG.OBJECT_CLASS_LINE &&
+                object.type !== JXG.OBJECT_TYPE_ANGLE) {
             if (object.type === JXG.OBJECT_TYPE_POLYGON) {
                 pre = 'P_{';
-            //} else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
-            //    pre = 'W_{';
             } else if (object.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                 pre = 'k_{';
             } else if (object.type === JXG.OBJECT_TYPE_TEXT) {
@@ -568,27 +496,28 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             post = '}';
         }
 
-        for (i=0; i<maxNameLength; i++) {
+        for (i = 0; i < maxNameLength; i++) {
             indices[i] = 0;
         }
 
-        while (indices[maxNameLength-1] < possibleNames.length) {
-            for (indices[0]=1; indices[0]<possibleNames.length; indices[0]++) {
+        while (indices[maxNameLength - 1] < possibleNames.length) {
+            for (indices[0] = 1; indices[0] < possibleNames.length; indices[0]++) {
                 name = pre;
 
-                for (i=maxNameLength; i>0; i--) {
-                    name += possibleNames[indices[i-1]];
+                for (i = maxNameLength; i > 0; i--) {
+                    name += possibleNames[indices[i - 1]];
                 }
 
-                if (this.elementsByName[name+post] == null) {
-                    return name+post;
+                if (!JXG.exists(this.elementsByName[name + post])) {
+                    return name + post;
                 }
 
             }
             indices[0] = possibleNames.length;
-            for (i=1; i<maxNameLength; i++) {
-                if (indices[i-1] == possibleNames.length) {
-                    indices[i-1] = 1;
+            
+            for (i = 1; i < maxNameLength; i++) {
+                if (indices[i - 1] === possibleNames.length) {
+                    indices[i - 1] = 1;
                     indices[i]++;
                 }
             }
@@ -604,9 +533,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     generateId: function () {
         var r = 1;
 
-        // as long as we don't have an unique id generate a new one
-        while (JXG.JSXGraph.boards['jxgBoard' + r] != null) {
-            r = Math.round(Math.random()*65535);
+        // as long as we don't have a unique id generate a new one
+        while (JXG.exists(JXG.JSXGraph.boards['jxgBoard' + r])) {
+            r = Math.round(Math.random() * 65535);
         }
 
         return ('jxgBoard' + r);
@@ -625,7 +554,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             elId = obj.id;
 
         // Falls Id nicht vorgegeben, eine Neue generieren:
-        if (elId == '' || !JXG.exists(elId)) {
+        if (elId === '' || !JXG.exists(elId)) {
             elId = this.id + type + num;
         }
 
@@ -654,11 +583,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
     },
 
-/**********************************************************
- *
- * Event Handler helpers
- *
- **********************************************************/
+    /**********************************************************
+     *
+     * Event Handler helpers
+     *
+     **********************************************************/
 
     /**
      * Calculates mouse coordinates relative to the boards container.
@@ -668,8 +597,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pCont = this.containerObj,
             cPos = JXG.getOffset(pCont),
             doc = document.documentElement.ownerDocument,
-            getProp = function(css) {
-                var n = parseInt(JXG.getStyle(pCont, css));
+            getProp = function (css) {
+                var n = parseInt(JXG.getStyle(pCont, css), 10);
                 return isNaN(n) ? 0 : n;
             };
 
@@ -722,7 +651,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     getMousePosition: function (e, i) {
         var cPos = this.getCoordsTopLeftCorner(),
-            absPos, v;
+            absPos,
+            v;
 
         // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
         // Seems to be obsolete now
@@ -733,7 +663,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(e, i);
-        
+
         /*
         v = [1, absPos[0], absPos[1]];
         v = JXG.Math.matVecMult(this.cssTransMat, v);
@@ -741,7 +671,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         v[2] /= v[1];
         return [v[1]-cPos[0], v[2]-cPos[1]];
         */
-        return [absPos[0]-cPos[0], absPos[1]-cPos[1]];
+        return [absPos[0] - cPos[0], absPos[1] - cPos[1]];
     },
 
     /**
@@ -767,7 +697,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     initMoveObject: function (x, y, evt, type) {
         var pEl, el, collect = [], haspoint, len = this.objectsList.length,
-            dragEl = {visProp:{layer:-10000}};
+            dragEl = {visProp: {layer: -10000}};
 
         //for (el in this.objects) {
         for (el = 0; el < len; el++) {
@@ -778,30 +708,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 pEl.triggerEventHandlers([type + 'down', 'down'], evt);
                 this.downObjects.push(pEl);
             }
-            if (
-                ((this.geonextCompatibilityMode
-                  && (pEl.elementClass==JXG.OBJECT_CLASS_POINT
-                     || pEl.type==JXG.OBJECT_TYPE_TEXT)
-                 )
-                 ||
-                 !this.geonextCompatibilityMode
-                )
-                && pEl.isDraggable
-                && pEl.visProp.visible
-                && (!pEl.visProp.fixed) && (!pEl.visProp.frozen)
-                && haspoint
-                ) {
-                    // Elements in the highest layer get priority.
-                    if (pEl.visProp.layer >= dragEl.visProp.layer) {
-                        // If an element and its label have the focus
-                        // simultaneously, the element is taken
-                        // this only works if we assume that every browser runs
-                        // through this.objects in the right order, i.e. an element A
-                        // added before element B turns up here before B does.
-                        if (JXG.exists(dragEl.label) && pEl==dragEl.label.content) {
-                            continue;
-                        }
-
+            if (((this.geonextCompatibilityMode &&
+                    (pEl.elementClass === JXG.OBJECT_CLASS_POINT || pEl.type === JXG.OBJECT_TYPE_TEXT)) ||
+                    !this.geonextCompatibilityMode) &&
+                    pEl.isDraggable &&
+                    pEl.visProp.visible &&
+                    (!pEl.visProp.fixed) && (!pEl.visProp.frozen) &&
+                    haspoint) {
+                // Elements in the highest layer get priority.
+                if (pEl.visProp.layer >= dragEl.visProp.layer) {
+                    // If an element and its label have the focus
+                    // simultaneously, the element is taken
+                    // this only works if we assume that every browser runs
+                    // through this.objects in the right order, i.e. an element A
+                    // added before element B turns up here before B does.
+                    if (!JXG.exists(dragEl.label) || pEl !== dragEl.label.content) {
                         dragEl = pEl;
                         collect[0] = dragEl;
 
@@ -810,6 +731,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         //    return collect;
                         //}
                     }
+                }
             }
         }
 
@@ -837,41 +759,39 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             drag = o.obj,
             oldCoords;
 
-        if (drag.type != JXG.OBJECT_TYPE_GLIDER) {
-            if (!isNaN(o.targets[0].Xprev+o.targets[0].Yprev)) {
-                 drag.setPositionDirectly(
-                    JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), 
-                    [o.targets[0].Xprev, o.targets[0].Yprev]);
+        if (drag.type !== JXG.OBJECT_TYPE_GLIDER) {
+            if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
+                drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
             }
             // Remember the actual position for the next move event. Then we are able to
             // compute the difference vector.
             o.targets[0].Xprev = newPos.scrCoords[1];
             o.targets[0].Yprev = newPos.scrCoords[2];
             this.update(drag);
-        } else if (drag.type == JXG.OBJECT_TYPE_GLIDER) {
+        } else if (drag.type === JXG.OBJECT_TYPE_GLIDER) {
             oldCoords = drag.coords;
 
             // First the new position of the glider is set to the new mouse position
             drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords.slice(1));
 
             // Then, from this position we compute the projection to the object the glider on which the glider lives.
-            if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+            if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
                 drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
-            } else if (drag.slideObject.elementClass == JXG.OBJECT_CLASS_LINE) {
+            } else if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_LINE) {
                 drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
             }
 
             // Now, we have to adjust the other group elements again.
-            if (drag.group.length != 0) {
-                drag.group[drag.group.length-1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
-                drag.group[drag.group.length-1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
-                drag.group[drag.group.length-1].update(this);
+            if (drag.group.length !== 0) {
+                drag.group[drag.group.length - 1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
+                drag.group[drag.group.length - 1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
+                drag.group[drag.group.length - 1].update(this);
             } else {
                 this.update(drag);
             }
         }
 
-        drag.triggerEventHandlers([type+  'drag', 'drag'], evt);
+        drag.triggerEventHandlers([type + 'drag', 'drag'], evt);
 
         this.updateInfobox(drag);
         this.update();
@@ -885,7 +805,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Object} o The touch object that is dragged: {JXG.Board#touches}.
      * @param {Object} evt The event object that lead to this movement.
      */
-    twoFingerMove: function(p1, p2, o, evt) {
+    twoFingerMove: function (p1, p2, o, evt) {
         var np1c, np2c, drag;
 
         if (JXG.exists(o) && JXG.exists(o.obj)) {
@@ -898,12 +818,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
         np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
 
-        if (drag.elementClass===JXG.OBJECT_CLASS_LINE
-            || drag.type===JXG.OBJECT_TYPE_POLYGON) {
+        if (drag.elementClass === JXG.OBJECT_CLASS_LINE ||
+                drag.type === JXG.OBJECT_TYPE_POLYGON) {
             this.twoFingerTouchObject(np1c, np2c, o, drag);
-        } else if (drag.elementClass===JXG.OBJECT_CLASS_CIRCLE) {
+        } else if (drag.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
             this.twoFingerTouchCircle(np1c, np2c, o, drag);
-        } 
+        }
         drag.triggerEventHandlers(['touchdrag', 'drag'], evt);
 
         o.targets[0].Xprev = np1c.scrCoords[1];
@@ -919,25 +839,24 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      * @param {object} drag The object that is dragged:
      */
-    twoFingerTouchObject: function(np1c, np2c, o, drag) {
+    twoFingerTouchObject: function (np1c, np2c, o, drag) {
         var np1, np2, op1, op2,
             nmid, omid, nd, od,
             d,
             S, alpha, t1, t2, t3, t4, t5;
 
         if (JXG.exists(o.targets[0]) &&
-            JXG.exists(o.targets[1]) &&
-            !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
-
+                JXG.exists(o.targets[1]) &&
+                !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
             np1 = np1c.usrCoords;
             np2 = np2c.usrCoords;
             // Previous finger position
-            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this)).usrCoords;
-            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev,o.targets[1].Yprev], this)).usrCoords;
+            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
+            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
 
             // Affine mid points of the old and new positions
-            omid = [1, (op1[1]+op2[1])*0.5, (op1[2]+op2[2])*0.5];
-            nmid = [1, (np1[1]+np2[1])*0.5, (np1[2]+np2[2])*0.5];
+            omid = [1, (op1[1] + op2[1]) * 0.5, (op1[2] + op2[2]) * 0.5];
+            nmid = [1, (np1[1] + np2[1]) * 0.5, (np1[2] + np2[2]) * 0.5];
 
             // Old and new directions
             od = JXG.Math.crossProduct(op1, op2);
@@ -945,15 +864,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             S = JXG.Math.crossProduct(od, nd);
 
             // If parallel, translate otherwise rotate
-            if (Math.abs(S[0])<JXG.Math.eps){
+            if (Math.abs(S[0]) < JXG.Math.eps) {
                 return;
-                t1 = this.create('transform', [nmid[1]-omid[1], nmid[2]-omid[2]], {type:'translate'});
-            } else {
-                S[1] /= S[0];
-                S[2] /= S[0];
-                alpha = JXG.Math.Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
-                t1 = this.create('transform', [alpha, S[1], S[2]], {type:'rotate'});
+                //t1 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
             }
+
+            S[1] /= S[0];
+            S[2] /= S[0];
+            alpha = JXG.Math.Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
+            t1 = this.create('transform', [alpha, S[1], S[2]], {type: 'rotate'});
+
             // Old midpoint of fingers after first transformation:
             t1.update();
             omid = JXG.Math.matVecMult(t1.matrix, omid);
@@ -961,7 +881,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             omid[2] /= omid[0];
 
             // Shift to the new mid point
-            t2 = this.create('transform', [nmid[1]-omid[1], nmid[2]-omid[2]], {type:'translate'});
+            t2 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
             t2.update();
             //omid = JXG.Math.matVecMult(t2.matrix, omid);
 
@@ -969,16 +889,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (drag.visProp.scalable) {
                 // Scale
                 d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
-                t3 = this.create('transform', [-nmid[1], -nmid[2]], {type:'translate'});
-                t4 = this.create('transform', [d, d], {type:'scale'});
-                t5 = this.create('transform', [nmid[1], nmid[2]], {type:'translate'});
+                t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
+                t4 = this.create('transform', [d, d], {type: 'scale'});
+                t5 = this.create('transform', [nmid[1], nmid[2]], {type: 'translate'});
                 t1.melt(t3).melt(t4).melt(t5);
             }
 
-            if (drag.elementClass===JXG.OBJECT_CLASS_LINE) {
+            if (drag.elementClass === JXG.OBJECT_CLASS_LINE) {
                 t1.applyOnce([drag.point1, drag.point2]);
-            } else if (drag.type===JXG.OBJECT_TYPE_POLYGON) {
-                t1.applyOnce(drag.vertices.slice(0,-1));
+            } else if (drag.type === JXG.OBJECT_TYPE_POLYGON) {
+                t1.applyOnce(drag.vertices.slice(0, -1));
             }
 
             this.update();
@@ -993,49 +913,49 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {object} o The touch object that is dragged: {JXG.Board#touches}.
      * @param {object} drag The object that is dragged:
      */
-    twoFingerTouchCircle: function(np1c, np2c, o, drag) {
+    twoFingerTouchCircle: function (np1c, np2c, o, drag) {
         var np1, np2, op1, op2,
             d, alpha, t1, t2, t3, t4, t5;
 
-        if (drag.method === 'pointCircle'
-            || drag.method === 'pointLine') {
+        if (drag.method === 'pointCircle' ||
+                drag.method === 'pointLine') {
             return;
         }
 
         if (JXG.exists(o.targets[0]) &&
-            JXG.exists(o.targets[1]) &&
-            !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+                JXG.exists(o.targets[1]) &&
+                !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
             np1 = np1c.usrCoords;
             np2 = np2c.usrCoords;
             // Previous finger position
-            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev,o.targets[0].Yprev], this)).usrCoords;
-            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev,o.targets[1].Yprev], this)).usrCoords;
+            op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
+            op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
 
             // Shift by the movement of the first finger
-            t1 = this.create('transform', [np1[1]-op1[1], np1[2]-op1[2]], {type:'translate'});
+            t1 = this.create('transform', [np1[1] - op1[1], np1[2] - op1[2]], {type: 'translate'});
             alpha = JXG.Math.Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
 
             // Rotate and scale by the movement of the second finger
-            t2 = this.create('transform', [-np1[1], -np1[2]], {type:'translate'});
-            t3 = this.create('transform', [alpha], {type:'rotate'});
+            t2 = this.create('transform', [-np1[1], -np1[2]], {type: 'translate'});
+            t3 = this.create('transform', [alpha], {type: 'rotate'});
             t1.melt(t2).melt(t3);
 
             if (drag.visProp.scalable) {
                 d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
-                t4 = this.create('transform', [d, d], {type:'scale'});
+                t4 = this.create('transform', [d, d], {type: 'scale'});
                 t1.melt(t4);
             }
-            t5 = this.create('transform', [ np1[1], np1[2]], {type:'translate'});
+            t5 = this.create('transform', [ np1[1], np1[2]], {type: 'translate'});
             t1.melt(t5);
 
             t1.applyOnce([drag.center]);
 
-            if (drag.method==='twoPoints') {
+            if (drag.method === 'twoPoints') {
                 t1.applyOnce([drag.point2]);
-            } else if (drag.method==='pointRadius') {
+            } else if (drag.method === 'pointRadius') {
                 if (JXG.isNumber(drag.updateRadius.origin)) {
-                    drag.setRadius(drag.radius*d);
+                    drag.setRadius(drag.radius * d);
                 }
             }
             this.update(drag.center);
@@ -1088,44 +1008,45 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {JXG.GeometryElement} obj The object to be dragged
      * @param {Array} targets Array of targets. It is changed by this function.
      */
-    saveStartPos: function (obj, targ) {
+    saveStartPos: function (obj, targets) {
         var xy = [], i, len;
-        
-        if (obj.elementClass == JXG.OBJECT_CLASS_LINE) {
+
+        if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
             xy.push(obj.point1.coords.usrCoords);
             xy.push(obj.point2.coords.usrCoords);
-        } else if (obj.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
+        } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
             xy.push(obj.center.coords.usrCoords);
-        } else if (obj.type == JXG.OBJECT_TYPE_GLIDER) {
+        } else if (obj.type === JXG.OBJECT_TYPE_GLIDER) {
             xy.push([obj.position, obj.position, obj.position]);
-        } else if (obj.type == JXG.OBJECT_TYPE_POLYGON) {
-            len = obj.vertices.length-1;
-            for (i=0; i<len; i++) {
+        } else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
+            len = obj.vertices.length - 1;
+            for (i = 0; i < len; i++) {
                 xy.push(obj.vertices[i].coords.usrCoords);
             }
-        } else if (obj.elementClass == JXG.OBJECT_CLASS_POINT) {
+        } else if (obj.elementClass === JXG.OBJECT_CLASS_POINT) {
             xy.push(obj.coords.usrCoords);
         } else {
             try {
                 xy.push(obj.coords.usrCoords);
-            } catch(e) {
+            } catch (e) {
                 JXG.debug('JSXGraph+ saveStartPos: obj.coords.usrCoords not available: ' + e);
             }
         }
 
         len = xy.length;
-        for (i=0; i<len; i++) {
-            targ.Zstart.push(xy[i][0]);
-            targ.Xstart.push(xy[i][1]);
-            targ.Ystart.push(xy[i][2]);
+        for (i = 0; i < len; i++) {
+            targets.Zstart.push(xy[i][0]);
+            targets.Xstart.push(xy[i][1]);
+            targets.Ystart.push(xy[i][2]);
         }
     },
 
     mouseOriginMoveStart: function (evt) {
-        var r = this.options.pan.enabled && (!this.options.pan.needShift || evt.shiftKey);
-        
+        var r = this.options.pan.enabled && (!this.options.pan.needShift || evt.shiftKey),
+            pos;
+
         if (r) {
-            var pos = this.getMousePosition(evt);
+            pos = this.getMousePosition(evt);
             this.initMoveOrigin(pos[0], pos[1]);
         }
 
@@ -1133,10 +1054,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     mouseOriginMove: function (evt) {
-        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN);
+        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN),
+            pos;
 
         if (r) {
-            var pos = this.getMousePosition(evt);
+            pos = this.getMousePosition(evt);
             this.moveOrigin(pos[0], pos[1], true);
         }
 
@@ -1145,22 +1067,24 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
     touchOriginMoveStart: function (evt) {
         var touches = evt[JXG.touchProperty],
-            twoFingersCondition = (touches.length == 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
-            r = this.options.pan.enabled && (!this.options.pan.needTwoFingers || twoFingersCondition);
+            twoFingersCondition = (touches.length === 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
+            r = this.options.pan.enabled && (!this.options.pan.needTwoFingers || twoFingersCondition),
+            pos;
 
         if (r) {
-            var pos = this.getMousePosition(evt, 0);
+            pos = this.getMousePosition(evt, 0);
             this.initMoveOrigin(pos[0], pos[1]);
         }
 
         return r;
     },
 
-    touchOriginMove: function(evt) {
-        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN);
+    touchOriginMove: function (evt) {
+        var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN),
+            pos;
 
         if (r) {
-            var pos = this.getMousePosition(evt, 0);
+            pos = this.getMousePosition(evt, 0);
             this.moveOrigin(pos[0], pos[1], true);
         }
 
@@ -1171,11 +1095,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.mode = this.BOARD_MODE_NONE;
     },
 
-/**********************************************************
- *
- * Event Handler
- *
- **********************************************************/
+    /**********************************************************
+     *
+     * Event Handler
+     *
+     **********************************************************/
 
     /**
      *  Add all possible event handlers to the board object
@@ -1183,20 +1107,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     addEventHandlers: function () {
         this.addMouseEventHandlers();
         this.addTouchEventHandlers();
-      },
+    },
 
     addMouseEventHandlers: function () {
-
-	   if (!this.hasMouseHandlers && typeof document != 'undefined') {
-
+        if (!this.hasMouseHandlers && JXG.isBrowser) {
             JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
-            // this is now added dynamically in mousedown
-            //JXG.addEvent(document, 'mouseup', this.mouseUpListener,this);
-
-           	JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-           	JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+            JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+            JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
             this.hasMouseHandlers = true;
 
@@ -1205,31 +1124,30 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             // This one works on IE, Firefox and Chromium with default configurations. On some Safari
             // or Opera versions the user must explicitly allow the deactivation of the context menu.
-            this.containerObj.oncontextmenu = function (e) { if (JXG.exists(e)) e.preventDefault(); return false; };
+            this.containerObj.oncontextmenu = function (e) {
+                if (JXG.exists(e)) {
+                    e.preventDefault();
+                }
+
+                return false;
+            };
         }
     },
 
     addTouchEventHandlers: function () {
-
-		if (!this.hasTouchHandlers && typeof document != 'undefined') {
-
+		if (!this.hasTouchHandlers && JXG.isBrowser) {
             JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
-            // this is now added dynamically in touchstart
-            //JXG.addEvent(document, 'touchend', this.touchEndListener, this);
-
-           	JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-           	JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+            JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+            JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
             this.hasTouchHandlers = true;
         }
     },
 
     removeMouseEventHandlers: function () {
-
-        if (this.hasMouseHandlers && typeof document != 'undefined') {
-
+        if (this.hasMouseHandlers && JXG.isBrowser) {
             JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
             JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
@@ -1238,17 +1156,15 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 this.hasMouseUp = false;
             }
 
-           	JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-		    JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+            JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+            JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
             this.hasMouseHandlers = false;
         }
     },
 
     removeTouchEventHandlers: function () {
-
-        if (this.hasTouchHandlers && typeof document != 'undefined') {
-
+        if (this.hasTouchHandlers && JXG.isBrowser) {
             JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
             JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
@@ -1277,7 +1193,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickLeftArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth*0.1, this.origin.scrCoords[2]);
+        this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth * 0.1, this.origin.scrCoords[2]);
         return this;
     },
 
@@ -1286,7 +1202,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickRightArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth*0.1, this.origin.scrCoords[2]);
+        this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth * 0.1, this.origin.scrCoords[2]);
         return this;
     },
 
@@ -1295,7 +1211,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickUpArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight*0.1);
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight * 0.1);
         return this;
     },
 
@@ -1304,7 +1220,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @private
      */
     clickDownArrow: function () {
-        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight*0.1);
+        this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight * 0.1);
         return this;
     },
 
@@ -1327,8 +1243,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (this.mode === this.BOARD_MODE_NONE) {
             c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
-            this.options.zoom.factorX = evt.scale/this.prevScale;
-            this.options.zoom.factorY = evt.scale/this.prevScale;
+            this.options.zoom.factorX = evt.scale / this.prevScale;
+            this.options.zoom.factorY = evt.scale / this.prevScale;
 
             this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
             this.prevScale = evt.scale;
@@ -1367,10 +1283,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {Boolean} ...
      */
     touchStartListener: function (evt, object) {
-        var i, pos, elements, j, k,
+        var i, pos, elements, j, k, time,
             eps = this.options.precision.touch,
             obj, found, targets,
-            evtTouches = evt[JXG.touchProperty];
+            evtTouches = evt[JXG.touchProperty],
+            target;
 
         if (!this.hasTouchEnd) {
             JXG.addEvent(document, 'touchend', this.touchEndListener, this);
@@ -1382,7 +1299,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         // prevent accidental selection of text
-        if (document.selection && typeof document.selection.empty == 'function') {
+        if (document.selection && typeof document.selection.empty === 'function') {
             document.selection.empty();
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
@@ -1391,9 +1308,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // multitouch
         this.options.precision.hasPoint = this.options.precision.touch;
 
-        // TODO: Is the following TODO still relevant? Or has it been done already? If so, this comment should be updated ...
-        // assuming only points are getting dragged
-        // todo: this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
+        // this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
         // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
         // touches, e.g. we translate (parallel translation) a line with one finger, now a second finger is over this line. this should change the operation to
         // a rotational translation. or one finger moves a circle, a second finger can be attached to the circle: this now changes the operation from translation to
@@ -1402,7 +1317,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //  * if we find a targettouch over an element that could be transformed with more than one finger, we search the rest of the targettouches, if they are over
         //    this element and add them.
         // ADDENDUM 11/10/11:
-        // to allow the user to drag lines and circles with multitouch we have to change this here. some notes for me before implementation:
         //  (1) run through the touches control object,
         //  (2) try to find the targetTouches for every touch. on touchstart only new touches are added, hence we can find a targettouch
         //      for every target in our touches objects
@@ -1429,7 +1343,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     for (k = 0; k < evtTouches.length; k++) {
                         // find the new targettouches
                         if (Math.abs(Math.pow(evtTouches[k].screenX - this.touches[i].targets[j].X, 2) +
-                            Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps*eps) {
+                                Math.pow(evtTouches[k].screenY - this.touches[i].targets[j].Y, 2)) < eps * eps) {
                             this.touches[i].targets[j].num = k;
 
                             this.touches[i].targets[j].X = evtTouches[k].screenX;
@@ -1441,7 +1355,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                     eps *= 2;
 
-                } while (this.touches[i].targets[j].num == -1 && eps < this.options.precision.touchMax);
+                } while (this.touches[i].targets[j].num === -1 && eps < this.options.precision.touchMax);
 
                 if (this.touches[i].targets[j].num === -1) {
                     JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
@@ -1460,15 +1374,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (object) {
                     elements = [ object ];
                     this.mode = this.BOARD_MODE_DRAG;
-                } else
+                } else {
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
+                }
 
-                if (elements.length != 0) {
-                    obj = elements[elements.length-1];
+                if (elements.length !== 0) {
+                    obj = elements[elements.length - 1];
 
-                    if (JXG.isPoint(obj) 
-                        || obj.type === JXG.OBJECT_TYPE_TEXT
-                        || obj.type === JXG.OBJECT_TYPE_TICKS) {
+                    if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT || obj.type === JXG.OBJECT_TYPE_TICKS) {
                         // it's a point, so it's single touch, so we just push it to our touches
 
                         targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
@@ -1478,19 +1391,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                         this.touches.push({ obj: obj, targets: targets });
                         this.highlightedObjects[obj.id] = obj;
                         obj.highlight(true);
-                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE 
-                                || obj.elementClass === JXG.OBJECT_CLASS_CIRCLE
-                                || obj.type === JXG.OBJECT_TYPE_POLYGON
-                                ) {
+                    } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE ||
+                                    obj.elementClass === JXG.OBJECT_CLASS_CIRCLE ||
+                                    obj.type === JXG.OBJECT_TYPE_POLYGON) {
                         found = false;
+
                         // first check if this geometric object is already capture in this.touches
                         for (j = 0; j < this.touches.length; j++) {
                             if (obj.id === this.touches[j].obj.id) {
                                 found = true;
                                 // only add it, if we don't have two targets in there already
                                 if (this.touches[j].targets.length === 1) {
-
-                                    var target = { num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
+                                    target = { num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] };
 
                                     // For the UNDO/REDO of object moves
                                     this.saveStartPos(obj, target);
@@ -1519,22 +1431,21 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 evtTouches[i].jxg_isused = true;
             }
         }
-        
+
         if (this.touches.length > 0) {
             evt.preventDefault();
             evt.stopPropagation();
         }
-        
+
         // move origin - but only if we're not in drag mode
         if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
             this.triggerEventHandlers(['touchstart', 'down'], evt);
             return false;
         }
-        
 
         if (JXG.isWebkitAndroid()) {
-            var ti = new Date();
-            this.touchMoveLast = ti.getTime()-200;
+            time = new Date();
+            this.touchMoveLast = time.getTime() - 200;
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
@@ -1551,7 +1462,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     touchMoveListener: function (evt) {
         var i, count = 0, pos,
-            evtTouches = evt[JXG.touchProperty];
+            evtTouches = evt[JXG.touchProperty],
+            time;
 
         if (this.mode !== this.BOARD_MODE_NONE) {
             evt.preventDefault();
@@ -1560,19 +1472,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // Reduce update frequency for Android devices
         if (JXG.isWebkitAndroid()) {
-            var ti = new Date();
-            ti = ti.getTime();
-            if (ti-this.touchMoveLast<80) {
+            time = new Date();
+            time = time.getTime();
+
+            if (time - this.touchMoveLast < 80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
                 this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
 
                 return false;
-            } else {
-                this.touchMoveLast = ti;
             }
+
+            this.touchMoveLast = time;
         }
 
-        if (this.mode != this.BOARD_MODE_DRAG) {
+        if (this.mode !== this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
 
@@ -1580,7 +1493,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         if (!this.touchOriginMove(evt)) {
 
-            if (this.mode == this.BOARD_MODE_DRAG) {
+            if (this.mode === this.BOARD_MODE_DRAG) {
                 // Runs over through all elements which are touched
                 // by at least one finger.
                 for (i = 0; i < this.touches.length; i++) {
@@ -1611,7 +1524,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        if (this.mode != this.BOARD_MODE_DRAG) {
+        if (this.mode !== this.BOARD_MODE_DRAG) {
             this.renderer.hide(this.infobox);
         }
 
@@ -1641,9 +1554,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
             this.touches.length = 0;
 
-            // assuming only points can be moved
-            // todo: don't run through the targettouches but through the touches and check if all touches.targets are still available
-            // if not, try to convert the operation, e.g. if a lines is rotated and translated with two fingers and one finger is lifted,
+            // try to convert the operation, e.g. if a lines is rotated and translated with two fingers and one finger is lifted,
             // convert the operation to a simple one-finger-translation.
             // ADDENDUM 11/10/11:
             // see addendum to touchStartListener from 11/10/11
@@ -1668,7 +1579,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 for (j = 0; j < tmpTouches[i].targets.length; j++) {
                     tmpTouches[i].targets[j].found = false;
                     for (k = 0; k < evtTouches.length; k++) {
-                        if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps*eps) {
+                        if (Math.abs(Math.pow(evtTouches[k].screenX - tmpTouches[i].targets[j].X, 2) + Math.pow(evtTouches[k].screenY - tmpTouches[i].targets[j].Y, 2)) < eps * eps) {
                             tmpTouches[i].targets[j].found = true;
                             tmpTouches[i].targets[j].num = k;
                             tmpTouches[i].targets[j].X = evtTouches[k].screenX;
@@ -1696,7 +1607,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
                     for (j = 0; j < tmpTouches[i].targets.length; j++) {
                         if (tmpTouches[i].targets[j].found) {
-                            this.touches[this.touches.length-1].targets.push({
+                            this.touches[this.touches.length - 1].targets.push({
                                 num: tmpTouches[i].targets[j].num,
                                 X: tmpTouches[i].targets[j].screenX,
                                 Y: tmpTouches[i].targets[j].screenY,
@@ -1722,7 +1633,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         for (i = 0; i < this.downObjects.length; i++) {
             found = false;
             for (j = 0; j < this.touches.length; j++) {
-                if (this.touches[j].obj.id == this.downObjects[i].id) {
+                if (this.touches[j].obj.id === this.downObjects[i].id) {
                     found = true;
                 }
             }
@@ -1743,7 +1654,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             this.originMoveEnd();
             this.update();
         }
-        
+
         return true;
     },
 
@@ -1757,7 +1668,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var pos, elements, xy, result, i;
 
         // prevent accidental selection of text
-        if (document.selection && typeof document.selection.empty == 'function') {
+        if (document.selection && typeof document.selection.empty === 'function') {
             document.selection.empty();
         } else if (window.getSelection) {
             window.getSelection().removeAllRanges();
@@ -1773,11 +1684,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (object) {
             elements = [ object ];
             this.mode = this.BOARD_MODE_DRAG;
-        } else
+        } else {
             elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+        }
 
         // if no draggable object can be found, get out here immediately
-        if (elements.length == 0) {
+        if (elements.length === 0) {
             this.mode = this.BOARD_MODE_NONE;
             result = true;
         } else {
@@ -1788,10 +1700,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     Y: pos[1],
                     Xprev: NaN,
                     Yprev: NaN
-                }
-                ]
+                }]
             };
-            this.mouse.obj = elements[elements.length-1];
+            this.mouse.obj = elements[elements.length - 1];
 
             this.dehighlightAll();
             this.highlightedObjects[this.mouse.obj.id] = this.mouse.obj;
@@ -1812,13 +1723,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 window.event.returnValue = false;
             }
         }
-        
+
         if (this.mode === this.BOARD_MODE_NONE) {
             result = this.mouseOriginMoveStart(evt);
         }
 
-        if (!object)
+        if (!object) {
             this.triggerEventHandlers(['mousedown', 'down'], evt);
+        }
 
         return result;
     },
@@ -1869,7 +1781,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.updateQuality = this.BOARD_QUALITY_LOW;
 
-        if (this.mode != this.BOARD_MODE_DRAG) {
+        if (this.mode !== this.BOARD_MODE_DRAG) {
             this.dehighlightAll();
             this.renderer.hide(this.infobox);
         }
@@ -1881,9 +1793,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         //     the current mouse position
 
         if (!this.mouseOriginMove(evt)) {
-            if (this.mode == this.BOARD_MODE_DRAG) {
+            if (this.mode === this.BOARD_MODE_DRAG) {
                 this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
-            } else { // BOARD_MODE_NONE or BOARD_MODE_CONSTRUCT
+            } else { // BOARD_MODE_NONE
                 this.highlightElements(pos[0], pos[1], evt, -1);
             }
         }
@@ -1904,7 +1816,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         evt = evt || window.event;
-        var wd = evt.detail ? evt.detail*(-1) : evt.wheelDelta/40,
+        var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
             pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
         if (wd > 0) {
@@ -1917,11 +1829,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         return false;
     },
 
-/**********************************************************
- *
- * End of Event Handlers
- *
- **********************************************************/
+    /**********************************************************
+     *
+     * End of Event Handlers
+     *
+     **********************************************************/
 
     /**
      * Updates and displays a little info box to show coordinates of current selected points.
@@ -1934,15 +1846,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         if (!el.visProp.showinfobox) {
             return this;
         }
-        if (el.elementClass == JXG.OBJECT_CLASS_POINT) {
+        if (el.elementClass === JXG.OBJECT_CLASS_POINT) {
             xc = el.coords.usrCoords[1];
             yc = el.coords.usrCoords[2];
 
-            this.infobox.setCoords(xc+this.infobox.distanceX/(this.unitX),
-                yc+this.infobox.distanceY/(this.unitY));
-                
-            if (typeof(el.infoboxText)!="string") {
-                if (el.visProp.infoboxdigits==='auto') {
+            this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
+
+            if (typeof el.infoboxText !== 'string') {
+                if (el.visProp.infoboxdigits === 'auto') {
                     x = JXG.autoDigits(xc);
                     y = JXG.autoDigits(yc);
                 } else if (JXG.isNumber(el.visProp.infoboxdigits)) {
@@ -1952,14 +1863,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     x = xc;
                     y = yc;
                 }
-                
-                this.highlightInfobox(x,y,el);
+
+                this.highlightInfobox(x, y, el);
             } else {
                 this.highlightCustomInfobox(el.infoboxText, el);
             }
 
             this.renderer.show(this.infobox);
-            //this.renderer.updateText(this.infobox);
         }
         return this;
     },
@@ -1970,7 +1880,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board.
      */
     highlightCustomInfobox: function (text) {
-        //this.infobox.setText('<span style="color:#bbbbbb;">' + text + '<'+'/span>');
         this.infobox.setText(text);
         return this;
     },
@@ -1995,17 +1904,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el, pEl, needsDehighlight = false;
 
         for (el in this.highlightedObjects) {
-            pEl = this.highlightedObjects[el];
+            if (this.highlightedObjects.hasOwnProperty(el)) {
+                pEl = this.highlightedObjects[el];
 
-            if (this.hasMouseHandlers)
-                pEl.noHighlight();
+                if (this.hasMouseHandlers) {
+                    pEl.noHighlight();
+                }
 
-            needsDehighlight = true;
+                needsDehighlight = true;
 
-            // In highlightedObjects should only be objects which fulfill all these conditions
-            // And in case of complex elements, like a turtle based fractal, it should be faster to
-            // just de-highlight the element instead of checking hasPoint...
-            // if ((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
+                // In highlightedObjects should only be objects which fulfill all these conditions
+                // And in case of complex elements, like a turtle based fractal, it should be faster to
+                // just de-highlight the element instead of checking hasPoint...
+                // if ((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
+            }
         }
 
         this.highlightedObjects = {};
@@ -2014,7 +1926,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // because we are redrawing anyhow
         //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
         // another object is highlighted.
-        if (this.options.renderer=='canvas' && needsDehighlight) {
+        if (this.options.renderer === 'canvas' && needsDehighlight) {
             this.prepareUpdate();
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
@@ -2043,9 +1955,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     getUsrCoordsOfMouse: function (evt) {
         var cPos = this.getCoordsTopLeftCorner(),
             absPos = JXG.getPosition(evt),
-            x = absPos[0]-cPos[0],
-            y = absPos[1]-cPos[1],
-            newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this);
+            x = absPos[0] - cPos[0],
+            y = absPos[1] - cPos[1],
+            newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this);
 
         return newCoords.usrCoords.slice(1);
     },
@@ -2070,10 +1982,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     getAllObjectsUnderMouse: function (evt) {
         var cPos = this.getCoordsTopLeftCorner(),
             absPos = JXG.getPosition(evt),
-            dx = absPos[0]-cPos[0],
-            dy = absPos[1]-cPos[1],
+            dx = absPos[0] - cPos[0],
+            dy = absPos[1] - cPos[1],
             elList = [],
-            el, pEl, len = this.objectsList.length;
+            el,
+            pEl,
+            len = this.objectsList.length;
 
         for (el = 0; el < len; el++) {
             pEl = this.objectsList[el];
@@ -2107,11 +2021,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
-            if (!el.visProp.frozen && (el.elementClass==JXG.OBJECT_CLASS_POINT ||
-                el.elementClass==JXG.OBJECT_CLASS_CURVE ||
-                el.type==JXG.OBJECT_TYPE_AXIS ||
-                el.type==JXG.OBJECT_TYPE_TEXT)) {
-                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE && el.type!=JXG.OBJECT_TYPE_AXIS) {
+            if (!el.visProp.frozen && (el.elementClass === JXG.OBJECT_CLASS_POINT ||
+                    el.elementClass === JXG.OBJECT_CLASS_CURVE ||
+                    el.type === JXG.OBJECT_TYPE_AXIS ||
+                    el.type === JXG.OBJECT_TYPE_TEXT)) {
+                if (el.elementClass !== JXG.OBJECT_CLASS_CURVE && el.type !== JXG.OBJECT_TYPE_AXIS) {
                     el.coords.usr2screen();
                 }
             }
@@ -2128,68 +2042,68 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {String} str String containing coniditional update in geonext syntax
      */
     addConditions: function (str) {
-        var plaintext = 'var el, x, y, c, rgbo;\n',
+        var term, m, left, right, name, el, property,
+            plaintext = 'var el, x, y, c, rgbo;\n',
             i = str.indexOf('<data>'),
-            j = str.indexOf('<'+'/data>'),
-            term, m, left, right, name, el;
+            j = str.indexOf('<' + '/data>');
 
-        if (i<0) {
+        if (i < 0) {
             return;
         }
 
-        while (i>=0) {
-            term = str.slice(i+6,j);   // throw away <data>
+        while (i >= 0) {
+            term = str.slice(i + 6, j);   // throw away <data>
             m = term.indexOf('=');
-            left = term.slice(0,m);
-            right = term.slice(m+1);
+            left = term.slice(0, m);
+            right = term.slice(m + 1);
             m = left.indexOf('.');     // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
-            name = left.slice(0,m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
+            name = left.slice(0, m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
             el = this.elementsByName[JXG.unescapeHTML(name)];
 
-            var property = left.slice(m+1).replace(/\s+/g,'').toLowerCase(); // remove whitespace in property
+            property = left.slice(m + 1).replace(/\s+/g, '').toLowerCase(); // remove whitespace in property
             right = JXG.GeonextParser.geonext2JS(right, this);
-            right = right.replace(/this\.board\./g,'this.');
+            right = right.replace(/this\.board\./g, 'this.');
 
             // Debug
-            if (!JXG.exists(this.elementsByName[name])){
-                JXG.debug("debug conditions: |"+name+"| undefined");
+            if (!JXG.exists(this.elementsByName[name])) {
+                JXG.debug("debug conditions: |" + name + "| undefined");
             }
             plaintext += "el = this.objects[\"" + el.id + "\"];\n";
 
             switch (property) {
                 case 'x':
                     plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,['+(right) +',y]);\n';
+                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[' + (right) + ',y]);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
                     break;
                 case 'y':
                     plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
-                    plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,'+(right)+'],this);\n';
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[x,'+(right) +']);\n';
+                    plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,' + (right) + '],this);\n';
+                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[x,' + (right) + ']);\n';
                     plaintext += 'el.prepareUpdate().update();\n';
                     break;
                 case 'visible':
-                    plaintext += 'var c='+(right)+';\n';
+                    plaintext += 'var c=' + (right) + ';\n';
                     plaintext += 'el.visProp.visible = c;\n';
                     plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
                     break;
                 case 'position':
-                    plaintext += 'el.position = ' + (right) +';\n';
+                    plaintext += 'el.position = ' + (right) + ';\n';
                     plaintext += 'el.prepareUpdate().update(true);\n';
                     break;
                 case 'stroke':
-                    plaintext += 'rgbo = JXG.rgba2rgbo('+(right)+');\n';
+                    plaintext += 'rgbo = JXG.rgba2rgbo(' + (right) + ');\n';
                     plaintext += 'el.visProp.strokecolor = rgbo[0];\n';
                     plaintext += 'el.visProp.strokeopacity = rgbo[1];\n';
                     break;
                 case 'style':
-                    plaintext += 'el.setStyle(' + (right) +');\n';
+                    plaintext += 'el.setStyle(' + (right) + ');\n';
                     break;
                 case 'strokewidth':
-                    plaintext += 'el.strokeWidth = ' + (right) +';\n';   // wird auch bei Punkten verwendet, was nicht realisiert ist.
+                    plaintext += 'el.strokeWidth = ' + (right) + ';\n';
                     break;
                 case 'fill':
-                    plaintext += 'var rgbo = JXG.rgba2rgbo('+(right)+');\n';
+                    plaintext += 'var rgbo = JXG.rgba2rgbo(' + (right) + ');\n';
                     plaintext += 'el.visProp.fillcolor = rgbo[0];\n';
                     plaintext += 'el.visProp.fillopacity = rgbo[1];\n';
                     break;
@@ -2199,9 +2113,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     JXG.debug("property '" + property + "' in conditions not yet implemented:" + right);
                     break;
             }
-            str = str.slice(j+7); // cut off "</data>"
+            str = str.slice(j + 7); // cut off "</data>"
             i = str.indexOf('<data>');
-            j = str.indexOf('<'+'/data>');
+            j = str.indexOf('<' + '/data>');
         }
         plaintext += 'this.prepareUpdate().updateElements();\n';
         plaintext += 'return true;\n';
@@ -2210,6 +2124,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         plaintext = plaintext.replace(/&gt;/g, ">");
         plaintext = plaintext.replace(/&amp;/g, "&");
 
+        // eval required
         this.updateConditions = new Function(plaintext);
         this.updateConditions();
     },
@@ -2259,14 +2174,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
-            if (!el.visProp.frozen
-                 && (el.elementClass==JXG.OBJECT_CLASS_POINT
-                 || el.elementClass==JXG.OBJECT_CLASS_CURVE
-                 || el.type==JXG.OBJECT_TYPE_AXIS
-                 || el.type==JXG.OBJECT_TYPE_TEXT)) {
-                
-                if (el.elementClass!=JXG.OBJECT_CLASS_CURVE 
-                    && el.type!=JXG.OBJECT_TYPE_AXIS) {
+            if (!el.visProp.frozen &&
+                    (el.elementClass === JXG.OBJECT_CLASS_POINT ||
+                    el.elementClass === JXG.OBJECT_CLASS_CURVE ||
+                    el.type === JXG.OBJECT_TYPE_AXIS ||
+                    el.type === JXG.OBJECT_TYPE_TEXT)) {
+                if (el.elementClass !== JXG.OBJECT_CLASS_CURVE && 
+                        el.type !== JXG.OBJECT_TYPE_AXIS) {
                     el.coords.usr2screen();
                 }
             }
@@ -2286,8 +2200,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var bb = this.getBoundingBox(),
             zX = this.options.zoom.factorX,
             zY = this.options.zoom.factorY,
-            dX = (bb[2]-bb[0])*(1.0-1.0/zX),
-            dY = (bb[1]-bb[3])*(1.0-1.0/zY),
+            dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
+            dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
             lr = 0.5, tr = 0.5;
 
         if (typeof x === 'number' && typeof y === 'number') {
@@ -2311,12 +2225,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var bb = this.getBoundingBox(),
             zX = this.options.zoom.factorX,
             zY = this.options.zoom.factorY,
-            dX = (bb[2]-bb[0])*(1.0-zX),
-            dY = (bb[1]-bb[3])*(1.0-zY),
+            dX = (bb[2] - bb[0]) * (1.0 - zX),
+            dY = (bb[1] - bb[3]) * (1.0 - zY),
             lr = 0.5, tr = 0.5;
 
-        if (this.zoomX < JXG.Options.zoom.eps || this.zoomY < JXG.Options.zoom.eps)
+        if (this.zoomX < JXG.Options.zoom.eps || this.zoomY < JXG.Options.zoom.eps) {
             return this;
+        }
 
         if (typeof x === 'number' && typeof y === 'number') {
             lr = (x - bb[0])/(bb[2] - bb[0]);
@@ -2352,7 +2267,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     zoomAllPoints: function () {
-        var minX = 0, // (0,0) shall be visible, too
+        var minX = 0,
             maxX = 0,
             minY = 0,
             maxY = 0,
@@ -2360,6 +2275,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (el = 0; el < len; el++) {
             pEl = this.objectsList[el];
+            
             if (JXG.isPoint(pEl) && pEl.visProp.visible) {
                 if (pEl.coords.usrCoords[1] < minX) {
                     minX = pEl.coords.usrCoords[1];
@@ -2478,11 +2394,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         try {
             // remove all children.
             for (el in object.childElements) {
-                object.childElements[el].board.removeObject(object.childElements[el]);
+                if (object.childElements.hasOwnProperty(el)) {
+                    object.childElements[el].board.removeObject(object.childElements[el]);
+                }
             }
 
             for (el in this.objects) {
-                if (JXG.exists(this.objects[el].childElements)) {
+                if (this.objects.hasOwnProperty(el) && JXG.exists(this.objects[el].childElements)) {
                     delete(this.objects[el].childElements[object.id]);
                     delete(this.objects[el].descendants[object.id]);
                 }
@@ -2505,7 +2423,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
 
             // the object deletion itself is handled by the object.
-            if (JXG.exists(object.remove)) object.remove();
+            if (JXG.exists(object.remove)) {
+                object.remove();
+            }
         } catch(e) {
             JXG.debug(object.id + ': Could not be removed: ' + e);
         }
@@ -2522,8 +2442,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     removeAncestors: function (object) {
-        for (var anc in object.ancestors)
-            this.removeAncestors(object.ancestors[anc]);
+        var anc;
+
+        for (anc in object.ancestors) {
+            if (object.ancestors.hasOwnProperty(anc)) {
+                this.removeAncestors(object.ancestors[anc]);
+            }
+        }
+            
         this.removeObject(object);
 
         return this;
@@ -2607,8 +2533,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     resizeContainer: function (canvasWidth, canvasHeight) {
-        this.canvasWidth = parseFloat(canvasWidth);
-        this.canvasHeight = parseFloat(canvasHeight);
+        this.canvasWidth = parseFloat(canvasWidth, 10);
+        this.canvasHeight = parseFloat(canvasHeight, 10);
         this.containerObj.style.width = (this.canvasWidth) + 'px';
         this.containerObj.style.height = (this.canvasHeight) + 'px';
 
@@ -2626,17 +2552,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         t = '<p>\n';
         for (el in this.objects) {
-            i = 0;
-            for (c in this.objects[el].childElements) {
-                i++;
+            if (this.objects.hasOwnProperty(el)) {
+                i = 0;
+                for (c in this.objects[el].childElements) {
+                    if (this.objects[el].childElements.hasOwnProperty(c)) {
+                        i++;
+                    }
+                }
+                if (i >= 0) {
+                    t += '<strong>' + this.objects[el].id + ':<'+'/strong> ';
+                }
+                for (c in this.objects[el].childElements) {
+                    if (this.objects[el].childElements.hasOwnProperty(c)) {
+                        t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
+                    }
+                }
+                t += '<p>\n';
             }
-            if (i>=0) {
-                t += '<b>' + this.objects[el].id + ':<'+'/b> ';
-            }
-            for (c in this.objects[el].childElements) {
-                t += this.objects[el].childElements[c].id+'('+this.objects[el].childElements[c].name+')'+', ';
-            }
-            t += '<p>\n';
         }
         t += '<'+'/p>\n';
         f = window.open();
@@ -2701,12 +2633,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     updateRenderer: function (drag) {
         var el, pEl, len = this.objectsList.length;
 
-        if (this.options.renderer=='canvas') {
+        if (this.options.renderer === 'canvas') {
             this.updateRendererCanvas(drag);
         } else {
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                //if ( !this.needsFullUpdate && (/*isBeforeDrag ||*/ !pEl.needsRegularUpdate) ) { continue; }
                 pEl.updateRenderer();
             }
         }
@@ -2726,16 +2657,22 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             len = this.options.layer.numlayers,
             last = Number.NEGATIVE_INFINITY, mini, la;
 
-        for (i=0;i<len;i++) {
+        for (i = 0; i < len; i++) {
             mini = Number.POSITIVE_INFINITY;
+            
             for (la in layers) {
-                if (layers[la]>last && layers[la]<mini) {
-                    mini = layers[la];
+                if (layers.hasOwnProperty(la)) {
+                    if (layers[la] > last && layers[la] < mini) {
+                        mini = layers[la];
+                    }
                 }
             }
+            
             last = mini;
+            
             for (el = 0; el < olen; el++) {
                 pEl = this.objectsList[el];
+                
                 if (pEl.visProp.layer === mini) {
                     pEl.prepareUpdate().updateRenderer();
                 }
@@ -2795,7 +2732,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @deprecated
      */
     updateHooks: function (m) {
-        arguments[0] = JXG.def(arguments[0], 'update');
+        var arg = Array.prototype.slice.call(arguments, 0);
+        
+        arg[0] = JXG.def(arg[0], 'update');
         this.triggerEventHandlers.apply(this, arguments);
 
         return this;
@@ -2821,8 +2760,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     removeChild: function (board) {
         var i;
-        for (i=this.dependentBoards.length-1; i>=0; i--) {
-            if (this.dependentBoards[i] == board) {
+        
+        for (i = this.dependentBoards.length - 1; i >= 0; i--) {
+            if (this.dependentBoards[i] === board) {
                 this.dependentBoards.splice(i,1);
             }
         }
@@ -2851,11 +2791,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         // To resolve dependencies between boards
         //for (var board in JXG.JSXGraph.boards) {
         len = this.dependentBoards.length;
-        for (i=0; i<len; i++) {
+        for (i = 0; i < len; i++) {
             // boardId = this.dependentBoards[i].id;
             // b = JXG.JSXGraph.boards[boardId];
             b = this.dependentBoards[i];
-            if ( b != this) {
+            if ( b !== this) {
                 b.updateQuality = this.updateQuality;
                 b.prepareUpdate().updateElements().updateConditions();
                 b.renderer.suspendRedraw();
@@ -2935,13 +2875,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         for (i = 0; i < parents.length; i++) {
-            if (elementType != 'text' || i!=2) {
+            if (elementType !== 'text' || i !== 2) {
                 parents[i] = JXG.getReference(this, parents[i]);
             }
         }
 
-        if (JXG.JSXGraph.elements[elementType] != null) {
-            if (typeof JXG.JSXGraph.elements[elementType] == 'function') {
+        if (JXG.JSXGraph.elements[elementType] !== null) {
+            if (typeof JXG.JSXGraph.elements[elementType] === 'function') {
                 el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
             } else {
                 el = JXG.JSXGraph.elements[elementType].creator(this, parents, attributes);
@@ -2975,8 +2915,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     clearTraces: function () {
         var el;
 
-        for (el = 0; el < this.objectsList.length; el++)
+        for (el = 0; el < this.objectsList.length; el++) {
             this.objectsList[el].clearTrace();
+        }
 
         this.numTraces = 0;
         return this;
@@ -3009,17 +2950,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     setBoundingBox: function (bbox, keepaspectratio) {
+        var h, w,
+            dim = JXG.getDimensions(this.container);
+        
         if (!JXG.isArray(bbox)) {
             return this;
         }
 
-        var h, w,
-            dim = JXG.getDimensions(this.container);
-        
         this.plainBB = bbox;
 
-        this.canvasWidth = parseInt(dim.width);
-        this.canvasHeight = parseInt(dim.height);
+        this.canvasWidth = parseInt(dim.width, 10);
+        this.canvasHeight = parseInt(dim.height, 10);
         w = this.canvasWidth;
         h = this.canvasHeight;
         if (keepaspectratio) {
@@ -3046,7 +2987,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     getBoundingBox: function () {
         var ul = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0,0], this),
             lr = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
-        return [ul.usrCoords[1],ul.usrCoords[2],lr.usrCoords[1],lr.usrCoords[2]];
+        return [ul.usrCoords[1], ul.usrCoords[2], lr.usrCoords[1], lr.usrCoords[2]];
     },
 
     /**
@@ -3057,6 +2998,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     addAnimation: function (element) {
         var that = this;
+        
         this.animationObjects[element.id] = element;
 
         if (!this.animationIntervalCode) {
@@ -3076,11 +3018,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var el;
 
         for (el in this.animationObjects) {
-            if (this.animationObjects[el] === null)
-                continue;
-
-            this.animationObjects[el] = null;
-            delete(this.animationObjects[el]);
+            if (this.animationObjects.hasOwnProperty(el) && JXG.exists(this.animationObjects[el])) {
+                this.animationObjects[el] = null;
+                delete(this.animationObjects[el]);
+            }
         }
 
         clearInterval(this.animationIntervalCode);
@@ -3100,57 +3041,64 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             obj=null, cbtmp;
 
         for (el in this.animationObjects) {
-            if (this.animationObjects[el] === null)
-                continue;
-
-            count++;
-            o = this.animationObjects[el];
-            if (o.animationPath) {
-                if (JXG.isFunction (o.animationPath)) {
-                    newCoords = o.animationPath(new Date().getTime() - o.animationStart);
-                } else {
-                    newCoords = o.animationPath.pop();
-                }
-
-                if ((!JXG.exists(newCoords)) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
-                    delete(o.animationPath);
-                } else {
-                    //o.setPositionByTransform(JXG.COORDS_BY_USER, [newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]]);
-                    o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords);
-                    //this.update(o);  // May slow down the animation, but is important
-                    // for dependent glider objects (see tangram.html).
-                    // Otherwise the intended projection may be incorrect.
-                    o.prepareUpdate().update().updateRenderer();
-                    obj = o;
-                }
-            }
-            if (o.animationData) {
-                c = 0;
-                for (r in o.animationData) {
-                    p = o.animationData[r].pop();
-                    if (!JXG.exists(p)) {
-                        delete(o.animationData[p]);
+            if (this.animationObjects.hasOwnProperty(el) && JXG.exists(this.animationObjects[el])) {
+                count++;
+                o = this.animationObjects[el];
+                
+                if (o.animationPath) {
+                    if (JXG.isFunction (o.animationPath)) {
+                        newCoords = o.animationPath(new Date().getTime() - o.animationStart);
                     } else {
-                        c++;
-                        o.setProperty(r + ':' + p);
+                        newCoords = o.animationPath.pop();
+                    }
+
+                    if ((!JXG.exists(newCoords)) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
+                        delete(o.animationPath);
+                    } else {
+                        //o.setPositionByTransform(JXG.COORDS_BY_USER, [newCoords[0] - o.coords.usrCoords[1], newCoords[1] - o.coords.usrCoords[2]]);
+                        o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords);
+                        //this.update(o);  // May slow down the animation, but is important
+                        // for dependent glider objects (see tangram.html).
+                        // Otherwise the intended projection may be incorrect.
+                        o.prepareUpdate().update().updateRenderer();
+                        obj = o;
                     }
                 }
-                if (c==0)
-                    delete(o.animationData);
-            }
+                if (o.animationData) {
+                    c = 0;
 
-            if (!JXG.exists(o.animationData) && !JXG.exists(o.animationPath)) {
-                this.animationObjects[el] = null;
-                delete(this.animationObjects[el]);
-                if (JXG.exists(o.animationCallback)) {
-                    cbtmp = o.animationCallback;
-                    o.animationCallback = null;
-                    cbtmp();
+                    for (r in o.animationData) {
+                        if (o.animationData.hasOwnProperty(r)) {
+                            p = o.animationData[r].pop();
+
+                            if (!JXG.exists(p)) {
+                                delete(o.animationData[p]);
+                            } else {
+                                c++;
+                                o.setProperty(r + ':' + p);
+                            }
+                        }
+                    }
+
+                    if (c === 0) {
+                        delete(o.animationData);
+                    }
+                }
+
+                if (!JXG.exists(o.animationData) && !JXG.exists(o.animationPath)) {
+                    this.animationObjects[el] = null;
+                    delete(this.animationObjects[el]);
+
+                    if (JXG.exists(o.animationCallback)) {
+                        cbtmp = o.animationCallback;
+                        o.animationCallback = null;
+                        cbtmp();
+                    }
                 }
             }
         }
 
-        if (count == 0) {
+        if (count === 0) {
             clearInterval(this.animationIntervalCode);
             delete(this.animationIntervalCode);
         } else {
@@ -3177,27 +3125,31 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         dest = JXG.getRef(this, dest);
 
         for (childId in src.childElements) {
-            child = src.childElements[childId];
-
-            found = false;
-            for  (prop in child) {
-                if (child[prop] ===  src) {
-                    child[prop] = dest;
-                    found = true;
+            if (src.childElements.hasOwnProperty(childId)) {
+                child = src.childElements[childId];
+                found = false;
+                
+                for (prop in child) {
+                    if (child.hasOwnProperty(prop)) {
+                        if (child[prop] ===  src) {
+                            child[prop] = dest;
+                            found = true;
+                        }
+                    }
                 }
-            }
-            if (found) {
-                delete src.childElements[childId];
-            }
-
-            for (i = 0; i < child.parents.length; i++) {
-                if (child.parents[i] === src.id) {
-                    child.parents[i] = dest.id;
+                
+                if (found) {
+                    delete src.childElements[childId];
                 }
-            }
 
-            dest.addChild(child);
-            //child.prepareUpdate().update().updateRenderer();
+                for (i = 0; i < child.parents.length; i++) {
+                    if (child.parents[i] === src.id) {
+                        child.parents[i] = dest.id;
+                    }
+                }
+
+                dest.addChild(child);
+            }
         }
         this.removeObject(src);
         this.update();
@@ -3210,37 +3162,42 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     emulateColorblindness: function (deficiency) {
-        var e, o, brd=this;
+        var e, o;
 
-        if (!JXG.exists(deficiency))
+        if (!JXG.exists(deficiency)) {
             deficiency = 'none';
+        }
 
-        if (this.currentCBDef == deficiency)
+        if (this.currentCBDef === deficiency) {
             return this;
+        }
 
-        for (e in brd.objects) {
-            o = brd.objects[e];
-            if (deficiency != 'none') {
-                if (this.currentCBDef == 'none') {
-                    // this could be accomplished by JXG.extend, too. But do not use
-                    // JXG.deepCopy as this could result in an infinite loop because in
-                    // visProp there could be geometry elements which contain the board which
-                    // contains all objects which contain board etc.
-                    o.visPropOriginal = {
-                        strokecolor: o.visProp.strokecolor,
-                        fillcolor: o.visProp.fillcolor,
-                        highlightstrokecolor: o.visProp.highlightstrokecolor,
-                        highlightfillcolor: o.visProp.highlightfillcolor
-                    };
+        for (e in this.objects) {
+            if (this.objects.hasOwnProperty(e)) {
+                o = this.objects[e];
+                
+                if (deficiency !== 'none') {
+                    if (this.currentCBDef === 'none') {
+                        // this could be accomplished by JXG.extend, too. But do not use
+                        // JXG.deepCopy as this could result in an infinite loop because in
+                        // visProp there could be geometry elements which contain the board which
+                        // contains all objects which contain board etc.
+                        o.visPropOriginal = {
+                            strokecolor: o.visProp.strokecolor,
+                            fillcolor: o.visProp.fillcolor,
+                            highlightstrokecolor: o.visProp.highlightstrokecolor,
+                            highlightfillcolor: o.visProp.highlightfillcolor
+                        };
+                    }
+                    o.setProperty({
+                        strokecolor: JXG.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
+                        fillcolor: JXG.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
+                        highlightstrokecolor: JXG.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
+                        highlightfillcolor: JXG.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
+                    });
+                } else if (JXG.exists(o.visPropOriginal)) {
+                    JXG.extend(o.visProp, o.visPropOriginal);
                 }
-                o.setProperty({
-                    strokecolor: JXG.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
-                    fillcolor: JXG.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
-                    highlightstrokecolor: JXG.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
-                    highlightfillcolor: JXG.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
-                });
-            } else if (JXG.exists(o.visPropOriginal)) {
-                JXG.extend(o.visProp, o.visPropOriginal);
             }
         }
         this.currentCBDef = deficiency;
@@ -3250,7 +3207,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
     
     /**
-     * TODO
+     * Update CSS transformations
      */
     updateCSSTransforms: function () {
         var obj = this.containerObj,
@@ -3266,15 +3223,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
          * In order to walk up the DOM hierarchy also in Mozilla and Webkit
          * we need the parentNode steps.
          */
-        while (o=o.offsetParent) {
+        o = o.offsetParent;
+        while (o) {
             this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
             
             o2 = o2.parentNode;
-            while (o2!=o) {
+            while (o2 !== o) {
                 this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
                 o2 = o2.parentNode;
             }
 
+            o = o.offsetParent;
         }
         this.cssTransMat = JXG.Math.inverse(this.cssTransMat);
 
@@ -3295,7 +3254,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#down
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__down: function (e) { },
 
     /**
      * @event
@@ -3303,7 +3262,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#mousedown
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__mousedown: function (e) { },
 
     /**
      * @event
@@ -3311,7 +3270,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#touchstart
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__touchstart: function (e) { },
 
     /**
      * @event
@@ -3319,7 +3278,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#up
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__up: function (e) { },
 
     /**
      * @event
@@ -3327,7 +3286,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#mouseup
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__mouseup: function (e) { },
 
     /**
      * @event
@@ -3335,7 +3294,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @name JXG.Board#touchend
      * @param {Event} e The browser's event object.
      */
-    __evt__: function (e) { },
+    __evt__touchend: function (e) { },
     
     /**
      * @event
@@ -3345,7 +3304,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt__: function (e, mode) { },
+    __evt__move: function (e, mode) { },
 
     /**
      * @event
@@ -3355,7 +3314,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt__: function (e, mode) { },
+    __evt__mousemove: function (e, mode) { },
     
     /**
      * @event
@@ -3365,7 +3324,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {Number} mode The mode the board currently is in
      * @see {JXG.Board#mode}
      */
-    __evt__: function (e, mode) { },
+    __evt__touchmove: function (e, mode) { },
 
     /**
      * @event
@@ -3375,7 +3334,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {JXG.GeoemtryElement} el The hit element.
      * @param {%} target ?
      */
-    __evt__: function (e, el, target) { },
+    __evt__hit: function (e, el, target) { },
 
     /**
      * @event
@@ -3385,14 +3344,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {JXG.GeoemtryElement} el The hit element.
      * @param {%} target ?
      */
-    __evt__: function (e, el, target) { },
+    __evt__mousehit: function (e, el, target) { },
     
     /**
      * @event
      * @description This board is updated.
      * @name JXG.Board#update
      */
-    __evt__: function () { },
+    __evt__update: function () { },
 
     /**
      * @ignore
@@ -3405,7 +3364,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.
      * <tt>filters</tt> are objects which's properties are compared to every element found in the dependency tree.
      * @param {JXG.GeometryElement} root Dependency tree root element
-     * @param {Object} filters An arbitrary amount of objects which define filters for the elements to return. Only elements
+     * @param {Object} filt An arbitrary amount of objects which define filters for the elements to return. Only elements
      * that fulfill at least one filter are returned. The comparison is a direct comparison, i.e. nested objects won't be
      * compared.
      * @example
@@ -3415,12 +3374,14 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * // This will return only points and lines
      * var partPointsLines = board.getPartialConstruction(p, {elementClass: JXG.OBJECT_CLASS_POINT}, {elementClass: JXG.OBJECT_CLASS_LINE});
      */
-    getPartialConstruction: function (root) {
+    getPartialConstruction: function (root, filt) {
         var filters, i;
 
         for (i = 1; i < arguments.length; i++) {
             filters.push(arguments[i]);
         }
+        
+        // I guess this needs some implementation
     },
 
     /**
@@ -3430,8 +3391,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @param {number} start_c1 The parameter t such that c1(t) touches c2. This is the start position of the
      *                          rolling process
      * @param {Number} stepsize Increase in t in each step for the curve c1
+     * @param {Number} direction
      * @param {Number} time Delay time for setInterval()
-     * @returns {Array} pointlist Array of points which are rolled in each step. This list should contain
+     * @param {Array} pointlist Array of points which are rolled in each step. This list should contain
      *      all points which define c2 and gliders on c2.
      *
      * @example
@@ -3494,8 +3456,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      *
      */
     createRoulette: function (c1, c2, start_c1, stepsize, direction, time, pointlist) {
-        var brd = this;
-        var Roulette = function () {
+        var brd = this,
+            Roulette = function () {
             var alpha = 0, Tx = 0, Ty = 0,
                 t1 = start_c1,
                 t2 = JXG.Math.Numerics.root(
@@ -3535,17 +3497,19 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 interval = null;
 
             this.rolling = function (){
+                var h, g, hp, gp, z;
+                
                 t1_new = t1+direction*stepsize;
                 c1dist = arclen(c1,t1,t1_new);             // arc length between c1(t1) and c1(t1_new)
                 t2_new = JXG.Math.Numerics.root(exactDist, t2);
                 // find t2_new such that arc length between c2(t2) and c1(t2_new)
                 // equals c1dist.
 
-                var h = new JXG.Complex(c1.X(t1_new),c1.Y(t1_new));    // c1(t) as complex number
-                var g = new JXG.Complex(c2.X(t2_new),c2.Y(t2_new));    // c2(t) as complex number
-                var hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new),JXG.Math.Numerics.D(c1.Y)(t1_new));
-                var gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2_new),JXG.Math.Numerics.D(c2.Y)(t2_new));
-                var z = JXG.C.div(hp,gp);                  // z is angle between the tangents of
+                h = new JXG.Complex(c1.X(t1_new),c1.Y(t1_new));    // c1(t) as complex number
+                g = new JXG.Complex(c2.X(t2_new),c2.Y(t2_new));    // c2(t) as complex number
+                hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new),JXG.Math.Numerics.D(c1.Y)(t1_new));
+                gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2_new),JXG.Math.Numerics.D(c2.Y)(t2_new));
+                z = JXG.C.div(hp,gp);                  // z is angle between the tangents of
                 // c1 at t1_new, and c2 at t2_new
                 alpha = Math.atan2(z.imaginary, z.real);
                 z.div(JXG.C.abs(z));                       // Normalizing the quotient
