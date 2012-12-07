@@ -18,11 +18,16 @@
                 JXG.Options.text.display = 'internal';
                 JXG.Options.showCopyright = false;
                 JXG.Options.showNavigation = false;
+
+                if (!pic) {
+                    JXG.Options.renderer = 'no';
+                }
+
                 // dirty hack
                 JXG.Board.prototype.initInfobox = function () {};
 
                 board = JXG.JSXGraph.loadBoardFromString(null, content.toString(), 'sketch');
-            
+
                 // save rendering to png
                 if (pic) {
                     out = fs.createWriteStream(file + '.png');
