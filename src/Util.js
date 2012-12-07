@@ -944,11 +944,11 @@ JXG.Util.Base64 = {
         var output = [],
             chr1, chr2, chr3,
             enc1, enc2, enc3, enc4,
-            i = 0;
+            i = 0, len = input.length;
 
         input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 
-        while (i < input.length) {
+        while (i < len) {
 
             enc1 = this._keyStr.indexOf(input.charAt(i++));
             enc2 = this._keyStr.indexOf(input.charAt(i++));
@@ -980,10 +980,11 @@ JXG.Util.Base64 = {
 
     // private method for UTF-8 encoding
     _utf8_encode : function (string) {
+        var utftext = "", n, len = string.length;
+        
         string = string.replace(/\r\n/g,"\n");
-        var utftext = "";
 
-        for (var n = 0; n < string.length; n++) {
+        for (n = 0; n < len; n++) {
 
             var c = string.charCodeAt(n);
 
@@ -1008,10 +1009,10 @@ JXG.Util.Base64 = {
     // private method for UTF-8 decoding
     _utf8_decode : function (utftext) {
         var string = [],
-            i = 0,
+            i = 0, len = utftext.length,
             c = 0, c2 = 0, c3 = 0;
 
-        while ( i < utftext.length ) {
+        while ( i < len ) {
             c = utftext.charCodeAt(i);
             if (c < 128) {
                 string.push(String.fromCharCode(c));
@@ -1033,7 +1034,8 @@ JXG.Util.Base64 = {
     },
     
     _destrip: function (stripped, wrap){
-        var lines = [], lineno, i,
+        var lines = [], lineno, 
+            i, len = stripped.length,
             destripped = [];
         
         if (wrap==null) 
@@ -1043,18 +1045,18 @@ JXG.Util.Base64 = {
         lineno = stripped.length / wrap;
         for (i = 0; i < lineno; i++)
             lines[i]=stripped.substr(i * wrap, wrap);
-        if (lineno != stripped.length / wrap)
+        if (lineno != len / wrap)
             lines[lines.length]=stripped.substr(lineno * wrap, stripped.length-(lineno * wrap));
             
-        for (i = 0; i < lines.length; i++)
+        for (i = 0; i < len; i++)
             destripped.push(lines[i]);
         return destripped.join('\n');
     },
     
     decodeAsArray: function (input){
         var dec = this.decode(input),
-            ar = [], i;
-        for (i=0;i<dec.length;i++){
+            ar = [], i, len = dec.length;
+        for (i=0;i<len;i++){
             ar[i]=dec.charCodeAt(i);
         }
         return ar;
@@ -1139,12 +1141,14 @@ JXG.Util.asciiCharCodeAt = function(str,i){
  * @return {String} utf8 decoded string
  */
 JXG.Util.utf8Decode = function(utftext) {
-  var string = [];
-  var i = 0;
-  var c = 0, c1 = 0, c2 = 0, c3;
+  var string = [], i = 0,
+    c = 0, c1 = 0, c2 = 0, c3,
+    len;
+    
   if (!JXG.exists(utftext)) return '';
   
-  while ( i < utftext.length ) {
+  len = utftext.length;
+  while ( i < len ) {
     c = utftext.charCodeAt(i);
 
     if (c < 128) {
