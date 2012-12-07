@@ -23,12 +23,18 @@
     along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+/*global JXG:true*/
+
 /**
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
  * @version 0.97
  */
+
+
+'use strict';
 
 /**
  * Constructs a new JSXGraph singleton object.
@@ -72,7 +78,7 @@ JXG.JSXGraph = {
                 for (i = 0; i < arr.length; i++) {
                     (function(include) {
                         JXG.require(JXG.requirePath + include + '.js');
-                    })(arr[i]);
+                    }(arr[i]));
                 }
 
                 delete(JXG.rendererFiles[renderer]);
@@ -92,13 +98,18 @@ JXG.JSXGraph = {
             // the last step and yes - it basically does nothing but reads two
             // properties of document.body on every mouse move. why? we don't know. if
             // you know, please let us know.
-            function MouseMove() {
+            //
+            // If we want to use the strict mode we have to refactor this a little bit. Let's
+            // hope the magic isn't gone now. Anywho... it's only useful in old versions of IE
+            // which should not be used anymore.
+            document.onmousemove = function () {
+                var t;
+
                 if (document.body) {
-                    document.body.scrollLeft;
-                    document.body.scrollTop;
+                    t = document.body.scrollLeft;
+                    t = document.body.scrollTop;
                 }
-            }
-            document.onmousemove = MouseMove;
+            };
             loadRenderer('vml');
         }
 
@@ -119,7 +130,30 @@ JXG.JSXGraph = {
         }
 
         return JXG.Options.renderer;
-    })(),
+    }()),
+    
+    initRenderer: function (box) {
+        var boxid, renderer;
+        
+        if (typeof document === 'object' && box !== null) {
+            boxid = document.getElementById(box);
+        } else {
+            boxid = box;
+        }
+    
+        // create the renderer
+        if(JXG.Options.renderer === 'svg') {
+            renderer = new JXG.SVGRenderer(boxid);
+        } else if(JXG.Options.renderer === 'vml') {
+            renderer = new JXG.VMLRenderer(boxid);
+        } else if (JXG.Options.renderer === 'canvas') {
+            renderer = new JXG.CanvasRenderer(boxid);
+        } else {
+            renderer = new JXG.NoRenderer();
+        }
+        
+        return renderer;
+    },
 
     /**
      * Initialise a new board.
@@ -145,18 +179,12 @@ JXG.JSXGraph = {
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
             board,
-            wheelzoom, shiftpan, attr, boxid;
+            wheelzoom, shiftpan, attr;
 
         dimensions = JXG.getDimensions(box);
         
-        if (typeof document !== 'undefined' && box !== null) {
-            boxid = document.getElementById(box);
-        } else {
-            boxid = box;
-        }
-
         // parse attributes
-        if (typeof attributes == 'undefined') {
+        if (typeof attributes === 'undefined') {
             attributes = {};
         }
 
@@ -200,18 +228,7 @@ JXG.JSXGraph = {
         wheelzoom = ( (typeof attributes["zoom"]) == 'undefined' ? JXG.Options.zoom.wheel : attributes["zoom"]);
         shiftpan = ( (typeof attributes["pan"]) == 'undefined' ? JXG.Options.pan : attributes["pan"]);
 
-        // create the renderer
-        if(JXG.Options.renderer == 'svg') {
-            renderer = new JXG.SVGRenderer(boxid);
-        } else if(JXG.Options.renderer == 'vml') {
-            renderer = new JXG.VMLRenderer(boxid);
-        } else if(JXG.Options.renderer == 'silverlight') {
-            renderer = new JXG.SilverlightRenderer(boxid, dimensions.width, dimensions.height);
-        } else if (JXG.Options.renderer == 'canvas') {
-            renderer = new JXG.CanvasRenderer(boxid);
-        } else {
-            renderer = new JXG.NoRenderer();
-        }
+        renderer = this.initRenderer(box);
 
         // create the board
         board = new JXG.Board(box, renderer, '', [originX, originY], zoomX, zoomY, unitX, unitY, dimensions.width, dimensions.height, showCopyright);
@@ -263,16 +280,8 @@ JXG.JSXGraph = {
     loadBoardFromFile: function (box, file, format) {
         var renderer, board, dimensions;
 
-        if(JXG.Options.renderer == 'svg') {
-            renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else if(JXG.Options.renderer == 'vml') {
-            renderer = new JXG.VMLRenderer(document.getElementById(box));
-        } else if(JXG.Options.renderer == 'silverlight') {
-            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
-        } else {
-            renderer = new JXG.CanvasRenderer(document.getElementById(box));
-        }
-        
+        renderer = this.initRenderer(box);
+
         //var dimensions = document.getElementById(box).getDimensions();
         dimensions = JXG.getDimensions(box);
 
@@ -305,15 +314,7 @@ JXG.JSXGraph = {
     loadBoardFromString: function(box, string, format) {
         var renderer, dimensions, board;
 
-        if(JXG.Options.renderer == 'svg') {
-            renderer = new JXG.SVGRenderer(document.getElementById(box));
-        } else if(JXG.Options.renderer == 'vml') {
-            renderer = new JXG.VMLRenderer(document.getElementById(box));
-        } else if(JXG.Options.renderer == 'silverlight') {
-            renderer = new JXG.SilverlightRenderer(document.getElementById(box), dimensions.width, dimensions.height);
-        } else {
-            renderer = new JXG.CanvasRenderer(document.getElementById(box));
-        }
+        renderer = this.initRenderer(box);
         //var dimensions = document.getElementById(box).getDimensions();
         dimensions = JXG.getDimensions(box);
 
