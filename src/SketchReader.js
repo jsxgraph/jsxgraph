@@ -53,8 +53,9 @@ JXG.extend(JXG, {
     GENTYPE_XYZ: 27, // unused ...
     GENTYPE_JCODE: 28,
     GENTYPE_MOVEMENT: 29,
+    GENTYPE_COMBINED: 30,
 
-    // 30 ... 32 // unused ...
+    // 31 ... 32 // unused ...
 
     GENTYPE_GRID: 33, // obsolete
 
@@ -122,10 +123,10 @@ JXG.extend(JXG, {
 
             // step has to be an objectliteral of the form: { type, args, src_ids, dest_sub_ids, dest_id }
 
-            var options, assign, attrid, obj, type;
+            var options, assign, attrid, type;
 
-            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, bo, arr,
-                xy, sxy, sxyc, step2, copy_log = [];
+            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, arr,
+                step2, copy_log = [];
 
             var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
 
@@ -328,6 +329,7 @@ JXG.extend(JXG, {
                         } else {
                             pid3 = step.src_ids[2];
                         }
+
                         set_str += assign + 'bisector(' + pid1 + ', ' + pid3 + ', ' + pid2 + ') ';
                         set_str += '<<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
                         set_str += step.dest_sub_ids[0] + '\'>> >>; ';
@@ -371,7 +373,10 @@ JXG.extend(JXG, {
                         set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
-                    reset_str = 'delete ' + step.dest_id + '; ';
+
+                    if (!(step.args && step.args.undoIsEmpty))
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
                     break;
 
                 case JXG.GENTYPE_INTERSECTION:
@@ -382,21 +387,7 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_CIRCLE:
                     reset_str = 'delete ' + step.dest_sub_ids[0] + '; ';
-/*
-                    if (step.args.create_point === true || step.args.create_midpoint === true) {
 
-                        if (step.args.create_point === true) {
-                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                            set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
-                        } else {
-                            set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'';
-                            set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: true>>; ';
-                        }
-
-                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-*/                        
                     if (step.args.create_point === true) {
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
@@ -829,8 +820,27 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_MIGRATE:
 
-                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
-                    reset_str += 'delete ' + step.dest_id + '; '; // as above: missing de-migration ...
+                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+                    if (step.args && step.args.undoIsFreeing) {
+                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
+                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id + '.strokeColor = \'' + step.args.strokeColor + '\'; '
+                    } else
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_COMBINED:
+
+                    set_str = reset_str = '';
+
+                    for (i=0; i<step.args.steps.length; i++) {
+                        arr = this.generateJCode(step.args.steps[i], board, step_log);
+                        set_str += arr[0];
+                        reset_str += arr[2];
+                    }
+
+                    console.log(set_str);
+                    console.log(reset_str);
 
                     break;
 
@@ -846,6 +856,7 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_MOVEMENT:
+
                     if (step.args.obj_type == JXG.OBJECT_TYPE_LINE) {
                         set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
                         set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
@@ -891,7 +902,7 @@ JXG.extend(JXG, {
                     break;
 
                 default:
-                    return;
+                    return [ ]; // this might be Michael's case (which we were talking about on 7.12.12)
             }
 
             return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
