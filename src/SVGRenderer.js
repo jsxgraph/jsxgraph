@@ -985,6 +985,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         this.touchpoints = [];
         for (i=0; i<n; i++) {
             na = 'touchpoint_'+i;
+            /*
             node = this.createPrim('ellipse', na);
             this.appendChildPrim(node, 19);
             this.updateEllipsePrim(node, 100+i*10, 100+i*20, 30, 30);
@@ -997,6 +998,17 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
             node.setAttributeNS(null, 'fill', '#0000ff');
             node.setAttributeNS(null, 'fill-opacity', 0.1);
             node.setAttributeNS(null, 'display', 'none');            
+            */
+            node = this.createPrim('path', na);
+            this.appendChildPrim(node, 19);
+            node.setAttributeNS(null, 'd', 'M 0 0');            
+            this.touchpoints.push(node);
+            
+            this.setPropertyPrim(node, 'stroked', 'true');
+            this.setPropertyPrim(node, 'stroke-width', '1px');
+            node.setAttributeNS(null, 'stroke', '#000000');
+            node.setAttributeNS(null, 'stroke-opacity', 1.0);
+            node.setAttributeNS(null, 'display', 'none');
         }
     },
     
@@ -1013,9 +1025,18 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     },
 
     updateTouchpoint: function(i, pos) {
+        var x, y, d = 15;
         if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
-            this.updateEllipsePrim(this.touchpoints[i], 
-                pos[0], pos[1], 30, 30);
+            x = pos[0];
+            y = pos[1];
+            this.touchpoints[i].setAttributeNS(null, 'd', 
+                'M ' + (x-d) + ' ' + (y) + ' ' + 
+                'L ' + (x+d) + ' ' + (y) + ' ' + 
+                'M ' + (x) + ' ' + (y-d) + ' ' + 
+                'L ' + (x) + ' ' + (y+d)
+                );            
+            //this.updateEllipsePrim(this.touchpoints[i], 
+            //    pos[0], pos[1], 30, 30);
         }
     }
     
