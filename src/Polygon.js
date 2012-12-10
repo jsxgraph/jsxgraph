@@ -207,9 +207,10 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.visProp.visible = false;
         this.board.renderer.hide(this);
 
+        /*
         for(i = 0; i < this.borders.length; i++) {
             this.borders[i].hideElement();
-        }
+        }*/
 
         if (this.hasLabel && JXG.exists(this.label)) {
             this.label.hiddenByParent = true;
@@ -228,9 +229,10 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.visProp.visible = true;
         this.board.renderer.show(this);
 
+        /*
         for(i = 0; i < this.borders.length; i++) {
             this.borders[i].showElement();
-        }
+        }*/
 
         if (this.hasLabel && JXG.exists(this.label)) {
             if(this.label.content.visProp.visible) {
