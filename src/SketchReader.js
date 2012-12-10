@@ -113,7 +113,9 @@ JXG.extend(JXG, {
         },
         // configure the generator below
 
-        generateJCodeMeta: function () {},
+        generateJCodeMeta: function () {
+            return ['', '', '', ''];
+        },
 
         id: function () {
             return JXG.Util.genUUID();
@@ -142,6 +144,7 @@ JXG.extend(JXG, {
                     v = v.toFixed(options.toFixed);
                 return v;
             };
+
 
             var getObject = function (v) {
                 var o;
@@ -370,7 +373,7 @@ JXG.extend(JXG, {
                         set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += ') <<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
 
@@ -383,6 +386,48 @@ JXG.extend(JXG, {
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
                     set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_MIGRATE:
+
+                    if (step.args && step.args.undoIsFreeing)
+                        set_str = step.src_ids[0] + '.name = ' + step.dest_id + '.name; ';
+                    else
+                        set_str = '';
+
+                    // TODO: The coords of the step.src_ids[0] object must be saved (preferably) in the propertys of the dest_id object ...
+                    // ==> A Jessiecode API is needed, because at the moment of code generation the src_ids[0] object does not exist ...
+                    // this might e.g. be the case, when the call comes from a GENTYPE_COMBINED step ...
+
+                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+
+                    if (step.args && step.args.undoIsFreeing) {
+                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
+                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id;
+                        reset_str += '.strokeColor = \'' + step.args.strokeColor + '\'; ';
+
+                        reset_str += 'point(' + step.dest_id + '.X(), ' + step.dest_id + '.Y())';
+                        reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
+                        reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + '); ';
+                    } else
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_COMBINED:
+
+                    set_str = reset_str = '';
+
+                    for (i=0; i<step.args.steps.length; i++) {
+                        arr = this.generateJCode(step.args.steps[i], board, step_log);
+                        set_str += arr[0];
+                        reset_str += arr[2];
+                    }
+
+                    //console.log(set_str);
+                    //console.log(reset_str);
+
                     break;
 
                 case JXG.GENTYPE_CIRCLE:
@@ -818,32 +863,6 @@ JXG.extend(JXG, {
 
                     break;
 
-                case JXG.GENTYPE_MIGRATE:
-
-                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
-                    if (step.args && step.args.undoIsFreeing) {
-                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
-                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id + '.strokeColor = \'' + step.args.strokeColor + '\'; '
-                    } else
-                        reset_str = 'delete ' + step.dest_id + '; ';
-
-                    break;
-
-                case JXG.GENTYPE_COMBINED:
-
-                    set_str = reset_str = '';
-
-                    for (i=0; i<step.args.steps.length; i++) {
-                        arr = this.generateJCode(step.args.steps[i], board, step_log);
-                        set_str += arr[0];
-                        reset_str += arr[2];
-                    }
-
-                    console.log(set_str);
-                    console.log(reset_str);
-
-                    break;
-
                 case JXG.GENTYPE_TRANSFORM:
 
                     set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
@@ -902,8 +921,14 @@ JXG.extend(JXG, {
                     break;
 
                 default:
-                    return [ ]; // this might be Michael's case (which we were talking about on 7.12.12)
+                    console.log(step.type);
+                    alert("No such GENTYPE!");
+                    return [ ];
             }
+/*
+            console.log(set_str);
+            console.log(reset_str);
+*/
 
             return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
         },
@@ -994,10 +1019,17 @@ JXG.extend(JXG, {
                 if (constr[i].type == 31) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_ABLATION;
 
-                if (constr[i] > 50)
-                    arr = this.generateJCodeMeta(constr[i], board);
-                else
-                    arr = this.generateJCode(constr[i], board, constr);
+                try {
+                    if (constr[i] > 50)
+                        arr = this.generateJCodeMeta(constr[i], board);
+                    else
+                        arr = this.generateJCode(constr[i], board, constr);
+                } catch(e) {
+                    console.log('#steps: ' + constr.length);
+                    console.log('step: ' + i + ', type: ' + constr[i].type);
+                    console.log(constr[i]);
+                }
+
 
                 board.jc.parse(arr[0], true);
             }
