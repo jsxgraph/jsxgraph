@@ -385,15 +385,17 @@ JXG.extend(JXG, {
                 case JXG.GENTYPE_INTERSECTION:
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
                     set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+
+                    if (!(step.args && step.args.undoIsEmpty))
+                        reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
 
                 case JXG.GENTYPE_MIGRATE:
 
-                    if (step.args && step.args.undoIsFreeing)
-                        set_str = step.src_ids[0] + '.name = ' + step.dest_id + '.name; ';
-                    else
+//                    if (step.args && step.args.undoIsFreeing)
+//                        set_str = step.src_ids[0] + '.name = ' + step.dest_id + '.name; ';
+//                    else
                         set_str = '';
 
                     // TODO: The coords of the step.src_ids[0] object must be saved (preferably) in the propertys of the dest_id object ...
@@ -421,7 +423,10 @@ JXG.extend(JXG, {
 
                     for (i=0; i<step.args.steps.length; i++) {
                         arr = this.generateJCode(step.args.steps[i], board, step_log);
-                        set_str += arr[0];
+
+                        if (!(step.args.steps[i].args && step.args.steps[i].args.justLogDo))
+                            set_str += arr[0];
+
                         reset_str += arr[2];
                     }
 
