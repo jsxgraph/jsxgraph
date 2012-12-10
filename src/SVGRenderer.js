@@ -978,6 +978,46 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     resize: function (w, h) {
         this.svgRoot.style.width = parseFloat(w) + 'px';
         this.svgRoot.style.height = parseFloat(h) + 'px';
+    },
+    
+    createTouchpoints: function(n) {
+        var i, na, node;
+        this.touchpoints = [];
+        for (i=0; i<n; i++) {
+            na = 'touchpoint_'+i;
+            node = this.createPrim('ellipse', na);
+            this.appendChildPrim(node, 19);
+            this.updateEllipsePrim(node, 100+i*10, 100+i*20, 30, 30);
+            this.touchpoints.push(node);
+            
+            this.setPropertyPrim(node, 'stroked', 'true');
+            this.setPropertyPrim(node, 'stroke-width', '1px');
+            node.setAttributeNS(null, 'stroke', '#000000');
+            node.setAttributeNS(null, 'stroke-opacity', 0.5);
+            node.setAttributeNS(null, 'fill', '#0000ff');
+            node.setAttributeNS(null, 'fill-opacity', 0.1);
+            node.setAttributeNS(null, 'display', 'none');            
+        }
+    },
+    
+    showTouchpoint: function(i) {
+        if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
+            this.touchpoints[i].setAttributeNS(null, 'display', 'inline');            
+        }
+    },
+    
+    hideTouchpoint: function(i) {
+        if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
+            this.touchpoints[i].setAttributeNS(null, 'display', 'none');            
+        }
+    },
+
+    updateTouchpoint: function(i, x, y) {
+        if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
+            this.updateEllipsePrim(this.touchpoints[i], 
+                x, y, 30, 30);
+        }
     }
+    
 
 });
