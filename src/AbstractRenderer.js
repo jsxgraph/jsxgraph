@@ -1185,6 +1185,6 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     
     hideTouchpoint: function(i) {},
 
-    updateTouchpoint: function(i, x, y) {}
+    updateTouchpoint: function(i, pos) {}
 
 });

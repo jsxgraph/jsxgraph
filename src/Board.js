@@ -1349,10 +1349,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                             this.touches[i].targets[j].X = evtTouches[k].screenX;
                             this.touches[i].targets[j].Y = evtTouches[k].screenY;
                             evtTouches[k].jxg_isused = true;
-
-this.renderer.showTouchpoint(j);
-this.renderer.updateTouchpoint(j, this.touches[i].targets[j].X, this.touches[i].targets[j].Y);
-                            
                             break;
                         }
                     }
@@ -1508,9 +1504,6 @@ this.renderer.updateTouchpoint(j, this.touches[i].targets[j].X, this.touches[i].
                             this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                             pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
                             this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
-
-               this.renderer.updateTouchpoint(0, pos[0], pos[1]);
-                            
                         }
                         // Touch by two fingers: moving lines
                     } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
@@ -1519,10 +1512,6 @@ this.renderer.updateTouchpoint(j, this.touches[i].targets[j].X, this.touches[i].
                             this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                             this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
                             this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-
-               this.renderer.updateTouchpoint(0, this.touches[i].targets[0].X, this.touches[i].targets[0].Y);
-               this.renderer.updateTouchpoint(1, this.touches[i].targets[1].X, this.touches[i].targets[1].Y);
-                            
                             this.twoFingerMove(
                                 this.getMousePosition(evt, this.touches[i].targets[0].num),
                                 this.getMousePosition(evt, this.touches[i].targets[1].num),
@@ -1596,8 +1585,6 @@ this.renderer.updateTouchpoint(j, this.touches[i].targets[j].X, this.touches[i].
                             tmpTouches[i].targets[j].num = k;
                             tmpTouches[i].targets[j].X = evtTouches[k].screenX;
                             tmpTouches[i].targets[j].Y = evtTouches[k].screenY;
-this.renderer.hideTouchpoint(j);
-                            
                             foundNumber++;
                             break;
                         }
@@ -1695,9 +1682,6 @@ this.renderer.hideTouchpoint(j);
 
         pos = this.getMousePosition(evt);
 
-        this.renderer.showTouchpoint(0);
-        this.renderer.updateTouchpoint(0, pos[0], pos[1]);
-        
         if (object) {
             elements = [ object ];
             this.mode = this.BOARD_MODE_DRAG;
@@ -1771,8 +1755,6 @@ this.renderer.hideTouchpoint(j);
         this.originMoveEnd();
         this.dehighlightAll();
         this.update();
-        
-        this.renderer.hideTouchpoint(0);
 
         for (i = 0; i < this.downObjects.length; i++) {
             this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], evt);
@@ -1805,8 +1787,6 @@ this.renderer.hideTouchpoint(j);
             this.renderer.hide(this.infobox);
         }
         
-        this.renderer.updateTouchpoint(0, pos[0], pos[1]);
-
         // we have to check for three cases:
         //   * user moves origin
         //   * user drags an object

@@ -1012,10 +1012,10 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
-    updateTouchpoint: function(i, x, y) {
+    updateTouchpoint: function(i, pos) {
         if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
             this.updateEllipsePrim(this.touchpoints[i], 
-                x, y, 30, 30);
+                pos[0], pos[1], 30, 30);
         }
     }
     
