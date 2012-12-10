@@ -1177,6 +1177,14 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @param {Number} w New width
      * @param {Number} h New height
      */
-    resize: function (w, h) { /* stub */}
+    resize: function (w, h) { /* stub */},
+    
+    createTouchpoints: function(n) {},
+    
+    showTouchpoint: function(i) {},
+    
+    hideTouchpoint: function(i) {},
+
+    updateTouchpoint: function(i, x, y) {}
 
 });
