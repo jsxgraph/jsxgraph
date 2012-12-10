@@ -391,10 +391,16 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_MIGRATE:
 
-                    // At first the coords of the step.src_ids[0] object must be saved
-                    // with the help of jessiecode in the propertys of the dest_id object ... TO BE DONE
+                    if (step.args && step.args.undoIsFreeing)
+                        set_str = step.src_ids[0] + '.name = ' + step.dest_id + '.name; ';
+                    else
+                        set_str = '';
 
-                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+                    // TODO: The coords of the step.src_ids[0] object must be saved (preferably) in the propertys of the dest_id object ...
+                    // ==> A Jessiecode API is needed, because at the moment of code generation the src_ids[0] object does not exist ...
+                    // this might e.g. be the case, when the call comes from a GENTYPE_COMBINED step ...
+
+                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
 
                     if (step.args && step.args.undoIsFreeing) {
                         reset_str = step.dest_id + '.free(); ' + step.dest_id;
@@ -1013,10 +1019,17 @@ JXG.extend(JXG, {
                 if (constr[i].type == 31) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_ABLATION;
 
-                if (constr[i] > 50)
-                    arr = this.generateJCodeMeta(constr[i], board);
-                else
-                    arr = this.generateJCode(constr[i], board, constr);
+                try {
+                    if (constr[i] > 50)
+                        arr = this.generateJCodeMeta(constr[i], board);
+                    else
+                        arr = this.generateJCode(constr[i], board, constr);
+                } catch(e) {
+                    console.log('#steps: ' + constr.length);
+                    console.log('step: ' + i + ', type: ' + constr[i].type);
+                    console.log(constr[i]);
+                }
+
 
                 board.jc.parse(arr[0], true);
             }
