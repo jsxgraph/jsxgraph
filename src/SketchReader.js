@@ -370,7 +370,7 @@ JXG.extend(JXG, {
                         set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += ') <<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
 
@@ -383,6 +383,42 @@ JXG.extend(JXG, {
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
                     set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_MIGRATE:
+
+                    // At first the coords of the step.src_ids[0] object must be saved
+                    // with the help of jessiecode in the propertys of the dest_id object ... TO BE DONE
+
+                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+
+                    if (step.args && step.args.undoIsFreeing) {
+                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
+                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id;
+                        reset_str += '.strokeColor = \'' + step.args.strokeColor + '\'; ';
+
+                        reset_str += 'point(' + step.dest_id + '.X(), ' + step.dest_id + '.Y())';
+                        reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
+                        reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + '); ';
+                    } else
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_COMBINED:
+
+                    set_str = reset_str = '';
+
+                    for (i=0; i<step.args.steps.length; i++) {
+                        arr = this.generateJCode(step.args.steps[i], board, step_log);
+                        set_str += arr[0];
+                        reset_str += arr[2];
+                    }
+
+                    //console.log(set_str);
+                    //console.log(reset_str);
+
                     break;
 
                 case JXG.GENTYPE_CIRCLE:
@@ -818,32 +854,6 @@ JXG.extend(JXG, {
 
                     break;
 
-                case JXG.GENTYPE_MIGRATE:
-
-                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
-                    if (step.args && step.args.undoIsFreeing) {
-                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
-                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id + '.strokeColor = \'' + step.args.strokeColor + '\'; '
-                    } else
-                        reset_str = 'delete ' + step.dest_id + '; ';
-
-                    break;
-
-                case JXG.GENTYPE_COMBINED:
-
-                    set_str = reset_str = '';
-
-                    for (i=0; i<step.args.steps.length; i++) {
-                        arr = this.generateJCode(step.args.steps[i], board, step_log);
-                        set_str += arr[0];
-                        reset_str += arr[2];
-                    }
-
-                    console.log(set_str);
-                    console.log(reset_str);
-
-                    break;
-
                 case JXG.GENTYPE_TRANSFORM:
 
                     set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
@@ -904,6 +914,10 @@ JXG.extend(JXG, {
                 default:
                     return [ ]; // this might be Michael's case (which we were talking about on 7.12.12)
             }
+/*
+            console.log(set_str);
+            console.log(reset_str);
+*/
 
             return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
         },
