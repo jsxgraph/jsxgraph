@@ -912,7 +912,9 @@ JXG.extend(JXG, {
                     break;
 
                 default:
-                    return [ ]; // this might be Michael's case (which we were talking about on 7.12.12)
+                    console.log(step.type);
+                    alert("No such GENTYPE!");
+                    return [ ];
             }
 /*
             console.log(set_str);
