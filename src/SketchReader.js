@@ -143,6 +143,7 @@ JXG.extend(JXG, {
                 return v;
             };
 
+
             var getObject = function (v) {
                 var o;
 
