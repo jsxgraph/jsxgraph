@@ -113,7 +113,9 @@ JXG.extend(JXG, {
         },
         // configure the generator below
 
-        generateJCodeMeta: function () {},
+        generateJCodeMeta: function () {
+            return ['', '', '', ''];
+        },
 
         id: function () {
             return JXG.Util.genUUID();
