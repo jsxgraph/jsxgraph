@@ -983,6 +983,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     createTouchpoints: function(n) {
         var i, na, node;
         this.touchpoints = [];
+        this.touchpointsCnt = 0;
         for (i=0; i<n; i++) {
             na = 'touchpoint_'+i;
             /*
@@ -1027,6 +1028,9 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
     updateTouchpoint: function(i, pos) {
         var x, y, d = 15;
         if (this.touchpoints && i>=0 && i<this.touchpoints.length) {
+            this.touchpointsCnt++;
+            if (this.touchpointsCnt%5 != 0) return;
+        
             x = pos[0];
             y = pos[1];
             this.touchpoints[i].setAttributeNS(null, 'd', 
