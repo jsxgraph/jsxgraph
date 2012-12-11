@@ -1179,12 +1179,29 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      */
     resize: function (w, h) { /* stub */},
     
+    /**
+     * Create crosshair elements (Fadenkreuz) for presentations.
+     * @param {Number} n Number of crosshairs.
+     */
     createTouchpoints: function(n) {},
-    
+
+    /**
+     * Show a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
     showTouchpoint: function(i) {},
     
+    /**
+     * Hide a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
     hideTouchpoint: function(i) {},
 
+    /**
+     * Move a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     * @param {Array} pos New positon in screen coordinates
+     */
     updateTouchpoint: function(i, pos) {}
 
 });

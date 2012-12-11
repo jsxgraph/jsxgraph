@@ -974,12 +974,13 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         //this.svgRoot.forceRedraw();
     },
 
-    // document in AbstractRenderer
+    // documented in AbstractRenderer
     resize: function (w, h) {
         this.svgRoot.style.width = parseFloat(w) + 'px';
         this.svgRoot.style.height = parseFloat(h) + 'px';
     },
     
+    // documented in JXG.AbstractRenderer
     createTouchpoints: function(n) {
         var i, na1, na2, node;
         this.touchpoints = [];
@@ -1013,6 +1014,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
     
+    // documented in JXG.AbstractRenderer
     showTouchpoint: function(i) {
         if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
             this.touchpoints[2*i].setAttributeNS(null, 'display', 'inline');            
@@ -1020,6 +1022,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
     
+    // documented in JXG.AbstractRenderer
     hideTouchpoint: function(i) {
         if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
             this.touchpoints[2*i].setAttributeNS(null, 'display', 'none');            
@@ -1027,6 +1030,7 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         }
     },
 
+    // documented in JXG.AbstractRenderer
     updateTouchpoint: function(i, pos) {
         var x, y, d = 37;
         if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
