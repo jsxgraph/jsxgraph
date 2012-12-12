@@ -577,24 +577,9 @@ JXG.Options = {
         useDirection: false
     },
     
-    inequality: {
-        fillColor: 'red',
-        fillOpacity: 0.2,
-        strokeColor: 'none',
-
-        /**
-         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
-         * greater (or equal) than.
-         * @type Boolean
-         * @default false
-         * @name Inequality#inverse
-         * @visprop
-         */
-        inverse: false
-    },
-
     /* special axis options */
     axis: {
+        name: '',                            // By default, do not generate names for axes. 
         needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
         strokeWidth: 1,
         strokeColor : '#666666',
@@ -848,6 +833,22 @@ JXG.Options = {
             withLabel: false,
             name: ''
         }
+    },
+
+    inequality: {
+        fillColor: 'red',
+        fillOpacity: 0.2,
+        strokeColor: 'none',
+
+        /**
+         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
+         * greater (or equal) than.
+         * @type Boolean
+         * @default false
+         * @name Inequality#inverse
+         * @visprop
+         */
+        inverse: false
     },
 
     infobox : {
@@ -1270,7 +1271,10 @@ JXG.Options = {
 		    strokeWidth: 1,
 		    highlightStrokeWidth: 1,
             // Polygon layer + 1
-            layer: 5
+            layer: 5,
+            label: {
+                position: 'top'
+                }
         },
         
         /**

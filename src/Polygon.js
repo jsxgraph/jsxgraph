@@ -39,7 +39,7 @@
 JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_POLYGON, JXG.OBJECT_CLASS_AREA);
 
-    var i, vertex, l,
+    var i, vertex, l, len, j,
         attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
     this.withLines = attributes.withlines;
@@ -65,7 +65,9 @@ JXG.Polygon = function (board, vertices, attributes) {
      */
     this.borders = [];
     if (this.withLines) {
-        for(i = 0; i < this.vertices.length - 1; i++) {
+        len = this.vertices.length - 1;
+        for(j = 0; j < len; j++) {
+            i = (j+1)%len;                                     // This sets the "correct" labels for the first triangle of a construction.
             attr_line.id = attr_line.ids && attr_line.ids[i];
             attr_line.strokecolor = JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length] || attr_line.strokecolor;
             if (attr_line.strokecolor===false) attr_line.strokecolor = 'none';
