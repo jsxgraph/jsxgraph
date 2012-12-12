@@ -17,17 +17,22 @@ from <a href="http://tracenpoche.sesamath.net/">http://tracenpoche.sesamath.net/
 
 <script type="text/javascript">
 /* <![CDATA[ */
-var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 25, unitY: 25, axis:true});
-var A = brd.create('point', [-9,5], {name:'A_0', visible:true});
-var B = brd.create('point', [8,8], {name:'B_0', visible:true});
-var C = brd.create('point', [-8,-3], {name:'C_0', visible:false});
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 15, unitY: 15, axis:true});
+var A = brd.create('point', [-3,5], {name:'A', withLabel:true, visible:true});
+var B = brd.create('point', [8,8], {name:'B', withLabel:true, visible:true});
+var C = brd.create('point', [-4,-3], {name:'C', withLabel:true, visible:true});
 
+/*
 var p1 = brd.create('polygon', [A, B, C], 
     {borders:{visible:false}, 
      hasInnerPoints:true});
+*/
 
-var p2 = brd.create('regularpolygon', [C, A, 5], 
-    {borders:{visible:true}, 
+var p2 = brd.create('polygon', [A,B,C], 
+    {borders:{
+        visible:true, 
+        withLabel:true, 
+        label:{position:'top'}}, 
      vertices:{visible:false, size:2},
      withLabel:false, 
      hasInnerPoints:true,
@@ -36,9 +41,11 @@ var p2 = brd.create('regularpolygon', [C, A, 5],
      scalable: false
      });
 
+/*
 brd.create('line', [A, B]);     
 //brd.create('circle', [A, B], {scalable:false});     
 brd.create('glider', [-9,3,p2.borders[0]]);     
+*/
 
 /* ]]> */
 </script>
