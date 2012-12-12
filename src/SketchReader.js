@@ -105,14 +105,6 @@ JXG.extend(JXG, {
 
     SketchReader: {
 
-        generator: {
-            toFixed: 0,
-            freeLine: false,
-            useGlider: false,
-            useSymbols: false
-        },
-        // configure the generator below
-
         generateJCodeMeta: function () {
             return ['', '', '', ''];
         },
@@ -121,16 +113,23 @@ JXG.extend(JXG, {
             return JXG.Util.genUUID();
         },
 
+        generator: {
+            toFixed: 0,
+            freeLine: false,
+            useGlider: false,
+            useSymbols: false
+        },
+
         generateJCode: function (step, board, step_log) {
 
             // step has to be an objectliteral of the form: { type, args, src_ids, dest_sub_ids, dest_id }
 
-            var options, assign, attrid, type;
+            var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
 
             var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, arr,
                 step2, copy_log = [];
 
-            var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
+            var options, assign, attrid, type;
 
             options = JXG.SketchReader.generator;
 
@@ -144,7 +143,6 @@ JXG.extend(JXG, {
                     v = v.toFixed(options.toFixed);
                 return v;
             };
-
 
             var getObject = function (v) {
                 var o;
@@ -172,7 +170,7 @@ JXG.extend(JXG, {
                 assign = step.dest_id + ' = ';
 
                 for (i = 0; i < step.src_ids.length; i++) {
-                    str = board.jc.findSymbol(getObject(step.src_ids[i]), 0); // Das Board wird hier immer benötigt!!!
+                    str = board.jc.findSymbol(getObject(step.src_ids[i]), 0);
 
                     if (str.length > 0) {
                         step.src_ids[i] = str[0];
@@ -393,9 +391,9 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_MIGRATE:
 
-//                    if (step.args && step.args.undoIsFreeing)
-//                        set_str = step.src_ids[0] + '.name = ' + step.dest_id + '.name; ';
-//                    else
+                    if (step.args && step.args.undoIsFreeing)
+                        set_str = step.dest_id + '.name = ' + step.src_ids[0] + '.getName(); ';
+                    else
                         set_str = '';
 
                     // TODO: The coords of the step.src_ids[0] object must be saved (preferably) in the propertys of the dest_id object ...
@@ -411,6 +409,9 @@ JXG.extend(JXG, {
 
                         reset_str += 'point(' + step.dest_id + '.X(), ' + step.dest_id + '.Y())';
                         reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
+
+
+
                         reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + '); ';
                     } else
                         reset_str = 'delete ' + step.dest_id + '; ';
@@ -424,14 +425,12 @@ JXG.extend(JXG, {
                     for (i=0; i<step.args.steps.length; i++) {
                         arr = this.generateJCode(step.args.steps[i], board, step_log);
 
-                        if (!(step.args.steps[i].args && step.args.steps[i].args.justLogDo))
-                            set_str += arr[0];
-
+                        set_str += arr[0];
                         reset_str += arr[2];
                     }
 
                     //console.log(set_str);
-                    //console.log(reset_str);
+                    console.log(reset_str);
 
                     break;
 
@@ -862,7 +861,7 @@ JXG.extend(JXG, {
                     if (step.args.migrate != 0 && step.args.migrate != -1)
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     else
-                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; '; // a de-migration function is missing ...
+                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
 
                     reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
 
@@ -927,6 +926,7 @@ JXG.extend(JXG, {
 
                 default:
                     console.log(step.type);
+
                     alert("No such GENTYPE!");
                     return [ ];
             }
@@ -934,7 +934,6 @@ JXG.extend(JXG, {
             console.log(set_str);
             console.log(reset_str);
 */
-
             return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
         },
 
