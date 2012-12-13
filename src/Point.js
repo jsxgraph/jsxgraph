@@ -1453,7 +1453,13 @@ JXG.createPoint = function(board, parents, attributes) {
         el = new JXG.Point(board, [NaN, NaN], attr);
         el.addConstraint(parents);
     }
-
+    
+    if (!board.isSuspendedUpdate) {
+        el.handleSnapToGrid();
+        el.handleSnapToPoints();
+        el.handleAttractors();
+    }
+    
     return el;
 };
 
