@@ -3130,7 +3130,10 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 child = src.childElements[childId];
                 found = false;
 
-                // Remove the src label
+                /**
+                 * Remove the src label and thus prevent 
+                 * copying it to dest.
+                 */
                 if (src.label && child===src.label.content) {
                     this.removeObject(child);
                     continue;
