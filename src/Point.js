@@ -817,17 +817,17 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         }
 
         for (anc in this.ancestors) {
-            if (this.ancestors[anc].descendants[this.id])
+            if (this.ancestors[anc].descendants && this.ancestors[anc].descendants[this.id])
                 delete this.ancestors[anc].descendants[this.id];
           
-            if (this.ancestors[anc].childElements[this.id])
+            if (this.ancestors[anc].childElements && this.ancestors[anc].childElements[this.id])
                 delete this.ancestors[anc].childElements[this.id];
                         
             for (child in this.descendants) {
-                if (this.ancestors[anc].descendants[child])
+                if (this.ancestors[anc].descendants && this.ancestors[anc].descendants[child])
                     delete this.ancestors[anc].descendants[child];
               
-                if (this.ancestors[anc].childElements[child])
+                if (this.ancestors[anc].childElements && this.ancestors[anc].childElements[child])
                     delete this.ancestors[anc].childElements[child];
             }
         }
