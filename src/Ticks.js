@@ -124,7 +124,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      */
     hasPoint: function (x, y) {
         var i, t,
-            len = this.ticks.length,
+            len = (this.ticks && this.ticks.length) || 0,
             r = this.board.options.precision.hasPoint;
             
         if (!this.line.visProp.scalable) {
