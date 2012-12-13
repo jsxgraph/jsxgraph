@@ -58,7 +58,7 @@ JXG.Options.point.label = {};
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
-    var p1 = brd.create('point', [1,1]);
+    var p1 = brd.create('point', [1,1], {withLabel:true});
     var p2 = brd.create('point', [3,0]);
     var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
@@ -103,6 +103,8 @@ JXG.Options.point.label = {};
     
     brd.renderer.createTouchpoints(6);
     //brd.renderer.showTouchpoint(2);
+    var p4 = brd.create('point', [4,4]);
+    brd.migratePoint(p1,p4);
     
 </script> 
 </body>

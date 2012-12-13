@@ -3129,7 +3129,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             if (src.childElements.hasOwnProperty(childId)) {
                 child = src.childElements[childId];
                 found = false;
-                
+
+                // Remove the src label
+                if (src.label && child===src.label.content) {
+                    this.removeObject(child);
+                    continue;
+                }
+                    
                 for (prop in child) {
                     if (child.hasOwnProperty(prop)) {
                         if (child[prop] ===  src) {
