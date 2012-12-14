@@ -499,7 +499,7 @@ JXG.extend(JXG, {
                             str1[i] = pn(step.args.p1[i]);
 
                         set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
-                        set_str += 'priv: true>>; ';
+                        set_str += 'snaptogrid: false, priv: true>>; ';
                         reset_str = 'delete ' + pid1 + '; ';
                     } else
                         pid1 = step.src_ids[j++];
@@ -511,7 +511,7 @@ JXG.extend(JXG, {
                             str1[i] = pn(step.args.p2[i]);
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
-                        set_str += 'priv: true>>; ';
+                        set_str += 'snaptogrid: false, priv: true>>; ';
                         reset_str = 'delete ' + pid2 + '; ' + reset_str;
                     } else
                         pid2 = step.src_ids[j++];
