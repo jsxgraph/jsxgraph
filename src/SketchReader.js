@@ -991,7 +991,7 @@ JXG.extend(JXG, {
 
                 if (constr[i].type == 0)
                     continue;
-
+/*
                 // fix for files created with the beta version
                 if (constr[i].type == JXG.GENTYPE_CTX_VISIBILITY && constr[i].args.isGrid) {
                     //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
@@ -1003,30 +1003,13 @@ JXG.extend(JXG, {
                     continue;
                 }
                 // end of fix
-/*
-                if (constr[i].type == 100) // Obsolete fix
-                    constr[i].type = JXG.GENTYPE_MOVEMENT;
 
-                if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
-
-                    for (j=i+1; j<constr.length-1; j++) {
-                        if (constr[j].type == JXG.GENTYPE_MOVEMENT && JXG.Draw.areEqual(constr[i].src_ids,
-                            constr[j].src_ids)) {
-                            constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                            break;
-                        }
-                    }
-
-                    if (j < constr.length-1)
-                        continue;
-                }
-*/
                 if (constr[i].type == 27) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_DELETE;
 
                 if (constr[i].type == 31) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_ABLATION;
-
+*/
                 try {
                     if (constr[i] > 50)
                         arr = this.generateJCodeMeta(constr[i], board);
