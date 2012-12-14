@@ -396,10 +396,6 @@ JXG.extend(JXG, {
                     else
                         set_str = '';
 
-                    // TODO: The coords of the step.src_ids[0] object must be saved (preferably) in the propertys of the dest_id object ...
-                    // ==> A Jessiecode API is needed, because at the moment of code generation the src_ids[0] object does not exist ...
-                    // this might e.g. be the case, when the call comes from a GENTYPE_COMBINED step ...
-
                     set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
 
                     if (step.args && step.args.undoIsFreeing) {
@@ -423,8 +419,8 @@ JXG.extend(JXG, {
                     for (i=0; i<step.args.steps.length; i++) {
                         arr = this.generateJCode(step.args.steps[i], board, step_log);
 
-                        set_str += arr[0];
-                        reset_str += arr[2];
+                        set_str = set_str + arr[0];
+                        reset_str = arr[2] + reset_str;
                     }
 
                     //console.log(set_str);
