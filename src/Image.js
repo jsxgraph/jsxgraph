@@ -225,7 +225,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units of the mouse/touch position
      * @param {Array} oldcoords coordinates in screen/user units of the previous mouse/touch position
-     * @returns {JXG.Image}
+     * @returns {JXG.Image} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         var c = new JXG.Coords(method, coords, this.board),

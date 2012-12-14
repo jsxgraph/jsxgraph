@@ -680,7 +680,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Sets coordinates and calls the point's update() method.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates <tt>(z, x, y)</tt> in screen/user units
-     * @returns {JXG.Point}
+     * @returns {JXG.Point} this element
      */
     setPositionDirectly: function (method, coords) {
         var i, dx, dy, dz, el, p,
@@ -712,7 +712,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             this.update();
         }
 
-        return this;
+        return coords;
     },
 
     /**

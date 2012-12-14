@@ -489,7 +489,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units
      * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.Line}
+     * @returns {JXG.Polygon} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         var dc, t, i, len,

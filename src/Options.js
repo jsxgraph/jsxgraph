@@ -1010,7 +1010,47 @@ JXG.Options = {
         
         label: {
             position:'llft'
-        }
+        },
+        
+        /**
+         * If set to true, the point will snap to a grid defined by
+         * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Point#snapSizeY
+         * @type Boolean
+         * @name JXG.Point#snapToGrid
+         * @default false
+         */
+        snapToGrid: false,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default x axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeY
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeX
+         * @default 1
+         */
+        snapSizeX: 1,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default y axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeY
+         * @default 1
+         */
+        snapSizeY: 1
+        
     },
 
     /* special options for locus curves */
