@@ -3152,7 +3152,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 dest.addChild(child);
             }
         }
-
+/*
         // The destination object should receive the name
         // and the label of the originating (src) object
 
@@ -3167,9 +3167,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         i = dest.label.content;
         dest.label.content = src.label.content;
         src.label.content = i;
-
+*/
         this.removeObject(src);
-        this.elementsByName[dest.name] = dest;
+        //this.elementsByName[dest.name] = dest;
 
         this.update();
         return this;
