@@ -240,12 +240,30 @@ JXG.createArc = function(board, parents, attributes) {
     // documented in geometry element
     el.hasPoint = function (x, y) {
         var prec = this.board.options.precision.hasPoint/(this.board.unitX),
-            checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board),
             r = this.Radius(),
-            dist = this.center.coords.distance(JXG.COORDS_BY_USER, checkPoint),
-            has = (Math.abs(dist-r) < prec),
-            angle, alpha, beta;
+            dist, checkPoint,
+            has, angle, alpha, beta,
+            invMat, c;
             
+        checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
+        
+        if (this.transformations.length>0) {
+            /** 
+             * Transform the mouse/touch coordinates 
+             * back to the original position of the curve.
+             */
+            this.updateTransformMatrix();
+            invMat = JXG.Math.inverse(this.transformMat);
+            c = JXG.Math.matVecMult(invMat, checkPoint.usrCoords);
+            checkPoint = new JXG.Coords(JXG.COORDS_BY_USER, c, this.board);
+        }
+            
+        dist = this.center.coords.distance(JXG.COORDS_BY_USER, checkPoint);
+        has = (Math.abs(dist-r) < prec);
+
+        /**
+         * At that point we know that the user has touched the circle line.
+         */
         if (has) {
             angle = JXG.Math.Geometry.rad(this.radiuspoint,this.center,checkPoint.usrCoords.slice(1));
             alpha = 0.0;
@@ -418,7 +436,7 @@ JXG.createSemicircle = function(board, parents, attributes) {
          * @name midpoint
          * @type Midpoint
          */
-        el.midpoint = mp;
+        el.midpoint = el.center = mp;
     } else
         throw new Error("JSXGraph: Can't create Semicircle with parent types '" + 
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

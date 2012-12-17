@@ -92,8 +92,6 @@ JXG.Line = function (board, p1, p2, attributes) {
     this.board.finalizeAdding(this);
 
     this.elType = 'line';
-    // create Label
-    this.createLabel();
 
     /* Add arrow as child to defining points */
     this.point1.addChild(this);
@@ -104,6 +102,9 @@ JXG.Line = function (board, p1, p2, attributes) {
                           // * the line is defined by three coordinates
                           // * and it will have a glider 
                           // * and board.suspendUpdate() has been called.
+
+    // create Label
+    this.createLabel();
 };
 
 JXG.Line.prototype = new JXG.GeometryElement;
@@ -477,7 +478,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
     // documented in geometry element
     getLabelAnchor: function() {
-        var x, y, 
+        var x, y,
             fs = 0,
             sx = 0, 
             sy = 0,
@@ -489,11 +490,11 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         } 
         c1 = c1.scrCoords;
         c2 = c2.scrCoords;
-        
+
         if (!JXG.exists(this.label.content)) {
             return new JXG.Coords(JXG.COORDS_BY_SCREEN, [NaN, NaN], this.board);
         }
-        
+
         switch (this.label.content.visProp.position) {
             case 'lft':
             case 'llft':
@@ -632,11 +633,11 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units
      * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.Line}
+     * @returns {JXG.Line} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         var dc, t, 
-            c = new JXG.Coords(method, coords, this.board),
+            c = new JXG.Coords(method, coords, this.board), 
             oldc = new JXG.Coords(method, oldcoords, this.board);
 
         if (!this.point1.draggable() || !this.point2.draggable()) {
@@ -650,11 +651,43 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
         return this;
     },
 
-    // see geometryelement.js
-    snapToGrid: function () {
+    // see GeometryElement.js
+    snapToGrid: function (pos) {
+        var c1, c2, dc, t, v,
+            x, y, sX, sY;
+            
         if (this.visProp.snaptogrid) {
-            this.point1.snapToGrid();
-            this.point2.snapToGrid();
+            if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
+                this.point1.snapToGrid();
+                this.point2.snapToGrid();
+            } else {
+                sX = this.visProp.snapsizex;
+                sY = this.visProp.snapsizey;
+            
+                c1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, [pos.Xprev, pos.Yprev], this.board);
+
+                x = c1.usrCoords[1];
+                y = c1.usrCoords[2];
+                        
+                if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                    sX = this.board.defaultAxes.x.defaultTicks.ticksDelta*(this.board.defaultAxes.x.defaultTicks.visProp.minorticks+1);
+                }
+                if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                    sY = this.board.defaultAxes.y.defaultTicks.ticksDelta*(this.board.defaultAxes.y.defaultTicks.visProp.minorticks+1);
+                }
+
+                // if no valid snap sizes are available, don't change the coords.
+                if (sX > 0 && sY > 0) {
+                    // projectCoordsToLine
+                    v = [0,this.stdform[1],this.stdform[2]];
+                    v = JXG.Math.crossProduct(v, c1.usrCoords);
+                    c2 = JXG.Math.Geometry.meetLineLine(v, this.stdform, 0, this.board);
+
+                    dc = JXG.Math.Statistics.subtract([1, Math.round(x/sX)*sX, Math.round(y/sY)*sY], c2.usrCoords);
+                    t = this.board.create('transform', dc.slice(1), {type:'translate'});
+                    t.applyOnce([this.point1, this.point2] );
+                }
+            }
         }
 
         return this;
@@ -813,9 +846,12 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
             if(this.ticks[t-1] == tick) {
                 this.board.removeObject(this.ticks[t-1]);
 
-                for(j=0; j<this.ticks[t-1].ticks.length; j++) {
-                    if(this.ticks[t-1].labels[j] != null)
-                        this.board.removeObject(this.ticks[t-1].labels[j]);
+                if (this.ticks[t-1].ticks) {
+                    for(j = 0; j < this.ticks[t-1].ticks.length; j++) {
+                        if(this.ticks[t-1].labels[j] != null) {
+                            this.board.removeObject(this.ticks[t-1].labels[j]);
+                        }
+                    }
                 }
                 delete(this.ticks[t-1]);
                 break;
@@ -1107,11 +1143,13 @@ JXG.JSXGraph.registerElement('line', JXG.createLine);
  * 
  */
 JXG.createSegment = function(board, parents, attributes) {
-    var el, i;
+    var el, i, attr;
 
     attributes.straightFirst = false;
     attributes.straightLast = false;
-    el = board.create('line', parents.slice(0,2), attributes);
+    attr = JXG.copyAttributes(attributes, board.options, 'segment');
+    
+    el = board.create('line', parents.slice(0,2), attr);
     
     if (parents.length==3) {
         el.hasFixedLength = true;

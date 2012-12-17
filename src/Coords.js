@@ -112,6 +112,7 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
         var o = this.board.origin.scrCoords,
             sc = this.scrCoords,
             b = this.board;
+
         this.usrCoords[0] =  1.0;
         this.usrCoords[1] = (sc[1] - o[1])/b.unitX;
         this.usrCoords[2] = (o[2] - sc[2])/b.unitY;

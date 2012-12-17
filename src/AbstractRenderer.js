@@ -24,9 +24,6 @@
 
 */
 
-/*jshint bitwise: false, curly: true, debug: false, eqeqeq: true, devel: false, evil: false,
-  forin: false, immed: true, laxbreak: false, newcap: false, noarg: true, nonew: true, onevar: true,
-   undef: true, white: true, sub: false*/
 /*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
 
 /**
@@ -394,7 +391,9 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
         } else {
             this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
         }
-        this.makeArrows(element);
+        if (element.numberPoints>1) {
+            this.makeArrows(element);
+        }
     },
 
     /* **************************
@@ -1178,6 +1177,31 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @param {Number} w New width
      * @param {Number} h New height
      */
-    resize: function (w, h) { /* stub */}
+    resize: function (w, h) { /* stub */},
+    
+    /**
+     * Create crosshair elements (Fadenkreuz) for presentations.
+     * @param {Number} n Number of crosshairs.
+     */
+    createTouchpoints: function(n) {},
+
+    /**
+     * Show a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
+    showTouchpoint: function(i) {},
+    
+    /**
+     * Hide a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     */
+    hideTouchpoint: function(i) {},
+
+    /**
+     * Move a specific crosshair.
+     * @param {Number} i Number of the crosshair to show
+     * @param {Array} pos New positon in screen coordinates
+     */
+    updateTouchpoint: function(i, pos) {}
 
 });

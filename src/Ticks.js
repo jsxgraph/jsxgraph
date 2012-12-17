@@ -124,7 +124,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
      */
     hasPoint: function (x, y) {
         var i, t,
-            len = this.ticks.length,
+            len = (this.ticks && this.ticks.length) || 0,
             r = this.board.options.precision.hasPoint;
             
         if (!this.line.visProp.scalable) {
@@ -181,6 +181,13 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
        return false;
     },
 
+    /**
+     * Sets x and y coordinate of the tick.
+     * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
+     * @returns {JXG.Ticks} this element     
+     */
     setPositionDirectly: function (method, coords, oldcoords) {
         var dx, dy, i, 
             c = new JXG.Coords(method, coords, this.board),

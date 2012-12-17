@@ -115,7 +115,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 		this.visProp.arrow['lastArrow'] = true;
 		this.visProp.arrow['straightFirst'] = false;
 		this.visProp.arrow['straightLast'] = false;
-        this.arrow = this.board.create('line',[this.turtle,this.turtle2], this.visProp.arrow);
+        this.arrow = this.board.create('line', [this.turtle,this.turtle2], this.visProp.arrow);
         this.objects.push(this.arrow);
 
         this.right(90-dir);
@@ -226,7 +226,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         for(var i=0;i<this.objects.length;i++) {
             var el = this.objects[i];
             if (el.type==JXG.OBJECT_TYPE_CURVE) {
-                this.board.removeObject(el.id);
+                this.board.removeObject(el);
                 this.objects.splice(i,1);
             }
         }
@@ -243,11 +243,12 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     * @return pointer to the turtle object
     */
     clearScreen: function() {
-        for(var i=0;i<this.objects.length;i++) {
-            var el = this.objects[i];
-            this.board.removeObject(el.id);
+        var i, el, len = this.objects.length;
+        for(i=0; i<len; i++) {
+            el = this.objects[i];
+            this.board.removeObject(el);
         }
-        this.init(0,0,90);
+        this.init(0,0, 90);
         return this;
     },
 
@@ -357,33 +358,35 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     },
 
     /**
-    *  Sets the visibility of the turtle head to true,
+    * Sets the visibility of the turtle head to true,
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
     showTurtle: function() { 
         this.turtleIsHidden = false; 
-        this.arrow.setProperty('visible:true');
+        this.arrow.setProperty({visible:true});
+        this.visProp.arrow['visible'] = false;
         this.setPos(this.pos[0],this.pos[1]);
         this.board.update();
         return this;
     },
 
     /**
-    *  Sets the visibility of the turtle head to false,
+    * Sets the visibility of the turtle head to false,
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
     hideTurtle: function() { 
         this.turtleIsHidden = true;
-        this.arrow.setProperty('visible:false');
-        this.setPos(this.pos[0],this.pos[1]);
+        this.arrow.setProperty({visible:false});
+        this.visProp.arrow['visible'] = false;
+        //this.setPos(this.pos[0],this.pos[1]);
         this.board.update();
         return this;
     },
 
     /**
-    *  Moves the turtle to position [0,0].
+    * Moves the turtle to position [0,0].
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */

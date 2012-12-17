@@ -33,14 +33,21 @@ JXG.Options = {
     takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
     renderer: 'svg',
     takeFirst : false, // if true the first element with hasPoint==true is taken.
-    pan: true,
     animationDelay: 35,
 
     /* zoom options */
     zoom : {
         factorX : 1.25,
         factorY : 1.25,
-        wheel: false
+        wheel: false,
+        needShift: false,
+        eps: 0.1
+    },
+    
+    pan: {
+        needShift: true,
+        needTwoFingers: true,
+        enabled: true
     },
 
     jc : {
@@ -570,24 +577,9 @@ JXG.Options = {
         useDirection: false
     },
     
-    inequality: {
-        fillColor: 'red',
-        fillOpacity: 0.2,
-        strokeColor: 'none',
-
-        /**
-         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
-         * greater (or equal) than.
-         * @type Boolean
-         * @default false
-         * @name Inequality#inverse
-         * @visprop
-         */
-        inverse: false
-    },
-
     /* special axis options */
     axis: {
+        name: '',                            // By default, do not generate names for axes. 
         needsRegularUpdate : false,         // Axes only updated after zooming and moving of the origin.
         strokeWidth: 1,
         strokeColor : '#666666',
@@ -663,6 +655,7 @@ JXG.Options = {
 
     /*special circle options */
     circle : {
+        hasInnerPoints: false,
         fillColor : 'none',
         highlightFillColor : 'none',
         strokeColor : '#0000ff',
@@ -742,6 +735,7 @@ JXG.Options = {
         strokeWidth : 1,
         strokeColor : '#0000ff',
         fillColor: 'none',
+        fixed: true,
         
         /**#@+
          * @visprop
@@ -839,6 +833,22 @@ JXG.Options = {
             withLabel: false,
             name: ''
         }
+    },
+
+    inequality: {
+        fillColor: 'red',
+        fillOpacity: 0.2,
+        strokeColor: 'none',
+
+        /**
+         * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
+         * greater (or equal) than.
+         * @type Boolean
+         * @default false
+         * @name Inequality#inverse
+         * @visprop
+         */
+        inverse: false
     },
 
     infobox : {
@@ -1000,7 +1010,47 @@ JXG.Options = {
         
         label: {
             position:'llft'
-        }
+        },
+        
+        /**
+         * If set to true, the point will snap to a grid defined by
+         * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Point#snapSizeY
+         * @type Boolean
+         * @name JXG.Point#snapToGrid
+         * @default false
+         */
+        snapToGrid: false,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default x axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeY
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeX
+         * @default 1
+         */
+        snapSizeX: 1,
+
+        /**
+         * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+         * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+         * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+         * of the default ticks of the default y axes of the board.
+         * @see JXG.Point#snapToGrid
+         * @see JXG.Point#snapSizeX
+         * @see JXG.Board#defaultAxes
+         * @type Number
+         * @name JXG.Point#snapSizeY
+         * @default 1
+         */
+        snapSizeY: 1
+        
     },
 
     /* special options for locus curves */
@@ -1261,7 +1311,10 @@ JXG.Options = {
 		    strokeWidth: 1,
 		    highlightStrokeWidth: 1,
             // Polygon layer + 1
-            layer: 5
+            layer: 5,
+            label: {
+                position: 'top'
+                }
         },
         
         /**
@@ -1306,6 +1359,13 @@ JXG.Options = {
         }
     },
 
+    /* special segment options */
+    segment: {
+        label: {
+            position: 'top'
+        }
+    },
+    
     semicircle : {
         midpoint: {
             visible: false,

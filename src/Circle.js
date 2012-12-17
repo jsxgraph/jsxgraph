@@ -191,7 +191,11 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
             r = this.Radius();
 
         var dist = Math.sqrt((mp[1]-p.usrCoords[1])*(mp[1]-p.usrCoords[1]) + (mp[2]-p.usrCoords[2])*(mp[2]-p.usrCoords[2]));
-        return (Math.abs(dist-r) < prec);
+        if (this.visProp.hasinnerpoints) {
+            return (dist < r + prec);
+        } else {
+            return (Math.abs(dist-r) < prec);
+        }
         //return (dist <= r + prec);
     },
 
@@ -548,7 +552,7 @@ JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinate in screen/user units
      * @param {Array} oldcoords previous coordinate in screen/user units
-     * @returns {JXG.Circle} Reference to this circle.
+     * @returns {JXG.Circle} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         coords = new JXG.Coords(method, coords, this.board);

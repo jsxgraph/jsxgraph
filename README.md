@@ -50,12 +50,12 @@ https://github.com/jsxgraph/jsxgraph/issues
 Build JSXGraph
 --------------
 
-In order to build JSXGraph you need Python 2 or later, YUI Compressor 2.x.x or
-later, and to build the reference docs you need jsdoc-toolkit 2.3.2 or later.
+In order to build JSXGraph you need Python 2 or later, yuglify, and to build the
+reference docs you need jsdoc-toolkit 2.3.2 or later.
 
 To build JSXGraph core type
 
-    $ python make.py --yui=/path/to/yui --output=/output/dir Core
+    $ python make.py --yuglify=/path/to/yuglify --output=/output/dir Core
 
 This will concatenate all core files (basically all .js files in src/ except
 loadjsxgraph.js and {Geonext,GeoGebra,Cinderella,Graph,Intergeo}Reader.js),

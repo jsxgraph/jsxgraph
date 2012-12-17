@@ -23,6 +23,8 @@
  along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*global JXG: true */
+
 /**
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
@@ -46,7 +48,7 @@ JXG.extend = function (object, extension, onlyOwn, toLower) {
     onlyOwn = onlyOwn || false;
     toLower = toLower || false;
 
-    for(e in extension) {
+    for (e in extension) {
         if (!onlyOwn || (onlyOwn && extension.hasOwnProperty(e))) {
             if (toLower) {
                 e2 = e.toLowerCase();
@@ -82,13 +84,27 @@ JXG.extend(JXG, /** @lends JXG */ {
      */
     touchProperty: 'touches',
 
+
+    /**
+     * Represents the currently used JSXGraph version.
+     * @type {String}
+     */
+    version: '0.97.1',
+
+    /**
+     * A document/window environment is available.
+     * @type Boolean
+     * @default false
+     */
+    isBrowser: typeof window === 'object' && typeof document === 'object',
+
     /**
      * Detect browser support for VML.
      * @returns {Boolean} True, if the browser supports VML.
      */
     supportsVML: function () {
         // From stackoverflow.com
-        return typeof document != 'undefined' && !!document.namespaces;
+        return this.isBrowser && !!document.namespaces;
     },
 
     /**
@@ -96,7 +112,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports SVG.
      */
     supportsSVG: function () {
-        return typeof document != 'undefined' && document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+        return this.isBrowser && document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
     },
 
     /**
@@ -104,12 +120,12 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports HTML canvas.
      */
     supportsCanvas: function () {
-        return typeof document != 'undefined' && !!document.createElement('canvas').getContext;
+        return this.isBrowser && !!document.createElement('canvas').getContext;
     },
 
     isNode: function () {
         // this is not a 100% sure but should be valid in most cases
-        return typeof document === 'undefined' && typeof window === 'undefined' && typeof module !== 'undefined' && module.exports;
+        return !this.isBrowser && typeof module === 'object' && module.exports;
     },
 
     /**
@@ -117,7 +133,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports touch events.
      */
     isTouchDevice: function () {
-        return 'ontouchstart' in document.documentElement;
+        return this.isBrowser && document.documentElement.hasOwnProperty('ontouchstart');
     },
 
     /**
@@ -157,7 +173,7 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @return {Boolean}
      */
     isMetroApp: function () {
-        return typeof window !== 'undefined' && window.clientInformation && window.clientInformation.appName && window.clientInformation.appName.indexOf('MSAppHost') > -1;
+        return typeof window === 'object' && window.clientInformation && window.clientInformation.appName && window.clientInformation.appName.indexOf('MSAppHost') > -1;
     },
 
     /**
@@ -186,7 +202,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     ieVersion: (function() {
         var undef;
 
-        if (typeof document == 'undefined') {
+        if (typeof document !== 'object') {
             return undef;
         }
 
@@ -292,8 +308,16 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if v is of type array.
      */
     isArray: function (v) {
-        // Borrowed from prototype.js
-        return v !== null && typeof v === "object" && 'splice' in v && 'join' in v;
+        var r;
+
+        // use the ES5 isArray() method and if that doesn't exist use a fallback.
+        if (Array.isArray) {
+            r = Array.isArray(v);
+        } else {
+            r = (v !== null && typeof v === "object" && 'splice' in v && 'join' in v);
+        }
+
+        return r;
     },
 
     /**
@@ -732,7 +756,6 @@ JXG.extend(JXG, /** @lends JXG */ {
 
         if (!JXG.exists(owner)) {
             JXG.debug('no such owner');
-            alert("see console and recheck why!!!");
             return;
         }
 
@@ -971,8 +994,8 @@ JXG.extend(JXG, /** @lends JXG */ {
             start = str.indexOf('(');
             if (start>0) {
                 len = str.length;
-                arrstr = str.substring(start+1,len-1);
-                arr = arrstr.split(',');
+                arrStr = str.substring(start+1,len-1);
+                arr = arrStr.split(',');
                 for (j=0, len2=arr.length; j<len2; j++) {
                     arr[j] = parseFloat(arr[j]);
                 }
@@ -1520,7 +1543,7 @@ JXG.extend(JXG, /** @lends JXG */ {
     /**
      * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
      * @param {Array} arr
-     * @param {} val
+     * @param {%} val
      * @returns {Boolean}
      */
     isInArray: function(arr, val) {
@@ -1576,7 +1599,7 @@ JXG.extend(JXG, /** @lends JXG */ {
 });
 
 // JessieScript startup: Search for script tags of type text/jessiescript and interpret them.
-if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+if (typeof window === 'object' && typeof document === 'object') {
     JXG.addEvent(window, 'load', function () {
         var scripts = document.getElementsByTagName('script'), type,
             i, j, div, board, width, height, bbox, axis, grid, code;

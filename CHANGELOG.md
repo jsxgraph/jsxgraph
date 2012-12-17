@@ -1,3 +1,81 @@
+0.97
+====
+
+Important Notes
+---------------
+
+
+New features
+------------
+
+
+Bug fixes
+---------
+
+
+
+
+0.96
+====
+
+Important Notes
+---------------
+
+New Features
+------------
+ * Polygons can be dragged (402b92c, 4541ce3, 6187eb0)
+ * Introducing new GeometryElement attribute *scalable* (6187eb0)
+ * Angles can be fixed via _setAngle()_ and freed via _free()_  (5ee106f, b9bd601, 1f25a5f, 8e1bce6, ad857bd, 8d95d75)
+ * Image hasPoint now checks the whole image area (8d95d75, d96e6d7, a4e0bc5, a9f3f73)
+ * JSXGraph can be used inside node.js; Rendering to PNG requires node-canvas (ab00ec3, 6106356, 8b00933)
+ * Construction can be zoomed by dragging ticks (1215fba, bf01231, 818e013, 9ef977f, 31690db, bdf1159, b0e6f6a, cdb2ac7, 459fba6)
+ * 'random' option for Riemann sums (d498fa2)
+ * Documentation now lists events (a7ae116, da9b0a0, 63cc708, 66fb7a7, 13e4993, 
+ * New interface EventEmitter which implements event handling (eeffbe1)
+ * JSXGraph can be run inside Windows 8 "Metro" Apps (1281086, b1935d8)
+ * GeometryElements fire events when an attribute gets changed (7fb8ab6)
+ * Introducing a .sketch file reader (08c8f02, de3c4b2, 3cf0d30, efc806d, 9febcdf, 9e19054, 8232d43)
+ * Enable Curve.X() and Curve.Y() for curves with bezierDegree=3 (10c8c3e)
+ * Intersection of segments (de10bc4, eef5264)
+ * New attribute _alwaysIntersect_ for interesction points of e.g. segments to be shown even if the segments don't interesect anymore (9670c8e, 488946f)
+ * Introduce JXG.Math.Geometry.distPointLine() (9b0bad3)
+ * Curve-line intersection now respects property alwaysIntersect (856db81)
+ * Improved speed of freeBoard() (3d3dc72)
+ * The distance of ticks can be set via setAttribute/setProperty now (cb80999)
+ * GeonextReader now uses the viewport tag if available (d06a020)
+ * Implement boolean attribute *hasInnerPoints* for circles (84e0d58)
+ * Curves can be dragged (a729000)
+ * Restrict zoom with ```JXG.Options.zoom.eps``` (d63c8de)
+ * Get current JSXGraph version with ```JXG.version``` (c46d563)
+ * Implemented X() and Y() methods for labels (#17, 8acaa51)
+ * Zooming and panning can now be configured (#5, f7e7799)
+ * Segment labels are placed on 'top' (1b53f3a)
+
+Bug fixes
+---------
+ * Fixed the return value of removeObject (0aa328f)
+ * Tick calculation with majorHeight and minorHeight equal to zero was broken (9bfcb47, e9535d2)
+ * Texts won't jump while being dragged anymore (2ba238e)
+ * Several documentation errors fixed (84f10ce, 917250a, 6277684, dcd0c6b, 394e149, fed7998)
+ * Bug fix: intersection of line with curve, where curve has curveType 'plot' (c10bbeb, 7e8c358, d5500e9, 0f7cb59)
+ * Fixed and improved groups (0145603, 5f9841b, de01c99, 7b03a70, 06bae53)
+ * Bugfix arrow head creation (6f90382)
+ * Arc/Arc intersections fixed (acac2e5)
+ * radar charts fixed (8b458b6)
+ * Added newline in Point.js (4054a7e)
+ * Include CSS transformations in the computation of the coordinates of the top left corner of the board (13226bf, 0c19743, c9b25d8, c3fc4f5, acf844a)
+ * Polygon labels fixed (#14, 3c4f4c5)
+ * fontSize given as a string caused problems (e2f94b0)
+ * bugfix createLabel() (8e5c8d1)
+ * 0 ticks are hidden again (3419ecf)
+ * Images now use the absolute value of the given height/width (1468387)
+ * Fixing turtle.hideTurtle(), turtle.showTurtle() (bc549a1)
+ * Remove ticks only of they exist (e74a68a)
+ * Work around a FF17 bug regarding SVG fill attribute with value 'none' (1760350)
+ * Bugfix turtle (b09af0e)
+ * Arrows can't be set on curves with less than two datapoints (75faf54)
+
+
 0.95
 ====
 

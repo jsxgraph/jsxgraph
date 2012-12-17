@@ -844,7 +844,12 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
                 oo = o*rgbo[1];
             }
             node = el.rendNode;
-            node.setAttributeNS(null, 'fill', c);
+            if (c!='none') {               // problem in firefox 17
+                node.setAttributeNS(null, 'fill', c);
+            } else {
+                oo = 0;
+            }
+            
             if (el.type === JXG.OBJECT_TYPE_IMAGE) {
                 node.setAttributeNS(null, 'opacity', oo);
             } else {
@@ -969,10 +974,78 @@ JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
         //this.svgRoot.forceRedraw();
     },
 
-    // document in AbstractRenderer
+    // documented in AbstractRenderer
     resize: function (w, h) {
         this.svgRoot.style.width = parseFloat(w) + 'px';
         this.svgRoot.style.height = parseFloat(h) + 'px';
+    },
+    
+    // documented in JXG.AbstractRenderer
+    createTouchpoints: function(n) {
+        var i, na1, na2, node;
+        this.touchpoints = [];
+        for (i=0; i<n; i++) {
+            na1 = 'touchpoint1_'+i;
+            node = this.createPrim('path', na1);
+            this.appendChildPrim(node, 19);
+            node.setAttributeNS(null, 'd', 'M 0 0');            
+            this.touchpoints.push(node);
+            
+            this.setPropertyPrim(node, 'stroked', 'true');
+            this.setPropertyPrim(node, 'stroke-width', '1px');
+            node.setAttributeNS(null, 'stroke', '#000000');
+            node.setAttributeNS(null, 'stroke-opacity', 1.0);
+            node.setAttributeNS(null, 'display', 'none');
+
+            na2 = 'touchpoint2_'+i;
+            node = this.createPrim('ellipse', na2);
+            this.appendChildPrim(node, 19);
+            this.updateEllipsePrim(node, 0, 0, 0, 0);
+            this.touchpoints.push(node);
+            
+            this.setPropertyPrim(node, 'stroked', 'true');
+            this.setPropertyPrim(node, 'stroke-width', '1px');
+            node.setAttributeNS(null, 'stroke', '#000000');
+            node.setAttributeNS(null, 'stroke-opacity', 1.0);
+            node.setAttributeNS(null, 'fill', '#ffffff');
+            node.setAttributeNS(null, 'fill-opacity', 0.0);
+            
+            node.setAttributeNS(null, 'display', 'none');            
+        }
+    },
+    
+    // documented in JXG.AbstractRenderer
+    showTouchpoint: function(i) {
+        if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
+            this.touchpoints[2*i].setAttributeNS(null, 'display', 'inline');            
+            this.touchpoints[2*i+1].setAttributeNS(null, 'display', 'inline');            
+        }
+    },
+    
+    // documented in JXG.AbstractRenderer
+    hideTouchpoint: function(i) {
+        if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
+            this.touchpoints[2*i].setAttributeNS(null, 'display', 'none');            
+            this.touchpoints[2*i+1].setAttributeNS(null, 'display', 'none');            
+        }
+    },
+
+    // documented in JXG.AbstractRenderer
+    updateTouchpoint: function(i, pos) {
+        var x, y, d = 37;
+        if (this.touchpoints && i>=0 && 2*i<this.touchpoints.length) {
+            x = pos[0];
+            y = pos[1];
+            this.touchpoints[2*i].setAttributeNS(null, 'd', 
+                'M ' + (x-d) + ' ' + (y) + ' ' + 
+                'L ' + (x+d) + ' ' + (y) + ' ' + 
+                'M ' + (x) + ' ' + (y-d) + ' ' + 
+                'L ' + (x) + ' ' + (y+d)
+                );            
+            this.updateEllipsePrim(this.touchpoints[2*i+1], 
+                pos[0], pos[1], 25, 25);
+        }
     }
+    
 
 });

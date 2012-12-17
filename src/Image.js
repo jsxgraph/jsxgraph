@@ -48,11 +48,11 @@ JXG.Image = function (board, url, coords, size, attributes) {
     this.W = JXG.createFunction(size[0],this.board,'');
     this.H = JXG.createFunction(size[1],this.board,'');
     this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(),this.Y()], this.board);
-    this.updateCoords = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.X(),this.Y()]);');
-    this.updateSize = new Function('','this.coords.setCoordinates(' + JXG.COORDS_BY_USER + ',[this.W(),this.H()]);');
     this.usrSize = [this.W(), this.H()];
-    this.size = [this.usrSize[0]*board.unitX,this.usrSize[1]*board.unitY];
+    this.size = [Math.abs(this.usrSize[0]*board.unitX),Math.abs(this.usrSize[1]*board.unitY)];
     this.url = url;
+    
+    this.elType = 'image';
     
     // span contains the anchor point and the two vectors
     // spanning the image rectangle.
@@ -128,7 +128,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         if (this.needsUpdate) {
             this.updateCoords();
             this.usrSize = [this.W(), this.H()];
-            this.size = [this.usrSize[0]*this.board.unitX,this.usrSize[1]*this.board.unitY];
+            this.size = [Math.abs(this.usrSize[0]*this.board.unitX),Math.abs(this.usrSize[1]*this.board.unitY)];
             this.updateTransform();
             this.updateSpan();
         }
@@ -156,6 +156,20 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
         return this;
     },
 
+    /**
+     * Updates the coordinates of the top left corner of the image.
+     */
+    updateCoords: function () {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
+    },
+
+    /**
+     * Updates the size of the image.
+     */
+    updateSize: function () {
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.W(), this.H()]);
+    },
+    
     /**
      * Update the anchor point of the image, i.e. the lower left corner
      * and the two vectors which span the rectangle.
@@ -211,7 +225,7 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units of the mouse/touch position
      * @param {Array} oldcoords coordinates in screen/user units of the previous mouse/touch position
-     * @returns {JXG.Image}
+     * @returns {JXG.Image} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         var c = new JXG.Coords(method, coords, this.board),

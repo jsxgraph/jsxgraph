@@ -13,6 +13,7 @@ function jxgcompress($filename)
 
 <head>
 <script src="./jsxcompressor.js" type="text/javascript"></script>
+</head>
 <body>
 <h1>Using the JSX Compressor</h1>
 <script type="text/javascript">
@@ -22,5 +23,6 @@ function jxgcompress($filename)
 
 eval(JXG.decompress(jxgcompressed));
 </script>
+</body>
 </html>
 

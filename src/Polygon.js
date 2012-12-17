@@ -39,7 +39,7 @@
 JXG.Polygon = function (board, vertices, attributes) {
     this.constructor(board, attributes, JXG.OBJECT_TYPE_POLYGON, JXG.OBJECT_CLASS_AREA);
 
-    var i, vertex, l,
+    var i, vertex, l, len, j,
         attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
     this.withLines = attributes.withlines;
@@ -65,7 +65,9 @@ JXG.Polygon = function (board, vertices, attributes) {
      */
     this.borders = [];
     if (this.withLines) {
-        for(i = 0; i < this.vertices.length - 1; i++) {
+        len = this.vertices.length - 1;
+        for(j = 0; j < len; j++) {
+            i = (j+1)%len;                                     // This sets the "correct" labels for the first triangle of a construction.
             attr_line.id = attr_line.ids && attr_line.ids[i];
             attr_line.strokecolor = JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length] || attr_line.strokecolor;
             if (attr_line.strokecolor===false) attr_line.strokecolor = 'none';
@@ -207,9 +209,10 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.visProp.visible = false;
         this.board.renderer.hide(this);
 
+        /*
         for(i = 0; i < this.borders.length; i++) {
             this.borders[i].hideElement();
-        }
+        }*/
 
         if (this.hasLabel && JXG.exists(this.label)) {
             this.label.hiddenByParent = true;
@@ -228,9 +231,10 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         this.visProp.visible = true;
         this.board.renderer.show(this);
 
+        /*
         for(i = 0; i < this.borders.length; i++) {
             this.borders[i].showElement();
-        }
+        }*/
 
         if (this.hasLabel && JXG.exists(this.label)) {
             if(this.label.content.visProp.visible) {
@@ -485,7 +489,7 @@ JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
      * @param {Array} coords coordinates in screen/user units
      * @param {Array} oldcoords previous coordinates in screen/user units
-     * @returns {JXG.Line}
+     * @returns {JXG.Polygon} this element
      */
     setPositionDirectly: function (method, coords, oldcoords) {
         var dc, t, i, len,

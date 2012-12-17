@@ -13,18 +13,24 @@ license = """/*
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
 */
     """
 
@@ -318,7 +324,7 @@ def makeReaders():
     print "Making Readers..."
     
     lic = ("/* Version %s */\n" % version) + license
-    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella']
+    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella', 'Sketch']
     for f in reader:
         fname = f + "Reader"
         shutil.copy("src/" + fname + ".js", "tmp/")
@@ -352,14 +358,15 @@ def makeRelease():
     shutil.copy(output + "/jsxgraphsrc.js", "tmp/jsxgraphsrc.js")
     shutil.copy("README.md", "tmp/README.md")
     shutil.copy("CHANGELOG.md", "tmp/CHANGELOG.md")
-    shutil.copy("LICENSE", "tmp/LICENSE")
+    shutil.copy("LICENSE.MIT", "tmp/LICENSE.MIT")
+    shutil.copy("LICENSE.LGPL", "tmp/LICENSE.LGPL")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
     
     makeReaders()
     
     shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE && cd ..")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE.MIT LICENSE.LGPL && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
 
 '''

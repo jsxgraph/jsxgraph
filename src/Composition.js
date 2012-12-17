@@ -2072,6 +2072,7 @@ JXG.createGrid = function (board, parents, attributes) {
             gridY = this.visProp.gridy,
             topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
             bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board),
+            start, end,
             i;
         //horizontal = [[], []], vertical = [[], []];
 
@@ -2104,15 +2105,32 @@ JXG.createGrid = function (board, parents, attributes) {
 
         c.dataX = [];
         c.dataY = [];
+        
+        // Sometimes the bounding box is used to invert the axis. We have to take this into account here.
+        start = topLeft.usrCoords[2];
+        end = bottomRight.usrCoords[2];
+        
+        if (topLeft.usrCoords[2] < bottomRight.usrCoords[2]) {
+            start = bottomRight.usrCoords[2];
+            end = topLeft.usrCoords[2];
+        }
 
         // start with the horizontal grid:
-        for (i = topLeft.usrCoords[2]; i > bottomRight.usrCoords[2] - gridY; i -= gridY) {
+        for (i = start; i > end - gridY; i -= gridY) {
             c.dataX.push(topLeft.usrCoords[1], bottomRight.usrCoords[1], NaN);
             c.dataY.push(i, i, NaN);
         }
 
+        start = topLeft.usrCoords[1];
+        end = bottomRight.usrCoords[1];
+        
+        if (topLeft.usrCoords[1] > bottomRight.usrCoords[1]) {
+            start = bottomRight.usrCoords[1];
+            end = topLeft.usrCoords[1];
+        }
+
         // build vertical grid
-        for (i = topLeft.usrCoords[1]; i < bottomRight.usrCoords[1] + gridX; i += gridX) {
+        for (i = start; i < end + gridX; i += gridX) {
             c.dataX.push(i, i, NaN);
             c.dataY.push(topLeft.usrCoords[2], bottomRight.usrCoords[2], NaN);
         }

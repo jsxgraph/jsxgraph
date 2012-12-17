@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <title></title>
+</head>
+<body>
+<div id="jxgbox" class="jxgbox" style="width: 500px; height: 500px;"></div>
+<script type="text/javascript">
+    
+    (function () {
+        'use strict';
+        
+        JXG.Options.renderer = 'canvas';
+        JXG.Options.text.display = 'internal';
+        
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5]}),
+            s = board.create('segment', [[-3, -2], [1, 3]], {dash: 2}),
+            p = board.create('point', [3, 4]);
+        
+        //If you select a point, its color will turn into red.
+        //It is not a problem in JXG.Options.renderer = 'canvas';
+        
+    }());
+</script>
+</body>
+</html>

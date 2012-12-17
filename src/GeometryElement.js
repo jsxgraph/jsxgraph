@@ -368,7 +368,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
         }
         return this;
     },
-
+    
     /**
      * Counts the direct children of an object without counting labels.
      * @private
@@ -934,6 +934,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
             this.label.content = JXG.createText(this.board, 
                 [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name], 
                 attr);
+            this.label.content.needsUpdate = true;
+            this.label.content.update();
 
             this.label.content.dump = false;
             this.label.color = this.label.content.visProp.strokecolor;

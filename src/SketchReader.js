@@ -53,8 +53,9 @@ JXG.extend(JXG, {
     GENTYPE_XYZ: 27, // unused ...
     GENTYPE_JCODE: 28,
     GENTYPE_MOVEMENT: 29,
+    GENTYPE_COMBINED: 30,
 
-    // 30 ... 32 // unused ...
+    // 31 ... 32 // unused ...
 
     GENTYPE_GRID: 33, // obsolete
 
@@ -64,7 +65,7 @@ JXG.extend(JXG, {
     GENTYPE_COPY: 42,
     GENTYPE_MIRROR: 43,
     GENTYPE_ROTATE: 44,
-    GENTYPE_TRANSLATE: 45,
+    GENTYPE_ABLATION: 45,
     GENTYPE_MIGRATE: 46,
     GENTYPE_TRANSFORM: 47,
 
@@ -104,30 +105,31 @@ JXG.extend(JXG, {
 
     SketchReader: {
 
+        generateJCodeMeta: function () {
+            return ['', '', '', ''];
+        },
+
+        id: function () {
+            return JXG.Util.genUUID();
+        },
+
         generator: {
             toFixed: 0,
             freeLine: false,
             useGlider: false,
             useSymbols: false
         },
-        // configure the generator below
-
-        generateJCodeMeta: function () {},
-
-        id: function () {
-            return JXG.Util.genUUID();
-        },
 
         generateJCode: function (step, board, step_log) {
 
             // step has to be an objectliteral of the form: { type, args, src_ids, dest_sub_ids, dest_id }
 
-            var options, assign, attrid, obj, type;
-
-            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, bo, arr,
-                xy, sxy, sxyc, step2, copy_log = [];
-
             var set_str = '', reset_str = '', ctx_set_str = '', ctx_reset_str = '';
+
+            var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3, xstart, ystart, el, arr,
+                step2, copy_log = [];
+
+            var options, assign, attrid, type;
 
             options = JXG.SketchReader.generator;
 
@@ -163,12 +165,12 @@ JXG.extend(JXG, {
             assign = '';
             attrid = 'id: \'' + step.dest_id + '\', ';
 
-            if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_TRANSLATE) {
+            if (JXG.exists(board) && options.useSymbols && step.type !== JXG.GENTYPE_ABLATION) {
                 attrid = '';
                 assign = step.dest_id + ' = ';
 
                 for (i = 0; i < step.src_ids.length; i++) {
-                    str = board.jc.findSymbol(getObject(step.src_ids[i]), 0); // Das Board wird hier immer benötigt!!!
+                    str = board.jc.findSymbol(getObject(step.src_ids[i]), 0);
 
                     if (str.length > 0) {
                         step.src_ids[i] = str[0];
@@ -201,11 +203,11 @@ JXG.extend(JXG, {
                     set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
                     set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleX;
-                    set_str += ', drawLabels: true>>>>; ';
+                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
                     set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
                     set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleY;
-                    set_str += ', drawLabels: true, drawZero: false>>>>; ';
+                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
 
                     set_str += step.dest_sub_ids[3] + '.visible = false; ';
                     set_str += step.dest_sub_ids[4] + '.visible = false; ';
@@ -328,6 +330,7 @@ JXG.extend(JXG, {
                         } else {
                             pid3 = step.src_ids[2];
                         }
+
                         set_str += assign + 'bisector(' + pid1 + ', ' + pid3 + ', ' + pid2 + ') ';
                         set_str += '<<' + attrid + 'point: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true, name: \'';
                         set_str += step.dest_sub_ids[0] + '\'>> >>;';
@@ -368,53 +371,82 @@ JXG.extend(JXG, {
                         set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += ') <<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
-                    reset_str = 'delete ' + step.dest_id + '; ';
+
+                    if (!(step.args && step.args.undoIsEmpty))
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
                     break;
 
                 case JXG.GENTYPE_INTERSECTION:
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
                     set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
+
+                    if (!(step.args && step.args.undoIsEmpty))
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_MIGRATE:
+
+                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+
+                    if (step.args && step.args.undoIsFreeing) {
+                        reset_str = step.dest_id + '.free(); ' + step.dest_id;
+                        reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id;
+                        reset_str += '.strokeColor = \'' + step.args.strokeColor + '\'; ';
+
+                        reset_str += 'point(' + step.dest_id + '.X(), ' + step.dest_id + '.Y())';
+                        reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
+
+                        reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + '); ';
+                    } else
+                        reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_COMBINED:
+
+                    console.log("missing src, dest IDs for COMBINED step");
+
+                    set_str = reset_str = '';
+
+                    for (i=0; i<step.args.steps.length; i++) {
+                        arr = this.generateJCode(step.args.steps[i], board, step_log);
+
+                        set_str = set_str + arr[0];
+                        reset_str = arr[2] + reset_str;
+                    }
+
+                    //console.log(set_str);
+                    //console.log(reset_str);
+
                     break;
 
                 case JXG.GENTYPE_CIRCLE:
                     reset_str = 'delete ' + step.dest_sub_ids[0] + '; ';
-/*
-                    if (step.args.create_point === true || step.args.create_midpoint === true) {
 
-                        if (step.args.create_point === true) {
-                            set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                            set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
-                        } else {
-                            set_str = 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'';
-                            set_str += step.dest_sub_ids[0] + '\', name: \'\', visible: true>>; ';
-                        }
-
-                        set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
-                        reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-*/                        
                     if (step.args.create_point === true) {
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
 
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                     } else if (step.args.create_by_radius === true) {
                         set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
                         set_str += step.dest_sub_ids[0] + '.visible = true; ';
                         set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                     } else {
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
                         set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
-                        set_str += '\', visible: true>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += '\', visible: true>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
+                        set_str += ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                     }
 
@@ -427,22 +459,22 @@ JXG.extend(JXG, {
                         set_str += 'point(' + pn(step.args.x2) + ', ' + pn(step.args.y2) + ') <<id: \'';
                         set_str += step.dest_sub_ids[1] + '\'>>; ';
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.dest_sub_ids[1] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
                         reset_str += step.dest_sub_ids[0] + '; ';
                     } else if (step.args.create_point === true) {
                         set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                         set_str += '\'>>; ';
                         set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                     } else if (step.args.create_by_radius === true) {
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.args.r + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; ';
                     } else {
                         set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                        set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
                         reset_str = 'delete ' + step.dest_id + '; ';
                     }
 
@@ -459,7 +491,7 @@ JXG.extend(JXG, {
                             str1[i] = pn(step.args.p1[i]);
 
                         set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: false, ';
-                        set_str += 'priv: true>>; ';
+                        set_str += 'snaptogrid: false, priv: true>>; ';
                         reset_str = 'delete ' + pid1 + '; ';
                     } else
                         pid1 = step.src_ids[j++];
@@ -471,7 +503,7 @@ JXG.extend(JXG, {
                             str1[i] = pn(step.args.p2[i]);
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
-                        set_str += 'priv: true>>; ';
+                        set_str += 'snaptogrid: false, priv: true>>; ';
                         reset_str = 'delete ' + pid2 + '; ' + reset_str;
                     } else
                         pid2 = step.src_ids[j++];
@@ -518,10 +550,15 @@ JXG.extend(JXG, {
                     // this is a corner case, we have to get rid of the ',' at the end
                     // simple solution: rebuild attrid
                     if (!options.useSymbols)
-                        attrid = ' id: \'' + step.dest_id + '\' ';
+                        attrid = 'id: \'' + step.dest_id + '\'';
 
                     set_str += assign + str + '(' + str2 + ')';
-                    set_str += (str1.length + attrid.length > 0 ? ' <<' + str1 + attrid + '>>' : '') + ';';
+
+                    if (str1.length + attrid.length > 0)
+                        set_str += ' <<' + str1 + attrid + ', snaptogrid: ' + GUI.snapToGrid + '>>;';
+                    else
+                        set_str += ' <<snaptogrid: ' + GUI.snapToGrid + '>>;';
+
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
 
                     break;
@@ -801,13 +838,13 @@ JXG.extend(JXG, {
 
                     break;
 
-                case JXG.GENTYPE_TRANSLATE:
+                case JXG.GENTYPE_ABLATION:
 
                     xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
                     ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
 
                     set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
-                    set_str += step.dest_sub_ids[0] + '\'>>; ';
+                    set_str += step.dest_sub_ids[0] + '\', withLabel: false>>; ';
                     set_str += 'circle(' + step.dest_sub_ids[0] + ', 1) <<id: \'' + step.dest_sub_ids[1];
                     set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', strokeColor: \'#888888\', visible: true>>; ';
 
@@ -821,16 +858,9 @@ JXG.extend(JXG, {
                     if (step.args.migrate != 0 && step.args.migrate != -1)
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     else
-                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; '; // a de-migration function is missing ...
+                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
 
                     reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
-
-                    break;
-
-                case JXG.GENTYPE_MIGRATE:
-
-                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
-                    reset_str += 'delete ' + step.dest_id + '; '; // as above: missing de-migration ...
 
                     break;
 
@@ -846,6 +876,7 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_MOVEMENT:
+
                     if (step.args.obj_type == JXG.OBJECT_TYPE_LINE) {
                         set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
                         set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
@@ -891,9 +922,15 @@ JXG.extend(JXG, {
                     break;
 
                 default:
-                    return;
-            }
+                    console.log(step.type);
 
+                    alert("No such GENTYPE!");
+                    return [ ];
+            }
+/*
+            console.log(set_str);
+            console.log(reset_str);
+*/
             return [ set_str, ctx_set_str, reset_str, ctx_reset_str ];
         },
 
@@ -947,7 +984,7 @@ JXG.extend(JXG, {
 
                 if (constr[i].type == 0)
                     continue;
-
+/*
                 // fix for files created with the beta version
                 if (constr[i].type == JXG.GENTYPE_CTX_VISIBILITY && constr[i].args.isGrid) {
                     //constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
@@ -959,34 +996,24 @@ JXG.extend(JXG, {
                     continue;
                 }
                 // end of fix
-/*
-                if (constr[i].type == 100) // Obsolete fix
-                    constr[i].type = JXG.GENTYPE_MOVEMENT;
 
-                if (constr[i].type == JXG.GENTYPE_MOVEMENT) {
-
-                    for (j=i+1; j<constr.length-1; j++) {
-                        if (constr[j].type == JXG.GENTYPE_MOVEMENT && JXG.Draw.areEqual(constr[i].src_ids,
-                            constr[j].src_ids)) {
-                            constr[i] = { type: 0, src_ids: [], dest_sub_ids: [], dest_id: 0 };
-                            break;
-                        }
-                    }
-
-                    if (j < constr.length-1)
-                        continue;
-                }
-*/
                 if (constr[i].type == 27) // Obsolete fix
                     constr[i].type = JXG.GENTYPE_DELETE;
 
                 if (constr[i].type == 31) // Obsolete fix
-                    constr[i].type = JXG.GENTYPE_TRANSLATE;
+                    constr[i].type = JXG.GENTYPE_ABLATION;
+*/
+                try {
+                    if (constr[i] > 50)
+                        arr = this.generateJCodeMeta(constr[i], board);
+                    else
+                        arr = this.generateJCode(constr[i], board, constr);
+                } catch(e) {
+                    console.log('#steps: ' + constr.length);
+                    console.log('step: ' + i + ', type: ' + constr[i].type);
+                    console.log(constr[i]);
+                }
 
-                if (constr[i] > 50)
-                    arr = this.generateJCodeMeta(constr[i], board);
-                else
-                    arr = this.generateJCode(constr[i], board, constr);
 
                 board.jc.parse(arr[0], true);
             }

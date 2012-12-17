@@ -132,32 +132,42 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
      */
     hasPoint: function (x, y, start) {
         var t, dist = Infinity,
-            c, trans, i, j, tX, tY,
-            xi, xi1, yi, yi1,
-            lbda, x0, y0, x1, y1, xy, den,
+            i, tX, tY,
+            xi, yi, x0, y0, x1, y1, xy, den, lbda, 
             steps = this.visProp.numberpointslow,
             d = (this.maxX()-this.minX())/steps,
             prec = this.board.options.precision.hasPoint/this.board.unitX,
             checkPoint, len,
-            suspendUpdate = true;
+            suspendUpdate = true,
+            invMat, c;
 
         prec = prec*prec;
         checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x,y], this.board);
         x = checkPoint.usrCoords[1];
         y = checkPoint.usrCoords[2];
-        if (this.visProp.curvetype=='parameter' || this.visProp.curvetype=='polar' || this.visProp.curvetype=='functiongraph') {
+        
+        if (this.transformations.length>0) {
+            /** 
+             * Transform the mouse/touch coordinates 
+             * back to the original position of the curve.
+             */
+            this.updateTransformMatrix();
+            invMat = JXG.Math.inverse(this.transformMat);
+            c = JXG.Math.matVecMult(invMat, [1, x, y]);
+            x = c[1];
+            y = c[2];
+        }
+        
+        if (this.visProp.curvetype=='parameter' 
+            || this.visProp.curvetype=='polar' 
+            || this.visProp.curvetype=='functiongraph') {
+            
             // Brute fore search for a point on the curve close to the mouse pointer
-            len = this.transformations.length;
+            
             for (i=0,t=this.minX(); i<steps; i++) {
                 tX = this.X(t,suspendUpdate);
                 tY = this.Y(t,suspendUpdate);
-                for (j=0; j<len; j++) {
-                    trans = this.transformations[j];
-                    trans.update();
-                    c = JXG.Math.matVecMult(trans.matrix,[1,tX,tY]);
-                    tX = c[1];
-                    tY = c[2];
-                }
+                
                 dist = (x-tX)*(x-tX)+(y-tY)*(y-tY);
                 if (dist<prec) { return true; }
                 t+=d;
@@ -169,34 +179,23 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
             len = this.numberPoints; // Rough search quality
             for (i=start;i<len-1;i++) {
                 xi  = this.X(i);
-                xi1 = this.X(i+1);
                 yi  = this.Y(i);
-                yi1 = this.Y(i+1);
-                for (j=0; j<this.transformations.length; j++) {
-                    trans = this.transformations[j];
-                    trans.update();
-                    c = JXG.Math.matVecMult(trans.matrix,[1,xi,yi]);
-                    xi = c[1];
-                    yi = c[2];
-                    c = JXG.Math.matVecMult(trans.matrix,[1,xi1,yi1]);
-                    xi1 = c[1];
-                    yi1 = c[2];
-                }
-
-                x1  = xi1 - xi;
-                y1  = yi1 - yi;
 
                 x0  = x - xi;
                 y0  = y - yi;
-                den = x1*x1+y1*y1;
 
+                x1  = this.X(i+1) - xi;
+                y1  = this.Y(i+1) - yi;
+                
+                den = x1*x1+y1*y1;
+                dist = x0*x0+y0*y0;
+                
                 if (den>=JXG.Math.eps) {
                     xy = x0*x1+y0*y1;
                     lbda = xy/den;
-                    dist = x0*x0+y0*y0 - lbda*xy;
+                    dist -= lbda*xy;
                 } else {
                     lbda = 0.0;
-                    dist = x0*x0+y0*y0;
                 }
                 if (lbda>=0.0 && lbda<=1.0 && dist<prec) {
                     return true;
@@ -278,6 +277,7 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         var len, mi, ma, x, y, i,
             suspendUpdate = false;
 
+        this.updateTransformMatrix();
         this.updateDataArray();
         mi = this.minX();
         ma = this.maxX();
@@ -312,11 +312,30 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 this.allocatePoints();  // It is possible, that the array length has increased.
                 this.updateParametricCurveNaive(mi, ma, this.numberPoints);
             }
+            len = this.numberPoints;
+            for (i=0; i<len; i++) {
+                this.updateTransform(this.points[i]);
+            }
         }
 
         return this;
     },
 
+    updateTransformMatrix: function() {
+        var t, c, i,
+            len = this.transformations.length;
+
+        this.transformMat = [[1,0,0], [0,1,0], [0,0,1]];
+        
+        for (i = 0; i < len; i++) {
+            t = this.transformations[i];
+            t.update();
+            this.transformMat = JXG.Math.matMatMult(t.matrix, this.transformMat);
+        }
+    
+        return this;
+    },
+    
     /**
      * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#visProp.doadvancedplot} is <tt>false</tt>.
      * @param {Number} mi Left bound of curve
@@ -332,7 +351,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
         for (i=0; i<len; i++) {
             t = mi+i*stepSize;
             this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t,suspendUpdate),this.Y(t,suspendUpdate)], false); // The last parameter prevents rounding in usr2screen().
-            this.updateTransform(this.points[i]);
             suspendUpdate = true;
         }
         return this;
@@ -462,7 +480,6 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
                 }
             }
             this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
-            this.updateTransform(this.points[j]);
             j++;
 
             x0 = x;
@@ -514,19 +531,25 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
     /**
      * Applies the transformations of the curve to the given point <tt>p</tt>.
+     * Before using it, {@link JXG.Curve#updateTransformMatrix} has to be called.
      * @param {JXG.Point} p
      * @returns {JXG.Point} The given point.
      */
     updateTransform: function (p) {
-        var t, c, i,
-            len = this.transformations.length;
-
+        var c, len = this.transformations.length;
+        /*
         for (i = 0; i < len; i++) {
             t = this.transformations[i];
             t.update();
             c = JXG.Math.matVecMult(t.matrix, p.usrCoords);
             p.setCoordinates(JXG.COORDS_BY_USER, [c[1], c[2]]);
         }
+        */
+        if (len>0) {
+            c = JXG.Math.matVecMult(this.transformMat, p.usrCoords);
+            p.setCoordinates(JXG.COORDS_BY_USER, [c[1], c[2]]);
+        }
+        
         return p;
     },
 
@@ -550,24 +573,70 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
     /**
      * Translates the object by <tt>(x, y)</tt>.
      * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-     * @param {Array} coords
+     * @param {Array} coords array of translation vector.
      * @returns {JXG.Curve} Reference to the curve object.
      */
     setPosition: function (method, coords) {
-        var t;
+        var t, obj, len=0, i;
+        
+        if (JXG.exists(this.parents)) {
+            len = this.parents.length;
+        }
+        
+        for (i=0; i<len; i++) {
+            obj = JXG.getRef(this.board, this.parents[i]);
+            
+            if (!obj.draggable()) {
+                return this;
+            }
+        }
+
+        /**
+         * We distinguish two cases:
+         * 1) curves which depend on free elements, i.e. arcs and sectors
+         * 2) other curves
+         *
+         * In the first case we simply transform the parents elements
+         * In the second case we add a transform to the curve.
+         */
 
         coords = new JXG.Coords(method, coords, this.board);
         t = this.board.create('transform', coords.usrCoords.slice(1),{type:'translate'});
         
-        if (this.transformations.length > 0 && this.transformations[this.transformations.length-1].isNumericMatrix) {
-            this.transformations[this.transformations.length-1].melt(t);
-        } else {
-            this.addTransform(t);
+        if (len>0) {   // First case
+            for (i=0; i<len; i++) {
+                obj = JXG.getRef(this.board, this.parents[i]);
+                t.applyOnce(obj);
+            }
+        } else {      // Second case
+            if (this.transformations.length > 0 
+                && this.transformations[this.transformations.length-1].isNumericMatrix) {
+            
+                this.transformations[this.transformations.length-1].melt(t);
+            } else {
+                this.addTransform(t);
+            }
         }
-        
         return this;
     },
 
+    /**
+     * Moves the cuvre by the difference of two coordinates.
+     * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+     * @param {Array} coords coordinates in screen/user units
+     * @param {Array} oldcoords previous coordinates in screen/user units
+     * @returns {JXG.Curve} this element
+     */
+    setPositionDirectly: function (method, coords, oldcoords) {
+        var c = new JXG.Coords(method, coords, this.board),
+            oldc = new JXG.Coords(method, oldcoords, this.board),
+            dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+            
+        this.setPosition(JXG.COORDS_BY_USER, dc);
+        
+        return this;
+    },
+    
     /**
      * Generate the method curve.X() in case curve.dataX is an array
      * and generate the method curve.Y() in case curve.dataY is an array.
@@ -656,54 +725,36 @@ JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         // Generate the methods X() and Y()
         if (JXG.isArray(xterm)) {
+            // Discrete data
             this.dataX = xterm;
             
             this.numberPoints = this.dataX.length;
             this.X = this.interpolationFunctionFromArray('X');
             this.visProp.curvetype = 'plot';
+            this.isDraggable = true;
         } else {
+            // Continuous data
             this.X = JXG.createFunction(xterm, this.board, varname);
             if (JXG.isString(xterm)) {
                 this.visProp.curvetype = 'functiongraph';
             } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
                 this.visProp.curvetype = 'parameter';
             }
+
+            this.isDraggable = true;
         }
 
         if (JXG.isArray(yterm)) {
             this.dataY = yterm;
             this.Y = this.interpolationFunctionFromArray('Y');
-            /*
-            this.Y = function(t) {
-                var i = parseInt(Math.floor(t)), f1, f2;
-                if (t<0) i = 0;
-                else if (t>this.dataY.length-2) i = this.dataY.length-2;
-                if (i==t) {
-                    if (JXG.isFunction(this.dataY[i])) {
-                        return this.dataY[i]();
-                    } else {
-                        return this.dataY[i];
-                    }
-                } else {
-                    if (JXG.isFunction(this.dataY[i])) {
-                        f1 = this.dataY[i]();
-                    } else {
-                        f1 = this.dataY[i];
-                    }
-                    if (JXG.isFunction(this.dataY[i+1])) {
-                        f2 = this.dataY[i+1]();
-                    } else {
-                        f2 = this.dataY[i+1];
-                    }
-                    return f1+(f2-f1)*(t-i);
-                }
-            };
-            */
         } else {
             this.Y = JXG.createFunction(yterm,this.board,varname);
         }
 
-        // polar form
+        /**
+          * Polar form
+          * Input data is function xterm() and offset coordinates yterm
+          */
         if (JXG.isFunction(xterm) && JXG.isArray(yterm)) {
             // Xoffset, Yoffset
             fx = JXG.createFunction(yterm[0],this.board,'');
