@@ -3167,22 +3167,20 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 		  i = dest.label.content.content;
 		  dest.label.content.content = src.label.content.content;
 		  src.label.content.content = i;
-		
+
 		  delete(dest.childElements[src.label]);		  
 		  delete(dest.descendants[src.label]);		  
 
 		  this.removeObject(src.label.content);
 		  this.removeObject(src);
-  
-		  //i = dest.label.content.plaintext;
-		  dest.label.content.plaintext = dest.name;//src.label.content.plaintext;
-		  //src.label.content.plaintext = i;
 
-		  //i = dest.label.content.htmlStr;
-		  dest.label.content.htmlStr = dest.name;//src.label.content.htmlStr;
-		  //src.label.content.htmlStr = i;
-
- 		  this.elementsByName[dest.name] = dest;
+	  	  // The following dest.* calls are all of no effect!
+		  
+		  dest.label.content.plaintext = dest.name;
+		  dest.label.content.htmlStr = dest.name;
+	  	  dest.setAttribute({name: dest.name});
+ 		  
+		  this.elementsByName[dest.name] = dest;
 
         this.update();
         return this;
