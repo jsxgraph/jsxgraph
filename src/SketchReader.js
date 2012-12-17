@@ -391,12 +391,7 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_MIGRATE:
 
-                    if (step.args && step.args.undoIsFreeing)
-                        set_str = step.dest_id + '.name = ' + step.src_ids[0] + '.getName(); ';
-                    else
-                        set_str = '';
-
-                    set_str += '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
 
                     if (step.args && step.args.undoIsFreeing) {
                         reset_str = step.dest_id + '.free(); ' + step.dest_id;
@@ -413,6 +408,8 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_COMBINED:
+
+                    console.log("missing src, dest IDs for COMBINED step");
 
                     set_str = reset_str = '';
 

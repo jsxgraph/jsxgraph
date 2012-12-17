@@ -994,8 +994,8 @@ JXG.extend(JXG, /** @lends JXG */ {
             start = str.indexOf('(');
             if (start>0) {
                 len = str.length;
-                arrstr = str.substring(start+1,len-1);
-                arr = arrstr.split(',');
+                arrStr = str.substring(start+1,len-1);
+                arr = arrStr.split(',');
                 for (j=0, len2=arr.length; j<len2; j++) {
                     arr[j] = parseFloat(arr[j]);
                 }

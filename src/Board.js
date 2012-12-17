@@ -3120,7 +3120,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     migratePoint: function(src, dest) {
-        var child, childId, prop, found, i;
+        var child, childId, prop, found, i, t, n;
 
         src = JXG.getRef(this, src);
         dest = JXG.getRef(this, dest);
@@ -3130,15 +3130,6 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 child = src.childElements[childId];
                 found = false;
 
-                /**
-                 * Remove the src label and thus prevent 
-                 * copying it to dest.
-                 */
-                if (src.label && child===src.label.content) {
-                    this.removeObject(child);
-                    continue;
-                }
-                    
                 for (prop in child) {
                     if (child.hasOwnProperty(prop)) {
                         if (child[prop] ===  src) {
@@ -3161,7 +3152,25 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 dest.addChild(child);
             }
         }
+
+        // The destination object should receive the name
+        // and the label of the originating (src) object
+
+        i = dest.name;
+        dest.name = src.name;
+        src.name = i;
+
+        i = dest.nameHTML;
+        dest.nameHTML = src.nameHTML;
+        src.nameHTML = i;
+
+        i = dest.label.content;
+        dest.label.content = src.label.content;
+        src.label.content = i;
+
         this.removeObject(src);
+        this.elementsByName[dest.name] = dest;
+
         this.update();
         return this;
     },
