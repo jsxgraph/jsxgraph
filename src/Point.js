@@ -551,18 +551,22 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * @returns {Number} Distance in user coordinate to the given point
      */
     Dist: function(point2) {
-        var sum,
+        var sum, f, r = NaN,
             c = point2.coords.usrCoords,
-            ucr = this.coords.usrCoords,
-            f;
-                        
-        f = ucr[0]-c[0];
-        sum = f*f;
-        f = ucr[1]-c[1];
-        sum += f*f;
-        f = ucr[2]-c[2];
-        sum += f*f;
-        return Math.sqrt(sum);
+            ucr = this.coords.usrCoords;
+        
+        if (this.isReal && point2.isReal) {
+            f = ucr[0]-c[0];
+            sum = f*f;
+            f = ucr[1]-c[1];
+            sum += f*f;
+            f = ucr[2]-c[2];
+            sum += f*f;
+            
+            r = Math.sqrt(sum);
+        }
+        
+        return r;
     },
 
     snapToGrid: function () {
