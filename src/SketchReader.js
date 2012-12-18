@@ -969,7 +969,7 @@ JXG.extend(JXG, {
         },
 
         readSketch: function (str, board) {
-            var i, j, arr, json_obj, unzipped, meta, constr;
+            var i, j, t, arr, json_obj, unzipped, meta, constr;
 
             unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
 
@@ -980,7 +980,14 @@ JXG.extend(JXG, {
             unzipped = JXG.Util.utf8Decode(unzipped[0][0]);
             constr = JSON.parse(unzipped);
 
-            for (i = 0; i < constr.length - 1; i++) {
+            meta = constr.pop();
+           
+				if (typeof meta.unredo == 'undefined')
+			 		t = constr.length-1;
+				else
+					t = meta.unredo;
+		
+				for (i = 0; i <= t; i++) {
 
                 if (constr[i].type == 0)
                     continue;
@@ -1018,7 +1025,6 @@ JXG.extend(JXG, {
                 board.jc.parse(arr[0], true);
             }
 
-            meta = constr.pop();
 
             // not yet :(
             //if (meta.axisVisible)
