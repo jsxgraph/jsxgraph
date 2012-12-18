@@ -60,10 +60,13 @@ JXG.Options.point.label = {};
     //var l = brd.create('line', [-1,1,0]);
     var p1 = brd.create('point', [1,1], {withLabel:true});
     var p2 = brd.create('point', [3,0]);
+brd.migratePoint(p1, p2);
+    
+/*    
     var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
     var a1 = brd.create('arc', [p1,p2,p3], {fixed:false});
-
+*/
     /*
     var p4 = brd.create('point', [4,1]);
     var p5 = brd.create('point', [2,0]);
@@ -87,7 +90,7 @@ JXG.Options.point.label = {};
         });
     */
     
-    
+/*    
     var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
     var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
     brd.create('glider', [1,1, c1]);
@@ -103,6 +106,8 @@ JXG.Options.point.label = {};
     
     brd.renderer.createTouchpoints(6);
     //brd.renderer.showTouchpoint(2);
+*/
+
     
 </script> 
 </body>
