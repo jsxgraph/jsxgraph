@@ -3155,6 +3155,8 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // The destination object should receive the name
         // and the label of the originating (src) object
+        delete(dest.childElements[src.label.content.id]);
+        delete(dest.descendants[src.label.content.id]);
         this.removeObject(dest.label.content);
         delete(this.elementsByName[dest.name]);
         dest.name = src.name;
