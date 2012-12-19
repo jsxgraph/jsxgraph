@@ -881,7 +881,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
          * no parameters and returning one third of the length of the points. 
          */
         bezier: function(points) {
-            var len,
+            var len, flen,
                 makeFct = function(which) {
                     return function(t, suspendedUpdate) {
                         var z = Math.floor(t) * 3,
@@ -889,14 +889,15 @@ JXG.Math.Numerics = (function(JXG, Math) {
                             t1 = 1 - t0;
 
                         if (!suspendedUpdate) {
-                            len = Math.floor(points.length / 3);
+                            flen = 3 * Math.floor( (points.length-1) / 3);
+                            len = Math.floor(flen / 3);
                         }
 
                         if (t < 0) {
                             return points[0][which]();
                         }
                         if (t >= len) {
-                            return points[points.length - 1][which]();
+                            return points[ flen ][which]();
                         }
                         if (isNaN(t)) {
                             return NaN;
