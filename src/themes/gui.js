@@ -13,60 +13,61 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
     lastRegPolCorners: 3,
 
     angle: {
-		fillColor: '#ddd',
-		strokeColor: '#000'
-	},
+        fillColor: '#ddd',
+        strokeColor: '#000',
+        orthotype: 'sectordot'
+    },
 
     glider : {
-   		fillColor: '#ff0',
-   		strokeColor: '#000'
-   	},
+        fillColor: '#ff0',
+        strokeColor: '#000'
+    },
 
-	intersection: {
-		fillColor: '#fff'
-	},
+    intersection: {
+        fillColor: '#fff'
+    },
 
-	point: {
-		size: 4,
-		fillColor:   '#c00',
-		strokeColor: '#000',
+    point: {
+        size: 4,
+        fillColor:   '#c00',
+        strokeColor: '#000',
 
-		// snap on majorTicks
+        // snap on majorTicks
 
-		snapX: -1,
-		snapY: -1
-	},
+        snapX: -1,
+        snapY: -1
+    },
 
-	polygon: {
-		fillColor: '#ffff00',
-		highlightFillColor: '#ffff00',
-		hasInnerPoints: false
-	},
+    polygon: {
+        fillColor: '#ffff00',
+        highlightFillColor: '#ffff00',
+        hasInnerPoints: false
+    },
 
-	precision: {
-		touchMax: Infinity
-	},
+    precision: {
+        touchMax: Infinity
+    },
 
-	segment: {
-		label: {
-			position: 'bot',
-			offsets: [0,-12]
-		}
-	}
+    segment: {
+        label: {
+            position: 'bot',
+            offsets: [0,-12]
+        }
+    }
 /*
     line: {
         strokeColor: '#f00' // can't see red lines anymore for NOW ...
     },
 
-	slider: {
-		point1: { needsRegularUpdate: true },
-		point2: { needsRegularUpdate: true },
-		baseline: { needsRegularUpdate: true },
-		highline: { needsRegularUpdate: true },
-		ticks: { needsRegularUpdate: true }
-	},
+    slider: {
+        point1: { needsRegularUpdate: true },
+        point2: { needsRegularUpdate: true },
+        baseline: { needsRegularUpdate: true },
+        highline: { needsRegularUpdate: true },
+        ticks: { needsRegularUpdate: true }
+    },
 
-	renderer: 'canvas'
+    renderer: 'canvas'
 */
 });
 
