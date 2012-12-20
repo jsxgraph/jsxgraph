@@ -348,7 +348,13 @@ JXG.Options = {
             strokeOpacity : 0.8,
             fillOpacity : 0.8,
             strokeWidth : 1
-        }
+        },
+        
+        /**
+         * @private
+         * By default, an element is not a label. Do not change this.
+         */
+        isLabel: false
         // close the meta tag
         /**#@-*/
     },
