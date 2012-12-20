@@ -114,7 +114,7 @@ JXG.extend(JXG, {
         },
 
         generator: {
-            toFixed: 0,
+            toFixed: 8, // should be enough for now ...
             freeLine: false,
             useGlider: false,
             useSymbols: false
