@@ -60,26 +60,21 @@ JXG.Options.point.label = {};
     //var l = brd.create('line', [-1,1,0]);
     var p1 = brd.create('point', [1,1], {withLabel:true});
     var p2 = brd.create('point', [3,0]);
-    brd.migratePoint(p1, p2);
+    //brd.migratePoint(p1, p2);
     
-/*    
     var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
     var a1 = brd.create('arc', [p1,p2,p3], {fixed:false});
-*/
-    /*
+
     var p4 = brd.create('point', [4,1]);
     var p5 = brd.create('point', [2,0]);
     var p6 = brd.create('point', [3,3]);
     var a2 = brd.create('arc', [p4,p6,p5]);
-    */
-    
-    /*
+
     var i1 = brd.create('intersection', [a1,a2,0], {visible:false});
     var i2 = brd.create('intersection', [a1,a2,1], {visible:false});
-    */
+
     // Create two arcs surroundng the intersection area
-    /*
     var c1 = brd.create('arc', [p1, i1, i2], {visible:false});
     var c2 = brd.create('arc', [p4, i2, i1], {visible:false});
     // Join the two arcs.
@@ -88,26 +83,15 @@ JXG.Options.point.label = {};
             strokeWidth:3, 
             fillColor:'yellow', fillOpacity:0.2
         });
-    */
     
-/*    
     var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
     var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
-    brd.create('glider', [1,1, c1]);
-    brd.create('glider', [2,1, e1]);
-    brd.create('glider', [1,1, a1]);
+    brd.create('glider', [1,1, c1],{color:'blue'});
+    brd.create('glider', [2,1, e1],{color:'blue'});
+    brd.create('glider', [1,1, a1],{color:'blue'});
+    
     brd.update();
     
-    translate = function() {
-        c1.setPosition(JXG.COORDS_BY_USER, [1,0,2]);
-        a1.setPosition(JXG.COORDS_BY_USER, [1,0]);
-        brd.update();
-    };
-    
-    brd.renderer.createTouchpoints(6);
-    //brd.renderer.showTouchpoint(2);
-*/
-
     
 </script> 
 </body>

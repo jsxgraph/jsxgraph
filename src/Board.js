@@ -775,27 +775,32 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             // compute the difference vector.
             o.targets[0].Xprev = newPos.scrCoords[1];
             o.targets[0].Yprev = newPos.scrCoords[2];
-            this.update(drag);
+            //this.update(drag);
+            drag.prepareUpdate().update(false).updateRenderer();  
         } else if (drag.type === JXG.OBJECT_TYPE_GLIDER) {
-            oldCoords = drag.coords;
+            oldCoords = drag.coords;  // Used in group mode
 
             // First the new position of the glider is set to the new mouse position
             drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords.slice(1));
 
-            // Then, from this position we compute the projection to the object the glider on which the glider lives.
-            if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
-                drag.coords = JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this);
-            } else if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_LINE) {
-                drag.coords = JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this);
-            }
-
             // Now, we have to adjust the other group elements again.
             if (drag.group.length !== 0) {
+                // Then, from this position we compute the projection to the object the glider on which the glider lives.
+                // Do we really need this?
+                if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                    drag.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this).usrCoords, false);
+                } else if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_LINE) {
+                    drag.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this).usrCoords, false);
+                }
+
                 drag.group[drag.group.length - 1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
                 drag.group[drag.group.length - 1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
                 drag.group[drag.group.length - 1].update(this);
             } else {
-                this.update(drag);
+                // This update triggers Point.updateGlider() instead of Point.updateGliderFromParent():
+                // 
+                //this.update(drag);
+                drag.prepareUpdate().update(false).updateRenderer();  
             }
         }
 
@@ -804,6 +809,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.updateInfobox(drag);
         this.update();
         drag.highlight(true);
+
     },
 
     /**

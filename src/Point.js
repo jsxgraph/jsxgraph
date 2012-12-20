@@ -162,7 +162,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
          * This function is called with fromParent==true for example if
          * the defining elements of the line or circle have been changed.
          */
-        if(this.type == JXG.OBJECT_TYPE_GLIDER) {
+        if(this.type === JXG.OBJECT_TYPE_GLIDER) {
             if (fromParent) {
                 this.updateGliderFromParent();
             } else {
@@ -204,7 +204,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             cp, c, invMat;
 
         if (slide.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
-            this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);            
             this.position = JXG.Math.Geometry.rad([slide.center.X()+1.0,slide.center.Y()],slide.center,this);
         } else if (slide.elementClass == JXG.OBJECT_CLASS_LINE) {
 
@@ -254,7 +254,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.coords.setCoordinates(JXG.COORDS_BY_USER, p1c);
                 this.position = 0.0;
             } else {
-                this.coords = JXG.Math.Geometry.projectPointToLine(this, slide, this.board);
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToLine(this, slide, this.board).usrCoords, false);
                 if (Math.abs(p2c[0])<JXG.Math.eps) {                 // The second point is an ideal point
                     i = 1;
                     d = p2c[i];
@@ -317,13 +317,14 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         } else if (slide.type == JXG.OBJECT_TYPE_TURTLE) {
             this.updateConstraint(); // In case, the point is a constrained glider.
-            this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board);  // side-effect: this.position is overwritten
+             // side-effect: this.position is overwritten
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false); 
         } else if(slide.elementClass == JXG.OBJECT_CLASS_CURVE) {
                         
             if ((slide.type == JXG.OBJECT_TYPE_ARC 
                 || slide.type == JXG.OBJECT_TYPE_SECTOR)) {
                                 
-                this.coords  = JXG.Math.Geometry.projectPointToCircle(this, slide, this.board);
+                this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
 
                 angle = JXG.Math.Geometry.rad(slide.radiuspoint, slide.center, this);
                 alpha = 0.0;
@@ -358,13 +359,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                     this.position = c[1];      // side effect !
                     this.coords = c[0];
                 } else {
-                    this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  
                     // side-effect: this.position is overwritten
+                    this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);  
                 }
             }
                         
         } else if(slide.elementClass == JXG.OBJECT_CLASS_POINT) {
-            this.coords  = JXG.Math.Geometry.projectPointToPoint(this, slide, this.board);
+            this.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
         }
     },
 
@@ -379,10 +380,10 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
 
         if(slide.elementClass == JXG.OBJECT_CLASS_CIRCLE) {
             r = slide.Radius();
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [
-                    slide.center.X() + r*Math.cos(this.position),
-                    slide.center.Y() + r*Math.sin(this.position)
-                ]);
+            c = [
+                slide.center.X() + r*Math.cos(this.position),
+                slide.center.Y() + r*Math.sin(this.position)
+                ];
         } else if(slide.elementClass == JXG.OBJECT_CLASS_LINE) {
             p1c = slide.point1.coords.usrCoords;
             p2c = slide.point2.coords.usrCoords;
@@ -392,11 +393,11 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 if (this.position < 0) {
                     lbda *= -1.0;
                 }
-                this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                c = [
                     p1c[0] + lbda*p2c[0],
                     p1c[1] + lbda*p2c[1],
                     p1c[2] + lbda*p2c[2]
-                ]);
+                    ];
             } else if (Math.abs(p1c[0])<JXG.Math.eps) {                 // The first point is an ideal point
                 lbda = Math.max(this.position, JXG.Math.eps);
                 lbda = Math.min(lbda, 2.0-JXG.Math.eps);
@@ -405,42 +406,45 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 } else {
                     lbda = (1.0-lbda)/lbda;
                 }
-                this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                c = [
                     p2c[0] + lbda*p1c[0],
                     p2c[1] + lbda*p1c[1],
                     p2c[2] + lbda*p1c[2]
-                ]);
+                    ];
             } else {
                 lbda = this.position;
-                this.coords.setCoordinates(JXG.COORDS_BY_USER, [
+                c = [
                     p1c[0] + lbda*(p2c[0]-p1c[0]),
                     p1c[1] + lbda*(p2c[1]-p1c[1]),
                     p1c[2] + lbda*(p2c[2]-p1c[2])
-                ]);
+                    ];
             }
         } else if(slide.type == JXG.OBJECT_TYPE_TURTLE) {
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
             this.updateConstraint(); // In case, the point is a constrained glider.
-            this.coords  = JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board);  // side-effect: this.position is overwritten
+            // side-effect: this.position is overwritten:
+            c  = JXG.Math.Geometry.projectPointToTurtle(this, slide, this.board).usrCoords;  
+            
         } else if(slide.elementClass == JXG.OBJECT_CLASS_CURVE) {
             this.coords.setCoordinates(JXG.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
                         
             if (slide.type == JXG.OBJECT_TYPE_ARC || slide.type == JXG.OBJECT_TYPE_SECTOR) {
                 alpha = JXG.Math.Geometry.rad([slide.center.X()+1, slide.center.Y()], slide.center, slide.radiuspoint);
                 r = slide.Radius();
-                this.coords.setCoordinates(JXG.COORDS_BY_USER, [
-                        slide.center.X() + r*Math.cos(this.position+alpha),
-                        slide.center.Y() + r*Math.sin(this.position+alpha)
-                    ]);
+                c = [
+                    slide.center.X() + r*Math.cos(this.position+alpha),
+                    slide.center.Y() + r*Math.sin(this.position+alpha)
+                    ];
             } else {
                 this.updateConstraint(); // In case, the point is a constrained glider.
-                this.coords  = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board);  
                 // side-effect: this.position is overwritten
+                c = JXG.Math.Geometry.projectPointToCurve(this, slide, this.board).usrCoords;  
             }
                         
         } else if(slide.elementClass == JXG.OBJECT_CLASS_POINT) {
-            this.coords  = JXG.Math.Geometry.projectPointToPoint(this, slide, this.board);
+            c = JXG.Math.Geometry.projectPointToPoint(this, slide, this.board).usrCoords;
         }
+        this.coords.setCoordinates(JXG.COORDS_BY_USER, c, false);
     },
 
     /**
