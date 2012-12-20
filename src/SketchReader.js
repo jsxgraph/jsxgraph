@@ -368,7 +368,7 @@ JXG.extend(JXG, {
                     if (options.useGlider) {
                         set_str = assign + 'glider(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ', ' + step.src_ids[0] + ')';
-                        set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\'>>') + ';';
+                        set_str += ( options.useSymbols ? '' : '<<id: \'' + step.dest_id + '\', snaptogrid: false>>') + ';';
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ') <<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
