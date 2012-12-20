@@ -663,15 +663,23 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // position of mouse cursor relative to containers position of container
         absPos = JXG.getPosition(e, i);
-
-        /*
-        v = [1, absPos[0], absPos[1]];
+        
+        /**
+         * In case there has been no down event before.
+         */
+        if (!JXG.exists(this.cssTransMat)) {
+            this.updateCSSTransforms();
+        }
+        v = [1, absPos[0]-cPos[0], absPos[1]-cPos[1]];
         v = JXG.Math.matVecMult(this.cssTransMat, v);
         v[1] /= v[0];
-        v[2] /= v[1];
-        return [v[1]-cPos[0], v[2]-cPos[1]];
-        */
+        v[2] /= v[0];
+        return [v[1], v[2]];
+        
+        // Method without CSS transformation
+        /*
         return [absPos[0] - cPos[0], absPos[1] - cPos[1]];
+        */
     },
 
     /**
@@ -3221,7 +3229,12 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
     
     /**
-     * Update CSS transformations
+     * Update CSS transformations of sclaing type. It is used to correct the mouse position
+     * in {@link JXG.Board#getMousePosition}.
+     * The inverse transformation matrix is updated on each mouseDown and touchStart event.
+     * 
+     * It is up to the user to call this method after an update of the CSS transformation
+     * in the DOM.
      */
     updateCSSTransforms: function () {
         var obj = this.containerObj,

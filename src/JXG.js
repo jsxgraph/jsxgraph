@@ -966,7 +966,9 @@ JXG.extend(JXG, /** @lends JXG */ {
 
     /**
      * Correct position of upper left corner in case of 
-     * a CSS transformation.
+     * a CSS transformation. Here, only translations are
+     * extracted. All scaling transformations are corrected 
+     * in {@link JXG.Board#getMousePosition}. 
      * @param {Array} cPos Previously determined position
      * @param {Object} obj A DOM element
      * @returns {Array} The corrected position.
@@ -975,7 +977,7 @@ JXG.extend(JXG, /** @lends JXG */ {
         var t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
             i, j, str, arrStr, 
             start, len, len2,
-            arr, mat;
+            arr; // mat;
             
         // Take the first transformation matrix
         len = t.length;
@@ -999,10 +1001,12 @@ JXG.extend(JXG, /** @lends JXG */ {
                 for (j=0, len2=arr.length; j<len2; j++) {
                     arr[j] = parseFloat(arr[j]);
                 }
-            
+
                 if (0==str.indexOf('matrix')) {    
+                    /*
                     mat = [[arr[0], arr[1]],
                            [arr[2], arr[3]]];
+                    */
                     //cPos = JXG.Math.matVecMult(mat, cPos);
                     cPos[0] += arr[4];
                     cPos[1] += arr[5];
@@ -1013,29 +1017,16 @@ JXG.extend(JXG, /** @lends JXG */ {
                 } else if (0==str.indexOf('translate')) {    
                     cPos[0] += arr[0];
                     cPos[1] += arr[1];
-                // The following trannsformations do not work
-                // and require more tests.
-                // Missing are rotate, skew, skewX, skewY
-                } else if (0==str.indexOf('scaleX')) {    
-                    mat = [[arr[0], 0],
-                           [0, 1]];
-                    cPos = JXG.Math.matVecMult(mat, cPos);
-                } else if (0==str.indexOf('scaleY')) {    
-                    mat = [[1, 0],
-                           [0, arr[0]]];
-                    cPos = JXG.Math.matVecMult(mat, cPos);
-                } else if (0==str.indexOf('scale')) {    
-                    mat = [[arr[0], 0],
-                           [0, arr[1]]];
-                    cPos = JXG.Math.matVecMult(mat, cPos);
-                }
+                } 
             }
         }
         return cPos;
     },
 
     /**
-     * TODO
+     * Scaling CSS transformations applied to the div element containing the JSXGraph constructions 
+     * are determined. Not implemented are 'rotate', 'skew', 'skewX', 'skewY'.
+     * @returns {Array} 3x3 transformation matrix. See {@link JXG.Board#updateCSSTransforms}.
      */
     getCSSTransformMatrix: function(obj) {
         var t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
@@ -1068,15 +1059,8 @@ JXG.extend(JXG, /** @lends JXG */ {
             
                 if (0==str.indexOf('matrix')) {  
                     mat = [[1, 0, 0],
-                           [arr[4], arr[0], arr[1]],
-                           [arr[5], arr[2], arr[3]]];
-                } else if (0==str.indexOf('translateX')) {    
-                    mat[1][0] = arr[0];
-                } else if (0==str.indexOf('translateY')) {    
-                    mat[2][0] = arr[0];
-                } else if (0==str.indexOf('translate')) {    
-                    mat[1][0] = arr[0];
-                    mat[2][0] = arr[1];
+                           [0, arr[0], arr[1]],
+                           [0, arr[2], arr[3]]];
                 // Missing are rotate, skew, skewX, skewY
                 } else if (0==str.indexOf('scaleX')) { 
                     mat[1][1] = arr[0];
