@@ -798,7 +798,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
      * Converts a glider into a free point.
      */
     free: function () {
-        var anc, child;
+        var ancestorId, ancestor, child;
 
         if (this.type !== JXG.OBJECT_TYPE_GLIDER) {
             if (!this.isDraggable) {
@@ -824,23 +824,27 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
             }
         }
 
-        for (anc in this.ancestors) {
-            if (this.ancestors[anc].descendants && this.ancestors[anc].descendants[this.id])
-                delete this.ancestors[anc].descendants[this.id];
-          
-            if (this.ancestors[anc].childElements && this.ancestors[anc].childElements[this.id])
-                delete this.ancestors[anc].childElements[this.id];
-                        
-            for (child in this.descendants) {
-                if (this.ancestors[anc].descendants && this.ancestors[anc].descendants[child])
-                    delete this.ancestors[anc].descendants[child];
-              
-                if (this.ancestors[anc].childElements && this.ancestors[anc].childElements[child])
-                    delete this.ancestors[anc].childElements[child];
+        // a free point does not depend on anything. And instead of running through tons of descendants and ancestor
+        // structures, where we eventually are going to visit a lot of objects twice or thrice with hard to read and
+        // comprehend code, just run once through all objects and delete all references to this point and its label.
+        for (ancestorId in this.board.objects) {
+            if (this.board.objects.hasOwnProperty(ancestorId)) {
+                ancestor = this.board.objects[ancestorId];
+                
+                if (ancestor.descendants) {
+                    delete ancestor.descendants[this.id];
+                    delete ancestor.childElements[this.id];
+                    
+                    if (this.hasLabel) {
+                        delete ancestor.descendants[this.label.content.id];
+                        delete ancestor.childElements[this.label.content.id];
+                    }
+                }
             }
         }
 
-        this.ancestors = []; // only remove the reference
+        // A free point does not depend on anything. Remove all ancestors.
+        this.ancestors = {}; // only remove the reference
 
         this.slideObject = null;
         this.elType = 'point';
