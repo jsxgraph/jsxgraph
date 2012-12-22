@@ -92,7 +92,33 @@ JXG.Options.point.label = {};
     
     brd.update();
     
+    var getMouseCoords = function(e) {
+        var cPos = brd.getCoordsTopLeftCorner(e),
+            absPos = JXG.getPosition(e),
+            dx = absPos[0]-cPos[0],
+            dy = absPos[1]-cPos[1];
+ 
+        return new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], brd);
+    },
     
+    up = function(e) {
+        var canCreate = true,
+            coords = getMouseCoords(e),
+            el;
+ 
+        for (el in brd.objects) {
+            if(JXG.isPoint(brd.objects[el]) && brd.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
+                canCreate = false;
+                break;
+            }
+        }
+ 
+        if (canCreate) {
+            brd.create('point', [coords.usrCoords[1], coords.usrCoords[2]]);
+        }
+    };
+ 
+    brd.addHook(up, 'mouseup');    
 </script> 
 </body>
 </html>

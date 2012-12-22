@@ -1208,7 +1208,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     clickLeftArrow: function () {
         this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth * 0.1, this.origin.scrCoords[2]);
-        return this;
+        return false;
     },
 
     /**
@@ -1217,7 +1217,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     clickRightArrow: function () {
         this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth * 0.1, this.origin.scrCoords[2]);
-        return this;
+        return false;
     },
 
     /**
@@ -1226,7 +1226,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     clickUpArrow: function () {
         this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight * 0.1);
-        return this;
+        return false;
     },
 
     /**
@@ -1235,7 +1235,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      */
     clickDownArrow: function () {
         this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight * 0.1);
-        return this;
+        return false;
     },
 
     /**
@@ -2229,7 +2229,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.zoomY *= zY;
         this.applyZoom();
 
-        return this;
+        return false;
     },
 
     /**
@@ -2245,7 +2245,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             lr = 0.5, tr = 0.5;
 
         if (this.zoomX < JXG.Options.zoom.eps || this.zoomY < JXG.Options.zoom.eps) {
-            return this;
+            return false;
         }
 
         if (typeof x === 'number' && typeof y === 'number') {
@@ -2258,7 +2258,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.zoomY /= zY;
 
         this.applyZoom();
-        return this;
+        return false;
     },
 
     /**
@@ -2274,7 +2274,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.zoomX = 1.0;
         this.zoomY = 1.0;
         this.applyZoom();
-        return this;
+        return false;
     },
 
     /**

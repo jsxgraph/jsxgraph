@@ -1135,6 +1135,18 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 button.appendChild(document.createTextNode(label));
                 /* button.innerHTML = label; */ // Does not work in XHTML
                 JXG.addEvent(button, 'click', handler, board);
+                JXG.addEvent(button, 'mouseup', 
+                    function(e) {
+                        if (!e) e = window.event;
+                        if (e.stopPropagation) { e.stopPropagation(); } // Non IE<=8
+                        else { e.cancelBubble = true; };
+                    }, board);
+                JXG.addEvent(button, 'touchend', 
+                    function(e) {
+                        if (!e) e = window.event;
+                        if (e.stopPropagation) { e.stopPropagation(); } // Non IE<=8
+                        else { e.cancelBubble = true; };
+                    }, board);
             };
 
         doc = board.containerObj.ownerDocument;
