@@ -1127,6 +1127,18 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
     drawZoomBar: function (board) {
         var doc,
             node,
+            cancelbubble = function (e) {
+                if (!e) {
+                    e = window.event;
+                }
+
+                if (e.stopPropagation) {
+                    // Non IE<=8
+                    e.stopPropagation();
+                } else {
+                    e.cancelBubble = true;
+                }
+            },
             createButton = function (label, handler) {
                 var button;
 
@@ -1135,18 +1147,12 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 button.appendChild(document.createTextNode(label));
                 /* button.innerHTML = label; */ // Does not work in XHTML
                 JXG.addEvent(button, 'click', handler, board);
-                JXG.addEvent(button, 'mouseup', 
-                    function(e) {
-                        if (!e) e = window.event;
-                        if (e.stopPropagation) { e.stopPropagation(); } // Non IE<=8
-                        else { e.cancelBubble = true; };
-                    }, board);
-                JXG.addEvent(button, 'touchend', 
-                    function(e) {
-                        if (!e) e = window.event;
-                        if (e.stopPropagation) { e.stopPropagation(); } // Non IE<=8
-                        else { e.cancelBubble = true; };
-                    }, board);
+
+                // prevent the click from bubbling down to the board
+                JXG.addEvent(button, 'mouseup', cancelbubble, board);
+                JXG.addEvent(button, 'mousedown', cancelbubble, board);
+                JXG.addEvent(button, 'touchend', cancelbubble, board);
+                JXG.addEvent(button, 'touchstart', cancelbubble, board);
             };
 
         doc = board.containerObj.ownerDocument;
