@@ -3051,7 +3051,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board
      */
     animate: function () {
-        var count = 0,
+        var count = 0, props,
             el, o, newCoords, r, p, c,
             obj=null, cbtmp;
 
@@ -3090,7 +3090,9 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                                 delete(o.animationData[p]);
                             } else {
                                 c++;
-                                o.setProperty(r + ':' + p);
+                                props = {};
+                                props[r] = p;
+                                o.setProperty(props);
                             }
                         }
                     }
