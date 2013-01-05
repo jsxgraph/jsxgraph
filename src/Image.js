@@ -126,7 +126,9 @@ JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
      */
     update: function () {
         if (this.needsUpdate) {
-            this.updateCoords();
+            if (!this.visProp.frozen) {
+                this.updateCoords();
+            }
             this.usrSize = [this.W(), this.H()];
             this.size = [Math.abs(this.usrSize[0]*this.board.unitX),Math.abs(this.usrSize[1]*this.board.unitY)];
             this.updateTransform();

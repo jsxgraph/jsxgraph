@@ -2036,12 +2036,17 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
-            if (!el.visProp.frozen && (el.elementClass === JXG.OBJECT_CLASS_POINT ||
+            if (el.elementClass === JXG.OBJECT_CLASS_POINT ||
                     el.elementClass === JXG.OBJECT_CLASS_CURVE ||
                     el.type === JXG.OBJECT_TYPE_AXIS ||
-                    el.type === JXG.OBJECT_TYPE_TEXT)) {
+                    el.type === JXG.OBJECT_TYPE_IMAGE ||
+                    el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.elementClass !== JXG.OBJECT_CLASS_CURVE && el.type !== JXG.OBJECT_TYPE_AXIS) {
-                    el.coords.usr2screen();
+                    if (el.visProp.frozen) {
+                        el.coords.screen2usr();
+                    } else {
+                        el.coords.usr2screen();
+                    }
                 }
             }
         }
@@ -2189,14 +2194,18 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
-            if (!el.visProp.frozen &&
-                    (el.elementClass === JXG.OBJECT_CLASS_POINT ||
+            if (el.elementClass === JXG.OBJECT_CLASS_POINT ||
                     el.elementClass === JXG.OBJECT_CLASS_CURVE ||
                     el.type === JXG.OBJECT_TYPE_AXIS ||
-                    el.type === JXG.OBJECT_TYPE_TEXT)) {
+                    el.type === JXG.OBJECT_TYPE_IMAGE ||
+                    el.type === JXG.OBJECT_TYPE_TEXT) {
                 if (el.elementClass !== JXG.OBJECT_CLASS_CURVE && 
                         el.type !== JXG.OBJECT_TYPE_AXIS) {
-                    el.coords.usr2screen();
+                    if (el.visProp.frozen) {
+                        el.coords.screen2usr();
+                    } else {
+                        el.coords.usr2screen();
+                    }
                 }
             }
         }

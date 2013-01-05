@@ -58,9 +58,11 @@ JXG.Options.point.label = {};
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
-    var p1 = brd.create('point', [1,1], {withLabel:true});
+    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEEZE', frozen:true});
     var p2 = brd.create('point', [3,0]);
     //brd.migratePoint(p1, p2);
+    var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
+    var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
     
     var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
@@ -91,34 +93,6 @@ JXG.Options.point.label = {};
     brd.create('glider', [1,1, a1],{color:'blue'});
     
     brd.update();
-    
-    var getMouseCoords = function(e) {
-        var cPos = brd.getCoordsTopLeftCorner(e),
-            absPos = JXG.getPosition(e),
-            dx = absPos[0]-cPos[0],
-            dy = absPos[1]-cPos[1];
- 
-        return new JXG.Coords(JXG.COORDS_BY_SCREEN, [dx, dy], brd);
-    },
-    
-    up = function(e) {
-        var canCreate = true,
-            coords = getMouseCoords(e),
-            el;
- 
-        for (el in brd.objects) {
-            if(JXG.isPoint(brd.objects[el]) && brd.objects[el].hasPoint(coords.scrCoords[1], coords.scrCoords[2])) {
-                canCreate = false;
-                break;
-            }
-        }
- 
-        if (canCreate) {
-            brd.create('point', [coords.usrCoords[1], coords.usrCoords[2]]);
-        }
-    };
- 
-    brd.addHook(up, 'mouseup');    
 </script> 
 </body>
 </html>

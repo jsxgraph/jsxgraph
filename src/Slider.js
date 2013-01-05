@@ -81,13 +81,16 @@ JXG.createSlider = function(board, parents, attributes) {
     snapWidth = attr['snapwidth'];
     precision = attr['precision'];
     
+    // start point
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
     p1 = board.create('point', pos0,  attr);
 
+    // end point
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
     p2 = board.create('point', pos1,  attr);
     board.create('group',[p1,p2]);
     
+    // slide line
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'baseline');
     l1 = board.create('segment', [p1,p2], attr);
 
@@ -103,12 +106,14 @@ JXG.createSlider = function(board, parents, attributes) {
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
     starty = pos0[1]+(pos1[1]-pos0[1])*(start-smin)/(smax-smin);
 
+    // glider point
     attr = JXG.copyAttributes(attributes, board.options, 'slider');
     // overwrite this in any case; the sliders label is a special text element, not the gliders label.
     attr.withLabel = false;
     p3 = board.create('glider', [startx, starty, l1], attr);   // gliders set snapwidth=-1 by default (i.e. deactivate them)
     p3.setProperty({snapwidth:snapWidth});
 
+    // segment from start point to glider point
     attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
     l2 = board.create('segment', [p1,p3],  attr);
                  

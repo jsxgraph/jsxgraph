@@ -315,7 +315,9 @@ JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         var anchor, sx, sy;
 
         if (this.needsUpdate) {
-            this.updateCoords();
+            if (!this.visProp.frozen) {
+                this.updateCoords();
+            }
             this.updateText();
             if (this.needsSizeUpdate) {
                 this.updateSize();
