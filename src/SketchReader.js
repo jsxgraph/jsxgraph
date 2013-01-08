@@ -595,7 +595,7 @@ JXG.extend(JXG, {
 
                     set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
                     set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]>>, ' + attrid + ' fillOpacity: ';
-                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
+                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints + ', scalable:true>>; ';
                     break;
 
                 case JXG.GENTYPE_QUADRILATERAL:
