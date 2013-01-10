@@ -2015,27 +2015,16 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     },
 
     /**
-     * Moves the origin and initializes an update of all elements.
-     * @param {Number} x
-     * @param {Number} y
-     * @param {Boolean} [diff=false]
+     * Update the coords object of all elements which possess this
+     * property. This is necessary after changing the viewport.
      * @returns {JXG.Board} Reference to this board.
-     */
-    moveOrigin: function (x, y, diff) {
+     **/
+    updateCoords: function() {
         var el, ob, len = this.objectsList.length;
-
-        if (JXG.exists(x) && JXG.exists(y)) {
-            this.origin.scrCoords[1] = x;
-            this.origin.scrCoords[2] = y;
-
-            if (diff) {
-                this.origin.scrCoords[1] -= this.drag_dx;
-                this.origin.scrCoords[2] -= this.drag_dy;
-            }
-        }
 
         for (ob = 0; ob < len; ob++) {
             el = this.objectsList[ob];
+            /*
             if (el.elementClass === JXG.OBJECT_CLASS_POINT ||
                     el.elementClass === JXG.OBJECT_CLASS_CURVE ||
                     el.type === JXG.OBJECT_TYPE_AXIS ||
@@ -2049,10 +2038,37 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                     }
                 }
             }
+            */
+            if (JXG.exists(el.coords)) {
+                    if (el.visProp.frozen) {
+                        el.coords.screen2usr();
+                    } else {
+                        el.coords.usr2screen();
+                    }
+            }
+        }
+        return this;
+    },
+
+    /**
+     * Moves the origin and initializes an update of all elements.
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Boolean} [diff=false]
+     * @returns {JXG.Board} Reference to this board.
+     */
+    moveOrigin: function (x, y, diff) {
+        if (JXG.exists(x) && JXG.exists(y)) {
+            this.origin.scrCoords[1] = x;
+            this.origin.scrCoords[2] = y;
+
+            if (diff) {
+                this.origin.scrCoords[1] -= this.drag_dx;
+                this.origin.scrCoords[2] -= this.drag_dy;
+            }
         }
 
-        this.clearTraces();
-        this.fullUpdate();
+        this.updateCoords().clearTraces().fullUpdate();
 
         return this;
     },
@@ -2190,28 +2206,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * @returns {JXG.Board} Reference to the board.
      */
     applyZoom: function () {
-        var el, ob, len = this.objectsList.length;
-
-        for (ob = 0; ob < len; ob++) {
-            el = this.objectsList[ob];
-            if (el.elementClass === JXG.OBJECT_CLASS_POINT ||
-                    el.elementClass === JXG.OBJECT_CLASS_CURVE ||
-                    el.type === JXG.OBJECT_TYPE_AXIS ||
-                    el.type === JXG.OBJECT_TYPE_IMAGE ||
-                    el.type === JXG.OBJECT_TYPE_TEXT) {
-                if (el.elementClass !== JXG.OBJECT_CLASS_CURVE && 
-                        el.type !== JXG.OBJECT_TYPE_AXIS) {
-                    if (el.visProp.frozen) {
-                        el.coords.screen2usr();
-                    } else {
-                        el.coords.usr2screen();
-                    }
-                }
-            }
-        }
-        this.calculateSnapSizes();
-        this.clearTraces();
-        this.fullUpdate();
+        this.updateCoords().calculateSnapSizes().clearTraces().fullUpdate();
 
         return this;
     },
