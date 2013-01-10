@@ -42,17 +42,18 @@ JXG.EventEmitter = {
      * Triggers all event handlers of this element for a given event.
      * @name JXG.EventEmitter#triggerEventHandlers
      * @function
-     * @param {String} event
+     * @param {Array} event
      * @returns Reference to the object.
      */
     triggerEventHandlers: function (event) {
         var i, h, args = null,
             j, evt, evtH, len1, len2;
 
+/*
         if (!JXG.isArray(event)) {
             event = [event];
         }
-
+*/
         len1 = event.length;
         for (j = 0; j < len1; j++) {
             evtH = this.eventHandlers[event[j]]; 

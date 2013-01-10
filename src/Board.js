@@ -2810,7 +2810,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.renderer.suspendRedraw(this);
         this.updateRenderer(drag);
         this.renderer.unsuspendRedraw();
-        this.triggerEventHandlers('update');
+        this.triggerEventHandlers(['update']);
 
         // To resolve dependencies between boards
         //for (var board in JXG.JSXGraph.boards) {
@@ -2825,7 +2825,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 b.renderer.suspendRedraw();
                 b.updateRenderer();
                 b.renderer.unsuspendRedraw();
-                b.triggerEventHandlers('update');
+                b.triggerEventHandlers(['update']);
             }
 
         }

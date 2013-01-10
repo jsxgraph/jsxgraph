@@ -773,10 +773,10 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
                     }
                     break;
             }
-            this.triggerEventHandlers('attribute:' + key, oldvalue);
+            this.triggerEventHandlers(['attribute:' + key], oldvalue);
         }
         
-        this.triggerEventHandlers('attribute', properties);
+        this.triggerEventHandlers(['attribute'], properties);
 
         if (!this.visProp.needsregularupdate) {
             this.board.fullUpdate();

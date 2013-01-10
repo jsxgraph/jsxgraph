@@ -22,7 +22,7 @@
 //JXG.Options.axis.ticks.drawZero = true;
 //JXG.Options.axis.withLabel = false;
 
-JXG.Options.text.display = 'internal';
+//JXG.Options.text.display = 'internal';
 
 /*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
@@ -96,7 +96,7 @@ JXG.Options.point.label = {};
     var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
     //var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
     //brd.create('glider', [1,1, a1],{color:'blue'});
-    brd.create('glider', [1,1, c1],{color:'blue', showInfobox:true});
+    brd.create('glider', [1,1, c1],{color:'blue', showInfobox:false});
     //brd.create('glider', [2,1, e1],{color:'blue'});
     
     brd.update();

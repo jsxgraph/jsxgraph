@@ -186,7 +186,7 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             this.screen2usr();
         }
         
-        this.triggerEventHandlers('update', ou, os);
+        this.triggerEventHandlers(['update'], ou, os);
 
         return this;
     },
