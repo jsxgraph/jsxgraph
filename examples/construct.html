@@ -54,16 +54,18 @@ JXG.Options.point.label = {};
     };
 
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
+    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:false});
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
+
+    var ax1 = brd.create('axis', [[0,-.7],[1,-.7]], { ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} });
+    var ax2 = brd.create('axis', [[-.7,0],[-.7,1]], { ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} });
     
-    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEZE'});
+    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEZE', frozen:true});
     var p2 = brd.create('point', [3,0]);
-    brd.migratePoint(p1, p2, true);
+    //brd.migratePoint(p1, p2, true);
     
-    /*
     var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
     var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
     
@@ -90,13 +92,13 @@ JXG.Options.point.label = {};
         });
     
     var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
-    var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
+    //var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
     brd.create('glider', [1,1, c1],{color:'blue'});
-    brd.create('glider', [2,1, e1],{color:'blue'});
     brd.create('glider', [1,1, a1],{color:'blue'});
+    //brd.create('glider', [2,1, e1],{color:'blue'});
     
     brd.update();
-    */
+
 </script> 
 </body>
 </html>
