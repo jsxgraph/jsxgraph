@@ -3560,17 +3560,17 @@ switch( act )
 	break;
 	case 63:
 	{
-		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 64:
 	{
-		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_const', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 65:
 	{
-		 rval = this.createNode('node_var', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_var', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 66:
@@ -3600,17 +3600,17 @@ switch( act )
 	break;
 	case 71:
 	{
-		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 72:
 	{
-		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ] ); 
+		 rval = this.createNode('node_const_bool', vstack[ vstack.length - 1 ]); 
 	}
 	break;
 	case 73:
 	{
-		 rval = NaN; 
+		 rval = this.createNode('node_const', NaN);; 
 	}
 	break;
 }
