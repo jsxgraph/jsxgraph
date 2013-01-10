@@ -58,9 +58,12 @@ JXG.Options.point.label = {};
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
-    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEEZE', frozen:true});
+    
+    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEZE'});
     var p2 = brd.create('point', [3,0]);
-    //brd.migratePoint(p1, p2);
+    brd.migratePoint(p1, p2, true);
+    
+    /*
     var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
     var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
     
@@ -93,6 +96,7 @@ JXG.Options.point.label = {};
     brd.create('glider', [1,1, a1],{color:'blue'});
     
     brd.update();
+    */
 </script> 
 </body>
 </html>

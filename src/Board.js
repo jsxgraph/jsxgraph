@@ -3142,9 +3142,11 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
      * will be deleted.
      * @param {JXG.Point} src Original point which will be deleted
      * @param {JXG.Point} dest New point with the dependencies of src.
+     * @param {Boolean} copyName Flag which decides if the name of the src element is copied to the
+     *  dest element.
      * @returns {JXG.Board} Reference to the board
      */
-    migratePoint: function(src, dest) {
+    migratePoint: function(src, dest, copyName) {
         var child, childId, prop, found, i, t, n;
 
         src = JXG.getRef(this, src);
@@ -3185,10 +3187,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             delete(dest.childElements[src.label.content.id]);
             delete(dest.descendants[src.label.content.id]);
         }
-
-        this.removeObject(dest.label.content);
-        delete(this.elementsByName[dest.name]);
-        dest.name = src.name;
+        if (copyName) {
+            if (dest.label.content) {
+                this.removeObject(dest.label.content);
+            }
+            delete(this.elementsByName[dest.name]);
+            dest.name = src.name;
+        }
 
         this.removeObject(src);
         dest.createLabel();
