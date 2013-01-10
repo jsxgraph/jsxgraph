@@ -713,7 +713,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
             if (pEl.visProp.visible && haspoint) {
-                pEl.triggerEventHandlers([type + 'down', 'down'], evt);
+                pEl.triggerEventHandlers([type + 'down', 'down'], [evt]);
                 this.downObjects.push(pEl);
             }
             if (((this.geonextCompatibilityMode &&
@@ -804,7 +804,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             }
         }
 
-        drag.triggerEventHandlers([type + 'drag', 'drag'], evt);
+        drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
 
         this.updateInfobox(drag);
         this.update();
@@ -838,7 +838,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         } else if (drag.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
             this.twoFingerTouchCircle(np1c, np2c, o, drag);
         }
-        drag.triggerEventHandlers(['touchdrag', 'drag'], evt);
+        drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
 
         o.targets[0].Xprev = np1c.scrCoords[1];
         o.targets[0].Yprev = np1c.scrCoords[2];
@@ -991,13 +991,13 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                     this.highlightedObjects[pId] = pEl;
                     pEl.highlight();
-                    this.triggerEventHandlers(['mousehit', 'hit'], evt, pEl, target);
+                    this.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
                 }
 
                 if (pEl.mouseover) {
-                    pEl.triggerEventHandlers(['mousemove', 'move'], evt);
+                    pEl.triggerEventHandlers(['mousemove', 'move'], [evt]);
                 } else {
-                    pEl.triggerEventHandlers(['mouseover', 'over'], evt);
+                    pEl.triggerEventHandlers(['mouseover', 'over'], [evt]);
                     pEl.mouseover = true;
                 }
             }
@@ -1008,7 +1008,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             pId = pEl.id;
             if (pEl.mouseover) {
                 if (!this.highlightedObjects[pId]) {
-                    pEl.triggerEventHandlers(['mouseout', 'out'], evt);
+                    pEl.triggerEventHandlers(['mouseout', 'out'], [evt]);
                     pEl.mouseover = false;
                 }
             }
@@ -1453,7 +1453,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         // move origin - but only if we're not in drag mode
         if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-            this.triggerEventHandlers(['touchstart', 'down'], evt);
+            this.triggerEventHandlers(['touchstart', 'down'], [evt]);
             return false;
         }
 
@@ -1464,7 +1464,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.options.precision.hasPoint = this.options.precision.mouse;
 
-        this.triggerEventHandlers(['touchstart', 'down'], evt);
+        this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
         return this.touches.length > 0;
     },
@@ -1491,7 +1491,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
             if (time - this.touchMoveLast < 80) {
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
-                this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
+                this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
 
                 return false;
             }
@@ -1544,7 +1544,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         this.options.precision.hasPoint = this.options.precision.mouse;
-        this.triggerEventHandlers(['touchmove', 'move'], evt, this.mode);
+        this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
 
         return this.mode === this.BOARD_MODE_NONE;
     },
@@ -1560,7 +1560,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
             tmpTouches = [], found, foundNumber,
             evtTouches = evt[JXG.touchProperty];
 
-        this.triggerEventHandlers(['touchend', 'up'], evt);
+        this.triggerEventHandlers(['touchend', 'up'], [evt]);
         this.renderer.hide(this.infobox);
 
         if (evtTouches.length > 0) {
@@ -1653,7 +1653,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 }
             }
             if (!found) {
-                this.downObjects[i].triggerEventHandlers(['touchup', 'up'], evt);
+                this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
                 this.downObjects[i].snapToGrid();
                 this.downObjects.splice(i, 1);
             }
@@ -1744,7 +1744,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         }
 
         if (!object) {
-            this.triggerEventHandlers(['mousedown', 'down'], evt);
+            this.triggerEventHandlers(['mousedown', 'down'], [evt]);
         }
 
         return result;
@@ -1757,7 +1757,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     mouseUpListener: function (evt) {
         var i, pos;
 
-        this.triggerEventHandlers(['mouseup', 'up'], evt);
+        this.triggerEventHandlers(['mouseup', 'up'], [evt]);
 
         // redraw with high precision
         this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -1771,7 +1771,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.update();
 
         for (i = 0; i < this.downObjects.length; i++) {
-            this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], evt);
+            this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
         }
 
         this.downObjects.length = 0;
@@ -1817,7 +1817,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
 
         this.updateQuality = this.BOARD_QUALITY_HIGH;
 
-        this.triggerEventHandlers(['mousemove', 'move'], evt, this.mode);
+        this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
     },
 
     /**
@@ -2754,7 +2754,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         var arg = Array.prototype.slice.call(arguments, 0);
         
         arg[0] = JXG.def(arg[0], 'update');
-        this.triggerEventHandlers.apply(this, arguments);
+        this.triggerEventHandlers.call(this, arguments);
 
         return this;
     },
@@ -2805,7 +2805,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
         this.renderer.suspendRedraw(this);
         this.updateRenderer(drag);
         this.renderer.unsuspendRedraw();
-        this.triggerEventHandlers(['update']);
+        this.triggerEventHandlers(['update'], []);
 
         // To resolve dependencies between boards
         //for (var board in JXG.JSXGraph.boards) {
@@ -2820,7 +2820,7 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 b.renderer.suspendRedraw();
                 b.updateRenderer();
                 b.renderer.unsuspendRedraw();
-                b.triggerEventHandlers(['update']);
+                b.triggerEventHandlers(['update'], []);
             }
 
         }

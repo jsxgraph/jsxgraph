@@ -43,37 +43,21 @@ JXG.EventEmitter = {
      * @name JXG.EventEmitter#triggerEventHandlers
      * @function
      * @param {Array} event
+     * @param {Array} args The arguments passed onto the event handler
      * @returns Reference to the object.
      */
-    triggerEventHandlers: function (event) {
-        var i, h, args = null,
-            j, evt, evtH, len1, len2;
+    triggerEventHandlers: function (event, args) {
+        var i, j, h, evt, len1, len2;
 
-/*
-        if (!JXG.isArray(event)) {
-            event = [event];
-        }
-*/
         len1 = event.length;
         for (j = 0; j < len1; j++) {
-            evtH = this.eventHandlers[event[j]]; 
-            /*
-            evt = event[j];
-            if (JXG.isArray(this.eventHandlers[evt])) {
-                len2 = this.eventHandlers[evt].length;
+            evt = this.eventHandlers[event[j]];
+
+            if (evt) {
+                len2 = evt.length;
+
                 for (i = 0; i < len2; i++) {
-                    h = this.eventHandlers[evt][i];
-                    h.handler.apply(h.context, args);
-                }
-            }
-            */
-            if (JXG.isArray(evtH)) {
-                len2 = evtH.length;
-                for (i = 0; i < len2; i++) {
-                    h = evtH[i];
-                    if (args===null) {
-                        args = Array.prototype.slice.call(arguments, 1);
-                    }
+                    h = evt[i];
                     h.handler.apply(h.context, args);
                 }
             }
@@ -128,8 +112,12 @@ JXG.EventEmitter = {
             if (i > -1) {
                 this.eventHandlers[event].splice(i, 1);
             }
+
+            if (this.eventHandlers[event].length === 0) {
+                delete this.eventHandlers[event];
+            }
         } else {
-            this.eventHandlers[event].length = 0;
+            delete this.eventHandlers[event];
         }
         
         return this;
