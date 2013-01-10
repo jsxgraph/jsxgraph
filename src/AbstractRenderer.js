@@ -550,7 +550,7 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
      * @see JXG.AbstractRenderer#updateTextStyle
      */
     updateText: function (el) {
-        var content = el.plaintext;
+        var content = el.plaintext, v;
 
         if (el.visProp.visible) {
             this.updateTextStyle(el, false);
@@ -559,19 +559,35 @@ JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.proto
                 // Set the position
                 if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                     if (el.visProp.anchorx === 'right') {
-                        el.rendNode.style.right = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
+                        v = parseInt(el.board.canvasWidth - el.coords.scrCoords[1]);
+                        if (el.visPropOld.right!=v) {
+                            el.rendNode.style.right = v + 'px';
+                            el.visPropOld.right = v;
+                        }
                     } else if (el.visProp.anchorx === 'middle') {
-                        el.rendNode.style.left = parseInt(el.coords.scrCoords[1]-0.5*el.size[0]) + 'px';
+                        v = parseInt(el.coords.scrCoords[1]-0.5*el.size[0]);
+                        if (el.visPropOld.left!=v) {
+                            el.rendNode.style.left = v + 'px';
+                            el.visPropOld.left = v;
+                        }
                     } else {   // 'left'
-                        el.rendNode.style.left = parseInt(el.coords.scrCoords[1]) + 'px';
+                        v = parseInt(el.coords.scrCoords[1]);
+                        if (el.visPropOld.left!=v) {
+                            el.rendNode.style.left = v + 'px';
+                            el.visPropOld.left = v;
+                        }
                     }
                     
                     if (el.visProp.anchory === 'top') {
-                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
+                        v = parseInt(el.coords.scrCoords[2] + this.vOffsetText);
                     } else if (el.visProp.anchory === 'middle') {
-                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - 0.5*el.size[1] + this.vOffsetText) + 'px';
+                        v = parseInt(el.coords.scrCoords[2] - 0.5*el.size[1] + this.vOffsetText);
                     } else {
-                        el.rendNode.style.top = parseInt(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
+                        v = parseInt(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText);
+                    }
+                    if (el.visPropOld.top!=v) {
+                        el.rendNode.style.top = v + 'px';
+                        el.visPropOld.top = v;
                     }
                 }
                 

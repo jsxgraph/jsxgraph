@@ -22,6 +22,8 @@
 //JXG.Options.axis.ticks.drawZero = true;
 //JXG.Options.axis.withLabel = false;
 
+JXG.Options.text.display = 'internal';
+
 /*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
 axis:false, keepaspectratio:true, 
@@ -67,7 +69,7 @@ JXG.Options.point.label = {};
     //brd.migratePoint(p1, p2, true);
     
     var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
-    var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
+    //var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
     
     var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
     var p3 = brd.create('point', [2,3]);
@@ -93,8 +95,8 @@ JXG.Options.point.label = {};
     
     var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
     //var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
-    brd.create('glider', [1,1, c1],{color:'blue'});
-    brd.create('glider', [1,1, a1],{color:'blue'});
+    //brd.create('glider', [1,1, a1],{color:'blue'});
+    brd.create('glider', [1,1, c1],{color:'blue', showInfobox:true});
     //brd.create('glider', [2,1, e1],{color:'blue'});
     
     brd.update();
