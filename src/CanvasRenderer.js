@@ -67,7 +67,7 @@
 
         this.canvasNamespace = null;
 
-        if (JXG.isBrowser()) {
+        if (JXG.isBrowser) {
             this.container = container;
             this.container.style.MozUserSelect = 'none';
 
