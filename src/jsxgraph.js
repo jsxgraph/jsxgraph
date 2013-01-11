@@ -122,9 +122,9 @@ JXG.JSXGraph = {
             JXG.Options.renderer = 'svg';
             loadRenderer('svg');
         }
-        
+
         // we are inside node
-        if (JXG.isNode()) {
+        if (JXG.isNode() && JXG.supportsCanvas()) {
             JXG.Options.renderer = 'canvas';
             loadRenderer('canvas');
         }

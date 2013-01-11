@@ -803,8 +803,9 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
      * @return Id of the ticks object.
      */
     addTicks: function(ticks) {
-        if(ticks.id == '' || typeof ticks.id == 'undefined')
+        if(ticks.id == '' || typeof ticks.id == 'undefined') {
             ticks.id = this.id + '_ticks_' + (this.ticks.length+1);
+        }
 
         this.board.renderer.drawTicks(ticks);
         this.ticks.push(ticks);

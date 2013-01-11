@@ -120,7 +120,16 @@ JXG.extend(JXG, /** @lends JXG */ {
      * @returns {Boolean} True, if the browser supports HTML canvas.
      */
     supportsCanvas: function () {
-        return this.isBrowser && !!document.createElement('canvas').getContext;
+        var hasCanvas = false;
+
+        if (this.isNode()) {
+            try {
+                require('canvas');
+                hasCanvas = true;
+            } catch (err) { }
+        }
+
+        return hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext);
     },
 
     isNode: function () {

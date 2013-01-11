@@ -175,6 +175,12 @@ JXG.GeometryElement = function (board, attributes, type, oclass) {
     this.symbolic = {};
 
     /**
+     * Stores the rendering node for the element.
+     * @type Object
+     */
+    this.rendNode = null;
+
+    /**
      * The string used with {@link JXG.Board#create}
      * @type String
      */
