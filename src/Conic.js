@@ -404,6 +404,7 @@ JXG.createHyperbola = function(board, parents, attributes) {
 JXG.createParabola = function(board, parents, attributes) {
     var F1 = parents[0], // focus
         l = parents[1],  // directrix
+        i,
         rotationMatrix,
         attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
         attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
@@ -483,8 +484,8 @@ JXG.createParabola = function(board, parents, attributes) {
     curve.type = JXG.OBJECT_TYPE_CONIC;
     
     M.addChild(curve);
-    if (JXG.isPoint(F[1])) {
-        F[1].addChild(curve);
+    if (JXG.isPoint(F1)) {
+        F1.addChild(curve);
     }
     l.addChild(curve);
     curve.parents = [];
