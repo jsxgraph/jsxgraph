@@ -483,8 +483,8 @@ JXG.createParabola = function(board, parents, attributes) {
     curve.type = JXG.OBJECT_TYPE_CONIC;
     
     M.addChild(curve);
-    if (JXG.isPoint(F[1])) {
-        F[1].addChild(curve);
+    if (JXG.isPoint(F1[1])) {
+        F1[1].addChild(curve);
     }
     l.addChild(curve);
     curve.parents = [];
