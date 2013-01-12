@@ -799,12 +799,10 @@
          * @see Image
          * @see JXG.Image
          * @see JXG.AbstractRenderer#highlight
-         * @see JXG.AbstractRenderer#nohighlight
+         * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            var css = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
-
-            el.rendNode.className = css;
+            el.rendNode.className = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
         },
 
 
