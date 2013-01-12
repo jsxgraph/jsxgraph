@@ -193,7 +193,9 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
             this.screen2usr();
         }
         
-        this.triggerEventHandlers(['update'], [ou, os]);
+        if (os[1] !== sc[1] || os[2] !== sc[2]) {
+            this.triggerEventHandlers(['update'], [ou, os]);
+        }
 
         return this;
     },
