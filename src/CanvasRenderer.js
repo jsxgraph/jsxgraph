@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, document: true, Image: true */
+/*global JXG: true, AMprocessNode: true, document: true, Image: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /*depends:
@@ -190,7 +190,7 @@
 
             type = type || 'stroke';
             targetType = targetType || type;
-            
+
             if (!JXG.exists(element.board) || !JXG.exists(element.board.highlightedObjects)) {
                 // This case handles trace elements.
                 // To make them work, we simply neglect highlighting.

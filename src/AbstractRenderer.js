@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, window: true */
 
 /*
     nomen:    Allow underscores to indicate private class members. Might be replaced by local variables.

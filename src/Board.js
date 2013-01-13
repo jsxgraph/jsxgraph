@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, init: true, translateASCIIMath: true */
+/*global JXG: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true */
 
 /*jslint nomen: true, plusplus: true*/
 
@@ -344,7 +344,7 @@
          * @type {@link JXG.GeometryElement}.
          * @see {JXG.Board#touches}
          */
-        this.mouse = null;
+        this.mouse = {};
 
         /**
          * Keeps track on touched elements, like {@link JXG.Board#mouse} does for mouse events.
@@ -384,9 +384,8 @@
          * @see JXG.JSXGraph#licenseText
          * @see JXG.JSXGraph#initBoard
          */
-        this.showCopyright = false;
-        if ((showCopyright !== null && showCopyright) || (showCopyright === null && this.options.showCopyright)) {
-            this.showCopyright = true;
+        this.showCopyright = JXG.def(showCopyright, this.options.showCopyright);
+        if (this.showCopyright) {
             this.renderer.displayCopyright(JXG.JSXGraph.licenseText, parseInt(this.options.text.fontSize, 10));
         }
 
@@ -482,7 +481,7 @@
          * @returns {String} Unique name for the object.
          */
         generateName: function (object) {
-            var possibleNames, i, j, length,
+            var possibleNames, i, j,
                 maxNameLength = 2,
                 pre = '',
                 post = '',
@@ -1502,9 +1501,8 @@
          * @return {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, count = 0, pos,
-                evtTouches = evt[JXG.touchProperty],
-                time;
+            var i, pos, time,
+                evtTouches = evt[JXG.touchProperty];
 
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
@@ -1703,11 +1701,11 @@
         /**
          * This method is called by the browser when the mouse button is clicked.
          * @param {Event} evt The browsers event object.
-         * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
+         * @param {JXG.GeometryElement} object If the object to be dragged is already known, it can be submitted via this parameter
          * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
          */
         mouseDownListener: function (evt, object) {
-            var pos, elements, xy, result, i;
+            var pos, elements, result;
 
             // prevent accidental selection of text
             if (document.selection && typeof document.selection.empty === 'function') {
@@ -1782,7 +1780,7 @@
          * @param {Event} evt
          */
         mouseUpListener: function (evt) {
-            var i, pos;
+            var i;
 
             this.triggerEventHandlers(['mouseup', 'up'], [evt]);
 
@@ -1919,9 +1917,10 @@
         /**
          * Changes the text of the info box to what is provided via text.
          * @param {String} text
+         * @param {JXG.GeometryElement} [el]
          * @returns {JXG.Board} Reference to the board.
          */
-        highlightCustomInfobox: function (text) {
+        highlightCustomInfobox: function (text, el) {
             this.infobox.setText(text);
             return this;
         },
@@ -1930,7 +1929,7 @@
          * Changes the text of the info box to show the given coordinates.
          * @param {Number} x
          * @param {Number} y
-         * @param {JXG.Point} el The element the mouse is pointing at
+         * @param {JXG.GeometryElement} [el] The element the mouse is pointing at
          * @returns {JXG.Board} Reference to the board.
          */
         highlightInfobox: function (x, y, el) {
@@ -2663,14 +2662,13 @@
 
         /**
          * Runs through all elements and calls their update() method.
-         * @param {JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Board} Reference to the board
          */
-        updateRenderer: function (drag) {
+        updateRenderer: function () {
             var el, pEl, len = this.objectsList.length;
 
             if (this.options.renderer === 'canvas') {
-                this.updateRendererCanvas(drag);
+                this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
                     pEl = this.objectsList[el];
@@ -2684,14 +2682,14 @@
          * Runs through all elements and calls their update() method.
          * This is a special version for the CanvasRenderer.
          * Here, we have to do our own layer handling.
-         * @param {JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Board} Reference to the board
          */
-        updateRendererCanvas: function (drag) {
-            var el, pEl, i, olen = this.objectsList.length,
+        updateRendererCanvas: function () {
+            var el, pEl, i, mini, la,
+                olen = this.objectsList.length,
                 layers = this.options.layer,
                 len = this.options.layer.numlayers,
-                last = Number.NEGATIVE_INFINITY, mini, la;
+                last = Number.NEGATIVE_INFINITY;
 
             for (i = 0; i < len; i++) {
                 mini = Number.POSITIVE_INFINITY;
@@ -2807,20 +2805,20 @@
 
         /**
          * Runs through most elements and calls their update() method and update the conditions.
-         * @param {Object} [drag] Element that caused the update.
+         * @param {JXG.GeometryElement} [drag] Element that caused the update.
          * @returns {JXG.Board} Reference to the board
          */
         update: function (drag) {
-            var i, len, boardId, b;
+            var i, len, b;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
                 return this;
             }
             this.inUpdate = true;
 
-            this.prepareUpdate(drag).updateElements(drag).updateConditions();
+            this.prepareUpdate().updateElements(drag).updateConditions();
             this.renderer.suspendRedraw(this);
-            this.updateRenderer(drag);
+            this.updateRenderer();
             this.renderer.unsuspendRedraw();
             this.triggerEventHandlers(['update'], []);
 
@@ -3037,7 +3035,7 @@
             this.animationObjects[element.id] = element;
 
             if (!this.animationIntervalCode) {
-                this.animationIntervalCode = setInterval(function () {
+                this.animationIntervalCode = window.setInterval(function () {
                     JXG.JSXGraph.boards[that.id].animate();
                 }, element.board.options.animationDelay);
             }
@@ -3059,7 +3057,7 @@
                 }
             }
 
-            clearInterval(this.animationIntervalCode);
+            window.clearInterval(this.animationIntervalCode);
             delete this.animationIntervalCode;
 
             return this;
@@ -3132,7 +3130,7 @@
             }
 
             if (count === 0) {
-                clearInterval(this.animationIntervalCode);
+                window.clearInterval(this.animationIntervalCode);
                 delete this.animationIntervalCode;
             } else {
                 this.update(obj);
@@ -3154,7 +3152,7 @@
          * @returns {JXG.Board} Reference to the board
          */
         migratePoint: function (src, dest, copyName) {
-            var child, childId, prop, found, i, t, n;
+            var child, childId, prop, found, i;
 
             src = JXG.getRef(this, src);
             dest = JXG.getRef(this, dest);
@@ -3392,7 +3390,7 @@
          * @name JXG.Board#hit
          * @param {Event} e The browser's event object.
          * @param {JXG.GeometryElement} el The hit element.
-         * @param {} target ?
+         * @param target
          */
         __evt__hit: function (e, el, target) { },
 
@@ -3402,7 +3400,7 @@
          * @name JXG.Board#mousehit
          * @param {Event} e The browser's event object.
          * @param {JXG.GeometryElement} el The hit element.
-         * @param {} target ?
+         * @param target
          */
         __evt__mousehit: function (e, el, target) { },
 
@@ -3614,13 +3612,13 @@
 
                     this.start = function () {
                         if (time > 0) {
-                            interval = setInterval(this.rolling, time);
+                            interval = window.setInterval(this.rolling, time);
                         }
                         return this;
                     };
 
                     this.stop = function () {
-                        clearInterval(interval);
+                        window.clearInterval(interval);
                         return this;
                     };
                     return this;
