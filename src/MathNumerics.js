@@ -95,14 +95,7 @@ JXG.Math.Numerics = (function(JXG, Math) {
                 Acopy,
                 // solution vector, to prevent changing b
                 x,
-                i, j, k,
-                // little helper to swap array elements
-                swap = function(i, j) {
-                    var temp = this[i];
-
-                    this[i] = this[j];
-                    this[j] = temp;
-                };
+                i, j, k;
 
             if ((n !== b.length) || (n !== A.length))
                 throw new Error("JXG.Math.Numerics.Gauss: Dimensions don't match. A must be a square matrix and b must be of the same length as A.");
@@ -122,15 +115,15 @@ JXG.Math.Numerics = (function(JXG, Math) {
                         // Equals pivot element zero?
                         if (Math.abs(Acopy[j][j]) < eps) {
                             // At least numerically, so we have to exchange the rows
-                            swap.apply(Acopy, [i, j]);
-                            swap.apply(x, [i, j]);
+                            JXG.swap(Acopy, i, j);
+                            JXG.swap(x, i, j);
                         } else {
                             // Saves the L matrix of the LR-decomposition. unnecessary.
                             Acopy[i][j] /= Acopy[j][j];
                             // Transform right-hand-side b
                             x[i] -= Acopy[i][j] * x[j];
                             // subtract the multiple of A[i][j] / A[j][j] of the j-th row from the i-th.
-                            for (k = j + 1; k < n; k ++) {
+                            for (k = j + 1; k < n; k++) {
                                 Acopy[i][k] -= Acopy[i][j] * Acopy[j][k];
                             }
                         }

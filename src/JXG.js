@@ -1562,6 +1562,23 @@ JXG.extend(JXG, /** @lends JXG */ {
     },
 
     /**
+     * Swaps to array elements.
+     * @param {Array} arr
+     * @param {Number} i
+     * @param {Number} j
+     * @returns {Array} Reference to the given array.
+     */
+    swap: function (arr, i, j) {
+        var tmp;
+        
+        tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+        
+        return arr;
+    },
+
+    /**
      * Tests if the input variable is an Array
      * @param input
      */
