@@ -166,7 +166,8 @@ JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
     setCoordinates: function (coord_type, coordinates, doRound) {
         var uc = this.usrCoords,
             sc = this.scrCoords,
-            ou = this.usrCoords.slice(0), os = this.scrCoords.slice(0);
+            ou = [uc[0], uc[1], uc[2]],
+            os = [sc[0], sc[1], sc[2]];
 
         if (coord_type === JXG.COORDS_BY_USER) {
             if (coordinates.length === 2) { // Euclidean coordinates

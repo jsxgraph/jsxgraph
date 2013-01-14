@@ -379,10 +379,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             ticksDelta /= this.visProp.minorticks+1;
             symbTicksDelta /= this.visProp.minorticks+1;
         }
-
         this.ticksDelta = ticksDelta;
         this.symbTicksDelta = symbTicksDelta;
-
 
 		// We shoot into the middle of the canvas
 		// to the tick position which is closest to the center
@@ -403,8 +401,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		center[1] /= center[0];
 		center[2] /= center[0];
 		center[0] = 1;
+        
 		// Round the distance of center to point1
-        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, center.slice(1), this.board);
+        tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, center, this.board);
         d = p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
         if ((p2.X()-p1.X())*(center[1]-p1.X())<0 || (p2.Y()-p1.Y())*(center[2]-p1.Y())<0) {
             d *= -1;
