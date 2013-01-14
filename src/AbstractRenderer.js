@@ -216,7 +216,7 @@
          */
         drawPoint: function (element) {
             var prim,
-                face = JXG.Point.prototype.normalizeFace.call(this, element.visProp.face);
+                face = element.normalizeFace(element.visProp.face);
 
             // determine how the point looks like
             if (face === 'o') {
@@ -250,7 +250,7 @@
          */
         updatePoint: function (element) {
             var size = element.visProp.size,
-                face = JXG.Point.prototype.normalizeFace.call(this, element.visProp.face);
+                face = element.normalizeFace(element.visProp.face);
 
             if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
                 this._updateVisual(element, {dash: false, shadow: false});
