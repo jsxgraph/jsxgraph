@@ -107,7 +107,20 @@ JXG.createSlider = function(board, parents, attributes) {
     if (withTicks) {
         attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
         ticks  = 2;
-        ti = board.create('ticks', [l1, p2.Dist(p1)/ticks], attr);
+        ti = board.create('ticks', [
+                l1, 
+                p2.Dist(p1)/ticks,
+                function(tick) {
+                    var dFull = p1.Dist(p2),
+                        d = p1.coords.distance(JXG.COORDS_BY_USER, tick);
+                
+                    if (dFull<JXG.Math.eps) {
+                        return 0;
+                    } else {
+                        return  d/dFull*sdiff+smin;
+                    }
+                }
+            ], attr);
     }
 
     startx = pos0[0]+(pos1[0]-pos0[0])*(start-smin)/(smax-smin);
@@ -246,7 +259,7 @@ JXG.createSlider = function(board, parents, attributes) {
         ti.dump = false;
         p3.subs.ticks = ti;
     }
-    
+
     return p3;
 };    
 

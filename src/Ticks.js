@@ -188,6 +188,19 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
        return false;
     },
 
+    generateLabelValue: function(tick) {
+        var p1 = this.line.point1,
+            p2 = this.line.point2;
+            
+        if (Math.abs(p1.coords.usrCoords[2]-p2.coords.usrCoords[2])<JXG.Math.eps) { // horizontal axis
+            return tick.usrCoords[1];
+        } else if (Math.abs(p1.coords.usrCoords[1]-p2.coords.usrCoords[1])<JXG.Math.eps) {  // vertical axis
+            return tick.usrCoords[2];
+        } else {
+            return p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
+        }
+    },
+    
     /**
      * Sets x and y coordinate of the tick.
      * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
@@ -225,7 +238,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         return this;
     },
     
-
     /**
      * (Re-)calculates the ticks coordinates.
      */
@@ -639,6 +651,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
             return null;
         }
 
+        // Correct label also for frozen tick lines.
+        pos = this.generateLabelValue(newTick);
+        
         labelText = pos.toString();
         if (Math.abs(pos) < JXG.Math.eps) {
             labelText = '0';
@@ -778,8 +793,9 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,Number} line,_distance The parents consist of the line the ticks are going to be attached to and optional the
+ * @param {JXG.Line,Number,Function} line,_distance,_generateLabelFunc The parents consist of the line the ticks are going to be attached to and optional the
  * distance between two major ticks. If no distance is given the attribute {@link JXG.Ticks#ticksDistance} is used.
+ * The third parameter (optional) is a function which determines the tick label. It has as parameter a coords object containing the coordinates of the new tick.
  * @example
  * // Create an axis providing two coord pairs.
  *   var p1 = board.create('point', [0, 3]);
@@ -798,7 +814,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  * </script><pre>
  */
 JXG.createTicks = function(board, parents, attributes) {
-    var el, dist,
+    var el, dist, genLabel,
         attr = JXG.copyAttributes(attributes, board.options, 'ticks');
 
     if (parents.length < 2) {
@@ -812,6 +828,10 @@ JXG.createTicks = function(board, parents, attributes) {
     } else {
         throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
+
+    if (parents.length==3) {
+        el.generateLabelValue = parents[2];
+    } 
     
     el.isDraggable = true;
 
