@@ -3,17 +3,15 @@ JSXGraph
 
 Interactive Math Library for the Web.
 
-Copyright 2008-2012
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
+        Emmanuel Ostenne,
         Bianca Valentin,
+        Heiko Vogel,
         Alfred Wassermann,
         Peter Wilfahrt
-
-JSXGraph is licensed under GNU Lesser General Public License, Version 3.0
-http://www.gnu.org/licenses/lgpl.txt
-
 
 About
 -----
@@ -71,4 +69,24 @@ especially our [tutorials](http://jsxgraph.uni-bayreuth.de/wiki/index.php/Docume
 or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
 
 
+License
+-------
 
+JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+You can redistribute it and/or modify it under the terms of the
+
+  * GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version
+  OR
+  * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+JSXGraph is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License and
+the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+and <http://opensource.org/licenses/MIT/>.

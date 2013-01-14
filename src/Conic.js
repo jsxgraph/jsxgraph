@@ -1,5 +1,5 @@
 /*
-    Copyright 2010
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -9,19 +9,26 @@
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph. If not, see <http://www.gnu.org/licenses/>.
-*/    
 
 /**
  * @fileoverview In this file the conic sections defined.
@@ -397,6 +404,7 @@ JXG.createHyperbola = function(board, parents, attributes) {
 JXG.createParabola = function(board, parents, attributes) {
     var F1 = parents[0], // focus
         l = parents[1],  // directrix
+        i,
         rotationMatrix,
         attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
         attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
@@ -476,8 +484,8 @@ JXG.createParabola = function(board, parents, attributes) {
     curve.type = JXG.OBJECT_TYPE_CONIC;
     
     M.addChild(curve);
-    if (JXG.isPoint(F[1])) {
-        F[1].addChild(curve);
+    if (JXG.isPoint(F1)) {
+        F1.addChild(curve);
     }
     l.addChild(curve);
     curve.parents = [];

@@ -3,7 +3,7 @@
 
 
 license = """/*
-    Copyright 2008-2012
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -35,7 +35,7 @@ license = """/*
     """
 
 duallicense = """/*
-    Copyright 2008-2012
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,

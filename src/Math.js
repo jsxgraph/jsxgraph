@@ -1,5 +1,5 @@
 /*
-    Copyright 2008,2009
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -9,31 +9,43 @@
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
- * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
- * @author graphjs
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
  */
 
-/**
- * Math namespace.
- * @namespace
+
+/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, Float32Array: true */
+/*jslint nomen: true, plusplus: true, bitwise: true*/
+
+/*depends:
+ JXG
  */
-JXG.Math = (function(JXG, Math, undefined) {
+
+(function (JXG, Math, undef) {
+
+    "use strict";
+
+    /**
+     * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
+     * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
+     * @author graphjs
+     */
 
     /*
      * Dynamic programming approach for recursive functions.
@@ -51,20 +63,27 @@ JXG.Math = (function(JXG, Math, undefined) {
         if (f.memo) {
             return f.memo;
         }
+
         cache = {};
         join = Array.prototype.join;
 
-        return (f.memo = function() {
+        f.memo = function () {
             var key = join.call(arguments);
 
-            return (cache[key] !== undefined) // Seems to be a bit faster than "if (a in b)"
-                ? cache[key]
-                : cache[key] = f.apply(this, arguments);
-        });
+            // Seems to be a bit faster than "if (a in b)"
+            return (cache[key] !== undef) ?
+                    cache[key] :
+                    cache[key] = f.apply(this, arguments);
+        };
+
+        return f.memo;
     };
 
-    /** @lends JXG.Math */
-    return {
+    /**
+     * Math namespace.
+     * @namespace
+     */
+    JXG.Math = {
         /**
          * eps defines the closeness to zero. If the absolute value of a given number is smaller
          * than eps, it is considered to be equal to zero.
@@ -77,10 +96,10 @@ JXG.Math = (function(JXG, Math, undefined) {
          * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
          * @param {Number} a
          * @param {Number} m
-         * @returns Mathematical modulo <tt>a mod m</tt>
+         * @returns {Number} Mathematical modulo <tt>a mod m</tt>
          */
         mod: function (a, m) {
-            return a - Math.floor(a/m)*m;
+            return a - Math.floor(a / m) * m;
         },
 
         /**
@@ -90,13 +109,13 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
          * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
          */
-        vector: function(n, init) {
+        vector: function (n, init) {
             var r, i;
 
             init = init || 0;
+            r = [];
 
-            r = new Array(Math.ceil(n));
-            for(i=0; i<n; i++) {
+            for (i = 0; i < n; i++) {
                 r[i] = init;
             }
 
@@ -111,16 +130,17 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} A <tt>n</tt> times <tt>m</tt>-matrix represented by a
          * two-dimensional array. The inner arrays hold the columns, the outer array holds the rows.
          */
-        matrix: function(n, m, init) {
+        matrix: function (n, m, init) {
             var r, i, j;
 
             init = init || 0;
             m = m || n;
+            r = [];
 
-            r = new Array(Math.ceil(n));
-            for(i=0; i<n; i++) {
-                r[i] = new Array(Math.ceil(m));
-                for(j=0; j<m; j++) {
+            for (i = 0; i < n; i++) {
+                r[i] = [];
+
+                for (j = 0; j < m; j++) {
                     r[i][j] = init;
                 }
             }
@@ -136,15 +156,16 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} A square matrix of length <tt>n</tt> with all coefficients equal to 0 except a_(i,i), i out of (1, ..., n), if <tt>m</tt> is undefined or not a number
          * or a <tt>n</tt> times <tt>m</tt>-matrix with a_(i,j) = 0 and a_(i,i) = 1 if m is a number.
          */
-        identity: function(n, m) {
+        identity: function (n, m) {
             var r, i;
 
-            if((m === undefined) && (typeof m !== 'number')) {
+            if ((m === undef) && (typeof m !== 'number')) {
                 m = n;
             }
 
             r = this.matrix(n, m);
-            for(i=0; i<Math.min(n, m); i++) {
+
+            for (i = 0; i < Math.min(n, m); i++) {
                 r[i][i] = 1;
             }
 
@@ -162,22 +183,22 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} 4x4 Matrix
          */
         frustum: function (l, r, b, t, n, f) {
-            var ret = JXG.Math.matrix(4, 4);
+            var ret = this.matrix(4, 4);
 
-            ret[0][0] = (n*2) / (r - l);
+            ret[0][0] = (n * 2) / (r - l);
             ret[0][1] = 0;
             ret[0][2] = (r + l) / (r - l);
             ret[0][3] = 0;
 
             ret[1][0] = 0;
-            ret[1][1] = (n*2) / (t - b);
+            ret[1][1] = (n * 2) / (t - b);
             ret[1][2] = (t + b) / (t - b);
             ret[1][3] = 0;
 
             ret[2][0] = 0;
             ret[2][1] = 0;
             ret[2][2] = -(f + n) / (f - n);
-            ret[2][3] = -(f*n*2) / (f - n);
+            ret[2][3] = -(f * n * 2) / (f - n);
 
             ret[3][0] = 0;
             ret[3][1] = 0;
@@ -196,8 +217,9 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Array} 4x4 Projection Matrix
          */
         projection: function (fov, ratio, n, f) {
-            var t = n*Math.tan(fov/2),
-                r = t*ratio;
+            var t = n * Math.tan(fov / 2),
+                r = t * ratio;
+
             return this.frustum(-r, r, -t, t, n, f);
         },
 
@@ -215,20 +237,22 @@ JXG.Math = (function(JXG, Math, undefined) {
          * c = JXG.Math.matVecMult(A, b)
          * // c === [13, 19];
          */
-        matVecMult: function(mat, vec) {
-            var m = mat.length,
+        matVecMult: function (mat, vec) {
+            var i, s, k,
+                m = mat.length,
                 n = vec.length,
-                res = [],
-                i, s, k;
+                res = [];
 
-            if (n===3) {
-                for (i=0;i<m;i++) {
-                    res[i] = mat[i][0]*vec[0] + mat[i][1]*vec[1] + mat[i][2]*vec[2];
+            if (n === 3) {
+                for (i = 0; i < m; i++) {
+                    res[i] = mat[i][0] * vec[0] + mat[i][1] * vec[1] + mat[i][2] * vec[2];
                 }
             } else {
-                for (i=0;i<m;i++) {
+                for (i = 0; i < m; i++) {
                     s = 0;
-                    for (k=0;k<n;k++) { s += mat[i][k]*vec[k]; }
+                    for (k = 0; k < n; k++) {
+                        s += mat[i][k] * vec[k];
+                    }
                     res[i] = s;
                 }
             }
@@ -241,18 +265,18 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} mat2 Two dimensional array of numbers
          * @returns {Array} Two dimensional Array of numbers containing result
          */
-        matMatMult: function(mat1, mat2) {
-            var m = mat1.length,
-                n = m>0 ? mat2[0].length : 0,
+        matMatMult: function (mat1, mat2) {
+            var i, j, s, k,
+                m = mat1.length,
+                n = m > 0 ? mat2[0].length : 0,
                 m2 = mat2.length,
-                res = this.matrix(m,n),
-                i, j, s, k;
+                res = this.matrix(m, n);
 
-            for (i=0;i<m;i++) {
-                for (j=0;j<n;j++) {
+            for (i = 0; i < m; i++) {
+                for (j = 0; j < n; j++) {
                     s = 0;
-                    for (k=0;k<m2;k++) {
-                        s += mat1[i][k]*mat2[k][j];
+                    for (k = 0; k < m2; k++) {
+                        s += mat1[i][k] * mat2[k][j];
                     }
                     res[i][j] = s;
                 }
@@ -265,19 +289,22 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} M The matrix to be transposed
          * @returns {Array} The transpose of M
          */
-        transpose: function(M) {
+        transpose: function (M) {
             var MT, i, j,
                 m, n;
 
-            m = M.length;                     // number of rows of M
-            n = M.length>0 ? M[0].length : 0; // number of columns of M
-            MT = this.matrix(n,m);
+            // number of rows of M
+            m = M.length;
+            // number of columns of M
+            n = M.length > 0 ? M[0].length : 0;
+            MT = this.matrix(n, m);
 
-            for (i=0; i<n; i++) {
-                for (j=0;j<m;j++) {
+            for (i = 0; i < n; i++) {
+                for (j = 0; j < m; j++) {
                     MT[i][j] = M[j][i];
                 }
             }
+
             return MT;
         },
 
@@ -286,57 +313,80 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} Ain
          * @returns {Array} Inverse matrix of Ain
          */
-        inverse: function(Ain) {
-            var i,j,k,s,ma,r,swp,
+        inverse: function (Ain) {
+            var i, j, k, s, ma, r, swp,
                 n = Ain.length,
                 A = [],
                 p = [],
                 hv = [];
 
-            for (i=0;i<n;i++) {
+            for (i = 0; i < n; i++) {
                 A[i] = [];
-                for (j=0;j<n;j++) { A[i][j] = Ain[i][j]; }
+                for (j = 0; j < n; j++) {
+                    A[i][j] = Ain[i][j];
+                }
                 p[i] = i;
             }
 
-            for (j=0;j<n;j++) {
+            for (j = 0; j < n; j++) {
                 // pivot search:
                 ma = Math.abs(A[j][j]);
                 r = j;
-                for (i=j+1;i<n;i++) {
-                    if (Math.abs(A[i][j])>ma) {
+
+                for (i = j + 1; i < n; i++) {
+                    if (Math.abs(A[i][j]) > ma) {
                         ma = Math.abs(A[i][j]);
                         r = i;
                     }
                 }
-                if (ma<=JXG.Math.eps) { // Singular matrix
-                    return false;
+
+                // Singular matrix
+                if (ma <= this.eps) {
+                    return [];
                 }
+
                 // swap rows:
-                if (r>j) {
-                    for (k=0;k<n;k++) {
-                        swp = A[j][k]; A[j][k] = A[r][k]; A[r][k] = swp;
+                if (r > j) {
+                    for (k = 0; k < n; k++) {
+                        swp = A[j][k];
+                        A[j][k] = A[r][k];
+                        A[r][k] = swp;
                     }
-                    swp = p[j]; p[j] = p[r]; p[r] = swp;
+
+                    swp = p[j];
+                    p[j] = p[r];
+                    p[r] = swp;
                 }
+
                 // transformation:
-                s = 1.0/A[j][j];
-                for (i=0;i<n;i++) {
+                s = 1.0 / A[j][j];
+                for (i = 0; i < n; i++) {
                     A[i][j] *= s;
                 }
                 A[j][j] = s;
-                for (k=0;k<n;k++) if (k!=j) {
-                    for (i=0;i<n;i++) if (i!=j) {
-                        A[i][k] -= A[i][j]*A[j][k];
+
+                for (k = 0; k < n; k++) {
+                    if (k !== j) {
+                        for (i = 0; i < n; i++) {
+                            if (i !== j) {
+                                A[i][k] -= A[i][j] * A[j][k];
+                            }
+                        }
+                        A[j][k] = -s * A[j][k];
                     }
-                    A[j][k] = -s*A[j][k];
                 }
             }
+
             // swap columns:
-            for (i=0;i<n;i++) {
-                for (k=0;k<n;k++) { hv[p[k]] = A[i][k]; }
-                for (k=0;k<n;k++) { A[i][k] = hv[k]; }
+            for (i = 0; i < n; i++) {
+                for (k = 0; k < n; k++) {
+                    hv[p[k]] = A[i][k];
+                }
+                for (k = 0; k < n; k++) {
+                    A[i][k] = hv[k];
+                }
             }
+
             return A;
         },
 
@@ -347,15 +397,16 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} [n] Length of the Vectors. If not given the length of the first vector is taken.
          * @returns {Number} The inner product of a and b.
          */
-        innerProduct: function(a, b, n) {
-            var i, s = 0;
+        innerProduct: function (a, b, n) {
+            var i,
+                s = 0;
 
-            if((n === undefined) || (typeof n !== 'number')) {
+            if ((n === undef) || (typeof n !== 'number')) {
                 n = a.length;
             }
 
-            for (i=0; i<n; i++) {
-                s += a[i]*b[i];
+            for (i = 0; i < n; i++) {
+                s += a[i] * b[i];
             }
 
             return s;
@@ -372,10 +423,10 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} c2 Homogeneous coordinates of line or point 2
          * @returns {Array} vector of length 3: homogeneous coordinates of the resulting point / line.
          */
-        crossProduct: function(c1,c2) {
-            return [c1[1]*c2[2]-c1[2]*c2[1],
-                c1[2]*c2[0]-c1[0]*c2[2],
-                c1[0]*c2[1]-c1[1]*c2[0]];
+        crossProduct: function (c1, c2) {
+            return [c1[1] * c2[2] - c1[2] * c2[1],
+                c1[2] * c2[0] - c1[0] * c2[2],
+                c1[0] * c2[1] - c1[1] * c2[0]];
         },
 
         /**
@@ -386,10 +437,17 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @returns {Number} n! = n*(n-1)*...*2*1
          */
         factorial: memoizer(function (n) {
-            if (n<0) return NaN;
+            if (n < 0) {
+                return NaN;
+            }
+
             n = Math.floor(n);
-            if (n===0 || n===1) return 1;
-            return n*arguments.callee(n-1);
+
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+
+            return n * this.factorial(n - 1);
         }),
 
         /**
@@ -399,20 +457,25 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} k Fraction will be ignored
          * @returns {Number} The binomial coefficient n over k
          */
-        binomial: memoizer(function(n,k) {
+        binomial: memoizer(function (n, k) {
             var b, i;
 
-            if (k>n || k<0) return NaN;
+            if (k > n || k < 0) {
+                return NaN;
+            }
 
             k = Math.round(k);
             n = Math.round(n);
 
-            if (k===0 || k===n) return 1;
+            if (k === 0 || k === n) {
+                return 1;
+            }
 
             b = 1;
-            for (i=0; i<k; i++) {
-                b *= (n-i);
-                b /= (i+1);
+
+            for (i = 0; i < k; i++) {
+                b *= (n - i);
+                b /= (i + 1);
             }
 
             return b;
@@ -423,8 +486,8 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} x The number the cosine hyperbolicus will be calculated of.
          * @returns {Number} Cosine hyperbolicus of the given value.
          */
-        cosh: function(x) {
-            return (Math.exp(x)+Math.exp(-x))*0.5;
+        cosh: function (x) {
+            return (Math.exp(x) + Math.exp(-x)) * 0.5;
         },
 
         /**
@@ -432,8 +495,8 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} x The number the sine hyperbolicus will be calculated of.
          * @returns {Number} Sine hyperbolicus of the given value.
          */
-        sinh: function(x) {
-            return (Math.exp(x)-Math.exp(-x))*0.5;
+        sinh: function (x) {
+            return (Math.exp(x) - Math.exp(-x)) * 0.5;
         },
 
         /**
@@ -442,24 +505,26 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} exponent
          * @returns {Number} base to the power of exponent.
          */
-        pow: function(base, exponent) {
-            if (base===0) {
-                if (exponent===0) {
+        pow: function (base, exponent) {
+            if (base === 0) {
+                if (exponent === 0) {
                     return 1;
-                } else {
-                    return 0;
                 }
+
+                return 0;
             }
 
-            if (Math.floor(exponent)===exponent) {// a is an integer
-                return Math.pow(base,exponent);
-            } else { // a is not an integer
-                if (base>0) {
-                    return Math.exp(exponent*Math.log(Math.abs(base)));
-                } else {
-                    return NaN;
-                }
+            if (Math.floor(exponent) === exponent) {
+                // a is an integer
+                return Math.pow(base, exponent);
             }
+
+            // a is not an integer
+            if (base > 0) {
+                return Math.exp(exponent * Math.log(Math.abs(base)));
+            }
+
+            return NaN;
         },
 
         /**
@@ -469,26 +534,31 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Number} exponent
          * @returns {Number} Base to the power of exponent
          */
-        squampow: function(base, exponent) {
+        squampow: function (base, exponent) {
             var result;
 
-            if (Math.floor(exponent)===exponent) { // exponent is integer (could be zero)
+            if (Math.floor(exponent) === exponent) {
+                // exponent is integer (could be zero)
                 result = 1;
-                if(exponent < 0) {
+
+                if (exponent < 0) {
                     // invert: base
                     base = 1.0 / base;
                     exponent *= -1;
                 }
-                while(exponent != 0) {
-                    if(exponent & 1)
+
+                while (exponent !== 0) {
+                    if (exponent & 1) {
                         result *= base;
+                    }
+
                     exponent >>= 1;
                     base *= base;
                 }
                 return result;
-            } else {
-                return this.pow(base, exponent);
             }
+
+            return this.pow(base, exponent);
         },
 
         /**
@@ -497,34 +567,38 @@ JXG.Math = (function(JXG, Math, undefined) {
          * @param {Array} stdform The standard form to be normalized.
          * @returns {Array} The normalized standard form.
          */
-        normalize: function(stdform) {
-            var a2 = 2*stdform[3],
-                r = stdform[4]/(a2),  // k/(2a)
-                n, signr;
+        normalize: function (stdform) {
+            var n, signr,
+                a2 = 2 * stdform[3],
+                r = stdform[4] / (a2);
+
             stdform[5] = r;
-            stdform[6] = -stdform[1]/a2;
-            stdform[7] = -stdform[2]/a2;
-            if (r===Infinity || isNaN(r)) {
-                n = Math.sqrt(stdform[1]*stdform[1]+stdform[2]*stdform[2]);
+            stdform[6] = -stdform[1] / a2;
+            stdform[7] = -stdform[2] / a2;
+
+            if (r === Infinity || isNaN(r)) {
+                n = Math.sqrt(stdform[1] * stdform[1] + stdform[2] * stdform[2]);
+
                 stdform[0] /= n;
                 stdform[1] /= n;
                 stdform[2] /= n;
                 stdform[3] = 0;
                 stdform[4] = 1;
-            } else if (Math.abs(r)>=1) {
-                stdform[0] = (stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)/(2*r);
-                stdform[1] = -stdform[6]/r;
-                stdform[2] = -stdform[7]/r;
-                stdform[3] = 1/(2*r);
+            } else if (Math.abs(r) >= 1) {
+                stdform[0] = (stdform[6] * stdform[6] + stdform[7] * stdform[7] - r * r) / (2 * r);
+                stdform[1] = -stdform[6] / r;
+                stdform[2] = -stdform[7] / r;
+                stdform[3] = 1 / (2 * r);
                 stdform[4] = 1;
             } else {
-                signr = (r<=0)?(-1):(1/*(r==0)?0:1*/);
-                stdform[0] = signr*(stdform[6]*stdform[6]+stdform[7]*stdform[7]-r*r)*0.5;
-                stdform[1] = -signr*stdform[6];
-                stdform[2] = -signr*stdform[7];
-                stdform[3] = signr/2;
-                stdform[4] = signr*r;
+                signr = (r <= 0 ? -1 : 1);
+                stdform[0] = signr * (stdform[6] * stdform[6] + stdform[7] * stdform[7] - r * r) * 0.5;
+                stdform[1] = -signr * stdform[6];
+                stdform[2] = -signr * stdform[7];
+                stdform[3] = signr / 2;
+                stdform[4] = signr * r;
             }
+
             return stdform;
         },
 
@@ -538,7 +612,7 @@ JXG.Math = (function(JXG, Math, undefined) {
 
             var v, i, j;
 
-            if(typeof Float32Array !== 'undefined') {
+            if (typeof Float32Array === 'function') {
                 v = new Float32Array(16);
             } else {
                 v = new Array(16);
@@ -550,7 +624,7 @@ JXG.Math = (function(JXG, Math, undefined) {
 
             for (i = 0; i < 4; i++) {
                 for (j = 0; j < 4; j++) {
-                    v[i + 4*j] = m[i][j];
+                    v[i + 4 * j] = m[i][j];
                 }
             }
 
@@ -558,4 +632,4 @@ JXG.Math = (function(JXG, Math, undefined) {
         }
 
     };
-})(JXG, Math);
+}(JXG, Math));
