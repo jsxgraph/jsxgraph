@@ -418,8 +418,6 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_COMBINED:
 
-                    console.log("missing src, dest IDs for COMBINED step");
-
                     set_str = reset_str = '';
 
                     for (i=0; i<step.args.steps.length; i++) {
