@@ -809,9 +809,9 @@ JXG.Options = {
         strokeWidth: 1,
         dash : 0,    // dashed grids slow down the iPad considerably
         /* snap to grid options */
-        
+
         /**
-         * @deprecated -- What will be / is the alternative?
+         * @deprecated
          */
         snapToGrid : false,
         /**
