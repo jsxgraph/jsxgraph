@@ -811,7 +811,7 @@ JXG.Options = {
         /* snap to grid options */
         
         /**
-         * @deprecated
+         * @deprecated -- What will be / is the alternative?
          */
         snapToGrid : false,
         /**
