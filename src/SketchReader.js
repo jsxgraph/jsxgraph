@@ -258,8 +258,8 @@ JXG.extend(JXG, {
                         sub_id = step.src_ids[0];
 
                     set_str += assign + 'tangent(' + sub_id + ') <<' + attrid + 'point1: <<name: \'' + step.dest_sub_ids[0];
-                    set_str += '\', id: \'' + step.dest_sub_ids[0] + '\'>>, point2: <<name: \'' + step.dest_sub_ids[1];
-                    set_str += '\', id: \'' + step.dest_sub_ids[1] + '\'>> >>; ';
+                    set_str += '\', id: \'' + step.dest_sub_ids[0] + '\', priv: true>>, point2: <<name: \'' + step.dest_sub_ids[1];
+                    set_str += '\', id: \'' + step.dest_sub_ids[1] + '\', priv: true>> >>; ';
                     reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
                     break;
