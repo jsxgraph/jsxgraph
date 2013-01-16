@@ -912,7 +912,7 @@
                 if (!el.vertices[j].isReal) {
                     isReal = false;
                 }
-                scrCoords = el.vertices[i].coords.scrCoords;
+                scrCoords = el.vertices[j].coords.scrCoords;
                 context.lineTo(scrCoords[1], scrCoords[2]);
             }
             context.closePath();
