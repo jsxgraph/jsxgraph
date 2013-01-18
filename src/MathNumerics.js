@@ -968,8 +968,8 @@
                     MT = JXG.Math.transpose(M);
                     B = JXG.Math.matMatMult(MT, M);
                     c = JXG.Math.matVecMult(MT, y);
-                    coeffs = this.Gauss(B, c);
-                    term = this.generatePolynomialTerm(coeffs, d, 'x', 3);
+                    coeffs = JXG.Math.Numerics.Gauss(B, c);
+                    term = JXG.Math.Numerics.generatePolynomialTerm(coeffs, d, 'x', 3);
                 }
 
                 // Horner's scheme to evaluate polynomial
