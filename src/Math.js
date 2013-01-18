@@ -37,15 +37,15 @@
  JXG
  */
 
+/**
+ * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
+ * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
+ * @author graphjs
+ */
+
 (function (JXG, Math, undef) {
 
     "use strict";
-
-    /**
-     * @fileoverview In this file the namespace JXG.Math is defined, which is the base namespace
-     * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
-     * @author graphjs
-     */
 
     /*
      * Dynamic programming approach for recursive functions.

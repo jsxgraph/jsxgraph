@@ -30,20 +30,29 @@
  */
 
 
+/*global JXG: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/*depends:
+ JXG
+ Math
+ */
+
 /**
  * @fileoverview In this file the namespace Math.Symbolic is defined, which holds methods
  * and algorithms for symbolic computations.
  * @author graphjs
  */
 
-/**
- * The JXG.Math.Symbolic namespace holds algorithms for symbolic computations.
- * @namespace
- */
-JXG.Math.Symbolic = function(JXG, undefined) {
+(function (JXG, undef) {
 
-    /** @lends JXG.Math.Symbolic */
-    return {
+    "use strict";
+
+    /**
+     * The JXG.Math.Symbolic namespace holds algorithms for symbolic computations.
+     * @namespace
+     */
+    JXG.Math.Symbolic = {
         /**
          * Generates symbolic coordinates for the part of a construction including all the elements from that
          * a specific element depends of. These coordinates will be stored in GeometryElement.symbolic.
@@ -54,43 +63,50 @@ JXG.Math.Symbolic = function(JXG, undefined) {
          *                        'underscore' (e.g. x_2), 'none' (e.g. x2), 'brace' (e.g. x[2]).
          * @returns {Number} Number of coordinates given.
          */
-        generateSymbolicCoordinatesPartial: function(board, element, variable, append) {
-            var makeCoords = function(num) {
+        generateSymbolicCoordinatesPartial: function (board, element, variable, append) {
+            var t_num, t, k,
+                list = element.ancestors,
+                count = 0,
+                makeCoords = function (num) {
                     var r;
-                    if (append === 'underscore')
-                        r = '' + variable + '_{' + num + '}';
-                    else if (append == 'brace')
-                        r = '' + variable + '[' + num + ']';
-                    else
-                        r = '' + variable + '' + num;
+                    if (append === 'underscore') {
+                        r = variable + '_{' + num + '}';
+                    } else if (append === 'brace') {
+                        r = variable + '[' + num + ']';
+                    } else {
+                        r = variable + num;
+                    }
 
                     return r;
-                },
-                list = element.ancestors,
-                count = 0, t_num, t, k;
+                };
 
             board.listOfFreePoints = [];
             board.listOfDependantPoints = [];
 
             for (t in list) {
-                t_num = 0;
-                if (JXG.isPoint(list[t])) {
-                    for (k in list[t].ancestors) {
-                        t_num++;
-                    }
-                    if (t_num === 0) {
-                        list[t].symbolic.x = list[t].coords.usrCoords[1];
-                        list[t].symbolic.y = list[t].coords.usrCoords[2];
-                        board.listOfFreePoints.push(list[t]);
+                if (list.hasOwnProperty(t)) {
+                    t_num = 0;
 
-                    } else {
-                        count++;
-                        list[t].symbolic.x = makeCoords(count);
-                        count++;
-                        list[t].symbolic.y = makeCoords(count);
-                        board.listOfDependantPoints.push(list[t]);
-                    }
+                    if (JXG.isPoint(list[t])) {
+                        for (k in list[t].ancestors) {
+                            if (list[t].ancestors.hasOwnProperty(k)) {
+                                t_num++;
+                            }
+                        }
 
+                        if (t_num === 0) {
+                            list[t].symbolic.x = list[t].coords.usrCoords[1];
+                            list[t].symbolic.y = list[t].coords.usrCoords[2];
+                            board.listOfFreePoints.push(list[t]);
+                        } else {
+                            count += 1;
+                            list[t].symbolic.x = makeCoords(count);
+                            count += 1;
+                            list[t].symbolic.y = makeCoords(count);
+                            board.listOfDependantPoints.push(list[t]);
+                        }
+
+                    }
                 }
             }
 
@@ -106,8 +122,8 @@ JXG.Math.Symbolic = function(JXG, undefined) {
          * Clears all .symbolic.x and .symbolic.y members on every point of a given board.
          * @param {JXG.Board} board The board that's points get cleared their symbolic coordinates.
          */
-        clearSymbolicCoordinates: function(board) {
-            var clear = function(list) {
+        clearSymbolicCoordinates: function (board) {
+            var clear = function (list) {
                     var t, l = (list && list.length) || 0;
 
                     for (t = 0; t < l; t++) {
@@ -130,37 +146,47 @@ JXG.Math.Symbolic = function(JXG, undefined) {
          * a specific element depends of.
          * @param {JXG.Board} board The board that's points polynomials will be generated.
          * @param {JXG.GeometryElement} element All points in the set of ancestors of this element are used to generate the set of polynomials.
+         * @param {Boolean} generateCoords
          * @returns {Array} An array of polynomials as strings.
          */
-        generatePolynomials: function(board, element, generateCoords) {
-            var list = element.ancestors,
+        generatePolynomials: function (board, element, generateCoords) {
+            var t, k, i,
+                list = element.ancestors,
                 number_of_ancestors,
                 pgs = [],
-                result = [],
-                t, k, i;
+                result = [];
 
-            if (generateCoords)
+            if (generateCoords) {
                 this.generateSymbolicCoordinatesPartial(board, element, 'u', 'brace');
+            }
 
             list[element.id] = element;
 
             for (t in list) {
-                number_of_ancestors = 0;
-                pgs = [];
-                if (JXG.isPoint(list[t])) {
-                    for (k in list[t].ancestors) {
-                        number_of_ancestors++;
-                    }
-                    if (number_of_ancestors > 0) {
-                        pgs = list[t].generatePolynomial();
-                        for (i = 0; i < pgs.length; i++)
-                            result.push(pgs[i]);
+                if (list.hasOwnProperty(t)) {
+                    number_of_ancestors = 0;
+                    pgs = [];
+
+                    if (JXG.isPoint(list[t])) {
+                        for (k in list[t].ancestors) {
+                            if (list[t].ancestors.hasOwnProperty(k)) {
+                                number_of_ancestors++;
+                            }
+                        }
+                        if (number_of_ancestors > 0) {
+                            pgs = list[t].generatePolynomial();
+
+                            for (i = 0; i < pgs.length; i++) {
+                                result.push(pgs[i]);
+                            }
+                        }
                     }
                 }
             }
 
-            if (generateCoords)
+            if (generateCoords) {
                 this.clearSymbolicCoordinates(board);
+            }
 
             return result;
         },
@@ -171,15 +197,20 @@ JXG.Math.Symbolic = function(JXG, undefined) {
          * @param {JXG.Point} point The point that will be traced.
          * @returns {Array} An array of points.
          */
-        geometricLocusByGroebnerBase: function(board, point) {
-            var numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
-                poly, polyStr, result, oldRadius = {},
-                xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0,0], board),
-                xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
-                P1, P2, i, sf = 1, transx = 0, transy = 0, rot = 0, c, s, tx,
+        geometricLocusByGroebnerBase: function (board, point) {
+            var poly, polyStr, result,
+                P1, P2, i,
                 xs, xe, ys, ye,
+                c, s, tx,
+                bol = board.options.locus,
+                oldRadius = {},
+                numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
+                xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0, 0], board),
+                xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
+                sf = 1, transx = 0, transy = 0, rot = 0,
 
-                isIn = function(item, array) {
+                // todo: outsource to JXG
+                isIn = function (item, array) {
                     var i;
                     for (i = 0; i < array.length; i++) {
                         if (array[i].id === item) {
@@ -187,15 +218,16 @@ JXG.Math.Symbolic = function(JXG, undefined) {
                         }
                     }
                     return false;
-                },
-                bol = board.options.locus;
+                };
 
 
-            if (JXG.Server.modules.geoloci === undefined)
+            if (JXG.Server.modules.geoloci === undef) {
                 JXG.Server.loadModule('geoloci');
+            }
 
-            if (JXG.Server.modules.geoloci === undefined)
+            if (JXG.Server.modules.geoloci === undef) {
                 throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
+            }
 
             xs = xsye.usrCoords[1];
             xe = xeys.usrCoords[1];
@@ -213,7 +245,7 @@ JXG.Math.Symbolic = function(JXG, undefined) {
 
             // Step 1
             if (bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
-                if ((bol.toOrigin !== undefined) && (bol.toOrigin != null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
+                if ((bol.toOrigin !== undef) && (bol.toOrigin !== null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
                     P1 = bol.toOrigin;
                 } else {
                     P1 = board.listOfFreePoints[0];
@@ -234,13 +266,14 @@ JXG.Math.Symbolic = function(JXG, undefined) {
 
                 // Step 2
                 if (bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
-                    if ((bol.to10 !== undefined) && (bol.to10 != null) && (bol.to10.id != bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
+                    if ((bol.to10 !== undef) && (bol.to10 !== null) && (bol.to10.id !== bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
                         P2 = bol.to10;
                     } else {
-                        if (board.listOfFreePoints[0].id == P1.id)
+                        if (board.listOfFreePoints[0].id === P1.id) {
                             P2 = board.listOfFreePoints[1];
-                        else
+                        } else {
                             P2 = board.listOfFreePoints[0];
+                        }
                     }
 
                     rot = JXG.Math.Geometry.rad([1, 0], [0, 0], [P2.symbolic.x, P2.symbolic.y]);
@@ -273,10 +306,10 @@ JXG.Math.Symbolic = function(JXG, undefined) {
                             board.listOfFreePoints[i].symbolic.y /= sf;
                         }
 
-                        for (i in board.objects) {
-                            if ((board.objects[i].elementClass == JXG.OBJECT_CLASS_CIRCLE) && (board.objects[i].method == 'pointRadius')) {
-                                oldRadius[i] = board.objects[i].radius;
-                                board.objects[i].radius /= sf;
+                        for (i = 0; i < board.objectsList.length; i++) {
+                            if ((board.objectsList[i].elementClass === JXG.OBJECT_CLASS_CIRCLE) && (board.objectsList[i].method === 'pointRadius')) {
+                                oldRadius[i] = board.objectsList[i].radius;
+                                board.objectsList[i].radius /= sf;
                             }
                         }
 
@@ -293,16 +326,24 @@ JXG.Math.Symbolic = function(JXG, undefined) {
                 // make the coordinates "as rational as possible"
                 for (i = 0; i < board.listOfFreePoints.length; i++) {
                     tx = board.listOfFreePoints[i].symbolic.x;
-                    if (Math.abs(tx) < JXG.Math.eps)
+
+                    if (Math.abs(tx) < JXG.Math.eps) {
                         board.listOfFreePoints[i].symbolic.x = 0;
-                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps)
+                    }
+
+                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps) {
                         board.listOfFreePoints[i].symbolic.x = Math.round(tx);
+                    }
 
                     tx = board.listOfFreePoints[i].symbolic.y;
-                    if (Math.abs(tx) < JXG.Math.eps)
+
+                    if (Math.abs(tx) < JXG.Math.eps) {
                         board.listOfFreePoints[i].symbolic.y = 0;
-                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps)
+                    }
+
+                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps) {
                         board.listOfFreePoints[i].symbolic.y = Math.round(tx);
+                    }
                 }
             }
 
@@ -311,9 +352,7 @@ JXG.Math.Symbolic = function(JXG, undefined) {
             poly = this.generatePolynomials(board, point);
             polyStr = poly.join(',');
 
-            this.cbp = function(data) {
-                //alert(data.exectime);
-                //callback(data.datax, data.datay, data.polynomial);
+            this.cbp = function (data) {
                 result = data;
             };
 
@@ -324,7 +363,9 @@ JXG.Math.Symbolic = function(JXG, undefined) {
             this.clearSymbolicCoordinates(board);
 
             for (i in oldRadius) {
-                board.objects[i].radius = oldRadius[i];
+                if (oldRadius.hasOwnProperty(i)) {
+                    board.objects[i].radius = oldRadius[i];
+                }
             }
 
 
@@ -332,6 +373,6 @@ JXG.Math.Symbolic = function(JXG, undefined) {
         }
 
 
-    }
-}(JXG);
+    };
+}(JXG));
 
