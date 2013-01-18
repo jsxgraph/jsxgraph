@@ -1013,18 +1013,6 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             t2 = t2ini;
         }
 
-        /*
-         if (t1>c1.maxX()) { t1 = c1.maxX(); }
-         if (t1<c1.minX()) { t1 = c1.minX(); }
-         if (t2>c2.maxX()) { t2 = c2.maxX(); }
-         if (t2<c2.minX()) { t2 = c2.minX(); }
-         */
-
-        c1X = function(t) { return c1.X.apply(c1, [t]); };
-        c1Y = function(t) { return c1.Y.apply(c1, [t]); };
-        c2X = function(t) { return c2.X.apply(c2, [t]); };
-        c2Y = function(t) { return c2.Y.apply(c2, [t]); };
-         
         e = c1.X(t1) - c2.X(t2);
         f = c1.Y(t1) - c2.Y(t2);
         F = e * e + f * f;
@@ -1047,12 +1035,10 @@ JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
             F = e * e + f * f;
             count++;
         }
-        //console.log(t1+' '+t2);
 
         arguments.callee.t1memo = t1;
         arguments.callee.t2memo = t2;
 
-        //return (new JXG.Coords(JXG.COORDS_BY_USER, [2,2], this.board));
         if (Math.abs(t1) < Math.abs(t2)) {
             return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1),c1.Y(t1)], board));
         } else {
