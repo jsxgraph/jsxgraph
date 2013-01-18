@@ -31,9 +31,6 @@
 
 
 JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
-    angle: function(A, B, C){ return JXG.Math.Geometry.angle(A,B,C); },
-    rad: function(A, B, C){ return JXG.Math.Geometry.rad(A,B,C); },
-    distance: function(arr1, arr2){ return JXG.Math.Geometry.distance(arr1,arr2); },
     pow: function(a, b){ return JXG.Math.pow(a,b); },
     round: function(x, n){ return (x).toFixed(n); },
     cosh: function(x){ return JXG.Math.cosh(x); },
@@ -62,81 +59,4 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
     sqrt: Math.sqrt,
     tan: Math.tan,
     trunc: Math.ceil,
-    
-    factorial: function(n){ return JXG.Math.factorial(n); },
-    binomial: function(n,k){ return JXG.Math.binomial(n,k); },
-
-    getElement: function (el) {return JXG.getReference(this,el); },
-
-    /**
-     * GUI interface
-     **/
-    intersectionOptions: ['point',[[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_LINE],[JXG.OBJECT_CLASS_LINE,JXG.OBJECT_CLASS_CIRCLE],
-                                   [JXG.OBJECT_CLASS_CIRCLE,JXG.OBJECT_CLASS_CIRCLE]]],
-
-    pointFunc: function(){return [null];},
-    pointOptions: ['point',[[JXG.OBJECT_CLASS_POINT]]],
-
-    lineFunc: function(){return arguments;},
-    lineOptions: ['line',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-
-    linesegmentFunc: function(){return arguments;},
-    linesegmentOptions: ['line',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    linesegmentAtts: {straightFirst : false, straightLast : false },
-
-    arrowFunc: function(){return arguments;},
-    arrowOptions: ['arrow',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-
-    circleFunc: function(){return arguments;},
-    circleOptions: ['circle',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT],[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE],
-                              [JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_CIRCLE]]],
-
-    arrowparallelOptions: ['arrowparallel',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    arrowparallelFunc: function(){return arguments;},
-
-    bisectorOptions: ['bisector',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    bisectorFunc: function(){return arguments;},
-
-    circumcircleOptions: ['circumcircle',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    circumcircleFunc: function(){return arguments;},
-
-    circumcirclemidpointOptions: ['circumcirclemidpoint',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    circumcirclemidpointFunc: function(){return arguments;},
-
-    integralOptions: ['integral',[[]]],
-    integralFunc: function(){return arguments;},
-
-    midpointOptions: ['midpoint',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT],[JXG.OBJECT_CLASS_LINE]]],
-    midpointFunc: function(){return arguments;},
-
-    mirrorpointOptions: ['mirrorpoint',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    mirrorpointFunc: function(){return arguments;},
-
-    normalOptions: ['normal',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    normalFunc: function(){return arguments;},
-
-    parallelOptions: ['parallel',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    parallelFunc: function(){return arguments;},
-
-    parallelpointOptions: ['parallelpoint',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_POINT]]],
-    parallelpointFunc: function(){return arguments;},
-
-    perpendicularOptions: ['perpendicular',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    perpendicularFunc: function(){return arguments;},
-
-    perpendicularpointOptions: ['perpendicularpoint',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    perpendicularpointFunc: function(){return arguments;},
-
-    reflectionOptions: ['reflection',[[JXG.OBJECT_CLASS_POINT,JXG.OBJECT_CLASS_LINE]]],
-    reflectionFunc: function(){return arguments;}
 });
-
-// Some shortcuts
-JXG.Point.prototype.setPositionX = function (method, x) {
-    var y = (method==JXG.COORDS_BY_USER)?this.coords.usrCoords[2]:this.coords.scrCoords[2];
-    this.setPosition(method,[x,y]);
-};
-JXG.Point.prototype.setPositionY = function (method, y) {
-    var x = (method==JXG.COORDS_BY_USER)?this.coords.usrCoords[1]:this.coords.scrCoords[1];
-    this.setPosition(method,[x,y]);
-};
