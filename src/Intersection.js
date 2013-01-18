@@ -144,5 +144,5 @@ JXG.extend(JXG.Board.prototype, /** @lends JXG.Board.prototype */ {
                 return JXG.Math.Geometry.meet(el1.stdform,el2.stdform,1,el1.board);
             }
         };
-    }, //returns a single point of intersection
+    } //returns a single point of intersection
 });
