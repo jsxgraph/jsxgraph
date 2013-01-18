@@ -10,7 +10,7 @@ JXG.Options = JXG.deepCopy(JXG.Options, {
 
     sensitive_area: 20,
 
-    lastRegPolCorners: 3,
+    lastRegPolCorners: 4,
 
     angle: {
         fillColor: '#ddd',
