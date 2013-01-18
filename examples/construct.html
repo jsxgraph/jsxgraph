@@ -60,7 +60,27 @@ JXG.Options.point.label = {};
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
+/*
+brd.create('axis',
+    [
+    [0, 0],
+    [100, 0]
+    ],
+    { withLabel: true, name: "TEST-X", label: { offset: [135,150]}});
+    
+brd.create('axis',
+    [
+    [0, 0],
+    [0, 10]
+    ],
+    { withLabel: true, name: "TEST-Y", label: { offset: [125,135]}});
+    brd.create('point', [5,5], {withLabel: true, name: "Test", label: { offset:[50,-20]}});
+*/
 
+var a1 = brd.create('point',[0,3]);
+var a2 = brd.create('point',[3,3]);
+brd.create('line', [a1,a2], {withLabel: true, name: "line", label: { position:'llft', offset:[40,100]}});
+/*
     var ax1 = brd.create('axis', [[0,1.7],[1,1.7]], 
         { 
             ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
@@ -118,6 +138,7 @@ JXG.Options.point.label = {};
     //brd.create('glider', [2,1, e1],{color:'blue'});
     
     brd.update();
+*/
 
 </script> 
 </body>

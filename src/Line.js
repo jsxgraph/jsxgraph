@@ -530,6 +530,7 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
                 y = 0.5*(c1[2] + c2[2]);
         }
 
+        // Correct label offsets if the label seems to be outside of camvas.
         if (this.visProp.straightfirst || this.visProp.straightlast) {
             if (JXG.exists(this.label.content)) {  // Does not exist during createLabel
                 sx = parseFloat(this.label.content.visProp.offset[0]);
@@ -539,21 +540,21 @@ JXG.extend(JXG.Line.prototype, /** @lends JXG.Line.prototype */ {
 
             if (Math.abs(x)<JXG.Math.eps) {
                 x = sx;
-            //} else if (Math.abs(x-this.board.canvasWidth) < JXG.Math.eps) {
             } else if (this.board.canvasWidth+JXG.Math.eps>x && x>this.board.canvasWidth-fs-JXG.Math.eps) {
                 x = this.board.canvasWidth - sx - fs;
             } else {
-                x += sx;
+                //x += sx;
             }
-            
+
             if (JXG.Math.eps+fs > y && y > -JXG.Math.eps) {
                 y = sy + fs;
             } else if (this.board.canvasHeight+JXG.Math.eps > y && y > this.board.canvasHeight-fs-JXG.Math.eps) {
                 y = this.board.canvasHeight - sy;
             } else {
-                y += sy;
+                //y += sy;
             }
         } 
+
         return new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
     },
 
