@@ -1210,7 +1210,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @returns {JXG.GeometryElement} Reference to the element.
      */
     snapToGrid: function () {
-        return this;    },
+        return this;    
+    },
 
     /**
      * Retrieve a copy of the current visProp.

@@ -370,11 +370,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
                 nx = p1.coords.usrCoords[1] + this.fixedTicks[i]*deltaX;
                 ny = p1.coords.usrCoords[2] + this.fixedTicks[i]*deltaY;
                 tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
-                
                 ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
 				// Compute the start position and the end position of a tick.
 				// If both positions are out of the canvas, ti is empty.
-                if (ti.length==2 && this.fixedTicks[i]>=lb && this.fixedTicks[i]<ub) {
+                if (ti.length===3 && this.fixedTicks[i]>=lb && this.fixedTicks[i]<ub) {
                     this.ticks.push(ti);
                 }
                 this.labels.push(this._makeLabel(this.visProp.labels[i] || this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
