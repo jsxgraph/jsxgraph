@@ -2615,11 +2615,10 @@ this.writeElement = function(board, output, input, cmd) {
         // in the ggb file.
         for(i=0; i<output.length; i++) {
             output[i].addConstraint([
-                    (function(x){ return function(){ return board.root(inp.Y,x,inp);}; })(output[i].X()), 
+                    (function(x){ return function(){ return JXG.Math.Numerics.root(inp.Y,x,inp);}; })(output[i].X()),
                     function(){ return 0;}
                 ]);
         }
-        //var p = board.create('point', [function(){ return board.root(output);}, function(){ return 1;}], attr);
         return output; // What to return here????
     break;
   case 'integral':

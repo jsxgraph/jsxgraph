@@ -1357,9 +1357,9 @@ JXG.createTangent = function(board, parents, attributes) {
             g = c.X;
             f = c.Y;
             tangent = board.create('line', [
-                    function(){ return -p.X()*board.D(f)(p.position)+p.Y()*board.D(g)(p.position);},
-                    function(){ return board.D(f)(p.position);},
-                    function(){ return -board.D(g)(p.position);}
+                    function(){ return -p.X()*JXG.Math.Numerics.D(f)(p.position)+p.Y()*JXG.Math.Numerics.D(g)(p.position);},
+                    function(){ return JXG.Math.Numerics.D(f)(p.position);},
+                    function(){ return -JXG.Math.Numerics.D(g)(p.position);}
                     ], attributes );
             p.addChild(tangent);
             // this is required for the geogebra reader to display a slope

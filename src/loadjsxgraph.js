@@ -52,7 +52,7 @@ var JXG = {};
     Not longer used: IntergeoReader, GeonextReader, Angle
 */
     if (!JXG.useMinify) {
-        JXG.baseFiles = 'JXG,EventEmitter,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,MathPoly,Complex,AbstractRenderer,NoRenderer,FileReader,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Intersection,Wrappers,Ticks,Util,Server,DataSource,JessieCode,Dump';
+        JXG.baseFiles = 'JXG,EventEmitter,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,MathPoly,Complex,AbstractRenderer,NoRenderer,FileReader,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Intersection,Ticks,Util,Server,DataSource,JessieCode,Dump';
     } else {
         JXG.baseFiles = 'jxg';
     }

@@ -1067,9 +1067,9 @@ JXG.createNormal = function(board, parents, attributes) {
             var g = c.X;
             var f = c.Y;
             l = board.create('line', [
-                    function(){ return -p.X()*board.D(g)(p.position)-p.Y()*board.D(f)(p.position);},
-                    function(){ return board.D(g)(p.position);},
-                    function(){ return board.D(f)(p.position);}
+                    function(){ return -p.X()*JXG.Math.Numerics.D(g)(p.position)-p.Y()*JXG.Math.Numerics.D(f)(p.position);},
+                    function(){ return JXG.Math.Numerics.D(g)(p.position);},
+                    function(){ return JXG.Math.Numerics.D(f)(p.position);}
                     ], attr);
         } else {                         // curveType 'plot'
             l = board.create('line', [

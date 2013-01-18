@@ -910,10 +910,10 @@
             f = c1.Y(t1) - c2.Y(t2);
             F = e * e + f * f;
 
-            D00 = board.D(c1.X, c1);
-            D01 = board.D(c2.X, c2);
-            D10 = board.D(c1.Y, c1);
-            D11 = board.D(c2.Y, c2);
+            D00 = JXG.Math.Numerics.D(c1.X, c1);
+            D01 = JXG.Math.Numerics.D(c2.X, c2);
+            D10 = JXG.Math.Numerics.D(c1.Y, c1);
+            D11 = JXG.Math.Numerics.D(c2.Y, c2);
 
             while (F > JXG.Math.eps && count < 10) {
                 a = D00(t1);
