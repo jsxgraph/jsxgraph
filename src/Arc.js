@@ -71,9 +71,8 @@ JXG.createArc = function(board, parents, attributes) {
 
     // this method is used to create circumccirclearcs, too. if a circumcirclearc is created we get a fourth
     // point, that's why we need to check that case, too.
-    if(!(parents = JXG.checkParents('arc', parents, [
-            [JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT],
-            [JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT, JXG.OBJECT_CLASS_POINT]]))) {
+    if (parents.length < 3 || parents[0].elementClass !== JXG.OBJECT_CLASS_POINT || parents[1].elementClass !== JXG.OBJECT_CLASS_POINT ||
+            parents[2].elementClass !== JXG.OBJECT_CLASS_POINT || (parents[3] && parents[3].elementClass !== JXG.OBJECT_CLASS_POINT)) {
         throw new Error("JSXGraph: Can't create Arc with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                         (typeof parents[2]) + "'." +
