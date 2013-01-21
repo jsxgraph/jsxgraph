@@ -1230,7 +1230,6 @@
 
         /**
          * Handler for click on left arrow in the navigation bar
-         * @private
          */
         clickLeftArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth * 0.1, this.origin.scrCoords[2]);
@@ -1239,7 +1238,6 @@
 
         /**
          * Handler for click on right arrow in the navigation bar
-         * @private
          */
         clickRightArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth * 0.1, this.origin.scrCoords[2]);
@@ -1248,7 +1246,6 @@
 
         /**
          * Handler for click on up arrow in the navigation bar
-         * @private
          */
         clickUpArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight * 0.1);
@@ -1257,7 +1254,6 @@
 
         /**
          * Handler for click on down arrow in the navigation bar
-         * @private
          */
         clickDownArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight * 0.1);

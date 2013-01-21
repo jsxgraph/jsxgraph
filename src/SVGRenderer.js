@@ -60,7 +60,6 @@
         /**
          * SVG root node
          * @type Node
-         * @private
          */
         this.svgRoot = null;
 
