@@ -2078,6 +2078,8 @@
 
             this.updateCoords().clearTraces().fullUpdate();
 
+            this.triggerEventHandlers(['boundingbox']);
+
             return this;
         },
 
@@ -2991,6 +2993,7 @@
             this.canvasHeight = parseInt(dim.height, 10);
             w = this.canvasWidth;
             h = this.canvasHeight;
+
             if (keepaspectratio) {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
@@ -3005,6 +3008,7 @@
             }
 
             this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
+
             return this;
         },
 
@@ -3406,6 +3410,13 @@
          * @name JXG.Board#update
          */
         __evt__update: function () { },
+
+        /**
+         * @event
+         * @description The bounding box of the board has changed.
+         * @name JXG.Board#boundingbox
+         */
+        __evt__boundingbox: function () { },
 
         /**
          * @ignore
