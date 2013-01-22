@@ -907,10 +907,6 @@ JXG.extend(JXG, {
                             reset_str += ']); ';
                         }
 
-                    } else if (step.args.obj_type == JXG.OBJECT_TYPE_GLIDER) {
-                        set_str = step.src_ids[0] + '.setPosition(' + pn(step.args.position) + '); ';
-                        reset_str = step.src_ids[0] + '.setPosition(' + step.args.xstart + '); ';
-
                     } else if (step.args.obj_type == JXG.OBJECT_TYPE_POLYGON) {
                         set_str = reset_str = "";
 
@@ -920,10 +916,17 @@ JXG.extend(JXG, {
                             reset_str += step.src_ids[i] + '.move([' + step.args.xstart[i] + ', ' + step.args.ystart[i];
                             reset_str += ']); ';
                         }
+
                     } else {
-                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+
+                        var mv = 'move';
+
+                        if (step.args.obj_type == JXG.OBJECT_TYPE_GLIDER)
+                            mv = "setPosition";
+
+                        set_str = step.src_ids[0] + '.' + mv + '([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
                         set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-                        reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+                        reset_str = step.src_ids[0] + '.' + mv + '([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
                     }
 
                     break;
