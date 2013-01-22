@@ -52,7 +52,7 @@ var JXG = {};
     Not longer used: IntergeoReader, GeonextReader, Angle
 */
     if (!JXG.useMinify) {
-        JXG.baseFiles = 'JXG,EventEmitter,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,MathPoly,Complex,AbstractRenderer,NoRenderer,FileReader,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Group,Circle,Conic,Polygon,Curve,Arc,Sector,Composition,Text,Image,Slider,Chart,Transformation,Turtle,RGBColor,Intersection,Ticks,Util,Server,DataSource,JessieCode,Dump';
+        JXG.baseFiles = 'jxg,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,geonextparser,board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,base/conic,base/polygon,base/curve,element/arc,element/sector,element/composition,base/text,base/image,element/slider,base/chart,base/transformation,base/turtle,utils/color,intersection,base/ticks,utils/zip,server,datasource,jessiecode,utils/dump';
     } else {
         JXG.baseFiles = 'jxg';
     }
@@ -61,10 +61,10 @@ var JXG = {};
         JXG.rendererFiles['svg'] = 'SVGRendererMinify';
         JXG.rendererFiles['vml'] = 'VMLRendererMinify';
     } else {
-        JXG.rendererFiles['svg'] = 'SVGRenderer';
-        JXG.rendererFiles['vml'] = 'VMLRenderer';
+        JXG.rendererFiles['svg'] = 'renderer/svg';
+        JXG.rendererFiles['vml'] = 'renderer/vml';
     }
-    JXG.rendererFiles['canvas'] = 'CanvasRenderer';
+    JXG.rendererFiles['canvas'] = 'renderer/canvas';
     //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
     JXG.requirePath = '';
 

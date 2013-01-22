@@ -197,7 +197,7 @@ def makeCore():
     license = ("/* Version %s */\n" % version) + license
 
     # Take the source files and write them into jstxt
-    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js') + ['SVGRenderer','VMLRenderer','CanvasRenderer']
+    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js') + ['renderer/svg','renderer/vml','renderer/canvas']
     jstxt = catFiles(files)
 
     # tmpfilename = tempfile.mktemp()
@@ -241,12 +241,12 @@ def makePlot():
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
 
-    files = 'JXG,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,AbstractRenderer,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Curve,Text,Composition,Util,Transformation,RGBColor,Wrappers,Ticks'.split(',')
+    files = 'jxg,math/math,math/numerics,math/statics,math/symbolic,math/geometry,renderer/abstract,geonextparser,board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/curve,base/text,element/composition,utils/zip,base/transformation,utils/color,base/ticks'.split(',')
     for f in files:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
-    renderer = ['SVGRenderer','CanvasRenderer']
+    renderer = ['renderer/svg','renderer/canvas']
     for f in renderer:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
@@ -306,9 +306,9 @@ def makeDocs(afterCore = False):
 
     #FILELIST=$(cat ../src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $2 }' | sed 's/,/.js ..\/src\//g')
     files = findFilenames('src/loadjsxgraph.js')
-    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/SVGRenderer.js src/VMLRenderer.js src/CanvasRenderer.js"
+    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/renderer/svg.js src/renderer/vml.js src/rendere/canvas.js"
     
-    #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
+    #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/renderer/svg.js ../src/renderer/vml.js
     os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -v -p -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
 
     #zip -r tmp/docs.zip tmp/docs/
@@ -324,11 +324,10 @@ def makeReaders():
     print "Making Readers..."
     
     lic = ("/* Version %s */\n" % version) + license
-    reader = ['Geonext', 'Geogebra', 'Intergeo', 'Cinderella', 'Sketch']
+    reader = ['geonext', 'geogebra', 'intergeo', 'cinderella', 'sketch']
     for f in reader:
-        fname = f + "Reader"
-        shutil.copy("src/" + fname + ".js", "tmp/")
-        shutil.copy("src/" + fname + ".js", output)
+        shutil.copy("src/reader/" + fname + ".js", "tmp/")
+        shutil.copy("src/reader/" + fname + ".js", output)
 
         # Minify; yuglify from Yahoo
         srcFilename = "tmp/" + fname + ".js"
@@ -386,7 +385,7 @@ def makeCompressor(afterCore = False):
     jstxt += 'JXG.decompress = function(str) {return unescape((new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip()[0][0]);};\n'
 
     # Take the source files and write them into jstxt
-    loader = ['Util']
+    loader = ['utils/zip']
     for f in loader:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
