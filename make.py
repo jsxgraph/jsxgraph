@@ -126,7 +126,7 @@ def usage():
 '''
 def findFilenames(filename):
     lines = open(filename).readlines()
-    expr = re.compile("baseFiles\s*=\s*('|\")([\w,\s]+)('|\")")
+    expr = re.compile("baseFiles\s*=\s*('|\")([\w,\s\/]+)('|\")")
     for el in lines:
         el = re.compile("\s+").sub("",el) # Replace whitespace
         r = expr.search(el)
