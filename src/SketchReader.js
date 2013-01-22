@@ -918,15 +918,10 @@ JXG.extend(JXG, {
                         }
 
                     } else {
-
-                        var mv = 'move';
-
-                        if (step.args.obj_type == JXG.OBJECT_TYPE_GLIDER)
-                            mv = "setPosition";
-
-                        set_str = step.src_ids[0] + '.' + mv + '([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
                         set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-                        reset_str = step.src_ids[0] + '.' + mv + '([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+
+                        reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
                     }
 
                     break;
