@@ -1055,7 +1055,7 @@
         indexOf: function (array, value, sub) {
             var i, s = JXG.exists(sub);
 
-            if (array.indexOf && !s) {
+            if (Array.indexOf && !s) {
                 return array.indexOf(value);
             }
 
