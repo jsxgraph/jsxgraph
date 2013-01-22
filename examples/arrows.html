@@ -3,8 +3,6 @@
     <title>Board events</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
-
 </head>
 <body>
 
@@ -25,6 +23,7 @@
     var l = board.create('segment', [p, q]);
 
     l.setProperty({firstarrow: true, lastarrow: true});
+
     function toggle() {
         l.setProperty({firstarrow:false, lastarrow:true});
         l.setProperty({firstarrow:true, lastarrow:true});

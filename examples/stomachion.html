@@ -1,0 +1,288 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Stomachion</h2>
+<div style="width:1200px">
+  <table border='0'>
+  <tr><td>
+  <div id="jxgbox" class="jxgbox" style="width:1100px; height:600px; float:left"></div></td>
+  <td valign='top'><form>
+  <input type='button' value='Solve it!' onClick='solveit()'>
+  <form></td>
+  </tr>
+  </table>
+  </div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    
+        function solveit() {
+            t=400;
+            board.suspendUpdate();
+            p11m.moveTo([33,18],t);
+            p12m.moveTo([39,18],t);            
+            p21m.moveTo([39,14],t);
+            p22m.moveTo([39,12],t);
+            p31m.moveTo([36,12],t);
+            p32m.moveTo([39,12],t);
+            p41m.moveTo([36,12],t);
+            p42m.moveTo([39,6],t); 
+            p51m.moveTo([33,12],t);
+            p52m.moveTo([33,18],t);
+            p61.moveTo([33,12],t);
+            p62.moveTo([33,6],t);
+            p71.moveTo([33,6], t);
+            p81.moveTo([30,6], t);
+            p91.moveTo([30,6],t);
+            p92.moveTo([30,12],t);
+            p101.moveTo([27,6], t);
+            p111.moveTo([27,6],t);
+            p121.moveTo([27,18],t);
+            p122.moveTo([27,6],t);
+            p131m.moveTo([33,18],t);
+            p132m.moveTo([33,12],t);
+            p141.moveTo([33,18],t);
+            p142.moveTo([27,18],t);
+            board.unsuspendUpdate();
+        }
+    
+
+
+        var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 0, originY: 600, unitX: 25, unitY: 25});
+        
+            
+        var p1 = board.create('point',[27,6],{visible:false}); 
+        var p2 = board.create('point',[27,18],{visible:false});         
+        var p3 = board.create('point',[39,18],{visible:false}); 
+        var p4 = board.create('point',[39,6],{visible:false});
+        var f = board.create('polygon',[p1,p2,p3,p4],{fillcolor:'none'});
+        for(i=0; i<f.borders.length; i++) {
+            f.borders[i].setProperty('strokeColor:black');
+        }
+        
+        // First polygon (mirrored)
+        var p11m = board.create('point',[7,17],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var c11m = board.create('circle',[p11m,6],{visible:false});
+        var p12m = board.create('glider',[1,17,c11m],{face:'plus',withLabel:false,visible:true});
+        var l11m = board.create('line',[p11m,p12m],{visible:false});        
+        var l12m = board.create('normal',[l11m,p12m],{visible:false});
+        var c12m = board.create('circle',[p12m,4],{visible:false});
+        var p13m = board.create('intersection',[c12m,l12m,1],{face:'cross',visible:false});        
+        var c13m = board.create('circle',[p11m,3],{visible:false});
+        var p14m = board.create('intersection',[c13m,l11m,0],{face:'cross',visible:false});         
+        var l13m = board.create('normal',[l11m,p14m],{visible:false});
+        var c14m = board.create('circle',[p14m,6],{visible:false});
+        var p15m = board.create('intersection',[c14m,l13m,1],{face:'cross',visible:false}); 
+        var f1m = board.create('polygon',[p11m,p12m,p13m,p15m],{fillcolor:'#00FF00',visible:true});
+        for(i=0; i<f1m.borders.length; i++) {
+            f1m.borders[i].setProperty('strokeColor:black');
+        }        
+        
+       
+        // Second polygon (mirrored)
+        var p21m = board.create('point',[10,20],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var c21m = board.create('circle',[p21m,2],{visible:false});
+        var p22m = board.create('glider',[8,20,c21m],{face:'plus',withLabel:false,visible:true});
+        var l21m = board.create('line',[p21m,p22m],{visible:false});
+        var l22m = board.create('normal',[l21m,p22m],{visible:false});
+        var c22m = board.create('circle',[p22m,3],{visible:false});
+        var p23m = board.create('intersection',[c22m,l22m,1],{face:'cross',visible:false});
+        var f2m = board.create('polygon',[p21m,p22m,p23m],{fillcolor:'#99FF00',visible:true});
+        for(i=0; i<f2m.borders.length; i++) {
+            f2m.borders[i].setProperty('strokeColor:black');
+        }        
+        
+      
+        // Third polygon (mirrored)
+        var p31m = board.create('point',[14,17],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var c31m = board.create('circle',[p31m,3],{visible:false});
+        var p32m = board.create('glider',[11,17,c31m],{face:'plus',withLabel:false,visible:true});
+        var l31m = board.create('line',[p31m,p32m],{visible:false});
+        var l32m = board.create('normal',[l31m,p32m],{visible:false});
+        var c32m = board.create('circle',[p32m,6],{visible:false});
+        var p33m = board.create('intersection',[c32m,l32m,1],{face:'cross',visible:false});
+        var f3m = board.create('polygon',[p31m,p32m,p33m],{fillcolor:'#99FF99',visible:true});
+        for(i=0; i<f3m.borders.length; i++) {
+            f3m.borders[i].setProperty('strokeColor:black');
+        }             
+
+        // Fourth polygon (mirrored)
+        var p41m = board.create('point',[15,22],{face:'circle',fillColor:'blue', withLabel:false, visible:true});
+        var c41m = board.create('circle',[p41m,Math.sqrt(20)+Math.sqrt(5)],{visible:false});
+        var p42m = board.create('glider',[21,19,c41m],{face:'plus',withLabel:false, visible:true}); 
+        var c42m = board.create('circle',[p41m,Math.sqrt(5)],{visible:false});
+        var c43m = board.create('circle',[p42m,Math.sqrt(32)],{visible:false});
+        var p43m = board.create('intersection',[c42m,c43m,0],{face:'cross',visible:false});
+        var f4m = board.create('polygon',[p41m,p42m,p43m],{fillcolor:'#CCCC33', visible:true});
+        for(i=0; i<f4m.borders.length; i++) {
+            f4m.borders[i].setProperty('strokeColor:black');
+        }   
+
+        // Fifth polygon (mirrored)
+        var p51m = board.create('point',[30,20],{face:'circle',fillColor:'blue',withLabel:false,visible:true});
+        var c51m = board.create('circle',[p51m,6],{visible:false});
+        var p52m = board.create('glider',[24,20,c51m],{face:'plus',withLabel:false,visible:true});        
+        var l51m = board.create('line',[p51m,p52m],{visible:false});   
+        var l52m = board.create('normal',[l51m,p51m],{visible:false});
+        var c52m = board.create('circle',[p51m,3],{visible:false});
+        var p53m = board.create('intersection',[c52m,l52m,1],{face:'cross',visible:false}); 
+        var c53m = board.create('circle',[p51m,2],{visible:false});
+        var p54m = board.create('intersection',[c53m,l52m,1],{face:'cross',visible:false}); 
+        var l53m = board.create('normal',[l52m,p54m],{visible:false});
+        var c54m = board.create('circle',[p54m,2],{visible:false});
+        var p55m = board.create('intersection',[c54m,l53m,0],{face:'cross',visible:false});
+        var f5m = board.create('polygon',[p51m,p52m,p53m,p55m],{fillcolor:'#FF00FF',visible:true});
+        for(i=0; i<f5m.borders.length; i++) {
+            f5m.borders[i].setProperty('strokeColor:black');
+        }
+
+        // Sixth polygon
+        var p61 = board.create('point',[1,14],{face:'circle',fillColor:'blue',withLabel:false});
+        var c61 = board.create('circle',[p61,6],{visible:false});
+        var p62 = board.create('glider',[7,14,c61],{face:'plus',withLabel:false});        
+        var l61 = board.create('line',[p61,p62],{visible:false});
+        var c62 = board.create('circle',[p61,2],{visible:false});
+        var p63 = board.create('intersection',[l61,c62,0],{visible:false});  
+        var l62 = board.create('normal',[l61,p63],{visible:false});
+        var c63 = board.create('circle',[p63,2],{visible:false});
+        var p64 = board.create('intersection',[c63,l62,0],{face:'cross',visible:false});
+        var f6 = board.create('polygon',[p61,p62,p64],{fillcolor:'#CC9966'});
+        for(i=0; i<f6.borders.length; i++) {
+            f6.borders[i].setProperty('strokeColor:black');
+        }    
+        var m6 = false;    
+        
+        // Seventh polygon
+        var p71 = board.create('point',[7,12],{face:'circle',fillColor:'blue',withLabel:false});
+        var c71 = board.create('circle',[p71,6],{visible:false});
+        var p72 = board.create('glider',[13,12,c71],{face:'plus',withLabel:false});        
+        var l71 = board.create('line',[p71,p72],{visible:false});
+        var c72 = board.create('circle',[p71,2],{visible:false});
+        var p73 = board.create('intersection',[l71,c72,0],{visible:false});  
+        var l72 = board.create('normal',[l71,p73],{visible:false});
+        var c73 = board.create('circle',[p73,4],{visible:false});
+        var p74 = board.create('intersection',[c73,l72,0],{face:'cross',visible:false});
+        var f7 = board.create('polygon',[p71,p72,p74],{fillcolor:'#996699'});
+        for(i=0; i<f7.borders.length; i++) {
+            f7.borders[i].setProperty('strokeColor:black');
+        } 
+        
+        // Eightth polygon
+        var p81 = board.create('point',[1,5],{face:'circle',fillColor:'blue',withLabel:false});
+        var c81 = board.create('circle',[p81,3],{visible:false});        
+        var p82 = board.create('glider',[4,5,c81],{face:'plus',withLabel:false});
+        var l81 = board.create('line',[p81,p82],{visible:false});
+        var l82 = board.create('normal',[p81,l81],{visible:false});
+        var l83 = board.create('normal',[p82,l81],{visible:false});
+        var c82 = board.create('circle',[p81,6],{visible:false});
+        var p83 = board.create('intersection',[l82,c82,0],{visible:false}); 
+        var c83 = board.create('circle',[p82,6],{visible:false});
+        var p84 = board.create('intersection',[l83,c83,0],{visible:false}); 
+        var l84 = board.create('line',[p83,p84],{visible:false});
+        var c84 = board.create('circle',[p83,1],{visible:false});
+        var p85 = board.create('intersection',[l84,c84,0],{visible:false}); 
+        var l85 = board.create('normal',[p85,l84],{visible:false});
+        var c85 = board.create('circle',[p85,2],{visible:false});
+        var p86 = board.create('intersection',[l85,c85,0],{visible:false}); 
+        var f8 = board.create('polygon',[p81,p82,p84,p86,p83],{fillcolor:'#00CCFF'});
+        for(i=0; i<f8.borders.length; i++) {
+            f8.borders[i].setProperty('strokeColor:black');
+        }    
+
+        // Nineth polygon
+        var p91 = board.create('point',[31,20],{face:'circle',fillColor:'blue',withLabel:false});
+        var c91 = board.create('circle',[p91,6],{visible:false});
+        var p92 = board.create('glider',[37,20,c91],{face:'plus',withLabel:false});        
+        var l91 = board.create('line',[p91,p92],{visible:false});
+        var c92 = board.create('circle',[p91,4],{visible:false});
+        var p93 = board.create('intersection',[l91,c92,0],{visible:false});  
+        var l92 = board.create('normal',[l91,p93],{visible:false});
+        var c93 = board.create('circle',[p93,1],{visible:false});
+        var p94 = board.create('intersection',[c93,l92,0],{face:'cross',visible:false});
+        var f9 = board.create('polygon',[p91,p92,p94],{fillcolor:'#FFFF00'});
+        for(i=0; i<f9.borders.length; i++) {
+            f9.borders[i].setProperty('strokeColor:black');
+        } 
+
+        // Tenth polygon
+        var p101 = board.create('point',[14,10],{face:'circle',fillColor:'blue',withLabel:false});
+        var c101 = board.create('circle',[p101,3],{visible:false});
+        var p102 = board.create('glider',[17,10,c101],{face:'plus',withLabel:false});        
+        var l101 = board.create('line',[p101,p102],{visible:false});
+        var c102 = board.create('circle',[p101,2],{visible:false});
+        var p103 = board.create('intersection',[l101,c102,0],{visible:false});  
+        var l102 = board.create('normal',[l101,p103],{visible:false});
+        var c103 = board.create('circle',[p103,4],{visible:false});
+        var p104 = board.create('intersection',[c103,l102,0],{face:'cross',visible:false});
+        var f10 = board.create('polygon',[p101,p102,p104],{fillcolor:'#FF3300'});
+        for(i=0; i<f10.borders.length; i++) {
+            f10.borders[i].setProperty('strokeColor:black');
+        } 
+        
+        // Eleventh polygon 
+        var p111 = board.create('point',[17,6],{face:'circle',fillColor:'blue',withLabel:false});
+        var c111 = board.create('circle',[p111,Math.sqrt(80)],{visible:false});
+        var p112 = board.create('glider',[21,14,c111],{face:'plus',withLabel:false});   
+        var c112 = board.create('circle',[p112,Math.sqrt(8)],{visible:false});
+        var c113 = board.create('circle',[p111,Math.sqrt(104)],{visible:false});
+        var p113 = board.create('intersection',[c112,c113,0],{face:'cross',visible:false}); 
+        var f11 = board.create('polygon',[p111,p112,p113],{fillcolor:'#FFCC33'});
+        for(i=0; i<f11.borders.length; i++) {
+            f11.borders[i].setProperty('strokeColor:black');
+        } 
+        
+        // Twelveth polygon
+        var p121 = board.create('point',[1,1],{face:'circle',fillColor:'blue',withLabel:false});
+        var c121 = board.create('circle',[p121,12],{visible:false});
+        var p122 = board.create('glider',[13,1,c121],{face:'plus',withLabel:false});        
+        var l121 = board.create('line',[p121,p122],{visible:false});
+        var c122 = board.create('circle',[p121,2],{visible:false});
+        var p123 = board.create('intersection',[l121,c122,0],{visible:false});  
+        var l122 = board.create('normal',[l121,p123],{visible:false});
+        var c123 = board.create('circle',[p123,2],{visible:false});
+        var p124 = board.create('intersection',[c123,l122,0],{face:'cross',visible:false});
+        var f12 = board.create('polygon',[p121,p122,p124],{fillcolor:'#FF9999'});
+        for(i=0; i<f12.borders.length; i++) {
+            f12.borders[i].setProperty('strokeColor:black');
+        } 
+
+        // Thirteenth polygon (mirrored)
+        var p131m = board.create('point',[13,8],{face:'circle',fillColor:'blue',withLabel:false, visible:true});
+        var c131m = board.create('circle',[p131m,6],{visible:false});
+        var p132m = board.create('glider',[7,8,c131m],{face:'plus',withLabel:false, visible:true});        
+        var l131m = board.create('line',[p131m,p132m],{visible:false});
+        var c132m = board.create('circle',[p131m,4],{visible:false});
+        var p133m = board.create('intersection',[l131m,c132m,0],{visible:false});  
+        var l132m = board.create('normal',[l131m,p133m],{visible:false});
+        var c133m = board.create('circle',[p133m,2],{visible:false});
+        var p134m = board.create('intersection',[c133m,l132m,1],{face:'cross',visible:false});
+        var f13m = board.create('polygon',[p131m,p132m,p134m],{fillcolor:'#0099CC', visible:true});
+        for(i=0; i<f13m.borders.length; i++) {
+            f13m.borders[i].setProperty('strokeColor:black');
+        }  
+        
+        // Fourteenth polygon
+        var p141 = board.create('point',[14,1],{face:'circle',fillColor:'blue',withLabel:false});
+        var c141 = board.create('circle',[p141,6],{visible:false});
+        var p142 = board.create('glider',[20,1,c141],{face:'plus',withLabel:false});        
+        var l141 = board.create('line',[p141,p142],{visible:false});
+        var c142 = board.create('circle',[p141,2],{visible:false});
+        var p143 = board.create('intersection',[l141,c142,0],{visible:false});  
+        var l142 = board.create('normal',[l141,p143],{visible:false});
+        var c143 = board.create('circle',[p143,4],{visible:false});
+        var p144 = board.create('intersection',[c143,l142,0],{face:'cross',visible:false});
+        var f14 = board.create('polygon',[p141,p142,p144],{fillcolor:'#FFCCFF'});
+        for(i=0; i<f14.borders.length; i++) {
+            f14.borders[i].setProperty('strokeColor:black');
+        }   
+        var m14 = false;       
+        
+  /* ]]> */
+  </script>
+</body>
+</html>

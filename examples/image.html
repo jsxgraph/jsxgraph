@@ -4,7 +4,6 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 </head>
 <body>
   <h2>Images</h2>
@@ -18,8 +17,7 @@
         picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
         //picStr = "./uccellino.jpg";
         picStr = "./fagiolo.jpg";
-//JXG.Options.renderer = 'canvas';
-        
+
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
 
         var p0 = board.create('point', [-1,0], {style:5, name:'opacity'}); 

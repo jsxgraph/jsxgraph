@@ -1,0 +1,67 @@
+<html>
+<head>
+   <title>Pascalsches Lima&ccedil;on | JSXGraph | Beispiel f&uuml;r einen geometrischen Ort</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>/ <a href="index.html">root</a> / <a href="loci.html">Beispiele f&uuml;r geometrische Orte</a> / Pascalsches Lima&ccedil;on</h2>
+<div style="text-align: center">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:600px; text-align: left; margin: auto;"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: true, grid: false,
+                                   keepaspectratio: true, showcopyright: false});
+
+//    board.suspendUpdate();
+    p3 = board.createElement('point', [8, 3]);
+    p4 = board.createElement('point', [8, 8]);
+    c1 = board.createElement('circle', [p4, 4]);//, {strokeOpacity: 0.3});
+
+    p6 = board.createElement('glider', [0, 0, c1], {name:"D"});
+    g = board.createElement('line', [p3, p6]);//, {strokeOpacity: 0.3});
+
+    c2 = board.createElement('circle', [p6, 3]);//, {strokeOpacity: 0.3});
+
+    p14_1 = board.createElement('intersection', [c2,g,0], {name: "T"});
+//    p14_2 = board.createElement('intersection', [c2,g,1]);
+
+    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
+
+//    tg = board.create('glider', [loc]);
+    //tg = p14_1;
+
+//    tc = board.create('circle', [tg, 3], {strokeOpacity: 0.3});
+//    ti = board.create('intersection', [tc, c1, 0]);
+//    tm = board.create('midpoint', [tg, ti]);
+
+//    board.unsuspendUpdate();
+
+//    tl = board.create('locus', [tm], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
+
+  /* ]]> */
+  </script>
+<br/><br/>
+<div id="src_disp" style="display:block;">
+<h2><a href="#" name="src"></a>Quelltext der Konstruktion</h2>
+<pre style="border: black solid 1px; padding: 4px"><tt>  board <font color="#990000">=</font> JXG<font color="#990000">.</font>JSXGraph<font color="#990000">.</font><b><font color="#000000">initBoard</font></b><font color="#990000">(</font><font color="#FF0000">'jxgbox'</font><font color="#990000">,</font> <font color="#FF0000">{</font>boundingbox<font color="#990000">:</font> <font color="#990000">[-</font><font color="#993399">2</font><font color="#990000">,</font> <font color="#993399">20</font><font color="#990000">,</font> <font color="#993399">20</font><font color="#990000">,</font> <font color="#990000">-</font><font color="#993399">2</font><font color="#990000">],</font> axis<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> grid<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#990000">,</font>
+                                 keepaspectratio<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> showcopyright<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  p3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">8</font><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">]);</font>
+  p4 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">8</font><font color="#990000">,</font> <font color="#993399">8</font><font color="#990000">]);</font>
+  c1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'circle'</font><font color="#990000">,</font> <font color="#990000">[</font>p4<font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">]);</font>
+
+  p6 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'glider'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">0</font><font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">,</font> c1<font color="#990000">],</font> <font color="#FF0000">{</font>name<font color="#990000">:</font><font color="#FF0000">"D"</font><font color="#FF0000">}</font><font color="#990000">);</font>
+  g <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'line'</font><font color="#990000">,</font> <font color="#990000">[</font>p3<font color="#990000">,</font> p6<font color="#990000">]);</font>
+
+  c2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'circle'</font><font color="#990000">,</font> <font color="#990000">[</font>p6<font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">]);</font>
+
+  p14_1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'intersection'</font><font color="#990000">,</font> <font color="#990000">[</font>c2<font color="#990000">,</font>g<font color="#990000">,</font><font color="#993399">0</font><font color="#990000">],</font> <font color="#FF0000">{</font>name<font color="#990000">:</font> <font color="#FF0000">"T"</font><font color="#FF0000">}</font><font color="#990000">);</font>
+  p14_2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'intersection'</font><font color="#990000">,</font> <font color="#990000">[</font>c2<font color="#990000">,</font>g<font color="#990000">,</font><font color="#993399">1</font><font color="#990000">]);</font>
+
+  loc <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'locus'</font><font color="#990000">,</font> <font color="#990000">[</font>p14_1<font color="#990000">],</font> <font color="#FF0000">{</font>strokeColor<font color="#990000">:</font> <font color="#FF0000">'red'</font><font color="#990000">,</font> strokeWidth<font color="#990000">:</font> <font color="#FF0000">'1px'</font><font color="#FF0000">}</font><font color="#990000">);</font>
+</tt></pre>
+</div></body>
+</html>

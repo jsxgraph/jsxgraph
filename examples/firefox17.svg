@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
-    <g>
-        <ellipse id="jxgbox_jxgBoard1C2" stroke-width="2px" stroke="#0000ff" stroke-opacity="1" style="fill:none" fill-opacity="1" cx="251" cy="251" rx="125.5" ry="125.5" />
-        <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="none"/>
-        <rect width="300" height="100" stroke-width="1" stroke="black" fill="none" />
-    </g>
-</svg>

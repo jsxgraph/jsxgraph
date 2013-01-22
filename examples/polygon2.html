@@ -7,8 +7,7 @@
 <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h1 onclick="brd.clearTraces();">Playground</h1>
-from <a href="http://tracenpoche.sesamath.net/">http://tracenpoche.sesamath.net/</a>
+<h1 onclick="brd.clearTraces();">Polygon</h1>
 <form><input type="text"></form>
 <!-- Drawing area -->
 <div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
@@ -22,13 +21,7 @@ var A = brd.create('point', [-3,5], {name:'A', withLabel:true, visible:true});
 var B = brd.create('point', [8,8], {name:'B', withLabel:true, visible:true});
 var C = brd.create('point', [-4,-3], {name:'C', withLabel:true, visible:true});
 
-/*
-var p1 = brd.create('polygon', [A, B, C], 
-    {borders:{visible:false}, 
-     hasInnerPoints:true});
-*/
-
-var p2 = brd.create('polygon', [A,B,C], 
+var p2 = brd.create('polygon', [A,B,C],
     {borders:{
         visible:true, 
         withLabel:true, 
@@ -40,12 +33,6 @@ var p2 = brd.create('polygon', [A,B,C],
      highlightFillColor:'blue',
      scalable: false
      });
-
-/*
-brd.create('line', [A, B]);     
-//brd.create('circle', [A, B], {scalable:false});     
-brd.create('glider', [-9,3,p2.borders[0]]);     
-*/
 
 /* ]]> */
 </script>

@@ -4,7 +4,7 @@
     <!--<script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>-->
     <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../../src/CanvasRenderer.js"></script>
+   <script type="text/javascript" src="../../src/renderer/canvas.js"></script>
 </head>
 <body>
 <h1>Text placements</h1>
@@ -21,15 +21,12 @@
 
     brd.suspendUpdate();
     txt5 = brd.create('text',[0,2, "html text middle"], {display:'html', anchorX:'middle'});
-    /*
     txt1 = brd.create('text',[2.5,4, "internal text right"], {display:'internal', anchorX:'right'});
     txt2 = brd.create('text',[2.5,2, "internal text left"], {display:'internal', anchorX:'middle'});
     txt3 = brd.create('text',[2.5,0, "internal text left"], {display:'internal', anchorX:'left', anchorY:'middle'});
     txt4 = brd.create('text',[0,4, "html text right"], {display:'html', anchorX:'right'});
     txt6 = brd.create('text',[0,0, "html text left"], {display:'html', anchorX:'left', anchorY:'middle'});
-    */
-    //alert(txt.rendNode.getBBox().width);
-    
+
     brd.unsuspendUpdate();
 </script> 
 </body>

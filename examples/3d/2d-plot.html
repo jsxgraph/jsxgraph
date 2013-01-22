@@ -1,0 +1,182 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+
+        varying vec4 f_color;
+
+        void main(void) {
+            gl_FragColor = f_color;
+        }
+   </script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+        attribute vec2 coord2d;
+
+        varying vec4 f_color;
+
+        uniform float offset_x;
+        uniform float scale_x;
+
+        void main(void) {
+            gl_Position = vec4((coord2d.x + offset_x) * scale_x, coord2d.y, 0, 1);
+            f_color = vec4(coord2d.xy / 2.0 + 0.5, 1, 1);
+        }
+  </script>
+</head>
+<body>
+
+<h2>webgl tests</h2>
+
+<div style="width:800px">
+    <!--div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left;"></div-->
+    <canvas id="box" width="500" height="500"></canvas>
+</div>
+
+<div id="debug" style="display:block;">DEBUG</div>
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    (function () {
+
+        // some say "use WebGLFloatArray", others say "use Float32Array" ... for quick changes
+        var glFloatArray = Float32Array;
+
+        // helper functions to graph the shader sources and build the shaders
+        var getShaderSource = function (id) {
+                var script = document.getElementById(id);
+                if (!script) {
+                    return;
+                }
+
+                var source = '';
+                var child = script.firstChild;
+
+                while (child) {
+                    // node is a "textnode" ?
+                    if (child.nodeType == 3) {
+                        source += child.textContent;
+                    }
+                    child = child.nextSibling;
+                }
+                return source;
+            },
+
+            loadShader = function (shaderType, shaderSource) {
+                var shader = gl.createShader(shaderType);
+
+                if (!shader) {
+                    return;
+                }
+
+                gl.shaderSource(shader, shaderSource);
+                gl.compileShader(shader);
+
+                if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                    alert(gl.getShaderInfoLog(shader));
+                    return null;
+                }
+
+                return shader;
+            };
+
+        // --------------------------
+        // set up rendering context
+        // --------------------------
+
+        // WebGL rendering context
+        var gl = null;
+
+        // grab the canvas object
+        var canvas = document.getElementById('box');
+
+        // request rendering context from the canvas
+        var names = ['webgl', 'experimental-webgl', 'moz-webgl', 'webkit-3d'],
+            i;
+
+        for (i = 0; i < names.length; i++) {
+            try {
+                gl = canvas.getContext(names[i]);
+                if (gl) {
+                    break;
+                }
+            } catch (e) {
+                // do nothing
+            }
+        }
+
+        if (!gl) {
+            alert('No known OpenGL context detected! Is it enabled?');
+            return;
+        }
+
+        // --------------------------
+        // compile and load shaders
+        // --------------------------
+
+        var vertexShader = loadShader(gl.VERTEX_SHADER, getShaderSource('shader-vs'));
+        var fragmentShader = loadShader(gl.FRAGMENT_SHADER, getShaderSource('shader-fs'));
+        if (!vertexShader || !fragmentShader) {
+            console.log('Shader problem');
+        }
+
+        // create program object
+        var program = gl.createProgram();
+
+        // attach the shaders to the program
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+
+        // setup attributes
+        gl.bindAttribLocation(program, 0, 'coord2d');
+
+        // linking
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+            console.log(gl.getProgramInfoLog(program));
+        }
+
+        gl.useProgram(program);
+
+        // set uniforms
+        gl.uniform1f(gl.getUniformLocation(program, "offset_x"), 0.0);
+        gl.uniform1f(gl.getUniformLocation(program, "scale_x"), 1.0);
+
+        // --------------------------
+        // generate the plot data
+        // --------------------------
+
+        var graph = [], x;
+        for (i = 0; i < 2000; i++) {
+            x = (i-1000.)/100.;
+
+            graph.push(x);
+            graph.push(Math.sin(x * 10.0) / (1.0 + x * x));
+        }
+
+        // --------------------------
+        // copy the plot to the graphics card memory
+        // --------------------------
+
+        var vbo = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+        gl.bufferData(gl.ARRAY_BUFFER, new glFloatArray(graph), gl.STATIC_DRAW);
+
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+        gl.drawArrays(gl.LINE_STRIP, 0, 2000);
+    })();
+
+    /* ]]> */
+</script>
+</body>
+</html>

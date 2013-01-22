@@ -3,11 +3,10 @@
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
 <script type="text/javascript" src="../distrib/jquery.min.js"></script>
-<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
 <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
-<h1 onclick="brd.clearTraces();">Playground</h1>
+<h1 onclick="brd.clearTraces();">Polygon</h1>
 from <a href="http://tracenpoche.sesamath.net/">http://tracenpoche.sesamath.net/</a>
 <form><input type="text"></form>
 <!-- Drawing area -->
@@ -49,7 +48,6 @@ var p2 = brd.create('polygon', [C[1], B[0], B[1], C[2], C[3], B[2], B[3], C[4], 
     {withLabel:false, fillColor:'blue', 
     lines: {strokeWidth:1, strokeColor:'black'},
     trace:false
-//,gradient:'linear',gradientsecondcolor:'black',gradientSecondOpacity:'0.5'    
     });
 
 brd.create('line',[A[0],B[0]],{straightFirst:false,straightLast:false,strokeWidth:1,withLabel:false});

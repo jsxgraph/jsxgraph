@@ -1,0 +1,112 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Watt's Curve</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 10, 14, -2], axis: true, grid: false});
+    p1 = board.createElement('point', [1, 1], {style:2,name:"A"});
+    p2 = board.createElement('point', [1, 3], {style:2,name:"B"});
+    p3 = board.createElement('point', [8, 1], {style:2,name:"C"});
+
+    l1 = board.createElement('line', [p1, p3]);
+    c1 = board.createElement('circle', [p1, p2]);
+    g1 = board.createElement('glider', [4, 4, c1], {style:5,name:"D"});
+
+    m1 = board.createElement('midpoint', [g1, p3], {style: '[]', size: 1});
+    c2 = board.createElement('circle', [m1, 1]);
+    m2 = board.createElement('intersection', [l1, c2, 0], {style: '[]', size: 1});
+    m3 = board.createElement('midpoint', [m2, g1], {style: '[]', size: 1, trace:true});
+
+    loc = board.createElement('locus', [m3], {strokeColor: 'red'});
+
+    function groebner(p, debug) {
+        if(debug)
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb, true);
+        else
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+    }
+
+    function symbcoords(p) {
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'underscore');
+
+        $('debug').innerHTML = '';
+        for(var o in board.objects) {
+            if(typeof board.objects[o].symbolic.x != 'undefined') {
+                $('debug').innerHTML += board.objects[o].name + ': ';
+                $('debug').innerHTML += '(' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')<br />';
+                board.objects[o].label.content.setText(board.objects[o].name + ' (' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')');
+            }
+        }
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function genpoly(p, method) {
+        var m = 'underscore';
+        if(method == 2)
+            m = 'brace';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', m);
+
+        var poly = JXG.Math.Symbolic.generatePolynomials(board, p, false);
+
+        if(method==2)
+            $('debug').innerHTML = 'Ideal(';
+        else
+            $('debug').innerHTML = '<ul>';
+
+        for(var i=0; i<poly.length; i++) {
+            if(method==2) {
+                $('debug').innerHTML += '' + poly[i];
+                if(i < poly.length-1)
+                    $('debug').innerHTML += ', ';
+            } else {
+                poly[i] = poly[i].replace(/\^(\d+)/g,'<sup>$1</sup>');
+                poly[i] = JXG.GeonextParser.replaceSub(poly[i]);
+                poly[i] = poly[i].replace(/\*/g,'');
+                $('debug').innerHTML += '<li>' + poly[i] + '</li>';
+            }
+        }
+        if(method==2)
+            $('debug').innerHTML += ')';
+        else
+            $('debug').innerHTML += '</ul>';
+
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function cb(poly) {
+        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
+    }
+  /* ]]> */
+  </script>
+m<sub>1</sub><br/>
+<a href="#" onclick="symbcoords(m1);">Generate symbolic coordinates</a><br />
+<a href="#" onclick="genpoly(m1, 1);">Build polynomials (human readable)</a><br />
+<a href="#" onclick="genpoly(m1, 2);">Build polynomials (cocoa ideal generator)</a><br />
+<a href="#" onclick="groebner(m1);">Generate locus</a><br />
+<br/>
+m<sub>2</sub><br/>
+<a href="#" onclick="symbcoords(m2);">Generate symbolic coordinates</a><br />
+<a href="#" onclick="genpoly(m2, 1);">Build polynomials (human readable)</a><br />
+<a href="#" onclick="genpoly(m2, 2);">Build polynomials (cocoa ideal generator)</a><br />
+<a href="#" onclick="groebner(m2);">Generate locus</a><br />
+
+m<sub>3</sub><br/>
+<a href="#" onclick="symbcoords(m3);">Generate symbolic coordinates</a><br />
+<a href="#" onclick="genpoly(m3, 1);">Build polynomials (human readable)</a><br />
+<a href="#" onclick="genpoly(m3, 2);">Build polynomials (cocoa ideal generator)</a><br />
+<a href="#" onclick="groebner(m3);">Generate locus</a><br />
+
+<div id="debug" style="display:block; width: 400px;"></div>
+</body>
+</html>
