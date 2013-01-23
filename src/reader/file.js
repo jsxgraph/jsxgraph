@@ -101,7 +101,7 @@ JXG.FileReader = {
 
                     if (typeof req.responseStream!='undefined' &&
                         (req.responseText.slice(0,2) == "PK"                            // ZIP -> Geogebra
-                            || JXG.Util.asciiCharCodeAt(req.responseText.slice(0,1),0)==31) // gzip -> Cinderella
+                            || JXG.Util.UTF8.asciiCharCodeAt(req.responseText.slice(0,1),0)==31) // gzip -> Cinderella
                         ) {
                         text = JXG.Util.Base64.decode(BinFileReader(req)); // After this, text contains the base64 encoded, zip-compressed string
                     } else {

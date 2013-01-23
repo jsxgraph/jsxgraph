@@ -982,7 +982,7 @@ JXG.extend(JXG, {
                 return '';
             }
 
-            unzipped = JXG.Util.utf8Decode(unzipped[0][0]);
+            unzipped = JXG.Util.UTF8.decode(unzipped[0][0]);
             constr = JSON.parse(unzipped);
 
             meta = constr.pop();
