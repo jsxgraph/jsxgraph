@@ -27,24 +27,24 @@
         out.innerHTML += 'up ' + e + '<br/>';
     });
 
-    board.on('hit', function (el, e, i) {
+    board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 1: ' + el.name + '<br />';
     });
 
-    board.on('hit', function (el, e, i) {
+    board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 2: ' + el.name + '<br />';
     });
 
     board.off('hit');
 
-    var hithdlr = function (el, e, i) {
+    var hithdlr = function (e, el, i) {
         out.innerHTML += 'hit 3: ' + el.name + '<br />';
     };
     board.on('hit', hithdlr);
 
     board.off('hit', hithdlr);
 
-    board.on('hit', function (el, e, i) {
+    board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 4: ' + el.name + '<br />';
     });
 

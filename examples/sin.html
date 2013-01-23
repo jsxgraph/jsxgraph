@@ -28,7 +28,7 @@ board1.createElement('curve', [
     function(t) {
         var val = 0;
         for(var i = 0; i < s.Value() + 1; i++) {
-            var f = board1.factorial(2*i+1);  // sin
+            var f = JXG.Math.factorial(2*i+1);  // sin
             val += Math.pow(-1, i) * Math.pow(t, 2 * i + 1) / f;
         }
         return val;
@@ -59,7 +59,7 @@ board2.createElement('curve', [
             //var f = 1;
             //var n = 1;
             //while (n <= 2 * i) { f = f * n++; }
-            var f = board1.factorial(2*i);
+            var f = JXG.Math.factorial(2*i);
                val += Math.pow(-1, i) * Math.pow(t, 2 * i) / f;
         }
         return val;
@@ -76,7 +76,7 @@ board3.suspendUpdate();
 board3.snapToGrid = true;
 //
 var s3 = board3.createElement('slider', [[2,-4],[7,-4],[0,0,10]], {name:'S3',snapWidth:1});
-board3.createElement('functiongraph', [function(t){ return board3.pow(1+t,s3.Value()); }, -10, 10],{strokeColor: "#cccccc"});
+board3.createElement('functiongraph', [function(t){ return Math.pow(1+t,s3.Value()); }, -10, 10],{strokeColor: "#cccccc"});
 
 board3.createElement('functiongraph', [
     function(x) {
@@ -84,7 +84,7 @@ board3.createElement('functiongraph', [
         var n = Math.round(s3.Value());
         var z = 1;
         for(var k=0; k<=n; k++) {
-            var f = board3.binomial(n,k);
+            var f = JXG.Math.binomial(n,k);
             val += z*f;
             z *= x;
         }

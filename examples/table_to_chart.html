@@ -22,13 +22,13 @@
    <script type="text/javascript">
    /* <![CDATA[ */
 
-        b = JXG._board('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
+        b = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-0.5, 350, 5, -30], axis: true, grid: false});
 
-		c = b._chart(['data'], { chartStyle: 'bar',
+		c = b.create('chart', ['data'], { chartStyle: 'bar',
 							     dynamic: true, withLabel: true,
 							     degree: 2, dir: 'vertical',
 							     face: 'X', size: 4,
-							     strokeWidth: '2px', withLabel: true,
+							     strokeWidth: 2, withLabel: true,
 							     strokeColor: ['#abf', '#e12', '#3d21a3', '#020310', '#020abc']});
 
   /* ]]> */

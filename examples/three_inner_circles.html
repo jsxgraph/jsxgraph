@@ -63,25 +63,25 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
     var pp3 = board.createElement('perpendicularpoint',[i1,b3],{name:"A'",fillColor:'blue',visible:false});
     
     var c2 = board.createElement('circumcircle',[pp1,pp2,pp3],{name:['M','']});
-    c2[1].setProperty('strokeColor:#3CB371');
-    c2[0].setProperty('fillColor:blue');
+    c2.setProperty({strokeColor:'#3CB371'});
+    c2.center.setProperty({fillColor:'blue'});
 
-    var l3 =  board.createElement('line',[pp1,c2[0]],{name:'',visible:false});
-    var i2 = board.createElement('intersection',[l3,c2[1],0],{name:'',visible:false});
+    var l3 =  board.createElement('line',[pp1,c2.center],{name:'',visible:false});
+    var i2 = board.createElement('intersection',[l3,c2,0],{name:'',visible:false});
     var l4 = board.createElement('parallel',[b1,i2],{visible:true});
     var i3 = board.createElement('intersection',[l4,b3,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var i4 = board.createElement('intersection',[l4,b2,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var l5 = board.createElement('line',[i3,i4],{name:'',straightFirst:false,straightLast:false});
 
-    var l13 =  board.createElement('line',[pp2,c2[0]],{name:'',visible:false});
-    var i12 = board.createElement('intersection',[l13,c2[1],0],{name:'',visible:false});
+    var l13 =  board.createElement('line',[pp2,c2.center],{name:'',visible:false});
+    var i12 = board.createElement('intersection',[l13,c2,0],{name:'',visible:false});
     var l14 = board.createElement('parallel',[b2,i12],{visible:true});
     var i13 = board.createElement('intersection',[l14,b3,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var i14 = board.createElement('intersection',[l14,b1,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var l15 = board.createElement('line',[i13,i14],{name:'',straightFirst:false,straightLast:false});
 
-    var l23 =  board.createElement('line',[pp3,c2[0]],{name:'',visible:false});
-    var i22 = board.createElement('intersection',[l23,c2[1],0],{name:'',visible:false});
+    var l23 =  board.createElement('line',[pp3,c2.center],{name:'',visible:false});
+    var i22 = board.createElement('intersection',[l23,c2,0],{name:'',visible:false});
     var l24 = board.createElement('parallel',[b3,i22],{visible:false});
     var i23 = board.createElement('intersection',[l24,b1,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
     var i24 = board.createElement('intersection',[l24,b2,0],{name:'',fillColor:'#9932CC',strokeColor:'#9932CC'});
@@ -97,8 +97,8 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
     var pp31 = board.createElement('perpendicularpoint',[i11,b3],{name:"",visible:false});    
     
     var c12 = board.createElement('circumcircle',[pp11,pp21,pp31],{name:['C_1','']});
-    c12[1].setProperty('strokeColor:#3CB371');
-    c12[0].setProperty('fillColor:blue');
+    c12.setProperty({strokeColor:'#3CB371'});
+    c12.center.setProperty({fillColor:'blue'});
     
     var l12 = board.createElement('bisector',[i13,'B',i14],{name:'',visible:false}); // alpha
     var l22 = board.createElement('bisector',[i14,i13,'B'],{name:'',visible:false}); // beta    
@@ -108,8 +108,8 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
     var pp32 = board.createElement('perpendicularpoint',[i12,b3],{name:"",visible:false});     
 
     var c22 = board.createElement('circumcircle',[pp12,pp22,pp32],{name:['B_1','']});
-    c22[1].setProperty('strokeColor:#3CB371');
-    c22[0].setProperty('fillColor:blue');
+    c22.setProperty({strokeColor:'#3CB371'});
+    c22.center.setProperty({fillColor:'blue'});
 
     var l13 = board.createElement('bisector',[i23,'A',i24],{name:'',visible:false}); // alpha
     var l23 = board.createElement('bisector',[i24,i23,'A'],{name:'',visible:false}); // beta    
@@ -118,16 +118,16 @@ Then r<sub>A</sub> + r<sub>B</sub> + r<sub>C</sub> = r<sub>M</sub>.
     var pp23 = board.createElement('perpendicularpoint',[i13,b1],{name:"",visible:false});
     var pp33 = board.createElement('perpendicularpoint',[i13,b2],{name:"",visible:false});     
     var c32 = board.createElement('circumcircle',[pp13,pp23,pp33],{name:['A_1','']});
-    c32[1].setProperty('strokeColor:#3CB371');  
-    c32[0].setProperty('fillColor:blue');
+    c32.setProperty({strokeColor:'#3CB371'});
+    c32.setProperty({fillColor:'blue'});
 
     // Hook-Funktion definieren, die die Tabelleninhalte updatet
     function print_table(board) {
-        $('rA').innerHTML = c32[1].Radius().toFixed(4);
-        $('rB').innerHTML = c22[1].Radius().toFixed(4);
-        $('rC').innerHTML = c12[1].Radius().toFixed(4);
-        $('rM').innerHTML = c2[1].Radius().toFixed(4);
-        $('rABC').innerHTML = (c32[1].Radius()+c22[1].Radius()+c12[1].Radius()).toFixed(4);
+        $('rA').innerHTML = c32.Radius().toFixed(4);
+        $('rB').innerHTML = c22.Radius().toFixed(4);
+        $('rC').innerHTML = c12.Radius().toFixed(4);
+        $('rM').innerHTML = c2.Radius().toFixed(4);
+        $('rABC').innerHTML = (c32.Radius()+c22.Radius()+c12.Radius()).toFixed(4);
     }
 
     // und beim board registrieren.

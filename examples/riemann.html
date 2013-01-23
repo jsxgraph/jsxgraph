@@ -41,7 +41,7 @@ var os = brd.create('riemannsum',[f,
     {fillColor:'#ffff00', fillOpacity:0.3});
 
 brd.create('text',[-6,-3,function(){ 
-    return 'Sum=' +(brd.riemannsum(f,s.Value(),document.getElementById('sumtype').value,a.Value(),b.Value())).toFixed(4); }
+    return 'Sum=' +(JXG.Math.Numerics.riemannsum(f,s.Value(),document.getElementById('sumtype').value,a.Value(),b.Value())).toFixed(4); }
     ],{fontSize:40});
 
 brd.create('text',[1,-3,function(){ 

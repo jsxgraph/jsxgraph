@@ -1,0 +1,143 @@
+<html>
+<head>
+   <title>Simson-Steiner-Theorem | JSXGraph | Beispiel f&uuml;r einen geometrischen Ort</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>/ <a href="index.html">root</a> / <a href="loci.html">Beispiele f&uuml;r geometrische Orte</a> / Simson-Steiner-Theorem</h2>
+<div style="text-align: center">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:500px; text-align: left; margin: auto;"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 8, -4], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+  p1 = board.createElement('point', [0, 0]);
+  p2 = board.createElement('point', [6, 0]);
+  p3 = board.createElement('point', [4, 4]);
+
+  t1 = board.createElement('triangle', [p1, p2, p3], {strokeWidth: '1px'});
+
+  m1 = board.createElement('point', [4, 1.5], {style:2,name:"X"});
+
+  l1 = board.createElement('perpendicularpoint', [m1, t1.c]);
+  l2 = board.createElement('perpendicularpoint', [m1, t1.a]);
+  l3 = board.createElement('perpendicularpoint', [m1, t1.b]);
+
+  t2 = board.createElement('triangle', [l1, l2, l3], {strokeWidth: '1px'});
+
+  // Get area of triangle given by the three points A, B, C
+  getTriangleArea = function(A, B, C, square) {
+    var a = B.coords.distance(JXG.COORDS_BY_USER, C.coords),
+        b = A.coords.distance(JXG.COORDS_BY_USER, C.coords),
+        c = B.coords.distance(JXG.COORDS_BY_USER, A.coords),
+        s = (typeof square == 'undefined' ? true : square);
+
+    if (s)
+      return (4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b));
+    else
+      return Math.sqrt((4*a*a*c*c-(a*a+c*c-b*b)*(a*a+c*c-b*b))/16.);
+  };
+
+  te = board.createElement('text', [-3.8, 5.5, function () { return ("Fl&auml;che des Dreiecks EDF: " + getTriangleArea(l1, l2, l3, false)); }]);
+
+  // dependency and polynomial generation hacking
+  m1.ancestors[l1.id] = l1;
+  m1.ancestors[l2.id] = l2;
+  m1.ancestors[l3.id] = l3;
+  m1.ancestors[p1.id] = p1;
+  m1.ancestors[p2.id] = p2;
+  m1.ancestors[p3.id] = p3;
+
+  m1.generatePolynomial = function () {
+    var as16 = getTriangleArea(l1, l2, l3),
+        as = '((('+l2.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+        bs = '((('+l1.symbolic.x+')-('+l3.symbolic.x+'))^2+(('+l1.symbolic.y+')-('+l3.symbolic.y+'))^2)',
+        cs = '((('+l2.symbolic.x+')-('+l1.symbolic.x+'))^2+(('+l2.symbolic.y+')-('+l1.symbolic.y+'))^2)',
+        poly = '4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')';
+
+    return ['4*'+as+'*'+cs+'-('+as+'+'+cs+'-'+bs+')*('+as+'+'+cs+'-'+bs+')-('+as16+')'];
+  };
+
+  loc = board.createElement('locus', [m1], {strokeColor: 'red', strokeWidth: '1px'});
+
+  createControlElements = function () {
+    glider = board.createElement('glider', [0, 5, loc]);
+    lg1 = board.createElement('perpendicularpoint', [glider, t1.a]);
+    lg2 = board.createElement('perpendicularpoint', [glider, t1.b]);
+    lg3 = board.createElement('perpendicularpoint', [glider, t1.c]);
+
+    tecontrol = board.createElement('text', [-3.8, 5, function () { return ("Fl&auml;che des Dreiecks HIJ: " + getTriangleArea(lg1, lg2, lg3, false)); }]);
+  }
+
+  /* ]]> */
+  </script>
+<a href="#" onclick="createControlElements();">Control the results</a><br />
+<br/><br/>
+<div id="src_disp" style="display:block;">
+<h2><a href="#" name="src"></a>Quelltext der Konstruktion</h2>
+<pre style="border: black solid 1px; padding: 4px"><tt>  board <font color="#990000">=</font> JXG<font color="#990000">.</font>JSXGraph<font color="#990000">.</font><b><font color="#000000">initBoard</font></b><font color="#990000">(</font><font color="#FF0000">'jxgbox'</font><font color="#990000">,</font> <font color="#FF0000">{</font>boundingbox<font color="#990000">:[-</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">6</font><font color="#990000">,</font> <font color="#993399">8</font><font color="#990000">,</font> <font color="#990000">-</font><font color="#993399">4</font><font color="#990000">],</font> axis<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> grid<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#990000">,</font>
+                                 keepaspectratio<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> showcopyright<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#FF0000">}</font><font color="#990000">);</font>
+  p1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">0</font><font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">]);</font>
+  p2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">6</font><font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">]);</font>
+  p3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">]);</font>
+
+  t1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'triangle'</font><font color="#990000">,</font> <font color="#990000">[</font>p1<font color="#990000">,</font> p2<font color="#990000">,</font> p3<font color="#990000">],</font> <font color="#FF0000">{</font>strokeWidth<font color="#990000">:</font> <font color="#FF0000">'1px'</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  m1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">1.5</font><font color="#990000">],</font> <font color="#FF0000">{</font>style<font color="#990000">:</font><font color="#993399">2</font><font color="#990000">,</font>name<font color="#990000">:</font><font color="#FF0000">"X"</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  l1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>m1<font color="#990000">,</font> t1<font color="#990000">.</font>c<font color="#990000">]);</font>
+  l2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>m1<font color="#990000">,</font> t1<font color="#990000">.</font>a<font color="#990000">]);</font>
+  l3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>m1<font color="#990000">,</font> t1<font color="#990000">.</font>b<font color="#990000">]);</font>
+
+  t2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'triangle'</font><font color="#990000">,</font> <font color="#990000">[</font>l1<font color="#990000">,</font> l2<font color="#990000">,</font> l3<font color="#990000">],</font> <font color="#FF0000">{</font>strokeWidth<font color="#990000">:</font> <font color="#FF0000">'1px'</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  <i><font color="#9A1900">// Get area of triangle given by the three points A, B, C</font></i>
+  getTriangleArea <font color="#990000">=</font> <b><font color="#0000FF">function</font></b><font color="#990000">(</font>A<font color="#990000">,</font> B<font color="#990000">,</font> C<font color="#990000">,</font> square<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">var</font></b> a <font color="#990000">=</font> B<font color="#990000">.</font>coords<font color="#990000">.</font><b><font color="#000000">distance</font></b><font color="#990000">(</font>JXG<font color="#990000">.</font>COORDS_BY_USER<font color="#990000">,</font> C<font color="#990000">.</font>coords<font color="#990000">),</font>
+        b <font color="#990000">=</font> A<font color="#990000">.</font>coords<font color="#990000">.</font><b><font color="#000000">distance</font></b><font color="#990000">(</font>JXG<font color="#990000">.</font>COORDS_BY_USER<font color="#990000">,</font> C<font color="#990000">.</font>coords<font color="#990000">),</font>
+        c <font color="#990000">=</font> B<font color="#990000">.</font>coords<font color="#990000">.</font><b><font color="#000000">distance</font></b><font color="#990000">(</font>JXG<font color="#990000">.</font>COORDS_BY_USER<font color="#990000">,</font> A<font color="#990000">.</font>coords<font color="#990000">),</font>
+        s <font color="#990000">=</font> <font color="#990000">(</font><b><font color="#0000FF">typeof</font></b> square <font color="#990000">==</font> <font color="#FF0000">'undefined'</font> <font color="#990000">?</font> <b><font color="#0000FF">true</font></b> <font color="#990000">:</font> square<font color="#990000">);</font>
+
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>s<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#990000">(</font><font color="#993399">4</font><font color="#990000">*</font>a<font color="#990000">*</font>a<font color="#990000">*</font>c<font color="#990000">*</font>c<font color="#990000">-(</font>a<font color="#990000">*</font>a<font color="#990000">+</font>c<font color="#990000">*</font>c<font color="#990000">-</font>b<font color="#990000">*</font>b<font color="#990000">)*(</font>a<font color="#990000">*</font>a<font color="#990000">+</font>c<font color="#990000">*</font>c<font color="#990000">-</font>b<font color="#990000">*</font>b<font color="#990000">));</font>
+    <b><font color="#0000FF">else</font></b>
+      <b><font color="#0000FF">return</font></b> Math<font color="#990000">.</font><b><font color="#000000">sqrt</font></b><font color="#990000">((</font><font color="#993399">4</font><font color="#990000">*</font>a<font color="#990000">*</font>a<font color="#990000">*</font>c<font color="#990000">*</font>c<font color="#990000">-(</font>a<font color="#990000">*</font>a<font color="#990000">+</font>c<font color="#990000">*</font>c<font color="#990000">-</font>b<font color="#990000">*</font>b<font color="#990000">)*(</font>a<font color="#990000">*</font>a<font color="#990000">+</font>c<font color="#990000">*</font>c<font color="#990000">-</font>b<font color="#990000">*</font>b<font color="#990000">))/</font><font color="#993399">16</font><font color="#990000">.);</font>
+  <font color="#FF0000">}</font><font color="#990000">;</font>
+
+  te <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'text'</font><font color="#990000">,</font> <font color="#990000">[-</font><font color="#993399">3.8</font><font color="#990000">,</font> <font color="#993399">5.5</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font> <font color="#FF0000">{</font> <b><font color="#0000FF">return</font></b> <font color="#990000">(</font><font color="#FF0000">"Fl&amp;auml;che des Dreiecks EDF: "</font> <font color="#990000">+</font> <b><font color="#000000">getTriangleArea</font></b><font color="#990000">(</font>l1<font color="#990000">,</font> l2<font color="#990000">,</font> l3<font color="#990000">,</font> <b><font color="#0000FF">false</font></b><font color="#990000">));</font> <font color="#FF0000">}</font><font color="#990000">]);</font>
+
+  <i><font color="#9A1900">// dependency and polynomial generation hacking</font></i>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>l1<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> l1<font color="#990000">;</font>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>l2<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> l2<font color="#990000">;</font>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>l3<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> l3<font color="#990000">;</font>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>p1<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> p1<font color="#990000">;</font>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>p2<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> p2<font color="#990000">;</font>
+  m1<font color="#990000">.</font>ancestors<font color="#990000">[</font>p3<font color="#990000">.</font>id<font color="#990000">]</font> <font color="#990000">=</font> p3<font color="#990000">;</font>
+
+  m1<font color="#990000">.</font>generatePolynomial <font color="#990000">=</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">var</font></b> as16 <font color="#990000">=</font> <b><font color="#000000">getTriangleArea</font></b><font color="#990000">(</font>l1<font color="#990000">,</font> l2<font color="#990000">,</font> l3<font color="#990000">),</font>
+        as <font color="#990000">=</font> <font color="#FF0000">'((('</font><font color="#990000">+</font>l2<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l3<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">'))^2+(('</font><font color="#990000">+</font>l2<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l3<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">'))^2)'</font><font color="#990000">,</font>
+        bs <font color="#990000">=</font> <font color="#FF0000">'((('</font><font color="#990000">+</font>l1<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l3<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">'))^2+(('</font><font color="#990000">+</font>l1<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l3<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">'))^2)'</font><font color="#990000">,</font>
+        cs <font color="#990000">=</font> <font color="#FF0000">'((('</font><font color="#990000">+</font>l2<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l1<font color="#990000">.</font>symbolic<font color="#990000">.</font>x<font color="#990000">+</font><font color="#FF0000">'))^2+(('</font><font color="#990000">+</font>l2<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>l1<font color="#990000">.</font>symbolic<font color="#990000">.</font>y<font color="#990000">+</font><font color="#FF0000">'))^2)'</font><font color="#990000">,</font>
+        poly <font color="#990000">=</font> <font color="#FF0000">'4*'</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'*'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-('</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'+'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-'</font><font color="#990000">+</font>bs<font color="#990000">+</font><font color="#FF0000">')*('</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'+'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-'</font><font color="#990000">+</font>bs<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>as16<font color="#990000">+</font><font color="#FF0000">')'</font><font color="#990000">;</font>
+
+    <b><font color="#0000FF">return</font></b> <font color="#990000">[</font><font color="#FF0000">'4*'</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'*'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-('</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'+'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-'</font><font color="#990000">+</font>bs<font color="#990000">+</font><font color="#FF0000">')*('</font><font color="#990000">+</font>as<font color="#990000">+</font><font color="#FF0000">'+'</font><font color="#990000">+</font>cs<font color="#990000">+</font><font color="#FF0000">'-'</font><font color="#990000">+</font>bs<font color="#990000">+</font><font color="#FF0000">')-('</font><font color="#990000">+</font>as16<font color="#990000">+</font><font color="#FF0000">')'</font><font color="#990000">];</font>
+  <font color="#FF0000">}</font><font color="#990000">;</font>
+
+  loc <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'locus'</font><font color="#990000">,</font> <font color="#990000">[</font>m1<font color="#990000">],</font> <font color="#FF0000">{</font>strokeColor<font color="#990000">:</font> <font color="#FF0000">'red'</font><font color="#990000">,</font> strokeWidth<font color="#990000">:</font> <font color="#FF0000">'1px'</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  createControlElements <font color="#990000">=</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font> <font color="#FF0000">{</font>
+    glider <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'glider'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">0</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">,</font> loc<font color="#990000">]);</font>
+    lg1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>glider<font color="#990000">,</font> t1<font color="#990000">.</font>a<font color="#990000">]);</font>
+    lg2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>glider<font color="#990000">,</font> t1<font color="#990000">.</font>b<font color="#990000">]);</font>
+    lg3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'perpendicularpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>glider<font color="#990000">,</font> t1<font color="#990000">.</font>c<font color="#990000">]);</font>
+
+    tecontrol <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'text'</font><font color="#990000">,</font> <font color="#990000">[-</font><font color="#993399">3.8</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">,</font> <b><font color="#0000FF">function</font></b> <font color="#990000">()</font> <font color="#FF0000">{</font> <b><font color="#0000FF">return</font></b> <font color="#990000">(</font><font color="#FF0000">"Fl&amp;auml;che des Dreiecks HIJ: "</font> <font color="#990000">+</font> <b><font color="#000000">getTriangleArea</font></b><font color="#990000">(</font>lg1<font color="#990000">,</font> lg2<font color="#990000">,</font> lg3<font color="#990000">,</font> <b><font color="#0000FF">false</font></b><font color="#990000">));</font> <font color="#FF0000">}</font><font color="#990000">]);</font>
+  <font color="#FF0000">}</font>
+</tt></pre>
+</div></body>
+</html>

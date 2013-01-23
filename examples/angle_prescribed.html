@@ -15,16 +15,6 @@
     var p2 = board.create('point', [3, 4], {face:'o',name:"B"});
     var p3 = board.create('point', [-1, 4], {face:'o',name:"C"});
 
-/*
-    var alpha = board.create('prescribedangle', [p1, p2, 30*Math.PI/180.0], 
-        {strokeColor:'red', visible:true, strokeWidth:2, fillColor:'#FF000050', 
-         label: {fontSize:30, strokeColor:'blue'},
-         anglepoint:{visible:true}
-        }
-       );
-    board.create('segment', [p1, alpha.anglepoint]);
-*/       
-    
     var beta = board.create('angle', [p2,p1,p3], {radius:3});
 
     var setAngle = function(el, val) {

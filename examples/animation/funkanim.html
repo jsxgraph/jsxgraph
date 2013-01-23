@@ -1,0 +1,36 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Playground to test things temporarily. May change very often.</h2>
+
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+<div id="debug" style="display:block;"></div>
+   <script type="text/javascript">
+   /* <![CDATA[ */
+
+brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-15, 20, 15, -10], keepaspectratio:true, axis: true});
+
+punkt = brd.create('point', [0, 0], {name: 'T'});
+
+punkt.moveTo([10, 10], 3000);
+
+punkt.animate({fillColor: '#0000ff'}, 3000);
+
+fun = brd.create('functiongraph', [function(x) { return punkt.X()*Math.sin(x); }]);
+
+  /* ]]> */
+  </script>
+<form>
+<input type="text" value="5" id="prec"/><input type="button" value="Set precision" onclick="brd.options.precision.hasPoint = parseInt(document.getElementById('prec').value);"/>
+
+<input type="button" value="Sim color blindness" onclick="makeColorBlind('deuteranopia');"/>
+</form>
+</body>
+</html>

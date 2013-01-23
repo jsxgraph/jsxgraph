@@ -4,7 +4,7 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../src/GeonextReader.js"></script>
+   <script type="text/javascript" src="../src/reader/geonext.js"></script>
 </head>
 <body>
   <h2>Parabola</h2>
@@ -40,11 +40,11 @@
 
 				curve = board.createElement('curve', [function(t){ return t; }, function(t){ return JXG.getReference(board2, 'A').X()*t*t+JXG.getReference(board2, 'B').X()*t+JXG.getReference(board2, 'C').X(); }, -10, 10]);						
 			
-				function print_table(board) {
+				function print_table() {
 					if (hook){
-						$('print_a').value = board.round(JXG.getReference(board, 'A').X(),2);
-						$('print_b').value = board.round(JXG.getReference(board, 'B').X(),2);
-						$('print_c').value = board.round(JXG.getReference(board, 'C').X(),2);
+						$('print_a').value = Math.round(JXG.getReference(board2, 'A').X(),2);
+						$('print_b').value = Math.round(JXG.getReference(board2, 'B').X(),2);
+						$('print_c').value = Math.round(JXG.getReference(board2, 'C').X(),2);
 					}
 				};
 				

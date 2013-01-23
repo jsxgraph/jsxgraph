@@ -1,0 +1,323 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="wahldaten.js"></script>
+   <script type="text/javascript" src="germany.js"></script>   
+</head>
+<body>
+<h2>Bundestagswahl 2009</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:700px; float:left"></div>
+  <div id="wahlkreis">&nbsp;</div>
+</div>
+<form>
+    <input type="radio" value="0" onclick="selectParty(0);" name="parties" checked='checked'>CDU/CSU<br/>
+    <input type="radio" value="1" onclick="selectParty(1);" name="parties">SPD<br/>
+    <input type="radio" value="2" onclick="selectParty(2);" name="parties">FDP<br/>
+    <input type="radio" value="3" onclick="selectParty(3);" name="parties">Die Gr&uuml;nen<br/>
+    <input type="radio" value="4" onclick="selectParty(4);" name="parties">Die Linke<br/>
+    <input type="radio" value="5" onclick="selectParty(5);" name="parties">NPD<br/>
+    <input type="radio" value="6" onclick="selectParty(6);" name="parties">REP<br/>
+    <input type="radio" value="7" onclick="selectParty(7);" name="parties">DVU<br/>
+    <input type="radio" value="8" onclick="selectParty(8);" name="parties">Die Piraten<br/>
+    <br />
+    <input type="radio" value="9" onclick="selectParty(9);" name="parties">Wahlbeteiligung<br/>
+</form>
+<br>
+<div id="debug" ></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+    var minX =-289319.4,
+        maxY = 6827620,
+        maxX = 351315.7,
+        minY = 5960587,
+        brd,
+        wahlkreisNode = document.getElementById('wahlkreis').firstChild,    
+        points = [],
+        len = data.length, // from germany.js
+        lastWk = null,
+        lastWkNr = 0,
+        i, col = 0;
+    
+    var CDUcols = ['#d3e9fe','#8db0fe','#405dff','#002ba5','#001654'];
+    var SPDcols = ['#ffceb8','#fe946a','#f83a1f','#bb0000','#7e0900'];
+    var FDPcols = ['#f9feae','#fff95e','#fee80c','#fecc12','#ffc400'];
+    var GRUENcols = ['#e4de4d','#b5c213','#508229','#508229','#062f00'];
+    var LINKScols = ['#fed0f5','#f3a3ff','#cb6cff','#952aea','#640390'];
+    var RECHTScols = ['#fee284','#d3a936','#ab6c00','#714702','#492e00'];
+    var PIRATENcols = ['#d3d3d3','#a9a9a9','#4a4a4a','#131313','#ff8800'];
+    var BETcols = ['#f8fde6','#e4e5b8','#889780','#354f4f','#002a2d'];
+    var CDUCSU = new Array(299);
+    var SPD = new Array(299);
+    var FDP = new Array(299);
+    var GRUEN = new Array(299);
+    var LINKS = new Array(299);
+    var NPD = new Array(299);
+    var REP = new Array(299);
+    var DVU = new Array(299);
+    var PIRATEN = new Array(299);
+    var Zweit = new Array(299);
+    var Beteiligung = new Array(299);    
+    var wkNamen = new Array(299);
+    var wkCurves = new Array(300);
+    
+    for(i=0;i<300;i++) {
+        wkCurves[i] = [];
+    }
+    
+    for(var i=5; i<337; i++) {
+        if(wahldata[i*135+1] != "") { // keine Leerzeile
+            if(wahldata[i*135+3] != "99" && wahldata[i*135+3] != "") { // kein Bundesland, auch nicht Bundesgebiet
+                if(wahldata[i*135+3] == "9") {
+                    CDUCSU[ wahldata[i*135+1] ] = wahldata[i*135+42]/wahldata[i*135+18]*100; // CSU
+                }
+                else {
+                    CDUCSU[ wahldata[i*135+1] ] = wahldata[i*135+26]/wahldata[i*135+18]*100; // CDU
+                }
+                
+                SPD[ 1*wahldata[i*135+1] ] = (wahldata[i*135+22]/wahldata[i*135+18]*100).toFixed(1);
+                FDP[ 1*wahldata[i*135+1] ] = (wahldata[i*135+30]/wahldata[i*135+18]*100).toFixed(1);
+                GRUEN[ 1*wahldata[i*135+1] ] = (wahldata[i*135+38]/wahldata[i*135+18]*100).toFixed(1);
+                LINKS[ 1*wahldata[i*135+1] ] = (wahldata[i*135+34]/wahldata[i*135+18]*100).toFixed(1);
+                NPD[ 1*wahldata[i*135+1] ] = (wahldata[i*135+46]/wahldata[i*135+18]*100).toFixed(1);
+                REP [ 1*wahldata[i*135+1] ] = (wahldata[i*135+50]/wahldata[i*135+18]*100).toFixed(1);
+                DVU [ 1*wahldata[i*135+1] ] = (wahldata[i*135+102]/wahldata[i*135+18]*100).toFixed(1);
+                PIRATEN [ 1*wahldata[i*135+1] ] = (wahldata[i*135+118]/wahldata[i*135+18]*100).toFixed(1);
+                Zweit[ 1*wahldata[i*135+1] ] =  wahldata[i*135+18];
+                Beteiligung [ 1*wahldata[i*135+1] ] =  (wahldata[i*135+18]/wahldata[i*135+4]*100).toFixed(1);
+                wkNamen[ 1*wahldata[i*135+1] ] =  wahldata[i*135+2];
+            }
+        }
+    }    
+
+    function selectParty(i) {
+        if(i==0) { // CDU/CSU
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getCSUcolor(j));
+                }
+            }
+        }    
+        else if(i==1) { // SPD
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getSPDcolor(j));
+                }
+            }
+        }
+        else if(i==2) { // FDP
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getFDPcolor(j));
+                }
+            }
+        }   
+        else if(i==3) { // GRUEN
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getGRUENcolor(j));
+                }
+            }
+        }  
+        else if(i==4) { // LINKS
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getLINKScolor(j));
+                }
+            }
+        } 
+        else if(i==5) { // NPD
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getNPDcolor(j));
+                }
+            }
+        } 
+        else if(i==6) { // REP
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getREPcolor(j));
+                }
+            }
+        }
+        else if(i==7) { // DVU
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getDVUcolor(j));
+                }
+            }
+        }   
+        else if(i==8) { // Piraten
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getPIRATENcolor(j));
+                }
+            }
+        }  
+       else if(i==9) { // Wahlbeteiligung
+            for(var j=1;j<300;j++) {
+                for(var k=0; k< wkCurves[j].length; k++) {
+                    wkCurves[j][k].setProperty('fillColor:'+getBETEILIGUNGcolor(j));
+                }
+            }
+        }          
+    }
+    
+    function getSPDcolor(col) {
+        if(SPD[col] < 18) { return SPDcols[0]; }
+        else if(SPD[col] >= 18 && SPD[col] < 23) { return SPDcols[1]; }
+        else if(SPD[col] >= 23 && SPD[col] < 28) { return SPDcols[2]; }
+        else if(SPD[col] >= 28 && SPD[col] < 33) { return SPDcols[3]; }
+        else { return SPDcols[4]; }
+    }
+    
+    function getCSUcolor(col) {
+        if(CDUCSU[col] < 30) { return CDUcols[0]; }
+        else if(CDUCSU[col] >= 30 && CDUCSU[col] < 35) { return CDUcols[1]; }
+        else if(CDUCSU[col] >= 35 && CDUCSU[col] < 40) { return CDUcols[2]; }
+        else if(CDUCSU[col] >= 40 && CDUCSU[col] < 45) { return CDUcols[3]; }
+        else { return CDUcols[4]; }
+    }   
+    
+    function getFDPcolor(col) {
+        if(FDP[col] <= 10) { return FDPcols[0]; }
+        else if(FDP[col] > 10 && FDP[col] <= 13) { return FDPcols[1]; }
+        else if(FDP[col] > 13 && FDP[col] <= 16) { return FDPcols[2]; }
+        else if(FDP[col] > 16 && FDP[col] <= 19) { return FDPcols[3]; }
+        else { return FDPcols[4]; }
+    } 
+    
+    function getGRUENcolor(col) {
+        if(GRUEN[col] < 6) { return GRUENcols[0]; }
+        else if(GRUEN[col] >= 6 && GRUEN[col] < 10) { return GRUENcols[1]; }
+        else if(GRUEN[col] >= 10 && GRUEN[col] < 14) { return GRUENcols[2]; }
+        else if(GRUEN[col] >= 14 && GRUEN[col] < 20) { return GRUENcols[3]; }
+        else { return GRUENcols[4]; }
+    }   
+
+    function getLINKScolor(col) {
+        if(LINKS[col] < 12) { return LINKScols[0]; }
+        else if(LINKS[col] >= 12 && LINKS[col] < 19) { return LINKScols[1]; }
+        else if(LINKS[col] >= 19 && LINKS[col] < 26) { return LINKScols[2]; }
+        else if(LINKS[col] >= 26 && LINKS[col] < 33) { return LINKScols[3]; }
+        else { return LINKScols[4]; }
+    }   
+    
+    function getNPDcolor(col) {
+        if(NPD[col] < 1) { return RECHTScols[0]; }
+        else if(NPD[col] >= 1 && NPD[col] < 2) { return RECHTScols[1]; }
+        else if(NPD[col] >= 2 && NPD[col] < 3) { return RECHTScols[2]; }
+        else if(NPD[col] >= 3 && NPD[col] < 4) { return RECHTScols[3]; }
+        else { return RECHTScols[4]; }
+    }
+
+    function getREPcolor(col) {
+        if(REP[col] <= 0.5) { return RECHTScols[0]; }
+        else if(REP[col] >= 0.5 && REP[col] <= 0.75) { return RECHTScols[1]; }
+        else if(REP[col] >= 0.75 && REP[col] <= 1) { return RECHTScols[2]; }
+        else if(REP[col] >= 1 && REP[col] <= 1.25) { return RECHTScols[3]; }
+        else { return RECHTScols[4]; }
+    }   
+
+    function getDVUcolor(col) {
+        if(DVU[col] < 0.5) { return RECHTScols[0]; }
+        else if(DVU[col] >= 0.5 && DVU[col] < 0.75) { return RECHTScols[1]; }
+        else if(DVU[col] >= 0.75 && DVU[col] < 1) { return RECHTScols[2]; }
+        else if(DVU[col] >= 1 && DVU[col] < 1.25) { return RECHTScols[3]; }
+        else { return RECHTScols[4]; }
+    }
+    
+    function getPIRATENcolor(col) {
+        if(PIRATEN[col] < 1) { return PIRATENcols[0]; }
+        else if(PIRATEN[col] >= 1 && PIRATEN[col] < 1.5) { return PIRATENcols[1]; }
+        else if(PIRATEN[col] >= 1.5 && PIRATEN[col] < 2) { return PIRATENcols[2]; }
+        else if(PIRATEN[col] >= 2 && PIRATEN[col] < 2.5) { return PIRATENcols[3]; }
+        else { return PIRATENcols[4]; }
+    }  
+    
+    function getBETEILIGUNGcolor(col) {
+        if(Beteiligung[col] < 66) { return BETcols[0]; }
+        else if(Beteiligung[col] >= 66 && Beteiligung[col] < 69) { return BETcols[1]; }
+        else if(Beteiligung[col] >= 69 && Beteiligung[col] < 72) { return BETcols[2]; }
+        else if(Beteiligung[col] >= 72 && Beteiligung[col] < 75) { return BETcols[3]; }
+        else { return BETcols[4]; }
+    }      
+    
+    brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-1000,maxY+1000,maxX+1000,minY-1000],
+                                        keepaspectratio:true});
+
+    for(i=0;i<len;i++) {
+        if(i%6==1) {
+            lastWk = data[i];
+        }
+        else if(i%6==0) {
+            lastWkNr = data[i];
+        }        
+        else if(i%6 == 5) {
+            points.push([data[i],lastWk,lastWkNr]);
+        }
+    }
+
+    function createCurve(area)  {
+        var compos = area[0].split(';'), // Zusammenhangskomponenten
+            x = [], y = [],
+            c = [], num, i, a, graph, k, a;
+            
+        num = compos.length;
+        for (k=0;k<num;k++) {
+            x = []; y = []; c = [];
+            xy = compos[k].split(',');            
+            len = xy.length;
+            for(i=0;i<len;i++) {
+                a = xy[i].split(' ');
+                c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
+            }
+            c = JXG.Math.Numerics.RamerDouglasPeuker(c,1.2);
+            len = c.length;
+            for (i=0;i<len;i++) {
+                x.push(c[i].usrCoords[1]);
+                y.push(c[i].usrCoords[2]);
+            }
+            graph = brd.createElement('curve', [x,y], 
+                        {fillColor:getCSUcolor(area[2]),
+                         highlightFillColor:'yellow',
+                         strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
+            wkCurves[ [area[2]] ].push(graph);
+            if(k==0) {                 
+                JXG.addEvent(graph.rendNode, 'mouseover', (function(g){ return function(){g.highlight(); /*wahlkreisNode.nodeValue=Beteiligung[area[2] ]+" "+area[2];*/};})(graph), graph);
+                JXG.addEvent(graph.rendNode, 'mouseout', (function(g){ return function(){g.noHighlight();};})(graph), graph);
+            }
+            graph.hasPoint = function(){return false; };
+        }
+    }
+
+    function final() {
+        brd.unsuspendUpdate();
+    }
+
+    //Copyright 2009 Nicholas C. Zakas. All rights reserved.
+    //MIT Licensed
+    function timedChunk(items, process, context, callback){
+        var todo = items.concat();   //create a clone of the original
+        setTimeout(function(){
+            var start = +new Date();
+            do {
+                process.call(context, todo.shift());
+            } while (todo.length > 0 && (+new Date() - start < 300));
+            if (todo.length > 0){
+                setTimeout(arguments.callee, 1);
+            } else {
+                callback(items);
+            }
+        }, 1);
+    }
+
+    brd.suspendUpdate();
+    timedChunk(points, createCurve, null, final);
+          /* ]]> */
+  </script>
+</body>
+</html>
