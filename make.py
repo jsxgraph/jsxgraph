@@ -306,7 +306,7 @@ def makeDocs(afterCore = False):
 
     #FILELIST=$(cat ../src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $2 }' | sed 's/,/.js ..\/src\//g')
     files = findFilenames('src/loadjsxgraph.js')
-    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/renderer/svg.js src/renderer/vml.js src/rendere/canvas.js"
+    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js"
     
     #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/renderer/svg.js ../src/renderer/vml.js
     os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -v -p -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
