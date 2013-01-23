@@ -317,7 +317,9 @@
                 if (el.visPropOld.left !== v) {
                     el.rendNode.setAttributeNS(null, 'x', v + 'px');
 
-                    if (el.visProp.anchorx === 'right') {
+                    if (el.visProp.anchorx === 'left') {
+                        el.rendNode.setAttributeNS(null, 'text-anchor', 'start');
+                    } else if (el.visProp.anchorx === 'right') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'end');
                     } else if (el.visProp.anchorx === 'middle') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'middle');
@@ -329,7 +331,9 @@
                 if (el.visPropOld.top !== v) {
                     el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText * 0.5) + 'px');
 
-                    if (el.visProp.anchory === 'top') {
+                    if (el.visProp.anchory === 'bottom') {
+                        el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
+                    } else if (el.visProp.anchory === 'top') {
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
                     } else if (el.visProp.anchory === 'middle') {
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');

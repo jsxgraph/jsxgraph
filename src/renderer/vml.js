@@ -214,13 +214,15 @@
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 if (el.visProp.anchorx === 'right') {
                     el.rendNode.style.right = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
+                    el.rendNode.style.left = 'auto';
                 } else if (el.visProp.anchorx === 'middle') {
                     el.rendNode.style.left = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]) + 'px';
+                    el.rendNode.style.right = 'auto';
                 } else {
                     el.rendNode.style.left = Math.floor(el.coords.scrCoords[1]) + 'px';
+                    el.rendNode.style.right = 'auto';
                 }
-                el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] - el.visProp.fontsize + this.vOffsetText) + 'px';
-
+                
                 if (el.visProp.anchory === 'top') {
                     el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
                 } else if (el.visProp.anchory === 'middle') {

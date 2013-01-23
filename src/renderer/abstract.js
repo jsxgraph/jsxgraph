@@ -579,12 +579,14 @@
                             v = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]);
                             if (el.visPropOld.right !== v) {
                                 el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
                                 el.visPropOld.right = v;
                             }
                         } else if (el.visProp.anchorx === 'middle') {
                             v = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]);
                             if (el.visPropOld.left !== v) {
                                 el.rendNode.style.left = v + 'px';
+                                el.rendNode.style.right = 'auto';
                                 el.visPropOld.left = v;
                             }
                         // 'left'
@@ -592,6 +594,7 @@
                             v = Math.floor(el.coords.scrCoords[1]);
                             if (el.visPropOld.left !== v) {
                                 el.rendNode.style.left = v + 'px';
+                                el.rendNode.style.right = 'auto';
                                 el.visPropOld.left = v;
                             }
                         }
@@ -674,12 +677,12 @@
                     element.visPropOld.fontsize = fs;
                 }
 
+            }
+            if (element.visProp.display === 'html') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
                 }
-            }
-            if (element.visProp.display === 'html') {
                 this.setObjectStrokeColor(element, sc, so);
             } else {
                 this.updateInternalTextStyle(element, sc, so);

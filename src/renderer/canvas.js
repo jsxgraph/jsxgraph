@@ -558,12 +558,16 @@
                 }
 
                 this.transformImage(el, el.transformations);
-                if (el.visProp.anchorx === 'right') {
+                if (el.visProp.anchorx === 'left') {
+                    context.textAlign = 'left';
+                } else if (el.visProp.anchorx === 'right') {
                     context.textAlign = 'right';
                 } else if (el.visProp.anchorx === 'middle') {
                     context.textAlign = 'center';
                 }
-                if (el.visProp.anchory === 'top') {
+                if (el.visProp.anchory === 'bottom') {
+                    context.textBaseline = 'bottom';
+                } else if (el.visProp.anchory === 'top') {
                     context.textBaseline = 'top';
                 } else if (el.visProp.anchory === 'middle') {
                     context.textBaseline = 'middle';
