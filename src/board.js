@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true */
+/*global JXG: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true, google: true*/
 
 /*jslint nomen: true, plusplus: true*/
 
@@ -456,8 +456,9 @@
          */
         this.hasTouchEnd = false;
 
-        if (typeof registerEvents == 'undefined' || registerEvents)
+        if (registerEvents) {
             this.addEventHandlers();
+        }
 
         this.methodMap = {
             update: 'update',
@@ -652,6 +653,21 @@
                 cPos[1] += getProp('padding-top');
 
                 pCont = this.containerObj;
+            }
+
+            if (document.body) {
+                pCont = document.body;
+                cPos[0] += getProp('left');
+                cPos[1] += getProp('top');
+            }
+
+            // Google Translate offers widgets for web authors. These widgets apparently tamper with the clientX
+            // and clientY coordinates of the mouse events. The minified sources seem to be the only publicly
+            // available version so we're doing it the hacky way: Add a fixed offset.
+            // see https://groups.google.com/d/msg/google-translate-general/H2zj0TNjjpY/jw6irtPlCw8J
+            if (typeof google === 'object' && google.translate) {
+                cPos[0] += 10;
+                cPos[1] += 25;
             }
 
             // add border width

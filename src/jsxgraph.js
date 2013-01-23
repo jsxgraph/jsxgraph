@@ -174,11 +174,11 @@ JXG.JSXGraph = {
      *     <li><b>pan</b>: Allow the user to pan with shift+drag mouse or two-fingers-pan gesture.</li>
      *     <li><b>axis</b>: If set to true, show the axis. Can also be set to an object that is given to both axes as an attribute object.</li>
      *     <li><b>grid</b>: If set to true, shows the grid. Can also bet set to an object that is given to the grid as its attribute object.</li>
+     *     <li><b>registerEvents</b>: Register mouse / touch events.</li>
      * </ul>
-     * @param {Boolean} registerEvents Register mouse / touch events.
      * @returns {JXG.Board} Reference to the created board.
      */
-    initBoard: function (box, attributes, registerEvents) {
+    initBoard: function (box, attributes) {
         var renderer,
             originX, originY, unitX, unitY,
             w, h, dimensions,
@@ -186,7 +186,8 @@ JXG.JSXGraph = {
             zoomfactor, zoomX, zoomY,
             showCopyright, showNavi,
             board,
-            wheelzoom, shiftpan, attr;
+            wheelzoom, shiftpan, attr,
+            registerEvents;
 
         dimensions = JXG.getDimensions(box);
         
@@ -234,6 +235,8 @@ JXG.JSXGraph = {
 
         wheelzoom = ( (typeof attributes["zoom"]) == 'undefined' ? JXG.Options.zoom.wheel : attributes["zoom"]);
         shiftpan = ( (typeof attributes["pan"]) == 'undefined' ? JXG.Options.pan : attributes["pan"]);
+
+        registerEvents = JXG.exists(attributes.registerEvents) ? attributes.registerEvents : true;
 
         renderer = this.initRenderer(box);
 
