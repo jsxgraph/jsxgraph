@@ -110,8 +110,11 @@
         NAMEMAX = 256;
 
 
+    // Util namespace
+    JXG.Util = JXG.Util || {};
+
     /**
-     * @class Util class
+     * @class Unzip class
      * Class for gunzipping, unzipping and base64 decoding of files.
      * It is used for reading GEONExT, Geogebra and Intergeo files.
      *
@@ -119,11 +122,6 @@
      * The code is based on the source code for gunzip.c by Pasi Ojala
      * @see http://www.cs.tut.fi/~albert/Dev/gunzip/gunzip.c
      * @see http://www.cs.tut.fi/~albert
-     */
-    JXG.Util = {};
-
-    /**
-     * Unzip zip files
      */
     JXG.Util.Unzip = function (barray) {
         var gpflags, crc, SIZE, fileout, flens, fmax,

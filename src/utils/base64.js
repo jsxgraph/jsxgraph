@@ -16,6 +16,9 @@
 
     "use strict";
 
+    // Util namespace
+    JXG.Util = JXG.Util || {};
+
     JXG.Util.Base64 = {
 
         // private property
