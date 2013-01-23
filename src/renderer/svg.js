@@ -313,8 +313,9 @@
 
             // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+
                 v = el.coords.scrCoords[1];
-                if (el.visPropOld.left !== v) {
+                if (el.visPropOld.left !== el.visProp.anchorx + v) {
                     el.rendNode.setAttributeNS(null, 'x', v + 'px');
 
                     if (el.visProp.anchorx === 'left') {
@@ -324,11 +325,11 @@
                     } else if (el.visProp.anchorx === 'middle') {
                         el.rendNode.setAttributeNS(null, 'text-anchor', 'middle');
                     }
-
-                    el.visPropOld.left = v;
+                    el.visPropOld.left = el.visProp.anchorx + v;
                 }
+
                 v = el.coords.scrCoords[2];
-                if (el.visPropOld.top !== v) {
+                if (el.visPropOld.top !== el.visProp.anchory + v) {
                     el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText * 0.5) + 'px');
 
                     if (el.visProp.anchory === 'bottom') {
@@ -338,8 +339,7 @@
                     } else if (el.visProp.anchory === 'middle') {
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                     }
-
-                    el.visPropOld.top = v;
+                    el.visPropOld.top = el.visProp.anchory + v;
                 }
             }
             if (el.htmlStr !== content) {
