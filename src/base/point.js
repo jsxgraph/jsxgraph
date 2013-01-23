@@ -653,7 +653,7 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
     handleAttractors: function() {
         var len = this.visProp.attractors.length,
             i, el, projCoords, d = 0.0;
-                        
+
         if (this.visProp.attractordistance==0.0) {
             return;
         }
@@ -725,6 +725,13 @@ JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
                 this.initialCoords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.matVecMult(JXG.Math.inverse(this.transformations[i].matrix), newCoords));
             }
             this.update();
+        }
+
+        // if the user suspends the board updates we need to recalculate the relative position of
+        // the point on the slide object. this is done in updateGlider() which is NOT called during the
+        // update process triggered by unsuspendUpdate.
+        if (this.board.isSuspendedUpdate && this.type === JXG.OBJECT_TYPE_GLIDER) {
+            this.updateGlider();
         }
 
         return coords;
