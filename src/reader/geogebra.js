@@ -2811,11 +2811,11 @@ this.prepareString = function(fileStr, isString) {
         bA = [];
         len = fileStr.length;
         for (i=0;i<len;i++)
-            bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+            bA[i]=JXG.Util.UTF8.asciiCharCodeAt(fileStr,i);
         // Unzip
         fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
     }
-    fileStr = JXG.Util.utf8Decode(fileStr);
+    fileStr = JXG.Util.UTF8.decode(fileStr);
     fileStr = JXG.GeogebraReader.utf8replace(fileStr);
     return fileStr;
 };

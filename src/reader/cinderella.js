@@ -593,12 +593,10 @@ JXG.CinderellaReader = new function() {
   		if (fileStr.indexOf('<') != 0) {
             len = fileStr.length;
 		    for (i=0;i<len;i++)
-		    	bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+		    	bA[i]=JXG.Util.UTF8.asciiCharCodeAt(fileStr, i);
 		    // Unzip
 		    fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];
 		}
-		//fileStr = JXG.Util.utf8Decode(fileStr);
-		//fileStr = JXG.GeogebraReader.utf8replace(fileStr);
 		return fileStr;
 	};
 	

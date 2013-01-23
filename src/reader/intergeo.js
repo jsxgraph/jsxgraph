@@ -888,7 +888,7 @@ JXG.IntergeoReader = new function() {
         if (fileStr.indexOf('<')!=0) {
             //binary = false;
             for (i=0;i<fileStr.length;i++)
-                bA[i]=JXG.Util.asciiCharCodeAt(fileStr,i);
+                bA[i]=JXG.Util.UTF8.asciiCharCodeAt(fileStr,i);
                    
             fileStr = (new JXG.Util.Unzip(bA)).unzipFile("construction/intergeo.xml");  // Unzip 
                                                                                         // Extract "construction/intergeo.xml" from
