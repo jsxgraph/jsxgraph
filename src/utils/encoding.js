@@ -9,6 +9,9 @@
 
     "use strict";
 
+    // Util namespace
+    JXG.Util = JXG.Util || {};
+
     JXG.Util.UTF8 = {
         /**
          * Encode a string to utf-8.

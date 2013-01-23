@@ -25,6 +25,9 @@
     var uuidCharsStr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
         uuidChars = uuidCharsStr.split('');
 
+    // Util namespace
+    JXG.Util = JXG.Util || {};
+
     JXG.Util.genUUID = function () {
         var r, i,
             uuid = [],
