@@ -77,12 +77,13 @@
      * @param {Number} canvasWidth  The width of canvas
      * @param {Number} canvasHeight The height of canvas
      * @param {Boolean} showCopyright Display the copyright text
+     * @param {Boolean} registerEvents Register mouse / touch events
      * @borrows JXG.EventEmitter#on as this.on
      * @borrows JXG.EventEmitter#off as this.off
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright) {
+    JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright, registerEvents) {
         /**
          * Board is in no special mode, objects are highlighted on mouse over and objects may be
          * clicked to start drag&drop.
@@ -455,7 +456,8 @@
          */
         this.hasTouchEnd = false;
 
-        this.addEventHandlers();
+        if (typeof registerEvents == 'undefined' || registerEvents)
+            this.addEventHandlers();
 
         this.methodMap = {
             update: 'update',
