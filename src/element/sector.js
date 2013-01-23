@@ -60,20 +60,30 @@
  * })();
  * </script><pre>
  */
-JXG.createSector = function(board, parents, attributes) {
-    var el, attr;
-        
+JXG.createSector = function (board, parents, attributes) {
+    var el, i, attr,
+        points = ['center', 'radiuspoint', 'anglepoint'];
+
     // Three points?
-    if ( !(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
-        throw new Error("JSXGraph: Can't create Sector with parent types '" + 
+    if (!(JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2]))) {
+        try {
+            for (i = 0; i < parents.length; i++) {
+                if (!JXG.isPoint(parents[i])) {
+                    attr = JXG.copyAttributes(attributes, board.options, 'sector', points[i]);
+                    parents[i] = board.create('point', parents[i], attr);
+                }
+            }
+        } catch (e) {
+            throw new Error("JSXGraph: Can't create Sector with parent types '" +
                         (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + 
                         (typeof parents[2]) + "'.");
+        }
     }
 
     attr = JXG.copyAttributes(attributes, board.options, 'sector');
 
     el = board.create('curve', [[0], [0]], attr);
-    
+
     el.type = JXG.OBJECT_TYPE_SECTOR;
 
     el.elType = 'sector';
