@@ -974,6 +974,7 @@
                     // Convert GEONExT syntax into  JavaScript syntax
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
+                    v = JXG.GeonextParser.replaceNameById(v, this.board);
                     newfuncs[i] = this.board.jc.snippet(v, true, null, true);
 
                     if (terms.length === 2) {
@@ -1009,6 +1010,8 @@
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
 
+                this.parents = [newfuncs[0].origin, newfuncs[1].origin];
+
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.XEval(), this.YEval()]);
                 };
@@ -1017,6 +1020,8 @@
                 this.ZEval = newfuncs[0];
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
+
+                this.parents = [newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin];
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);

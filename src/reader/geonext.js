@@ -630,7 +630,7 @@ JXG.GeonextReader = {
                         gxtEl = gxtReader.readNodes(gxtEl, Data, 'data');
                         gxtEl = gxtReader.transformProperties(gxtEl, 'point');
 
-						if (false) { // Handle weird element names
+						/*if (false) { // Handle weird element names
 							gxtEl.x = JXG.GeonextParser.gxt2jc(gxtEl.x, board);
 							gxtEl.y = JXG.GeonextParser.gxt2jc(gxtEl.y, board);
 						} else {  // Workaround until the jessiecode compiler is 100% compatible
@@ -638,7 +638,7 @@ JXG.GeonextReader = {
 							gxtEl.x = new Function('return ' + gxtEl.x + ';');
 							gxtEl.y = JXG.GeonextParser.geonext2JS(gxtEl.y, board);
 							gxtEl.y = new Function('return ' + gxtEl.y + ';');
-						}
+						}*/
 
                         /*
                         p = board.create('point', [parseFloat(gxtEl.xval), parseFloat(gxtEl.yval)], gxtEl);

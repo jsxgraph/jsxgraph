@@ -266,6 +266,8 @@
                 elements = this.dump(board),
                 script = [];
 
+            script.push('$board.setView(' + JXG.toJSON(board.getBoundingBox()) + ');');
+
             for (i = 0; i < elements.length; i++) {
                 if (elements[i].attributes.name.length > 0) {
                     script.push('// ' + elements[i].attributes.name);
@@ -287,6 +289,8 @@
             var i,
                 elements = this.dump(board),
                 script = [];
+
+            script.push('board.setBoundingBox(' + JXG.toJSON(board.getBoundingBox()) + ');');
 
             for (i = 0; i < elements.length; i++) {
                 script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + JXG.toJSON(elements[i].attributes) + ');');
