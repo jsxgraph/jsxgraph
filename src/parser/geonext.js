@@ -270,7 +270,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
                     elName = term.slice(pos+2,end);
                     elName = elName.replace(/\\(['"])?/g,"$1");
                     el = board.elementsByName[elName];
-                    term = term.slice(0,pos+2) + el.id +  term.slice(end);
+                    if (el) {
+                        term = term.slice(0,pos+2) + el.id +  term.slice(end);
+                    }
                 }
             }
             end = term.indexOf(')',pos+2);
@@ -286,7 +288,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
                 elName = term.slice(pos+5,end);
                 elName = elName.replace(/\\(['"])?/g,"$1");
                 el = board.elementsByName[elName];
-                term = term.slice(0,pos+5) + el.id +  term.slice(end);
+                if (el) {
+                    term = term.slice(0,pos+5) + el.id +  term.slice(end);
+                }
             }
         }
         end = term.indexOf(',',pos+5);
@@ -296,7 +300,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
             elName = term.slice(pos+1,end);
             elName = elName.replace(/\\(['"])?/g,"$1");
             el = board.elementsByName[elName];
-            term = term.slice(0,pos+1) + el.id +  term.slice(end);
+            if (el) {
+                term = term.slice(0,pos+1) + el.id +  term.slice(end);
+            }
         }
         end = term.indexOf(')',pos+1);
         pos = term.indexOf('Dist(',end);
@@ -312,7 +318,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
                     elName = term.slice(pos+4,end);
                     elName = elName.replace(/\\(['"])?/g,"$1");
                     el = board.elementsByName[elName];
-                    term = term.slice(0,pos+4) + el.id +  term.slice(end);
+                    if (el) {
+                        term = term.slice(0,pos+4) + el.id +  term.slice(end);
+                    }
                 }
             }
             end = term.indexOf(',',pos+4);
@@ -322,7 +330,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
                 elName = term.slice(pos+1,end);
                 elName = elName.replace(/\\(['"])?/g,"$1");
                 el = board.elementsByName[elName];
-                term = term.slice(0,pos+1) + el.id +  term.slice(end);
+                if (el) {
+                    term = term.slice(0,pos+1) + el.id +  term.slice(end);
+                }
             }
             end = term.indexOf(',',pos+1);
             pos = term.indexOf(',',end);
@@ -331,7 +341,9 @@ JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board *
                 elName = term.slice(pos+1,end);
                 elName = elName.replace(/\\(['"])?/g,"$1");
                 el = board.elementsByName[elName];
-                term = term.slice(0,pos+1) + el.id +  term.slice(end);
+                if (el) {
+                    term = term.slice(0,pos+1) + el.id +  term.slice(end);
+                }
             }
             end = term.indexOf(')',pos+1);
             pos = term.indexOf(funcs[i]+'(',end);
