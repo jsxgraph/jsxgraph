@@ -1042,9 +1042,10 @@ JXG.extend(JXG, {
             //GUI.transformation = meta.transformation; // transformation matrices (rotations, ...)
             //GUI.restore_state = meta.restoreState; // restore states
 
-            board.options.grid.snapToGrid = !meta.snapToGrid;
-            board.options.point.snapToGrid = !meta.snapToGrid;
-            board.options.point.snapToPoints = !meta.snapToPoints;
+            // Deprecated
+//            board.options.grid.snapToGrid = !meta.snapToGrid;
+//            board.options.point.snapToGrid = !meta.snapToGrid;
+//            board.options.point.snapToPoints = !meta.snapToPoints;
 
             return '';
         }
