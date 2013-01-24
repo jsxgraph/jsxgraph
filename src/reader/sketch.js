@@ -929,7 +929,7 @@ JXG.extend(JXG, {
                 default:
                     console.log(step.type);
 
-                    alert("No such GENTYPE!");
+                    alert("No such GENTYPE!" + step.type);
                     return [ ];
             }
 /*
