@@ -298,7 +298,7 @@ JXG.JSXGraph = {
         dimensions = JXG.getDimensions(box);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
+        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, true, true);
         board.initInfobox();
 
         JXG.FileReader.parseFileContent(file, board, format);
@@ -331,7 +331,7 @@ JXG.JSXGraph = {
         dimensions = JXG.getDimensions(box);
 
         /* User default parameters, in parse* the values in the gxt files are submitted to board */
-        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height);
+        board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, true, true);
         board.initInfobox();
 
         JXG.FileReader.parseString(string, board, format, true);
