@@ -489,10 +489,14 @@
             } else if (JXG.isFunction(term)) {
                 f = term;
             } else if (JXG.isNumber(term)) {
-                f = function () { return term; };
+                f = function () {
+                    return term;
+                };
             } else if (JXG.isString(term)) {
                 // In case of string function like fontsize
-                f = function () { return term; };
+                f = function () {
+                    return term;
+                };
             }
 
             if (f !== null) {
@@ -1083,6 +1087,8 @@
          * @param str
          */
         unescapeHTML: function (str) {
+            // this regex is NOT insecure. We are replacing everything found with ''
+            /*jslint regexp:true*/
             return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
         },
 
