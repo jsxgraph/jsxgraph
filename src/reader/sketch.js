@@ -369,7 +369,7 @@ JXG.extend(JXG, {
 
                 case JXG.GENTYPE_POINT:
                     set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                    set_str += ')' + ( options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\'>>') + ';';
+                    set_str += ')' + ( options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\', snaptogrid: ' + GUI.snapToGrid + '>>') + ';';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
