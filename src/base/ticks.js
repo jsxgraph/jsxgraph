@@ -197,7 +197,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         } else if (Math.abs(p1.coords.usrCoords[1]-p2.coords.usrCoords[1])<JXG.Math.eps) {  // vertical axis
             return tick.usrCoords[2];
         } else {
-            return p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
+            return p1.coords.distance(JXG.COORDS_BY_USER, tick);
         }
     },
     
@@ -561,11 +561,6 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 			style = this.minStyle;
 		}
         
-		// This is necessary to compute the correct direction of infinite grid lines
-		// if unitX!=unitY.
-		//dxs = dx; //*this.board.unitX;
-		//dys = dy; //*this.board.unitY;
-
 		// For all ticks regardless if of finite or infinite
 		// tick length the intersection with the canvas border is 
 		// computed. 
@@ -627,10 +622,10 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
 		}
 		// finite tick length
 		if (style=='finite') {
-			x[0] = c[1] + dxs;
-			y[0] = c[2] - dys;
-			x[1] = c[1] - dxs;
-			y[1] = c[2] + dys;
+			x[0] = c[1] + dxs*this.visProp.tickendings[0];
+			y[0] = c[2] - dys*this.visProp.tickendings[0];
+			x[1] = c[1] - dxs*this.visProp.tickendings[1];
+			y[1] = c[2] + dys*this.visProp.tickendings[1];
 		}
         if (isInsideCanvas) {
             return [x,y, major];

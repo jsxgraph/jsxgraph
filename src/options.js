@@ -417,6 +417,15 @@ JXG.Options = {
         majorHeight: 10,
 
         /**
+         * Decides in which direction finite ticks are visible. Possible values are 0=false or 1=true. 
+         * In case of [0,1] the tick is only visible to the right of the line. In case of
+         * [1,0] the tick is only visible to the left of the line.
+         * @type Array
+         * @name JXG.Ticks#tickEndings
+         */
+        tickEndings: [1,1],
+        
+        /**
          * The number of minor ticks between two major ticks.
          * @type Number
          * @name JXG.Ticks#minorTicks
@@ -618,8 +627,9 @@ JXG.Options = {
             drawZero : false,
             insertTicks : true,
             minTicksDistance : 10,
-            minorHeight : 4,          // if <0: full width and height
+            minorHeight : 10,          // if <0: full width and height
             majorHeight : -1,         // if <0: full width and height
+            tickEndings: [0,1],
             minorTicks : 4,
             ticksDistance: 1,         // TODO doc
             strokeOpacity : 0.25

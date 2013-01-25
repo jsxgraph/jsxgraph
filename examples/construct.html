@@ -79,8 +79,7 @@ brd.create('axis',
 
 var a1 = brd.create('point',[0,3]);
 var a2 = brd.create('point',[3,3]);
-/*
-    var ax1 = brd.create('axis', [[0,1.7],[1,1.7]], 
+    var ax1 = brd.create('axis', [[0,1.7],[1,4.7]], 
         { 
             ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
         }
@@ -99,7 +98,6 @@ var a2 = brd.create('point',[3,3]);
             point2:{frozen:true},
             ticks:{drawLabels:true}
         });
-*/        
 brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
         
 /*
