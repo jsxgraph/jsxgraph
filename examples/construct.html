@@ -6,8 +6,8 @@
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
     <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94/jsxgraphcore.js"></script>-->
     <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
-    <script type="text/javascript" src="../src/GeonextReader.js"></script>
-    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../src/reader/geonext.js"></script>
+    <script type="text/javascript" src="../src/renderer/canvas.js"></script>
 </head>
 <body id="body">
 <input type="button" value="translate curve" onClick="translate()">
@@ -56,7 +56,7 @@ JXG.Options.point.label = {};
     };
 
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:false});
+    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1,5,5,-1], axis:true});
     
     // Create two arcs
     //var l = brd.create('line', [-1,1,0]);
@@ -79,7 +79,6 @@ brd.create('axis',
 
 var a1 = brd.create('point',[0,3]);
 var a2 = brd.create('point',[3,3]);
-brd.create('line', [a1,a2], {withLabel: true, name: "line", label: { position:'llft', offset:[40,100]}});
 /*
     var ax1 = brd.create('axis', [[0,1.7],[1,1.7]], 
         { 
@@ -93,14 +92,17 @@ brd.create('line', [a1,a2], {withLabel: true, name: "line", label: { position:'l
             ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
         }
         );
-    var p1 = brd.create('point', [1,1], {withLabel:true, name:'FREEZE', frozen:true});
-    var p2 = brd.create('point', [3,0], {snapToGrid:true});
+    var p1 = brd.create('point', [3,3], {withLabel:true, name:'FREEZE', frozen:true, visible:false});
+    var p2 = brd.create('point', [3,1], {snapToGrid:true, visible:false});
     var s1 = brd.create('slider', [[1,3],[4,3],[10,40,110]], 
         {   point1:{frozen:true}, 
             point2:{frozen:true},
             ticks:{drawLabels:true}
         });
-
+*/        
+brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
+        
+/*
     var t1 = brd.create('text', [1,2,'hello'], {snapToGrid:true});
 
 
