@@ -178,32 +178,37 @@
          */
         _createArrowHead: function (element, idAppendix) {
             var node2, node3,
-                id = element.id + 'Triangle';
+                id = element.id + 'Triangle',
+                s;
 
             if (JXG.exists(idAppendix)) {
                 id += idAppendix;
             }
             node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, 'viewBox', '0 0 10 6');
-            node2.setAttributeNS(null, 'refY', '3');
-            node2.setAttributeNS(null, 'markerUnits', 'userSpaceOnUse'); //'strokeWidth');
-            node2.setAttributeNS(null, 'markerHeight', '12');
-            node2.setAttributeNS(null, 'markerWidth', '10');
-            node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'stroke', JXG.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'stroke-opacity', JXG.evaluate(element.visProp.strokeopacity));
             node2.setAttributeNS(null, 'fill', JXG.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'fill-opacity', JXG.evaluate(element.visProp.strokeopacity));
+
+            node2.setAttributeNS(null, 'orient', 'auto');
+            node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
+            s = parseInt(element.visProp.strokewidth);
+            node2.setAttributeNS(null, 'viewBox', -s + ' ' + (-s) + ' ' + s*12 + ' ' + s*12);
+            node2.setAttributeNS(null, 'markerHeight', 10);
+            node2.setAttributeNS(null, 'markerWidth', 10);
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
 
-            if (idAppendix === 'End') {
-                node2.setAttributeNS(null, 'refX', '0');
-                node3.setAttributeNS(null, 'd', 'M 0 3 L 10 6 L 10 0 z');
-            } else {
-                node2.setAttributeNS(null, 'refX', '10');
-                node3.setAttributeNS(null, 'd', 'M 0 0 L 10 3 L 0 6 z');
+            if (idAppendix === 'End') {     // First arrow
+                node2.setAttributeNS(null, 'refY', 5);
+                node2.setAttributeNS(null, 'refX', 2);
+                node3.setAttributeNS(null, 'd', 'M 10 0 L 0 5 L 10 10 z');
+            } else {                        // Last arrow
+                node2.setAttributeNS(null, 'refY', 5);
+                node2.setAttributeNS(null, 'refX', 8);
+                node3.setAttributeNS(null, 'd', 'M 0 0 L 10 5 L 0 10 z');
             }
+
             node2.appendChild(node3);
             return node2;
         },

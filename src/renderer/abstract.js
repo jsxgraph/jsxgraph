@@ -333,7 +333,7 @@
                 margin = null;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
-                margin = 0;
+                margin = -4;
             }
             JXG.Math.Geometry.calcStraight(element, c1, c2, margin);
             this.updateLinePrim(element.rendNode,
