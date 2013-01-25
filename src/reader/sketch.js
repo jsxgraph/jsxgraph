@@ -199,14 +199,14 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_AXIS:
-                    set_str = step.args.name[0] + ' = point(' + pn(step.args.coords[0].usrCoords[1]) + ', ';
-                    set_str += pn(step.args.coords[0].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
+                    set_str = step.args.name[0] + ' = point(' + step.args.coords[0].usrCoords[1] + ', ';
+                    set_str += step.args.coords[0].usrCoords[2] + ') <<id: \'' + step.dest_sub_ids[0] + '\', name: \'';
                     set_str += step.args.name[0] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[1];
-                    set_str += ' = point(' + pn(step.args.coords[1].usrCoords[1]) + ', ';
-                    set_str += pn(step.args.coords[1].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
+                    set_str += ' = point(' + step.args.coords[1].usrCoords[1] + ', ';
+                    set_str += step.args.coords[1].usrCoords[2] + ') <<id: \'' + step.dest_sub_ids[1] + '\', name: \'';
                     set_str += step.args.name[1] + '\', fixed: true, priv: true, visible: false>>; ' + step.args.name[2];
-                    set_str += ' = point(' + pn(step.args.coords[2].usrCoords[1]) + ', ';
-                    set_str += pn(step.args.coords[2].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[2] + '\', name: \'';
+                    set_str += ' = point(' + step.args.coords[2].usrCoords[1] + ', ';
+                    set_str += step.args.coords[2].usrCoords[2] + ') <<id: \'' + step.dest_sub_ids[2] + '\', name: \'';
                     set_str += step.args.name[2] + '\', fixed: true, priv: true, visible: false>>; ';
 
                     set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
