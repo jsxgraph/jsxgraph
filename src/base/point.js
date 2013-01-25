@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, console: true */
+/*global JXG: true, console: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -201,7 +201,7 @@
              * If point is a calculated point, call updateConstraint() to calculate new coords.
              * The second test is for dynamic axes.
              */
-            if (this.type === JXG.OBJECT_TYPE_CAS || this.type === JXG.OBJECT_TYPE_AXISPOINT) {
+            if (this.type === JXG.OBJECT_TYPE_CAS || this.type === JXG.OBJECT_TYPE_INTERSECTION || this.type === JXG.OBJECT_TYPE_AXISPOINT) {
                 this.updateConstraint();
             }
 
@@ -1744,6 +1744,7 @@
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
 
+        el.type = JXG.OBJECT_TYPE_INTERSECTION;
         el.elType = 'intersection';
         el.parents = [parents[0].id, parents[1].id, parents[2]];
 
@@ -1814,6 +1815,7 @@
             el = board.create('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
         }
 
+        el.type = JXG.OBJECT_TYPE_INTERSECTION;
         el.elType = 'otherintersection';
         el.parents = [parents[0].id, parents[1].id, parents[2]];
 
