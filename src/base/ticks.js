@@ -787,8 +787,8 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  * @constructor
  * @type JXG.Ticks
  * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
- * @param {JXG.Line,Number,Function} line,_distance,_generateLabelFunc The parents consist of the line the ticks are going to be attached to and optional the
- * distance between two major ticks. If no distance is given the attribute {@link JXG.Ticks#ticksDistance} is used.
+ * @param {JXG.Line,Number,Function} line,_distance,_generateLabelFunc The parents consist of the line the ticks are going to be attached to and the
+ * distance between two major ticks.
  * The third parameter (optional) is a function which determines the tick label. It has as parameter a coords object containing the coordinates of the new tick.
  * @example
  * // Create an axis providing two coord pairs.
@@ -803,7 +803,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  *   var p1 = board.create('point', [0, 3]);
  *   var p2 = board.create('point', [1, 3]);
  *   var l1 = board.create('line', [p1, p2]);
- *   var t = board.create('ticks', [l1], {ticksDistance: 2});
+ *   var t = board.create('ticks', [l1, 2], {ticksDistance: 2});
  * })();
  * </script><pre>
  */

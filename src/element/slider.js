@@ -31,8 +31,8 @@
 
 
 /**
- * @fileoverview The geometry object Line is defined in this file. Line stores all
- * style and functional properties that are required to draw and move a line on
+ * @fileoverview The geometry object slider is defined in this file. Slider stores all
+ * style and functional properties that are required to draw and use a slider on
  * a board.
  */
 
@@ -50,7 +50,7 @@
  * on the board. The third array gives the start and the end of the range the slider operates as the first resp. the
  * third component of the array. The second component of the third array gives its start value.
  * @example
- * // Create a free point using affine euclidean coordinates
+ * // Create a slider with values between 1 and 10, initial position is 5.
  * var s = board.create('slider', [[1, 2], [3, 2], [1, 5, 10]]);
  * </pre><div id="cfb51cde-2603-4f18-9cc4-1afb452b374d" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">
@@ -60,7 +60,7 @@
  *   })();
  * </script><pre>
  * @example
- * // Create a constrained point using anonymous function
+ * // Create a slider taking integer values between 1 and 50. Initial value is 50.
  * var s = board.create('slider', [[1, 3], [3, 1], [1, 10, 50]], {snapWidth: 1});
  * </pre><div id="e17128e6-a25d-462a-9074-49460b0d66f4" style="width: 200px; height: 200px;"></div>
  * <script type="text/javascript">

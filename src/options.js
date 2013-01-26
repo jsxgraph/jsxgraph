@@ -1486,6 +1486,59 @@ JXG.Options = {
         }
     },
     
+    /* special tape measure options */
+    tapemeasure : {
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        highlightStrokeColor: '#000000',
+        withTicks: true,
+        withLabel: true,
+        precision: 2,
+
+        //layer: 9,
+        point1: {
+            strokeColor: '#000000',
+            fillColor: '#ffffff',
+            fillOpacity: 0.0,
+            highlightFillOpacity: 0.1,
+            size: 6,
+            snapToPoints: true,
+            attractorDistance: 0.1,
+            showInfobox: false,
+            withLabel: false,
+            name: ''
+        },
+        point2: {
+            strokeColor: '#000000',
+            fillColor: '#ffffff',
+            fillOpacity: 0.0,
+            highlightFillOpacity: 0.1,
+            size: 6,
+            snapToPoints: true,
+            attractorDistance: 0.1,
+            showInfobox: false,
+            withLabel: false,
+            name: ''
+        },
+        ticks : {
+            drawLabels : false,
+            drawZero : true,
+            insertTicks : true,
+            minorHeight : 8,         
+            majorHeight : 16,        
+            minorTicks : 4,
+            tickEndings: [0,1],
+            defaultDistance : 0.1, 
+            strokeOpacity : 1,
+            strokeWidth: 1,
+            strokeColor : '#000000'
+        },
+        
+        label: {
+            position: 'top'
+        }
+    },
+    
     /* special text options */
     text : {
         /**#@+

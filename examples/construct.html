@@ -76,7 +76,7 @@ brd.create('axis',
     { withLabel: true, name: "TEST-Y", label: { offset: [125,135]}});
     brd.create('point', [5,5], {withLabel: true, name: "Test", label: { offset:[50,-20]}});
 */
-
+/*
 var a1 = brd.create('point',[0,3]);
 var a2 = brd.create('point',[3,3]);
     var ax1 = brd.create('axis', [[0,1.7],[1,4.7]], 
@@ -91,15 +91,16 @@ var a2 = brd.create('point',[3,3]);
             ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
         }
         );
-    var p1 = brd.create('point', [3,3], {withLabel:true, name:'FREEZE', frozen:true, visible:false});
-    var p2 = brd.create('point', [3,1], {snapToGrid:true, visible:false});
+*/        
+
+    var p1 = brd.create('point', [3,2], {withLabel:true, name:'FREEZE', frozen:false, visible:true});
+    var p2 = brd.create('point', [3,1], {snapToPoints: false, visible:true});
     var s1 = brd.create('slider', [[1,3],[4,3],[10,40,110]], 
         {   point1:{frozen:true}, 
             point2:{frozen:true},
             ticks:{drawLabels:true}
         });
-brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
-        
+//brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
 /*
     var t1 = brd.create('text', [1,2,'hello'], {snapToGrid:true});
 
@@ -140,6 +141,7 @@ brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArr
     brd.update();
 */
 
+    var tape = brd.create('tapemeasure', [[1,4],[3,4]], {name: 'd'});
 </script> 
 </body>
 </html>
