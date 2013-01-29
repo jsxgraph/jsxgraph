@@ -877,7 +877,7 @@
          * @param {Number,function,Slider} degree number, function or slider.
          * Either
          * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
-         * an array of JXG.Points. In the latter case, the <tt>dataY</tt> parameter will be ignored.
+         * an array of {@link JXG.Point}s or {@link JXG.Coords}. In the latter case, the <tt>dataY</tt> parameter will be ignored.
          * @param {Array} dataY Array containing the y-coordinates of the data set,
          * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
          * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
@@ -909,6 +909,8 @@
             // Parameters degree, point array
             } else if (arguments.length === 2 && JXG.isArray(dataX) && dataX.length > 0 && JXG.isPoint(dataX[0])) {
                 inputType = 1;
+            } else if (arguments.length === 2 && JXG.isArray(dataX) && dataX.length > 0 && dataX[0].usrCoords && dataX[0].scrCoords) {
+                inputType = 2;
             } else {
                 throw new Error("JSXGraph: Can't create regressionPolynomial. Wrong parameters.");
             }
@@ -929,6 +931,16 @@
                         for (i = 0; i < len; i++) {
                             dX[i] = dataX[i].X();
                             dY[i] = dataX[i].Y();
+                        }
+                    }
+
+                    if (inputType === 2) {
+                        dX = [];
+                        dY = [];
+
+                        for (i = 0; i < len; i++) {
+                            dX[i] = dataX[i].usrCoords[1];
+                            dY[i] = dataX[i].usrCoords[2];
                         }
                     }
 
