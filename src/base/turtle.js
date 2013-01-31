@@ -132,7 +132,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
     * Move the turtle forward.
-    * @param {float} length of forward move in user coordinates
+    * @param {Number} length of forward move in user coordinates
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -167,7 +167,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
      
     /**
     * Move the turtle backwards.
-    * @param {float} length of backwards move in user coordinates
+    * @param {Number} length of backwards move in user coordinates
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -177,7 +177,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
      
     /**
     * Rotate the turtle direction to the right
-    * @param {float} angle of the rotation in degrees
+    * @param {Number} angle of the rotation in degrees
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -194,7 +194,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
      
     /**
     * Rotate the turtle direction to the right.
-    * @param {float} angle of the rotation in degrees
+    * @param {Number} angle of the rotation in degrees
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -262,8 +262,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
     *  Moves the turtle without drawing to a new position
-    * @param {float} x new x- coordinate 
-    * @param {float} y new y- coordinate 
+    * @param {Number} x new x- coordinate
+    * @param {Number} y new y- coordinate
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -289,7 +289,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
     *  Sets the pen size. Equivalent to setProperty({strokeWidth:size})
     * but affects only the future turtle.
-    * @param {float} size
+    * @param {Number} size
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -303,7 +303,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
     *  Sets the pen color. Equivalent to setProperty({strokeColor:color})
     * but affects only the future turtle.
-    * @param {string} color
+    * @param {String} color
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -317,7 +317,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
     *  Sets the highlight pen color. Equivalent to setProperty({highlightStrokeColor:color})
     * but affects only the future turtle.
-    * @param {string} color
+    * @param {String} color
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -432,10 +432,10 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
     * Rotates the turtle into a new direction.
     * There are two possibilities:
-    * @param {float} angle New direction to look to
+    * @param {Number} angle New direction to look to
     * or
-    * @param {float} x New x coordinate to look to
-    * @param {float} y New y coordinate to look to
+    * @param {Number} x New x coordinate to look to
+    * @param {Number} y New y coordinate to look to
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -466,8 +466,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
     * Moves the turtle to a given coordinate pair.
     * The direction is not changed.
-    * @param {float} x New x coordinate to look to
-    * @param {float} y New y coordinate to look to
+    * @param {Number} x New x coordinate to look to
+    * @param {Number} y New y coordinate to look to
     * @type {JXG.Turtle}
     * @return pointer to the turtle object
     */
@@ -543,9 +543,9 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
      * the "co"-coordinate of the turtle curve at position t is returned.
-     * @param {float} t parameter 
-     * @param {string} coordinate. Either 'X' or 'Y'.
-     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     * @param {Number} t parameter
+     * @param {String} coordinate. Either 'X' or 'Y'.
+     * @return {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
      */
     evalAt: function(/** float */ t, /** string */ co) /** float */ { 
         var i, j, el, tc, len = this.objects.length;
@@ -565,8 +565,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
      * if t is not supplied the x-coordinate of the turtle is returned. Otherwise
      * the x-coordinate of the turtle curve at position t is returned.
-     * @param {float} t parameter 
-     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     * @param {Number} t parameter
+     * @return {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
      */
     X: function(/** float */ t) /** float */ { 
         if (typeof t == 'undefined' ) {
@@ -579,8 +579,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
     /**
      * if t is not supplied the y-coordinate of the turtle is returned. Otherwise
      * the y-coordinate of the turtle curve at position t is returned.
-     * @param {float} t parameter 
-     * @return {float} x-coordinate of the turtle position or x-coordinate of turtle at position t
+     * @param {Number} t parameter
+     * @return {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
      */
     Y: function(/** float */ t) /** float */ { 
         if (typeof t == 'undefined' ) {
@@ -592,7 +592,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
     * @return z-coordinate of the turtle position
-    * @type {float}
+    * @type {Number}
     */
     Z: function(/** float */ t) /** float */ { 
         return 1.0; 
@@ -624,7 +624,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
      * Checks whether (x,y) is near the curve.
      * @param {Number} x Coordinate in x direction, screen coordinates.
      * @param {Number} y Coordinate in y direction, screen coordinates.
-     * @return {bool} True if (x,y) is near the curve, False otherwise.
+     * @return {Boolean} True if (x,y) is near the curve, False otherwise.
      */
     hasPoint: function (x,y) {
         var i, el;

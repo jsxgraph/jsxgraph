@@ -902,8 +902,8 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
 
     /**
      * Determines whether the arc has arrows at start or end of the arc.
-     * @param {bool} firstArrow True if there is an arrow at the start of the arc, false otherwise.
-     * @param {bool} lastArrow True if there is an arrow at the end of the arc, false otherwise.
+     * @param {Boolean} firstArrow True if there is an arrow at the start of the arc, false otherwise.
+     * @param {Boolean} lastArrow True if there is an arrow at the end of the arc, false otherwise.
      * Is stored at visProp['firstarrow'] and visProp['lastarrow']
      */
     setArrow: function (firstArrow, lastArrow) {

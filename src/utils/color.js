@@ -398,10 +398,10 @@
      * Based on C Code in "Computer Graphics -- Principles and Practice,"
      * Foley et al, 1996, p. 593.
      * See also http://www.efg2.com/Lab/Graphics/Colors/HSV.htm
-     * @param {float} H value between 0 and 360
-     * @param {float} S value between 0.0 (shade of gray) to 1.0 (pure color)
-     * @param {float} V value between 0.0 (black) to 1.0 (white)
-     * @return {string} RGB color string
+     * @param {Number} H value between 0 and 360
+     * @param {Number} S value between 0.0 (shade of gray) to 1.0 (pure color)
+     * @param {Number} V value between 0.0 (black) to 1.0 (white)
+     * @return {String} RGB color string
      */
     JXG.hsv2rgb = function (H, S, V) {
         var R, G, B, f, i, hTemp, p, q, t;
