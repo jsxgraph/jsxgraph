@@ -643,7 +643,7 @@ JXG.extend(JXG, {
                     break;
 
                 case JXG.GENTYPE_RULER:
-                    set_str = assign + 'ruler([ ' + step.args.p1 + ' ], [ ' + step.args.p2 + ' ], \'' + step.args.label + '\'); ';
+                    set_str = assign + 'tapemeasure([ ' + step.args.p1 + ' ], [ ' + step.args.p2 + ' ]); '; //, \'' + step.args.label + '\'); ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
