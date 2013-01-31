@@ -56,7 +56,7 @@
      * @class This is the Coordinates class.
      * All members a coordinate has to provide
      * are defined here.
-     * @param {int} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
+     * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
      * @param {Array} coordinates An array of affine coordinates.
      * @param {JXG.Board} board A reference to a board.
      * @borrows JXG.EventEmitter#on as this.on

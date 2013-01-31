@@ -145,8 +145,8 @@
     JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         /**
          * Checks whether (x,y) is near the point.
-         * @param {int} x Coordinate in x direction, screen coordinates.
-         * @param {int} y Coordinate in y direction, screen coordinates.
+         * @param {Number} x Coordinate in x direction, screen coordinates.
+         * @param {Number} y Coordinate in y direction, screen coordinates.
          * @type boolean
          * @return True if (x,y) is near the point, False otherwise.
          * @private

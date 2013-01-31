@@ -30,11 +30,15 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, document:true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
  JXG
+ Board
+ filereader
+ options
+ renderer
  */
 
 /**
@@ -117,8 +121,10 @@
 
                     if (document.body) {
                         t = document.body.scrollLeft;
-                        t = document.body.scrollTop;
+                        t += document.body.scrollTop;
                     }
+
+                    return t;
                 };
                 loadRenderer('vml');
             }
@@ -187,11 +193,7 @@
                 renderer,
                 w, h, dimensions,
                 bbox, attr, axattr,
-                zoomfactor, zoomX, zoomY,
-                showCopyright, showNavi,
-                board,
-                wheelzoom, shiftpan,
-                registerEvents;
+                board;
 
             dimensions = JXG.getDimensions(box);
 
@@ -269,7 +271,6 @@
          * @param {String} file base64 encoded string.
          * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
          * @returns {JXG.Board} Reference to the created board.
-         *
          * @see JXG.FileReader
          * @see JXG.GeonextReader
          * @see JXG.GeogebraReader
@@ -289,9 +290,11 @@
             board.initInfobox();
 
             JXG.FileReader.parseFileContent(file, board, format);
-            if(board.attr.shownavigation) {
+
+            if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
             }
+
             this.boards[board.id] = board;
             return board;
         },
@@ -303,18 +306,16 @@
          * @param {String} string base64 encoded string.
          * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
          * @returns {JXG.Board} Reference to the created board.
-         *
          * @see JXG.FileReader
          * @see JXG.GeonextReader
          * @see JXG.GeogebraReader
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
          */
-        loadBoardFromString: function(box, string, format) {
+        loadBoardFromString: function (box, string, format) {
             var renderer, dimensions, board;
 
             renderer = this.initRenderer(box);
-            //var dimensions = document.getElementById(box).getDimensions();
             dimensions = JXG.getDimensions(box);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
@@ -322,6 +323,7 @@
             board.initInfobox();
 
             JXG.FileReader.parseString(string, board, format, true);
+
             if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
             }
@@ -332,12 +334,12 @@
 
         /**
          * Delete a board and all its contents.
-         * @param {String} board HTML-ID to the DOM-element in which the board is drawn.
+         * @param {JXG.Board,String} board HTML-ID to the DOM-element in which the board is drawn.
          */
         freeBoard: function (board) {
-            var el, i;
+            var el;
 
-            if (typeof(board) == 'string') {
+            if (typeof board === 'string') {
                 board = this.boards[board];
             }
 
@@ -345,9 +347,10 @@
             board.suspendUpdate();
 
             // Remove all objects from the board.
-            for(el in board.objects) {
-                //board.removeObject(board.objects[el]);
-                board.objects[el].remove();
+            for (el in board.objects) {
+                if (board.objects.hasOwnProperty(el)) {
+                    board.objects[el].remove();
+                }
             }
 
             // Remove all the other things, left on the board, XHTML save
@@ -357,20 +360,21 @@
             // board.containerObj.innerHTML = '';
 
             // Tell the browser the objects aren't needed anymore
-            for(el in board.objects) {
-                delete(board.objects[el]);
+            for (el in board.objects) {
+                if (board.objects.hasOwnProperty(el)) {
+                    delete board.objects[el];
+                }
             }
 
             // Free the renderer and the algebra object
-            delete(board.renderer);
-            delete(board.algebra);
+            delete board.renderer;
 
             // clear the creator cache
             board.jc.creator.clearCache();
-            delete(board.jc);
+            delete board.jc;
 
             // Finally remove the board itself from the boards array
-            delete(this.boards[board.id]);
+            delete this.boards[board.id];
         },
 
         /**
@@ -386,8 +390,10 @@
             element = element.toLowerCase();
             this.elements[element] = creator;
 
-            if(JXG.Board.prototype['_' + element])
-                throw new Error("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
+            if (JXG.Board.prototype['_' + element]) {
+                JXG.debug("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
+            }
+
             JXG.Board.prototype['_' + element] = function (parents, attributes) {
                 return this.create(element, parents, attributes);
             };
@@ -400,8 +406,8 @@
          * @param {String} element The name of the element which is to be removed from the element list.
          */
         unregisterElement: function (element) {
-            delete (this.elements[element.toLowerCase()]);
-            delete (JXG.Board.prototype['_' + element.toLowerCase()]);
+            delete this.elements[element.toLowerCase()];
+            delete JXG.Board.prototype['_' + element.toLowerCase()];
         }
     };
 }());

@@ -622,9 +622,8 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
 
     /**
      * Checks whether (x,y) is near the curve.
-     * @param {int} x Coordinate in x direction, screen coordinates.
-     * @param {int} y Coordinate in y direction, screen coordinates.
-     * @param {y} Find closest point on the curve to (x,y)
+     * @param {Number} x Coordinate in x direction, screen coordinates.
+     * @param {Number} y Coordinate in y direction, screen coordinates.
      * @return {bool} True if (x,y) is near the curve, False otherwise.
      */
     hasPoint: function (x,y) {
@@ -646,7 +645,7 @@ JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
  * Creates a new turtle
  * @param {JXG.Board} board The board the turtle is put on.
  * @param {Array} parents 
- * @param {Object} attributs Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+ * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
  * @type JXG.Turtle
  * @return Reference to the created turtle object.
  */
