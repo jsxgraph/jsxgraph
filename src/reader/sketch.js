@@ -63,8 +63,9 @@ JXG.extend(JXG, {
     GENTYPE_JCODE: 28,
     GENTYPE_MOVEMENT: 29,
     GENTYPE_COMBINED: 30,
+    GENTYPE_RULER: 31,
 
-    // 31 ... 32 // unused ...
+    // 32 // unused ...
 
     GENTYPE_GRID: 33, // obsolete
 
@@ -641,6 +642,11 @@ JXG.extend(JXG, {
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
+                case JXG.GENTYPE_RULER:
+                    set_str = assign + 'ruler([ ' + step.args.p1 + ' ], [ ' + step.args.p2 + ' ], \'' + step.args.label + '\'); ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    break;
+
                 case JXG.GENTYPE_POLYGON:
                     set_str = assign + 'polygon(';
 
@@ -731,6 +737,7 @@ JXG.extend(JXG, {
                     reset_str += step.dest_sub_ids[1] + '; delete ';
                     reset_str += step.dest_sub_ids[0] + '; ';
                     break;
+
 
                 case JXG.GENTYPE_DELETE:
 
