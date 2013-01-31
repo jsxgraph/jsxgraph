@@ -65,9 +65,9 @@
  * </script><pre>
   */
 JXG.createTapemeasure = function(board, parents, attributes) {
-    var pos0, pos1, 
+    var pos0, pos1,
         attr, withTicks, withText, precision,
-        li, n, ti;
+        li, p1, p2, n, ti;
 
     pos0 = parents[0];
     pos1 = parents[1];
