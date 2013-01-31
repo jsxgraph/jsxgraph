@@ -1139,7 +1139,7 @@
             var i, neville,
                 interpath = [],
                 p = [],
-                delay = this.board.options.animationDelay,
+                delay = this.board.attr.animationdelay,
                 steps = time / delay,
 
                 makeFakeFunction = function (i, j) {
@@ -1204,7 +1204,7 @@
             where = new JXG.Coords(JXG.COORDS_BY_USER, where, this.board);
 
             var i,
-                delay = this.board.options.animationDelay,
+                delay = this.board.attr.animationdelay,
                 steps = Math.ceil(time / delay),
                 coords = [],
                 X = this.coords.usrCoords[1],
@@ -1256,7 +1256,7 @@
          */
         visit: function (where, time, options) {
             var i, j,
-                delay = this.board.options.animationDelay,
+                delay = this.board.attr.animationdelay,
                 steps = Math.ceil(time / (delay * options.repeat)),
                 coords = [],
                 X = this.coords.usrCoords[1],

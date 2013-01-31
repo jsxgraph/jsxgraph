@@ -35,32 +35,40 @@
  * @description These are the default options of the board and of all geometry elements.
  */
 JXG.Options = {
-    /* Options that are used directly within the board class */
-    showCopyright : true,
-    showNavigation : true,
-    takeSizeFromFile : false, // If true, the construction - when read from a file or string - the size of the div can be changed.
-    renderer: 'svg',
-    takeFirst : false, // if true the first element with hasPoint==true is taken.
-    animationDelay: 35,
-
-    /* zoom options */
-    zoom : {
-        factorX : 1.25,
-        factorY : 1.25,
-        wheel: false,
-        needShift: false,
-        eps: 0.1
-    },
-    
-    pan: {
-        needShift: true,
-        needTwoFingers: true,
-        enabled: true
-    },
-
     jc : {
         enabled: true,
         compile: true
+    },
+
+    /* Options that are used directly within the board class */
+    board: {
+        boundingBox: [-5, 5, 5, -5],
+        zoomFactor: 1,
+        zoomX: 1,
+        zoomY: 1,
+        showCopyright: true,
+        axis: false,
+        showNavigation: true,
+        keepAspectRatio: false,
+        // if true the first element with hasPoint==true is taken.
+        takeFirst : false,
+        // If true, the construction - when read from a file or string - the size of the div can be changed.
+        takeSizeFromFile : false,
+        renderer: 'svg',
+        animationDelay: 35,
+        registerEvents: true,
+        zoom : {
+            factorX : 1.25,
+            factorY : 1.25,
+            wheel: false,
+            needshift: false,
+            eps: 0.1
+        },
+        pan: {
+            needShift: true,
+            needTwoFingers: true,
+            enabled: true
+        }
     },
 
     /* navbar options */

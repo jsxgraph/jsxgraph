@@ -76,14 +76,13 @@
      * @param {Number} unitY Units in y-axis direction
      * @param {Number} canvasWidth  The width of canvas
      * @param {Number} canvasHeight The height of canvas
-     * @param {Boolean} showCopyright Display the copyright text
-     * @param {Boolean} registerEvents Register mouse / touch events
+     * @param {Object} attributes The attributes object given to {@link JXG.JSXGraph#initBoard}
      * @borrows JXG.EventEmitter#on as this.on
      * @borrows JXG.EventEmitter#off as this.off
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      */
-    JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, showCopyright, registerEvents) {
+    JXG.Board = function (container, renderer, id, origin, zoomX, zoomY, unitX, unitY, canvasWidth, canvasHeight, attributes) {
         /**
          * Board is in no special mode, objects are highlighted on mouse over and objects may be
          * clicked to start drag&drop.
@@ -164,6 +163,7 @@
          * @type JXG.Options
          */
         this.options = JXG.deepCopy(JXG.Options);
+        this.attr = attributes;
 
         /**
          * Dimension of the board.
@@ -380,13 +380,7 @@
          */
         this.downObjects = [];
 
-        /**
-         * Display the licence text.
-         * @see JXG.JSXGraph#licenseText
-         * @see JXG.JSXGraph#initBoard
-         */
-        this.showCopyright = JXG.def(showCopyright, this.options.showCopyright);
-        if (this.showCopyright) {
+        if (this.attr.showcopyright) {
             this.renderer.displayCopyright(JXG.JSXGraph.licenseText, parseInt(this.options.text.fontSize, 10));
         }
 
@@ -456,7 +450,7 @@
          */
         this.hasTouchEnd = false;
 
-        if (registerEvents) {
+        if (this.attr.registerevents) {
             this.addEventHandlers();
         }
 
@@ -780,7 +774,7 @@
                             collect[0] = dragEl;
 
                             // we can't drop out of this loop because of the event handling system
-                            //if (this.options.takeFirst) {
+                            //if (this.attr.takefirst) {
                             //    return collect;
                             //}
                         }
@@ -792,7 +786,7 @@
                 this.mode = this.BOARD_MODE_DRAG;
             }
 
-            if (this.options.takeFirst) {
+            if (this.attr.takefirst) {
                 collect.length = 1;
             }
 
@@ -1100,7 +1094,7 @@
         },
 
         mouseOriginMoveStart: function (evt) {
-            var r = this.options.pan.enabled && (!this.options.pan.needShift || evt.shiftKey),
+            var r = this.attr.pan.enabled && (!this.attr.pan.needshift || evt.shiftKey),
                 pos;
 
             if (r) {
@@ -1126,7 +1120,7 @@
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
                 twoFingersCondition = (touches.length === 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
-                r = this.options.pan.enabled && (!this.options.pan.needTwoFingers || twoFingersCondition),
+                r = this.attr.pan.enabled && (!this.attr.pan.needtwofingers || twoFingersCondition),
                 pos;
 
             if (r) {
@@ -1285,10 +1279,10 @@
          */
         gestureChangeListener: function (evt) {
             var c,
-                zx = this.options.zoom.factorX,
-                zy = this.options.zoom.factorY;
+                zx = this.attr.zoom.factorx,
+                zy = this.attr.zoom.factory;
 
-            if (!this.options.zoom.wheel) {
+            if (!this.attr.zoom.wheel) {
                 return true;
             }
 
@@ -1297,14 +1291,14 @@
             if (this.mode === this.BOARD_MODE_NONE) {
                 c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
-                this.options.zoom.factorX = evt.scale / this.prevScale;
-                this.options.zoom.factorY = evt.scale / this.prevScale;
+                this.attr.zoom.factorx = evt.scale / this.prevScale;
+                this.attr.zoom.factory = evt.scale / this.prevScale;
 
                 this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
                 this.prevScale = evt.scale;
 
-                this.options.zoom.factorX = zx;
-                this.options.zoom.factorY = zy;
+                this.attr.zoom.factorx = zx;
+                this.attr.zoom.factory = zy;
             }
 
             return false;
@@ -1316,7 +1310,7 @@
          * @return {Boolean}
          */
         gestureStartListener: function (evt) {
-            if (!this.options.zoom.wheel) {
+            if (!this.attr.zoom.wheel) {
                 return true;
             }
 
@@ -1865,7 +1859,7 @@
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
-            if (!this.options.zoom.wheel || (this.options.zoom.needShift && !evt.shiftKey)) {
+            if (!this.attr.zoom.wheel || (this.attr.zoom.needshift && !evt.shiftKey)) {
                 return true;
             }
 
@@ -1981,7 +1975,7 @@
             // because we are redrawing anyhow
             //  -- We do need to redraw during dehighlighting. Otherwise objects won't be dehighlighted until
             // another object is highlighted.
-            if (this.options.renderer === 'canvas' && needsDehighlight) {
+            if (this.renderer.type === 'canvas' && needsDehighlight) {
                 this.prepareUpdate();
                 this.renderer.suspendRedraw(this);
                 this.updateRenderer();
@@ -2240,13 +2234,13 @@
         },
 
         /**
-         * Zooms into the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
+         * Zooms into the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
          * @returns {JXG.Board} Reference to the board
          */
         zoomIn: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.options.zoom.factorX,
-                zY = this.options.zoom.factorY,
+                zX = this.attr.zoom.factorx,
+                zY = this.attr.zoom.factory,
                 dX = (bb[2] - bb[0]) * (1.0 - 1.0 / zX),
                 dY = (bb[1] - bb[3]) * (1.0 - 1.0 / zY),
                 lr = 0.5,
@@ -2266,19 +2260,19 @@
         },
 
         /**
-         * Zooms out of the board by the factors board.options.zoom.factorX and board.options.zoom.factorY and applies the zoom.
+         * Zooms out of the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
          * @returns {JXG.Board} Reference to the board
          */
         zoomOut: function (x, y) {
             var bb = this.getBoundingBox(),
-                zX = this.options.zoom.factorX,
-                zY = this.options.zoom.factorY,
+                zX = this.attr.zoom.factorx,
+                zY = this.attr.zoom.factory,
                 dX = (bb[2] - bb[0]) * (1.0 - zX),
                 dY = (bb[1] - bb[3]) * (1.0 - zY),
                 lr = 0.5,
                 tr = 0.5;
 
-            if (this.zoomX < JXG.Options.zoom.eps || this.zoomY < JXG.Options.zoom.eps) {
+            if (this.zoomX < JXG.attr.zoom.eps || this.zoomY < JXG.attr.zoom.eps) {
                 return false;
             }
 
@@ -2405,15 +2399,16 @@
          * @returns {JXG.Board}
          */
         setZoom: function (fX, fY) {
-            var oX = this.options.zoom.factorX, oY = this.options.zoom.factorY;
+            var oX = this.attr.zoom.factorx,
+                oY = this.attr.zoom.factory;
 
-            this.options.zoom.factorX = fX / this.zoomX;
-            this.options.zoom.factorY = fY / this.zoomY;
+            this.attr.zoom.factorx = fX / this.zoomX;
+            this.attr.zoom.factory = fY / this.zoomY;
 
             this.zoomIn();
 
-            this.options.zoom.factorX = oX;
-            this.options.zoom.factorY = oY;
+            this.attr.zoom.factorx = oX;
+            this.attr.zoom.factory = oY;
 
             return this;
         },
@@ -2683,7 +2678,7 @@
         updateRenderer: function () {
             var el, pEl, len = this.objectsList.length;
 
-            if (this.options.renderer === 'canvas') {
+            if (this.renderer.type === 'canvas') {
                 this.updateRendererCanvas();
             } else {
                 for (el = 0; el < len; el++) {
@@ -3055,7 +3050,7 @@
             if (!this.animationIntervalCode) {
                 this.animationIntervalCode = window.setInterval(function () {
                     JXG.JSXGraph.boards[that.id].animate();
-                }, element.board.options.animationDelay);
+                }, element.board.attr.animationdelay);
             }
 
             return this;

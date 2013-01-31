@@ -483,8 +483,8 @@ JXG.CinderellaReader = new function() {
         
         board.zoomX *= scale/2.4;
         board.zoomY *= scale/2.4;
-        oX = board.origin.scrCoords[1]*board.options.zoom.factorX;
-        oY = board.origin.scrCoords[2]*board.options.zoom.factorY;
+        oX = board.origin.scrCoords[1]*board.attr.zoom.factorx;
+        oY = board.origin.scrCoords[2]*board.attr.zoom.factory;
         board.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX-150, oY+50],board);
         board.applyZoom();
         return board;

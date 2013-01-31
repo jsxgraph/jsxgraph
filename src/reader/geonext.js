@@ -418,7 +418,7 @@ JXG.GeonextReader = {
         conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);
 
         // resize board
-        if (board.options.takeSizeFromFile) {
+        if (board.attr.takeSizeFromFile) {
             board.resizeContainer(this.gEBTN(boardData, 'width'), this.gEBTN(boardData, 'height'));
         }
 
@@ -446,7 +446,7 @@ JXG.GeonextReader = {
             board.unitY = parseFloat(this.gEBTN(tmp, 'y'))*board.zoomY;
         }
 
-        if (board.options.takeSizeFromFile) {
+        if (board.attr.takeSizeFromFile) {
             board.resizeContainer(this.gEBTN(boardData, 'width'), this.gEBTN(boardData, 'height'));
         }
         
