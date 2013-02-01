@@ -1941,7 +1941,7 @@
          * @returns {JXG.Board} Reference to the board.
          */
         highlightInfobox: function (x, y, el) {
-            this.highlightCustomInfobox('(' + x + ', ' + y + ')');
+            this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             return this;
         },
 
