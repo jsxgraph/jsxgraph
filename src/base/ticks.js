@@ -808,7 +808,7 @@ JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
  * </script><pre>
  */
 JXG.createTicks = function(board, parents, attributes) {
-    var el, dist, genLabel,
+    var el, dist,
         attr = JXG.copyAttributes(attributes, board.options, 'ticks');
 
     if (parents.length < 2) {
@@ -823,7 +823,7 @@ JXG.createTicks = function(board, parents, attributes) {
         throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     }
 
-    if (parents.length==3) {
+    if (parents.length === 3) {
         el.generateLabelValue = parents[2];
     } 
     
