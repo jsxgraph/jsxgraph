@@ -35,6 +35,15 @@
 
 /* depends:
  JXG
+ base/element
+ base/coords
+ parser/geonext
+ math/geometry
+ math/statistics
+  elements:
+   circumcircle
+   transform
+   point
  */
 
 /**
@@ -93,13 +102,13 @@
         this.method = method;
 
         // this is kept so existing code won't ne broken
-        this.midpoint = JXG.getReference(this.board, par1);
+        this.midpoint = JXG.getRef(this.board, par1);
 
         /**
          * The circles center. Do not set this parameter directly as it will break JSXGraph's update system.
          * @type JXG.Point
          */
-        this.center = JXG.getReference(this.board, par1);
+        this.center = JXG.getRef(this.board, par1);
 
         /** Point on the circle only set if method equals 'twoPoints'. Do not set this parameter directly as it will break JSXGraph's update system.
          * @type JXG.Point
@@ -132,7 +141,7 @@
         this.circle = null;
 
         if (method === 'twoPoints') {
-            this.point2 = JXG.getReference(board, par2);
+            this.point2 = JXG.getRef(board, par2);
             this.radius = this.Radius();
         } else if (method === 'pointRadius') {
             this.gxtterm = par2;
@@ -142,11 +151,11 @@
             this.updateRadius();
         } else if (method === 'pointLine') {
             // dann ist p2 die Id eines Objekts vom Typ Line!
-            this.line = JXG.getReference(board, par2);
+            this.line = JXG.getRef(board, par2);
             this.radius = this.line.point1.coords.distance(JXG.COORDS_BY_USER, this.line.point2.coords);
         } else if (method === 'pointCircle') {
             // dann ist p2 die Id eines Objekts vom Typ Circle!
-            this.circle = JXG.getReference(board, par2);
+            this.circle = JXG.getRef(board, par2);
             this.radius = this.circle.Radius();
         }
 
