@@ -946,12 +946,11 @@
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
          * @param {Number} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
-         * @param {Object} pointObj
-         * @param {JXG.Point} pointObj.point
+         * @param {Boolean} alwaysIntersect
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,1,0] is returned.
          */
-        meetCurveLine: function (el1, el2, nr, board, pointObj) {
+        meetCurveLine: function (el1, el2, nr, board, alwaysIntersect) {
             var v = [0, NaN, NaN], i, cu, li;
 
             if (!JXG.exists(board)) {
@@ -967,7 +966,7 @@
             }
 
             if (cu.visProp.curvetype === 'plot') {
-                v = this.meetCurveLineDiscrete(cu, li, nr, board, pointObj);
+                v = this.meetCurveLineDiscrete(cu, li, nr, board, alwaysIntersect);
             } else {
                 v = this.meetCurveLineContinuous(cu, li, nr, board);
             }
@@ -1051,23 +1050,13 @@
          * @param {JXG.Line} li
          * @param {Number} nr
          * @param {JXG.Board} board
-         * @param {Object} pointObj
-         * @param {JXG.Point} pointObj.point
+         * @param {Boolean} testSegment
          */
-        meetCurveLineDiscrete: function (cu, li, nr, board, pointObj) {
+        meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
             var i, p1, p2, q,
                 d, cnt = 0, res,
                 p,
-                len = cu.numberPoints,
-                testSegment = false;
-
-            if (JXG.exists(pointObj)) {
-                p = pointObj.point;
-
-                if (JXG.exists(p) && !p.visProp.alwaysintersect) {
-                    testSegment = true;
-                }
-            }
+                len = cu.numberPoints;
 
             // In case, no intersection will be found we will take this
             q = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
@@ -1080,7 +1069,7 @@
 
                 // The defining points are identical
                 if (d > JXG.Math.eps) {
-                    res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords, board);
+                    res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords);
                     if (0 <= res[1] && res[1] <= 1) {
                         if (cnt === nr) {
                             /**

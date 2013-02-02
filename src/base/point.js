@@ -1719,21 +1719,94 @@
      * </script><pre>
      */
     JXG.createIntersectionPoint = function (board, parents, attributes) {
-        var el,
-            attr = JXG.copyAttributes(attributes, board.options, 'intersection'),
-            func;
+        var el, el1, el2, func, i, j,
+            attr = JXG.copyAttributes(attributes, board.options, 'intersection');
 
 
         // make sure we definitely have the indices
         parents.push(0, 0);
 
         el = board.create('point', [0, 0, 0], attr);
-        func = new board.intersection(parents[0], parents[1], parents[2], parents[3], {point: el});
+
+        el1 = JXG.getRef(board, parents[0]);
+        el2 = JXG.getRef(board, parents[1]);
+
+        i = parents[2];
+        j = parents[3];
+
+        if (el1.elementClass === JXG.OBJECT_CLASS_CURVE &&
+                el2.elementClass === JXG.OBJECT_CLASS_CURVE &&
+                (el1.type !== JXG.OBJECT_TYPE_ARC || el2.type !== JXG.OBJECT_TYPE_ARC)) {
+            // curve - curve, but not both are arcs
+            // TEMPORARY FIX!!!
+            func = function () {
+                return JXG.Math.Geometry.meetCurveCurve(el1, el2, i, j, el1.board);
+            };
+
+        } else if ((el1.type === JXG.OBJECT_TYPE_ARC && el2.elementClass === JXG.OBJECT_CLASS_LINE) ||
+                (el2.type === JXG.OBJECT_TYPE_ARC && el1.elementClass === JXG.OBJECT_CLASS_LINE)) {
+            // arc - line   (arcs are of class curve, but are intersected like circles)
+            // TEMPORARY FIX!!!
+            func = function () {
+                return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
+            };
+
+        } else if ((el1.elementClass === JXG.OBJECT_CLASS_CURVE && el2.elementClass === JXG.OBJECT_CLASS_LINE) ||
+                (el2.elementClass === JXG.OBJECT_CLASS_CURVE && el1.elementClass === JXG.OBJECT_CLASS_LINE)) {
+            // curve - line (this includes intersections between conic sections and lines
+            func = function () {
+                return JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, el.visProp.alwaysintersect);
+            };
+
+        } else if (el1.elementClass === JXG.OBJECT_CLASS_LINE && el2.elementClass === JXG.OBJECT_CLASS_LINE) {
+            // line - line, lines may also be segments.
+            func = function () {
+                var res, c,
+                    first1 = el1.visProp.straightfirst,
+                    first2 = el2.visProp.straightfirst,
+                    last1 = el1.visProp.straightlast,
+                    last2 = el2.visProp.straightlast;
+
+                /**
+                 * If one of the lines is a segment or ray and
+                 * the the intersection point shpould disappear if outside
+                 * of the segment or ray we call
+                 * meetSegmentSegment
+                 */
+                if (!el.visProp.alwaysintersect && (!first1 || !last1 || !first2 || !last2)) {
+                    res = JXG.Math.Geometry.meetSegmentSegment(
+                        el1.point1.coords.usrCoords,
+                        el1.point2.coords.usrCoords,
+                        el2.point1.coords.usrCoords,
+                        el2.point2.coords.usrCoords,
+                        el1.board
+                    );
+
+                    if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
+                            (!first2 && res[2] < 0) || (!last2 && res[2] > 1)) {
+                        // Non-existent
+                        c = [0, NaN, NaN];
+                    } else {
+                        c = res[0];
+                    }
+
+                    return (new JXG.Coords(JXG.COORDS_BY_USER, c, el1.board));
+                }
+
+                return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
+            };
+        } else {
+            // All other combinations of circles and lines
+            func = function () {
+                return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
+            };
+        }
+
         el.addConstraint([func]);
 
         try {
-            parents[0].addChild(el);
-            parents[1].addChild(el);
+            el1.addChild(el);
+            el2.addChild(el);
         } catch (e) {
             throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
@@ -1741,15 +1814,11 @@
 
         el.type = JXG.OBJECT_TYPE_INTERSECTION;
         el.elType = 'intersection';
-        el.parents = [parents[0].id, parents[1].id, parents[2]];
-
-        if (JXG.exists(parents[3])) {
-            el.parents.push(parents[3]);
-        }
+        el.parents = [el1.id, el2.id, i, j];
 
         el.generatePolynomial = function () {
-            var poly1 = parents[0].generatePolynomial(el),
-                poly2 = parents[1].generatePolynomial(el);
+            var poly1 = el1.generatePolynomial(el),
+                poly2 = el2.generatePolynomial(el);
 
             if ((poly1.length === 0) || (poly2.length === 0)) {
                 return [];
@@ -1797,7 +1866,8 @@
      * </script><pre>
      */
     JXG.createOtherIntersectionPoint = function (board, parents, attributes) {
-        var el;
+        var el, el1, el2, other;
+
         if (parents.length !== 3 ||
                 !JXG.isPoint(parents[2]) ||
                 (parents[0].elementClass !== JXG.OBJECT_CLASS_LINE && parents[0].elementClass !== JXG.OBJECT_CLASS_CIRCLE) ||
@@ -1806,20 +1876,34 @@
             throw new Error("JSXGraph: Can't create 'other intersection point' with parent types '" +
                 (typeof parents[0]) + "',  '" + (typeof parents[1]) + "'and  '" + (typeof parents[2]) + "'." +
                 "\nPossible parent types: [circle|line,circle|line,point]");
-        } else {
-            el = board.create('point', [board.otherIntersection(parents[0], parents[1], parents[2])], attributes);
         }
+
+        el1 = JXG.getRef(board, parents[0]);
+        el2 = JXG.getRef(board, parents[1]);
+        other = JXG.getRef(board, parents[2]);
+
+        el = board.create('point', [function () {
+            var c = JXG.Math.Geometry.meet(el1.stdform, el2.stdform, 0, el1.board);
+
+            if (Math.abs(other.X() - c.usrCoords[1]) > JXG.Math.eps ||
+                    Math.abs(other.Y() - c.usrCoords[2]) > JXG.Math.eps ||
+                    Math.abs(other.Z() - c.usrCoords[0]) > JXG.Math.eps) {
+                return c;
+            }
+
+            return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, 1, el1.board);
+        }], attributes);
 
         el.type = JXG.OBJECT_TYPE_INTERSECTION;
         el.elType = 'otherintersection';
-        el.parents = [parents[0].id, parents[1].id, parents[2]];
+        el.parents = [el1.id, el2.id, other];
 
-        parents[0].addChild(el);
-        parents[1].addChild(el);
+        el1.addChild(el);
+        el2.addChild(el);
 
         el.generatePolynomial = function () {
-            var poly1 = parents[0].generatePolynomial(el),
-                poly2 = parents[1].generatePolynomial(el);
+            var poly1 = el1.generatePolynomial(el),
+                poly2 = el2.generatePolynomial(el);
 
             if ((poly1.length === 0) || (poly2.length === 0)) {
                 return [];
