@@ -42,8 +42,8 @@
 /*depends:
  JXG
  
- Math           calculations should not be done in here. we should consider moving this somewhere else
- Math.Geometry
+ math/math           calculations should not be done in here. we should consider moving this somewhere else
+ math/geometry
 */
 
 /**

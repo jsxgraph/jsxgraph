@@ -35,14 +35,14 @@
 
 /*depends:
  JXG
- AbstractRenderer
+ renderer/abstract
  
  for Lines:
- Coords
- MathGeometry
+ base/coords
+ math/geometry
  
  for Curves:
- MathNumerics
+ math/numerics
 */
 
 (function () {

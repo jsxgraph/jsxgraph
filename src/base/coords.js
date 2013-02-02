@@ -35,8 +35,8 @@
 
 /*depends:
  JXG
- EventEmitter
- Math
+ utils/event
+ math/math
  */
 
 (function () {

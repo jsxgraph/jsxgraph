@@ -36,17 +36,23 @@
 
 /*depends:
  JXG
- EventEmitter
- JessieCode
+ utils/event
+ parser/jessiecode
  JSXGraph (licenseText, boards)
- Math
- Coords
- MathGeometry
+ math/math
+ base/coords
+ math/geometry
  Options (should be removed and converted to this.options)
- GeonextParser
- Color
- MathNumerics
- Complex
+ parser/geonext
+ utils/color
+ math/numerics
+ math/complex
+  elements:
+   transform
+   point
+   line
+   text
+   grid
  */
 
 /**

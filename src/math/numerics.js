@@ -35,8 +35,8 @@
 
 /*depends:
  JXG
- Math
- MathGeometry - this should be easy to resolve. Only the releauxpolygon related method depends on this
+ math/math
+ math/geometry - this should be easy to resolve. Only the releauxpolygon related method depends on this
    and we could also move this method over to MathGeometry
  */
 

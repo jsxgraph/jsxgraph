@@ -35,7 +35,7 @@
 
 /* depends:
  JXG
- AbstractRenderer
+ renderer/abstract
 */
 
 /**

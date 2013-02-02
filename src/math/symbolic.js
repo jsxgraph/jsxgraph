@@ -35,7 +35,7 @@
 
 /*depends:
  JXG
- Math
+ math/math
  */
 
 /**

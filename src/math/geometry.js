@@ -35,9 +35,9 @@
 
 /*depends:
  JXG
- Coords
- Math
- MathNumerics
+ base/coords
+ math/math
+ math/numerics
  */
 
 /**

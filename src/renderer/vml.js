@@ -35,10 +35,10 @@
 
 /* depends:
  JXG
- AbstractRenderer
+ renderer/abstract
 
  for Curves:
- MathNumerics
+ math/numerics
 */
 
 (function () {

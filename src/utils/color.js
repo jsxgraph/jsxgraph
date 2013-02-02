@@ -36,7 +36,7 @@
 
 /*depends:
  JXG
- Math (just eps)
+ math/math (just eps)
  */
 
 /**
