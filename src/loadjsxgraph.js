@@ -30,6 +30,12 @@
  */
 
 
+/*global JXG: true, document: true*/
+/*jslint nomen: true, plusplus: true, regexp: true*/
+
+/* depends:
+ */
+
 /**
  * JSXGraph namespace. Holds all classes, objects, functions and variables belonging to JSXGraph
  * to reduce the risc of interfering with other JavaScript code.
@@ -37,48 +43,50 @@
  */
 var JXG = {};
 
-(function(){ // Hide the initialization in an anonymous function
+(function () {
+
+    "use strict";
+
     var i, s, n, arr;
 
-    // Minified-Modus: ja, nein
+    // Minified mode?
     JXG.useMinify = false;
 
     JXG.countDrawings = 0;
     JXG.countTime = 0;
-    JXG.require = function(libraryName) {
+    JXG.require = function (libraryName) {
         document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
     };
-/* 
-    Not longer used: IntergeoReader, GeonextReader, Angle
-*/
+
     if (!JXG.useMinify) {
         JXG.baseFiles = 'jxg,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server,parser/datasource,parser/jessiecode,utils/dump';
     } else {
         JXG.baseFiles = 'jxg';
     }
     JXG.rendererFiles = {};
+
     if (JXG.useMinify) {
-        JXG.rendererFiles['svg'] = 'SVGRendererMinify';
-        JXG.rendererFiles['vml'] = 'VMLRendererMinify';
+        JXG.rendererFiles.svg = 'SVGRendererMinify';
+        JXG.rendererFiles.vml = 'VMLRendererMinify';
     } else {
-        JXG.rendererFiles['svg'] = 'renderer/svg';
-        JXG.rendererFiles['vml'] = 'renderer/vml';
+        JXG.rendererFiles.svg = 'renderer/svg';
+        JXG.rendererFiles.vml = 'renderer/vml';
     }
-    JXG.rendererFiles['canvas'] = 'renderer/canvas';
-    //JXG.rendererFiles['silverlight'] = 'Silverlight,createSilverlight,SilverlightRenderer';
+
+    JXG.rendererFiles.canvas = 'renderer/canvas';
     JXG.requirePath = '';
 
-    for (i=0;i<document.getElementsByTagName("script").length;i++) {
+    for (i = 0; i < document.getElementsByTagName("script").length; i++) {
         s = document.getElementsByTagName("script")[i];
         if (s.src && s.src.match(/loadjsxgraph\.js(\?.*)?$/)) {
-            JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/,'');
+            JXG.requirePath = s.src.replace(/loadjsxgraph\.js(\?.*)?$/, '');
             arr = JXG.baseFiles.split(',');
-            for (n=0;n<arr.length;n++) {
-                (function(include) { JXG.require(JXG.requirePath+include+'.js');})(arr[n]);
+            for (n = 0; n < arr.length; n++) {
+                JXG.require(JXG.requirePath + arr[n] + '.js');
             }
         }
     }
 
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';
-})();
+}());

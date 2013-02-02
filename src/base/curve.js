@@ -817,10 +817,10 @@
             }
 
             // Set the bounds lower bound
-            if (mi !== null) {
+            if (JXG.exists(mi)) {
                 this.minX = JXG.createFunction(mi, this.board, '');
             }
-            if (ma !== null) {
+            if (JXG.exists(ma)) {
                 this.maxX = JXG.createFunction(ma, this.board, '');
             }
         },
