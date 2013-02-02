@@ -431,8 +431,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
     /**
      * Array of strings containing the polynomials defining the element.
      * Used for determining geometric loci the groebner way.
-     * @type Array
-     * @return An array containing polynomials describing the locus of the current object.
+     * @returns {Array} An array containing polynomials describing the locus of the current object.
      * @private
      */
     generatePolynomial: function () {
@@ -445,8 +444,7 @@ JXG.extend(JXG.GeometryElement.prototype, /** @lends JXG.GeometryElement.prototy
      * @param {Object} hash Object containing propiertes with target values for the animation.
      * @param {number} time Number of milliseconds to complete the animation.
      * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
-     * @return A reference to the object
-     * @type JXG.GeometryElement
+     * @returns {JXG.GeometryElement} A reference to the object
      */
     animate: function (hash, time, options) {
         options = options || {};

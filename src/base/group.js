@@ -230,8 +230,7 @@
      * @param {JXG.Board} board The board the points are on.
      * @param {Array} parents Array of points to group.
      * @param {Object} attributes Visual properties.
-     * @type JXG.Group
-     * @return An object of type JXG.Group.
+     * @returns {JXG.Group}
      */
     JXG.createGroup = function (board, parents, attributes) {
         var i, g = new JXG.Group(board, attributes.id, attributes.name, parents);

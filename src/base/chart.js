@@ -41,6 +41,18 @@
  base/element
  parser/datasource
  utils/color
+  elements:
+   curve
+   spline
+   functiongraph
+   point
+   text
+   polygon
+   sector
+   transform
+   line
+   legend
+   circle
  */
 
 (function () {

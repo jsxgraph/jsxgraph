@@ -41,6 +41,8 @@
  base/coords
  base/element
  jsxgraph
+  elements:
+   transform
  */
 
 /**
@@ -147,8 +149,7 @@
          * Checks whether (x,y) is near the point.
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @type boolean
-         * @return True if (x,y) is near the point, False otherwise.
+         * @returns {Boolean} True if (x,y) is near the point, False otherwise.
          * @private
          */
         hasPoint: function (x, y) {
@@ -549,8 +550,7 @@
 
         /**
          * Getter method for x, this is used by for CAS-points to access point coordinates.
-         * @return User coordinate of point in x direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in x direction.
          */
         X: function () {
             return this.coords.usrCoords[1];
@@ -558,8 +558,7 @@
 
         /**
          * Getter method for y, this is used by CAS-points to access point coordinates.
-         * @return User coordinate of point in y direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in y direction.
          */
         Y: function () {
             return this.coords.usrCoords[2];
@@ -567,8 +566,7 @@
 
         /**
          * Getter method for z, this is used by CAS-points to access point coordinates.
-         * @return User coordinate of point in z direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in z direction.
          */
         Z: function () {
             return this.coords.usrCoords[0];
@@ -577,8 +575,7 @@
         /**
          * New evaluation of the function term.
          * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
-         * @return User coordinate of point in x direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in x direction.
          * @private
          */
         XEval: function () {
@@ -588,8 +585,7 @@
         /**
          * New evaluation of the function term.
          * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
-         * @return User coordinate of point in y direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in y direction.
          * @private
          */
         YEval: function () {
@@ -599,8 +595,7 @@
         /**
          * New evaluation of the function term.
          * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
-         * @return User coordinate of point in z direction.
-         * @type Number
+         * @returns {Number} User coordinate of point in z direction.
          * @private
          */
         ZEval: function () {

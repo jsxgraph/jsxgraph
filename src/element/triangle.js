@@ -39,8 +39,7 @@
  * @param {JXG.Board} board The board the triangle is put on.
  * @param {Array} parents Array of three points defining the triangle.
  * @param {Object} attributes Visual properties that are assigned to the constructed lines.
- * @type Object
- * @return An object with the following members: <br />
+ * @returns {Object} An object with the following members: <br />
  * <table><tr><th>Type</th><th>Member</th></tr>
  *   <tr><td>JXG.Point</td><td>A</td></tr>
  *   <tr><td>JXG.Point</td><td>B</td></tr>
@@ -51,7 +50,7 @@
  *   <tr><td>JXG.Group</td><td>G</td></tr>
  * </table>
  */
-JXG.createTriangle = function(board, parents, attributes) {
+JXG.createTriangle = function (board, parents, attributes) {
 
     var p1, p2, p3, l1, l2, l3, ret, i, attr;
 

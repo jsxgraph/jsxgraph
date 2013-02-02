@@ -42,6 +42,10 @@
  math/statistics
  base/coords
  base/element
+  elements:
+   transform
+   point
+   ticks
  */
 
 /**
@@ -447,8 +451,7 @@
 
         /**
          * Calculates the y intersect of the line.
-         * @type Number
-         * @return The y intersect.
+         * @returns {Number} The y intersect.
          */
         getRise: function () {
             if (Math.abs(this.stdform[2]) >= JXG.Math.eps) {
@@ -460,8 +463,7 @@
 
         /**
          * Calculates the slope of the line.
-         * @type Number
-         * @return The slope of the line or Infinity if the line is parallel to the y-axis.
+         * @returns {Number} The slope of the line or Infinity if the line is parallel to the y-axis.
          */
         getSlope: function () {
             if (Math.abs(this.stdform[2]) >= JXG.Math.eps) {
@@ -788,10 +790,9 @@
         },
 
 
-        /*
-         * This is needed for GEONExT compatibility
-         * @type Number
-         * @return the distance between the two points defining the line
+        /**
+         * The distance between the two points defining the line.
+         * @returns {Number}
          */
         L: function () {
             return this.point1.Dist(this.point2);
@@ -824,8 +825,7 @@
         /**
          * Adds ticks to this line. Ticks can be added to any kind of line: line, arrow, and axis.
          * @param {JXG.Ticks} ticks Reference to a ticks object which is describing the ticks (color, distance, how many, etc.).
-         * @type String
-         * @return Id of the ticks object.
+         * @returns {String} Id of the ticks object.
          */
         addTicks: function (ticks) {
             if (ticks.id === '' || !JXG.exists(ticks.id)) {

@@ -679,8 +679,7 @@
     /**
      * Decolorizes the given color.
      * @param {String} color HTML string containing the HTML color code.
-     * @type String
-     * @return Returns a HTML color string
+     * @returns {String} Returns a HTML color string
      */
     JXG.rgb2bw = function (color) {
         var x, tmp, arr,
@@ -707,8 +706,7 @@
      * @param {String} color HTML string containing the HTML color code.
      * @param {String} deficiency The type of color blindness. Possible
      * options are <i>protanopia</i>, <i>deuteranopia</i>, and <i>tritanopia</i>.
-     * @type String
-     * @return Returns a HTML color string
+     * @returns {String} Returns a HTML color string
      */
     JXG.rgb2cb = function (color, deficiency) {
         var rgb, l, m, s, lms, tmp,

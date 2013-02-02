@@ -1040,8 +1040,7 @@ JXG.JSXGraph.registerElement('plot', JXG.createFunctiongraph);
  * @param {JXG.Board} board Reference to the board the spline is drawn on.
  * @param {Array} parents Array of points the spline interpolates
  * @param {Object} attributes Define color, width, ... of the spline
- * @type JXG.Curve
- * @return Returns reference to an object of type JXG.Curve.
+ * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
  */
 JXG.createSpline = function(board, parents, attributes) {
     var F;
