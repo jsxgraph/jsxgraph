@@ -30,547 +30,531 @@
  */
 
 
-/**
- * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
- * @namespace
+/*global JXG: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ JXG
+
+ inside eval'd strings:
+ math/math
+ math/geometry
  */
 
-JXG.GeonextParser = {};
+(function () {
 
-/**
- * Converts expression of the form <i>leftop^rightop</i> into <i>Math.pow(leftop,rightop)</i>.
- * @param {String} te Expression of the form <i>leftop^rightop</i>
- * @type String
- * @return Converted expression.
- */
-JXG.GeonextParser.replacePow = function(te) {
-    var count, pos, c,
-        leftop, rightop, pre, p, left, i, right, expr;
-    //te = te.replace(/\s+/g,''); // Loesche allen whitespace
-                                // Achtung: koennte bei Variablennamen mit Leerzeichen
-                                // zu Problemen fuehren.
-                                
-    te = te.replace(/(\s*)\^(\s*)/g,'\^'); // delete all whitespace immediately before and after all ^ operators
+    "use strict";
 
-	//  Loop over all ^ operators
-    i = te.indexOf('^');
-    while (i>=0) {
-		// left and right are the substrings before, resp. after the ^ character
-        left = te.slice(0,i);
-        right = te.slice(i+1);
+    /**
+     * Parser helper routines. The methods in here are for parsing expressions in Geonext Syntax.
+     * @namespace
+     */
+    JXG.GeonextParser = {
+        /**
+         * Converts expression of the form <i>leftop^rightop</i> into <i>Math.pow(leftop,rightop)</i>.
+         * @param {String} te Expression of the form <i>leftop^rightop</i>
+         * @returns {String} Converted expression.
+         */
+        replacePow: function (te) {
+            var count, pos, c,
+                leftop, rightop, pre, p, left, i, right, expr;
 
-		// If there is a ")" immediately before the ^ operator, it can be the end of a
-		// (i) term in parenthesis
-		// (ii) function call
-		// (iii) method  call
-		// In either case, first the corresponding opening parenthesis is searched.
-		// This is the case, when count==0
-        if (left.charAt(left.length-1)==')') {
-            count = 1;
-            pos = left.length-2;
-            while (pos>=0 && count>0) {
-                c = left.charAt(pos);
-                if (c==')') { count++; }
-                else if (c=='(') { count--; }
-                pos--;
-            }   
-            if (count==0) {
-				// Now, we have found the opning parenthesis and we have to look
-				// if it is (i), or (ii), (iii).
-                leftop = '';
-                pre = left.substring(0,pos+1);   // Search for F or p.M before (...)^
-                p = pos;
-                while (p>=0 && pre.substr(p,1).match(/([\w\.]+)/)) { 
-                    leftop = RegExp.$1+leftop;
-                    p--;
-                }
-                leftop += left.substring(pos+1,left.length);
-                leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g,"\\$1");
-            } else {
-				throw new Error("JSXGraph: Missing '(' in expression");
-			}
-        } else {
-            //leftop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+'; // former: \\w\\. . Doesn't work for sin(x^2)
-   			// Otherwise, the operand has to be a constant (or variable).
-         leftop = '[\\w\\.]+'; // former: \\w\\.
-        }
-		// To the right of the ^ operator there also may be a function or method call
-		// or a term in parenthesis. Alos, ere we search for the closing
-		// parenthesis.
-        if (right.match(/^([\w\.]*\()/)) {
-            count = 1;
-            pos = RegExp.$1.length;
-            while (pos<right.length && count>0) {
-                c = right.charAt(pos);
-                if (c==')') { count--; }
-                else if (c=='(') { count++; }
-                pos++;
-            }
-            if (count==0) {
-                rightop = right.substring(0,pos);
-                rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g,"\\$1");
-            } else {
-				throw new Error("JSXGraph: Missing ')' in expression");
-			}
-        } else {
-            //rightop = '[\\w\\.\\(\\)\\+\\*\\%\\^\\-\\/\\[\\]]+';  // ^b , see leftop. Doesn't work for sin(x^2)
-			// Otherwise, the operand has to be a constant (or variable).
-            rightop = '[\\w\\.]+';  
-        }
-		// Now, we have the two operands and replace ^ by JXG.Math.pow
-        expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
-        te = te.replace(expr,"JXG.Math.pow($1,$2)");
-        i = te.indexOf('^');
-    }
-    return te;
-};
+            // delete all whitespace immediately before and after all ^ operators
+            te = te.replace(/(\s*)\^(\s*)/g, '^');
 
-/**
- * Converts expression of the form <i>If(a,b,c)</i> into <i>(a)?(b):(c)/i>.
- * @param {String} te Expression of the form <i>If(a,b,c)</i>
- * @type String
- * @return Converted expression.
- */
-JXG.GeonextParser.replaceIf = function(te) {
-    var s = '',
-        left, right,
-        first = null,
-        second = null,
-        third = null,
-        i, pos, count, k1, k2, c, meat;
-    
-    i = te.indexOf('If(');
-    if (i<0) { return te; }
+            //  Loop over all ^ operators
+            i = te.indexOf('^');
+            while (i >= 0) {
+                // left and right are the substrings before, resp. after the ^ character
+                left = te.slice(0, i);
+                right = te.slice(i + 1);
 
-    te = te.replace(/""/g,'0'); // "" means not defined. Here, we replace it by 0
-    while (i>=0) {
-        left = te.slice(0,i);
-        right = te.slice(i+3); 
-        
-        // Search the end of the If() command and take out the meat
-        count = 1;
-        pos = 0;
-        k1 = -1;
-        k2 = -1;
-        while (pos<right.length && count>0) {
-            c = right.charAt(pos);
-            if (c==')') { 
-                count--;
-            } else if (c=='(') {
-                count++;
-            } else if (c==',' && count==1) {
-                if (k1<0) { 
-                    k1 = pos; // first komma
+                // If there is a ")" immediately before the ^ operator, it can be the end of a
+                // (i) term in parenthesis
+                // (ii) function call
+                // (iii) method  call
+                // In either case, first the corresponding opening parenthesis is searched.
+                // This is the case, when count==0
+                if (left.charAt(left.length - 1) === ')') {
+                    count = 1;
+                    pos = left.length - 2;
+
+                    while (pos >= 0 && count > 0) {
+                        c = left.charAt(pos);
+                        if (c === ')') {
+                            count++;
+                        } else if (c === '(') {
+                            count -= 1;
+                        }
+                        pos -= 1;
+                    }
+
+                    if (count === 0) {
+                        // Now, we have found the opning parenthesis and we have to look
+                        // if it is (i), or (ii), (iii).
+                        leftop = '';
+                        // Search for F or p.M before (...)^
+                        pre = left.substring(0, pos + 1);
+                        p = pos;
+                        while (p >= 0 && pre.substr(p, 1).match(/([\w\.]+)/)) {
+                            leftop = RegExp.$1 + leftop;
+                            p -= 1;
+                        }
+                        leftop += left.substring(pos + 1, left.length);
+                        leftop = leftop.replace(/([\(\)\+\*\%\^\-\/\]\[])/g, '\\$1');
+                    } else {
+                        throw new Error("JSXGraph: Missing '(' in expression");
+                    }
                 } else {
-                    k2 = pos; // second komma
+                    // Otherwise, the operand has to be a constant (or variable).
+                    leftop = '[\\w\\.]+'; // former: \\w\\.
+                }
+
+                // To the right of the ^ operator there also may be a function or method call
+                // or a term in parenthesis. Alos, ere we search for the closing
+                // parenthesis.
+                if (right.match(/^([\w\.]*\()/)) {
+                    count = 1;
+                    pos = RegExp.$1.length;
+
+                    while (pos < right.length && count > 0) {
+                        c = right.charAt(pos);
+
+                        if (c === ')') {
+                            count -= 1;
+                        } else if (c === '(') {
+                            count += 1;
+                        }
+                        pos += 1;
+                    }
+
+                    if (count === 0) {
+                        rightop = right.substring(0, pos);
+                        rightop = rightop.replace(/([\(\)\+\*\%\^\-\/\[\]])/g, '\\$1');
+                    } else {
+                        throw new Error("JSXGraph: Missing ')' in expression");
+                    }
+                } else {
+                    // Otherwise, the operand has to be a constant (or variable).
+                    rightop = '[\\w\\.]+';
+                }
+                // Now, we have the two operands and replace ^ by JXG.Math.pow
+                expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
+                te = te.replace(expr, 'JXG.Math.pow($1,$2)');
+                i = te.indexOf('^');
+            }
+
+            return te;
+        },
+
+        /**
+         * Converts expression of the form <i>If(a,b,c)</i> into <i>(a)?(b):(c)/i>.
+         * @param {String} te Expression of the form <i>If(a,b,c)</i>
+         * @returns {String} Converted expression.
+         */
+        replaceIf: function (te) {
+            var left, right,
+                i, pos, count, k1, k2, c, meat,
+                s = '',
+                first = null,
+                second = null,
+                third = null;
+
+            i = te.indexOf('If(');
+            if (i < 0) {
+                return te;
+            }
+
+            // "" means not defined. Here, we replace it by 0
+            te = te.replace(/""/g, '0');
+            while (i >= 0) {
+                left = te.slice(0, i);
+                right = te.slice(i + 3);
+
+                // Search the end of the If() command and take out the meat
+                count = 1;
+                pos = 0;
+                k1 = -1;
+                k2 = -1;
+
+                while (pos < right.length && count > 0) {
+                    c = right.charAt(pos);
+
+                    if (c === ')') {
+                        count -= 1;
+                    } else if (c === '(') {
+                        count += 1;
+                    } else if (c === ',' && count === 1) {
+                        if (k1 < 0) {
+                            // first komma
+                            k1 = pos;
+                        } else {
+                            // second komma
+                            k2 = pos;
+                        }
+                    }
+                    pos += 1;
+                }
+                meat = right.slice(0, pos - 1);
+                right = right.slice(pos);
+
+                // Test the two kommas
+                if (k1 < 0) {
+                    // , missing
+                    return '';
+                }
+
+                if (k2 < 0) {
+                    // , missing
+                    return '';
+                }
+
+                first = meat.slice(0, k1);
+                second = meat.slice(k1 + 1, k2);
+                third = meat.slice(k2 + 1);
+
+                // Recurse
+                first = this.replaceIf(first);
+                second = this.replaceIf(second);
+                third = this.replaceIf(third);
+
+                s += left + '((' + first + ')?' + '(' + second + '):(' + third + '))';
+                te = right;
+                first = null;
+                second = null;
+                i = te.indexOf('If(');
+            }
+            s += right;
+            return s;
+        },
+
+        /**
+         * Replace _{} by &lt;sub&gt;
+         * @param {String} te String containing _{}.
+         * @returns {String} Given string with _{} replaced by &lt;sub&gt;.
+         */
+        replaceSub: function (te) {
+            if (!te.indexOf) {
+                return te;
+            }
+
+            var i = te.indexOf('_{'),
+                j;
+
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/_\{/, '<sub>');
+                j = te.substr(i).indexOf('}');
+                if (j >= 0) {
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sub>');
+                }
+                i = te.indexOf('_{');
+            }
+
+            i = te.indexOf('_');
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, '<sub>$1</sub>');
+                i = te.indexOf('_');
+            }
+
+            return te;
+        },
+
+        /**
+         * Replace ^{} by &lt;sup&gt;
+         * @param {String} te String containing ^{}.
+         * @returns {String} Given string with ^{} replaced by &lt;sup&gt;.
+         */
+        replaceSup: function (te) {
+            if (!te.indexOf) {
+                return te;
+            }
+
+            var i = te.indexOf('^{'),
+                j;
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, '<sup>');
+                j = te.substr(i).indexOf('}');
+                if (j >= 0) {
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sup>');
+                }
+                i = te.indexOf('^{');
+            }
+
+            i = te.indexOf('^');
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, '<sup>$1</sup>');
+                i = te.indexOf('^');
+            }
+
+            return te;
+        },
+
+        /**
+         * Replace an element's name in terms by an element's id.
+         * @param {String} term Term containing names of elements.
+         * @param {JXG.Board} board Reference to the board the elements are on.
+         * @param {Boolean} [jc=false] If true, all id's will be surrounded by <tt>$('</tt> and <tt>')</tt>.
+         * @returns {String} The same string with names replaced by ids.
+         **/
+        replaceNameById: function (term, board, jc) {
+            var end, elName, el, i,
+                pos = 0,
+                funcs = ['X', 'Y', 'L', 'V'],
+
+                printId = function (id) {
+                    if (jc) {
+                        return '$(\'' + id + '\')';
+                    }
+
+                    return id;
+                };
+
+            // Find X(el), Y(el), ...
+            // All functions declared in funcs
+            for (i = 0; i < funcs.length; i++) {
+                pos = term.indexOf(funcs[i] + '(');
+
+                while (pos >= 0) {
+                    if (pos >= 0) {
+                        end = term.indexOf(')', pos + 2);
+                        if (end >= 0) {
+                            elName = term.slice(pos + 2, end);
+                            elName = elName.replace(/\\(['"])?/g, '$1');
+                            el = board.elementsByName[elName];
+
+                            if (el) {
+                                term = term.slice(0, pos + 2) + (jc ? '$(\'' : '') + printId(el.id) +  term.slice(end);
+                            }
+                        }
+                    }
+                    end = term.indexOf(')', pos + 2);
+                    pos = term.indexOf(funcs[i] + '(', end);
                 }
             }
-            pos++;
-        } 
-        meat = right.slice(0,pos-1);
-        right = right.slice(pos);
-        
-        // Test the two kommas
-        if (k1<0) { return ''; } // , missing
-        if (k2<0) { return ''; } // , missing
-        
-        first = meat.slice(0,k1);
-        second = meat.slice(k1+1,k2);
-        third = meat.slice(k2+1);
-        first = this.replaceIf(first);    // Recurse
-        second = this.replaceIf(second);  // Recurse
-        third = this.replaceIf(third);    // Recurse
 
-        s += left + '((' + first + ')?' + '('+second+'):('+third+'))';  
-        te = right;
-        first = null;
-        second = null;
-        i = te.indexOf('If(');
-    }
-    s += right;
-    return s;
-};
+            pos = term.indexOf('Dist(');
+            while (pos >= 0) {
+                if (pos >= 0) {
+                    end = term.indexOf(',', pos + 5);
+                    if (end >= 0) {
+                        elName = term.slice(pos + 5, end);
+                        elName = elName.replace(/\\(['"])?/g, '$1');
+                        el = board.elementsByName[elName];
 
-/**
- * Replace _{} by &lt;sub&gt;
- * @param {String} the String containing _{}.
- * @type String
- * @return Given string with _{} replaced by &lt;sub&gt;.
- */
-JXG.GeonextParser.replaceSub = function(te) {
-    if(te['indexOf']) {} else return te;
+                        if (el) {
+                            term = term.slice(0, pos + 5) + printId(el.id) +  term.slice(end);
+                        }
+                    }
+                }
+                end = term.indexOf(',', pos + 5);
+                pos = term.indexOf(',', end);
+                end = term.indexOf(')', pos + 1);
 
-    var i = te.indexOf('_{'),
-        j;
-    while (i>=0) {
-        te = te.substr(0,i)+te.substr(i).replace(/_\{/,'<sub>');
-        j = te.substr(i).indexOf('}');
-        if (j>=0) {
-            te = te.substr(0,j)+te.substr(j).replace(/\}/,'</sub>');
-        }
-        i = te.indexOf('_{');
-    }
-
-    i = te.indexOf('_');
-    while (i>=0) {
-        te = te.substr(0,i)+te.substr(i).replace(/_(.?)/,'<sub>$1</sub>');
-        i = te.indexOf('_');
-    }
-    return te;
-};
-
-/**
- * Replace ^{} by &lt;sup&gt;
- * @param {String} the String containing ^{}.
- * @type String
- * @return Given string with ^{} replaced by &lt;sup&gt;.
- */
-JXG.GeonextParser.replaceSup = function(te) {
-    if(te['indexOf']) {} else return te;
-
-    var i = te.indexOf('^{'),
-        j;
-    while (i>=0) {
-        te = te.substr(0,i)+te.substr(i).replace(/\^\{/,'<sup>');
-        j = te.substr(i).indexOf('}');
-        if (j>=0) {
-            te = te.substr(0,j)+te.substr(j).replace(/\}/,'</sup>');
-        }
-        i = te.indexOf('^{');
-    }
-
-    i = te.indexOf('^');
-    while (i>=0) {
-        te = te.substr(0,i)+te.substr(i).replace(/\^(.?)/,'<sup>$1</sup>');
-        i = te.indexOf('^');
-    }
-
-    return te;
-};
-
-/**
- * Replace an element's name in terms by an element's id.
- * @param term Term containing names of elements.
- * @param board Reference to the board the elements are on.
- * @return The same string with names replaced by ids.
- **/
-JXG.GeonextParser.replaceNameById = function(/** string */ term, /** JXG.Board */ board) /** string */ {
-    var pos = 0, end, elName, el, i,
-        funcs = ['X','Y','L','V'];
-
-    //    
-    // Find X(el), Y(el), ... 
-    // All functions declared in funcs
-    for (i=0;i<funcs.length;i++) {
-        pos = term.indexOf(funcs[i]+'(');
-        while (pos>=0) {
-            if (pos>=0) {
-                end = term.indexOf(')',pos+2);
-                if (end>=0) {
-                    elName = term.slice(pos+2,end);
-                    elName = elName.replace(/\\(['"])?/g,"$1");
+                if (end >= 0) {
+                    elName = term.slice(pos + 1, end);
+                    elName = elName.replace(/\\(['"])?/g, '$1');
                     el = board.elementsByName[elName];
+
                     if (el) {
-                        term = term.slice(0,pos+2) + el.id +  term.slice(end);
+                        term = term.slice(0, pos + 1) + printId(el.id) +  term.slice(end);
+                    }
+                }
+                end = term.indexOf(')', pos + 1);
+                pos = term.indexOf('Dist(', end);
+            }
+
+            funcs = ['Deg', 'Rad'];
+            for (i = 0; i < funcs.length; i++) {
+                pos = term.indexOf(funcs[i] + '(');
+                while (pos >= 0) {
+                    if (pos >= 0) {
+                        end = term.indexOf(',', pos + 4);
+                        if (end >= 0) {
+                            elName = term.slice(pos + 4, end);
+                            elName = elName.replace(/\\(['"])?/g, '$1');
+                            el = board.elementsByName[elName];
+
+                            if (el) {
+                                term = term.slice(0, pos + 4) + printId(el.id) +  term.slice(end);
+                            }
+                        }
+                    }
+
+                    end = term.indexOf(',', pos + 4);
+                    pos = term.indexOf(',', end);
+                    end = term.indexOf(',', pos + 1);
+
+                    if (end >= 0) {
+                        elName = term.slice(pos + 1, end);
+                        elName = elName.replace(/\\(['"])?/g, '$1');
+                        el = board.elementsByName[elName];
+
+                        if (el) {
+                            term = term.slice(0, pos + 1) + printId(el.id) +  term.slice(end);
+                        }
+                    }
+
+                    end = term.indexOf(',', pos + 1);
+                    pos = term.indexOf(',', end);
+                    end = term.indexOf(')', pos + 1);
+
+                    if (end >= 0) {
+                        elName = term.slice(pos + 1, end);
+                        elName = elName.replace(/\\(['"])?/g, '$1');
+                        el = board.elementsByName[elName];
+                        if (el) {
+                            term = term.slice(0, pos + 1) + printId(el.id) +  term.slice(end);
+                        }
+                    }
+
+                    end = term.indexOf(')', pos + 1);
+                    pos = term.indexOf(funcs[i] + '(', end);
+                }
+            }
+
+            return term;
+        },
+
+        /**
+         * Replaces element ids in terms by element this.board.objects['id'].
+         * @param {String} term A GEONE<sub>x</sub>T function string with JSXGraph ids in it.
+         * @returns {String} The input string with element ids replaced by this.board.objects["id"].
+         **/
+        replaceIdByObj: function (term) {
+            // Search for expressions like "X(gi23)" or "Y(gi23A)" and convert them to objects['gi23'].X().
+            var expr = /(X|Y|L)\(([\w_]+)\)/g;
+            term = term.replace(expr, 'this.board.objects[\'$2\'].$1()');
+
+            expr = /(V)\(([\w_]+)\)/g;
+            term = term.replace(expr, 'this.board.objects[\'$2\'].Value()');
+
+            expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;
+            term = term.replace(expr, 'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
+
+            expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;
+            term = term.replace(expr, 'JXG.Math.Geometry.trueAngle(this.board.objects[\"$2\"],this.board.objects[\"$3\"],this.board.objects[\"$4\"])');
+
+            // Search for Rad('gi23','gi24','gi25')
+            expr = /Rad\(([\w_]+),([\w_]+),([\w_]+)\)/g;
+            term = term.replace(expr, 'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
+
+            expr = /N\((.+)\)/g;
+            term = term.replace(expr, '($1)');
+
+            return term;
+        },
+
+        /**
+         * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JavaScript syntax.
+         * @param {String} term Expression in GEONExT syntax
+         * @param {JXG.Board} board
+         * @returns {String} Given expression translated to JavaScript.
+         */
+        geonext2JS: function (term, board) {
+            var expr, newterm, i,
+                from = ['Abs', 'ACos', 'ASin', 'ATan', 'Ceil', 'Cos', 'Exp', 'Factorial', 'Floor',
+                    'Log', 'Max', 'Min', 'Random', 'Round', 'Sin', 'Sqrt', 'Tan', 'Trunc'],
+                to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos',
+                    'Math.exp', 'JXG.Math.factorial', 'Math.floor', 'Math.log', 'Math.max', 'Math.min',
+                    'Math.random', 'Math.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
+
+            // This replaces &gt; by >, &lt; by < and &amp; by &. But it is too strict.
+            //term = JXG.unescapeHTML(term);
+            // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
+            term = term.replace(/&lt;/g, '<');
+            term = term.replace(/&gt;/g, '>');
+            term = term.replace(/&amp;/g, '&');
+
+            // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
+            newterm = term;
+            newterm = this.replaceNameById(newterm, board);
+            newterm = this.replaceIf(newterm);
+            // Exponentiations-Problem x^y -> Math(exp(x,y).
+            newterm = this.replacePow(newterm);
+            newterm = this.replaceIdByObj(newterm);
+
+            for (i = 0; i < from.length; i++) {
+                // sin -> Math.sin and asin -> Math.asin
+                expr = new RegExp(['(\\W|^)(', from[i], ')'].join(''), 'ig');
+                newterm = newterm.replace(expr, ['$1', to[i]].join(''));
+            }
+            newterm = newterm.replace(/True/g, 'true');
+            newterm = newterm.replace(/False/g, 'false');
+            newterm = newterm.replace(/fasle/g, 'false');
+            newterm = newterm.replace(/Pi/g, 'Math.PI');
+
+            return newterm;
+        },
+
+        /**
+         * Finds dependencies in a given term and resolves them by adding the
+         * dependent object to the found objects child elements.
+         * @param {JXG.GeometryElement} me Object depending on objects in given term.
+         * @param {String} term String containing dependencies for the given object.
+         * @param {JXG.Board} [board=me.board] Reference to a board
+         */
+        findDependencies: function (me, term, board) {
+            var elements, el, expr, elmask;
+
+            if (!JXG.exists(board)) {
+                board = me.board;
+            }
+
+            elements = board.elementsByName;
+
+            for (el in elements) {
+                if (elements.hasOwnProperty(el)) {
+                    if (el !== me.name) {
+                        if (elements[el].type === JXG.OBJECT_TYPE_TEXT) {
+                            if (!elements[el].visProp.islabel) {
+                                elmask = el.replace(/\[/g, '\\[');
+                                elmask = elmask.replace(/\]/g, '\\]');
+
+                                // Searches (A), (A,B),(A,B,C)
+                                expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\(" + elmask + "\)\(,\[\\w\\[\\]'_ \]+\)*\\)", 'g');
+
+                                if (term.search(expr) >= 0) {
+                                    elements[el].addChild(me);
+                                }
+                            }
+                        } else {
+                            elmask = el.replace(/\[/g, '\\[');
+                            elmask = elmask.replace(/\]/g, '\\]');
+
+                            // Searches (A), (A,B),(A,B,C)
+                            expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\(" + elmask + "\)\(,\[\\w\\[\\]'_ \]+\)*\\)", 'g');
+
+                            if (term.search(expr) >= 0) {
+                                elements[el].addChild(me);
+                            }
+                        }
                     }
                 }
             }
-            end = term.indexOf(')',pos+2);
-            pos = term.indexOf(funcs[i]+'(',end);
+        },
+
+        /**
+         * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JessieCode syntax.
+         * @param {String} term Expression in GEONExT syntax
+         * @param {JXG.Board} board
+         * @returns {String} Given expression translated to JavaScript.
+         */
+        gxt2jc: function (term, board) {
+            var newterm,
+                from = ['Sqrt'],
+                to = ['sqrt'];
+
+            // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
+            term = term.replace(/&lt;/g, '<');
+            term = term.replace(/&gt;/g, '>');
+            term = term.replace(/&amp;/g, '&');
+            newterm = term;
+            newterm = this.replaceNameById(newterm, board, true);
+            newterm = newterm.replace(/True/g, 'true');
+            newterm = newterm.replace(/False/g, 'false');
+            newterm = newterm.replace(/fasle/g, 'false');
+
+            return newterm;
         }
-    }
-
-    pos = term.indexOf('Dist(');
-    while (pos>=0) {
-        if (pos>=0) {
-            end = term.indexOf(',',pos+5);
-            if (end>=0) {
-                elName = term.slice(pos+5,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                if (el) {
-                    term = term.slice(0,pos+5) + el.id +  term.slice(end);
-                }
-            }
-        }
-        end = term.indexOf(',',pos+5);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(')',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = board.elementsByName[elName];
-            if (el) {
-                term = term.slice(0,pos+1) + el.id +  term.slice(end);
-            }
-        }
-        end = term.indexOf(')',pos+1);
-        pos = term.indexOf('Dist(',end);
-    }
-
-    funcs = ['Deg','Rad'];
-    for (i=0;i<funcs.length;i++) {
-        pos = term.indexOf(funcs[i]+'(');
-        while (pos>=0) {
-            if (pos>=0) {
-                end = term.indexOf(',',pos+4);
-                if (end>=0) {
-                    elName = term.slice(pos+4,end);
-                    elName = elName.replace(/\\(['"])?/g,"$1");
-                    el = board.elementsByName[elName];
-                    if (el) {
-                        term = term.slice(0,pos+4) + el.id +  term.slice(end);
-                    }
-                }
-            }
-            end = term.indexOf(',',pos+4);
-            pos = term.indexOf(',',end);
-            end = term.indexOf(',',pos+1);
-            if (end>=0) {
-                elName = term.slice(pos+1,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                if (el) {
-                    term = term.slice(0,pos+1) + el.id +  term.slice(end);
-                }
-            }
-            end = term.indexOf(',',pos+1);
-            pos = term.indexOf(',',end);
-            end = term.indexOf(')',pos+1);
-            if (end>=0) {
-                elName = term.slice(pos+1,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                if (el) {
-                    term = term.slice(0,pos+1) + el.id +  term.slice(end);
-                }
-            }
-            end = term.indexOf(')',pos+1);
-            pos = term.indexOf(funcs[i]+'(',end);
-        }
-    }
-    return term;
-};
-
-/**
- * Replaces element ids in terms by element this.board.objects['id'].
- * @param term A GEONE<sub>x</sub>T function string with JSXGraph ids in it.
- * @return The input string with element ids replaced by this.board.objects["id"]. 
- **/
-JXG.GeonextParser.replaceIdByObj = function(/** string */ term) /** string */ {
-    var expr = /(X|Y|L)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
-    term = term.replace(expr,"this.board.objects[\"$2\"].$1()");
-    
-    expr = /(V)\(([\w_]+)\)/g;  // Suche "X(gi23)" oder "Y(gi23A)" und wandle in objects['gi23'].X() um.
-    term = term.replace(expr,"this.board.objects[\"$2\"].Value()");
-
-    expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;  // 
-    term = term.replace(expr,'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
-
-    expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;  // 
-    term = term.replace(expr,'JXG.Math.Geometry.trueAngle(this.board.objects[\"$2\"],this.board.objects[\"$3\"],this.board.objects[\"$4\"])');
-
-    expr = /Rad\(([\w_]+),([\w_]+),([\w_]+)\)/g;  // Suche Rad('gi23','gi24','gi25')
-    term = term.replace(expr,'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
-
-    expr = /N\((.+)\)/g;  // 
-    term = term.replace(expr,'($1)');
-
-    return term;
-};
-
-/**
- * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JavaScript syntax.
- * @param {String} term Expression in GEONExT syntax
- * @type String
- * @return Given expression translated to JavaScript.
- */
-JXG.GeonextParser.geonext2JS = function(term, board) {
-    var expr, newterm, i,
-        from = ['Abs', 'ACos', 'ASin', 'ATan','Ceil','Cos','Exp','Factorial','Floor','Log','Max','Min','Random','Round','Sin','Sqrt','Tan','Trunc'], 
-        to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos', 'Math.exp', 'JXG.Math.factorial','Math.floor', 'Math.log', 'Math.max', 'Math.min', 'Math.random', 'this.board.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
-    // removed: 'Pow'  -> Math.pow
-    
-    //term = JXG.unescapeHTML(term);  // This replaces &gt; by >, &lt; by < and &amp; by &. But it is to strict. 
-    term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
-    term = term.replace(/&gt;/g,'>'); 
-    term = term.replace(/&amp;/g,'&'); 
-    
-    // Umwandeln der GEONExT-Syntax in JavaScript-Syntax
-    newterm = term;
-    newterm = this.replaceNameById(newterm, board);
-    newterm = this.replaceIf(newterm);
-    // Exponentiations-Problem x^y -> Math(exp(x,y).
-    newterm = this.replacePow(newterm);
-    newterm = this.replaceIdByObj(newterm);
-    for (i=0; i<from.length; i++) {
-        expr = new RegExp(['(\\W|^)(',from[i],')'].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
-        newterm = newterm.replace(expr,['$1',to[i]].join(''));
-    } 
-    newterm = newterm.replace(/True/g,'true');
-    newterm = newterm.replace(/False/g,'false');
-    newterm = newterm.replace(/fasle/g,'false');
-
-    newterm = newterm.replace(/Pi/g,'Math.PI');
-    return newterm;
-};
-
-/**
- * Finds dependencies in a given term and resolves them by adding the
- * dependent object to the found objects child elements.
- * @param {JXG.GeometryElement} me Object depending on objects in given term.
- * @param {String} term String containing dependencies for the given object.
- * @param {JXG.Board} [board=me.board] Reference to a board
- */
-JXG.GeonextParser.findDependencies = function(me, term, board) {
-    if(typeof board=='undefined')
-        board = me.board;
-
-    var elements = board.elementsByName,
-        el, expr, elmask;
-
-    for (el in elements) {
-        if (el != me.name) {
-            if(elements[el].type == JXG.OBJECT_TYPE_TEXT) {
-                if(!elements[el].visProp.islabel) {
-                    elmask = el.replace(/\[/g,'\\[');
-                    elmask = elmask.replace(/\]/g,'\\]');
-                    expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
-                    if (term.search(expr)>=0) {
-                        elements[el].addChild(me);
-                    }
-                }
-            }
-            else {
-                elmask = el.replace(/\[/g,'\\[');
-                elmask = elmask.replace(/\]/g,'\\]');
-                expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\("+elmask+"\)\(,\[\\w\\[\\]'_ \]+\)*\\)","g");  // Searches (A), (A,B),(A,B,C)
-                if (term.search(expr)>=0) {
-                    elements[el].addChild(me);
-                }
-            }
-        }
-    }
-};
-
-/**
- * Converts the given algebraic expression in GEONE<sub>x</sub>T syntax into an equivalent expression in JavaScript syntax.
- * @param {String} term Expression in GEONExT syntax
- * @type String
- * @return Given expression translated to JavaScript.
- */
-JXG.GeonextParser.gxt2jc = function(term, board) {
-    var newterm,
-		from = ['Sqrt'],
-		to = ['sqrt'];
-    
-    term = term.replace(/&lt;/g,'<'); // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
-    term = term.replace(/&gt;/g,'>'); 
-    term = term.replace(/&amp;/g,'&'); 
-    newterm = term;
-    newterm = this.replaceNameById2(newterm, board);
-	/*
-    for (i=0; i<from.length; i++) {
-        expr = new RegExp(['(\\W|^)(',from[i],')'].join(''),"ig");  // sin -> Math.sin and asin -> Math.asin 
-        newterm = newterm.replace(expr,['$1',to[i]].join(''));
-    } 
-	*/
-    newterm = newterm.replace(/True/g,'true');
-    newterm = newterm.replace(/False/g,'false');
-    newterm = newterm.replace(/fasle/g,'false');
-
-    return newterm;
-};
-
-/**
- * Replace an element's name in terms by an element's id.
- * @param term Term containing names of elements.
- * @param board Reference to the board the elements are on.
- * @return The same string with names replaced by ids.
- **/
-JXG.GeonextParser.replaceNameById2 = function(/** string */ term, /** JXG.Board */ board) /** string */ {
-    var pos = 0, end, elName, el, i,
-        funcs = ['X','Y','L','V'];
-
-    //    
-    // Find X(el), Y(el), ... 
-    // All functions declared in funcs
-    for (i=0;i<funcs.length;i++) {
-        pos = term.indexOf(funcs[i]+'(');
-        while (pos>=0) {
-            if (pos>=0) {
-                end = term.indexOf(')',pos+2);
-                if (end>=0) {
-                    elName = term.slice(pos+2,end);
-                    elName = elName.replace(/\\(['"])?/g,"$1");
-                    el = board.elementsByName[elName];
-                    term = term.slice(0,pos+2) + "$('"+el.id +"')" +  term.slice(end);
-                }
-            }
-            end = term.indexOf(')',pos+2);
-            pos = term.indexOf(funcs[i]+'(',end);
-        }
-    }
-
-    pos = term.indexOf('Dist(');
-    while (pos>=0) {
-        if (pos>=0) {
-            end = term.indexOf(',',pos+5);
-            if (end>=0) {
-                elName = term.slice(pos+5,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                term = term.slice(0,pos+5) + "$('"+el.id +"')" +  term.slice(end);
-            }
-        }
-        end = term.indexOf(',',pos+5);
-        pos = term.indexOf(',',end);
-        end = term.indexOf(')',pos+1);
-        if (end>=0) {
-            elName = term.slice(pos+1,end);
-            elName = elName.replace(/\\(['"])?/g,"$1");
-            el = board.elementsByName[elName];
-            term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
-        }
-        end = term.indexOf(')',pos+1);
-        pos = term.indexOf('Dist(',end);
-    }
-
-    funcs = ['Deg','Rad'];
-    for (i=0;i<funcs.length;i++) {
-        pos = term.indexOf(funcs[i]+'(');
-        while (pos>=0) {
-            if (pos>=0) {
-                end = term.indexOf(',',pos+4);
-                if (end>=0) {
-                    elName = term.slice(pos+4,end);
-                    elName = elName.replace(/\\(['"])?/g,"$1");
-                    el = board.elementsByName[elName];
-                    term = term.slice(0,pos+4) + "$('"+el.id +"')" +  term.slice(end);
-                }
-            }
-            end = term.indexOf(',',pos+4);
-            pos = term.indexOf(',',end);
-            end = term.indexOf(',',pos+1);
-            if (end>=0) {
-                elName = term.slice(pos+1,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
-            }
-            end = term.indexOf(',',pos+1);
-            pos = term.indexOf(',',end);
-            end = term.indexOf(')',pos+1);
-            if (end>=0) {
-                elName = term.slice(pos+1,end);
-                elName = elName.replace(/\\(['"])?/g,"$1");
-                el = board.elementsByName[elName];
-                term = term.slice(0,pos+1) + "$('"+el.id +"')" +  term.slice(end);
-            }
-            end = term.indexOf(')',pos+1);
-            pos = term.indexOf(funcs[i]+'(',end);
-        }
-    }
-    return term;
-};
-
+    };
+}());

@@ -35,8 +35,8 @@
 
 /* depends:
  JXG
- Board
- filereader
+ board
+ reader/file
  options
  renderer
  */
@@ -196,11 +196,12 @@
                 board;
 
             dimensions = JXG.getDimensions(box);
+            attributes = attributes || {};
 
-            // parse attributes
+            // merge attributes
             attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
-            attr.zoom = JXG.copyAttributes(attributes, JXG.Options, 'board', 'zoom');
-            attr.pan = JXG.copyAttributes(attributes, JXG.Options, 'board', 'pan');
+            attr.zoom = JXG.copyAttributes(attr, JXG.Options, 'board', 'zoom');
+            attr.pan = JXG.copyAttributes(attr, JXG.Options, 'board', 'pan');
 
             if (attr.unitx || attr.unity) {
                 originX = JXG.def(attr.originx, 150);
@@ -270,6 +271,7 @@
          * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {String} file base64 encoded string.
          * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
+         * @param {Object} [attributes]
          * @returns {JXG.Board} Reference to the created board.
          * @see JXG.FileReader
          * @see JXG.GeonextReader
@@ -277,16 +279,20 @@
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
          */
-        loadBoardFromFile: function (box, file, format) {
-            var renderer, board, dimensions;
+        loadBoardFromFile: function (box, file, format, attributes) {
+            var attr, renderer, board, dimensions;
 
             renderer = this.initRenderer(box);
-
-            //var dimensions = document.getElementById(box).getDimensions();
             dimensions = JXG.getDimensions(box);
+            attributes = attributes || {};
+
+            // merge attributes
+            attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
+            attr.zoom = JXG.copyAttributes(attributes, JXG.Options, 'board', 'zoom');
+            attr.pan = JXG.copyAttributes(attributes, JXG.Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
-            board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, true, true);
+            board = new JXG.Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
             JXG.FileReader.parseFileContent(file, board, format);
@@ -305,6 +311,7 @@
          * @param {String} box HTML-ID to the HTML-element in which the board is painted.
          * @param {String} string base64 encoded string.
          * @param {String} format containing the file format: 'Geonext' or 'Intergeo'.
+         * @param {Object} [attributes]
          * @returns {JXG.Board} Reference to the created board.
          * @see JXG.FileReader
          * @see JXG.GeonextReader
@@ -312,14 +319,20 @@
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
          */
-        loadBoardFromString: function (box, string, format) {
-            var renderer, dimensions, board;
+        loadBoardFromString: function (box, string, format, attributes) {
+            var attr, renderer, dimensions, board;
 
             renderer = this.initRenderer(box);
             dimensions = JXG.getDimensions(box);
+            attributes = attributes || {};
+
+            // merge attributes
+            attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
+            attr.zoom = JXG.copyAttributes(attributes, JXG.Options, 'board', 'zoom');
+            attr.pan = JXG.copyAttributes(attributes, JXG.Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
-            board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, true, true);
+            board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
             JXG.FileReader.parseString(string, board, format, true);
