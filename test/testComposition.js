@@ -39,7 +39,7 @@ TestCase("Composition", {
     setUp: function () {
         this.element = {
             id: 'elid',
-            setProperty: sinon.stub(),
+            setAttribute: sinon.stub(),
             prepareUpdate: sinon.stub(),
             update: sinon.stub(),
             updateRenderer: sinon.stub(),
@@ -107,15 +107,15 @@ TestCase("Composition", {
         assertTrue(c.element.update.calledOnce);
     },
 
-    testSetProperty: function () {
+    testSetAttribute: function () {
         expectAsserts(1);
 
         var c = new JXG.Composition({
             element: this.element
         });
 
-        c.setProperty();
-        assertTrue(c.element.setProperty.calledOnce);
+        c.setAttribute();
+        assertTrue(c.element.setAttribute.calledOnce);
     },
 
     testHighlight: function () {
