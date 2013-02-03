@@ -350,7 +350,7 @@
         },
 
         /**
-         * * Updates the stdform derived from the position of the center and the circle's radius.
+         * Updates the stdform derived from the position of the center and the circle's radius.
          * @private
          */
         updateStdform: function () {
