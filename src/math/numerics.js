@@ -1483,7 +1483,7 @@
          * @param {function} f Function, whose root is to be found
          * @param {Array,Number} x0  Start value or start interval enclosing the root
          * @param {Object} object Parent object in case f is method of it
-         * @return {Number} the approximation of the root
+         * @returns {Number} the approximation of the root
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -1492,8 +1492,7 @@
          * algorithm 748 is applied. Otherwise, if x0 is a number,
          * the algorithm tries to bracket a zero of f starting from x0.
          * If this fails, we fall back to Newton's method.
-         *
-         **/
+         */
         fzero: function (f, x0, object) {
             var a, b, c,
                 fa, fb, fc,
@@ -1666,7 +1665,7 @@
          * @param {function} f Function, whose minimum is to be found
          * @param {Array} x0  Start interval enclosing the minimum
          * @param {Object} context Parent object in case f is method of it
-         * @return {Number} the approximation of the minimum
+         * @returns {Number} the approximation of the minimum
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
@@ -1702,7 +1701,7 @@
             fw = fv;
 
             while (niter < maxiter) {
-                // Range over which the minimum is seeked for
+                // Range over the interval in which we are looking for the minimum
                 range = b - a;
                 middle_range = (a + b) * 0.5;
 
@@ -1742,8 +1741,9 @@
                     // extent           
                 }
 
-                if (Math.abs(new_step) < tol_act) {    // Adjust the step to be not less
-                    if (new_step > 0) {                // than tolerance
+                // Adjust the step to be not less than tolerance
+                if (Math.abs(new_step) < tol_act) {
+                    if (new_step > 0) {
                         new_step = tol_act;
                     } else {
                         new_step = -tol_act;
@@ -1752,13 +1752,17 @@
 
                 // Obtain the next approximation to min 
                 // and reduce the enveloping range
-                t = x + new_step;                       // Tentative point for the min
+
+                // Tentative point for the min
+                t = x + new_step;
                 ft = f.call(context, t);
                 nfev += 1;
 
-                if (ft <= fx) {                       // t is a better approximation
-                    if (t < x) {                      // Reduce the range so that
-                        b = x;                        // t would fall within it
+                // t is a better approximation
+                if (ft <= fx) {
+                    // Reduce the range so that t would fall within it
+                    if (t < x) {
+                        b = x;
                     } else {
                         a = x;
                     }
@@ -1771,8 +1775,10 @@
                     fv = fw;
                     fw = fx;
                     fx = ft;
-                } else {                                // x remains the better approx
-                    if (t < x) {                      // Reduce the range enclosing x
+                // x remains the better approx
+                } else {
+                    // Reduce the range enclosing x
+                    if (t < x) {
                         a = t;
                     } else {
                         b = t;
@@ -1795,14 +1801,12 @@
         },
 
         /**
-         * Helper function to create curve which displays Reuleaux polygons.
-         * @param {array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
-         *                       these point list is the array vrtices of a regular polygon.
-         * @param {number} nr Number of vertices
-         * @returns {array} An array containing the two functions defining the Reuleaux polygon and the two values
-         * for the start and the end of the paramtric curve.
-         * array may be used as parent array of a {@link JXG.Curve}.
-         *
+         * Helper function to create curve which displays a Reuleaux polygons.
+         * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
+         * these point list is the array vrtices of a regular polygon.
+         * @param {Number} nr Number of vertices
+         * @returns {Array} An array containing the two functions defining the Reuleaux polygon and the two values
+         * for the start and the end of the paramtric curve. array may be used as parent array of a {@link JXG.Curve}.
          * @example
          * var A = brd.create('point',[-2,-2]);
          * var B = brd.create('point',[0,1]);
@@ -1841,6 +1845,7 @@
                         }
 
                         t1 = t1 * 0.5 + j * pi2_n * 0.5 + beta;
+
                         return points[j][which]() + d * Math[trig](t1);
                     };
                 };

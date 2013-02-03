@@ -84,13 +84,13 @@
          * udpate system so your construction won't be updated properly.
          * @type JXG.Point
          */
-        this.point1 = JXG.getReference(this.board, p1);
+        this.point1 = JXG.getRef(this.board, p1);
 
         /**
          * Endpoint of the line. Just like {@link #point1} you shouldn't write this field directly.
          * @type JXG.Point
          */
-        this.point2 = JXG.getReference(this.board, p2);
+        this.point2 = JXG.getRef(this.board, p2);
 
         /**
          * Array of ticks storing all the ticks on this line. Do not set this field directly and use
@@ -960,7 +960,7 @@
                 attr = JXG.copyAttributes(attributes, board.options, 'line', 'point1');
                 p1 = board.create('point', parents[0], attr);
             } else if (JXG.isString(parents[0]) || parents[0].elementClass === JXG.OBJECT_CLASS_POINT) {
-                p1 =  JXG.getReference(board, parents[0]);
+                p1 =  JXG.getRef(board, parents[0]);
             } else if ((typeof parents[0] === 'function') && (parents[0]().elementClass === JXG.OBJECT_CLASS_POINT)) {
                 p1 = parents[0]();
                 constrained = true;
@@ -979,7 +979,7 @@
                 attr = JXG.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = board.create('point', parents[1], attr);
             } else if (JXG.isString(parents[1]) || parents[1].elementClass === JXG.OBJECT_CLASS_POINT) {
-                p2 =  JXG.getReference(board, parents[1]);
+                p2 =  JXG.getRef(board, parents[1]);
             } else if ((typeof parents[1] === 'function') && (parents[1]().elementClass === JXG.OBJECT_CLASS_POINT)) {
                 p2 = parents[1]();
                 constrained = true;

@@ -117,12 +117,12 @@
             } else if (type === 'reflect') {
                 // line or two points
                 if (params.length < 4) {
-                    params[0] = JXG.getReference(board, params[0]);
+                    params[0] = JXG.getRef(board, params[0]);
                 }
 
                 // two points
                 if (params.length === 2) {
-                    params[1] = JXG.getReference(board, params[1]);
+                    params[1] = JXG.getRef(board, params[1]);
                 }
 
                 // 4 coordinates [px,py,qx,qy]
@@ -179,7 +179,7 @@
                     this.evalParam = JXG.createEvalFunction(board, params, 1);
 
                     if (params.length === 2) {
-                        params[1] = JXG.getReference(board, params[1]);
+                        params[1] = JXG.getRef(board, params[1]);
                     }
                 }
 
@@ -285,7 +285,13 @@
             }
         },
 
+        /**
+         * @deprecated Use setAttribute
+         * @param term
+         */
         setProperty: function (term) { },
+
+        setAttribute: function (term) { },
 
         /**
          * Multiplication of a transformation t from the right.

@@ -214,12 +214,18 @@
             delete this.objects[point.id];
         },
 
-        setProperty: function () {
+        /**
+         * @deprecated
+         * Use setAttribute
+         */
+        setProperty: JXG.shortcut(JXG.Group.prototype, 'setAttribute'),
+
+        setAttribute: function () {
             var el;
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
-                    this.objects[el].point.setProperty.apply(this.objects[el].point, arguments);
+                    this.objects[el].point.setAttribute.apply(this.objects[el].point, arguments);
                 }
             }
         }

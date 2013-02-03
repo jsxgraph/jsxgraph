@@ -99,29 +99,3 @@ JXG.Math.Numerics.createRoulette = function(c1, c2, start_c1, stepsize, directio
     };
     return new Roulette();
 };
-
-JXG.Math.Numerics.reuleauxPolygon = function(points, nr) {
-    var pi2 = Math.PI*2,
-        pi2_n = pi2/nr,
-        diag = (nr-1)/2,
-        beta, d = 0,
-        makeFct = function(which, trig) {
-                return function(t, suspendUpdate) {
-                    if (!suspendUpdate) {
-                        d = points[0].Dist(points[diag]);
-                        beta = JXG.Math.Geometry.rad([points[0].X()+1,points[0].Y()],points[0],points[(diag)%nr]);
-                    }
-                    var t1 = (t%pi2 + pi2) % pi2;
-                    var j = Math.floor(t1 / pi2_n)%nr;
-                    if (isNaN(j)) return j;
-                    t1 = (t1-j*pi2_n)*0.5 + beta+j*pi2_n;
-                    return points[j][which]()+d*Math[trig](t1);
-                };
-            };
-    return [
-            makeFct('X','cos'),
-            makeFct('Y','sin'),
-            0,
-            Math.PI*2
-        ];
-};        

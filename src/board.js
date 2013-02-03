@@ -2435,7 +2435,7 @@
                 return this;
             }
 
-            object = JXG.getReference(this, object);
+            object = JXG.getRef(this, object);
 
             // If the object which is about to be removed unknown, do nothing.
             if (!JXG.exists(object)) {
@@ -2925,7 +2925,7 @@
 
             for (i = 0; i < parents.length; i++) {
                 if (elementType !== 'text' || i !== 2) {
-                    parents[i] = JXG.getReference(this, parents[i]);
+                    parents[i] = JXG.getRef(this, parents[i]);
                 }
             }
 
@@ -3125,7 +3125,7 @@
                                     c += 1;
                                     props = {};
                                     props[r] = p;
-                                    o.setProperty(props);
+                                    o.setAttribute(props);
                                 }
                             }
                         }
@@ -3261,7 +3261,7 @@
                                 highlightfillcolor: o.visProp.highlightfillcolor
                             };
                         }
-                        o.setProperty({
+                        o.setAttribute({
                             strokecolor: JXG.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
                             fillcolor: JXG.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
                             highlightstrokecolor: JXG.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
@@ -3557,12 +3557,33 @@
                         ),
                         t1_new = 0.0, t2_new = 0.0,
                         c1dist,
-                        rotation = brd.create('transform', [function () { return alpha; }], {type: 'rotate'}),
-                        rotationLocal = brd.create('transform', [function () { return alpha; },
-                            function () { return c1.X(t1); },
-                            function () { return c1.Y(t1); }],
-                            {type: 'rotate'}),
-                        translate = brd.create('transform', [function () { return Tx; }, function () { return Ty; }], {type: 'translate'}),
+
+                        rotation = brd.create('transform', [
+                            function () {
+                                return alpha;
+                            }
+                        ], {type: 'rotate'}),
+
+                        rotationLocal = brd.create('transform', [
+                            function () {
+                                return alpha;
+                            },
+                            function () {
+                                return c1.X(t1);
+                            },
+                            function () {
+                                return c1.Y(t1);
+                            }
+                        ], {type: 'rotate'}),
+
+                        translate = brd.create('transform', [
+                            function () {
+                                return Tx;
+                            },
+                            function () {
+                                return Ty;
+                            }
+                        ], {type: 'translate'}),
 
                         // arc length via Simpson's rule.
                         arclen = function (c, a, b) {
@@ -3577,12 +3598,14 @@
                                 fb = Math.sqrt(cpxb * cpxb + cpyb * cpyb),
                                 fab = Math.sqrt(cpxab * cpxab + cpyab * cpyab);
 
-                            return (fa + 4 * fab + fb) * (b - a) / 6.0;
+                            return (fa + 4 * fab + fb) * (b - a) / 6;
                         },
+
                         exactDist = function (t) {
                             return c1dist - arclen(c2, t2, t);
                         },
-                        beta = Math.PI / 18.0,
+
+                        beta = Math.PI / 18,
                         beta9 = beta * 9,
                         interval = null;
 
@@ -3594,8 +3617,7 @@
                         // arc length between c1(t1) and c1(t1_new)
                         c1dist = arclen(c1, t1, t1_new);
 
-                        // find t2_new such that arc length between c2(t2) and c1(t2_new)
-                        // equals c1dist.
+                        // find t2_new such that arc length between c2(t2) and c1(t2_new) equals c1dist.
                         t2_new = JXG.Math.Numerics.root(exactDist, t2);
 
                         // c1(t) as complex number
@@ -3607,8 +3629,7 @@
                         hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new), JXG.Math.Numerics.D(c1.Y)(t1_new));
                         gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2_new), JXG.Math.Numerics.D(c2.Y)(t2_new));
 
-                        // z is angle between the tangents of
-                        // c1 at t1_new, and c2 at t2_new
+                        // z is angle between the tangents of c1 at t1_new, and c2 at t2_new
                         z = JXG.C.div(hp, gp);
 
                         alpha = Math.atan2(z.imaginary, z.real);

@@ -152,7 +152,7 @@
         attr.withLabel = false;
         // gliders set snapwidth=-1 by default (i.e. deactivate them)
         p3 = board.create('glider', [startx, starty, l1], attr);
-        p3.setProperty({snapwidth: snapWidth});
+        p3.setAttribute({snapwidth: snapWidth});
 
         // segment from start point to glider point
         attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');

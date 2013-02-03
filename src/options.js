@@ -804,7 +804,7 @@
              * <li>'functiongraph': function graph</li>
              * <li>'polar'</li>
              * <li>'implicit' (not yet)</li></ul>
-             * Only parameter and plot are set directly. Polar is set with setProperties only.
+             * Only parameter and plot are set directly. Polar is set with {@link JXG.GeometryElement#setAttribute} only.
              * @name JXG.Curve#curveType
              */
             curveType: null,
@@ -812,7 +812,7 @@
             numberPointsHigh: 1600,  // Number of points on curves after mouseUp
             numberPointsLow: 400,    // Number of points on curves after mousemove
             doAdvancedPlot: true,    // Use the algorithm by Gillam and Hohenwarter
-            // It is much slower, but the result is better
+                                     // It is much slower, but the result is better
 
             label: {
                 position: 'lft'
@@ -1611,7 +1611,7 @@
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
          * to the same value.
-         * It is used in JXG.GeometryElement#setProperty and in
+         * It is used in JXG.GeometryElement#setAttribute and in
          * the constructor JXG.GeometryElement.
          * Attention: In Options.js abbreviations are not allowed.
          */

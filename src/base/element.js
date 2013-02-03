@@ -463,7 +463,7 @@
          * Array of strings containing the polynomials defining the element.
          * Used for determining geometric loci the groebner way.
          * @returns {Array} An array containing polynomials describing the locus of the current object.
-         * @private
+         * @public
          */
         generatePolynomial: function () {
             return [];

@@ -422,7 +422,7 @@
 
             }
 
-            // Not enough! We need points, but this gives an error in board.setProperty.
+            // Not enough! We need points, but this gives an error in setAttribute.
             return {sectors: sector, points: p, midpoint: center};
         },
 
@@ -654,8 +654,8 @@
                 });
 
                 for (j = 0; j < numofparams; j++) {
-                    polygons[i].borders[j].setProperty('strokecolor:' + colorArray[i % colorArray.length]);
-                    polygons[i].borders[j].setProperty('strokewidth:' + myAtts.polystrokewidth);
+                    polygons[i].borders[j].setAttribute('strokecolor:' + colorArray[i % colorArray.length]);
+                    polygons[i].borders[j].setAttribute('strokewidth:' + myAtts.polystrokewidth);
                 }
             }
 

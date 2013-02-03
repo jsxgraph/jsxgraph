@@ -1479,20 +1479,20 @@
          * Set the face of a point element.
          * @param {String} f String which determines the face of the point. See {@link JXG.GeometryElement#face} for a list of available faces.
          * @see JXG.GeometryElement#face
-         * @deprecated
+         * @deprecated Use setAttribute()
          */
         face: function (f) {
-            this.setProperty({face: f});
+            this.setAttribute({face: f});
         },
 
         /**
          * Set the size of a point element
          * @param {Number} s Integer which determines the size of the point.
          * @see JXG.GeometryElement#size
-         * @deprecated
+         * @deprecated Use setAttribute()
          */
         size: function (s) {
-            this.setProperty({size: s});
+            this.setAttribute({size: s});
         },
 
         // already documented in GeometryElement

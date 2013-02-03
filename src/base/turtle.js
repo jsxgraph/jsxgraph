@@ -82,7 +82,7 @@
         // this._attributes is overwritten by setPenSize, setPenColor...
         // Setting the color or size affects the turtle from the time of
         // calling the method,
-        // whereas Turtle.setProperty affects all turtle curves.
+        // whereas Turtle.setAttribute affects all turtle curves.
         this._attributes = JXG.copyAttributes(this.visProp, board.options, 'turtle');
         delete this._attributes.id;
 
@@ -327,7 +327,7 @@
         },
 
         /**
-         *  Sets the pen size. Equivalent to setProperty({strokeWidth:size})
+         *  Sets the pen size. Equivalent to setAttribute({strokeWidth:size})
          * but affects only the future turtle.
          * @param {Number} size
          * @returns {JXG.Turtle} pointer to the turtle object
@@ -340,7 +340,7 @@
         },
 
         /**
-         *  Sets the pen color. Equivalent to setProperty({strokeColor:color})
+         *  Sets the pen color. Equivalent to setAttribute({strokeColor:color})
          * but affects only the future turtle.
          * @param {String} color
          * @returns {JXG.Turtle} pointer to the turtle object
@@ -353,7 +353,7 @@
         },
 
         /**
-         *  Sets the highlight pen color. Equivalent to setProperty({highlightStrokeColor:color})
+         *  Sets the highlight pen color. Equivalent to setAttribute({highlightStrokeColor:color})
          * but affects only the future turtle.
          * @param {String} color
          * @returns {JXG.Turtle} pointer to the turtle object
@@ -366,19 +366,19 @@
         },
 
         /**
-         * Sets properties of the turtle, see also {@link JXG.GeometryElement#setProperty}.
+         * Sets properties of the turtle, see also {@link JXG.GeometryElement#setAttribute}.
          * Sets the property for all curves of the turtle in the past and in the future.
          * @param {Object} attributes key:value pairs
          * @returns {JXG.Turtle} pointer to the turtle object
          */
-        setProperty: function (attributes) {
+        setAttribute: function (attributes) {
             var i, el, tmp,
                 len = this.objects.length;
 
             for (i = 0; i < len; i++) {
                 el = this.objects[i];
                 if (el.type === JXG.OBJECT_TYPE_CURVE) {
-                    el.setProperty(attributes);
+                    el.setAttribute(attributes);
                 }
             }
 
@@ -410,7 +410,7 @@
          */
         showTurtle: function () {
             this.turtleIsHidden = false;
-            this.arrow.setProperty({visible: true});
+            this.arrow.setAttribute({visible: true});
             this.visProp.arrow.visible = false;
             this.setPos(this.pos[0], this.pos[1]);
             this.board.update();
@@ -424,7 +424,7 @@
          */
         hideTurtle: function () {
             this.turtleIsHidden = true;
-            this.arrow.setProperty({visible: false});
+            this.arrow.setAttribute({visible: false});
             this.visProp.arrow.visible = false;
             this.board.update();
 
@@ -690,7 +690,7 @@
      * Creates a new turtle
      * @param {JXG.Board} board The board the turtle is put on.
      * @param {Array} parents
-     * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setProperty}
+     * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}
      * @returns {JXG.Turtle} Reference to the created turtle object.
      */
     JXG.createTurtle = function (board, parents, attributes) {

@@ -91,10 +91,10 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1, 10, 11, -2], axis: true});
         board.suspendUpdate();
         var s = board.create('slider', [[5,-1],[8,-1], [1,1,2]], {name:'S'});
-        var f = [function(){return this.board.round(s.Value()*4,2);},
-                 function(){return this.board.round(s.Value()*(-1),2);},
-                 function(){return this.board.round(s.Value()*3,2);},
-                 function(){return this.board.round(s.Value()*2,2);}];
+        var f = [function(){return Math.round(s.Value()*4,2);},
+                 function(){return Math.round(s.Value()*(-1),2);},
+                 function(){return Math.round(s.Value()*3,2);},
+                 function(){return Math.round(s.Value()*2,2);}];
         var chart = board.create('chart', [f], {chartStyle:'bar',width:0.8,labels:f});
         board.unsuspendUpdate();
     };

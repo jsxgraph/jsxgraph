@@ -70,13 +70,13 @@
      * </pre><div id="49f59123-f013-4681-bfd9-338b89893156" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
- *   var board = JXG.JSXGraph.initBoard('49f59123-f013-4681-bfd9-338b89893156', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
- *     p1 = board.create('point', [1.5, 5.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [5.0, 3.0]),
- *
- *     a = board.create('sector', [p1, p2, p3]);
- * })();
+     *   var board = JXG.JSXGraph.initBoard('49f59123-f013-4681-bfd9-338b89893156', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [1.5, 5.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [5.0, 3.0]),
+     *
+     *     a = board.create('sector', [p1, p2, p3]);
+     * })();
      * </script><pre>
      */
     JXG.createSector = function (board, parents, attributes) {
@@ -114,7 +114,7 @@
          * @name point1
          * @type JXG.Point
          */
-        el.point1 = JXG.getReference(board, parents[0]);
+        el.point1 = JXG.getRef(board, parents[0]);
         el.center = el.point1;
 
         /**
@@ -123,7 +123,7 @@
          * @name point2
          * @type JXG.Point
          */
-        el.point2 = JXG.getReference(board, parents[1]);
+        el.point2 = JXG.getRef(board, parents[1]);
         el.radiuspoint = el.point2;
 
         /**
@@ -132,7 +132,7 @@
          * @name point3
          * @type JXG.Point
          */
-        el.point3 = JXG.getReference(board, parents[2]);
+        el.point3 = JXG.getRef(board, parents[2]);
         el.anglepoint = el.point3;
 
         /* Add arc as child to defining points */
@@ -440,13 +440,13 @@
      * </pre><div id="a34151f9-bb26-480a-8d6e-9b8cbf789ae5" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
- *   var board = JXG.JSXGraph.initBoard('a34151f9-bb26-480a-8d6e-9b8cbf789ae5', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
- *     p1 = board.create('point', [5.0, 3.0]),
- *     p2 = board.create('point', [1.0, 0.5]),
- *     p3 = board.create('point', [1.5, 5.0]),
- *
- *     a = board.create('angle', [p1, p2, p3]);
- * })();
+     *   var board = JXG.JSXGraph.initBoard('a34151f9-bb26-480a-8d6e-9b8cbf789ae5', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [5.0, 3.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [1.5, 5.0]),
+     *
+     *     a = board.create('angle', [p1, p2, p3]);
+     * })();
      * </script><pre>
      */
     JXG.createAngle = function (board, parents, attributes) {
@@ -455,8 +455,10 @@
         // Test if three points are given
         if ((JXG.isPoint(parents[0])) && (JXG.isPoint(parents[1])) && (JXG.isPoint(parents[2]))) {
             attr = JXG.copyAttributes(attributes, board.options, 'angle');
+
             //  If empty, create a new name
             text = attr.name;
+
             if (!JXG.exists(text) || text === '') {
                 text = board.generateName({type: JXG.OBJECT_TYPE_ANGLE});
                 attr.name = text;
@@ -528,19 +530,19 @@
                 } else if (type === 'sectordot') {
                     this.updateDataArraySector();
                     if (!this.dot.visProp.visible) {
-                        this.dot.setProperty({visible: true});
+                        this.dot.setAttribute({visible: true});
                     }
                 }
 
                 if (type !== 'sectordot' && this.dot.visProp.visible) {
-                    this.dot.setProperty({visible: false});
+                    this.dot.setAttribute({visible: false});
                 }
             };
 
             /*
              * Supply the helper points with the correct function, which depends
              * on the visProp.radius property of the sector.
-             * With this trick, setPropertyy({radius:...}) works.
+             * With this trick, setAttributey({radius:...}) works.
              */
             p.addConstraint([function () {
                 var A = parents[0], S = parents[1],
