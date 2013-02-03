@@ -47,9 +47,11 @@
  * @author graphjs
  */
 
-(function (JXG, undef) {
+(function () {
 
     "use strict";
+
+    var undef;
 
     /**
      * The JXG.Math.Symbolic namespace holds algorithms for symbolic computations.
@@ -72,6 +74,7 @@
                 count = 0,
                 makeCoords = function (num) {
                     var r;
+
                     if (append === 'underscore') {
                         r = variable + '_{' + num + '}';
                     } else if (append === 'brace') {
@@ -374,8 +377,5 @@
 
             return result;
         }
-
-
     };
-}(JXG));
-
+}());

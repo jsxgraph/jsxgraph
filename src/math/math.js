@@ -43,9 +43,11 @@
  * @author graphjs
  */
 
-(function (JXG, Math, undef) {
+(function () {
 
     "use strict";
+
+    var undef;
 
     /*
      * Dynamic programming approach for recursive functions.
@@ -632,4 +634,4 @@
         }
 
     };
-}(JXG, Math));
+}());

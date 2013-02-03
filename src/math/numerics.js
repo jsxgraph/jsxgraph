@@ -46,7 +46,7 @@
  * @author graphjs
  */
 
-(function (JXG, Math) {
+(function () {
 
     "use strict";
 
@@ -1972,4 +1972,4 @@
             return newPts;
         }
     };
-}(JXG, Math));
+}());
