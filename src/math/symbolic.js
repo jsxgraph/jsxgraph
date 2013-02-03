@@ -35,7 +35,10 @@
 
 /*depends:
  JXG
+ base/coords
  math/math
+ math/geometry
+ server/server
  */
 
 /**
