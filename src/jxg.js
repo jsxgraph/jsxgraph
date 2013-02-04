@@ -365,26 +365,6 @@
         },
 
         /**
-         * Reads the configuration parameter of an attribute of an element from a {@link JXG.Options} object
-         * @param {JXG.Options} options Reference to an instance of JXG.Options. You usually want to use the
-         * options property of your board.
-         * @param {String} element The name of the element which options you wish to read, e.g. 'point' or
-         * 'elements' for general attributes.
-         * @param {String} key The name of the attribute to read, e.g. 'strokeColor' or 'withLabel'
-         * @returns The value of the selected configuration parameter.
-         * @see JXG.Options
-         */
-        readOption: function (options, element, key) {
-            var val = options.elements[key];
-
-            if (JXG.exists(options[element][key])) {
-                val = options[element][key];
-            }
-
-            return val;
-        },
-
-        /**
          * Generates an attributes object that is filled with default values from the Options object
          * and overwritten by the user speciified attributes.
          * @param {Object} attributes user specified attributes
