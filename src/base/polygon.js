@@ -95,7 +95,7 @@
                 // This sets the "correct" labels for the first triangle of a construction.
                 i = (j + 1) % len;
                 attr_line.id = attr_line.ids && attr_line.ids[i];
-                attr_line.strokecolor = JXG.isArray(attr_line.colors) && (attr_line.colors[i % attr_line.colors.length] || attr_line.strokecolor);
+                attr_line.strokecolor = (JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
 
                 if (attr_line.strokecolor === false) {
                     attr_line.strokecolor = 'none';
