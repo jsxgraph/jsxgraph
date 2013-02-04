@@ -36,6 +36,7 @@
 /*depends:
  JXG
  renderer/abstract
+ utils/env
  
  for Lines:
  base/coords

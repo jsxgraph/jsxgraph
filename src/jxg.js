@@ -34,6 +34,7 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
+ utils/env (getPosition, getDimensions, getStyle)
  GeonextParser, should be replaced by jessiecode
  jsxgraph, to create and initialize a board. this occurs twice.
            the first occurence is a shortcut to initBoard - it should be removed
@@ -101,114 +102,11 @@
 
 
     JXG.extend(JXG, /** @lends JXG */ {
-
-        /**
-         * Determines the property that stores the relevant information in the event object.
-         * @type {String}
-         * @default 'touches'
-         */
-        touchProperty: 'touches',
-
-
         /**
          * Represents the currently used JSXGraph version.
          * @type {String}
          */
         version: '0.97.1',
-
-        /**
-         * A document/window environment is available.
-         * @type Boolean
-         * @default false
-         */
-        isBrowser: typeof window === 'object' && typeof document === 'object',
-
-        /**
-         * Detect browser support for VML.
-         * @returns {Boolean} True, if the browser supports VML.
-         */
-        supportsVML: function () {
-            // From stackoverflow.com
-            return this.isBrowser && !!document.namespaces;
-        },
-
-        /**
-         * Detect browser support for SVG.
-         * @returns {Boolean} True, if the browser supports SVG.
-         */
-        supportsSVG: function () {
-            return this.isBrowser && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1');
-        },
-
-        /**
-         * Detect browser support for Canvas.
-         * @returns {Boolean} True, if the browser supports HTML canvas.
-         */
-        supportsCanvas: function () {
-            var hasCanvas = false;
-
-            if (this.isNode()) {
-                try {
-                    require('canvas');
-                    hasCanvas = true;
-                } catch (err) { }
-            }
-
-            return hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext);
-        },
-
-        isNode: function () {
-            // this is not a 100% sure but should be valid in most cases
-            return !this.isBrowser && typeof module === 'object' && module.exports;
-        },
-
-        /**
-         * Determine if the current browser supports touch events
-         * @returns {Boolean} True, if the browser supports touch events.
-         */
-        isTouchDevice: function () {
-            return this.isBrowser && document.documentElement.hasOwnProperty('ontouchstart');
-        },
-
-        /**
-         * Detects if the user is using an Android powered device.
-         * @returns {Boolean}
-         */
-        isAndroid: function () {
-            return JXG.exists(navigator) && navigator.userAgent.toLowerCase().indexOf('android') > -1;
-        },
-
-        /**
-         * Detects if the user is using the default Webkit browser on an Android powered device.
-         * @returns {Boolean}
-         */
-        isWebkitAndroid: function () {
-            return this.isAndroid() && navigator.userAgent.indexOf(' AppleWebKit/') > -1;
-        },
-
-        /**
-         * Detects if the user is using a Apple iPad / iPhone.
-         * @returns {Boolean}
-         */
-        isApple: function () {
-            return JXG.exists(navigator) && (navigator.userAgent.indexOf('iPad') > -1 || navigator.userAgent.indexOf('iPhone') > -1);
-        },
-
-        /**
-         * Detects if the user is using Safari on an Apple device.
-         * @returns {Boolean}
-         */
-        isWebkitApple: function () {
-            return this.isApple() && (navigator.userAgent.search(/Mobile\/[0-9A-Za-z\.]*Safari/) > -1);
-        },
-
-        /**
-         * Returns true if the run inside a Windows 8 "Metro" App.
-         * @return {Boolean}
-         */
-        isMetroApp: function () {
-            return typeof window === 'object' && window.clientInformation && window.clientInformation.appName && window.clientInformation.appName.indexOf('MSAppHost') > -1;
-        },
 
         /**
          * Resets visPropOld of <tt>el</tt>
@@ -231,28 +129,6 @@
                 top: -100000
             };
         },
-
-        /**
-         * Internet Explorer version. Works only for IE > 4.
-         * @type Number
-         */
-        ieVersion: (function () {
-            var undef,
-                v = 3,
-                div = document.createElement('div'),
-                all = div.getElementsByTagName('i');
-
-            if (typeof document !== 'object') {
-                return undef;
-            }
-
-            do {
-                div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i><' + '/i><![endif]-->';
-            } while (all[0]);
-
-            return v > 4 ? v : undef;
-
-        }()),
 
         /**
          * s may be a string containing the name or id of an element or even a reference
@@ -620,7 +496,7 @@
             var element, display, els, originalVisibility, originalPosition,
                 originalDisplay, originalWidth, originalHeight;
 
-            if (!this.isBrowser || elementId === null) {
+            if (!JXG.isBrowser || elementId === null) {
                 return {
                     width: 500,
                     height: 500
@@ -1412,8 +1288,11 @@
         trunc: function (n, p) {
             p = JXG.def(p, 0);
 
+            /*jslint bitwise:true*/
+
             if (p === 0) {
-                n = ~~n;
+                n = ~n;
+                n = ~n;
             } else {
                 n = n.toFixed(p);
             }

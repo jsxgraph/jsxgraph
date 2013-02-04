@@ -35,7 +35,8 @@
 
 /* depends:
  JXG
- board
+ utils/env
+ base/board
  reader/file
  options
  renderer

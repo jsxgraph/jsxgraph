@@ -37,6 +37,7 @@
 /*depends:
  JXG
  utils/event
+ utils/env
  parser/jessiecode
  JSXGraph (licenseText, boards)
  math/math

@@ -29,6 +29,9 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+/* depends
+ utils/env
+ */
 
 /**
  * The FileReader object bundles the file input capabilities of JSXGraph.
