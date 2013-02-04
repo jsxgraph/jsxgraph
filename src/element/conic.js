@@ -571,6 +571,7 @@
 
         polarForm = function (t, suspendUpdate) {
             var e = M.Dist(F1) * 0.5,
+                e4 = e * 4,
                 transformMat = [
                     [1, 0, 0],
                     [0, 1, 0],
@@ -593,13 +594,14 @@
                 curve.quadraticform =
                     JXG.Math.matMatMult(JXG.Math.transpose(transformMat),
                         JXG.Math.matMatMult([
-                            [-b * 4 * e - a * a, a, 2 * e],
+                            [-b * e4 - a * a, a, 2 * e],
                             [a, -1, 0],
                             [2 * e, 0, 0]
                         ], transformMat));
             }
-            return JXG.Math.matVecMult(rotationMatrix, [1, t + a, t * t / (e * 4) + b]);
+            return JXG.Math.matVecMult(rotationMatrix, [e4, e4 * (t + a), t * t + b * e4]);
         };
+
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
