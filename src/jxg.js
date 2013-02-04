@@ -88,7 +88,7 @@
     };
 
     /**
-     * Creates a shortcut to a method, e.g. {@link JXG.Board#create} is a shortcut to {@link JXG.Board#createElement}.
+     * Creates a shortcut to a method, e.g. {@link JXG.Board#createElement} is a shortcut to {@link JXG.Board#create}.
      * Sometimes the target is undefined by the time you want to define the shortcut so we need this little helper.
      * @param {Object} object The object the method we want to create a shortcut for belongs to.
      * @param {Function} fun The method we want to create a shortcut for.
@@ -155,7 +155,7 @@
         },
 
         /**
-         * This is just a shortcut to {@link JXG.getReference}.
+         * This is just a shortcut to {@link JXG.getRef}.
          */
         getReference: JXG.shortcut(JXG, 'getRef'),
 
