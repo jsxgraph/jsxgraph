@@ -315,29 +315,11 @@
             var f = [], i, str;
 
             for (i = 0; i < n; i++) {
-                if (typeof param[i] === 'string') {
-                    str = JXG.GeonextParser.geonext2JS(param[i], board);
-                    str = str.replace(/this\.board\./g, 'board.');
-                    f[i] = new Function('', 'return ' + (str) + ';');
-                }
+                f[i] = JXG.createFunction(param[i], board, '', true);
             }
 
             return function (k) {
-                var a = param[k];
-
-                if (typeof a === 'string') {
-                    return f[k]();
-                }
-
-                if (typeof a === 'function') {
-                    return a();
-                }
-
-                if (typeof a === 'number') {
-                    return a;
-                }
-
-                return 0;
+                return f[k]();
             };
         },
 
