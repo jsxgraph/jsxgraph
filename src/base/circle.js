@@ -610,12 +610,13 @@
          * @returns {JXG.Circle} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p,
-                diffc = JXG.Math.Statistics.subtract(coords.usrCoords, oldcoords.usrCoords),
+            var i, p, diffc,
                 len = this.parents.length;
 
             coords = new JXG.Coords(method, coords, this.board);
             oldcoords = new JXG.Coords(method, oldcoords, this.board);
+
+            diffc = JXG.Math.Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
 
             for (i = 0; i < len; i++) {
                 if (!JXG.getRef(this.board, this.parents[i]).draggable()) {
