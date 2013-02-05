@@ -1389,9 +1389,9 @@
                 eps = this.options.precision.touch,
                 found, target, result;
 
-            if (!this.hasTouchEnd) {
-                JXG.addEvent(document, 'pointerUp', this.pointerUpListener, this);
-                this.hasTouchEnd = true;
+            if (!this.hasPointerUp) {
+                JXG.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                this.hasPointerUp = true;
             }
 
             if (this.hasMouseHandlers) {
@@ -1606,8 +1606,8 @@
             }
 
             if (this.touches.length === 0) {
-                JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
-                this.hasTouchEnd = false;
+                JXG.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                this.hasPointerUp = false;
 
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
