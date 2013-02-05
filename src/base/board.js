@@ -1538,8 +1538,14 @@
                                     this.touches[i].targets[j].Y = evt.pageY;
 
                                     this.twoFingerMove(
-                                        this.getMousePosition(evt),
-                                        this.getMousePosition(evt),
+                                        this.getMousePosition({
+                                            pageX: this.touches[i].targets[0].X,
+                                            pageY: this.touches[i].targets[0].Y
+                                        }),
+                                        this.getMousePosition({
+                                            pageX: this.touches[i].targets[1].X,
+                                            pageY: this.touches[i].targets[1].Y
+                                        }),
                                         this.touches[i],
                                         evt
                                     );
