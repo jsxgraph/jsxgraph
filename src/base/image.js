@@ -35,10 +35,12 @@
 
 /* depends:
  JXG
+ base/constants
  base/coords
  base/element
  math/math
  math/statistics
+ utils/type
  */
 
 /**

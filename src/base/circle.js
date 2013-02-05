@@ -36,10 +36,12 @@
 /* depends:
  JXG
  base/element
+ base/constants
  base/coords
  parser/geonext
  math/geometry
  math/statistics
+ utils/type
   elements:
    circumcircle
    transform

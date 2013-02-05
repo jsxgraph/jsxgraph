@@ -30,18 +30,24 @@
  */
 
 
-/*global JXG: true, jQuery: true, window: true, document: true, navigator: true, require: true, module: true, console: true */
+/*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends
- JXG
+ utils/type
+ */
+
+/**
+ * @fileoverview The functions in this file help with the detection of the environment JSXGraph runs in. We can distinguish
+ * between node.js, windows 8 app and browser, what rendering techniques are supported and (most of the time) if the device
+ * the browser runs on is a tablet/cell or a desktop computer.
  */
 
 (function () {
 
     "use strict";
 
-    JXG.extend(JXG, {
+    JXG.extend(JXG, /** @lends JXG */ {
         /**
          * Determines the property that stores the relevant information in the event object.
          * @type {String}

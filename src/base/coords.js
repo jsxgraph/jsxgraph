@@ -34,7 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /*depends:
- JXG
+ JXG (JXG.extend)
+ base/constants
  utils/event
  math/math
  */
@@ -47,9 +48,6 @@
      * @fileoverview In this file the Coords object is defined, a class to manage all
      * properties and methods coordinates usually have.
      */
-
-    JXG.COORDS_BY_USER = 0x0001;
-    JXG.COORDS_BY_SCREEN = 0x0002;
 
     /**
      * Constructs a new Coordinates object.

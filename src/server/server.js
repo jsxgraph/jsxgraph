@@ -37,6 +37,7 @@
  JXG
  utils/zip
  utils/base64
+ utils/type
  */
 
 /**

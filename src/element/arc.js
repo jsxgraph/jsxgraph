@@ -39,6 +39,8 @@
  math/math
  base/coords
  base/circle
+ utils/type
+ base/constants
   elements:
    curve
    midpoint

@@ -35,12 +35,14 @@
 
 /* depends:
  JXG
+ base/constants
+ base/coords
+ math/math
+ options
+ parser/geonext
  utils/event
  utils/color
- options
- base/coords
- parser/geonext
- math/math
+ utils/type
   elements:
    text
  */
@@ -48,42 +50,6 @@
 (function () {
 
     "use strict";
-
-    JXG.extend(JXG, {
-        // object types
-        OBJECT_TYPE_ARC: 1,
-        OBJECT_TYPE_ARROW: 2,
-        OBJECT_TYPE_AXIS: 3,
-        OBJECT_TYPE_AXISPOINT: 4,
-        OBJECT_TYPE_TICKS: 5,
-        OBJECT_TYPE_CIRCLE: 6,
-        OBJECT_TYPE_CONIC: 7,
-        OBJECT_TYPE_CURVE: 8,
-        OBJECT_TYPE_GLIDER: 9,
-        OBJECT_TYPE_IMAGE: 10,
-        OBJECT_TYPE_LINE: 11,
-        OBJECT_TYPE_POINT: 12,
-        OBJECT_TYPE_SLIDER: 13,
-        OBJECT_TYPE_CAS: 14,
-        OBJECT_TYPE_GXTCAS: 15,
-        OBJECT_TYPE_POLYGON: 16,
-        OBJECT_TYPE_SECTOR: 17,
-        OBJECT_TYPE_TEXT: 18,
-        OBJECT_TYPE_ANGLE: 19,
-        OBJECT_TYPE_INTERSECTION: 20,
-        OBJECT_TYPE_TURTLE: 21,
-        OBJECT_TYPE_VECTOR: 22,
-        OBJECT_TYPE_OPROJECT: 23,
-        OBJECT_TYPE_GRID: 24,
-
-        // object classes
-        OBJECT_CLASS_POINT: 1,
-        OBJECT_CLASS_LINE: 2,
-        OBJECT_CLASS_CIRCLE: 3,
-        OBJECT_CLASS_CURVE: 4,
-        OBJECT_CLASS_AREA: 5,
-        OBJECT_CLASS_OTHER: 6
-    });
 
     /**
      * Constructs a new GeometryElement object.

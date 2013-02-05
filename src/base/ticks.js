@@ -36,8 +36,10 @@
 /* depends:
  JXG
  math/math
+ base/constants
  base/element
  base/coords
+ utils/type
   elements:
    text
  */

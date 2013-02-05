@@ -34,11 +34,12 @@
 /*jslint nomen: true, plusplus: true*/
 
 /*depends:
- JXG
+ base/constants
  base/coords
  math/math
  math/geometry
  server/server
+ utils/type
  */
 
 /**

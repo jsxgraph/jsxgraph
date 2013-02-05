@@ -35,9 +35,11 @@
 
 /* depends:
  JXG
+ base/constants
  base/coords
  math/statistics
  utils/array
+ utils/type
  base/element
   elements:
    segment

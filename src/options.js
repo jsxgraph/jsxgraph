@@ -35,9 +35,11 @@
 
 /* depends:
  JXG
+ base/constants
  base/point
  math/math
  utils/color
+ utils/type
  */
 
 (function () {

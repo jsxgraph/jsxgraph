@@ -35,7 +35,9 @@
 
 /* depends:
  JXG
+ base/constants
  base/element
+ utils/type
   elements:
    curve
    point

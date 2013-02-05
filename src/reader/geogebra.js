@@ -29,6 +29,10 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+/* depends (incomplete)
+ base/constants
+ utils/type
+ */
 
 JXG.GeogebraReader = new function() {
 /**

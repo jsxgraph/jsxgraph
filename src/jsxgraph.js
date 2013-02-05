@@ -59,14 +59,6 @@
      * to load, save, create and free a board.
      */
     JXG.JSXGraph = {
-
-        /**
-         * The small gray version indicator in the top left corner of every JSXGraph board (if
-         * showCopyright is not set to false on board creation).
-         * @type String
-         */
-        licenseText: 'JSXGraph v0.97.1 Copyright (C) see http://jsxgraph.org',
-
         /**
          * Associative array that keeps references to all boards.
          * @type Object

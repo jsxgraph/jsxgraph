@@ -29,6 +29,9 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+/* depends (incomplete)
+ utils/type
+ */
 
 /* Compatibility for <= 0.75.4 */
 /*

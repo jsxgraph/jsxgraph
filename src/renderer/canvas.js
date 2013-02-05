@@ -36,7 +36,9 @@
 /*depends:
  JXG
  renderer/abstract
+ base/constants
  utils/env
+ utils/type
  
  for Lines:
  base/coords
@@ -1005,7 +1007,7 @@
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && board.showCopyright) {
-                this.displayCopyright(JXG.JSXGraph.licenseText, 12);
+                this.displayCopyright(JXG.licenseText, 12);
             }
         },
 

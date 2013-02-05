@@ -37,6 +37,7 @@
  JXG
  element/composition
  options
+ utils/type
   elements:
    point
    line

@@ -34,7 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ base/constants
+ utils/type
 
  inside eval'd strings:
  math/math

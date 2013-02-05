@@ -30,18 +30,24 @@
  */
 
 
-/*global JXG: true, jQuery: true, window: true, document: true, navigator: true, require: true, module: true, console: true */
+/*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends
  JXG
+ utils/type
+ */
+
+/**
+ * @fileoverview array.js contains multiple helper functions to simplify the handling of arrays. These functions will, for
+ * now, be attached directly to the JXG namespace.
  */
 
 (function () {
 
     "use strict";
 
-    JXG.extend(JXG, {
+    JXG.extend(JXG, /** @lends JXG */ {
         /**
          * Search an array for a given value.
          * @param {Array} array

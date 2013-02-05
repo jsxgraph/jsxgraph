@@ -36,6 +36,7 @@
 /*depends:
  JXG
  math/math
+ utils/type
  */
 
 (function () {

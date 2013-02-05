@@ -37,6 +37,7 @@
  JXG
  math/math
  utils/array
+ utils/type
  */
 
 /**

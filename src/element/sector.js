@@ -38,6 +38,8 @@
  math/geometry
  math/math
  base/coords
+ base/constants
+ utils/type
   elements:
    point
    curve

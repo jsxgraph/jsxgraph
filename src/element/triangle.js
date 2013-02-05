@@ -35,6 +35,7 @@
 
 /* depends:
  JXG
+ utils/type
   elements:
    line
    group

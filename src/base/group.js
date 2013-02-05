@@ -35,6 +35,8 @@
 
 /* depends:
  JXG
+ base/constants
+ utils/type
  */
 
 /** 

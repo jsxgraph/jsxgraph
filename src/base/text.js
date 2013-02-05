@@ -35,11 +35,13 @@
 
 /* depends:
  JXG
+ base/constants
  base/coords
  base/element
  parser/geonext
  math/statistics
  utils/env
+ utils/type
  */
 
 /**

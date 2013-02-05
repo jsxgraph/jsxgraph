@@ -29,7 +29,10 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
+/* depends (incomplete)
+ base/constants
+ utils/type
+ */
 JXG.debug = function() {};
 JXG.GeonextReader = {
 

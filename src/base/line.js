@@ -40,8 +40,10 @@
  math/geometry
  math/numerics
  math/statistics
+ base/constants
  base/coords
  base/element
+ utils/type
   elements:
    transform
    point

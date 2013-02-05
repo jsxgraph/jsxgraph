@@ -29,6 +29,10 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+/* depends: (incomplete)
+ JXG
+ base/constants
+ */
 
 JXG.CinderellaReader = new function() {
     this.parseData = function(board) {

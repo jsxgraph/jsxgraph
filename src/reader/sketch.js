@@ -31,13 +31,16 @@
  */
 
 /* depends
- JXG
+ JXG (JXG.extend, JXG.deepCopy)
+ base/constants
+ math/math
  options
  utils/array
  utils/zip
  utils/encoding
  utils/base64
  utils/uuid
+ utils/type
  */
 
 

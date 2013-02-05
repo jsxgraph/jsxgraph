@@ -35,6 +35,8 @@
 /* depends:
  JXG
  renderer/abstract
+ base/constants
+ utils/type
 
  for Curves:
  math/numerics

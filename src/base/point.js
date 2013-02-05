@@ -39,7 +39,9 @@
  math/geometry
  math/numerics
  base/coords
+ base/constants
  base/element
+ utils/type
  jsxgraph
   elements:
    transform

@@ -36,6 +36,7 @@
 /* depends:
  JXG
  math/math
+ base/constants
  base/point
   elements:
    point

@@ -29,8 +29,9 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-/* depends
+/* depends (incomplete)
  utils/env
+ utils/type
  */
 
 /**

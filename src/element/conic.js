@@ -38,6 +38,7 @@
  math/math
  math/geometry
  math/numerics
+ utils/type
   elements:
    point
    curve

@@ -35,9 +35,11 @@
 
 /*depends:
  JXG
+ base/constants
  base/coords
  math/math
  math/numerics
+ utils/type
  */
 
 /**

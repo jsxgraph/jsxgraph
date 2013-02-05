@@ -36,18 +36,20 @@
 
 /*depends:
  JXG
- utils/event
- utils/env
- parser/jessiecode
- JSXGraph (licenseText, boards)
- math/math
+ JSXGraph (boards)
+ base/constants
  base/coords
+ options (should be removed and converted to this.options)
+ math/numerics
+ math/math
  math/geometry
- Options (should be removed and converted to this.options)
+ math/complex
+ parser/jessiecode
  parser/geonext
  utils/color
- math/numerics
- math/complex
+ utils/type
+ utils/event
+ utils/env
   elements:
    transform
    point
@@ -388,7 +390,7 @@
         this.downObjects = [];
 
         if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(JXG.JSXGraph.licenseText, parseInt(this.options.text.fontSize, 10));
+            this.renderer.displayCopyright(JXG.licenseText, parseInt(this.options.text.fontSize, 10));
         }
 
         /**

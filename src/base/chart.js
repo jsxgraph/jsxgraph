@@ -37,10 +37,12 @@
  JXG
  math/numerics
  math/statistics
+ base/constants
  base/coords
  base/element
  parser/datasource
  utils/color
+ utils/type
   elements:
    curve
    spline

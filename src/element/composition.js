@@ -42,6 +42,8 @@
  math/symbolic
  base/composition
  base/coords
+ base/constants
+ utils/type
   elements:
    line
    circle

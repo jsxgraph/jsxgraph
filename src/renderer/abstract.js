@@ -42,8 +42,10 @@
 /*depends:
  JXG
  
+ base/constants
  math/math           calculations should not be done in here. we should consider moving this somewhere else
  math/geometry
+ utils/type
 */
 
 /**

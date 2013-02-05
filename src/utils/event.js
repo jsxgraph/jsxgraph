@@ -36,6 +36,7 @@
 /*depends:
  JXG
  utils/array
+ utils/type
  */
 
 /**

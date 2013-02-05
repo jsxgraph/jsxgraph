@@ -35,12 +35,14 @@
 
 /* depends:
  JXG
+ base/constants
  base/coords
  base/element
  math/math
  math/statistics
  math/numerics
  parser/geonext
+ utils/type
   elements:
    transform
  */
