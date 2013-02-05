@@ -37,6 +37,7 @@
  renderer/abstract
  base/constants
  utils/type
+ utils/browser
 
  for Curves:
  math/numerics

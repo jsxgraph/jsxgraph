@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, document:true*/
+/*global JXG: true, document:true, jQuery:true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -38,6 +38,7 @@
  utils/env
  utils/type
  utils/object
+ utils/browser
  base/board
  reader/file
  options
@@ -418,4 +419,71 @@
             delete JXG.Board.prototype['_' + element.toLowerCase()];
         }
     };
+
+    // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
+    if (typeof window === 'object' && typeof document === 'object') {
+        JXG.addEvent(window, 'load', function () {
+            var scripts = document.getElementsByTagName('script'), type,
+                i, j, div, id, board, width, height, bbox, axis, grid, code;
+
+            for (i = 0; i < scripts.length; i++) {
+                type = scripts[i].getAttribute('type', false);
+
+                if (JXG.exists(type) && (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' || type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
+                    width = scripts[i].getAttribute('width', false) || '500px';
+                    height = scripts[i].getAttribute('height', false) || '500px';
+                    bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
+                    id = scripts[i].getAttribute('container', false);
+
+                    bbox = bbox.split(',');
+                    if (bbox.length !== 4) {
+                        bbox = [-5, 5, 5, -5];
+                    } else {
+                        for (j = 0; j < bbox.length; j++) {
+                            bbox[j] = parseFloat(bbox[j]);
+                        }
+                    }
+                    axis = JXG.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
+                    grid = JXG.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
+
+                    if (!JXG.exists(id)) {
+                        id = 'jessiescript_autgen_jxg_' + i;
+                        div = document.createElement('div');
+                        div.setAttribute('id', id);
+                        div.setAttribute('style', 'width:' + width + '; height:' + height + '; float:left');
+                        div.setAttribute('class', 'jxgbox');
+                        try {
+                            document.body.insertBefore(div, scripts[i]);
+                        } catch (e) {
+                            // there's probably jquery involved...
+                            if (typeof jQuery === 'object') {
+                                jQuery(div).insertBefore(scripts[i]);
+                            }
+                        }
+                    } else {
+                        div = document.getElementById(id);
+                    }
+
+                    if (document.getElementById(id)) {
+                        board = JXG.JSXGraph.initBoard(id, {boundingbox: bbox, keepaspectratio: true, grid: grid, axis: axis});
+
+                        code = scripts[i].innerHTML;
+                        code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
+                        scripts[i].innerHTML = code;
+                        if (type.toLowerCase().indexOf('script') > -1) {
+                            board.construct(code);
+                        } else {
+                            try {
+                                board.jc.parse(code);
+                            } catch (e2) {
+                                JXG.debug(e2);
+                            }
+                        }
+                    } else {
+                        JXG.debug('JSXGraph: Apparently the div injection failed. Can\'t create a board, sorry.');
+                    }
+                }
+            }
+        }, window);
+    }
 }());

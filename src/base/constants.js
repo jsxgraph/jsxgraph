@@ -34,16 +34,16 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends
- JXG (just the namespace)
+ jxg
  */
 
 (function () {
 
     "use strict";
 
-    var constants, j;
+    var constants;
 
-    constants = {
+    constants = /** @lends JXG */ {
         // copyright, version, ...
 
         /**
@@ -98,12 +98,7 @@
         OBJECT_CLASS_OTHER: 6
     };
 
-    // temporary fix until AMD transition is done
-    for (j in constants) {
-        if (constants.hasOwnProperty(j)) {
-            JXG[j] = constants[j];
-        }
-    }
+    JXG.extend(JXG, constants);
 
     return constants;
 }());

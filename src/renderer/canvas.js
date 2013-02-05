@@ -39,6 +39,7 @@
  base/constants
  utils/env
  utils/type
+ utils/browser
  
  for Lines:
  base/coords

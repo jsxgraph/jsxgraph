@@ -53,6 +53,7 @@
  utils/object
  utils/string
  utils/number
+ utils/browser
   elements:
    transform
    point

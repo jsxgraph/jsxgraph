@@ -47,6 +47,7 @@
  math/geometry
  utils/type
  utils/object
+ utils/browser
 */
 
 /**
