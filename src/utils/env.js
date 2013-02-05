@@ -90,9 +90,13 @@
             return hasCanvas || (this.isBrowser && !!document.createElement('canvas').getContext);
         },
 
+        /**
+         * True, if run inside a node.js environment.
+         * @returns {Boolean}
+         */
         isNode: function () {
             // this is not a 100% sure but should be valid in most cases
-            return !this.isBrowser && typeof module === 'object' && module.exports;
+            return !this.isBrowser && typeof module === 'object' && !!module.exports;
         },
 
         /**

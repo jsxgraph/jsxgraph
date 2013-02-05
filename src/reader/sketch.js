@@ -30,6 +30,16 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
+/* depends
+ JXG
+ options
+ utils/array
+ utils/zip
+ utils/encoding
+ utils/base64
+ utils/uuid
+ */
+
 
 JXG.extend(JXG, {
 

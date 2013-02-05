@@ -35,6 +35,7 @@
 
 /* depends:
  utils/env (getPosition, getDimensions, getStyle)
+ utils/array (removeEvent, collectionContains)
  GeonextParser, should be replaced by jessiecode
  jsxgraph, to create and initialize a board. this occurs twice.
            the first occurence is a shortcut to initBoard - it should be removed
@@ -612,25 +613,6 @@
         },
 
         /**
-         * Removes an element from the given array
-         * @param {Array} ar
-         * @param el
-         * @returns {Array}
-         */
-        removeElementFromArray: function (ar, el) {
-            var i;
-
-            for (i = 0; i < ar.length; i++) {
-                if (ar[i] === el) {
-                    ar.splice(i, 1);
-                    return ar;
-                }
-            }
-
-            return ar;
-        },
-
-        /**
          * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
@@ -885,30 +867,6 @@
             /*jslint forin:false*/
 
             return keys;
-        },
-
-        /**
-         * Search an array for a given value.
-         * @param {Array} array
-         * @param value
-         * @param {String} [sub] Use this property if the elements of the array are objects.
-         * @returns {Number} The index of the first appearance of the given value, or
-         * <tt>-1</tt> if the value was not found.
-         */
-        indexOf: function (array, value, sub) {
-            var i, s = JXG.exists(sub);
-
-            if (Array.indexOf && !s) {
-                return array.indexOf(value);
-            }
-
-            for (i = 0; i < array.length; i++) {
-                if ((s && array[i][sub] === value) || (!s && array[i] === value)) {
-                    return i;
-                }
-            }
-
-            return -1;
         },
 
         /**
@@ -1191,57 +1149,6 @@
         },
 
         /**
-         * Eliminates duplicate entries in an array.
-         * @param {Array} a An array
-         * @returns {Array} The array with duplicate entries eliminated.
-         */
-        eliminateDuplicates: function (a) {
-            var i,
-                len = a.length,
-                result = [],
-                obj = {};
-
-            for (i = 0; i < len; i++) {
-                obj[a[i]] = 0;
-            }
-
-            for (i in obj) {
-                if (obj.hasOwnProperty(i)) {
-                    result.push(i);
-                }
-            }
-
-            return result;
-        },
-
-        /**
-         * Compare two arrays.
-         * @param {Array} a1
-         * @param {Array} a2
-         * @returns {Boolean} <tt>true</tt>, if the arrays coefficients are of same type and value.
-         */
-        cmpArrays: function (a1, a2) {
-            var i;
-
-            // trivial cases
-            if (a1 === a2) {
-                return true;
-            }
-
-            if (a1.length !== a2.length) {
-                return false;
-            }
-
-            for (i = 0; i < a1.length; i++) {
-                if (a1[i] !== a2[i]) {
-                    return false;
-                }
-            }
-
-            return true;
-        },
-
-        /**
          * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
          * @param {Number} n
          * @param {Number} p
@@ -1319,73 +1226,6 @@
                     console.log(e.stack.split('\n').slice(1).join('\n'));
                 }
             }
-        },
-
-        /**
-         * Swaps to array elements.
-         * @param {Array} arr
-         * @param {Number} i
-         * @param {Number} j
-         * @returns {Array} Reference to the given array.
-         */
-        swap: function (arr, i, j) {
-            var tmp;
-
-            tmp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = tmp;
-
-            return arr;
-        },
-
-        /**
-         * Generates a deep copy of an array and removes the duplicate entries.
-         * @param {Array} arr
-         * @returns {Array}
-         */
-        uniqueArray: function (arr) {
-            var i, j, isArray,
-                ret = [];
-
-            if (arr.length === 0) {
-                return [];
-            }
-
-            isArray = JXG.isArray(arr[0]);
-
-            for (i = 0; i < arr.length; i++) {
-                for (j = i + 1; j < arr.length; j++) {
-                    if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
-                        arr[i] = [];
-                    } else if (!isArray && arr[i] === arr[j]) {
-                        arr[i] = '';
-                    }
-                }
-            }
-
-            j = 0;
-
-            for (i = 0; i < arr.length; i++) {
-                if (!isArray && arr[i] !== "") {
-                    ret[j] = arr[i];
-                    j++;
-                } else if (isArray && arr[i].length !== 0) {
-                    ret[j] = (arr[i].slice(0));
-                    j++;
-                }
-            }
-
-            return ret;
-        },
-
-        /**
-         * Checks if an array contains an element equal to <tt>val</tt> but does not check the type!
-         * @param {Array} arr
-         * @param val
-         * @returns {Boolean}
-         */
-        isInArray: function (arr, val) {
-            return JXG.indexOf(arr, val) > -1;
         },
 
         /**

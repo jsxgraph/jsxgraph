@@ -37,6 +37,7 @@
  JXG
  base/coords
  math/statistics
+ utils/array
  base/element
   elements:
    segment
