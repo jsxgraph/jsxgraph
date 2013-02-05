@@ -510,7 +510,7 @@ def main(argv):
     # Search for the version and print it before the license text.
     if not version:
         expr = re.compile("JSXGraph v(.*) Copyright")
-        r = expr.search(open("src/jsxgraph.js").read())
+        r = expr.search(open("src/base/constants.js").read())
         version = r.group(1)
 
     try:
