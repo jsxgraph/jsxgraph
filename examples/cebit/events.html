@@ -36,6 +36,13 @@
 <script type="text/javascript">
     var container = document.getElementById('playfield'),
         i,
+        pointerTypes = [
+            'undefined',
+            'unavailable',
+            'touch',
+            'pen',
+            'mouse'
+        ],
         eventManager = {
             events: [
                 'mousedown',
@@ -57,6 +64,9 @@
                     $('#result').append(what + ' called ' + this.counter + ' times<br />');
                     this.counter = 1;
                 }
+
+                console.log('type ', pointerTypes[e.pointerType], ' / pressure ', e.pressure, ' / id ', e.pointerId, ' / primary ',e.isPrimary);
+
                 this.lastEvent = what;
                 this.counter += 1;
 
