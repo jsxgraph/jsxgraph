@@ -18,8 +18,10 @@
             };
 
             if (obj.addEventListener) { // Non-IE browser
+                console.log('addEventListener', type);
                 obj.addEventListener(type, owner['x_internal'+type], false);
             } else {
+                console.log('attach event', type);
                 obj.attachEvent('on'+type, owner['x_internal'+type]);
             }
         }
@@ -27,7 +29,7 @@
 </head>
 <body>
 
-<div id="playfield" style="width: 300px; height: 300px; border: 3px solid black;"></div>
+<div id="playfield" style="width: 300px; height: 300px; border: 3px solid black; -ms-touch-action: none;"></div>
 <div id="result"></div>
 <a href="jxg.html"><div class="box" style="float: left; background-color: #ccc;">Next</div></a>
 
@@ -41,7 +43,10 @@
                 'mouseup',
                 'touchstart',
                 'touchmove',
-                'touchend'
+                'touchend',
+                'MSPointerDown',
+                'MSPointerMove',
+                'MSPointerUp'
             ],
 
             lastEvent: '',
@@ -54,6 +59,14 @@
                 }
                 this.lastEvent = what;
                 this.counter += 1;
+
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else if (window.event) {
+                    window.event.returnValue = false;
+                }
+
+                return true;
             },
             makeEventHandler: function(what) {
                 return function(e) {
@@ -61,6 +74,9 @@
                 };
             }
         };
+
+    $('#result').append('mspointerenabled:', window.navigator.msPointerEnabled.toString(), '<br />');
+    console.log(window.navigator.msPointerEnabled);
 
     try {
         for(i = 0; i < eventManager.events.length; i++) {

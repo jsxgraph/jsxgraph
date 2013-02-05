@@ -10,6 +10,7 @@
     border-radius:10px;
     /*-moz-border-radius:10px;*/
     -webkit-border-radius:10px;
+    -ms-touch-action: none;
     /*
         -moz-box-shadow:black 2px 2px 2px -2px, #151A10 4px 4px;
         -webkit-box-shadow:4px 4px 3px #151A10;
