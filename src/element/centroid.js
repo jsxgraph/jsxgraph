@@ -36,6 +36,7 @@
 /* depends:
  JXG
  utils/type
+ utils/object
   elements:
    point
  */

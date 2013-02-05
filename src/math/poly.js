@@ -38,6 +38,7 @@
  math/math
  utils/array
  utils/type
+ utils/object
  */
 
 /**

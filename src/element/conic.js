@@ -39,6 +39,7 @@
  math/geometry
  math/numerics
  utils/type
+ utils/object
   elements:
    point
    curve

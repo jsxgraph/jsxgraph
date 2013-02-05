@@ -38,6 +38,7 @@
  element/composition
  options
  utils/type
+ utils/object
   elements:
    point
    line

@@ -40,6 +40,7 @@
  base/coords
  base/constants
  utils/type
+ utils/object
   elements:
    point
    curve

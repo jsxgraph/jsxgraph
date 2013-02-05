@@ -50,6 +50,9 @@
  utils/type
  utils/event
  utils/env
+ utils/object
+ utils/string
+ utils/number
   elements:
    transform
    point
@@ -3446,6 +3449,30 @@
         __evt__: function () {},
 
         //endregion
+
+        /**
+         * Select a single or multiple elements at once.
+         * @param {String} str The name, id or a reference to a JSXGraph element on this board.
+         * @returns {JXG.GeometryElement}
+         */
+        select: function (str) {
+            var s = str;
+
+            if (typeof s === 'string') {
+                // Search by ID
+                if (JXG.exists(this.objects[s])) {
+                    s = this.objects[s];
+                // Search by name
+                } else if (JXG.exists(this.elementsByName[s])) {
+                    s = this.elementsByName[s];
+                // Search by group ID
+                } else if (JXG.exists(this.groups[s])) {
+                    s = this.groups[s];
+                }
+            }
+
+            return s;
+        },
 
         /**
          * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.

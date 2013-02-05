@@ -34,8 +34,10 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ JXG (namespace)
  utils/env
+ utils/type
+ utils/object
  base/board
  reader/file
  options

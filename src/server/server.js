@@ -38,6 +38,7 @@
  utils/zip
  utils/base64
  utils/type
+ util/object
  */
 
 /**

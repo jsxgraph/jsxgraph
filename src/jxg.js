@@ -35,11 +35,10 @@
 
 /* depends:
  utils/env (getPosition, getDimensions, getStyle)
- utils/array (removeEvent, collectionContains)
- utils/type (removeEvent, deepCopy, toJSON, trunc, iife below)
+ utils/array (removeEvent)
+ utils/type (removeEvent, iife below)
  utils/type (jxg.exists)
  jsxgraph, to create and initialize a board. this occurs twice.
-           the first occurence is a shortcut to initBoard - it should be removed
            the second occurence is the IIFE below the JXG definition and should be moved
            to another file
  */
@@ -105,147 +104,22 @@
 
     JXG.extend(JXG, /** @lends JXG */ {
         /**
-         * Resets visPropOld of <tt>el</tt>
-         * @param {JXG.GeometryElement} el
-         */
-        clearVisPropOld: function (el) {
-            el.visPropOld = {
-                strokecolor: '',
-                strokeopacity: '',
-                strokewidth: '',
-                fillcolor: '',
-                fillopacity: '',
-                shadow: false,
-                firstarrow: false,
-                lastarrow: false,
-                cssclass: '',
-                fontsize: -1,
-                left: -100000,
-                right: 100000,
-                top: -100000
-            };
-        },
-
-        /**
          * s may be a string containing the name or id of an element or even a reference
          * to the element itself. This function returns a reference to the element. Search order: id, name.
          * @param {JXG.Board} board Reference to the board the element belongs to.
          * @param {String} s String or reference to a JSXGraph element.
          * @returns {Object} Reference to the object given in parameter object
+         * @deprecated Use {@link JXG.Board#select}
          */
         getRef: function (board, s) {
-            if (typeof s === 'string') {
-                // Search by ID
-                if (JXG.exists(board.objects[s])) {
-                    s = board.objects[s];
-                // Search by name
-                } else if (JXG.exists(board.elementsByName[s])) {
-                    s = board.elementsByName[s];
-                // Search by group ID
-                } else if (JXG.exists(board.groups[s])) {
-                    s = board.groups[s];
-                }
-            }
-
-            return s;
+            return board.select(s);
         },
 
         /**
          * This is just a shortcut to {@link JXG.getRef}.
+         * @deprecated Use {@link JXG.Board#select}.
          */
         getReference: JXG.shortcut(JXG, 'getRef'),
-
-        /**
-         * @deprecated
-         */
-        _board: function (box, attributes) {
-            return JXG.JSXGraph.initBoard(box, attributes);
-        },
-
-        /**
-         * Generates an attributes object that is filled with default values from the Options object
-         * and overwritten by the user speciified attributes.
-         * @param {Object} attributes user specified attributes
-         * @param {Object} options defaults options
-         * @param {String} s variable number of strings, e.g. 'slider', subtype 'point1'.
-         * @returns {Object} The resulting attributes object
-         */
-        copyAttributes: function (attributes, options, s) {
-            var a, i, len, o, isAvail,
-                primitives = {
-                    'circle': 1,
-                    'curve': 1,
-                    'image': 1,
-                    'line': 1,
-                    'point': 1,
-                    'polygon': 1,
-                    'text': 1,
-                    'ticks': 1,
-                    'integral': 1
-                };
-
-
-            len = arguments.length;
-            if (len < 3 || primitives[s]) {
-                // default options from Options.elements
-                a = this.deepCopy(options.elements, null, true);
-            } else {
-                a = {};
-            }
-
-            // Only the layer of the main element is set.
-            if (len < 4 && this.exists(s) && this.exists(options.layer[s])) {
-                a.layer = options.layer[s];
-            }
-
-            // default options from specific elements
-            o = options;
-            isAvail = true;
-            for (i = 2; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
-                } else {
-                    isAvail = false;
-                    break;
-                }
-            }
-            if (isAvail) {
-                a = this.deepCopy(a, o, true);
-            }
-
-            // options from attributes
-            o = attributes;
-            isAvail = true;
-            for (i = 3; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
-                } else {
-                    isAvail = false;
-                    break;
-                }
-            }
-            if (isAvail) {
-                this.extend(a, o, null, true);
-            }
-
-            // Special treatment of labels
-            o = options;
-            isAvail = true;
-            for (i = 2; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
-                    o = o[arguments[i]];
-                } else {
-                    isAvail = false;
-                    break;
-                }
-            }
-            if (isAvail) {
-                a.label =  JXG.deepCopy(o.label, a.label);
-            }
-            a.label = JXG.deepCopy(options.label, a.label);
-
-            return a;
-        },
 
         /**
          * Reads the width and height of an HTML element.
@@ -629,234 +503,6 @@
         },
 
         /**
-         * Extracts the keys of a given object.
-         * @param object The object the keys are to be extracted
-         * @param onlyOwn If true, hasOwnProperty() is used to verify that only keys are collected
-         * the object owns itself and not some other object in the prototype chain.
-         * @returns {Array} All keys of the given object.
-         */
-        keys: function (object, onlyOwn) {
-            var keys = [], property;
-
-            // the caller decides if we use hasOwnProperty
-            /*jslint forin:true*/
-            for (property in object) {
-                if (onlyOwn) {
-                    if (object.hasOwnProperty(property)) {
-                        keys.push(property);
-                    }
-                } else {
-                    keys.push(property);
-                }
-            }
-            /*jslint forin:false*/
-
-            return keys;
-        },
-
-        /**
-         * Replaces all occurences of &amp; by &amp;amp;, &gt; by &amp;gt;, and &lt; by &amp;lt;.
-         * @param str
-         */
-        escapeHTML: function (str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        },
-
-        /**
-         * Eliminates all substrings enclosed by &lt; and &gt; and replaces all occurences of
-         * &amp;amp; by &amp;, &amp;gt; by &gt;, and &amp;lt; by &lt;.
-         * @param str
-         */
-        unescapeHTML: function (str) {
-            // this regex is NOT insecure. We are replacing everything found with ''
-            /*jslint regexp:true*/
-            return str.replace(/<\/?[^>]+>/gi, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-        },
-
-        /**
-         * This outputs an object with a base class reference to the given object. This is useful if
-         * you need a copy of an e.g. attributes object and want to overwrite some of the attributes
-         * without changing the original object.
-         * @param {Object} obj Object to be embedded.
-         * @returns {Object} An object with a base class reference to <tt>obj</tt>.
-         */
-        clone: function (obj) {
-            var cObj = {};
-
-            cObj.prototype = obj;
-
-            return cObj;
-        },
-
-        /**
-         * Embeds an existing object into another one just like {@link #clone} and copies the contents of the second object
-         * to the new one. Warning: The copied properties of obj2 are just flat copies.
-         * @param {Object} obj Object to be copied.
-         * @param {Object} obj2 Object with data that is to be copied to the new one as well.
-         * @returns {Object} Copy of given object including some new/overwritten data from obj2.
-         */
-        cloneAndCopy: function (obj, obj2) {
-            var r,
-                cObj = function () {};
-
-            cObj.prototype = obj;
-
-            // no hasOwnProperty on purpose
-            /*jslint forin:true*/
-            /*jshint forin:true*/
-
-            for (r in obj2) {
-                cObj[r] = obj2[r];
-            }
-
-            /*jslint forin:false*/
-            /*jshint forin:false*/
-
-
-            return cObj;
-        },
-
-        /**
-         * Creates a deep copy of an existing object, i.e. arrays or sub-objects are copied component resp.
-         * element-wise instead of just copying the reference. If a second object is supplied, the two objects
-         * are merged into one object. The properties of the second object have priority.
-         * @param {Object} obj This object will be copied.
-         * @param {Object} obj2 This object will merged into the newly created object
-         * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
-         * @returns {Object} copy of obj or merge of obj and obj2.
-         */
-        deepCopy: function (obj, obj2, toLower) {
-            var c, i, prop, j, i2;
-
-            toLower = toLower || false;
-
-            if (typeof obj !== 'object' || obj === null) {
-                return obj;
-            }
-
-            // missing hasOwnProperty is on purpose in this function
-            /*jslint forin:true*/
-            /*jshint forin:false*/
-
-            if (this.isArray(obj)) {
-                c = [];
-                for (i = 0; i < obj.length; i++) {
-                    prop = obj[i];
-                    if (typeof prop === 'object') {
-                        c[i] = this.deepCopy(prop);
-                    } else {
-                        c[i] = prop;
-                    }
-                }
-            } else {
-                c = {};
-                for (i in obj) {
-                    i2 = toLower ? i.toLowerCase() : i;
-
-                    prop = obj[i];
-                    if (typeof prop === 'object') {
-                        c[i2] = this.deepCopy(prop);
-                    } else {
-                        c[i2] = prop;
-                    }
-                }
-
-                for (i in obj2) {
-                    i2 = toLower ? i.toLowerCase() : i;
-
-                    prop = obj2[i];
-                    if (typeof prop === 'object') {
-                        if (JXG.isArray(prop) || !JXG.exists(c[i2])) {
-                            c[i2] = this.deepCopy(prop);
-                        } else {
-                            c[i2] = this.deepCopy(c[i2], prop, toLower);
-                        }
-                    } else {
-                        c[i2] = prop;
-                    }
-                }
-            }
-
-            /*jslint forin:false*/
-            /*jshint forin:true*/
-
-            return c;
-        },
-
-        /**
-         * Converts a JavaScript object into a JSON string.
-         * @param {Object} obj A JavaScript object, functions will be ignored.
-         * @param {Boolean} [noquote=false] No quotes around the name of a property.
-         * @returns {String} The given object stored in a JSON string.
-         */
-        toJSON: function (obj, noquote) {
-            var list, prop, i, s, val;
-
-            noquote = JXG.def(noquote, false);
-
-            // check for native JSON support:
-            if (window.JSON && window.JSON.stringify && !noquote) {
-                try {
-                    s = JSON.stringify(obj);
-                    return s;
-                } catch (e) {
-                    // if something goes wrong, e.g. if obj contains functions we won't return
-                    // and use our own implementation as a fallback
-                }
-            }
-
-            switch (typeof obj) {
-            case 'object':
-                if (obj) {
-                    list = [];
-
-                    if (JXG.isArray(obj)) {
-                        for (i = 0; i < obj.length; i++) {
-                            list.push(JXG.toJSON(obj[i], noquote));
-                        }
-
-                        return '[' + list.join(',') + ']';
-                    }
-
-                    for (prop in obj) {
-                        if (obj.hasOwnProperty(prop)) {
-                            try {
-                                val = JXG.toJSON(obj[prop], noquote);
-                            } catch (e2) {
-                                val = '';
-                            }
-
-                            if (noquote) {
-                                list.push(prop + ':' + val);
-                            } else {
-                                list.push('"' + prop + '":' + val);
-                            }
-                        }
-                    }
-
-                    return '{' + list.join(',') + '} ';
-                }
-                return 'null';
-            case 'string':
-                return '\'' + obj.replace(/(["'])/g, '\\$1') + '\'';
-            case 'number':
-            case 'boolean':
-                return obj.toString();
-            }
-
-            return '0';
-        },
-
-        /**
-         * Makes a string lower case except for the first character which will be upper case.
-         * @param {String} str Arbitrary string
-         * @returns {String} The capitalized string.
-         */
-        capitalize: function (str) {
-            return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
-        },
-
-        /**
          * Process data in timed chunks. Data which takes long to process, either because it is such
          * a huge amount of data or the processing takes some time, causes warnings in browsers about
          * irresponsive scripts. To prevent these warnings, the processing is split into smaller pieces
@@ -885,78 +531,6 @@
                 };
 
             window.setTimeout(timerFun, 1);
-        },
-
-        /**
-         * Make numbers given as strings nicer by removing all unnecessary leading and trailing zeroes.
-         * @param {String} str
-         * @returns {String}
-         */
-        trimNumber: function (str) {
-            str = str.replace(/^0+/, '');
-            str = str.replace(/0+$/, '');
-
-            if (str[str.length - 1] === '.' || str[str.length - 1] === ',') {
-                str = str.slice(0, -1);
-            }
-
-            if (str[0] === '.' || str[0] === ',') {
-                str = "0" + str;
-            }
-
-            return str;
-        },
-
-        /**
-         * Remove all leading and trailing whitespaces from a given string.
-         * @param {String} str
-         * @returns {String}
-         */
-        trim: function (str) {
-            str = str.replace(/^\s+/, '');
-            str = str.replace(/\s+$/, '');
-
-            return str;
-        },
-
-        /**
-         * Truncate a number <tt>n</tt> after <tt>p</tt> decimals.
-         * @param {Number} n
-         * @param {Number} p
-         * @returns {Number}
-         */
-        trunc: function (n, p) {
-            p = JXG.def(p, 0);
-
-            /*jslint bitwise:true*/
-
-            if (p === 0) {
-                n = ~n;
-                n = ~n;
-            } else {
-                n = n.toFixed(p);
-            }
-
-            return n;
-        },
-
-        /**
-         * Truncate a number <tt>val</tt> automatically.
-         * @param val
-         * @returns {Number}
-         */
-        autoDigits: function (val) {
-            var x = Math.abs(val);
-            if (x > 0.1) {
-                x = val.toFixed(2);
-            } else if (x >= 0.01) {
-                x = val.toFixed(4);
-            } else if (x >= 0.0001) {
-                x = val.toFixed(6);
-            } else {
-                x = val;
-            }
-            return x;
         },
 
         /**
@@ -997,23 +571,6 @@
                     console.log(e.stack.split('\n').slice(1).join('\n'));
                 }
             }
-        },
-
-        /**
-         * Checks if an object contains a key, whose value equals to val
-         */
-        isInObject: function (lit, val) {
-            var el;
-
-            for (el in lit) {
-                if (lit.hasOwnProperty(el)) {
-                    if (lit[el] === val) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
     });
 

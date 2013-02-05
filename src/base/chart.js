@@ -43,6 +43,7 @@
  parser/datasource
  utils/color
  utils/type
+ utils/object
   elements:
    curve
    spline

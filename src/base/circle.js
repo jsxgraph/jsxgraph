@@ -42,6 +42,7 @@
  math/geometry
  math/statistics
  utils/type
+ utils/object
   elements:
    circumcircle
    transform
@@ -539,7 +540,7 @@
             copy.visProp.layer = this.board.options.layer.trace;
 
             this.numTraces++;
-            JXG.clearVisPropOld(copy);
+            JXG.clearVisPropOld.call(copy);
 
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;

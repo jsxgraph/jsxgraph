@@ -34,8 +34,9 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ JXG (namespace)
  utils/type
+ utils/object
   elements:
    line
    group

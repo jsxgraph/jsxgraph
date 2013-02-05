@@ -44,6 +44,7 @@
  base/coords
  base/constants
  utils/type
+ utils/object
   elements:
    line
    circle

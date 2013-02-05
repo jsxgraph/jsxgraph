@@ -44,6 +44,7 @@
  base/coords
  base/element
  utils/type
+ utils/object
   elements:
    transform
    point

@@ -43,6 +43,8 @@
  utils/event
  utils/color
  utils/type
+ utils/object
+ utils/string
   elements:
    text
  */

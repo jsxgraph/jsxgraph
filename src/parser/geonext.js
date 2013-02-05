@@ -459,8 +459,6 @@
                     'Math.exp', 'JXG.Math.factorial', 'Math.floor', 'Math.log', 'Math.max', 'Math.min',
                     'Math.random', 'Math.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
 
-            // This replaces &gt; by >, &lt; by < and &amp; by &. But it is too strict.
-            //term = JXG.unescapeHTML(term);
             // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
             term = term.replace(/&lt;/g, '<');
             term = term.replace(/&gt;/g, '>');

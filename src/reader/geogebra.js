@@ -32,6 +32,7 @@
 /* depends (incomplete)
  base/constants
  utils/type
+ utils/string
  */
 
 JXG.GeogebraReader = new function() {

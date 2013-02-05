@@ -38,6 +38,7 @@
  math/math
  base/constants
  base/point
+ utils/object
   elements:
    point
    group

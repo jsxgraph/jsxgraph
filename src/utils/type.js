@@ -34,7 +34,7 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends
- JXG (namespace)
+ JXG (namespace, extend)
  base/constants
  parser/geonext (createFunction)
  */

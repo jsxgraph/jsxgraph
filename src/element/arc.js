@@ -40,6 +40,7 @@
  base/coords
  base/circle
  utils/type
+ utils/object
  base/constants
   elements:
    curve

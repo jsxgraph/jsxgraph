@@ -41,6 +41,7 @@
  utils/base64
  utils/uuid
  utils/type
+ utils/string
  */
 
 

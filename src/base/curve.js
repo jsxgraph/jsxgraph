@@ -43,6 +43,7 @@
  math/numerics
  parser/geonext
  utils/type
+ utils/object
   elements:
    transform
  */

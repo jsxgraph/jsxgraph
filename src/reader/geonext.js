@@ -32,6 +32,7 @@
 /* depends (incomplete)
  base/constants
  utils/type
+ utils/string
  */
 JXG.debug = function() {};
 JXG.GeonextReader = {
