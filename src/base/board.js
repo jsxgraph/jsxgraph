@@ -438,16 +438,23 @@
         /**
          * A flag which tells if the board registers mouse events.
          * @type Boolean
-         * @default true
+         * @default false
          */
         this.hasMouseHandlers = false;
 
         /**
          * A flag which tells if the board registers touch events.
          * @type Boolean
-         * @default true
+         * @default false
          */
         this.hasTouchHandlers = false;
+
+        /**
+         * A flag which stores if the board registered pointer events.
+         * @type {Boolean}
+         * @default false
+         */
+        this.hasPointerHandlers = false;
 
         /**
          * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
@@ -462,6 +469,13 @@
          * @default false
          */
         this.hasTouchEnd = false;
+
+        /**
+         * A flag which tells us if the board has a pointerUp event registered at the moment.
+         * @type {Boolean}
+         * @default false
+         */
+        this.hasPointerUp = false;
 
         if (this.attr.registerevents) {
             this.addEventHandlers();
@@ -1172,6 +1186,19 @@
         addEventHandlers: function () {
             this.addMouseEventHandlers();
             this.addTouchEventHandlers();
+
+            if (JXG.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled)) {
+                this.addPointerEventHandlers();
+            }
+        },
+
+        addPointerEventHandlers: function () {
+            if (!this.hasPointerHandlers && JXG.isBrowser) {
+                JXG.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                JXG.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+
+                this.hasPointerHandlers = true;
+            }
         },
 
         addMouseEventHandlers: function () {
@@ -1208,6 +1235,19 @@
                 JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
                 this.hasTouchHandlers = true;
+            }
+        },
+
+        removePointerEventHandlers: function () {
+            if (this.hasPointerHandlers && JXG.isBrowser) {
+                JXG.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                JXG.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+
+                if (this.hasPointerUp) {
+                    JXG.removeEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
+                }
+
+                this.hasPointerHandlers = false;
             }
         },
 
@@ -1251,6 +1291,7 @@
         removeEventHandlers: function () {
             this.removeMouseEventHandlers();
             this.removeTouchEventHandlers();
+            this.removePointerEventHandlers();
         },
 
         /**
@@ -1331,6 +1372,251 @@
             this.prevScale = 1;
 
             return false;
+        },
+
+        /**
+         * pointer-Events
+         */
+
+        /**
+         * This method is called by the browser when a pointing device is pressed on the screen.
+         * @param {Event} evt The browsers event object.
+         * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
+         * @returns {Boolean} ...
+         */
+        pointerDownListener: function (evt, object) {
+            var i, j, k, pos, elements,
+                eps = this.options.precision.touch,
+                found, target, result;
+
+            if (!this.hasTouchEnd) {
+                JXG.addEvent(document, 'pointerUp', this.pointerUpListener, this);
+                this.hasTouchEnd = true;
+            }
+
+            if (this.hasMouseHandlers) {
+                this.removeMouseEventHandlers();
+            }
+
+            if (this.hasTouchHandlers) {
+                this.removeTouchEventHandlers();
+            }
+
+            // prevent accidental selection of text
+            if (document.selection && typeof document.selection.empty === 'function') {
+                document.selection.empty();
+            } else if (window.getSelection) {
+                window.getSelection().removeAllRanges();
+            }
+
+            this.options.precision.hasPoint = eps;
+
+            // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
+            // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
+            // keep this id until a pointerUp event is fired. What we have to do here is:
+            //  1. collect all elements under the current pointer
+            //  2. run through the touches control structure
+            //    a. look for the object collected in step 1.
+            //    b. if an object is found, check the number of pointers. if appropriate, add the pointer.
+
+            pos = this.getMousePosition(evt);
+            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+
+            // if no draggable object can be found, get out here immediately
+            if (elements.length > 0) {
+                // check touches structure
+                target = elements[elements.length - 1];
+                found = false;
+
+                for (i = 0; i < this.touches.length; i++) {
+                    // the target is already in our touches array, try to add the pointer to the existing touch
+                    if (this.touches[i].obj === target) {
+                        j = i;
+                        k = this.touches[i].targets.push({
+                            num: evt.pointerId,
+                            X: pos[0],
+                            Y: pos[1],
+                            Xprev: NaN,
+                            Yprev: NaN,
+                            Xstart: [],
+                            Ystart: [],
+                            Zstart: []
+                        }) - 1;
+
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    k = 0;
+                    j = this.touches.push({
+                        obj: target,
+                        targets: [{
+                            num: evt.pointerId,
+                            X: pos[0],
+                            Y: pos[1],
+                            Xprev: NaN,
+                            Yprev: NaN,
+                            Xstart: [],
+                            Ystart: [],
+                            Zstart: []
+                        }]
+                    }) - 1;
+                }
+
+                this.dehighlightAll();
+                this.highlightedObjects[target.id] = target;
+                target.highlight(true);
+
+                this.saveStartPos(target, this.touches[j].targets[k]);
+
+                // prevent accidental text selection
+                // this could get us new trouble: input fields, links and drop down boxes placed as text
+                // on the board don't work anymore.
+                if (evt && evt.preventDefault) {
+                    evt.preventDefault();
+                } else if (window.event) {
+                    window.event.returnValue = false;
+                }
+            }
+
+            if (this.touches.length > 0) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+
+            // move origin - but only if we're not in drag mode
+            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+                this.triggerEventHandlers(['touchstart', 'down'], [evt]);
+                return false;
+            }
+
+            this.options.precision.hasPoint = this.options.precision.mouse;
+            this.triggerEventHandlers(['touchstart', 'down'], [evt]);
+
+            return result;
+        },
+
+        /**
+         * Called periodically by the browser while the user moves a pointing device across the screen.
+         * @param {Event} evt
+         * @return {Boolean}
+         */
+        pointerMoveListener: function (evt) {
+            var i, j, pos, time,
+                evtTouches = evt[JXG.touchProperty];
+
+            if (this.mode !== this.BOARD_MODE_NONE) {
+                evt.preventDefault();
+                evt.stopPropagation();
+            }
+
+            if (this.mode !== this.BOARD_MODE_DRAG) {
+                this.renderer.hide(this.infobox);
+            }
+
+            this.options.precision.hasPoint = this.options.precision.touch;
+
+            // try with mouseOriginMove because the evt objects are quite similar
+            if (!this.mouseOriginMove(evt)) {
+                if (this.mode === this.BOARD_MODE_DRAG) {
+                    // Runs through all elements which are touched by at least one finger.
+                    for (i = 0; i < this.touches.length; i++) {
+                        for (j = 0; j < this.touches[i].targets.length; j++) {
+                            if (this.touches[i].targets[j].num === evt.pointerId) {
+                                // Touch by one finger:  this is possible for all elements that can be dragged
+                                if (this.touches[i].targets.length === 1) {
+                                    this.touches[i].targets[j].X = evt.pageX;
+                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    pos = this.getMousePosition(evt);
+                                    this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
+                                // Touch by two fingers: moving lines
+                                } else if (this.touches[i].targets.length === 2 &&
+                                        this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                                    this.touches[i].targets[j].X = evt.pageX;
+                                    this.touches[i].targets[j].Y = evt.pageY;
+
+                                    this.twoFingerMove(
+                                        this.getMousePosition(evt),
+                                        this.getMousePosition(evt),
+                                        this.touches[i],
+                                        evt
+                                    );
+                                }
+
+                                // there is only one pointer in the evt object, there's no point in looking further
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            if (this.mode !== this.BOARD_MODE_DRAG) {
+                this.renderer.hide(this.infobox);
+            }
+
+            this.options.precision.hasPoint = this.options.precision.mouse;
+            this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
+
+            return this.mode === this.BOARD_MODE_NONE;
+        },
+
+        /**
+         * Triggered as soon as the user stops touching the device with at least one finger.
+         * @param {Event} evt
+         * @return {Boolean}
+         */
+        pointerUpListener: function (evt) {
+            var i, j, k, found, foundNumber,
+                tmpTouches = [],
+                eps = this.options.precision.touch;
+
+            this.triggerEventHandlers(['touchend', 'up'], [evt]);
+            this.renderer.hide(this.infobox);
+
+            for (i = 0; i < this.touches.length; i++) {
+                for (j = 0; j < this.touches[i].targets.length; j++) {
+                    if (this.touches[i].targets[j].num === evt.pointerId) {
+                        this.touches[i].targets.splice(j, 1);
+
+                        if (this.touches[i].targets.length === 0) {
+                            this.touches.splice(i, 1);
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            for (i = 0; i < this.downObjects.length; i++) {
+                found = false;
+                for (j = 0; j < this.touches.length; j++) {
+                    if (this.touches[j].obj.id === this.downObjects[i].id) {
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
+                    this.downObjects[i].snapToGrid();
+                    this.downObjects.splice(i, 1);
+                }
+            }
+
+            if (this.touches.length === 0) {
+                JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+                this.hasTouchEnd = false;
+
+                this.dehighlightAll();
+                this.updateQuality = this.BOARD_QUALITY_HIGH;
+
+                this.originMoveEnd();
+                this.update();
+            }
+
+            return true;
         },
 
         /**
@@ -1743,7 +2029,7 @@
             pos = this.getMousePosition(evt);
 
             if (object) {
-                elements = [ object ];
+                elements = [object];
                 this.mode = this.BOARD_MODE_DRAG;
             } else {
                 elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
