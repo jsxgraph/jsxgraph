@@ -1184,11 +1184,11 @@
          *  Add all possible event handlers to the board object
          */
         addEventHandlers: function () {
-            this.addMouseEventHandlers();
-            this.addTouchEventHandlers();
-
-            if (JXG.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled)) {
+            if (JXG.supportsPointerEvents()) {
                 this.addPointerEventHandlers();
+            } else {
+                this.addMouseEventHandlers();
+                this.addTouchEventHandlers();
             }
         },
 
@@ -1487,7 +1487,7 @@
             }
 
             // move origin - but only if we're not in drag mode
-            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+            if (this.mode === this.BOARD_MODE_NONE && this.mouseOriginMoveStart(evt)) {
                 this.triggerEventHandlers(['touchstart', 'down'], [evt]);
                 return false;
             }
