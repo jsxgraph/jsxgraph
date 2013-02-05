@@ -1014,18 +1014,6 @@
             }
 
             return false;
-        },
-
-        collectionContains: function (arr, val) {
-            if (JXG.isArray(arr)) {
-                return JXG.isInArray(arr, val);
-            }
-
-            if (JXG.isObject(arr)) {
-                return JXG.isInObject(arr, val);
-            }
-
-            return arr === val;
         }
     });
 
