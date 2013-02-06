@@ -1123,12 +1123,14 @@
 
         /**
          * Starts an animation which moves the point along a given path in given time.
-         * @param {Array,function} path The path the point is moved on. This can be either an array of arrays containing x and y values of the points of
+         * @param {Array|function} path The path the point is moved on. This can be either an array of arrays containing x and y values of the points of
          * the path, or  function taking the amount of elapsed time since the animation has started and returns an array containing a x and a y value or NaN.
          * In case of NaN the animation stops.
          * @param {Number} time The time in milliseconds in which to finish the animation
          * @param {Object} [options] Optional settings for the animation.
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong() will interpolate the path
+         * using {@link JXG.Math.Numerics#Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.Point} Reference to the point.
          */
         moveAlong: function (path, time, options) {
@@ -1165,11 +1167,19 @@
                     return this.board.update(this);
                 }
 
-                neville = JXG.Math.Numerics.Neville(p);
-                for (i = 0; i < steps; i++) {
-                    interpath[i] = [];
-                    interpath[i][0] = neville[0]((steps - i) / steps * neville[3]());
-                    interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
+                if (!JXG.exists(options.interpolate) || options.interpolate) {
+                    neville = JXG.Math.Numerics.Neville(p);
+                    for (i = 0; i < steps; i++) {
+                        interpath[i] = [];
+                        interpath[i][0] = neville[0]((steps - i) / steps * neville[3]());
+                        interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
+                    }
+                } else {
+                    for (i = 0; i < steps; i++) {
+                        interpath[i] = [];
+                        interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
+                        interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
+                    }
                 }
 
                 this.animationPath = interpath;
