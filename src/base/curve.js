@@ -892,6 +892,7 @@
                     elementClass: JXG.OBJECT_CLASS_CURVE,
 
                     points: this.points.slice(0),
+                    bezierDegree: this.bezierDegree,
                     numberPoints: this.numberPoints,
                     bezierDegree: this.bezierDegree,
                     board: this.board,
