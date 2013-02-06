@@ -47,39 +47,39 @@
 
     "use strict";
 
-    var undef;
+    var undef,
 
-    /*
-     * Dynamic programming approach for recursive functions.
-     * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
-     * @see JXG.Math.factorial
-     * @see JXG.Math.binomial
-     * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
-     *
-     * This method is hidden, because it is only used in JXG.Math. If someone wants
-     * to use it in JSXGraph outside of JXG.Math, it should be moved to jsxgraph.js
-     */
-    var memoizer = function (f) {
-        var cache, join;
+        /*
+         * Dynamic programming approach for recursive functions.
+         * From "Speed up your JavaScript, Part 3" by Nicholas C. Zakas.
+         * @see JXG.Math.factorial
+         * @see JXG.Math.binomial
+         * http://blog.thejit.org/2008/09/05/memoization-in-javascript/
+         *
+         * This method is hidden, because it is only used in JXG.Math. If someone wants
+         * to use it in JSXGraph outside of JXG.Math, it should be moved to jsxgraph.js
+         */
+        memoizer = function (f) {
+            var cache, join;
 
-        if (f.memo) {
+            if (f.memo) {
+                return f.memo;
+            }
+
+            cache = {};
+            join = Array.prototype.join;
+
+            f.memo = function () {
+                var key = join.call(arguments);
+
+                // Seems to be a bit faster than "if (a in b)"
+                return (cache[key] !== undef) ?
+                        cache[key] :
+                        cache[key] = f.apply(this, arguments);
+            };
+
             return f.memo;
-        }
-
-        cache = {};
-        join = Array.prototype.join;
-
-        f.memo = function () {
-            var key = join.call(arguments);
-
-            // Seems to be a bit faster than "if (a in b)"
-            return (cache[key] !== undef) ?
-                    cache[key] :
-                    cache[key] = f.apply(this, arguments);
         };
-
-        return f.memo;
-    };
 
     /**
      * Math namespace.
