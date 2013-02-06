@@ -894,7 +894,6 @@
                     points: this.points.slice(0),
                     bezierDegree: this.bezierDegree,
                     numberPoints: this.numberPoints,
-                    bezierDegree: this.bezierDegree,
                     board: this.board,
                     visProp: JXG.deepCopy(this.visProp, this.visProp.traceattributes, true)
                 };
