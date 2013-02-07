@@ -199,7 +199,7 @@ JXG.FileReader = {
                     str = JXG.Util.Base64.decode(str);
                 }
 
-                str = JXG.CinderellaReader.readCinderella(str, board);
+                str = JXG.CinderellaReader.read(str, board);
                 board.xmlString = str;
 
                 break;

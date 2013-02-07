@@ -79,6 +79,26 @@
     };
 
     JXG.extend(JXG, /** @lends JXG */ {
+        readers: {},
+
+        /**
+         * Register a file reader.
+         * @param {Object} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
+         * and <tt>read()</tt>.
+         * @param {Array} ext
+         */
+        registerReader: function (reader, ext) {
+            var i, e;
+
+            for (i = 0; i < ext.length; i++) {
+                e = ext[i].toLowerCase();
+
+                if (!JXG.exists(this.readers[e])) {
+                    this.readers[e] = reader;
+                }
+            }
+        },
+
         /**
          * Creates a shortcut to a method, e.g. {@link JXG.Board#createElement} is a shortcut to {@link JXG.Board#create}.
          * Sometimes the target is undefined by the time you want to define the shortcut so we need this little helper.
