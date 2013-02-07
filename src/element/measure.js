@@ -135,6 +135,8 @@
 
             board.removeObject(p2);
             board.removeObject(p1);
+
+            JXG.GeometryElement.prototype.remove.call(this);
         };
 
         p1.dump = false;
