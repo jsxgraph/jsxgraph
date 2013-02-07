@@ -236,7 +236,11 @@
             // create the board
             board = new JXG.Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
 
+            // this is deprecated, but we'll keep it for now until everything is migrated
             this.boards[board.id] = board;
+
+            // the new board storage
+            JXG.boards[board.id] = board;
 
             // create elements like axes, grid, navigation, ...
             board.suspendUpdate();

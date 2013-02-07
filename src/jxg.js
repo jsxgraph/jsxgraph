@@ -79,6 +79,17 @@
     };
 
     JXG.extend(JXG, /** @lends JXG */ {
+        /**
+         * Store a reference to every board in this central list. This will at some point
+         * replace JXG.JSXGraph.boards.
+         * @type Object
+         */
+        boards: {},
+
+        /**
+         * Store the available file readers in this structure.
+         * @type Object
+         */
         readers: {},
 
         /**
