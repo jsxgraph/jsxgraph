@@ -2798,6 +2798,7 @@
                 res = '';
 
                 try {
+                    /*jslint regexp:true*/
                     if (element.getElementsByTagName('isLaTeX')[0] && element.getElementsByTagName('isLaTeX')[0].getAttribute('val') === 'true') {
                         board.options.text.useASCIIMathML = true;
                         t = JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp');
@@ -2831,7 +2832,7 @@
                         // res is verified by ggbParse
                         /*jslint evil:true*/
                         p = board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + res + ';')], attr);
-                        /*jslint evil:false*/
+                        /*jslint evil:false, regexp:false*/
                     } else {
                         JXG.debug(JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp'));
                         t = JXG.GeogebraReader.ggbParse(tree, board, JXG.GeogebraReader.functionParse(board.ggbProps.format, false, JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp')));
@@ -2930,7 +2931,7 @@
          * @param {Object} tree XML tree of the construction
          * @param {JXG.Board} board
          */
-        readGeogebra: function (tree, board) {
+        read: function (tree, board) {
             var type, constructions, el, Data, i, t, s, expr, cmds, input, output, elname, elements;
 
             board.ggbElements = [];
@@ -3026,6 +3027,8 @@
             // delete board.ggbElements;
         },
 
+        readGeogebra: JXG.shortcut(JXG.GeogebraReader, 'read'),
+
         /**
          * Clean the utf8-symbols in a Geogebra expression in JavaScript syntax
          * @param {String} exp string to clean
@@ -3095,4 +3098,6 @@
             return JXG.isArray(v) && v.length === 3 && v[0] === 1;
         }
     };
+
+    JXG.registerReader(JXG.GeogebraReader, ['ggb', 'geogebra']);
 }());
