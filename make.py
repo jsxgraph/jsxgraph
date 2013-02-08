@@ -326,14 +326,14 @@ def makeReaders():
     lic = ("/* Version %s */\n" % version) + license
     reader = ['geonext', 'geogebra', 'intergeo', 'cinderella', 'sketch']
     for f in reader:
-        shutil.copy("src/reader/" + fname + ".js", "tmp/")
-        shutil.copy("src/reader/" + fname + ".js", output)
+        shutil.copy("src/reader/" + f + ".js", "tmp/")
+        shutil.copy("src/reader/" + f + ".js", output)
 
         # Minify; yuglify from Yahoo
-        srcFilename = "tmp/" + fname + ".js"
+        srcFilename = "tmp/" + f + ".js"
         
         # Prepend license text
-        coreFilename = output + "/" + fname + ".min.js"
+        coreFilename = output + "/" + f + ".min.js"
         
         fout = open(coreFilename,'w')
         fout.write(lic)
