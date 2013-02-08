@@ -70,7 +70,7 @@
          */
         objects: {},
 
-        readIntergeo: function (tree, board) {
+        read: function (tree, board) {
             this.board = board;
             this.board.origin = {};
             this.board.origin.usrCoords = [1, 0, 0];
@@ -85,6 +85,8 @@
             this.readDisplay(tree.getElementsByTagName("display"));
             this.board.fullUpdate();
         },
+
+        readIntergeo: JXG.shortcut(JXG.IntergeoReader, 'read'),
 
         readElement: function (tree, s) {
             var node;
