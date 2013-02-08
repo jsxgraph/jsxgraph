@@ -54,6 +54,8 @@
          */
         ggbAct: function (tree, board, type, m, n) {
             var s1, s2, a,
+                regexValue = new RegExp('JXG\\.boards\\[\'' + board.id + '\'\\].select\\(\'(.+?)\'\\)\\.'),
+                regexSelect = new RegExp('JXG\\.boards\\[\'' + board.id + '\'\\].select'),
                 v1 = m,
                 v2 = n;
 
@@ -82,21 +84,19 @@
                     return [1, v1[1] + '+' + v2[1], v1[2] + '+' + v2[2]];
                 }
 
-                JXG.debug('--> add', v1, v2);
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v1) && !v1.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v1.match(/JXG\.getRef/)) {
+                // The first match (which is negated) is to check if we are looking at a blank element or a value from this element
+                // If the select() call is followed by a '.', a property or a value is accessed, ergo we must not append .X() and .Y().
+                if (JXG.isString(v1) && !v1.match(regexValue) && v1.match(regexSelect)) {
                     s1 = [v1 + '.X()', v1 + '.Y()'];
                 } else {
                     s1 = v1;
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v2) && !v2.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v2.match(/JXG\.getRef/)) {
+                if (JXG.isString(v2) && !v2.match(regexValue) && v2.match(regexSelect)) {
                     s2 = [v2 + '.X()', v2 + '.Y()'];
                 } else {
                     s2 = v2;
                 }
-                JXG.debug('<-- add', s1, s2);
 
                 //Add: Vector + Point
                 if (JXG.GeogebraReader.isGGBVector(s1) && JXG.isArray(s2)) {
@@ -130,15 +130,13 @@
                     return [1, v1[1] + '-' + v2[1], v1[2] + '-' + v2[2]];
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v1) && !v1.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v1.match(/JXG\.getRef/)) {
+                if (JXG.isString(v1) && !v1.match(regexValue) && v1.match(regexSelect)) {
                     s1 = [v1 + '.X()', v1 + '.Y()'];
                 } else {
                     s1 = v1;
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v2) && !v2.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v2.match(/JXG\.getRef/)) {
+                if (JXG.isString(v2) && !v2.match(regexValue) && v2.match(regexSelect)) {
                     s2 = [v2 + '.X()', v2 + '.Y()'];
                 } else {
                     s2 = v2;
@@ -192,15 +190,13 @@
                     return '((' + v1[1] + ')*(' + v2[1] + ')+(' + v1[2] + ')*(' + v2[2] + '))';
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v1) && !v1.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v1.match(/JXG\.getRef/)) {
+                if (JXG.isString(v1) && !v1.match(regexValue) && v1.match(regexSelect)) {
                     s1 = [v1 + '.X()', v1 + '.Y()'];
                 } else {
                     s1 = v1;
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v2) && !v2.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v2.match(/JXG\.getRef/)) {
+                if (JXG.isString(v2) && !v2.match(regexValue) && v2.match(regexSelect)) {
                     s2 = [v2 + '.X()', v2 + '.Y()'];
                 } else {
                     s2 = v2;
@@ -224,15 +220,13 @@
 
                 return s1 + ' * ' + s2;
             case 'div':
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v1) && !v1.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v1.match(/JXG\.getRef/)) {
+                if (JXG.isString(v1) && !v1.match(regexValue) && v1.match(regexSelect)) {
                     s1 = [v1 + '.X()', v1 + '.Y()'];
                 } else {
                     s1 = v1;
                 }
 
-                // TODO: why is there a negated match for getRef+board and a match for just getRef?
-                if (JXG.isString(v2) && !v2.match(/JXG\.getRef\(JXG\.GeogebraReader\.board, "(.+?)"\)\./) && v2.match(/JXG\.getRef/)) {
+                if (JXG.isString(v2) && !v2.match(regexValue) && v2.match(regexSelect)) {
                     s2 = [v2 + '.X()', v2 + '.Y()'];
                 } else {
                     s2 = v2;
@@ -1487,7 +1481,7 @@
                 gxtEl.z = parseFloat(Data.getElementsByTagName("coords")[0].getAttribute("z"));
             } else if (Data.getElementsByTagName("startPoint")[0]) {
                 if (Data.getElementsByTagName("startPoint")[0].getAttribute('exp')) {
-                    a = JXG.getRef(board, Data.getElementsByTagName("startPoint")[0].getAttribute('exp'));
+                    a = board.select(Data.getElementsByTagName("startPoint")[0].getAttribute('exp'));
                     gxtEl.x = function () {
                         return a.X() + labelOffset.x;
                     };
@@ -1960,7 +1954,7 @@
                         parseFloat(element.getElementsByTagName('coords')[0].getAttribute('x')),
                         parseFloat(element.getElementsByTagName('coords')[0].getAttribute('y'))
                     ];
-                } else if (JXG.getRef(board, input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
                     // Parallel line through point
                     type = 'parallel';
                 }
@@ -2405,8 +2399,8 @@
                 try {
                     JXG.debug("* LineBiSector (Mittelsenkrechte): First: " + input[0].name);
                     m = board.create('midpoint', input, {visible: false});
-                    if (JXG.isPoint(JXG.getRef(board, input[0].id)) &&
-                            JXG.isPoint(JXG.getRef(board, input[1].id))) {
+                    if (JXG.isPoint(board.select(input[0].id)) &&
+                            JXG.isPoint(board.select(input[1].id))) {
                         t = board.create('line', input, {visible: 'false'});
                         p = board.create('perpendicular', [m, t], attr);
                     } else {
@@ -2892,7 +2886,7 @@
                 try {
                     JXG.debug("* Integral: First: " + input[0].name + ", Sec.: " + input[1].name + ", Thir.: " + input[2].name);
                     JXG.debug([input[1](), input[2]()]);
-                    p = board.create('integral', [JXG.getRef(board, input[0]), [input[1], input[2]]], attr);
+                    p = board.create('integral', [board.select(input[0]), [input[1], input[2]]], attr);
                     return p;
                 } catch (exc33) {
                     JXG.debug("* Err: Integral " + attr.name + e);
