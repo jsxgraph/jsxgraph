@@ -86,7 +86,7 @@
             [this.Z(), 0, this.H()]
         ];
 
-        this.parent = JXG.getRef(attributes.anchor);
+        this.parent = board.select(attributes.anchor);
 
         this.id = this.board.setId(this, 'Im');
 

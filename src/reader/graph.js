@@ -147,8 +147,11 @@
             return str;
         },
 
-        read: function (fileStr, board, directed) {
-            var graph;
+        read: function (fileStr, board) {
+            var graph,
+                // no directed graphs for now
+                directed = false;
+
             this.data = fileStr;
             board.suspendUpdate();
             graph = this.parseData(board, directed);
@@ -229,5 +232,5 @@
         }
     };
 
-    JXG.registerReader(JXG.GraphReader, ['txt', 'graph']);
+    JXG.registerReader(JXG.GraphReader, ['txt', 'graph', 'digraph']);
 }());

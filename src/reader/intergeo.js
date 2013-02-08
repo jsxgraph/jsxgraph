@@ -38,6 +38,7 @@
  utils/encoding
  utils/zip
  utils/type
+ utils/base64
   elements:
    point
    line
@@ -930,10 +931,16 @@
 
         /**
          * Extract the xml-code as String from the zipped Intergeo archive.
+         * @param {String} fileStr
+         * @param {Boolean} isString
          * @returns {String} xml code
          */
-        prepareString: function (fileStr) {
+        prepareString: function (fileStr, isString) {
             var bA = [], i;
+
+            if (isString) {
+                fileStr = JXG.Util.Base64.decode(fileStr);
+            }
 
             if (fileStr.indexOf('<') !== 0) {
                 //binary = false;

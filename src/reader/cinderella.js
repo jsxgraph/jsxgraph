@@ -43,6 +43,7 @@
  base/constants
  utils/encoding
  utils/zip
+ utils/base64
   elements:
    point
    line
@@ -68,7 +69,7 @@
     "use strict";
 
     JXG.CinderellaReader = {
-        parseData: function (board) {
+        parseData: function (board, data) {
             var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment,
                 defRadius, circle, erg, poly, point, objName2, erg2, lines, point2, oX, oY, scale,
 
@@ -78,7 +79,7 @@
                     };
                 };
 
-            dataLines = this.data.split('\n');
+            dataLines = data.split('\n');
 
             for (i = 0; i < dataLines.length; i++) {
                 // free point
@@ -869,9 +870,14 @@
             return [objAppearance, dashing, i];
         },
 
-        prepareString: function (fileStr) {
+        prepareString: function (fileStr, isString) {
             var i, len,
                 bA = [];
+
+            // if isString is true, str is the base64 encoded zip file, otherwise it's just the zip file
+            if (isString) {
+                fileStr = JXG.Util.Base64.decode(fileStr);
+            }
 
             if (fileStr.indexOf('<') !== 0) {
                 len = fileStr.length;
@@ -887,9 +893,9 @@
         },
 
         read: function (fileStr, board) {
-            this.data = this.prepareString(fileStr);
+            var data = this.prepareString(fileStr);
             board.suspendUpdate();
-            this.parseData(board);
+            this.parseData(board, data);
             board.unsuspendUpdate();
         },
 
