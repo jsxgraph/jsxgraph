@@ -2577,7 +2577,7 @@
                 lr = 0.5,
                 tr = 0.5;
 
-            if (this.zoomX < JXG.attr.zoom.eps || this.zoomY < JXG.attr.zoom.eps) {
+            if (this.zoomX < this.attr.zoom.eps || this.zoomY < this.attr.zoom.eps) {
                 return false;
             }
 
