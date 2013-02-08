@@ -34,9 +34,50 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends (incomplete)
+ JXG
  base/constants
+ base/coords
+ math/numerics
  utils/type
  utils/string
+ utils/color
+ utils/base64
+ utils/encoding
+ utils/zip
+  elements:
+   grid
+   axis
+   circle
+   glider
+   point
+   line
+   normal
+   regularpolygon
+   polygon
+   intersection
+   otherintersection
+   midpoint
+   text
+   arrow
+   transform
+   mirrorpoint
+   reflection
+   arc
+   ellipse
+   conic
+   sector
+   perpendicular
+   tangent
+   polar
+   circumcirclearc
+   circumcirclesector
+   semicircle
+   angle
+   bisector
+   slider
+   functiongraph
+   segment
+   integral
  */
 
 (function () {
@@ -2131,7 +2172,6 @@
                 gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
                 attr = JXG.GeogebraReader.visualProperties(element, attr);
 
-                console.log('input', input);
                 if (element.getElementsByTagName("startPoint")[0]) {
                     if (input && input.length === 2) {
                         e = JXG.GeogebraReader.checkElement(tree, board, input[1].name);
@@ -2174,11 +2214,10 @@
 
                 try {
                     JXG.debug("* Vector: First: " + attr.name);
-                    console.log(s, e);
                     p = board.create('arrow', [s, e], attr);
                     return p;
                 } catch (exc8) {
-                    JXG.debugWST("* Err: Vector " + attr.name + e);
+                    JXG.debug("* Err: Vector " + attr.name + e);
                     return false;
                 }
                 break;
@@ -2837,7 +2876,7 @@
                         JXG.debug(JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp'));
                         t = JXG.GeogebraReader.ggbParse(tree, board, JXG.GeogebraReader.functionParse(board.ggbProps.format, false, JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp')));
                         JXG.debug(t[1]);
-                        console.log('parsing text', t, JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp'));
+
                         // res is verified by ggbParse
                         /*jslint evil:true*/
                         p = board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(JXG.boards[\'' + board.id + '\'].ggbProps.decimals));') ], attr);
