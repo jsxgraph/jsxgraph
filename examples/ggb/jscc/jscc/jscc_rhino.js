@@ -619,8 +619,8 @@ function print_parse_tables( mode )
 	}
 	else if( mode == MODE_GEN_JS )
 	{
-		code += "/* Pop-Table */\n";
-		code += "var pop_tab = new Array(\n";
+		code += "    // Pop-Table\n";
+		code += "    pop_tab = [\n";
 	}
 	
 	for( i = 0; i < productions.length; i++ )
@@ -634,8 +634,8 @@ function print_parse_tables( mode )
 		}
 		else if( mode == MODE_GEN_JS )
 		{
-			code += "\tnew Array( " + productions[i].lhs + "/* " + symbols[productions[i].lhs].label + " */, "
-				+ productions[i].rhs.length + " )" +
+			code += "        [" + "/* " + symbols[productions[i].lhs].label + " */"  + productions[i].lhs + ", "
+				+ productions[i].rhs.length + "]" +
 					(( i < productions.length-1 ) ? ",\n" : "\n");
 		}
 	}
@@ -646,7 +646,7 @@ function print_parse_tables( mode )
 	}
 	else if( mode == MODE_GEN_JS )
 	{
-		code += ");\n\n";
+		code += "    ];\n\n";
 	}
 	
 	/* Printing the action table */			
@@ -699,21 +699,21 @@ function print_parse_tables( mode )
 	}
 	else if( mode == MODE_GEN_JS )
 	{
-		code += "/* Action-Table */\n";
-		code += "var act_tab = new Array(\n";
+		code += "    // Action-Table\n";
+		code += "    act_tab = [\n";
 		
 		for( i = 0; i < states.length; i++ )
 		{
-			code += "\t/* State " + i + " */ new Array( "
+			code += "        /* State " + i + " */\n        ["
 			for( j = 0; j < states[i].actionrow.length; j++ )
-				code += states[i].actionrow[j][0] + "/* \"" + 
-					symbols[states[i].actionrow[j][0]].label + "\" */," + states[i].actionrow[j][1]
-						+ ( ( j < states[i].actionrow.length-1 ) ? " , " : "" );
+				code += "/* \"" +
+					symbols[states[i].actionrow[j][0]].label + "\" */" + states[i].actionrow[j][0] + ", " + states[i].actionrow[j][1]
+						+ ( ( j < states[i].actionrow.length-1 ) ? ", " : "" );
 			
-			code += " )" + ( ( i < states.length-1 ) ? ",\n" : "\n" );
+			code += "]" + ( ( i < states.length-1 ) ? ",\n" : "\n" );
 		}
 		
-		code += ");\n\n";
+		code += "    ];\n\n";
 	}
 	
 	/* Printing the goto table */			
@@ -763,22 +763,22 @@ function print_parse_tables( mode )
 	}
 	else if( mode == MODE_GEN_JS )
 	{
-		code += "/* Goto-Table */\n";
-		code += "var goto_tab = new Array(\n";
+		code += "    // Goto-Table\n";
+		code += "    goto_tab = [\n";
 		
 		for( i = 0; i < states.length; i++ )
 		{
-			code += "\t/* State " + i + " */";
-			code += " new Array( "
+			code += "        /* State " + i + " */\n";
+			code += "        ["
 							
 			for( j = 0; j < states[i].gotorow.length; j++ )
-				code += states[i].gotorow[j][0] + "/* " + symbols[ states[i].gotorow[j][0] ].label + " */,"
-					+ states[i].gotorow[j][1] + ( ( j < states[i].gotorow.length-1 ) ? " , " : "" );
+				code += "/* " + symbols[ states[i].gotorow[j][0] ].label + " */" + states[i].gotorow[j][0] + ", "
+					+ states[i].gotorow[j][1] + ( ( j < states[i].gotorow.length-1 ) ? ", " : "" );
 			
-			code += " )" + ( ( i < states.length-1 ) ? ",\n" : "\n" );
+			code += "]" + ( ( i < states.length-1 ) ? ",\n" : "\n" );
 		}
 		
-		code += ");\n\n";
+		code += "    ];\n\n";
 	}
 	
 	return code;
@@ -808,11 +808,10 @@ function print_dfa_table( dfa_states )
 	var i, j, k, eof_id = -1;
 	var grp_start, grp_first, first;
 	
-	code += "switch( state )\n"
-	code += "{\n";
+	code += "switch (state) {\n"
 	for( i = 0; i < dfa_states.length; i++ )
 	{
-		code += "	case " + i + ":\n";
+		code += "            case " + i + ":\n";
 		
 		first = true;
 		for( j = 0; j < dfa_states.length; j++ )
@@ -830,10 +829,12 @@ function print_dfa_table( dfa_states )
 				{
 					if( grp_first )
 					{
-						code += "		";
+                        if (first)
+						    code += "                ";
+
 						if( !first )
-							code += "else ";
-						code += "if( ";
+							code += " else ";
+						code += "if (";
 						
 						grp_first = false;
 						first = false;
@@ -842,34 +843,37 @@ function print_dfa_table( dfa_states )
 						code += " || ";
 					
 					if( grp_start == k - 1 )
-						code += "info.src.charCodeAt( pos ) == " + grp_start;
+						code += "info.src.charCodeAt(pos) === " + grp_start;
 					else					
-						code += "( info.src.charCodeAt( pos ) >= " + grp_start +
-									" && info.src.charCodeAt( pos ) <= " + (k-1) + " )";
+						code += "(info.src.charCodeAt(pos) >= " + grp_start +
+									" && info.src.charCodeAt(pos) <= " + (k-1) + ")";
 					grp_start = -1;
 					k--;
 				}
 			}
 			
 			if( !grp_first )
-				code += " ) state = " + j + ";\n";
+				code += ") {\n                    state = " + j + ";\n                }";
 		}
 				
-		code += "		";
+		code += "";
 		if( !first )
-			code += "else ";
-		code += "state = -1;\n"
+			code += " else {\n    ";
+		code += "                state = -1;\n"
+
+        if (!first)
+            code += "                }\n";
 		
 		if( dfa_states[i].accept > -1 )
 		{
-			code += "		match = " + dfa_states[i].accept + ";\n";
-			code += "		match_pos = pos;\n";
+			code += "                match = " + dfa_states[i].accept + ";\n";
+			code += "                match_pos = pos;\n";
 		}
 		
-		code += "		break;\n\n";
+		code += "                break;\n\n";
 	}
 	
-	code += "}\n\n";
+	code += "            }\n\n";
 
 	return code;
 }
@@ -896,24 +900,25 @@ function print_symbol_labels()
 	var code = new String();
 	var i;	
 	
-	code += "/* Symbol labels */\n";
-	code += "var labels = new Array(\n";
+	code += "    // Symbol labels\n";
+	code += "    labels = [\n";
 	for( i = 0; i < symbols.length; i++ )
 	{
-		code += "\t\"" + symbols[i].label + "\" ";
-		
+
 		if( symbols[i].kind == SYM_TERM )
-			code += "/* Terminal symbol */";
+			code += "        /* Terminal symbol */\n";
 		else
-			code += "/* Non-terminal symbol */";
+			code += "        /* Non-terminal symbol */\n";
 			
+        code += "        \"" + symbols[i].label + "\"";
+
 		if( i < symbols.length-1 )
 			code += ",";
 			
 		code += "\n";
 	}
 
-	code += ");\n\n";
+	code += "    ];\n\n";
 
 	return code;
 }
@@ -1017,14 +1022,12 @@ function print_actions()
 	var semcode, strmatch;
 	var i, j, k, idx;
 	
-	code += "switch( act )\n";
-	code += "{\n";
-	
+	code += "switch (act) {\n";
+
 	for( i = 0; i < productions.length; i++ )
 	{
-		code += "	case " + i + ":\n";
-		code += "	{\n";
-		
+		code += "            case " + i + ":\n";
+
 		semcode = new String();
 		for( j = 0, k = 0; j < productions[i].code.length; j++, k++ )
 		{
@@ -1037,7 +1040,7 @@ function print_actions()
 				{
 					idx = parseInt( strmatch[0].substr( 1, strmatch[0].length ) );
 					idx = productions[i].rhs.length - idx + 1;
-					semcode += "vstack[ vstack.length - " + idx + " ]";
+					semcode += "vstack[vstack.length - " + idx + "]";
 				}
 				
 				j += strmatch[0].length - 1;
@@ -1049,12 +1052,11 @@ function print_actions()
 			}
 		}
 
-		code += "		" + semcode + "\n";
-		code += "	}\n";
-		code += "	break;\n";
+		code += "                " + semcode + "\n";
+		code += "                break;\n";
 	}
 	
-	code += "}\n\n";
+	code += "            }\n\n";
 
 	return code;
 }

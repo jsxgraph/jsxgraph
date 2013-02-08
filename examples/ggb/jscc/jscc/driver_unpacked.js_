@@ -1,13 +1,10 @@
 ##HEADER##
 
-var ##PREFIX##_dbg_withtrace = false;
-var ##PREFIX##_dbg_string = '';
-
-function __##PREFIX##dbg_print (text) {
-    ##PREFIX##_dbg_string += text + '\n';
+function ##PREFIX##dbg_print(text) {
+    ##PREFIX##dbg_string += text + '\n';
 }
 
-function __##PREFIX##lex (info) {
+function ##PREFIX##lex(info) {
     var state = 0,
         match = -1,
         match_pos = 0,
@@ -46,8 +43,8 @@ function __##PREFIX##lex (info) {
 }
 
 
-function __##PREFIX##parse (src, err_off, err_la) {
-    var i, act, go, la, rval, rvstack, rsstack,
+function ##PREFIX##parse(tree, board, src, err_off, err_la) {
+    var i, act, go, la, rval, rvstack, rsstack, undef,
         act_tab, pop_tab, goto_tab, labels,
         sstack = [],
         vstack = [],
@@ -73,7 +70,7 @@ function __##PREFIX##parse (src, err_off, err_la) {
     sstack.push(0);
     vstack.push(0);
 
-    la = __##PREFIX##lex(info);
+    la = ##PREFIX##lex(info);
 
     while (true) {
         act = ##ERROR##;
@@ -85,27 +82,27 @@ function __##PREFIX##parse (src, err_off, err_la) {
             }
         }
 
-        if (##PREFIX##_dbg_withtrace && sstack.length > 0) {
-            __##PREFIX##dbg_print( '\nState ' + sstack[sstack.length - 1] + '\n' +
+        if (##PREFIX##dbg_withtrace && sstack.length > 0) {
+            ##PREFIX##dbg_print('\nState ' + sstack[sstack.length - 1] + '\n' +
                 '\tLookahead: ' + labels[la] + ' (\'' + info.att + '\')\n' +
                 '\tAction: ' + act + '\n' +
                 '\tSource: \'' + info.src.substr(info.offset, 30) +
-                ((info.offset + 30 < info.src.length) ? '...' : '' ) +
+                ((info.offset + 30 < info.src.length) ? '...' : '') +
                 '\'\n' + '\tStack: ' + sstack.join() + '\n' +
                 '\tValue stack: ' + vstack.join() + '\n');
         }
 
         //Panic-mode: Try recovery when parse-error occurs!
         if (act === ##ERROR##) {
-            if( ##PREFIX##_dbg_withtrace ) {
-                __##PREFIX##dbg_print('Error detected: There is no reduce or shift on the symbol ' + labels[la]);
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('Error detected: There is no reduce or shift on the symbol ' + labels[la]);
             }
 
             err_cnt += 1;
             err_off.push(info.offset - info.att.length);
             err_la.push([]);
-            for (i = 0; i < act_tab[sstack[sstack.length-1]].length; i += 2) {
-                err_la[err_la.length-1].push(labels[act_tab[sstack[sstack.length - 1]][i]]);
+            for (i = 0; i < act_tab[sstack[sstack.length - 1]].length; i += 2) {
+                err_la[err_la.length - 1].push(labels[act_tab[sstack[sstack.length - 1]][i]]);
             }
 
             //Remember the original stack!
@@ -117,17 +114,17 @@ function __##PREFIX##parse (src, err_off, err_la) {
             }
 
             while (act === ##ERROR## && la !== ##EOF##) {
-                if (##PREFIX##_dbg_withtrace) {
-                    __##PREFIX##dbg_print( '\tError recovery\n' +
+                if (##PREFIX##dbg_withtrace) {
+                    ##PREFIX##dbg_print('\tError recovery\n' +
                         'Current lookahead: ' + labels[la] + ' (' + info.att + ')\n' +
-                        'Action: ' + act + '\n\n' );
+                        'Action: ' + act + '\n\n');
                 }
 
                 if (la === -1) {
                     info.offset += 1;
                 }
 
-                while (act === ##ERROR## && sstack.length > 0 ) {
+                while (act === ##ERROR## && sstack.length > 0) {
                     sstack.pop();
                     vstack.pop();
 
@@ -138,7 +135,7 @@ function __##PREFIX##parse (src, err_off, err_la) {
                     act = ##ERROR##;
 
                     for (i = 0; i < act_tab[sstack[sstack.length - 1]].length; i += 2) {
-                        if (act_tab[sstack[sstack.length - 1]][i] === la ) {
+                        if (act_tab[sstack[sstack.length - 1]][i] === la) {
                             act = act_tab[sstack[sstack.length - 1]][i + 1];
                             break;
                         }
@@ -154,54 +151,54 @@ function __##PREFIX##parse (src, err_off, err_la) {
                     vstack.push(rvstack[i]);
                 }
 
-                la = __##PREFIX##lex(info);
+                la = ##PREFIX##lex(info);
             }
 
             if (act === ##ERROR##) {
-                if (##PREFIX##_dbg_withtrace) {
-                    __##PREFIX##dbg_print('\tError recovery failed, terminating parse process...');
+                if (##PREFIX##dbg_withtrace) {
+                    ##PREFIX##dbg_print('\tError recovery failed, terminating parse process...');
                 }
                 break;
             }
 
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('\tError recovery succeeded, continuing');
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('\tError recovery succeeded, continuing');
             }
         }
 
         //Shift
         if (act > 0) {
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('Shifting symbol: ' + labels[la] + ' (' + info.att + ')');
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('Shifting symbol: ' + labels[la] + ' (' + info.att + ')');
             }
 
             sstack.push(act);
             vstack.push(info.att);
 
-            la = __##PREFIX##lex(info);
+            la = ##PREFIX##lex(info);
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('\tNew lookahead symbol: ' + labels[la] + ' (' + info.att + ')');
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('\tNew lookahead symbol: ' + labels[la] + ' (' + info.att + ')');
             }
         //Reduce
         } else {
             act *= -1;
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('Reducing by producution: ' + act);
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('Reducing by producution: ' + act);
             }
 
-            rval = void(0);
+            rval = undef;
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('\tPerforming semantic action...');
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('\tPerforming semantic action...');
             }
 
             ##ACTIONS##
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('\tPopping ' + pop_tab[act][1] + ' off the stack...');
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('\tPopping ' + pop_tab[act][1] + ' off the stack...');
             }
 
             for (i = 0; i < pop_tab[act][1]; i++) {
@@ -221,23 +218,23 @@ function __##PREFIX##parse (src, err_off, err_la) {
                 break;
             }
 
-            if (##PREFIX##_dbg_withtrace) {
-                __##PREFIX##dbg_print('\tPushing non-terminal ' + labels[pop_tab[act][0]]);
+            if (##PREFIX##dbg_withtrace) {
+                ##PREFIX##dbg_print('\tPushing non-terminal ' + labels[pop_tab[act][0]]);
             }
 
             sstack.push(go);
             vstack.push(rval);
         }
 
-        if (##PREFIX##_dbg_withtrace) {
-            JXG.debug(##PREFIX##_dbg_string);
-            ##PREFIX##_dbg_string = '';
+        if (##PREFIX##dbg_withtrace) {
+            JXG.debug(##PREFIX##dbg_string);
+            ##PREFIX##dbg_string = '';
         }
     }
 
-    if (##PREFIX##_dbg_withtrace) {
-        __##PREFIX##dbg_print('\nParse complete.');
-        JXG.debug(##PREFIX##_dbg_string);
+    if (##PREFIX##dbg_withtrace) {
+        ##PREFIX##dbg_print('\nParse complete.');
+        JXG.debug(##PREFIX##dbg_string);
     }
 
     return err_cnt;
