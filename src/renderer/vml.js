@@ -224,7 +224,7 @@
                     el.rendNode.style.left = Math.floor(el.coords.scrCoords[1]) + 'px';
                     el.rendNode.style.right = 'auto';
                 }
-                
+
                 if (el.visProp.anchory === 'top') {
                     el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
                 } else if (el.visProp.anchory === 'middle') {

@@ -196,8 +196,8 @@
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
-            s = parseInt(element.visProp.strokewidth);
-            node2.setAttributeNS(null, 'viewBox', -s + ' ' + (-s) + ' ' + s*12 + ' ' + s*12);
+            s = parseInt(element.visProp.strokewidth, 10);
+            node2.setAttributeNS(null, 'viewBox', -s + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
             node2.setAttributeNS(null, 'markerHeight', 10);
             node2.setAttributeNS(null, 'markerWidth', 10);
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
