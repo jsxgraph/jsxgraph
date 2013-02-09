@@ -3091,7 +3091,7 @@
             // second one: base64 encoded ggb file, this is our recommendation for an IE & Opera
             // workaround, which can't deal with binary data transferred via AJAX.
 
-            if (isString) {
+            if (isString && fileStr.indexOf('<') !== 0) {
                 // first try to decode assuming we got a base64 encoded ggb file
                 fstr = JXG.Util.Base64.decode(fileStr);
 

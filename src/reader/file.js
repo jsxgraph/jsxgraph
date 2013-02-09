@@ -151,11 +151,11 @@
          * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
          * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
          * </dl>
-         * @param {Boolean} isString Some file formats can be given as Base64 encoded strings or as plain xml, in both cases
+         * @param {Boolean} fromString Some file formats can be given as Base64 encoded strings or as plain xml, in both cases
          * they are given as strings. This flag is used to distinguish those cases: <tt>true</tt> means, it is given as a string,
          * no need to un-Base64 and unzip the file.
          */
-        parseString: function (str, board, format, isString) {
+        parseString: function (str, board, format, fromString) {
             var tree, graph, xml, reader;
 
             format = format.toLowerCase();
@@ -163,7 +163,7 @@
             switch (format) {
             case 'cdy':
             case 'cinderella':
-                str = JXG.CinderellaReader.prepareString(str, isString);
+                str = JXG.CinderellaReader.prepareString(str, fromString);
                 str = JXG.CinderellaReader.read(str, board);
                 board.xmlString = str;
 
@@ -174,27 +174,20 @@
                 break;
             case 'graph':
             case 'digraph':
-                // no directed graphs for now
                 reader = new JXG.GraphReader(board, str);
                 reader.read();
                 break;
             case 'geonext':
-                // str is a string containing the XML code of the construction
                 str = JXG.GeonextReader.prepareString(str);
                 xml = true;
                 break;
             case 'geogebra':
-                isString = str.slice(0, 2) !== "PK";
-
                 reader = new JXG.GeogebraReader(board, str);
                 reader.read();
-                // if isString is true, str is a base64 encoded string, otherwise it's the zipped file
-                //str = reader.prepareString(str, isString);
-                xml = true;
                 break;
             case 'intergeo':
-                str = JXG.IntergeoReader.prepareString(str, isString);
-                xml = true;
+                reader = new JXG.IntergeoReader(board, str);
+                reader.read();
                 break;
             case 'sketch':
                 str = JXG.SketchReader.readSketch(str, board);
@@ -212,10 +205,6 @@
                         JXG.GeonextReader.read(tree, board);
                     }
                     board.unsuspendUpdate();
-                } else if (tree.getElementsByTagName('geogebra').length > 0) {
-                    reader.read(tree, board);
-                } else if (format.toLowerCase() === 'intergeo') {
-                    JXG.IntergeoReader.read(tree, board);
                 }
             }
         }
