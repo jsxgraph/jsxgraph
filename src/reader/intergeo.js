@@ -1048,5 +1048,5 @@
 
     });
 
-    JXG.registerReader(JXG.IntergeoReader, ['i2g', 'xml']);
+    JXG.registerReader(JXG.IntergeoReader, ['i2g', 'xml', 'intergeo']);
 }());

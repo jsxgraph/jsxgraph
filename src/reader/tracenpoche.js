@@ -1062,3 +1062,5 @@ JXG.TracenpocheReader = function(board, str) {
         }
     };
 };
+
+JXG.registerReader(JXG.TracenpocheReader, ['tracenpoche']);

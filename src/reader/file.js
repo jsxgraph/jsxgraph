@@ -153,40 +153,18 @@
          * </dl>
          */
         parseString: function (str, board, format) {
-            var graph, reader;
+            var Reader,
+                read;
 
             format = format.toLowerCase();
 
-            switch (format) {
-            case 'cdy':
-            case 'cinderella':
-                reader = new JXG.CinderellaReader(board, str);
-                reader.read();
-                break;
-            case 'tracenpoche':
-                reader = new JXG.TracenpocheReader(board, str);
-                reader.read();
-                break;
-            case 'graph':
-            case 'digraph':
-                reader = new JXG.GraphReader(board, str);
-                reader.read();
-                break;
-            case 'geonext':
-                reader = new JXG.GeonextReader(board, str);
-                reader.read();
-                break;
-            case 'geogebra':
-                reader = new JXG.GeogebraReader(board, str);
-                reader.read();
-                break;
-            case 'intergeo':
-                reader = new JXG.IntergeoReader(board, str);
-                reader.read();
-                break;
-            case 'sketch':
-                str = JXG.SketchReader.readSketch(str, board);
-                break;
+            Reader = JXG.readers[format];
+
+            if (JXG.exists(Reader)) {
+                read = new Reader(board, str);
+                read.read();
+            } else {
+                throw new Error('JSXGraph: There is no reader available for \'' + format + '\'.');
             }
         }
     };

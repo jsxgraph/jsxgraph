@@ -52,8 +52,58 @@
 
     "use strict";
 
-    JXG.SketchReader = {
+    // this is a small workaround to adapt the SketchReader to our new file API
+    // we don't have to change anything in sketchometry.
+    JXG.SketchReader = function (board, str) {
+        this.read = function () {
+            var i, t, arr, unzipped, meta, constr;
 
+            unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
+
+            if (!JXG.exists(unzipped[0])) {
+                return '';
+            }
+
+            unzipped = JXG.Util.UTF8.decode(unzipped[0][0]);
+            constr = JSON.parse(unzipped);
+
+            meta = constr.pop();
+
+            if (!JXG.exists(meta.unredo)) {
+                t = constr.length - 1;
+            } else {
+                t = meta.unredo;
+            }
+
+            for (i = 0; i <= t; i++) {
+                if (constr[i].type !== 0) {
+                    try {
+                        if (constr[i] > 50) {
+                            arr = JXG.SketchReader.generateJCodeMeta(constr[i], board);
+                        } else {
+                            arr = JXG.SketchReader.generateJCode(constr[i], board, constr);
+                        }
+                    } catch (e) {
+                        JXG.debug('#steps: ' + constr.length);
+                        JXG.debug('step: ' + i + ', type: ' + constr[i].type);
+                        JXG.debug(constr[i]);
+                    }
+
+                    board.jc.parse(arr[0], true);
+                }
+            }
+
+
+            // bounding box
+            arr = meta.boundingBox;
+            board.setBoundingBox(arr);
+
+            return '';
+        };
+    };
+
+    // No prototype here
+    JXG.extend(JXG.SketchReader, /** @lends JXG.SketchReader */ {
         generateJCodeMeta: function () {
             return ['', '', '', ''];
         },
@@ -962,54 +1012,8 @@
             step.dest_sub_ids = JXG.uniqueArray(step.dest_sub_ids);
 
             return step;
-        },
-
-        readSketch: function (str, board) {
-            var i, j, t, arr, json_obj, unzipped, meta, constr;
-
-            unzipped = new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str)).unzip();
-
-            if (!JXG.exists(unzipped[0])) {
-                return '';
-            }
-
-            unzipped = JXG.Util.UTF8.decode(unzipped[0][0]);
-            constr = JSON.parse(unzipped);
-
-            meta = constr.pop();
-
-            if (!JXG.exists(meta.unredo)) {
-                t = constr.length - 1;
-            } else {
-                t = meta.unredo;
-            }
-
-            for (i = 0; i <= t; i++) {
-                if (constr[i].type !== 0) {
-                    try {
-                        if (constr[i] > 50) {
-                            arr = this.generateJCodeMeta(constr[i], board);
-                        } else {
-                            arr = this.generateJCode(constr[i], board, constr);
-                        }
-                    } catch (e) {
-                        JXG.debug('#steps: ' + constr.length);
-                        JXG.debug('step: ' + i + ', type: ' + constr[i].type);
-                        JXG.debug(constr[i]);
-                    }
-
-                    board.jc.parse(arr[0], true);
-                }
-            }
-
-
-            // bounding box
-            arr = meta.boundingBox;
-            board.setBoundingBox(arr);
-
-            return '';
         }
-    };
+    });
 
     JXG.registerReader(JXG.SketchReader, ['sketch', 'sketchometry']);
 }());
