@@ -510,7 +510,7 @@
                                 elmask = elmask.replace(/\]/g, '\\]');
 
                                 // Searches (A), (A,B),(A,B,C)
-                                expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\(" + elmask + "\)\(,\[\\w\\[\\]'_ \]+\)*\\)", 'g');
+                                expr = new RegExp("\\(([\\w\\[\\]'_ ]+,)*(" + elmask + ")(,[\\w\\[\\]'_ ]+)*\\)", 'g');
 
                                 if (term.search(expr) >= 0) {
                                     elements[el].addChild(me);
@@ -521,7 +521,7 @@
                             elmask = elmask.replace(/\]/g, '\\]');
 
                             // Searches (A), (A,B),(A,B,C)
-                            expr = new RegExp("\\(\(\[\\w\\[\\]'_ \]+,\)*\(" + elmask + "\)\(,\[\\w\\[\\]'_ \]+\)*\\)", 'g');
+                            expr = new RegExp("\\(([\\w\\[\\]'_ ]+,)*(" + elmask + ")(,[\\w\\[\\]'_ ]+)*\\)", 'g');
 
                             if (term.search(expr) >= 0) {
                                 elements[el].addChild(me);
