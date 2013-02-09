@@ -26,8 +26,6 @@
  */
 
 
-JXG.TracenpocheReader = new function() {
-
 /* E.Ostenne notes :
 
 @figure : objects 
@@ -75,7 +73,10 @@ pilote : (useless : rare cause in test -> Interactive Whiteboard : for accuracy 
 
 
 
-JXG.TracenpocheReader = new function() {
+JXG.TracenpocheReader = new function(board, str) {
+
+    this.board = board;
+    this.content = str;
 	
 	aimantageList = new Array(); //list of point to magnetized to ...
 	//
@@ -902,11 +903,9 @@ JXG.TracenpocheReader = new function() {
         return fileStr;
     };
     
-    this.readTracenpoche = function(fileStr, board){
-        this.data = this.prepareString(fileStr);
-        board.suspendUpdate();
-        this.parseData(board);
-        board.unsuspendUpdate();
+    this.readTracenpoche = function(){
+        this.data = this.prepareString(this.content);
+        this.parseData(this.board);
         return this.data;
     };
     
