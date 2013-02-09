@@ -164,7 +164,8 @@
                 reader.read();
                 break;
             case 'tracenpoche':
-                board.xmlString = JXG.TracenpocheReader.readTracenpoche(str, board);
+                reader = new JXG.TracenpocheReader(board, str);
+                reader.read();
                 break;
             case 'graph':
             case 'digraph':
