@@ -151,12 +151,9 @@
          * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
          * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
          * </dl>
-         * @param {Boolean} fromString Some file formats can be given as Base64 encoded strings or as plain xml, in both cases
-         * they are given as strings. This flag is used to distinguish those cases: <tt>true</tt> means, it is given as a string,
-         * no need to un-Base64 and unzip the file.
          */
-        parseString: function (str, board, format, fromString) {
-            var tree, graph, xml, reader;
+        parseString: function (str, board, format) {
+            var graph, reader;
 
             format = format.toLowerCase();
 
@@ -168,7 +165,6 @@
                 break;
             case 'tracenpoche':
                 board.xmlString = JXG.TracenpocheReader.readTracenpoche(str, board);
-
                 break;
             case 'graph':
             case 'digraph':
@@ -176,8 +172,8 @@
                 reader.read();
                 break;
             case 'geonext':
-                str = JXG.GeonextReader.prepareString(str);
-                xml = true;
+                reader = new JXG.GeonextReader(board, str);
+                reader.read();
                 break;
             case 'geogebra':
                 reader = new JXG.GeogebraReader(board, str);
@@ -190,20 +186,6 @@
             case 'sketch':
                 str = JXG.SketchReader.readSketch(str, board);
                 break;
-            }
-
-            if (xml) {
-                board.xmlString = str;
-                tree = JXG.XML.parse(str);
-                // Now, we can walk through the tree
-
-                if (format.toLowerCase() === 'geonext') {
-                    board.suspendUpdate();
-                    if (tree.getElementsByTagName('GEONEXT').length > 0) {
-                        JXG.GeonextReader.read(tree, board);
-                    }
-                    board.unsuspendUpdate();
-                }
             }
         }
     };

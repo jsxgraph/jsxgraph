@@ -43,6 +43,7 @@
  utils/string
  utils/zip
  utils/base64
+ utils/xml
   elements:
    image
    transform
@@ -78,7 +79,15 @@
 
     "use strict";
 
-    JXG.GeonextReader = {
+    JXG.GeonextReader = function (board, str) {
+        var content;
+
+        this.board = board;
+        content = this.prepareString(str);
+        this.tree = JXG.XML.parse(content);
+    };
+
+    JXG.extend(JXG.GeonextReader.prototype, /** @lends JXG.GeonextReader.prototype */ {
         changeOriginIds: function (board, id) {
             if ((id === 'gOOe0') || (id === 'gXOe0') || (id === 'gYOe0') || (id === 'gXLe0') || (id === 'gYLe0')) {
                 return board.id + id;
@@ -1057,22 +1066,17 @@
                 this.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
                 break;
             default:
-                JXG.debug("* <b>Err:</b> " + Data.nodeName + " not yet implemented <br>\n");
+                JXG.debug("* Err: " + Data.nodeName + " not yet implemented");
             }
         },
 
         /**
-         * @deprecated Use #read
-         */
-        readGeonext: JXG.shortcut(JXG.GeonextReader, 'read'),
-
-        /**
          * Reading the elements of a geonext file
-         * @param {Object} tree expects the content of the parsed geonext file returned by function parseFF/parseIE
-         * @param {Object} board board object
          */
-        read: function (tree, board) {
-            var xmlNode, elChildNodes, s, Data,  boardData, conditions, tmp,
+        read: function () {
+            var xmlNode, elChildNodes, s, boardData, conditions, tmp,
+                tree = this.tree,
+                board = this.board,
                 strTrue = 'true';
 
             // maybe this is not necessary as we already provide layer options for sectors and circles via JXG.Options but
@@ -1266,7 +1270,7 @@
 
             return str;
         }
-    }; // end: GeonextReader
+    });
 
     JXG.registerReader(JXG.GeonextReader, ['gxt', 'geonext']);
 }());
