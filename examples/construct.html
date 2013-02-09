@@ -1,161 +1,148 @@
-<!--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html>-->
+﻿<!--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> <html>-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 <head>
    <title>JSXGraph example</title>
-   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.91/jsxgraphcore.js"></script>-->
-    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore-0.82.js"></script>-->
-    <script type="text/javascript" src="../src/GeonextReader.js"></script>
-    <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
-<style type="text/css">
-.fat {
-    font-size:64px;
-    font-family: Arial, Helvetica;
-    font-weight: bold;
-    border: 3px solid red;
-    background-color:yellow;
-    padding: 10px;
-    -moz-border-radius:10px;
-    color: red;
-}
-
-.fatHL {
-    font-size:64px;
-    font-family: Arial, Helvetica;
-    font-weight: bold;
-    border: 3px solid red;
-    background-color:green;
-    padding: 10px;
-    -moz-border-radius:10px;
-    color: white;
-}
-    
-    
-</style>    
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94/jsxgraphcore.js"></script>-->
+    <!--<script type="text/javascript" src="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js"></script>-->
+    <script type="text/javascript" src="../src/reader/geonext.js"></script>
+    <script type="text/javascript" src="../src/renderer/canvas.js"></script>
 </head>
 <body id="body">
-<h1 id="x1">Playground</h1>
-<input type="button" onClick="curve.setProperty({visible:false}); g2.setProperty({visible:false});" value="Visible">
-<div id='jxgbox' class='jxgbox' style='width:800px; height:700px; z-Index:20'></div>
-<div id="debug" style='width:600px; height:200px; background-color:#eee'></div>
+<input type="button" value="translate curve" onClick="translate()">
+<div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
 <script type='text/javascript'>
-//JXG.Options.text.display = 'internal';
 //JXG.Options.renderer = 'canvas';
 //JXG.Options.grid.snapToGrid = true;
 
 //JXG.Options.axis.visible = false;
 //JXG.Options.axis.ticks.drawLabels = true;
 //JXG.Options.axis.ticks.drawZero = true;
+//JXG.Options.axis.withLabel = false;
 
+//JXG.Options.text.display = 'internal';
+
+/*
 var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-6,6,6,-6], 
-axis:true, keepaspectratio:true, 
+axis:false, keepaspectratio:true, 
 grid:false, showNavigation:true});
-
-
-var A = brd.create('point',[1,7,2.5], {label:{fontSize:16}});
-var B = brd.create('point',[1,2,-2.5], {label:{fontSize:16, strokeColor:'blue'}});
-var li1 = brd.create('line',[A,B], {dash:2, strokeColor:'black', strokeWidth:1});
-//var cu2 = brd.create('curve',[function(t){ return li1.X(t)/li1.Z(t); }, function(t){ return li1.Y(t)/li1.Z(t); }, 0.0, 1.0], {strokeColor:'black', strokeWidth:4});
-
-var C = brd.create('point',[-2,2]);
-var D = brd.create('point',[0,2,2]);
-var li2 = brd.create('normal',[C,li1]);
-
-//var li2 = brd.create('line',[C,D]);
-var E = brd.create('glider',[-1,1,li2]);
-var F = brd.create('glider',[4,1,li1], {size:12, color:'blue'});
-//var G = brd.create('orthogonalprojection',[C,li1]);
-var X = brd.create('midpoint',[C,F]);
-
-var cu = brd.create('tracecurve',[F,X], {dash:0, strokeColor:'red'});
-
-
-//
-/*
-var D = brd.create('point',[1,-2,2]);
-var li2 = brd.create('circle',[C,D]);
-
-var I = brd.create('intersection',[li1, li2, 0]);
-brd.create('circle',[B,I]);
 */
 
 /*
-var k = brd.create('circle',[[0,0],2]);
-var g = brd.create('line',[1,1,1]);
-var A = brd.create('intersection',[k,g,0]);
-var B = brd.create('otherintersection',[k,g,A]);
-var C = brd.create('point',[0,0], {face:'+',size:20,strokeColor:'black', fillColor:'yellow'});
-var p = brd.create('polygon',[A,B,C]);
+JXG.Options.zoom.wheel = false;
+JXG.Options.glider = {label:{}};
+JXG.Options.point.label = {};
+*/
+    JXG.joinCurves = function(board, parents, attributes) {
+        var cu1 = parents[0], 
+            cu2 = parents[1],
+            attr = JXG.copyAttributes(attributes, board.options, 'curve'),
+            c = board.create('curve', [[0], [0]], attr);
+        
+        c.updateDataArray = function() {
+            // The two paths have to be connected
+            this.dataX = cu1.dataX.slice(0,-1).concat(cu2.dataX);
+            this.dataY = cu1.dataY.slice(0,-1).concat(cu2.dataY);
+            if (this.dataX.length<4) {
+                this.bezierDegree = 1;
+            } else {
+                this.bezierDegree = cu1.bezierDegree;
+            }
+        };
+        c.prepareUpdate().update().updateRenderer();
+        return c;
+    };
+
+
+    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4,5,5,-4], axis:true});
+
+    // Create two arcs
+    //var l = brd.create('line', [-1,1,0]);
+/*
+brd.create('axis',
+    [
+    [0, 0],
+    [100, 0]
+    ],
+    { withLabel: true, name: "TEST-X", label: { offset: [135,150]}});
+    
+brd.create('axis',
+    [
+    [0, 0],
+    [0, 10]
+    ],
+    { withLabel: true, name: "TEST-Y", label: { offset: [125,135]}});
+    brd.create('point', [5,5], {withLabel: true, name: "Test", label: { offset:[50,-20]}});
 */
 /*
-// x axis
-var pX0 = brd.create('point', 
-    [0, function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[3]+(bb[1]-bb[3])*0.1;
+var a1 = brd.create('point',[0,3]);
+var a2 = brd.create('point',[3,3]);
+    var ax1 = brd.create('axis', [[0,1.7],[1,4.7]], 
+        { 
+            ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
         }
-    ], {visible:false, withLabel:false}); 
-var pX1 = brd.create('point', 
-    [1, function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[3]+(bb[1]-bb[3])*0.1;
+        );
+    brd.create('ticks', [ax1, [2.7]], {strokeColor: '#00ff00', majorHeight:20, drawLabels: true});        
+
+    var ax2 = brd.create('axis', [[-.7,0],[-.7,1]], 
+        { 
+            ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
         }
-    ], {visible:false, withLabel:false}); 
-
-var xaxis = brd.create('axis', [pX0, pX1]);
-pX0.type = JXG.OBJECT_TYPE_CAS;   
-pX1.type = JXG.OBJECT_TYPE_CAS;    
-
-// y axis
-var pX2 = brd.create('point', 
-    [function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[0]+(bb[2]-bb[0])*0.1;
-        }, 0
-    ], {visible:false, withLabel:false}); 
-var pX3 = brd.create('point', 
-    [function(){
-            var bb = brd.getBoundingBox(); 
-            return bb[0]+(bb[2]-bb[0])*0.1;
-        }, 1
-    ], {visible:false, withLabel:false}); 
-
-var xaxis = brd.create('axis', [pX2, pX3]);
-pX2.type = JXG.OBJECT_TYPE_CAS;   
-pX3.type = JXG.OBJECT_TYPE_CAS;    
-*/
-
+        );
+*/        
 /*
-var p = [];
-for (i=0;i<2;i++) {
-	//p.push(brd.create('point', [(Math.random()-0.5)*7,(Math.random()-0.5)*7],{withLabel:true}));
-	p.push(brd.create('point', [2,2*i-1],{withLabel:true}));
-}
-var c = brd.create('curve', JXG.Math.Numerics.CatmullRomSpline(p), {strokeWidth:3});
-*/
+    var s1 = brd.create('slider', [[1,3],[4,3],[10,40,110]], 
+        {   point1:{frozen:true}, 
+            point2:{frozen:true},
+            ticks:{drawLabels:true}
+        });
+*/        
+var p1 = brd.create('point', [2,2]);
+var ff = brd.create('functiongraph', [function(x){return p1.Y()+x*x;}], {trace:true});
+//brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
 /*
-var t = brd.create('turtle', [-1,0], {id:'NIX'});
-//t.fd(3); //
-t.fd(3).rt(90).fd(0.2).pu().fd(0.2).pd().rt(90).fd(3);
-t.setProperty({strokeWidth:5, strokeColor:'black'});
-t.setPenColor('red').rt(60).fd(1.2).pu().fd(0.2).pd().rt(90);
-t.setPenSize(1);
-t.setProperty({strokeColor:'black'});
-t.fd(3);
+    var t1 = brd.create('text', [1,2,'hello'], {snapToGrid:true});
 
+
+    //brd.migratePoint(p1, p2, true);
+    
+    var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
+    //var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
+    
+    var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
+    var p3 = brd.create('point', [2,3]);
+    var a1 = brd.create('arc', [p1,p2,p3], {fixed:false});
+
+    var p4 = brd.create('point', [4,1]);
+    var p5 = brd.create('point', [2,0]);
+    var p6 = brd.create('point', [3,3]);
+    var a2 = brd.create('arc', [p4,p6,p5]);
+
+    var i1 = brd.create('intersection', [a1,a2,0], {visible:false});
+    var i2 = brd.create('intersection', [a1,a2,1], {visible:false});
+
+    // Create two arcs surroundng the intersection area
+    var c1 = brd.create('arc', [p1, i1, i2], {visible:false});
+    var c2 = brd.create('arc', [p4, i2, i1], {visible:false});
+    // Join the two arcs.
+    var c3 = JXG.joinCurves(brd, [c1,c2], 
+        {   strokeColor:'black', 
+            strokeWidth:3, 
+            fillColor:'yellow', fillOpacity:0.2
+        });
+    
+    var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
+    //var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
+    //brd.create('glider', [1,1, a1],{color:'blue'});
+    brd.create('glider', [1,1, c1],{color:'blue', showInfobox:true});
+    //brd.create('glider', [2,1, e1],{color:'blue'});
+    
+    brd.update();
 */
-var txt = brd.create('text', [5,4, function(){ return JXG.JSXGraph.rendererType;}], 
-    {cssClass:'fat', highlightCssClass:'fatHL',
-     fontSize:32, 
-     strokeColor:'red',
-     highlightStrokeColor:'blue'});
 
-
-//brd.update();
-
-
+    //var tape = brd.create('tapemeasure', [[1,4],[3,4]], {name: 'd'});
 </script> 
 </body>
 </html>

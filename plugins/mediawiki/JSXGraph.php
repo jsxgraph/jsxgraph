@@ -1,28 +1,32 @@
 <?php
-/* 
-    Copyright 2008,2009
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
+/*
+    Copyright 2008-2013
         Alfred Wassermann,
         Peter Wilfahrt
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-*/
+
 /**
  * JSXGraph extension
  *
@@ -53,6 +57,8 @@
  * jsxgraph-params:
  *   width:    default: 500
  *   height:   default: 400
+ *   modules:  default: "", additional javascript files that shoulde be loaded, comma separated and without the file
+ *             extension. Those have to be in the same directory as the jsxgraphcore.js, e.g. "Square,JessieScript"
  *   filename, filestring or $input (between <jsxgraph>-tags) --> required
  *   box:      default: jxgbox
  *   board:    default: brd
@@ -61,6 +67,7 @@ $jsxgraph_version = '0.3.1';
 
 // CHANGE this to load local files:
 $outputURI        = 'http://jsxgraph.uni-bayreuth.de/distrib';
+$outputURICDN     = 'http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94';
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -96,6 +103,7 @@ function jsxgraphOutput($input, $args, $parser) {
   global $jsxgraph_version; // see line 9 of this file
   global $markerList;
   global $outputURI;
+  global $outputURICDN;
 
   $error_message = "no error"; //will be overwritten, if error occurs
   $CRLF = "\r\n";
@@ -122,8 +130,22 @@ function jsxgraphOutput($input, $args, $parser) {
   // Load necessary stylesheet und scripts
   if ($markercount==0) {
     $output .= "<link rel='stylesheet' type='text/css' href='".$outputURI."/jsxgraph.css' />";
-    $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+    if (preg_match("/^XXXX132\.180/",getenv("REMOTE_ADDR"))) {
+	     $output .= "<script src='".$outputURI."/jsxgraphcore.js' type='text/javascript'></script>";
+	     $output .= "<script src='".$outputURI."/GeonextReader.js' type='text/javascript'></script>";
+	 } else {
+        $output .= "<script src='".$outputURICDN."/jsxgraphcore.js' type='text/javascript'></script>";
+        $output .= "<script src='".$outputURICDN."/GeonextReader.min.js' type='text/javascript'></script>";
+    }
   }
+
+  if (isset($args['modules']) && trim($args['modules'])!="") { 
+    $modules = explode(',', $args['modules']);
+    for ($i = 0; $i < count($modules); $i++) {
+      $output .= "<script src='".$outputURI."/".$modules[$i].".js' type='text/javascript'></script>";
+    }
+  }
+  
   // Output div
   $output .= "<div id='". $outputDivId ."' class='jxgbox' style='width:". $width ."px; height:". $height ."px;'></div>";
   $output .= "<script type='text/javascript'>";

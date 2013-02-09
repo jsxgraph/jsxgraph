@@ -3,7 +3,7 @@
 
 
 license = """/*
-    Copyright 2008-2011
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -13,23 +13,29 @@ license = """/*
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
 
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
 */
     """
 
 duallicense = """/*
-    Copyright 2008-2011
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -59,12 +65,14 @@ import re
 import tempfile
 import shutil
 
+import codecs
+
 # Used for JSHint
 import urllib
 
 
 # Default values for options. May be overridden via command line options
-yui = "~/Tools/yuicompressor"
+yuglify = "~/node_modules/yuglify/bin/yuglify"
 jsdoc = "~/Tools/jsdoc-toolkit"
 jstest = "~/Tools/JsTestDriver/JsTestDriver-1.3.4-a.jar"
 output = "distrib"
@@ -93,13 +101,14 @@ def usage():
     print "  -s, --server=URL       Overrides the server option in the JsTestDriver config."
     print "  -v, --version=VERSION  Use VERSION as release version for proper zip archive and"
     print "                         folder names."
-    print "  -y, --yui=PATH         Search for YUI Compressor in PATH."
+    print "  -y, --yuglify=PATH     Search for YUI yuglify in PATH."
     print
     print "Targets:"
     print "  Core                   Concatenates and minifies JSXGraph source files into"
     print "                         distrib/jsxgraphcore.js ."
-    print "  Release                Makes Core and Docs and creates distribution ready zip archives"
+    print "  Release                Makes Core, Readers and Docs and creates distribution ready zip archives"
     print "                         in distrib/ ."
+    print "  Readers                Makes Readers and copies them to distrib/ ."
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
     print "  Hint                   Run JSHint on the file given with -l or --hint."
@@ -117,7 +126,7 @@ def usage():
 '''
 def findFilenames(filename):
     lines = open(filename).readlines()
-    expr = re.compile("baseFiles\s*=\s*('|\")([\w,\s]+)('|\")")
+    expr = re.compile("baseFiles\s*=\s*('|\")([\w,\s\/]+)('|\")")
     for el in lines:
         el = re.compile("\s+").sub("",el) # Replace whitespace
         r = expr.search(el)
@@ -126,11 +135,61 @@ def findFilenames(filename):
             return files  # return all files in loadjsxgraph.js
     return []
 
+
+'''
+   Read a file and remove the BOM. unused
+'''
+def removeBOM(s):
+    #if s[0] == unicode((codecs.BOM_UTF8), "utf8"):
+    if s.startswith(codecs.BOM_UTF8):
+        print "found bom"
+        s = s[1:]
+    
+    if s.startswith(codecs.BOM_UTF8):
+        print "STILL A BOM"
+        
+    return s;
+
+'''
+   Read a file. unused
+'''
+def readFile(filename, mode='r', encoding=None):
+    if os.path.isfile(filename):
+        fi = file(filename,'rb')
+        header = fi.read(4) # Read just the first four bytes.
+        fi.close()
+
+        encodings = [ ( codecs.BOM_UTF32, 'utf-32' ),
+                ( codecs.BOM_UTF16, 'utf-16' ),
+                ( codecs.BOM_UTF8, 'utf-8' ) ]
+
+        for h,e in encodings:
+            if header.find(h) == 0:
+                encoding = e
+                break
+        return codecs.open(filename, mode, encoding)
+
+
+'''
+   Go through a list of files, remove all BOMs and concatenate the files into
+   one string
+'''
+def catFiles(l):
+    jstxt = '';
+
+    for f in l:
+        print 'take ', f
+        jstxt += open('src/'+f+'.js').read()
+        jstxt += '\n\n'
+
+    return jstxt
+
+
 '''
     Generate jsxgraphcore.js and place it in <output>
 '''
 def makeCore():
-    global yui, jsdoc, version, output, license
+    global yuglify, jsdoc, version, output, license
 
     print "Making Core..."
     
@@ -138,27 +197,13 @@ def makeCore():
     license = ("/* Version %s */\n" % version) + license
 
     # Take the source files and write them into jstxt
-    loader = ['loadjsxgraphInOneFile']
-    for f in loader:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
-
-    files = findFilenames('src/loadjsxgraph.js')
-    for f in files:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
-    renderer = ['SVGRenderer','VMLRenderer','CanvasRenderer']
-    for f in renderer:
-        print 'take ', f
-        jstxt += open('src/'+f+'.js','r').read()
-        jstxt += '\n';
+    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js') + ['renderer/svg','renderer/vml','renderer/canvas']
+    jstxt = catFiles(files)
 
     # tmpfilename = tempfile.mktemp()
-    tmpfilename = output + '/jsxgraphsrc.js'
+    srcFilename = output + '/jsxgraphsrc.js'
 
-    fout = open(tmpfilename,'w')
+    fout = open(srcFilename,'w')
     fout.write(jstxt)
     fout.close()
 
@@ -168,8 +213,8 @@ def makeCore():
     fout.write(license)
     fout.close()
 
-    # Minify; YUI compressor from Yahoo
-    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
     print s
     os.system(s)
     # os.remove(tmpfilename)
@@ -182,7 +227,7 @@ def makeCore():
     Generate slim jsxplotcore.js and place it in <output>
 '''
 def makePlot():
-    global yui, jsdoc, version, output, license
+    global yuglify, jsdoc, version, output, license
 
     print "Making Plot..."
 
@@ -196,12 +241,12 @@ def makePlot():
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
 
-    files = 'JXG,Math,MathNumerics,MathStatistics,MathSymbolic,MathGeometry,AbstractRenderer,GeonextParser,Board,Options,jsxgraph,GeometryElement,Coords,Point,Line,Curve,Text,Composition,Util,Transformation,RGBColor,Wrappers,Ticks'.split(',')
+    files = 'jxg,math/math,math/numerics,math/statics,math/symbolic,math/geometry,renderer/abstract,geonextparser,board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/curve,base/text,element/composition,utils/zip,base/transformation,utils/color,base/ticks'.split(',')
     for f in files:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
-    renderer = ['SVGRenderer','CanvasRenderer']
+    renderer = ['renderer/svg','renderer/canvas']
     for f in renderer:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
@@ -218,8 +263,8 @@ def makePlot():
     fout.write(license)
     fout.close()
 
-    # Minify; YUI compressor from Yahoo
-    s = "java -jar " + yui + "/build/yuicompressor*.jar --type js " + tmpfilename + " >>" + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + tmpfilename + " >> " + coreFilename
     print s
     os.system(s)
     os.remove(tmpfilename)
@@ -228,7 +273,7 @@ def makePlot():
     Generate JSXGraph HTML reference, zip it and place the archive in <output>
 '''
 def makeDocs(afterCore = False):
-    global yui, jsdoc, version, output
+    global yuglify, jsdoc, version, output
     
     jsd = os.path.expanduser(jsdoc)
     if afterCore:
@@ -261,15 +306,43 @@ def makeDocs(afterCore = False):
 
     #FILELIST=$(cat ../src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $2 }' | sed 's/,/.js ..\/src\//g')
     files = findFilenames('src/loadjsxgraph.js')
-    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/SVGRenderer.js src/VMLRenderer.js src/CanvasRenderer.js"
+    filesStr = "src/loadjsxgraph.js src/" + ".js src/".join(files) + ".js src/renderer/svg.js src/renderer/vml.js src/renderer/canvas.js"
     
-    #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/SVGRenderer.js ../src/VMLRenderer.js
+    #java -jar $ROOT/jsrun.jar $ROOT/app/run.js -a -v -t=$ROOT/templates/jsdoc -d=docs ../src/loadjsxgraph.js ../src/$FILELIST.js ../src/renderer/svg.js ../src/renderer/vml.js
     os.system("java -jar " + jsd + "/jsrun.jar " + jsd + "/app/run.js -v -p -t=" + jsd + "/templates/jsx -d=tmp/docs " + filesStr)
 
     #zip -r tmp/docs.zip tmp/docs/
     os.system("cd tmp && zip -r docs-" + version + ".zip docs/ && cd ..")
     shutil.move("tmp/docs-" + version + ".zip", output + "/docs-" + version + ".zip")
     
+'''
+    Make targets Readers and place them in <output>
+'''
+def makeReaders():
+    global yuglify, output, version, license
+
+    print "Making Readers..."
+    
+    lic = ("/* Version %s */\n" % version) + license
+    reader = ['geonext', 'geogebra', 'intergeo', 'cinderella', 'sketch']
+    for f in reader:
+        shutil.copy("src/reader/" + f + ".js", "tmp/")
+        shutil.copy("src/reader/" + f + ".js", output)
+
+        # Minify; yuglify from Yahoo
+        srcFilename = "tmp/" + f + ".js"
+        
+        # Prepend license text
+        coreFilename = output + "/" + f + ".min.js"
+        
+        fout = open(coreFilename,'w')
+        fout.write(lic)
+        fout.close()
+        
+        # Minify: Yuglify
+        s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
+        print s
+        os.system(s)
 
 '''
     Make targets Core and Docs and create distribution-ready zip archives in <output>
@@ -281,20 +354,25 @@ def makeRelease():
     makeDocs(True)
     
     shutil.copy(output + "/jsxgraphcore.js", "tmp/jsxgraphcore.js")
-    shutil.copy("README", "tmp/README")
-    shutil.copy("LICENSE", "tmp/LICENSE")
+    shutil.copy(output + "/jsxgraphsrc.js", "tmp/jsxgraphsrc.js")
+    shutil.copy("README.md", "tmp/README.md")
+    shutil.copy("CHANGELOG.md", "tmp/CHANGELOG.md")
+    shutil.copy("LICENSE.MIT", "tmp/LICENSE.MIT")
+    shutil.copy("LICENSE.LGPL", "tmp/LICENSE.LGPL")
     shutil.copy("distrib/jsxgraph.css", "tmp/jsxgraph.css")
+    
+    makeReaders()
+    
     shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraph.css themes/ README LICENSE && cd ..")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE.MIT LICENSE.LGPL && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
-
 
 '''
     Make JSXCompressor, a JSXGraph subproject
 '''
 def makeCompressor(afterCore = False):
-    global yui, jsdoc, version, output
+    global yuglify, jsdoc, version, output
 
     print "Make JSXCompressor"
 
@@ -307,31 +385,30 @@ def makeCompressor(afterCore = False):
     jstxt += 'JXG.decompress = function(str) {return unescape((new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(str))).unzip()[0][0]);};\n'
 
     # Take the source files and write them into jstxt
-    loader = ['Util']
+    loader = ['utils/zip']
     for f in loader:
         print 'take ', f
         jstxt += open('src/'+f+'.js','r').read()
         jstxt += '\n';
 
 
-    tmpfilename = tempfile.mktemp()
-    fout = open(tmpfilename,'w')
+    srcFilename = output + "/jsxcompressor.js"
+    fout = open(srcFilename,'w')
     fout.write(jstxt)
     fout.close()
 
     # Prepend license text
-    coreFilename = output + "/jsxcompressor.js"
+    coreFilename = output + "/jsxcompressor.min.js"
     fout = open(coreFilename, 'w')
     fout.write(duallicense)
     fout.close()
 
-    # Minify 
-    # YUI compressor from Yahoo
-    s = 'java -jar ' + yui + '/build/yuicompressor*.jar --type js ' + tmpfilename + ' >>' + coreFilename
+    # Minify: Yuglify
+    s = yuglify + " --terminal < " + srcFilename + " >> " + coreFilename
     print s
     os.system(s)
-     
-    os.remove(tmpfilename)
+
+    os.system("cp %s %s" % (srcFilename, 'JSXCompressor/'))
     os.system("cp %s %s" % (coreFilename, 'JSXCompressor/'))
     # If makeCore has been called just befure, make sure you grab the newest version
     os.system("cp %s %s" % (out + '/jsxgraphcore.js', 'JSXCompressor/'))
@@ -395,10 +472,10 @@ def makeAll():
     
 
 def main(argv):
-    global yui, jsdoc, version, output, hint, jstest, reset, port, server
+    global yuglify, jsdoc, version, output, hint, jstest, reset, port, server
 
     try:
-        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yui=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
+        opts, args = getopt.getopt(argv, "hy:j:v:o:l:t:p:s:", ["help", "yuglify=", "jsdoc=", "version=", "output=", "hint=", "test=", "reset", "port=", "server="])
     except getopt.GetoptError as (errono, strerror):
         usage()
         sys.exit(2)
@@ -412,8 +489,8 @@ def main(argv):
             output = os.path.expanduser(arg)
         elif opt in ("-v", "--version"):
             version = arg
-        elif opt in ("-y", "--yui"):
-            yui = arg
+        elif opt in ("-y", "--yuglify"):
+            yuglify = arg
         elif opt in ("-l", "--hint"):
             hint = arg
         elif opt in ("-t", "--test"):
@@ -433,7 +510,7 @@ def main(argv):
     # Search for the version and print it before the license text.
     if not version:
         expr = re.compile("JSXGraph v(.*) Copyright")
-        r = expr.search(open("src/jsxgraph.js").read())
+        r = expr.search(open("src/base/constants.js").read())
         version = r.group(1)
 
     try:

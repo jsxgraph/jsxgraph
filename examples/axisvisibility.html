@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>Board events</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<button onclick="toggle()">Toggle axis</button>
+<button onclick="toggleText()">Toggle text</button>
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var visible = true,
+        vtext = true,
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: visible, grid: false, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
+        t = board.create('text', [1, 1, 'hello'], {visible: vtext, needsRegularUpdate: false});
+
+    function toggle() {
+        visible = !visible;
+        board.defaultAxes.x.setProperty({visible: visible});
+        board.defaultAxes.y.setProperty({visible: visible});
+    }
+
+    function toggleText() {
+        vtext = !vtext;
+
+        t.setProperty({visible: vtext});
+    }
+
+    /* ]]> */
+</script>
+</body>
+</html>

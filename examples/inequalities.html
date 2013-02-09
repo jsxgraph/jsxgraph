@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Inequalities</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */   
+    (function() {
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-1,6,10,-3], axis:false, grid:false});
+        
+        var p1 = board.create('point', [3, 0], {face:'+',name:"A"}); 
+        var p2 = board.create('point', [7, 2], {face:'o',name:"B"});
+
+        var l1 = board.create('line', [p1, p2], {strokeWidth:'2', strokeColor:'green',withLabel:true});
+        window.l = l1;
+        
+        var abdown = board.create('inequality', [l1]/*, {strokeColor: 'black', strokeWidth: 20, strokeOpacity: 0.5}*/);
+        //var abup = board.create('inequality', [l1], {inverse: true, fillColor: 'green'});        
+    })();
+/* ]]> */
+</script>
+</body>
+</html>

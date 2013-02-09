@@ -19,6 +19,7 @@
     /* <![CDATA[ */
 
     (function() {
+        JXG.Options.renderer = 'canvas';
         var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis:false, grid:true}),
             //
             // bestFit, the best-fitting circle or line is found by least-squares fitting.
@@ -171,7 +172,7 @@
                         e = em;
                     }
                 }
-                var cPos = board.getRelativeMouseCoordinates(e),
+                var cPos = board.getCoordsTopLeftCorner(e),
                     absPos = JXG.getPosition(e),
                     dx = absPos[0]-cPos[0],
                     dy = absPos[1]-cPos[1];

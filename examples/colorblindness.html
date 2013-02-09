@@ -2,7 +2,6 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
 <body>
@@ -29,13 +28,13 @@ for(i=0;i<=2;i++) {
 pABC = brd.createElement('perpendicular',[pol.borders[0],C],{strokeWidth:1,dash:2, name:['','H_c']});
 pBCA = brd.createElement('perpendicular',[pol.borders[1],A],{strokeWidth:1,dash:2, name:['','H_a']});
 pCAB = brd.createElement('perpendicular',[pol.borders[2],B],{strokeWidth:1,dash:2, name:['','H_b']});
-pABC[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pBCA[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-pCAB[1].setProperty('strokeColor:#901B77','fillColor:#CA147A');
-i1 = brd.createElement('intersection',[pABC[0],pCAB[0],0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
-pABC[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pBCA[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
-pCAB[0].setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pABC.setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pBCA.setProperty('strokeColor:#901B77','fillColor:#CA147A');
+pCAB.setProperty('strokeColor:#901B77','fillColor:#CA147A');
+i1 = brd.createElement('intersection',[pABC,pCAB,0],{strokeColor:'#009256',fillColor:'#65B72E',name:'H'});
+pABC.setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pBCA.setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
+pCAB.setProperty({strokeColor:'#000000',dash:1,strokeWidth:1});
  
 mAB = brd.createElement('midpoint',[A,B],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_c'});
 mBC = brd.createElement('midpoint',[B,C],{strokeColor:'#901B77',fillColor:'#CA147A',name:'M_a'});
@@ -64,8 +63,6 @@ function makeColorBlind(deficiency) {
     }
     brd.unsuspendUpdate();
 }
-
-//   brd.simulateColorblindness('tritanopia');
 
   /* ]]> */
   </script>

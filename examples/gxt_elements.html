@@ -1,0 +1,31 @@
+<html>
+<head>
+   <title>Geonext elements test file</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/reader/geonext.js"></script>
+</head>
+<body>
+   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+    <script type="text/javascript">
+        var board;
+    </script>
+   <form>
+      <input type='button' value='Geonext-File einlesen' onclick="if(board) JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt_elements/'+document.getElementById('gxt').options[document.getElementById('gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
+        <select id="gxt">
+          <option value='arrowparallel'>arrowparallel</option>
+          <option value='lotstrecke'>lotstrecke</option>
+          <option value='parallele'>parallele</option>
+          <option value='senkrechte'>senkrechte</option>
+          <option value='umkreis'>umkreis</option>
+        </select>
+      <br>
+   </form>
+   <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
+   </div>
+
+</body>
+</html>

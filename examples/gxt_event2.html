@@ -1,0 +1,176 @@
+<!--
+  $Date: 2007-12-11 17:26:38 +0100 (Di, 11 Dez 2007) $
+  $Revision: 50 $
+  $Author: graphjs $
+  $HeadURL: svn://btmdx1.mat.uni-bayreuth.de/graphjs/gxt_event.html $
+  $Id: gxt_event.html 50 2007-12-11 16:26:38Z graphjs $
+
+-->
+<html>
+<head>
+   <title>GEONExT SVG+VML</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/reader/geonext.js"></script>
+
+</head>
+<body>
+   <!-- 
+      Drawing area 
+   -->
+   <div id="box" style="width:800px; height:500px; overflow:hidden; border:1px dashed black; background-color:wheat; clip:rect(0px, 800px, 500px, 0px);">
+   </div>
+   <!-- 
+      Drawing area 
+   -->
+
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        // Das Objekt geonext ist global und wird in Geonext.js initialisiert
+        //board = JXG.JSXGraph.initBoard('box');
+board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb81.nc.gxt','Geonext');
+  /*      var newCasPoint = function() {
+            var p = new JXG.Point(board, [0,0], '', '', true);
+            p.makeCas(document.getElementById('xterm').value,document.getElementById('yterm').value);
+            p.traced = true;
+            return p;
+        }
+
+        p1 = new JXG.Point(board, [1,1], '', "A'", true);
+        p2 = new JXG.Point(board, [1,0], '', '', true); //A
+        p3 = new JXG.Point(board, [0,-2], '', '', true);
+        p6 = board.addCircumcenter(p1,p2,p3,'gCM','CM','','');
+
+        p4 = new JXG.Point(board, [4.4,0], '', 'D', true);
+        p5 = new JXG.Point(board, [4,-5], '', 'X', true);*/
+//        p6 = new JXG.Point(board, [4,-5], '', '', true);
+                
+//        g1 = new JXG.Group(board, '', '', [p1, p2]);
+//        g2 = new JXG.Group(board, '', '', [p3.id, p4]);
+//        g3 = new JXG.Group(board, '', '', p1, p3.id);
+//        g3.ungroup();
+
+//        mid = board.objects[board.addMidpoint(p1.id,p2.id,'mid','M')];
+        
+    //    line1 = new JXG.Line(board, p2.id, p1.id, 'gerade1','');
+//        line1.setStraight(true, false);
+//        line2 = new JXG.Line(board, p3.id, p4.id, 'gerade2','');
+
+//        line3 = new JXG.Line(board, 'gOOe0', p1.id, '','');
+//        line3 = new JXG.Line(board, p5.id, p1.id, '','');
+
+
+//       board.renderer.hide(line1);
+
+//       arrow = new JXG.Arrow(board, p2.id, p5.id,'','');
+//       arrow2 = new JXG.Arrow(board, p2.id, p6.id,'','');        
+//    ax = new JXG.Axis(board, [-3,0],[10,0],'','');
+//    ay = new JXG.Axis(board, [0,1],[0,0],'','');
+
+//        board.addAngleBisector(p5.id, p2.id, p6.id, 'wink');        
+   // p6 = board.addParallelPoint(line1.point1, line1.point2, p4,'12345','ABCD');
+    //line1 = new JXG.Line(board, p1.id, p6.id, '','');
+        
+      //  board.addPerpendicular(line1.id, p2.id, '', '');
+//        board.addPerpendicular(line1.id, p4.id, '', '');
+      //  board.addPerpendicular(line1.id, 'mid', '', '');
+        
+//        board.addCircumcenter(p1.id, p2.id, p4.id, 'uvw', 'U', 'umkr');
+        
+//       p = new JXG.Polygon(board, new Array(p1.id, p3.id, p2.id, p4.id, p1.id, ''), new Array("border1","border2","border3", "border4"), "pg", ''); 
+    //var g = new JXG.Curve(board, "If(X(A)>0,If(Y(B)>0,2,1),-1)*x^2", '', '');
+    //var h = new JXG.Curve(board, ['x',"X(A')*Abs(x)",'x',-1,1], 'G278', '');
+    /*var h = new JXG.Curve(board, ["2*Cos(t)+Cos(2*t)+X(A')","2*Sin(t)-Sin(2*t)+Y(A')",'t','0','4*Pi'], '', '');
+    var h = new JXG.Curve(board, ['(4*Cos(t)+3*Cos(2*t))*X(A)+3','X(A)*(4*Sin(t)-3*Sin(2*t))','t','0','2*Pi'], '', '');
+    h.setProperty('strokeColor:#0000ffff','strokeWidth:1','fillColor:#00000050');
+    p4.makeSlider(h);
+
+    var h = new JXG.Curve(board, ['2*Cos(t)','1.4*Sin(t+X(A))','t','-Pi','Pi'], '', '');
+    h.setProperty('strokeColor:#000000ff','strokeWidth:1','fillColor:#ffff0050');
+
+    var h = new JXG.Curve(board, ['x','Sin(x)'], '', '');
+    p5.makeSlider(h);*/
+
+//        var f = new JXG.Curve(board, 'X(A)*Sin(1/x)', 'G29', '');
+        //var f = new JXG.Curve(board, 'X(A)*Tan(x)', 'G30', '');
+//        p4.startAnimation(-1, 12);
+
+        //var t = new JXG.Text(board,'<h2>Winkel_{BCA} &phi;</h2> <arc> &ang;<span style=text-decoration:overline>BCA</span>=<value>Deg(B,C,A)</value>, X(A)=<value>X(A)</value>, Dist(A,B)=<value>Dist(A,B)</value>', [6, -4], 'xxxx', '');
+    //alert(board.elementsByName["A'"].name);
+    /* ]]> */
+   </script>
+   <form>
+      <input type='button' value='Grid ein' onclick="board.renderer.drawGrid(board);" />
+      <input type='button' value='Grid aus' onclick="board.renderer.removeGrid(board);" />
+      <input type='button' value='Verstecke A' onclick="p4.makeSlider(g); p1.hideElement();" />
+      <input type='button' value='Zeige A' onclick="p1.showElement();" />
+      <input type='button' value='Zeichnungen' onclick="alert('Redraws: ' + countDrawings + ', Benoetigte Zeit: ' + countTime + '. Durchschnitt: ' + (countTime/countDrawings) + 'ms/Redraw');" />
+      <input type='button' value='(De-)Aktiviere SnapToGrid' id='snap' onclick="board.snapToGrid = !board.snapToGrid;" />
+      <br>
+      <input type='button' value='Entferne A' onclick="board.removeObject('A');">
+      <input type='button' value='Zoom In' onclick='board.zoomIn()'>
+      <input type='button' value='Zoom Out' onclick='board.zoomOut()'>
+      <input type='button' value='Zoom 100%' onclick='board.zoom100()'>
+      <input type='button' value='Zoom alle Punkte' onclick='board.zoomAllPoints()'>
+        <br>
+        x=<input type="text" size="10" id="xterm" value="X(A)"><br>
+        y=<input type="text" size="10" id="yterm" value="Sin(X(A))*2"> <input type='button' value='Neuer CAS-Punkt' onclick='cas = newCasPoint()'>
+      <br>
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board);board = JXG.JSXGraph.loadBoardFromFile('box','gxt/blubb'+document.getElementById('blubb').value+'.nc.gxt','Geonext');" />
+      <input type='text' id='blubb' value="3" size="3">
+      <br>
+      <input type='button' value='Geonext-File einlesen' onclick="JXG.JSXGraph.freeBoard(board); board = JXG.JSXGraph.loadBoardFromFile('box','gxt/'+document.getElementById('blubb_gxt').options[document.getElementById('blubb_gxt').selectedIndex].value+'.nc.gxt','Geonext');" />
+          <select id="blubb_gxt">
+
+        
+        <option value='blubb11'>Schnitte Kreis-Gerade</option>    
+        <option value='blubb0'>Schnitte Kreis-Gerade</option>        
+        <option value='blubb37'>Schnitte mit Arcs</option>            
+        <option value='blubb46'>Schnitte mit Arrows</option>
+        <option value='blubb47'>Schnitt Kreis-senkrechte Gerade: Schnittpunktreihenfolge</option>
+        <option value='blubb69'>Schnitt Kreis-Normale: Schnittpunktreihenfolge</option>
+        <option value='blubb70'>Schnitt Kreis-Normale: Schnittpunktreihenfolge II</option>
+        <option value='blubb39'>voneinander abhaengige Schnitte</option>    
+        <option value='blubb66'>voneinander abhaengige Schnitte II</option>        
+        <option value='blubb49'>Slider auf Strecke</option>
+        <option value='blubb34'>Arrow mit Trace-Eigenschaft</option>
+        <option value='blubb55'>Lines mit Trace-Eigenschaft</option>
+        <option value='blubb56'>Circles mit Trace-Eigenschaft</option>
+        <option value='blubb57'>Polygon mit Trace-Eigenschaft</option>
+        <option value='blubb54'>Draft-Modus</option>
+        <option value='blubb58'>Draft-Modus II</option>
+        <option value='blubb45'>Opacity</option>
+        <option value='blubb44'>Compositions mit Farbeigenschaften</option>
+        <option value='blubb40'>Dash-styles</option>        
+        <option value='blubb32'>bunte Arcs mit Pfeilspitzen</option>    
+        <option value='blubb31'>Arc und Sector mit Farbeigenschaften</option>
+        <option value='blubb27'>Polygon mit Farbeigenschaften</option>        
+        <option value='blubb26'>Linien mit Farbeigenschaften</option>        
+        <option value='blubb22'>Punkt-styles</option>
+        <option value='blubb61'>Angle</option>    
+        <option value='blubb48'>ARROW_PARALLEL</option>    
+        <option value='blubb52'>Verschiedenste Objekte</option>            
+        <option value='blubb6'>Polygon, Circumcenter, Arrows, Curve</option>
+        <option value='blubb18'>Arc und Sector</option>        
+        <option value='blubb1'>Punkte mit Achse</option>        
+        <option value='blubb2'>Linien</option>
+        <option value='blubb3'>Linien und Kreise</option>        
+        <option value='blubb4'>Linien und Kreise</option>    
+        <option value='blubb74'>Linien mit Labels</option>
+        <option value='blubb75'>Linien mit Labels</option>
+        <option value='blubb76'>Curves</option>
+        <option value='blubb00'>Beispiel fuer notwendigkeit von Perpendicular.change</option>
+        </select>
+      <br>
+      <input type='button' value='Show Elements of board' onclick='document.getElementById("debug").innerHTML = ""; for(var Elements in board.objects) document.getElementById("debug").innerHTML += Elements + ": " + board.objects[Elements] + "<br/>";'>
+      <input type='button' value='Clear All Traces' onclick='board.clearTraces();'>
+      <input type='button' value='Do PSTricks' onclick='board.pstricks.givePsTricksToDiv("debug",board);'>
+   </form>
+   <div id="debug" style="position:relative; width:600px; height:100px; border:1px dashed black; background-color:white;">
+   Test
+   </div>
+
+</body>
+</html>

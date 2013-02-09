@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>JSXGraph CeBIT Tests</title>
+    <style type="text/css">
+        .box {
+            width: 200px;
+            height: 80px;
+        }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        function addEvent(obj, type, fn, owner) {
+            owner['x_internal'+type] = function() {
+                return fn.apply(owner, arguments);
+            };
+
+            if (obj.addEventListener) { // Non-IE browser
+                console.log('addEventListener', type);
+                obj.addEventListener(type, owner['x_internal'+type], false);
+            } else {
+                console.log('attach event', type);
+                obj.attachEvent('on'+type, owner['x_internal'+type]);
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div id="playfield" style="width: 300px; height: 300px; border: 3px solid black; -ms-touch-action: none;"></div>
+<div id="result"></div>
+<a href="jxg.html"><div class="box" style="float: left; background-color: #ccc;">Next</div></a>
+
+<script type="text/javascript">
+    var container = document.getElementById('playfield'),
+        i,
+        pointerTypes = [
+            'undefined',
+            'unavailable',
+            'touch',
+            'pen',
+            'mouse'
+        ],
+        eventManager = {
+            events: [
+                'mousedown',
+                'mousemove',
+                'mouseup',
+                'touchstart',
+                'touchmove',
+                'touchend',
+                'MSPointerDown',
+                'MSPointerMove',
+                'MSPointerUp'
+            ],
+
+            lastEvent: '',
+            counter: 1,
+
+            handleEvent: function(what, e) {
+                if (what !== this.lastEvent || this.counter > 50) {
+                    $('#result').append(what + ' called ' + this.counter + ' times<br />');
+                    this.counter = 1;
+                }
+
+                console.log('type ', pointerTypes[e.pointerType], ' / pressure ', e.pressure, ' / id ', e.pointerId, ' / primary ',e.isPrimary);
+
+                this.lastEvent = what;
+                this.counter += 1;
+
+                if (e.preventDefault) {
+                    e.preventDefault();
+                } else if (window.event) {
+                    window.event.returnValue = false;
+                }
+
+                return true;
+            },
+            makeEventHandler: function(what) {
+                return function(e) {
+                    return this.handleEvent(what, e);
+                };
+            }
+        };
+
+    $('#result').append('mspointerenabled:', window.navigator.msPointerEnabled.toString(), '<br />');
+    console.log(window.navigator.msPointerEnabled);
+
+    try {
+        for(i = 0; i < eventManager.events.length; i++) {
+            addEvent(container, eventManager.events[i], eventManager.makeEventHandler(eventManager.events[i]), eventManager);
+        }
+    } catch(e) {
+        $('#result').append('Error: ' + e);
+    }
+</script>
+
+</body>
+</html>

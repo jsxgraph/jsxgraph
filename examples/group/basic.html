@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../../distrib/jquery.min.js"></script>
+</head>
+<body>
+<div id="box" style="width:500px; height:500px;"></div>
+
+<script type="text/javascript">
+    (function () {
+        var board = JXG.JSXGraph.initBoard('box', {boundingbox: [-5, 5, 5, -5], axis: true}),
+            points = [], no = 3, i,
+            group;
+
+        for (i = 0; i < no; i++) {
+            points.push(board.create('point', [Math.random()*8-4, Math.random()*8-4]));
+        }
+        
+        var test = board.create('polygon', points);
+        
+        board.create('polygon', points);
+
+        group = board.create('group', points);
+        //group.addPoints(points);
+        //group.removePoint(points[1]);
+        
+        board.removeObject(test);
+    })();
+</script>
+
+</body>
+</html>

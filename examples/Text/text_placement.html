@@ -1,0 +1,33 @@
+﻿<html>
+<head>
+    <title>JSXGraph example</title>
+    <!--<script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../../src/renderer/canvas.js"></script>
+</head>
+<body>
+<h1>Text placements</h1>
+<div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
+<div id="debug" style="display:block;"></div>
+<script type='text/javascript'>
+    var brd, txt, p0, p1, p2, im;
+    //JXG.Options.renderer = 'canvas';
+    //JXG.Options.text.display = 'internal';
+    JXG.Options.text.fontSize = 12;
+    
+    brd = JXG.JSXGraph.initBoard('jxgbox', 
+        {boundingbox:[-5,8,5,-8], axis:false, showNavigation:true, showCopyright:true});
+
+    brd.suspendUpdate();
+    txt5 = brd.create('text',[0,2, "html text middle"], {display:'html', anchorX:'middle'});
+    txt1 = brd.create('text',[2.5,4, "internal text right"], {display:'internal', anchorX:'right'});
+    txt2 = brd.create('text',[2.5,2, "internal text left"], {display:'internal', anchorX:'middle'});
+    txt3 = brd.create('text',[2.5,0, "internal text left"], {display:'internal', anchorX:'left', anchorY:'middle'});
+    txt4 = brd.create('text',[0,4, "html text right"], {display:'html', anchorX:'right'});
+    txt6 = brd.create('text',[0,0, "html text left"], {display:'html', anchorX:'left', anchorY:'middle'});
+
+    brd.unsuspendUpdate();
+</script> 
+</body>
+</html>

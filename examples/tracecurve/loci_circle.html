@@ -1,0 +1,111 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+   <script type="text/javascript" src="../src/Triangle.js"></script>
+</head>
+<body>
+<h2>Watt's Curve</h2>
+<div style="width:800px">
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:450px; float:left"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 10, 14, -2], axis: true, grid: false});
+    p1 = board.createElement('point', [0, 0], {style:2,name:"A"});
+    p2 = board.createElement('point', [-3, 0], {style:2,name:"B"});
+    p3 = board.createElement('point', [3, 0], {style:2,name:"C"});
+
+    // dependency and polynomial generation
+    p1.addChild(p3);
+    p2.addChild(p3);
+
+    p3.generatePolynomial = function () {
+        // distance p3 to p1 must be the same as distance p2 to p1.
+        var poly = '((' +p3.symbolic.x+')-('+p1.symbolic.x+'))^2+((' +p3.symbolic.y+')-('+p1.symbolic.y+'))^2-((' +p2.symbolic.x+')-('+p1.symbolic.x+'))^2-((' +p2.symbolic.y+')-('+p1.symbolic.y+'))^2';
+
+        return [poly];
+    };
+
+    function groebner(p, debug) {
+        if(debug)
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb, true);
+        else
+            JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+    }
+
+    function anc(p) {
+        var list = p.ancestors,
+            count = 0, t;
+
+        $('debug').innerHTML = '';
+        for(t in list) {
+            $('debug').innerHTML += list[t].name + '<br/>';
+        }
+    }
+
+    function symbcoords(p) {
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', 'underscore');
+
+        $('debug').innerHTML = '';
+        for(var o in board.objects) {
+            if(typeof board.objects[o].symbolic.x != 'undefined') {
+                $('debug').innerHTML += board.objects[o].name + ': ';
+                $('debug').innerHTML += '(' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')<br />';
+                board.objects[o].label.content.setText(board.objects[o].name + ' (' + board.objects[o].symbolic.x + ', ' + board.objects[o].symbolic.y + ')');
+            }
+        }
+        board.update();
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function genpoly(p, method) {
+        var m = 'underscore';
+        if(method == 2)
+            m = 'brace';
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, p, 'u', m);
+
+        var poly = JXG.Math.Symbolic.generatePolynomials(board, p, false);
+
+        if(method==2)
+            $('debug').innerHTML = 'Ideal(';
+        else
+            $('debug').innerHTML = '<ul>';
+
+        for(var i=0; i<poly.length; i++) {
+            if(method==2) {
+                $('debug').innerHTML += '' + poly[i];
+                if(i < poly.length-1)
+                    $('debug').innerHTML += ', ';
+            } else {
+                poly[i] = poly[i].replace(/\^(\d+)/g,'<sup>$1</sup>');
+                poly[i] = JXG.GeonextParser.replaceSub(poly[i]);
+                poly[i] = poly[i].replace(/\*/g,'');
+                $('debug').innerHTML += '<li>' + poly[i] + '</li>';
+            }
+        }
+        if(method==2)
+            $('debug').innerHTML += ')';
+        else
+            $('debug').innerHTML += '</ul>';
+
+        JXG.Math.Symbolic.clearSymbolicCoordinates(board);
+    }
+
+    function cb(poly) {
+        alert(poly[0].replace(/\*\*(\d+)/g,'<sup>$1</sup>').replace(/\*/g,''));
+    }
+  /* ]]> */
+  </script>
+<a href="#" onclick="anc(p3);">Print ancestors</a><br />
+<a href="#" onclick="symbcoords(p3);">Generate symbolic coordinates</a><br />
+<a href="#" onclick="genpoly(p3, 1);">Build polynomials (human readable)</a><br />
+<a href="#" onclick="genpoly(p3, 2);">Build polynomials (cocoa ideal generator)</a><br />
+<a href="#" onclick="groebner(p3);">Generate locus</a><br />
+<a href="#" onclick="groebner(p3, debug);">Generate locus (debug)</a><br />
+<div id="debug" style="display:block; width: 400px;"></div>
+</body>
+</html>

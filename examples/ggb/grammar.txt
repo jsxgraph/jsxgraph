@@ -1,0 +1,74 @@
+/~ --- Token definitions --- ~/
+
+/~ Characters to be ignored ~/
+!   ' |\t' ;
+
+/~ Non-associative tokens ~/
+    '\('
+    '\)'
+    '[0-9]+'                        INT
+    '[0-9]+\.[0-9]*|[0-9]*\.[0-9]+' FLOAT
+    '\_\_[a-zA-Z0-9]+'              PARAM
+    '[a-zA-Z]+(\_*[a-zA-Z0-9]+)*'   VAR
+    '\&[a-zA-Z]+\;'                 HTML
+    '\"[a-zA-Z0-9äüöß\=\.\ ]*\"'    STRING
+    '[a-zA-Z]+\[[a-zA-Z]+\]'        COMMAND
+    ;
+
+/~ Left-associative tokens, from lowest to highest precedence ~/
+<  '\+'
+   '\-';
+
+<  '\*'
+   '/';
+
+<  '^';
+
+<  '\,';
+
+<  '<='
+   '>='
+   '=='
+   '!='
+   '<'
+   '>';
+
+<  '!';
+
+<  '\|\|'
+   '\&\&';
+
+##
+
+/~ --- Grammar specification --- ~/
+
+p:      e                          [*%% = ggbr.ggbAct('end', %1);*]
+        ;
+
+e:        '(' e ',' e ')'          [*%% = ggbr.ggbAct('coord', %2, %4, element);*] /~ element unabhaengig ~/
+        | e '<=' e                 [*%% = ggbr.ggbAct('le', %1, %3);*]
+        | e '>=' e                 [*%% = ggbr.ggbAct('ge', %1, %3);*]
+        | e '==' e                 [*%% = ggbr.ggbAct('eq', %1, %3);*]
+        | e '!=' e                 [*%% = ggbr.ggbAct('neq', %1, %3);*]
+        | e '<' e                  [*%% = ggbr.ggbAct('lt', %1, %3);*]
+        | e '>' e                  [*%% = ggbr.ggbAct('gt', %1, %3);*]
+        | e '+' e                  [*%% = ggbr.ggbAct('add', %1, %3);*]
+        | e '-' e                  [*%% = ggbr.ggbAct('sub', %1, %3);*]
+		| '!' e                    [*%% = ggbr.ggbAct('neg', %2);*]
+		| e '^' e                  [*%% = ggbr.ggbAct('pow', %1, %3);*]
+		| e '||' e                 [*%% = ggbr.ggbAct('or', %1, %3);*]
+		| e '&&' e                 [*%% = ggbr.ggbAct('and', %1, %3);*]
+        | e '*' e                  [*%% = ggbr.ggbAct('mul', %1, %3);*]
+        | e '/' e                  [*%% = ggbr.ggbAct('div', %1, %3);*]
+        | '-' e &'*'               [*%% = ggbr.ggbAct('negmult', %2);*]
+        | '(' e ')'                [*%% = ggbr.ggbAct('bra', %2);*]
+        | STRING '+' e             [*%% = ggbr.ggbAct('string', %1, %3);*]
+        | INT                      [*%% = ggbr.ggbAct('int', %1);*]
+        | FLOAT                    [*%% = ggbr.ggbAct('float', %1);*]
+        | PARAM                    [*%% = ggbr.ggbAct('param', %1);*]
+        | HTML                     [*%% = ggbr.ggbAct('html', %1);*]
+        | STRING                   [*%% = ggbr.ggbAct('string', %1);*]
+        | COMMAND                  [*%% = ggbr.ggbAct('command', %1);*]
+        | VAR '(' e ')'            [*%% = ggbr.ggbAct('var', %1, %3);*]
+        | VAR                      [*%% = ggbr.ggbAct('var', %1);*]
+        ;

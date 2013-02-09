@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>JSXGraph example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/math/bst.js"></script>
+</head>
+<body>
+<h1>BST</h1>
+<script type="text/javascript">
+
+    var b = new JXG.Math.BST(),
+        a = new JXG.Math.BST(),
+        c = new JXG.Math.BST();
+    b.init();
+    a.init();
+    c.init();
+    
+    var i, s = "Hallo, dies ist ein Text";
+    s = "24135";
+    for (i=0; i<s.length; i++) {
+        b.insert(s[i]);
+    }
+    
+    s = "Ein anderer String";
+    for (i=0; i<s.length; i++) {
+        a.insert(s[i]);
+    }
+    
+    //b.insertHead('A');
+    //b.deleteNode('A');
+
+    //b.balance();
+    //b.deleteNode('H');
+    //b.head = b.rotL(b.head);
+    
+    //b.traverse(b.head, function(node){console.log(node.item);});
+//console.log("RESULT");    
+    b.show();
+    
+    var n = b.search('3')
+    console.log(n);
+    console.log(b.next(n));
+    console.log(b.prev(n));
+    
+//console.log("--------------");    
+    //a.show()
+    //console.log(b.select(0));
+//console.log("############");    
+//    c.head = b.joinRand(b.head,a.head);
+//c.show();
+
+/*    var h = new JXG.Heap();
+    var i, s = "hallo ein xyz"; //, dies ist ein Text";
+    for (i=0; i<s.length; i++) {
+        h.insert(s[i]);
+    }
+
+    console.log(h.pq);
+*/    
+</script>
+</body>
+</html>

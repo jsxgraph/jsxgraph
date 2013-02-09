@@ -1,0 +1,41 @@
+<html>
+<head>
+   <title>JSXGraph Konstruktionstemplate</title>
+   <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script type="text/javascript" src="../src/reader/graph.js"></script>
+</head>
+<body>
+
+  <div id="jxgbox" class="jxgbox" style="width:500px; height:500px;"></div>
+  <script type="text/javascript">
+  /* <![CDATA[ */                    
+    //board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graph3.txt', 'digraph');
+    board = JXG.JSXGraph.loadBoardFromFile('jxgbox','graphs/graphJana.txt', 'digraph');
+							  /* ]]> */
+                              
+    function waitForGraph () {
+        if(board.addedGraph != null) {
+            // anfangen
+            doSomething();
+        }
+        else {
+            // warten
+            window.setTimeout("waitForGraph()", 100);
+        }
+    }
+    window.setTimeout("waitForGraph()", 100);
+     
+    function doSomething() {      
+        board.addedGraph.nodes[2].reference.setProperty({fillColor:'blue',strokeColor:'black',size:7,face:'[]'}); // B
+        board.addedGraph.segments[1][2].edge.setProperty({strokeColor:'green',dash:3}); // Kante von A nach B
+        board.addedGraph.segments[1][2].weight.setText('Hallo');
+
+        JXG.debug(board.addedGraph.adjMatrix);
+    }
+    
+    
+   </script>
+
+</body>
+</html>

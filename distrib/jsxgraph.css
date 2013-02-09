@@ -7,8 +7,10 @@
     border-style:solid;
     border-width:1px;
     border-color:#356AA0;
-    -moz-border-radius:10px;
+    border-radius:10px;
+    /*-moz-border-radius:10px;*/
     -webkit-border-radius:10px;
+    -ms-touch-action: none;
     /*
         -moz-box-shadow:black 2px 2px 2px -2px, #151A10 4px 4px;
         -webkit-box-shadow:4px 4px 3px #151A10;
@@ -23,6 +25,25 @@
     /*line-height:100%;*/ /* This has to be commented out. Otherwise subscripts are not visible in IE */
     /*border-style:dotted;*/
     /*border-width:0.4px;*/
+}
+
+.JXGinfobox {
+    border-style:none;
+    border-width:1px;
+    border-color:black;
+}
+
+.JXGimage {
+    opacity:1.0;
+}
+
+.JXGimageHighlight {
+    opacity:0.6;
+    /*
+    border-style:solid;
+    border-width:10px;
+    border-color:#A0A0A0;
+    */
 }
 
 .navbar {

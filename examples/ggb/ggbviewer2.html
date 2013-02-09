@@ -1,0 +1,197 @@
+<html>
+<head>
+  <title>JSXGraph example</title>
+  <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+  <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+  <script type="text/javascript" src="../../src/reader/geogebra.js"></script>
+  <script type="text/javascript" src="../../distrib/AM3.js"></script>
+</head>
+<body>
+<div id="box" class='jxgbox' style="width:500px; height:400px; float:left"></div>
+<div id="ggb" class='jxgbox' style="width:650px; height:400px; float:left;margin-left:20px;"></div>
+
+<div style="clear:both;">
+
+<form>
+    <p>
+	<input type='button' value='Zoom In' onclick='board.zoomIn()'>
+	<input type='button' value='Zoom Out' onclick='board.zoomOut()'>
+	<input type='button' value='Zoom 100%' onclick='board.zoom100()'>
+	<input type='button' value='Show XML' onclick='board.showXML()'>
+    <p>
+    Geogebra examples: <br>
+    <select id="beispiele_geo">
+		<option value='./elements/abstand.ggb'>[X] abstand</option>
+		<option value='./elements/dreheobjektumpunkt.ggb'>[X] dreheobjektumpunkt</option>
+		<option value='./elements/geradedurchzweipunkte.ggb'>[X] geradedurchzweipunkte</option>
+		<option value='./elements/geradenspiegelung.ggb'>[X] geradenspiegelung</option>
+		<option value='./elements/halbkreisdurchzweipunkte.ggb'>[X] halbkreisdurchzweipunkte (semicircle)</option><!-- noch mit Fehler, wird aber richtig angezeigt, Konstr. ueber sector -->
+		<option value='./elements/kegelschnittdurchfuenfpunkte.ggb'>[X] kegelschnittdurchfuenfpunkte (conic)</option>	
+		<option value='./elements/kreisbogenmitmittelpunktundzweipunkte.ggb'>[X] kreisbogenmitmittelpunktundzweipunkte</option>
+		<option value='./elements/kreisdurchdreipunkte.ggb'>[X] kreisdurchdreipunkte</option>
+		<option value='./elements/kreismitmittelpunktdurchpunkt.ggb'>[X] kreismitmittelpunktdurchpunkt</option>
+		<option value='./elements/kreismitmittelpunktundradis.ggb'>[X] kreismitmittelpunktundradis</option>
+		<option value='./elements/kreissektormitmittelpunktdurchzweipunkte.ggb'>[X] kreissektormitmittelpunktdurchzweipunkte</option>
+		<option value='./elements/kurvendiskussion.ggb'>[X] kurvendiskussion (x^3 + 3 x^2 + 1)</option>
+		<option value='./elements/mittelsenkrechte.ggb'>[X] mittelsenkrechte (mit Hilfsmittelpunkt aber nur Strecke)</option>
+		<option value='./elements/parallelegerade.ggb'>[X] parallelegerade</option>
+		<option value='./elements/polareoderkonguierterdurchmesser.ggb'>[X] polareoderkonguierterdurchmesser (polar)</option>
+		<option value='./elements/punkt.ggb'>[X] punkt</option>
+		<option value='./elements/punkt-ya.ggb'>[X] Punkt: y(A)</option>		
+		<option value='./elements/punktspiegelung.ggb'>[X] punktspiegelung</option>
+		<option value='./elements/schieberegler.ggb'>[X] schieberegler (slider + abhaengiger Punkt)</option>
+		<option value='./elements/schieberegler-pow.ggb'>[X] schieberegler pow</option>
+		<option value='./elements/schieberegler2-punkt.ggb'>[X] schieberegler2 - punkt</option>
+		<option value='./elements/senkrechtegerade.ggb'>[X] senkrechtegerade (Update um Linien zu zeigen und Punkt weg)</option>
+		<option value='./elements/sinus.ggb'>[X] Sinus</option>
+		<option value='./elements/sin-intervall.ggb'>[X] Sinus -3, 3</option>
+		<option value='./elements/sin-point+slider.ggb'>[X] Sinus(punkt + slider)</option>
+		<option value='./elements/steigung.ggb'>[X] steigung (slope)</option>
+		<option value='./elements/strahldurchzweipunkte.ggb'>[X] strahldurchzweipunkte</option>
+		<option value='./elements/streckedurchzweipunkte.ggb'>[X] streckedurchzweipunkte</option>
+        <option value='./elements/streckemitfesterlaengevonpunkt.ggb'>[X] streckemitfesterlaengevonpunkt</option>
+		<option value='./elements/streckeobjektzentrischvonpunkt.ggb'>[X] streckeobjektzentrischvonpunkt</option>
+		<option value='./elements/tangenten.ggb'>[X] tangenten</option>
+		<option value='./elements/umkreisbogendurchdreipunkte.ggb'>[X] umkreisbogendurchdreipunkte</option>
+		<option value='./elements/umkreissektordurchdreipunkte.ggb'>[X] umkreissektordurchdreipunkte</option>
+		<option value='./elements/vektorzwischenzweipunkten.ggb'>[X] vektorzwischenzweipunkten</option>
+		<option value='./elements/verschiebeobjektumvektor.ggb'>[X] verschiebeobjektumvektor</option>
+		<option value='./elements/vieleck-regelmaessig.ggb'>[X] vieleck-regelmaessig</option>
+		<option value='./elements/vieleck.ggb'>[X] vieleck</option>
+		<option value='./elements/winkelhalbierende.ggb'>[X] winkelhalbierende</option>
+		<option>--Elemente--------</option>
+		<option value='./elements/winkelmitfestergroesse.ggb'>[ ] winkelmitfestergroesse</option>  <!-- Die Linien vom Mittelpunkt an die Kreisraender sind inkorrekt,-->      
+		<option value='./elements/winkel.ggb'>[ ] winkel</option><!-- Die Linien vom Mittelpunkt an die Kreisraender sind inkorrekt, mit dem neuen Arc/Angle sollte das aber moeglich sein? -->
+		<option value='./elements/flaeche.ggb'>[ ] flaeche</option><!-- Umrechung absoluter Screenangaben in -->
+		<option>--Worksheets------</option>
+		<option value='./worksheets/exp01_worksheet.ggb'>[X] exp01_worksheet</option>
+		<option value='./worksheets/exp02_worksheet.ggb'>[X] exp02_worksheet</option>
+		<option value='./worksheets/ellip_worksheet.ggb'>[] ellip_worksheet</option>
+		<option value='./worksheets/gegenvektor_worksheet.ggb'>[X] gegenvektor_worksheet</option>
+		<option value='./worksheets/glockenkurve.ggb'>[X] glockenkurve</option>
+		<option value='./worksheets/GS_Konstruktion_worksheet.ggb'>[X] GS_Konstruktion_worksheet</option><!-- die schnittkonstruktionen stimmen hier noch nicht. z.b. mal am punkt rechts unten ziehen -->
+		<option value='./worksheets/GeradenSpiegelung_worksheet.ggb'>[-] GeradenSpiegelung_worksheet</option><!-- Bilder allgemein noch nicht -->
+		<option value='./worksheets/PunktSpiegelung_worksheet.ggb'>[-] PunktSpiegelung_worksheet</option><!-- Bilder allgemein noch nicht -->
+		<option value='./worksheets/Streckung_worksheet.ggb'>[-] Streckung_worksheet</option><!-- Bilder allgemein noch nicht: Abbruch an dieser Stelle -->
+		<option value='./worksheets/addition_worksheet.ggb'>[ ] addition_worksheet</option>
+		<option value='./worksheets/baumdiagramm3.ggb'>[ ] baumdiagramm3</option><!-- slider bzw numeric -->
+		<option value='./worksheets/baumdiagramm3b.ggb'>[ ] baumdiagramm3b</option><!-- slider bzw numeric -->
+		<option value='./worksheets/betrag_worksheet.ggb'>[ ] betrag_worksheet</option><!-- (x(A), x(B)) in Parser + Konstrutktion der Elemente mit Zahl bzw Funktion -->
+		<option value='./worksheets/dynagraph.ggb'>[ ] dynagraph</option>
+		<option value='./worksheets/dynagraph_worksheet.ggb'>[ ] dynagraph_worksheet</option>
+		<option value='./worksheets/einheitsvektor_worksheet.ggb'>[ ] einheitsvektor_worksheet</option><!-- Parser haengt an dem Zeichen "|" -->
+		<option value='./worksheets/euler_gerade1.ggb'>[X] euler_gerade1</option>
+		<option value='./worksheets/euler_gerade2.ggb'>[X] euler_gerade2</option>
+		<option value='./worksheets/Feuerbachkreis.ggb'>[X] Feuerbachkreis</option>
+		<option value='./worksheets/funktion_steigung1.ggb'>[X] funktion_steigung1</option>
+		<option value='./worksheets/funktion_steigung1b.ggb'>[X] funktion_steigung1b</option>
+		<option value='./worksheets/funktion_steigung2.ggb'>[X] funktion_steigung2</option>
+		<option value='./worksheets/funktion_steigung2b.ggb'>[X] funktion_steigung2b</option>
+		<option value='./worksheets/geogebra.ggb'>[X] geogebra</option>
+		<option value='./worksheets/glasscheibe1.ggb'>[ ] glasscheibe1</option><!-- numerische Variable "Fläche" muss doppelt verkettet aufgelöst werden -->
+		<option value='./worksheets/glasscheibe2.ggb'>[ ] glasscheibe2</option><!-- s.o. -->
+		<option value='./worksheets/hoehenschnittpunkt.ggb'>[X] hoehenschnittpunkt</option>
+		<option value='./worksheets/huehner_worksheet.ggb'>[ ] huehner_worksheet</option><!-- Problem an korrekter Verwendung von numeric -->
+		<option value='./worksheets/kreis_gleichung.ggb'>[ ] kreis_gleichung</option><!-- Problem an korrekter Verwendung von numeric -->
+		<option value='./worksheets/kreis_tangente.ggb'>[ ] kreis_tangente</option><!-- Problem an korrekter Verwendung von numeric -->
+		<option value='./worksheets/leiter_wand.ggb'>[ ] leiter_wand</option><!-- Problem an korrekter Verwendung von numeric -->
+		<option value='./worksheets/malthus01_worksheet.ggb'>[ ] malthus01_worksheet</option><!-- Intersection von x- und y-Achse, die werden aber nicht gezeichnet (axes=false) -->
+		<option value='./worksheets/malthus02_worksheet.ggb'>[ ] malthus02_worksheet</option><!-- Intersection von x- und y-Achse, die werden aber nicht gezeichnet (axes=false) -->
+		<option value='./worksheets/malthus03_worksheet.ggb'>[ ] malthus03_worksheet</option><!-- Intersection von x- und y-Achse, die werden aber nicht gezeichnet (axes=false) -->
+		<option value='./worksheets/muehle_worksheet.ggb'>[ ] muehle_worksheet</option><!--  Volumenberechnung und Textlabels -->
+		<option value='./worksheets/normalverteilung.ggb'>[ ] normalverteilung</option><!-- nuermic und Sonderzeichen -->
+		<option value='./worksheets/parabel_abstand.ggb'>[ ] parabel_abstand</option>
+		<option value='./worksheets/parabel_scheitel.ggb'>[ ] parabel_scheitel</option>
+		<option value='./worksheets/pascal01.ggb'>[X] pascal01</option>
+		<option value='./worksheets/pascal02.ggb'>[X] pascal02</option>
+		<option value='./worksheets/polare_hauptsatz_worksheet.ggb'>[X] polare_hauptsatz_worksheet</option>
+		<option value='./worksheets/polare_kegelschnitt_worksheet.ggb'>[X] polare_kegelschnitt_worksheet</option>
+		<option value='./worksheets/polare_kreis_worksheet.ggb'>[X] polare_kreis_worksheet</option>
+		<option value='./worksheets/poly2_1.ggb'>[ ] poly2_1</option><!-- numeric und root -->
+		<option value='./worksheets/poly2_2.ggb'>[ ] poly2_2</option><!-- derivate, ableiten der Funktion-->
+		<option value='./worksheets/poly2_3.ggb'>[ ] poly2_3</option><!-- numeric und root  -->
+		<option value='./worksheets/poly3_1.ggb'>[ ] poly3_1</option><!-- numeric und root  -->
+		<option value='./worksheets/poly3_2.ggb'>[ ] poly3_2</option><!-- Abhängigkeit der Punkte + numeric und root  -->
+		<option value='./worksheets/poly3_3.ggb'>[ ] poly3_3</option><!--  siehe poly3_2 -->
+		<option value='./worksheets/poly3_4.ggb'>[ ] poly3_4</option><!--  siehe poly3_3 -->
+		<option value='./worksheets/pythagoras_worksheet.ggb'>[ ] pythagoras_worksheet</option><!-- Expression Addition (Orthogonalvector[])-->
+		<option value='./worksheets/rechteck_flaeche.ggb'>[X] rechteck_flaeche</option>
+		<option value='./worksheets/see_grundstueck.ggb'>[ ] see_grundstueck</option><!-- numeric -->
+		<option value='./worksheets/sincostan.ggb'>[ ] sincostan</option><!-- numeric + expressions -->
+		<option value='./worksheets/sincostan_funktion.ggb'>[ ] sincostan_funktion</option><!-- numeric + point -->
+		<option value='./worksheets/skalarmult_worksheet.ggb'>[ ] skalarmult_worksheet</option><!-- vector mult -->
+		<option value='./worksheets/streckeabtragen_worksheet.ggb'>[ ] streckeabtragen_worksheet</option><!-- Vektorrichtung + Startposition -->
+		<option value='./worksheets/streckenteilung_worksheet.ggb'>[ ] streckenteilung_worksheet</option><!-- Vektor -->
+		<option value='./worksheets/subtraktion_worksheet.ggb'>[ ] subtraktion_worksheet</option><!-- Textlabel + Berechnungen -->
+		<option value='./worksheets/thales.ggb'>[ ] thales</option><!-- Angle, Text + Punkt auf Kreis -->
+		<option value='./worksheets/thales_beweis.ggb'>[ ] thales_beweis</option><!-- Punktfixierung (fixed sowie auf Kreis) -->
+		<option value='./worksheets/trigonometrisch1.ggb'>[X] trigonometrisch1</option>
+		<option value='./worksheets/trigonometrisch2.ggb'>[X] trigonometrisch2</option>
+		<option value='./worksheets/trigonometrisch3.ggb'>[X] trigonometrisch3</option>
+		<option value='./worksheets/trigonometrisch4.ggb'>[X] trigonometrisch4</option>
+		<option value='./worksheets/umfangswinkel_worksheet.ggb'>[ ] umfangswinkel_worksheet</option><!-- Anzeige der Angle -->
+		<option value='./worksheets/unterobersumme.ggb'>[ ] unterobersumme</option>
+		<option value='./worksheets/vektor_worksheet.ggb'>[X] vektor_worksheet</option>
+		<option value='./worksheets/verschiebung_worksheet.ggb'>[X] verschiebung_worksheet</option>
+		<option value='./worksheets/verzinsung_worksheet.ggb'>[ ] verzinsung_worksheet</option><!-- Expression + floor -->
+        <option>-----------------</option>
+        <option value='./elements/bianca/circumcirclesArcBianca.ggb'>[X] circumcirclesArcBianca</option>
+        <option value='./elements/bianca/circumcircleSectorsBianca.ggb'>[X] circumcircleSectorsBianca</option>
+        <option value='./elements/bianca/semicirclesBianca.ggb'>[X] semicirclesBianca</option>
+        <option value='./elements/bianca/steigungsdreieckBianca.ggb'>[X] steigungsdreieckBianca</option>
+        <option value='./elements/bianca/lineStyles.ggb'>[X] lineStyles</option>
+        <option value='./elements/bianca/circleStyles.ggb'>[X] circleStyles</option>
+        <option value='./elements/bianca/pointStylesBianca.ggb'>[X] pointStylesBianca</option>
+        <option value='./elements/bianca/polygonStylesBianca.ggb'>[X] polygonStylesBianca</option>
+        <option value='./elements/bianca/regularPolygonStylesBianca.ggb'>[X] regularPolygonStylesBianca</option>
+        <option value='./elements/bianca/sectorStylesBianca.ggb'>[X] sectorStylesBianca</option>
+        <option value='./elements/bianca/sectorStyles2Bianca.ggb'>[X] sectorStyles2Bianca</option>
+        <option value='./elements/bianca/sectorStyles3Bianca.ggb'>[X] sectorStyles3Bianca</option>
+        <option value='./elements/bianca/stylesBianca.ggb'>[X] stylesBianca</option>
+        <option value='./elements/bianca/winkelhalbierende.ggb'>[X] winkelhalbierende</option>
+        <option value='./elements/bianca/mittelsenkrechte.ggb'>[X] mittelsenkrechte</option>
+        <option value='./elements/bianca/parallele.ggb'>[X] parallele</option>
+        <option value='./elements/bianca/vectorStyles.ggb'>[X] vectorStyles</option>
+        <option value='./elements/bianca/vectorSimple.ggb'>[X] vectorSimple</option>
+        <option value='./elements/bianca/circleRadius2.ggb'>[X] circleRadius2</option>        
+        <option value='./elements/bianca/conics.ggb'>[X] conics</option>
+        <option value='./elements/bianca/conics2.ggb'>[X] conics2</option>
+        <option value='./elements/bianca/conics3.ggb'>[X] conics3</option>
+        <option value='./elements/bianca/conics4.ggb'>[X] conics4</option>
+        <option value='./elements/bianca/conics5.ggb'>[X] conics5</option>
+        <option value='./elements/bianca/conics6.ggb'>[X] conics6</option>
+        <option value='./elements/bianca/conics7.ggb'>[X] conics7</option>
+        <option value='./elements/bianca/intersection.ggb'>[X] intersection</option>
+        <option value='./elements/bianca/tangenten.ggb'>[X] tangenten</option>
+        <option value='./elements/bianca/intersection2.ggb'>[ ] intersection2</option><!-- Punkt E wird doppelt angelegt ; was ist mit output[1]? -->
+        <option value='./elements/bianca/schieberegler.ggb'>[X] schieberegler</option><!-- geht gar nichts -->
+        <option value='./elements/bianca/schieberegler2.ggb'>[ ] schieberegler2</option><!-- geht gar nichts -->
+        <option value='./elements/bianca/circleRadius.ggb'>[ ] circleRadius</option> <!-- Problem mit Festlegung des Radius durch zwei Punkte -->  
+        <option value='./elements/matthias/calc.ggb'>[ ] Berechnungen</option><!-- Auflösung von Name[A], bisher nicht in Parser o.ä. berücksichtigt -->
+        <option value='./elements/matthias/vect.ggb'>[X] Vektoren</option>
+        <option value='./Bourne/roots-polynomial.ggb' selected>[ ] Murray Bourne example</option>
+        
+        
+    </select>
+    <input type='button' value='Read Geogebra file' onclick="loadFile('beispiele_geo','Geogebra')" />
+    <br/>
+    <input type='text' value='./elements/punkt.ggb' id="beispiele_ggb" />
+    <input type='button' value='Read Geogebra' onclick="loadFile('beispiele_ggb','Geogebra',true)" />
+</form>
+</div>
+<div id="debug" style="display:block;"></div>
+<script type="text/javascript">
+  var board;
+  function loadFile(bspname, format, text) {
+    document.getElementById('box').innerHTML = '';
+    if(text) var value = document.getElementById(bspname).value;
+    else     var value = document.getElementById(bspname).options[document.getElementById(bspname).selectedIndex].value;
+
+    if(typeof board != 'undefined') JXG.JSXGraph.freeBoard(board);
+
+    board = JXG.JSXGraph.loadBoardFromFile('box',value, format);
+    document.getElementById('ggb').innerHTML = '<applet code="geogebra.GeoGebraApplet" archive="http://www.geogebra.org/webstart/geogebra.jar" width="650" height="400"><param name="filename" value="'+value+'"/><param name="framePossible" value="false"/></applet>';
+  }
+</script>
+</body>
+</html>

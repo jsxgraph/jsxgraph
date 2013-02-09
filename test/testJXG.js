@@ -1,5 +1,5 @@
 /*
-    Copyright 2011
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -9,20 +9,26 @@
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
 
 /*
  *  Js-Test-Driver Test Suite for JXG.AbstractRenderer
@@ -30,6 +36,16 @@
  */
 
 TestCase("JXG", {
+    div: null,
+
+    setUp: function () {
+        document.getElementsByTagName('body')[0].innerHTML = '<div id="jxgbox" style="width: 100px; height: 100px;"></div>';
+        this.div = document.getElementById('jxgbox');
+    },
+
+    tearDown: function () {
+
+    },
 
     testExtend: function () {
         expectAsserts(4);
@@ -91,15 +107,15 @@ TestCase("JXG", {
                 }
             };
 
-        sinon.spy(JXG, 'getReference');
+        sinon.spy(JXG, 'getRef');
         assertEquals('test search board.objects', 1, JXG.getReference(board, 'point'));
         assertEquals('test search board.elementsByName', 2, JXG.getReference(board, 'circle'));
         assertEquals('test search board.groups', 3, JXG.getReference(board, 'group'));
         assertEquals('test objects has an higher order of precedence  than elementsByName', 1, JXG.getRef(board, 'line'));
         assertEquals('test non existing keys are simply returned', 'arc', JXG.getRef(board, 'arc'));
 
-        assertEquals('test getRef amd getReferemce are actually the same', 5, JXG.getReference.callCount);
-        JXG.getReference.restore();
+        assertEquals('test getRef amd getReference are actually the same', 5, JXG.getRef.callCount);
+        JXG.getRef.restore();
     },
 
     testIsString: function () {
@@ -234,5 +250,56 @@ TestCase("JXG", {
         assertEquals('test number original content', 10, copy.num);
         assertEquals('test subobject original content', 42, copy.subo.foo);
         assertEquals('test name content', 'test', copy.name);
-    }
+    },
+
+    testAddEvent: function() {
+        expectAsserts(1);
+
+        var mousedown = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown, this);
+        fire.event(this.div, 'mousedown');
+
+        assertTrue(mousedown.calledOnce);
+    },
+
+    testRemoveEvent: function () {
+        expectAsserts(3);
+
+        var mousedown1 = sinon.stub(),
+            mousedown2 = sinon.stub(),
+            mousedown3 = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown1, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown2, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown3, this);
+
+        JXG.removeEvent(this.div, 'mousedown', mousedown2, this);
+
+        fire.event(this.div, 'mousedown');
+
+        assertTrue(mousedown1.calledOnce);
+        assertFalse(mousedown2.calledOnce);
+        assertTrue(mousedown3.calledOnce);
+    },
+
+    testRemoveAllEvents: function () {
+        expectAsserts(3);
+
+        var mousedown1 = sinon.stub(),
+            mousedown2 = sinon.stub(),
+            mousedown3 = sinon.stub();
+
+        JXG.addEvent(this.div, 'mousedown', mousedown1, this);
+        JXG.addEvent(this.div, 'mousedown', mousedown2, this);
+
+        JXG.removeAllEvents(this.div, 'mousedown', this);
+
+        JXG.addEvent(this.div, 'mousedown', mousedown3, this);
+
+        fire.event(this.div, 'mousedown');
+
+        assertFalse(mousedown1.calledOnce);
+        assertFalse(mousedown2.calledOnce);
+        assertTrue(mousedown3.calledOnce);    }
 });

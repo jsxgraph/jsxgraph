@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <title></title>
+</head>
+<body>
+<div id="jxgbox" class="jxgbox" style="width: 500px; height: 500px"></div>
+<script type="text/javascript">
+    JXG.Options.pan.enabled = true;
+    JXG.Options.pan.needShift = false;
+    JXG.Options.pan.needTwoFingers = false;
+    
+    JXG.Options.zoom.wheel = true;
+    JXG.Options.zoom.needShift = true;
+    
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], axis: true}),
+        p = board.create('point', [2, 3]);
+    
+</script>
+</body>
+</html>

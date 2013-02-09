@@ -1,0 +1,71 @@
+<html>
+<head>
+    <title>Board events</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+
+</head>
+<body>
+
+<div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
+
+<div id="out"></div>
+
+<script type="text/javascript">
+    /* <![CDATA[ */
+
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: true, grid: false, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
+        out = document.getElementById('out');
+
+    var p = board.create('point', [1, 2]);
+    var q = board.create('point', [3, 2]);
+
+    var l = board.create('line', [p, q]);
+
+    // test add/remove of internal event handlers
+    board.on('up', function (e) {
+        out.innerHTML += 'up ' + e + '<br/>';
+    });
+
+    board.on('hit', function (e, el, i) {
+        out.innerHTML += 'hit 1: ' + el.name + '<br />';
+    });
+
+    board.on('hit', function (e, el, i) {
+        out.innerHTML += 'hit 2: ' + el.name + '<br />';
+    });
+
+    board.off('hit');
+
+    var hithdlr = function (e, el, i) {
+        out.innerHTML += 'hit 3: ' + el.name + '<br />';
+    };
+    board.on('hit', hithdlr);
+
+    board.off('hit', hithdlr);
+
+    board.on('hit', function (e, el, i) {
+        out.innerHTML += 'hit 4: ' + el.name + '<br />';
+    });
+
+
+    // test add/remove native event handlers
+    JXG.addEvent(board.containerObj, 'mousedown', function (e) {
+        out.innerHTML += 'mousedown 1<br />';
+    }, this);
+    JXG.removeAllEvents(board.containerObj, 'mousedown', this);
+
+    var mousedown2 = function (e) {
+        out.innerHTML += 'mousedown 2<br />';
+    };
+    JXG.addEvent(board.containerObj, 'mousedown', mousedown2, this);
+
+    JXG.addEvent(board.containerObj, 'mousedown', function (e) {
+        out.innerHTML += 'mousedown 3<br />';
+    }, this);
+
+    JXG.removeEvent(board.containerObj, 'mousedown', mousedown2, this);
+    /* ]]> */
+</script>
+</body>
+</html>

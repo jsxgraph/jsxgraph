@@ -1,0 +1,27 @@
+﻿<html>
+<head>
+    <title>JSXGraph example</title>
+    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<textarea id="input" style="display:block;" cols="40" rows="10"></textarea>
+<button onclick="exec();">Execute</button>
+<div id="jxgbox" class="jxgbox" style="width:400px; height:400px;"></div>
+<script type="text/javascript">
+    /* <![CDATA[ */
+    function exec() {
+        var code = 'use jxgbox;\n' + document.getElementById('input').value,
+            board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-5, 5, 5, -5], 
+                                axis: false, keepaspectratio: true}),
+            p;
+
+        p = new JXG.JessieCode();
+        p.parse(code);
+    }
+
+    /* ]]> */
+</script>
+</body>
+</html>
+

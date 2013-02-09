@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
     <title>JSXGraph example</title>
     <!--<script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>-->
@@ -20,12 +20,12 @@
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
     p2 = brd.create('point', [0,4], {color:'blue', trace:true}); 
     txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], {fontSize:'64'});
+    /*
     txt.rendNode.style.fill = "#ff00ff";
     txt.rendNode.style.stroke = "#000000";
     txt.rendNode.style.strokeWidth = "3px";
-    
-    im = brd.create('image',["uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
-
+*/
+    im = brd.create('image',["../uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
     //txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
 
     var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
@@ -46,9 +46,20 @@
     tOffInv.bindTo(im); ts1.bindTo(im); tRot.bindTo(im); ts2.bindTo(im); tOff.bindTo(im);
 
     tRot.bindTo(p2);  // For comparison, a rotation in user coordinates.
-        
+    
     brd.update();
-   
+
+    txt2 = brd.create('text',[2.5,-2, "Input element: <input type='checkbox' onclick='txt.setProperty({visible:false})'>"], {display:'html', anchorX:'right'});
+    txt3 = brd.create('text',[2.5,-6, "internal text right"], {display:'internal', anchorX:'right', rotate:0});
+    txt4 = brd.create('text',[2.5,-8, "internal text left"], {display:'internal', anchorX:'middle'});
+    txt5 = brd.create('text',[2.5,-10, "internal text left"], {display:'internal', anchorX:'left', rotate:45});
+    txt6 = brd.create('text',[0,-6, "html text right"], {display:'html', anchorX:'right'});
+    txt7 = brd.create('text',[0,-8, "html text left"], {display:'html', anchorX:'middle'});
+    txt8 = brd.create('text',[0,-10, "html text left"], {display:'html', anchorX:'left'});
+    
+    txt3.setProperty({rotate:180});
+    //brd.update();
+    //brd.setBoundingBox([-5,10,5,-10], false);
     //alert(txt.rendNode.getBBox().width);
 </script> 
 </body>

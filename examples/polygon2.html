@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+<script type="text/javascript" src="../distrib/jquery.min.js"></script>
+<!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
+<script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h1 onclick="brd.clearTraces();">Polygon</h1>
+<form><input type="text"></form>
+<!-- Drawing area -->
+<div id="box" class="jxgbox" style="width:600px; height:600px; overflow:hidden; /*position:absolute; top:0px; left:0px;*/"></div>
+<!-- Drawing area -->
+<div id="debug" style="display:block;"></div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+var brd = JXG.JSXGraph.initBoard('box', {originX: 300, originY: 300, grid:true, unitX: 15, unitY: 15, axis:true});
+var A = brd.create('point', [-3,5], {name:'A', withLabel:true, visible:true});
+var B = brd.create('point', [8,8], {name:'B', withLabel:true, visible:true});
+var C = brd.create('point', [-4,-3], {name:'C', withLabel:true, visible:true});
+
+var p2 = brd.create('polygon', [A,B,C],
+    {borders:{
+        visible:true, 
+        withLabel:true, 
+        label:{position:'top'}}, 
+     vertices:{visible:false, size:2},
+     withLabel:false, 
+     hasInnerPoints:true,
+     fillColor:'yellow',
+     highlightFillColor:'blue',
+     scalable: false
+     });
+
+/* ]]> */
+</script>
+</body>
+</html>

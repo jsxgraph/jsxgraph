@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>JSXGraph example</title>
-    <script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
 </head>
@@ -13,20 +13,17 @@
     JXG.Options.text.useMathJax = true;
     brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,20,5,-5], axis:true, showNavigation:true, showCopyright:true});
     k = brd.create('slider',[[-4,-2],[3,-2],[-5,1,5]],{name:'n', snapWidth:1});
-    brd.create('functiongraph', [function(t) {return brd.pow(Math.E,t*k.Value());}],{strokeColor:'#ff0000'});
+    brd.create('functiongraph', [function(t) {return Math.pow(Math.E,t*k.Value());}],{strokeColor:'#ff0000'});
     brd.create('text',[-4,15,
       function() { 
         var temp;
         if (k.Value() == 1) {
           temp = '\\[f(x) = e^x \\]'; 
-          //temp = '<div id="function">'+'\\[f(x) = e^x \\]'+'</div>'; 
         } else {
           temp = '\\[f(x) = e^{' + k.Value() + 'x}\\]';
-          //temp = '<div id="function">'+'\\[f(x) = e^{' + k.Value() + 'x}\\]'+'</div>';
         }
        return temp;
      }], {fontSize:60});
-    //brd.create('text',[-3,15,function() { MathJax.Hub.Typeset('function'); return '';}]);
     brd.update();
 </script> 
 </body>

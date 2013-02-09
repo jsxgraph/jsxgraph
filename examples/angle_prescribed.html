@@ -1,0 +1,43 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>Angle</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+<script type="text/javascript">
+/* <![CDATA[ */   
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-6,6,4,-3], keepaspectratio:true, axis:false, grid:false});
+    
+    var p1 = board.create('point', [0, 0], {face:'+',name:"A"}); 
+    var p2 = board.create('point', [3, 4], {face:'o',name:"B"});
+    var p3 = board.create('point', [-1, 4], {face:'o',name:"C"});
+
+    var beta = board.create('angle', [p2,p1,p3], {radius:3});
+
+    var setAngle = function(el, val) {
+        var p, q, t;
+        p = el.anglepoint;
+        q = el.radiuspoint;
+        
+        if (p.draggable()) {
+            t = board.create('transform', [val, el.center], {type:'rotate'});
+            p.addTransform(q, t);
+            p.isDraggable = false;
+            p.parents = [q, t.id];
+        } 
+    }
+    
+    beta.setAngle(90*Math.PI/180.0);
+    beta.free();
+    beta.setAngle(60*Math.PI/180.0);
+    board.update();
+
+    
+    
+/* ]]> */
+</script>
+</body>
+</html>

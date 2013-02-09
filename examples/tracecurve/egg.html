@@ -1,0 +1,63 @@
+<html>
+<head>
+   <title>Ei-Kurve | JSXGraph | Beispiel f&uuml;r einen geometrischen Ort</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
+</head>
+<body>
+<h2>/ <a href="index.html">root</a> / <a href="loci.html">Beispiele f&uuml;r geometrische Orte</a> / Ei-Kurve</h2>
+<div style="text-align: center">
+<br/>Wird keine Ortskurve angezeigt, so dauert die Berechnung zu lange (> 20s)<br/><br/>
+  <div id="jxgbox" class="jxgbox" style="width:600px; height:400px; text-align: left; margin: auto;"></div>
+</div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+  board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-2, 5, 10, -3], axis: true, grid: false,
+                                 keepaspectratio: true, showcopyright: false});
+  p1 = board.createElement('point', [1, 1]);
+  p2 = board.createElement('point', [1, 3]);
+  p3 = board.createElement('point', [8, 1]);
+
+    board.options.locus.translateToOrigin = true;
+    board.options.locus.toOrigin = p1;
+    board.options.locus.translateTo10 = true;
+    board.options.locus.to10 = p2;
+    board.options.locus.stretch = true;
+
+  l1 = board.createElement('line', [p1, p3]);
+  c1 = board.createElement('circle', [p1, p2]);
+  g1 = board.createElement('glider', [4, 4, c1], {name:"G"});
+
+  m1 = board.createElement('midpoint', [g1, p3]);
+  c2 = board.createElement('circle', [m1, 1]);
+  m2 = board.createElement('intersection', [l1, c2, 0]);
+  m3 = board.createElement('midpoint', [m2, g1], {name: "T"});
+
+  loc = board.createElement('locus', [m3], {strokeColor: 'red', strokeWidth: '1px'});
+
+  /* ]]> */
+  </script>
+<br/><br/>
+<div id="src_disp" style="display:block;">
+<h2><a href="#" name="src"></a>Quelltext der Konstruktion</h2>
+<pre style="border: black solid 1px; padding: 4px"><tt>  board <font color="#990000">=</font> JXG<font color="#990000">.</font>JSXGraph<font color="#990000">.</font><b><font color="#000000">initBoard</font></b><font color="#990000">(</font><font color="#FF0000">'jxgbox'</font><font color="#990000">,</font> <font color="#FF0000">{</font>boundingbox<font color="#990000">:[-</font><font color="#993399">2</font><font color="#990000">,</font> <font color="#993399">5</font><font color="#990000">,</font> <font color="#993399">10</font><font color="#990000">,</font> <font color="#990000">-</font><font color="#993399">3</font><font color="#990000">],</font> axis<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> grid<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#990000">,</font>
+                                 keepaspectratio<font color="#990000">:</font> <b><font color="#0000FF">true</font></b><font color="#990000">,</font> showcopyright<font color="#990000">:</font> <b><font color="#0000FF">false</font></b><font color="#FF0000">}</font><font color="#990000">);</font>
+  p1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">1</font><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">]);</font>
+  p2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">1</font><font color="#990000">,</font> <font color="#993399">3</font><font color="#990000">]);</font>
+  p3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'point'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">8</font><font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">]);</font>
+
+  l1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'line'</font><font color="#990000">,</font> <font color="#990000">[</font>p1<font color="#990000">,</font> p3<font color="#990000">]);</font>
+  c1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'circle'</font><font color="#990000">,</font> <font color="#990000">[</font>p1<font color="#990000">,</font> p2<font color="#990000">]);</font>
+  g1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'glider'</font><font color="#990000">,</font> <font color="#990000">[</font><font color="#993399">4</font><font color="#990000">,</font> <font color="#993399">4</font><font color="#990000">,</font> c1<font color="#990000">],</font> <font color="#FF0000">{</font>name<font color="#990000">:</font><font color="#FF0000">"G"</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  m1 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'midpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>g1<font color="#990000">,</font> p3<font color="#990000">]);</font>
+  c2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'circle'</font><font color="#990000">,</font> <font color="#990000">[</font>m1<font color="#990000">,</font> <font color="#993399">1</font><font color="#990000">]);</font>
+  m2 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'intersection'</font><font color="#990000">,</font> <font color="#990000">[</font>l1<font color="#990000">,</font> c2<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">]);</font>
+  m3 <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'midpoint'</font><font color="#990000">,</font> <font color="#990000">[</font>m2<font color="#990000">,</font> g1<font color="#990000">],</font> <font color="#FF0000">{</font>name<font color="#990000">:</font> <font color="#FF0000">"T"</font><font color="#FF0000">}</font><font color="#990000">);</font>
+
+  loc <font color="#990000">=</font> board<font color="#990000">.</font><b><font color="#000000">createElement</font></b><font color="#990000">(</font><font color="#FF0000">'locus'</font><font color="#990000">,</font> <font color="#990000">[</font>m3<font color="#990000">],</font> <font color="#FF0000">{</font>strokeColor<font color="#990000">:</font> <font color="#FF0000">'red'</font><font color="#990000">,</font> strokeWidth<font color="#990000">:</font> <font color="#FF0000">'1px'</font><font color="#FF0000">}</font><font color="#990000">);</font>
+</tt></pre>
+</div>
+</body>
+</html>

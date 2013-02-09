@@ -1,5 +1,5 @@
 /*
-    Copyright 2011
+    Copyright 2008-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -9,20 +9,26 @@
 
     This file is part of JSXGraph.
 
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
 
 /*
  *  Js-Test-Driver Test Suite for JXG.Composition
@@ -33,7 +39,7 @@ TestCase("Composition", {
     setUp: function () {
         this.element = {
             id: 'elid',
-            setProperty: sinon.stub(),
+            setAttribute: sinon.stub(),
             prepareUpdate: sinon.stub(),
             update: sinon.stub(),
             updateRenderer: sinon.stub(),
@@ -101,15 +107,15 @@ TestCase("Composition", {
         assertTrue(c.element.update.calledOnce);
     },
 
-    testSetProperty: function () {
+    testSetAttribute: function () {
         expectAsserts(1);
 
         var c = new JXG.Composition({
             element: this.element
         });
 
-        c.setProperty();
-        assertTrue(c.element.setProperty.calledOnce);
+        c.setAttribute();
+        assertTrue(c.element.setAttribute.calledOnce);
     },
 
     testHighlight: function () {

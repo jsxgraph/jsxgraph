@@ -2,9 +2,7 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
-  <script type="text/javascript" src="../src/CanvasRenderer.js"></script>
 </head>
 <body>
   <h2>Chart examples</h2>
@@ -25,8 +23,6 @@
   <div id="debug" style="display:block;"></div>
   <script type="text/javascript">
     /* <![CDATA[ */
-//JXG.Options.renderer = 'canvas';
-
         var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 450, unitX: 50, unitY: 20});
 
         var dataArr = [4,1.2,3,2,5,7,1.54,function () { return 2; }];
@@ -134,7 +130,7 @@
 
             var a = board.createElement('chart', dataArr, {
                 chartStyle:'radar',
-                colors:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
+                colorArray:['#0F408D','#6F1B75','#CA147A','#DA2228','#E8801B','#FCF302','#8DC922','#15993C','#87CCEE','#0092CE'],
                 //fillOpacity:0.5,
                 //strokeColor:'black',
                 //strokeWidth:1,
