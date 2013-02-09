@@ -59,7 +59,7 @@ var JXG = {};
     };
 
     if (!JXG.useMinify) {
-        JXG.baseFiles = 'jxg,base/constants,utils/object,utils/string,utils/number,utils/type,utils/env,utils/browser,utils/array,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,parser/datasource,parser/jessiecode,utils/dump';
+        JXG.baseFiles = 'jxg,base/constants,utils/object,utils/string,utils/number,utils/type,utils/xml,utils/env,utils/browser,utils/array,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,parser/datasource,parser/jessiecode,utils/dump';
     } else {
         JXG.baseFiles = 'jxg';
     }

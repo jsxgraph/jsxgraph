@@ -138,56 +138,6 @@
         },
 
         /**
-         * Cleans out unneccessary whitespaces in a chunk of xml.
-         * @param {Object} el
-         */
-        cleanWhitespace: function (el) {
-            var cur = el.firstChild;
-
-            while (JXG.exists(cur)) {
-                if (cur.nodeType === 3 && !/\S/.test(cur.nodeValue)) {
-                    el.removeChild(cur);
-                } else if (cur.nodeType === 1) {
-                    this.cleanWhitespace(cur);
-                }
-                cur = cur.nextSibling;
-            }
-        },
-
-        /**
-         * Converts a given string into a XML tree.
-         * @param {String} str
-         * @returns {Object} The xml tree represented by the root node.
-         */
-        stringToXMLTree: function (str) {
-            var parser, tree, DP;
-
-            if (typeof DOMParser === 'function') {
-                DP = DOMParser;
-            } else {
-                // IE workaround, since there is no DOMParser
-                DP = function () {
-                    this.parseFromString = function (str) {
-                        var d;
-
-                        if (typeof ActiveXObject === 'function') {
-                            d = new ActiveXObject('MSXML.DomDocument');
-                            d.loadXML(str);
-                        }
-
-                        return d;
-                    };
-                };
-            }
-
-            parser = new DP();
-            tree = parser.parseFromString(str, 'text/xml');
-            this.cleanWhitespace(tree);
-
-            return tree;
-        },
-
-        /**
          * Parses a given string according to the file format given in format.
          * @param {String} str Contents of the file.
          * @param {JXG.Board} board The board the construction in the file should be loaded in.
@@ -206,7 +156,7 @@
          * no need to un-Base64 and unzip the file.
          */
         parseString: function (str, board, format, isString) {
-            var tree, graph, xml;
+            var tree, graph, xml, reader;
 
             format = format.toLowerCase();
 
@@ -223,12 +173,10 @@
 
                 break;
             case 'graph':
-                str = JXG.GraphReader.prepareString(str, isString);
-                str = JXG.GraphReader.readGraph(str, board);
-                break;
             case 'digraph':
-                str = JXG.GraphReader.prepareString(str, isString);
-                str = JXG.GraphReader.readGraph(str, board);
+                // no directed graphs for now
+                reader = new JXG.GraphReader(board, str);
+                reader.read();
                 break;
             case 'geonext':
                 // str is a string containing the XML code of the construction
@@ -238,8 +186,10 @@
             case 'geogebra':
                 isString = str.slice(0, 2) !== "PK";
 
+                reader = new JXG.GeogebraReader(board, str);
+                reader.read();
                 // if isString is true, str is a base64 encoded string, otherwise it's the zipped file
-                str = JXG.GeogebraReader.prepareString(str, isString);
+                //str = reader.prepareString(str, isString);
                 xml = true;
                 break;
             case 'intergeo':
@@ -253,7 +203,7 @@
 
             if (xml) {
                 board.xmlString = str;
-                tree = this.stringToXMLTree(str);
+                tree = JXG.XML.parse(str);
                 // Now, we can walk through the tree
 
                 if (format.toLowerCase() === 'geonext') {
@@ -263,7 +213,7 @@
                     }
                     board.unsuspendUpdate();
                 } else if (tree.getElementsByTagName('geogebra').length > 0) {
-                    JXG.GeogebraReader.read(tree, board);
+                    reader.read(tree, board);
                 } else if (format.toLowerCase() === 'intergeo') {
                     JXG.IntergeoReader.read(tree, board);
                 }

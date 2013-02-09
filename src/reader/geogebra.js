@@ -44,6 +44,7 @@
  utils/base64
  utils/encoding
  utils/zip
+ utils/xml
   elements:
    grid
    axis
@@ -84,19 +85,33 @@
 
     "use strict";
 
-    JXG.GeogebraReader = {
+    JXG.GeogebraReader = function (board, str) {
+        var tree, content;
+
+        content = this.prepareString(str);
+        tree = JXG.XML.parse(content);
+
+        this.tree = tree;
+        this.board = board;
+        this.ggbElements = [];
+
+        // this needs to be accessible from eval'd strings so we have to keep it in board
+        this.board.ggb = {};
+        this.format = parseFloat(tree.getElementsByTagName('geogebra')[0].getAttribute('format'));
+        this.decimals = parseInt(tree.getElementsByTagName('geogebra')[0].getElementsByTagName('kernel')[0].getElementsByTagName('decimals')[0].getAttribute('val'), 10);
+    };
+
+    JXG.extend(JXG.GeogebraReader.prototype, /** @lends JXG.GeogebraReader.prototype */ {
         /**
-         * @param {Object} tree The XML tree representing the geogebra construction.
-         * @param {JXG.Board} board
          * @param {String} type the type of expression
          * @param {String} m first input value
          * @param {String} n second input value
-         * @return {String|Array} return the object, string or calculated value
+         * @return {String|Array|Number} return the object, string or calculated value
          */
-        ggbAct: function (tree, board, type, m, n) {
+        ggbAct: function (type, m, n) {
             var s1, s2, a,
-                regexValue = new RegExp('JXG\\.boards\\[\'' + board.id + '\'\\].select\\(\'(.+?)\'\\)\\.'),
-                regexSelect = new RegExp('JXG\\.boards\\[\'' + board.id + '\'\\].select'),
+                regexValue = new RegExp('JXG\\.boards\\[\'' + this.board.id + '\'\\].select\\(\"(.+?)\"\\)\\.'),
+                regexSelect = new RegExp('JXG\\.boards\\[\'' + this.board.id + '\'\\].select'),
                 v1 = m,
                 v2 = n;
 
@@ -104,8 +119,8 @@
             case 'end':
                 return v1;
             case 'coord':
-                s1 = (board.ggbElements[v1]) ? 'JXG.boards[\'' + board.id + '\'].select(\'' + v1 + '\')' : v1;
-                s2 = (board.ggbElements[v2]) ? 'JXG.boards[\'' + board.id + '\'].select(\'' + v2 + '\')' : v2;
+                s1 = (this.ggbElements[v1]) ? 'JXG.boards[\'' + this.board.id + '\'].select(\'' + v1 + '\')' : v1;
+                s2 = (this.ggbElements[v2]) ? 'JXG.boards[\'' + this.board.id + '\'].select(\'' + v2 + '\')' : v2;
                 return [s1, s2];
             case 'le': // smaller than
                 return '( (' + v1 + ') <= (' + v2 + ') )';
@@ -121,7 +136,7 @@
                 return '( (' + v1 + ') > (' + v2 + ') )';
             case 'add':
                 //Add: Vector + Vector
-                if (JXG.GeogebraReader.isGGBVector(v1) && JXG.GeogebraReader.isGGBVector(v2)) {
+                if (this.isGGBVector(v1) && this.isGGBVector(v2)) {
                     return [1, v1[1] + '+' + v2[1], v1[2] + '+' + v2[2]];
                 }
 
@@ -140,12 +155,12 @@
                 }
 
                 //Add: Vector + Point
-                if (JXG.GeogebraReader.isGGBVector(s1) && JXG.isArray(s2)) {
+                if (this.isGGBVector(s1) && JXG.isArray(s2)) {
                     return [s1[1] + '+' + s2[0], s1[2] + '+' + s2[1]];
                 }
 
                 //Add: Vector + Point
-                if (JXG.GeogebraReader.isGGBVector(s2) && JXG.isArray(s1)) {
+                if (this.isGGBVector(s2) && JXG.isArray(s1)) {
                     return [s2[1] + '+' + s1[0], s2[2] + '+' + s1[1]];
                 }
 
@@ -167,7 +182,7 @@
 
                 return s1 + ' + ' + s2;
             case 'sub':
-                if (JXG.GeogebraReader.isGGBVector(v1) && JXG.GeogebraReader.isGGBVector(v2)) { //Sub: Vector - Vector
+                if (this.isGGBVector(v1) && this.isGGBVector(v2)) { //Sub: Vector - Vector
                     return [1, v1[1] + '-' + v2[1], v1[2] + '-' + v2[2]];
                 }
 
@@ -184,12 +199,12 @@
                 }
 
                 //Add: Vector - Point
-                if (JXG.GeogebraReader.isGGBVector(s1) && JXG.isArray(s2)) {
+                if (this.isGGBVector(s1) && JXG.isArray(s2)) {
                     return [s1[1] + '-' + s2[0], s1[2] + '-' + s2[1]];
                 }
 
                 //Add: Punkt - Vector
-                if (JXG.isArray(s1) && JXG.GeogebraReader.isGGBVector(s2)) {
+                if (JXG.isArray(s1) && this.isGGBVector(s2)) {
                     return [s1[0] + '-(' + s2[1] + ')', s1[1] + '-(' + s2[2] + ')'];
                 }
 
@@ -219,15 +234,15 @@
             case 'and':
                 return '(' + v1 + '&&' + v2 + ')';
             case 'mul':
-                if (JXG.GeogebraReader.isGGBVector(v1) && !JXG.isArray(v2)) { // Mult: Vector * Skalar
+                if (this.isGGBVector(v1) && !JXG.isArray(v2)) { // Mult: Vector * Skalar
                     return [1, '(' + v1[1] + ')*' + v2, '(' + v1[2] + ')*' + v2];
                 }
 
-                if (!JXG.isArray(v1) && JXG.GeogebraReader.isGGBVector(v2)) { // Mult: Skalar * Vector
+                if (!JXG.isArray(v1) && this.isGGBVector(v2)) { // Mult: Skalar * Vector
                     return [1, '(' + v2[1] + ')*' + v1, '(' + v2[2] + ')*' + v1];
                 }
 
-                if (JXG.GeogebraReader.isGGBVector(v1) && JXG.GeogebraReader.isGGBVector(v2)) { //Mult: Vector * Vector
+                if (this.isGGBVector(v1) && this.isGGBVector(v2)) { //Mult: Vector * Vector
                     return '((' + v1[1] + ')*(' + v2[1] + ')+(' + v1[2] + ')*(' + v2[2] + '))';
                 }
 
@@ -291,13 +306,13 @@
 
                 return s1 + ' / ' + s2;
             case 'negmult':
-                if (JXG.GeogebraReader.isGGBVector(v1)) {
+                if (this.isGGBVector(v1)) {
                     return [1, -1 + '*' + v1[1], -1 + '*' + v1[2]];
                 }
 
                 return -1 + '*' + v1;
             case 'bra':
-                if (JXG.GeogebraReader.isGGBVector(v1)) {
+                if (this.isGGBVector(v1)) {
                     return [1, '(' + v1[1] + ')', '(' + v1[2] + ')'];
                 }
 
@@ -321,7 +336,7 @@
                 s1 = v2[0];
                 s2 = (v2[1].split(']'))[0];
                 if (s1.toLowerCase() === 'name') {
-                    return 'JXG.boards[\'' + board.id + '\'].select(\'' + s2 + '\').getName()';
+                    return 'JXG.boards[\'' + this.board.id + '\'].select(\'' + s2 + '\').getName()';
                 }
                 break;
             case 'var':
@@ -357,53 +372,51 @@
                         return 'Math.PI';
                     }
 
-                    a = JXG.GeogebraReader.checkElement(tree, board, v1);
-                    if (JXG.exists(board.ggb[v1])) {
-                        return 'JXG.boards[\'' + board.id + '\'].ggb["' + v1 + '"]()';
+                    a = this.checkElement(v1);
+                    if (JXG.exists(this.board.ggb[v1])) {
+                        return 'JXG.boards[\'' + this.board.id + '\'].ggb["' + v1 + '"]()';
                     }
 
                     if (JXG.exists(a.Value)) {
-                        return 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '").Value()';
+                        return 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").Value()';
                     }
 
                     if (JXG.exists(a.Area)) {
-                        return 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '").Area()';
+                        return 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").Area()';
                     }
 
                     if (JXG.exists(a.plaintextStr)) {
-                        return '1.0*JXG.boards[\'' + board.id + '\'].select("' + v1 + '").plaintextStr';
+                        return '1.0*JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").plaintextStr';
                     }
 
                     if (a.type === JXG.OBJECT_TYPE_VECTOR) {
-                        return [1, 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point2.X()-JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point1.X()', 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point2.Y()-JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point1.Y()'];
+                        return [1, 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point2.X()-JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point1.X()', 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point2.Y()-JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point1.Y()'];
                     }
 
                     if (a.elementClass === JXG.OBJECT_CLASS_LINE) {
-                        return 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point1.Dist(JXG.boards[\'' + board.id + '\'].select("' + v1 + '").point2)';
+                        return 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point1.Dist(JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '").point2)';
                     }
 
-                    return 'JXG.boards[\'' + board.id + '\'].select("' + v1 + '")';
+                    return 'JXG.boards[\'' + this.board.id + '\'].select("' + v1 + '")';
                 }
             }
         },
 
         /**
          * JS/CC parser to convert the input expression to a working javascript function.
-         * @param {Object} tree XML tree of the construction
-         * @param {JXG.Board} board
-         * @param {Object} el Element that needs to be updated
          * @param {String} exp String which contains the function, expression or information
+         * @param {Object} el Element that needs to be updated
          */
-        ggbParse: function (tree, board, exp, el) {
-            var i,
+        ggbParse: function (exp, el) {
+            var i, error_count,
                 error_offsets = [],
                 error_lookaheads = [],
-                error_count = 0,
                 errstr = '',
                 str = exp,
                 dbg_withtrace = false,
                 dbg_string = '',
-                element = el ? board.select(board.ggbElements[el].id) : false;
+                ggbr = this,
+                element = el ? this.board.select(this.ggbElements[el].id) : false;
 
             if (element) {
                 JXG.debug("Update element: " + element.name + "(" + element.id + ")");
@@ -805,7 +818,7 @@
             }
 
 
-            function parse(tree, board, src, err_off, err_la) {
+            function parse(src, err_off, err_la) {
                 var i, act, go, la, rval, rvstack, rsstack, undef,
                     act_tab, pop_tab, goto_tab, labels,
                     sstack = [],
@@ -1268,85 +1281,85 @@
                             rval = vstack[vstack.length - 1];
                             break;
                         case 1:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'end', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('end', vstack[vstack.length - 1]);
                             break;
                         case 2:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'coord', vstack[vstack.length - 4], vstack[vstack.length - 2], element);
+                            rval = ggbr.ggbAct('coord', vstack[vstack.length - 4], vstack[vstack.length - 2], element);
                             break;
                         case 3:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'le', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('le', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 4:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'ge', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('ge', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 5:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'eq', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('eq', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 6:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'neq', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('neq', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 7:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'lt', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('lt', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 8:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'gt', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('gt', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 9:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'add', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('add', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 10:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'sub', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('sub', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 11:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'neg', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('neg', vstack[vstack.length - 1]);
                             break;
                         case 12:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'pow', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('pow', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 13:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'or', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('or', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 14:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'and', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('and', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 15:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'mul', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('mul', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 16:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'div', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('div', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 17:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'negmult', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('negmult', vstack[vstack.length - 1]);
                             break;
                         case 18:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'bra', vstack[vstack.length - 2]);
+                            rval = ggbr.ggbAct('bra', vstack[vstack.length - 2]);
                             break;
                         case 19:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'string', vstack[vstack.length - 3], vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('string', vstack[vstack.length - 3], vstack[vstack.length - 1]);
                             break;
                         case 20:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'int', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('int', vstack[vstack.length - 1]);
                             break;
                         case 21:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'float', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('float', vstack[vstack.length - 1]);
                             break;
                         case 22:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'param', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('param', vstack[vstack.length - 1]);
                             break;
                         case 23:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'html', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('html', vstack[vstack.length - 1]);
                             break;
                         case 24:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'string', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('string', vstack[vstack.length - 1]);
                             break;
                         case 25:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'command', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('command', vstack[vstack.length - 1]);
                             break;
                         case 26:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'var', vstack[vstack.length - 4], vstack[vstack.length - 2]);
+                            rval = ggbr.ggbAct('var', vstack[vstack.length - 4], vstack[vstack.length - 2]);
                             break;
                         case 27:
-                            rval = JXG.GeogebraReader.ggbAct(tree, board, 'var', vstack[vstack.length - 1]);
+                            rval = ggbr.ggbAct('var', vstack[vstack.length - 1]);
                             break;
                         }
 
@@ -1394,7 +1407,7 @@
             }
             /***** end replace *****/
 
-            if ((error_count = parse(tree, board, str, error_offsets, error_lookaheads)) > 0) {
+            if ((error_count = parse(str, error_offsets, error_lookaheads)) > 0) {
                 for (i = 0; i < error_count; i++) {
                     errstr += 'Parse error in line ' +
                         (str.substr(0, error_offsets[i]).match(/\n/g) ? str.substr(0, error_offsets[i]).match(/\n/g).length : 1) +
@@ -1408,41 +1421,37 @@
 
         /**
          * Override JSxGraph defaults with Geogebra settings
-         * @param {Object} board object
-         * @returns {Object} board oject
          */
-        setDefaultOptions: function (board) {
-            board.options.elements.strokeWidth = 1;
-            board.options.elements.withLabel = true;
+        setDefaultOptions: function () {
+            this.board.options.elements.strokeWidth = 1;
+            this.board.options.elements.withLabel = true;
 
-            board.options.point.face = 'circle';
-            board.options.point.size = 3;
-            board.options.point.fillColor = 'blue';
-            board.options.point.fillOpacity = 1;
-            board.options.point.highlightFillOpacity = 1;
-            board.options.point.strokeColor = 'black';
-            board.options.point.highlightStrokeColor = 'black';
-            board.options.point.strokeWidth = 2;
+            this.board.options.point.face = 'circle';
+            this.board.options.point.size = 3;
+            this.board.options.point.fillColor = 'blue';
+            this.board.options.point.fillOpacity = 1;
+            this.board.options.point.highlightFillOpacity = 1;
+            this.board.options.point.strokeColor = 'black';
+            this.board.options.point.highlightStrokeColor = 'black';
+            this.board.options.point.strokeWidth = 2;
 
-            board.options.line.strokeWidth = 1;
-            board.options.line.highlightStrokeColor = '#000000';
-            board.options.line.strokeColor = '#000000';
+            this.board.options.line.strokeWidth = 1;
+            this.board.options.line.highlightStrokeColor = '#000000';
+            this.board.options.line.strokeColor = '#000000';
 
-            board.options.polygon.fillColor = JXG.rgb2hex(153, 51, 0);
-            board.options.polygon.fillOpacity = 0.1;
-            board.options.polygon.highlightFillColor = board.options.polygon.fillColor;
-            board.options.polygon.highlightFillOpacity = 0.1;
+            this.board.options.polygon.fillColor = JXG.rgb2hex(153, 51, 0);
+            this.board.options.polygon.fillOpacity = 0.1;
+            this.board.options.polygon.highlightFillColor = this.board.options.polygon.fillColor;
+            this.board.options.polygon.highlightFillOpacity = 0.1;
 
-            board.options.sector.fillColor = JXG.rgb2hex(153, 51, 0);
-            board.options.sector.fillOpacity = 0.1;
-            board.options.sector.highlightFillColor = board.options.sector.fillColor;
-            board.options.sector.highlightFillOpacity = 0.1;
+            this.board.options.sector.fillColor = JXG.rgb2hex(153, 51, 0);
+            this.board.options.sector.fillOpacity = 0.1;
+            this.board.options.sector.highlightFillColor = this.board.options.sector.fillColor;
+            this.board.options.sector.highlightFillOpacity = 0.1;
 
-            board.options.angle.fillColor = JXG.rgb2hex(0, 100, 0);
-            board.options.angle.fillOpacity = 0.1;
-            board.options.angle.highlightFillOpacity = 0.1;
-
-            return board;
+            this.board.options.angle.fillColor = JXG.rgb2hex(0, 100, 0);
+            this.board.options.angle.fillOpacity = 0.1;
+            this.board.options.angle.highlightFillOpacity = 0.1;
         },
 
         /**
@@ -1498,12 +1507,11 @@
         },
 
         /**
-         * @param {JXG.Board} board
          * @param {Object} gxtEl element of which attributes are to set
          * @param {Object} Data element of which attributes are to set
          * @returns {Object} updated element
          */
-        coordinates: function (board, gxtEl, Data) {
+        coordinates: function (gxtEl, Data) {
             var a, tmp,
                 labelOffset = {
                     x: 0,
@@ -1512,8 +1520,8 @@
                 };
 
             if (Data.getElementsByTagName('labelOffset')[0]) {
-                labelOffset.x = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("x")) / board.unitX;
-                labelOffset.y = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("y")) / board.unitY;
+                labelOffset.x = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("x")) / this.board.unitX;
+                labelOffset.y = parseFloat(Data.getElementsByTagName("labelOffset")[0].getAttribute("y")) / this.board.unitY;
             }
 
             if (Data.getElementsByTagName("coords")[0]) {
@@ -1522,7 +1530,7 @@
                 gxtEl.z = parseFloat(Data.getElementsByTagName("coords")[0].getAttribute("z"));
             } else if (Data.getElementsByTagName("startPoint")[0]) {
                 if (Data.getElementsByTagName("startPoint")[0].getAttribute('exp')) {
-                    a = board.select(Data.getElementsByTagName("startPoint")[0].getAttribute('exp'));
+                    a = this.board.select(Data.getElementsByTagName("startPoint")[0].getAttribute('exp'));
                     gxtEl.x = function () {
                         return a.X() + labelOffset.x;
                     };
@@ -1538,7 +1546,7 @@
                 }
             } else if (Data.getElementsByTagName("absoluteScreenLocation")[0]) {
                 tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].getAttribute("x")),
-                    parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].getAttribute("y"))], board);
+                    parseFloat(Data.getElementsByTagName("absoluteScreenLocation")[0].getAttribute("y"))], this.board);
                 gxtEl.x = tmp.usrCoords[1] + labelOffset.x;
                 gxtEl.y = tmp.usrCoords[2] + labelOffset.y;
                 gxtEl.z = false;
@@ -1551,7 +1559,7 @@
 
         /**
          * Writing element attributes to the given object
-         * @param {XMLNode} Data expects the content of the current element
+         * @param {Object} Data expects the content of the current element
          * @param {Object} attr
          * @returns {Object} object with according attributes
          */
@@ -1669,26 +1677,25 @@
 
         /**
          * Searching for an element in the geogebra tree
-         * @param {Object} tree XML tree of the construction
          * @param {String} name the name of the element to search for
          * @param {Boolean} [expr=false] whether it is search for an expression or not
          * @returns {Object} object with according label
          */
-        getElement: function (tree, name, expr) {
+        getElement: function (name, expr) {
             var Data, i, j;
 
             expr = expr || false;
-            for (i = 0; i < tree.getElementsByTagName("construction").length; i++) {
+            for (i = 0; i < this.tree.getElementsByTagName("construction").length; i++) {
                 if (expr === false) {
-                    for (j = 0; j < tree.getElementsByTagName("construction")[i].getElementsByTagName("element").length; j++) {
-                        Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("element")[j];
+                    for (j = 0; j < this.tree.getElementsByTagName("construction")[i].getElementsByTagName("element").length; j++) {
+                        Data = this.tree.getElementsByTagName("construction")[i].getElementsByTagName("element")[j];
                         if (name === Data.getAttribute("label")) {
                             return Data;
                         }
                     }
                 } else {
-                    for (j = 0; j < tree.getElementsByTagName("construction")[i].getElementsByTagName("expression").length; j++) {
-                        Data = tree.getElementsByTagName("construction")[i].getElementsByTagName("expression")[j];
+                    for (j = 0; j < this.tree.getElementsByTagName("construction")[i].getElementsByTagName("expression").length; j++) {
+                        Data = this.tree.getElementsByTagName("construction")[i].getElementsByTagName("expression")[j];
                         if (name === Data.getAttribute("label")) {
                             return Data;
                         }
@@ -1701,12 +1708,10 @@
 
         /**
          * Check if an element is already registered in the temporary ggbElements register. If not, create and register the element.
-         * @param {Object} tree XML tree of the construction
-         * @param {JXG.Board} board
          * @param {String} name the name of the element to check
          * @returns {Object} newly created element
          */
-        checkElement: function (tree, board, name) {
+        checkElement: function (name) {
             var input;
 
             // Segment[A, B] nur bis Version 2.4 ? In 2.5 schon (x(A), x(B)) und durch Parser loesbar
@@ -1717,7 +1722,7 @@
             //   input = tmp[1].split(']');
             //   input = input[0].split(', ');
             //   for(i=0; i<input.length; i++) {
-            //     input[i] = JXG.GeogebraReader.checkElement(input[i]);
+            //     input[i] = this.checkElement(input[i]);
             //   }
             //   output = {
             //     'attributes' : []
@@ -1725,25 +1730,24 @@
             //   output.attributes['type'] = {value: type };
             //   output.attributes['label'] = {value: name};
             //
-            //   board.ggbElements[name] = JXG.GeogebraReader.writeElement(tree, board, name, input, type);
+            //   this.ggbElements[name] = this.writeElement(name, input, type);
             // } else
 
-            if (!JXG.exists(board.ggbElements[name]) || board.ggbElements[name] === '') {
-                input = JXG.GeogebraReader.getElement(tree, name);
-                board.ggbElements[name] = JXG.GeogebraReader.writeElement(tree, board, input);
+            if (!JXG.exists(this.ggbElements[name]) || this.ggbElements[name] === '') {
+                input = this.getElement(name);
+                this.ggbElements[name] = this.writeElement(input);
             }
 
-            return board.ggbElements[name];
+            return this.ggbElements[name];
         },
 
         /**
          * Prepare expression for this.ggbParse with solving multiplications and replacing mathematical functions.
-         * @param {Number} format
          * @param {String} type c, s, or something else
          * @param {String} exp Expression to parse and correct
          * @returns {String} correct expression with fixed function and multiplication
          */
-        functionParse: function (format, type, exp) {
+        functionParse: function (type, exp) {
             var input, vars, expr, output, i, s, o;
 
             switch (type) {
@@ -1774,7 +1778,7 @@
                     // replace -__x to -1*__x
                     expr = expr.replace(/-__/g, '-1*__');
 
-                    if (format <= 3.01) {
+                    if (this.format <= 3.01) {
                         // prepare string: "solve" multiplications 'a b' to 'a*b'
                         s = expr.split(' ');
                         o = '';
@@ -1804,7 +1808,7 @@
                 exp = exp.replace(/(?![e])x(?!\()(?![p])/g, '__x');
                 return ['__x', exp];
             default:
-                if (format <= 3.01) {
+                if (this.format <= 3.01) {
                     // prepare string: "solve" multiplications 'a b' to 'a*b'
                     s = exp.split(' ');
                     o = '';
@@ -1830,60 +1834,59 @@
 
         /**
          * Searching for an element in the geogebra tree
-         * @param {Object} tree XML tree of the construction
-         * @param {JXG.Board} board
          */
-        writeBoard: function (tree, board) {
-            var snapToPoint, grid,
-                boardData = tree.getElementsByTagName("euclidianView")[0],
+        writeBoard: function () {
+            var grid, // currently unused: snapToPoint,
+                boardData = this.tree.getElementsByTagName("euclidianView")[0],
                 coordSystem = boardData.getElementsByTagName('coordSystem')[0],
-                gui = tree.getElementsByTagName('gui')[0],
+                gui = this.tree.getElementsByTagName('gui')[0],
                 evSettings = boardData.getElementsByTagName('evSettings')[0];
 
-            board.origin = {};
-            board.origin.usrCoords = [1, 0, 0];
-            board.origin.scrCoords = [1, parseInt(coordSystem.getAttribute('xZero'), 10), parseInt(coordSystem.getAttribute('yZero'), 10)];
-            board.unitX = (coordSystem.getAttribute('scale')) ? parseInt(coordSystem.getAttribute('scale'), 10) : 1;
-            board.unitY = (coordSystem.getAttribute('yscale')) ? parseInt(coordSystem.getAttribute('yscale'), 10) : board.unitX;
+            this.board.origin = {};
+            this.board.origin.usrCoords = [1, 0, 0];
+            this.board.origin.scrCoords = [1, parseInt(coordSystem.getAttribute('xZero'), 10), parseInt(coordSystem.getAttribute('yZero'), 10)];
+            this.board.unitX = (coordSystem.getAttribute('scale')) ? parseInt(coordSystem.getAttribute('scale'), 10) : 1;
+            this.board.unitY = (coordSystem.getAttribute('yscale')) ? parseInt(coordSystem.getAttribute('yscale'), 10) : this.board.unitX;
 
-            board.fontSize = (gui && gui.getElementsByTagName('font')[0]) ?
+            this.board.fontSize = (gui && gui.getElementsByTagName('font')[0]) ?
                     parseInt(gui.getElementsByTagName("font")[0].getAttribute("size"), 10) :
                     12;
 
             // this is deprecated, but we'll keep it for now until everything is migrated
-            JXG.JSXGraph.boards[board.id] = board;
+            JXG.JSXGraph.boards[this.board.id] = this.board;
 
             // the new board storage
-            JXG.boards[board.id] = board;
+            JXG.boards[this.board.id] = this.board;
 
             // Update of properties during update() is not necessary in GEONExT files
-            board.renderer.enhancedRendering = true;
+            this.board.renderer.enhancedRendering = true;
 
-            // snap to point
-            snapToPoint = (evSettings.getAttribute("pointCapturing") === "true");
+            // snap to point; value is never used?
+            //snapToPoint = (evSettings.getAttribute("pointCapturing") === "true");
 
-            grid = (evSettings.getAttribute("grid") === "true") ? board.create('grid') : null;
+            grid = (evSettings.getAttribute("grid") === "true") ? this.board.create('grid') : null;
 
             if (evSettings.getAttribute("axes") && evSettings.getAttribute("axes") === "true") {
-                board.ggbElements.xAxis = board.create('axis', [[0, 0], [1, 0]], {strokeColor: 'black', minorTicks: 0});
-                board.ggbElements.yAxis = board.create('axis', [[0, 0], [0, 1]], {strokeColor: 'black', minorTicks: 0});
+                this.ggbElements.xAxis = this.board.create('axis', [[0, 0], [1, 0]], {strokeColor: 'black', minorTicks: 0});
+                this.ggbElements.yAxis = this.board.create('axis', [[0, 0], [0, 1]], {strokeColor: 'black', minorTicks: 0});
             }
         },
 
         /**
          * Searching for an element in the geogebra tree
-         * @param {Object} tree XML tree of the construction
-         * @param {JXG.Board} board
          * @param {Object} output ggb element whose attributes are to parse
          * @param {Array} input list of all input elements
          * @param {String} cmd output construction method
          * @returns {Object} return newly created element or false
          */
-        writeElement: function (tree, board, output, input, cmd) {
+        writeElement: function (output, input, cmd) {
             var p, res, re2, poly, t2, t, m, i, l2, p2, l1, p1, slopeWidth,
                 tmp, attr2, t1, i2, i1, pol, type, d2, d1, d, startpoint,
                 inp, borderatts, borders, element, gxtEl, attr, exp, coord, points,
-                border, length, match, rx, q, c, s, e, sx, sy, ex, ey, func, range,
+                length, match, rx, q, c, s, e, sx, sy, ex, ey, func, range,
+
+                // for use with closures
+                that = this,
 
                 makeConstFun = function (a) {
                     return function () {
@@ -1912,13 +1915,13 @@
 
             switch (gxtEl.type) {
             case 'point':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                attr = this.visualProperties(element, attr);
 
-                if (JXG.GeogebraReader.getElement(tree, attr.name, true)) {
-                    exp = JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp');
-                    coord = JXG.GeogebraReader.ggbParse(tree, board, exp);
+                if (this.getElement(attr.name, true)) {
+                    exp = this.getElement(attr.name, true).getAttribute('exp');
+                    coord = this.ggbParse(exp);
 
                     // this is parsed and verified by the parser unit above
                     /*jslint evil:true*/
@@ -1926,7 +1929,7 @@
                     gxtEl.y = new Function('return ' + coord[1] + ';');
                     /*jslint evil:false*/
                 } else {
-                    gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
+                    gxtEl = this.coordinates(gxtEl, element);
                 }
 
                 if (!JXG.exists(attr.styleGGB)) {
@@ -1948,16 +1951,16 @@
                     if (JXG.exists(input)) {
                         if (JXG.exists(match) && match.length === 3) {
                             // from Circle[A, 5] take "A" and "5", stored in ma[1] and ma[2]
-                            q = JXG.GeogebraReader.checkElement(tree, board, match[1]);
-                            c = board.create('circle', [q, parseFloat(match[2])], {fillColor: 'none', visible: false, name: ''});
-                            p = board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
+                            q = this.checkElement(match[1]);
+                            c = this.board.create('circle', [q, parseFloat(match[2])], {fillColor: 'none', visible: false, name: ''});
+                            p = this.board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
                         } else if (JXG.isArray(input)) {
-                            p = board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
+                            p = this.board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
                         } else {
-                            p = board.create('glider', [gxtEl.x, gxtEl.y, input], attr);
+                            p = this.board.create('glider', [gxtEl.x, gxtEl.y, input], attr);
                         }
                     } else {
-                        p = board.create('point', [gxtEl.x, gxtEl.y], attr);
+                        p = this.board.create('point', [gxtEl.x, gxtEl.y], attr);
                     }
                     return p;
                 } catch (exc1) {
@@ -1966,16 +1969,16 @@
                 }
                 break;
             case 'segment':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Segment: (" + attr.name + ") First: " + input[0].name + ", Last: " + input[1].name);
                     attr.straightFirst = false;
                     attr.straightLast =  false;
-                    p = board.create('line', input, attr);
+                    p = this.board.create('line', input, attr);
                     return p;
                 } catch (exc2) {
                     JXG.debug("* Err: Segment " + attr.name + " First: " + input[0].name + ", Last: " + input[1].name);
@@ -1983,10 +1986,10 @@
                 }
                 break;
             case 'line':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 type = 'line';
                 if (!input) {
@@ -1995,13 +1998,13 @@
                         parseFloat(element.getElementsByTagName('coords')[0].getAttribute('x')),
                         parseFloat(element.getElementsByTagName('coords')[0].getAttribute('y'))
                     ];
-                } else if (board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (this.board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
                     // Parallel line through point
                     type = 'parallel';
                 }
 
                 try {
-                    p = board.create(type, input, attr);
+                    p = this.board.create(type, input, attr);
                     return p;
                 } catch (exc3) {
                     JXG.debug("* Err: Line " + attr.label);
@@ -2009,14 +2012,14 @@
                 }
                 break;
             case "orthogonalline":
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Orthogonalline: First: " + input[0].id + ", Last: " + input[1].id);
-                    p = board.create('normal', input, attr);
+                    p = this.board.create('normal', input, attr);
                     return p;
                 } catch (exc4) {
                     JXG.debug("* Err: Orthogonalline " + attr.label);
@@ -2024,10 +2027,10 @@
                 }
                 break;
             case "polygon":
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 // test if polygon is regular
                 if (input.length === 3 && output.length !== 4) {
@@ -2047,8 +2050,8 @@
                         borderatts[i - 1] = {};
                         borders[i - 1].id = '';
                         borders[i - 1].name = output[i].getAttribute('label');
-                        borderatts[i - 1] = JXG.GeogebraReader.colorProperties(output[i], borderatts[i - 1]);
-                        borderatts[i - 1] = JXG.GeogebraReader.visualProperties(output[i], borderatts[i - 1]);
+                        borderatts[i - 1] = this.colorProperties(output[i], borderatts[i - 1]);
+                        borderatts[i - 1] = this.visualProperties(output[i], borderatts[i - 1]);
                     }
                     attr.borders = borders;
 
@@ -2059,7 +2062,7 @@
 
                         for (i = input[2] + 1; i < output.length; i++) {
                             if (output[i].attributes) {
-                                points.push(JXG.GeogebraReader.checkElement(tree, board, output[i].getAttribute('label')));
+                                points.push(this.checkElement(output[i].getAttribute('label')));
                             } else {
                                 points.push(output[i]);
                             }
@@ -2073,9 +2076,9 @@
                     }
 
                     if (type === 'regular') {
-                        p = board.create('regularpolygon', points, attr);
+                        p = this.board.create('regularpolygon', points, attr);
                     } else {
-                        p = board.create('polygon', points, attr);
+                        p = this.board.create('polygon', points, attr);
                     }
 
                     for (i = 0; i < p.borders.length; i++) {
@@ -2091,10 +2094,10 @@
                 }
                 break;
             case 'intersect':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Intersection: First: " + input[0].name + ", Second: " + input[1].name);
@@ -2109,15 +2112,15 @@
                     }
 
                     if (output.length === 1) {
-                        p = board.create('intersection', [input[0], input[1], 0], attr);
+                        p = this.board.create('intersection', [input[0], input[1], 0], attr);
                     } else {
-                        p = board.create('intersection', [input[0], input[1], 1], attr);
+                        p = this.board.create('intersection', [input[0], input[1], 1], attr);
                         attr2 = {};
-                        attr2 = JXG.GeogebraReader.colorProperties(output[1], attr2);
-                        attr2 = JXG.GeogebraReader.visualProperties(output[1], attr2);
+                        attr2 = this.colorProperties(output[1], attr2);
+                        attr2 = this.visualProperties(output[1], attr2);
                         attr2.name = output[1].getAttribute('label');
-                        p2 = board.create('otherintersection', [input[0], input[1], p], attr2);
-                        board.ggbElements[attr2.name] = p2;
+                        p2 = this.board.create('otherintersection', [input[0], input[1], p], attr2);
+                        this.ggbElements[attr2.name] = p2;
                     }
 
                     return p;
@@ -2127,10 +2130,10 @@
                 }
                 break;
             case 'distance':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
 
                 try {
@@ -2141,9 +2144,9 @@
                         p = input[1];
                         board.elementsByName[attr.name] = p;
                     } else {*/
-                    m = board.create('midpoint', input, {visible: 'false'});
+                    m = this.board.create('midpoint', input, {visible: 'false'});
                     attr.visible = 'true';
-                    p = board.create('text', [
+                    p = this.board.create('text', [
                         function () {
                             return m.X();
                         },
@@ -2152,12 +2155,12 @@
                         },
                         function () {
                             return "<span style='text-decoration: overline'>" + input[0].name + input[1].name + "</span> = " +
-                                JXG.trimNumber(board.select(input[0].id).Dist(board.select(input[1].id)).toFixed(board.ggbProps.decimals));
+                                JXG.trimNumber(that.board.select(input[0].id).Dist(that.board.select(input[1].id)).toFixed(that.decimals));
                         }
                     ], attr);
 
                     p.Value = function () {
-                        return (board.select(input[0].id).Dist(board.select(input[1].id)));
+                        return (that.board.select(input[0].id).Dist(that.board.select(input[1].id)));
                     };
 
                     return p;
@@ -2167,14 +2170,14 @@
                 }
                 break;
             case 'vector':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 if (element.getElementsByTagName("startPoint")[0]) {
                     if (input && input.length === 2) {
-                        e = JXG.GeogebraReader.checkElement(tree, board, input[1].name);
+                        e = this.checkElement(input[1].name);
                     } else {
                         e = [parseFloat(element.getElementsByTagName("coords")[0].getAttribute("x")), parseFloat(element.getElementsByTagName("coords")[0].getAttribute("y"))];
                     }
@@ -2183,17 +2186,16 @@
                         s = [parseFloat(element.getElementsByTagName("startPoint")[0].getAttribute("x")), parseFloat(element.getElementsByTagName("startPoint")[0].getAttribute("y"))];
                     } else if (element.getElementsByTagName("startPoint")[0].getAttribute("exp")) {
                         startpoint = element.getElementsByTagName("startPoint")[0].getAttribute("exp");
-                        s = JXG.GeogebraReader.checkElement(tree, board, startpoint);
+                        s = this.checkElement(startpoint);
                     }
                 } else if (input && input.length !== 0) {
                     s = input[0];
                     e = input[1];
                 } else {
-                    exp = JXG.GeogebraReader.getElement(tree, element.getAttribute('label'), true);
+                    exp = this.getElement(element.getAttribute('label'), true);
                     if (exp) {// experimental
                         exp = exp.getAttribute('exp');
-                        // exp = JXG.GeogebraReader.functionParse(board.ggbProps.format, '', exp);
-                        exp = JXG.GeogebraReader.ggbParse(tree, board, exp);
+                        exp = this.ggbParse(exp);
 
                         // the input to these evals were verified by the parser unit above
                         /*jslint evil:true*/
@@ -2205,7 +2207,7 @@
                         /*jslint evil:false*/
 
                         JXG.debug('exp: ' + exp);
-                        p = board.create('arrow', [[0, 0], [exp[0], exp[1]]], attr);
+                        p = this.board.create('arrow', [[0, 0], [exp[0], exp[1]]], attr);
 
                         return p;
                         // priorization of expression like 't*a' --> a := startPoint
@@ -2214,7 +2216,7 @@
 
                 try {
                     JXG.debug("* Vector: First: " + attr.name);
-                    p = board.create('arrow', [s, e], attr);
+                    p = this.board.create('arrow', [s, e], attr);
                     return p;
                 } catch (exc8) {
                     JXG.debug("* Err: Vector " + attr.name + e);
@@ -2222,10 +2224,10 @@
                 }
                 break;
             case 'rotate':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Rotate: First: " + input[0].name + ", Second: " + input[1]);
@@ -2241,8 +2243,8 @@
                         attr.strokeWidth = 1;
                     }
 
-                    t = board.create('transform', [parseInt(input[1], 10) * Math.PI / 180, input[2]], {type: 'rotate'});
-                    p = board.create('point', [input[0], t], attr);
+                    t = this.board.create('transform', [parseInt(input[1], 10) * Math.PI / 180, input[2]], {type: 'rotate'});
+                    p = this.board.create('point', [input[0], t], attr);
                     return p;
                 } catch (exc9) {
                     JXG.debug("* Err: Rotate " + attr.name);
@@ -2250,17 +2252,17 @@
                 }
                 break;
             case 'dilate':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Dilate: First: " + input[0].name + ", Second: " + input[1]);
                     attr.type = 'rotate';
                     d = parseInt(input[1], 10);
-                    d1 = board.create('transform', [d, d], {type: 'scale'});
-                    d2 = board.create('transform', [
+                    d1 = this.board.create('transform', [d, d], {type: 'scale'});
+                    d2 = this.board.create('transform', [
                         function () {
                             return (1 - d) * input[2].X();
                         },
@@ -2278,7 +2280,7 @@
                         attr.strokeColor = 'black';
                         attr.strokeWidth = 1;
                     }
-                    p = board.create('point', [input[0], [d1, d2]], attr);
+                    p = this.board.create('point', [input[0], [d1, d2]], attr);
 
                     return p;
                 } catch (exc10) {
@@ -2287,13 +2289,13 @@
                 }
                 break;
             case 'translate':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
-                    t = board.create('transform', [
+                    t = this.board.create('transform', [
                         function () {
                             return input[1].point2.X() - input[1].point1.X();
                         },
@@ -2311,7 +2313,7 @@
                         attr.strokeColor = 'black';
                         attr.strokeWidth = 1;
                     }
-                    p = board.create('point', [input[0], t], attr);
+                    p = this.board.create('point', [input[0], t], attr);
                     return p;
                 } catch (exc11) {
                     JXG.debug("* Err: Translate " + attr.name);
@@ -2319,22 +2321,22 @@
                 }
                 break;
             case 'mirror':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 // Punktspiegelung
-                if (JXG.isPoint(board.select(input[1].id))) {
+                if (JXG.isPoint(this.board.select(input[1].id))) {
                     type = 'mirrorpoint';
                 // Achsenspiegelung
-                } else if (board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (this.board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
                     type = 'reflection';
                 }
 
                 try {
                     JXG.debug("* Mirror: First: " + input[0].name + ", Second: " + input[1].name);
-                    p = board.create(type, [input[1], input[0]], attr);
+                    p = this.board.create(type, [input[1], input[0]], attr);
                     return p;
                 } catch (exc12) {
                     JXG.debug("* Err: Mirror " + attr.name);
@@ -2342,14 +2344,14 @@
                 }
                 break;
             case 'circle':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Circle: First: " + input[0].name + ", Second: " + input[1]);
-                    p = board.create('circle', input, attr);
+                    p = this.board.create('circle', input, attr);
                     return p;
                 } catch (exc13) {
                     JXG.debug("* Err: Circle " + attr.name);
@@ -2357,14 +2359,14 @@
                 }
                 break;
             case 'circlearc':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* CircleArc: First: " + input[0].name + ", Second: " + input[1].name);
-                    p = board.create('arc', input, attr);
+                    p = this.board.create('arc', input, attr);
                     return p;
                 } catch (exc14) {
                     JXG.debug("* Err: CircleArc " + attr.name);
@@ -2372,10 +2374,10 @@
                 }
                 break;
             case 'ellipse':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Ellipse: First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2]);
@@ -2386,7 +2388,7 @@
                         input[2] = parseInt(input[2], 10) * 2;
                     }
 
-                    p = board.create('ellipse', input, attr);
+                    p = this.board.create('ellipse', input, attr);
                     return p;
                 } catch (exc15) {
                     JXG.debug("* Err: Ellipse " + attr.name);
@@ -2394,20 +2396,20 @@
                 }
                 break;
             case 'conic':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     if (input && input.length === 5) {
-                        p = board.create('conic', input, attr);
+                        p = this.board.create('conic', input, attr);
                     } else if (element.getElementsByTagName('matrix')) {
                         m = [];
                         for (i = 0; i < element.getElementsByTagName('matrix')[0].attributes.length; i++) {
                             m[i] = parseFloat(element.getElementsByTagName('matrix')[0].attributes[i].value);
                         }
-                        p = board.create('conic', m, attr);
+                        p = this.board.create('conic', m, attr);
                     }
                     return p;
                 } catch (exc16) {
@@ -2416,13 +2418,13 @@
                 }
                 break;
             case 'circlesector':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
                 try {
                     JXG.debug("* CircleSector: First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name);
-                    p = board.create('sector', [input[0], input[1], input[2]], attr);
+                    p = this.board.create('sector', [input[0], input[1], input[2]], attr);
                     return p;
                 } catch (exc17) {
                     JXG.debug("* Err: CircleSector " + attr.name);
@@ -2430,20 +2432,20 @@
                 }
                 break;
             case 'linebisector':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* LineBiSector (Mittelsenkrechte): First: " + input[0].name);
-                    m = board.create('midpoint', input, {visible: false});
-                    if (JXG.isPoint(board.select(input[0].id)) &&
-                            JXG.isPoint(board.select(input[1].id))) {
-                        t = board.create('line', input, {visible: 'false'});
-                        p = board.create('perpendicular', [m, t], attr);
+                    m = this.board.create('midpoint', input, {visible: false});
+                    if (JXG.isPoint(this.board.select(input[0].id)) &&
+                            JXG.isPoint(this.board.select(input[1].id))) {
+                        t = this.board.create('line', input, {visible: 'false'});
+                        p = this.board.create('perpendicular', [m, t], attr);
                     } else {
-                        p = board.create('perpendicular', [m, input[0]], attr);
+                        p = this.board.create('perpendicular', [m, input[0]], attr);
                     }
                     return p;
                 } catch (exc18) {
@@ -2452,16 +2454,16 @@
                 }
                 break;
             case 'ray':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Ray: First: " + input[0].name);
                     attr.straightFirst = true;
                     attr.straightLast =  false;
-                    p = board.create('line', [input[1], input[0]], attr);
+                    p = this.board.create('line', [input[1], input[0]], attr);
                     return p;
                 } catch (exc19) {
                     JXG.debug("* Err: Ray " + attr.name);
@@ -2469,10 +2471,10 @@
                 }
                 break;
             case 'tangent':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Tangent: First: " + input[0].name + ", Sec.: " + input[1].name + "(" + input[1].type + ")");
@@ -2480,22 +2482,22 @@
                     // graph
                     case 1330923344:
                         input[0].makeGlider(input[1]);
-                        p = board.create('tangent', [input[0]], attr);
+                        p = this.board.create('tangent', [input[0]], attr);
                         return p;
                     // circle 0x4F54434C
                     case 1330922316:
                     // conic 0x4F54434F
                     case 1330922319:
-                        pol = board.create('polar', [input[1], input[0]], {visible: false});
-                        i1 = board.create('intersection', [input[1], pol, 0], {visible: false});
-                        i2 = board.create('intersection', [input[1], pol, 1], {visible: false});
-                        t1 = board.create('line', [input[0], i1], attr);
+                        pol = this.board.create('polar', [input[1], input[0]], {visible: false});
+                        i1 = this.board.create('intersection', [input[1], pol, 0], {visible: false});
+                        i2 = this.board.create('intersection', [input[1], pol, 1], {visible: false});
+                        t1 = this.board.create('line', [input[0], i1], attr);
                         attr2 = {};
-                        attr2 = JXG.GeogebraReader.colorProperties(output[1], attr2);
-                        attr2 = JXG.GeogebraReader.visualProperties(output[1], attr2);
+                        attr2 = this.colorProperties(output[1], attr2);
+                        attr2 = this.visualProperties(output[1], attr2);
                         attr2.name = output[1].getAttribute('label');
-                        t2 = board.create('line', [input[0], i2], attr2);
-                        board.ggbElements[attr2.name] = t2;
+                        t2 = this.board.create('line', [input[0], i2], attr2);
+                        this.ggbElements[attr2.name] = t2;
                         return [t1, t2];
                     }
                 } catch (exc20) {
@@ -2504,14 +2506,14 @@
                 }
                 break;
             case 'circumcirclearc':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* CircumcircleArc: First: " + input[0].name);
-                    p = board.create('circumcirclearc', input, attr);
+                    p = this.board.create('circumcirclearc', input, attr);
                     return p;
                 } catch (exc21) {
                     JXG.debug("* Err: CircumcircleArc " + attr.name);
@@ -2519,14 +2521,14 @@
                 }
                 break;
             case 'circumcirclesector':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* CircumcircleSector: First: " + input[0].name);
-                    p = board.create('circumcirclesector', [input[0], input[1], input[2]], attr);
+                    p = this.board.create('circumcirclesector', [input[0], input[1], input[2]], attr);
                     return p;
                 } catch (exc22) {
                     JXG.debug("* Err: CircumcircleSector " + attr.name);
@@ -2534,14 +2536,14 @@
                 }
                 break;
             case 'semicircle':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Semicircle: First: " + input[0].name);
-                    p = board.create('semicircle', [input[0], input[1]], attr);
+                    p = this.board.create('semicircle', [input[0], input[1]], attr);
                     return p;
                 } catch (exc23) {
                     JXG.debug("* Err: Semicircle " + attr.name);
@@ -2549,14 +2551,14 @@
                 }
                 break;
             case 'angle':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Angle: First: " + input[0].name);
-                    p = board.create('angle', input, attr);
+                    p = this.board.create('angle', input, attr);
                     return p;
                 } catch (exc24) {
                     JXG.debug("* Err: Angle " + attr.name);
@@ -2564,16 +2566,16 @@
                 }
                 break;
             case 'angularbisector':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
                 attr.straightFirst = true;
                 attr.straightLast = true;
 
                 try {
                     JXG.debug("* Angularbisector: First: " + input[0].name);
-                    p = board.create('bisector', input, attr);
+                    p = this.board.create('bisector', input, attr);
                     return p;
                 } catch (exc25) {
                     JXG.debug("* Err: Angularbisector " + attr.name);
@@ -2584,25 +2586,25 @@
                 if (element.getElementsByTagName('slider').length === 0) {
                     // auxiliary doesn't exist in every numeric
                     //element.getElementsByTagName('auxiliary').length != 0 && element.getElementsByTagName('auxiliary')[0].attributes['val'].value == 'true') {
-                    exp = JXG.GeogebraReader.getElement(tree, element.getAttribute('label'), true);
+                    exp = this.getElement(element.getAttribute('label'), true);
 
                     if (exp) {
                         exp = exp.getAttribute('exp');
-                        exp = JXG.GeogebraReader.functionParse(board.ggbProps.format, '', exp);
-                        exp = JXG.GeogebraReader.ggbParse(tree, board, exp);
+                        exp = this.functionParse('', exp);
+                        exp = this.ggbParse(exp);
                     }
 
                     // exp was validated by ggbParse
                     /*jslint evil:true*/
-                    board.ggb[attr.name] = new Function('return ' + exp + ';');
+                    this.board.ggb[attr.name] = new Function('return ' + exp + ';');
                     /*jslint evil:false*/
 
-                    JXG.debug('value: ' + board.ggb[attr.name]());
-                    return board.ggb[attr.name];
+                    JXG.debug('value: ' + this.board.ggb[attr.name]());
+                    return this.board.ggb[attr.name];
                 }
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                attr = this.visualProperties(element, attr);
 
                 // it's a slider
                 if (element.getElementsByTagName('slider').length === 1) {
@@ -2611,20 +2613,20 @@
                     length = parseFloat(element.getElementsByTagName('slider')[0].getAttribute('width'));
                     // are coordinates absolut?
                     if (element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') && element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') === 'true') {
-                        tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], board);
+                        tmp = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx, sy], this.board);
                         sx = tmp.usrCoords[1];
                         sy = tmp.usrCoords[2];
                     }
 
                     if (element.getElementsByTagName('slider')[0].getAttribute('horizontal') === 'true') {
                         if (element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') && element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') === 'true') {
-                            length /= (board.unitX);
+                            length /= (this.board.unitX);
                         }
                         ex = sx + length;
                         ey = sy;
                     } else {
                         if (element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') && element.getElementsByTagName('slider')[0].getAttribute('absoluteScreenLocation') === 'true') {
-                            length /= (board.unitY);
+                            length /= (this.board.unitY);
                         }
                         ex = sx;
                         ey = sy + length;
@@ -2637,7 +2639,7 @@
                     try {
                         JXG.debug("* Numeric: First: " + attr.name);
                         attr.withTicks = false;
-                        p = board.create('slider', [[sx, sy], [ex, ey], [
+                        p = this.board.create('slider', [[sx, sy], [ex, ey], [
                             parseFloat(element.getElementsByTagName('slider')[0].getAttribute('min')),
                             parseFloat(element.getElementsByTagName('value')[0].getAttribute('val')),
                             parseFloat(element.getElementsByTagName('slider')[0].getAttribute('max'))
@@ -2650,10 +2652,10 @@
                 }
                 break;
             case 'midpoint':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     if (!JXG.exists(attr.styleGGB)) {
@@ -2665,7 +2667,7 @@
                         attr.strokeColor = 'black';
                         attr.strokeWidth = 1;
                     }
-                    p = board.create('midpoint', input, attr);
+                    p = this.board.create('midpoint', input, attr);
                     JXG.debug("* Midpoint (" + p.id + "): " + attr.name + "(" + gxtEl.x + ", " + gxtEl.y + ")");
                     return p;
                 } catch (exc27) {
@@ -2674,10 +2676,10 @@
                 }
                 break;
             case 'center':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
                 try {
                     if (!JXG.exists(attr.styleGGB)) {
                         attr.face = 'circle';
@@ -2688,12 +2690,12 @@
                         attr.strokeColor = 'black';
                         attr.strokeWidth = 1;
                     }
-                    p = board.create('point', [
+                    p = this.board.create('point', [
                         function () {
-                            return board.select(input[0].id).center.X();
+                            return that.board.select(input[0].id).center.X();
                         },
                         function () {
-                            return board.select(input[0].id).center.Y();
+                            return that.board.select(input[0].id).center.Y();
                         }
                     ], attr);
                     JXG.debug("* Center (" + p.id + "): " + attr.name + "(" + gxtEl.x + ", " + gxtEl.y + ")");
@@ -2704,23 +2706,23 @@
                 }
                 break;
             case 'function':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
-                if (JXG.GeogebraReader.getElement(tree, attr.name, true)) {
-                    func = JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp');
-                    func = JXG.GeogebraReader.functionParse(board.ggbProps.format, 'c', func);
+                if (this.getElement(attr.name, true)) {
+                    func = this.getElement(attr.name, true).getAttribute('exp');
+                    func = this.functionParse('c', func);
                 } else {
                     func = input[0];
-                    func = JXG.GeogebraReader.functionParse(board.ggbProps.format, 's', func);
+                    func = this.functionParse('s', func);
                 }
 
                 JXG.debug(func);
 
                 length = func.length;
-                func[func.length - 1] = 'return ' + JXG.GeogebraReader.ggbParse(tree, board, func[func.length - 1]) + ';';
+                func[func.length - 1] = 'return ' + this.ggbParse(func[func.length - 1]) + ';';
 
                 JXG.debug(func);
 
@@ -2730,15 +2732,15 @@
                 try {
                     /*jslint evil:true*/
                     if (length === 1) {
-                        p = board.create('functiongraph', [new Function(func[0]), range[0], range[1]], attr);
+                        p = this.board.create('functiongraph', [new Function(func[0]), range[0], range[1]], attr);
                     } else if (length === 2) {
-                        p = board.create('functiongraph', [new Function(func[0], func[1]), range[0], range[1]], attr);
+                        p = this.board.create('functiongraph', [new Function(func[0], func[1]), range[0], range[1]], attr);
                     } else if (length === 3) {
-                        p = board.create('functiongraph', [new Function(func[0], func[1], func[2]), range[0], range[1]], attr);
+                        p = this.board.create('functiongraph', [new Function(func[0], func[1], func[2]), range[0], range[1]], attr);
                     } else if (length === 4) {
-                        p = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3]), range[0], range[1]], attr);
+                        p = this.board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3]), range[0], range[1]], attr);
                     } else if (length === 5) {
-                        p = board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4]), range[0], range[1]], attr);
+                        p = this.board.create('functiongraph', [new Function(func[0], func[1], func[2], func[3], func[4]), range[0], range[1]], attr);
                     }
                     /*jslint evil:false*/
 
@@ -2750,14 +2752,14 @@
 
                 break;
             case 'polar':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Polar: First: " + input[0].name + ", Sec.: " + input[1].name);
-                    p = board.create('polar', input, attr);
+                    p = this.board.create('polar', input, attr);
                     return p;
                 } catch (exc30) {
                     JXG.debug("* Err: Polar " + attr.name);
@@ -2765,10 +2767,10 @@
                 }
                 break;
             case 'slope':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Slope (" + attr.name + "): First: " + input[0].name);
@@ -2776,7 +2778,7 @@
                     slopeWidth = parseInt(attr.slopeWidth, 10) || 1;
                     p1 = input[0].glider || input[0].point1;
 
-                    p2 = board.create('point', [
+                    p2 = this.board.create('point', [
                         function () {
                             return (slopeWidth + p1.X());
                         },
@@ -2785,12 +2787,12 @@
                         }
                     ], {visible: false});
 
-                    l1 = board.create('segment', [p1, p2], {visible: false});
-                    l2 = board.create('normal', [l1, l1.point2], {visible: false});
-                    i = board.create('intersection', [input[0], l2, 0], {visible: false});
-                    m = board.create('midpoint', [l1.point2, i], {visible: false});
+                    l1 = this.board.create('segment', [p1, p2], {visible: false});
+                    l2 = this.board.create('normal', [l1, l1.point2], {visible: false});
+                    i = this.board.create('intersection', [input[0], l2, 0], {visible: false});
+                    m = this.board.create('midpoint', [l1.point2, i], {visible: false});
 
-                    t = board.create('text', [
+                    t = this.board.create('text', [
                         function () {
                             return m.X();
                         },
@@ -2798,11 +2800,11 @@
                             return m.Y();
                         },
                         function () {
-                            return "&nbsp;&nbsp;" + (slopeWidth > 1 ? slopeWidth.toString() : '') + ' ' + this.name + ' = ' + JXG.trimNumber((slopeWidth * input[0].getSlope()).toFixed(board.ggbProps.decimals));
+                            return "&nbsp;&nbsp;" + (slopeWidth > 1 ? slopeWidth.toString() : '') + ' ' + this.name + ' = ' + JXG.trimNumber((slopeWidth * input[0].getSlope()).toFixed(that.decimals));
                         }
                     ], attr);
                     attr.name = '';
-                    t2 = board.create('text', [
+                    t2 = this.board.create('text', [
                         function () {
                             return (p1.X() + p2.X()) / 2;
                         },
@@ -2818,7 +2820,7 @@
                             return input[0].getSlope();
                         };
                     }());
-                    poly = board.create('polygon', [p1, p2, i], attr);
+                    poly = this.board.create('polygon', [p1, p2, i], attr);
 
                     poly.borders[2].setProperty({visible: false});
                     poly.borders[0].setProperty({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash: attr.dash});
@@ -2830,28 +2832,28 @@
                 }
                 break;
             case 'text':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
                 res = '';
 
                 try {
                     /*jslint regexp:true*/
                     if (element.getElementsByTagName('isLaTeX')[0] && element.getElementsByTagName('isLaTeX')[0].getAttribute('val') === 'true') {
-                        board.options.text.useASCIIMathML = true;
-                        t = JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp');
+                        this.board.options.text.useASCIIMathML = true;
+                        t = this.getElement(attr.name, true).getAttribute('exp');
 
                         // here we're searching for patterns like
                         //    " + ... + "
                         // ... will be sent to the ggbParser and a calculated text element is built from this.
                         rx = t.match(/(.*?)" \+ (.+) \+ "(.*)/);
                         while (rx) {
-                            re2 = JXG.GeogebraReader.ggbParse(tree, board, RegExp.$2);
+                            re2 = this.ggbParse(RegExp.$2);
                             if (typeof re2 === 'string') {
                                 res = res + RegExp.$1 + re2;
                             } else {
-                                res = res + RegExp.$1 + '" + JXG.trimNumber((' + re2 + ').toFixed(JXG.boards[\'' + board.id + '\'].ggbProps.decimals)) + "';
+                                res = res + RegExp.$1 + '" + JXG.trimNumber((' + re2 + ').toFixed(' + this.decimals + ')) + "';
                             }
                             t = RegExp.$3;
 
@@ -2861,7 +2863,7 @@
                         // we have to look, if the string's ending with a string-part or a formula part:
                         rx = t.match(/(.*?)" \+ (.+)/);
                         if (rx) {
-                            res = res + RegExp.$1 + '" + JXG.trimNumber((' + JXG.GeogebraReader.ggbParse(tree, board, RegExp.$2) + ').toFixed(JXG.boards[\'' + board.id + '\'].ggbProps.decimals))';
+                            res = res + RegExp.$1 + '" + JXG.trimNumber((' + this.ggbParse(RegExp.$2) + ').toFixed(' + this.decimals + '))';
                         } else {
                             res = res + t;
                         }
@@ -2870,16 +2872,16 @@
 
                         // res is verified by ggbParse
                         /*jslint evil:true*/
-                        p = board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + res + ';')], attr);
+                        p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + res + ';')], attr);
                         /*jslint evil:false, regexp:false*/
                     } else {
-                        JXG.debug(JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp'));
-                        t = JXG.GeogebraReader.ggbParse(tree, board, JXG.GeogebraReader.functionParse(board.ggbProps.format, false, JXG.GeogebraReader.getElement(tree, attr.name, true).getAttribute('exp')));
+                        JXG.debug(this.getElement(attr.name, true).getAttribute('exp'));
+                        t = this.ggbParse(this.functionParse(false, this.getElement(attr.name, true).getAttribute('exp')));
                         JXG.debug(t[1]);
 
                         // res is verified by ggbParse
                         /*jslint evil:true*/
-                        p = board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(JXG.boards[\'' + board.id + '\'].ggbProps.decimals));') ], attr);
+                        p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(' + this.decimals + '));') ], attr);
                         /*jslint evil:false*/
                     }
                     JXG.debug("* Text: " + t);
@@ -2890,13 +2892,13 @@
                 }
                 break;
             case 'root':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 for (i = 0; i < output.length; i++) {
-                    output[i] = JXG.GeogebraReader.checkElement(tree, board, output[i].getAttribute('label'));
+                    output[i] = this.checkElement(output[i].getAttribute('label'));
                 }
 
                 if (JXG.isArray(input)) {
@@ -2918,15 +2920,15 @@
                 // What to return here????
                 return output;
             case 'integral':
-                attr = JXG.GeogebraReader.boardProperties(gxtEl, element, attr);
-                attr = JXG.GeogebraReader.colorProperties(element, attr);
-                gxtEl = JXG.GeogebraReader.coordinates(board, gxtEl, element);
-                attr = JXG.GeogebraReader.visualProperties(element, attr);
+                attr = this.boardProperties(gxtEl, element, attr);
+                attr = this.colorProperties(element, attr);
+                gxtEl = this.coordinates(gxtEl, element);
+                attr = this.visualProperties(element, attr);
 
                 try {
                     JXG.debug("* Integral: First: " + input[0].name + ", Sec.: " + input[1].name + ", Thir.: " + input[2].name);
                     JXG.debug([input[1](), input[2]()]);
-                    p = board.create('integral', [board.select(input[0]), [input[1], input[2]]], attr);
+                    p = this.board.create('integral', [this.board.select(input[0]), [input[1], input[2]]], attr);
                     return p;
                 } catch (exc33) {
                     JXG.debug("* Err: Integral " + attr.name + e);
@@ -2967,27 +2969,19 @@
 
         /**
          * Reading the elements of a geogebra file
-         * @param {Object} tree XML tree of the construction
-         * @param {JXG.Board} board
          */
-        read: function (tree, board) {
+        read: function () {
             var type, constructions, el, Data, i, t, s, expr, cmds, input, output, elname, elements;
 
-            board.ggbElements = [];
-            board.ggb = {};
-            board.ggbProps = {};
-            board.ggbProps.format = parseFloat(tree.getElementsByTagName('geogebra')[0].getAttribute('format'));
-            board.ggbProps.decimals = parseInt(tree.getElementsByTagName('geogebra')[0].getElementsByTagName('kernel')[0].getElementsByTagName('decimals')[0].getAttribute('val'), 10);
-
-            JXG.GeogebraReader.writeBoard(tree, board);
+            this.writeBoard();
 
             // board won't be overwritten, setDefaultOptions returns the board reference given to it.
-            board = JXG.GeogebraReader.setDefaultOptions(board);
+            this.setDefaultOptions();
 
             // speeding up the drawing process
-            //board.suspendUpdate();
+            //this.board.suspendUpdate();
 
-            constructions = tree.getElementsByTagName("construction");
+            constructions = this.tree.getElementsByTagName("construction");
             for (t = 0; t < constructions.length; t++) {
 
                 cmds = constructions[t].getElementsByTagName("command");
@@ -3003,9 +2997,9 @@
                         if (el.match(/\u00B0/) || !el.match(/\D/) || el.match(/Circle/) || Data.getAttribute('name') === 'Function' || el === parseFloat(el)) {
                             input[i] = el;
                         } else if (el === 'xAxis' || el === 'yAxis') {
-                            input[i] = board.ggbElements[el];
+                            input[i] = this.ggbElements[el];
                         } else {
-                            input[i] = JXG.GeogebraReader.checkElement(tree, board, el);
+                            input[i] = this.checkElement(el);
                         }
                     }
 
@@ -3014,16 +3008,16 @@
 
                     for (i = 0; i < Data.getElementsByTagName("output")[0].attributes.length; i++) {
                         el = Data.getElementsByTagName("output")[0].attributes[i].value;
-                        output[i] = JXG.GeogebraReader.getElement(tree, el);
+                        output[i] = this.getElement(el);
                     }
 
-                    if (!JXG.exists(board.ggbElements[elname]) || board.ggbElements[elname] === '') {
-                        board.ggbElements[elname] = JXG.GeogebraReader.writeElement(tree, board, output, input, Data.getAttribute('name').toLowerCase());
+                    if (!JXG.exists(this.ggbElements[elname]) || this.ggbElements[elname] === '') {
+                        this.ggbElements[elname] = this.writeElement(output, input, Data.getAttribute('name').toLowerCase());
 
                         /* register borders to according "parent" */
-                        if (board.ggbElements[elname].borders) {
-                            for (i = 0; i < board.ggbElements[elname].borders.length; i++) {
-                                board.ggbElements[board.ggbElements[elname].borders[i].name] = board.ggbElements[elname].borders[i];
+                        if (this.ggbElements[elname].borders) {
+                            for (i = 0; i < this.ggbElements[elname].borders.length; i++) {
+                                this.ggbElements[this.ggbElements[elname].borders[i].name] = this.ggbElements[elname].borders[i];
                             }
                         }
                     }
@@ -3036,20 +3030,20 @@
                     Data = elements[s];
                     el = Data.getAttribute('label');
 
-                    if (!JXG.exists(board.ggbElements[el]) || board.ggbElements[el] === '') {
-                        board.ggbElements[el] = JXG.GeogebraReader.writeElement(tree, board, Data);
+                    if (!JXG.exists(this.ggbElements[el]) || this.ggbElements === '') {
+                        this.ggbElements[el] = this.writeElement(Data);
 
-                        expr = JXG.GeogebraReader.getElement(tree, el, true);
+                        expr = this.getElement(el, true);
                         if (expr) {
                             type = Data.getAttribute('type');
 
                             switch (type) {
                             case 'text':
                             case 'function':
-                                // board.ggbElements[el] = JXG.GeogebraReader.writeElement(tree, board.ggbElements, board, expr, false, type);
+                                // this.ggbElements[el] = this.writeElement(this.ggbElements, this.board, expr, false, type);
                                 break;
                             default:
-                                JXG.GeogebraReader.ggbParse(tree, board, expr.getAttribute('exp'), el);
+                                this.ggbParse(expr.getAttribute('exp'), el);
                                 break;
                             }
                         }
@@ -3060,13 +3054,9 @@
             } // end: for construction
 
             // speeding up the drawing process
-            board.unsuspendUpdate();
-
-            board.fullUpdate();
-            // delete board.ggbElements;
+            this.board.unsuspendUpdate();
+            this.board.fullUpdate();
         },
-
-        readGeogebra: JXG.shortcut(JXG.GeogebraReader, 'read'),
 
         /**
          * Clean the utf8-symbols in a Geogebra expression in JavaScript syntax
@@ -3090,19 +3080,19 @@
         /**
          * Extracting the packed geogebra file in order to return the "blank" xml-tree for further parsing.
          * @param {String} fileStr archive containing geogebra.xml-file or raw input string (eg. xml-tree)
-         * @param {Boolean} isString
-         * @returns {String} content of geogebra.xml-file if archive was passed in
+         * @returns {String} content of geogebra.xml-file if an archive was passed in
          */
-        prepareString: function (fileStr, isString) {
-            var i, bA, len, fstr;
+        prepareString: function (fileStr) {
+            var i, bA, len, fstr,
+                isString = fileStr.slice(0, 2) !== "PK";
 
             // here we have to deal with two different base64 encoded streams
             // first one: base64 encoded xml (geogebra's web export)
             // second one: base64 encoded ggb file, this is our recommendation for an IE & Opera
             // workaround, which can't deal with binary data transferred via AJAX.
 
-            // first try to decode assuming we got a base64 encoded ggb file
             if (isString) {
+                // first try to decode assuming we got a base64 encoded ggb file
                 fstr = JXG.Util.Base64.decode(fileStr);
 
                 if (fstr.slice(0, 2) !== "PK") {
@@ -3123,7 +3113,7 @@
                 fileStr = (new JXG.Util.Unzip(bA)).unzipFile("geogebra.xml");
             }
             fileStr = JXG.Util.UTF8.decode(fileStr);
-            fileStr = JXG.GeogebraReader.utf8replace(fileStr);
+            fileStr = this.utf8replace(fileStr);
 
             return fileStr;
         },
@@ -3136,7 +3126,7 @@
         isGGBVector: function (v) {
             return JXG.isArray(v) && v.length === 3 && v[0] === 1;
         }
-    };
+    });
 
     JXG.registerReader(JXG.GeogebraReader, ['ggb', 'geogebra']);
 }());

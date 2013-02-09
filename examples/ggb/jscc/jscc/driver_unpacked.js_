@@ -43,7 +43,7 @@ function ##PREFIX##lex(info) {
 }
 
 
-function ##PREFIX##parse(tree, board, src, err_off, err_la) {
+function ##PREFIX##parse(src, err_off, err_la) {
     var i, act, go, la, rval, rvstack, rsstack, undef,
         act_tab, pop_tab, goto_tab, labels,
         sstack = [],

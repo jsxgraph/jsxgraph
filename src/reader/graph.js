@@ -46,8 +46,13 @@
 
     "use strict";
 
-    JXG.GraphReader = {
-        parseData: function (board, directed) {
+    JXG.GraphReader = function (board, str) {
+        this.board = board;
+        this.data = str;
+    };
+
+    JXG.extend(JXG.GraphReader.prototype, /** @lends JXG.GraphReader.prototype */ {
+        parseData: function (directed) {
             var splitted, n, nodes = [], adjMatrix = [], i, j, tmp, nodenumbers = {}, tmp2, weighted = false,
                 boundingBox;
 
@@ -63,7 +68,7 @@
                 boundingBox[i] = parseInt(boundingBox[i], 10);
             }
 
-            board.setBoundingBox(boundingBox, true);
+            this.board.setBoundingBox(boundingBox, true);
             splitted.shift();
 
             // second line: number of nodes
@@ -131,7 +136,7 @@
                 }
             }
 
-            board.addedGraph = {
+            this.board.addedGraph = {
                 n: n,
                 nodes: nodes,
                 adjMatrix: adjMatrix,
@@ -140,28 +145,21 @@
                 directed: directed
             };
 
-            return board.addedGraph;
+            return this.board.addedGraph;
         },
 
-        prepareString: function (str) {
-            return str;
-        },
-
-        read: function (fileStr, board) {
+        read: function () {
             var graph,
                 // no directed graphs for now
                 directed = false;
 
-            this.data = fileStr;
-            board.suspendUpdate();
-            graph = this.parseData(board, directed);
-            this.drawGraph(graph, board);
-            board.unsuspendUpdate();
+            this.board.suspendUpdate();
+            graph = this.parseData(directed);
+            this.drawGraph(graph);
+            this.board.unsuspendUpdate();
         },
 
-        readGraph: JXG.shortcut(JXG.GraphReader, 'read'),
-
-        drawGraph: function (graph, board) {
+        drawGraph: function (graph) {
             var i, j, s, t, p, x, y,
                 n = graph.n,
                 nodes = graph.nodes,
@@ -169,68 +167,68 @@
 
             for (i = 0; i < n; i++) {
                 if (!JXG.exists(nodes[i].coords[0])) {
-                    x = Math.random() * board.canvasWidth / (board.unitX * 1.1) - board.origin.scrCoords[1] / (board.unitX * 1.1);
+                    x = Math.random() * this.board.canvasWidth / (this.board.unitX * 1.1) - this.board.origin.scrCoords[1] / (this.board.unitX * 1.1);
                 } else {
                     x = nodes[i].coords[0];
                 }
 
                 if (!JXG.exists(nodes[i].coords[1])) {
-                    y = Math.random() * board.canvasHeight / (board.unitY * 1.1) - (board.canvasHeight - board.origin.scrCoords[2]) / (board.unitY * 1.1);
+                    y = Math.random() * this.board.canvasHeight / (this.board.unitY * 1.1) - (this.board.canvasHeight - this.board.origin.scrCoords[2]) / (this.board.unitY * 1.1);
                 } else {
                     y = nodes[i].coords[1];
                 }
 
-                p = board.create('point', [x, y], {name: nodes[i].name});
+                p = this.board.create('point', [x, y], {name: nodes[i].name});
                 nodes[i].reference = p;
             }
 
-            board.addedGraph.segments = [];
+            this.board.addedGraph.segments = [];
 
             for (i = 0; i < n; i++) {
-                board.addedGraph.segments[i] = [];
+                this.board.addedGraph.segments[i] = [];
 
                 for (j = 0; j < i + 1; j++) {
                     if (i === j) {
-                        board.addedGraph.segments[i].push(null);
+                        this.board.addedGraph.segments[i].push(null);
                     } else if (adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] !== 0) {
                         if (graph.directed) {
-                            s = board.create('segment', [nodes[i].name, nodes[j].name]);
+                            s = this.board.create('segment', [nodes[i].name, nodes[j].name]);
                             s.setProperty({lastArrow: true});
 
                             if (graph.weighted) {
-                                t = board.create('text', [0, 0, adjMatrix[i][j]], {anchor: s});
-                                board.addedGraph.segments[i].push({edge: s, weight: t});
+                                t = this.board.create('text', [0, 0, adjMatrix[i][j]], {anchor: s});
+                                this.board.addedGraph.segments[i].push({edge: s, weight: t});
                             } else {
-                                board.addedGraph.segments[i].push({edge: s, weight: 1});
+                                this.board.addedGraph.segments[i].push({edge: s, weight: 1});
                             }
                         } else {
-                            board.addedGraph.segments[i][j] = board.addedGraph.segments[j][i];
+                            this.board.addedGraph.segments[i][j] = this.board.addedGraph.segments[j][i];
                         }
                     } else {
-                        board.addedGraph.segments[i].push(null);
+                        this.board.addedGraph.segments[i].push(null);
                     }
                 }
 
                 for (j = i + 1; j < n; j++) {
                     if (adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] !== 0) {
-                        s = board.create('segment', [nodes[i].name, nodes[j].name]);
+                        s = this.board.create('segment', [nodes[i].name, nodes[j].name]);
                         if (graph.directed) {
                             s.setProperty({lastArrow: true});
                         }
 
                         if (graph.weighted) {
-                            t = board.create('text', [0, 0, adjMatrix[i][j]], {anchor: s});
-                            board.addedGraph.segments[i].push({edge: s, weight: t});
+                            t = this.board.create('text', [0, 0, adjMatrix[i][j]], {anchor: s});
+                            this.board.addedGraph.segments[i].push({edge: s, weight: t});
                         } else {
-                            board.addedGraph.segments[i].push({edge: s, weight: 1});
+                            this.board.addedGraph.segments[i].push({edge: s, weight: 1});
                         }
                     } else {
-                        board.addedGraph.segments[i].push(null);
+                        this.board.addedGraph.segments[i].push(null);
                     }
                 }
             }
         }
-    };
+    });
 
     JXG.registerReader(JXG.GraphReader, ['txt', 'graph', 'digraph']);
 }());

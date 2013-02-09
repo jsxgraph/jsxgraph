@@ -94,7 +94,7 @@
 
         /**
          * Register a file reader.
-         * @param {Object} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
+         * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
          * and <tt>read()</tt>.
          * @param {Array} ext
          */
