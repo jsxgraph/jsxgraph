@@ -68,8 +68,13 @@
 
     "use strict";
 
-    JXG.CinderellaReader = {
-        parseData: function (board, data) {
+    JXG.CinderellaReader = function (board, str) {
+        this.board = board;
+        this.data = this.prepareString(str);
+    };
+
+    JXG.extend(JXG.CinderellaReader.prototype, /** @lends JXG.CinderellaReader.prototype */ {
+        read: function () {
             var dataLines, i, j, k, pCoords, defName, objName, defPoints, segment,
                 defRadius, circle, erg, poly, point, objName2, erg2, lines, point2, oX, oY, scale,
 
@@ -79,7 +84,7 @@
                     };
                 };
 
-            dataLines = data.split('\n');
+            dataLines = this.data.split('\n');
 
             for (i = 0; i < dataLines.length; i++) {
                 // free point
@@ -96,7 +101,7 @@
                     erg = this.readPointProperties(dataLines, i);
                     i = erg[1];
 
-                    board.create('point', [pCoords[0] / pCoords[2], -pCoords[1] / pCoords[2]], {
+                    this.board.create('point', [pCoords[0] / pCoords[2], -pCoords[1] / pCoords[2]], {
                         name: objName,
                         size: erg[0][1],
                         fillColor: erg[0][0],
@@ -129,7 +134,7 @@
                     erg = this.readLineProperties(dataLines, i);
                     i = erg[2];
 
-                    board.create('line', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('line', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         straightFirst: !segment,
                         straightLast: !segment,
                         name: objName,
@@ -155,7 +160,7 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    board.create('circle', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('circle', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         name: objName,
                         strokeColor: erg[0][0],
                         fillColor: erg[1],
@@ -180,7 +185,7 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    board.create('circle', [board.select(defName), Math.sqrt(parseFloat(defRadius))], {
+                    this.board.create('circle', [this.board.select(defName), Math.sqrt(parseFloat(defRadius))], {
                         name: objName,
                         strokeColor: erg[0][0],
                         fillColor: erg[1],
@@ -210,9 +215,9 @@
 
                     erg = this.readPointProperties(dataLines, i);
                     i = erg[1];
-                    circle = board.select(defName);
+                    circle = this.board.select(defName);
 
-                    board.create('glider', [
+                    this.board.create('glider', [
                         circle.center.coords.usrCoords[1] + defPoints[0],
                         circle.center.coords.usrCoords[2] - defPoints[1],
                         circle
@@ -244,10 +249,10 @@
                     erg = this.readPointProperties(dataLines, i);
                     i = erg[1];
 
-                    board.create('glider', [
+                    this.board.create('glider', [
                         pCoords[0] / pCoords[2],
                         -pCoords[1] / pCoords[2],
-                        board.select(defName)
+                        this.board.select(defName)
                     ], {
                         name: objName,
                         size: erg[0][1],
@@ -274,7 +279,7 @@
                     erg = this.readPointProperties(dataLines, i);
                     i = erg[1];
 
-                    board.create('midpoint', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('midpoint', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         name: objName,
                         size: erg[0][1],
                         fillColor: erg[0][0],
@@ -296,10 +301,10 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    circle = board.create('circumcircle', [
-                        board.select(defName[0]),
-                        board.select(defName[1]),
-                        board.select(defName[2])
+                    circle = this.board.create('circumcircle', [
+                        this.board.select(defName[0]),
+                        this.board.select(defName[1]),
+                        this.board.select(defName[2])
                     ], {
                         name: objName,
                         strokeColor: erg[0][0],
@@ -327,7 +332,7 @@
                     erg = this.readLineProperties(dataLines, i);
                     i = erg[2];
 
-                    board.create('parallel', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('parallel', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         name: objName,
                         withLabel: true,
                         strokeColor: erg[0][0],
@@ -351,7 +356,7 @@
                     erg = this.readLineProperties(dataLines, i);
                     i = erg[2];
 
-                    board.create('normal', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('normal', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         name: objName,
                         withLabel: true,
                         strokeColor: erg[0][0],
@@ -375,12 +380,12 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    board.create('conic', [
-                        board.select(defName[0]),
-                        board.select(defName[1]),
-                        board.select(defName[2]),
-                        board.select(defName[3]),
-                        board.select(defName[4])
+                    this.board.create('conic', [
+                        this.board.select(defName[0]),
+                        this.board.select(defName[1]),
+                        this.board.select(defName[2]),
+                        this.board.select(defName[3]),
+                        this.board.select(defName[4])
                     ], {
                         name: objName,
                         strokeColor: erg[0][0],
@@ -403,10 +408,10 @@
                     erg = this.readCircleProperties(dataLines, i);
 
                     if (dataLines[i].search(/ConicFociH\(.+/) !== -1) {
-                        board.create('hyperbola', [
-                            board.select(defName[0]),
-                            board.select(defName[1]),
-                            board.select(defName[2])
+                        this.board.create('hyperbola', [
+                            this.board.select(defName[0]),
+                            this.board.select(defName[1]),
+                            this.board.select(defName[2])
                         ], {
                             name: objName,
                             strokeColor: erg[0][0],
@@ -415,10 +420,10 @@
                             strokeWidth: erg[0][2]
                         });
                     } else {
-                        board.create('ellipse', [
-                            board.select(defName[0]),
-                            board.select(defName[1]),
-                            board.select(defName[2])
+                        this.board.create('ellipse', [
+                            this.board.select(defName[0]),
+                            this.board.select(defName[1]),
+                            this.board.select(defName[2])
                         ], {
                             name: objName,
                             strokeColor: erg[0][0],
@@ -445,7 +450,7 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    board.create('parabola', [board.select(defName[0]), board.select(defName[1])], {
+                    this.board.create('parabola', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         name: objName,
                         strokeColor: erg[0][0],
                         fillColor: erg[1],
@@ -462,14 +467,14 @@
                     for (j = 0; j < defPoints.length; j++) {
                         defName[j] = defPoints[j].match(/"[A-Za-z]*"/)[0];
                         defName[j] = defName[j].slice(1, defName[j].length - 1);
-                        defName[j] = board.select(defName[j]);
+                        defName[j] = this.board.select(defName[j]);
                     }
                     objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                     objName = objName[0].slice(1, objName[0].length - 1);
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    poly = board.create('polygon', defName, {
+                    poly = this.board.create('polygon', defName, {
                         name: objName,
                         fillColor: erg[1],
                         fillOpacity: erg[2]
@@ -495,10 +500,10 @@
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
 
-                    poly = board.create('circumcirclearc', [
-                        board.select(defName[0]),
-                        board.select(defName[1]),
-                        board.select(defName[2])
+                    poly = this.board.create('circumcirclearc', [
+                        this.board.select(defName[0]),
+                        this.board.select(defName[1]),
+                        this.board.select(defName[2])
                     ], {
                         name: objName,
                         strokeColor: erg[0][0],
@@ -522,8 +527,8 @@
                     objName = dataLines[i].match(/"[A-Za-z0-9]*"/);
                     objName = objName[0].slice(1, objName[0].length - 1);
 
-                    j = board.select(defName);
-                    point = board.create('point', [
+                    j = this.board.select(defName);
+                    point = this.board.create('point', [
                         j.coords.usrCoords[1] + parseFloat(pCoords[0]),
                         j.coords.usrCoords[2] + parseFloat(pCoords[1])
                     ], {visible: false});
@@ -531,7 +536,7 @@
                     erg = this.readLineProperties(dataLines, i);
                     i = erg[2];
 
-                    board.create('line', [j, point], {
+                    this.board.create('line', [j, point], {
                         name: objName,
                         withLabel: true,
                         strokeColor: erg[0][0],
@@ -554,9 +559,9 @@
                     objName = objName[0].slice(1, objName[0].length - 1);
                     erg = this.readCircleProperties(dataLines, i);
                     i = erg[3];
-                    defRadius = makeRadiusFun(defName, board);
+                    defRadius = makeRadiusFun(defName, this.board);
 
-                    board.create('circle', [board.select(defName[2]), defRadius], {
+                    this.board.create('circle', [this.board.select(defName[2]), defRadius], {
                         name: objName,
                         strokeColor: erg[0][0],
                         fillColor: erg[1],
@@ -593,7 +598,7 @@
                         i = erg[2];
                     }
 
-                    lines = board.create('bisectorlines', [board.select(defName[0]), board.select(defName[1])], {
+                    lines = this.board.create('bisectorlines', [this.board.select(defName[0]), this.board.select(defName[1])], {
                         line1: {
                             name: objName2
                         },
@@ -631,7 +636,7 @@
                     erg = this.readPointProperties(dataLines, i);
                     i = erg[1];
 
-                    board.create('intersection', [board.select(defName[0]), board.select(defName[1]), 0], {
+                    this.board.create('intersection', [this.board.select(defName[0]), this.board.select(defName[1]), 0], {
                         name: objName,
                         size: erg[0][1],
                         fillColor: erg[0][0],
@@ -640,7 +645,8 @@
                     });
 
                 // intersection circle/line or circle/circle
-                } else if (dataLines[i].search(/IntersectionConicLine\(.+/) !== -1 || dataLines[i].search(/IntersectionCircleCircle\(.+/) !== -1) {
+                } else if (dataLines[i].search(/IntersectionConicLine\(.+/) !== -1 ||
+                        dataLines[i].search(/IntersectionCircleCircle\(.+/) !== -1) {
                     if (dataLines[i].search(/IntersectionConicLine\(.+/) !== -1) {
                         k = 0;
                         j = 1;
@@ -677,7 +683,11 @@
                     }
 
                     if (objName2 !== '') {
-                        point = board.create('intersection', [board.select(defName[0]), board.select(defName[1]), j], {
+                        point = this.board.create('intersection', [
+                            this.board.select(defName[0]),
+                            this.board.select(defName[1]),
+                            j
+                        ], {
                             name: objName2,
                             size: erg[0][1],
                             fillColor: erg[0][0],
@@ -688,9 +698,9 @@
                         });
 
                         if (objName !== '') {
-                            point2 = board.create('otherintersection', [
-                                board.select(defName[0]),
-                                board.select(defName[1]),
+                            point2 = this.board.create('otherintersection', [
+                                this.board.select(defName[0]),
+                                this.board.select(defName[1]),
                                 point
                             ], {
                                 name: objName,
@@ -703,7 +713,11 @@
                             });
                         }
                     } else {
-                        point = board.create('intersection', [board.select(defName[0]), board.select(defName[1]), k], {
+                        point = this.board.create('intersection', [
+                            this.board.select(defName[0]),
+                            this.board.select(defName[1]),
+                            k
+                        ], {
                             name: objName,
                             size: erg[0][1],
                             fillColor: erg[0][0],
@@ -722,14 +736,14 @@
                 }
             }
 
-            board.zoomX *= scale / 2.4;
-            board.zoomY *= scale / 2.4;
-            oX = board.origin.scrCoords[1] * board.attr.zoom.factorx;
-            oY = board.origin.scrCoords[2] * board.attr.zoom.factory;
-            board.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX - 150, oY + 50], board);
-            board.applyZoom();
+            this.board.zoomX *= scale / 2.4;
+            this.board.zoomY *= scale / 2.4;
+            oX = this.board.origin.scrCoords[1] * this.board.attr.zoom.factorx;
+            oY = this.board.origin.scrCoords[2] * this.board.attr.zoom.factory;
+            this.board.origin = new JXG.Coords(JXG.COORDS_BY_SCREEN, [oX - 150, oY + 50], this.board);
+            this.board.applyZoom();
 
-            return board;
+            return this.board;
         },
 
         calculateColor: function (colNr) {
@@ -890,22 +904,8 @@
                 fileStr = (new JXG.Util.Unzip(bA)).unzip()[0][0];
             }
             return fileStr;
-        },
-
-        read: function (fileStr, board) {
-            var data = this.prepareString(fileStr);
-            board.suspendUpdate();
-            this.parseData(board, data);
-            board.unsuspendUpdate();
-        },
-
-        /**
-         * @deprecated use #read()
-         * @param fileStr
-         * @param board
-         */
-        readCinderella: JXG.shortcut(JXG.CinderellaReader, 'read')
-    };
+        }
+    });
 
     JXG.registerReader(JXG.CinderellaReader, ['cdy', 'cindy', 'cinderella']);
 }());

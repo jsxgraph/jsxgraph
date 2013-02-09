@@ -163,10 +163,8 @@
             switch (format) {
             case 'cdy':
             case 'cinderella':
-                str = JXG.CinderellaReader.prepareString(str, fromString);
-                str = JXG.CinderellaReader.read(str, board);
-                board.xmlString = str;
-
+                reader = new JXG.CinderellaReader(board, str);
+                reader.read();
                 break;
             case 'tracenpoche':
                 board.xmlString = JXG.TracenpocheReader.readTracenpoche(str, board);
