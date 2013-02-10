@@ -34,12 +34,10 @@
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
- JXG
+ jxg
  renderer/abstract
  base/constants
  utils/type
-
- for Curves:
  math/numerics
 */
 

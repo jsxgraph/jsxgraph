@@ -33,8 +33,8 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG
+/* depends:
+ jxg
  base/constants
  base/coords
  math/math

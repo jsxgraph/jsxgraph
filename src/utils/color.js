@@ -34,9 +34,9 @@
 
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG
- math/math (just eps)
+/* depends:
+ jxg
+ math/math
  */
 
 /**

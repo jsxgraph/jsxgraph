@@ -34,11 +34,11 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ jxg
  utils/zip
  utils/base64
  utils/type
- util/object
+ utils/object
  */
 
 /**

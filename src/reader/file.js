@@ -33,9 +33,11 @@
 /*global JXG:true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends (incomplete)
+/* depends:
  utils/env
  utils/type
+ utils/encoding
+ utils/base64
  */
 
 (function () {

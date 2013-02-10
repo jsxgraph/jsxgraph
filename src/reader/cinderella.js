@@ -29,16 +29,11 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-/* depends: (incomplete)
- JXG
- base/constants
- */
-
 /*global JXG:true*/
 /*jslint nomen:true, plusplus:true, regexp:true*/
 
 /* depends:
- JXG
+ jxg
  base/coords
  base/constants
  utils/encoding

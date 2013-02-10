@@ -33,8 +33,8 @@
 /*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG (JXG.extend)
+/* depends:
+ jxg
  base/constants
  utils/event
  math/math

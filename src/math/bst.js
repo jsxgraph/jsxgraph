@@ -34,8 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
- math/math (only for the namespace)
+ jxg
+ math/math
  */
 
 (function () {

@@ -33,8 +33,8 @@
 /*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG
+/* depends:
+ jxg
  utils/array
  utils/type
  */

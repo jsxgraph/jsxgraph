@@ -33,8 +33,8 @@
 /*global JXG: true, DOMParser: true, ActiveXObject: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends
- JXG (namespace)
+/* depends:
+ jxg
  utils/type
  */
 

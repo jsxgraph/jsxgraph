@@ -34,7 +34,6 @@
 /*jslint nomen:true, plusplus:true, forin:true*/
 
 /* depends:
- no dependencies
  */
 
 /**

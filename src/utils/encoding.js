@@ -2,7 +2,7 @@
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
- JXG
+ jxg
  */
 
 (function () {

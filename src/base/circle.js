@@ -34,7 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ jxg
+ jsxgraph
  base/element
  base/constants
  base/coords

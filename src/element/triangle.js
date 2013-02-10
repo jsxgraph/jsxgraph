@@ -34,7 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG (namespace)
+ jxg
+ jsxgraph
  utils/type
  utils/object
   elements:

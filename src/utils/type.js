@@ -33,10 +33,10 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends
- JXG (namespace, extend)
+/* depends:
+ jxg
  base/constants
- parser/geonext (createFunction)
+ parser/geonext
  */
 
 /**

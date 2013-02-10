@@ -33,8 +33,8 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true, bitwise:true*/
 
-/* depends
- JXG (namespace)
+/* depends:
+ jxg
  utils/type
  */
 

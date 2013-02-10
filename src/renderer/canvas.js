@@ -33,19 +33,15 @@
 /*global JXG: true, AMprocessNode: true, document: true, Image: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/*depends:
- JXG
+/* depends:
+ jxg
  renderer/abstract
  base/constants
  utils/env
  utils/type
  utils/browser
- 
- for Lines:
  base/coords
  math/geometry
- 
- for Curves:
  math/numerics
 */
 

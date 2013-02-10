@@ -33,14 +33,17 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG
+/* depends:
+ jxg
  utils/array
  utils/type
  math/math
- math/geometry - this should be easy to resolve. Only the releauxpolygon related method depends on this
-   and we could also move this method over to MathGeometry
+ math/geometry
  */
+
+// math/geometry - this should be easy to resolve. Only the releauxpolygon related method depends on this
+// and we could also move this method over to MathGeometry
+
 
 /**
  * @fileoverview In this file the namespace Math.Numerics is defined, which holds numerical

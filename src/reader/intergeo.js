@@ -32,8 +32,8 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends
- JXG
+/* depends:
+ jxg
  math/math
  utils/encoding
  utils/zip

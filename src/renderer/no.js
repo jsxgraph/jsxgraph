@@ -34,7 +34,7 @@
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
- JXG (just the namespace, nothing else)
+ jxg
  renderer/abstract
 */
 

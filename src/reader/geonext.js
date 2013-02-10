@@ -32,8 +32,8 @@
 /*global JXG: true, XMLSerializer: true, Image: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends
- JXG
+/* depends:
+ jxg
  jsxgraph
  base/constants
  base/group

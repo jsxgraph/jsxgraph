@@ -34,9 +34,10 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG (namespace)
+ jxg
+ jsxgraph
  utils/object
-  element:
+  elements:
    point
    segment
    ticks

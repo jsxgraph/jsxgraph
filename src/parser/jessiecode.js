@@ -29,7 +29,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ jxg
+ jsxgraph
  base/constants
  base/text
  math/math
@@ -40,8 +41,6 @@
  utils/object
  utils/string
  utils/number
-
- jsxgraph (for element list and board list, latter one could possibly be removed)
  */
 
 /**

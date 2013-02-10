@@ -34,12 +34,12 @@
 
 /*jslint nomen: true, plusplus: true*/
 
-/*depends:
- JXG
- JSXGraph (boards)
+/* depends:
+ jxg
+ jsxgraph
  base/constants
  base/coords
- options (should be removed and converted to this.options)
+ options
  math/numerics
  math/math
  math/geometry

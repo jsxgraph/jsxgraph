@@ -39,11 +39,10 @@
 */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
-/*depends:
- JXG
- 
+/* depends:
+ jxg
  base/constants
- math/math           calculations should not be done in here. we should consider moving this somewhere else
+ math/math
  math/geometry
  utils/type
  utils/object

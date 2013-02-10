@@ -41,13 +41,24 @@
  * to reduce the risc of interfering with other JavaScript code.
  * @namespace
  */
-var JXG = {};
+var JXG = {},
+    define;
 
 (function () {
 
     "use strict";
 
-    var i, s, n, arr;
+    var i, s, n, arr, cache;
+
+    define = function (deps, factory) {
+        var i;
+
+        for (i = 0; i < deps.length; i++) {
+            if (!cache[deps[i]]) {
+
+            }
+        }
+    };
 
     // Minified mode?
     JXG.useMinify = false;

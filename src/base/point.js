@@ -34,7 +34,8 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- JXG
+ jxg
+ jsxgraph
  math/math
  math/geometry
  math/numerics
@@ -43,7 +44,6 @@
  base/element
  utils/type
  utils/object
- jsxgraph
   elements:
    transform
  */

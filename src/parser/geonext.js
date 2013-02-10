@@ -36,11 +36,11 @@
 /* depends:
  base/constants
  utils/type
-
- inside eval'd strings:
  math/math
  math/geometry
  */
+
+// math/math and math/geometry dependencies are inside eval'd strings
 
 (function () {
 

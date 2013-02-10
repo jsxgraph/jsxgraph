@@ -33,7 +33,7 @@
 /*global JXG: true*/
 /*jslint nomen: true, plusplus: true*/
 
-/* depends
+/* depends:
  jxg
  */
 
