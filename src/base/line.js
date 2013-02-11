@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  math/geometry
  math/numerics
@@ -1137,7 +1136,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('line', JXG.createLine);
+    JXG.registerElement('line', JXG.createLine);
 
     /**
      * @class This element is used to provide a constructor for a segment.
@@ -1230,7 +1229,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('segment', JXG.createSegment);
+    JXG.registerElement('segment', JXG.createSegment);
 
     /**
      * @class This element is used to provide a constructor for arrow, which is just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
@@ -1273,7 +1272,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('arrow', JXG.createArrow);
+    JXG.registerElement('arrow', JXG.createArrow);
 
     /**
      * @class This element is used to provide a constructor for an axis. It's strictly spoken just a wrapper for element {@link Line} with {@link JXG.Line#straightFirst}
@@ -1348,7 +1347,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('axis', JXG.createAxis);
+    JXG.registerElement('axis', JXG.createAxis);
 
     /**
      * @class With the element tangent the slope of a line, circle, or curve in a certain point can be visualized. A tangent is always constructed
@@ -1586,6 +1585,6 @@
      * Register the element type tangent at JSXGraph
      * @private
      */
-    JXG.JSXGraph.registerElement('tangent', JXG.createTangent);
-    JXG.JSXGraph.registerElement('polar', JXG.createTangent);
+    JXG.registerElement('tangent', JXG.createTangent);
+    JXG.registerElement('polar', JXG.createTangent);
 }());

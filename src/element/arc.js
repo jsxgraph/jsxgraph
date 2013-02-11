@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/geometry
  math/math
  base/coords
@@ -396,7 +395,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('arc', JXG.createArc);
+    JXG.registerElement('arc', JXG.createArc);
 
     /**
      * @class A semicircle is a special arc defined by two points. The arc hits both points.
@@ -460,7 +459,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('semicircle', JXG.createSemicircle);
+    JXG.registerElement('semicircle', JXG.createSemicircle);
 
     /**
      * @class A circumcircle arc is an {@link Arc} defined by three points. All three points lie on the arc.
@@ -528,7 +527,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('circumcirclearc', JXG.createCircumcircleArc);
+    JXG.registerElement('circumcirclearc', JXG.createCircumcircleArc);
 
     /**
      * @class A minor arc is a segment of the circumference of a circle having measure less than or equal to
@@ -567,7 +566,7 @@
         return JXG.createArc(board, parents, attributes);
     };
 
-    JXG.JSXGraph.registerElement('minorarc', JXG.createMinorArc);
+    JXG.registerElement('minorarc', JXG.createMinorArc);
 
     /**
      * @class A major arc is a segment of the circumference of a circle having measure greater than or equal to
@@ -605,5 +604,5 @@
         return JXG.createArc(board, parents, attributes);
     };
 
-    JXG.JSXGraph.registerElement('majorarc', JXG.createMajorArc);
+    JXG.registerElement('majorarc', JXG.createMajorArc);
 }());

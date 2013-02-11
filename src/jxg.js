@@ -122,16 +122,6 @@
         },
 
         /**
-         * The opposite of {@link JXG.JSXGraph.registerElement}, it removes a given element from
-         * the element list. You probably don't need this.
-         * @param {String} element The name of the element which is to be removed from the element list.
-         */
-        unregisterElement: function (element) {
-            delete this.elements[element.toLowerCase()];
-            delete JXG.Board.prototype['_' + element.toLowerCase()];
-        },
-
-        /**
          * Register a file reader.
          * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
          * and <tt>read()</tt>.

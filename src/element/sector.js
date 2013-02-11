@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/geometry
  math/math
  base/coords
@@ -348,7 +347,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('sector', JXG.createSector);
+    JXG.registerElement('sector', JXG.createSector);
 
 
     /**
@@ -415,7 +414,7 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('circumcirclesector', JXG.createCircumcircleSector);
+    JXG.registerElement('circumcirclesector', JXG.createCircumcircleSector);
 
 
     /**
@@ -716,5 +715,5 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('angle', JXG.createAngle);
+    JXG.registerElement('angle', JXG.createAngle);
 }());

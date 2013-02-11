@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  base/constants
  base/point
@@ -295,5 +294,5 @@
         return p3;
     };
 
-    JXG.JSXGraph.registerElement('slider', JXG.createSlider);
+    JXG.registerElement('slider', JXG.createSlider);
 }());

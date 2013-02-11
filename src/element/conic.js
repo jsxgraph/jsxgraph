@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  math/geometry
  math/numerics
@@ -915,8 +914,8 @@
         return curve;
     };
 
-    JXG.JSXGraph.registerElement('ellipse', JXG.createEllipse);
-    JXG.JSXGraph.registerElement('hyperbola', JXG.createHyperbola);
-    JXG.JSXGraph.registerElement('parabola', JXG.createParabola);
-    JXG.JSXGraph.registerElement('conic', JXG.createConic);
+    JXG.registerElement('ellipse', JXG.createEllipse);
+    JXG.registerElement('hyperbola', JXG.createHyperbola);
+    JXG.registerElement('parabola', JXG.createParabola);
+    JXG.registerElement('conic', JXG.createConic);
 }());

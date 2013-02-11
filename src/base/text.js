@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/coords
  base/element
@@ -588,5 +587,5 @@
         return t;
     };
 
-    JXG.JSXGraph.registerElement('text', JXG.createText);
+    JXG.registerElement('text', JXG.createText);
 }());

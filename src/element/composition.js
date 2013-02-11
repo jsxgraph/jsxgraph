@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  math/geometry
  math/numerics
@@ -2221,26 +2220,26 @@
     };
 
 
-    JXG.JSXGraph.registerElement('arrowparallel', JXG.createArrowParallel);
-    JXG.JSXGraph.registerElement('bisector', JXG.createBisector);
-    JXG.JSXGraph.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
-    JXG.JSXGraph.registerElement('circumcircle', JXG.createCircumcircle);
-    JXG.JSXGraph.registerElement('circumcirclemidpoint', JXG.createCircumcenter);
-    JXG.JSXGraph.registerElement('circumcenter', JXG.createCircumcenter);
-    JXG.JSXGraph.registerElement('incenter', JXG.createIncenter);
-    JXG.JSXGraph.registerElement('incircle', JXG.createIncircle);
-    JXG.JSXGraph.registerElement('integral', JXG.createIntegral);
-    JXG.JSXGraph.registerElement('midpoint', JXG.createMidpoint);
-    JXG.JSXGraph.registerElement('mirrorpoint', JXG.createMirrorPoint);
-    JXG.JSXGraph.registerElement('normal', JXG.createNormal);
-    JXG.JSXGraph.registerElement('orthogonalprojection', JXG.createOrthogonalProjection);
-    JXG.JSXGraph.registerElement('parallel', JXG.createParallel);
-    JXG.JSXGraph.registerElement('parallelpoint', JXG.createParallelPoint);
-    JXG.JSXGraph.registerElement('perpendicular', JXG.createPerpendicular);
-    JXG.JSXGraph.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
-    JXG.JSXGraph.registerElement('perpendicularsegment', JXG.createPerpendicularSegment);
-    JXG.JSXGraph.registerElement('reflection', JXG.createReflection);
-    JXG.JSXGraph.registerElement('locus', JXG.createLocus);
-    JXG.JSXGraph.registerElement('grid', JXG.createGrid);
-    JXG.JSXGraph.registerElement('inequality', JXG.createInequality);
+    JXG.registerElement('arrowparallel', JXG.createArrowParallel);
+    JXG.registerElement('bisector', JXG.createBisector);
+    JXG.registerElement('bisectorlines', JXG.createAngularBisectorsOfTwoLines);
+    JXG.registerElement('circumcircle', JXG.createCircumcircle);
+    JXG.registerElement('circumcirclemidpoint', JXG.createCircumcenter);
+    JXG.registerElement('circumcenter', JXG.createCircumcenter);
+    JXG.registerElement('incenter', JXG.createIncenter);
+    JXG.registerElement('incircle', JXG.createIncircle);
+    JXG.registerElement('integral', JXG.createIntegral);
+    JXG.registerElement('midpoint', JXG.createMidpoint);
+    JXG.registerElement('mirrorpoint', JXG.createMirrorPoint);
+    JXG.registerElement('normal', JXG.createNormal);
+    JXG.registerElement('orthogonalprojection', JXG.createOrthogonalProjection);
+    JXG.registerElement('parallel', JXG.createParallel);
+    JXG.registerElement('parallelpoint', JXG.createParallelPoint);
+    JXG.registerElement('perpendicular', JXG.createPerpendicular);
+    JXG.registerElement('perpendicularpoint', JXG.createPerpendicularPoint);
+    JXG.registerElement('perpendicularsegment', JXG.createPerpendicularSegment);
+    JXG.registerElement('reflection', JXG.createReflection);
+    JXG.registerElement('locus', JXG.createLocus);
+    JXG.registerElement('grid', JXG.createGrid);
+    JXG.registerElement('inequality', JXG.createInequality);
 }());

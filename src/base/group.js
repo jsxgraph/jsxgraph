@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  utils/type
  */
@@ -254,5 +253,5 @@
         return g;
     };
 
-    JXG.JSXGraph.registerElement('group', JXG.createGroup);
+    JXG.registerElement('group', JXG.createGroup);
 }());

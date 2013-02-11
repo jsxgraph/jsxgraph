@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  base/constants
  base/element
@@ -870,5 +869,5 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('ticks', JXG.createTicks);
+    JXG.registerElement('ticks', JXG.createTicks);
 }());

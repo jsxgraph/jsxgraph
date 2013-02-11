@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/numerics
  math/statistics
  base/constants
@@ -869,7 +868,7 @@
         return new JXG.Chart(board, parents, attr);
     };
 
-    JXG.JSXGraph.registerElement('chart', JXG.createChart);
+    JXG.registerElement('chart', JXG.createChart);
 
     /**
      * Legend for chart
@@ -946,5 +945,5 @@
 
         return new JXG.Legend(board, start_from, attributes);
     };
-    JXG.JSXGraph.registerElement('legend', JXG.createLegend);
+    JXG.registerElement('legend', JXG.createLegend);
 }());

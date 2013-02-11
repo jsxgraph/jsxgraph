@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  utils/object
   elements:
    point
@@ -157,5 +156,5 @@
         return li;
     };
 
-    JXG.JSXGraph.registerElement('tapemeasure', JXG.createTapemeasure);
+    JXG.registerElement('tapemeasure', JXG.createTapemeasure);
 }());

@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/coords
  math/statistics
@@ -703,6 +702,6 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('polygon', JXG.createPolygon);
-    JXG.JSXGraph.registerElement('regularpolygon', JXG.createRegularPolygon);
+    JXG.registerElement('polygon', JXG.createPolygon);
+    JXG.registerElement('regularpolygon', JXG.createRegularPolygon);
 }());

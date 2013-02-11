@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/element
  utils/type
@@ -705,5 +704,5 @@
         return new JXG.Turtle(board, parents, attr);
     };
 
-    JXG.JSXGraph.registerElement('turtle', JXG.createTurtle);
+    JXG.registerElement('turtle', JXG.createTurtle);
 }());

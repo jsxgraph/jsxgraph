@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/element
  base/constants
  base/coords
@@ -789,5 +788,5 @@
         return el;
     };
 
-    JXG.JSXGraph.registerElement('circle', JXG.createCircle);
+    JXG.registerElement('circle', JXG.createCircle);
 }());

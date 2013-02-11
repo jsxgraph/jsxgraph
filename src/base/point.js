@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  math/math
  math/geometry
  math/numerics
@@ -1929,8 +1928,8 @@
     };
 
 
-    JXG.JSXGraph.registerElement('point', JXG.createPoint);
-    JXG.JSXGraph.registerElement('glider', JXG.createGlider);
-    JXG.JSXGraph.registerElement('intersection', JXG.createIntersectionPoint);
-    JXG.JSXGraph.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
+    JXG.registerElement('point', JXG.createPoint);
+    JXG.registerElement('glider', JXG.createGlider);
+    JXG.registerElement('intersection', JXG.createIntersectionPoint);
+    JXG.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
 }());

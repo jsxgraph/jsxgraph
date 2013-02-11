@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  element/composition
  options
  utils/type
@@ -156,5 +155,5 @@
         throw new Error("JSXGraph: Can't create square with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
     };
 
-    JXG.JSXGraph.registerElement('square', JXG.createSquare);
+    JXG.registerElement('square', JXG.createSquare);
 }());

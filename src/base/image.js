@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/coords
  base/element
@@ -309,5 +308,5 @@
         return im;
     };
 
-    JXG.JSXGraph.registerElement('image', JXG.createImage);
+    JXG.registerElement('image', JXG.createImage);
 }());

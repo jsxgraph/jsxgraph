@@ -35,7 +35,6 @@
 
 /*depends:
  jxg
- jsxgraph
  base/constants
  utils/type
  */
@@ -341,5 +340,5 @@
         return new JXG.Transformation(board, attributes.type, parents);
     };
 
-    JXG.JSXGraph.registerElement('transform', JXG.createTransform);
+    JXG.registerElement('transform', JXG.createTransform);
 }());

@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  utils/type
  utils/object
   elements:
@@ -135,5 +134,5 @@
         throw new Error("JSXGraph: Can't create centroid with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
     };
 
-    JXG.JSXGraph.registerElement('centroid', JXG.createCentroid);
+    JXG.registerElement('centroid', JXG.createCentroid);
 }());

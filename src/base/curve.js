@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/coords
  base/element
@@ -1050,7 +1049,7 @@
         return new JXG.Curve(board, ['x'].concat(parents), attr);
     };
 
-    JXG.JSXGraph.registerElement('curve', JXG.createCurve);
+    JXG.registerElement('curve', JXG.createCurve);
 
     /**
      * @class This element is used to provide a constructor for functiongraph, which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X()}
@@ -1102,8 +1101,8 @@
         return new JXG.Curve(board, par, attr);
     };
 
-    JXG.JSXGraph.registerElement('functiongraph', JXG.createFunctiongraph);
-    JXG.JSXGraph.registerElement('plot', JXG.createFunctiongraph);
+    JXG.registerElement('functiongraph', JXG.createFunctiongraph);
+    JXG.registerElement('plot', JXG.createFunctiongraph);
 
 
     /**
@@ -1180,7 +1179,7 @@
      * Register the element type spline at JSXGraph
      * @private
      */
-    JXG.JSXGraph.registerElement('spline', JXG.createSpline);
+    JXG.registerElement('spline', JXG.createSpline);
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
@@ -1265,7 +1264,7 @@
         return c;
     };
 
-    JXG.JSXGraph.registerElement('riemannsum', JXG.createRiemannsum);
+    JXG.registerElement('riemannsum', JXG.createRiemannsum);
 
     /**
      * @class This element is used to provide a constructor for travce curve (simple locus curve), which is realized as a special curve.
@@ -1410,5 +1409,5 @@
         return c;
     };
 
-    JXG.JSXGraph.registerElement('tracecurve', JXG.createTracecurve);
+    JXG.registerElement('tracecurve', JXG.createTracecurve);
 }());
