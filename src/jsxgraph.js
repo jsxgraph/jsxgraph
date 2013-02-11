@@ -69,21 +69,6 @@
          * @type String
          */
         rendererType: (function () {
-            var loadRenderer = function (renderer) {
-                var arr, i;
-
-                // Load the source files for the renderer
-                if (JXG.rendererFiles[renderer]) {
-                    arr = JXG.rendererFiles[renderer].split(',');
-
-                    for (i = 0; i < arr.length; i++) {
-                        JXG.require(JXG.requirePath + arr[i] + '.js');
-                    }
-
-                    delete JXG.rendererFiles[renderer];
-                }
-            };
-
             JXG.Options.renderer = 'no';
 
             if (JXG.supportsVML()) {
@@ -111,23 +96,19 @@
 
                     return t;
                 };
-                loadRenderer('vml');
             }
 
             if (JXG.supportsCanvas()) {
                 JXG.Options.renderer = 'canvas';
-                loadRenderer('canvas');
             }
 
             if (JXG.supportsSVG()) {
                 JXG.Options.renderer = 'svg';
-                loadRenderer('svg');
             }
 
             // we are inside node
             if (JXG.isNode() && JXG.supportsCanvas()) {
                 JXG.Options.renderer = 'canvas';
-                loadRenderer('canvas');
             }
 
             return JXG.Options.renderer;

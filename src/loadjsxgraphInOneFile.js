@@ -41,15 +41,8 @@ var JXG = {};
     'use strict';
 
     var i, s;
-    //JXG.useMinify = true;
-    JXG.countDrawings = 0;
-    JXG.countTime = 0;
+
     JXG.require = function (libraryName) {};
-    JXG.rendererFiles = {
-        svg: 'SVGRenderer',
-        vml: 'VMLRenderer',
-        canvas: 'CanvasRenderer'
-    };
     JXG.baseFiles = null;
     // this maybe required by additional software/extensions and/or future renderers
     JXG.requirePath = '';
