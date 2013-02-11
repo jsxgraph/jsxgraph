@@ -1852,9 +1852,6 @@
                     parseInt(gui.getElementsByTagName("font")[0].getAttribute("size"), 10) :
                     12;
 
-            // this is deprecated, but we'll keep it for now until everything is migrated
-            JXG.JSXGraph.boards[this.board.id] = this.board;
-
             // the new board storage
             JXG.boards[this.board.id] = this.board;
 

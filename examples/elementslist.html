@@ -20,8 +20,8 @@
     (function () {
         var i;
 
-        for (i in JXG.JSXGraph.elements) {
-            if (JXG.JSXGraph.elements.hasOwnProperty(i)) {
+        for (i in JXG.elements) {
+            if (JXG.elements.hasOwnProperty(i)) {
                 $('#jxgbox').append(i + '<br />');
             }
         }

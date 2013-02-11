@@ -1435,7 +1435,60 @@
             b *= b;
 
             return Math.abs(nom) / Math.sqrt(a + b);
-        }
+        },
 
+
+        /**
+         * Helper function to create curve which displays a Reuleaux polygons.
+         * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
+         * these point list is the array vrtices of a regular polygon.
+         * @param {Number} nr Number of vertices
+         * @returns {Array} An array containing the two functions defining the Reuleaux polygon and the two values
+         * for the start and the end of the paramtric curve. array may be used as parent array of a {@link JXG.Curve}.
+         * @example
+         * var A = brd.create('point',[-2,-2]);
+         * var B = brd.create('point',[0,1]);
+         * var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
+         * var reuleauxTriangle = brd.create('curve', JXG.Math.Geometry.reuleauxPolygon(pol.vertices, 3),
+         *                          {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
+         *
+         * </pre><div id="2543a843-46a9-4372-abc1-94d9ad2db7ac" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         * var brd = JXG.JSXGraph.initBoard('2543a843-46a9-4372-abc1-94d9ad2db7ac', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright:false, shownavigation: false});
+         * var A = brd.create('point',[-2,-2]);
+         * var B = brd.create('point',[0,1]);
+         * var pol = brd.create('regularpolygon',[A,B,3], {withLines:false, fillColor:'none', highlightFillColor:'none', fillOpacity:0.0});
+         * var reuleauxTriangle = brd.create('curve', JXG.Math.Geometry.reuleauxPolygon(pol.vertices, 3),
+         *                          {strokeWidth:6, strokeColor:'#d66d55', fillColor:'#ad5544', highlightFillColor:'#ad5544'});
+         * </script><pre>
+         */
+        reuleauxPolygon: function (points, nr) {
+            var beta,
+                pi2 = Math.PI * 2,
+                pi2_n = pi2 / nr,
+                diag = (nr - 1) / 2,
+                d = 0,
+                makeFct = function (which, trig) {
+                    return function (t, suspendUpdate) {
+                        var t1 = (t % pi2 + pi2) % pi2,
+                            j = Math.floor(t1 / pi2_n) % nr;
+
+                        if (!suspendUpdate) {
+                            d = points[0].Dist(points[diag]);
+                            beta = JXG.Math.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[(diag) % nr]);
+                        }
+
+                        if (isNaN(j)) {
+                            return j;
+                        }
+
+                        t1 = t1 * 0.5 + j * pi2_n * 0.5 + beta;
+
+                        return points[j][which]() + d * Math[trig](t1);
+                    };
+                };
+
+            return [makeFct('X', 'cos'), makeFct('Y', 'sin'), 0, pi2];
+        }
     });
 }());

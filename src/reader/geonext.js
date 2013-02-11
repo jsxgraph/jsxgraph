@@ -34,7 +34,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/group
  parser/geonext
@@ -1131,13 +1130,10 @@
 
             // jsxgraph chooses an id for the board but we don't want to use it, we want to use
             // the id stored in the geonext file. if you know why this is required, please note it here.
-            delete JXG.JSXGraph.boards[board.id];
             delete JXG.boards[board.id];
 
             board.id = this.gEBTN(boardData, 'id');
 
-            // Let's keep them a for little while
-            JXG.JSXGraph.boards[board.id] = board;
             JXG.boards[board.id] = board;
 
             // this creates some basic elements present in every geonext construction but not explicitly present in the file

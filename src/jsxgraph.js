@@ -65,19 +65,6 @@
      */
     JXG.JSXGraph = {
         /**
-         * Associative array that keeps references to all boards.
-         * @type Object
-         */
-        boards: {},
-
-        /**
-         * Associative array that keeps track of all constructable elements registered
-         * via {@link JXG.JSXGraph.registerElement}.
-         * @type Object
-         */
-        elements: {},
-
-        /**
          * Stores the renderer that is used to draw the boards.
          * @type String
          */
@@ -239,7 +226,7 @@
             board = new JXG.Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
 
             // this is deprecated, but we'll keep it for now until everything is migrated
-            this.boards[board.id] = board;
+            JXG.boards[board.id] = board;
 
             // the new board storage
             JXG.boards[board.id] = board;
@@ -303,7 +290,7 @@
                 board.renderer.drawZoomBar(board);
             }
 
-            this.boards[board.id] = board;
+            JXG.boards[board.id] = board;
             return board;
         },
 
@@ -343,7 +330,7 @@
                 board.renderer.drawZoomBar(board);
             }
 
-            this.boards[board.id] = board;
+            JXG.boards[board.id] = board;
             return board;
         },
 
@@ -355,7 +342,7 @@
             var el;
 
             if (typeof board === 'string') {
-                board = this.boards[board];
+                board = JXG.boards[board];
             }
 
             board.removeEventHandlers();
@@ -389,40 +376,24 @@
             delete board.jc;
 
             // Finally remove the board itself from the boards array
-            delete this.boards[board.id];
+            delete JXG.boards[board.id];
         },
 
         /**
-         * This registers a new construction element to JSXGraph for the construction via the {@link JXG.Board.create}
-         * interface.
-         * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
-         * will be overwritten.
-         * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
-         * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
-         * <tt>JXG.create...</tt> function for an example.
+         * @deprecated Use JXG#registerElement
+         * @param element
+         * @param creator
          */
         registerElement: function (element, creator) {
-            element = element.toLowerCase();
-            this.elements[element] = creator;
-
-            if (JXG.Board.prototype['_' + element]) {
-                JXG.debug("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
-            }
-
-            JXG.Board.prototype['_' + element] = function (parents, attributes) {
-                return this.create(element, parents, attributes);
-            };
-
+            JXG.registerElement(element, creator);
         },
 
         /**
-         * The opposite of {@link JXG.JSXGraph.registerElement}, it removes a given element from
-         * the element list. You probably don't need this.
-         * @param {String} element The name of the element which is to be removed from the element list.
+         * @deprecated
+         * @param element
          */
         unregisterElement: function (element) {
-            delete this.elements[element.toLowerCase()];
-            delete JXG.Board.prototype['_' + element.toLowerCase()];
+            throw new Error('Unimplemented');
         }
     };
 

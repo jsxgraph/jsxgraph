@@ -92,6 +92,46 @@
         readers: {},
 
         /**
+         * Associative array that keeps track of all constructable elements registered
+         * via {@link JXG.JSXGraph.registerElement}.
+         * @type Object
+         */
+        elements: {},
+
+        /**
+         * This registers a new construction element to JSXGraph for the construction via the {@link JXG.Board.create}
+         * interface.
+         * @param {String} element The elements name. This is case-insensitive, existing elements with the same name
+         * will be overwritten.
+         * @param {Function} creator A reference to a function taking three parameters: First the board, the element is
+         * to be created on, a parent element array, and an attributes object. See {@link JXG.createPoint} or any other
+         * <tt>JXG.create...</tt> function for an example.
+         */
+        registerElement: function (element, creator) {
+            element = element.toLowerCase();
+            this.elements[element] = creator;
+
+            if (JXG.Board.prototype['_' + element]) {
+                JXG.debug("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
+            }
+
+            JXG.Board.prototype['_' + element] = function (parents, attributes) {
+                return this.create(element, parents, attributes);
+            };
+
+        },
+
+        /**
+         * The opposite of {@link JXG.JSXGraph.registerElement}, it removes a given element from
+         * the element list. You probably don't need this.
+         * @param {String} element The name of the element which is to be removed from the element list.
+         */
+        unregisterElement: function (element) {
+            delete this.elements[element.toLowerCase()];
+            delete JXG.Board.prototype['_' + element.toLowerCase()];
+        },
+
+        /**
          * Register a file reader.
          * @param {function} reader A file reader. This object has to provide two methods: <tt>prepareString()</tt>
          * and <tt>read()</tt>.

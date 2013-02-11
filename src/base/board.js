@@ -36,7 +36,6 @@
 
 /* depends:
  jxg
- jsxgraph
  base/constants
  base/coords
  options
@@ -583,7 +582,7 @@
             var r = 1;
 
             // as long as we don't have a unique id generate a new one
-            while (JXG.exists(JXG.JSXGraph.boards['jxgBoard' + r])) {
+            while (JXG.exists(JXG.boards['jxgBoard' + r])) {
                 r = Math.round(Math.random() * 65535);
             }
 
@@ -3139,7 +3138,7 @@
             this.triggerEventHandlers(['update'], []);
 
             // To resolve dependencies between boards
-            // for (var board in JXG.JSXGraph.boards) {
+            // for (var board in JXG.boards) {
             len = this.dependentBoards.length;
             for (i = 0; i < len; i++) {
                 b = this.dependentBoards[i];
@@ -3228,11 +3227,11 @@
                 }
             }
 
-            if (JXG.JSXGraph.elements[elementType] !== null) {
-                if (typeof JXG.JSXGraph.elements[elementType] === 'function') {
-                    el = JXG.JSXGraph.elements[elementType](this, parents, attributes);
+            if (JXG.elements[elementType] !== null) {
+                if (typeof JXG.elements[elementType] === 'function') {
+                    el = JXG.elements[elementType](this, parents, attributes);
                 } else {
-                    el = JXG.JSXGraph.elements[elementType].creator(this, parents, attributes);
+                    el = JXG.elements[elementType].creator(this, parents, attributes);
                 }
             } else {
                 throw new Error("JSXGraph: JXG.createElement: Unknown element type given: " + elementType);
@@ -3354,7 +3353,7 @@
 
             if (!this.animationIntervalCode) {
                 this.animationIntervalCode = window.setInterval(function () {
-                    JXG.JSXGraph.boards[that.id].animate();
+                    JXG.boards[that.id].animate();
                 }, element.board.attr.animationdelay);
             }
 
