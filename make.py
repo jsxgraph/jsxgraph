@@ -197,7 +197,7 @@ def makeCore():
     license = ("/* Version %s */\n" % version) + license
 
     # Take the source files and write them into jstxt
-    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js') + ['renderer/svg','renderer/vml','renderer/canvas']
+    files = ['loadjsxgraphInOneFile'] + findFilenames('src/loadjsxgraph.js')
     jstxt = catFiles(files)
 
     # tmpfilename = tempfile.mktemp()

@@ -15,13 +15,13 @@ function f(x) {
    return Math.sin(x)*Math.cos(x)*p.X();
 }
 c = plot(f);
-g = board.D(f);
+g = JXG.Math.Numerics.D(f);
 plot(g,{strokecolor:'black', dash:1});
-h = board.D(g);
+h = JXG.Math.Numerics.D(g);
 plot(h, {strokecolor:'red', dash:2});
 
 var interval = [0, 2.5];
-i_m = board.I(interval, f);
+i_m = JXG.Math.Numerics.I(interval, f);
 
 board.createElement('integral', [interval, c]);
 </textarea> <br>
