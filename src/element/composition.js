@@ -1472,7 +1472,6 @@
                 center: p
             };
         } catch (e) {
-            console.log(e, e.stack);
             throw new Error("JSXGraph: Can't create circumcircle with parent types '" +
                 (typeof parents[0]) + "', '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                 "\nPossible parent types: [point,point,point]");

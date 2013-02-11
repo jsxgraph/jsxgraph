@@ -44,7 +44,6 @@
  utils/type
  utils/object
   elements:
-   circumcircle
    transform
    point
  */
@@ -768,7 +767,12 @@
             el = new JXG.Circle(board, 'pointLine', p[0], p[1], attr);
         } else if (parents.length === 3 && JXG.isPoint(p[0]) && JXG.isPoint(p[1]) && JXG.isPoint(p[2])) {
             // Circle through three points
-            el = JXG.createCircumcircle(board, p, attributes);
+            // Check if circumcircle element is available
+            if (JXG.elements.circumcircle) {
+                el = JXG.createCircumcircle(board, p, attributes);
+            } else {
+                throw new Error('JSXGraph: Can\'t create circle with three points. Please include the circumcircle element (element/composition).');
+            }
         } else {
             throw new Error("JSXGraph: Can't create circle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

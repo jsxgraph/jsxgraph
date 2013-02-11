@@ -45,8 +45,6 @@
  utils/type
  utils/object
  utils/string
-  elements:
-   text
  */
 
 (function () {
@@ -930,36 +928,44 @@
          * @see #addLabelToElement
          */
         createLabel: function () {
-            var attr = {};
+            var attr;
 
-            attr =  JXG.deepCopy(this.visProp.label, null);
-            attr.id = this.id + 'Label';
-            attr.isLabel = true;
-            attr.visible = this.visProp.visible;
-            attr.anchor = this;
-            attr.priv = this.visProp.priv;
+            // this is a dirty hack to resolve the text-dependency. If there is no text element available,
+            // just don't create a label. This method is usually not called by a user, so we won't throw
+            // an exception here and simply output a warning via JXG.debug.
+            if (JXG.elements.text) {
+                attr =  JXG.deepCopy(this.visProp.label, null);
+                attr.id = this.id + 'Label';
+                attr.isLabel = true;
+                attr.visible = this.visProp.visible;
+                attr.anchor = this;
+                attr.priv = this.visProp.priv;
 
-            this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
-            this.label = {};
+                this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
+                this.label = {};
 
-            if (this.visProp.withlabel) {
-                this.label.relativeCoords = [0, 0];
+                if (this.visProp.withlabel) {
+                    this.label.relativeCoords = [0, 0];
 
-                this.label.content = JXG.createText(this.board,
-                    [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name],
-                    attr);
-                this.label.content.needsUpdate = true;
-                this.label.content.update();
+                    this.label.content = JXG.createText(this.board,
+                        [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name],
+                        attr);
+                    this.label.content.needsUpdate = true;
+                    this.label.content.update();
 
-                this.label.content.dump = false;
-                this.label.color = this.label.content.visProp.strokecolor;
+                    this.label.content.dump = false;
+                    this.label.color = this.label.content.visProp.strokecolor;
 
-                if (!this.visProp.visible) {
-                    this.label.hiddenByParent = true;
-                    this.label.content.visProp.visible = false;
+                    if (!this.visProp.visible) {
+                        this.label.hiddenByParent = true;
+                        this.label.content.visProp.visible = false;
+                    }
+                    this.hasLabel = true;
                 }
-                this.hasLabel = true;
+            } else {
+                JXG.debug('JSXGraph: Can\'t create label: text element is not available. Make sure you include base/text');
             }
+
             return this;
         },
 
