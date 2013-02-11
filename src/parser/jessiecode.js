@@ -30,7 +30,7 @@
 
 /* depends:
  jxg
- jsxgraph
+ parser/geonext
  base/constants
  base/text
  math/math
@@ -317,7 +317,7 @@
          */
         isCreator: function (vname) {
             // check for an element with this name
-            return !!JXG.JSXGraph.elements[vname];
+            return !!JXG.elements[vname];
         },
 
         /**
@@ -368,7 +368,7 @@
             }
 
             if (!local) {
-                s = JXG.getRef(this.board, vname);
+                s = this.board.select(vname);
                 if (s !== vname) {
                     return s;
                 }
@@ -541,8 +541,8 @@
                 error_cnt = 0,
                 error_off = [],
                 error_la = [],
-                replacegxt = ['Abs', 'ACos', 'ASin', 'ATan', 'Ceil', 'Cos', 'Exp', 'Factorial', 'Floor', 'Log', 'Max',
-                    'Min', 'Random', 'Round', 'Sin', 'Sqrt', 'Tan', 'Trunc', 'If', 'Deg', 'Rad', 'Dist'],
+                /*replacegxt = ['Abs', 'ACos', 'ASin', 'ATan', 'Ceil', 'Cos', 'Exp', 'Factorial', 'Floor', 'Log', 'Max',
+                    'Min', 'Random', 'Round', 'Sin', 'Sqrt', 'Tan', 'Trunc', 'If', 'Deg', 'Rad', 'Dist'],*/
                 ccode = code.replace(/\r\n/g, '\n').split('\n'),
                 cleaned = [];
 
@@ -563,10 +563,11 @@
                 for (i = 0; i < ccode.length; i++) {
                     if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
                         if (geonext) {
-                            for (j = 0; j < replacegxt.length; j++) {
+                            ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
+                            /*for (j = 0; j < replacegxt.length; j++) {
                                 regex = new RegExp(replacegxt[j] + "\\(", 'g');
                                 ccode[i] = ccode[i].replace(regex, replacegxt[j].toLowerCase() + '(');
-                            }
+                            }*/
                         }
 
                         cleaned.push(ccode[i]);
@@ -1189,9 +1190,9 @@
                     found = false;
 
                     // search all the boards for the one with the appropriate container div
-                    for (b in JXG.JSXGraph.boards) {
-                        if (JXG.JSXGraph.boards.hasOwnProperty(b) && JXG.JSXGraph.boards[b].container === node.children[0].toString()) {
-                            this.use(JXG.JSXGraph.boards[b]);
+                    for (b in JXG.boards) {
+                        if (JXG.boards.hasOwnProperty(b) && JXG.boards[b].container === node.children[0].toString()) {
+                            this.use(JXG.boards[b]);
                             found = true;
                         }
                     }
@@ -1439,7 +1440,7 @@
                     break;
                 case 'op_use':
                     if (js) {
-                        ret = '$jc$.use(JXG.JSXGraph.boards[\'' + node.children[0] + '\'])';
+                        ret = '$jc$.use(JXG.boards[\'' + node.children[0] + '\'])';
                     } else {
                         ret = 'use ' + node.children[0] + ';';
                     }
@@ -1693,7 +1694,7 @@
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.trunc.src = 'JXG.trunc';
             // usually unused, see node_op > op_execfun
-            builtIn.$.src = '(function (n) { return JXG.getRef($jc$.board, n); })';
+            builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
             if (builtIn.$board) {
                 builtIn.$board.src = '$jc$.board';
             }

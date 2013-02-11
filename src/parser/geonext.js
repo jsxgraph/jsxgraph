@@ -141,7 +141,8 @@
                 }
                 // Now, we have the two operands and replace ^ by JXG.Math.pow
                 expr = new RegExp('(' + leftop + ')\\^(' + rightop + ')');
-                te = te.replace(expr, 'JXG.Math.pow($1,$2)');
+                //te = te.replace(expr, 'JXG.Math.pow($1,$2)');
+                te = te.replace(expr, 'pow($1,$2)');
                 i = te.indexOf('^');
             }
 
@@ -424,20 +425,25 @@
         replaceIdByObj: function (term) {
             // Search for expressions like "X(gi23)" or "Y(gi23A)" and convert them to objects['gi23'].X().
             var expr = /(X|Y|L)\(([\w_]+)\)/g;
-            term = term.replace(expr, 'this.board.objects[\'$2\'].$1()');
+            //term = term.replace(expr, 'this.board.objects[\'$2\'].$1()');
+            term = term.replace(expr, '$(\'$2\').$1()');
 
             expr = /(V)\(([\w_]+)\)/g;
-            term = term.replace(expr, 'this.board.objects[\'$2\'].Value()');
+            //term = term.replace(expr, 'this.board.objects[\'$2\'].Value()');
+            term = term.replace(expr, '$(\'$2\').Value()');
 
             expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;
-            term = term.replace(expr, 'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
+            //term = term.replace(expr, 'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
+            term = term.replace(expr, 'dist($(\'$2\'), $(\'$3\'))');
 
             expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;
-            term = term.replace(expr, 'JXG.Math.Geometry.trueAngle(this.board.objects[\"$2\"],this.board.objects[\"$3\"],this.board.objects[\"$4\"])');
+            //term = term.replace(expr, 'JXG.Math.Geometry.trueAngle(this.board.objects[\"$2\"],this.board.objects[\"$3\"],this.board.objects[\"$4\"])');
+            term = term.replace(expr, 'deg($(\'$2\'),$(\'$3\'),$(\'$4\'))');
 
             // Search for Rad('gi23','gi24','gi25')
             expr = /Rad\(([\w_]+),([\w_]+),([\w_]+)\)/g;
-            term = term.replace(expr, 'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
+            //term = term.replace(expr, 'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
+            term = term.replace(expr, 'rad($(\'$1\'),$(\'$2\'),$(\'$3\'))');
 
             expr = /N\((.+)\)/g;
             term = term.replace(expr, '($1)');
@@ -480,7 +486,8 @@
             newterm = newterm.replace(/True/g, 'true');
             newterm = newterm.replace(/False/g, 'false');
             newterm = newterm.replace(/fasle/g, 'false');
-            newterm = newterm.replace(/Pi/g, 'Math.PI');
+            newterm = newterm.replace(/Pi/g, 'PI');
+            newterm = newterm.replace(/"/g, '\'');
 
             return newterm;
         },

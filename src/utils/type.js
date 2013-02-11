@@ -36,7 +36,6 @@
 /* depends:
  jxg
  base/constants
- parser/geonext
  */
 
 /**
@@ -234,7 +233,9 @@
                 // Convert GEONExT syntax into  JavaScript syntax
                 //newTerm = JXG.GeonextParser.geonext2JS(term, board);
                 //return new Function(variableName,'return ' + newTerm + ';');
-                term = JXG.GeonextParser.replaceNameById(term, board);
+
+                //term = JXG.GeonextParser.replaceNameById(term, board);
+                //term = JXG.GeonextParser.geonext2JS(term, board);
                 f = board.jc.snippet(term, true, variableName, true);
             } else if (JXG.isFunction(term)) {
                 f = term;

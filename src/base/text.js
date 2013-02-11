@@ -198,6 +198,8 @@
          * @private
          */
         _setText: function (text) {
+            var updateText;
+
             this.needsSizeUpdate = false;
 
             if (typeof text === 'function') {
@@ -218,7 +220,11 @@
                         this.content = this.generateTerm(text);
                     }
                 }
-                this.updateText = new Function('this.plaintext = ' + this.content + '; ');
+                //new Function('this.plaintext = ' + this.content + '; ');
+                updateText = JXG.createFunction(this.content, this.board, null, true);
+                this.updateText = function () {
+                    this.plaintext = updateText();
+                };
             }
 
             // First evaluation of the string.
@@ -412,7 +418,7 @@
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
-            contentStr = contentStr.replace(/\"/g, '\\"');
+            contentStr = contentStr.replace(/\"/g, '\\\'');
             contentStr = contentStr.replace(/\'/g, "\\'");
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
@@ -427,13 +433,13 @@
                     plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);
                     res = JXG.GeonextParser.geonext2JS(term, this.board);
-                    res = res.replace(/\\"/g, '"');
+                    res = res.replace(/\\"/g, "'");
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
                     if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
-                        if (JXG.isNumber((JXG.bind(new Function('return ' + res + ';'), this))())) {
+                        if (JXG.isNumber((JXG.bind(JXG.createFunction(res, this.board, null, true), this))())) {
                             // may also be a string
                             plaintext += '+(' + res + ').toFixed(' + (this.visProp.digits) + ')';
                         } else {
