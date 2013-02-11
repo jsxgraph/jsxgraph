@@ -1682,8 +1682,9 @@
 
             // set the javascript equivalent for the builtIns
             // some of the anonymous functions should be replaced by global methods later on
-            builtIn.PI.src = 'Math.PI';
-            builtIn.EULER.src = 'Math.E';
+
+          //  builtIn.PI.src = 'Math.PI'; // builtin.PI == Math.PI is readonly!
+          //  builtIn.EULER.src = 'Math.E'; // builtin.EULER == Math.E is readonly!
             builtIn.X.src = '$jc$.X';
             builtIn.Y.src = '$jc$.Y';
             builtIn.V.src = '$jc$.V';
