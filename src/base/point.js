@@ -35,6 +35,7 @@
 
 /* depends:
  jxg
+ options
  math/math
  math/geometry
  math/numerics
@@ -1421,49 +1422,12 @@
         },
 
         /**
-         * All point faces can be defined with more than one name, e.g. a cross faced point can be given
-         * by face equal to 'cross' or equal to 'x'. This method maps all possible values to fixed ones to
-         * simplify if- and switch-clauses regarding point faces. The translation table is as follows:
-         * <table>
-         * <tr><th>Input</th><th>Output</th></tr>
-         * <tr><td>cross, x</td><td>x</td></tr>
-         * <tr><td>circle, o</td><td>o</td></tr>
-         * <tr><td>square, []</td><td>[]</td></tr>
-         * <tr><td>plus, +</td><td>+</td></tr>
-         * <tr><td>diamond, &lt;&gt;</td><td>&lt;&gt;</td></tr>
-         * <tr><td>triangleup, a, ^</td><td>A</td></tr>
-         * <tr><td>triangledown, v</td><td>v</td></tr>
-         * <tr><td>triangleleft, &lt;</td><td>&lt;</td></tr>
-         * <tr><td>triangleright, &gt;</td><td>&gt;</td></tr>
-         * </table>
-         * @param {String} s A string which should determine a valid point face.
-         * @returns {String} Returns a normalized string or undefined if the given string is not a valid
-         * point face.
+         * @deprecated Use JXG#normalizePointFace instead
+         * @param s
+         * @return {*}
          */
         normalizeFace: function (s) {
-            var map = {
-                cross: 'x',
-                x: 'x',
-                circle: 'o',
-                o: 'o',
-                square: '[]',
-                '[]': '[]',
-                plus: '+',
-                '+': '+',
-                diamond: '<>',
-                '<>': '<>',
-                triangleup: '^',
-                a: '^',
-                '^': '^',
-                triangledown: 'v',
-                v: 'v',
-                triangleleft: '<',
-                '<': '<',
-                triangleright: '>',
-                '>': '>'
-            };
-
-            return map[s];
+            return JXG.normalizePointFace(s);
         },
 
         /**

@@ -41,6 +41,7 @@
 
 /* depends:
  jxg
+ options
  base/constants
  math/math
  math/geometry
@@ -221,7 +222,7 @@
             var prim,
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = JXG.Point.prototype.normalizeFace.call(element, element.visProp.face);
+                face = JXG.normalizePointFace(element.visProp.face);
 
             // determine how the point looks like
             if (face === 'o') {
@@ -257,7 +258,7 @@
             var size = element.visProp.size,
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = JXG.Point.prototype.normalizeFace.call(element, element.visProp.face);
+                face = JXG.normalizePointFace(element.visProp.face);
 
             if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
                 this._updateVisual(element, {dash: false, shadow: false});
