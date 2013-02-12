@@ -179,7 +179,6 @@
          * @see JXG#debugWST
          */
         debug: function (s) {
-
             var i, p;
 
             for (i = 0; i < arguments.length; i++) {
@@ -190,8 +189,7 @@
                     document.getElementById('debug').innerHTML += p + "<br/>";
                 }
             }
-        }, // TODO: without outputing the line number where the debug-function was called -- it is somewhat useless ...
-
+        },
 
         /**
          * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
