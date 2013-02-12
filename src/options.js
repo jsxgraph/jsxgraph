@@ -966,12 +966,12 @@
             /**#@-*/
         },
 
-        /* special legend options */
+        /* special label options */
         label: {
             /**#@+
              * @visprop
              */
-            strokeColor: '#552222',
+            strokeColor: 'black',
             highlightStrokeOpacity: 1,
             highlightStrokeColor: '#C3D9FF',
 
@@ -1569,7 +1569,7 @@
             fontSize: 12,
             digits: 2,
             isLabel: false,
-            strokeColor: '#552222',
+            strokeColor: 'black',
             useASCIIMathML: false,
             useMathJax: false,
             display: 'html',                    // 'html' or 'internal'
