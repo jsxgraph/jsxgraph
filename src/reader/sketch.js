@@ -374,7 +374,7 @@
 
             case JXG.GENTYPE_POINT:
                 set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                set_str += ')' + (options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\', snaptogrid: ' + GUI.snapToGrid + '>>') + ';';
+                set_str += ')' + (options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>') + ';';
                 reset_str = 'delete ' + step.dest_id + '; ';
                 break;
 
@@ -444,20 +444,20 @@
                     set_str += ') <<id: \'' + step.dest_sub_ids[0] + '\', priv: false>>; ';
 
                     set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                 } else if (step.args.create_by_radius) {
                     set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                     set_str += '\', name: \'\', withLabel: true, visible: true, priv: false>>; ';
                     set_str += step.dest_sub_ids[0] + '.visible = true; ';
                     set_str += assign + 'circle(\'' + step.dest_sub_ids[0] + '\', ' + pn(step.args.r) + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                 } else {
                     set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
                     set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
                     set_str += '\', visible: true>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
-                    set_str += ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                 }
 
@@ -470,22 +470,22 @@
                     set_str += 'point(' + pn(step.args.x2) + ', ' + pn(step.args.y2) + ') <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\'>>; ';
                     set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.dest_sub_ids[1] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; delete ';
                     reset_str += step.dest_sub_ids[0] + '; ';
                 } else if (step.args.create_point) {
                     set_str = 'point(' + pn(step.args.x) + ', ' + pn(step.args.y) + ') <<id: \'' + step.dest_sub_ids[0];
                     set_str += '\'>>; ';
                     set_str += assign + 'circle(' + step.dest_sub_ids[0] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                 } else if (step.args.create_by_radius) {
                     set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.args.r + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                 } else {
                     set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + GUI.snapToGrid + '>>; ';
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                 }
 
@@ -580,9 +580,9 @@
                 set_str += assign + str + '(' + str2 + ')';
 
                 if (str1.length + attrid.length > 0) {
-                    set_str += ' <<' + str1 + attrid + ', snaptogrid: ' + GUI.snapToGrid + '>>;';
+                    set_str += ' <<' + str1 + attrid + ', snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>;';
                 } else {
-                    set_str += ' <<snaptogrid: ' + GUI.snapToGrid + '>>;';
+                    set_str += ' <<snaptogrid: ' + JXG.Options.elements.snapToGrid + '>>;';
                 }
 
                 reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
