@@ -30,6 +30,12 @@
  */
 
 
+/*global JXG: true, document: true, module: true*/
+/*jslint nomen: true, plusplus: true, regexp: true*/
+
+/* depends:
+ */
+
 /**
  * JSXGraph namespace. Holds all classes, objects, functions and variables belonging to JSXGraph
  * to reduce the risc of interfering with other JavaScript code.

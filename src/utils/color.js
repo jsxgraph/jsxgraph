@@ -690,10 +690,11 @@
         }
 
         arr = JXG.rgbParser(color);
-        x = 0.3 * arr[0] + 0.59 * arr[1] + 0.11 * arr[2];
+        x = Math.floor(0.3 * arr[0] + 0.59 * arr[1] + 0.11 * arr[2]);
 
-        // todo recheck these bitwise operators
-        // x should be a float, might not be a good idea to use these
+        // rgbParser and Math.floor ensure that x is 0 <= x <= 255.
+        // Bitwise operators can be used.
+        /*jslint bitwise: true*/
         tmp = HexChars.charAt((x >> 4) & 0xf) + HexChars.charAt(x & 0xf);
 
         color = "#" + tmp + tmp + tmp;
@@ -781,7 +782,9 @@
 
         rgb = JXG.LMS2rgb(l, m, s);
 
-        // todo check these bitwise operators
+        // LMS2rgb returns an array of values ranging from 0 to 255 (both included)
+        // bitwise operators are safe to use.
+        /*jslint bitwise: true*/
         tmp = HexChars.charAt((rgb[0] >> 4) & 0xf) + HexChars.charAt(rgb[0] & 0xf);
         color = "#" + tmp;
         tmp = HexChars.charAt((rgb[1] >> 4) & 0xf) + HexChars.charAt(rgb[1] & 0xf);

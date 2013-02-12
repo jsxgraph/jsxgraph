@@ -425,26 +425,23 @@
         replaceIdByObj: function (term) {
             // Search for expressions like "X(gi23)" or "Y(gi23A)" and convert them to objects['gi23'].X().
             var expr = /(X|Y|L)\(([\w_]+)\)/g;
-            //term = term.replace(expr, 'this.board.objects[\'$2\'].$1()');
             term = term.replace(expr, '$(\'$2\').$1()');
 
             expr = /(V)\(([\w_]+)\)/g;
-            //term = term.replace(expr, 'this.board.objects[\'$2\'].Value()');
             term = term.replace(expr, '$(\'$2\').Value()');
 
             expr = /(Dist)\(([\w_]+),([\w_]+)\)/g;
-            //term = term.replace(expr, 'this.board.objects[\"$2\"].Dist(this.board.objects[\"$3\"])');
             term = term.replace(expr, 'dist($(\'$2\'), $(\'$3\'))');
 
             expr = /(Deg)\(([\w_]+),([ \w\[\w_]+),([\w_]+)\)/g;
-            //term = term.replace(expr, 'JXG.Math.Geometry.trueAngle(this.board.objects[\"$2\"],this.board.objects[\"$3\"],this.board.objects[\"$4\"])');
             term = term.replace(expr, 'deg($(\'$2\'),$(\'$3\'),$(\'$4\'))');
 
             // Search for Rad('gi23','gi24','gi25')
             expr = /Rad\(([\w_]+),([\w_]+),([\w_]+)\)/g;
-            //term = term.replace(expr, 'JXG.Math.Geometry.rad(this.board.objects[\"$1\"],this.board.objects[\"$2\"],this.board.objects[\"$3\"])');
             term = term.replace(expr, 'rad($(\'$1\'),$(\'$2\'),$(\'$3\'))');
 
+            // it's ok, it will run through the jessiecode parser afterwards...
+            /*jslint regexp: true*/
             expr = /N\((.+)\)/g;
             term = term.replace(expr, '($1)');
 
@@ -461,9 +458,9 @@
             var expr, newterm, i,
                 from = ['Abs', 'ACos', 'ASin', 'ATan', 'Ceil', 'Cos', 'Exp', 'Factorial', 'Floor',
                     'Log', 'Max', 'Min', 'Random', 'Round', 'Sin', 'Sqrt', 'Tan', 'Trunc'],
-                to =   ['Math.abs', 'Math.acos', 'Math.asin', 'Math.atan', 'Math.ceil', 'Math.cos',
-                    'Math.exp', 'JXG.Math.factorial', 'Math.floor', 'Math.log', 'Math.max', 'Math.min',
-                    'Math.random', 'Math.round', 'Math.sin', 'Math.sqrt', 'Math.tan', 'Math.ceil'];
+                to =   ['abs', 'acos', 'asin', 'atan', 'ceil', 'cos',
+                    'exp', 'factorial', 'floor', 'log', 'max', 'min',
+                    'random', 'round', 'sin', 'sqrt', 'tan', 'ceil'];
 
             // Hacks, to enable not well formed XML, @see JXG.GeonextReader#replaceLessThan
             term = term.replace(/&lt;/g, '<');

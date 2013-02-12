@@ -90,34 +90,6 @@ TestCase("JXG", {
         assertEquals('test shortcut passes parameters with correct value', 10, o.justAFunction.getCall(1).args[0]);
     },
 
-    testGetReference: function () {
-        expectAsserts(6);
-
-        var board = {
-                objects: {
-                    point: 1,
-                    line: 1
-                },
-                elementsByName: {
-                    line: 2,
-                    circle: 2
-                },
-                groups: {
-                    group: 3
-                }
-            };
-
-        sinon.spy(JXG, 'getRef');
-        assertEquals('test search board.objects', 1, JXG.getReference(board, 'point'));
-        assertEquals('test search board.elementsByName', 2, JXG.getReference(board, 'circle'));
-        assertEquals('test search board.groups', 3, JXG.getReference(board, 'group'));
-        assertEquals('test objects has an higher order of precedence  than elementsByName', 1, JXG.getRef(board, 'line'));
-        assertEquals('test non existing keys are simply returned', 'arc', JXG.getRef(board, 'arc'));
-
-        assertEquals('test getRef amd getReference are actually the same', 5, JXG.getRef.callCount);
-        JXG.getRef.restore();
-    },
-
     testIsString: function () {
         expectAsserts(5);
 
@@ -175,19 +147,6 @@ TestCase("JXG", {
         assertFalse('string false', JXG.str2Bool('false'));
         assertTrue('literal true', JXG.str2Bool(true));
         assertFalse('literal false', JXG.str2Bool(false));
-    },
-
-    test_board: function () {
-        expectAsserts(1);
-
-        var bkp = JXG.JSXGraph.initBoard;
-
-        JXG.JSXGraph.initBoard = sinon.stub();
-
-        JXG._board('ain\'t', {it: 'funny'});
-        assertTrue('_board calls JSXGraph.initBoard', JXG.JSXGraph.initBoard.calledOnce);
-
-        JXG.JSXGraph.initBoard = bkp;
     },
 
     testDeepCopy: function () {

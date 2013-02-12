@@ -49,11 +49,11 @@ TestCase("GeonextParser", {
                     Val: function(){ return 2.0;}
             };
 
-        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'JXG.Math.pow(x,2)', JXG.GeonextParser.geonext2JS('x^2',null));
-        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'Math.sin(x)', JXG.GeonextParser.geonext2JS('sin(x)',null));
-        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'Math.asin(x)', JXG.GeonextParser.geonext2JS('asin(x)',null));
-        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'Math.sin(JXG.Math.pow(x,2))', JXG.GeonextParser.geonext2JS('sin(x^2)',null));
-        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'JXG.Math.pow(ob.Val(),x)', JXG.GeonextParser.geonext2JS('ob.Val()^x',null));
+        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'pow(x,2)', JXG.GeonextParser.geonext2JS('x^2',null));
+        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'sin(x)', JXG.GeonextParser.geonext2JS('sin(x)',null));
+        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'asin(x)', JXG.GeonextParser.geonext2JS('asin(x)',null));
+        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'sin(pow(x,2))', JXG.GeonextParser.geonext2JS('sin(x^2)',null));
+        assertEquals("JXG.GeonextParser.geonext2JS, incorrect result", 'pow(ob.Val(),x)', JXG.GeonextParser.geonext2JS('ob.Val()^x',null));
     }
 
 });

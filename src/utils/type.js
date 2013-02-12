@@ -118,7 +118,7 @@
             if (Array.isArray) {
                 r = Array.isArray(v);
             } else {
-                r = (v !== null && typeof v === "object" && 'splice' in v && 'join' in v);
+                r = (v !== null && typeof v === "object" && typeof v.splice === 'function' && typeof v.join === 'function');
             }
 
             return r;

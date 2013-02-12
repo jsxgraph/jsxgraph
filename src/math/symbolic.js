@@ -215,19 +215,7 @@
                 numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
                 xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0, 0], board),
                 xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
-                sf = 1, transx = 0, transy = 0, rot = 0,
-
-                // todo: outsource to JXG
-                isIn = function (item, array) {
-                    var i;
-                    for (i = 0; i < array.length; i++) {
-                        if (array[i].id === item) {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-
+                sf = 1, transx = 0, transy = 0, rot = 0;
 
             if (JXG.Server.modules.geoloci === undef) {
                 JXG.Server.loadModule('geoloci');
@@ -253,7 +241,7 @@
 
             // Step 1
             if (bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
-                if ((bol.toOrigin !== undef) && (bol.toOrigin !== null) && isIn(bol.toOrigin.id, board.listOfFreePoints)) {
+                if ((bol.toOrigin !== undef) && (bol.toOrigin !== null) && JXG.isInArray(board.listOfFreePoints, bol.toOrigin.id)) {
                     P1 = bol.toOrigin;
                 } else {
                     P1 = board.listOfFreePoints[0];
@@ -274,7 +262,7 @@
 
                 // Step 2
                 if (bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
-                    if ((bol.to10 !== undef) && (bol.to10 !== null) && (bol.to10.id !== bol.toOrigin.id) && isIn(bol.to10.id, board.listOfFreePoints)) {
+                    if ((bol.to10 !== undef) && (bol.to10 !== null) && (bol.to10.id !== bol.toOrigin.id) && JXG.isInArray(board.listOfFreePoints, bol.to10.id)) {
                         P2 = bol.to10;
                     } else {
                         if (board.listOfFreePoints[0].id === P1.id) {
