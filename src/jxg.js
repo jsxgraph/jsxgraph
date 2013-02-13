@@ -178,7 +178,7 @@
          * @param s An arbitrary number of parameters.
          * @see JXG#debugWST
          */
-        debug: function (s) {
+        debugInt: function (s) {
             var i, p;
 
             for (i = 0; i < arguments.length; i++) {
@@ -199,17 +199,36 @@
          * @see JXG#debug
          */
         debugWST: function (s) {
-            var e;
-            JXG.debug(s);
+            var e = new Error();
 
-            if (window.console && console.log) {
-                e = new Error();
+            JXG.debugInt.apply(this, arguments);
 
-                if (e && e.stack) {
-                    console.log('stacktrace');
-                    console.log(e.stack.split('\n').slice(1).join('\n'));
-                }
+            if (e && e.stack) {
+                JXG.debugInt('stacktrace');
+                JXG.debugInt(e.stack.split('\n').slice(1).join('\n'));
             }
+        },
+
+        debugLine: function (s) {
+            var e = new Error();
+
+            JXG.debugInt.apply(this, arguments);
+
+            if (e && e.stack) {
+                JXG.debugInt('Called from', e.stack.split('\n').slice(2, 3).join('\n'));
+            }
+        },
+
+        /**
+         * Add something to the debug log. If available a JavaScript debug console is used. Otherwise
+         * we're looking for a HTML div with id "debug". If this doesn't exist, too, the output is omitted.
+         * @param s An arbitrary number of parameters.
+         * @see JXG#debugWST
+         * @see JXG#debugLine
+         * @see JXG#debugInt
+         */
+        debug: function (s) {
+            JXG.debugInt.apply(this, arguments);
         }
     });
 }());
