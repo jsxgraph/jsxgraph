@@ -114,6 +114,10 @@
         if (typeof this.yterm === 'string') {
             this.notifyParents(this.yterm);
         }
+
+        this.methodMap = JXG.deepCopy(this.methodMap, {
+            generateTerm: 'generateTerm'
+        });
     };
 
     JXG.Curve.prototype = new JXG.GeometryElement();
