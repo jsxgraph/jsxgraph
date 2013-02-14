@@ -759,14 +759,8 @@
                         reset_str = 'delete ' + step.dest_id + '; ';
 
                     } else {
-
-                        console.log("missing jessiecode");
-
-                        /*
-                        //func = id + ".Y = " + func + ";"
-                        eval("GUI.board.objects['" + id + "'].Y = " + func);
-                        GUI.board.update();
-                        */
+                        set_str = step.dest_id + ".generateTerm('x', 'x', '" + step.args.func.cleanTerm() + "'); $board.update();";
+                        reset_str = step.dest_id + ".generateTerm('x', 'x', '" + step.args.funcOld.cleanTerm() + "'); $board.update();";
                     }
 
                     break;
