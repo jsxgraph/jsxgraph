@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, document: true, window: true, require: true, module: true, navigator: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -167,14 +167,15 @@
          * @type Number
          */
         ieVersion: (function () {
-            var undef,
-                v = 3,
-                div = document.createElement('div'),
-                all = div.getElementsByTagName('i');
+            var undef, div, all,
+                v = 3;
 
             if (typeof document !== 'object') {
-                return undef;
+                return 0;
             }
+
+            div = document.createElement('div');
+            all = div.getElementsByTagName('i');
 
             do {
                 div.innerHTML = '<!--[if gt IE ' + (++v) + ']><' + 'i><' + '/i><![endif]-->';

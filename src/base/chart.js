@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -764,7 +764,7 @@
     JXG.createChart = function (board, parents, attributes) {
         var data, row, i, j, col, charts = [], w, x, showRows, attr,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len,
-            table = document.getElementById(parents[0]);
+            table = JXG.isBrowser ? document.getElementById(parents[0]) : null;
 
         if ((parents.length === 1) && (typeof parents[0] === 'string')) {
             if (JXG.exists(table)) {

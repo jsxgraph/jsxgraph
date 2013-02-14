@@ -281,7 +281,7 @@
             noquote = JXG.def(noquote, false);
 
             // check for native JSON support:
-            if (window.JSON && window.JSON.stringify && !noquote) {
+            if (typeof JSON === 'object' && JSON.stringify && !noquote) {
                 try {
                     s = JSON.stringify(obj);
                     return s;

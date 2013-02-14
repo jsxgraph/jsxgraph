@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, document:true, jQuery:true*/
+/*global JXG: true, document:true, jQuery:true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:

@@ -120,7 +120,6 @@
          * @returns {Array}
          */
         uniqueArray: function (arr) {
-
             var i, j, isArray, ret = [];
 
             if (arr.length === 0) {
@@ -142,7 +141,6 @@
             j = 0;
 
             for (i = 0; i < arr.length; i++) {
-
                 isArray = JXG.isArray(arr[i]);
 
                 if (!isArray && arr[i] !== '') {
@@ -154,7 +152,8 @@
                 }
             }
 
-            return (arr = ret);
+            arr = ret;
+            return ret;
         },
 
         /**

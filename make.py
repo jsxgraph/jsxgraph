@@ -93,7 +93,6 @@ def usage():
     print
     print "Options:"
     print "  -h, --help             Display this help and exit."
-    print "  -l, --hint=FILE        Set the file you want to check with JSHint."
     print "  -j, --jsdoc=PATH       Search for jsdoc-toolkit in PATH."
     print "  -o, --output=PATH      Override the default output path distrib/ by PATH."
     print "  -p, --port=PORT        Set server port for the JsTestDriver server. Default is 4224."
@@ -111,7 +110,8 @@ def usage():
     print "  Readers                Makes Readers and copies them to distrib/ ."
     print "  Docs                   Generate documentation from source code comments. Uses"
     print "                         jsdoc-toolkit."
-    print "  Hint                   Run JSHint on the file given with -l or --hint."
+    print "  Hint                   Run JSHint on all files listed in loadjsxgraph."
+    print "  Lint                   Run JSLint on all files listed in loadjsxgraph."
     print "  Plot                   Make a slim JSXGraph core just for function plotting."
     print "  Test                   Run Unit Tests with JsTestDriver."
     print "  TestServer             Run JsTestDriver server."
@@ -428,22 +428,23 @@ def fetch(url, local):
 	localFile.close()
 
 '''
-    Check a file with JSHint
+    Check all files with JSHint
 '''
 def makeHint():
-    global hint
+    files = findFilenames('src/loadjsxgraph.js')
 
-    # TODO: If hint is None use all files in src/*
-    if hint is None:
-        print "No file given. Please provide a file with the -l or --hint option."
-        return
+    for f in files:
+        os.system('jshint src/' + f + '.js')
 
-    # Fetch program files
-    fetch('https://github.com/jshint/jshint/raw/master/env/rhino.js', '/tmp/rhino.js')
-    fetch('http://jshint.com/jshint.js', '/tmp/jshint.js')
 
-    abshint = os.path.abspath(hint)
-    os.system('cd /tmp && rhino /tmp/rhino.js ' + abshint)
+'''
+    Check all files with JSLint
+'''
+def makeLint():
+    files = findFilenames('src/loadjsxgraph.js')
+
+    for f in files:
+        os.system('jslint src/' + f + '.js')
 
 
 '''
