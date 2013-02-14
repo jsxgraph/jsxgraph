@@ -4,7 +4,7 @@
  */
 
 
-/*global JXG: true, console: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
@@ -12,19 +12,16 @@
  utils/encoding
  */
 
-(function () {
+define([], function () {
 
     "use strict";
+
+    var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
     // Util namespace
     JXG.Util = JXG.Util || {};
 
     JXG.Util.Base64 = {
-
-        // private property
-        _keyStr : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
-
-        // public method for encoding
         encode : function (input) {
             var chr1, chr2, chr3, enc1, enc2, enc3, enc4,
                 output = [],
@@ -48,10 +45,10 @@
                     enc4 = 64;
                 }
 
-                output.push([this._keyStr.charAt(enc1),
-                    this._keyStr.charAt(enc2),
-                    this._keyStr.charAt(enc3),
-                    this._keyStr.charAt(enc4)].join(''));
+                output.push([keyStr.charAt(enc1),
+                    keyStr.charAt(enc2),
+                    keyStr.charAt(enc3),
+                    keyStr.charAt(enc4)].join(''));
             }
 
             return output.join('');
@@ -71,10 +68,10 @@
             /*jslint regexp:false*/
 
             while (i < len) {
-                enc1 = this._keyStr.indexOf(input.charAt(i++));
-                enc2 = this._keyStr.indexOf(input.charAt(i++));
-                enc3 = this._keyStr.indexOf(input.charAt(i++));
-                enc4 = this._keyStr.indexOf(input.charAt(i++));
+                enc1 = keyStr.indexOf(input.charAt(i++));
+                enc2 = keyStr.indexOf(input.charAt(i++));
+                enc3 = keyStr.indexOf(input.charAt(i++));
+                enc4 = keyStr.indexOf(input.charAt(i++));
 
                 chr1 = (enc1 << 2) | (enc2 >> 4);
                 chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
@@ -119,4 +116,6 @@
             return ar;
         }
     };
-}());
+
+    return JXG.Util.Base64;
+});

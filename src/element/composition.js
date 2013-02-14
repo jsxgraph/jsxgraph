@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -76,7 +76,7 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -2241,4 +2241,28 @@
     JXG.registerElement('locus', JXG.createLocus);
     JXG.registerElement('grid', JXG.createGrid);
     JXG.registerElement('inequality', JXG.createInequality);
-}());
+
+    return {
+        createArrowParallel: JXG.createArrowParallel,
+        createBisector: JXG.createBisector,
+        createAngularBisectorOfTwoLines: JXG.createAngularBisectorsOfTwoLines,
+        createCircumcircle: JXG.createCircumcircle,
+        createCircumcenter: JXG.createCircumcenter,
+        createIncenter: JXG.createIncenter,
+        createIncircle: JXG.createIncircle,
+        createIntegral: JXG.createIntegral,
+        createMidpoint: JXG.createMidpoint,
+        createMirrorPoint: JXG.createMirrorPoint,
+        createNormal: JXG.createNormal,
+        createOrthogonalProjection: JXG.createOrthogonalProjection,
+        createParallel: JXG.createParallel,
+        createParallelPoint: JXG.createParallelPoint,
+        createPerpendicular: JXG.createPerpendicular,
+        createPerpendicularPoint: JXG.createPerpendicularPoint,
+        createPerpendicularSegmen: JXG.createPerpendicularSegment,
+        createReflection: JXG.createReflection,
+        createLocus: JXG.createLocus,
+        createGrid: JXG.createGrid,
+        createInequality: JXG.createInequality
+    };
+});

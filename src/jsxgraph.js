@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, document:true, jQuery:true*/
+/*global JXG: true, document:true, jQuery:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -45,6 +45,7 @@
  renderer/svg
  renderer/vml
  renderer/canvas
+ renderer/no
  */
 
 /**
@@ -54,7 +55,9 @@
  * @version 0.97
  */
 
-(function () {
+define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base/board', 'reader/file', 'options',
+    'renderer/svg', 'renderer/vml', 'renderer/canvas', 'renderer/no'], function (JXG, Env, Type, Obj, Browser, Board,
+    FileReader, Options, SVGRenderer, VMLRenderer, CanvasRenderer, NoRenderer) {
 
     "use strict";
 
@@ -69,10 +72,10 @@
          * @type String
          */
         rendererType: (function () {
-            JXG.Options.renderer = 'no';
+            Options.renderer = 'no';
 
-            if (JXG.supportsVML()) {
-                JXG.Options.renderer = 'vml';
+            if (Env.supportsVML()) {
+                Options.renderer = 'vml';
                 // Ok, this is some real magic going on here. IE/VML always was so
                 // terribly slow, except in one place: Examples placed in a moodle course
                 // was almost as fast as in other browsers. So i grabbed all the css and
@@ -98,20 +101,20 @@
                 };
             }
 
-            if (JXG.supportsCanvas()) {
-                JXG.Options.renderer = 'canvas';
+            if (Env.supportsCanvas()) {
+                Options.renderer = 'canvas';
             }
 
-            if (JXG.supportsSVG()) {
-                JXG.Options.renderer = 'svg';
+            if (Env.supportsSVG()) {
+                Options.renderer = 'svg';
             }
 
             // we are inside node
-            if (JXG.isNode() && JXG.supportsCanvas()) {
-                JXG.Options.renderer = 'canvas';
+            if (Env.isNode() && Env.supportsCanvas()) {
+                Options.renderer = 'canvas';
             }
 
-            return JXG.Options.renderer;
+            return Options.renderer;
         }()),
 
         initRenderer: function (box) {
@@ -124,14 +127,14 @@
             }
 
             // create the renderer
-            if (JXG.Options.renderer === 'svg') {
-                renderer = new JXG.SVGRenderer(boxid);
-            } else if (JXG.Options.renderer === 'vml') {
-                renderer = new JXG.VMLRenderer(boxid);
-            } else if (JXG.Options.renderer === 'canvas') {
-                renderer = new JXG.CanvasRenderer(boxid);
+            if (Options.renderer === 'svg') {
+                renderer = new SVGRenderer(boxid);
+            } else if (Options.renderer === 'vml') {
+                renderer = new VMLRenderer(boxid);
+            } else if (Options.renderer === 'canvas') {
+                renderer = new CanvasRenderer(boxid);
             } else {
-                renderer = new JXG.NoRenderer();
+                renderer = new NoRenderer();
             }
 
             return renderer;
@@ -161,19 +164,19 @@
                 bbox, attr, axattr,
                 board;
 
-            dimensions = JXG.getDimensions(box);
+            dimensions = Browser.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
-            attr.zoom = JXG.copyAttributes(attr, JXG.Options, 'board', 'zoom');
-            attr.pan = JXG.copyAttributes(attr, JXG.Options, 'board', 'pan');
+            attr = Obj.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Obj.copyAttributes(attr, Options, 'board', 'zoom');
+            attr.pan = Obj.copyAttributes(attr, Options, 'board', 'pan');
 
             if (attr.unitx || attr.unity) {
-                originX = JXG.def(attr.originx, 150);
-                originY = JXG.def(attr.originy, 150);
-                unitX = JXG.def(attr.unitx, 50);
-                unitY = JXG.def(attr.unity, 50);
+                originX = Type.def(attr.originx, 150);
+                originY = Type.def(attr.originy, 150);
+                unitX = Type.def(attr.unitx, 50);
+                unitY = Type.def(attr.unity, 50);
             } else {
                 bbox = attr.boundingbox;
                 w = parseInt(dimensions.width, 10);
@@ -204,7 +207,7 @@
             renderer = this.initRenderer(box);
 
             // create the board
-            board = new JXG.Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
+            board = new Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
 
             // this is deprecated, but we'll keep it for now until everything is migrated
             JXG.boards[board.id] = board;
@@ -253,19 +256,19 @@
             var attr, renderer, board, dimensions;
 
             renderer = this.initRenderer(box);
-            dimensions = JXG.getDimensions(box);
+            dimensions = Browser.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
-            attr.zoom = JXG.copyAttributes(attributes, JXG.Options, 'board', 'zoom');
-            attr.pan = JXG.copyAttributes(attributes, JXG.Options, 'board', 'pan');
+            attr = Obj.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Obj.copyAttributes(attributes, Options, 'board', 'zoom');
+            attr.pan = Obj.copyAttributes(attributes, Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
-            board = new JXG.Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
+            board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
-            JXG.FileReader.parseFileContent(file, board, format);
+            FileReader.parseFileContent(file, board, format);
 
             if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
@@ -293,19 +296,19 @@
             var attr, renderer, dimensions, board;
 
             renderer = this.initRenderer(box);
-            dimensions = JXG.getDimensions(box);
+            dimensions = Browser.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = JXG.copyAttributes(attributes, JXG.Options, 'board');
-            attr.zoom = JXG.copyAttributes(attributes, JXG.Options, 'board', 'zoom');
-            attr.pan = JXG.copyAttributes(attributes, JXG.Options, 'board', 'pan');
+            attr = Obj.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Obj.copyAttributes(attributes, Options, 'board', 'zoom');
+            attr.pan = Obj.copyAttributes(attributes, Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
-            board = new JXG.Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
+            board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
-            JXG.FileReader.parseString(string, board, format, true);
+            FileReader.parseString(string, board, format, true);
 
             if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
@@ -380,14 +383,14 @@
 
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
     if (typeof window === 'object' && typeof document === 'object') {
-        JXG.addEvent(window, 'load', function () {
+        Browser.addEvent(window, 'load', function () {
             var scripts = document.getElementsByTagName('script'), type,
                 i, j, div, id, board, width, height, bbox, axis, grid, code;
 
             for (i = 0; i < scripts.length; i++) {
                 type = scripts[i].getAttribute('type', false);
 
-                if (JXG.exists(type) && (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' || type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
+                if (Type.exists(type) && (type.toLowerCase() === 'text/jessiescript' || type.toLowerCase() === 'jessiescript' || type.toLowerCase() === 'text/jessiecode' || type.toLowerCase() === 'jessiecode')) {
                     width = scripts[i].getAttribute('width', false) || '500px';
                     height = scripts[i].getAttribute('height', false) || '500px';
                     bbox = scripts[i].getAttribute('boundingbox', false) || '-5, 5, 5, -5';
@@ -401,10 +404,10 @@
                             bbox[j] = parseFloat(bbox[j]);
                         }
                     }
-                    axis = JXG.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
-                    grid = JXG.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
+                    axis = Type.str2Bool(scripts[i].getAttribute('axis', false) || 'false');
+                    grid = Type.str2Bool(scripts[i].getAttribute('grid', false) || 'false');
 
-                    if (!JXG.exists(id)) {
+                    if (!Type.exists(id)) {
                         id = 'jessiescript_autgen_jxg_' + i;
                         div = document.createElement('div');
                         div.setAttribute('id', id);
@@ -444,4 +447,6 @@
             }
         }, window);
     }
-}());
+
+    return JXG.JSXGraph;
+});

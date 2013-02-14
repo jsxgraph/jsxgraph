@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -53,7 +53,7 @@
  * style and functional properties that are required to draw an arc on a board.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -605,4 +605,12 @@
     };
 
     JXG.registerElement('majorarc', JXG.createMajorArc);
-}());
+
+    return {
+        createArc: JXG.createArc,
+        createSemicircle: JXG.createSemicircle,
+        createCircumcircleArc: JXG.createCircumcircleArc,
+        createMinorArc: JXG.createMinorArc,
+        createMajorArc: JXG.createMajorArc
+    };
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, Float32Array: true */
+/*global JXG: true, define: true, Float32Array: true */
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * @author graphjs
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -634,4 +634,6 @@
         }
 
     };
-}());
+
+    return JXG.Math;
+});

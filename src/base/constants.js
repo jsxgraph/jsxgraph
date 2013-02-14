@@ -30,14 +30,14 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
  jxg
  */
 
-(function () {
+define(['jxg'], function (JXG) {
 
     "use strict";
 
@@ -172,4 +172,4 @@
     JXG.extend(JXG, constants);
 
     return constants;
-}());
+});

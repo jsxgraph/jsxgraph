@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -40,7 +40,7 @@
  math/math
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -225,4 +225,6 @@
          */
         __evt__: function () {}
     });
-}());
+
+    return JXG.Coords;
+});

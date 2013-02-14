@@ -25,7 +25,7 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-/*global JXG:true, window:true, console:true, self:true, document:true*/
+/*global JXG:true, define: true, window:true, console:true, self:true, document:true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -49,7 +49,7 @@
  * Math portals which want to use JSXGraph to display interactive math graphics.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1749,7 +1749,9 @@
 
     });
 
-}());
+
+    return JXG.JessieCode;
+});
 /*
     Copyright 2008-2011
         Matthias Ehmann,

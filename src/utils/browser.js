@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -44,7 +44,7 @@
  * browser independent event management.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -461,4 +461,6 @@
             window.setTimeout(timerFun, 1);
         }
     });
-}());
+
+    return JXG;
+});

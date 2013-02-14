@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -42,7 +42,7 @@
 
 // math/math and math/geometry dependencies are inside eval'd strings
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -560,4 +560,6 @@
             return newterm;
         }
     };
-}());
+
+    return JXG.GeonextParser;
+});

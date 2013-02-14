@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, escape:true, window:true, ActiveXObject:true, XMLHttpRequest:true*/
+/*global JXG: true, define: true, escape:true, window:true, ActiveXObject:true, XMLHttpRequest:true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -46,7 +46,7 @@
  * server side a python plugin system is used.
  */
 
-(function () {
+define(['jxg', 'utils/zip', 'utils/base64', 'utils/type', 'utils/object'], function (JXG, Zip, Base64, Type, Obj) {
 
     "use strict";
 
@@ -99,21 +99,21 @@
                 }
             }
 
-            dataJSONStr = JXG.toJSON(data);
+            dataJSONStr = Obj.toJSON(data);
 
             // generate id
             do {
                 id = action + Math.floor(Math.random() * 4096);
-            } while (JXG.exists(this.runningCalls[id]));
+            } while (Type.exists(this.runningCalls[id]));
 
             // store information about the calls
             this.runningCalls[id] = {action: action};
-            if (JXG.exists(data.module)) {
+            if (Type.exists(data.module)) {
                 this.runningCalls[id].module = data.module;
             }
 
             fileurl = JXG.serverBase + 'JXGServer.py';
-            passdata = 'action=' + escape(action) + '&id=' + id + '&dataJSON=' + escape(JXG.Util.Base64.encode(dataJSONStr));
+            passdata = 'action=' + escape(action) + '&id=' + id + '&dataJSON=' + escape(Base64.encode(dataJSONStr));
 
             this.cbp = function (d) {
                 /*jslint evil:true*/
@@ -121,12 +121,12 @@
                     tmp, inject, paramlist, id,
                     i, j;
 
-                str = (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(d))).unzip();
-                if (JXG.isArray(str) && str.length > 0) {
+                str = (new Zip.Unzip(Base64.decodeAsArray(d))).unzip();
+                if (Type.isArray(str) && str.length > 0) {
                     str = str[0][0];
                 }
 
-                if (!JXG.exists(str)) {
+                if (!Type.exists(str)) {
                     return;
                 }
 
@@ -236,4 +236,6 @@
     };
 
     JXG.Server.load = JXG.Server.loadModule;
-}());
+
+    return JXG.Server;
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -49,7 +49,7 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -594,4 +594,9 @@
     };
 
     JXG.registerElement('text', JXG.createText);
-}());
+
+    return {
+        Text: JXG.Text,
+        createText: JXG.createText
+    };
+});

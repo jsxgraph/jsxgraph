@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -44,7 +44,7 @@
  * managing grouping of points.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -254,4 +254,9 @@
     };
 
     JXG.registerElement('group', JXG.createGroup);
-}());
+
+    return {
+        Group: JXG.Group,
+        createGroup: JXG.createGroup
+    };
+});

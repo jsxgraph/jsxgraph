@@ -29,19 +29,22 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
  jxg
+ options
  renderer/abstract
  base/constants
  utils/type
  utils/browser
+ utils/color
  math/numerics
 */
 
-(function () {
+define(['jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/browser', 'utils/color',
+    'math/numerics'], function (JXG, Options, AbstractRenderer, Const, Type, Browser, Color, Numerics) {
 
     "use strict";
 
@@ -94,8 +97,8 @@
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        this.svgRoot.style.width = JXG.getStyle(this.container, 'width');
-        this.svgRoot.style.height = JXG.getStyle(this.container, 'height');
+        this.svgRoot.style.width = Browser.getStyle(this.container, 'width');
+        this.svgRoot.style.height = Browser.getStyle(this.container, 'height');
 
         this.container.appendChild(this.svgRoot);
 
@@ -146,7 +149,7 @@
          * @type Array
          */
         this.layer = [];
-        for (i = 0; i < JXG.Options.layer.numlayers; i++) {
+        for (i = 0; i < Options.layer.numlayers; i++) {
             this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
             this.svgRoot.appendChild(this.layer[i]);
         }
@@ -166,7 +169,7 @@
         this.dashArray = ['2, 2', '5, 5', '10, 10', '20, 20', '20, 10, 10, 10', '20, 5, 10, 5'];
     };
 
-    JXG.SVGRenderer.prototype = new JXG.AbstractRenderer();
+    JXG.SVGRenderer.prototype = new AbstractRenderer();
 
     JXG.extend(JXG.SVGRenderer.prototype, /** @lends JXG.SVGRenderer.prototype */ {
 
@@ -182,15 +185,15 @@
                 id = element.id + 'Triangle',
                 s;
 
-            if (JXG.exists(idAppendix)) {
+            if (Type.exists(idAppendix)) {
                 id += idAppendix;
             }
             node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, 'stroke', JXG.evaluate(element.visProp.strokecolor));
-            node2.setAttributeNS(null, 'stroke-opacity', JXG.evaluate(element.visProp.strokeopacity));
-            node2.setAttributeNS(null, 'fill', JXG.evaluate(element.visProp.strokecolor));
-            node2.setAttributeNS(null, 'fill-opacity', JXG.evaluate(element.visProp.strokeopacity));
+            node2.setAttributeNS(null, 'stroke', Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(element.visProp.strokeopacity));
+            node2.setAttributeNS(null, 'fill', Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(element.visProp.strokeopacity));
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
@@ -272,7 +275,7 @@
 
             node = this.getElementById(ticks.id);
 
-            if (!JXG.exists(node)) {
+            if (!Type.exists(node)) {
                 node = this.createPrim('path', ticks.id);
                 this.appendChildPrim(node, ticks.visProp.layer);
                 this.appendNodesToElement(ticks, 'path');
@@ -398,7 +401,7 @@
 
         // already documented in JXG.AbstractRenderer
         updateImageURL: function (el) {
-            var url = JXG.evaluate(el.url);
+            var url = Type.evaluate(el.url);
 
             el.rendNode.setAttributeNS(this.xlinkNamespace, 'xlink:href', url);
         },
@@ -416,10 +419,10 @@
 
         // already documented in JXG.AbstractRenderer
         appendChildPrim: function (node, level) {
-            if (!JXG.exists(level)) { // trace nodes have level not set
+            if (!Type.exists(level)) { // trace nodes have level not set
                 level = 0;
-            } else if (level >= JXG.Options.layer.numlayers) {
-                level = JXG.Options.layer.numlayers - 1;
+            } else if (level >= Options.layer.numlayers) {
+                level = Options.layer.numlayers - 1;
             }
 
             this.layer[level].appendChild(node);
@@ -444,7 +447,7 @@
 
         // already documented in JXG.AbstractRenderer
         remove: function (shape) {
-            if (JXG.exists(shape) && JXG.exists(shape.parentNode)) {
+            if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
             }
         },
@@ -459,7 +462,7 @@
 
             if (el.visProp.firstarrow) {
                 node2 = el.rendNodeTriangleStart;
-                if (!JXG.exists(node2)) {
+                if (!Type.exists(node2)) {
                     node2 = this._createArrowHead(el, 'End');
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleStart = node2;
@@ -469,13 +472,13 @@
                 }
             } else {
                 node2 = el.rendNodeTriangleStart;
-                if (JXG.exists(node2)) {
+                if (Type.exists(node2)) {
                     this.remove(node2);
                 }
             }
             if (el.visProp.lastarrow) {
                 node2 = el.rendNodeTriangleEnd;
-                if (!JXG.exists(node2)) {
+                if (!Type.exists(node2)) {
                     node2 = this._createArrowHead(el, 'Start');
                     this.defs.appendChild(node2);
                     el.rendNodeTriangleEnd = node2;
@@ -485,7 +488,7 @@
                 }
             } else {
                 node2 = el.rendNodeTriangleEnd;
-                if (JXG.exists(node2)) {
+                if (Type.exists(node2)) {
                     this.remove(node2);
                 }
             }
@@ -583,7 +586,7 @@
 
             if (el.bezierDegree === 1) {
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+                    el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
                 }
 
                 for (i = 0; i < len; i++) {
@@ -649,7 +652,7 @@
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-                el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+                el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -788,10 +791,10 @@
             var fillNode = el.rendNode, col, op,
                 node, node2, node3, x1, x2, y1, y2;
 
-            op = JXG.evaluate(el.visProp.fillopacity);
+            op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
 
-            col = JXG.evaluate(el.visProp.fillcolor);
+            col = Type.evaluate(el.visProp.fillcolor);
 
             if (el.visProp.gradient === 'linear') {
                 node = this.createPrim('linearGradient', el.id + '_gradient');
@@ -849,14 +852,14 @@
                 node2 = el.gradNode1,
                 node3 = el.gradNode2;
 
-            if (!JXG.exists(node2) || !JXG.exists(node3)) {
+            if (!Type.exists(node2) || !Type.exists(node3)) {
                 return;
             }
 
-            op = JXG.evaluate(el.visProp.fillopacity);
+            op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
 
-            col = JXG.evaluate(el.visProp.fillcolor);
+            col = Type.evaluate(el.visProp.fillcolor);
 
             if (el.visProp.gradient === 'linear') {
                 node2.setAttributeNS(null, 'style', 'stop-color:' + col + ';stop-opacity:' + op);
@@ -870,20 +873,20 @@
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity) {
             var node, c, rgbo, oo,
-                rgba = JXG.evaluate(color),
-                o = JXG.evaluate(opacity);
+                rgba = Type.evaluate(color),
+                o = Type.evaluate(opacity);
 
             o = (o > 0) ? o : 0;
 
             if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
                 return;
             }
-            if (JXG.exists(rgba) && rgba !== false) {
+            if (Type.exists(rgba) && rgba !== false) {
                 if (rgba.length !== 9) {          // RGB, not RGBA
                     c = rgba;
                     oo = o;
                 } else {                       // True RGBA, not RGB
-                    rgbo = JXG.rgba2rgbo(rgba);
+                    rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
@@ -902,7 +905,7 @@
                     node.setAttributeNS(null, 'fill-opacity', oo);
                 }
 
-                if (JXG.exists(el.visProp.gradient)) {
+                if (Type.exists(el.visProp.gradient)) {
                     this.updateGradient(el);
                 }
             }
@@ -912,8 +915,8 @@
 
         // documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = JXG.evaluate(color), c, rgbo,
-                o = JXG.evaluate(opacity), oo,
+            var rgba = Type.evaluate(color), c, rgbo,
+                o = Type.evaluate(opacity), oo,
                 node;
 
             o = (o > 0) ? o : 0;
@@ -922,19 +925,19 @@
                 return;
             }
 
-            if (JXG.exists(rgba) && rgba !== false) {
+            if (Type.exists(rgba) && rgba !== false) {
                 if (rgba.length !== 9) {          // RGB, not RGBA
                     c = rgba;
                     oo = o;
                 } else {                       // True RGBA, not RGB
-                    rgbo = JXG.rgba2rgbo(rgba);
+                    rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
 
                 node = el.rendNode;
 
-                if (el.type === JXG.OBJECT_TYPE_TEXT) {
+                if (el.type === Const.OBJECT_TYPE_TEXT) {
                     if (el.visProp.display === 'html') {
                         node.style.color = c;
                         node.style.opacity = oo;
@@ -947,9 +950,9 @@
                     node.setAttributeNS(null, 'stroke-opacity', oo);
                 }
 
-                if (el.type === JXG.OBJECT_TYPE_ARROW) {
+                if (el.type === Const.OBJECT_TYPE_ARROW) {
                     this._setArrowAtts(el.rendNodeTriangle, c, oo, el.visProp.strokewidth);
-                } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
                         this._setArrowAtts(el.rendNodeTriangleStart, c, oo, el.visProp.strokewidth);
                     }
@@ -967,7 +970,7 @@
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = JXG.evaluate(width);
+                w = Type.evaluate(width);
 
             if (el.visPropOld.strokewidth === w) {
                 return;
@@ -975,12 +978,12 @@
 
             node = el.rendNode;
             this.setPropertyPrim(node, 'stroked', 'true');
-            if (JXG.exists(w)) {
+            if (Type.exists(w)) {
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
-                if (el.type === JXG.OBJECT_TYPE_ARROW) {
+                if (el.type === Const.OBJECT_TYPE_ARROW) {
                     this._setArrowAtts(el.rendNodeTriangle, el.visProp.strokecolor, el.visProp.strokeopacity, w);
-                } else if (el.elementClass === JXG.OBJECT_CLASS_CURVE || el.elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
                         this._setArrowAtts(el.rendNodeTriangleStart, el.visProp.strokecolor, el.visProp.strokeopacity, w);
                     }
@@ -999,7 +1002,7 @@
                 return;
             }
 
-            if (JXG.exists(el.rendNode)) {
+            if (Type.exists(el.rendNode)) {
                 if (el.visProp.shadow) {
                     el.rendNode.setAttributeNS(null, 'filter', 'url(#' + this.container.id + '_' + 'f1)');
                 } else {
@@ -1097,8 +1100,7 @@
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
         }
-
-
     });
 
-}());
+    return JXG.SVGRenderer;
+});

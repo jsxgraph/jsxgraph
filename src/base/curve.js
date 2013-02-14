@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -52,7 +52,7 @@
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1410,4 +1410,14 @@
     };
 
     JXG.registerElement('tracecurve', JXG.createTracecurve);
-}());
+
+    return {
+        Curve: JXG.eCurve,
+        createCurve: JXG.createCurve,
+        createFunctiongraph: JXG.createFunctiongraph,
+        createPlot: JXG.createPlot,
+        createSpline: JXG.createSpline,
+        createRiemannsum: JXG.createRiemannsum,
+        createTracecurve: JXG.createTracecurve
+    };
+});

@@ -10,14 +10,14 @@
  *   > uuid = '92329D39-6F5C-4520-ABFC-AAB64544E172'
  */
 
-/*global JXG: true, console: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
  jxg
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -51,4 +51,6 @@
 
         return uuid.join('');
     };
-}());
+
+    return JXG.Util;
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG:true*/
+/*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -41,7 +41,7 @@
  utils/type
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1899,4 +1899,9 @@
 
         JXG.useStandardOptions(board);
     };
-}());
+
+    // needs to be exported
+    JXG.Options.normalizePointFace = JXG.normalizePointFace;
+
+    return JXG.Options;
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -47,7 +47,7 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1491,4 +1491,6 @@
             return [makeFct('X', 'cos'), makeFct('Y', 'sin'), 0, pi2];
         }
     });
-}());
+
+    return JXG.Math.Geometry;
+});

@@ -77,13 +77,24 @@ var JXG = {},
         };
 
     define = function (deps, factory) {
-        var i, oldlength,
+        var i, oldlength, undef,
             resDeps = [],
             inc = true;
+
+        if (deps === undef) {
+            deps = [];
+        }
+
+        console.log('define', new Error().stack.split('\n').splice(2, 1).join(''));
+
+        if (factory === undef) {
+            factory = function () {};
+        }
 
         for (i = 0; i < deps.length; i++) {
             resDeps.push(table[deps[i]]());
             if (!resDeps[i]) {
+                console.log('can\'t find', deps[i]);
                 inc = false;
                 break;
             }
@@ -96,6 +107,7 @@ var JXG = {},
         }
 
         if (checkwaitlist) {
+            console.log('checking waitlist', waitlist.length);
             // don't go through the waitlist while we're going through the waitlist
             checkwaitlist = false;
             oldlength = 0;
@@ -111,6 +123,7 @@ var JXG = {},
             }
 
             checkwaitlist = true;
+            console.log('waitlist is now', waitlist.length);
         }
     };
 
@@ -118,7 +131,7 @@ var JXG = {},
         document.write('<script type="text/javascript" src="' + libraryName + '"><\/script>');
     };
 
-    JXG.baseFiles = 'jxg,base/constants,utils/object,utils/string,utils/number,utils/type,utils/xml,utils/env,utils/browser,utils/array,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,parser/datasource,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/no,renderer/canvas';
+    JXG.baseFiles = 'jxg,base/constants,utils/object,utils/string,utils/number,utils/type,utils/xml,utils/env,utils/browser,utils/array,utils/event,math/math,math/numerics,math/statistics,math/symbolic,math/geometry,math/poly,math/complex,renderer/abstract,renderer/no,reader/file,parser/geonext,base/board,options,jsxgraph,base/element,base/coords,base/point,base/line,base/group,base/circle,element/conic,base/polygon,base/curve,element/arc,element/sector,base/composition,element/composition,base/text,base/image,element/slider,element/measure,base/chart,base/transformation,base/turtle,utils/color,base/ticks,utils/zip,utils/base64,utils/uuid,utils/encoding,server/server,parser/datasource,parser/jessiecode,utils/dump,renderer/svg,renderer/vml,renderer/canvas,renderer/no';
     JXG.requirePath = '';
 
     for (i = 0; i < document.getElementsByTagName("script").length; i++) {
@@ -141,12 +154,12 @@ var JXG = {},
     table = {
         'jsxgraph': checkJXG,
         'jxg': checkJXG,
-        'options': checkJXG,
+        'options': makeCheck('Options'),
 
         'base/board': makeCheck('Board'),
         'base/chart': checkJXG,
         'base/circle': checkJXG,
-        'base/composition': checkJXG,
+        'base/composition': makeCheck('Composition'),
         'base/constants': checkJXG,
         'base/coords': makeCheck('Coords'),
         'base/curve': checkJXG,
@@ -213,7 +226,7 @@ var JXG = {},
         'utils/object': checkJXG,
         'utils/string': checkJXG,
         'utils/type': checkJXG,
-        'utils/uuid': makeCheck('Util.UUID'),
+        'utils/uuid': makeCheck('Util.genUUID'),
         'utils/xml': makeCheck('XML'),
         'utils/zip': makeCheck('Util.Unzip')
     };

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /*depends:
@@ -45,7 +45,7 @@
  * @version 0.1
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -341,4 +341,9 @@
     };
 
     JXG.registerElement('transform', JXG.createTransform);
-}());
+
+    return {
+        Transformation: JXG.Transformation,
+        createTransform: JXG.createTransform
+    }
+});

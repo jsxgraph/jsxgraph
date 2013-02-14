@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -46,7 +46,7 @@
  * @author graphjs
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1919,4 +1919,6 @@
             return newPts;
         }
     };
-}());
+
+    return JXG.Math.Numerics;
+});

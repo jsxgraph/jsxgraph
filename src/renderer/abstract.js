@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true, window: true */
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true, window: true */
 
 /*
     nomen:    Allow underscores to indicate private class members. Might be replaced by local variables.
@@ -42,6 +42,7 @@
 /* depends:
  jxg
  options
+ base/coords
  base/constants
  math/math
  math/geometry
@@ -58,7 +59,8 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-(function () {
+define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/geometry', 'utils/type', 'utils/object',
+    'utils/browser'], function (JXG, Options, Coords, Const, JXGMath, Geometry, Type, Obj, Browser) {
 
     "use strict";
 
@@ -222,7 +224,7 @@
             var prim,
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = JXG.normalizePointFace(element.visProp.face);
+                face = Options.normalizePointFace(element.visProp.face);
 
             // determine how the point looks like
             if (face === 'o') {
@@ -258,7 +260,7 @@
             var size = element.visProp.size,
                 // sometimes element is not a real point and lacks the methods of a JXG.Point instance,
                 // in these cases to not use element directly.
-                face = JXG.normalizePointFace(element.visProp.face);
+                face = Options.normalizePointFace(element.visProp.face);
 
             if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
                 this._updateVisual(element, {dash: false, shadow: false});
@@ -290,13 +292,13 @@
             var node = this.getElementById(element.id);
 
             // remove the existing point rendering node
-            if (JXG.exists(node)) {
+            if (Type.exists(node)) {
                 this.remove(node);
             }
 
             // and make a new one
             this.drawPoint(element);
-            JXG.clearVisPropOld(element);
+            Obj.clearVisPropOld(element);
 
             if (!element.visProp.visible) {
                 this.hide(element);
@@ -332,14 +334,14 @@
          * @see JXG.AbstractRenderer#drawLine
          */
         updateLine: function (element) {
-            var c1 = new JXG.Coords(JXG.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
-                c2 = new JXG.Coords(JXG.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
+            var c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
+                c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
                 margin = null;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
                 margin = -4;
             }
-            JXG.Math.Geometry.calcStraight(element, c1, c2, margin);
+            Geometry.calcStraight(element, c1, c2, margin);
             this.updateLinePrim(element.rendNode,
                 c1.scrCoords[1], c1.scrCoords[2],
                 c2.scrCoords[1], c2.scrCoords[2], element.board);
@@ -447,7 +449,7 @@
             var radius = element.Radius();
 
             if (radius > 0.0 &&
-                    Math.abs(element.center.coords.usrCoords[0]) > JXG.Math.eps &&
+                    Math.abs(element.center.coords.usrCoords[0]) > JXGMath.eps &&
                     !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) &&
                     radius * element.board.unitX < 2000000) {
                 this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1],
@@ -670,7 +672,7 @@
              * This part is executed for all text elements except internal texts in canvas.
              */
             if (element.visProp.display === 'html' || this.type !== 'canvas') {
-                fs = JXG.evaluate(element.visProp.fontsize);
+                fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     try {
                         element.rendNode.style.fontSize = fs + 'px';
@@ -773,11 +775,11 @@
                 len = transformations.length;
 
             for (i = 0; i < len; i++) {
-                m = JXG.Math.matMatMult(mpre1, m);
-                m = JXG.Math.matMatMult(mpre2, m);
-                m = JXG.Math.matMatMult(transformations[i].matrix, m);
-                m = JXG.Math.matMatMult(mpost2, m);
-                m = JXG.Math.matMatMult(mpost1, m);
+                m = JXGMath.matMatMult(mpre1, m);
+                m = JXGMath.matMatMult(mpre2, m);
+                m = JXGMath.matMatMult(transformations[i].matrix, m);
+                m = JXGMath.matMatMult(mpost2, m);
+                m = JXGMath.matMatMult(mpost1, m);
             }
             return m;
         },
@@ -997,10 +999,10 @@
             var draftColor = element.board.options.elements.draft.color,
                 draftOpacity = element.board.options.elements.draft.opacity;
 
-            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            if (element.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, draftColor, draftOpacity);
             } else {
-                if (element.elementClass === JXG.OBJECT_CLASS_POINT) {
+                if (element.elementClass === Const.OBJECT_CLASS_POINT) {
                     this.setObjectFillColor(element, draftColor, draftOpacity);
                 } else {
                     this.setObjectFillColor(element, 'none', 0);
@@ -1015,10 +1017,10 @@
          * @param {JXG.GeometryElement} element Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (element) {
-            if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+            if (element.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
             } else {
-                if (element.type === JXG.OBJECT_CLASS_POINT) {
+                if (element.type === Const.OBJECT_CLASS_POINT) {
                     this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
                 }
                 this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
@@ -1081,16 +1083,16 @@
             var i, ev = element.visProp;
 
             if (!ev.draft) {
-                if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+                if (element.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                     for (i = 0; i < element.borders.length; i++) {
                         this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor,
                             element.borders[i].visProp.highlightstrokeopacity);
                     }
                 } else {
-                    if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                    if (element.type === Const.OBJECT_TYPE_TEXT) {
                         this.updateTextStyle(element, true);
-                    } else if (element.type === JXG.OBJECT_TYPE_IMAGE) {
+                    } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, true);
                     } else {
                         this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
@@ -1115,16 +1117,16 @@
             var i, ev = element.visProp;
 
             if (!element.visProp.draft) {
-                if (element.type === JXG.OBJECT_TYPE_POLYGON) {
+                if (element.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                     for (i = 0; i < element.borders.length; i++) {
                         this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor,
                             element.borders[i].visProp.strokeopacity);
                     }
                 } else {
-                    if (element.type === JXG.OBJECT_TYPE_TEXT) {
+                    if (element.type === Const.OBJECT_TYPE_TEXT) {
                         this.updateTextStyle(element, false);
-                    } else if (element.type === JXG.OBJECT_TYPE_IMAGE) {
+                    } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, false);
                     } else {
                         this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
@@ -1180,13 +1182,13 @@
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    JXG.addEvent(button, 'click', handler, board);
+                    Browser.addEvent(button, 'click', handler, board);
 
                     // prevent the click from bubbling down to the board
-                    JXG.addEvent(button, 'mouseup', cancelbubble, board);
-                    JXG.addEvent(button, 'mousedown', cancelbubble, board);
-                    JXG.addEvent(button, 'touchend', cancelbubble, board);
-                    JXG.addEvent(button, 'touchstart', cancelbubble, board);
+                    Browser.addEvent(button, 'mouseup', cancelbubble, board);
+                    Browser.addEvent(button, 'mousedown', cancelbubble, board);
+                    Browser.addEvent(button, 'touchend', cancelbubble, board);
+                    Browser.addEvent(button, 'touchstart', cancelbubble, board);
                 };
 
             doc = board.containerObj.ownerDocument;
@@ -1257,6 +1259,7 @@
          * @param {Array} pos New positon in screen coordinates
          */
         updateTouchpoint: function (i, pos) {}
-
     });
-}());
+
+    return JXG.AbstractRenderer;
+});

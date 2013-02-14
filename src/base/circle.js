@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -56,7 +56,7 @@
  * @version 0.1
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -793,4 +793,9 @@
     };
 
     JXG.registerElement('circle', JXG.createCircle);
-}());
+
+    return {
+        Circle: JXG.Circle,
+        createCircle: JXG.createCircle
+    };
+});

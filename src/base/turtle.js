@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -52,7 +52,7 @@
  * @author A.W.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -705,4 +705,9 @@
     };
 
     JXG.registerElement('turtle', JXG.createTurtle);
-}());
+
+    return {
+        Turtle: JXG.Turtle,
+        createTurtle: JXG.createTurtle
+    };
+});

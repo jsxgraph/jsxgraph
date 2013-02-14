@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -54,7 +54,7 @@
  * a board.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -295,4 +295,8 @@
     };
 
     JXG.registerElement('slider', JXG.createSlider);
-}());
+
+    return {
+        createSlider: JXG.createSlider
+    };
+});

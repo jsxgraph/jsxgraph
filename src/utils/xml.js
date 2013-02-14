@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, DOMParser: true, ActiveXObject: true*/
+/*global JXG: true, define: true, DOMParser: true, ActiveXObject: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -38,10 +38,14 @@
  utils/type
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
+    /**
+     * Holds browser independent xml parsing routines. Won't work in environments other than browsers.
+     * @namespace
+     */
     JXG.XML = {
         /**
          * Cleans out unneccessary whitespaces in a chunk of xml.
@@ -93,4 +97,6 @@
             return tree;
         }
     };
-}());
+
+    return JXG.XML;
+});

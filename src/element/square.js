@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -44,7 +44,7 @@
    line
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -156,4 +156,8 @@
     };
 
     JXG.registerElement('square', JXG.createSquare);
-}());
+
+    return {
+        createSquare: JXG.createSquare
+    };
+});

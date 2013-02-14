@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -48,7 +48,7 @@
  * @fileoverview In this file the geometry element Image is defined.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -309,4 +309,9 @@
     };
 
     JXG.registerElement('image', JXG.createImage);
-}());
+
+    return {
+        Image: JXG.Image,
+        createImage: JXG.createImage
+    };
+});

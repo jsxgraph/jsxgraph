@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -58,7 +58,7 @@
    circle
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -946,4 +946,11 @@
         return new JXG.Legend(board, start_from, attributes);
     };
     JXG.registerElement('legend', JXG.createLegend);
-}());
+
+    return {
+        Chart: JXG.Chart,
+        Legend: JXG.Legend,
+        createChart: JXG.createChart,
+        createLegend: JXG.createLegend
+    };
+});

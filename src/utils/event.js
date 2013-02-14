@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -158,4 +158,6 @@
             o.triggerEventHandlers = this.triggerEventHandlers;
         }
     };
-}());
+
+    return JXG.EventEmitter;
+});

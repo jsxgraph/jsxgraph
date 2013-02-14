@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true */
+/*global JXG: true, define: true*/
 
 /*jslint nomen: true, plusplus: true*/
 
@@ -44,7 +44,7 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -794,4 +794,6 @@
 
         return color;
     };
-}());
+
+    return JXG;
+});

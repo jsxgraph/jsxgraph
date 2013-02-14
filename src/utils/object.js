@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * extracting information from them.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -378,4 +378,6 @@
             return false;
         }
     });
-}());
+
+    return JXG;
+});

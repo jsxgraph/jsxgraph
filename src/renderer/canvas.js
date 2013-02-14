@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, document: true, Image: true, require: true */
+/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
@@ -40,12 +40,17 @@
  utils/env
  utils/type
  utils/browser
+ utils/uuid
+ utils/color
  base/coords
+ math/math
  math/geometry
  math/numerics
 */
 
-(function () {
+define(['jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type', 'utils/browser', 'utils/uuid',
+    'utils/color', 'base/coords', 'math/math', 'math/geometry', 'math/numerics'], function (JXG, AbstractRenderer,
+    Const, Env, Type, Browser, UUID, Color, Coords, JXGMath, Geometry, Numerics) {
 
     "use strict";
 
@@ -63,11 +68,11 @@
 
         this.canvasRoot = null;
         this.suspendHandle = null;
-        this.canvasId = JXG.Util.genUUID();
+        this.canvasId = UUID.genUUID();
 
         this.canvasNamespace = null;
 
-        if (JXG.isBrowser) {
+        if (Env.isBrowser) {
             this.container = container;
             this.container.style.MozUserSelect = 'none';
 
@@ -76,11 +81,11 @@
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', JXG.getStyle(this.container,
-                'width'), '" height="', JXG.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
+            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', Browser.getStyle(this.container,
+                'width'), '" height="', Browser.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
-        } else if (JXG.isNode()) {
+        } else if (Env.isNode()) {
             this.canvasId = require('canvas');
             this.canvasRoot = new this.canvasId(500, 500);
             this.context = this.canvasRoot.getContext('2d');
@@ -89,7 +94,7 @@
         this.dashArray = [[2, 2], [5, 5], [10, 10], [20, 20], [20, 10, 10, 10], [20, 5, 10, 5]];
     };
 
-    JXG.CanvasRenderer.prototype = new JXG.AbstractRenderer();
+    JXG.CanvasRenderer.prototype = new AbstractRenderer();
 
     JXG.extend(JXG.CanvasRenderer.prototype, /** @lends JXG.CanvasRenderer.prototype */ {
 
@@ -191,22 +196,22 @@
             type = type || 'stroke';
             targetType = targetType || type;
 
-            if (!JXG.exists(element.board) || !JXG.exists(element.board.highlightedObjects)) {
+            if (!Type.exists(element.board) || !Type.exists(element.board.highlightedObjects)) {
                 // This case handles trace elements.
                 // To make them work, we simply neglect highlighting.
                 isTrace = true;
             }
 
-            if (!isTrace && JXG.exists(element.board.highlightedObjects[element.id])) {
+            if (!isTrace && Type.exists(element.board.highlightedObjects[element.id])) {
                 hl = 'highlight';
             } else {
                 hl = '';
             }
 
             // type is equal to 'fill' or 'stroke'
-            rgba = JXG.evaluate(ev[hl + type + 'color']);
+            rgba = Type.evaluate(ev[hl + type + 'color']);
             if (rgba !== 'none' && rgba !== false) {
-                o = JXG.evaluate(ev[hl + type + 'opacity']);
+                o = Type.evaluate(ev[hl + type + 'opacity']);
                 o = (o > 0) ? o : 0;
 
                 // RGB, not RGBA
@@ -215,7 +220,7 @@
                     oo = o;
                 // True RGBA, not RGB
                 } else {
-                    rgbo = JXG.rgba2rgbo(rgba);
+                    rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
@@ -406,10 +411,10 @@
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var scr1 = new JXG.Coords(JXG.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                scr2 = new JXG.Coords(JXG.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
+            var scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+                scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
 
-            JXG.Math.Geometry.calcStraight(el, scr1, scr2);
+            Geometry.calcStraight(el, scr1, scr2);
 
             this.context.beginPath();
             this.context.moveTo(scr1.scrCoords[1], scr1.scrCoords[2]);
@@ -587,8 +592,8 @@
         // documented in JXG.AbstractRenderer
         // Only necessary for texts
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = JXG.evaluate(color), c, rgbo,
-                o = JXG.evaluate(opacity), oo,
+            var rgba = Type.evaluate(color), c, rgbo,
+                o = Type.evaluate(opacity), oo,
                 node;
 
             o = (o > 0) ? o : 0;
@@ -599,19 +604,19 @@
 
             // Check if this could be merged with _setColor
 
-            if (JXG.exists(rgba) && rgba !== false) {
+            if (Type.exists(rgba) && rgba !== false) {
                 // RGB, not RGBA
                 if (rgba.length !== 9) {
                     c = rgba;
                     oo = o;
                 // True RGBA, not RGB
                 } else {
-                    rgbo = JXG.rgba2rgbo(rgba);
+                    rgbo = Color.rgba2rgbo(rgba);
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
                 node = el.rendNode;
-                if (el.type === JXG.OBJECT_TYPE_TEXT && el.visProp.display === 'html') {
+                if (el.type === Const.OBJECT_TYPE_TEXT && el.visProp.display === 'html') {
                     node.style.color = c;
                     node.style.opacity = oo;
                 }
@@ -640,8 +645,8 @@
         // already documented in JXG.AbstractRenderer
         updateImage: function (el) {
             var context = this.context,
-                o = JXG.evaluate(el.visProp.fillopacity),
-                paintImg = JXG.bind(function () {
+                o = Type.evaluate(el.visProp.fillopacity),
+                paintImg = Type.bind(function () {
                     el.imgIsLoaded = true;
                     if (el.size[0] <= 0 || el.size[1] <= 0) {
                         return;
@@ -675,7 +680,7 @@
 
             if (len > 0) {
                 m = this.joinTransforms(el, t);
-                if (Math.abs(JXG.Math.Numerics.det(m)) >= JXG.Math.eps) {
+                if (Math.abs(Numerics.det(m)) >= JXGMath.eps) {
                     ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
                 }
             }
@@ -685,7 +690,7 @@
         updateImageURL: function (el) {
             var url;
 
-            url = JXG.evaluate(el.url);
+            url = Type.evaluate(el.url);
             if (el._src !== url) {
                 el.imgIsLoaded = false;
                 el.rendNode.src = url;
@@ -703,7 +708,7 @@
         // documented in AbstractRenderer
         remove: function (shape) {
             // sounds odd for a pixel based renderer but we need this for html texts
-            if (JXG.exists(shape) && JXG.exists(shape.parentNode)) {
+            if (Type.exists(shape) && Type.exists(shape.parentNode)) {
                 shape.parentNode.removeChild(shape);
             }
         },
@@ -727,7 +732,7 @@
                 context = this.context;
 
             if (el.visProp.strokecolor !== 'none' && (el.visProp.lastarrow || el.visProp.firstarrow)) {
-                if (el.elementClass === JXG.OBJECT_CLASS_LINE) {
+                if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
                     x2 = scr2.scrCoords[1];
@@ -771,7 +776,7 @@
 
             if (el.bezierDegree === 1) {
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+                    el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
                 }
 
                 for (i = 0; i < len; i++) {
@@ -842,7 +847,7 @@
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-                el.points = JXG.Math.Numerics.RamerDouglasPeuker(el.points, 0.5);
+                el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -932,14 +937,14 @@
 
         // documented in AbstractRenderer
         show: function (el) {
-            if (JXG.exists(el.rendNode)) {
+            if (Type.exists(el.rendNode)) {
                 el.rendNode.style.visibility = "inherit";
             }
         },
 
         // documented in AbstractRenderer
         hide: function (el) {
-            if (JXG.exists(el.rendNode)) {
+            if (Type.exists(el.rendNode)) {
                 el.rendNode.style.visibility = "hidden";
             }
         },
@@ -948,10 +953,10 @@
         setGradient: function (el) {
             var col, op;
 
-            op = JXG.evaluate(el.visProp.fillopacity);
+            op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;
 
-            col = JXG.evaluate(el.visProp.fillcolor);
+            col = Type.evaluate(el.visProp.fillcolor);
         },
 
         // documented in AbstractRenderer
@@ -969,7 +974,7 @@
 
         // documented in AbstractRenderer
         highlight: function (obj) {
-            if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, true);
             } else {
                 obj.board.prepareUpdate();
@@ -982,7 +987,7 @@
 
         // documented in AbstractRenderer
         noHighlight: function (obj) {
-            if (obj.type === JXG.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, false);
             } else {
                 obj.board.prepareUpdate();
@@ -1026,7 +1031,7 @@
                 this.canvasRoot.height = parseFloat(h);
             }
         }
-
     });
 
-}());
+    return JXG.CanvasRenderer;
+});

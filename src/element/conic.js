@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -49,7 +49,7 @@
  * @fileoverview In this file the conic sections defined.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -918,4 +918,11 @@
     JXG.registerElement('hyperbola', JXG.createHyperbola);
     JXG.registerElement('parabola', JXG.createParabola);
     JXG.registerElement('conic', JXG.createConic);
-}());
+
+    return {
+        createEllipse: JXG.createEllipse,
+        createHyperbola: JXG.createHyperbola,
+        createParabola: JXG.createParabola,
+        createConic: JXG.createConic
+    };
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -46,7 +46,7 @@
  * manipulate polynomials.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -293,4 +293,6 @@
             return s.join('+');
         }
     });
-}());
+
+    return JXG.Math.Poly;
+});

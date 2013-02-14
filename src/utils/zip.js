@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, console: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
@@ -41,7 +41,7 @@
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -793,4 +793,6 @@
             return unzipped;
         };
     };
-}());
+
+    return JXG.Util;
+});

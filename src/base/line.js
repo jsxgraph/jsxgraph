@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -56,7 +56,7 @@
  * a board.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1587,4 +1587,14 @@
      */
     JXG.registerElement('tangent', JXG.createTangent);
     JXG.registerElement('polar', JXG.createTangent);
-}());
+
+    return {
+        Line: JXG.Line,
+        createLine: JXG.createLine,
+        createTangent: JXG.createTangent,
+        createPolar: JXG.createPolar,
+        createSegment: JXG.createSegment,
+        createAxis: JXG.createAxis,
+        createArrow: JXG.createArrow
+    };
+});

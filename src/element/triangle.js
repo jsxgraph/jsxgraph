@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -46,7 +46,7 @@
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -110,4 +110,8 @@
     };
 
     JXG.registerElement('triangle', JXG.createTriangle);
-}());
+
+    return {
+        createTriangle: JXG.createTriangle
+    };
+});

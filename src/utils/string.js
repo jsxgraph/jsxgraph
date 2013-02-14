@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -41,7 +41,7 @@
  * @fileoverview String manipulation routines.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -108,4 +108,6 @@
             return str;
         }
     });
-}());
+
+    return JXG;
+});

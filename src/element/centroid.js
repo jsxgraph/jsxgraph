@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -45,7 +45,7 @@
  * @fileoverview Example file for a centroid implemented as an extension to JSXGraph. 
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -135,4 +135,8 @@
     };
 
     JXG.registerElement('centroid', JXG.createCentroid);
-}());
+
+    return {
+        createCentroid: JXG.createCentroid
+    };
+});

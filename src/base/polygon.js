@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG:true*/
+/*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -47,7 +47,7 @@
    transform
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -704,4 +704,10 @@
 
     JXG.registerElement('polygon', JXG.createPolygon);
     JXG.registerElement('regularpolygon', JXG.createRegularPolygon);
-}());
+
+    return {
+        Polygon: JXG.Polygon,
+        createPolygon: JXG.createPolygon,
+        createRegularPolygon: JXG.createRegularPolygon
+    };
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * now, be attached directly to the JXG namespace.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -210,4 +210,6 @@
             return ar;
         }
     });
-}());
+
+    return JXG;
+});

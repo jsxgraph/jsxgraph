@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -45,7 +45,7 @@
  * @author graphjs
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -305,4 +305,8 @@
 
         return Math.sqrt(z.real);
     };
-}());
+
+    JXG.Complex.C = JXG.C;
+
+    return JXG.Complex;
+});

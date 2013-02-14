@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -301,4 +301,6 @@
             return script.join('\n');
         }
     };
-}());
+
+    return JXG.Dump;
+});

@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true, google: true*/
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, window: true, document: true, init: true, translateASCIIMath: true, google: true*/
 
 /*jslint nomen: true, plusplus: true*/
 
@@ -68,7 +68,7 @@
  * @version 0.1
  */
 
-(function () {
+define([], function () {
 
     'use strict';
 
@@ -3995,4 +3995,6 @@
             return new Roulette();
         }
     });
-}());
+
+    return JXG.Board;
+});

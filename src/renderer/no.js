@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, AMprocessNode: true, MathJax: true, document: true */
+/*global JXG: true, define: true, AMprocessNode: true, MathJax: true, document: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
@@ -46,7 +46,7 @@
  * renderers is the class AbstractRenderer.
  */
 
-(function () {
+define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
 
     "use strict";
 
@@ -629,5 +629,7 @@
 
     });
 
-    JXG.NoRenderer.prototype = new JXG.AbstractRenderer();
-}());
+    JXG.NoRenderer.prototype = new AbstractRenderer();
+
+    return JXG.NoRenderer;
+});

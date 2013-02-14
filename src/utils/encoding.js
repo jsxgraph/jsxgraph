@@ -1,11 +1,11 @@
-/*global JXG: true, console: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
  jxg
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -177,4 +177,6 @@
             return c;
         }
     };
-}());
+
+    return JXG.Util.UTF8;
+});

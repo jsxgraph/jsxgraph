@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -53,7 +53,7 @@
  * @version 0.1
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -870,4 +870,9 @@
     };
 
     JXG.registerElement('ticks', JXG.createTicks);
-}());
+
+    return {
+        Ticks: JXG.Ticks,
+        createTicks: JXG.createTicks
+    };
+});

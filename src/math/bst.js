@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG:true*/
+/*global JXG:true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -38,7 +38,7 @@
  math/math
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -540,4 +540,6 @@
         this.pq[i] = this.pq[j];
         this.pq[j] = t;
     };
-}());
+
+    return JXG.Math.BST;
+});

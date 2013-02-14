@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -48,7 +48,7 @@
  * a board.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -157,4 +157,8 @@
     };
 
     JXG.registerElement('tapemeasure', JXG.createTapemeasure);
-}());
+
+    return {
+        createTapemeasure: JXG.createTapemeasure
+    };
+});

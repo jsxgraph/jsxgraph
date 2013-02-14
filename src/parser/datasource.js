@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true */
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,7 +43,7 @@
  * javascript arrays and HTML tables.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -237,4 +237,6 @@
             return result;
         }
     });
-}());
+
+    return JXG.DataSource;
+});

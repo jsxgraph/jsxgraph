@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -39,7 +39,7 @@
  utils/type
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -417,4 +417,6 @@
             return res;
         }
     };
-}());
+
+    return JXG.Math.Statistics;
+});

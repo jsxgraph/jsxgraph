@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG:true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
+/*global JXG:true, define: true, ActiveXObject:true, jxgBinFileReader:true, DOMParser:true, XMLHttpRequest:true, document:true, navigator:true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -40,7 +40,7 @@
  utils/base64
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -220,4 +220,6 @@ Function jxgBinFileReader(xhr)\n\
 End Function\n\
 </script>\n');
     }
-}());
+
+    return JXG.FileReader;
+});

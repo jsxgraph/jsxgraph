@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -48,7 +48,7 @@
    transform
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -716,4 +716,10 @@
     };
 
     JXG.registerElement('angle', JXG.createAngle);
-}());
+
+    return {
+        createSector: JXG.createSector,
+        createCircumcircleSector: JXG.createCircumcircleSector,
+        createAngle: JXG.createAngle
+    };
+});

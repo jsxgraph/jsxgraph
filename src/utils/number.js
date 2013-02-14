@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true*/
+/*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true, bitwise:true*/
 
 /* depends:
@@ -42,7 +42,7 @@
  * @fileoverview A collection of helper functions that deal with numbers.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -86,4 +86,6 @@
             return x;
         }
     });
-}());
+
+    return Number;
+});

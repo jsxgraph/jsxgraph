@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, console: true, window: true*/
+/*global JXG: true, define: true, console: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -54,7 +54,7 @@
  * a board.
  */
 
-(function () {
+define([], function () {
 
     "use strict";
 
@@ -1896,4 +1896,12 @@
     JXG.registerElement('glider', JXG.createGlider);
     JXG.registerElement('intersection', JXG.createIntersectionPoint);
     JXG.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
-}());
+
+    return {
+        Point: JXG.Point,
+        createPoint: JXG.createPoint,
+        createGlider: JXG.createGlider,
+        createIntersection: JXG.createIntersectionPoint,
+        createOtherIntersection: JXG.createOtherIntersectionPoint
+    };
+});
