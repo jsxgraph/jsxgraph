@@ -678,7 +678,7 @@
          * @function
          * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
          * @returns {Object} Pointer to the angle element..
-         *
+         * @memberOf Angle.prototype
          */
         el.setAngle = function (val) {
             var t,
@@ -700,7 +700,7 @@
          * @name free
          * @function
          * @returns {Object} Pointer to the angle element..
-         *
+         * @memberOf Angle.prototype
          */
         el.free = function () {
             var p = this.anglepoint;

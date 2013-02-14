@@ -541,6 +541,7 @@
          */
         Neville: function (p) {
             var w = [],
+                /** @ignore */
                 makeFct = function (fun) {
                     return function (t, suspendedUpdate) {
                         var i, d, s,
@@ -741,6 +742,7 @@
          */
         lagrangePolynomial: function (p) {
             var w = [],
+                /** @ignore */
                 fct = function (x, suspendedUpdate) {
                     var i, j, k, xi, s, M,
                         len = p.length,
@@ -806,6 +808,7 @@
                 first = {},
                 last = {},
 
+                /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
                         var s, c,
@@ -888,6 +891,7 @@
 
             // Slider
             if (JXG.isPoint(degree) && typeof degree.Value === 'function') {
+                /** @ignore */
                 deg = function () {
                     return degree.Value();
                 };
@@ -896,6 +900,7 @@
                 deg = degree;
             // number
             } else if (JXG.isNumber(degree)) {
+                /** @ignore */
                 deg = function () {
                     return degree;
                 };
@@ -915,6 +920,7 @@
                 throw new Error("JSXGraph: Can't create regressionPolynomial. Wrong parameters.");
             }
 
+            /** @ignore */
             fct = function (x, suspendedUpdate) {
                 var i, j, M, MT, y, B, c, s, d,
                     // input data
@@ -1012,6 +1018,7 @@
          */
         bezier: function (points) {
             var len, flen,
+                /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
                         var z = Math.floor(t) * 3,
@@ -1113,6 +1120,7 @@
                     }
                     return N;
                 },
+                /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
                         var y, j, s,
@@ -1819,7 +1827,9 @@
                  * @param {Array} pts Array of {@link JXG.Coords}
                  * @param {Number} i Index of a point in pts
                  * @param {Number} j Index of a point in pts
-                 **/
+                 * @ignore
+                 * @private
+                 */
                 findSplit = function (pts, i, j) {
                     var d, k, ci, cj, ck,
                         x0, y0, x1, y1,
@@ -1884,6 +1894,7 @@
                  * @param {Number} j Index of an element of pts
                  * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
                  * @param {Array} newPts Array of {@link JXG.Coords}
+                 * @ignore
                  * @private
                  */
                 RDP = function (pts, i, j, eps, newPts) {

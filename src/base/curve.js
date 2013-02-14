@@ -644,15 +644,13 @@
                 }
             }
 
-            /**
-             * We distinguish two cases:
-             * 1) curves which depend on free elements, i.e. arcs and sectors
-             * 2) other curves
-             *
-             * In the first case we simply transform the parents elements
-             * In the second case we add a transform to the curve.
-             */
-
+            // We distinguish two cases:
+            // 1) curves which depend on free elements, i.e. arcs and sectors
+            // 2) other curves
+            //
+            // In the first case we simply transform the parents elements
+            // In the second case we add a transform to the curve.
+            //
             coords = new JXG.Coords(method, coords, this.board);
             t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
 

@@ -136,6 +136,7 @@
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                     "\nPossible parent types: [point,point,point], [point,point,number|function]");
             }
+            /** @ignore */
             majorAxis = function () {
                 return C.Dist(F[0]) + C.Dist(F[1]);
             };
@@ -160,6 +161,7 @@
             }
         ], attr_foci);
 
+        /** @ignore */
         transformFunc = function () {
             var beta, co, si, sgn, m,
                 ax = F[0].X(),
@@ -198,6 +200,7 @@
             parents[3],
             parents[4]], attr_curve);
 
+        /** @ignore */
         polarForm = function (phi, suspendUpdate) {
             var mx, my,
                 a = majorAxis() * 0.5,
@@ -238,9 +241,11 @@
             return JXG.Math.matVecMult(rotationMatrix, [1, a * Math.cos(phi), b * Math.sin(phi)]);
         };
 
+        /** @ignore */
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
+        /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[2];
         };
@@ -347,6 +352,7 @@
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                     "\nPossible parent types: [point,point,point], [point,point,number|function]");
             }
+            /** @ignore */
             majorAxis = function () {
                 return C.Dist(F[0]) - C.Dist(F[1]);
             };
@@ -371,6 +377,7 @@
             }
         ], attr_foci);
 
+        /** @ignore */
         transformFunc = function () {
             var m, sgn, beta,
                 ax = F[0].X(),
@@ -403,9 +410,9 @@
                 return 0;
             }, parents[3], parents[4]], attr_curve);
 
-        /*
-         * Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
-         */
+
+        // Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
+        /** @ignore */
         polarForm = function (phi, suspendUpdate) {
             var mx, my,
                 a = majorAxis() * 0.5,
@@ -443,9 +450,11 @@
             return JXG.Math.matVecMult(rotationMatrix, [1, a / Math.cos(phi), b * Math.tan(phi)]);
         };
 
+        /** @ignore */
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
+        /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[2];
         };
@@ -546,6 +555,7 @@
             }
         ], attr_foci);
 
+        /** @ignore */
         transformFunc = function () {
             var m,
                 beta = Math.atan(l.getSlope()),
@@ -571,6 +581,7 @@
                 return 0;
             }, parents[2], parents[3]], attr_curve);
 
+        /** @ignore */
         polarForm = function (t, suspendUpdate) {
             var e = M.Dist(F1) * 0.5,
                 e4 = e * 4,
@@ -604,10 +615,12 @@
             return JXG.Math.matVecMult(rotationMatrix, [e4, e4 * (t + a), t * t + b * e4]);
         };
 
+        /** @ignore */
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
 
+        /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[2];
         };
@@ -800,6 +813,7 @@
                 return 0;
             }, 0, 2 * Math.PI], attr_curve);
 
+        /** @ignore */
         polarForm = function (phi, suspendUpdate) {
             var i, j, len, v;
 
@@ -873,10 +887,12 @@
             return v;
         };
 
+        /** @ignore */
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
 
+        /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[2];
         };
