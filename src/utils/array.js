@@ -114,22 +114,22 @@
         },
 
         /**
-         * Generates a copy of an array and removes the duplicate entries. The original
-         * Array will be altered.
+         * Removes duplicate entries from an array.
+         *
          * @param {Array} arr
          * @returns {Array}
          */
         uniqueArray: function (arr) {
-            var i, j, isArray,
-                ret = [];
+
+            var i, j, isArray, ret = [];
 
             if (arr.length === 0) {
                 return [];
             }
 
-            isArray = JXG.isArray(arr[0]);
-
             for (i = 0; i < arr.length; i++) {
+                isArray = JXG.isArray(arr[i]);
+
                 for (j = i + 1; j < arr.length; j++) {
                     if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
                         arr[i] = [];
@@ -142,6 +142,9 @@
             j = 0;
 
             for (i = 0; i < arr.length; i++) {
+
+                isArray = JXG.isArray(arr[i]);
+
                 if (!isArray && arr[i] !== '') {
                     ret[j] = arr[i];
                     j += 1;
@@ -151,7 +154,7 @@
                 }
             }
 
-            return ret;
+            return (arr = ret);
         },
 
         /**
