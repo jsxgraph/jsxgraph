@@ -56,14 +56,14 @@ To build JSXGraph core type
     $ python make.py --yuglify=/path/to/yuglify --output=/output/dir Core
 
 This will concatenate all core files (basically all .js files in src/ except
-loadjsxgraph.js and {Geonext,GeoGebra,Cinderella,Graph,Intergeo}Reader.js),
-strip all comments and minify the file into /output/dir/jsxgraphcore.js.
+loadjsxgraph.js and all files in src/reader except file.js), strip all comments
+and minify the file into /output/dir/jsxgraphcore.js.
 
 
 Usage
 -----
 
-Include jsxgraphcore.js and, if required, one or more *Reader.js in your HTML
+Include jsxgraphcore.js and, if required, one or more file readers in your HTML
 file. For further usage instructions please consult our [wiki](http://jsxgraph.uni-bayreuth.de/wiki/)
 especially our [tutorials](http://jsxgraph.uni-bayreuth.de/wiki/index.php/Documentation)
 or [the API reference docs](http://jsxgraph.uni-bayreuth.de/docs/).
