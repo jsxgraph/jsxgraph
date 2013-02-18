@@ -167,14 +167,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @type Number
          */
         ieVersion: (function () {
-            var undef,
-                v = 3,
-                div = document.createElement('div'),
-                all = div.getElementsByTagName('i');
+            var undef, div, all,
+                v = 3;
 
             if (typeof document !== 'object') {
-                return undef;
+                return 0;
             }
+
+            div = document.createElement('div');
+            all = div.getElementsByTagName('i');
 
             do {
                 div.innerHTML = '<!--[if gt IE ' + (++v) + ']><' + 'i><' + '/i><![endif]-->';

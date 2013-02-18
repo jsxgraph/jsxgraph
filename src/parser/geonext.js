@@ -241,8 +241,12 @@ define([
                 return te;
             }
 
-            var i = te.indexOf('_{'),
-                j;
+            var j,
+                i = te.indexOf('_{');
+
+            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
+            /*jslint regexp: true*/
 
             while (i >= 0) {
                 te = te.substr(0, i) + te.substr(i).replace(/_\{/, '<sub>');
@@ -272,8 +276,13 @@ define([
                 return te;
             }
 
-            var i = te.indexOf('^{'),
-                j;
+            var j,
+                i = te.indexOf('^{');
+
+            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
+            /*jslint regexp: true*/
+
             while (i >= 0) {
                 te = te.substr(0, i) + te.substr(i).replace(/\^\{/, '<sup>');
                 j = te.substr(i).indexOf('}');

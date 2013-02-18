@@ -743,18 +743,21 @@ define([], function () {
         if (parents.length === 3) {
             // line through point parents[2] which is parallel to line through parents[0] and parents[1]
             p = parents[2];
+            /** @ignore */
             li = function () {
                 return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
             };
         } else if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT) {
             // Parallel to line parents[1] through point parents[0]
             p = parents[0];
+            /** @ignore */
             li = function () {
                 return parents[1].stdform;
             };
         } else if (parents[1].elementClass === JXG.OBJECT_CLASS_POINT) {
             // Parallel to line parents[0] through point parents[1]
             p = parents[1];
+            /** @ignore */
             li = function () {
                 return parents[0].stdform;
             };

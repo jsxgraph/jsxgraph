@@ -242,11 +242,13 @@ define([
             } else if (JXG.isFunction(term)) {
                 f = term;
             } else if (JXG.isNumber(term)) {
+                /** @ignore */
                 f = function () {
                     return term;
                 };
             } else if (JXG.isString(term)) {
                 // In case of string function like fontsize
+                /** @ignore */
                 f = function () {
                     return term;
                 };

@@ -1220,6 +1220,7 @@ define([], function () {
                 dX = (where.usrCoords[1] - X),
                 dY = (where.usrCoords[2] - Y),
 
+                /** @ignore */
                 stepFun = function (i) {
                     if (options.effect && options.effect === '<>') {
                         return Math.pow(Math.sin((i / steps) * Math.PI / 2), 2);
@@ -1272,6 +1273,7 @@ define([], function () {
                 dX = (where[0] - X),
                 dY = (where[1] - Y),
 
+                /** @ignore */
                 stepFun = function (i) {
                     var x = (i < steps / 2 ? 2 * i / steps : 2 * (steps - i) / steps);
 
@@ -1715,6 +1717,7 @@ define([], function () {
                 (el1.type !== JXG.OBJECT_TYPE_ARC || el2.type !== JXG.OBJECT_TYPE_ARC)) {
             // curve - curve, but not both are arcs
             // TEMPORARY FIX!!!
+            /** @ignore */
             func = function () {
                 return JXG.Math.Geometry.meetCurveCurve(el1, el2, i, j, el1.board);
             };
@@ -1723,6 +1726,7 @@ define([], function () {
                 (el2.type === JXG.OBJECT_TYPE_ARC && el1.elementClass === JXG.OBJECT_CLASS_LINE)) {
             // arc - line   (arcs are of class curve, but are intersected like circles)
             // TEMPORARY FIX!!!
+            /** @ignore */
             func = function () {
                 return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
             };
@@ -1730,12 +1734,14 @@ define([], function () {
         } else if ((el1.elementClass === JXG.OBJECT_CLASS_CURVE && el2.elementClass === JXG.OBJECT_CLASS_LINE) ||
                 (el2.elementClass === JXG.OBJECT_CLASS_CURVE && el1.elementClass === JXG.OBJECT_CLASS_LINE)) {
             // curve - line (this includes intersections between conic sections and lines
+            /** @ignore */
             func = function () {
                 return JXG.Math.Geometry.meetCurveLine(el1, el2, i, el1.board, el.visProp.alwaysintersect);
             };
 
         } else if (el1.elementClass === JXG.OBJECT_CLASS_LINE && el2.elementClass === JXG.OBJECT_CLASS_LINE) {
             // line - line, lines may also be segments.
+            /** @ignore */
             func = function () {
                 var res, c,
                     first1 = el1.visProp.straightfirst,
@@ -1773,6 +1779,7 @@ define([], function () {
             };
         } else {
             // All other combinations of circles and lines
+            /** @ignore */
             func = function () {
                 return JXG.Math.Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
             };

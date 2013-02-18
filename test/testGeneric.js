@@ -91,7 +91,7 @@ TestCase("Generic", {
                 successSuper = true;
             },
 
-            Super = function() {
+            Super = function () {
             },
             Class = function () {
             },
@@ -101,7 +101,7 @@ TestCase("Generic", {
         JXG.extend(Super.prototype, {
             woop: woopSuper
         });
-        Class.prototype = new Super;
+        Class.prototype = new Super();
 
         JXG.extend(Class.prototype, {
             woop: function () {
@@ -115,5 +115,35 @@ TestCase("Generic", {
 
         assertTrue('super called', successSuper);
         assertTrue('base called', successBase);
+    },
+
+    testHiddenProperty: function () {
+        expectAsserts(3);
+
+        var inst,
+            Base = function (prop) {
+                this.property = prop || 'Default';
+            },
+            Sub = function () {
+                // nothing
+            };
+
+        Base.prototype.foo = function () {
+            return this.property;
+        };
+
+        Sub.prototype = new Base();
+
+        inst = new Sub();
+
+        assertEquals('Property value is Default', 'Default', inst.foo());
+
+        inst.property = 'bar';
+
+        assertEquals('Property value is bar', 'bar', inst.foo());
+
+        delete inst.property;
+
+        assertEquals('Property value is now Default again', 'Default', inst.foo());
     }
 });
