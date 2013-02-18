@@ -43,6 +43,10 @@
  * @version 0.83
  */
 
+if (typeof JXG !== 'object') {
+    JXG = {};
+}
+
 define([], function () {
 
     "use strict";
@@ -222,4 +226,6 @@ define([], function () {
             JXG.debugInt.apply(this, arguments);
         }
     });
+
+    return JXG;
 });

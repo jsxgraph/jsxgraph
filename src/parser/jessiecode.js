@@ -1748,34 +1748,6 @@ define([
 
     });
 
-});
-/*
-    Copyright 2008-2011
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with JSXGraph.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
-
 /*
     Default template driver for JS/CC generated parsers running as
     browser-based JavaScript/ECMAScript applications.
@@ -1791,14 +1763,6 @@ define([
     
     This is in the public domain.
 */
-
-/*global JXG: true*/
-/*jslint nomen: true, plusplus: true*/
-
-
-(function () {
-
-    "use strict";
 
     JXG.extend(JXG.JessieCode.prototype, /** @lends JXG.JessieCode.prototype */ {
         /**
@@ -4171,5 +4135,5 @@ define([
     });
 
 
-
-}());
+    return JXG.JessieCode;
+});
