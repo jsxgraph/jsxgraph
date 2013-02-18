@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- math/math
  */
 
 /**
@@ -45,7 +44,7 @@
  * @author graphjs
  */
 
-define([], function () {
+define(['jxg', 'math/math'], function (JXG) {
 
     "use strict";
 

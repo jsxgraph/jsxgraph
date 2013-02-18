@@ -550,8 +550,8 @@ define([
             }
 
             if (Text) {
-                setTextBackup = Text.prototype.setText;
-                Text.prototype.setText = Text.prototype.setTextJessieCode;
+                setTextBackup = Text.Text.prototype.setText;
+                Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
             }
 
             try {
@@ -586,7 +586,7 @@ define([
             } finally {
                 // make sure the original text method is back in place
                 if (Text) {
-                    Text.prototype.setText = setTextBackup;
+                    Text.Text.prototype.setText = setTextBackup;
                 }
             }
         },

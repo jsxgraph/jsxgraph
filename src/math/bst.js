@@ -34,18 +34,18 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- jxg
  math/math
+ utils/type
  */
 
-define([], function () {
+define(['math/math', 'utils/type'], function (Mat, Type) {
 
     "use strict";
 
     /**
      * Balanced binary search tree
      */
-    JXG.Math.BST = function () {
+    Mat.BST = function () {
         this.head = null;
         this.z = null;
         this.randomized = true;
@@ -54,7 +54,7 @@ define([], function () {
     /**
      * public
      */
-    JXG.Math.BST.prototype.newNode = function (it, le, ri, n) {
+    Mat.BST.prototype.newNode = function (it, le, ri, n) {
         return {
             item: it,
             l: le,
@@ -63,24 +63,24 @@ define([], function () {
         };
     };
 
-    JXG.Math.BST.prototype.init = function (random) {
+    Mat.BST.prototype.init = function (random) {
         this.z = this.newNode(null, 0, 0, 0);
         this.head = this.z;
 
-        if (JXG.exists(random)) {
+        if (Type.exists(random)) {
             this.randomized = random;
         }
     };
 
-    JXG.Math.BST.prototype.count = function () {
+    Mat.BST.prototype.count = function () {
         return this.head.N;
     };
 
-    JXG.Math.BST.prototype.search = function (val) {
+    Mat.BST.prototype.search = function (val) {
         return this.searchR(this.head, val);
     };
 
-    JXG.Math.BST.prototype.insert = function (item) {
+    Mat.BST.prototype.insert = function (item) {
         if (this.randomized) {
             this.head = this.insertRandR(this.head, item);
         } else {
@@ -88,7 +88,7 @@ define([], function () {
         }
     };
 
-    JXG.Math.BST.prototype.traverse = function (h, visit) {
+    Mat.BST.prototype.traverse = function (h, visit) {
         if (this.isNil(h)) {
             return;
         }
@@ -97,15 +97,15 @@ define([], function () {
         this.traverse(h.r, visit);
     };
 
-    JXG.Math.BST.prototype.insertHead = function (item) {
+    Mat.BST.prototype.insertHead = function (item) {
         this.head = this.insertT(this.head, item);
     };
 
-    JXG.Math.BST.prototype.deleteNode = function (v) {
+    Mat.BST.prototype.deleteNode = function (v) {
         this.head = this.deleteR(this.head, v);
     };
 
-    JXG.Math.BST.prototype.join = function (a, b) {
+    Mat.BST.prototype.join = function (a, b) {
         if (this.isNil(b)) {
             return a;
         }
@@ -123,19 +123,19 @@ define([], function () {
         return b;
     };
 
-    JXG.Math.BST.prototype.select = function (k) {
+    Mat.BST.prototype.select = function (k) {
         return this.selectR(this.head, k);
     };
 
-    JXG.Math.BST.prototype.balance = function () {
+    Mat.BST.prototype.balance = function () {
         this.head = this.balanceR(this.head);
     };
 
-    JXG.Math.BST.prototype.show = function () {
+    Mat.BST.prototype.show = function () {
         this.showR(this.head, 0);
     };
 
-    JXG.Math.BST.prototype.joinRand = function (a, b) {
+    Mat.BST.prototype.joinRand = function (a, b) {
         if (Math.random() / (1 / (a.N + b.N) + 1) < a.N) {
             return this.joinRandR(a, b);
         }
@@ -143,7 +143,7 @@ define([], function () {
         return this.joinRandR(b, a);
     };
 
-    JXG.Math.BST.prototype.minimum = function (h) {
+    Mat.BST.prototype.minimum = function (h) {
         if (this.isNil(h)) {
             return h;
         }
@@ -155,7 +155,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.maximum = function (h) {
+    Mat.BST.prototype.maximum = function (h) {
         if (this.isNil(h)) {
             return h;
         }
@@ -167,7 +167,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.next = function (node) {
+    Mat.BST.prototype.next = function (node) {
         var nxt, h = this.head;
 
         // Trivial case
@@ -193,7 +193,7 @@ define([], function () {
         return nxt;
     };
 
-    JXG.Math.BST.prototype.prev = function (node) {
+    Mat.BST.prototype.prev = function (node) {
         var nxt, h = this.head;
 
         // Trivial case
@@ -223,15 +223,15 @@ define([], function () {
     /**
      * private
      */
-    JXG.Math.BST.prototype.fixN = function (h) {
+    Mat.BST.prototype.fixN = function (h) {
         h.N = h.l.N + h.r.N + 1;
     };
 
-    JXG.Math.BST.prototype.isNil = function (h) {
+    Mat.BST.prototype.isNil = function (h) {
         return h.l === 0 && h.r === 0;
     };
 
-    JXG.Math.BST.prototype.searchR = function (h, val) {
+    Mat.BST.prototype.searchR = function (h, val) {
         var t = h.item;
         if (this.isNil(h)) {
             return this.z;
@@ -248,7 +248,7 @@ define([], function () {
         return this.searchR(h.r, val);
     };
 
-    JXG.Math.BST.prototype.insertR = function (h, item) {
+    Mat.BST.prototype.insertR = function (h, item) {
         if (this.isNil(h)) {
             return this.newNode(item, this.z, this.z, 1);
         }
@@ -263,7 +263,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.rotR = function (h) {
+    Mat.BST.rotR = function (h) {
         var x = h.l;
 
         h.l = x.r;
@@ -275,7 +275,7 @@ define([], function () {
         return x;
     };
 
-    JXG.Math.BST.prototype.rotL = function (h) {
+    Mat.BST.prototype.rotL = function (h) {
         var x = h.r,
             n = x.N;
 
@@ -288,7 +288,7 @@ define([], function () {
         return x;
     };
 
-    JXG.Math.BST.prototype.insertT = function (h, item) {
+    Mat.BST.prototype.insertT = function (h, item) {
         if (this.isNil(h)) {
             return this.newNode(item, this.z, this.z, 1);
         }
@@ -304,7 +304,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.selectR = function (h, k) {
+    Mat.BST.prototype.selectR = function (h, k) {
         var t;
 
         if (this.isNil(h)) {
@@ -324,7 +324,7 @@ define([], function () {
         return h.item;
     };
 
-    JXG.Math.BST.prototype.partR = function (h, k) {
+    Mat.BST.prototype.partR = function (h, k) {
         var t = h.l.N;
 
         if (t > k) {
@@ -342,7 +342,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.joinLR = function (a, b) {
+    Mat.BST.prototype.joinLR = function (a, b) {
         if (this.isNil(b)) {
             return a;
         }
@@ -353,7 +353,7 @@ define([], function () {
         return b;
     };
 
-    JXG.Math.BST.prototype.deleteR = function (h, v) {
+    Mat.BST.prototype.deleteR = function (h, v) {
         var x,
             t = h.item;
 
@@ -385,7 +385,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.balanceR = function (h) {
+    Mat.BST.prototype.balanceR = function (h) {
         if (h.N < 2) {
             return h;
         }
@@ -401,7 +401,7 @@ define([], function () {
     /**
      * Randomized Balnaced Binary Trees
      */
-    JXG.Math.BST.prototype.insertRandR = function (h, item) {
+    Mat.BST.prototype.insertRandR = function (h, item) {
         var t = h.item;
 
         if (this.isNil(h)) {
@@ -422,7 +422,7 @@ define([], function () {
         return h;
     };
 
-    JXG.Math.BST.prototype.joinRandR = function (a, b) {
+    Mat.BST.prototype.joinRandR = function (a, b) {
         if (this.isNil(a)) {
             return b;
         }
@@ -436,7 +436,7 @@ define([], function () {
         return b;
     };
 
-    JXG.Math.BST.prototype.joinRandLR = function (a, b) {
+    Mat.BST.prototype.joinRandLR = function (a, b) {
         if (this.isNil(a)) { return b; }
         if (this.isNil(b)) { return a; }
 
@@ -452,7 +452,7 @@ define([], function () {
     /**
      * Test output
      */
-    JXG.Math.BST.prototype.printnode = function (node, hgt) {
+    Mat.BST.prototype.printnode = function (node, hgt) {
         var i,
             t = '';
 
@@ -463,7 +463,7 @@ define([], function () {
         console.log(t);
     };
 
-    JXG.Math.BST.prototype.showR = function (x, hgt) {
+    Mat.BST.prototype.showR = function (x, hgt) {
         if (this.isNil(x)) {
             this.printnode(x, hgt);
             return;
@@ -478,7 +478,7 @@ define([], function () {
     /**
      * Heap
      */
-    JXG.Math.Heap = function () {
+    Mat.Heap = function () {
         this.pq = [];
         this.N = 0;
     };
@@ -486,18 +486,18 @@ define([], function () {
     /**
      * public
      */
-    JXG.Math.Heap.prototype.empty = function () {
+    Mat.Heap.prototype.empty = function () {
         this.pq = [];
         this.N = 0;
     };
 
-    JXG.Math.Heap.prototype.insert = function (v) {
+    Mat.Heap.prototype.insert = function (v) {
         this.pq[this.N] = v;
         this.N++;
         this.fixUp(this.N);
     };
 
-    JXG.Math.Heap.prototype.delmax = function () {
+    Mat.Heap.prototype.delmax = function () {
         this.exchange(0, this.N - 1);
         this.fixDown(0, this.N - 1);
         this.N--;
@@ -508,7 +508,7 @@ define([], function () {
     /**
      * private
      */
-    JXG.Math.Heap.prototype.fixUp = function (k) {
+    Mat.Heap.prototype.fixUp = function (k) {
         var i = k - 1;
 
         while (i > 0 && this.pq[Math.floor(i / 2)] < this.pq[i]) {
@@ -517,7 +517,7 @@ define([], function () {
         }
     };
 
-    JXG.Math.Heap.prototype.fixDown = function (k, N) {
+    Mat.Heap.prototype.fixDown = function (k, N) {
         var j, i = k;
         while (2 * i < N) {
             j = 2 * i;
@@ -535,11 +535,11 @@ define([], function () {
         }
     };
 
-    JXG.Math.Heap.prototype.exchange = function (i, j) {
+    Mat.Heap.prototype.exchange = function (i, j) {
         var t = this.pq[i];
         this.pq[i] = this.pq[j];
         this.pq[j] = t;
     };
 
-    return JXG.Math.BST;
+    return Mat.BST;
 });

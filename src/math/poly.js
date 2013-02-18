@@ -36,9 +36,7 @@
 /* depends:
  jxg
  math/math
- utils/array
  utils/type
- utils/object
  */
 
 /**
@@ -46,7 +44,7 @@
  * manipulate polynomials.
  */
 
-define([], function () {
+define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     "use strict";
 
@@ -54,14 +52,14 @@ define([], function () {
      * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
      * @namespace
      */
-    JXG.Math.Poly = {};
+    Mat.Poly = {};
 
     /**
      * Define a polynomial ring over R.
      * @class
      * @param {Array} variables List of indeterminates.
      */
-    JXG.Math.Poly.Ring = function (variables) {
+    Mat.Poly.Ring = function (variables) {
         /**
          * A list of variables in this polynomial ring.
          * @type Array
@@ -69,7 +67,7 @@ define([], function () {
         this.vars = variables;
     };
 
-    JXG.extend(JXG.Math.Poly.Ring.prototype, /** @lends JXG.Math.Poly.Ring.prototype */ {
+    JXG.extend(Mat.Poly.Ring.prototype, /** @lends JXG.Math.Poly.Ring.prototype */ {
         // nothing yet.
     });
 
@@ -81,14 +79,14 @@ define([], function () {
      * @param {Number} coefficient
      * @param {Array} exponents An array of exponents, corresponding to ring
      */
-    JXG.Math.Poly.Monomial = function (ring, coefficient, exponents) {
+    Mat.Poly.Monomial = function (ring, coefficient, exponents) {
         var i;
 
-        if (!JXG.exists(ring)) {
+        if (!Type.exists(ring)) {
             throw new Error('JSXGraph error: In JXG.Math.Poly.monomial missing parameter \'ring\'.');
         }
 
-        if (!JXG.isArray(exponents)) {
+        if (!Type.isArray(exponents)) {
             exponents = [];
         }
 
@@ -115,17 +113,17 @@ define([], function () {
          * in the ring definition.
          * @type Array
          */
-        this.exponents = JXG.deepCopy(exponents);
+        this.exponents = Type.deepCopy(exponents);
     };
 
-    JXG.extend(JXG.Math.Poly.Monomial.prototype, /** @lends JXG.Math.Poly.Monomial.prototype */ {
+    JXG.extend(Mat.Poly.Monomial.prototype, /** @lends JXG.Math.Poly.Monomial.prototype */ {
 
         /**
          * Creates a deep copy of the monomial.
          * @returns {JXG.Math.Poly.Monomial}
          */
         copy: function () {
-            return new JXG.Math.Poly.Monomial(this.ring, this.coefficient, this.exponents);
+            return new Mat.Poly.Monomial(this.ring, this.coefficient, this.exponents);
         },
 
         /**
@@ -151,17 +149,17 @@ define([], function () {
      * @param {JXG.Math.Poly.Ring} ring A polynomial ring.
      * @param {String} str TODO String representation of the polynomial, will be parsed.
      */
-    JXG.Math.Poly.Polynomial = function (ring, str) {
+    Mat.Poly.Polynomial = function (ring, str) {
         var parse = function () {
 
             },
             mons;
 
-        if (!JXG.exists(ring)) {
+        if (!Type.exists(ring)) {
             throw new Error('JSXGraph error: In JXG.Math.Poly.polynomial missing parameter \'ring\'.');
         }
 
-        if (JXG.exists(str) && typeof str === 'string') {
+        if (Type.exists(str) && typeof str === 'string') {
             mons = parse(str);
         } else {
             mons = [];
@@ -180,7 +178,7 @@ define([], function () {
         this.monomials = mons;
     };
 
-    JXG.extend(JXG.Math.Poly.Polynomial.prototype, /** @lends JXG.Math.Poly.Polynomial.prototype */ {
+    JXG.extend(Mat.Poly.Polynomial.prototype, /** @lends JXG.Math.Poly.Polynomial.prototype */ {
         /**
          * Find a monomial with the given signature, i.e. exponent vector.
          * @param {Array} sig An array of numbers
@@ -191,7 +189,7 @@ define([], function () {
             var i;
 
             for (i = 0; i < this.monomials.length; i++) {
-                if (JXG.cmpArrays(this.monomials[i].exponents, sig)) {
+                if (Type.cmpArrays(this.monomials[i].exponents, sig)) {
                     return i;
                 }
             }
@@ -225,8 +223,8 @@ define([], function () {
         add: function (mp) {
             var i;
 
-            if (JXG.exists(mp) && mp.ring === this.ring) {
-                if (JXG.isArray(mp.exponents)) {
+            if (Type.exists(mp) && mp.ring === this.ring) {
+                if (Type.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, 1);
                 } else {
@@ -248,8 +246,8 @@ define([], function () {
         sub: function (mp) {
             var i;
 
-            if (JXG.exists(mp) && mp.ring === this.ring) {
-                if (JXG.isArray(mp.exponents)) {
+            if (Type.exists(mp) && mp.ring === this.ring) {
+                if (Type.isArray(mp.exponents)) {
                     // mp is a monomial
                     this.addSubMonomial(mp, -1);
                 } else {
@@ -270,7 +268,7 @@ define([], function () {
         copy: function () {
             var i, p;
 
-            p = new JXG.Math.Poly.Polynomial(this.ring);
+            p = new Mat.Poly.Polynomial(this.ring);
 
             for (i = 0; i < this.monomials.length; i++) {
                 p.monomials.push(this.monomials[i].copy());
@@ -294,5 +292,5 @@ define([], function () {
         }
     });
 
-    return JXG.Math.Poly;
+    return Mat.Poly;
 });

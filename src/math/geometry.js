@@ -47,7 +47,9 @@
  * stuff like intersection points, angles, midpoint, and so on.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'utils/type'
+], function (JXG, Const, Coords, Mat, Numerics, Type) {
 
     "use strict";
 
@@ -55,12 +57,11 @@ define([], function () {
      * Math.Geometry namespace definition
      * @namespace
      */
-    JXG.Math.Geometry = {};
+    Mat.Geometry = {};
 
 // the splitting is necessary due to the shortcut for the circumcircleMidpoint method to circumcenter.
 
-    JXG.extend(JXG.Math.Geometry, /** @lends JXG.Math.Geometry */ {
-
+    JXG.extend(Mat.Geometry, /** @lends JXG.Math.Geometry */ {
         /****************************************/
         /**** GENERAL GEOMETRIC CALCULATIONS ****/
         /****************************************/
@@ -187,7 +188,7 @@ define([], function () {
                 y = Ac[2] - Bc[2],
                 d = Math.sqrt(x * x + y * y);
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = A.board;
             }
 
@@ -227,7 +228,7 @@ define([], function () {
             x = Math.cos(phi) + Bc[1];
             y = Math.sin(phi) + Bc[2];
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+            return new Coords(Const.COORDS_BY_USER, [x, y], board);
         },
 
         /**
@@ -244,7 +245,7 @@ define([], function () {
                 p1c = line.point1.coords.usrCoords,
                 p2c = line.point2.coords.usrCoords;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
@@ -260,7 +261,7 @@ define([], function () {
             x1 = pc[1] + 2 * mu * w;
             y1 = pc[2] - 2 * mu * v;
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [x1, y1], board);
+            return new Coords(Const.COORDS_BY_USER, [x1, y1], board);
         },
 
         /**
@@ -277,7 +278,7 @@ define([], function () {
                 pc = point.coords.usrCoords,
                 rotpc = rotpoint.coords.usrCoords;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
@@ -290,7 +291,7 @@ define([], function () {
             x1 = x0 * c - y0 * s + rotpc[1];
             y1 = x0 * s + y0 * c + rotpc[2];
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [x1, y1], board);
+            return new Coords(Const.COORDS_BY_USER, [x1, y1], board);
         },
 
         /**
@@ -308,7 +309,7 @@ define([], function () {
                 B = line.point2.coords.usrCoords,
                 C = point.coords.usrCoords;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
@@ -323,14 +324,14 @@ define([], function () {
                 y = B[2] - A[1] + B[1];
                 change = false;
             // special case: point lies somewhere else on the line
-            } else if (((Math.abs(A[1] - B[1]) > JXG.Math.eps) &&
-                    (Math.abs(C[2] - (A[2] - B[2]) * (C[1] - A[1]) / (A[1] - B[1]) - A[2]) < JXG.Math.eps)) ||
-                    ((Math.abs(A[1] - B[1]) <= JXG.Math.eps) && (Math.abs(A[1] - C[1]) < JXG.Math.eps))) {
+            } else if (((Math.abs(A[1] - B[1]) > Mat.eps) &&
+                    (Math.abs(C[2] - (A[2] - B[2]) * (C[1] - A[1]) / (A[1] - B[1]) - A[2]) < Mat.eps)) ||
+                    ((Math.abs(A[1] - B[1]) <= Mat.eps) && (Math.abs(A[1] - C[1]) < Mat.eps))) {
                 x = C[1] + B[2] - C[2];
                 y = C[2] - B[1] + C[1];
                 change = true;
 
-                if (Math.abs(x - C[1]) < JXG.Math.eps && Math.abs(y - C[2]) < JXG.Math.eps) {
+                if (Math.abs(x - C[1]) < Mat.eps && Math.abs(y - C[2]) < Mat.eps) {
                     x = C[1] + A[2] - C[2];
                     y = C[2] - A[1] + C[1];
                     change = false;
@@ -344,8 +345,8 @@ define([], function () {
                 d1 = C[1] * emc + C[2] * fmd;
                 den = fmd * fmd + emc * emc;
 
-                if (Math.abs(den) < JXG.Math.eps) {
-                    den = JXG.Math.eps;
+                if (Math.abs(den) < Mat.eps) {
+                    den = Mat.eps;
                 }
 
                 x = (d0 * fmd + d1 * emc) / den;
@@ -353,13 +354,13 @@ define([], function () {
                 change = true;
             }
 
-            return [new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board), change];
+            return [new Coords(Type.COORDS_BY_USER, [x, y], board), change];
         },
 
         /**
          * @deprecated Please use {@link JXG.Math.Geometry#circumcenter} instead.
          */
-        circumcenterMidpoint: JXG.shortcut(JXG.Math.Geometry, 'circumcenter'),
+        circumcenterMidpoint: JXG.shortcut(Mat.Geometry, 'circumcenter'),
 
         /**
          * Calculates the center of the circumcircle of the three given points.
@@ -375,19 +376,19 @@ define([], function () {
                 B = point2.coords.usrCoords,
                 C = point3.coords.usrCoords;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point1.board;
             }
 
             u = [B[0] - A[0], -B[2] + A[2], B[1] - A[1]];
             v = [(A[0] + B[0])  * 0.5, (A[1] + B[1]) * 0.5, (A[2] + B[2]) * 0.5];
-            m1 = JXG.Math.crossProduct(u, v);
+            m1 = Mat.crossProduct(u, v);
 
             u = [C[0] - B[0], -C[2] + B[2], C[1] - B[1]];
             v = [(B[0] + C[0]) * 0.5, (B[1] + C[1]) * 0.5, (B[2] + C[2]) * 0.5];
-            m2 = JXG.Math.crossProduct(u, v);
+            m2 = Mat.crossProduct(u, v);
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, JXG.Math.crossProduct(m1, m2), board);
+            return new Coords(Const.COORDS_BY_USER, Mat.crossProduct(m1, m2), board);
         },
 
         /**
@@ -426,7 +427,7 @@ define([], function () {
 
             d = this.distance(array1, array2, n);
 
-            if (d > JXG.Math.eps && (Math.abs(array1[0]) < JXG.Math.eps || Math.abs(array2[0]) < JXG.Math.eps)) {
+            if (d > Mat.eps && (Math.abs(array1[0]) < Mat.eps || Math.abs(array2[0]) < Mat.eps)) {
                 return Infinity;
             }
 
@@ -450,7 +451,7 @@ define([], function () {
             var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
                 c, s, i, j, p1, p2;
 
-            if (!JXG.exists(margin)) {
+            if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
                 // of thick lines in most cases.
                 margin = 10;
@@ -461,10 +462,10 @@ define([], function () {
 
             // If one of the point is an ideal point in homogeneous coordinates
             // drawing of line segments or rays are not possible.
-            if (Math.abs(point1.scrCoords[0]) < JXG.Math.eps) {
+            if (Math.abs(point1.scrCoords[0]) < Mat.eps) {
                 straightFirst = true;
             }
-            if (Math.abs(point2.scrCoords[0]) < JXG.Math.eps) {
+            if (Math.abs(point2.scrCoords[0]) < Mat.eps) {
                 straightLast = true;
             }
 
@@ -490,17 +491,17 @@ define([], function () {
             s = [];
 
             // top
-            s[0] = JXG.Math.crossProduct(c, [margin, 0, 1]);
+            s[0] = Mat.crossProduct(c, [margin, 0, 1]);
             // left
-            s[1] = JXG.Math.crossProduct(c, [margin, 1, 0]);
+            s[1] = Mat.crossProduct(c, [margin, 1, 0]);
             // bottom
-            s[2] = JXG.Math.crossProduct(c, [-margin - el.board.canvasHeight, 0, 1]);
+            s[2] = Mat.crossProduct(c, [-margin - el.board.canvasHeight, 0, 1]);
             // right
-            s[3] = JXG.Math.crossProduct(c, [-margin - el.board.canvasWidth, 1, 0]);
+            s[3] = Mat.crossProduct(c, [-margin - el.board.canvasWidth, 1, 0]);
 
             // Normalize the intersections
             for (i = 0; i < 4; i++) {
-                if (Math.abs(s[i][0]) > JXG.Math.eps) {
+                if (Math.abs(s[i][0]) > Mat.eps) {
                     for (j = 2; j > 0; j--) {
                         s[i][j] /= s[i][0];
                     }
@@ -513,22 +514,22 @@ define([], function () {
 
             // Line starts at point1 and point1 is inside the board
             takePoint1 = !straightFirst &&
-                Math.abs(point1.usrCoords[0]) >= JXG.Math.eps &&
+                Math.abs(point1.usrCoords[0]) >= Mat.eps &&
                 point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
                 point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight;
 
             // Line ends at point2 and point2 is inside the board
             takePoint2 = !straightLast &&
-                Math.abs(point2.usrCoords[0]) >= JXG.Math.eps &&
+                Math.abs(point2.usrCoords[0]) >= Mat.eps &&
                 point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
                 point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight;
 
             // line is parallel to "left", take "top" and "bottom"
-            if (Math.abs(s[1][0]) < JXG.Math.eps) {
+            if (Math.abs(s[1][0]) < Mat.eps) {
                 intersect1 = s[0];                          // top
                 intersect2 = s[2];                          // bottom
             // line is parallel to "top", take "left" and "right"
-            } else if (Math.abs(s[0][0]) < JXG.Math.eps) {
+            } else if (Math.abs(s[0][0]) < Mat.eps) {
                 intersect1 = s[1];                          // left
                 intersect2 = s[3];                          // right
             // left intersection out of board (above)
@@ -565,8 +566,8 @@ define([], function () {
                 }
             }
 
-            intersect1 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
-            intersect2 = new JXG.Coords(JXG.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
+            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
+            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
 
             /**
              * At this point we have four points:
@@ -627,11 +628,11 @@ define([], function () {
             }
 
             if (p1) {
-                point1.setCoordinates(JXG.COORDS_BY_USER, p1.usrCoords.slice(1));
+                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
             }
 
             if (p2) {
-                point2.setCoordinates(JXG.COORDS_BY_USER, p2.usrCoords.slice(1));
+                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
             }
         },
 
@@ -650,12 +651,12 @@ define([], function () {
                 dix = i2.usrCoords[1] - i1.usrCoords[1],
                 diy = i2.usrCoords[2] - i1.usrCoords[2];
 
-            if (Math.abs(p2.usrCoords[0]) < JXG.Math.eps) {
+            if (Math.abs(p2.usrCoords[0]) < Mat.eps) {
                 dpx = p2.usrCoords[1];
                 dpy = p2.usrCoords[2];
             }
 
-            if (Math.abs(p1.usrCoords[0]) < JXG.Math.eps) {
+            if (Math.abs(p1.usrCoords[0]) < Mat.eps) {
                 dpx = -p1.usrCoords[1];
                 dpy = -p1.usrCoords[2];
             }
@@ -679,19 +680,19 @@ define([], function () {
             sx = s.usrCoords[1] - start.usrCoords[1];
             sy = s.usrCoords[2] - start.usrCoords[2];
 
-            if (Math.abs(dx) < JXG.Math.eps) {
+            if (Math.abs(dx) < Mat.eps) {
                 dx = 0;
             }
 
-            if (Math.abs(dy) < JXG.Math.eps) {
+            if (Math.abs(dy) < Mat.eps) {
                 dy = 0;
             }
 
-            if (Math.abs(sx) < JXG.Math.eps) {
+            if (Math.abs(sx) < Mat.eps) {
                 sx = 0;
             }
 
-            if (Math.abs(sy) < JXG.Math.eps) {
+            if (Math.abs(sy) < Mat.eps) {
                 sy = 0;
             }
 
@@ -720,7 +721,7 @@ define([], function () {
          */
         meet: function (el1, el2, i, board) {
             var result,
-                eps = JXG.Math.eps;
+                eps = Mat.eps;
 
             // line line
             if (Math.abs(el1[3]) < eps && Math.abs(el2[3]) < eps) {
@@ -748,14 +749,14 @@ define([], function () {
          * @returns {JXG.Coords} Coordinates of the intersection point.
          */
         meetLineLine: function (l1, l2, i, board) {
-            var s = JXG.Math.crossProduct(l1, l2);
+            var s = Mat.crossProduct(l1, l2);
 
-            if (Math.abs(s[0]) > JXG.Math.eps) {
+            if (Math.abs(s[0]) > Mat.eps) {
                 s[1] /= s[0];
                 s[2] /= s[0];
                 s[0] = 1.0;
             }
-            return new JXG.Coords(JXG.COORDS_BY_USER, s, board);
+            return new Coords(Const.COORDS_BY_USER, s, board);
         },
 
         /**
@@ -773,12 +774,12 @@ define([], function () {
                 A, B, C, k, t;
 
             // Radius is zero, return center of circle
-            if (circ[4] < JXG.Math.eps) {
-                if (Math.abs(JXG.Math.innerProduct([1, circ[6], circ[7]], lin, 3)) < JXG.Math.eps) {
-                    return new JXG.Coords(JXG.COORDS_BY_USER, circ.slice(6, 8), board);
+            if (circ[4] < Mat.eps) {
+                if (Math.abs(Mat.innerProduct([1, circ[6], circ[7]], lin, 3)) < Mat.eps) {
+                    return new Coords(Const.COORDS_BY_USER, circ.slice(6, 8), board);
                 }
 
-                return new JXG.Coords(JXG.COORDS_BY_USER, [NaN, NaN], board);
+                return new Coords(Const.COORDS_BY_USER, [NaN, NaN], board);
             }
 
             c = circ[0];
@@ -804,12 +805,12 @@ define([], function () {
                 t = [(-B + k) / (2 * A), (-B - k) / (2 * A)];
 
                 return ((i === 0) ?
-                        new JXG.Coords(JXG.COORDS_BY_USER, [-t[0] * (-n[1]) - d * n[0], -t[0] * n[0] - d * n[1]], board) :
-                        new JXG.Coords(JXG.COORDS_BY_USER, [-t[1] * (-n[1]) - d * n[0], -t[1] * n[0] - d * n[1]], board)
+                        new Coords(Const.COORDS_BY_USER, [-t[0] * (-n[1]) - d * n[0], -t[0] * n[0] - d * n[1]], board) :
+                        new Coords(Const.COORDS_BY_USER, [-t[1] * (-n[1]) - d * n[0], -t[1] * n[0] - d * n[1]], board)
                     );
             }
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [0, 0, 0], board);
+            return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
         },
 
         /**
@@ -826,28 +827,28 @@ define([], function () {
             var radicalAxis;
 
             // Radius are zero, return center of circle, if on other circle
-            if (circ1[4] < JXG.Math.eps) {
-                if (Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) < JXG.Math.eps) {
-                    return new JXG.Coords(JXG.COORDS_BY_USER, circ1.slice(6, 8), board);
+            if (circ1[4] < Mat.eps) {
+                if (Math.abs(this.distance(circ1.slice(6, 2), circ2.slice(6, 8)) - circ2[4]) < Mat.eps) {
+                    return new Coords(Const.COORDS_BY_USER, circ1.slice(6, 8), board);
                 }
 
-                return new JXG.Coords(JXG.COORDS_BY_USER, [0, 0, 0], board);
+                return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
             // Radius are zero, return center of circle, if on other circle
-            if (circ2[4] < JXG.Math.eps) {
-                if (Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) < JXG.Math.eps) {
-                    return new JXG.Coords(JXG.COORDS_BY_USER, circ2.slice(6, 8), board);
+            if (circ2[4] < Mat.eps) {
+                if (Math.abs(this.distance(circ2.slice(6, 2), circ1.slice(6, 8)) - circ1[4]) < Mat.eps) {
+                    return new Coords(Const.COORDS_BY_USER, circ2.slice(6, 8), board);
                 }
 
-                return new JXG.Coords(JXG.COORDS_BY_USER, [0, 0, 0], board);
+                return new Coords(Const.COORDS_BY_USER, [0, 0, 0], board);
             }
 
             radicalAxis = [circ2[3] * circ1[0] - circ1[3] * circ2[0],
                 circ2[3] * circ1[1] - circ1[3] * circ2[1],
                 circ2[3] * circ1[2] - circ1[3] * circ2[2],
                 0, 1, Infinity, Infinity, Infinity];
-            radicalAxis = JXG.Math.normalize(radicalAxis);
+            radicalAxis = Mat.normalize(radicalAxis);
 
             return this.meetLineCircle(radicalAxis, circ1, i, board);
         },
@@ -896,7 +897,7 @@ define([], function () {
                 D10, D11,
                 count = 0;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = c1.board;
             }
 
@@ -912,12 +913,12 @@ define([], function () {
             f = c1.Y(t1) - c2.Y(t2);
             F = e * e + f * f;
 
-            D00 = JXG.Math.Numerics.D(c1.X, c1);
-            D01 = JXG.Math.Numerics.D(c2.X, c2);
-            D10 = JXG.Math.Numerics.D(c1.Y, c1);
-            D11 = JXG.Math.Numerics.D(c2.Y, c2);
+            D00 = Numerics.D(c1.X, c1);
+            D01 = Numerics.D(c2.X, c2);
+            D10 = Numerics.D(c1.Y, c1);
+            D11 = Numerics.D(c2.Y, c2);
 
-            while (F > JXG.Math.eps && count < 10) {
+            while (F > Mat.eps && count < 10) {
                 a = D00(t1);
                 b = -D01(t2);
                 c = D10(t1);
@@ -935,10 +936,10 @@ define([], function () {
             this.meetCurveCurve.t2memo = t2;
 
             if (Math.abs(t1) < Math.abs(t2)) {
-                return (new JXG.Coords(JXG.COORDS_BY_USER, [c1.X(t1), c1.Y(t1)], board));
+                return (new Coords(Const.COORDS_BY_USER, [c1.X(t1), c1.Y(t1)], board));
             }
 
-            return (new JXG.Coords(JXG.COORDS_BY_USER, [c2.X(t2), c2.Y(t2)], board));
+            return (new Coords(Const.COORDS_BY_USER, [c2.X(t2), c2.Y(t2)], board));
         },
 
         /**
@@ -955,11 +956,11 @@ define([], function () {
         meetCurveLine: function (el1, el2, nr, board, alwaysIntersect) {
             var v = [0, NaN, NaN], i, cu, li;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = el1.board;
             }
 
-            if (el1.elementClass === JXG.OBJECT_CLASS_CURVE) {
+            if (el1.elementClass === Const.OBJECT_CLASS_CURVE) {
                 cu = el1;
                 li = el2;
             } else {
@@ -998,11 +999,11 @@ define([], function () {
             // Find some intersection point
             if (this.meetCurveLineContinuous.t1memo) {
                 tstart = this.meetCurveLineContinuous.t1memo;
-                t = JXG.Math.Numerics.root(func, tstart);
+                t = Numerics.root(func, tstart);
             } else {
                 tstart = cu.minX();
                 tend = cu.maxX();
-                t = JXG.Math.Numerics.root(func, [tstart, tend]);
+                t = Numerics.root(func, [tstart, tend]);
             }
 
             this.meetCurveLineContinuous.t1memo = t;
@@ -1013,7 +1014,7 @@ define([], function () {
             if (nr === 1) {
                 if (this.meetCurveLineContinuous.t2memo) {
                     tstart = this.meetCurveLineContinuous.t2memo;
-                    t2 = JXG.Math.Numerics.root(func, tstart);
+                    t2 = Numerics.root(func, tstart);
                 }
 
                 if (!(Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1)) {
@@ -1022,7 +1023,7 @@ define([], function () {
                     tnew = cu.minX();
 
                     for (i = 0; i < steps; i++) {
-                        t2 = JXG.Math.Numerics.root(func, [tnew, tnew + delta]);
+                        t2 = Numerics.root(func, [tnew, tnew + delta]);
 
                         if (Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1) {
                             break;
@@ -1035,13 +1036,13 @@ define([], function () {
                 this.meetCurveLineContinuous.t2memo = t;
             }
 
-            if (Math.abs(func(t)) > JXG.Math.eps) {
+            if (Math.abs(func(t)) > Mat.eps) {
                 z = NaN;
             } else {
                 z = 1.0;
             }
 
-            return (new JXG.Coords(JXG.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
+            return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
         },
 
         /**
@@ -1061,7 +1062,7 @@ define([], function () {
                 len = cu.numberPoints;
 
             // In case, no intersection will be found we will take this
-            q = new JXG.Coords(JXG.COORDS_BY_USER, [0, NaN, NaN], board);
+            q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
 
             p2 = [1, cu.X(0), cu.Y(0)];
             for (i = 1; i < len; i++) {
@@ -1070,7 +1071,7 @@ define([], function () {
                 d = this.distance(p1, p2);
 
                 // The defining points are identical
-                if (d > JXG.Math.eps) {
+                if (d > Mat.eps) {
                     res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords);
                     if (0 <= res[1] && res[1] <= 1) {
                         if (cnt === nr) {
@@ -1085,7 +1086,7 @@ define([], function () {
                                 break;
                             }
 
-                            q = new JXG.Coords(JXG.COORDS_BY_USER, res[0], board);
+                            q = new Coords(Const.COORDS_BY_USER, res[0], board);
                             break;
                         }
                         cnt += 1;
@@ -1108,12 +1109,12 @@ define([], function () {
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
             var t, u, diff,
-                li1 = JXG.Math.crossProduct(p1, p2),
-                li2 = JXG.Math.crossProduct(q1, q2),
-                c = JXG.Math.crossProduct(li1, li2),
+                li1 = Mat.crossProduct(p1, p2),
+                li2 = Mat.crossProduct(q1, q2),
+                c = Mat.crossProduct(li1, li2),
                 denom = c[0];
 
-            if (Math.abs(denom) < JXG.Math.eps) {
+            if (Math.abs(denom) < Mat.eps) {
                 return [c, Infinity, Infinity];
             }
 
@@ -1143,29 +1144,29 @@ define([], function () {
             var dist, P, x, y, factor,
                 M = circle.center.coords.usrCoords;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
             // gave us a point
-            if (JXG.isPoint(point)) {
-                dist = point.coords.distance(JXG.COORDS_BY_USER, circle.center.coords);
+            if (Type.isPoint(point)) {
+                dist = point.coords.distance(Const.COORDS_BY_USER, circle.center.coords);
                 P = point.coords.usrCoords;
             // gave us coords
             } else {
-                dist = point.distance(JXG.COORDS_BY_USER, circle.center.coords);
+                dist = point.distance(Const.COORDS_BY_USER, circle.center.coords);
                 P = point.usrCoords;
             }
 
-            if (Math.abs(dist) < JXG.Math.eps) {
-                dist = JXG.Math.eps;
+            if (Math.abs(dist) < Mat.eps) {
+                dist = Mat.eps;
             }
 
             factor = circle.Radius() / dist;
             x = M[1] + factor * (P[1] - M[1]);
             y = M[2] + factor * (P[2] - M[2]);
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+            return new Coords(Const.COORDS_BY_USER, [x, y], board);
         },
 
         /**
@@ -1180,11 +1181,11 @@ define([], function () {
             // Homogeneous version
             var v = [0, line.stdform[1], line.stdform[2]];
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
-            v = JXG.Math.crossProduct(v, point.coords.usrCoords);
+            v = Mat.crossProduct(v, point.coords.usrCoords);
 
             return this.meetLineLine(v, line.stdform, 0, board);
         },
@@ -1208,12 +1209,12 @@ define([], function () {
              * If the segment has length 0, i.e. is a point,
              * the projection is equal to that point.
              */
-            if (Math.abs(s[0]) < JXG.Math.eps && Math.abs(s[1]) < JXG.Math.eps) {
+            if (Math.abs(s[0]) < Mat.eps && Math.abs(s[1]) < Mat.eps) {
                 return q1;
             }
 
-            t = JXG.Math.innerProduct(v, s);
-            denom = JXG.Math.innerProduct(s, s);
+            t = Mat.innerProduct(v, s);
+            denom = Mat.innerProduct(s, s);
             t /= denom;
 
             return [ [1, t * s[0] + q1[1], t * s[1] + q1[2]], t];
@@ -1229,7 +1230,7 @@ define([], function () {
          * @returns {JXG.Coords} The coordinates of the projection of the given point on the given graph.
          */
         projectPointToCurve: function (point, curve, board) {
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
@@ -1263,7 +1264,7 @@ define([], function () {
                 minfunc, tnew, fnew, fold, delta, steps,
                 infty = Number.POSITIVE_INFINITY;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = curve.board;
             }
 
@@ -1291,7 +1292,7 @@ define([], function () {
                     tnew += delta;
                 }
 
-                t = JXG.Math.Numerics.root(JXG.Math.Numerics.D(minfunc), t);
+                t = Numerics.root(Numerics.D(minfunc), t);
 
                 if (t < curve.minX()) {
                     t = curve.maxX() + t - curve.minX();
@@ -1302,7 +1303,7 @@ define([], function () {
                     t = curve.minX() + t - curve.maxX();
                 }
 
-                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
+                newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
             } else if (curve.visProp.curvetype === 'plot') {
                 t = 0;
                 mindist = infty;
@@ -1346,13 +1347,13 @@ define([], function () {
                     }
                 }
 
-                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, newCoords, board);
+                newCoords = new Coords(Const.COORDS_BY_USER, newCoords, board);
             // functiongraph
             } else {
                 t = x;
                 x = t;
                 y = curve.Y(t);
-                newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+                newCoords = new Coords(Const.COORDS_BY_USER, [x, y], board);
             }
 
             return [curve.updateTransform(newCoords), t];
@@ -1373,7 +1374,7 @@ define([], function () {
                 mindist = Number.POSITIVE_INFINITY,
                 len = turtle.objects.length;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = point.board;
             }
 
@@ -1381,7 +1382,7 @@ define([], function () {
             for (i = 0; i < len; i++) {
                 el = turtle.objects[i];
 
-                if (el.elementClass === JXG.OBJECT_CLASS_CURVE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                     newCoords = this.projectPointToCurve(point, el);
                     dist = this.distance(newCoords.usrCoords, point.coords.usrCoords);
 
@@ -1397,7 +1398,7 @@ define([], function () {
                 }
             }
 
-            newCoords = new JXG.Coords(JXG.COORDS_BY_USER, [x, y], board);
+            newCoords = new Coords(Const.COORDS_BY_USER, [x, y], board);
             point.position = t + npmin;
 
             return minEl.updateTransform(newCoords);
@@ -1426,7 +1427,7 @@ define([], function () {
                 c = line[0],
                 nom;
 
-            if (Math.abs(a) + Math.abs(b) < JXG.Math.eps) {
+            if (Math.abs(a) + Math.abs(b) < Mat.eps) {
                 return Number.POSITIVE_INFINITY;
             }
 
@@ -1475,7 +1476,7 @@ define([], function () {
 
                         if (!suspendUpdate) {
                             d = points[0].Dist(points[diag]);
-                            beta = JXG.Math.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[(diag) % nr]);
+                            beta = Mat.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[(diag) % nr]);
                         }
 
                         if (isNaN(j)) {
@@ -1492,5 +1493,5 @@ define([], function () {
         }
     });
 
-    return JXG.Math.Geometry;
+    return Mat.Geometry;
 });

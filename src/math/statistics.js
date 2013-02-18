@@ -39,7 +39,7 @@
  utils/type
  */
 
-define([], function () {
+define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     "use strict";
 
@@ -47,8 +47,7 @@ define([], function () {
      * Functions for mathematical statistics. Most functions are like in the statistics package R.
      * @namespace
      */
-    JXG.Math.Statistics = {
-
+    Mat.Statistics = {
         /**
          * Sums up all elements of the given array.
          * @param {Array} arr An array of numbers.
@@ -211,7 +210,7 @@ define([], function () {
         abs: function (arr) {
             var i, len, res;
 
-            if (JXG.isArray(arr)) {
+            if (Type.isArray(arr)) {
                 len = arr.length;
                 res = [];
 
@@ -236,19 +235,19 @@ define([], function () {
         add: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
+            if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1[i] + arr2;
                 }
-            } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
                 len = arr2.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1 + arr2[i];
                 }
-            } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
                 len = Math.min(arr1.length, arr2.length);
 
                 for (i = 0; i < len; i++) {
@@ -271,19 +270,19 @@ define([], function () {
         div: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
+            if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1[i] / arr2;
                 }
-            } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
                 len = arr2.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1 / arr2[i];
                 }
-            } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
                 len = Math.min(arr1.length, arr2.length);
 
                 for (i = 0; i < len; i++) {
@@ -300,7 +299,7 @@ define([], function () {
          * @function
          * @deprecated Use {@link JXG.Math.Statistics#div} instead.
          */
-        divide: JXG.shortcut(JXG.Math.Statistics, 'div'),
+        divide: JXG.shortcut(Mat.Statistics, 'div'),
 
         /**
          * Divides two (sequences of) values and returns the remainder. If two arrays are given and the lengths don't
@@ -315,25 +314,25 @@ define([], function () {
                 return a % m;
             };
 
-            math = JXG.def(math, false);
+            math = Type.def(math, false);
 
             if (math) {
-                mod = JXG.Math.mod;
+                mod = Mat.mod;
             }
 
-            if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
+            if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = mod(arr1[i], arr2);
                 }
-            } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
                 len = arr2.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = mod(arr1, arr2[i]);
                 }
-            } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
                 len = Math.min(arr1.length, arr2.length);
 
                 for (i = 0; i < len; i++) {
@@ -357,19 +356,19 @@ define([], function () {
         multiply: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
+            if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1[i] * arr2;
                 }
-            } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
                 len = arr2.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1 * arr2[i];
                 }
-            } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
                 len = Math.min(arr1.length, arr2.length);
 
                 for (i = 0; i < len; i++) {
@@ -392,19 +391,19 @@ define([], function () {
         subtract: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (JXG.isArray(arr1) && JXG.isNumber(arr2)) {
+            if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1[i] - arr2;
                 }
-            } else if (JXG.isNumber(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isNumber(arr1) && Type.isArray(arr2)) {
                 len = arr2.length;
 
                 for (i = 0; i < len; i++) {
                     res[i] = arr1 - arr2[i];
                 }
-            } else if (JXG.isArray(arr1) && JXG.isArray(arr2)) {
+            } else if (Type.isArray(arr1) && Type.isArray(arr2)) {
                 len = Math.min(arr1.length, arr2.length);
 
                 for (i = 0; i < len; i++) {
@@ -418,5 +417,5 @@ define([], function () {
         }
     };
 
-    return JXG.Math.Statistics;
+    return Mat.Statistics;
 });

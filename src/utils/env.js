@@ -44,9 +44,7 @@
  * the browser runs on is a tablet/cell or a desktop computer.
  */
 
-define([
-    'jxg', 'type'
-], function (JXG, Type) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 

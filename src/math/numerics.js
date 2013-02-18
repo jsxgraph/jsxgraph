@@ -34,8 +34,6 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
- jxg
- utils/array
  utils/type
  math/math
  */
@@ -46,7 +44,7 @@
  * @author graphjs
  */
 
-define([], function () {
+define(['utils/type', 'math/math'], function (Type, Mat) {
 
     "use strict";
 
@@ -86,8 +84,7 @@ define([], function () {
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
      * @namespace
      */
-    JXG.Math.Numerics = {
-
+    Mat.Numerics = {
         /**
          * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
          * The algorithm runs in-place. I.e. the entries of A and b are changed.
@@ -102,7 +99,7 @@ define([], function () {
                 Acopy,
                 // solution vector, to prevent changing b
                 x,
-                eps = JXG.Math.eps,
+                eps = Mat.eps,
                 // number of columns of A
                 n = A.length > 0 ? A[0].length : 0;
 
@@ -126,8 +123,8 @@ define([], function () {
                         // Equals pivot element zero?
                         if (Math.abs(Acopy[j][j]) < eps) {
                             // At least numerically, so we have to exchange the rows
-                            JXG.swap(Acopy, i, j);
-                            JXG.swap(x, i, j);
+                            Type.swap(Acopy, i, j);
+                            Type.swap(x, i, j);
                         } else {
                             // Saves the L matrix of the LR-decomposition. unnecessary.
                             Acopy[i][j] /= Acopy[j][j];
@@ -193,7 +190,7 @@ define([], function () {
          */
         gaussBareiss: function (mat) {
             var k, c, s, i, j, p, n, M, t,
-                eps = JXG.Math.eps;
+                eps = Mat.eps;
 
             n = mat.length;
 
@@ -280,7 +277,7 @@ define([], function () {
          */
         Jacobi: function (Ain) {
             var i, j, k, aa, si, co, tt, ssum, amax,
-                eps = JXG.Math.eps,
+                eps = Mat.eps,
                 sum = 0.0,
                 n = Ain.length,
                 V = [
@@ -491,12 +488,12 @@ define([], function () {
         Newton: function (f, x, context) {
             var df,
                 i = 0,
-                h = JXG.Math.eps,
+                h = Mat.eps,
                 newf = f.apply(context, [x]),
                 nfev = 1;
 
             // For compatibility
-            if (JXG.isArray(x)) {
+            if (Type.isArray(x)) {
                 x = x[0];
             }
 
@@ -544,7 +541,7 @@ define([], function () {
                 makeFct = function (fun) {
                     return function (t, suspendedUpdate) {
                         var i, d, s,
-                            bin = JXG.Math.binomial,
+                            bin = Mat.binomial,
                             len = p.length,
                             len1 = len - 1,
                             num = 0.0,
@@ -666,7 +663,7 @@ define([], function () {
                 y0 = [];
 
             // number of points to be evaluated
-            if (JXG.isArray(x0)) {
+            if (Type.isArray(x0)) {
                 l = x0.length;
                 asArray = true;
             } else {
@@ -887,15 +884,15 @@ define([], function () {
                 term = '';
 
             // Slider
-            if (JXG.isPoint(degree) && typeof degree.Value === 'function') {
+            if (Type.isPoint(degree) && typeof degree.Value === 'function') {
                 deg = function () {
                     return degree.Value();
                 };
             // function
-            } else if (JXG.isFunction(degree)) {
+            } else if (Type.isFunction(degree)) {
                 deg = degree;
             // number
-            } else if (JXG.isNumber(degree)) {
+            } else if (Type.isNumber(degree)) {
                 deg = function () {
                     return degree;
                 };
@@ -904,12 +901,12 @@ define([], function () {
             }
 
             // Parameters degree, dataX, dataY
-            if (arguments.length === 3 && JXG.isArray(dataX) && JXG.isArray(dataY)) {
+            if (arguments.length === 3 && Type.isArray(dataX) && Type.isArray(dataY)) {
                 inputType = 0;
             // Parameters degree, point array
-            } else if (arguments.length === 2 && JXG.isArray(dataX) && dataX.length > 0 && JXG.isPoint(dataX[0])) {
+            } else if (arguments.length === 2 && Type.isArray(dataX) && dataX.length > 0 && Type.isPoint(dataX[0])) {
                 inputType = 1;
-            } else if (arguments.length === 2 && JXG.isArray(dataX) && dataX.length > 0 && dataX[0].usrCoords && dataX[0].scrCoords) {
+            } else if (arguments.length === 2 && Type.isArray(dataX) && dataX.length > 0 && dataX[0].usrCoords && dataX[0].scrCoords) {
                 inputType = 2;
             } else {
                 throw new Error("JSXGraph: Can't create regressionPolynomial. Wrong parameters.");
@@ -950,13 +947,13 @@ define([], function () {
                         dY = [];
 
                         for (i = 0; i < len; i++) {
-                            if (JXG.isFunction(dataX[i])) {
+                            if (Type.isFunction(dataX[i])) {
                                 dX.push(dataX[i]());
                             } else {
                                 dX.push(dataX[i]);
                             }
 
-                            if (JXG.isFunction(dataY[i])) {
+                            if (Type.isFunction(dataY[i])) {
                                 dY.push(dataY[i]());
                             } else {
                                 dY.push(dataY[i]);
@@ -977,11 +974,11 @@ define([], function () {
                     }
 
                     y = dY;
-                    MT = JXG.Math.transpose(M);
-                    B = JXG.Math.matMatMult(MT, M);
-                    c = JXG.Math.matVecMult(MT, y);
-                    coeffs = JXG.Math.Numerics.Gauss(B, c);
-                    term = JXG.Math.Numerics.generatePolynomialTerm(coeffs, d, 'x', 3);
+                    MT = Mat.transpose(M);
+                    B = Mat.matMatMult(MT, M);
+                    c = Mat.matVecMult(MT, y);
+                    coeffs = Mat.Numerics.Gauss(B, c);
+                    term = Mat.Numerics.generatePolynomialTerm(coeffs, d, 'x', 3);
                 }
 
                 // Horner's scheme to evaluate polynomial
@@ -1169,7 +1166,7 @@ define([], function () {
             var h = 0.00001,
                 h2 = 1.0 / (h * 2.0);
 
-            if (!JXG.exists(obj)) {
+            if (!Type.exists(obj)) {
                 return function (x, suspendUpdate) {
                     return (f(x + h, suspendUpdate) - f(x - h, suspendUpdate)) * h2;
                 };
@@ -1397,7 +1394,7 @@ define([], function () {
                 result = [],
                 r = 0;
 
-            if (JXG.isString(butcher)) {
+            if (Type.isString(butcher)) {
                 butcher = predefinedButcher[butcher] || predefinedButcher.euler;
             }
             s = butcher.s;
@@ -1505,12 +1502,12 @@ define([], function () {
                 p, q,
                 // Step at this iteration
                 new_step,
-                eps = JXG.Math.eps,
+                eps = Mat.eps,
                 maxiter = this.maxIterationsRoot,
                 niter = 0,
                 nfev = 0;
 
-            if (JXG.isArray(x0)) {
+            if (Type.isArray(x0)) {
                 if (x0.length < 2) {
                     throw new Error("JXG.Math.Numerics.fzero: length of array x0 has to be at least two.");
                 }
@@ -1558,7 +1555,7 @@ define([], function () {
 
             if (fa * fb > 0) {
                 // Bracketing not successful, fall back to Newton's method or to fminbr
-                if (JXG.isArray(x0)) {
+                if (Type.isArray(x0)) {
                     return this.fminbr(f, [a, b], object);
                 }
 
@@ -1678,13 +1675,13 @@ define([], function () {
                 p, q, t, ft,
                 // Golden section ratio
                 r = (3.0 - Math.sqrt(5.0)) * 0.5,
-                tol = JXG.Math.eps,
-                sqrteps = Math.sqrt(JXG.Math.eps),
+                tol = Mat.eps,
+                sqrteps = Math.sqrt(Mat.eps),
                 maxiter = this.maxIterationsMinimize,
                 niter = 0,
                 nfev = 0;
 
-            if (!JXG.isArray(x0) || x0.length < 2) {
+            if (!Type.isArray(x0) || x0.length < 2) {
                 throw new Error("JXG.Math.Numerics.fminbr: length of array x0 has to be at least two.");
             }
 
@@ -1846,7 +1843,7 @@ define([], function () {
                         y1 = cj[2] - ci[2];
                         den = x1 * x1 + y1 * y1;
 
-                        if (den >= JXG.Math.eps) {
+                        if (den >= Mat.eps) {
                             lbda = (x0 * x1 + y0 * y1) / den;
 
                             if (lbda < 0.0) {
@@ -1920,5 +1917,5 @@ define([], function () {
         }
     };
 
-    return JXG.Math.Numerics;
+    return Mat.Numerics;
 });

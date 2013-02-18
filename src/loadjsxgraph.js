@@ -85,6 +85,7 @@ var JXG = {},
             deps = [];
         }
 
+        window.wait = waitlist;
         console.log('define', new Error().stack.split('\n').splice(2, 1).join(''));
 
         if (factory === undef) {
@@ -221,7 +222,7 @@ var JXG = {},
         'utils/env': checkJXG,
         'utils/event': makeCheck('EventEmitter'),
         'utils/type': checkJXG,
-        'utils/uuid': makeCheck('Util.genUUID'),
+        'utils/uuid': makeCheck('Util'),
         'utils/xml': makeCheck('XML'),
         'utils/zip': makeCheck('Util.Unzip')
     };

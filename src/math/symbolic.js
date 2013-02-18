@@ -49,7 +49,9 @@
  * @author graphjs
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/geometry', 'server/server', 'utils/type'
+], function (JXG, Const, Coords, Mat, Geometry, Server, Type) {
 
     "use strict";
 
@@ -59,7 +61,7 @@ define([], function () {
      * The JXG.Math.Symbolic namespace holds algorithms for symbolic computations.
      * @namespace
      */
-    JXG.Math.Symbolic = {
+    Mat.Symbolic = {
         /**
          * Generates symbolic coordinates for the part of a construction including all the elements from that
          * a specific element depends of. These coordinates will be stored in GeometryElement.symbolic.
@@ -95,7 +97,7 @@ define([], function () {
                 if (list.hasOwnProperty(t)) {
                     t_num = 0;
 
-                    if (JXG.isPoint(list[t])) {
+                    if (Type.isPoint(list[t])) {
                         for (k in list[t].ancestors) {
                             if (list[t].ancestors.hasOwnProperty(k)) {
                                 t_num++;
@@ -118,7 +120,7 @@ define([], function () {
                 }
             }
 
-            if (JXG.isPoint(element)) {
+            if (Type.isPoint(element)) {
                 element.symbolic.x = 'x';
                 element.symbolic.y = 'y';
             }
@@ -135,7 +137,7 @@ define([], function () {
                     var t, l = (list && list.length) || 0;
 
                     for (t = 0; t < l; t++) {
-                        if (JXG.isPoint(list[t])) {
+                        if (Type.isPoint(list[t])) {
                             list[t].symbolic.x = '';
                             list[t].symbolic.y = '';
                         }
@@ -175,7 +177,7 @@ define([], function () {
                     number_of_ancestors = 0;
                     pgs = [];
 
-                    if (JXG.isPoint(list[t])) {
+                    if (Type.isPoint(list[t])) {
                         for (k in list[t].ancestors) {
                             if (list[t].ancestors.hasOwnProperty(k)) {
                                 number_of_ancestors++;
@@ -213,15 +215,15 @@ define([], function () {
                 bol = board.options.locus,
                 oldRadius = {},
                 numDependent = this.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace'),
-                xsye = new JXG.Coords(JXG.COORDS_BY_USR, [0, 0], board),
-                xeys = new JXG.Coords(JXG.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
+                xsye = new Coords(Const.COORDS_BY_USR, [0, 0], board),
+                xeys = new Coords(Const.COORDS_BY_USR, [board.canvasWidth, board.canvasHeight], board),
                 sf = 1, transx = 0, transy = 0, rot = 0;
 
-            if (JXG.Server.modules.geoloci === undef) {
-                JXG.Server.loadModule('geoloci');
+            if (Server.modules.geoloci === undef) {
+                Server.loadModule('geoloci');
             }
 
-            if (JXG.Server.modules.geoloci === undef) {
+            if (Server.modules.geoloci === undef) {
                 throw new Error("JSXGraph: Unable to load JXG.Server module 'geoloci.py'.");
             }
 
@@ -241,7 +243,7 @@ define([], function () {
 
             // Step 1
             if (bol.translateToOrigin && (board.listOfFreePoints.length > 0)) {
-                if ((bol.toOrigin !== undef) && (bol.toOrigin !== null) && JXG.isInArray(board.listOfFreePoints, bol.toOrigin.id)) {
+                if ((bol.toOrigin !== undef) && (bol.toOrigin !== null) && Type.isInArray(board.listOfFreePoints, bol.toOrigin.id)) {
                     P1 = bol.toOrigin;
                 } else {
                     P1 = board.listOfFreePoints[0];
@@ -262,7 +264,7 @@ define([], function () {
 
                 // Step 2
                 if (bol.translateTo10 && (board.listOfFreePoints.length > 1)) {
-                    if ((bol.to10 !== undef) && (bol.to10 !== null) && (bol.to10.id !== bol.toOrigin.id) && JXG.isInArray(board.listOfFreePoints, bol.to10.id)) {
+                    if ((bol.to10 !== undef) && (bol.to10 !== null) && (bol.to10.id !== bol.toOrigin.id) && Type.isInArray(board.listOfFreePoints, bol.to10.id)) {
                         P2 = bol.to10;
                     } else {
                         if (board.listOfFreePoints[0].id === P1.id) {
@@ -272,7 +274,7 @@ define([], function () {
                         }
                     }
 
-                    rot = JXG.Math.Geometry.rad([1, 0], [0, 0], [P2.symbolic.x, P2.symbolic.y]);
+                    rot = Geometry.rad([1, 0], [0, 0], [P2.symbolic.x, P2.symbolic.y]);
                     c = Math.cos(-rot);
                     s = Math.sin(-rot);
 
@@ -294,7 +296,7 @@ define([], function () {
                     ye = s * tx + c * ye;
 
                     // Step 3
-                    if (bol.stretch && (Math.abs(P2.symbolic.x) > JXG.Math.eps)) {
+                    if (bol.stretch && (Math.abs(P2.symbolic.x) > Mat.eps)) {
                         sf = P2.symbolic.x;
 
                         for (i = 0; i < board.listOfFreePoints.length; i++) {
@@ -303,7 +305,7 @@ define([], function () {
                         }
 
                         for (i = 0; i < board.objectsList.length; i++) {
-                            if ((board.objectsList[i].elementClass === JXG.OBJECT_CLASS_CIRCLE) && (board.objectsList[i].method === 'pointRadius')) {
+                            if ((board.objectsList[i].elementClass === Const.OBJECT_CLASS_CIRCLE) && (board.objectsList[i].method === 'pointRadius')) {
                                 oldRadius[i] = board.objectsList[i].radius;
                                 board.objectsList[i].radius /= sf;
                             }
@@ -323,21 +325,21 @@ define([], function () {
                 for (i = 0; i < board.listOfFreePoints.length; i++) {
                     tx = board.listOfFreePoints[i].symbolic.x;
 
-                    if (Math.abs(tx) < JXG.Math.eps) {
+                    if (Math.abs(tx) < Mat.eps) {
                         board.listOfFreePoints[i].symbolic.x = 0;
                     }
 
-                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps) {
+                    if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
                         board.listOfFreePoints[i].symbolic.x = Math.round(tx);
                     }
 
                     tx = board.listOfFreePoints[i].symbolic.y;
 
-                    if (Math.abs(tx) < JXG.Math.eps) {
+                    if (Math.abs(tx) < Mat.eps) {
                         board.listOfFreePoints[i].symbolic.y = 0;
                     }
 
-                    if (Math.abs(tx - Math.round(tx)) < JXG.Math.eps) {
+                    if (Math.abs(tx - Math.round(tx)) < Mat.eps) {
                         board.listOfFreePoints[i].symbolic.y = Math.round(tx);
                     }
                 }
@@ -352,9 +354,9 @@ define([], function () {
                 result = data;
             };
 
-            this.cb = JXG.bind(this.cbp, this);
+            this.cb = Type.bind(this.cbp, this);
 
-            JXG.Server.modules.geoloci.lociCoCoA(xs, xe, ys, ye, numDependent, polyStr, sf, rot, transx, transy, this.cb, true);
+            Server.modules.geoloci.lociCoCoA(xs, xe, ys, ye, numDependent, polyStr, sf, rot, transx, transy, this.cb, true);
 
             this.clearSymbolicCoordinates(board);
 
@@ -369,5 +371,5 @@ define([], function () {
         }
     };
 
-    return JXG.Math.Symbolic;
+    return Mat.Symbolic;
 });

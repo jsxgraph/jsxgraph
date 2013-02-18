@@ -43,7 +43,7 @@
  * @author graphjs
  */
 
-define([], function () {
+define(['jxg'], function (JXG) {
 
     "use strict";
 

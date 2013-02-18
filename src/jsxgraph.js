@@ -55,9 +55,10 @@
  * @version 0.97
  */
 
-define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base/board', 'reader/file', 'options',
-    'renderer/svg', 'renderer/vml', 'renderer/canvas', 'renderer/no'], function (JXG, Env, Type, Obj, Browser, Board,
-    FileReader, Options, SVGRenderer, VMLRenderer, CanvasRenderer, NoRenderer) {
+define([
+    'jxg', 'utils/env', 'utils/type', 'base/board', 'reader/file', 'options',
+    'renderer/svg', 'renderer/vml', 'renderer/canvas', 'renderer/no'
+], function (JXG, Env, Type, Board, FileReader, Options, SVGRenderer, VMLRenderer, CanvasRenderer, NoRenderer) {
 
     "use strict";
 
@@ -164,13 +165,13 @@ define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base
                 bbox, attr, axattr,
                 board;
 
-            dimensions = Browser.getDimensions(box);
+            dimensions = Env.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = Obj.copyAttributes(attributes, Options, 'board');
-            attr.zoom = Obj.copyAttributes(attr, Options, 'board', 'zoom');
-            attr.pan = Obj.copyAttributes(attr, Options, 'board', 'pan');
+            attr = Type.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
+            attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
 
             if (attr.unitx || attr.unity) {
                 originX = Type.def(attr.originx, 150);
@@ -256,13 +257,13 @@ define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base
             var attr, renderer, board, dimensions;
 
             renderer = this.initRenderer(box);
-            dimensions = Browser.getDimensions(box);
+            dimensions = Env.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = Obj.copyAttributes(attributes, Options, 'board');
-            attr.zoom = Obj.copyAttributes(attributes, Options, 'board', 'zoom');
-            attr.pan = Obj.copyAttributes(attributes, Options, 'board', 'pan');
+            attr = Type.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
+            attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
@@ -296,13 +297,13 @@ define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base
             var attr, renderer, dimensions, board;
 
             renderer = this.initRenderer(box);
-            dimensions = Browser.getDimensions(box);
+            dimensions = Env.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
-            attr = Obj.copyAttributes(attributes, Options, 'board');
-            attr.zoom = Obj.copyAttributes(attributes, Options, 'board', 'zoom');
-            attr.pan = Obj.copyAttributes(attributes, Options, 'board', 'pan');
+            attr = Type.copyAttributes(attributes, Options, 'board');
+            attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
+            attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
@@ -383,7 +384,7 @@ define(['jxg', 'utils/env', 'utils/type', 'utils/object', 'utils/browser', 'base
 
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
     if (typeof window === 'object' && typeof document === 'object') {
-        Browser.addEvent(window, 'load', function () {
+        Env.addEvent(window, 'load', function () {
             var scripts = document.getElementsByTagName('script'), type,
                 i, j, div, id, board, width, height, bbox, axis, grid, code;
 
