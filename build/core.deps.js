@@ -32,6 +32,7 @@ define([
     'element/sector',
     'base/composition',
     'element/composition',
+    'element/locus',
     'base/text',
     'base/image',
     'element/slider',
