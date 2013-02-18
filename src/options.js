@@ -41,7 +41,9 @@
  utils/type
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'math/math', 'utils/color', 'utils/type'
+], function (JXG, Const, Mat, Color, Type) {
 
     "use strict";
 
@@ -1641,13 +1643,13 @@ define([], function () {
             },
             validateColor = function (v) {
                 // for now this should do it...
-                return JXG.isString(v);
+                return Type.isString(v);
             },
             validatePointFace = function (v) {
-                return JXG.exists(JXG.normalizePointFace(v));
+                return Type.exists(JXG.normalizePointFace(v));
             },
             validateInteger = function (v) {
-                return (Math.abs(v - Math.round(v)) < JXG.Math.eps);
+                return (Math.abs(v - Math.round(v)) < Mat.eps);
             },
             validatePositiveInteger = function (v) {
                 return validateInteger(v) && v > 0;
@@ -1668,26 +1670,26 @@ define([], function () {
             validators = {
                 attractorDistance: validateNotNegative,
                 color: validateColor,
-                defaultDistance: JXG.isNumber,
+                defaultDistance: Type.isNumber,
                 display: validateDisplay,
                 doAdvancedPlot: false,
                 draft: false,
                 drawLabels: false,
                 drawZero: false,
                 face: validatePointFace,
-                factor: JXG.isNumber,
+                factor: Type.isNumber,
                 fillColor: validateColor,
-                fillOpacity: JXG.isNumber,
+                fillOpacity: Type.isNumber,
                 firstArrow: false,
                 fontSize: validateInteger,
                 dash: validateInteger,
-                gridX: JXG.isNumber,
-                gridY: JXG.isNumber,
+                gridX: Type.isNumber,
+                gridY: Type.isNumber,
                 hasGrid: false,
                 highlightFillColor: validateColor,
-                highlightFillOpacity: JXG.isNumber,
+                highlightFillOpacity: Type.isNumber,
                 highlightStrokeColor: validateColor,
-                highlightStrokeOpacity: JXG.isNumber,
+                highlightStrokeOpacity: Type.isNumber,
                 insertTicks: false,
                 //: validateScreenCoords,
                 lastArrow: false,
@@ -1698,8 +1700,8 @@ define([], function () {
                 minTicksDistance: validatePositiveInteger,
                 numberPointsHigh: validatePositiveInteger,
                 numberPointsLow: validatePositiveInteger,
-                opacity: JXG.isNumber,
-                radius: JXG.isNumber,
+                opacity: Type.isNumber,
+                radius: Type.isNumber,
                 RDPsmoothing: false,
                 renderer: validateRenderer,
                 right: validatePixel,
@@ -1709,14 +1711,14 @@ define([], function () {
                 size: validateInteger,
                 snapSizeX: validatePositive,
                 snapSizeY: validatePositive,
-                snapWidth: JXG.isNumber,
+                snapWidth: Type.isNumber,
                 snapToGrid: false,
                 snatchDistance: validateNotNegative,
                 straightFirst: false,
                 straightLast: false,
                 stretch: false,
                 strokeColor: validateColor,
-                strokeOpacity: JXG.isNumber,
+                strokeOpacity: Type.isNumber,
                 strokeWidth: validateInteger,
                 takeFirst: false,
                 takeSizeFromFile: false,
@@ -1821,9 +1823,9 @@ define([], function () {
         for (el in board.objects) {
             if (board.objects.hasOwnProperty(el)) {
                 p = board.objects[el];
-                if (p.elementClass === JXG.OBJECT_CLASS_POINT) {
+                if (p.elementClass === Const.OBJECT_CLASS_POINT) {
                     copyProps(p, o.point);
-                } else if (p.elementClass === JXG.OBJECT_CLASS_LINE) {
+                } else if (p.elementClass === Const.OBJECT_CLASS_LINE) {
                     copyProps(p, o.line);
 
                     for (t = 0; t < p.ticks.length; t++) {
@@ -1832,19 +1834,19 @@ define([], function () {
                         p.ticks[t].visProp.minorheight = o.line.ticks.minorHeight;
                         p.ticks[t].visProp.majorheight = o.line.ticks.majorHeight;
                     }
-                } else if (p.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                } else if (p.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                     copyProps(p, o.circle);
-                } else if (p.type === JXG.OBJECT_TYPE_ANGLE) {
+                } else if (p.type === Const.OBJECT_TYPE_ANGLE) {
                     copyProps(p, o.angle);
-                } else if (p.type === JXG.OBJECT_TYPE_ARC) {
+                } else if (p.type === Const.OBJECT_TYPE_ARC) {
                     copyProps(p, o.arc);
-                } else if (p.type === JXG.OBJECT_TYPE_POLYGON) {
+                } else if (p.type === Const.OBJECT_TYPE_POLYGON) {
                     copyProps(p, o.polygon);
-                } else if (p.type === JXG.OBJECT_TYPE_CONIC) {
+                } else if (p.type === Const.OBJECT_TYPE_CONIC) {
                     copyProps(p, o.conic);
-                } else if (p.type === JXG.OBJECT_TYPE_CURVE) {
+                } else if (p.type === Const.OBJECT_TYPE_CURVE) {
                     copyProps(p, o.curve);
-                } else if (p.type === JXG.OBJECT_TYPE_SECTOR) {
+                } else if (p.type === Const.OBJECT_TYPE_SECTOR) {
                     p.arc.visProp.fillcolor = o.sector.fillColor;
                     p.arc.visProp.highlightfillcolor = o.sector.highlightFillColor;
                     p.arc.visProp.fillopacity = o.sector.fillOpacity;
@@ -1868,34 +1870,34 @@ define([], function () {
      */
     JXG.useBlackWhiteOptions = function (board) {
         var o = JXG.Options;
-        o.point.fillColor = JXG.rgb2bw(o.point.fillColor);
-        o.point.highlightFillColor = JXG.rgb2bw(o.point.highlightFillColor);
-        o.point.strokeColor = JXG.rgb2bw(o.point.strokeColor);
-        o.point.highlightStrokeColor = JXG.rgb2bw(o.point.highlightStrokeColor);
+        o.point.fillColor = Color.rgb2bw(o.point.fillColor);
+        o.point.highlightFillColor = Color.rgb2bw(o.point.highlightFillColor);
+        o.point.strokeColor = Color.rgb2bw(o.point.strokeColor);
+        o.point.highlightStrokeColor = Color.rgb2bw(o.point.highlightStrokeColor);
 
-        o.line.fillColor = JXG.rgb2bw(o.line.fillColor);
-        o.line.highlightFillColor = JXG.rgb2bw(o.line.highlightFillColor);
-        o.line.strokeColor = JXG.rgb2bw(o.line.strokeColor);
-        o.line.highlightStrokeColor = JXG.rgb2bw(o.line.highlightStrokeColor);
+        o.line.fillColor = Color.rgb2bw(o.line.fillColor);
+        o.line.highlightFillColor = Color.rgb2bw(o.line.highlightFillColor);
+        o.line.strokeColor = Color.rgb2bw(o.line.strokeColor);
+        o.line.highlightStrokeColor = Color.rgb2bw(o.line.highlightStrokeColor);
 
-        o.circle.fillColor = JXG.rgb2bw(o.circle.fillColor);
-        o.circle.highlightFillColor = JXG.rgb2bw(o.circle.highlightFillColor);
-        o.circle.strokeColor = JXG.rgb2bw(o.circle.strokeColor);
-        o.circle.highlightStrokeColor = JXG.rgb2bw(o.circle.highlightStrokeColor);
+        o.circle.fillColor = Color.rgb2bw(o.circle.fillColor);
+        o.circle.highlightFillColor = Color.rgb2bw(o.circle.highlightFillColor);
+        o.circle.strokeColor = Color.rgb2bw(o.circle.strokeColor);
+        o.circle.highlightStrokeColor = Color.rgb2bw(o.circle.highlightStrokeColor);
 
-        o.arc.fillColor = JXG.rgb2bw(o.arc.fillColor);
-        o.arc.highlightFillColor = JXG.rgb2bw(o.arc.highlightFillColor);
-        o.arc.strokeColor = JXG.rgb2bw(o.arc.strokeColor);
-        o.arc.highlightStrokeColor = JXG.rgb2bw(o.arc.highlightStrokeColor);
+        o.arc.fillColor = Color.rgb2bw(o.arc.fillColor);
+        o.arc.highlightFillColor = Color.rgb2bw(o.arc.highlightFillColor);
+        o.arc.strokeColor = Color.rgb2bw(o.arc.strokeColor);
+        o.arc.highlightStrokeColor = Color.rgb2bw(o.arc.highlightStrokeColor);
 
-        o.polygon.fillColor = JXG.rgb2bw(o.polygon.fillColor);
-        o.polygon.highlightFillColor  = JXG.rgb2bw(o.polygon.highlightFillColor);
+        o.polygon.fillColor = Color.rgb2bw(o.polygon.fillColor);
+        o.polygon.highlightFillColor  = Color.rgb2bw(o.polygon.highlightFillColor);
 
-        o.sector.fillColor = JXG.rgb2bw(o.sector.fillColor);
-        o.sector.highlightFillColor  = JXG.rgb2bw(o.sector.highlightFillColor);
+        o.sector.fillColor = Color.rgb2bw(o.sector.fillColor);
+        o.sector.highlightFillColor  = Color.rgb2bw(o.sector.highlightFillColor);
 
-        o.curve.strokeColor = JXG.rgb2bw(o.curve.strokeColor);
-        o.grid.gridColor = JXG.rgb2bw(o.grid.gridColor);
+        o.curve.strokeColor = Color.rgb2bw(o.curve.strokeColor);
+        o.grid.gridColor = Color.rgb2bw(o.grid.gridColor);
 
         JXG.useStandardOptions(board);
     };

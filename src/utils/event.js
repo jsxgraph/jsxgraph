@@ -35,7 +35,6 @@
 
 /* depends:
  jxg
- utils/array
  utils/type
  */
 
@@ -43,7 +42,7 @@
  * @fileoverview In this file the EventEmitter interface is defined.
  */
 
-define([], function () {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -98,11 +97,11 @@ define([], function () {
          * @returns Reference to the object.
          */
         on: function (event, handler, context) {
-            if (!JXG.isArray(this.eventHandlers[event])) {
+            if (!Type.isArray(this.eventHandlers[event])) {
                 this.eventHandlers[event] = [];
             }
 
-            context = JXG.def(context, this);
+            context = Type.def(context, this);
 
             this.eventHandlers[event].push({
                 handler: handler,
@@ -123,12 +122,12 @@ define([], function () {
         off: function (event, handler) {
             var i;
 
-            if (!event || !JXG.isArray(this.eventHandlers[event])) {
+            if (!event || !Type.isArray(this.eventHandlers[event])) {
                 return this;
             }
 
             if (handler) {
-                i = JXG.indexOf(this.eventHandlers[event], handler, 'handler');
+                i = Type.indexOf(this.eventHandlers[event], handler, 'handler');
                 if (i > -1) {
                     this.eventHandlers[event].splice(i, 1);
                 }

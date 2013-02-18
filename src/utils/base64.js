@@ -12,7 +12,7 @@
  utils/encoding
  */
 
-define([], function () {
+define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
     "use strict";
 
@@ -27,7 +27,7 @@ define([], function () {
                 output = [],
                 i = 0;
 
-            input = JXG.Util.UTF8.encode(input);
+            input = Encoding.encode(input);
 
             while (i < input.length) {
                 chr1 = input.charCodeAt(i++);
@@ -91,7 +91,7 @@ define([], function () {
             output = output.join('');
 
             if (utf8) {
-                output = JXG.Util.UTF8.decode(output);
+                output = Encoding.decode(output);
             }
 
             return output;

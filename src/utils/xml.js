@@ -38,7 +38,7 @@
  utils/type
  */
 
-define([], function () {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -54,7 +54,7 @@ define([], function () {
         cleanWhitespace: function (el) {
             var cur = el.firstChild;
 
-            while (JXG.exists(cur)) {
+            while (Type.exists(cur)) {
                 if (cur.nodeType === 3 && !/\S/.test(cur.nodeValue)) {
                     el.removeChild(cur);
                 } else if (cur.nodeType === 1) {

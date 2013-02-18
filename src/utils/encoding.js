@@ -5,7 +5,7 @@
  jxg
  */
 
-define([], function () {
+define(['jxg'], function (JXG) {
 
     "use strict";
 

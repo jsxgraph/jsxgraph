@@ -36,14 +36,13 @@
 /* depends:
  jxg
  utils/type
- utils/object
  */
 
 /**
  * @fileoverview The JXG.Dump namespace provides methods to save a board to javascript.
  */
 
-define([], function () {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -57,16 +56,16 @@ define([], function () {
          * Adds markers to every element of the board
          * @param {JXG.Board} board
          * @param {Array|String} markers
-         * @param {Array|%} values
+         * @param {Array} values
          */
         addMarkers: function (board, markers, values) {
             var e, l, i;
 
-            if (!JXG.isArray(markers)) {
+            if (!Type.isArray(markers)) {
                 markers = [markers];
             }
 
-            if (!JXG.isArray(values)) {
+            if (!Type.isArray(values)) {
                 values = [values];
             }
 
@@ -92,7 +91,7 @@ define([], function () {
         deleteMarkers: function (board, markers) {
             var e, l, i;
 
-            if (!JXG.isArray(markers)) {
+            if (!Type.isArray(markers)) {
                 markers = [markers];
             }
 
@@ -130,7 +129,7 @@ define([], function () {
          * @returns {Object} Minimal attributes object
          */
         minimizeObject: function (instance, s) {
-            var p, pl, copy = JXG.deepCopy(instance),
+            var p, pl, copy = Type.deepCopy(instance),
                 defaults = [], i;
 
             for (i = 1; i < arguments.length; i++) {
@@ -231,7 +230,7 @@ define([], function () {
                 if (obj) {
                     list = [];
 
-                    if (JXG.isArray(obj)) {
+                    if (Type.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
                             list.push(this.toJSAN(obj[i]));
                         }
@@ -268,7 +267,7 @@ define([], function () {
                 elements = this.dump(board),
                 script = [];
 
-            script.push('$board.setView(' + JXG.toJSON(board.getBoundingBox()) + ');');
+            script.push('$board.setView(' + Type.toJSON(board.getBoundingBox()) + ');');
 
             for (i = 0; i < elements.length; i++) {
                 if (elements[i].attributes.name.length > 0) {
@@ -292,10 +291,10 @@ define([], function () {
                 elements = this.dump(board),
                 script = [];
 
-            script.push('board.setBoundingBox(' + JXG.toJSON(board.getBoundingBox()) + ');');
+            script.push('board.setBoundingBox(' + Type.toJSON(board.getBoundingBox()) + ');');
 
             for (i = 0; i < elements.length; i++) {
-                script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + JXG.toJSON(elements[i].attributes) + ');');
+                script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + Type.toJSON(elements[i].attributes) + ');');
             }
 
             return script.join('\n');

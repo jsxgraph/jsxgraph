@@ -36,6 +36,7 @@
 
 /* depends:
  jxg
+ utils/type
  math/math
  */
 
@@ -44,7 +45,7 @@
  * Stoyan Stefanov <sstoo@gmail.com> (see http://www.phpied.com/rgb-color-parser-in-javascript/)
  */
 
-define([], function () {
+define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
     "use strict";
 
@@ -258,17 +259,17 @@ define([], function () {
             values = color,
             testFloat = false;
 
-        if (!JXG.exists(color)) {
+        if (!Type.exists(color)) {
             return [];
         }
 
-        if (JXG.exists(ag) && JXG.exists(ab)) {
+        if (Type.exists(ag) && Type.exists(ab)) {
             values = [color, ag, ab];
         }
 
         color_string = values;
 
-        if (JXG.isArray(color_string)) {
+        if (Type.isArray(color_string)) {
             for (i = 0; i < 3; i++) {
                 testFloat = testFloat || /\./.test(values[i].toString());
             }
@@ -409,7 +410,7 @@ define([], function () {
         H = ((H % 360.0) + 360.0) % 360;
 
         if (S === 0) {
-            if (isNaN(H) || H < JXG.Math.eps) {
+            if (isNaN(H) || H < Mat.eps) {
                 R = V;
                 G = V;
                 B = V;

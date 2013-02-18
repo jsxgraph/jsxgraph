@@ -41,7 +41,7 @@
  * @fileoverview Utilities for uncompressing and base64 decoding
  */
 
-define([], function () {
+define(['jxg'], function (JXG) {
 
     "use strict";
 
