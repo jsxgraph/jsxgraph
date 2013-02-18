@@ -359,16 +359,15 @@ define([
          * @returns {Array}
          */
         uniqueArray: function (arr) {
-            var i, j, isArray,
-                ret = [];
+            var i, j, isArray, ret = [];
 
             if (arr.length === 0) {
                 return [];
             }
 
-            isArray = JXG.isArray(arr[0]);
-
             for (i = 0; i < arr.length; i++) {
+                isArray = JXG.isArray(arr[i]);
+
                 for (j = i + 1; j < arr.length; j++) {
                     if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
                         arr[i] = [];
@@ -381,6 +380,8 @@ define([
             j = 0;
 
             for (i = 0; i < arr.length; i++) {
+                isArray = JXG.isArray(arr[i]);
+
                 if (!isArray && arr[i] !== '') {
                     ret[j] = arr[i];
                     j += 1;
@@ -390,6 +391,7 @@ define([
                 }
             }
 
+            arr = ret;
             return ret;
         },
 
@@ -723,7 +725,7 @@ define([
             noquote = JXG.def(noquote, false);
 
             // check for native JSON support:
-            if (window.JSON && window.JSON.stringify && !noquote) {
+            if (typeof JSON && JSON.stringify && !noquote) {
                 try {
                     s = JSON.stringify(obj);
                     return s;
