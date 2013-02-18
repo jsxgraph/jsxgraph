@@ -76,8 +76,9 @@ var JXG = {},
             };
         };
 
-    define = function (deps, factory) {
+    define = function (deps, factory, file) {
         var i, oldlength, undef,
+            filename = file || new Error().stack.split('\n').splice(2, 1).join(''),
             resDeps = [],
             inc = true;
 
@@ -86,7 +87,7 @@ var JXG = {},
         }
 
         window.wait = waitlist;
-        console.log('define', new Error().stack.split('\n').splice(2, 1).join(''));
+        console.log('define', filename);
 
         if (factory === undef) {
             factory = function () {};
@@ -104,7 +105,7 @@ var JXG = {},
         if (inc) {
             factory.apply(this, resDeps);
         } else if (checkwaitlist) {
-            waitlist.push([deps, factory]);
+            waitlist.push([deps, factory, filename]);
         }
 
         if (checkwaitlist) {
@@ -190,7 +191,7 @@ var JXG = {},
         'element/triangle': checkJXG,
 
         'math/bst': makeCheck('Math.BST'),
-        'math/complex': makeCheck('Math.Complex'),
+        'math/complex': makeCheck('Complex'),
         'math/geometry': makeCheck('Math.Geometry'),
         'math/math': makeCheck('Math'),
         'math/numerics': makeCheck('Math.Numerics'),

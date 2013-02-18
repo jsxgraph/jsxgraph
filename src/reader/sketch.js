@@ -38,14 +38,11 @@
  base/constants
  math/math
  options
- utils/object
- utils/array
  utils/zip
  utils/encoding
  utils/base64
  utils/uuid
  utils/type
- utils/string
  */
 
 (function () {

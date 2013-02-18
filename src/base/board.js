@@ -49,10 +49,6 @@
  utils/type
  utils/event
  utils/env
- utils/object
- utils/string
- utils/number
- utils/browser
   elements:
    transform
    point
@@ -68,7 +64,12 @@
  * @version 0.1
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'options', 'math/numerics', 'math/math', 'math/geometry', 'math/complex',
+    'parser/jessiecode', 'parser/geonext', 'utils/color', 'utils/type', 'utils/event', 'utils/env', 'base/transformation',
+    'base/point', 'base/line', 'base/text', 'element/composition'
+], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, JessieCode, GeonextParser, Color, Type,
+                EventEmitter, Env, Transform, Point, Line, Text, Composition) {
 
     'use strict';
 
@@ -153,9 +154,9 @@ define([], function () {
          * Pointer to the html element containing the board.
          * @type Object
          */
-        this.containerObj = (JXG.isBrowser ? document.getElementById(this.container) : null);
+        this.containerObj = (Env.isBrowser ? document.getElementById(this.container) : null);
 
-        if (JXG.isBrowser && this.containerObj === null) {
+        if (Env.isBrowser && this.containerObj === null) {
             throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
         }
 
@@ -174,7 +175,7 @@ define([], function () {
          * Some standard options
          * @type JXG.Options
          */
-        this.options = JXG.deepCopy(JXG.Options);
+        this.options = Type.deepCopy(Options);
         this.attr = attributes;
 
         /**
@@ -184,7 +185,7 @@ define([], function () {
          */
         this.dimension = 2;
 
-        this.jc = new JXG.JessieCode();
+        this.jc = new JessieCode();
         this.jc.use(this);
 
         /**
@@ -236,13 +237,13 @@ define([], function () {
         this.canvasHeight = canvasHeight;
 
         // If the given id is not valid, generate an unique id
-        if (JXG.exists(id) && id !== '' && JXG.isBrowser && !JXG.exists(document.getElementById(id))) {
+        if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(document.getElementById(id))) {
             this.id = id;
         } else {
             this.id = this.generateId();
         }
 
-        JXG.EventEmitter.eventify(this);
+        EventEmitter.eventify(this);
 
         this.hooks = [];
 
@@ -393,7 +394,7 @@ define([], function () {
         this.downObjects = [];
 
         if (this.attr.showcopyright) {
-            this.renderer.displayCopyright(JXG.licenseText, parseInt(this.options.text.fontSize, 10));
+            this.renderer.displayCopyright(Const.licenseText, parseInt(this.options.text.fontSize, 10));
         }
 
         /**
@@ -511,15 +512,15 @@ define([], function () {
                 indices = [],
                 name = '';
 
-            if (object.type === JXG.OBJECT_TYPE_TICKS) {
+            if (object.type === Const.OBJECT_TYPE_TICKS) {
                 return '';
             }
 
-            if (object.elementClass === JXG.OBJECT_CLASS_POINT) {
+            if (object.elementClass === Const.OBJECT_CLASS_POINT) {
                 // points have capital letters
                 possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-            } else if (object.type === JXG.OBJECT_TYPE_ANGLE) {
+            } else if (object.type === Const.OBJECT_TYPE_ANGLE) {
                 possibleNames = ['', '&alpha;', '&beta;', '&gamma;', '&delta;', '&epsilon;', '&zeta;', '&eta;', '&theta;',
                     '&iota;', '&kappa;', '&lambda;', '&mu;', '&nu;', '&xi;', '&omicron;', '&pi;', '&rho;',
                     '&sigma;', '&tau;', '&upsilon;', '&phi;', '&chi;', '&psi;', '&omega;'];
@@ -529,14 +530,14 @@ define([], function () {
                     'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
             }
 
-            if (object.elementClass !== JXG.OBJECT_CLASS_POINT &&
-                    object.elementClass !== JXG.OBJECT_CLASS_LINE &&
-                    object.type !== JXG.OBJECT_TYPE_ANGLE) {
-                if (object.type === JXG.OBJECT_TYPE_POLYGON) {
+            if (object.elementClass !== Const.OBJECT_CLASS_POINT &&
+                    object.elementClass !== Const.OBJECT_CLASS_LINE &&
+                    object.type !== Const.OBJECT_TYPE_ANGLE) {
+                if (object.type === Const.OBJECT_TYPE_POLYGON) {
                     pre = 'P_{';
-                } else if (object.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                } else if (object.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                     pre = 'k_{';
-                } else if (object.type === JXG.OBJECT_TYPE_TEXT) {
+                } else if (object.type === Const.OBJECT_TYPE_TEXT) {
                     pre = 't_{';
                 } else {
                     pre = 's_{';
@@ -556,7 +557,7 @@ define([], function () {
                         name += possibleNames[indices[i - 1]];
                     }
 
-                    if (!JXG.exists(this.elementsByName[name + post])) {
+                    if (!Type.exists(this.elementsByName[name + post])) {
                         return name + post;
                     }
 
@@ -582,7 +583,7 @@ define([], function () {
             var r = 1;
 
             // as long as we don't have a unique id generate a new one
-            while (JXG.exists(JXG.boards['jxgBoard' + r])) {
+            while (Type.exists(JXG.boards['jxgBoard' + r])) {
                 r = Math.round(Math.random() * 65535);
             }
 
@@ -604,7 +605,7 @@ define([], function () {
             this.numObjects += 1;
 
             // Falls Id nicht vorgegeben, eine Neue generieren:
-            if (elId === '' || !JXG.exists(elId)) {
+            if (elId === '' || !Type.exists(elId)) {
                 elId = this.id + type + num;
             }
 
@@ -645,14 +646,14 @@ define([], function () {
          */
         getCoordsTopLeftCorner: function () {
             var pCont = this.containerObj,
-                cPos = JXG.getOffset(pCont),
+                cPos = Env.getOffset(pCont),
                 doc = document.documentElement.ownerDocument,
                 getProp = function (css) {
-                    var n = parseInt(JXG.getStyle(pCont, css), 10);
+                    var n = parseInt(Env.getStyle(pCont, css), 10);
                     return isNaN(n) ? 0 : n;
                 };
 
-            if (this.cPos.length > 0 && (this.mode === JXG.BOARD_MODE_DRAG || this.mode === JXG.BOARD_MODE_MOVE_ORIGIN)) {
+            if (this.cPos.length > 0 && (this.mode === Const.BOARD_MODE_DRAG || this.mode === Const.BOARD_MODE_MOVE_ORIGIN)) {
                 return this.cPos;
             }
 
@@ -721,22 +722,22 @@ define([], function () {
 
             // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
             // Seems to be obsolete now
-            //if (JXG.isWebkitAndroid()) {
+            //if (Env.isWebkitAndroid()) {
             //    cPos[0] -= document.body.scrollLeft;
             //    cPos[1] -= document.body.scrollTop;
             //}
 
             // position of mouse cursor relative to containers position of container
-            absPos = JXG.getPosition(e, i);
+            absPos = Env.getPosition(e, i);
 
             /**
              * In case there has been no down event before.
              */
-            if (!JXG.exists(this.cssTransMat)) {
+            if (!Type.exists(this.cssTransMat)) {
                 this.updateCSSTransforms();
             }
             v = [1, absPos[0] - cPos[0], absPos[1] - cPos[1]];
-            v = JXG.Math.matVecMult(this.cssTransMat, v);
+            v = Mat.matVecMult(this.cssTransMat, v);
             v[1] /= v[0];
             v[2] /= v[0];
             return [v[1], v[2]];
@@ -782,7 +783,7 @@ define([], function () {
                     this.downObjects.push(pEl);
                 }
                 if (((this.geonextCompatibilityMode &&
-                        (pEl.elementClass === JXG.OBJECT_CLASS_POINT || pEl.type === JXG.OBJECT_TYPE_TEXT)) ||
+                        (pEl.elementClass === Const.OBJECT_CLASS_POINT || pEl.type === Const.OBJECT_TYPE_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
@@ -795,7 +796,7 @@ define([], function () {
                         // this only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!JXG.exists(dragEl.label) || pEl !== dragEl.label.content) {
+                        if (!Type.exists(dragEl.label) || pEl !== dragEl.label.content) {
                             dragEl = pEl;
                             collect[0] = dragEl;
 
@@ -828,13 +829,13 @@ define([], function () {
          * @param {String} type Mouse or touch event?
          */
         moveObject: function (x, y, o, evt, type) {
-            var newPos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
+            var newPos = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
                 drag = o.obj,
                 oldCoords;
 
-            if (drag.type !== JXG.OBJECT_TYPE_GLIDER) {
+            if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
-                    drag.setPositionDirectly(JXG.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
+                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
                 }
                 // Remember the actual position for the next move event. Then we are able to
                 // compute the difference vector.
@@ -842,20 +843,20 @@ define([], function () {
                 o.targets[0].Yprev = newPos.scrCoords[2];
                 //this.update(drag);
                 drag.prepareUpdate().update(false).updateRenderer();
-            } else if (drag.type === JXG.OBJECT_TYPE_GLIDER) {
+            } else if (drag.type === Const.OBJECT_TYPE_GLIDER) {
                 oldCoords = drag.coords;  // Used in group mode
 
                 // First the new position of the glider is set to the new mouse position
-                drag.setPositionDirectly(JXG.COORDS_BY_USER, newPos.usrCoords.slice(1));
+                drag.setPositionDirectly(Const.COORDS_BY_USER, newPos.usrCoords.slice(1));
 
                 // Now, we have to adjust the other group elements again.
                 if (drag.group.length !== 0) {
                     // Then, from this position we compute the projection to the object the glider on which the glider lives.
                     // Do we really need this?
-                    if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
-                        drag.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToCircle(drag, drag.slideObject, this).usrCoords, false);
-                    } else if (drag.slideObject.elementClass === JXG.OBJECT_CLASS_LINE) {
-                        drag.coords.setCoordinates(JXG.COORDS_BY_USER, JXG.Math.Geometry.projectPointToLine(drag, drag.slideObject, this).usrCoords, false);
+                    if (drag.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                        drag.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(drag, drag.slideObject, this).usrCoords, false);
+                    } else if (drag.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {
+                        drag.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(drag, drag.slideObject, this).usrCoords, false);
                     }
 
                     drag.group[drag.group.length - 1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
@@ -887,20 +888,20 @@ define([], function () {
         twoFingerMove: function (p1, p2, o, evt) {
             var np1c, np2c, drag;
 
-            if (JXG.exists(o) && JXG.exists(o.obj)) {
+            if (Type.exists(o) && Type.exists(o.obj)) {
                 drag = o.obj;
             } else {
                 return;
             }
 
             // New finger position
-            np1c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
-            np2c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
+            np1c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p1[0], p1[1]), this);
+            np2c = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(p2[0], p2[1]), this);
 
-            if (drag.elementClass === JXG.OBJECT_CLASS_LINE ||
-                    drag.type === JXG.OBJECT_TYPE_POLYGON) {
+            if (drag.elementClass === Const.OBJECT_CLASS_LINE ||
+                    drag.type === Const.OBJECT_TYPE_POLYGON) {
                 this.twoFingerTouchObject(np1c, np2c, o, drag);
-            } else if (drag.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+            } else if (drag.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 this.twoFingerTouchCircle(np1c, np2c, o, drag);
             }
             drag.triggerEventHandlers(['touchdrag', 'drag'], [evt]);
@@ -924,58 +925,58 @@ define([], function () {
                 d,
                 S, alpha, t1, t2, t3, t4, t5;
 
-            if (JXG.exists(o.targets[0]) &&
-                    JXG.exists(o.targets[1]) &&
+            if (Type.exists(o.targets[0]) &&
+                    Type.exists(o.targets[1]) &&
                     !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
                 np1 = np1c.usrCoords;
                 np2 = np2c.usrCoords;
                 // Previous finger position
-                op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
-                op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
+                op1 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
+                op2 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
 
                 // Affine mid points of the old and new positions
                 omid = [1, (op1[1] + op2[1]) * 0.5, (op1[2] + op2[2]) * 0.5];
                 nmid = [1, (np1[1] + np2[1]) * 0.5, (np1[2] + np2[2]) * 0.5];
 
                 // Old and new directions
-                od = JXG.Math.crossProduct(op1, op2);
-                nd = JXG.Math.crossProduct(np1, np2);
-                S = JXG.Math.crossProduct(od, nd);
+                od = Mat.crossProduct(op1, op2);
+                nd = Mat.crossProduct(np1, np2);
+                S = Mat.crossProduct(od, nd);
 
                 // If parallel, translate otherwise rotate
-                if (Math.abs(S[0]) < JXG.Math.eps) {
+                if (Math.abs(S[0]) < Mat.eps) {
                     return;
                 }
 
                 S[1] /= S[0];
                 S[2] /= S[0];
-                alpha = JXG.Math.Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
+                alpha = Geometry.rad(omid.slice(1), S.slice(1), nmid.slice(1));
                 t1 = this.create('transform', [alpha, S[1], S[2]], {type: 'rotate'});
 
                 // Old midpoint of fingers after first transformation:
                 t1.update();
-                omid = JXG.Math.matVecMult(t1.matrix, omid);
+                omid = Mat.matVecMult(t1.matrix, omid);
                 omid[1] /= omid[0];
                 omid[2] /= omid[0];
 
                 // Shift to the new mid point
                 t2 = this.create('transform', [nmid[1] - omid[1], nmid[2] - omid[2]], {type: 'translate'});
                 t2.update();
-                //omid = JXG.Math.matVecMult(t2.matrix, omid);
+                //omid = Mat.matVecMult(t2.matrix, omid);
 
                 t1.melt(t2);
                 if (drag.visProp.scalable) {
                     // Scale
-                    d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+                    d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
                     t4 = this.create('transform', [d, d], {type: 'scale'});
                     t5 = this.create('transform', [nmid[1], nmid[2]], {type: 'translate'});
                     t1.melt(t3).melt(t4).melt(t5);
                 }
 
-                if (drag.elementClass === JXG.OBJECT_CLASS_LINE) {
+                if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
                     t1.applyOnce([drag.point1, drag.point2]);
-                } else if (drag.type === JXG.OBJECT_TYPE_POLYGON) {
+                } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
                     t1.applyOnce(drag.vertices.slice(0, -1));
                 }
 
@@ -1000,19 +1001,19 @@ define([], function () {
                 return;
             }
 
-            if (JXG.exists(o.targets[0]) &&
-                    JXG.exists(o.targets[1]) &&
+            if (Type.exists(o.targets[0]) &&
+                    Type.exists(o.targets[1]) &&
                     !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
 
                 np1 = np1c.usrCoords;
                 np2 = np2c.usrCoords;
                 // Previous finger position
-                op1 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
-                op2 = (new JXG.Coords(JXG.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
+                op1 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[0].Xprev, o.targets[0].Yprev], this)).usrCoords;
+                op2 = (new Coords(Const.COORDS_BY_SCREEN, [o.targets[1].Xprev, o.targets[1].Yprev], this)).usrCoords;
 
                 // Shift by the movement of the first finger
                 t1 = this.create('transform', [np1[1] - op1[1], np1[2] - op1[2]], {type: 'translate'});
-                alpha = JXG.Math.Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
+                alpha = Geometry.rad(op2.slice(1), np1.slice(1), np2.slice(1));
 
                 // Rotate and scale by the movement of the second finger
                 t2 = this.create('transform', [-np1[1], -np1[2]], {type: 'translate'});
@@ -1020,7 +1021,7 @@ define([], function () {
                 t1.melt(t2).melt(t3);
 
                 if (drag.visProp.scalable) {
-                    d = JXG.Math.Geometry.distance(np1, np2) / JXG.Math.Geometry.distance(op1, op2);
+                    d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t4 = this.create('transform', [d, d], {type: 'scale'});
                     t1.melt(t4);
                 }
@@ -1032,7 +1033,7 @@ define([], function () {
                 if (drag.method === 'twoPoints') {
                     t1.applyOnce([drag.point2]);
                 } else if (drag.method === 'pointRadius') {
-                    if (JXG.isNumber(drag.updateRadius.origin)) {
+                    if (Type.isNumber(drag.updateRadius.origin)) {
                         drag.setRadius(drag.radius * d);
                     }
                 }
@@ -1048,11 +1049,11 @@ define([], function () {
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pId = pEl.id;
-                if (pEl.visProp.highlight && JXG.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+                if (pEl.visProp.highlight && Type.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                     // this is required in any case because otherwise the box won't be shown until the point is dragged
                     this.updateInfobox(pEl);
 
-                    if (!JXG.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
+                    if (!Type.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
                         this.highlightedObjects[pId] = pEl;
                         pEl.highlight();
                         this.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
@@ -1089,19 +1090,19 @@ define([], function () {
         saveStartPos: function (obj, targets) {
             var xy = [], i, len;
 
-            if (obj.elementClass === JXG.OBJECT_CLASS_LINE) {
+            if (obj.elementClass === Const.OBJECT_CLASS_LINE) {
                 xy.push(obj.point1.coords.usrCoords);
                 xy.push(obj.point2.coords.usrCoords);
-            } else if (obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 xy.push(obj.center.coords.usrCoords);
-            } else if (obj.type === JXG.OBJECT_TYPE_GLIDER) {
+            } else if (obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push([obj.position, obj.position, obj.position]);
-            } else if (obj.type === JXG.OBJECT_TYPE_POLYGON) {
+            } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
                 len = obj.vertices.length - 1;
                 for (i = 0; i < len; i++) {
                     xy.push(obj.vertices[i].coords.usrCoords);
                 }
-            } else if (obj.elementClass === JXG.OBJECT_CLASS_POINT) {
+            } else if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
                 xy.push(obj.coords.usrCoords);
             } else {
                 try {
@@ -1145,7 +1146,7 @@ define([], function () {
 
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
-                twoFingersCondition = (touches.length === 2 && JXG.Math.Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
+                twoFingersCondition = (touches.length === 2 && Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
                 r = this.attr.pan.enabled && (!this.attr.pan.needtwofingers || twoFingersCondition),
                 pos;
 
@@ -1183,7 +1184,7 @@ define([], function () {
          *  Add all possible event handlers to the board object
          */
         addEventHandlers: function () {
-            if (JXG.supportsPointerEvents()) {
+            if (Env.supportsPointerEvents()) {
                 this.addPointerEventHandlers();
             } else {
                 this.addMouseEventHandlers();
@@ -1192,31 +1193,31 @@ define([], function () {
         },
 
         addPointerEventHandlers: function () {
-            if (!this.hasPointerHandlers && JXG.isBrowser) {
-                JXG.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                JXG.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+            if (!this.hasPointerHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
 
                 this.hasPointerHandlers = true;
             }
         },
 
         addMouseEventHandlers: function () {
-            if (!this.hasMouseHandlers && JXG.isBrowser) {
-                JXG.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                JXG.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+            if (!this.hasMouseHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.addEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
-                JXG.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                JXG.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 this.hasMouseHandlers = true;
 
                 // This one produces errors on IE
-                //   JXG.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+                //   Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
 
                 // This one works on IE, Firefox and Chromium with default configurations. On some Safari
                 // or Opera versions the user must explicitly allow the deactivation of the context menu.
                 this.containerObj.oncontextmenu = function (e) {
-                    if (JXG.exists(e)) {
+                    if (Type.exists(e)) {
                         e.preventDefault();
                     }
 
@@ -1226,24 +1227,24 @@ define([], function () {
         },
 
         addTouchEventHandlers: function () {
-            if (!this.hasTouchHandlers && JXG.isBrowser) {
-                JXG.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                JXG.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+            if (!this.hasTouchHandlers && Env.isBrowser) {
+                Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
-                JXG.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                JXG.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+                Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
                 this.hasTouchHandlers = true;
             }
         },
 
         removePointerEventHandlers: function () {
-            if (this.hasPointerHandlers && JXG.isBrowser) {
-                JXG.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                JXG.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+            if (this.hasPointerHandlers && Env.isBrowser) {
+                Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
 
                 if (this.hasPointerUp) {
-                    JXG.removeEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.removeEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
                 }
 
                 this.hasPointerHandlers = false;
@@ -1251,34 +1252,34 @@ define([], function () {
         },
 
         removeMouseEventHandlers: function () {
-            if (this.hasMouseHandlers && JXG.isBrowser) {
-                JXG.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
-                JXG.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
+            if (this.hasMouseHandlers && Env.isBrowser) {
+                Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
+                Env.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
                 if (this.hasMouseUp) {
-                    JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+                    Env.removeEvent(document, 'mouseup', this.mouseUpListener, this);
                     this.hasMouseUp = false;
                 }
 
-                JXG.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
-                JXG.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 this.hasMouseHandlers = false;
             }
         },
 
         removeTouchEventHandlers: function () {
-            if (this.hasTouchHandlers && JXG.isBrowser) {
-                JXG.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
-                JXG.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
+            if (this.hasTouchHandlers && Env.isBrowser) {
+                Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
+                Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
-                    JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+                    Env.removeEvent(document, 'touchend', this.touchEndListener, this);
                     this.hasTouchEnd = false;
                 }
 
-                JXG.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                JXG.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+                Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
 
                 this.hasTouchHandlers = false;
             }
@@ -1342,7 +1343,7 @@ define([], function () {
             evt.preventDefault();
 
             if (this.mode === this.BOARD_MODE_NONE) {
-                c = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+                c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
                 this.attr.zoom.factorx = evt.scale / this.prevScale;
                 this.attr.zoom.factory = evt.scale / this.prevScale;
@@ -1389,7 +1390,7 @@ define([], function () {
                 found, target, result;
 
             if (!this.hasPointerUp) {
-                JXG.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
                 this.hasPointerUp = true;
             }
 
@@ -1611,7 +1612,7 @@ define([], function () {
             }
 
             if (this.touches.length === 0) {
-                JXG.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
                 this.hasPointerUp = false;
 
                 this.dehighlightAll();
@@ -1642,7 +1643,7 @@ define([], function () {
                 target;
 
             if (!this.hasTouchEnd) {
-                JXG.addEvent(document, 'touchend', this.touchEndListener, this);
+                Env.addEvent(document, 'touchend', this.touchEndListener, this);
                 this.hasTouchEnd = true;
             }
 
@@ -1711,7 +1712,7 @@ define([], function () {
 
                     if (this.touches[i].targets[j].num === -1) {
                         JXG.debug('i couldn\'t find a targettouches for target no ' + j + ' on ' + this.touches[i].obj.name + ' (' + this.touches[i].obj.id + '). Removed the target.');
-                        JXG.debug('eps = ' + eps + ', touchMax = ' + JXG.Options.precision.touchMax);
+                        JXG.debug('eps = ' + eps + ', touchMax = ' + Options.precision.touchMax);
                         this.touches[i].targets.splice(i, 1);
                     }
 
@@ -1733,7 +1734,7 @@ define([], function () {
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
 
-                        if (JXG.isPoint(obj) || obj.type === JXG.OBJECT_TYPE_TEXT || obj.type === JXG.OBJECT_TYPE_TICKS) {
+                        if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_TEXT || obj.type === Const.OBJECT_TYPE_TICKS) {
                             // it's a point, so it's single touch, so we just push it to our touches
 
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
@@ -1743,9 +1744,9 @@ define([], function () {
                             this.touches.push({ obj: obj, targets: targets });
                             this.highlightedObjects[obj.id] = obj;
                             obj.highlight(true);
-                        } else if (obj.elementClass === JXG.OBJECT_CLASS_LINE ||
-                                obj.elementClass === JXG.OBJECT_CLASS_CIRCLE ||
-                                obj.type === JXG.OBJECT_TYPE_POLYGON) {
+                        } else if (obj.elementClass === Const.OBJECT_CLASS_LINE ||
+                                obj.elementClass === Const.OBJECT_CLASS_CIRCLE ||
+                                obj.type === Const.OBJECT_TYPE_POLYGON) {
                             found = false;
 
                             // first check if this geometric object is already capture in this.touches
@@ -1795,7 +1796,7 @@ define([], function () {
                 return false;
             }
 
-            if (JXG.isWebkitAndroid()) {
+            if (Env.isWebkitAndroid()) {
                 time = new Date();
                 this.touchMoveLast = time.getTime() - 200;
             }
@@ -1822,7 +1823,7 @@ define([], function () {
             }
 
             // Reduce update frequency for Android devices
-            if (JXG.isWebkitAndroid()) {
+            if (Env.isWebkitAndroid()) {
                 time = new Date();
                 time = time.getTime();
 
@@ -1942,11 +1943,11 @@ define([], function () {
                         }
                     }
 
-                    if (JXG.isPoint(tmpTouches[i].obj)) {
+                    if (Type.isPoint(tmpTouches[i].obj)) {
                         found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found);
-                    } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_LINE) {
+                    } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_LINE) {
                         found = (tmpTouches[i].targets[0] && tmpTouches[i].targets[0].found) || (tmpTouches[i].targets[1] && tmpTouches[i].targets[1].found);
-                    } else if (tmpTouches[i].obj.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+                    } else if (tmpTouches[i].obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         found = foundNumber === 1 || foundNumber === 3;
                     }
 
@@ -1997,7 +1998,7 @@ define([], function () {
             }
 
             if (!evtTouches || evtTouches.length === 0) {
-                JXG.removeEvent(document, 'touchend', this.touchEndListener, this);
+                Env.removeEvent(document, 'touchend', this.touchEndListener, this);
                 this.hasTouchEnd = false;
 
                 this.dehighlightAll();
@@ -2027,7 +2028,7 @@ define([], function () {
             }
 
             if (!this.hasMouseUp) {
-                JXG.addEvent(document, 'mouseup', this.mouseUpListener, this);
+                Env.addEvent(document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = true;
             }
 
@@ -2114,7 +2115,7 @@ define([], function () {
             this.downObjects.length = 0;
 
             if (this.hasMouseUp) {
-                JXG.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+                Env.removeEvent(document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = false;
             }
 
@@ -2169,7 +2170,7 @@ define([], function () {
 
             evt = evt || window.event;
             var wd = evt.detail ? -evt.detail : evt.wheelDelta / 40,
-                pos = new JXG.Coords(JXG.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+                pos = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
             if (wd > 0) {
                 this.zoomIn(pos.usrCoords[1], pos.usrCoords[2]);
@@ -2198,7 +2199,7 @@ define([], function () {
             if (!el.visProp.showinfobox) {
                 return this;
             }
-            if (el.elementClass === JXG.OBJECT_CLASS_POINT) {
+            if (el.elementClass === Const.OBJECT_CLASS_POINT) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
 
@@ -2206,9 +2207,9 @@ define([], function () {
 
                 if (typeof el.infoboxText !== 'string') {
                     if (el.visProp.infoboxdigits === 'auto') {
-                        x = JXG.autoDigits(xc);
-                        y = JXG.autoDigits(yc);
-                    } else if (JXG.isNumber(el.visProp.infoboxdigits)) {
+                        x = Type.autoDigits(xc);
+                        y = Type.autoDigits(yc);
+                    } else if (Type.isNumber(el.visProp.infoboxdigits)) {
                         x = xc.toFixed(el.visProp.infoboxdigits);
                         y = yc.toFixed(el.visProp.infoboxdigits);
                     } else {
@@ -2269,7 +2270,7 @@ define([], function () {
                     // In highlightedObjects should only be objects which fulfill all these conditions
                     // And in case of complex elements, like a turtle based fractal, it should be faster to
                     // just de-highlight the element instead of checking hasPoint...
-                    // if ((!JXG.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
+                    // if ((!Type.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
                 }
             }
 
@@ -2307,10 +2308,10 @@ define([], function () {
          */
         getUsrCoordsOfMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
-                absPos = JXG.getPosition(evt),
+                absPos = Env.getPosition(evt),
                 x = absPos[0] - cPos[0],
                 y = absPos[1] - cPos[1],
-                newCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this);
+                newCoords = new Coords(Const.COORDS_BY_SCREEN, [x, y], this);
 
             return newCoords.usrCoords.slice(1);
         },
@@ -2334,7 +2335,7 @@ define([], function () {
          */
         getAllObjectsUnderMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
-                absPos = JXG.getPosition(evt),
+                absPos = Env.getPosition(evt),
                 dx = absPos[0] - cPos[0],
                 dy = absPos[1] - cPos[1],
                 elList = [],
@@ -2363,7 +2364,7 @@ define([], function () {
             for (ob = 0; ob < len; ob++) {
                 el = this.objectsList[ob];
 
-                if (JXG.exists(el.coords)) {
+                if (Type.exists(el.coords)) {
                     if (el.visProp.frozen) {
                         el.coords.screen2usr();
                     } else {
@@ -2382,7 +2383,7 @@ define([], function () {
          * @returns {JXG.Board} Reference to this board.
          */
         moveOrigin: function (x, y, diff) {
-            if (JXG.exists(x) && JXG.exists(y)) {
+            if (Type.exists(x) && Type.exists(y)) {
                 this.origin.scrCoords[1] = x;
                 this.origin.scrCoords[2] = y;
 
@@ -2420,14 +2421,14 @@ define([], function () {
                 right = term.slice(m + 1);
                 m = left.indexOf('.');     // Dies erzeugt Probleme bei Variablennamen der Form " Steuern akt."
                 name = left.slice(0, m);    //.replace(/\s+$/,''); // do NOT cut out name (with whitespace)
-                el = this.elementsByName[JXG.unescapeHTML(name)];
+                el = this.elementsByName[Type.unescapeHTML(name)];
 
                 property = left.slice(m + 1).replace(/\s+/g, '').toLowerCase(); // remove whitespace in property
-                right = JXG.GeonextParser.geonext2JS(right, this);
+                right = GeonextParser.geonext2JS(right, this);
                 right = right.replace(/this\.board\./g, 'this.');
 
                 // Debug
-                if (!JXG.exists(this.elementsByName[name])) {
+                if (!Type.exists(this.elementsByName[name])) {
                     JXG.debug("debug conditions: |" + name + "| undefined");
                 }
                 plaintext += "el = this.objects[\"" + el.id + "\"];\n";
@@ -2507,8 +2508,8 @@ define([], function () {
          * @returns {JXG.Board} Reference to the board.
          */
         calculateSnapSizes: function () {
-            var p1 = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this),
-                p2 = new JXG.Coords(JXG.COORDS_BY_USER, [this.options.grid.gridX, this.options.grid.gridY], this),
+            var p1 = new Coords(Const.COORDS_BY_USER, [0, 0], this),
+                p2 = new Coords(Const.COORDS_BY_USER, [this.options.grid.gridX, this.options.grid.gridY], this),
                 x = p1.scrCoords[1] - p2.scrCoords[1],
                 y = p1.scrCoords[2] - p2.scrCoords[2];
 
@@ -2624,7 +2625,7 @@ define([], function () {
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
 
-                if (JXG.isPoint(pEl) && pEl.visProp.visible) {
+                if (Type.isPoint(pEl) && pEl.visProp.visible) {
                     if (pEl.coords.usrCoords[1] < minX) {
                         minX = pEl.coords.usrCoords[1];
                     } else if (pEl.coords.usrCoords[1] > maxX) {
@@ -2662,16 +2663,16 @@ define([], function () {
                 newBBox = [0, 0, 0, 0],
                 dir = [1, -1, -1, 1];
 
-            if (!JXG.isArray(elements) || elements.length === 0) {
+            if (!Type.isArray(elements) || elements.length === 0) {
                 return this;
             }
 
             for (i = 0; i < elements.length; i++) {
-                e = JXG.getRef(this, elements[i]);
+                e = this.select(elements[i]);
 
                 box = e.bounds();
-                if (JXG.isArray(box)) {
-                    if (JXG.isArray(newBBox)) {
+                if (Type.isArray(box)) {
+                    if (Type.isArray(newBBox)) {
                         for (j = 0; j < 4; j++) {
                             if (dir[j] * box[j] < dir[j] * newBBox[j]) {
                                 newBBox[j] = box[j];
@@ -2683,7 +2684,7 @@ define([], function () {
                 }
             }
 
-            if (JXG.isArray(newBBox)) {
+            if (Type.isArray(newBBox)) {
                 for (j = 0; j < 4; j++) {
                     newBBox[j] -= dir[j];
                 }
@@ -2725,7 +2726,7 @@ define([], function () {
         removeObject: function (object) {
             var el, i;
 
-            if (JXG.isArray(object)) {
+            if (Type.isArray(object)) {
                 for (i = 0; i < object.length; i++) {
                     this.removeObject(object[i]);
                 }
@@ -2737,7 +2738,7 @@ define([], function () {
 
             // If the object which is about to be removed unknown or a string, do nothing.
             // it is a string if a string was given and could not be resolved to an element.
-            if (!JXG.exists(object) || JXG.isString(object)) {
+            if (!Type.exists(object) || Type.isString(object)) {
                 return this;
             }
 
@@ -2750,7 +2751,7 @@ define([], function () {
                 }
 
                 for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el) && JXG.exists(this.objects[el].childElements)) {
+                    if (this.objects.hasOwnProperty(el) && Type.exists(this.objects[el].childElements)) {
                         delete this.objects[el].childElements[object.id];
                         delete this.objects[el].descendants[object.id];
                     }
@@ -2773,7 +2774,7 @@ define([], function () {
                 }
 
                 // the object deletion itself is handled by the object.
-                if (JXG.exists(object.remove)) {
+                if (Type.exists(object.remove)) {
                     object.remove();
                 }
             } catch (e) {
@@ -2860,7 +2861,7 @@ define([], function () {
          * @returns {JXG.Board} Reference to the board
          */
         initInfobox: function () {
-            var  attr = JXG.copyAttributes({}, this.options, 'infobox');
+            var  attr = Type.copyAttributes({}, this.options, 'infobox');
 
             attr.id = this.id + '_infobox';
 
@@ -2936,7 +2937,7 @@ define([], function () {
         showXML: function () {
             var f = window.open('');
             f.document.open();
-            f.document.write('<pre>' + JXG.escapeHTML(this.xmlString) + '<' + '/pre>');
+            f.document.write('<pre>' + Type.escapeHTML(this.xmlString) + '<' + '/pre>');
             f.document.close();
             return this;
         },
@@ -2963,14 +2964,14 @@ define([], function () {
         updateElements: function (drag) {
             var el, pEl;
 
-            drag = JXG.getRef(this, drag);
+            drag = this.select(drag);
 
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
-                pEl.update(!JXG.exists(drag) || pEl.id !== drag.id);
+                pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
             }
 
             return this;
@@ -3041,9 +3042,9 @@ define([], function () {
          * @deprecated
          */
         addHook: function (hook, m, context) {
-            m = JXG.def(m, 'update');
+            m = Type.def(m, 'update');
 
-            context = JXG.def(context, this);
+            context = Type.def(context, this);
 
             this.hooks.push([m, hook]);
             this.on(m, hook, context);
@@ -3084,7 +3085,7 @@ define([], function () {
         updateHooks: function (m) {
             var arg = Array.prototype.slice.call(arguments, 0);
 
-            arg[0] = JXG.def(arg[0], 'update');
+            arg[0] = Type.def(arg[0], 'update');
             this.triggerEventHandlers([arg[0]], arguments);
 
             return this;
@@ -3096,7 +3097,7 @@ define([], function () {
          * @returns {JXG.Board} Reference to the board
          */
         addChild: function (board) {
-            if (JXG.exists(board) && JXG.exists(board.containerObj)) {
+            if (Type.exists(board) && Type.exists(board.containerObj)) {
                 this.dependentBoards.push(board);
                 this.update();
             }
@@ -3143,7 +3144,7 @@ define([], function () {
             len = this.dependentBoards.length;
             for (i = 0; i < len; i++) {
                 b = this.dependentBoards[i];
-                if (JXG.exists(b) && b !== this) {
+                if (Type.exists(b) && b !== this) {
                     b.updateQuality = this.updateQuality;
                     b.prepareUpdate().updateElements().updateConditions();
                     b.renderer.suspendRedraw();
@@ -3214,17 +3215,17 @@ define([], function () {
 
             elementType = elementType.toLowerCase();
 
-            if (!JXG.exists(parents)) {
+            if (!Type.exists(parents)) {
                 parents = [];
             }
 
-            if (!JXG.exists(attributes)) {
+            if (!Type.exists(attributes)) {
                 attributes = {};
             }
 
             for (i = 0; i < parents.length; i++) {
                 if (elementType !== 'text' || i !== 2) {
-                    parents[i] = JXG.getRef(this, parents[i]);
+                    parents[i] = this.select(parents[i]);
                 }
             }
 
@@ -3235,11 +3236,11 @@ define([], function () {
                     el = JXG.elements[elementType].creator(this, parents, attributes);
                 }
             } else {
-                throw new Error("JSXGraph: JXG.createElement: Unknown element type given: " + elementType);
+                throw new Error("JSXGraph: create: Unknown element type given: " + elementType);
             }
 
-            if (!JXG.exists(el)) {
-                JXG.debug("JSXGraph: JXG.createElement: failure creating " + elementType);
+            if (!Type.exists(el)) {
+                JXG.debug("JSXGraph: create: failure creating " + elementType);
                 return el;
             }
 
@@ -3299,9 +3300,9 @@ define([], function () {
          */
         setBoundingBox: function (bbox, keepaspectratio) {
             var h, w,
-                dim = JXG.getDimensions(this.container);
+                dim = Env.getDimensions(this.container);
 
-            if (!JXG.isArray(bbox)) {
+            if (!Type.isArray(bbox)) {
                 return this;
             }
 
@@ -3335,8 +3336,8 @@ define([], function () {
          * @returns {Array} bounding box [x1,y1,x2,y2] upper left corner, lower right corner
          */
         getBoundingBox: function () {
-            var ul = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this),
-                lr = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
+            var ul = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this),
+                lr = new Coords(Const.COORDS_BY_SCREEN, [this.canvasWidth, this.canvasHeight], this);
 
             return [ul.usrCoords[1], ul.usrCoords[2], lr.usrCoords[1], lr.usrCoords[2]];
         },
@@ -3369,7 +3370,7 @@ define([], function () {
             var el;
 
             for (el in this.animationObjects) {
-                if (this.animationObjects.hasOwnProperty(el) && JXG.exists(this.animationObjects[el])) {
+                if (this.animationObjects.hasOwnProperty(el) && Type.exists(this.animationObjects[el])) {
                     this.animationObjects[el] = null;
                     delete this.animationObjects[el];
                 }
@@ -3392,21 +3393,21 @@ define([], function () {
                 obj = null;
 
             for (el in this.animationObjects) {
-                if (this.animationObjects.hasOwnProperty(el) && JXG.exists(this.animationObjects[el])) {
+                if (this.animationObjects.hasOwnProperty(el) && Type.exists(this.animationObjects[el])) {
                     count += 1;
                     o = this.animationObjects[el];
 
                     if (o.animationPath) {
-                        if (JXG.isFunction(o.animationPath)) {
+                        if (Type.isFunction(o.animationPath)) {
                             newCoords = o.animationPath(new Date().getTime() - o.animationStart);
                         } else {
                             newCoords = o.animationPath.pop();
                         }
 
-                        if ((!JXG.exists(newCoords)) || (!JXG.isArray(newCoords) && isNaN(newCoords))) {
+                        if ((!Type.exists(newCoords)) || (!Type.isArray(newCoords) && isNaN(newCoords))) {
                             delete o.animationPath;
                         } else {
-                            o.setPositionDirectly(JXG.COORDS_BY_USER, newCoords);
+                            o.setPositionDirectly(Const.COORDS_BY_USER, newCoords);
                             o.prepareUpdate().update().updateRenderer();
                             obj = o;
                         }
@@ -3418,7 +3419,7 @@ define([], function () {
                             if (o.animationData.hasOwnProperty(r)) {
                                 p = o.animationData[r].pop();
 
-                                if (!JXG.exists(p)) {
+                                if (!Type.exists(p)) {
                                     delete o.animationData[p];
                                 } else {
                                     c += 1;
@@ -3434,11 +3435,11 @@ define([], function () {
                         }
                     }
 
-                    if (!JXG.exists(o.animationData) && !JXG.exists(o.animationPath)) {
+                    if (!Type.exists(o.animationData) && !Type.exists(o.animationPath)) {
                         this.animationObjects[el] = null;
                         delete this.animationObjects[el];
 
-                        if (JXG.exists(o.animationCallback)) {
+                        if (Type.exists(o.animationCallback)) {
                             cbtmp = o.animationCallback;
                             o.animationCallback = null;
                             cbtmp();
@@ -3472,8 +3473,8 @@ define([], function () {
         migratePoint: function (src, dest, copyName) {
             var child, childId, prop, found, i;
 
-            src = JXG.getRef(this, src);
-            dest = JXG.getRef(this, dest);
+            src = this.select(src);
+            dest = this.select(dest);
 
             for (childId in src.childElements) {
                 if (src.childElements.hasOwnProperty(childId)) {
@@ -3535,7 +3536,7 @@ define([], function () {
         emulateColorblindness: function (deficiency) {
             var e, o;
 
-            if (!JXG.exists(deficiency)) {
+            if (!Type.exists(deficiency)) {
                 deficiency = 'none';
             }
 
@@ -3561,12 +3562,12 @@ define([], function () {
                             };
                         }
                         o.setAttribute({
-                            strokecolor: JXG.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
-                            fillcolor: JXG.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
-                            highlightstrokecolor: JXG.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
-                            highlightfillcolor: JXG.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
+                            strokecolor: Color.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
+                            fillcolor: Color.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
+                            highlightstrokecolor: Color.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
+                            highlightfillcolor: Color.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
                         });
-                    } else if (JXG.exists(o.visPropOriginal)) {
+                    } else if (Type.exists(o.visPropOriginal)) {
                         JXG.extend(o.visProp, o.visPropOriginal);
                     }
                 }
@@ -3590,7 +3591,7 @@ define([], function () {
                 o = obj,
                 o2 = obj;
 
-            this.cssTransMat = JXG.getCSSTransformMatrix(o);
+            this.cssTransMat = Env.getCSSTransformMatrix(o);
 
             /*
              * In Mozilla and Webkit: offsetParent seems to jump at least to the next iframe,
@@ -3601,17 +3602,17 @@ define([], function () {
              */
             o = o.offsetParent;
             while (o) {
-                this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
+                this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
 
                 o2 = o2.parentNode;
                 while (o2 !== o) {
-                    this.cssTransMat = JXG.Math.matMatMult(JXG.getCSSTransformMatrix(o), this.cssTransMat);
+                    this.cssTransMat = Mat.matMatMult(Env.getCSSTransformMatrix(o), this.cssTransMat);
                     o2 = o2.parentNode;
                 }
 
                 o = o.offsetParent;
             }
-            this.cssTransMat = JXG.Math.inverse(this.cssTransMat);
+            this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             return this;
         },
@@ -3753,13 +3754,13 @@ define([], function () {
 
             if (typeof s === 'string') {
                 // Search by ID
-                if (JXG.exists(this.objects[s])) {
+                if (Type.exists(this.objects[s])) {
                     s = this.objects[s];
                 // Search by name
-                } else if (JXG.exists(this.elementsByName[s])) {
+                } else if (Type.exists(this.elementsByName[s])) {
                     s = this.elementsByName[s];
                 // Search by group ID
-                } else if (JXG.exists(this.groups[s])) {
+                } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
             }
@@ -3867,7 +3868,7 @@ define([], function () {
                 Roulette = function () {
                     var alpha = 0, Tx = 0, Ty = 0,
                         t1 = start_c1,
-                        t2 = JXG.Math.Numerics.root(
+                        t2 = Numerics.root(
                             function (t) {
                                 var c1x = c1.X(t1),
                                     c1y = c1.Y(t1),
@@ -3910,12 +3911,12 @@ define([], function () {
 
                         // arc length via Simpson's rule.
                         arclen = function (c, a, b) {
-                            var cpxa = JXG.Math.Numerics.D(c.X)(a),
-                                cpya = JXG.Math.Numerics.D(c.Y)(a),
-                                cpxb = JXG.Math.Numerics.D(c.X)(b),
-                                cpyb = JXG.Math.Numerics.D(c.Y)(b),
-                                cpxab = JXG.Math.Numerics.D(c.X)((a + b) * 0.5),
-                                cpyab = JXG.Math.Numerics.D(c.Y)((a + b) * 0.5),
+                            var cpxa = Numerics.D(c.X)(a),
+                                cpya = Numerics.D(c.Y)(a),
+                                cpxb = Numerics.D(c.X)(b),
+                                cpyb = Numerics.D(c.Y)(b),
+                                cpxab = Numerics.D(c.X)((a + b) * 0.5),
+                                cpyab = Numerics.D(c.Y)((a + b) * 0.5),
 
                                 fa = Math.sqrt(cpxa * cpxa + cpya * cpya),
                                 fb = Math.sqrt(cpxb * cpxb + cpyb * cpyb),
@@ -3941,23 +3942,23 @@ define([], function () {
                         c1dist = arclen(c1, t1, t1_new);
 
                         // find t2_new such that arc length between c2(t2) and c1(t2_new) equals c1dist.
-                        t2_new = JXG.Math.Numerics.root(exactDist, t2);
+                        t2_new = Numerics.root(exactDist, t2);
 
                         // c1(t) as complex number
-                        h = new JXG.Complex(c1.X(t1_new), c1.Y(t1_new));
+                        h = new Complex(c1.X(t1_new), c1.Y(t1_new));
 
                         // c2(t) as complex number
-                        g = new JXG.Complex(c2.X(t2_new), c2.Y(t2_new));
+                        g = new Complex(c2.X(t2_new), c2.Y(t2_new));
 
-                        hp = new JXG.Complex(JXG.Math.Numerics.D(c1.X)(t1_new), JXG.Math.Numerics.D(c1.Y)(t1_new));
-                        gp = new JXG.Complex(JXG.Math.Numerics.D(c2.X)(t2_new), JXG.Math.Numerics.D(c2.Y)(t2_new));
+                        hp = new Complex(Numerics.D(c1.X)(t1_new), Numerics.D(c1.Y)(t1_new));
+                        gp = new Complex(Numerics.D(c2.X)(t2_new), Numerics.D(c2.Y)(t2_new));
 
                         // z is angle between the tangents of c1 at t1_new, and c2 at t2_new
-                        z = JXG.C.div(hp, gp);
+                        z = Complex.C.div(hp, gp);
 
                         alpha = Math.atan2(z.imaginary, z.real);
                         // Normalizing the quotient
-                        z.div(JXG.C.abs(z));
+                        z.div(Complex.C.abs(z));
                         z.mult(g);
                         Tx = h.real - z.real;
 

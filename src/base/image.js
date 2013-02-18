@@ -41,7 +41,6 @@
  math/math
  math/statistics
  utils/type
- utils/object
  */
 
 /**

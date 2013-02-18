@@ -39,7 +39,6 @@
  base/constants
  utils/env
  utils/type
- utils/browser
  utils/uuid
  utils/color
  base/coords

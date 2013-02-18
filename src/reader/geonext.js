@@ -39,7 +39,6 @@
  parser/geonext
  utils/type
  utils/color
- utils/string
  utils/zip
  utils/base64
  utils/xml

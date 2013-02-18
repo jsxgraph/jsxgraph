@@ -39,7 +39,6 @@
  base/coords
  math/numerics
  utils/type
- utils/string
  utils/color
  utils/base64
  utils/encoding

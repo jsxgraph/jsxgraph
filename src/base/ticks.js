@@ -40,8 +40,6 @@
  base/element
  base/coords
  utils/type
- utils/object
- utils/string
   elements:
    text
  */

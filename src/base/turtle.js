@@ -38,7 +38,6 @@
  base/constants
  base/element
  utils/type
- utils/object
   elements:
    curve
    point

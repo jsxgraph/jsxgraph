@@ -40,7 +40,9 @@
  math/math
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'utils/event', 'math/math'
+], function (JXG, Const, EventEmitter, Mat) {
 
     "use strict";
 
@@ -81,7 +83,7 @@ define([], function () {
          */
         this.scrCoords = [];
 
-        JXG.EventEmitter.eventify(this);
+        EventEmitter.eventify(this);
         this.setCoordinates(method, coordinates);
     };
 
@@ -91,7 +93,7 @@ define([], function () {
          * @private
          */
         normalizeUsrCoords: function () {
-            var eps = JXG.Math.eps;
+            var eps = Mat.eps;
             if (Math.abs(this.usrCoords[0]) > eps) {
                 this.usrCoords[1] /= this.usrCoords[0];
                 this.usrCoords[2] /= this.usrCoords[0];
@@ -147,12 +149,12 @@ define([], function () {
                 scr = this.scrCoords,
                 f;
 
-            if (coord_type === JXG.COORDS_BY_USER) {
+            if (coord_type === Const.COORDS_BY_USER) {
                 c = coordinates.usrCoords;
                 f = ucr[0] - c[0];
                 sum = f * f;
 
-                if (sum > JXG.Math.eps) {
+                if (sum > Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
                 f = ucr[1] - c[1];
@@ -186,7 +188,7 @@ define([], function () {
                 ou = [uc[0], uc[1], uc[2]],
                 os = [sc[0], sc[1], sc[2]];
 
-            if (coord_type === JXG.COORDS_BY_USER) {
+            if (coord_type === Const.COORDS_BY_USER) {
                 if (coordinates.length === 2) { // Euclidean coordinates
                     uc[0] = 1.0;
                     uc[1] = coordinates[0];

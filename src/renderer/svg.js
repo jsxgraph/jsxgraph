@@ -38,7 +38,7 @@
  renderer/abstract
  base/constants
  utils/type
- utils/browser
+ utils/env
  utils/color
  math/numerics
 */

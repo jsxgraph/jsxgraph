@@ -42,7 +42,6 @@
  math/geometry
  math/statistics
  utils/type
- utils/object
   elements:
    transform
    point

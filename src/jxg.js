@@ -110,15 +110,6 @@ define([], function () {
         registerElement: function (element, creator) {
             element = element.toLowerCase();
             this.elements[element] = creator;
-
-            if (JXG.Board.prototype['_' + element]) {
-                JXG.debug("JSXGraph: Can't create wrapper method in JXG.Board because member '_" + element + "' already exists'");
-            }
-
-            JXG.Board.prototype['_' + element] = function (parents, attributes) {
-                return this.create(element, parents, attributes);
-            };
-
         },
 
         /**

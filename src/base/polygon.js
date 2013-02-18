@@ -38,9 +38,7 @@
  base/constants
  base/coords
  math/statistics
- utils/array
  utils/type
- utils/object
  base/element
   elements:
    segment

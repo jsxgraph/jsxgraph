@@ -37,8 +37,6 @@
  jxg
  utils/env
  utils/type
- utils/object
- utils/browser
  base/board
  reader/file
  options
