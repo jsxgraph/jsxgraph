@@ -34,15 +34,16 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
+ jxg
  base/constants
  utils/type
  math/math
  math/geometry
  */
 
-// math/math and math/geometry dependencies are inside eval'd strings
-
-define([], function () {
+define([
+    'jxg', 'base/constants', 'utils/type'
+], function (JXG, Const, Type) {
 
     "use strict";
 
@@ -499,7 +500,7 @@ define([], function () {
         findDependencies: function (me, term, board) {
             var elements, el, expr, elmask;
 
-            if (!JXG.exists(board)) {
+            if (!Type.exists(board)) {
                 board = me.board;
             }
 
@@ -508,7 +509,7 @@ define([], function () {
             for (el in elements) {
                 if (elements.hasOwnProperty(el)) {
                     if (el !== me.name) {
-                        if (elements[el].type === JXG.OBJECT_TYPE_TEXT) {
+                        if (elements[el].type === Const.OBJECT_TYPE_TEXT) {
                             if (!elements[el].visProp.islabel) {
                                 elmask = el.replace(/\[/g, '\\[');
                                 elmask = elmask.replace(/\]/g, '\\]');

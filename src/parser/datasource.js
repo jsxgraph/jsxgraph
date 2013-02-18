@@ -43,7 +43,7 @@
  * javascript arrays and HTML tables.
  */
 
-define([], function () {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -59,12 +59,12 @@ define([], function () {
         loadFromArray: function (table, columnHeader, rowHeader) {
             var i, j, cell;
 
-            if (JXG.isArray(columnHeader)) {
+            if (Type.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (JXG.isArray(rowHeader)) {
+            if (Type.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }
@@ -79,7 +79,7 @@ define([], function () {
                 this.rowHeaders = [];
             }
 
-            if (JXG.exists(table)) {
+            if (Type.exists(table)) {
                 // extract the data
                 this.data = [];
 
@@ -118,12 +118,12 @@ define([], function () {
         loadFromTable: function (table, columnHeader, rowHeader) {
             var row, i, j, col, cell, name;
 
-            if (JXG.isArray(columnHeader)) {
+            if (Type.isArray(columnHeader)) {
                 this.columnHeaders = columnHeader;
                 columnHeader = false;
             }
 
-            if (JXG.isArray(rowHeader)) {
+            if (Type.isArray(rowHeader)) {
                 this.rowHeaders = rowHeader;
                 rowHeader = false;
             }
@@ -141,7 +141,7 @@ define([], function () {
             // to adjust: examples in examples folder & wiki
             table = document.getElementById(table);
 
-            if (JXG.exists(table)) {
+            if (Type.exists(table)) {
                 // extract the data
                 row = table.getElementsByTagName('tr');
                 this.data = [];

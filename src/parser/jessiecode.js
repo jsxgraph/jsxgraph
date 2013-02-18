@@ -25,7 +25,7 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-/*global JXG:true, define: true, window:true, console:true, self:true, document:true*/
+/*global JXG: true, define: true, window: true, console: true, self: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -36,11 +36,8 @@
  math/math
  math/geometry
  math/statistics
- utils/array
  utils/type
- utils/object
- utils/string
- utils/number
+ utils/uuid
  */
 
 /**
@@ -49,7 +46,9 @@
  * Math portals which want to use JSXGraph to display interactive math graphics.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/uuid', 'utils/env'
+], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, UUID, Env) {
 
     "use strict";
 
@@ -256,7 +255,7 @@ define([], function () {
                         return function (parameters, attributes) {
                             var attr;
 
-                            if (JXG.exists(attributes)) {
+                            if (Type.exists(attributes)) {
                                 attr = attributes;
                             } else {
                                 attr = {name: (that.lhs[that.scope] !== 0 ? that.lhs[that.scope] : '')};
@@ -302,7 +301,7 @@ define([], function () {
         isLocalVariable: function (vname) {
             var s;
             for (s = this.scope; s > -1; s--) {
-                if (JXG.exists(this.sstack[s][vname])) {
+                if (Type.exists(this.sstack[s][vname])) {
                     return s;
                 }
             }
@@ -347,7 +346,7 @@ define([], function () {
         getvar: function (vname, local) {
             var s, undef;
 
-            local = JXG.def(local, false);
+            local = Type.def(local, false);
 
             s = this.isLocalVariable(vname);
             if (s > -1) {
@@ -386,10 +385,10 @@ define([], function () {
         getvarJS: function (vname, local, withProps) {
             var s, r = '';
 
-            local = JXG.def(local, false);
-            withProps = JXG.def(withProps, false);
+            local = Type.def(local, false);
+            withProps = Type.def(withProps, false);
 
-            if (JXG.indexOf(this.pstack[this.pscope], vname) > -1) {
+            if (Type.indexOf(this.pstack[this.pscope], vname) > -1) {
                 return vname;
             }
 
@@ -417,11 +416,11 @@ define([], function () {
             }
 
             if (!local) {
-                if (JXG.isId(this.board, vname)) {
+                if (Type.isId(this.board, vname)) {
                     r = '$jc$.board.objects[\'' + vname + '\']';
-                } else if (JXG.isName(this.board, vname)) {
+                } else if (Type.isName(this.board, vname)) {
                     r = '$jc$.board.elementsByName[\'' + vname + '\']';
-                } else if (JXG.isGroup(this.board, vname)) {
+                } else if (Type.isGroup(this.board, vname)) {
                     r = '$jc$.board.groups[\'' + vname + '\']';
                 }
             }
@@ -439,7 +438,7 @@ define([], function () {
             var i, attr = {};
 
             for (i = 0; i < arguments.length; i++) {
-                attr = JXG.deepCopy(attr, arguments[i], true);
+                attr = Type.deepCopy(attr, arguments[i], true);
             }
 
             return attr;
@@ -454,7 +453,7 @@ define([], function () {
         setProp: function (o, what, value) {
             var par = {}, x, y;
 
-            if (o.elementClass === JXG.OBJECT_CLASS_POINT && (what === 'X' || what === 'Y')) {
+            if (o.elementClass === Const.OBJECT_CLASS_POINT && (what === 'X' || what === 'Y')) {
                 // set coords
 
                 what = what.toLowerCase();
@@ -471,7 +470,7 @@ define([], function () {
                     x = what === 'x' ? value : o.X();
                     y = what === 'y' ? value : o.Y();
 
-                    o.setPosition(JXG.COORDS_BY_USER, [x, y]);
+                    o.setPosition(Const.COORDS_BY_USER, [x, y]);
                 } else if (o.isDraggable && (typeof value === 'function' || typeof value === 'string')) {
                     x = what === 'x' ? value : o.coords.usrCoords[1];
                     y = what === 'y' ? value : o.coords.usrCoords[2];
@@ -485,7 +484,7 @@ define([], function () {
                 }
 
                 this.board.update();
-            } else if (o.type === JXG.OBJECT_TYPE_TEXT && (what === 'X' || what === 'Y')) {
+            } else if (o.type === Const.OBJECT_TYPE_TEXT && (what === 'X' || what === 'Y')) {
                 if (typeof value === 'number') {
                     o[what] = function () { return value; };
                 } else if (typeof value === 'function') {
@@ -493,7 +492,7 @@ define([], function () {
                     o[what] = value;
                 } else if (typeof value === 'string') {
                     o.isDraggable = false;
-                    o[what] = JXG.createFunction(value, this.board, null, true);
+                    o[what] = Type.createFunction(value, this.board, null, true);
                     o[what + 'jc'] = value;
                 }
 
@@ -550,18 +549,18 @@ define([], function () {
                 this.code += code + '\n';
             }
 
-            if (JXG.Text) {
-                setTextBackup = JXG.Text.prototype.setText;
-                JXG.Text.prototype.setText = JXG.Text.prototype.setTextJessieCode;
+            if (Text) {
+                setTextBackup = Text.prototype.setText;
+                Text.prototype.setText = Text.prototype.setTextJessieCode;
             }
 
             try {
-                if (!JXG.exists(geonext)) {
+                if (!Type.exists(geonext)) {
                     geonext = false;
                 }
 
                 for (i = 0; i < ccode.length; i++) {
-                    if (!(JXG.trim(ccode[i])[0] === '/' && JXG.trim(ccode[i])[1] === '/')) {
+                    if (!(Type.trim(ccode[i])[0] === '/' && Type.trim(ccode[i])[1] === '/')) {
                         if (geonext) {
                             ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
                             /*for (j = 0; j < replacegxt.length; j++) {
@@ -586,8 +585,8 @@ define([], function () {
                 }
             } finally {
                 // make sure the original text method is back in place
-                if (JXG.Text) {
-                    JXG.Text.prototype.setText = setTextBackup;
+                if (Text) {
+                    Text.prototype.setText = setTextBackup;
                 }
             }
         },
@@ -602,17 +601,17 @@ define([], function () {
         snippet: function (code, funwrap, varname, geonext) {
             var vname, c, tmp, result;
 
-            vname = 'jxg__tmp__intern_' + JXG.Util.genUUID().replace(/\-/g, '');
+            vname = 'jxg__tmp__intern_' + UUID.genUUID().replace(/\-/g, '');
 
-            if (!JXG.exists(funwrap)) {
+            if (!Type.exists(funwrap)) {
                 funwrap = true;
             }
 
-            if (!JXG.exists(varname)) {
+            if (!Type.exists(varname)) {
                 varname = '';
             }
 
-            if (!JXG.exists(geonext)) {
+            if (!Type.exists(geonext)) {
                 geonext = false;
             }
 
@@ -625,7 +624,7 @@ define([], function () {
             this.parse(c, geonext, true);
 
             result = this.sstack[0][vname];
-            if (JXG.exists(tmp)) {
+            if (Type.exists(tmp)) {
                 this.sstack[0][vname] = tmp;
             } else {
                 delete this.sstack[0][vname];
@@ -648,7 +647,7 @@ define([], function () {
                 // these children exist, if node.replaced is set.
                 v = this.board.objects[node.children[1].children[0].value];
 
-                if (JXG.exists(v) && v.name !== "") {
+                if (Type.exists(v) && v.name !== "") {
                     node.type = 'node_var';
                     node.value = v.name;
 
@@ -662,7 +661,7 @@ define([], function () {
             if (node.children) {
                 // assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
-                    if (JXG.exists(node.children[i - 1])) {
+                    if (Type.exists(node.children[i - 1])) {
                         node.children[i - 1] = this.replaceIDs(node.children[i - 1]);
                     }
 
@@ -691,7 +690,7 @@ define([], function () {
             } else if (node.type === 'node_var') {
                 if (this.isLHS) {
                     this.letvar(v, true);
-                } else if (!JXG.exists(this.getvar(v, true)) && JXG.exists(this.board.elementsByName[v])) {
+                } else if (!Type.exists(this.getvar(v, true)) && Type.exists(this.board.elementsByName[v])) {
                     node = this.createReplacementNode(node);
                 }
             }
@@ -699,7 +698,7 @@ define([], function () {
             if (node.children) {
                 // assignments are first evaluated on the right hand side
                 for (i = node.children.length; i > 0; i--) {
-                    if (JXG.exists(node.children[i - 1])) {
+                    if (Type.exists(node.children[i - 1])) {
                         node.children[i - 1] = this.replaceNames(node.children[i - 1]);
                     }
                 }
@@ -757,7 +756,7 @@ define([], function () {
 
             if (node.children) {
                 for (i = node.children.length; i > 0; i--) {
-                    if (JXG.exists(node.children[i - 1])) {
+                    if (Type.exists(node.children[i - 1])) {
                         this.collectDependencies(node.children[i - 1], result);
                     }
 
@@ -766,7 +765,7 @@ define([], function () {
         },
 
         resolveProperty: function (e, v, compile) {
-            compile = JXG.def(compile, false);
+            compile = Type.def(compile, false);
 
             // is it a geometry element or a board?
             if (e /*&& e.type && e.elementClass*/ && e.methodMap) {
@@ -780,10 +779,10 @@ define([], function () {
                 } else {
                     // ok, it's not the label he wants to change
                     // well, what then?
-                    if (JXG.exists(e.subs) && JXG.exists(e.subs[v])) {
+                    if (Type.exists(e.subs) && Type.exists(e.subs[v])) {
                         // a subelement it is, good sir.
                         e = e.subs;
-                    } else if (JXG.exists(e.methodMap[v])) {
+                    } else if (Type.exists(e.methodMap[v])) {
                         // the user wants to call a method
                         v = e.methodMap[v];
                     } else {
@@ -794,11 +793,11 @@ define([], function () {
                 }
             }
 
-            if (!JXG.exists(e)) {
+            if (!Type.exists(e)) {
                 this._error(e + ' is not an object');
             }
 
-            if (!JXG.exists(e[v])) {
+            if (!Type.exists(e[v])) {
                 this._error('unknown property ' + v);
             }
 
@@ -852,7 +851,7 @@ define([], function () {
                         this._error('Left-hand side of assignment is read-only.');
                     }
 
-                    if (v[0] !== this.sstack[this.scope] || (JXG.isArray(v[0]) && typeof v[1] === 'number')) {
+                    if (v[0] !== this.sstack[this.scope] || (Type.isArray(v[0]) && typeof v[1] === 'number')) {
                         // it is either an array component being set or a property of an object.
                         this.setProp(v[0], v[1], this.execute(node.children[1]));
                     } else {
@@ -958,7 +957,7 @@ define([], function () {
                     ret = this.execute(node.children[0]);
                     i = this.execute(node.children[1]);
 
-                    if (typeof i === 'number' && Math.abs(Math.round(i) - i) < JXG.Math.eps) {
+                    if (typeof i === 'number' && Math.abs(Math.round(i) - i) < Mat.eps) {
                         ret = ret[i];
                     } else {
                         ret = undef;
@@ -1059,7 +1058,7 @@ define([], function () {
                     fun.toJS = fun.toString;
                     fun.toString = (function (_that) {
                         return function () {
-                            return _that.compile(_that.replaceIDs(JXG.deepCopy(node)));
+                            return _that.compile(_that.replaceIDs(Type.deepCopy(node)));
                         };
                     }(this));
 
@@ -1085,7 +1084,7 @@ define([], function () {
                     this.execute(node.children[1]);
 
                     // parse the properties only if given
-                    if (JXG.exists(node.children[2])) {
+                    if (Type.exists(node.children[2])) {
                         if (node.children[3]) {
                             this.pstack.push([]);
                             this.dpstack.push([]);
@@ -1094,7 +1093,7 @@ define([], function () {
                             this.execute(node.children[2]);
                             attr = {};
                             for (i = 0; i < this.pstack[this.pscope].length; i++) {
-                                attr = JXG.deepCopy(attr, this.execute(this.pstack[this.pscope][i]), true);
+                                attr = Type.deepCopy(attr, this.execute(this.pstack[this.pscope][i]), true);
                             }
 
                             this.pscope--;
@@ -1115,7 +1114,7 @@ define([], function () {
                         sc = this;
                     }
 
-                    if (!fun.creator && JXG.exists(node.children[2])) {
+                    if (!fun.creator && Type.exists(node.children[2])) {
                         this._error('Unexpected value. Only element creators are allowed to have a value after the function call.');
                     }
 
@@ -1159,7 +1158,7 @@ define([], function () {
                     ret = this.resolveProperty(e, v, false);
 
                     // set the scope, in case this is a method the user wants to call
-                    if (JXG.exists(ret)) {
+                    if (Type.exists(ret)) {
                         ret.sc = e;
                     }
 
@@ -1222,7 +1221,7 @@ define([], function () {
                     /*jslint eqeq:true*/
                     break;
                 case 'op_approx':
-                    ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < JXG.Math.eps;
+                    ret = Math.abs(this.execute(node.children[0]) - this.execute(node.children[1])) < Mat.eps;
                     break;
                 case 'op_grt':
                     ret = this.execute(node.children[0]) > this.execute(node.children[1]);
@@ -1246,17 +1245,17 @@ define([], function () {
                     ret = !this.execute(node.children[0]);
                     break;
                 case 'op_add':
-                    ret = JXG.Math.Statistics.add(this.execute(node.children[0]), this.execute(node.children[1]));
+                    ret = Statistics.add(this.execute(node.children[0]), this.execute(node.children[1]));
                     break;
                 case 'op_sub':
-                    ret = JXG.Math.Statistics.subtract(this.execute(node.children[0]), this.execute(node.children[1]));
+                    ret = Statistics.subtract(this.execute(node.children[0]), this.execute(node.children[1]));
                     break;
                 case 'op_div':
-                    ret = JXG.Math.Statistics.div(this.execute(node.children[0]), this.execute(node.children[1]));
+                    ret = Statistics.div(this.execute(node.children[0]), this.execute(node.children[1]));
                     break;
                 case 'op_mod':
                     // use mathematical modulo, JavaScript implements the symmetric modulo.
-                    ret = JXG.Math.Statistics.mod(this.execute(node.children[0]), this.execute(node.children[1]), true);
+                    ret = Statistics.mod(this.execute(node.children[0]), this.execute(node.children[1]), true);
                     break;
                 case 'op_mul':
                     ret = this.mul(this.execute(node.children[0]), this.execute(node.children[1]));
@@ -1301,7 +1300,7 @@ define([], function () {
             var e,
                 ret = '';
 
-            if (!JXG.exists(js)) {
+            if (!Type.exists(js)) {
                 js = false;
             }
 
@@ -1323,7 +1322,7 @@ define([], function () {
                 case 'op_assign':
                     e = this.compile(node.children[0], js);
                     if (js) {
-                        if (JXG.isArray(e)) {
+                        if (Type.isArray(e)) {
                             ret = '$jc$.setProp(' + e[0] + ', \'' + e[1] + '\', ' + this.compile(node.children[1], js) + ');\n';
                         } else {
                             if (this.isLocalVariable(e) !== this.scope) {
@@ -1597,7 +1596,7 @@ define([], function () {
          * @returns {Number}
          */
         dist: function (p1, p2) {
-            if (!JXG.exists(p1) || !JXG.exists(p1.Dist)) {
+            if (!Type.exists(p1) || !Type.exists(p1.Dist)) {
                 this._error('Error: Can\'t calculate distance.');
             }
 
@@ -1611,11 +1610,11 @@ define([], function () {
          * @returns {Number|Array} (Inner) product of the given input values.
          */
         mul: function (a, b) {
-            if (JXG.isArray(a) * JXG.isArray(b)) {
-                return JXG.Math.innerProduct(a, b, Math.min(a.length, b.length));
+            if (Type.isArray(a) * Type.isArray(b)) {
+                return Mat.innerProduct(a, b, Math.min(a.length, b.length));
             }
 
-            return JXG.Math.Statistics.multiply(a, b);
+            return Statistics.multiply(a, b);
         },
 
 
@@ -1635,7 +1634,7 @@ define([], function () {
         findSymbol: function (v, scope) {
             var s, i;
 
-            scope = JXG.def(scope, -1);
+            scope = Type.def(scope, -1);
 
             if (scope === -1) {
                 scope = this.scope;
@@ -1666,19 +1665,19 @@ define([], function () {
                     V: that.V,
                     L: that.L,
                     dist: that.dist,
-                    rad: JXG.Math.Geometry.rad,
-                    deg: JXG.Math.Geometry.trueAngle,
-                    factorial: JXG.Math.factorial,
-                    trunc: JXG.trunc,
+                    rad: Geometry.rad,
+                    deg: Geometry.trueAngle,
+                    factorial: Mat.factorial,
+                    trunc: Type.trunc,
                     '$': that.getElementById,
                     '$board': that.board,
                     '$log': that.log
                 };
 
             // special scopes for factorial, deg, and rad
-            builtIn.rad.sc = JXG.Math.Geometry;
-            builtIn.deg.sc = JXG.Math.Geometry;
-            builtIn.factorial.sc = JXG.Math;
+            builtIn.rad.sc = Geometry;
+            builtIn.deg.sc = Geometry;
+            builtIn.factorial.sc = Mat;
 
             // set the javascript equivalent for the builtIns
             // some of the anonymous functions should be replaced by global methods later on
@@ -1712,7 +1711,7 @@ define([], function () {
         _debug: function (log) {
             if (typeof console === 'object') {
                 console.log(log);
-            } else if (JXG.isBrowser() && document && document.getElementById('debug') !== null) {
+            } else if (Env.isBrowser && document && document.getElementById('debug') !== null) {
                 document.getElementById('debug').innerHTML += log + '<br />';
             }
         },
@@ -1734,7 +1733,7 @@ define([], function () {
         _warn: function (msg) {
             if (typeof console === 'object') {
                 console.log('Warning(' + this.line + '): ' + msg);
-            } else if (JXG.isBrowser() && document && document.getElementById(this.warnLog) !== null) {
+            } else if (Env.isBrowser && document && document.getElementById(this.warnLog) !== null) {
                 document.getElementById(this.warnLog).innerHTML += 'Warning(' + this.line + '): ' + msg + '<br />';
             }
         },
@@ -1749,8 +1748,6 @@ define([], function () {
 
     });
 
-
-    return JXG.JessieCode;
 });
 /*
     Copyright 2008-2011
