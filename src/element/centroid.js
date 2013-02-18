@@ -36,7 +36,6 @@
 /* depends:
  jxg
  utils/type
- utils/object
   elements:
    point
  */
@@ -45,7 +44,9 @@
  * @fileoverview Example file for a centroid implemented as an extension to JSXGraph. 
  */
 
-define([], function () {
+define([
+    'jxg', 'utils/type', 'base/point'
+], function (JXG, Type, Point) {
 
     "use strict";
 
@@ -79,11 +80,11 @@ define([], function () {
      */
     JXG.createCentroid = function (board, parents, attributes) {
 
-        if (JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
             var p1 = parents[0],
                 p2 = parents[1],
                 p3 = parents[2],
-                attr = JXG.copyAttributes(attributes, board.options, 'point'),
+                attr = Type.copyAttributes(attributes, board.options, 'point'),
                 cent = board.create('point', [
                     function () {
                         return (p1.X() + p2.X() + p3.X()) / 3;

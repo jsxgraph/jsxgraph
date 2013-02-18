@@ -38,7 +38,7 @@
  math/math
  base/constants
  base/point
- utils/object
+ utils/type
   elements:
    point
    group
@@ -54,7 +54,9 @@
  * a board.
  */
 
-define([], function () {
+define([
+    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group', 'base/line', 'base/ticks', 'base/text'
+], function (JXG, Mat, Const, Type, Point, Group, Line, Ticks, Text) {
 
     "use strict";
 
@@ -103,30 +105,30 @@ define([], function () {
         smax = parents[2][2];
         sdiff = smax - smin;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'slider');
+        attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
         withText = attr.withlabel;
         snapWidth = attr.snapwidth;
         precision = attr.precision;
 
         // start point
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point1');
+        attr = Type.copyAttributes(attributes, board.options, 'slider', 'point1');
         p1 = board.create('point', pos0,  attr);
 
         // end point
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'point2');
+        attr = Type.copyAttributes(attributes, board.options, 'slider', 'point2');
         p2 = board.create('point', pos1,  attr);
         board.create('group', [p1, p2]);
 
         // slide line
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'baseline');
+        attr = Type.copyAttributes(attributes, board.options, 'slider', 'baseline');
         l1 = board.create('segment', [p1, p2], attr);
 
         // this is required for a correct projection of the glider onto the segment below
         l1.updateStdform();
 
         if (withTicks) {
-            attr = JXG.copyAttributes(attributes, board.options, 'slider', 'ticks');
+            attr = Type.copyAttributes(attributes, board.options, 'slider', 'ticks');
             ticks  = 2;
             ti = board.create('ticks', [
                 l1,
@@ -134,9 +136,9 @@ define([], function () {
 
                 function (tick) {
                     var dFull = p1.Dist(p2),
-                        d = p1.coords.distance(JXG.COORDS_BY_USER, tick);
+                        d = p1.coords.distance(Const.COORDS_BY_USER, tick);
 
-                    if (dFull < JXG.Math.eps) {
+                    if (dFull < Mat.eps) {
                         return 0;
                     }
 
@@ -149,7 +151,7 @@ define([], function () {
         starty = pos0[1] + (pos1[1] - pos0[1]) * (start - smin) / (smax - smin);
 
         // glider point
-        attr = JXG.copyAttributes(attributes, board.options, 'slider');
+        attr = Type.copyAttributes(attributes, board.options, 'slider');
         // overwrite this in any case; the sliders label is a special text element, not the gliders label.
         attr.withLabel = false;
         // gliders set snapwidth=-1 by default (i.e. deactivate them)
@@ -157,14 +159,14 @@ define([], function () {
         p3.setAttribute({snapwidth: snapWidth});
 
         // segment from start point to glider point
-        attr = JXG.copyAttributes(attributes, board.options, 'slider', 'highline');
+        attr = Type.copyAttributes(attributes, board.options, 'slider', 'highline');
         l2 = board.create('segment', [p1, p3],  attr);
 
         p3.Value = function () {
             return p3.visProp.snapwidth === -1 ? this.position * sdiff + smin : Math.round((this.position * sdiff + smin) / this.visProp.snapwidth) * this.visProp.snapwidth;
         };
 
-        p3.methodMap = JXG.deepCopy(p3.methodMap, {
+        p3.methodMap = Type.deepCopy(p3.methodMap, {
             Value: 'Value'
         });
 
@@ -190,7 +192,7 @@ define([], function () {
             } else {
                 n = '';
             }
-            attr = JXG.copyAttributes(attributes, board.options, 'slider', 'label');
+            attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
             t = board.create('text', [
                 function () {
                     return (p2.X() - p1.X()) * 0.05 + p2.X();
@@ -269,7 +271,7 @@ define([], function () {
             board.removeObject(p1);
 
 
-            JXG.Point.prototype.remove.call(p3);
+            Point.Point.prototype.remove.call(p3);
         };
 
         p1.dump = false;

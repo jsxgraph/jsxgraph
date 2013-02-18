@@ -35,20 +35,21 @@
 
 /* depends:
  jxg
- element/composition
+ base/composition
  options
  utils/type
- utils/object
   elements:
    point
    line
  */
 
-define([], function () {
+define([
+    'jxg', 'base/composition', 'options', 'utils/type', 'base/point', 'base/line'
+], function (JXG, Composition, Options, Type, Point, Line) {
 
     "use strict";
 
-    JXG.extend(JXG.Options, {
+    JXG.extend(Options, {
         square: {
             points: {
                 withLabel: false,
@@ -93,11 +94,11 @@ define([], function () {
     JXG.createSquare = function (board, parents, attributes) {
         var p1, p2, p3, p4, l1, l2, l3, l4, ret, i, attr, sq;
 
-        if (JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
             p1 = parents[0];
             p2 = parents[1];
 
-            attr = JXG.copyAttributes(attributes, board.options, 'square', 'points');
+            attr = Type.copyAttributes(attributes, board.options, 'square', 'points');
 
             p3 = board.create('point', [
                 function () {
@@ -117,7 +118,7 @@ define([], function () {
                 }
             ], attr);
 
-            attr = JXG.copyAttributes(attributes, board.options, 'square', 'lines');
+            attr = Type.copyAttributes(attributes, board.options, 'square', 'lines');
             l1 = board.create('line', [p1, p3], attr);
             l2 = board.create('line', [p1, p4], attr);
             l3 = board.create('line', [p2, p3], attr);
@@ -142,7 +143,7 @@ define([], function () {
                 lines: [l1, l2, l3, l4]
             };
 
-            ret = new JXG.Composition(sq);
+            ret = new Composition(sq);
 
             for (i = 1; i <= 4; i++) {
                 ret['point' + i] = ret.points[i - 1];

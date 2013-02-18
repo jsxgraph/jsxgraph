@@ -36,7 +36,6 @@
 /* depends:
  jxg
  utils/type
- utils/object
   elements:
    line
    group
@@ -46,7 +45,9 @@
  * @fileoverview Example file for a triangle implemented as a extension to JSXGraph.
  */
 
-define([], function () {
+define([
+    'jxg', 'utils/type', 'base/line', 'base/group'
+], function (JXG, Type, Line, Group) {
 
     "use strict";
 
@@ -70,12 +71,12 @@ define([], function () {
 
         var p1, p2, p3, l1, l2, l3, ret, i, attr;
 
-        if (JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
             p1 = parents[0];
             p2 = parents[1];
             p3 = parents[2];
 
-            attr = JXG.copyAttributes(attributes, board.options, 'line');
+            attr = Type.copyAttributes(attributes, board.options, 'line');
 
             l1 = board.create('line', [p1, p2], attr);
             l2 = board.create('line', [p2, p3], attr);

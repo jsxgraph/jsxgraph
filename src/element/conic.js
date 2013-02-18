@@ -39,7 +39,6 @@
  math/geometry
  math/numerics
  utils/type
- utils/object
   elements:
    point
    curve
@@ -49,7 +48,9 @@
  * @fileoverview In this file the conic sections defined.
  */
 
-define([], function () {
+define([
+    'jxg', 'math/math', 'math/numerics', 'math/geometry', 'utils/type', 'base/point', 'base/curve'
+], function (JXG, Mat, Numerics, Geometry, Type, Point, Curve) {
 
     "use strict";
 
@@ -89,8 +90,8 @@ define([], function () {
             rotationMatrix,
             // focus 1 and focus 2
             F = [],
-            attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
-            attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
+            attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // The foci and the third point are either points or coordinate arrays.
         for (i = 0; i < 2; i++) {
@@ -98,14 +99,14 @@ define([], function () {
             if (parents[i].length > 1) {
                 F[i] = board.create('point', parents[i], attr_foci);
             // focus i given by point
-            } else if (JXG.isPoint(parents[i])) {
-                F[i] = JXG.getRef(board, parents[i]);
+            } else if (Type.isPoint(parents[i])) {
+                F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
                 F[i] = parents[i]();
             // focus i given by point name
-            } else if (JXG.isString(parents[i])) {
-                F[i] = JXG.getRef(board, parents[i]);
+            } else if (Type.isString(parents[i])) {
+                F[i] = board.select(parents[i]);
             } else {
                 throw new Error("JSXGraph: Can't create Ellipse with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -114,23 +115,23 @@ define([], function () {
         }
 
         // length of major axis
-        if (JXG.isNumber(parents[2])) {
-            majorAxis = JXG.createFunction(parents[2], board);
-        } else if ((typeof parents[2] === 'function') && (JXG.isNumber(parents[2]()))) {
+        if (Type.isNumber(parents[2])) {
+            majorAxis = Type.createFunction(parents[2], board);
+        } else if ((typeof parents[2] === 'function') && (Type.isNumber(parents[2]()))) {
             majorAxis = parents[2];
         } else {
             // point on ellipse
-            if (JXG.isPoint(parents[2])) {
-                C = JXG.getRef(board, parents[2]);
+            if (Type.isPoint(parents[2])) {
+                C = board.select(parents[2]);
             // point on ellipse given by coordinates
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === Const.OBJECT_CLASS_POINT)) {
                 C = parents[2]();
             // focus i given by point name
-            } else if (JXG.isString(parents[2])) {
-                C = JXG.getRef(board, parents[2]);
+            } else if (Type.isString(parents[2])) {
+                C = board.select(parents[2]);
             } else {
                 throw new Error("JSXGraph: Can't create Ellipse with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -143,12 +144,12 @@ define([], function () {
         }
 
         // to
-        if (!JXG.exists(parents[4])) {
+        if (!Type.exists(parents[4])) {
             parents[4] = 1.0001 * Math.PI;
         }
 
         // from
-        if (!JXG.exists(parents[3])) {
+        if (!Type.exists(parents[3])) {
             parents[3] = -1.0001 * Math.PI;
         }
 
@@ -229,16 +230,16 @@ define([], function () {
                 transformMat[2][2] = rotationMatrix[2][2];
 
                 curve.quadraticform =
-                    JXG.Math.matMatMult(
-                        JXG.Math.transpose(transformMat),
-                        JXG.Math.matMatMult([
+                    Mat.matMatMult(
+                        Mat.transpose(transformMat),
+                        Mat.matMatMult([
                             [-1 + mx * mx / (a * a) + my * my / bb, -mx / aa, -mx / bb],
                             [-mx / aa, 1 / aa, 0],
                             [-my / bb, 0, 1 / bb]
                         ], transformMat)
                     );
             }
-            return JXG.Math.matVecMult(rotationMatrix, [1, a * Math.cos(phi), b * Math.sin(phi)]);
+            return Mat.matVecMult(rotationMatrix, [1, a * Math.cos(phi), b * Math.sin(phi)]);
         };
 
         /** @ignore */
@@ -250,15 +251,15 @@ define([], function () {
             return polarForm(phi, suspendUpdate)[2];
         };
         curve.midpoint = M;
-        curve.type = JXG.OBJECT_TYPE_CONIC;
+        curve.type = Const.OBJECT_TYPE_CONIC;
 
         M.addChild(curve);
         for (i = 0; i < 2; i++) {
-            if (JXG.isPoint(F[i])) {
+            if (Type.isPoint(F[i])) {
                 F[i].addChild(curve);
             }
         }
-        if (JXG.isPoint(C)) {
+        if (Type.isPoint(C)) {
             C.addChild(curve);
         }
         curve.parents = [];
@@ -305,8 +306,8 @@ define([], function () {
         var polarForm, curve, transformFunc, M, C, majorAxis, i, rotationMatrix,
             // focus 1 and focus 2
             F = [],
-            attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
-            attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
+            attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // The foci and the third point are either points or coordinate arrays.
         for (i = 0; i < 2; i++) {
@@ -314,14 +315,14 @@ define([], function () {
             if (parents[i].length > 1) {
                 F[i] = board.create('point', parents[i], attr_foci);
             // focus i given by point
-            } else if (JXG.isPoint(parents[i])) {
-                F[i] = JXG.getRef(board, parents[i]);
+            } else if (Type.isPoint(parents[i])) {
+                F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
                 F[i] = parents[i]();
             // focus i given by point name
-            } else if (JXG.isString(parents[i])) {
-                F[i] = JXG.getRef(board, parents[i]);
+            } else if (Type.isString(parents[i])) {
+                F[i] = board.select(parents[i]);
             } else {
                 throw new Error("JSXGraph: Can't create Hyperbola with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -330,23 +331,23 @@ define([], function () {
         }
 
         // length of major axis
-        if (JXG.isNumber(parents[2])) {
-            majorAxis = JXG.createFunction(parents[2], board);
-        } else if ((typeof parents[2] === 'function') && (JXG.isNumber(parents[2]()))) {
+        if (Type.isNumber(parents[2])) {
+            majorAxis = Type.createFunction(parents[2], board);
+        } else if ((typeof parents[2] === 'function') && (Type.isNumber(parents[2]()))) {
             majorAxis = parents[2];
         } else {
             // point on ellipse
-            if (JXG.isPoint(parents[2])) {
-                C = JXG.getRef(board, parents[2]);
+            if (Type.isPoint(parents[2])) {
+                C = board.select(parents[2]);
             // point on ellipse given by coordinates
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === Const.OBJECT_CLASS_POINT)) {
                 C = parents[2]();
             // focus i given by point name
-            } else if (JXG.isString(parents[2])) {
-                C = JXG.getRef(board, parents[2]);
+            } else if (Type.isString(parents[2])) {
+                C = board.select(parents[2]);
             } else {
                 throw new Error("JSXGraph: Can't create Hyperbola with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
@@ -359,12 +360,12 @@ define([], function () {
         }
 
         // to
-        if (!JXG.exists(parents[4])) {
+        if (!Type.exists(parents[4])) {
             parents[4] = 1.0001 * Math.PI;
         }
 
         // from
-        if (!JXG.exists(parents[3])) {
+        if (!Type.exists(parents[3])) {
             parents[3] = -1.0001 * Math.PI;
         }
 
@@ -440,14 +441,14 @@ define([], function () {
                 transformMat[2][1] = rotationMatrix[1][2];
                 transformMat[2][2] = rotationMatrix[2][2];
                 curve.quadraticform =
-                    JXG.Math.matMatMult(JXG.Math.transpose(transformMat),
-                        JXG.Math.matMatMult([
+                    Mat.matMatMult(Mat.transpose(transformMat),
+                        Mat.matMatMult([
                             [-1 + mx * mx / aa + my * my / bb, -mx / aa, my / bb],
                             [-mx / aa, 1 / aa, 0],
                             [my / bb, 0, -1 / bb]
                         ], transformMat));
             }
-            return JXG.Math.matVecMult(rotationMatrix, [1, a / Math.cos(phi), b * Math.tan(phi)]);
+            return Mat.matVecMult(rotationMatrix, [1, a / Math.cos(phi), b * Math.tan(phi)]);
         };
 
         /** @ignore */
@@ -460,15 +461,15 @@ define([], function () {
         };
 
         curve.midpoint = M;
-        curve.type = JXG.OBJECT_TYPE_CONIC;
+        curve.type = Const.OBJECT_TYPE_CONIC;
 
         M.addChild(curve);
         for (i = 0; i < 2; i++) {
-            if (JXG.isPoint(F[i])) {
+            if (Type.isPoint(F[i])) {
                 F[i].addChild(curve);
             }
         }
-        if (JXG.isPoint(C)) {
+        if (Type.isPoint(C)) {
             C.addChild(curve);
         }
         curve.parents = [];
@@ -515,21 +516,21 @@ define([], function () {
             F1 = parents[0],
             // directrix
             l = parents[1],
-            attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
-            attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
+            attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         // focus 1 given by coordinates
         if (parents[0].length > 1) {
             F1 = board.create('point', parents[0], attr_foci);
         // focus i given by point
-        } else if (JXG.isPoint(parents[0])) {
-            F1 = JXG.getRef(board, parents[0]);
+        } else if (Type.isPoint(parents[0])) {
+            F1 = board.select(parents[0]);
         // given by function
-        } else if ((typeof parents[0] === 'function') && (parents[0]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+        } else if ((typeof parents[0] === 'function') && (parents[0]().elementClass === Const.OBJECT_CLASS_POINT)) {
             F1 = parents[0]();
         // focus i given by point name
-        } else if (JXG.isString(parents[0])) {
-            F1 = JXG.getRef(board, parents[0]);
+        } else if (Type.isString(parents[0])) {
+            F1 = board.select(parents[0]);
         } else {
             throw new Error("JSXGraph: Can't create Parabola with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -537,12 +538,12 @@ define([], function () {
         }
 
         // to
-        if (!JXG.exists(parents[3])) {
+        if (!Type.exists(parents[3])) {
             parents[3] = 10;
         }
 
         // from
-        if (!JXG.exists(parents[2])) {
+        if (!Type.exists(parents[2])) {
             parents[2] = -10;
         }
 
@@ -550,8 +551,8 @@ define([], function () {
             function () {
                 var v = [0, l.stdform[1], l.stdform[2]];
 
-                v = JXG.Math.crossProduct(v, F1.coords.usrCoords);
-                return JXG.Math.Geometry.meetLineLine(v, l.stdform, 0, board).usrCoords;
+                v = Mat.crossProduct(v, F1.coords.usrCoords);
+                return Geometry.meetLineLine(v, l.stdform, 0, board).usrCoords;
             }
         ], attr_foci);
 
@@ -605,14 +606,14 @@ define([], function () {
                 transformMat[2][1] = rotationMatrix[1][2];
                 transformMat[2][2] = rotationMatrix[2][2];
                 curve.quadraticform =
-                    JXG.Math.matMatMult(JXG.Math.transpose(transformMat),
-                        JXG.Math.matMatMult([
+                    Mat.matMatMult(Mat.transpose(transformMat),
+                        Mat.matMatMult([
                             [-b * e4 - a * a, a, 2 * e],
                             [a, -1, 0],
                             [2 * e, 0, 0]
                         ], transformMat));
             }
-            return JXG.Math.matVecMult(rotationMatrix, [e4, e4 * (t + a), t * t + b * e4]);
+            return Mat.matVecMult(rotationMatrix, [e4, e4 * (t + a), t * t + b * e4]);
         };
 
         /** @ignore */
@@ -625,10 +626,10 @@ define([], function () {
             return polarForm(phi, suspendUpdate)[2];
         };
 
-        curve.type = JXG.OBJECT_TYPE_CONIC;
+        curve.type = Const.OBJECT_TYPE_CONIC;
         M.addChild(curve);
 
-        if (JXG.isPoint(F1)) {
+        if (Type.isPoint(F1)) {
             F1.addChild(curve);
         }
 
@@ -691,8 +692,8 @@ define([], function () {
             ],
             points = [],
             p = [],
-            attr_foci = JXG.copyAttributes(attributes, board.options, 'conic', 'foci'),
-            attr_curve = JXG.copyAttributes(attributes, board.options, 'conic');
+            attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
+            attr_curve = Type.copyAttributes(attributes, board.options, 'conic');
 
         if (parents.length === 5) {
             givenByPoints = true;
@@ -708,14 +709,14 @@ define([], function () {
                 if (parents[i].length > 1) {
                     points[i] = board.create('point', parents[i], attr_foci);
                 // point i given by point
-                } else if (JXG.isPoint(parents[i])) {
-                    points[i] = JXG.getRef(board, parents[i]);
+                } else if (Type.isPoint(parents[i])) {
+                    points[i] = board.select(parents[i]);
                 // given by function
-                } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === JXG.OBJECT_CLASS_POINT)) {
+                } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
                     points[i] = parents[i]();
                 // point i given by point name
-                } else if (JXG.isString(parents[i])) {
-                    points[i] = JXG.getRef(board, parents[i]);
+                } else if (Type.isString(parents[i])) {
+                    points[i] = board.select(parents[i]);
                 } else {
                     throw new Error("JSXGraph: Can't create Conic section with parent types '" + (typeof parents[i]) + "'." +
                         "\nPossible parent types: [point,point,point,point,point], [a00,a11,a22,a01,a02,a12]");
@@ -740,12 +741,12 @@ define([], function () {
                 [0, 0, 0],
                 [0, 0, 0]
             ];
-            definingMat[0][0] = (JXG.isFunction(parents[2])) ? function () { return parents[2](); } : function () { return parents[2]; };
-            definingMat[0][1] = (JXG.isFunction(parents[4])) ? function () { return parents[4](); } : function () { return parents[4]; };
-            definingMat[0][2] = (JXG.isFunction(parents[5])) ? function () { return parents[5](); } : function () { return parents[5]; };
-            definingMat[1][1] = (JXG.isFunction(parents[0])) ? function () { return parents[0](); } : function () { return parents[0]; };
-            definingMat[1][2] = (JXG.isFunction(parents[3])) ? function () { return parents[3](); } : function () { return parents[3]; };
-            definingMat[2][2] = (JXG.isFunction(parents[1])) ? function () { return parents[1](); } : function () { return parents[1]; };
+            definingMat[0][0] = (Type.isFunction(parents[2])) ? function () { return parents[2](); } : function () { return parents[2]; };
+            definingMat[0][1] = (Type.isFunction(parents[4])) ? function () { return parents[4](); } : function () { return parents[4]; };
+            definingMat[0][2] = (Type.isFunction(parents[5])) ? function () { return parents[5](); } : function () { return parents[5]; };
+            definingMat[1][1] = (Type.isFunction(parents[0])) ? function () { return parents[0](); } : function () { return parents[0]; };
+            definingMat[1][2] = (Type.isFunction(parents[3])) ? function () { return parents[3](); } : function () { return parents[3]; };
+            definingMat[2][2] = (Type.isFunction(parents[1])) ? function () { return parents[1](); } : function () { return parents[1]; };
         }
 
         // sym(A) = A + A^t . Manipulates A in place.
@@ -790,10 +791,10 @@ define([], function () {
                     [0, 0, 0]
                 ];
 
-            Mv = JXG.Math.matVecMult(B, p);
-            pBp = JXG.Math.innerProduct(p, Mv);
-            Mv = JXG.Math.matVecMult(A, p);
-            pAp = JXG.Math.innerProduct(p, Mv);
+            Mv = Mat.matVecMult(B, p);
+            pBp = Mat.innerProduct(p, Mv);
+            Mv = Mat.matVecMult(A, p);
+            pAp = Mat.innerProduct(p, Mv);
 
             for (i = 0; i < 3; i++) {
                 for (j = 0; j < 3; j++) {
@@ -825,8 +826,8 @@ define([], function () {
                     }
 
                     // Compute the quadratic form
-                    c1 = degconic(JXG.Math.crossProduct(p[0], p[1]), JXG.Math.crossProduct(p[2], p[3]));
-                    c2 = degconic(JXG.Math.crossProduct(p[0], p[2]), JXG.Math.crossProduct(p[1], p[3]));
+                    c1 = degconic(Mat.crossProduct(p[0], p[1]), Mat.crossProduct(p[2], p[3]));
+                    c2 = degconic(Mat.crossProduct(p[0], p[2]), Mat.crossProduct(p[1], p[3]));
                     M = fitConic(c1, c2, p[4]);
                 } else {
                     for (i = 0; i < 3; i++) {
@@ -843,7 +844,7 @@ define([], function () {
                 curve.quadraticform = M;
 
                 // Compute Eigenvalues and Eigenvectors
-                eigen = JXG.Math.Numerics.Jacobi(M);
+                eigen = Numerics.Jacobi(M);
 
                 // Scale the Eigenvalues such that the first Eigenvalue is positive
                 if (eigen[0][0][0] < 0) {
@@ -872,11 +873,11 @@ define([], function () {
 
             // The degenerate cases with eigen[0][i][i]==0 are not handled correct yet.
             if (eigen[0][1][1] <= 0.0 && eigen[0][2][2] <= 0.0) {
-                v = JXG.Math.matVecMult(rotationMatrix, [1 / c, Math.cos(phi) / a, Math.sin(phi) / b]);
+                v = Mat.matVecMult(rotationMatrix, [1 / c, Math.cos(phi) / a, Math.sin(phi) / b]);
             } else if (eigen[0][1][1] <= 0.0 && eigen[0][2][2] > 0.0) {
-                v = JXG.Math.matVecMult(rotationMatrix, [Math.cos(phi) / c, 1 / a, Math.sin(phi) / b]);
+                v = Mat.matVecMult(rotationMatrix, [Math.cos(phi) / c, 1 / a, Math.sin(phi) / b]);
             } else if (eigen[0][2][2] < 0.0) {
-                v = JXG.Math.matVecMult(rotationMatrix, [Math.sin(phi) / c, Math.cos(phi) / a, 1 / b]);
+                v = Mat.matVecMult(rotationMatrix, [Math.sin(phi) / c, Math.cos(phi) / a, 1 / b]);
             }
 
             // Normalize
@@ -910,11 +911,11 @@ define([], function () {
             }
         ], attr_foci);
 
-        curve.type = JXG.OBJECT_TYPE_CONIC;
+        curve.type = Const.OBJECT_TYPE_CONIC;
 
         if (givenByPoints) {
             for (i = 0; i < 5; i++) {
-                if (JXG.isPoint(points[i])) {
+                if (Type.isPoint(points[i])) {
                     points[i].addChild(curve);
                 }
             }

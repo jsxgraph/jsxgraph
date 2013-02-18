@@ -44,7 +44,6 @@
  base/coords
  base/constants
  utils/type
- utils/object
   elements:
    line
    circle
@@ -76,7 +75,10 @@
  *   <li>{@link Reflection}</li></ul>
  */
 
-define([], function () {
+define([
+    'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'math/symbolic', 'base/coords', 'utils/type',
+    'base/constants', 'base/point', 'base/line', 'base/circle', 'base/transformation', 'base/composition', 'base/curve', 'base/text'
+], function (JXG, Mat, Geometry, Numerics, Statistics, Symbolic, Coords, Type, Const, Point, Line, Circle, Transform, Composition, Curve, Text) {
 
     "use strict";
 
@@ -111,10 +113,10 @@ define([], function () {
     JXG.createOrthogonalProjection = function (board, parents, attributes) {
         var l, p, t, attr;
 
-        if (JXG.isPoint(parents[0]) && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[0];
             l = parents[1];
-        } else if (JXG.isPoint(parents[1]) && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[1];
             l = parents[0];
         } else {
@@ -123,11 +125,11 @@ define([], function () {
                 "\nPossible parent types: [point,line]");
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'orthogonalprojection');
+        attr = Type.copyAttributes(attributes, board.options, 'orthogonalprojection');
 
         t = board.create('point', [
             function () {
-                return JXG.Math.Geometry.projectPointToLine(p, l, board);
+                return Geometry.projectPointToLine(p, l, board);
             }
         ], attr);
 
@@ -233,13 +235,13 @@ define([], function () {
     JXG.createPerpendicular = function (board, parents, attributes) {
         var p, l, pd, attr;
 
-        parents[0] = JXG.getRef(board, parents[0]);
-        parents[1] = JXG.getRef(board, parents[1]);
+        parents[0] = board.select(parents[0]);
+        parents[1] = board.select(parents[1]);
 
-        if (JXG.isPoint(parents[0]) && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
             p = parents[0];
-        } else if (JXG.isPoint(parents[1]) && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[0];
             p = parents[1];
         } else {
@@ -248,8 +250,8 @@ define([], function () {
                 "\nPossible parent types: [line,point]");
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'perpendicular');
-        pd = JXG.createLine(board, [
+        attr = Type.copyAttributes(attributes, board.options, 'perpendicular');
+        pd = Line.createLine(board, [
             function () {
                 return l.stdform[2] * p.X() - l.stdform[1] * p.Y();
             },
@@ -299,10 +301,10 @@ define([], function () {
     JXG.createPerpendicularPoint = function (board, parents, attributes) {
         var l, p, t;
 
-        if (JXG.isPoint(parents[0]) && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[0];
             l = parents[1];
-        } else if (JXG.isPoint(parents[1]) && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[1];
             l = parents[0];
         } else {
@@ -313,7 +315,7 @@ define([], function () {
 
         t = board.create('point', [
             function () {
-                return JXG.Math.Geometry.perpendicular(l, p, board)[0];
+                return Geometry.perpendicular(l, p, board)[0];
             }
         ], attributes);
 
@@ -418,13 +420,13 @@ define([], function () {
     JXG.createPerpendicularSegment = function (board, parents, attributes) {
         var p, l, pd, t, attr;
 
-        parents[0] = JXG.getRef(board, parents[0]);
-        parents[1] = JXG.getRef(board, parents[1]);
+        parents[0] = board.select(parents[0]);
+        parents[1] = board.select(parents[1]);
 
-        if (JXG.isPoint(parents[0]) && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
             p = parents[0];
-        } else if (JXG.isPoint(parents[1]) && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[0];
             p = parents[1];
         } else {
@@ -432,19 +434,19 @@ define([], function () {
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [line,point]");
         }
-        attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment', 'point');
+        attr = Type.copyAttributes(attributes, board.options, 'perpendicularsegment', 'point');
         t = JXG.createPerpendicularPoint(board, [l, p], attr);
 
         t.dump = false;
 
-        if (!JXG.exists(attributes.layer)) {
+        if (!Type.exists(attributes.layer)) {
             attributes.layer = board.options.layer.line;
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'perpendicularsegment');
-        pd = JXG.createLine(board, [
+        attr = Type.copyAttributes(attributes, board.options, 'perpendicularsegment');
+        pd = Line.createLine(board, [
             function () {
-                return (JXG.Math.Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]);
+                return (Geometry.perpendicular(l, p, board)[1] ? [t, p] : [p, t]);
             }
         ], attr);
 
@@ -499,10 +501,10 @@ define([], function () {
     JXG.createMidpoint = function (board, parents, attributes) {
         var a, b, t;
 
-        if (parents.length === 2 && JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
+        if (parents.length === 2 && Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
             a = parents[0];
             b = parents[1];
-        } else if (parents.length === 1 && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (parents.length === 1 && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             a = parents[0].point1;
             b = parents[0].point2;
         } else {
@@ -513,7 +515,7 @@ define([], function () {
         t = board.create('point', [
             function () {
                 var x = a.coords.usrCoords[1] + b.coords.usrCoords[1];
-                if (isNaN(x) || Math.abs(a.coords.usrCoords[0]) < JXG.Math.eps || Math.abs(b.coords.usrCoords[0]) < JXG.Math.eps) {
+                if (isNaN(x) || Math.abs(a.coords.usrCoords[0]) < Mat.eps || Math.abs(b.coords.usrCoords[0]) < Mat.eps) {
                     return NaN;
                 }
 
@@ -521,7 +523,7 @@ define([], function () {
             },
             function () {
                 var y = a.coords.usrCoords[2] + b.coords.usrCoords[2];
-                if (isNaN(y) || Math.abs(a.coords.usrCoords[0]) < JXG.Math.eps || Math.abs(b.coords.usrCoords[0]) < JXG.Math.eps) {
+                if (isNaN(y) || Math.abs(a.coords.usrCoords[0]) < Mat.eps || Math.abs(b.coords.usrCoords[0]) < Mat.eps) {
                     return NaN;
                 }
 
@@ -612,15 +614,19 @@ define([], function () {
     JXG.createParallelPoint = function (board, parents, attributes) {
         var a, b, c, p;
 
-        if (parents.length === 3 && parents[0].elementClass === JXG.OBJECT_CLASS_POINT && parents[1].elementClass === JXG.OBJECT_CLASS_POINT && parents[2].elementClass === JXG.OBJECT_CLASS_POINT) {
+        if (parents.length === 3 && parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
             a = parents[0];
             b = parents[1];
             c = parents[2];
-        } else if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             c = parents[0];
             a = parents[1].point1;
             b = parents[1].point2;
-        } else if (parents[1].elementClass === JXG.OBJECT_CLASS_POINT && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             c = parents[1];
             a = parents[0].point1;
             b = parents[0].point2;
@@ -745,16 +751,16 @@ define([], function () {
             p = parents[2];
             /** @ignore */
             li = function () {
-                return JXG.Math.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
+                return Mat.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
             };
-        } else if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT) {
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_POINT) {
             // Parallel to line parents[1] through point parents[0]
             p = parents[0];
             /** @ignore */
             li = function () {
                 return parents[1].stdform;
             };
-        } else if (parents[1].elementClass === JXG.OBJECT_CLASS_POINT) {
+        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
             // Parallel to line parents[0] through point parents[1]
             p = parents[1];
             /** @ignore */
@@ -763,20 +769,20 @@ define([], function () {
             };
         }
 
-        if (!JXG.exists(attributes.layer)) {
+        if (!Type.exists(attributes.layer)) {
             attributes.layer = board.options.layer.line;
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'parallel', 'point');
+        attr = Type.copyAttributes(attributes, board.options, 'parallel', 'point');
         pp = board.create('point', [
             function () {
-                return JXG.Math.crossProduct([1, 0, 0], li());
+                return Mat.crossProduct([1, 0, 0], li());
             }
         ], attr);
 
         pp.isDraggable = true;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'parallel');
+        attr = Type.copyAttributes(attributes, board.options, 'parallel');
         pl = board.create('line', [p, pp], attr);
 
         pl.elType = 'parallel';
@@ -886,10 +892,10 @@ define([], function () {
             c = p.slideObject;
         // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
         } else if (parents.length === 2) {
-            if (JXG.isPoint(parents[0])) {
+            if (Type.isPoint(parents[0])) {
                 p = parents[0];
                 c = parents[1];
-            } else if (JXG.isPoint(parents[1])) {
+            } else if (Type.isPoint(parents[1])) {
                 c = parents[0];
                 p = parents[1];
             } else {
@@ -903,13 +909,13 @@ define([], function () {
                 "\nPossible parent types: [point,line], [point,circle], [glider]");
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'normal');
-        if (c.elementClass === JXG.OBJECT_CLASS_LINE) {
+        attr = Type.copyAttributes(attributes, board.options, 'normal');
+        if (c.elementClass === Const.OBJECT_CLASS_LINE) {
             // Private point
-            attrp = JXG.copyAttributes(attributes, board.options, 'normal', 'point');
+            attrp = Type.copyAttributes(attributes, board.options, 'normal', 'point');
             pp = board.create('point', [
                 function () {
-                    var p = JXG.Math.crossProduct([1, 0, 0], c.stdform);
+                    var p = Mat.crossProduct([1, 0, 0], c.stdform);
                     return [p[0], -p[2], p[1]];
                 }
             ], attrp);
@@ -925,21 +931,21 @@ define([], function () {
              * @memberOf Normal.prototype
              */
             l.point = pp;
-        } else if (c.elementClass === JXG.OBJECT_CLASS_CIRCLE) {
+        } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             l = board.create('line', [c.midpoint, p], attr);
-        } else if (c.elementClass === JXG.OBJECT_CLASS_CURVE) {
+        } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
             if (c.visProp.curvetype !== 'plot') {
                 g = c.X;
                 f = c.Y;
                 l = board.create('line', [
                     function () {
-                        return -p.X() * JXG.Math.Numerics.D(g)(p.position) - p.Y() * JXG.Math.Numerics.D(f)(p.position);
+                        return -p.X() * Numerics.D(g)(p.position) - p.Y() * Numerics.D(f)(p.position);
                     },
                     function () {
-                        return JXG.Math.Numerics.D(g)(p.position);
+                        return Numerics.D(g)(p.position);
                     },
                     function () {
-                        return JXG.Math.Numerics.D(f)(p.position);
+                        return Numerics.D(f)(p.position);
                     }
                 ], attr);
             } else {                         // curveType 'plot'
@@ -987,7 +993,7 @@ define([], function () {
                     }
                 ], attr);
             }
-        } else if (c.type === JXG.OBJECT_TYPE_TURTLE) {
+        } else if (c.type === Const.OBJECT_TYPE_TURTLE) {
             l = board.create('line', [
                 function () {
                     var el, j,
@@ -998,7 +1004,7 @@ define([], function () {
                     for (j = 0; j < c.objects.length; j++) {
                         el = c.objects[j];
 
-                        if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
                             if (i < el.numberPoints) {
                                 break;
                             }
@@ -1025,7 +1031,7 @@ define([], function () {
                     // run through all curves of this turtle
                     for (j = 0; j < c.objects.length; j++) {
                         el = c.objects[j];
-                        if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
                             if (i < el.numberPoints) {
                                 break;
                             }
@@ -1051,7 +1057,7 @@ define([], function () {
                     // run through all curves of this turtle
                     for (j = 0; j < c.objects.length; j++) {
                         el = c.objects[j];
-                        if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                        if (el.type === Const.OBJECT_TYPE_CURVE) {
                             if (i < el.numberPoints) {
                                 break;
                             }
@@ -1117,13 +1123,14 @@ define([], function () {
     JXG.createBisector = function (board, parents, attributes) {
         var p, l, i, attr;
 
-        if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT && parents[1].elementClass === JXG.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === JXG.OBJECT_CLASS_POINT) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
             // hidden and fixed helper
-            attr = JXG.copyAttributes(attributes, board.options, 'bisector', 'point');
+            attr = Type.copyAttributes(attributes, board.options, 'bisector', 'point');
             p = board.create('point', [
                 function () {
-                    return JXG.Math.Geometry.angleBisector(parents[0], parents[1], parents[2], board);
+                    return Geometry.angleBisector(parents[0], parents[1], parents[2], board);
                 }
             ], attr);
             p.dump = false;
@@ -1133,12 +1140,12 @@ define([], function () {
                 parents[i].addChild(p);
             }
 
-            if (!JXG.exists(attributes.layer)) {
+            if (!Type.exists(attributes.layer)) {
                 attributes.layer = board.options.layer.line;
             }
 
-            attr = JXG.copyAttributes(attributes, board.options, 'bisector');
-            l = JXG.createLine(board, [parents[1], p], attr);
+            attr = Type.copyAttributes(attributes, board.options, 'bisector');
+            l = Line.createLine(board, [parents[1], p], attr);
 
             /**
              * Helper point
@@ -1201,20 +1208,20 @@ define([], function () {
         // (a1*x+b1*y+c1*z)/sqrt(a1^2+b1^2) = +/- (a2*x+b2*y+c2*z)/sqrt(a2^2+b2^2)
 
         var g1, g2, attr, ret,
-            l1 = JXG.getRef(board, parents[0]),
-            l2 = JXG.getRef(board, parents[1]);
+            l1 = board.select(parents[0]),
+            l2 = board.select(parents[1]);
 
-        if (l1.elementClass !== JXG.OBJECT_CLASS_LINE || l2.elementClass !== JXG.OBJECT_CLASS_LINE) {
+        if (l1.elementClass !== Const.OBJECT_CLASS_LINE || l2.elementClass !== Const.OBJECT_CLASS_LINE) {
             throw new Error("JSXGraph: Can't create angle bisectors of two lines with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [line,line]");
         }
 
-        if (!JXG.exists(attributes.layer)) {
+        if (!Type.exists(attributes.layer)) {
             attributes.layer = board.options.layer.line;
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line1');
+        attr = Type.copyAttributes(attributes, board.options, 'bisectorlines', 'line1');
         g1 = board.create('line', [
             function () {
                 var d1 = Math.sqrt(l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]),
@@ -1236,10 +1243,10 @@ define([], function () {
             }
         ], attr);
 
-        if (!JXG.exists(attributes.layer)) {
+        if (!Type.exists(attributes.layer)) {
             attributes.layer = board.options.layer.line;
         }
-        attr = JXG.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
+        attr = Type.copyAttributes(attributes, board.options, 'bisectorlines', 'line2');
         g2 = board.create('line', [
             function () {
                 var d1 = Math.sqrt(l1.stdform[1] * l1.stdform[1] + l1.stdform[2] * l1.stdform[2]),
@@ -1276,7 +1283,7 @@ define([], function () {
          * @type Line
          */
 
-        ret = new JXG.Composition({line1: g1, line2: g2});
+        ret = new Composition({line1: g1, line2: g2});
 
         g1.dump = false;
         g2.dump = false;
@@ -1322,15 +1329,15 @@ define([], function () {
     JXG.createCircumcenter = function (board, parents, attributes) {
         var p, i, a, b, c;
 
-        if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT && parents[1].elementClass === JXG.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === JXG.OBJECT_CLASS_POINT) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT && parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
             a = parents[0];
             b = parents[1];
             c = parents[2];
 
-            p = JXG.createPoint(board, [
+            p = Point.createPoint(board, [
                 function () {
-                    return JXG.Math.Geometry.circumcenterMidpoint(a, b, c, board);
+                    return Geometry.circumcenterMidpoint(a, b, c, board);
                 }
             ], attributes);
 
@@ -1403,7 +1410,7 @@ define([], function () {
     JXG.createIncenter = function (board, parents, attributes) {
         var p, A, B, C;
 
-        if (parents.length >= 3 && JXG.isPoint(parents[0]) && JXG.isPoint(parents[1]) && JXG.isPoint(parents[2])) {
+        if (parents.length >= 3 && Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
             A = parents[0];
             B = parents[1];
             C = parents[2];
@@ -1415,7 +1422,7 @@ define([], function () {
                 b = Math.sqrt((A.X() - C.X()) * (A.X() - C.X()) + (A.Y() - C.Y()) * (A.Y() - C.Y()));
                 c = Math.sqrt((B.X() - A.X()) * (B.X() - A.X()) + (B.Y() - A.Y()) * (B.Y() - A.Y()));
 
-                return new JXG.Coords(JXG.COORDS_BY_USER, [(a * A.X() + b * B.X() + c * C.X()) / (a + b + c), (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c)], board);
+                return new Coords(Const.COORDS_BY_USER, [(a * A.X() + b * B.X() + c * C.X()) / (a + b + c), (a * A.Y() + b * B.Y() + c * C.Y()) / (a + b + c)], board);
             }], attributes);
 
             p.elType = 'incenter';
@@ -1458,16 +1465,16 @@ define([], function () {
         var p, c, attr;
 
         try {
-            attr = JXG.copyAttributes(attributes, board.options, 'circumcircle', 'center');
+            attr = Type.copyAttributes(attributes, board.options, 'circumcircle', 'center');
             p = JXG.createCircumcenter(board, parents, attr);
 
             p.dump = false;
 
-            if (!JXG.exists(attributes.layer)) {
+            if (!Type.exists(attributes.layer)) {
                 attributes.layer = board.options.layer.circle;
             }
-            attr = JXG.copyAttributes(attributes, board.options, 'circumcircle');
-            c = JXG.createCircle(board, [p, parents[0]], attr);
+            attr = Type.copyAttributes(attributes, board.options, 'circumcircle');
+            c = Circle.createCircle(board, [p, parents[0]], attr);
 
             c.elType = 'circumcircle';
             c.parents = [parents[0].id, parents[1].id, parents[2].id];
@@ -1514,16 +1521,16 @@ define([], function () {
         var p, c, attr;
 
         try {
-            attr = JXG.copyAttributes(attributes, board.options, 'incircle', 'center');
+            attr = Type.copyAttributes(attributes, board.options, 'incircle', 'center');
             p = JXG.createIncenter(board, parents, attr);
 
             p.dump = false;
 
-            if (!JXG.exists(attributes.layer)) {
+            if (!Type.exists(attributes.layer)) {
                 attributes.layer = board.options.layer.circle;
             }
-            attr = JXG.copyAttributes(attributes, board.options, 'incircle');
-            c = JXG.createCircle(board, [p, function () {
+            attr = Type.copyAttributes(attributes, board.options, 'incircle');
+            c = Circle.createCircle(board, [p, function () {
                 var a = Math.sqrt((parents[1].X() - parents[2].X()) * (parents[1].X() - parents[2].X()) + (parents[1].Y() - parents[2].Y()) * (parents[1].Y() - parents[2].Y())),
                     b = Math.sqrt((parents[0].X() - parents[2].X()) * (parents[0].X() - parents[2].X()) + (parents[0].Y() - parents[2].Y()) * (parents[0].Y() - parents[2].Y())),
                     c = Math.sqrt((parents[1].X() - parents[0].X()) * (parents[1].X() - parents[0].X()) + (parents[1].Y() - parents[0].Y()) * (parents[1].Y() - parents[0].Y())),
@@ -1588,10 +1595,10 @@ define([], function () {
     JXG.createReflection = function (board, parents, attributes) {
         var l, p, r, t;
 
-        if (parents[0].elementClass === JXG.OBJECT_CLASS_POINT && parents[1].elementClass === JXG.OBJECT_CLASS_LINE) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[0];
             l = parents[1];
-        } else if (parents[1].elementClass === JXG.OBJECT_CLASS_POINT && parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[1];
             l = parents[0];
         } else {
@@ -1600,8 +1607,8 @@ define([], function () {
                 "\nPossible parent types: [line,point]");
         }
 
-        t = JXG.createTransform(board, [l], {type: 'reflect'});
-        r = JXG.createPoint(board, [p, t], attributes);
+        t = Transform.createTransform(board, [l], {type: 'reflect'});
+        r = Point.createPoint(board, [p, t], attributes);
         p.addChild(r);
         l.addChild(r);
 
@@ -1665,10 +1672,10 @@ define([], function () {
     JXG.createMirrorPoint = function (board, parents, attributes) {
         var p, i;
 
-        if (JXG.isPoint(parents[0]) && JXG.isPoint(parents[1])) {
-            p = JXG.createPoint(board, [
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1])) {
+            p = Point.createPoint(board, [
                 function () {
-                    return JXG.Math.Geometry.rotation(parents[0], parents[1], Math.PI, board);
+                    return Geometry.rotation(parents[0], parents[1], Math.PI, board);
                 }
             ], attributes);
 
@@ -1718,10 +1725,10 @@ define([], function () {
             pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
             t, p;
 
-        if (JXG.isArray(parents[0]) && parents[1].elementClass === JXG.OBJECT_CLASS_CURVE) {
+        if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
             interval = parents[0];
             curve = parents[1];
-        } else if (JXG.isArray(parents[1]) && parents[0].elementClass === JXG.OBJECT_CLASS_CURVE) {
+        } else if (Type.isArray(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_CURVE) {
             interval = parents[1];
             curve = parents[0];
         } else {
@@ -1734,7 +1741,7 @@ define([], function () {
         start = interval[0];
         end = interval[1];
 
-        if (JXG.isFunction(start)) {
+        if (Type.isFunction(start)) {
             startx = start;
             starty = function () { return curve.Y(startx()); };
             start = startx();
@@ -1743,7 +1750,7 @@ define([], function () {
             starty = curve.Y(start);
         }
 
-        if (JXG.isFunction(start)) {
+        if (Type.isFunction(start)) {
             endx = end;
             endy = function () { return curve.Y(endx()); };
             end = endx();
@@ -1752,33 +1759,33 @@ define([], function () {
             endy = curve.Y(end);
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'curveLeft');
+        attr = Type.copyAttributes(attributes, board.options, 'integral', 'curveLeft');
         pa_on_curve = board.create('glider', [startx, starty, curve], attr);
-        if (JXG.isFunction(startx)) {
+        if (Type.isFunction(startx)) {
             pa_on_curve.hideElement();
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
+        attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
             function () {
                 return pa_on_curve.X();
             }, 0], attr);
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'curveRight');
+        attr = Type.copyAttributes(attributes, board.options, 'integral', 'curveRight');
         pb_on_curve = board.create('glider', [endx, endy, curve], attr);
-        if (JXG.isFunction(endx)) {
+        if (Type.isFunction(endx)) {
             pb_on_curve.hideElement();
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral', 'baseRight');
+        attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
             function () {
                 return pb_on_curve.X();
             }, 0], attr);
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral');
+        attr = Type.copyAttributes(attributes, board.options, 'integral');
         if (attr.withLabel !== false) {
-            attr = JXG.copyAttributes(attributes, board.options, 'integral', 'label');
+            attr = Type.copyAttributes(attributes, board.options, 'integral', 'label');
             t = board.create('text', [
                 function () {
                     return pb_on_curve.X() + 0.2;
@@ -1787,7 +1794,7 @@ define([], function () {
                     return pb_on_curve.Y() - 0.8;
                 },
                 function () {
-                    var Int = JXG.Math.Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
+                    var Int = Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
                     return '&int; = ' + (Int).toFixed(4);
                 }
             ], attr);
@@ -1798,7 +1805,7 @@ define([], function () {
             pb_on_curve.addChild(t);
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'integral');
+        attr = Type.copyAttributes(attributes, board.options, 'integral');
         p = board.create('curve', [[0], [0]], attr);
 
         // dump stuff
@@ -1942,7 +1949,7 @@ define([], function () {
     JXG.createLocus = function (board, parents, attributes) {
         var c, p;
 
-        if (JXG.isArray(parents) && parents.length === 1 && parents[0].elementClass === JXG.OBJECT_CLASS_POINT) {
+        if (Type.isArray(parents) && parents.length === 1 && parents[0].elementClass === Const.OBJECT_CLASS_POINT) {
             p = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create locus with parent of type other than point." +
@@ -1966,7 +1973,7 @@ define([], function () {
                 return;
             }
 
-            spe = JXG.Math.Symbolic.generatePolynomials(board, p, true).join('|');
+            spe = Symbolic.generatePolynomials(board, p, true).join('|');
             if (spe === c.spe) {
                 return;
             }
@@ -2009,7 +2016,7 @@ define([], function () {
                     };
                 }(eq));
             };
-            data = JXG.Math.Symbolic.geometricLocusByGroebnerBase(board, p, cb);
+            data = Symbolic.geometricLocusByGroebnerBase(board, p, cb);
 
             cb(data.datax, data.datay, data.polynomial, data.exectime);
         };
@@ -2043,19 +2050,19 @@ define([], function () {
     JXG.createGrid = function (board, parents, attributes) {
         var c, attr;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'grid');
+        attr = Type.copyAttributes(attributes, board.options, 'grid');
         c = board.create('curve', [[null], [null]], attr);
 
         c.elType = 'grid';
         c.parents = [];
-        c.type = JXG.OBJECT_TYPE_GRID;
+        c.type = Const.OBJECT_TYPE_GRID;
 
         c.updateDataArray = function () {
             var start, end, i,
                 gridX = this.visProp.gridx,
                 gridY = this.visProp.gridy,
-                topLeft = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], board),
-                bottomRight = new JXG.Coords(JXG.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
+                topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board),
+                bottomRight = new Coords(Const.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
 
             //
             //      |         |         |
@@ -2081,8 +2088,8 @@ define([], function () {
 
             board.options.grid.hasGrid = true;
 
-            topLeft.setCoordinates(JXG.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
-            bottomRight.setCoordinates(JXG.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
+            topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
+            bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
 
             c.dataX = [];
             c.dataY = [];
@@ -2158,10 +2165,8 @@ define([], function () {
     JXG.createInequality = function (board, parents, attributes) {
         var f, a, attr;
 
-        // TODO: documentation, special case line parallel to y axis, curve case
-
-        attr = JXG.copyAttributes(attributes, board.options, 'inequality');
-        if (parents[0].elementClass === JXG.OBJECT_CLASS_LINE) {
+        attr = Type.copyAttributes(attributes, board.options, 'inequality');
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             a = board.create('curve', [[], []], attr);
             a.hasPoint = function () {
                 return false;
@@ -2186,12 +2191,12 @@ define([], function () {
                     slope2 = slope1;
 
                 if (slope1[1] > 0) {
-                    slope1 = JXG.Math.Statistics.multiply(slope1, -1);
+                    slope1 = Statistics.multiply(slope1, -1);
                     slope2 = slope1;
                 }
 
                 // calculate the area height = 2* the distance of the line to the point in the middle of the top/bottom border.
-                h = expansion * Math.max(JXG.Math.Geometry.perpendicular(parents[0], dp, board)[0].distance(JXG.COORDS_BY_USER, dp.coords), w);
+                h = expansion * Math.max(Geometry.perpendicular(parents[0], dp, board)[0].distance(Const.COORDS_BY_USER, dp.coords), w);
                 h *= factor;
 
                 // reuse dp
@@ -2200,7 +2205,7 @@ define([], function () {
                         usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
                     }
                 };
-                dp = JXG.Math.Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
+                dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
                 i1 = [1, dp[1] + slope1[1] * w, dp[2] - slope1[0] * w];
                 i2 = [1, dp[1] - slope2[1] * w, dp[2] + slope2[0] * w];
 
@@ -2211,8 +2216,8 @@ define([], function () {
                 this.dataY = [i1[2], i1[2] + slope1[1] * h, i2[2] + slope2[1] * h, i2[2], i1[2]];
             };
         } else {
-            f = JXG.createFunction(parents[0]);
-            if (!JXG.exists(f)) {
+            f = Type.createFunction(parents[0]);
+            if (!Type.exists(f)) {
                 throw new Error("JSXGraph: Can't create area with the given parents." +
                     "\nPossible parent types: [line], [function]");
             }

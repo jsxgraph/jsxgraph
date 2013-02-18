@@ -35,7 +35,8 @@
 
 /* depends:
  jxg
- utils/object
+ utils/type
+ base/element
   elements:
    point
    segment
@@ -48,7 +49,9 @@
  * a board.
  */
 
-define([], function () {
+define([
+    'jxg', 'utils/type', 'base/element', 'base/point', 'base/line', 'base/ticks'
+], function (JXG, Type, GeometryElement, Point, Line, Ticks) {
 
     "use strict";
 
@@ -88,21 +91,21 @@ define([], function () {
         pos0 = parents[0];
         pos1 = parents[1];
 
-        attr = JXG.copyAttributes(attributes, board.options, 'tapemeasure');
+        attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
         withTicks = attr.withticks;
         withText = attr.withlabel;
         precision = attr.precision;
 
         // start point
-        attr = JXG.copyAttributes(attributes, board.options, 'tapemeasure', 'point1');
+        attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'point1');
         p1 = board.create('point', pos0,  attr);
 
         // end point
-        attr = JXG.copyAttributes(attributes, board.options, 'tapemeasure', 'point2');
+        attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'point2');
         p2 = board.create('point', pos1,  attr);
 
         // tape measure line
-        attr = JXG.copyAttributes(attributes, board.options, 'tapemeasure');
+        attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
 
         // Below, we will replace the label by the measurement function.
         if (withText) {
@@ -122,7 +125,7 @@ define([], function () {
         }
 
         if (withTicks) {
-            attr = JXG.copyAttributes(attributes, board.options, 'tapemeasure', 'ticks');
+            attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'ticks');
             //ticks  = 2;
             ti = board.create('ticks', [li, 0.1], attr);
         }
@@ -136,7 +139,7 @@ define([], function () {
             board.removeObject(p2);
             board.removeObject(p1);
 
-            JXG.GeometryElement.prototype.remove.call(this);
+            GeometryElement.prototype.remove.call(this);
         };
 
         p1.dump = false;
