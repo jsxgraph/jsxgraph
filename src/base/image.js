@@ -47,7 +47,9 @@
  * @fileoverview In this file the geometry element Image is defined.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'utils/type'
+], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Type) {
 
     "use strict";
 
@@ -58,19 +60,19 @@ define([], function () {
      * @constructor
      */
     JXG.Image = function (board, url, coords, size, attributes) {
-        this.constructor(board, attributes, JXG.OBJECT_TYPE_IMAGE, JXG.OBJECT_CLASS_OTHER);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_IMAGE, Const.OBJECT_CLASS_OTHER);
 
-        this.initialCoords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);  // Still needed?
+        this.initialCoords = new Coords(Const.COORDS_BY_USER, coords, this.board);  // Still needed?
 
-        if (!JXG.isFunction(coords[0]) && !JXG.isFunction(coords[1])) {
+        if (!Type.isFunction(coords[0]) && !Type.isFunction(coords[1])) {
             this.isDraggable = true;
         }
-        this.X = JXG.createFunction(coords[0], this.board, '');
-        this.Y = JXG.createFunction(coords[1], this.board, '');
-        this.Z = JXG.createFunction(1, this.board, '');
-        this.W = JXG.createFunction(size[0], this.board, '');
-        this.H = JXG.createFunction(size[1], this.board, '');
-        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(), this.Y()], this.board);
+        this.X = Type.createFunction(coords[0], this.board, '');
+        this.Y = Type.createFunction(coords[1], this.board, '');
+        this.Z = Type.createFunction(1, this.board, '');
+        this.W = Type.createFunction(size[0], this.board, '');
+        this.H = Type.createFunction(size[1], this.board, '');
+        this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
         this.usrSize = [this.W(), this.H()];
         this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
         this.url = url;
@@ -96,7 +98,7 @@ define([], function () {
 
     };
 
-    JXG.Image.prototype = new JXG.GeometryElement();
+    JXG.Image.prototype = new GeometryElement();
 
     JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 
@@ -122,13 +124,13 @@ define([], function () {
             }
 
             // Image is transformed
-            c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             // v is the vector from anchor point to the drag point
             c = c.usrCoords;
             v = [c[0] - this.span[0][0],
                 c[1] - this.span[0][1],
                 c[2] - this.span[0][2]];
-            dot = JXG.Math.innerProduct;   // shortcut
+            dot = Mat.innerProduct;   // shortcut
 
             // Project the drag point to the sides.
             p = dot(v, this.span[1]);
@@ -187,14 +189,14 @@ define([], function () {
          * Updates the coordinates of the top left corner of the image.
          */
         updateCoords: function () {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
+            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.X(), this.Y()]);
         },
 
         /**
          * Updates the size of the image.
          */
         updateSize: function () {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.W(), this.H()]);
+            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.W(), this.H()]);
         },
 
         /**
@@ -217,7 +219,7 @@ define([], function () {
                 // Transform the three corners
                 for (i = 0; i < len; i++) {
                     for (j = 0; j < 3; j++) {
-                        v[j] = JXG.Math.matVecMult(this.transformations[i].matrix, v[j]);
+                        v[j] = Mat.matVecMult(this.transformations[i].matrix, v[j]);
                     }
                 }
                 // Normalize the vectors
@@ -242,7 +244,7 @@ define([], function () {
         addTransform: function (transform) {
             var i;
 
-            if (JXG.isArray(transform)) {
+            if (Type.isArray(transform)) {
                 for (i = 0; i < transform.length; i++) {
                     this.transformations.push(transform[i]);
                 }
@@ -260,14 +262,14 @@ define([], function () {
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var dc,
-                c = new JXG.Coords(method, coords, this.board),
-                oldc = new JXG.Coords(method, oldcoords, this.board),
+                c = new Coords(method, coords, this.board),
+                oldc = new Coords(method, oldcoords, this.board),
                 v = [this.Z(), this.X(), this.Y()];
 
-            dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+            dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
-            this.X = JXG.createFunction(v[1] + dc[1], this.board, '');
-            this.Y = JXG.createFunction(v[2] + dc[2], this.board, '');
+            this.X = Type.createFunction(v[1] + dc[1], this.board, '');
+            this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
 
             return this;
         }
@@ -297,11 +299,11 @@ define([], function () {
     JXG.createImage = function (board, parents, attributes) {
         var attr, im;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'image');
+        attr = Type.copyAttributes(attributes, board.options, 'image');
         im = new JXG.Image(board, parents[0], parents[1], parents[2], attr);
 
-        if (JXG.evaluate(attr.rotate) !== 0) {
-            im.addRotation(JXG.evaluate(attr.rotate));
+        if (Type.evaluate(attr.rotate) !== 0) {
+            im.addRotation(Type.evaluate(attr.rotate));
         }
 
         return im;

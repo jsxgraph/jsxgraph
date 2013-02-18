@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, document:true, jQuery:true, define: true*/
+/*global JXG: true, document:true, jQuery:true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -381,7 +381,7 @@ define([
     };
 
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
-    if (typeof window === 'object' && typeof document === 'object') {
+    if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
             var scripts = document.getElementsByTagName('script'), type,
                 i, j, div, id, board, width, height, bbox, axis, grid, code;

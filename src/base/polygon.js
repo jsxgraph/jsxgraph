@@ -45,7 +45,9 @@
    transform
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'utils/type', 'base/element', 'base/line', 'base/transformation'
+], function (JXG, Const, Coords, Statistics, Type, GeometryElement, Line, Transform) {
 
     "use strict";
 
@@ -63,10 +65,10 @@ define([], function () {
      */
 
     JXG.Polygon = function (board, vertices, attributes) {
-        this.constructor(board, attributes, JXG.OBJECT_TYPE_POLYGON, JXG.OBJECT_CLASS_AREA);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_POLYGON, Const.OBJECT_CLASS_AREA);
 
         var i, vertex, l, len, j,
-            attr_line = JXG.copyAttributes(attributes, board.options, 'polygon', 'borders');
+            attr_line = Type.copyAttributes(attributes, board.options, 'polygon', 'borders');
 
         this.withLines = attributes.withlines;
         this.attr_line = attr_line;
@@ -77,7 +79,7 @@ define([], function () {
          */
         this.vertices = [];
         for (i = 0; i < vertices.length; i++) {
-            vertex = JXG.getRef(this.board, vertices[i]);
+            vertex = this.board.select(vertices[i]);
             this.vertices[i] = vertex;
         }
 
@@ -97,7 +99,7 @@ define([], function () {
                 // This sets the "correct" labels for the first triangle of a construction.
                 i = (j + 1) % len;
                 attr_line.id = attr_line.ids && attr_line.ids[i];
-                attr_line.strokecolor = (JXG.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
+                attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
 
                 if (attr_line.strokecolor === false) {
                     attr_line.strokecolor = 'none';
@@ -112,7 +114,7 @@ define([], function () {
 
         // Add polygon as child to defining points
         for (i = 0; i < this.vertices.length - 1; i++) {
-            vertex = JXG.getRef(this.board, this.vertices[i]);
+            vertex = this.board.select(this.vertices[i]);
             vertex.addChild(this);
         }
 
@@ -131,7 +133,7 @@ define([], function () {
 
     };
 
-    JXG.Polygon.prototype = new JXG.GeometryElement();
+    JXG.Polygon.prototype = new GeometryElement();
 
     JXG.extend(JXG.Polygon.prototype, /** @lends JXG.Polygon.prototype */ {
         /**
@@ -212,7 +214,7 @@ define([], function () {
                 }
             }
 
-            return new JXG.Coords(JXG.COORDS_BY_USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
+            return new Coords(Const.COORDS_BY_USER, [(a + x) * 0.5, (b + y) * 0.5], this.board);
         },
 
         getLabelAnchor: JXG.shortcut(JXG.Polygon.prototype, 'getTextAnchor'),
@@ -224,10 +226,10 @@ define([], function () {
             copy.id = this.id + 'T' + this.numTraces;
             this.numTraces++;
             copy.vertices = this.vertices;
-            copy.visProp = JXG.deepCopy(this.visProp, this.visProp.traceattributes, true);
+            copy.visProp = Type.deepCopy(this.visProp, this.visProp.traceattributes, true);
             copy.visProp.layer = this.board.options.layer.trace;
             copy.board = this.board;
-            JXG.clearVisPropOld(copy);
+            Type.clearVisPropOld(copy);
 
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
@@ -252,7 +254,7 @@ define([], function () {
              this.borders[i].hideElement();
              }*/
 
-            if (this.hasLabel && JXG.exists(this.label)) {
+            if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
                 if (this.label.content.visProp.visible) {
                     this.board.renderer.hide(this.label.content);
@@ -274,7 +276,7 @@ define([], function () {
              this.borders[i].showElement();
              }*/
 
-            if (this.hasLabel && JXG.exists(this.label)) {
+            if (this.hasLabel && Type.exists(this.label)) {
                 if (this.label.content.visProp.visible) {
                     this.board.renderer.show(this.label.content);
                 }
@@ -308,7 +310,7 @@ define([], function () {
                 this.board.removeObject(this.borders[i]);
             }
 
-            JXG.GeometryElement.prototype.remove.call(this);
+            GeometryElement.prototype.remove.call(this);
         },
 
         /**
@@ -318,7 +320,7 @@ define([], function () {
         findPoint: function (p) {
             var i;
 
-            if (!JXG.isPoint(p)) {
+            if (!Type.isPoint(p)) {
                 return -1;
             }
 
@@ -361,7 +363,7 @@ define([], function () {
             }
 
             for (i = 1; i < arguments.length; i++) {
-                if (JXG.isPoint(arguments[i])) {
+                if (Type.isPoint(arguments[i])) {
                     npoints.push(arguments[i]);
                 }
             }
@@ -408,11 +410,11 @@ define([], function () {
 
             // collect all valid parameters as indices in nidx
             for (i = 0; i < arguments.length; i++) {
-                if (JXG.isPoint(arguments[i])) {
+                if (Type.isPoint(arguments[i])) {
                     idx = this.findPoint(arguments[i]);
                 }
 
-                if (JXG.isNumber(idx) && idx > -1 && idx < this.vertices.length && JXG.indexOf(nidx, idx) === -1) {
+                if (Type.isNumber(idx) && idx > -1 && idx < this.vertices.length && Type.indexOf(nidx, idx) === -1) {
                     nidx.push(idx);
                 }
             }
@@ -446,7 +448,7 @@ define([], function () {
             // update vertices
             this.vertices = [];
             for (i = 0; i < nvertices.length; i++) {
-                if (JXG.isPoint(nvertices[i])) {
+                if (Type.isPoint(nvertices[i])) {
                     this.vertices.push(nvertices[i]);
                 }
             }
@@ -508,7 +510,7 @@ define([], function () {
         },
 
         getAttributes: function () {
-            var attr = JXG.GeometryElement.prototype.getAttributes.call(this), i;
+            var attr = GeometryElement.prototype.getAttributes.call(this), i;
 
             if (this.withLines) {
                 attr.lines = attr.lines || {};
@@ -533,8 +535,8 @@ define([], function () {
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var dc, t, i, len,
-                c = new JXG.Coords(method, coords, this.board),
-                oldc = new JXG.Coords(method, oldcoords, this.board);
+                c = new Coords(method, coords, this.board),
+                oldc = new Coords(method, oldcoords, this.board);
 
             len = this.vertices.length - 1;
             for (i = 0; i < len; i++) {
@@ -543,7 +545,7 @@ define([], function () {
                 }
             }
 
-            dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+            dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
             t = this.board.create('transform', dc.slice(1), {type: 'translate'});
             t.applyOnce(this.vertices.slice(0, -1));
 
@@ -584,12 +586,13 @@ define([], function () {
      * </script><pre>
      */
     JXG.createPolygon = function (board, parents, attributes) {
-        var el, i, attr = JXG.copyAttributes(attributes, board.options, 'polygon');
+        var el, i,
+            attr = Type.copyAttributes(attributes, board.options, 'polygon');
 
         // Sind alles Punkte?
         for (i = 0; i < parents.length; i++) {
-            parents[i] = JXG.getRef(board, parents[i]);
-            if (!JXG.isPoint(parents[i])) {
+            parents[i] = board.select(parents[i]);
+            if (!Type.isPoint(parents[i])) {
                 throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
             }
         }
@@ -645,18 +648,18 @@ define([], function () {
     JXG.createRegularPolygon = function (board, parents, attributes) {
         var el, i, n, p = [], rot, c, len, pointsExist, attr;
 
-        if (JXG.isNumber(parents[parents.length - 1]) && parents.length !== 3) {
+        if (Type.isNumber(parents[parents.length - 1]) && parents.length !== 3) {
             throw new Error("JSXGraph: A regular polygon needs two points and a number as input.");
         }
 
         len = parents.length;
         n = parents[len - 1];
-        if ((!JXG.isNumber(n) && !JXG.isPoint(JXG.getRef(board, n))) || n < 3) {
+        if ((!Type.isNumber(n) && !Type.isPoint(board.select(n))) || n < 3) {
             throw new Error("JSXGraph: The third parameter has to be number greater than 2 or a point.");
         }
 
         // Regular polygon given by n points
-        if (JXG.isPoint(JXG.getRef(board, n))) {
+        if (Type.isPoint(board.select(n))) {
             n = len;
             pointsExist = true;
         } else {
@@ -666,26 +669,26 @@ define([], function () {
 
         // The first two parent elements have to be points
         for (i = 0; i < len; i++) {
-            parents[i] = JXG.getRef(board, parents[i]);
-            if (!JXG.isPoint(parents[i])) {
+            parents[i] = board.select(parents[i]);
+            if (!Type.isPoint(parents[i])) {
                 throw new Error("JSXGraph: Can't create regular polygon if the first two parameters aren't points.");
             }
         }
 
         p[0] = parents[0];
         p[1] = parents[1];
-        attr = JXG.copyAttributes(attributes, board.options, 'polygon', 'vertices');
+        attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
         for (i = 2; i < n; i++) {
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
                 p[i] = parents[i];
                 p[i].addTransform(parents[i - 2], rot);
             } else {
-                if (JXG.isArray(attr.ids) && attr.ids.length >= n - 2) {
+                if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];
                 }
                 p[i] = board.create('point', [p[i - 2], rot], attr);
-                p[i].type = JXG.OBJECT_TYPE_CAS;
+                p[i].type = Const.OBJECT_TYPE_CAS;
 
                 // The next two lines of code are need to make regular polgonmes draggable
                 // The new helper points are set to be draggable.
@@ -693,7 +696,7 @@ define([], function () {
                 p[i].visProp.fixed = false;
             }
         }
-        attr = JXG.copyAttributes(attributes, board.options, 'polygon');
+        attr = Type.copyAttributes(attributes, board.options, 'polygon');
         el = board.create('polygon', p, attr);
         el.elType = 'regularpolygon';
 

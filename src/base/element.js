@@ -45,7 +45,9 @@
  utils/type
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'options', 'parser/geonext', 'utils/event', 'utils/color', 'utils/type'
+], function (JXG, Const, Coords, Mat, Options, GeonextParser, EventEmitter, Color, Type) {
 
     "use strict";
 
@@ -252,7 +254,7 @@ define([], function () {
          */
         this.visProp = {};
 
-        JXG.EventEmitter.eventify(this);
+        EventEmitter.eventify(this);
 
         /**
          * Is the mouse over this element?
@@ -280,7 +282,7 @@ define([], function () {
              * @constant
              * @type number
              */
-            this.elementClass = oclass || JXG.OBJECT_CLASS_OTHER;
+            this.elementClass = oclass || Const.OBJECT_CLASS_OTHER;
 
             /**
              * Unique identifier for the element. Equivalent to id-attribute of renderer element.
@@ -290,7 +292,7 @@ define([], function () {
 
             name = attributes.name;
             /* If name is not set or null or even undefined, generate an unique name for this object */
-            if (!JXG.exists(name)) {
+            if (!Type.exists(name)) {
                 name = this.board.generateName(this);
             }
             this.board.elementsByName[name] = this;
@@ -306,7 +308,7 @@ define([], function () {
             this.needsRegularUpdate = attributes.needsregularupdate;
 
             // create this.visPropOld and set default values
-            JXG.clearVisPropOld(this);
+            Type.clearVisPropOld(this);
 
             attr = this.resolveShortcuts(attributes);
             for (key in attr) {
@@ -420,7 +422,7 @@ define([], function () {
          */
         draggable: function () {
             return this.isDraggable && !this.visProp.fixed &&
-                !this.visProp.frozen && this.type !== JXG.OBJECT_TYPE_GLIDER;
+                !this.visProp.frozen && this.type !== Const.OBJECT_TYPE_GLIDER;
         },
 
         /**
@@ -450,8 +452,8 @@ define([], function () {
 
                 animateColor = function (startRGB, endRGB, property) {
                     var hsv1, hsv2, sh, ss, sv;
-                    hsv1 = JXG.rgb2hsv(startRGB);
-                    hsv2 = JXG.rgb2hsv(endRGB);
+                    hsv1 = Color.rgb2hsv(startRGB);
+                    hsv2 = Color.rgb2hsv(endRGB);
 
                     sh = (hsv2[0] - hsv1[0]) / steps;
                     ss = (hsv2[1] - hsv1[1]) / steps;
@@ -459,7 +461,7 @@ define([], function () {
                     self.animationData[property] = [];
 
                     for (i = 0; i < steps; i++) {
-                        self.animationData[property][steps - i - 1] = JXG.hsv2rgb(hsv1[0] + (i + 1) * sh, hsv1[1] + (i + 1) * ss, hsv1[2] + (i + 1) * sv);
+                        self.animationData[property][steps - i - 1] = Color.hsv2rgb(hsv1[0] + (i + 1) * sh, hsv1[1] + (i + 1) * ss, hsv1[2] + (i + 1) * sv);
                     }
                 },
 
@@ -497,7 +499,7 @@ define([], function () {
                         animateColor(this.visProp[p], hash[r], p);
                         break;
                     case 'size':
-                        if (this.elementClass !== JXG.OBJECT_CLASS_POINT) {
+                        if (this.elementClass !== Const.OBJECT_CLASS_POINT) {
                             break;
                         }
                         animateFloat(this.visProp[p], hash[r], p, true);
@@ -542,7 +544,7 @@ define([], function () {
             this.visProp.visible = false;
             this.board.renderer.hide(this);
 
-            if (JXG.exists(this.label) && this.hasLabel) {
+            if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
                 if (this.label.content.visProp.visible) {
                     this.board.renderer.hide(this.label.content);
@@ -558,7 +560,7 @@ define([], function () {
             this.visProp.visible = true;
             this.board.renderer.show(this);
 
-            if (JXG.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
                 if (this.label.content.visProp.visible) {
                     this.board.renderer.show(this.label.content);
@@ -579,8 +581,8 @@ define([], function () {
             // Search for entries in visProp with "color" as part of the property name
             // and containing a RGBA string
             if (this.visProp.hasOwnProperty(property) && property.indexOf('color') >= 0 &&
-                    JXG.isString(value) && value.length === 9 && value.charAt(0) === '#') {
-                value = JXG.rgba2rgbo(value);
+                    Type.isString(value) && value.length === 9 && value.charAt(0) === '#') {
+                value = Color.rgba2rgbo(value);
                 this.visProp[property] = value[0];
                 // Previously: *=. But then, we can only decrease opacity.
                 this.visProp[property.replace('color', 'opacity')] = value[1];
@@ -598,12 +600,12 @@ define([], function () {
         resolveShortcuts: function (properties) {
             var key, i;
 
-            for (key in JXG.Options.shortcuts) {
-                if (JXG.Options.shortcuts.hasOwnProperty(key)) {
-                    if (JXG.exists(properties[key])) {
-                        for (i = 0; i < JXG.Options.shortcuts[key].length; i++) {
-                            if (!JXG.exists(properties[JXG.Options.shortcuts[key][i]])) {
-                                properties[JXG.Options.shortcuts[key][i]] = properties[key];
+            for (key in Options.shortcuts) {
+                if (Options.shortcuts.hasOwnProperty(key)) {
+                    if (Type.exists(properties[key])) {
+                        for (i = 0; i < Options.shortcuts[key].length; i++) {
+                            if (!Type.exists(properties[Options.shortcuts[key][i]])) {
+                                properties[Options.shortcuts[key][i]] = properties[key];
                             }
                         }
                     }
@@ -659,11 +661,11 @@ define([], function () {
             // normalize the user input
             for (i = 0; i < arguments.length; i++) {
                 arg = arguments[i];
-                if (JXG.isString(arg)) {
+                if (Type.isString(arg)) {
                     // pairRaw is string of the form 'key:value'
                     pair = arg.split(':');
-                    properties[JXG.trim(pair[0])] = JXG.trim(pair[1]);
-                } else if (!JXG.isArray(arg)) {
+                    properties[Type.trim(pair[0])] = Type.trim(pair[1]);
+                } else if (!Type.isArray(arg)) {
                     // pairRaw consists of objects of the form {key1:value1,key2:value2,...}
                     JXG.extend(properties, arg);
                 } else {
@@ -692,19 +694,19 @@ define([], function () {
                         this.board.renderer.setBuffering(this, this.needsRegularUpdate ? 'auto' : 'static');
                         break;
                     case 'labelcolor':
-                        value = JXG.rgba2rgbo(value);
+                        value = Color.rgba2rgbo(value);
                         opacity = value[1];
                         value = value[0];
                         if (opacity === 0) {
-                            if (JXG.exists(this.label) && this.hasLabel) {
+                            if (Type.exists(this.label) && this.hasLabel) {
                                 this.label.content.hideElement();
                             }
                         }
-                        if (JXG.exists(this.label) && this.hasLabel) {
+                        if (Type.exists(this.label) && this.hasLabel) {
                             this.label.color = value;
                             this.board.renderer.setObjectStrokeColor(this.label.content, value, opacity);
                         }
-                        if (this.type === JXG.OBJECT_TYPE_TEXT) {
+                        if (this.type === Const.OBJECT_TYPE_TEXT) {
                             this.visProp.strokecolor = value;
                             this.visProp.strokeopacity = opacity;
                             this.board.renderer.setObjectStrokeColor(this, this.visProp.strokecolor, this.visProp.strokeopacity);
@@ -727,7 +729,7 @@ define([], function () {
                         }
                         break;
                     case 'face':
-                        if (this.elementClass === JXG.OBJECT_CLASS_POINT) {
+                        if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                             this.visProp.face = value;
                             this.board.renderer.changePointStyle(this);
                         }
@@ -745,7 +747,7 @@ define([], function () {
                         this.board.renderer.setGradient(this);
                         break;
                     case 'gradientsecondcolor':
-                        value = JXG.rgba2rgbo(value);
+                        value = Color.rgba2rgbo(value);
                         this.visProp.gradientsecondcolor = value[0];
                         this.visProp.gradientsecondopacity = value[1];
                         this.board.renderer.updateGradient(this);
@@ -775,20 +777,20 @@ define([], function () {
                         this.hasLabel = value;
                         break;
                     case 'rotate':
-                        if ((this.type === JXG.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
-                                this.type === JXG.OBJECT_TYPE_IMAGE) {
+                        if ((this.type === Const.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
+                                this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
                         break;
                     case 'ticksdistance':
-                        if (this.type === JXG.OBJECT_TYPE_TICKS && typeof value === 'number') {
+                        if (this.type === Const.OBJECT_TYPE_TICKS && typeof value === 'number') {
                             this.ticksFunction = makeTicksFunction(value);
                         }
                         break;
                     default:
-                        if (JXG.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
+                        if (Type.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
                                 JXG.Validator[key](value)) || (JXG.Validator[key] &&
-                                JXG.isFunction(value) && JXG.Validator[key](value())))) {
+                                Type.isFunction(value) && JXG.Validator[key](value())))) {
                             value = value.toLowerCase && value.toLowerCase() === 'false' ? false : value;
                             this._set(key, value);
                         }
@@ -885,7 +887,7 @@ define([], function () {
          * @see JXG.GeometryElement#getLabelAnchor
          */
         getTextAnchor: function () {
-            return new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
+            return new Coords(Const.COORDS_BY_USER, [0, 0], this.board);
         },
 
         /**
@@ -895,7 +897,7 @@ define([], function () {
          * @see JXG.GeometryElement#getTextAnchor
          */
         getLabelAnchor: function () {
-            return new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
+            return new Coords(Const.COORDS_BY_USER, [0, 0], this.board);
         },
 
         /**
@@ -932,20 +934,20 @@ define([], function () {
             // just don't create a label. This method is usually not called by a user, so we won't throw
             // an exception here and simply output a warning via JXG.debug.
             if (JXG.elements.text) {
-                attr =  JXG.deepCopy(this.visProp.label, null);
+                attr =  Type.deepCopy(this.visProp.label, null);
                 attr.id = this.id + 'Label';
                 attr.isLabel = true;
                 attr.visible = this.visProp.visible;
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
-                this.nameHTML = JXG.GeonextParser.replaceSup(JXG.GeonextParser.replaceSub(this.name));
+                this.nameHTML = GeonextParser.replaceSup(GeonextParser.replaceSub(this.name));
                 this.label = {};
 
                 if (this.visProp.withlabel) {
                     this.label.relativeCoords = [0, 0];
 
-                    this.label.content = JXG.createText(this.board,
+                    this.label.content = JXG.elements.text(this.board,
                         [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name],
                         attr);
                     this.label.content.needsUpdate = true;
@@ -973,7 +975,7 @@ define([], function () {
          * @returns {JXG.Board}
          */
         highlight: function (force) {
-            force = JXG.def(force, false);
+            force = Type.def(force, false);
             // I know, we have the JXG.Board.highlightedObjects AND JXG.GeometryElement.highlighted and YES we need both.
             // Board.highlightedObjects is for the internal highlighting and GeometryElement.highlighted is for user highlighting
             // initiated by the user, e.g. through custom DOM events. We can't just pick one because this would break user
@@ -1046,7 +1048,7 @@ define([], function () {
          * @private
          */
         normalize: function () {
-            this.stdform = JXG.Math.normalize(this.stdform);
+            this.stdform = Mat.normalize(this.stdform);
             return this;
         },
 
@@ -1066,7 +1068,7 @@ define([], function () {
             vis = [];
             for (key in this.visProp) {
                 if (this.visProp.hasOwnProperty(key)) {
-                    if (JXG.exists(this.visProp[key])) {
+                    if (Type.exists(this.visProp[key])) {
                         vis.push('"' + key + '":' + this.visProp[key]);
                     }
                 }
@@ -1087,8 +1089,8 @@ define([], function () {
             var tOffInv, tOff, tS, tSInv, tRot,
                 that = this;
 
-            if (((this.type === JXG.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
-                    this.type === JXG.OBJECT_TYPE_IMAGE) && angle !== 0) {
+            if (((this.type === Const.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
+                    this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
 
                 tOffInv = this.board.create('transform', [
                     function () {
@@ -1265,7 +1267,7 @@ define([], function () {
          * @returns {Object}
          */
         getAttributes: function () {
-            var attributes = JXG.deepCopy(this.visProp),
+            var attributes = Type.deepCopy(this.visProp),
                 cleanThis = ['attractors', 'attractordistance', 'snatchdistance', 'traceattributes', 'frozen',
                     'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
                     'needsregularupdate', 'zoom', 'layer', 'offset'],

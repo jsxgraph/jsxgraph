@@ -38,7 +38,7 @@
  utils/type
  */
 
-define([], function () {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -122,7 +122,7 @@ define([], function () {
 
                     for (i in that.elements) {
                         if (that.elements.hasOwnProperty(i)) {
-                            if (JXG.exists(that.elements[i][what])) {
+                            if (Type.exists(that.elements[i][what])) {
                                 that.elements[i][what].apply(that.elements[i], arguments);
                             }
                         }
@@ -161,8 +161,8 @@ define([], function () {
          * using a reserved name and providing an invalid element.
          */
         add: function (what, element) {
-            if (!JXG.exists(this[what]) && JXG.exists(element)) {
-                if (JXG.exists(element.id)) {
+            if (!Type.exists(this[what]) && Type.exists(element)) {
+                if (Type.exists(element.id)) {
                     this.elements[element.id] = element;
                 } else {
                     this.elements[what] = element;

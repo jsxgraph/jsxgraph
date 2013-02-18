@@ -51,7 +51,9 @@
  * @version 0.1
  */
 
-define([], function () {
+define([
+    'jxg', 'math/math', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
+], function (JXG, Mat, Const, GeometryElement, Coords, Type, Text) {
 
     "use strict";
 
@@ -67,7 +69,7 @@ define([], function () {
      * @extends JXG.GeometryElement
      */
     JXG.Ticks = function (line, ticks, attributes) {
-        this.constructor(line.board, attributes, JXG.OBJECT_TYPE_TICKS, JXG.OBJECT_CLASS_OTHER);
+        this.constructor(line.board, attributes, Const.OBJECT_TYPE_TICKS, Const.OBJECT_CLASS_OTHER);
 
         /**
          * The line the ticks belong to.
@@ -99,13 +101,13 @@ define([], function () {
          */
         this.equidistant = false;
 
-        if (JXG.isFunction(ticks)) {
+        if (Type.isFunction(ticks)) {
             this.ticksFunction = ticks;
             throw new Error("Function arguments are no longer supported.");
-        } else if (JXG.isArray(ticks)) {
+        } else if (Type.isArray(ticks)) {
             this.fixedTicks = ticks;
         } else {
-            if (Math.abs(ticks) < JXG.Math.eps) {
+            if (Math.abs(ticks) < Mat.eps) {
                 ticks = attributes.defaultdistance;
             }
 
@@ -142,7 +144,7 @@ define([], function () {
         this.board.setId(this, 'Ti');
     };
 
-    JXG.Ticks.prototype = new JXG.GeometryElement();
+    JXG.Ticks.prototype = new GeometryElement();
 
     JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
         /**
@@ -161,7 +163,7 @@ define([], function () {
             }
 
             // Ignore non-axes and axes that are not horizontal or vertical
-            if (this.line.stdform[1] !== 0 && this.line.stdform[2] !== 0 && this.line.type !== JXG.OBJECT_TYPE_AXIS) {
+            if (this.line.stdform[1] !== 0 && this.line.stdform[2] !== 0 && this.line.type !== Const.OBJECT_TYPE_AXIS) {
                 return false;
             }
 
@@ -171,8 +173,8 @@ define([], function () {
                 // Skip minor ticks
                 if (t[2]) {
                     // Ignore ticks at zero
-                    if (!((this.line.stdform[1] === 0 && Math.abs(t[0][0] - this.line.point1.coords.scrCoords[1]) < JXG.Math.eps) ||
-                            (this.line.stdform[2] === 0 && Math.abs(t[1][0] - this.line.point1.coords.scrCoords[2]) < JXG.Math.eps))) {
+                    if (!((this.line.stdform[1] === 0 && Math.abs(t[0][0] - this.line.point1.coords.scrCoords[1]) < Mat.eps) ||
+                            (this.line.stdform[2] === 0 && Math.abs(t[1][0] - this.line.point1.coords.scrCoords[2]) < Mat.eps))) {
                         // tick length is not zero, ie. at least one pixel
                         if (Math.abs(t[0][0] - t[0][1]) >= 1 || Math.abs(t[1][0] - t[1][1]) >= 1) {
                             if (this.line.stdform[1] === 0) {
@@ -198,16 +200,16 @@ define([], function () {
                 p2 = this.line.point2;
 
             // horizontal axis
-            if (Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < JXG.Math.eps) {
+            if (Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
                 return tick.usrCoords[1];
             }
 
             // vertical axis
-            if (Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < JXG.Math.eps) {
+            if (Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
                 return tick.usrCoords[2];
             }
 
-            return p1.coords.distance(JXG.COORDS_BY_USER, tick);
+            return p1.coords.distance(Const.COORDS_BY_USER, tick);
         },
 
         /**
@@ -219,8 +221,8 @@ define([], function () {
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var dx, dy, i,
-                c = new JXG.Coords(method, coords, this.board),
-                oldc = new JXG.Coords(method, oldcoords, this.board),
+                c = new Coords(method, coords, this.board),
+                oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
 
 
@@ -229,13 +231,13 @@ define([], function () {
             }
 
             // horizontal line
-            if (Math.abs(this.line.stdform[1]) < JXG.Math.eps && Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > JXG.Math.eps) {
+            if (Math.abs(this.line.stdform[1]) < Mat.eps && Math.abs(c.usrCoords[1] * oldc.usrCoords[1]) > Mat.eps) {
                 dx = oldc.usrCoords[1] / c.usrCoords[1];
                 bb[0] *= dx;
                 bb[2] *= dx;
                 this.board.setBoundingBox(bb, false);
             // vertical line
-            } else if (Math.abs(this.line.stdform[2]) < JXG.Math.eps && Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > JXG.Math.eps) {
+            } else if (Math.abs(this.line.stdform[2]) < Mat.eps && Math.abs(c.usrCoords[2] * oldc.usrCoords[2]) > Mat.eps) {
                 dy = oldc.usrCoords[2] / c.usrCoords[2];
                 bb[3] *= dy;
                 bb[1] *= dy;
@@ -264,7 +266,7 @@ define([], function () {
                 // The same thing for Y coordinates
                 deltaY = (p2.coords.usrCoords[2] - p1.coords.usrCoords[2]) / distP1P2,
                 // Distance of p1 to the unit point in screen coordinates
-                distScr = p1.coords.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
+                distScr = p1.coords.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
                 // Distance between two major ticks in user coordinates
                 ticksDelta = (this.equidistant ? this.ticksFunction(1) : 1),
                 // This factor is for enlarging ticksDelta and it switches between 5 and 2
@@ -292,7 +294,7 @@ define([], function () {
 
 
                 // the following variables are used to define ticks height and slope
-                eps = JXG.Math.eps,
+                eps = Mat.eps,
                 pos, lb, ub,
                 distMaj = this.visProp.majorheight * 0.5,
                 distMin = this.visProp.minorheight * 0.5,
@@ -361,7 +363,7 @@ define([], function () {
             this.removeTickLabels();
 
             // If the parent line is not finite, we can stop here.
-            if (Math.abs(dx) < JXG.Math.eps && Math.abs(dy) < JXG.Math.eps) {
+            if (Math.abs(dx) < Mat.eps && Math.abs(dy) < Mat.eps) {
                 return;
             }
 
@@ -378,7 +380,7 @@ define([], function () {
                 for (i = 0; i < this.fixedTicks.length; i++) {
                     nx = p1.coords.usrCoords[1] + this.fixedTicks[i] * deltaX;
                     ny = p1.coords.usrCoords[2] + this.fixedTicks[i] * deltaY;
-                    tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+                    tickCoords = new Coords(Const.COORDS_BY_USER, [nx, ny], this.board);
                     ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
 
                     // Compute the start position and the end position of a tick.
@@ -398,7 +400,7 @@ define([], function () {
 
             // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
             // adjust distances
-            if (this.visProp.insertticks && this.minTicksDistance > JXG.Math.eps) {
+            if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
                 f = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
                 ticksDelta *= f;
                 symbTicksDelta *= f;
@@ -427,21 +429,21 @@ define([], function () {
                 -this.line.stdform[2],
                 this.line.stdform[1]
             ];
-            center = JXG.Math.crossProduct(this.line.stdform, perp);
+            center = Mat.crossProduct(this.line.stdform, perp);
             center[1] /= center[0];
             center[2] /= center[0];
             center[0] = 1;
 
             // Round the distance of center to point1
-            tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, center, this.board);
-            d = p1.coords.distance(JXG.COORDS_BY_USER, tickCoords);
+            tickCoords = new Coords(Const.COORDS_BY_USER, center, this.board);
+            d = p1.coords.distance(Const.COORDS_BY_USER, tickCoords);
             if ((p2.X() - p1.X()) * (center[1] - p1.X()) < 0 || (p2.Y() - p1.Y()) * (center[2] - p1.Y()) < 0) {
                 d *= -1;
             }
             tickPosition = Math.round(d / ticksDelta) * ticksDelta;
 
             // Find the correct direction of center from point1
-            if (Math.abs(tickPosition) > JXG.Math.eps) {
+            if (Math.abs(tickPosition) > Mat.eps) {
                 dir = Math.abs(tickPosition) / tickPosition;
             }
 
@@ -468,7 +470,7 @@ define([], function () {
             // direction until we are out of the canvas in this direction, too.
             // Then we are done.
             do {
-                tickCoords = new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board);
+                tickCoords = new Coords(Const.COORDS_BY_USER, [nx, ny], this.board);
 
                 // Test if tick is a major tick.
                 // This is the case if (dir*tickPosition+startTick)/ticksDelta is
@@ -528,7 +530,7 @@ define([], function () {
                 f /= 10;
                 nx = p1c.usrCoords[1] + deltaX * ticksDelta * f;
                 ny = p1c.usrCoords[2] + deltaY * ticksDelta * f;
-                distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
+                distScr = p1c.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
 
             // If necessary, enlarge ticksDelta
@@ -537,7 +539,7 @@ define([], function () {
                 factor = (factor === 5 ? 2 : 5);
                 nx = p1c.usrCoords[1] + deltaX * ticksDelta * f;
                 ny = p1c.usrCoords[2] + deltaY * ticksDelta * f;
-                distScr = p1c.distance(JXG.COORDS_BY_SCREEN, new JXG.Coords(JXG.COORDS_BY_USER, [nx, ny], this.board));
+                distScr = p1c.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
 
             return f;
@@ -584,13 +586,13 @@ define([], function () {
             // computed.
 
             // horizontal line and vertical tick
-            if (Math.abs(dx) < JXG.Math.eps) {
+            if (Math.abs(dx) < Mat.eps) {
                 x[0] = c[1];
                 x[1] = c[1];
                 y[0] = 0;
                 y[1] = ch;
                 // vertical line and horizontal tick
-            } else if (Math.abs(dy) < JXG.Math.eps) {
+            } else if (Math.abs(dy) < Mat.eps) {
                 x[0] = 0;
                 x[1] = cw;
                 y[0] = c[2];
@@ -600,7 +602,7 @@ define([], function () {
                 count = 0;
 
                 // intersect with top
-                s = JXG.Math.crossProduct([0, 0, 1], [-dys * c[1] - dxs * c[2], dys, dxs]);
+                s = Mat.crossProduct([0, 0, 1], [-dys * c[1] - dxs * c[2], dys, dxs]);
                 s[1] /= s[0];
                 if (s[1] >= 0 && s[1] <= cw) {
                     x[count] = s[1];
@@ -609,7 +611,7 @@ define([], function () {
                 }
 
                 // intersect with left
-                s = JXG.Math.crossProduct([0, 1, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
+                s = Mat.crossProduct([0, 1, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
                 s[2] /= s[0];
                 if (s[2] >= 0 && s[2] <= ch) {
                     x[count] = 0;
@@ -619,7 +621,7 @@ define([], function () {
 
                 if (count < 2) {
                     // intersect with bottom
-                    s = JXG.Math.crossProduct([ch * ch, 0, -ch], [-dys * c[1] - dxs * c[2], dys, dxs]);
+                    s = Mat.crossProduct([ch * ch, 0, -ch], [-dys * c[1] - dxs * c[2], dys, dxs]);
                     s[1] /= s[0];
                     if (s[1] >= 0 && s[1] <= cw) {
                         x[count] = s[1];
@@ -629,7 +631,7 @@ define([], function () {
                 }
                 if (count < 2) {
                     // intersect with right
-                    s = JXG.Math.crossProduct([cw * cw, -cw, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
+                    s = Mat.crossProduct([cw * cw, -cw, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
                     s[2] /= s[0];
                     if (s[2] >= 0 && s[2] <= ch) {
                         x[count] = cw;
@@ -679,7 +681,7 @@ define([], function () {
             pos = this.generateLabelValue(newTick);
 
             labelText = pos.toString();
-            if (Math.abs(pos) < JXG.Math.eps) {
+            if (Math.abs(pos) < Mat.eps) {
                 labelText = '0';
             }
 
@@ -711,8 +713,8 @@ define([], function () {
                 visible: this.visProp.visible,
                 priv: this.visProp.priv
             };
-            attr = JXG.deepCopy(attr, this.visProp.label);
-            label = JXG.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
+            attr = Type.deepCopy(attr, this.visProp.label);
+            label = Text.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
             label.isDraggable = false;
             label.dump = false;
 
@@ -743,11 +745,11 @@ define([], function () {
             var j;
 
             // remove existing tick labels
-            if (JXG.exists(this.labels)) {
+            if (Type.exists(this.labels)) {
                 if ((this.board.needsFullUpdate || this.needsRegularUpdate) &&
                         !(this.board.renderer.type === 'canvas' && this.board.options.text.display === 'internal')) {
                     for (j = 0; j < this.labels.length; j++) {
-                        if (JXG.exists(this.labels[j])) {
+                        if (Type.exists(this.labels[j])) {
                             this.board.removeObject(this.labels[j]);
                         }
                     }
@@ -789,7 +791,7 @@ define([], function () {
             this.board.renderer.hide(this);
 
             for (i = 0; i < this.labels.length; i++) {
-                if (JXG.exists(this.labels[i])) {
+                if (Type.exists(this.labels[i])) {
                     this.labels[i].hideElement();
                 }
             }
@@ -804,7 +806,7 @@ define([], function () {
             this.board.renderer.show(this);
 
             for (i = 0; i < this.labels.length; i++) {
-                if (JXG.exists(this.labels[i])) {
+                if (Type.exists(this.labels[i])) {
                     this.labels[i].showElement();
                 }
             }
@@ -844,7 +846,7 @@ define([], function () {
      */
     JXG.createTicks = function (board, parents, attributes) {
         var el, dist,
-            attr = JXG.copyAttributes(attributes, board.options, 'ticks');
+            attr = Type.copyAttributes(attributes, board.options, 'ticks');
 
         if (parents.length < 2) {
             dist = attributes.ticksDistance;
@@ -852,7 +854,8 @@ define([], function () {
             dist = parents[1];
         }
 
-        if ((parents[0].elementClass === JXG.OBJECT_CLASS_LINE) && (JXG.isFunction(parents[1]) || JXG.isArray(parents[1]) || JXG.isNumber(parents[1]))) {
+        if ((parents[0].elementClass === Const.OBJECT_CLASS_LINE) &&
+                (Type.isFunction(parents[1]) || Type.isArray(parents[1]) || Type.isNumber(parents[1]))) {
             el = new JXG.Ticks(parents[0], dist, attr);
         } else {
             throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");

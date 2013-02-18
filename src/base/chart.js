@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true*/
+/*global JXG: true, define: true, document: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -43,6 +43,7 @@
  parser/datasource
  utils/color
  utils/type
+ utils/env
   elements:
    curve
    spline
@@ -57,7 +58,12 @@
    circle
  */
 
-define([], function () {
+define([
+    'jxg', 'math/numerics', 'math/statistics', 'base/constants', 'base/coords', 'base/element', 'parser/datasource',
+    'utils/color', 'utils/type', 'utils/env', 'base/curve', 'base/point', 'base/text', 'base/polygon', 'element/sector',
+    'base/transformation', 'base/line', 'base/circle'
+], function (JXG, Numerics, Statistics, Const, Coords, GeometryElement, DataSource, Color, Type, Env, Curve, Point, Text,
+        Polygon, Sector, Transform, Line, Circle) {
 
     "use strict";
 
@@ -69,7 +75,7 @@ define([], function () {
 
         var x, y, i, c, style, len;
 
-        if (!JXG.isArray(parents) || parents.length === 0) {
+        if (!Type.isArray(parents) || parents.length === 0) {
             throw new Error('JSXGraph: Can\'t create a chart without data');
         }
 
@@ -78,7 +84,7 @@ define([], function () {
          */
         this.elements = [];
 
-        if (JXG.isNumber(parents[0])) {
+        if (Type.isNumber(parents[0])) {
             // parents looks like [a,b,c,..]
             // x has to be filled
 
@@ -87,14 +93,14 @@ define([], function () {
             for (i = 0; i < y.length; i++) {
                 x[i] = i + 1;
             }
-        } else if (parents.length === 1 && JXG.isArray(parents[0])) {
+        } else if (parents.length === 1 && Type.isArray(parents[0])) {
             // parents looks like [[a,b,c,..]]
             // x has to be filled
 
             y = parents[0];
             x = [];
 
-            len = JXG.evaluate(y).length;
+            len = Type.evaluate(y).length;
             for (i = 0; i < len; i++) {
                 x[i] = i + 1;
             }
@@ -105,7 +111,7 @@ define([], function () {
             y = parents[1].slice(0, len);
         }
 
-        if (JXG.isArray(y) && y.length === 0) {
+        if (Type.isArray(y) && y.length === 0) {
             throw new Error('JSXGraph: Can\'t create charts without data.');
         }
 
@@ -142,7 +148,7 @@ define([], function () {
 
         return this.elements;
     };
-    JXG.Chart.prototype = new JXG.GeometryElement();
+    JXG.Chart.prototype = new GeometryElement();
 
     JXG.extend(JXG.Chart.prototype, /** @lends JXG.Chart.prototype */ {
         drawLine: function (board, x, y, attributes) {
@@ -170,7 +176,7 @@ define([], function () {
             attributes.fillcolor = 'none';
             attributes.highlightfillcolor = 'none';
 
-            return board.create('functiongraph', [JXG.Math.Numerics.regressionPolynomial(deg, x, y)], attributes);
+            return board.create('functiongraph', [Numerics.regressionPolynomial(deg, x, y)], attributes);
         },
 
         drawBar: function (board, x, y, attributes) {
@@ -191,7 +197,7 @@ define([], function () {
                     name: ''
                 };
 
-            if (!JXG.exists(attributes.fillopacity)) {
+            if (!Type.exists(attributes.fillopacity)) {
                 attributes.fillopacity = 0.6;
             }
 
@@ -215,7 +221,7 @@ define([], function () {
             fs = parseFloat(board.options.text.fontSize);
 
             for (i = 0; i < x.length; i++) {
-                if (JXG.isFunction(x[i])) {
+                if (Type.isFunction(x[i])) {
                     xp0 = makeXpFun(i, -0.5);
 
                     xp1 = makeXpFun(i, 0);
@@ -233,7 +239,7 @@ define([], function () {
                     p[2] = board.create('point', [yp, xp2], hiddenPoint);
                     p[3] = board.create('point', [0, xp2], hiddenPoint);
 
-                    if (JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i])) {
+                    if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
                         strwidth = attributes.labels[i].toString().length;
                         strwidth = 2 * strwidth * fs / board.unitX;
 
@@ -253,7 +259,7 @@ define([], function () {
                     p[2] = board.create('point', [xp2, yp], hiddenPoint);
                     p[3] = board.create('point', [xp2, 0], hiddenPoint);
 
-                    if (JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i])) {
+                    if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
                         strwidth = attributes.labels[i].toString().length;
                         strwidth = 0.6 * strwidth * fs / board.unitX;
 
@@ -270,14 +276,14 @@ define([], function () {
 
                 attributes.withlines = false;
 
-                if (JXG.isArray(attributes.colors)) {
+                if (Type.isArray(attributes.colors)) {
                     colors = attributes.colors;
                     attributes.fillcolor = colors[i % colors.length];
                 }
 
                 pols[i] = board.create('polygon', p, attributes);
 
-                if (JXG.exists(attributes.labels) && JXG.exists(attributes.labels[i])) {
+                if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
                     pols[i].text = text;
                 }
             }
@@ -305,7 +311,7 @@ define([], function () {
             var i, center,
                 p = [],
                 sector = [],
-                s = JXG.Math.Statistics.sum(y),
+                s = Statistics.sum(y),
                 colorArray = attributes.colors,
                 highlightColorArray = attributes.highlightcolors,
                 labelArray = attributes.labels,
@@ -320,12 +326,12 @@ define([], function () {
                         var s, t = 0, i, rad;
 
                         for (i = 0; i <= j; i++) {
-                            t += parseFloat(JXG.evaluate(y[i]));
+                            t += parseFloat(Type.evaluate(y[i]));
                         }
 
                         s = t;
                         for (i = j + 1; i < y.length; i++) {
-                            s += parseFloat(JXG.evaluate(y[i]));
+                            s += parseFloat(Type.evaluate(y[i]));
                         }
                         rad = (s !== 0) ? (2 * Math.PI * t / s) : 0;
 
@@ -337,12 +343,12 @@ define([], function () {
                     var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
                         dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
-                    if (JXG.exists(this.label.content)) {
+                    if (Type.exists(this.label.content)) {
                         this.label.content.rendNode.style.fontSize = (s * this.label.content.visProp.fontsize) + 'px';
                         this.label.content.prepareUpdate().update().updateRenderer();
                     }
 
-                    this.point2.coords = new JXG.Coords(JXG.COORDS_BY_USER, [
+                    this.point2.coords = new Coords(Const.COORDS_BY_USER, [
                         this.point1.coords.usrCoords[1] + dx * f,
                         this.point1.coords.usrCoords[2] + dy * f
                     ], this.board);
@@ -374,14 +380,14 @@ define([], function () {
                     name: ''
                 };
 
-            if (!JXG.isArray(labelArray)) {
+            if (!Type.isArray(labelArray)) {
                 labelArray = [];
                 for (i = 0; i < y.length; i++) {
                     labelArray[i] = '';
                 }
             }
 
-            if (!JXG.isFunction(r)) {
+            if (!Type.isFunction(r)) {
                 radius = function () {
                     return r;
                 };
@@ -461,7 +467,7 @@ define([], function () {
 
                     this.setLabelRelativeCoords(relCoords);
 
-                    return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(), this.point2.Y()], this.board);
+                    return new Coords(Const.COORDS_BY_USER, [this.point2.X(), this.point2.Y()], this.board);
                 },
 
                 get_transform = function (angle, i) {
@@ -482,7 +488,7 @@ define([], function () {
             }
             // labels for axes
             paramArray = attributes.paramarray;
-            if (!JXG.exists(paramArray)) {
+            if (!Type.exists(paramArray)) {
                 JXG.debug("Need paramArray attribute");
                 return;
             }
@@ -546,7 +552,7 @@ define([], function () {
             // Values for inner circle, minimums by default
             starts = attributes.startarray || mins;
 
-            if (JXG.exists(attributes.start)) {
+            if (Type.exists(attributes.start)) {
                 for (i = 0; i < numofparams; i++) {
                     starts[i] = attributes.start;
                 }
@@ -554,7 +560,7 @@ define([], function () {
 
             // Values for outer circle, maximums by default
             ends = attributes.endarray || maxes;
-            if (JXG.exists(attributes.end)) {
+            if (Type.exists(attributes.end)) {
                 for (i = 0; i < numofparams; i++) {
                     ends[i] = attributes.end;
                 }
@@ -587,7 +593,7 @@ define([], function () {
             radius = attributes.radius || 10;
             sw = attributes.strokewidth || 1;
 
-            if (!JXG.exists(attributes.highlightonsector)) {
+            if (!Type.exists(attributes.highlightonsector)) {
                 attributes.highlightonsector = false;
             }
 
@@ -763,14 +769,14 @@ define([], function () {
     JXG.createChart = function (board, parents, attributes) {
         var data, row, i, j, col, charts = [], w, x, showRows, attr,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len,
-            table = JXG.isBrowser ? document.getElementById(parents[0]) : null;
+            table = Env.isBrowser ? document.getElementById(parents[0]) : null;
 
         if ((parents.length === 1) && (typeof parents[0] === 'string')) {
-            if (JXG.exists(table)) {
+            if (Type.exists(table)) {
                 // extract the data
-                attr = JXG.copyAttributes(attributes, board.options, 'chart');
+                attr = Type.copyAttributes(attributes, board.options, 'chart');
 
-                table = (new JXG.DataSource()).loadFromTable(parents[0], attr.withheaders, attr.withheaders);
+                table = (new DataSource()).loadFromTable(parents[0], attr.withheaders, attr.withheaders);
                 data = table.data;
                 col = table.columnHeaders;
                 row = table.rowHeaders;
@@ -786,7 +792,7 @@ define([], function () {
 
                 len = data.length;
                 showRows = [];
-                if (attr.rows && JXG.isArray(attr.rows)) {
+                if (attr.rows && Type.isArray(attr.rows)) {
                     for (i = 0; i < len; i++) {
                         for (j = 0; j < attr.rows.length; j++) {
                             if ((attr.rows[j] === i) || (attr.withheaders && attr.rows[j] === row[i])) {
@@ -829,25 +835,25 @@ define([], function () {
                     if (strokeColor && strokeColor.length === len) {
                         attr.strokecolor = strokeColor[i];
                     } else {
-                        attr.strokecolor = JXG.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
+                        attr.strokecolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
                     }
 
                     if (fillColor && fillColor.length === len) {
                         attr.fillcolor = fillColor[i];
                     } else {
-                        attr.fillcolor = JXG.hsv2rgb(((i + 1) / len) * 360, 0.9, 1.0);
+                        attr.fillcolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 1.0);
                     }
 
                     if (hStrokeColor && hStrokeColor.length === len) {
                         attr.highlightstrokecolor = hStrokeColor[i];
                     } else {
-                        attr.highlightstrokecolor = JXG.hsv2rgb(((i + 1) / len) * 360, 0.9, 1.0);
+                        attr.highlightstrokecolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 1.0);
                     }
 
                     if (hFillColor && hFillColor.length === len) {
                         attr.highlightfillcolor = hFillColor[i];
                     } else {
-                        attr.highlightfillcolor = JXG.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
+                        attr.highlightfillcolor = Color.hsv2rgb(((i + 1) / len) * 360, 0.9, 0.6);
                     }
 
                     if (attr.chartstyle && attr.chartstyle.indexOf('bar') !== -1) {
@@ -863,7 +869,7 @@ define([], function () {
             return charts;
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'chart');
+        attr = Type.copyAttributes(attributes, board.options, 'chart');
         return new JXG.Chart(board, parents, attr);
     };
 
@@ -879,10 +885,10 @@ define([], function () {
         /* Call the constructor of GeometryElement */
         this.constructor();
 
-        attr = JXG.copyAttributes(attributes, board.options, 'legend');
+        attr = Type.copyAttributes(attributes, board.options, 'legend');
 
         this.board = board;
-        this.coords = new JXG.Coords(JXG.COORDS_BY_USER, coords, this.board);
+        this.coords = new Coords(Const.COORDS_BY_USER, coords, this.board);
         this.myAtts = {};
         this.label_array = attr.labelarray || attr.labels;
         this.color_array = attr.colorarray || attr.colors;
@@ -900,7 +906,7 @@ define([], function () {
             throw new Error('JSXGraph: Unknown legend style: ' + this.style);
         }
     };
-    JXG.Legend.prototype = new JXG.GeometryElement();
+    JXG.Legend.prototype = new GeometryElement();
 
     JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
         var i,
@@ -909,7 +915,7 @@ define([], function () {
 
             getLabelAnchor = function () {
                 this.setLabelRelativeCoords(this.visProp.label.offset);
-                return new JXG.Coords(JXG.COORDS_BY_USER, [this.point2.X(), this.point2.Y()], this.board);
+                return new Coords(Const.COORDS_BY_USER, [this.point2.X(), this.point2.Y()], this.board);
             };
 
         for (i = 0; i < this.label_array.length; i++) {
@@ -936,7 +942,7 @@ define([], function () {
         //parents are coords of left top point of the legend
         var start_from = [0, 0];
 
-        if (JXG.exists(parents)) {
+        if (Type.exists(parents)) {
             if (parents.length === 2) {
                 start_from = parents;
             }

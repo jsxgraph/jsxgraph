@@ -39,6 +39,7 @@
  base/coords
  base/element
  math/math
+ math/geometry
  math/statistics
  math/numerics
  parser/geonext
@@ -51,7 +52,10 @@
  * @fileoverview In this file the geometry element Curve is defined.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'math/numerics',
+    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation'
+], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform) {
 
     "use strict";
 
@@ -67,7 +71,7 @@ define([], function () {
      * @see JXG.Board#addCurve
      */
     JXG.Curve = function (board, parents, attributes) {
-        this.constructor(board, attributes, JXG.OBJECT_TYPE_CURVE, JXG.OBJECT_CLASS_CURVE);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_CURVE, Const.OBJECT_CLASS_CURVE);
 
         this.points = [];
         /**
@@ -82,7 +86,7 @@ define([], function () {
         this.dataX = null;
         this.dataY = null;
 
-        if (JXG.exists(parents[0])) {
+        if (Type.exists(parents[0])) {
             this.varname = parents[0];
         } else {
             this.varname = 'x';
@@ -114,12 +118,12 @@ define([], function () {
             this.notifyParents(this.yterm);
         }
 
-        this.methodMap = JXG.deepCopy(this.methodMap, {
+        this.methodMap = Type.deepCopy(this.methodMap, {
             generateTerm: 'generateTerm'
         });
     };
 
-    JXG.Curve.prototype = new JXG.GeometryElement();
+    JXG.Curve.prototype = new GeometryElement();
 
 
     JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
@@ -136,7 +140,7 @@ define([], function () {
                 return 0;
             }
 
-            leftCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
+            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             return leftCoords.usrCoords[1];
         },
 
@@ -151,7 +155,7 @@ define([], function () {
             if (this.visProp.curvetype === 'polar') {
                 return 2 * Math.PI;
             }
-            rightCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
+            rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
 
             return rightCoords.usrCoords[1];
         },
@@ -183,7 +187,7 @@ define([], function () {
                 suspendUpdate = true;
 
             prec = prec * prec;
-            checkPoint = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+            checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
 
@@ -193,8 +197,8 @@ define([], function () {
                  * back to the original position of the curve.
                  */
                 this.updateTransformMatrix();
-                invMat = JXG.Math.inverse(this.transformMat);
-                c = JXG.Math.matVecMult(invMat, [1, x, y]);
+                invMat = Mat.inverse(this.transformMat);
+                c = Mat.matVecMult(invMat, [1, x, y]);
                 x = c[1];
                 y = c[2];
             }
@@ -217,7 +221,7 @@ define([], function () {
                     t += d;
                 }
             } else if (this.visProp.curvetype === 'plot') {
-                if (!JXG.exists(start) || start < 0) {
+                if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
 
@@ -236,7 +240,7 @@ define([], function () {
                     den = x1 * x1 + y1 * y1;
                     dist = x0 * x0 + y0 * y0;
 
-                    if (den >= JXG.Math.eps) {
+                    if (den >= Mat.eps) {
                         xy = x0 * x1 + y0 * y1;
                         lbda = xy / den;
                         dist -= lbda * xy;
@@ -262,7 +266,7 @@ define([], function () {
 
             if (this.points.length < this.numberPoints) {
                 for (i = this.points.length; i < len; i++) {
-                    this.points[i] = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
+                    this.points[i] = new Coords(Const.COORDS_BY_USER, [0, 0], this.board);
                 }
             }
         },
@@ -330,7 +334,7 @@ define([], function () {
 
             // Discrete data points
             // x-coordinates are in an array
-            if (JXG.exists(this.dataX)) {
+            if (Type.exists(this.dataX)) {
                 this.numberPoints = this.dataX.length;
                 len = this.numberPoints;
 
@@ -341,15 +345,15 @@ define([], function () {
                     x = i;
 
                     // y-coordinates are in an array
-                    if (JXG.exists(this.dataY)) {
+                    if (Type.exists(this.dataY)) {
                         y = i;
                         // The last parameter prevents rounding in usr2screen().
-                        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.dataX[i], this.dataY[i]], false);
+                        this.points[i].setCoordinates(Const.COORDS_BY_USER, [this.dataX[i], this.dataY[i]], false);
                     } else {
                         // discrete x data, continuous y data
                         y = this.X(x);
                         // The last parameter prevents rounding in usr2screen().
-                        this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.dataX[i], this.Y(y, suspendUpdate)], false);
+                        this.points[i].setCoordinates(Const.COORDS_BY_USER, [this.dataX[i], this.Y(y, suspendUpdate)], false);
                     }
 
                     this.updateTransform(this.points[i]);
@@ -389,7 +393,7 @@ define([], function () {
             for (i = 0; i < len; i++) {
                 t = this.transformations[i];
                 t.update();
-                this.transformMat = JXG.Math.matMatMult(t.matrix, this.transformMat);
+                this.transformMat = Mat.matMatMult(t.matrix, this.transformMat);
             }
 
             return this;
@@ -410,7 +414,7 @@ define([], function () {
             for (i = 0; i < len; i++) {
                 t = mi + i * stepSize;
                 // The last parameter prevents rounding in usr2screen().
-                this.points[i].setCoordinates(JXG.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                this.points[i].setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
                 suspendUpdate = true;
             }
             return this;
@@ -427,7 +431,7 @@ define([], function () {
                 x, y, x0, y0, top, depth,
                 MAX_DEPTH, MAX_XDIST, MAX_YDIST,
                 suspendUpdate = false,
-                po = new JXG.Coords(JXG.COORDS_BY_USER, [0, 0], this.board),
+                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board),
                 dyadicStack = [],
                 depthStack = [],
                 pointStack = [],
@@ -442,7 +446,7 @@ define([], function () {
                         y1 = p2[1] - p1[2],
                         den = x1 * x1 + y1 * y1;
 
-                    if (den >= JXG.Math.eps) {
+                    if (den >= Mat.eps) {
                         lbda = (x0 * x1 + y0 * y1) / den;
                         if (lbda > 0) {
                             if (lbda <= 1) {
@@ -479,7 +483,7 @@ define([], function () {
             depthStack[0] = 0;
 
             t = mi;
-            po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
 
             // Now, there was a first call to the functions defining the curve.
             // Defining elements like sliders have been evaluated.
@@ -491,7 +495,7 @@ define([], function () {
             t0 = t;
 
             t = ma;
-            po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
             x = po.scrCoords[1];
             y = po.scrCoords[2];
 
@@ -501,7 +505,7 @@ define([], function () {
             depth = 0;
 
             this.points = [];
-            this.points[j++] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x0, y0], this.board);
+            this.points[j++] = new Coords(Const.COORDS_BY_SCREEN, [x0, y0], this.board);
 
             do {
                 distOK = this.isDistOK(x - x0, y - y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0, y0, x, y);
@@ -522,7 +526,7 @@ define([], function () {
                     // In that case, t is undefined and we will see a jump in the curve.
                     t = mi + i * divisors[depth];
 
-                    po.setCoordinates(JXG.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                    po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
                     x = po.scrCoords[1];
                     y = po.scrCoords[2];
                     distOK = this.isDistOK(x - x0, y - y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0, y0, x, y);
@@ -535,7 +539,7 @@ define([], function () {
                     }
                 }
 
-                this.points[j] = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
+                this.points[j] = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
                 j += 1;
 
                 x0 = x;
@@ -597,8 +601,8 @@ define([], function () {
                 len = this.transformations.length;
 
             if (len > 0) {
-                c = JXG.Math.matVecMult(this.transformMat, p.usrCoords);
-                p.setPosition(JXG.COORDS_BY_USER, [c[1], c[2]]);
+                c = Mat.matVecMult(this.transformMat, p.usrCoords);
+                p.setPosition(Const.COORDS_BY_USER, [c[1], c[2]]);
             }
 
             return p;
@@ -611,7 +615,7 @@ define([], function () {
          */
         addTransform: function (transform) {
             var i,
-                list = JXG.isArray(transform) ? transform : [transform],
+                list = Type.isArray(transform) ? transform : [transform],
                 len = list.length;
 
             for (i = 0; i < len; i++) {
@@ -631,12 +635,12 @@ define([], function () {
             var t, obj, i,
                 len = 0;
 
-            if (JXG.exists(this.parents)) {
+            if (Type.exists(this.parents)) {
                 len = this.parents.length;
             }
 
             for (i = 0; i < len; i++) {
-                obj = JXG.getRef(this.board, this.parents[i]);
+                obj = this.board.select(this.parents[i]);
 
                 if (!obj.draggable()) {
                     return this;
@@ -650,12 +654,12 @@ define([], function () {
             // In the first case we simply transform the parents elements
             // In the second case we add a transform to the curve.
             //
-            coords = new JXG.Coords(method, coords, this.board);
+            coords = new Coords(method, coords, this.board);
             t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
 
             if (len > 0) {
                 for (i = 0; i < len; i++) {
-                    obj = JXG.getRef(this.board, this.parents[i]);
+                    obj = this.board.select(this.parents[i]);
                     t.applyOnce(obj);
                 }
             } else {
@@ -677,11 +681,11 @@ define([], function () {
          * @returns {JXG.Curve} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var c = new JXG.Coords(method, coords, this.board),
-                oldc = new JXG.Coords(method, oldcoords, this.board),
-                dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+            var c = new Coords(method, coords, this.board),
+                oldc = new Coords(method, oldcoords, this.board),
+                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
-            this.setPosition(JXG.COORDS_BY_USER, dc);
+            this.setPosition(Const.COORDS_BY_USER, dc);
 
             return this;
         },
@@ -707,7 +711,7 @@ define([], function () {
                 }
 
                 if (t < 0) {
-                    if (JXG.isFunction(arr[0])) {
+                    if (Type.isFunction(arr[0])) {
                         return arr[0]();
                     }
 
@@ -718,7 +722,7 @@ define([], function () {
                     len /= 3;
 
                     if (t >= len) {
-                        if (JXG.isFunction(arr[arr.length - 1])) {
+                        if (Type.isFunction(arr[arr.length - 1])) {
                             return arr[arr.length - 1]();
                         }
 
@@ -730,7 +734,7 @@ define([], function () {
                     t1 = 1 - t0;
 
                     for (j = 0; j < 4; j++) {
-                        if (JXG.isFunction(arr[i + j])) {
+                        if (Type.isFunction(arr[i + j])) {
                             f[j] = arr[i + j]();
                         } else {
                             f[j] = arr[i + j];
@@ -747,14 +751,14 @@ define([], function () {
                 }
 
                 if (i === t) {
-                    if (JXG.isFunction(arr[i])) {
+                    if (Type.isFunction(arr[i])) {
                         return arr[i]();
                     }
                     return arr[i];
                 }
 
                 for (j = 0; j < 2; j++) {
-                    if (JXG.isFunction(arr[i + j])) {
+                    if (Type.isFunction(arr[i + j])) {
                         f[j] = arr[i + j]();
                     } else {
                         f[j] = arr[i + j];
@@ -773,7 +777,7 @@ define([], function () {
             var fx, fy;
 
             // Generate the methods X() and Y()
-            if (JXG.isArray(xterm)) {
+            if (Type.isArray(xterm)) {
                 // Discrete data
                 this.dataX = xterm;
 
@@ -783,31 +787,31 @@ define([], function () {
                 this.isDraggable = true;
             } else {
                 // Continuous data
-                this.X = JXG.createFunction(xterm, this.board, varname);
-                if (JXG.isString(xterm)) {
+                this.X = Type.createFunction(xterm, this.board, varname);
+                if (Type.isString(xterm)) {
                     this.visProp.curvetype = 'functiongraph';
-                } else if (JXG.isFunction(xterm) || JXG.isNumber(xterm)) {
+                } else if (Type.isFunction(xterm) || Type.isNumber(xterm)) {
                     this.visProp.curvetype = 'parameter';
                 }
 
                 this.isDraggable = true;
             }
 
-            if (JXG.isArray(yterm)) {
+            if (Type.isArray(yterm)) {
                 this.dataY = yterm;
                 this.Y = this.interpolationFunctionFromArray('Y');
             } else {
-                this.Y = JXG.createFunction(yterm, this.board, varname);
+                this.Y = Type.createFunction(yterm, this.board, varname);
             }
 
             /**
              * Polar form
              * Input data is function xterm() and offset coordinates yterm
              */
-            if (JXG.isFunction(xterm) && JXG.isArray(yterm)) {
+            if (Type.isFunction(xterm) && Type.isArray(yterm)) {
                 // Xoffset, Yoffset
-                fx = JXG.createFunction(yterm[0], this.board, '');
-                fy = JXG.createFunction(yterm[1], this.board, '');
+                fx = Type.createFunction(yterm[0], this.board, '');
+                fy = Type.createFunction(yterm[1], this.board, '');
 
                 this.X = function (phi) {
                     return (xterm)(phi) * Math.cos(phi) + fx();
@@ -821,11 +825,11 @@ define([], function () {
             }
 
             // Set the bounds lower bound
-            if (JXG.exists(mi)) {
-                this.minX = JXG.createFunction(mi, this.board, '');
+            if (Type.exists(mi)) {
+                this.minX = Type.createFunction(mi, this.board, '');
             }
-            if (JXG.exists(ma)) {
-                this.maxX = JXG.createFunction(ma, this.board, '');
+            if (Type.exists(ma)) {
+                this.maxX = Type.createFunction(ma, this.board, '');
             }
         },
 
@@ -835,7 +839,7 @@ define([], function () {
          * @param {String} contentStr String containing dependencies for the given object.
          */
         notifyParents: function (contentStr) {
-            JXG.GeonextParser.findDependencies(this, contentStr, this.board);
+            GeonextParser.findDependencies(this, contentStr, this.board);
         },
 
         // documented in geometry element
@@ -881,8 +885,8 @@ define([], function () {
                 y = 0.5 * by;
             }
 
-            c = new JXG.Coords(JXG.COORDS_BY_SCREEN, [x, y], this.board);
-            return JXG.Math.Geometry.projectCoordsToCurve(c.usrCoords[1], c.usrCoords[2], 0, this, this.board)[0];
+            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+            return Geometry.projectCoordsToCurve(c.usrCoords[1], c.usrCoords[2], 0, this, this.board)[0];
         },
 
         // documented in geometry element
@@ -890,20 +894,20 @@ define([], function () {
             var er,
                 copy = {
                     id: this.id + 'T' + this.numTraces,
-                    elementClass: JXG.OBJECT_CLASS_CURVE,
+                    elementClass: Const.OBJECT_CLASS_CURVE,
 
                     points: this.points.slice(0),
                     bezierDegree: this.bezierDegree,
                     numberPoints: this.numberPoints,
                     board: this.board,
-                    visProp: JXG.deepCopy(this.visProp, this.visProp.traceattributes, true)
+                    visProp: Type.deepCopy(this.visProp, this.visProp.traceattributes, true)
                 };
 
             copy.visProp.layer = this.board.options.layer.trace;
             copy.visProp.curvetype = this.visProp.curvetype;
             this.numTraces++;
 
-            JXG.clearVisPropOld(copy);
+            Type.clearVisPropOld(copy);
 
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
@@ -1046,7 +1050,7 @@ define([], function () {
      * </script><pre>
      */
     JXG.createCurve = function (board, parents, attributes) {
-        var attr = JXG.copyAttributes(attributes, board.options, 'curve');
+        var attr = Type.copyAttributes(attributes, board.options, 'curve');
         return new JXG.Curve(board, ['x'].concat(parents), attr);
     };
 
@@ -1097,7 +1101,7 @@ define([], function () {
         var attr,
             par = ['x', 'x'].concat(parents);
 
-        attr = JXG.copyAttributes(attributes, board.options, 'curve');
+        attr = Type.copyAttributes(attributes, board.options, 'curve');
         attr.curvetype = 'functiongraph';
         return new JXG.Curve(board, par, attr);
     };
@@ -1128,7 +1132,7 @@ define([], function () {
                     y = [];
 
                     // given as [x[], y[]]
-                    if (parents.length === 2 && JXG.isArray(parents[0]) && JXG.isArray(parents[1]) && parents[0].length === parents[1].length) {
+                    if (parents.length === 2 && Type.isArray(parents[0]) && Type.isArray(parents[1]) && parents[0].length === parents[1].length) {
                         for (i = 0; i < parents[0].length; i++) {
                             if (typeof parents[0][i] === 'function') {
                                 x.push(parents[0][i]());
@@ -1144,11 +1148,11 @@ define([], function () {
                         }
                     } else {
                         for (i = 0; i < parents.length; i++) {
-                            if (JXG.isPoint(parents[i])) {
+                            if (Type.isPoint(parents[i])) {
                                 x.push(parents[i].X());
                                 y.push(parents[i].Y());
                             // given as [[x1,y1], [x2, y2], ...]
-                            } else if (JXG.isArray(parents[i]) && parents[i].length === 2) {
+                            } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
                                 for (i = 0; i < parents.length; i++) {
                                     if (typeof parents[i][0] === 'function') {
                                         x.push(parents[i][0]());
@@ -1168,9 +1172,9 @@ define([], function () {
 
                     // The array D has only to be calculated when the position of one or more sample point
                     // changes. otherwise D is always the same for all points on the spline.
-                    D = JXG.Math.Numerics.splineDef(x, y);
+                    D = Numerics.splineDef(x, y);
                 }
-                return JXG.Math.Numerics.splineEval(t, x, y, D);
+                return Numerics.splineEval(t, x, y, D);
             };
         };
         return board.create('curve', ["x", f()], attributes);
@@ -1227,19 +1231,19 @@ define([], function () {
     JXG.createRiemannsum = function (board, parents, attributes) {
         var n, type, f, par, c, attr;
 
-        attr = JXG.copyAttributes(attributes, board.options, 'riemannsum');
+        attr = Type.copyAttributes(attributes, board.options, 'riemannsum');
         attr.curvetype = 'plot';
 
         f = parents[0];
-        n = JXG.createFunction(parents[1], board, '');
+        n = Type.createFunction(parents[1], board, '');
 
-        if (!JXG.exists(n)) {
+        if (!Type.exists(n)) {
             throw new Error("JSXGraph: JXG.createRiemannsum: argument '2' n has to be number or function." +
                 "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
         }
 
-        type = JXG.createFunction(parents[2], board, '', false);
-        if (!JXG.exists(type)) {
+        type = Type.createFunction(parents[2], board, '', false);
+        if (!Type.exists(type)) {
             throw new Error("JSXGraph: JXG.createRiemannsum: argument 3 'type' has to be string or function." +
                 "\nPossible parent types: [function,n:number|function,type,start:number|function,end:number|function]");
         }
@@ -1254,7 +1258,7 @@ define([], function () {
         };
 
         c.updateDataArray = function () {
-            var u = JXG.Math.Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
+            var u = Numerics.riemann(f, n(), type(), this.minX(), this.maxX());
             this.dataX = u[0];
             this.dataY = u[1];
 
@@ -1306,16 +1310,16 @@ define([], function () {
                 "\nPossible parent types: [glider, point]");
         }
 
-        glider = JXG.getRef(this.board, parents[0]);
-        tracepoint = JXG.getRef(this.board, parents[1]);
+        glider = this.board.select(parents[0]);
+        tracepoint = this.board.select(parents[1]);
 
-        if (glider.type !== JXG.OBJECT_TYPE_GLIDER || !JXG.isPoint(tracepoint)) {
+        if (glider.type !== Const.OBJECT_TYPE_GLIDER || !Type.isPoint(tracepoint)) {
             throw new Error("JSXGraph: Can't create trace curve with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [glider, point]");
         }
 
-        attr = JXG.copyAttributes(attributes, board.options, 'tracecurve');
+        attr = Type.copyAttributes(attributes, board.options, 'tracecurve');
         attr.curvetype = 'plot';
         c = board.create('curve', [[0], [0]], attr);
 
@@ -1336,7 +1340,7 @@ define([], function () {
              * For gliders on circles and lines a closed curve is computed.
              * For gliders on curves the curve is not closed.
              */
-            if (slideObj.elementClass !== JXG.OBJECT_CLASS_CURVE) {
+            if (slideObj.elementClass !== Const.OBJECT_CLASS_CURVE) {
                 le++;
             }
 
@@ -1347,7 +1351,7 @@ define([], function () {
                 y = slideObj.Y(t) / slideObj.Z(t);
 
                 // Position the glider
-                glider.setPositionDirectly(JXG.COORDS_BY_USER, [x, y]);
+                glider.setPositionDirectly(Const.COORDS_BY_USER, [x, y]);
                 from = false;
 
                 // Update all elements from the glider up to the trace element
@@ -1413,7 +1417,7 @@ define([], function () {
     JXG.registerElement('tracecurve', JXG.createTracecurve);
 
     return {
-        Curve: JXG.eCurve,
+        Curve: JXG.Curve,
         createCurve: JXG.createCurve,
         createFunctiongraph: JXG.createFunctiongraph,
         createPlot: JXG.createPlot,

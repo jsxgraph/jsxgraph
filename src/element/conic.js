@@ -35,6 +35,7 @@
 
 /* depends:
  jxg
+ base/constants
  math/math
  math/geometry
  math/numerics
@@ -49,8 +50,8 @@
  */
 
 define([
-    'jxg', 'math/math', 'math/numerics', 'math/geometry', 'utils/type', 'base/point', 'base/curve'
-], function (JXG, Mat, Numerics, Geometry, Type, Point, Curve) {
+    'jxg', 'base/constants', 'math/math', 'math/numerics', 'math/geometry', 'utils/type', 'base/point', 'base/curve'
+], function (JXG, Const, Mat, Numerics, Geometry, Type, Point, Curve) {
 
     "use strict";
 

@@ -44,7 +44,9 @@
  * managing grouping of points.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'utils/type'
+], function (JXG, Const, Type) {
 
     "use strict";
 
@@ -67,33 +69,33 @@ define([], function () {
         number = this.board.numObjects;
         this.board.numObjects += 1;
 
-        if ((id === '') || !JXG.exists(id)) {
+        if ((id === '') || !Type.exists(id)) {
             this.id = this.board.id + 'Group' + number;
         } else {
             this.id = id;
         }
         this.board.groups[this.id] = this;
 
-        this.type = JXG.OBJECT_TYPE_POINT;
-        this.elementClass = JXG.OBJECT_CLASS_POINT;
+        this.type = Const.OBJECT_TYPE_POINT;
+        this.elementClass = Const.OBJECT_CLASS_POINT;
 
-        if ((name === '') || !JXG.exists(name)) {
+        if ((name === '') || !Type.exists(name)) {
             this.name = 'group_' + this.board.generateName(this);
         } else {
             this.name = name;
         }
         delete this.type;
 
-        if (JXG.isArray(objects)) {
+        if (Type.isArray(objects)) {
             objArray = objects;
         } else {
             objArray = Array.prototype.slice.call(arguments, 3);
         }
 
         for (i = 0; i < objArray.length; i++) {
-            obj = JXG.getRef(this.board, objArray[i]);
+            obj = this.board.select(objArray[i]);
 
-            if ((!obj.visProp.fixed) && ((obj.type === JXG.OBJECT_TYPE_POINT) || (obj.type === JXG.OBJECT_TYPE_GLIDER))) {
+            if ((!obj.visProp.fixed) && ((obj.type === Const.OBJECT_TYPE_POINT) || (obj.type === Const.OBJECT_TYPE_GLIDER))) {
                 if (obj.group.length !== 0) {
                     this.addGroup(obj.group[obj.group.length - 1]);
                 } else {
@@ -116,7 +118,7 @@ define([], function () {
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
-                    if (JXG.isArray(this.objects[el].point.group) &&
+                    if (Type.isArray(this.objects[el].point.group) &&
                             this.objects[el].point.group[this.objects[el].point.group.length - 1] === this) {
                         this.objects[el].point.group.pop();
                     }
@@ -149,10 +151,10 @@ define([], function () {
 
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el)) {
-                        if (JXG.exists(this.board.objects[el])) {
+                        if (Type.exists(this.board.objects[el])) {
                             obj = this.objects[el].point;
                             if (obj.id !== point.id) {
-                                obj.coords.setCoordinates(JXG.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
+                                obj.coords.setCoordinates(Const.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
                             }
                             this.objects[el].point.prepareUpdate().update(false).updateRenderer();
                         } else {

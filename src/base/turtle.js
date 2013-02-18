@@ -51,7 +51,9 @@
  * @author A.W.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/element', 'utils/type', 'base/curve', 'base/point', 'base/line', 'base/transformation'
+], function (JXG, Const, GeometryElement, Type, Curve, Point, Line, Transform) {
 
     "use strict";
 
@@ -74,7 +76,7 @@ define([], function () {
     JXG.Turtle = function (board, parents, attributes) {
         var x, y, dir;
 
-        this.constructor(board, attributes, JXG.OBJECT_TYPE_TURTLE, JXG.OBJECT_CLASS_OTHER);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_TURTLE, Const.OBJECT_CLASS_OTHER);
 
         this.turtleIsHidden = false;
         this.board = board;
@@ -85,7 +87,7 @@ define([], function () {
         // Setting the color or size affects the turtle from the time of
         // calling the method,
         // whereas Turtle.setAttribute affects all turtle curves.
-        this._attributes = JXG.copyAttributes(this.visProp, board.options, 'turtle');
+        this._attributes = Type.copyAttributes(this.visProp, board.options, 'turtle');
         delete this._attributes.id;
 
         x = 0;
@@ -101,7 +103,7 @@ define([], function () {
                 dir = parents[2];
             } else if (parents.length === 2) {
                 // [[x,y],dir]
-                if (JXG.isArray(parents[0])) {
+                if (Type.isArray(parents[0])) {
                     x = parents[0][0];
                     y = parents[0][1];
                     dir = parents[1];
@@ -121,7 +123,7 @@ define([], function () {
         return this;
     };
 
-    JXG.Turtle.prototype = new JXG.GeometryElement();
+    JXG.Turtle.prototype = new GeometryElement();
 
     JXG.extend(JXG.Turtle.prototype, /** @lends JXG.Turtle.prototype */ {
         /**
@@ -269,7 +271,7 @@ define([], function () {
 
             for (i = 0; i < this.objects.length; i++) {
                 el = this.objects[i];
-                if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                if (el.type === Const.OBJECT_TYPE_CURVE) {
                     this.board.removeObject(el);
                     this.objects.splice(i, 1);
                 }
@@ -308,15 +310,15 @@ define([], function () {
         setPos: function (x, y) {
             var t;
 
-            if (JXG.isArray(x)) {
+            if (Type.isArray(x)) {
                 this.pos = x;
             } else {
                 this.pos = [x, y];
             }
 
             if (!this.turtleIsHidden) {
-                this.turtle.setPositionDirectly(JXG.COORDS_BY_USER, [x, y]);
-                this.turtle2.setPositionDirectly(JXG.COORDS_BY_USER, [x, y + this.arrowLen]);
+                this.turtle.setPositionDirectly(Const.COORDS_BY_USER, [x, y]);
+                this.turtle2.setPositionDirectly(Const.COORDS_BY_USER, [x, y + this.arrowLen]);
                 t = this.board.create('transform', [-(this.dir - 90) * Math.PI / 180, this.turtle], {type: 'rotate'});
                 t.applyOnce(this.turtle2);
             }
@@ -379,16 +381,16 @@ define([], function () {
 
             for (i = 0; i < len; i++) {
                 el = this.objects[i];
-                if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                if (el.type === Const.OBJECT_TYPE_CURVE) {
                     el.setAttribute(attributes);
                 }
             }
 
             // Set visProp of turtle
             tmp = this.visProp.id;
-            this.visProp = JXG.deepCopy(this.curve.visProp);
+            this.visProp = Type.deepCopy(this.curve.visProp);
             this.visProp.id = tmp;
-            this._attributes = JXG.deepCopy(this.visProp);
+            this._attributes = Type.deepCopy(this.visProp);
             delete this._attributes.id;
 
             return this;
@@ -479,7 +481,7 @@ define([], function () {
         lookTo: function (target) {
             var ax, ay, bx, by, beta;
 
-            if (JXG.isArray(target)) {
+            if (Type.isArray(target)) {
                 ax = this.pos[0];
                 ay = this.pos[1];
                 bx = target[0];
@@ -488,7 +490,7 @@ define([], function () {
                 // Rotate by the slope of the line [this.pos, target]
                 beta = Math.atan2(by - ay, bx - ax);
                 this.right(this.dir - (beta * 180 / Math.PI));
-            } else if (JXG.isNumber(target)) {
+            } else if (Type.isNumber(target)) {
                 this.right(this.dir - target);
             }
             return this;
@@ -503,7 +505,7 @@ define([], function () {
         moveTo: function (target) {
             var dx, dy, t;
 
-            if (JXG.isArray(target)) {
+            if (Type.isArray(target)) {
                 dx = target[0] - this.pos[0];
                 dy = target[1] - this.pos[1];
 
@@ -592,7 +594,7 @@ define([], function () {
             for (i = 0, j = 0; i < len; i++) {
                 el = this.objects[i];
 
-                if (el.elementClass === JXG.OBJECT_CLASS_CURVE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                     if (j <= t && t < j + el.numberPoints) {
                         tc = (t - j);
                         return el[co](tc);
@@ -611,7 +613,7 @@ define([], function () {
          * @returns {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
          */
         X: function (t) {
-            if (!JXG.exists(t)) {
+            if (!Type.exists(t)) {
                 return this.pos[0];
             }
 
@@ -625,7 +627,7 @@ define([], function () {
          * @returns {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
          */
         Y: function (t) {
-            if (!JXG.exists(t)) {
+            if (!Type.exists(t)) {
                 return this.pos[1];
             }
             return this.evalAt(t, 'Y');
@@ -656,7 +658,7 @@ define([], function () {
 
             for (i = 0; i < len; i++) {
                 el = this.objects[i];
-                if (el.elementClass === JXG.OBJECT_CLASS_CURVE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
                     np += this.objects[i].numberPoints;
                 }
             }
@@ -676,7 +678,7 @@ define([], function () {
             for (i = 0; i < this.objects.length; i++) {
                 el = this.objects[i];
 
-                if (el.type === JXG.OBJECT_TYPE_CURVE) {
+                if (el.type === Const.OBJECT_TYPE_CURVE) {
                     if (el.hasPoint(x, y)) {
                         // So what??? All other curves have to be notified now (for highlighting)
                         return true;
@@ -699,7 +701,7 @@ define([], function () {
         var attr;
         parents = parents || [];
 
-        attr = JXG.copyAttributes(attributes, board.options, 'turtle');
+        attr = Type.copyAttributes(attributes, board.options, 'turtle');
         return new JXG.Turtle(board, parents, attr);
     };
 

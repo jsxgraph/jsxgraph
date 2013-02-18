@@ -36,6 +36,7 @@
 /*depends:
  jxg
  base/constants
+ math/math
  utils/type
  */
 
@@ -45,7 +46,9 @@
  * @version 0.1
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'math/math', 'utils/type'
+], function (JXG, Const, Mat, Type) {
 
     "use strict";
 
@@ -69,7 +72,7 @@ define([], function () {
      * ( b  0  1)
      */
     JXG.Transformation = function (board, type, params) {
-        this.elementClass = JXG.OBJECT_CLASS_OTHER;
+        this.elementClass = Const.OBJECT_CLASS_OTHER;
         this.matrix = [
             [1, 0, 0],
             [0, 1, 0],
@@ -104,13 +107,13 @@ define([], function () {
             }
 
             if (type === 'translate') {
-                this.evalParam = JXG.createEvalFunction(board, params, 2);
+                this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][0] = this.evalParam(0);
                     this.matrix[2][0] = this.evalParam(1);
                 };
             } else if (type === 'scale') {
-                this.evalParam = JXG.createEvalFunction(board, params, 2);
+                this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][1] = this.evalParam(0); // x
                     this.matrix[2][2] = this.evalParam(1); // y
@@ -119,17 +122,17 @@ define([], function () {
             } else if (type === 'reflect') {
                 // line or two points
                 if (params.length < 4) {
-                    params[0] = JXG.getRef(board, params[0]);
+                    params[0] = board.select(params[0]);
                 }
 
                 // two points
                 if (params.length === 2) {
-                    params[1] = JXG.getRef(board, params[1]);
+                    params[1] = board.select(params[1]);
                 }
 
                 // 4 coordinates [px,py,qx,qy]
                 if (params.length === 4) {
-                    this.evalParam = JXG.createEvalFunction(board, params, 4);
+                    this.evalParam = Type.createEvalFunction(board, params, 4);
                 }
 
                 this.update = function () {
@@ -141,10 +144,10 @@ define([], function () {
                         v = params[0].stdform;
                     // two points
                     } else if (params.length === 2) {
-                        v = JXG.Math.crossProduct(params[1].coords.usrCoords, params[0].coords.usrCoords);
+                        v = Mat.crossProduct(params[1].coords.usrCoords, params[0].coords.usrCoords);
                     // two points coordinates [px,py,qx,qy]
                     } else if (params.length === 4) {
-                        v = JXG.Math.crossProduct(
+                        v = Mat.crossProduct(
                             [1, this.evalParam(2), this.evalParam(3)],
                             [1, this.evalParam(0), this.evalParam(1)]
                         );
@@ -175,13 +178,13 @@ define([], function () {
             } else if (type === 'rotate') {
                 // angle, x, y
                 if (params.length === 3) {
-                    this.evalParam = JXG.createEvalFunction(board, params, 3);
+                    this.evalParam = Type.createEvalFunction(board, params, 3);
                 // angle, p or angle
                 } else if (params.length <= 2) {
-                    this.evalParam = JXG.createEvalFunction(board, params, 1);
+                    this.evalParam = Type.createEvalFunction(board, params, 1);
 
                     if (params.length === 2) {
-                        params[1] = JXG.getRef(board, params[1]);
+                        params[1] = board.select(params[1]);
                     }
                 }
 
@@ -210,14 +213,14 @@ define([], function () {
                     }
                 };
             } else if (type === 'shear') {
-                this.evalParam = JXG.createEvalFunction(board, params, 1);
+                this.evalParam = Type.createEvalFunction(board, params, 1);
 
                 this.update = function () {
                     var beta = this.evalParam(0);
                     this.matrix[1][1] = Math.tan(beta);
                 };
             } else if (type === 'generic') {
-                this.evalParam = JXG.createEvalFunction(board, params, 9);
+                this.evalParam = Type.createEvalFunction(board, params, 9);
 
                 this.update = function () {
                     this.matrix[0][0] = this.evalParam(0);
@@ -243,10 +246,10 @@ define([], function () {
         apply: function (p, self) {
             this.update();
 
-            if (JXG.exists(self)) {
-                return JXG.Math.matVecMult(this.matrix, p.initialCoords.usrCoords);
+            if (Type.exists(self)) {
+                return Mat.matVecMult(this.matrix, p.initialCoords.usrCoords);
             }
-            return JXG.Math.matVecMult(this.matrix, p.coords.usrCoords);
+            return Mat.matVecMult(this.matrix, p.coords.usrCoords);
         },
 
         /**
@@ -258,7 +261,7 @@ define([], function () {
         applyOnce: function (p) {
             var c, len, i;
 
-            if (!JXG.isArray(p)) {
+            if (!Type.isArray(p)) {
                 p = [p];
             }
 
@@ -266,8 +269,8 @@ define([], function () {
 
             for (i = 0; i < len; i++) {
                 this.update();
-                c = JXG.Math.matVecMult(this.matrix, p[i].coords.usrCoords);
-                p[i].coords.setCoordinates(JXG.COORDS_BY_USER, c);
+                c = Mat.matVecMult(this.matrix, p[i].coords.usrCoords);
+                p[i].coords.setCoordinates(Const.COORDS_BY_USER, c);
             }
         },
 
@@ -276,7 +279,7 @@ define([], function () {
          */
         bindTo: function (p) {
             var i, len;
-            if (JXG.isArray(p)) {
+            if (Type.isArray(p)) {
                 len = p.length;
 
                 for (i = 0; i < len; i++) {
@@ -345,5 +348,5 @@ define([], function () {
     return {
         Transformation: JXG.Transformation,
         createTransform: JXG.createTransform
-    }
+    };
 });

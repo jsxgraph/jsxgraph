@@ -48,7 +48,9 @@
  * @fileoverview In this file the Text element is defined.
  */
 
-define([], function () {
+define([
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'parser/geonext', 'math/statistics', 'utils/env', 'utils/type'
+], function (JXG, Const, Coords, GeometryElement, GeonextParser, Statistics, Env, Type) {
 
     "use strict";
 
@@ -62,7 +64,7 @@ define([], function () {
      * @return A new geometry element Text
      */
     JXG.Text = function (board, content, coords, attributes) {
-        this.constructor(board, attributes, JXG.OBJECT_TYPE_TEXT, JXG.OBJECT_CLASS_OTHER);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_OTHER);
 
         var i, anchor;
 
@@ -71,13 +73,13 @@ define([], function () {
 
         this.isDraggable = false;
         this.needsSizeUpdate = false;
-        this.element = JXG.getRef(this.board, attributes.anchor);
+        this.element = this.board.select(attributes.anchor);
 
         if (this.element) {
             if (this.visProp.islabel) {
-                this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
+                this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
             } else {
-                this.relativeCoords = new JXG.Coords(JXG.COORDS_BY_USER, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
+                this.relativeCoords = new Coords(Const.COORDS_BY_USER, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
             }
             this.element.addChild(this);
 
@@ -87,7 +89,7 @@ define([], function () {
                 if (this.visProp.islabel) {
                     sx =  parseFloat(this.visProp.offset[0]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
+                    coords = new Coords(Const.COORDS_BY_SCREEN, [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
 
                     return coords.usrCoords[1];
                 }
@@ -102,7 +104,7 @@ define([], function () {
                 if (this.visProp.islabel) {
                     sy = -parseFloat(this.visProp.offset[1]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
+                    coords = new Coords(Const.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
 
                     return coords.usrCoords[2];
                 }
@@ -111,19 +113,19 @@ define([], function () {
                 return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
             };
 
-            this.coords = new JXG.Coords(JXG.COORDS_BY_SCREEN, [0, 0], this.board);
+            this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             this.isDraggable = true;
         } else {
-            if (JXG.isNumber(coords[0]) && JXG.isNumber(coords[1])) {
+            if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
                 this.isDraggable = true;
             }
-            this.X = JXG.createFunction(coords[0], this.board, null, true);
-            this.Y = JXG.createFunction(coords[1], this.board, null, true);
+            this.X = Type.createFunction(coords[0], this.board, null, true);
+            this.Y = Type.createFunction(coords[1], this.board, null, true);
 
-            this.coords = new JXG.Coords(JXG.COORDS_BY_USER, [this.X(), this.Y()], this.board);
+            this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
         }
 
-        this.Z = JXG.createFunction(1, this.board, '');
+        this.Z = Type.createFunction(1, this.board, '');
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
         this.board.renderer.drawText(this);
@@ -141,7 +143,7 @@ define([], function () {
 
         this.elType = 'text';
 
-        this.methodMap = JXG.deepCopy(this.methodMap, {
+        this.methodMap = Type.deepCopy(this.methodMap, {
             setText: 'setTextJessieCode',
             free: 'free',
             move: 'setCoords'
@@ -150,7 +152,7 @@ define([], function () {
         return this;
     };
 
-    JXG.Text.prototype = new JXG.GeometryElement();
+    JXG.Text.prototype = new GeometryElement();
 
     JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         /**
@@ -207,7 +209,7 @@ define([], function () {
                 };
                 this.needsSizeUpdate = true;
             } else {
-                if (JXG.isNumber(text)) {
+                if (Type.isNumber(text)) {
                     this.content = (text).toFixed(this.visProp.digits);
                 } else {
                     if (this.visProp.useasciimathml) {
@@ -220,7 +222,7 @@ define([], function () {
                     }
                 }
                 //new Function('this.plaintext = ' + this.content + '; ');
-                updateText = JXG.createFunction(this.content, this.board, null, true);
+                updateText = Type.createFunction(this.content, this.board, null, true);
                 this.updateText = function () {
                     this.plaintext = updateText();
                 };
@@ -249,7 +251,7 @@ define([], function () {
                     return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 };
             } else {
-                if (JXG.isNumber(text)) {
+                if (Type.isNumber(text)) {
                     s = text;
                 } else {
                     s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -281,7 +283,7 @@ define([], function () {
         updateSize: function () {
             var tmp;
 
-            if (!JXG.isBrowser) {
+            if (!Env.isBrowser) {
                 return this;
             }
 
@@ -317,7 +319,7 @@ define([], function () {
          * @return {object} reference to the text object.
          */
         setCoords: function (x, y) {
-            if (JXG.isArray(x) && x.length > 1) {
+            if (Type.isArray(x) && x.length > 1) {
                 y = x[1];
                 x = x[0];
             }
@@ -330,7 +332,7 @@ define([], function () {
                 return y;
             };
 
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [x, y]);
+            this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
 
             // this should be a local update, otherwise there might be problems
             // with the tick update routine resulting in orphaned tick labels
@@ -340,8 +342,8 @@ define([], function () {
         },
 
         free: function () {
-            this.X = JXG.createFunction(this.X(), this.board, '');
-            this.Y = JXG.createFunction(this.Y(), this.board, '');
+            this.X = Type.createFunction(this.X(), this.board, '');
+            this.Y = Type.createFunction(this.Y(), this.board, '');
 
             this.isDraggable = true;
         },
@@ -373,7 +375,7 @@ define([], function () {
          * Updates the coordinates of the text element.
          */
         updateCoords: function () {
-            this.coords.setCoordinates(JXG.COORDS_BY_USER, [this.X(), this.Y()]);
+            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.X(), this.Y()]);
         },
 
         /**
@@ -429,16 +431,16 @@ define([], function () {
             if (i >= 0) {
                 this.needsSizeUpdate = true;
                 while (i >= 0) {
-                    plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr.slice(0, i))) + '"';
+                    plaintext += ' + "' + GeonextParser.replaceSub(GeonextParser.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);
-                    res = JXG.GeonextParser.geonext2JS(term, this.board);
+                    res = GeonextParser.geonext2JS(term, this.board);
                     res = res.replace(/\\"/g, "'");
                     res = res.replace(/\\'/g, "'");
 
                     // GEONExT-Hack: apply rounding once only.
                     if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
-                        if (JXG.isNumber((JXG.bind(JXG.createFunction(res, this.board, null, true), this))())) {
+                        if (Type.isNumber((Type.bind(Type.createFunction(res, this.board, null, true), this))())) {
                             // may also be a string
                             plaintext += '+(' + res + ').toFixed(' + (this.visProp.digits) + ')';
                         } else {
@@ -454,7 +456,7 @@ define([], function () {
                 }
             }
 
-            plaintext += ' + "' + JXG.GeonextParser.replaceSub(JXG.GeonextParser.replaceSup(contentStr)) + '"';
+            plaintext += ' + "' + GeonextParser.replaceSub(GeonextParser.replaceSup(contentStr)) + '"';
             plaintext = plaintext.replace(/<overline>/g, '<span style=text-decoration:overline>');
             plaintext = plaintext.replace(/<\/overline>/g, '</span>');
             plaintext = plaintext.replace(/<arrow>/g, '<span style=text-decoration:overline>');
@@ -481,7 +483,7 @@ define([], function () {
                 res = search.exec(content);
 
                 if (res !== null) {
-                    JXG.GeonextParser.findDependencies(this, res[1], this.board);
+                    GeonextParser.findDependencies(this, res[1], this.board);
                     content = content.substr(res.index);
                     content = content.replace(search, '');
                 }
@@ -505,24 +507,24 @@ define([], function () {
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var dc, v,
-                c = new JXG.Coords(method, coords, this.board),
-                oldc = new JXG.Coords(method, oldcoords, this.board);
+                c = new Coords(method, coords, this.board),
+                oldc = new Coords(method, oldcoords, this.board);
 
             if (this.relativeCoords) {
                 if (this.visProp.islabel) {
-                    dc = JXG.Math.Statistics.subtract(c.scrCoords, oldc.scrCoords);
+                    dc = Statistics.subtract(c.scrCoords, oldc.scrCoords);
                     this.relativeCoords.scrCoords[1] += dc[1];
                     this.relativeCoords.scrCoords[2] += dc[2];
                 } else {
-                    dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+                    dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
                     this.relativeCoords.usrCoords[1] += dc[1];
                     this.relativeCoords.usrCoords[2] += dc[2];
                 }
             } else {
-                dc = JXG.Math.Statistics.subtract(c.usrCoords, oldc.usrCoords);
+                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
                 v = [this.Z(), this.X(), this.Y()];
-                this.X = JXG.createFunction(v[1] + dc[1], this.board, '');
-                this.Y = JXG.createFunction(v[2] + dc[2], this.board, '');
+                this.X = Type.createFunction(v[1] + dc[1], this.board, '');
+                this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
             }
 
             return this;
@@ -574,7 +576,7 @@ define([], function () {
      */
     JXG.createText = function (board, parents, attributes) {
         var t,
-            attr = JXG.copyAttributes(attributes, board.options, 'text');
+            attr = Type.copyAttributes(attributes, board.options, 'text');
 
         // downwards compatibility
         attr.anchor = attr.parent || attr.anchor;
@@ -585,8 +587,8 @@ define([], function () {
             t.parents = parents;
         }
 
-        if (JXG.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
-            t.addRotation(JXG.evaluate(attr.rotate));
+        if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
+            t.addRotation(Type.evaluate(attr.rotate));
         }
 
         return t;

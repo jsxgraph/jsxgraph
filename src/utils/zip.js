@@ -349,7 +349,7 @@ define(['jxg'], function (JXG) {
                     cSum |= (readByte() << 8);
 
                     if (((blockLen ^ ~cSum) & 0xffff)) {
-                        console.log('BlockLen checksum mismatch\n');
+                        JXG.debug('BlockLen checksum mismatch\n');
                     }
 
                     while (blockLen--) {
