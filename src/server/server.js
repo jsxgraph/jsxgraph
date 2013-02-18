@@ -38,7 +38,6 @@
  utils/zip
  utils/base64
  utils/type
- utils/object
  */
 
 /**
@@ -46,7 +45,9 @@
  * server side a python plugin system is used.
  */
 
-define(['jxg', 'utils/zip', 'utils/base64', 'utils/type', 'utils/object'], function (JXG, Zip, Base64, Type, Obj) {
+define([
+    'jxg', 'utils/zip', 'utils/base64', 'utils/type'
+], function (JXG, Zip, Base64, Type) {
 
     "use strict";
 
@@ -99,7 +100,7 @@ define(['jxg', 'utils/zip', 'utils/base64', 'utils/type', 'utils/object'], funct
                 }
             }
 
-            dataJSONStr = Obj.toJSON(data);
+            dataJSONStr = Type.toJSON(data);
 
             // generate id
             do {
