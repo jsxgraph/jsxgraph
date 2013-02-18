@@ -34,13 +34,16 @@
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
+ jxg
  utils/env
  utils/type
  utils/encoding
  utils/base64
  */
 
-define([], function () {
+define([
+    'jxg', 'utils/env', 'utils/type', 'utils/encoding', 'utils/base64'
+], function (JXG, Env, Type, Encoding, Base64) {
 
     "use strict";
 
@@ -68,7 +71,7 @@ define([], function () {
         parseFileContent: function (url, board, format, async) {
             var request = false;
 
-            if (!JXG.exists(async)) {
+            if (!Type.exists(async)) {
                 async = true;
             }
 
@@ -113,14 +116,14 @@ define([], function () {
                         text = '';
 
                     if (req.readyState === 4) {
-                        if (JXG.exists(req.responseStream) &&
+                        if (Type.exists(req.responseStream) &&
                                 // PK: zip, geogebra
                                 // 31: gzip, cinderella
                                 (req.responseText.slice(0, 2) === "PK" ||
-                                JXG.Util.UTF8.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
+                                Encoding.asciiCharCodeAt(req.responseText.slice(0, 1), 0) === 31)) {
 
                             // After this, text contains the base64 encoded, zip-compressed string
-                            text = JXG.Util.Base64.decode(jxgBinFileReader(req));
+                            text = Base64.decode(jxgBinFileReader(req));
                         } else {
                             text = req.responseText;
                         }
@@ -129,7 +132,7 @@ define([], function () {
                 };
             }
 
-            this.cb = JXG.bind(this.cbp, this);
+            this.cb = Type.bind(this.cbp, this);
             request.onreadystatechange = this.cb;
 
             try {
@@ -162,7 +165,7 @@ define([], function () {
 
             Reader = JXG.readers[format];
 
-            if (JXG.exists(Reader)) {
+            if (Type.exists(Reader)) {
                 read = new Reader(board, str);
                 read.read();
             } else {
@@ -176,7 +179,7 @@ define([], function () {
 
     /*jslint evil:true, es5:true, white:true*/
     /*jshint multistr:true*/
-    if (!JXG.isMetroApp() && JXG.isBrowser && typeof navigator === 'object' && /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent) && document && document.write) {
+    if (!Env.isMetroApp() && Env.isBrowser && typeof navigator === 'object' && /msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent) && document && document.write) {
         document.write('<script type="text/vbscript">\n\
 Function Base64Encode(inData)\n\
   Const Base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"\n\
