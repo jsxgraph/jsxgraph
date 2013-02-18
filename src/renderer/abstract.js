@@ -47,8 +47,7 @@
  math/math
  math/geometry
  utils/type
- utils/object
- utils/browser
+ utils/env
 */
 
 /**
@@ -59,8 +58,9 @@
  * renderers is the class AbstractRenderer defined in this file.
  */
 
-define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/geometry', 'utils/type', 'utils/object',
-    'utils/browser'], function (JXG, Options, Coords, Const, JXGMath, Geometry, Type, Obj, Browser) {
+define([
+    'jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/geometry', 'utils/type', 'utils/env'
+], function (JXG, Options, Coords, Const, Mat, Geometry, Type, Env) {
 
     "use strict";
 
@@ -298,7 +298,7 @@ define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/ge
 
             // and make a new one
             this.drawPoint(element);
-            Obj.clearVisPropOld(element);
+            Type.clearVisPropOld(element);
 
             if (!element.visProp.visible) {
                 this.hide(element);
@@ -449,7 +449,7 @@ define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/ge
             var radius = element.Radius();
 
             if (radius > 0.0 &&
-                    Math.abs(element.center.coords.usrCoords[0]) > JXGMath.eps &&
+                    Math.abs(element.center.coords.usrCoords[0]) > Mat.eps &&
                     !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) &&
                     radius * element.board.unitX < 2000000) {
                 this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1],
@@ -775,11 +775,11 @@ define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/ge
                 len = transformations.length;
 
             for (i = 0; i < len; i++) {
-                m = JXGMath.matMatMult(mpre1, m);
-                m = JXGMath.matMatMult(mpre2, m);
-                m = JXGMath.matMatMult(transformations[i].matrix, m);
-                m = JXGMath.matMatMult(mpost2, m);
-                m = JXGMath.matMatMult(mpost1, m);
+                m = Mat.matMatMult(mpre1, m);
+                m = Mat.matMatMult(mpre2, m);
+                m = Mat.matMatMult(transformations[i].matrix, m);
+                m = Mat.matMatMult(mpost2, m);
+                m = Mat.matMatMult(mpost1, m);
             }
             return m;
         },
@@ -1182,13 +1182,13 @@ define(['jxg', 'options', 'base/coords', 'base/constants', 'math/math', 'math/ge
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    Browser.addEvent(button, 'click', handler, board);
+                    Env.addEvent(button, 'click', handler, board);
 
                     // prevent the click from bubbling down to the board
-                    Browser.addEvent(button, 'mouseup', cancelbubble, board);
-                    Browser.addEvent(button, 'mousedown', cancelbubble, board);
-                    Browser.addEvent(button, 'touchend', cancelbubble, board);
-                    Browser.addEvent(button, 'touchstart', cancelbubble, board);
+                    Env.addEvent(button, 'mouseup', cancelbubble, board);
+                    Env.addEvent(button, 'mousedown', cancelbubble, board);
+                    Env.addEvent(button, 'touchend', cancelbubble, board);
+                    Env.addEvent(button, 'touchstart', cancelbubble, board);
                 };
 
             doc = board.containerObj.ownerDocument;

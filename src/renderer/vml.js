@@ -43,8 +43,9 @@
  math/numerics
 */
 
-define(['jxg', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'math/math',
-    'math/numerics'], function (JXG, AbstractRenderer, Const, Type, Color, JXGMath, Numerics) {
+define([
+    'jxg', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color', 'math/math', 'math/numerics'
+], function (JXG, AbstractRenderer, Const, Type, Color, Mat, Numerics) {
 
     "use strict";
 
@@ -285,16 +286,16 @@ define(['jxg', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/color
                 }
 
                 m = this.joinTransforms(el, t);
-                p[0] = JXGMath.matVecMult(m, el.coords.scrCoords);
+                p[0] = Mat.matVecMult(m, el.coords.scrCoords);
                 p[0][1] /= p[0][0];
                 p[0][2] /= p[0][0];
-                p[1] = JXGMath.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2]]);
+                p[1] = Mat.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2]]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
-                p[2] = JXGMath.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2] - el.size[1]]);
+                p[2] = Mat.matVecMult(m, [1, el.coords.scrCoords[1] + el.size[0], el.coords.scrCoords[2] - el.size[1]]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
-                p[3] = JXGMath.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1]]);
+                p[3] = Mat.matVecMult(m, [1, el.coords.scrCoords[1], el.coords.scrCoords[2] - el.size[1]]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
                 maxX = p[0][1];

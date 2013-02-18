@@ -48,9 +48,10 @@
  math/numerics
 */
 
-define(['jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type', 'utils/browser', 'utils/uuid',
-    'utils/color', 'base/coords', 'math/math', 'math/geometry', 'math/numerics'], function (JXG, AbstractRenderer,
-    Const, Env, Type, Browser, UUID, Color, Coords, JXGMath, Geometry, Numerics) {
+define([
+    'jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type', 'utils/uuid', 'utils/color',
+    'base/coords', 'math/math', 'math/geometry', 'math/numerics'
+], function (JXG, AbstractRenderer, Const, Env, Type, UUID, Color, Coords, Mat, Geometry, Numerics) {
 
     "use strict";
 
@@ -81,8 +82,8 @@ define(['jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type',
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', Browser.getStyle(this.container,
-                'width'), '" height="', Browser.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
+            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', Env.getStyle(this.container,
+                'width'), '" height="', Env.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
@@ -680,7 +681,7 @@ define(['jxg', 'renderer/abstract', 'base/constants', 'utils/env', 'utils/type',
 
             if (len > 0) {
                 m = this.joinTransforms(el, t);
-                if (Math.abs(Numerics.det(m)) >= JXGMath.eps) {
+                if (Math.abs(Numerics.det(m)) >= Mat.eps) {
                     ctx.transform(m[1][1], m[2][1], m[1][2], m[2][2], m[1][0], m[2][0]);
                 }
             }

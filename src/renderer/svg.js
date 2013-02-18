@@ -43,8 +43,9 @@
  math/numerics
 */
 
-define(['jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/browser', 'utils/color',
-    'math/numerics'], function (JXG, Options, AbstractRenderer, Const, Type, Browser, Color, Numerics) {
+define([
+    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'math/numerics'
+], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Numerics) {
 
     "use strict";
 
@@ -97,8 +98,8 @@ define(['jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', '
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        this.svgRoot.style.width = Browser.getStyle(this.container, 'width');
-        this.svgRoot.style.height = Browser.getStyle(this.container, 'height');
+        this.svgRoot.style.width = Env.getStyle(this.container, 'width');
+        this.svgRoot.style.height = Env.getStyle(this.container, 'height');
 
         this.container.appendChild(this.svgRoot);
 
