@@ -119,13 +119,17 @@ var JXG = {},
 
                 // go through the waitlist, look if another module can be initialized
                 for (i = 0; i < waitlist.length; i++) {
-                    define.apply(this, waitlist[i]);
+                    if (define.apply(this, waitlist[i])) {
+                        waitlist.splice(i, 1);
+                    }
                 }
             }
 
             checkwaitlist = true;
             console.log('waitlist is now', waitlist.length);
         }
+
+        return inc;
     };
 
     JXG.require = function (libraryName) {
