@@ -2,12 +2,13 @@
     "baseUrl": "../src/",
     "name": "../build/almond",
     "include": [
-        "../build/core.deps.js"
+        "jsxgraph",
+        "base/curve"
     ],
     "wrap": {
         "start": "(function () {",
         "end": "window.JXG = require('jxg');}())"
     },
-    "out": './bin/core-src.js',
+    "out": './bin/plot-src.js',
     "optimize": "none"
 }
