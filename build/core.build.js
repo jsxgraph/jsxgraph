@@ -1,13 +1,14 @@
 {
     "baseUrl": "../src/",
-    "name": "../build/almond",
+    "name": "../node_modules/almond/almond",
     "include": [
         "../build/core.deps.js"
     ],
     "wrap": {
         "start": "(function () {",
-        "end": "window.JXG = require('jxg');}())"
+        "end": "window.JXG = require('../build/core.deps.js');}())"
     },
-    "out": './bin/core-src.js',
-    "optimize": "none"
+    "out": './bin/jsxgraphcore.js',
+    "optimize": "uglify2",
+    "preserveLicenseComments": false
 }

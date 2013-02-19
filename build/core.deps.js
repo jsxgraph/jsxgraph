@@ -54,4 +54,6 @@ define([
     'renderer/vml',
     'renderer/canvas',
     'renderer/no'
-], function () { });
+], function (JXG) {
+    return JXG;
+});

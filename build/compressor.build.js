@@ -2,14 +2,13 @@
     "baseUrl": "../src/",
     "name": "../node_modules/almond/almond",
     "include": [
-        "jsxgraph",
-        "base/curve"
+        "../build/compressor.deps.js"
     ],
     "wrap": {
         "start": "(function () {",
-        "end": "window.JXG = require('jxg');}())"
+        "end": "window.JXG = require('../build/compressor.deps.js');}())"
     },
-    "out": './bin/jxgplot.js',
+    "out": './bin/jsxcompressor.js',
     "optimize": "uglify2",
     "preserveLicenseComments": false
 }
