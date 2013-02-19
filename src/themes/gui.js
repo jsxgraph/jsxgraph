@@ -1,4 +1,4 @@
-JXG.Options = JXG.deepCopy(JXG.Options, {
+JXG.Options = JXG.merge(JXG.Options, {
 
     axisScaleX: 1,
 

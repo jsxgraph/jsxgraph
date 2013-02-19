@@ -113,6 +113,10 @@ define([
                 Options.renderer = 'canvas';
             }
 
+            Options.foo = 'bar';
+
+            console.log('chose renderer', Options.renderer);
+
             return Options.renderer;
         }()),
 
@@ -165,6 +169,8 @@ define([
 
             dimensions = Env.getDimensions(box);
             attributes = attributes || {};
+
+            console.log('init board', Options.renderer);
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');

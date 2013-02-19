@@ -562,6 +562,45 @@ define([
         },
 
         /**
+         * Recursively merges obj2 into obj1. Contrary to {@link JXG#deepCopy} this won't create a new object
+         * but instead will
+         * @param {Object} obj1
+         * @param {Object} obj2
+         * @returns {Object}
+         */
+        merge: function (obj1, obj2) {
+            var i, j;
+
+            for (i in obj2) {
+                if (obj2.hasOwnProperty(i)) {
+                    if (this.isArray(obj2[i])) {
+                        if (!obj1[i]) {
+                            obj1[i] = [];
+                        }
+
+                        for (j = 0; j < obj2[i].length; j++) {
+                            if (typeof obj2[i][j] === 'object') {
+                                obj1[i][j] = this.merge(obj1[i][j], obj2[i][j]);
+                            } else {
+                                obj1[i][j] = obj2[i][j];
+                            }
+                        }
+                    } else if (typeof obj2[i] === 'object') {
+                        if (!obj1[i]) {
+                            obj1[i] = {};
+                        }
+
+                        obj1[i] = this.merge(obj1[i], obj2[i]);
+                    } else {
+                        obj1[i] = obj2[i];
+                    }
+                }
+            }
+
+            return obj1;
+        },
+
+        /**
          * Creates a deep copy of an existing object, i.e. arrays or sub-objects are copied component resp.
          * element-wise instead of just copying the reference. If a second object is supplied, the two objects
          * are merged into one object. The properties of the second object have priority.
