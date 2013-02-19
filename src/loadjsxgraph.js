@@ -76,9 +76,8 @@ var JXG = {},
             };
         };
 
-    define = function (deps, factory, file) {
+    define = function (deps, factory) {
         var i, oldlength, undef,
-            filename = file || new Error().stack.split('\n').splice(2, 1).join(''),
             resDeps = [],
             inc = true;
 
@@ -103,7 +102,7 @@ var JXG = {},
         if (inc) {
             factory.apply(this, resDeps);
         } else if (checkwaitlist) {
-            waitlist.push([deps, factory, filename]);
+            waitlist.push([deps, factory]);
         }
 
         if (checkwaitlist) {
