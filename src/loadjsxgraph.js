@@ -87,7 +87,6 @@ var JXG = {},
         }
 
         window.wait = waitlist;
-        console.log('define', filename);
 
         if (factory === undef) {
             factory = function () {};
@@ -96,7 +95,6 @@ var JXG = {},
         for (i = 0; i < deps.length; i++) {
             resDeps.push(table[deps[i]]());
             if (!resDeps[i]) {
-                console.log('can\'t find', deps[i]);
                 inc = false;
                 break;
             }
@@ -109,7 +107,6 @@ var JXG = {},
         }
 
         if (checkwaitlist) {
-            console.log('checking waitlist', waitlist.length);
             // don't go through the waitlist while we're going through the waitlist
             checkwaitlist = false;
             oldlength = 0;
@@ -127,7 +124,6 @@ var JXG = {},
             }
 
             checkwaitlist = true;
-            console.log('waitlist is now', waitlist.length);
         }
 
         return inc;
