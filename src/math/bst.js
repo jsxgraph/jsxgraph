@@ -263,7 +263,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
         return h;
     };
 
-    Mat.BST.rotR = function (h) {
+    Mat.BST.prototype.rotR = function (h) {
         var x = h.l;
 
         h.l = x.r;
