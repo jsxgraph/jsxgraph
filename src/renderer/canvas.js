@@ -86,7 +86,7 @@ define([
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
-            this.canvasId = module.require('canvas');
+            this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
             this.canvasRoot = new this.canvasId(500, 500);
             this.context = this.canvasRoot.getContext('2d');
         }

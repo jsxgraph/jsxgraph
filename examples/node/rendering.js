@@ -5,7 +5,14 @@
  * Known issues: This doesn't work right now because for unknown reasons the infobox enforces HTML rendering.
  * If initInfobox is changed such that it returns without creating a text element it works.
  */
+
+// use the (minified) core, i.e. jsxgraph in one single file, built with r.js
 var JXG = require('../../build/bin/jsxgraphcore.js');
+
+// use the dev version
+//var JXG = require('../../src/jsxgraphnode.js');
+
+console.log('version', JXG.version);
 
 JXG.Options.text.display = 'internal';
 // dirty hack
@@ -16,7 +23,9 @@ board.create('point', [3, 4]);
 board.create('point', [-2, 3], {color: 'green'});
 board.create('line', [[-2, 2], [4, 2]]);
 
-board.create('circle', [[0, 0], 3]);
+var c = board.create('circle', [[0, 0], 2.5]);
+
+console.log('circle radius', c.Radius(), 'canvas', JXG.supportsCanvas(), board.renderer.type);
 
 
 if (JXG.supportsCanvas()) {
@@ -28,11 +37,11 @@ if (JXG.supportsCanvas()) {
         out = fs.createWriteStream(__dirname + '/rendering.png'),
         stream = board.renderer.canvasRoot.createPNGStream();
 
-    stream.on('data', function(chunk){
+    stream.on('data', function (chunk) {
         out.write(chunk);
     });
 
-    stream.on('end', function(){
+    stream.on('end', function () {
         console.log('saved png');
     });
 }

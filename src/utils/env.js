@@ -85,11 +85,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports HTML canvas.
          */
         supportsCanvas: function () {
-            var hasCanvas = false;
+            var c,
+                hasCanvas = false;
 
             if (this.isNode()) {
                 try {
-                    module.require('canvas');
+                    c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
                     hasCanvas = true;
                 } catch (err) { }
             }
@@ -103,7 +104,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         isNode: function () {
             // this is not a 100% sure but should be valid in most cases
-            return !this.isBrowser && typeof module === 'object' && !!module.exports;
+
+                // we are not inside a browser
+            return !this.isBrowser && (
+                // there is a module object (plain node, no requirejs)
+                (typeof module === 'object' && !!module.exports) ||
+                // there is a global object and requirejs is loaded
+                (typeof global === 'object' && global.requirejsVars && !global.requirejsVars.isBrowser)
+            );
         },
 
         /**
