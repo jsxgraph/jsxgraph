@@ -1310,8 +1310,8 @@ define([
                 "\nPossible parent types: [glider, point]");
         }
 
-        glider = this.board.select(parents[0]);
-        tracepoint = this.board.select(parents[1]);
+        glider = board.select(parents[0]);
+        tracepoint = board.select(parents[1]);
 
         if (glider.type !== Const.OBJECT_TYPE_GLIDER || !Type.isPoint(tracepoint)) {
             throw new Error("JSXGraph: Can't create trace curve with parent types '" +
