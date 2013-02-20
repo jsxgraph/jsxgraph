@@ -423,6 +423,8 @@ define([
                 } else if (Type.isGroup(this.board, vname)) {
                     r = '$jc$.board.groups[\'' + vname + '\']';
                 }
+
+                return r;
             }
 
             return '';
