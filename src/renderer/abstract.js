@@ -671,7 +671,7 @@ define([
             /*
              * This part is executed for all text elements except internal texts in canvas.
              */
-            if (element.visProp.display === 'html' || this.type !== 'canvas') {
+            if (element.visProp.display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     try {

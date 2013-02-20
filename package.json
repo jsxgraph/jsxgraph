@@ -54,7 +54,8 @@
     },
 
     "scripts": {
-        "build": "./node_modules/requirejs/bin/r.js -o build/core.build.js"
+        "buildCore": "./node_modules/requirejs/bin/r.js -o build/core.build.json",
+        "buildCompressor": "./node_modules/requirejs/bin/r.js -o build/compressor.build.json"
     },
 
     "private": true

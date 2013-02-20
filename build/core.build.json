@@ -6,9 +6,9 @@
     ],
     "wrap": {
         "start": "(function () {",
-        "end": "window.JXG = require('../build/core.deps.js');}())"
+        "end": "require('../build/core.deps.js');}())"
     },
     "out": './bin/jsxgraphcore.js',
-    "optimize": "uglify2",
+    "optimize": "none",
     "preserveLicenseComments": false
 }

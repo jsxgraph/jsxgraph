@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true, window: true, document: true, navigator: true, require: true, module: true*/
+/*global JXG: true, define: true, window: true, document: true, navigator: true, module: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -89,7 +89,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             if (this.isNode()) {
                 try {
-                    require('canvas');
+                    module.require('canvas');
                     hasCanvas = true;
                 } catch (err) { }
             }

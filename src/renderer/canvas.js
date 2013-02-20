@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, require: true */
+/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
@@ -86,7 +86,7 @@ define([
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
-            this.canvasId = require('canvas');
+            this.canvasId = module.require('canvas');
             this.canvasRoot = new this.canvasId(500, 500);
             this.context = this.canvasRoot.getContext('2d');
         }

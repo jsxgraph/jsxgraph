@@ -1,9 +1,10 @@
+/*global define: true*/
 define([
     'jxg',
+    'utils/env',
     'base/constants',
     'utils/type',
     'utils/xml',
-    'utils/env',
     'utils/event',
     'math/math',
     'math/numerics',
@@ -54,6 +55,14 @@ define([
     'renderer/vml',
     'renderer/canvas',
     'renderer/no'
-], function (JXG) {
+], function (JXG, Env) {
+    "use strict";
+
+    if (Env.isBrowser) {
+        window.JXG = JXG;
+    } else if (Env.isNode()) {
+        module.exports = JXG;
+    }
+
     return JXG;
 });

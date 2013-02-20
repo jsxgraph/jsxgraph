@@ -43,13 +43,15 @@
  * @version 0.83
  */
 
-if (typeof JXG !== 'object') {
-    JXG = {};
-}
-
 define([], function () {
 
     "use strict";
+
+    var jxg = {};
+
+    if (typeof JXG === 'object') {
+        jxg = JXG;
+    }
 
     // We need the following two methods "extend" and "shortcut" to create the JXG object via JXG.extend.
 
@@ -60,7 +62,7 @@ define([], function () {
      * @param {Boolean} [onlyOwn=false] Only consider properties that belong to extension itself, not any inherited properties.
      * @param {Boolean} [toLower=false] If true the keys are convert to lower case. This is needed for visProp, see JXG#copyAttributes
      */
-    JXG.extend = function (object, extension, onlyOwn, toLower) {
+    jxg.extend = function (object, extension, onlyOwn, toLower) {
         var e, e2;
 
         onlyOwn = onlyOwn || false;
@@ -81,7 +83,7 @@ define([], function () {
         }
     };
 
-    JXG.extend(JXG, /** @lends JXG */ {
+    jxg.extend(jxg, /** @lends JXG */ {
         /**
          * Store a reference to every board in this central list. This will at some point
          * replace JXG.JSXGraph.boards.
@@ -128,7 +130,7 @@ define([], function () {
             for (i = 0; i < ext.length; i++) {
                 e = ext[i].toLowerCase();
 
-                if (!JXG.exists(this.readers[e])) {
+                if (typeof this.readers[e] !== 'function') {
                     this.readers[e] = reader;
                 }
             }
@@ -196,21 +198,21 @@ define([], function () {
         debugWST: function (s) {
             var e = new Error();
 
-            JXG.debugInt.apply(this, arguments);
+            jxg.debugInt.apply(this, arguments);
 
             if (e && e.stack) {
-                JXG.debugInt('stacktrace');
-                JXG.debugInt(e.stack.split('\n').slice(1).join('\n'));
+                jxg.debugInt('stacktrace');
+                jxg.debugInt(e.stack.split('\n').slice(1).join('\n'));
             }
         },
 
         debugLine: function (s) {
             var e = new Error();
 
-            JXG.debugInt.apply(this, arguments);
+            jxg.debugInt.apply(this, arguments);
 
             if (e && e.stack) {
-                JXG.debugInt('Called from', e.stack.split('\n').slice(2, 3).join('\n'));
+                jxg.debugInt('Called from', e.stack.split('\n').slice(2, 3).join('\n'));
             }
         },
 
@@ -223,9 +225,9 @@ define([], function () {
          * @see JXG#debugInt
          */
         debug: function (s) {
-            JXG.debugInt.apply(this, arguments);
+            jxg.debugInt.apply(this, arguments);
         }
     });
 
-    return JXG;
+    return jxg;
 });
