@@ -270,7 +270,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Non-IE browser
             if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
                 obj.addEventListener(type, el, false);
-            } else {  // IE
+            }
+
+            // IE
+            if (Type.exists(obj) && Type.exists(obj.attachEvent)) {
                 obj.attachEvent('on' + type, el);
             }
         },
@@ -308,9 +311,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             }
 
             try {
-                if (Type.exists(obj.addEventListener)) { // Non-IE browser
+                // Non-IE browser
+                if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
                     obj.removeEventListener(type, owner['x_internal' + type][i], false);
-                } else {  // IE
+                }
+
+                // IE
+                if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
                     obj.detachEvent('on' + type, owner['x_internal' + type][i]);
                 }
 
