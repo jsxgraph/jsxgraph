@@ -221,8 +221,7 @@ define([
                         this.content = this.generateTerm(text);
                     }
                 }
-                //new Function('this.plaintext = ' + this.content + '; ');
-                updateText = Type.createFunction(this.content, this.board, null, true);
+                updateText = this.board.jc.snippet(this.content, true, '', false);
                 this.updateText = function () {
                     this.plaintext = updateText();
                 };
@@ -440,7 +439,7 @@ define([
                     // GEONExT-Hack: apply rounding once only.
                     if (res.indexOf('toFixed') < 0) {
                         // output of a value tag
-                        if (Type.isNumber((Type.bind(Type.createFunction(res, this.board, null, true), this))())) {
+                        if (Type.isNumber((Type.bind(this.board.jc.snippet(res, true, '', false), this))())) {
                             // may also be a string
                             plaintext += '+(' + res + ').toFixed(' + (this.visProp.digits) + ')';
                         } else {
@@ -464,6 +463,7 @@ define([
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
+            plaintext = plaintext.replace(/"/g, "'");
 
             return plaintext;
         },
