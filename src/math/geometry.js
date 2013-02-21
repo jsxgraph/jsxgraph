@@ -55,6 +55,7 @@ define([
 
     /**
      * Math.Geometry namespace definition
+     * @name JXG.Math.Geometry
      * @namespace
      */
     Mat.Geometry = {};

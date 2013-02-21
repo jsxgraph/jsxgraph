@@ -25,7 +25,10 @@ define(['jxg'], function (JXG) {
     var uuidCharsStr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
         uuidChars = uuidCharsStr.split('');
 
-    // Util namespace
+    /**
+     * General utility routines
+     * @namespace
+     */
     JXG.Util = JXG.Util || {};
 
     JXG.Util.genUUID = function () {

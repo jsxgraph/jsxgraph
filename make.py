@@ -365,7 +365,7 @@ def makeRelease():
     
     shutil.copy("src/themes/dark.js", "tmp/themes/dark.js")
     shutil.copy("src/themes/gui.js", "tmp/themes/gui.js")
-    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README LICENSE.MIT LICENSE.LGPL && cd ..")
+    os.system("cd tmp && zip -r jsxgraph-" + version + ".zip docs/ jsxgraphcore.js jsxgraphsrc.js jsxgraph.css themes/ README.md LICENSE.MIT LICENSE.LGPL && cd ..")
     shutil.move("tmp/jsxgraph-" + version + ".zip", output + "/jsxgraph-" + version + ".zip")
 
 '''

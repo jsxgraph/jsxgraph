@@ -1,0 +1,14 @@
+{
+    "baseUrl": "../src/",
+    "name": "../node_modules/almond/almond",
+    "include": [
+        "../build/core.deps.js"
+    ],
+    "wrap": {
+        "start": "(function () {",
+        "end": "require('../build/core.deps.js');}())"
+    },
+    "out": './bin/jsxgraphcore-min-nc.js',
+    "optimize": "uglify2",
+    "preserveLicenseComments": false
+}

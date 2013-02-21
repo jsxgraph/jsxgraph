@@ -82,6 +82,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
     /**
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
+     * @name JXG.Math.Geometry
      * @namespace
      */
     Mat.Numerics = {

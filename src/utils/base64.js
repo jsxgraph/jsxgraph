@@ -21,6 +21,10 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
     // Util namespace
     JXG.Util = JXG.Util || {};
 
+    /**
+     * Base64 routines
+     * @namespace
+     */
     JXG.Util.Base64 = {
         encode : function (input) {
             var chr1, chr2, chr3, enc1, enc2, enc3, enc4,

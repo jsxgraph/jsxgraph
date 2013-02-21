@@ -12,6 +12,10 @@ define(['jxg'], function (JXG) {
     // Util namespace
     JXG.Util = JXG.Util || {};
 
+    /**
+     * UTF8 encoding routines
+     * @namespace
+     */
     JXG.Util.UTF8 = {
         /**
          * Encode a string to utf-8.

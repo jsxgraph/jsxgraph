@@ -59,6 +59,7 @@ define([
 
     /**
      * The JXG.Math.Symbolic namespace holds algorithms for symbolic computations.
+     * @name JXG.Math.Symbolic
      * @namespace
      */
     Mat.Symbolic = {

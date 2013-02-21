@@ -50,6 +50,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     /**
      * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
+     * @name JXG.Math.Poly
      * @namespace
      */
     Mat.Poly = {};
@@ -57,6 +58,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     /**
      * Define a polynomial ring over R.
      * @class
+     * @name JXG.Math.Poly.Ring
      * @param {Array} variables List of indeterminates.
      */
     Mat.Poly.Ring = function (variables) {
@@ -75,6 +77,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     /**
      * Define a monomial over the polynomial ring <tt>ring</tt>.
      * @class
+     * @name JXG.Math.Poly.Monomial
      * @param {JXG.Math.Poly.Ring} ring
      * @param {Number} coefficient
      * @param {Array} exponents An array of exponents, corresponding to ring
@@ -146,6 +149,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     /**
      * A polynomial is a sum of monomials.
      * @class
+     * @name JXG.Math.Poly.Polynomial
      * @param {JXG.Math.Poly.Ring} ring A polynomial ring.
      * @param {String} str TODO String representation of the polynomial, will be parsed.
      */
