@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true */
+/*global JXG: true, define: true, AMprocessNode: true, document: true, Image: true, module: true, require: true */
 /*jslint nomen: true, plusplus: true, newcap:true*/
 
 /* depends:
@@ -232,7 +232,7 @@ define([
             } else {
                 hasColor = false;
             }
-            if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth)) ) {
+            if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth))) {
                 this.context.lineWidth = parseFloat(ev.strokewidth);
             }
             return hasColor;
