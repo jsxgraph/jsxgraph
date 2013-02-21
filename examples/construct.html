@@ -10,7 +10,6 @@
     <script type="text/javascript" src="../src/renderer/canvas.js"></script>
 </head>
 <body id="body">
-<input type="button" value="translate curve" onClick="translate()">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
 <script type='text/javascript'>
@@ -56,93 +55,22 @@ JXG.Options.point.label = {};
     };
 
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4,5,5,-4], axis:true});
 
-    // Create two arcs
-    //var l = brd.create('line', [-1,1,0]);
-/*
-brd.create('axis',
-    [
-    [0, 0],
-    [100, 0]
-    ],
-    { withLabel: true, name: "TEST-X", label: { offset: [135,150]}});
-    
-brd.create('axis',
-    [
-    [0, 0],
-    [0, 10]
-    ],
-    { withLabel: true, name: "TEST-Y", label: { offset: [125,135]}});
-    brd.create('point', [5,5], {withLabel: true, name: "Test", label: { offset:[50,-20]}});
-*/
-/*
-var a1 = brd.create('point',[0,3]);
-var a2 = brd.create('point',[3,3]);
-    var ax1 = brd.create('axis', [[0,1.7],[1,4.7]], 
-        { 
-            ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
-        }
-        );
-    brd.create('ticks', [ax1, [2.7]], {strokeColor: '#00ff00', majorHeight:20, drawLabels: true});        
-
-    var ax2 = brd.create('axis', [[-.7,0],[-.7,1]], 
-        { 
-            ticks:{drawZero:true}, point1:{frozen:true}, point2:{frozen:true} 
-        }
-        );
-*/        
-/*
-    var s1 = brd.create('slider', [[1,3],[4,3],[10,40,110]], 
-        {   point1:{frozen:true}, 
-            point2:{frozen:true},
-            ticks:{drawLabels:true}
-        });
-*/        
-var p1 = brd.create('point', [2,2]);
-var ff = brd.create('functiongraph', [function(x){return p1.Y()+x*x;}], {trace:false});
-//brd.create('segment', [p1,p2], {strokeWidth:20, highlightStrokeWidth:2, firstArrow:true, lastArrow:true});
-/*
-    var t1 = brd.create('text', [1,2,'hello'], {snapToGrid:true});
-
-
-    //brd.migratePoint(p1, p2, true);
-    
-    var txt1 = brd.create('text', [1,4,'FREEEEEZZZZZE'], {frozen:true});
-    //var sl1 = brd.create('slider', [[1,3.5],[4,3.5],[1,2,5]], {name:'x',point1:{frozen:true}, point2:{frozen:true}});
-    
-    var ll = brd.create('segment', [p1,p2], {name:'x', withLabel:true});
-    var p3 = brd.create('point', [2,3]);
-    var a1 = brd.create('arc', [p1,p2,p3], {fixed:false});
-
-    var p4 = brd.create('point', [4,1]);
-    var p5 = brd.create('point', [2,0]);
-    var p6 = brd.create('point', [3,3]);
-    var a2 = brd.create('arc', [p4,p6,p5]);
-
-    var i1 = brd.create('intersection', [a1,a2,0], {visible:false});
-    var i2 = brd.create('intersection', [a1,a2,1], {visible:false});
-
-    // Create two arcs surroundng the intersection area
-    var c1 = brd.create('arc', [p1, i1, i2], {visible:false});
-    var c2 = brd.create('arc', [p4, i2, i1], {visible:false});
-    // Join the two arcs.
-    var c3 = JXG.joinCurves(brd, [c1,c2], 
-        {   strokeColor:'black', 
-            strokeWidth:3, 
-            fillColor:'yellow', fillOpacity:0.2
-        });
-    
-    var c1 = brd.create('curve', [[0,1,2],[0,2,2]], {fixed: false});
-    //var e1 = brd.create('ellipse', [p1, p2, 3], {fixed: false});
-    //brd.create('glider', [1,1, a1],{color:'blue'});
-    brd.create('glider', [1,1, c1],{color:'blue', showInfobox:true});
-    //brd.create('glider', [2,1, e1],{color:'blue'});
-    
-    brd.update();
-*/
-
-    //var tape = brd.create('tapemeasure', [[1,4],[3,4]], {name: 'd'});
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10]});
+var s = board.create('slider', [[1,8],[5,8],[0,0,1]]);
+ 
+var g = board.create('functiongraph', [function(x){ return x*x;}],
+         {
+          strokeColor:function(){ return (s.Value()<0.5)?'red':'blue';},
+          strokeWidth:function(){ return (s.Value()<0.5)?4:1;}
+         });
+/*         
+var f = board.create('functiongraph', [function(x){ return x+1;}],
+         {
+          strokeColor:function(){ return (s.Value()>=0.5)?'red':'blue';},
+          strokeWidth:function(){ return (s.Value()>=0.5)?4:1;}
+         });
+*/         
 </script> 
 </body>
 </html>

@@ -973,7 +973,7 @@ define([
             var node,
                 w = Type.evaluate(width);
 
-            if (el.visPropOld.strokewidth === w) {
+            if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
             }
 

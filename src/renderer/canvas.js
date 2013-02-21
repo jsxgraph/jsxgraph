@@ -232,7 +232,7 @@ define([
             } else {
                 hasColor = false;
             }
-            if (type === 'stroke') {
+            if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth)) ) {
                 this.context.lineWidth = parseFloat(ev.strokewidth);
             }
             return hasColor;
