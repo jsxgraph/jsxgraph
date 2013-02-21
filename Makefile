@@ -38,8 +38,8 @@ all: core
 core:
 	$(REQUIREJS) -o $(BUILD)/core.build.json
 
-core-min: core
-	$(REQUIREJS) -o $(BUILD)/core-min.build.json
+core-min:
+	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify out=$(BUILDBIN)/jsxgraphcore-min-nc.js
 	$(CAT) COPYRIGHT > $(BUILDBIN)/jsxgraphcore-min.js
 	$(CAT) $(BUILDBIN)/jsxgraphcore-min-nc.js >> $(BUILDBIN)/jsxgraphcore-min.js
 
