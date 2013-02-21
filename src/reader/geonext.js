@@ -902,14 +902,9 @@
                 gxtEl = this.colorProperties(gxtEl, Data);
                 gxtEl = this.firstLevelProperties(gxtEl, Data);
                 gxtEl.funct = Data.getElementsByTagName('data')[0].getElementsByTagName('function')[0].firstChild.data;
-                gxtEl.funct = JXG.GeonextParser.geonext2JS(gxtEl.funct, board);
+                gxtEl.funct = board.jc.snippet(gxtEl.funct, true, 'x', true);
 
-                // intentional
-                /*jslint evil:true*/
-                gxtEl.funct = new Function('x', 'return ' + gxtEl.funct + ';');
-                /*jslint evil:false*/
-
-                c = board.create('curve', ['x', gxtEl.funct], {
+                c = board.create('plot', [gxtEl.funct], {
                     id: gxtEl.id,
                     name: gxtEl.name,
                     strokeColor: gxtEl.strokeColor,
@@ -1036,10 +1031,10 @@
                 // intentional
                 /*jslint evil:true*/
                 board.create('curve', [
-                    new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functionx, board) + ';'),
-                    new Function('t', 'return ' + JXG.GeonextParser.geonext2JS(gxtEl.functiony, board) + ';'),
-                    new Function('return ' + JXG.GeonextParser.geonext2JS(gxtEl.min, board) + ';'),
-                    new Function('return ' + JXG.GeonextParser.geonext2JS(gxtEl.max, board) + ';')
+                    board.jc.snippet(gxtEl.functionx, true, 't', true),
+                    board.jc.snippet(gxtEl.functiony, true, 't', true),
+                    board.jc.snippet(gxtEl.min, true, '', true),
+                    board.jc.snippet(gxtEl.max, true, '', true)
                 ], gxtEl);
                 /*jslint evil:false*/
                 this.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
