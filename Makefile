@@ -2,6 +2,8 @@
 REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=node ./node_modules/.bin/jsdoc2
+LINT=./node_modules/.bin/jslint
+HINT=./node_modules/.bin/jshint
 
 # general tools
 CP=cp
@@ -24,6 +26,9 @@ MKDIRFLAGS=-p
 RMFLAGS=-rf
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 ZIPFLAGS=-r
+
+# filelist - required for docs and linters
+FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
 
 # rules
 
@@ -70,7 +75,8 @@ docs: core core-min
 	# run node-jsdoc2
 	# this is not the best method because all the source methods and properties
 	# will be reported "defined in jsxgraphcore.js". But it'll do for now.
-	$(JSDOC2) $(JSDOC2FLAGS) $(BUILDBIN)/jsxgraphcore.js
+	#$(JSDOC2) $(JSDOC2FLAGS) $(BUILDBIN)/jsxgraphcore.js
+	$(JSDOC2) $(JSDOC2FLAGS) src/$(FILELIST).js
 	
 	# zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
@@ -87,3 +93,10 @@ compressor: core
 
 plot:
 	$(REQUIREJS) -o build/plot.build.json
+
+hint:
+	$(HINT) src/$(FILELIST).js
+
+lint:
+	$(LINT) src/$(FILELIST).js
+

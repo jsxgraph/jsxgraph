@@ -656,8 +656,8 @@ define([
      * @constructor
      * @type JXG.Conic
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_JXG.Point,array_} point,point,point,point,point Parent elements are five points.
-     * @param {number_number_number_number_number_number} 6 numbers (a_00,a_11,a_22,a_01,a_12,a_22)
+     * @param {JXG.Point,Array_JXG.Point,Array_JXG.Point,Array_JXG.Point,Array_JXG.Point,Array} a,b,c,d,e Parent elements are five points.
+     * @param {Number_Number_Number_Number_Number_Number} a_00,a_11,a_22,a_01,a_12,a_22 6 numbers
      * @example
      * // Create a conic section through the points A, B, C, D, and E.
      *  var A = board.create('point', [1,5]);
