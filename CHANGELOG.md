@@ -3,15 +3,86 @@
 
 Important Notes
 ---------------
+ * Wrappers.js was removed. This includes the removal of several wrapper functions in JXG.Board. Please use their
+   non-wrapped corresponding methods in Math, JXG.Math, JXG.Math.Geometry, and JXG.Math.Numerics (c857dc4, d8f8f6a)
+   * angle, rad, distance: Use JXG.Math.Geometry.*
+   * D, I, root, lagrangePolynomial, neville, riemannsum: Use JXG.Math.Numerics.*
+   * factorial, binomial, pow, cosh, sinh: Use JXG.Math.*
+   * round, abs, acos, asin, atan, ceil, cos, exp, floor, log, max, min, random, sin, sqrt, tan: Use Math.*
+   * trunc: Use Math.ceil
+   * sgn: No replacement
+ * Board attributes in JXG.Options were moved from JXG.Options to JXG.Options.board (3e39b82):
+ * The list of boards and the list of available elements were moved from JXG.JSXGraph to JXG (c0048e7, e202e15)
+ * Polygon borders won't be hidden automatically when the polygon is hidden (8e95f2c4)
+ * Pstricks was removed
+ * Board.getElement was renamed to Board.select and will replace JXG.getRef(erence) in a future release (c857dc4, 92c18ac)
+ * Reorganization of the repository: All files in src/ were renamed to all lowercase and moved into subfolders (bb301e0,
+   5eaf33b, fe457c9, 66ba3f2)
+ * Intersection points now have a type value of JXG.OBJECT_TYPE_INTERSECTION (86a21fe)
+   showCopyright, showNavigation, takeSizeFromFile, renderer, takeFirst, animationDelay, zoom, and pan.
+ * The board methods intersection, intersectionFunc, and otherintersection were removed. Please use the elements
+   'intersection' and 'otherintersection' (b76004c)
+ * The unused methods JXG.readOption and JXG.collectionContains were removed (f322fa6, 8879354)
+ * JXG.JSXGraph.registerElement was moved to JXG.registerElement (e202e15)
+ * XML parsing routines were moved from JXG.FileReader to JXG.XML (c2e25ac)
 
 
 New features
 ------------
+ * Prepared "virtual finger" (2bd4583, d71230a, 11548fd, 11548fd, 3e7d1e5, 5134b0b, 45d3d76)
+ * Snap to grid for lines (86b2295)
+ * Take CSS transformations of type matrix, scale, and translate into consideration (a1da3b7)
+ * Configure and use linting tools, minor refactoring (c790fcb, 5ec6a53, 9f1b6c4, 2545716, 985ea61,
+   ee2be46, b2d95ce, 18d32e0, 479e39c, 069033a, 3e39b82, e139837, 3234de5, 20c6b43, 7f58c56, 367596a,
+   fa4f5ec, 99da70a, b8a9ebd, 85637c9, 224a2a8, 56a9bdc, 27ba870, fe457c9, ae9f7a3, 27a03fe, 9e9f429,
+   e5e5216, 6533125, daa2239, 5e037b3, 8250d55, 1ed9914, ae9609d, 73fdd68)
+ * New helper function JXG.swap; Used to swap two elements in an array (bdea634)
+ * New optional parameter for ticks: generateLabelValue (7511ee7)
+ * New board event 'boundingbox', fired everytime the boundingbox changes (2dbeb60)
+ * Function and number arrays are allowed as parent elements for sectors, too (74f6482)
+ * A predefined div can now be provided to jessiecode/jessiescript tags (550dcd2)
+ * New arrow head for the SVG renderer (9b161a9)
+ * New tick property: tickEndings (7bfc59c)
+ * New element 'tapemeasure' (f1698c2, e6bb86a, 5717f14)
+ * JXG.Math.Numerics.regressionPolynomial now also accepts arrays of JXG.Coords (2fef545)
+ * Implemented Pointer API support (#18, 8820f3f, 4d22876, 235ee34, 97a3f6e, 24827d3, 535f871)
+ * The interpolation along an array of (x,y) coordinates in Point.moveAlong() can be overriden (2ef875c)
+ * Implemented the AMD pattern (e1dd0fc, e202e15, e4d74e2, e2ef764, 2d76afc, c451f7c, 0aea31e, 0260f46, 14d1a1e,
+   c53fb42, 1d13837, 3c2fa9a, 82dcf24, f707aab, 8695226)
+ * JXG.debugLine outputs the given debug strings and the line from which it was called (9e4460f)
+ * New build scripts using requirejs and uglifyjs (46e0237, ea12ae8, a53516a)
+ * JXG.merge: merge one object into another one without creating a copy (99bc1bc)
 
 
 Bug fixes
 ---------
-
+ * Speed improvements in unzipping routines (b5cb640)
+ * Enabled file reader support for node (274eb21)
+ * Speed improvements for EventEmitter (8f05b9c)
+ * Fixed border placement of polygons (a72c31e)
+ * Set axis name to '' (a72c31e)
+ * migratePoint: remove old label (e2259cb)
+ * Handle snaptopoint/grid/attractors during creation (0f30c60)
+ * Fixed grids in inverted bounding boxes (e26214f)
+ * Fixed Point.Dist() in case one point is not real (8a51da4)
+ * migratePoint() label fix (8a51da4, edcf13c, 184c66f, 285de98, 2cd6613, 4e371dd, 7dc981d)
+ * prevent access to incomplete bezier segments (fd09f8e)
+ * fixed gliders on points (ccf2c58)
+ * prevent event bubbling on mouseup and touchend for navigation bar (#25, 860491c, 1694e4f)
+ * fixed attribute frozen (146a702)
+ * jessiecode: fixed NaN value (9ee04d8)
+ * migratePoint: new parameter copyName to enable the transfer of the point's name (6c0234a)
+ * Speed improvements for html texts and SVG texts (fabc54a)
+ * triggerEventHandlers now only accepts an array of events and parameters (5f88bac, 234c136)
+ * Bugfix conic (3a3605b)
+ * Speed improvements coords (4633732)
+ * bugfix JXG.Math.factorial (9f1b6c4)
+ * bugfix line label offsets (98b6a95)
+ * Update the glider relative position during suspended updates (3317a1e)
+ * Fixed ticks on "skew" lines (7bfc59c)
+ * Fixed a division by zero in the parabola element (e6c714a)
+ * Fixed traces of curve elements (3d6813b, 8f23d84, bbee2a4)
+ * Reverted text colors to black (1a28fc9)
 
 
 
