@@ -59,19 +59,7 @@ JXG.Options.point.label = {};
 
 
 var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [0, 20, 20, 0],grid:true});
-var point = board.create('point', [
-        Math.round(Math.random()*18)+1,Math.round(Math.random()*18)+1], 
-        {strokeColor:'#4CADD4',fillColor:'#4CADD4',strokeWidth:10,name:' '});
 
-var setRandomPosition = function()  {
-        point.setPositionDirectly(JXG.COORDS_BY_USER,
-            Math.round(Math.random()*18)+1,
-            Math.round(Math.random()*18)+1);
-    }
-
-setRandomPosition();
-
-//board.update();
 
 </script> 
 </body>
