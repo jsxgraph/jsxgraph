@@ -312,15 +312,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             try {
                 // Non-IE browser
-                if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
+                if (Type.exists(obj) && Type.exists(obj.removeEventListener)) {
                     obj.removeEventListener(type, owner['x_internal' + type][i], false);
                 }
 
                 // IE
-                if (Type.exists(obj) && Type.exists(obj.addEventListener)) {
+                if (Type.exists(obj) && Type.exists(obj.detachEvent)) {
                     obj.detachEvent('on' + type, owner['x_internal' + type][i]);
                 }
-
             } catch (e) {
                 JXG.debug('event not registered in browser: (' + type + ' -- ' + fn + ')');
             }
