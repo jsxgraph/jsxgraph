@@ -72,7 +72,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         parse: function (str) {
             var parser, tree, DP;
 
-            if (typeof DOMParser === 'function') {
+            // DOMParser is a function in all browsers, except older IE and Safari.
+            // In IE it does not exists (workaround in else branch), in Safari it's an object.
+            if (typeof DOMParser === 'function' || typeof DOMParser === 'object') {
                 DP = DOMParser;
             } else {
                 // IE workaround, since there is no DOMParser
