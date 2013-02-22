@@ -42,6 +42,8 @@
     }],
 
     "dependencies": {
+    },
+    "optionalDependencies": {
         "canvas": "1.0.x"
     },
     "devDependencies": {
