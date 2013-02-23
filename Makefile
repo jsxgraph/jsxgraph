@@ -1,9 +1,12 @@
+.PHONY: test test-server-start
+
 # build tools
 REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=node ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
+JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
 
 # general tools
 CP=cp
@@ -26,6 +29,9 @@ MKDIRFLAGS=-p
 RMFLAGS=-rf
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 ZIPFLAGS=-r
+JSTESTPORT=4224
+JSTESTSERVER=localhost:4224
+JSTESTFLAGS=--reset --captureConsole --tests all
 
 # filelist - required for docs and linters
 FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
@@ -100,3 +106,8 @@ hint:
 lint:
 	$(LINT) src/$(FILELIST).js
 
+test-server:
+	$(JSTESTDRIVER) --port $(JSTESTPORT)
+
+test: core
+	$(JSTESTDRIVER) $(JSTESTSERVER) $(JSTESTFLAGS) --basePath ./ --config test/jsTestDriver.conf

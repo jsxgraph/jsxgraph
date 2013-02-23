@@ -52,7 +52,8 @@
         "almond": "0.2.x",
         "jsdoc2": "2.4.x",
         "jshint": "0.9.x",
-        "jslint": "0.1.x"
+        "jslint": "0.1.x",
+        "jstestdriver": "1.0.x"
     },
     "engines": {
         "node": ">= 0.6.0"
