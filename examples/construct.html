@@ -58,8 +58,9 @@ JXG.Options.point.label = {};
 
 
 
-var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [0, 20, 20, 0],grid:true});
-
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1],grid:true});
+var f = brd.create('functiongraph', [function(x){ return Math.exp(x); }]);
+brd.create('glider', [2,4,f]);
 
 </script> 
 </body>

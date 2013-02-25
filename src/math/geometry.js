@@ -1269,43 +1269,7 @@ define([
                 board = curve.board;
             }
 
-            if (curve.visProp.curvetype === 'parameter' || curve.visProp.curvetype === 'polar') {
-                // Function to minimize
-                minfunc = function (t) {
-                    var dx = x - curve.X(t),
-                        dy = y - curve.Y(t);
-                    return dx * dx + dy * dy;
-                };
-
-                fold = minfunc(t);
-                steps = 20;
-                delta = (curve.maxX() - curve.minX()) / steps;
-                tnew = curve.minX();
-
-                for (i = 0; i < steps; i++) {
-                    fnew = minfunc(tnew);
-
-                    if (fnew < fold) {
-                        t = tnew;
-                        fold = fnew;
-                    }
-
-                    tnew += delta;
-                }
-
-                t = Numerics.root(Numerics.D(minfunc), t);
-
-                if (t < curve.minX()) {
-                    t = curve.maxX() + t - curve.minX();
-                }
-
-                // Cyclically
-                if (t > curve.maxX()) {
-                    t = curve.minX() + t - curve.maxX();
-                }
-
-                newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
-            } else if (curve.visProp.curvetype === 'plot') {
+            if (curve.visProp.curvetype === 'plot') {
                 t = 0;
                 mindist = infty;
 
@@ -1349,13 +1313,45 @@ define([
                 }
 
                 newCoords = new Coords(Const.COORDS_BY_USER, newCoords, board);
-            // functiongraph
-            } else {
-                t = x;
-                x = t;
-                y = curve.Y(t);
-                newCoords = new Coords(Const.COORDS_BY_USER, [x, y], board);
-            }
+            
+            } else {   // 'parameter', 'polar', 'functiongraph'
+
+                // Function to minimize
+                minfunc = function (t) {
+                    var dx = x - curve.X(t),
+                        dy = y - curve.Y(t);
+                    return dx * dx + dy * dy;
+                };
+
+                fold = minfunc(t);
+                steps = 20;
+                delta = (curve.maxX() - curve.minX()) / steps;
+                tnew = curve.minX();
+
+                for (i = 0; i < steps; i++) {
+                    fnew = minfunc(tnew);
+
+                    if (fnew < fold) {
+                        t = tnew;
+                        fold = fnew;
+                    }
+
+                    tnew += delta;
+                }
+
+                t = Numerics.root(Numerics.D(minfunc), t);
+
+                if (t < curve.minX()) {
+                    t = curve.maxX() + t - curve.minX();
+                }
+
+                // Cyclically
+                if (t > curve.maxX()) {
+                    t = curve.minX() + t - curve.maxX();
+                }
+
+                newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
+            } 
 
             return [curve.updateTransform(newCoords), t];
         },
