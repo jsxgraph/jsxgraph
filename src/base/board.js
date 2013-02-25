@@ -1991,6 +1991,10 @@ define([
                     }
                 }
                 if (!found) {
+                    if (this.downObjects[i].type === Const.OBJECT_TYPE_GLIDER) {
+                        this.downObjects[i].needsUpdateFromParent = false;
+                    }
+
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
                     this.downObjects[i].snapToGrid();
                     this.downObjects.splice(i, 1);
@@ -2101,7 +2105,12 @@ define([
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             if (this.mouse && this.mouse.obj) {
-                this.mouse.obj.snapToGrid(this.mouse.targets[0]); // The parameter is needed for lines with snapToGrid enabled
+                // The parameter is needed for lines with snapToGrid enabled
+                this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+            }
+
+            if (this.mode === this.BOARD_MODE_DRAG && this.mouse.obj.type === Const.OBJECT_TYPE_GLIDER) {
+                this.mouse.obj.needsUpdateFromParent = false;
             }
 
             this.originMoveEnd();
@@ -3579,6 +3588,54 @@ define([
         },
 
         /**
+         * Select a single or multiple elements at once.
+         * @param {String} str The name, id or a reference to a JSXGraph element on this board.
+         * @returns {JXG.GeometryElement}
+         */
+        select: function (str) {
+            var s = str;
+
+            if (typeof s === 'string') {
+                // Search by ID
+                if (Type.exists(this.objects[s])) {
+                    s = this.objects[s];
+                // Search by name
+                } else if (Type.exists(this.elementsByName[s])) {
+                    s = this.elementsByName[s];
+                // Search by group ID
+                } else if (Type.exists(this.groups[s])) {
+                    s = this.groups[s];
+                }
+            }
+
+            return s;
+        },
+
+        /**
+         * Checks if the given point is inside the boundingbox.
+         * @param {Number|JXG.Coords} x User coordinate or {@link JXG.Coords} object.
+         * @param {Number} [y] User coordinate. May be omitted in case <tt>x</tt> is a {@link JXG.Coords} object.
+         * @returns {Boolean}
+         */
+        hasPoint: function (x, y) {
+            var px = x,
+                py = y,
+                bbox = this.getBoundingBox();
+
+            if (JXG.exists(x) && JXG.isArray(x.usrCoords)) {
+                px = x.usrCoords[1];
+                py = x.usrCoords[2];
+            }
+
+            if (typeof px === 'number' && typeof py === 'number' &&
+                    bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]) {
+                return true;
+            }
+
+            return false;
+        },
+
+        /**
          * Update CSS transformations of sclaing type. It is used to correct the mouse position
          * in {@link JXG.Board#getMousePosition}.
          * The inverse transformation matrix is updated on each mouseDown and touchStart event.
@@ -3743,30 +3800,6 @@ define([
         __evt__: function () {},
 
         //endregion
-
-        /**
-         * Select a single or multiple elements at once.
-         * @param {String} str The name, id or a reference to a JSXGraph element on this board.
-         * @returns {JXG.GeometryElement}
-         */
-        select: function (str) {
-            var s = str;
-
-            if (typeof s === 'string') {
-                // Search by ID
-                if (Type.exists(this.objects[s])) {
-                    s = this.objects[s];
-                // Search by name
-                } else if (Type.exists(this.elementsByName[s])) {
-                    s = this.elementsByName[s];
-                // Search by group ID
-                } else if (Type.exists(this.groups[s])) {
-                    s = this.groups[s];
-                }
-            }
-
-            return s;
-        },
 
         /**
          * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.

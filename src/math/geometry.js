@@ -1412,6 +1412,44 @@ define([
         },
 
         /**
+         *
+         * @param {JXG.Point|JXG.Coords} point
+         * @param {JXG.Board} [board]
+         */
+        projectPointToBoard: function (point, board) {
+            var i, l, c,
+                brd = board || point.board,
+                // comparison factor, point coord idx, bbox idx, 1st bbox corner x & y idx, 2nd bbox corner x & y idx
+                config = [
+                    // left
+                    [1, 1, 0, 0, 3, 0, 1],
+                    // top
+                    [-1, 2, 1, 0, 1, 2, 1],
+                    // right
+                    [-1, 1, 2, 2, 1, 2, 3],
+                    // bottom
+                    [1, 2, 3, 0, 3, 2, 3]
+                ],
+                coords = point.coords || point,
+                bbox = brd.getBoundingBox();
+
+            for (i = 0; i < 4; i++) {
+                c = config[i];
+                if (c[0] * coords.usrCoords[c[1]] < c[0] * bbox[c[2]]) {
+                    // define border
+                    l = Mat.crossProduct([1, bbox[c[3]], bbox[c[4]]], [1, bbox[c[5]], bbox[c[6]]]);
+                    l[3] = 0;
+                    l = Mat.normalize(l);
+
+                    // project point
+                    coords = this.projectPointToLine({coords: coords, board: brd}, {stdform: l});
+                }
+            }
+
+            return coords;
+        },
+
+        /**
          * Calculates the distance of a point to a line. The point and the line are given by homogeneous
          * coordinates. For lines this can be line.stdform.
          * @param {Array} point Homogeneous coordinates of a point.

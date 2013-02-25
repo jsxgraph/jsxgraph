@@ -113,6 +113,22 @@ define([
          */
         this.slideObject = null;
 
+        /**
+         * To prevent a glider from running off the board, we need to store the last position as a glider. It will
+         * be stored as the usrCoords array of the coords property.
+         * @type {Array}
+         */
+        this.lastGliderPos = null;
+
+        /**
+         * A {@link JXG.Point#updateGlider} call is usually followed by a general {@link JXG.Board#update} which calls
+         * {@link JXG.Point#updateGliderFromParent}. To prevent double updates, {@link JXG.Point#needsUpdateFromParent}
+         * is set to false in updateGlider() and reset to true in the following call to
+         * {@link JXG.Point#updateGliderFromParent}
+         * @type {Boolean}
+         */
+        this.needsUpdateFromParent = true;
+
         this.Xjc = null;
         this.Yjc = null;
 
@@ -235,12 +251,16 @@ define([
         updateGlider: function () {
             var i, p1c, p2c, d, v, poly, cc, pos, sgn,
                 alpha, beta, angle,
-                cp, c, invMat,
+                cp, c, invMat, newCoords, newPos,
+                doRound = false,
                 slide = this.slideObject;
 
+            this.needsUpdateFromParent = false;
+
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
-                this.position = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this);
+                //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
+                newCoords = Geometry.projectPointToCircle(this, slide, this.board);
+                newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this);
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 /*
                  * onPolygon==true: the point is a slider on a segment and this segment is one of the
@@ -284,15 +304,18 @@ define([
 
                 // Distance between the two defining points
                 d = p1c.distance(Const.COORDS_BY_USER, p2c);
-                p1c = p1c.usrCoords.slice(0);
-                p2c = p2c.usrCoords.slice(0);
 
                 // The defining points are identical
                 if (d < Mat.eps) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
-                    this.position = 0.0;
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
+                    newCoords = p1c;
+                    doRound = true;
+                    newPos = 0.0;
                 } else {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(this, slide, this.board).usrCoords, false);
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(this, slide, this.board).usrCoords, false);
+                    newCoords = Geometry.projectPointToLine(this, slide, this.board);
+                    p1c = p1c.usrCoords.slice(0);
+                    p2c = p2c.usrCoords.slice(0);
 
                     // The second point is an ideal point
                     if (Math.abs(p2c[0]) < Mat.eps) {
@@ -304,10 +327,10 @@ define([
                             d = p2c[i];
                         }
 
-                        d = (this.coords.usrCoords[i] - p1c[i]) / d;
+                        d = (newCoords.usrCoords[i] - p1c[i]) / d;
                         sgn = (d >= 0) ? 1 : -1;
                         d = Math.abs(d);
-                        this.position = sgn * d / (d + 1);
+                        newPos = sgn * d / (d + 1);
 
                     // The first point is an ideal point
                     } else if (Math.abs(p1c[0]) < Mat.eps) {
@@ -319,13 +342,13 @@ define([
                             d = p1c[i];
                         }
 
-                        d = (this.coords.usrCoords[i] - p2c[i]) / d;
+                        d = (newCoords.usrCoords[i] - p2c[i]) / d;
 
                         // 1.0 - d/(1-d);
                         if (d < 0.0) {
-                            this.position = (1 - 2.0 * d) / (1.0 - d);
+                            newPos = (1 - 2.0 * d) / (1.0 - d);
                         } else {
-                            this.position = 1 / (d + 1);
+                            newPos = 1 / (d + 1);
                         }
                     } else {
                         i = 1;
@@ -335,7 +358,7 @@ define([
                             i = 2;
                             d = p2c[i] - p1c[i];
                         }
-                        this.position = (this.coords.usrCoords[i] - p1c[i]) / d;
+                        newPos = (newCoords.usrCoords[i] - p1c[i]) / d;
                     }
                 }
 
@@ -343,39 +366,45 @@ define([
                 // First, recalculate the new value of this.position
                 // Second, call update(fromParent==true) to make the positioning snappier.
                 if (this.visProp.snapwidth > 0.0 && Math.abs(this._smax - this._smin) >= Mat.eps) {
-                    this.position = Math.max(Math.min(this.position, 1), 0);
+                    newPos = Math.max(Math.min(newPos, 1), 0);
 
-                    v = this.position * (this._smax - this._smin) + this._smin;
+                    v = newPos * (this._smax - this._smin) + this._smin;
                     v = Math.round(v / this.visProp.snapwidth) * this.visProp.snapwidth;
-                    this.position = (v - this._smin) / (this._smax - this._smin);
+                    newPos = (v - this._smin) / (this._smax - this._smin);
                     this.update(true);
                 }
 
-                p1c = slide.point1.coords.usrCoords;
-                if (!slide.visProp.straightfirst && Math.abs(p1c[0]) > Mat.eps && this.position < 0) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
-                    this.position = 0;
+                p1c = slide.point1.coords;
+                if (!slide.visProp.straightfirst && Math.abs(p1c.usrCoords[0]) > Mat.eps && newPos < 0) {
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, p1c);
+                    newCoords = p1c;
+                    doRound = true;
+                    newPos = 0;
                 }
 
-                p2c = slide.point2.coords.usrCoords;
-                if (!slide.visProp.straightlast && Math.abs(p2c[0]) > Mat.eps && this.position > 1) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, p2c);
-                    this.position = 1;
+                p2c = slide.point2.coords;
+                if (!slide.visProp.straightlast && Math.abs(p2c.usrCoords[0]) > Mat.eps && newPos > 1) {
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, p2c);
+                    newCoords = p2c;
+                    doRound = true;
+                    newPos = 1;
                 }
             } else if (slide.type === Const.OBJECT_TYPE_TURTLE) {
                 // In case, the point is a constrained glider.
                 // side-effect: this.position is overwritten
                 this.updateConstraint();
-                this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false);
+                //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false);
+                newCoords = Geometry.projectPointToTurtle(this, slide, this.board);
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if ((slide.type === Const.OBJECT_TYPE_ARC ||
                         slide.type === Const.OBJECT_TYPE_SECTOR)) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
+                    newCoords = Geometry.projectPointToCircle(this, slide, this.board);
 
                     angle = Geometry.rad(slide.radiuspoint, slide.center, this);
                     alpha = 0.0;
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
-                    this.position = angle;
+                    newPos = angle;
 
                     if ((slide.visProp.type === 'minor' && beta > Math.PI) ||
                             (slide.visProp.type === 'major' && beta < Math.PI)) {
@@ -385,10 +414,10 @@ define([
 
                     // Correct the position if we are outside of the sector/arc
                     if (angle < alpha || angle > beta) {
-                        this.position = beta;
+                        newPos = beta;
 
                         if ((angle < alpha && angle > alpha * 0.5) || (angle > beta && angle > beta * 0.5 + Math.PI)) {
-                            this.position = alpha;
+                            newPos = alpha;
                         }
                         this.updateGliderFromParent();
                     }
@@ -403,19 +432,31 @@ define([
                         c = Mat.matVecMult(invMat, this.coords.usrCoords);
 
                         cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
-                        c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
+                        newCoords = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
 
                         // side effect !
-                        this.position = c[1];
-                        this.coords = c[0];
+                        newPos = c[1];
                     } else {
                         // side-effect: this.position is overwritten
-                        this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
+                        //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
+                        newCoords = Geometry.projectPointToCurve(this, slide, this.board);
+                        newPos = newCoords.usrCoords[1];
                     }
                 }
-
             } else if (slide.elementClass === Const.OBJECT_CLASS_POINT) {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
+                //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
+                newCoords = Geometry.projectPointToPoint(this, slide, this.board);
+            }
+
+            if (!this.board.hasPoint(newCoords)) {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, this.lastGliderPos, false);
+            } else {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
+                this.lastGliderPos = newCoords.usrCoords;
+
+                if (newPos) {
+                    this.position = newPos;
+                }
             }
         },
 
@@ -427,6 +468,11 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject, alpha;
+
+            if (!this.needsUpdateFromParent) {
+                this.needsUpdateFromParent = true;
+                return;
+            }
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = slide.Radius();
@@ -871,6 +917,7 @@ define([
                 return this.slideObject.generatePolynomial(this);
             };
 
+            this.lastGliderPos = this.coords.usrCoords;
             // Determine the initial value of this.position
             this.updateGlider();
 
@@ -975,7 +1022,7 @@ define([
                     // Convert GEONExT syntax into  JavaScript syntax
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
-                    v = GeonextParser.replaceNameById(v, this.board);
+                    //v = GeonextParser.replaceNameById(v, this.board);
                     newfuncs[i] = this.board.jc.snippet(v, true, null, true);
 
                     if (terms.length === 2) {
