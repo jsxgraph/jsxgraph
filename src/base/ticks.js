@@ -36,6 +36,7 @@
 /* depends:
  jxg
  math/math
+ math/geometry
  base/constants
  base/element
  base/coords
@@ -52,8 +53,8 @@
  */
 
 define([
-    'jxg', 'math/math', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
-], function (JXG, Mat, Const, GeometryElement, Coords, Type, Text) {
+    'jxg', 'math/math', 'math/geometry', 'base/constants', 'base/element', 'base/coords', 'utils/type', 'base/text'
+], function (JXG, Mat, Geometry, Const, GeometryElement, Coords, Type, Text) {
 
     "use strict";
 
@@ -195,8 +196,9 @@ define([
             return false;
         },
 
-        generateLabelValue: function (tick) {
-            var p1 = this.line.point1,
+        generateLabelValue: function (tick, center) {
+            var f = -1,
+                p1 = this.line.point1,
                 p2 = this.line.point2;
 
             // horizontal axis
@@ -209,7 +211,12 @@ define([
                 return tick.usrCoords[2];
             }
 
-            return p1.coords.distance(Const.COORDS_BY_USER, tick);
+            if ((this.visProp.anchor === 'right' && !Geometry.isSameDirection(p2.coords, p1.coords, tick)) ||
+                    (this.visProp.anchor !== 'right' && Geometry.isSameDirection(p1.coords, p2.coords, tick))) {
+                f = 1;
+            }
+
+            return f * p1.coords.distance(Const.COORDS_BY_USER, tick);
         },
 
         /**
@@ -400,16 +407,17 @@ define([
                         this.ticks.push(ti);
                     }
 
-                    this.labels.push(this._makeLabel(this.visProp.labels[i] || this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                    this.labels.push(this._makeLabel(this.visProp.labels[i] || this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i, coordsZero));
                     // visibility test missing
                 }
                 return;
             }
 
+            // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
+
             symbTicksDelta = ticksDelta;
             ticksDelta *= this.visProp.scale;
 
-            // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
             // adjust distances
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
                 f = this._adjustTickDistance(ticksDelta, distScr, factor, coordsZero, deltaX, deltaY);
@@ -500,7 +508,7 @@ define([
                         this.ticks.push(ti);
 
                         if (tickCoords.major) {
-                            this.labels.push(this._makeLabel(pos, tickCoords, this.board, this.visProp.drawlabels, this.id, i));
+                            this.labels.push(this._makeLabel(pos, tickCoords, this.board, this.visProp.drawlabels, this.id, i, coordsZero));
                         } else {
                             this.labels.push(null);
                         }
@@ -681,7 +689,7 @@ define([
          * @returns {JXG.Text}
          * @private
          */
-        _makeLabel: function (pos, newTick, board, drawLabels, id, i) {
+        _makeLabel: function (pos, newTick, board, drawLabels, id, i, center) {
             var labelText, label, attr,
                 num = (typeof pos === 'number');
 
@@ -690,7 +698,10 @@ define([
             }
 
             // Correct label also for frozen tick lines.
-            pos = this.generateLabelValue(newTick);
+            // this yields incorrect results for horizontal and vertical lines.
+            // in fact, the result is only correct if the relevant coordinate of point1 equals zero
+            // with relevant coordinate being x for lines parallel to the x-axis and y for lines parallel to the y-axis
+            //pos = this.generateLabelValue(newTick, center);
 
             labelText = pos.toString();
             if (Math.abs(pos) < Mat.eps) {
