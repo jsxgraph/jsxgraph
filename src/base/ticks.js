@@ -251,7 +251,7 @@ define([
          * (Re-)calculates the ticks coordinates.
          */
         calculateTicksCoordinates: function () {
-            var center, d, bb, perp,
+            var center, d, bb, perp, coordsZero,
                 symbTicksDelta, f,
                 // Point 1 of the line
                 p1 = this.line.point1,
@@ -324,6 +324,17 @@ define([
                 this.majStyle = 'finite';
             }
 
+            if (this.visProp.anchor === 'right') {
+                coordsZero = p2.coords;
+            } else if (this.visProp.anchor === 'middle') {
+                coordsZero = new Coords(JXG.COORDS_BY_USER, [
+                    (p1.coords.usrCoords[1] + p2.coords.usrCoords[1]) / 2,
+                    (p1.coords.usrCoords[2] + p2.coords.usrCoords[2]) / 2
+                ], this.board);
+            } else {
+                coordsZero = p1.coords;
+            }
+
             // Set lower and upper bound for the tick distance.
             // This is necessary for segments.
             if (this.line.visProp.straightfirst) {
@@ -378,8 +389,8 @@ define([
             // we have an array of fixed ticks we have to draw
             if (!this.equidistant) {
                 for (i = 0; i < this.fixedTicks.length; i++) {
-                    nx = p1.coords.usrCoords[1] + this.fixedTicks[i] * deltaX;
-                    ny = p1.coords.usrCoords[2] + this.fixedTicks[i] * deltaY;
+                    nx = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltaX;
+                    ny = coordsZero.usrCoords[2] + this.fixedTicks[i] * deltaY;
                     tickCoords = new Coords(Const.COORDS_BY_USER, [nx, ny], this.board);
                     ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
 
@@ -401,7 +412,7 @@ define([
             // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
             // adjust distances
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                f = this._adjustTickDistance(ticksDelta, distScr, factor, p1.coords, deltaX, deltaY);
+                f = this._adjustTickDistance(ticksDelta, distScr, factor, coordsZero, deltaX, deltaY);
                 ticksDelta *= f;
                 symbTicksDelta *= f;
             }
@@ -436,7 +447,8 @@ define([
 
             // Round the distance of center to point1
             tickCoords = new Coords(Const.COORDS_BY_USER, center, this.board);
-            d = p1.coords.distance(Const.COORDS_BY_USER, tickCoords);
+            d = coordsZero.distance(Const.COORDS_BY_USER, tickCoords);
+
             if ((p2.X() - p1.X()) * (center[1] - p1.X()) < 0 || (p2.Y() - p1.Y()) * (center[2] - p1.Y()) < 0) {
                 d *= -1;
             }
@@ -448,8 +460,8 @@ define([
             }
 
             // From now on, we jump around center
-            center[1] = p1.coords.usrCoords[1] + deltaX * tickPosition;
-            center[2] = p1.coords.usrCoords[2] + deltaY * tickPosition;
+            center[1] = coordsZero.usrCoords[1] + deltaX * tickPosition;
+            center[2] = coordsZero.usrCoords[2] + deltaY * tickPosition;
             startTick = tickPosition;
             tickPosition = 0;
 

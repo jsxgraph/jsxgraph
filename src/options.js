@@ -407,6 +407,15 @@ define([
             label: {},
 
             /**
+             * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
+             * and 'middle' is equivalent to the midpoint of the defining points.
+             * @type String
+             * @name JXG.Ticks#anchor
+             * @default 'left'
+             */
+            anchor: 'left',
+
+            /**
              * Draw the zero tick, that lies at line.point1?
              * @type Boolean
              * @name JXG.Ticks#drawZero
