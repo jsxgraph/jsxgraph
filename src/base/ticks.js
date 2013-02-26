@@ -197,17 +197,18 @@ define([
         },
 
         generateLabelValue: function (tick, center) {
-            var f = -1,
+            var anchor = this.visProp.anchor,
+                f = -1,
                 p1 = this.line.point1,
                 p2 = this.line.point2;
 
             // horizontal axis
-            if (Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
+            if (anchor === 'left' && Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
                 return tick.usrCoords[1];
             }
 
             // vertical axis
-            if (Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
+            if (anchor === 'left' && Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
                 return tick.usrCoords[2];
             }
 
@@ -216,7 +217,7 @@ define([
                 f = 1;
             }
 
-            return f * p1.coords.distance(Const.COORDS_BY_USER, tick);
+            return f * center.distance(Const.COORDS_BY_USER, tick);
         },
 
         /**
@@ -710,10 +711,7 @@ define([
             }
 
             // Correct label also for frozen tick lines.
-            // this yields incorrect results for horizontal and vertical lines.
-            // in fact, the result is only correct if the relevant coordinate of point1 equals zero
-            // with relevant coordinate being x for lines parallel to the x-axis and y for lines parallel to the y-axis
-            //pos = this.generateLabelValue(newTick, center);
+            pos = this.generateLabelValue(newTick, center);
 
             labelText = pos.toString();
             if (Math.abs(pos) < Mat.eps) {
