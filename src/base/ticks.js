@@ -906,7 +906,7 @@ define([
     };
 
     /**
-     * @class Ticks are used as distance markers on a line.
+     * @class Hashes can be used to mark congruent lines.
      * @pseudo
      * @description
      * @name Hash
