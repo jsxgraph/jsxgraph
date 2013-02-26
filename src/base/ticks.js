@@ -347,13 +347,25 @@ define([
             if (this.line.visProp.straightfirst) {
                 lb = Number.NEGATIVE_INFINITY;
             } else {
-                lb = eps;
+                if (this.visProp.anchor === 'middle') {
+                    lb = -distP1P2 / 2 + eps;
+                } else if (this.visProp.anchor === 'right') {
+                    lb = -distP1P2 + eps;
+                } else {
+                    lb = eps;
+                }
             }
 
             if (this.line.visProp.straightlast) {
                 ub = Number.POSITIVE_INFINITY;
             } else {
-                ub = distP1P2 - eps;
+                if (this.visProp.anchor === 'middle') {
+                    ub = distP1P2 / 2 - eps;
+                } else if (this.visProp.anchor === 'right') {
+                    ub = -eps;
+                } else {
+                    ub = distP1P2 - eps;
+                }
             }
 
             // This piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
