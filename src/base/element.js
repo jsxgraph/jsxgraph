@@ -787,6 +787,11 @@ define([
                             this.ticksFunction = makeTicksFunction(value);
                         }
                         break;
+                    case 'generatelabelvalue':
+                        if (this.type === Const.OBJECT_TYPE_TICKS && typeof value === 'function') {
+                            this.generateLabelValue = value;
+                        }
+                        break;
                     default:
                         if (Type.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
                                 JXG.Validator[key](value)) || (JXG.Validator[key] &&

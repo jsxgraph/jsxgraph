@@ -894,8 +894,8 @@ define([
             throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
 
-        if (parents.length === 3) {
-            el.generateLabelValue = parents[2];
+        if (typeof attr.generatelabelvalue === 'function') {
+            el.generateLabelValue = attr.generatelabelvalue;
         }
 
         el.isDraggable = true;
