@@ -905,10 +905,63 @@ define([
         return el;
     };
 
+    /**
+     * @class Ticks are used as distance markers on a line.
+     * @pseudo
+     * @description
+     * @name Hash
+     * @augments JXG.Ticks
+     * @constructor
+     * @type JXG.Ticks
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Line,Number} line,numberofhashes The parents consist of the line the hash marks are going to be attached to and the
+     * number of dashes.
+     * @example
+     * // Create an axis providing two coord pairs.
+     *   var p1 = board.create('point', [0, 3]);
+     *   var p2 = board.create('point', [1, 3]);
+     *   var l1 = board.create('line', [p1, p2]);
+     *   var t = board.create('hash', [l1, 3]);
+     * </pre><div id="4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('4a20af06-4395-451c-b7d1-002757cf01be', {boundingbox: [-1, 7, 7, -1], showcopyright: false, shownavigation: false});
+     *   var p1 = board.create('point', [0, 3]);
+     *   var p2 = board.create('point', [1, 3]);
+     *   var l1 = board.create('line', [p1, p2]);
+     *   var t = board.create('hash', [l1, 3]);
+     * })();
+     * </script><pre>
+     */
+    JXG.createHashmark = function (board, parents, attributes) {
+        var num, i, base, width, totalwidth,
+            pos = [],
+            attr = Type.copyAttributes(attributes, board.options, 'hash');
+
+        if (parents[0].elementClass !== Const.OBJECT_CLASS_LINE || typeof parents[1] !== 'number') {
+            throw new Error("JSXGraph: Can't create Hash with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+        }
+
+        num = parents[1];
+        width = attr.ticksdistance;
+        totalwidth = (num - 1) * width;
+        base = -totalwidth / 2;
+
+        for (i = 0; i < num; i++) {
+            pos[i] = base + i * width;
+        }
+
+        console.log(pos, width);
+
+        return board.create('ticks', [parents[0], pos], attr);
+    };
+
     JXG.registerElement('ticks', JXG.createTicks);
+    JXG.registerElement('hash', JXG.createHashmark);
 
     return {
         Ticks: JXG.Ticks,
-        createTicks: JXG.createTicks
+        createTicks: JXG.createTicks,
+        createHashmark: JXG.createHashmark
     };
 });

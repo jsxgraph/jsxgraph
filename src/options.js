@@ -513,6 +513,16 @@ define([
             /**#@-*/
         },
 
+        hash: {
+            drawLabels: false,
+            drawZero: true,
+            majorHeight: 20,
+            anchor: 'middle',
+            strokeWidth: 2,
+            strokeColor: 'blue',
+            ticksDistance: 0.2
+        },
+
         /* precision options */
         precision: {
             touch: 30,
