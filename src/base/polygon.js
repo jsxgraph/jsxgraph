@@ -526,6 +526,14 @@ define([
             return attr;
         },
 
+        snapToGrid: function () {
+            var i;
+
+            for (i = 0; i < this.vertices.length; i++) {
+                this.vertices[i].snapToGrid();
+            }
+        },
+
         /**
          * Moves the line by the difference of two coordinates.
          * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
