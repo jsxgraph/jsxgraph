@@ -247,13 +247,13 @@ define([
 
             if (typeof text === 'function') {
                 s = function () {
-                    return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    return Type.sanitizeHTML(text());
                 };
             } else {
                 if (Type.isNumber(text)) {
                     s = text;
                 } else {
-                    s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    s = Type.sanitizeHTML(text);
                 }
             }
 

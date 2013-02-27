@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true*/
+/*global JXG: true, define: true, html_sanitize: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -921,6 +921,18 @@ define([
             str = str.replace(/\s+$/, '');
 
             return str;
+        },
+
+        /**
+         * Convert HTML tags to entities or use html_sanitize if the google caja html sanitizer is available.
+         * @param {String} str
+         */
+        sanitizeHTML: function (str) {
+            if (typeof html_sanitize === 'function') {
+                return html_sanitize(str, function () { return; }, function (id) { return id; });
+            } else {
+                return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
         }
     });
 
