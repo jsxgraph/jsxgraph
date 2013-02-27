@@ -779,7 +779,7 @@ define([
 
             // remove existing tick labels
             if (Type.exists(this.labels)) {
-                if ((this.board.needsFullUpdate || this.needsRegularUpdate) &&
+                if ((this.board.needsFullUpdate || this.needsRegularUpdate || this.needsUpdate) &&
                         !(this.board.renderer.type === 'canvas' && this.board.options.text.display === 'internal')) {
                     for (j = 0; j < this.labels.length; j++) {
                         if (Type.exists(this.labels[j])) {

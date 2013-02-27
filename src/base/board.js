@@ -1090,7 +1090,9 @@ define([
         saveStartPos: function (obj, targets) {
             var xy = [], i, len;
 
-            if (obj.elementClass === Const.OBJECT_CLASS_LINE) {
+            if (obj.type === Const.OBJECT_TYPE_TICKS) {
+                xy.push([1, NaN, NaN]);
+            } else if (obj.elementClass === Const.OBJECT_CLASS_LINE) {
                 xy.push(obj.point1.coords.usrCoords);
                 xy.push(obj.point2.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
