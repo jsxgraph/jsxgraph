@@ -195,7 +195,8 @@ define([
 
     JXG.extend(JXG.Circle.prototype, /** @lends JXG.Circle.prototype */ {
         /**
-         * Checks whether (x,y) is near the circle.
+         * Checks whether (x,y) is near the circle line or inside of the ellipse 
+         * (in case JXG.Options.conic#hasInnerPoints is true).
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
          * @returns {Boolean} True if (x,y) is near the circle, False otherwise.

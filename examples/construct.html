@@ -55,12 +55,13 @@ JXG.Options.point.label = {};
     };
 
 
-
-
-
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1],grid:true});
-var f = brd.create('functiongraph', [function(x){ return Math.exp(x); }]);
-brd.create('glider', [2,4,f]);
+var A = brd.create('point', [4,4]);
+var B = brd.create('point', [6,4]);
+var C = brd.create('point', [7,6]);
+var ell = brd.create('ellipse', [A,B,C], {fixed:false, hasInnerPoints:false});
+var g = brd.create('glider', [2,2,ell]);
+var t = brd.create('text', [0,5,function(){ return (g.Dist(A)+g.Dist(B)).toFixed(3);}]);
 
 </script> 
 </body>

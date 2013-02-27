@@ -50,8 +50,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'math/math', 'math/numerics', 'math/geometry', 'utils/type', 'base/point', 'base/curve'
-], function (JXG, Const, Mat, Numerics, Geometry, Type, Point, Curve) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'math/geometry', 'utils/type', 'base/point', 'base/curve'
+], function (JXG, Const, Coords, Mat, Numerics, Geometry, Type, Point, Curve) {
 
     "use strict";
 
@@ -254,6 +254,31 @@ define([
         curve.midpoint = M;
         curve.type = Const.OBJECT_TYPE_CONIC;
 
+        /**
+         * Checks whether (x,y) is near the ellipse line or inside of the ellipse 
+         * (in case JXG.Options.conic#hasInnerPoints is true).
+         * @param {Number} x Coordinate in x direction, screen coordinates.
+         * @param {Number} y Coordinate in y direction, screen coordinates.
+         * @returns {Boolean} True if (x,y) is near the ellipse, False otherwise.
+         * @private
+         */
+        curve.hasPoint =  function (x, y) {
+            var prec = this.board.options.precision.hasPoint,
+                ac = F[0].coords,
+                bc = F[1].coords,
+                cc = C.coords,
+                p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+                r = cc.distance(Const.COORDS_BY_SCREEN, ac) + cc.distance(Const.COORDS_BY_SCREEN, bc),
+                dist = p.distance(Const.COORDS_BY_SCREEN, ac) + p.distance(Const.COORDS_BY_SCREEN, bc);
+                
+            if (this.visProp.hasinnerpoints) {
+                return (dist < r + prec);
+            }
+
+            return (Math.abs(dist - r) < prec);
+        },
+        
+        
         M.addChild(curve);
         for (i = 0; i < 2; i++) {
             if (Type.isPoint(F[i])) {

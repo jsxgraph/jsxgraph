@@ -1104,6 +1104,8 @@ define([
                 }
             } else if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
                 xy.push(obj.coords.usrCoords);
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
+                // TODO
             } else {
                 try {
                     xy.push(obj.coords.usrCoords);
