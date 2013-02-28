@@ -1313,7 +1313,6 @@ define([
                 }
 
                 newCoords = new Coords(Const.COORDS_BY_USER, newCoords, board);
-            
             } else {   // 'parameter', 'polar', 'functiongraph'
 
                 // Function to minimize
@@ -1351,7 +1350,7 @@ define([
                 }
 
                 newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
-            } 
+            }
 
             return [curve.updateTransform(newCoords), t];
         },
