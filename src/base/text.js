@@ -208,6 +208,11 @@ define([
                     this.plaintext = text();
                 };
                 this.needsSizeUpdate = true;
+            } else if (Type.isString(text) && !this.visProp.parse) {
+                this.updateText = function () {
+                    this.plaintext = text;
+                };
+                this.needsSizeUpdate = true;
             } else {
                 if (Type.isNumber(text)) {
                     this.content = (text).toFixed(this.visProp.digits);
@@ -247,13 +252,14 @@ define([
 
             if (typeof text === 'function') {
                 s = function () {
-                    return text().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    return Type.sanitizeHTML(text());
                 };
             } else {
                 if (Type.isNumber(text)) {
                     s = text;
                 } else {
-                    s = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    s = Type.sanitizeHTML(text);
+
                 }
             }
 
@@ -301,6 +307,76 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Replace _{} by &lt;sub&gt;
+         * @param {String} te String containing _{}.
+         * @returns {String} Given string with _{} replaced by &lt;sub&gt;.
+         */
+        replaceSub: function (te) {
+            if (!te.indexOf) {
+                return te;
+            }
+
+            var j,
+                i = te.indexOf('_{');
+
+            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // i.e. replacing _{...} with <sub>...</sub>. What is passed would get out anyway.
+            /*jslint regexp: true*/
+
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/_\{/, '<sub>');
+                j = te.substr(i).indexOf('}');
+                if (j >= 0) {
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sub>');
+                }
+                i = te.indexOf('_{');
+            }
+
+            i = te.indexOf('_');
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/_(.?)/, '<sub>$1</sub>');
+                i = te.indexOf('_');
+            }
+
+            return te;
+        },
+
+        /**
+         * Replace ^{} by &lt;sup&gt;
+         * @param {String} te String containing ^{}.
+         * @returns {String} Given string with ^{} replaced by &lt;sup&gt;.
+         */
+        replaceSup: function (te) {
+            if (!te.indexOf) {
+                return te;
+            }
+
+            var j,
+                i = te.indexOf('^{');
+
+            // the regexp in here are not used for filtering but to provide some kind of sugar for label creation,
+            // i.e. replacing ^{...} with <sup>...</sup>. What is passed would get out anyway.
+            /*jslint regexp: true*/
+
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/\^\{/, '<sup>');
+                j = te.substr(i).indexOf('}');
+                if (j >= 0) {
+                    te = te.substr(0, j) + te.substr(j).replace(/\}/, '</sup>');
+                }
+                i = te.indexOf('^{');
+            }
+
+            i = te.indexOf('^');
+            while (i >= 0) {
+                te = te.substr(0, i) + te.substr(i).replace(/\^(.?)/, '<sup>$1</sup>');
+                i = te.indexOf('^');
+            }
+
+            return te;
         },
 
         /**
@@ -415,6 +491,7 @@ define([
             var res, term, i, j,
                 plaintext = '""';
 
+            // revert possible jc replacement
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
@@ -422,7 +499,10 @@ define([
             contentStr = contentStr.replace(/\'/g, "\\'");
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
-            contentStr = contentStr.replace(/<sqrt\s*\/>/g, '&radic;');
+            contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
+            contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
+            contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
 
             // Convert GEONExT syntax into  JavaScript syntax
             i = contentStr.indexOf('<value>');
@@ -430,7 +510,7 @@ define([
             if (i >= 0) {
                 this.needsSizeUpdate = true;
                 while (i >= 0) {
-                    plaintext += ' + "' + GeonextParser.replaceSub(GeonextParser.replaceSup(contentStr.slice(0, i))) + '"';
+                    plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);
                     res = GeonextParser.geonext2JS(term, this.board);
                     res = res.replace(/\\"/g, "'");
@@ -455,11 +535,15 @@ define([
                 }
             }
 
-            plaintext += ' + "' + GeonextParser.replaceSub(GeonextParser.replaceSup(contentStr)) + '"';
+            plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
             plaintext = plaintext.replace(/<overline>/g, '<span style=text-decoration:overline>');
+            plaintext = plaintext.replace(/&lt;overline&lt;/g, '<span style=text-decoration:overline>');
             plaintext = plaintext.replace(/<\/overline>/g, '</span>');
+            plaintext = plaintext.replace(/&lt;\/overline&gt;/g, '</span>');
             plaintext = plaintext.replace(/<arrow>/g, '<span style=text-decoration:overline>');
+            plaintext = plaintext.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
             plaintext = plaintext.replace(/<\/arrow>/g, '</span>');
+            plaintext = plaintext.replace(/&lt;\/arrow&gt;/g, '</span>');
 
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
@@ -477,6 +561,10 @@ define([
         notifyParents: function (content) {
             var search,
                 res = null;
+
+            // revert possible jc replacement
+            content = content.replace(/&lt;value&gt;/g, '<value>');
+            content = content.replace(/&lt;\/value&gt;/g, '</value>');
 
             do {
                 search = /<value>([\w\s\*\/\^\-\+\(\)\[\],<>=!]+)<\/value>/;

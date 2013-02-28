@@ -297,15 +297,15 @@ define([
                 p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = cc.distance(Const.COORDS_BY_SCREEN, ac) + cc.distance(Const.COORDS_BY_SCREEN, bc),
                 dist = p.distance(Const.COORDS_BY_SCREEN, ac) + p.distance(Const.COORDS_BY_SCREEN, bc);
-                
+
             if (this.visProp.hasinnerpoints) {
                 return (dist < r + prec);
             }
 
             return (Math.abs(dist - r) < prec);
-        },
-        
-        
+        };
+
+
         M.addChild(curve);
         for (i = 0; i < 2; i++) {
             if (Type.isPoint(F[i])) {

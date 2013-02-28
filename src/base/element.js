@@ -946,7 +946,8 @@ define([
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
-                this.nameHTML = GeonextParser.replaceSup(GeonextParser.replaceSub(this.name));
+                // why?
+                //this.nameHTML = GeonextParser.replaceSup(GeonextParser.replaceSub(this.name));
                 this.label = {};
 
                 if (this.visProp.withlabel) {
@@ -1455,7 +1456,7 @@ define([
         /**
          * @ignore
          */
-        __evt__: function () {}
+        __evt: function () {}
         //endregion
 
     });

@@ -1141,11 +1141,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         if (t >= n - k + 2) {
                             return points[n][which]();
                         }
-                        
+
                         s = Math.floor(t) + k - 1;
                         knots = _knotVector(n, k);
                         N = _evalBasisFuncs(t, knots, n, k, s);
-                        
+
                         y = 0.0;
                         for (j = s - k + 1; j <= s; j++) {
                             if (j < len && j >= 0) {

@@ -949,8 +949,6 @@ define([
             pos[i] = base + i * width;
         }
 
-        console.log(pos, width);
-
         return board.create('ticks', [parents[0], pos], attr);
     };
 
