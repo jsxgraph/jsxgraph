@@ -208,6 +208,11 @@ define([
                     this.plaintext = text();
                 };
                 this.needsSizeUpdate = true;
+            } else if (Type.isString(text) && !this.visProp.parse) {
+                this.updateText = function () {
+                    this.plaintext = text;
+                };
+                this.needsSizeUpdate = true;
             } else {
                 if (Type.isNumber(text)) {
                     this.content = (text).toFixed(this.visProp.digits);
@@ -250,7 +255,7 @@ define([
 
             this.updateText = function () {
                 updateText.call(this);
-                this.plaintext = Type.sanitizeHTML(this.plaintext);
+                this.plaintext = Type.sanitizeHTML(this.plaintext, this.visProp.usecaja);
             };
 
             return;

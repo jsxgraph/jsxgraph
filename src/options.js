@@ -932,7 +932,8 @@ define([
             anchorY: 'middle',                   //  'top', 'middle', or 'bottom': vertical alignment of the text.
             cssClass: 'JXGinfobox',
             rotate: 0,                           // works for non-zero values only in combination with display=='internal'
-            visible: true
+            visible: true,
+            parse: false
 
             /**#@-*/
         },
@@ -1589,6 +1590,8 @@ define([
 
             fontSize: 12,
             digits: 2,
+            parse: true,
+            useCaja: false,
             isLabel: false,
             strokeColor: 'black',
             useASCIIMathML: false,
