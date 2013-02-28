@@ -59,9 +59,8 @@ var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1], axis:tru
 var A = brd.create('point', [4,4]);
 var B = brd.create('point', [6,4]);
 var C = brd.create('point', [7,6]);
-var ell = brd.create('ellipse', [A,B,C], {fixed:false, hasInnerPoints:false});
+var ell = brd.create('ellipse', [A,B,C, 0, 0.9*Math.PI], {fixed:false, hasInnerPoints:false});
 var g = brd.create('glider', [2,2,ell]);
-var t = brd.create('text', [0,5,function(){ return (g.Dist(A)+g.Dist(B)).toFixed(3);}]);
 
 </script> 
 </body>
