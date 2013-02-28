@@ -241,23 +241,19 @@ define([
          * @param {String|function} text
          */
         setTextJessieCode: function (text) {
-            var s;
+            var s, updateText;
 
             this.visProp.castext = text;
 
-            if (typeof text === 'function') {
-                s = function () {
-                    return Type.sanitizeHTML(text());
-                };
-            } else {
-                if (Type.isNumber(text)) {
-                    s = text;
-                } else {
-                    s = Type.sanitizeHTML(text);
-                }
-            }
+            this._setText(text);
+            updateText = this.updateText;
 
-            return this._setText(s);
+            this.updateText = function () {
+                updateText.call(this);
+                this.plaintext = Type.sanitizeHTML(this.plaintext);
+            };
+
+            return;
         },
 
         /**
