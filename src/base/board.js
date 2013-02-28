@@ -2419,9 +2419,70 @@ define([
          */
         addConditions: function (str) {
             var term, m, left, right, name, el, property,
+                functions = [],
                 plaintext = 'var el, x, y, c, rgbo;\n',
                 i = str.indexOf('<data>'),
-                j = str.indexOf('<' + '/data>');
+                j = str.indexOf('<' + '/data>'),
+
+                xyFun = function (board, el, f, what) {
+                    return function () {
+                        var e, t;
+
+                        e = board.select(el.id);
+                        t = e.coords.usrCoords[what];
+
+                        if (what === 2) {
+                            e.setPositionDirectly(JXG.COORDS_BY_USER, [f(), t]);
+                        } else {
+                            e.setPositionDirectly(JXG.COORDS_BY_USER, [t, f()]);
+                        }
+                        e.prepareUpdate().update();
+                    };
+                },
+
+                visFun = function (board, el, f) {
+                    return function () {
+                        var e, v;
+
+                        e = board.select(el.id);
+                        v = f();
+
+                        e.setAttribute({visible: v});
+                    };
+                },
+
+                colFun = function (board, el, f, what) {
+                    return function () {
+                        var e, v;
+
+                        e = board.select(el.id);
+                        v = f();
+
+                        if (what === 'strokewidth') {
+                            e.visProp.strokewidth = v;
+                        } else {
+                            v = Color.rgba2rgbo(v);
+                            e.visProp[what + 'color'] = v[0];
+                            e.visProp[what + 'opacity'] = v[1];
+                        }
+                    };
+                },
+
+                posFun = function (board, el, f) {
+                    return function () {
+                        var e = board.select(el.id);
+
+                        e.position = f();
+                    };
+                },
+
+                styleFun = function (board, el, f) {
+                    return function () {
+                        var e = board.select(el.id);
+
+                        e.setStyle(f());
+                    };
+                };
 
             if (i < 0) {
                 return;
@@ -2437,8 +2498,7 @@ define([
                 el = this.elementsByName[Type.unescapeHTML(name)];
 
                 property = left.slice(m + 1).replace(/\s+/g, '').toLowerCase(); // remove whitespace in property
-                right = GeonextParser.geonext2JS(right, this);
-                right = right.replace(/this\.board\./g, 'this.');
+                right = Type.createFunction(right, this, '', true);
 
                 // Debug
                 if (!Type.exists(this.elementsByName[name])) {
@@ -2448,40 +2508,28 @@ define([
 
                 switch (property) {
                 case 'x':
-                    plaintext += 'var y=el.coords.usrCoords[2];\n';  // y stays
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[' + (right) + ',y]);\n';
-                    plaintext += 'el.prepareUpdate().update();\n';
+                    functions.push(xyFun(this, el, right, 2));
                     break;
                 case 'y':
-                    plaintext += 'var x=el.coords.usrCoords[1];\n';  // x stays
-                    plaintext += 'el.coords=new JXG.Coords(JXG.COORDS_BY_USER,[x,' + (right) + '],this);\n';
-                    plaintext += 'el.setPositionDirectly(JXG.COORDS_BY_USER,[x,' + (right) + ']);\n';
-                    plaintext += 'el.prepareUpdate().update();\n';
+                    functions.push(xyFun(this, el, right, 1));
                     break;
                 case 'visible':
-                    plaintext += 'var c=' + (right) + ';\n';
-                    plaintext += 'el.visProp.visible = c;\n';
-                    plaintext += 'if (c) {el.showElement();} else {el.hideElement();}\n';
+                    functions.push(visFun(this, el, right));
                     break;
                 case 'position':
-                    plaintext += 'el.position = ' + (right) + ';\n';
-                    plaintext += 'el.prepareUpdate().update(true);\n';
+                    functions.push(posFun(this, el, right));
                     break;
                 case 'stroke':
-                    plaintext += 'rgbo = JXG.rgba2rgbo(' + (right) + ');\n';
-                    plaintext += 'el.visProp.strokecolor = rgbo[0];\n';
-                    plaintext += 'el.visProp.strokeopacity = rgbo[1];\n';
+                    functions.push(colFun(this, el, right, 'stroke'));
                     break;
                 case 'style':
-                    plaintext += 'el.setStyle(' + (right) + ');\n';
+                    functions.push(styleFun(this, el, right));
                     break;
                 case 'strokewidth':
-                    plaintext += 'el.strokeWidth = ' + (right) + ';\n';
+                    functions.push(colFun(this, el, right, 'strokewidth'));
                     break;
                 case 'fill':
-                    plaintext += 'var rgbo = JXG.rgba2rgbo(' + (right) + ');\n';
-                    plaintext += 'el.visProp.fillcolor = rgbo[0];\n';
-                    plaintext += 'el.visProp.fillopacity = rgbo[1];\n';
+                    functions.push(colFun(this, el, right, 'fill'));
                     break;
                 case 'label':
                     break;
@@ -2493,15 +2541,17 @@ define([
                 i = str.indexOf('<data>');
                 j = str.indexOf('<' + '/data>');
             }
-            plaintext += 'this.prepareUpdate().updateElements();\n';
-            plaintext += 'return true;\n';
 
-            plaintext = plaintext.replace(/&lt;/g, "<");
-            plaintext = plaintext.replace(/&gt;/g, ">");
-            plaintext = plaintext.replace(/&amp;/g, "&");
+            this.updateConditions = function () {
+                var i;
 
-            // eval might be required here. should check this later, maybe we can get rid of it
-            this.updateConditions = new Function(plaintext);
+                for (i = 0; i < functions.length; i++) {
+                    functions[i]();
+                }
+
+                this.prepareUpdate().updateElements();
+                return true;
+            };
             this.updateConditions();
         },
 

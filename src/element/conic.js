@@ -244,40 +244,39 @@ define([
         };
 
         /** @ignore */
-        curve.X = function(phi, suspendUpdate) {
+        curve.X = function (phi, suspendUpdate) {
             var r = C.Dist(F[0]) + C.Dist(F[1]),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) - r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
-                
 
             return F[0].X() + Math.cos(beta + phi) * b;
         };
 
         /** @ignore */
-        curve.Y = function(phi, suspendUpdate) {
+        curve.Y = function (phi, suspendUpdate) {
             var r = C.Dist(F[0]) + C.Dist(F[1]),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) - r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
-                
+
             return F[0].Y() + Math.sin(beta + phi) * b;
         };
-        
+
         /** @ignore */
         /*
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
         */
-        
+
         /** @ignore */
         /*
         curve.Y = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[2];
         };
         */
-        
+
         curve.midpoint = M;
         curve.type = Const.OBJECT_TYPE_CONIC;
 
@@ -505,33 +504,32 @@ define([
         };
 
         /** @ignore */
-        curve.X = function(phi, suspendUpdate) {
+        curve.X = function (phi, suspendUpdate) {
             var r = C.Dist(F[0]) - C.Dist(F[1]),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
-                
 
             return F[0].X() + Math.cos(beta + phi) * b;
         };
 
         /** @ignore */
-        curve.Y = function(phi, suspendUpdate) {
+        curve.Y = function (phi, suspendUpdate) {
             var r = C.Dist(F[0]) - C.Dist(F[1]),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
-                
+
             return F[0].Y() + Math.sin(beta + phi) * b;
         };
-        
+
         /** @ignore */
         /*
         curve.X = function (phi, suspendUpdate) {
             return polarForm(phi, suspendUpdate)[1];
         };
         */
-        
+
         /** @ignore */
         /*
         curve.Y = function (phi, suspendUpdate) {

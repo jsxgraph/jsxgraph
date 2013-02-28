@@ -124,7 +124,7 @@ define(['jxg'], function (JXG) {
      * @see http://www.cs.tut.fi/~albert
      */
     JXG.Util.Unzip = function (barray) {
-        var gpflags, crc, SIZE, fileout, flens, fmax,
+        var gpflags, crc, SIZE, fileout, flens, fmax, skipdir,
             outputArr = [],
             output = '',
             debug = false,
@@ -666,7 +666,7 @@ define(['jxg'], function (JXG) {
             }
         }
 
-        function skipdir() {
+        skipdir = function () {
             var crc, compSize, size, os, i, c,
                 tmp = [];
 
@@ -772,7 +772,7 @@ define(['jxg'], function (JXG) {
             if (modeZIP) {
                 nextFile();
             }
-        }
+        };
 
         JXG.Util.Unzip.prototype.unzipFile = function (name) {
             var i;
