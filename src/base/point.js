@@ -448,15 +448,11 @@ define([
                 newCoords = Geometry.projectPointToPoint(this, slide, this.board);
             }
 
-            if (!this.board.hasPoint(newCoords)) {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, this.lastGliderPos, false);
-            } else {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
-                this.lastGliderPos = newCoords.usrCoords;
+            this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
+            this.lastGliderPos = newCoords.usrCoords;
 
-                if (newPos) {
-                    this.position = newPos;
-                }
+            if (newPos) {
+                this.position = newPos;
             }
         },
 
