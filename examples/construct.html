@@ -56,12 +56,14 @@ JXG.Options.point.label = {};
 
 
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1], axis:true});
+var sl = brd.create('slider', [[1,1],[5,1],[0,1,4]]);
+/*
 var A = brd.create('point', [4,4]);
 var B = brd.create('point', [6,4]);
 var C = brd.create('point', [7,6]);
 var ell = brd.create('ellipse', [A,B,C, 0, 0.9*Math.PI], {fixed:false, hasInnerPoints:false});
 var g = brd.create('glider', [2,2,ell]);
-
+*/
 </script> 
 </body>
 </html>
