@@ -1310,14 +1310,15 @@ define([
          * @see #animate
          */
         visit: function (where, time, options) {
-            var i, j,
+            where = new Coords(Const.COORDS_BY_USER, where, this.board);
+
+            var i, j, steps,
                 delay = this.board.attr.animationdelay,
-                steps = Math.ceil(time / (delay * options.repeat)),
                 coords = [],
                 X = this.coords.usrCoords[1],
                 Y = this.coords.usrCoords[2],
-                dX = (where[0] - X),
-                dY = (where[1] - Y),
+                dX = (where.usrCoords[1] - X),
+                dY = (where.usrCoords[2] - Y),
 
                 /** @ignore */
                 stepFun = function (i) {
@@ -1340,10 +1341,11 @@ define([
                 }
             }
 
+            steps = Math.ceil(time / (delay * options.repeat));
 
             for (j = 0; j < options.repeat; j++) {
                 for (i = steps; i >= 0; i--) {
-                    coords[j * (steps + 1) + steps - i] = [where[0], X + dX * stepFun(i), Y + dY * stepFun(i)];
+                    coords[j * (steps + 1) + steps - i] = [where.usrCoords[0], X + dX * stepFun(i), Y + dY * stepFun(i)];
                 }
             }
             this.animationPath = coords;
