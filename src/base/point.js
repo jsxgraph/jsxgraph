@@ -451,9 +451,7 @@ define([
             this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
             this.lastGliderPos = newCoords.usrCoords;
 
-            if (newPos) {
-                this.position = newPos;
-            }
+            this.position = newPos;
         },
 
         /**
