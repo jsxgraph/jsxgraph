@@ -107,6 +107,7 @@ define([
         this.suspendUpdate = false;
         this.dX = 0;
         this.dY = 0;
+        this.updateHandled = false;
     };
 
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
@@ -137,7 +138,8 @@ define([
         },
 
         /**
-         * Sends an update to all group members.
+         * Sends an update to all group members. This method is called from the points' coords object event listeners
+         * and not by the board.
          * @param {JXG.Point} point The point that caused the update.
          * @param {Number} dX
          * @param {Number} dY
@@ -146,8 +148,9 @@ define([
             var obj = null,
                 el;
 
-            if (!this.suspendUpdate) {
+            if (!this.suspendUpdate && !this.updateHandled) {
                 this.suspendUpdate = true;
+                this.updateHandled = true;
 
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el)) {
