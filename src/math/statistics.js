@@ -39,7 +39,7 @@
  utils/type
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
+define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Const, Mat, Type) {
 
     "use strict";
 
@@ -356,6 +356,14 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          */
         multiply: function (arr1, arr2) {
             var i, len, res = [];
+
+            if (arr1.type === Const.OBJECT_TYPE_GLIDER && typeof arr1.Value === 'function') {
+                arr1 = arr1.Value();
+            }
+
+            if (arr2.type === Const.OBJECT_TYPE_GLIDER && typeof arr2.Value === 'function') {
+                arr2 = arr2.Value();
+            }
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
