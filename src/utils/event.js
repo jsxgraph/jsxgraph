@@ -79,8 +79,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             for (j = 0; j < len1; j++) {
                 evt = this.eventHandlers[event[j]];
 
-                if (!this.suspended[evt]) {
-                    this.suspended[evt] = true;
+                if (!this.suspended[event[j]]) {
+                    this.suspended[event[j]] = true;
 
                     if (evt) {
                         len2 = evt.length;
@@ -91,7 +91,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                         }
                     }
 
-                    this.suspended[evt] = false;
+                    this.suspended[event[j]] = false;
                 }
             }
 
