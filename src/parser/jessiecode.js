@@ -1264,7 +1264,7 @@ define([
                     ret = this.mul(this.execute(node.children[0]), this.execute(node.children[1]));
                     break;
                 case 'op_exp':
-                    ret = Math.pow(this.execute(node.children[0]),  this.execute(node.children[1]));
+                    ret = this.pow(this.execute(node.children[0]),  this.execute(node.children[1]));
                     break;
                 case 'op_neg':
                     ret = this.execute(node.children[0]) * -1;
@@ -1521,7 +1521,7 @@ define([
                     break;
                 case 'op_exp':
                     if (js) {
-                        ret = 'Math.pow(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
+                        ret = '$jc$.pow(' + this.compile(node.children[0], js) + ', ' + this.compile(node.children[1], js) + ')';
                     } else {
                         ret = '(' + this.compile(node.children[0], js) + '^' + this.compile(node.children[1], js) + ')';
                     }
@@ -1622,6 +1622,19 @@ define([
             }
 
             return Statistics.multiply(a, b);
+        },
+
+        /**
+         * Pow function wrapper to allow direct usage of sliders.
+         * @param {Number|Slider} a
+         * @param {Number|Slider} b
+         * @returns {Number}
+         */
+        pow: function (a, b) {
+            a = Type.evalSlider(a);
+            b = Type.evalSlider(b);
+
+            return Math.pow(a, b);
         },
 
         ifthen: function (cond, v1, v2) {

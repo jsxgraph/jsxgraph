@@ -236,6 +236,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         add: function (arr1, arr2) {
             var i, len, res = [];
 
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
+
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
@@ -270,6 +273,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          */
         div: function (arr1, arr2) {
             var i, len, res = [];
+
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
@@ -321,6 +327,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
                 mod = Mat.mod;
             }
 
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
+
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
@@ -357,13 +366,8 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         multiply: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (arr1.type === Const.OBJECT_TYPE_GLIDER && typeof arr1.Value === 'function') {
-                arr1 = arr1.Value();
-            }
-
-            if (arr2.type === Const.OBJECT_TYPE_GLIDER && typeof arr2.Value === 'function') {
-                arr2 = arr2.Value();
-            }
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
@@ -399,6 +403,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          */
         subtract: function (arr1, arr2) {
             var i, len, res = [];
+
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
