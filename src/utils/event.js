@@ -58,6 +58,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         eventHandlers: {},
 
         /**
+         * Events can be suspended to prevent endless loops.
+         * @name JXG.EventEmitter#suspended
+         * @type Object
+         */
+        suspended: {},
+
+        /**
          * Triggers all event handlers of this element for a given event.
          * @name JXG.EventEmitter#triggerEventHandlers
          * @function
@@ -65,22 +72,27 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {Array} args The arguments passed onto the event handler
          * @returns Reference to the object.
          */
-        triggerEventHandlers: function (event, args) {
+        trigger: function (event, args) {
             var i, j, h, evt, len1, len2;
 
             len1 = event.length;
             for (j = 0; j < len1; j++) {
                 evt = this.eventHandlers[event[j]];
 
-                if (evt) {
-                    len2 = evt.length;
+                if (!this.suspended[evt]) {
+                    this.suspended[evt] = true;
 
-                    for (i = 0; i < len2; i++) {
-                        h = evt[i];
-                        h.handler.apply(h.context, args);
+                    if (evt) {
+                        len2 = evt.length;
+
+                        for (i = 0; i < len2; i++) {
+                            h = evt[i];
+                            h.handler.apply(h.context, args);
+                        }
                     }
-                }
 
+                    this.suspended[evt] = false;
+                }
             }
 
             return this;
@@ -154,7 +166,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             o.eventHandlers = {};
             o.on = this.on;
             o.off = this.off;
-            o.triggerEventHandlers = this.triggerEventHandlers;
+            o.triggerEventHandlers = this.trigger;
+            o.trigger = this.trigger;
+            o.suspended = {};
         }
     };
 
