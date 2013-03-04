@@ -144,7 +144,15 @@
             // for printing, e.g. trim them with toFixed()
                 pn = function (v) {
                     if (options.toFixed > 0) {
-                        v; // = v.toFixed(options.toFixed); // toFixed is not a member function of the Number class ...
+                        // toFixed is a method if Number since JavaScript 1.5, resp. ECMAScript (ECMA 262) 3rd Edition
+                        // introduced somewhat around 1999/2000. It is part of every recent version of every major browser.
+                        // See this table: http://en.wikipedia.org/wiki/JavaScript#Versions
+                        // The only possible explanation is that v might not be a number but a string or something else.
+                        // In that case the caller should be fixed instead of rendering this function completely useless.
+
+                        // make sure v is a float (or NaN if it neither is a float nor could be converted to float).
+                        v = parseFloat(v);
+                        v.toFixed(options.toFixed); // toFixed is not a member function of the Number class ...
                     }
 
                     return v;
