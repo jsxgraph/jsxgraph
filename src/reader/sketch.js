@@ -144,7 +144,7 @@
             // for printing, e.g. trim them with toFixed()
                 pn = function (v) {
                     if (options.toFixed > 0) {
-                        v = v.toFixed(options.toFixed);
+                        v; // = v.toFixed(options.toFixed); // toFixed is not a member function of the Number class ...
                     }
 
                     return v;
