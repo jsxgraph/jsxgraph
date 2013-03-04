@@ -3037,6 +3037,13 @@ define([
                 pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
             }
 
+            // update groups last
+            for (el in this.groups) {
+                if (this.groups.hasOwnProperty(el)) {
+                    this.groups[el].update(drag);
+                }
+            }
+
             return this;
         },
 
