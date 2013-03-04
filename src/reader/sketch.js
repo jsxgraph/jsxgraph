@@ -152,7 +152,7 @@
 
                         // make sure v is a float (or NaN if it neither is a float nor could be converted to float).
                         v = parseFloat(v);
-                        v.toFixed(options.toFixed); // toFixed is not a member function of the Number class ...
+                        v = v.toFixed(options.toFixed); // toFixed is not a member function of the Number class ...
                     }
 
                     return v;
