@@ -253,7 +253,7 @@ define([
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
          */
-        loadBoardFromFile: function (box, file, format, attributes) {
+        loadBoardFromFile: function (box, file, format, attributes, callback) {
             var attr, renderer, board, dimensions;
 
             renderer = this.initRenderer(box);
@@ -269,7 +269,7 @@ define([
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
-            FileReader.parseFileContent(file, board, format);
+            FileReader.parseFileContent(file, board, format, true, callback);
 
             if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
@@ -293,7 +293,7 @@ define([
          * @see JXG.IntergeoReader
          * @see JXG.CinderellaReader
          */
-        loadBoardFromString: function (box, string, format, attributes) {
+        loadBoardFromString: function (box, string, format, attributes, callback) {
             var attr, renderer, dimensions, board;
 
             renderer = this.initRenderer(box);
@@ -309,7 +309,7 @@ define([
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
 
-            FileReader.parseString(string, board, format, true);
+            FileReader.parseString(string, board, format, true, callback);
 
             if (board.attr.shownavigation) {
                 board.renderer.drawZoomBar(board);
