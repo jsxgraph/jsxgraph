@@ -11,6 +11,9 @@ Important Notes
    * round, abs, acos, asin, atan, ceil, cos, exp, floor, log, max, min, random, sin, sqrt, tan: Use Math.*
    * trunc: Use Math.ceil
    * sgn: No replacement
+ * New makefile: make.py was replaced by a GNU make Makefile. Type make core-min to build a jsxgraphcore.js and see
+   the Makefile for other build targets (245c1e3, 8d8ed2c, 824725e, 8b5aa0e)
+ * The GeonextParser now outputs JessieCode (https://github.com/jsxgraph/JessieCode) instead of JavaScript.
  * Board attributes in JXG.Options were moved from JXG.Options to JXG.Options.board (3e39b82):
  * The list of boards and the list of available elements were moved from JXG.JSXGraph to JXG (c0048e7, e202e15)
  * Polygon borders won't be hidden automatically when the polygon is hidden (8e95f2c4)
@@ -52,6 +55,17 @@ New features
  * JXG.debugLine outputs the given debug strings and the line from which it was called (9e4460f)
  * New build scripts using requirejs and uglifyjs (46e0237, ea12ae8, a53516a)
  * JXG.merge: merge one object into another one without creating a copy (99bc1bc)
+ * New property for ticks: *anchor*, defines the position of the tick with value 0 and accepts 'left', 'middle', and
+   'right' (f8a6723, c2179a4, 2643817)
+ * Hash marks for lines (#7, f8a6723, c2179a4, 2643817, ffbd40e, b548f59)
+ * Polygon vertices will snap to grid if the polygon is dragged (19a5a1d)
+ * Implemented *innerPoints* attribute for ellipse (#20, 3a9180e)
+ * Enable the use of the Google caja html sanitizer function if available. The use is controlled via the 'usecaja'
+   attribute for texts (3a9180e, 3205b13)
+ * Don't analyze the content of a text if its new attribute 'parse' is set to false (3205b13)
+ * Allow specific Geonext tags in texts (935df2b)
+ * loadBoardFrom*() functions now accept a callback function which is called when the file readers are finished
+   loading the construction (#33, 25aa537)
 
 
 Bug fixes
@@ -83,6 +97,15 @@ Bug fixes
  * Fixed a division by zero in the parabola element (e6c714a)
  * Fixed traces of curve elements (3d6813b, 8f23d84, bbee2a4)
  * Reverted text colors to black (1a28fc9)
+ * Handle degenerate conics more gracefully (ffe4f7d)
+ * Make projectCoordsToCurve() more robust for function graphs (0c0abb3, 7df9f48)
+ * Prevent double update for gliders (f34c724)
+ * Prevent endless loops in EventEmitter.trigger() (b751699, 9abb0d7)
+ * Fixed groups (#11, 4ed4feb, e424c63, 11699d2)
+ * Fixed JXG.Point.visit() (b16c713)
+ * Elements with the attribute *highlight* set to false now will never be automatically highlighted (25d986a)
+ * JXG.Dump lost required attribute values (4e69297)
+ * GeonextReader: Change the background color of the board (4e69297)
 
 
 
