@@ -114,13 +114,6 @@ define([
         this.slideObject = null;
 
         /**
-         * To prevent a glider from running off the board, we need to store the last position as a glider. It will
-         * be stored as the usrCoords array of the coords property.
-         * @type {Array}
-         */
-        this.lastGliderPos = null;
-
-        /**
          * A {@link JXG.Point#updateGlider} call is usually followed by a general {@link JXG.Board#update} which calls
          * {@link JXG.Point#updateGliderFromParent}. To prevent double updates, {@link JXG.Point#needsUpdateFromParent}
          * is set to false in updateGlider() and reset to true in the following call to
@@ -451,8 +444,6 @@ define([
             }
 
             this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
-            this.lastGliderPos = newCoords.usrCoords;
-
             this.position = newPos;
         },
 
@@ -913,7 +904,6 @@ define([
                 return this.slideObject.generatePolynomial(this);
             };
 
-            this.lastGliderPos = this.coords.usrCoords;
             // Determine the initial value of this.position
             this.updateGlider();
 
