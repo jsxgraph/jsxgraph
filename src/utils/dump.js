@@ -129,21 +129,25 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Object} Minimal attributes object
          */
         minimizeObject: function (instance, s) {
-            var p, pl, copy = Type.deepCopy(instance),
-                defaults = [], i;
+            var p, pl, i,
+                def = {},
+                copy = Type.deepCopy(instance),
+                defaults = [];
 
             for (i = 1; i < arguments.length; i++) {
                 defaults.push(arguments[i]);
             }
 
-            for (i = 0; i < defaults.length; i++) {
-                for (p in defaults[i]) {
-                    if (defaults[i].hasOwnProperty(p)) {
-                        pl = p.toLowerCase();
+            for (i = defaults.length; i > 0; i--) {
+                def = Type.deepCopy(def, defaults[i - 1], true);
+            }
 
-                        if (typeof defaults[i][p] !== 'object' && defaults[i][p] === copy[pl]) {
-                            delete copy[pl];
-                        }
+            for (p in def) {
+                if (def.hasOwnProperty(p)) {
+                    pl = p.toLowerCase();
+
+                    if (typeof def[p] !== 'object' && def[p] === copy[pl]) {
+                        delete copy[pl];
                     }
                 }
             }
@@ -160,11 +164,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         prepareAttributes: function (board, obj) {
             var a, s;
 
-            a = this.minimizeObject(obj.getAttributes(), board.options[obj.elType], board.options.elements);
+            a = this.minimizeObject(obj.getAttributes(), board.options[obj.elType]);
 
             for (s in obj.subs) {
                 if (obj.subs.hasOwnProperty(s)) {
-                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(), board.options[obj.elType][s], board.options[obj.subs[s].elType], board.options.elements);
+                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(), board.options[obj.elType][s], board.options[obj.subs[s].elType]);
                     a[s].id = obj.subs[s].id;
                     a[s].name = obj.subs[s].name;
                 }
