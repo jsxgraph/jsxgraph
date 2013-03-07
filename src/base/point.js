@@ -395,6 +395,7 @@ define([
                 this.updateConstraint();
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToTurtle(this, slide, this.board);
+                newPos = this.position;     // save position for the overwriting below
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if ((slide.type === Const.OBJECT_TYPE_ARC ||
                         slide.type === Const.OBJECT_TYPE_SECTOR)) {
@@ -432,20 +433,21 @@ define([
                         c = Mat.matVecMult(invMat, this.coords.usrCoords);
 
                         cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
-                        newCoords = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
-
-                        // side effect !
+                        c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
+                        
+                        newCoords = c[0]
                         newPos = c[1];
                     } else {
                         // side-effect: this.position is overwritten
                         //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
                         newCoords = Geometry.projectPointToCurve(this, slide, this.board);
-                        newPos = newCoords.usrCoords[1];
+                        newPos = this.position; // save position for the overwriting below 
                     }
                 }
             } else if (slide.elementClass === Const.OBJECT_CLASS_POINT) {
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToPoint(this, slide, this.board);
+                newPos = this.position; // save position for the overwriting below
             }
 
             this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
