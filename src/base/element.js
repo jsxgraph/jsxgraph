@@ -995,8 +995,9 @@ define([
             //    through dehighlightAll.
 
             // highlight only if not highlighted
-            if (!this.highlighted || force) {
+            if (this.visProp.highlight && (!this.highlighted || force)) {
                 this.highlighted = true;
+                this.board.highlightedObjects[this.id] = this;
                 this.board.renderer.highlight(this);
             }
             return this;
@@ -1012,6 +1013,7 @@ define([
             // dehighlight only if not highlighted
             if (this.highlighted) {
                 this.highlighted = false;
+                delete this.board.highlightedObjects[this.id];
                 this.board.renderer.noHighlight(this);
             }
             return this;
