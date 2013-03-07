@@ -1323,7 +1323,7 @@ define([
                 };
 
                 fold = minfunc(t);
-                steps = 20;
+                steps = 50;
                 delta = (curve.maxX() - curve.minX()) / steps;
                 tnew = curve.minX();
 
@@ -1338,8 +1338,9 @@ define([
                     tnew += delta;
                 }
 
-                t = Numerics.root(Numerics.D(minfunc), t);
-
+                //t = Numerics.root(Numerics.D(minfunc), t);
+                t = Numerics.fminbr(minfunc, [t-delta, t+delta]);
+                
                 if (t < curve.minX()) {
                     t = curve.maxX() + t - curve.minX();
                 }

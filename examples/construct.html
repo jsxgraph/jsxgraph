@@ -54,14 +54,23 @@ JXG.Options.point.label = {};
         return c;
     };
 
-
+if (true) {
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1], axis:true});
 var A = brd.create('point', [4,4]);
 var B = brd.create('point', [6,4]);
 var C = brd.create('point', [7,6]);
-var ell = brd.create('ellipse', [A,B,C, 0, 0.9*Math.PI], {fixed:false, hasInnerPoints:false});
+var ell = brd.create('ellipse', [A,B,C, 0, 1*Math.PI], {fixed:false, hasInnerPoints:false});
 var g = brd.create('glider', [2,2,ell]);
 
+} else {
+var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
+
+    var f = board.create('plot', function (x) {
+        return 15 * Math.sin(x);
+    });
+    var g = board.create('glider', [f], {size: 7});
+}
+    
 </script> 
 </body>
 </html>
