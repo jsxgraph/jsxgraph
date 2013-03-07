@@ -428,7 +428,7 @@ define([
                         cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
                         c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
                         
-                        newCoords = c[0]
+                        newCoords = c[0];
                         newPos = c[1];
                     } else {
                         // side-effect: this.position is overwritten
