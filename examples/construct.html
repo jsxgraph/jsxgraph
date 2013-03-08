@@ -55,12 +55,14 @@ JXG.Options.point.label = {};
     };
 
 if (true) {
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-1, 8, 8, -1], axis:true});
-var A = brd.create('point', [4,4]);
-var B = brd.create('point', [6,4]);
-var C = brd.create('point', [7,6]);
-var ell = brd.create('ellipse', [A,B,C, 0, 2*Math.PI], {fixed:false, hasInnerPoints:false});
-var g = brd.create('glider', [2,2,ell]);
+var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
+var A = brd.create('point', [0,0]);
+var B = brd.create('point', [1,0]);
+var C = brd.create('point', [2,0]);
+var ell = brd.create('hyperbola', [A,B,C, 0, 2*Math.PI], {fixed:false, hasInnerPoints:false});
+//var ell = brd.create('circle', [A,C], {fixed:false, hasInnerPoints:false});
+var g = brd.create('glider', [3,0,ell]);
+var t = brd.create('tangent', [g]);
 
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
