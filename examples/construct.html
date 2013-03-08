@@ -58,10 +58,13 @@ if (true) {
 var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
 var A = brd.create('point', [0,0]);
 var B = brd.create('point', [1,0]);
-var C = brd.create('point', [2,0]);
-var ell = brd.create('hyperbola', [A,B,C, 0, 2*Math.PI], {fixed:false, hasInnerPoints:false});
+var C = brd.create('point', [0,2]);
+var D = brd.create('point', [2,2]);
+var E = brd.create('point', [-3,2]);
+var li = brd.create('line', [A,B]);
+var ell = brd.create('ellipse', [A,B,C], {fixed:false, hasInnerPoints:false});
 //var ell = brd.create('circle', [A,C], {fixed:false, hasInnerPoints:false});
-var g = brd.create('glider', [3,0,ell]);
+var g = brd.create('glider', [0,0,ell]);
 var t = brd.create('tangent', [g]);
 
 } else {

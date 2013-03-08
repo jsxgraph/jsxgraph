@@ -173,17 +173,19 @@ define([
 
         /** @ignore */
         polarForm = function (phi, suspendUpdate) {
-            var r = majorAxis(),
-                rr = r * r,
-                ax = F[0].X(),
-                ay = F[0].Y(),
-                bx = F[1].X(),
-                by = F[1].Y(),
-                axbx = ax - bx,
-                ayby = ay - by,
-                f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
+            var r, rr, ax, ay, bx, by, axbx, ayby, f;
 
             if (!suspendUpdate) {
+                r = majorAxis();
+                rr = r * r;
+                ax = F[0].X();
+                ay = F[0].Y();
+                bx = F[1].X();
+                by = F[1].Y();
+                axbx = ax - bx;
+                ayby = ay - by;
+                f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
+
                 curve.quadraticform =
                     [
                     [f * f - bx * bx - by * by, f * axbx / r + bx,      f * ayby / r + by],
@@ -195,7 +197,7 @@ define([
         
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var r = C.Dist(F[0]) + C.Dist(F[1]),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) - r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -209,7 +211,7 @@ define([
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var r = C.Dist(F[0]) + C.Dist(F[1]),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) - r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -382,17 +384,19 @@ define([
         // Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
         /** @ignore */
         polarForm = function (phi, suspendUpdate) {
-            var r = majorAxis(),
-                rr = r * r,
-                ax = F[0].X(),
-                ay = F[0].Y(),
-                bx = F[1].X(),
-                by = F[1].Y(),
-                axbx = ax - bx,
-                ayby = ay - by,
-                f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
+            var r, rr, ax, ay, bx, by, axbx, ayby, f;
 
             if (!suspendUpdate) {
+                r = majorAxis();
+                rr = r * r;
+                ax = F[0].X();
+                ay = F[0].Y();
+                bx = F[1].X();
+                by = F[1].Y();
+                axbx = ax - bx;
+                ayby = ay - by;
+                f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
+
                 curve.quadraticform =
                     [
                     [f * f - bx * bx - by * by, f * axbx / r + bx,      f * ayby / r + by],
@@ -404,7 +408,7 @@ define([
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var r = C.Dist(F[0]) - C.Dist(F[1]),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -418,7 +422,7 @@ define([
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var r = C.Dist(F[0]) - C.Dist(F[1]),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -477,7 +481,7 @@ define([
      * </script><pre>
      */
     JXG.createParabola = function (board, parents, attributes) {
-        var polarForm, curve, transformFunc, M, i, rotationMatrix,
+        var polarForm, curve, M, i, 
             // focus
             F1 = parents[0],
             // directrix
@@ -523,23 +527,6 @@ define([
         ], attr_foci);
 
         /** @ignore */
-        transformFunc = function () {
-            var m,
-                beta = Math.atan(l.getSlope()),
-                x = (M.X() + F1.X()) * 0.5,
-                y = (M.Y() + F1.Y()) * 0.5;
-
-            beta += (F1.Y() - M.Y() < 0 || (F1.Y() === M.Y() && F1.X() > M.X())) ? Math.PI : 0;
-
-            // Rotate by the slope of the line l (Leitlinie = directrix)
-            m = [
-                [1, 0, 0],
-                [x * (1 - Math.cos(beta)) + y * Math.sin(beta), Math.cos(beta), -Math.sin(beta)],
-                [y * (1 - Math.cos(beta)) - x * Math.sin(beta), Math.sin(beta), Math.cos(beta)]
-            ];
-            return m;
-        };
-
         curve = board.create('curve', [
             function (x) {
                 return 0;
@@ -550,46 +537,44 @@ define([
 
         /** @ignore */
         polarForm = function (t, suspendUpdate) {
-            var e = M.Dist(F1) * 0.5,
-                e4 = e * 4,
-                transformMat = [
-                    [1, 0, 0],
-                    [0, 1, 0],
-                    [0, 0, 1]
-                ],
-                a = (M.X() + F1.X()) * 0.5,
-                b = (M.Y() + F1.Y()) * 0.5;
-
+            var a, b, c, ab, px, py;
+            
             if (!suspendUpdate) {
-                rotationMatrix = transformFunc();
-                transformMat[0][0] = rotationMatrix[0][0];
-                transformMat[0][1] = 0;
-                transformMat[0][2] = 0;
-                transformMat[1][0] = a * (1 - rotationMatrix[1][1]) + b * rotationMatrix[1][2];
-                transformMat[1][1] = rotationMatrix[1][1];
-                transformMat[1][2] = rotationMatrix[2][1];
-                transformMat[2][0] = b * (1 - rotationMatrix[1][1]) - a * rotationMatrix[1][2];
-                transformMat[2][1] = rotationMatrix[1][2];
-                transformMat[2][2] = rotationMatrix[2][2];
-                curve.quadraticform =
-                    Mat.matMatMult(Mat.transpose(transformMat),
-                        Mat.matMatMult([
-                            [-b * e4 - a * a, a, 2 * e],
-                            [a, -1, 0],
-                            [2 * e, 0, 0]
-                        ], transformMat));
+                a = l.stdform[1];
+                b = l.stdform[2];
+                c = l.stdform[0];
+                ab = a * a + b * b;
+                px = F1.X();
+                py = F1.Y();
+                  
+                curve.quadraticform = 
+                    [
+                    [(c * c - ab * (px * px + py * py)), c * a + ab * px, c * b + ab * py],
+                    [c * a + ab * px,                  -b * b,          a * b],
+                    [c * b + ab * py,                  a * b,           -a * a]
+                    ];
             }
-            return Mat.matVecMult(rotationMatrix, [e4, e4 * (t + a), t * t + b * e4]);
         };
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            return polarForm(phi, suspendUpdate)[1];
+            var d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
+                a = d / (1 + Math.sin(Math.PI - phi)),
+                beta = l.getAngle();
+            
+            if (!suspendUpdate) {
+                polarForm(phi, suspendUpdate);
+            }
+            return F1.X() - Math.cos(beta + phi) * a;
         };
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            return polarForm(phi, suspendUpdate)[2];
+            var d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
+                a = d / (1 + Math.sin(Math.PI - phi)),
+                beta = l.getAngle();
+            
+            return F1.Y() - Math.sin(beta + phi) * a;
         };
 
         curve.type = Const.OBJECT_TYPE_CONIC;
