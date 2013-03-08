@@ -7,14 +7,15 @@ Important Notes
    non-wrapped corresponding methods in Math, JXG.Math, JXG.Math.Geometry, and JXG.Math.Numerics (c857dc4, d8f8f6a)
    * angle, rad, distance: Use JXG.Math.Geometry.*
    * D, I, root, lagrangePolynomial, neville, riemannsum: Use JXG.Math.Numerics.*
-   * factorial, binomial, pow, cosh, sinh: Use JXG.Math.*
-   * round, abs, acos, asin, atan, ceil, cos, exp, floor, log, max, min, random, sin, sqrt, tan: Use Math.*
-   * trunc: Use Math.ceil
+   * factorial, binomial, cosh, sinh: Use JXG.Math.*
+   * round, abs, acos, asin, atan, ceil, cos, exp, floor, log, pow, max, min, random, sin, sqrt, tan: Use Math.*
+   * trunc: Use Math.floor
    * sgn: No replacement
  * New makefile: make.py was replaced by a GNU make Makefile. Type make core-min to build a jsxgraphcore.js and see
    the Makefile for other build targets (245c1e3, 8d8ed2c, 824725e, 8b5aa0e)
  * The GeonextParser now outputs JessieCode (https://github.com/jsxgraph/JessieCode) instead of JavaScript.
  * Board attributes in JXG.Options were moved from JXG.Options to JXG.Options.board (3e39b82):
+   showCopyright, showNavigation, takeSizeFromFile, renderer, takeFirst, animationDelay, zoom, and pan.
  * The list of boards and the list of available elements were moved from JXG.JSXGraph to JXG (c0048e7, e202e15)
  * Polygon borders won't be hidden automatically when the polygon is hidden (8e95f2c4)
  * Pstricks was removed
@@ -22,7 +23,6 @@ Important Notes
  * Reorganization of the repository: All files in src/ were renamed to all lowercase and moved into subfolders (bb301e0,
    5eaf33b, fe457c9, 66ba3f2)
  * Intersection points now have a type value of JXG.OBJECT_TYPE_INTERSECTION (86a21fe)
-   showCopyright, showNavigation, takeSizeFromFile, renderer, takeFirst, animationDelay, zoom, and pan.
  * The board methods intersection, intersectionFunc, and otherintersection were removed. Please use the elements
    'intersection' and 'otherintersection' (b76004c)
  * The unused methods JXG.readOption and JXG.collectionContains were removed (f322fa6, 8879354)
