@@ -539,7 +539,7 @@ define([
         drawText: function (element) {
             var node, z;
 
-            if (element.visProp.display === 'html') {
+            if (element.visProp.display === 'html' && Env.isBrowser) {
                 node = this.container.ownerDocument.createElement('div');
                 node.style.position = 'absolute';
 
@@ -656,7 +656,8 @@ define([
          */
         updateTextStyle: function (element, doHighlight) {
             var fs, so, sc, css,
-                ev = element.visProp;
+                ev = element.visProp,
+                display = Env.isBrowser ? ev.display : 'internal';
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
@@ -668,10 +669,8 @@ define([
                 css = ev.cssclass;
             }
 
-            /*
-             * This part is executed for all text elements except internal texts in canvas.
-             */
-            if (element.visProp.display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
+            // This part is executed for all text elements except internal texts in canvas.
+            if (display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     try {
@@ -684,7 +683,8 @@ define([
                 }
 
             }
-            if (element.visProp.display === 'html') {
+
+            if (display === 'html') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
@@ -1191,30 +1191,32 @@ define([
                     Env.addEvent(button, 'touchstart', cancelbubble, board);
                 };
 
-            doc = board.containerObj.ownerDocument;
-            node = doc.createElement('div');
+            if (Env.isBrowser) {
+                doc = board.containerObj.ownerDocument;
+                node = doc.createElement('div');
 
-            node.setAttribute('id', board.containerObj.id + '_navigationbar');
+                node.setAttribute('id', board.containerObj.id + '_navigationbar');
 
-            node.style.color = board.options.navbar.strokeColor;
-            node.style.backgroundColor = board.options.navbar.fillColor;
-            node.style.padding = board.options.navbar.padding;
-            node.style.position = board.options.navbar.position;
-            node.style.fontSize = board.options.navbar.fontSize;
-            node.style.cursor = board.options.navbar.cursor;
-            node.style.zIndex = board.options.navbar.zIndex;
-            board.containerObj.appendChild(node);
-            node.style.right = board.options.navbar.right;
-            node.style.bottom = board.options.navbar.bottom;
+                node.style.color = board.options.navbar.strokeColor;
+                node.style.backgroundColor = board.options.navbar.fillColor;
+                node.style.padding = board.options.navbar.padding;
+                node.style.position = board.options.navbar.position;
+                node.style.fontSize = board.options.navbar.fontSize;
+                node.style.cursor = board.options.navbar.cursor;
+                node.style.zIndex = board.options.navbar.zIndex;
+                board.containerObj.appendChild(node);
+                node.style.right = board.options.navbar.right;
+                node.style.bottom = board.options.navbar.bottom;
 
-            // For XHTML we need unicode instead of HTML entities
-            createButton('\u00A0\u2013\u00A0', board.zoomOut);
-            createButton('\u00A0o\u00A0', board.zoom100);
-            createButton('\u00A0+\u00A0', board.zoomIn);
-            createButton('\u00A0\u2190\u00A0', board.clickLeftArrow);
-            createButton('\u00A0\u2193\u00A0', board.clickUpArrow);
-            createButton('\u00A0\u2191\u00A0', board.clickDownArrow);
-            createButton('\u00A0\u2192\u00A0', board.clickRightArrow);
+                // For XHTML we need unicode instead of HTML entities
+                createButton('\u00A0\u2013\u00A0', board.zoomOut);
+                createButton('\u00A0o\u00A0', board.zoom100);
+                createButton('\u00A0+\u00A0', board.zoomIn);
+                createButton('\u00A0\u2190\u00A0', board.clickLeftArrow);
+                createButton('\u00A0\u2193\u00A0', board.clickUpArrow);
+                createButton('\u00A0\u2191\u00A0', board.clickDownArrow);
+                createButton('\u00A0\u2192\u00A0', board.clickRightArrow);
+            }
         },
 
         /**

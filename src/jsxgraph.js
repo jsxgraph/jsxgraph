@@ -113,7 +113,10 @@ define([
                 Options.renderer = 'canvas';
             }
 
-            Options.foo = 'bar';
+            if (Env.isNode() || Options.renderer === 'no') {
+                Options.text.display = 'internal';
+                Options.infobox.display = 'internal';
+            }
 
             return Options.renderer;
         }()),
