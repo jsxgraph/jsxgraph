@@ -70,6 +70,8 @@ define([
     // the return value of this factory function
     } else if (Env.isNode() && typeof module === 'object') {
         module.exports = JXG;
+    } else if (Env.isWebWorker()) {
+        self.JXG = JXG;
     }
 
     return JXG;
