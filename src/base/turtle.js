@@ -120,6 +120,42 @@ define([
         }
 
         this.init(x, y, dir);
+
+        this.methodMap = Type.deepCopy(this.methodMap, {
+            forward: 'forward',
+            fd: 'forward',
+            back: 'back',
+            bk: 'back',
+            right: 'right',
+            rt: 'right',
+            left: 'left',
+            lt: 'left',
+            penUp: 'penUp',
+            pu: 'penUp',
+            penDown: 'penDown',
+            pd: 'pwnDown',
+            clearScreen: 'clearScreen',
+            cs: 'clearScreen',
+            clean: 'clean',
+            setPos: 'setPos',
+            home: 'home',
+            hideTurtle: 'hideTurtle',
+            ht: 'hideTurtle',
+            showTurtle: 'showTurtle',
+            st: 'showTurtle',
+            penSize: 'penSize',
+            penColor: 'penColor',
+            pushTurtle: 'pushTurtle',
+            push: 'pushTurtle',
+            popTurtle: 'popTurtle',
+            pop: 'popTurtle',
+            lookTo: 'lookTo',
+            pos: 'pos',
+            moveTo: 'moveTo',
+            X: 'X',
+            Y: 'Y'
+        });
+
         return this;
     };
 
