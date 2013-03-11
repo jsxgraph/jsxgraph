@@ -219,6 +219,8 @@ define([
             // the new board storage
             JXG.boards[board.id] = board;
 
+            board.resizeContainer(dimensions.width, dimensions.height, true);
+
             // create elements like axes, grid, navigation, ...
             board.suspendUpdate();
             board.initInfobox();
@@ -271,6 +273,7 @@ define([
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
+            board.resizeContainer(dimensions.width, dimensions.height, true);
 
             FileReader.parseFileContent(file, board, format, true, callback);
 
@@ -311,6 +314,7 @@ define([
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);
             board.initInfobox();
+            board.resizeContainer(dimensions.width, dimensions.height, true);
 
             FileReader.parseString(string, board, format, true, callback);
 
