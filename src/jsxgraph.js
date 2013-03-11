@@ -121,7 +121,7 @@ define([
             return Options.renderer;
         }()),
 
-        initRenderer: function (box) {
+        initRenderer: function (box, dim) {
             var boxid, renderer;
 
             if (typeof document === 'object' && box !== null) {
@@ -132,11 +132,11 @@ define([
 
             // create the renderer
             if (Options.renderer === 'svg') {
-                renderer = new SVGRenderer(boxid);
+                renderer = new SVGRenderer(boxid, dim);
             } else if (Options.renderer === 'vml') {
                 renderer = new VMLRenderer(boxid);
             } else if (Options.renderer === 'canvas') {
-                renderer = new CanvasRenderer(boxid);
+                renderer = new CanvasRenderer(boxid, dim);
             } else {
                 renderer = new NoRenderer();
             }
@@ -208,7 +208,7 @@ define([
                 originY = unitY * bbox[1];
             }
 
-            renderer = this.initRenderer(box);
+            renderer = this.initRenderer(box, dimensions);
 
             // create the board
             board = new Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
@@ -259,8 +259,8 @@ define([
         loadBoardFromFile: function (box, file, format, attributes, callback) {
             var attr, renderer, board, dimensions;
 
-            renderer = this.initRenderer(box);
             dimensions = Env.getDimensions(box);
+            renderer = this.initRenderer(box, dimensions);
             attributes = attributes || {};
 
             // merge attributes
@@ -299,8 +299,8 @@ define([
         loadBoardFromString: function (box, string, format, attributes, callback) {
             var attr, renderer, dimensions, board;
 
-            renderer = this.initRenderer(box);
             dimensions = Env.getDimensions(box);
+            renderer = this.initRenderer(box, dimensions);
             attributes = attributes || {};
 
             // merge attributes
