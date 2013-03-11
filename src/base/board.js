@@ -1043,18 +1043,20 @@ define([
         },
 
         highlightElements: function (x, y, evt, target) {
-            var el, pEl, pId, len = this.objectsList.length;
+            var el, pEl, pId,
+                overObjects = {},
+                len = this.objectsList.length;
 
             // Elements  below the mouse pointer which are not highlighted yet will be highlighted.
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pId = pEl.id;
-                if (pEl.visProp.highlight && Type.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+                if (Type.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
                     // this is required in any case because otherwise the box won't be shown until the point is dragged
                     this.updateInfobox(pEl);
 
                     if (!Type.exists(this.highlightedObjects[pId])) { // highlight only if not highlighted
-                        this.highlightedObjects[pId] = pEl;
+                        overObjects[pId] = pEl;
                         pEl.highlight();
                         this.triggerEventHandlers(['mousehit', 'hit'], [evt, pEl, target]);
                     }
@@ -1072,7 +1074,7 @@ define([
                 pEl = this.objectsList[el];
                 pId = pEl.id;
                 if (pEl.mouseover) {
-                    if (!this.highlightedObjects[pId]) {
+                    if (!overObjects[pId]) {
                         pEl.triggerEventHandlers(['mouseout', 'out'], [evt]);
                         pEl.mouseover = false;
                     }
@@ -1470,7 +1472,6 @@ define([
                 }
 
                 this.dehighlightAll();
-                this.highlightedObjects[target.id] = target;
                 target.highlight(true);
 
                 this.saveStartPos(target, this.touches[j].targets[k]);
@@ -1746,7 +1747,6 @@ define([
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
                             this.touches.push({ obj: obj, targets: targets });
-                            this.highlightedObjects[obj.id] = obj;
                             obj.highlight(true);
                         } else if (obj.elementClass === Const.OBJECT_CLASS_LINE ||
                                 obj.elementClass === Const.OBJECT_CLASS_CIRCLE ||
@@ -1779,7 +1779,6 @@ define([
                                 // For the UNDO/REDO of object moves
                                 this.saveStartPos(obj, targets[0]);
                                 this.touches.push({ obj: obj, targets: targets });
-                                this.highlightedObjects[obj.id] = obj;
                                 obj.highlight(true);
                             }
                         }
@@ -1978,7 +1977,6 @@ define([
                         }
 
                     } else {
-                        delete this.highlightedObjects[tmpTouches[i].obj.id];
                         tmpTouches[i].obj.noHighlight();
                     }
                 }
@@ -2066,7 +2064,6 @@ define([
                 this.mouse.obj = elements[elements.length - 1];
 
                 this.dehighlightAll();
-                this.highlightedObjects[this.mouse.obj.id] = this.mouse.obj;
                 this.mouse.obj.highlight(true);
 
                 this.mouse.targets[0].Xstart = [];
@@ -3035,6 +3032,13 @@ define([
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
                 pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
+            }
+
+            // update groups last
+            for (el in this.groups) {
+                if (this.groups.hasOwnProperty(el)) {
+                    this.groups[el].update(drag);
+                }
             }
 
             return this;

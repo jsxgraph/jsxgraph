@@ -1671,7 +1671,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f Function, whose minimum is to be found
          * @param {Array} x0  Start interval enclosing the minimum
          * @param {Object} context Parent object in case f is method of it
-         * @returns {Number} the approximation of the minimum
+         * @returns {Number} the approximation of the minimum value position
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition

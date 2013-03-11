@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, require: true*/
+/*global JXG: true, define: true, window: true, document: true, navigator: true, module: true, global: true, self: true, require: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -112,6 +112,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 // there is a global object and requirejs is loaded
                 (typeof global === 'object' && global.requirejsVars && !global.requirejsVars.isBrowser)
             );
+        },
+
+        /**
+         * True if run inside a webworker environment.
+         * @returns {Boolean}
+         */
+        isWebWorker: function () {
+            return !this.isBrowser && (typeof self === 'object' && typeof self.postMessage === 'function');
         },
 
         /**

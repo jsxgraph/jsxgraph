@@ -160,11 +160,11 @@
             gxtEl.highlightFillColor = gxtEl.fillColor;
             gxtEl.highlightFillOpacity = gxtEl.fillOpacity;
 
-            gxtEl.labelColor = JXG.rgba2rgbo(this.gEBTN(color, 'label'))[0];
+            rgbo = JXG.rgba2rgbo(this.gEBTN(color, 'label'));
+            gxtEl.labelColor = rgbo[0];
+            gxtEl.withLabel = rgbo[1] > 0;
+            gxtEl.labelOpacity = rgbo[1];
             gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, 'draft'))[0];
-
-            // GEONExT hides labels by setting opacity to 0.
-            gxtEl.withLabel = JXG.rgba2rgbo(this.gEBTN(color, 'label'))[1] !== 0;
 
             // backwards compatibility
             gxtEl.colorStroke = gxtEl.strokeColor;
@@ -236,25 +236,31 @@
          * @return {Object} gxtEl
          */
         transformProperties: function (gxtEl, type) {
-            var facemap = [
-                // 0-2
-                'cross', 'cross', 'cross',
-                // 3-6
-                'circle', 'circle', 'circle', 'circle',
-                // 7-9
-                'square', 'square', 'square',
-                // 10-12
-                'plus', 'plus', 'plus'
-            ], sizemap = [
-                // 0-2
-                2, 3, 4,
-                // 3-6
-                1, 2, 3, 4,
-                // 7-9
-                2, 3, 4,
-                // 10-12
-                2, 3, 4
-            ];
+            var i,
+                facemap = [
+                    // 0-2
+                    'cross', 'cross', 'cross',
+                    // 3-6
+                    'circle', 'circle', 'circle', 'circle',
+                    // 7-9
+                    'square', 'square', 'square',
+                    // 10-12
+                    'plus', 'plus', 'plus'
+                ],
+                sizemap = [
+                    // 0-2
+                    2, 3, 4,
+                    // 3-6
+                    1, 2, 3, 4,
+                    // 7-9
+                    2, 3, 4,
+                    // 10-12
+                    2, 3, 4
+                ],
+                remove = [
+                    'color', 'dash', 'style', 'style', 'ident', 'colordraft', 'colorstroke', 'colorfill',
+                    'colorlabel', 'active', 'area', 'showinfo', 'showcoord', 'fix'
+                ];
 
             gxtEl.strokeWidth = gxtEl.strokewidth;
             gxtEl.face = facemap[parseInt(gxtEl.style, 10)] || 'cross';
@@ -279,8 +285,14 @@
             if (typeof gxtEl.label === 'string') {
                 delete gxtEl.label;
             }
+            gxtEl.label = gxtEl.label || {
+                opacity: gxtEl.labelOpacity
+            };
 
-            delete gxtEl.color;
+            // clean up
+            for (i = 0; i < remove.length; i++) {
+                delete gxtEl[remove[i]];
+            }
 
             return gxtEl;
         },
@@ -1081,6 +1093,13 @@
 
             boardData = this.gEBTN(tree, 'board', 0, false);
             conditions = this.readConditions(boardData.getElementsByTagName('conditions')[0]);
+
+            // set the board background color
+            s = this.gEBTN(boardData, 'background', 0, false);
+            s = this.gEBTN(s, 'color', 0, true);
+            tmp = JXG.rgba2rgbo(s);
+            s = JXG.rgbParser(tmp[0]);
+            board.containerObj.style.backgroundColor = 'rgba(' + s[0] + ', ' + s[1] + ', ' + s[2] + ', ' + tmp[1] + ')';
 
             // resize board
             if (board.attr.takeSizeFromFile) {

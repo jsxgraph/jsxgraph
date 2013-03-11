@@ -236,6 +236,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         add: function (arr1, arr2) {
             var i, len, res = [];
 
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
+
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
@@ -270,6 +273,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          */
         div: function (arr1, arr2) {
             var i, len, res = [];
+
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
@@ -321,6 +327,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
                 mod = Mat.mod;
             }
 
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
+
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
@@ -357,13 +366,8 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         multiply: function (arr1, arr2) {
             var i, len, res = [];
 
-            if (arr1.type === Const.OBJECT_TYPE_GLIDER && typeof arr1.Value === 'function') {
-                arr1 = arr1.Value();
-            }
-
-            if (arr2.type === Const.OBJECT_TYPE_GLIDER && typeof arr2.Value === 'function') {
-                arr2 = arr2.Value();
-            }
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
 
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
@@ -400,6 +404,9 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         subtract: function (arr1, arr2) {
             var i, len, res = [];
 
+            arr1 = Type.evalSlider(arr1);
+            arr2 = Type.evalSlider(arr2);
+
             if (Type.isArray(arr1) && Type.isNumber(arr2)) {
                 len = arr1.length;
 
@@ -423,6 +430,35 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
             }
 
             return res;
+        },
+
+        /**
+         * The Theil-Sen estimator can be used to determine a more robust linear regression of a set of sample
+         * points than least squares regression in {@link JXG.Math.Numerics.regressionPolynomial}.
+         * @param {Array} coords Array of {@link JXG.Coords}.
+         * @returns {Array} The stdform of the regression line.
+         */
+        TheilSenRegression: function (coords) {
+            var i, j,
+                slopes = [],
+                tmpslopes = [],
+                yintercepts = [];
+
+            for (i = 0; i < coords.length; i++) {
+                tmpslopes.length = 0;
+
+                for (j = 0; j < coords.length; j++) {
+                    if (Math.abs(coords[j].usrCoords[1] - coords[i].usrCoords[1]) > Mat.eps) {
+                        tmpslopes[j] = (coords[j].usrCoords[2] - coords[i].usrCoords[2]) /
+                            (coords[j].usrCoords[1] - coords[i].usrCoords[1]);
+                    }
+                }
+
+                slopes[i] = this.median(tmpslopes);
+                yintercepts.push(coords[i].usrCoords[2] - slopes[i] * coords[i].usrCoords[1]);
+            }
+
+            return [this.median(yintercepts), this.median(slopes), -1];
         }
     };
 

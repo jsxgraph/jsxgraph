@@ -67,8 +67,9 @@ define([
          * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
          * </dl>
          * @param {Boolean} async Call ajax asynchonously.
+         * @param {function} callback A function that is run when the board is ready.
          */
-        parseFileContent: function (url, board, format, async) {
+        parseFileContent: function (url, board, format, async, callback) {
             var request = false;
 
             if (!Type.exists(async)) {
@@ -127,7 +128,7 @@ define([
                         } else {
                             text = req.responseText;
                         }
-                        this.parseString(text, board, format, false);
+                        this.parseString(text, board, format, callback);
                     }
                 };
             }
@@ -156,8 +157,9 @@ define([
          * <dt>geogebra</dt><dd>Geogebra File <a href="http://www.geogebra.org">http://www.geogebra.org</a></dd>
          * <dl><dt>cdy or cinderella</dt><dd>Cinderella (<a href="http://www.cinderella.de/">http://www.cinderella.de</a></dd>
          * </dl>
+         * @param {function} callback
          */
-        parseString: function (str, board, format) {
+        parseString: function (str, board, format, callback) {
             var Reader,
                 read;
 
@@ -170,6 +172,10 @@ define([
                 read.read();
             } else {
                 throw new Error('JSXGraph: There is no reader available for \'' + format + '\'.');
+            }
+
+            if (typeof callback === 'function') {
+                callback(board);
             }
         }
     };

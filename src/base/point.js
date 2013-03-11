@@ -114,13 +114,6 @@ define([
         this.slideObject = null;
 
         /**
-         * To prevent a glider from running off the board, we need to store the last position as a glider. It will
-         * be stored as the usrCoords array of the coords property.
-         * @type {Array}
-         */
-        this.lastGliderPos = null;
-
-        /**
          * A {@link JXG.Point#updateGlider} call is usually followed by a general {@link JXG.Board#update} which calls
          * {@link JXG.Point#updateGliderFromParent}. To prevent double updates, {@link JXG.Point#needsUpdateFromParent}
          * is set to false in updateGlider() and reset to true in the following call to
@@ -395,6 +388,7 @@ define([
                 this.updateConstraint();
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToTurtle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToTurtle(this, slide, this.board);
+                newPos = this.position;     // save position for the overwriting below
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if ((slide.type === Const.OBJECT_TYPE_ARC ||
                         slide.type === Const.OBJECT_TYPE_SECTOR)) {
@@ -432,28 +426,25 @@ define([
                         c = Mat.matVecMult(invMat, this.coords.usrCoords);
 
                         cp = (new Coords(Const.COORDS_BY_USER, c, this.board)).usrCoords;
-                        newCoords = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
-
-                        // side effect !
+                        c = Geometry.projectCoordsToCurve(cp[1], cp[2], this.position || 0, slide, this.board);
+                        
+                        newCoords = c[0];
                         newPos = c[1];
                     } else {
                         // side-effect: this.position is overwritten
                         //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCurve(this, slide, this.board).usrCoords, false);
                         newCoords = Geometry.projectPointToCurve(this, slide, this.board);
-                        newPos = newCoords.usrCoords[1];
+                        newPos = this.position; // save position for the overwriting below 
                     }
                 }
             } else if (slide.elementClass === Const.OBJECT_CLASS_POINT) {
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToPoint(this, slide, this.board);
+                newPos = this.position; // save position for the overwriting below
             }
 
             this.coords.setCoordinates(Const.COORDS_BY_USER, newCoords.usrCoords, doRound);
-            this.lastGliderPos = newCoords.usrCoords;
-
-            if (newPos) {
-                this.position = newPos;
-            }
+            this.position = newPos;
         },
 
         /**
@@ -913,7 +904,6 @@ define([
                 return this.slideObject.generatePolynomial(this);
             };
 
-            this.lastGliderPos = this.coords.usrCoords;
             // Determine the initial value of this.position
             this.updateGlider();
 

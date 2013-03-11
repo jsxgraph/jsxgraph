@@ -935,6 +935,19 @@ define([
             }
 
             return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        },
+
+        /**
+         * If <tt>s</tt> is a slider, it returns the sliders value, otherwise it just returns the given value.
+         * @param {*} s
+         * @retusn {*} s.Value() if s is an element of type slider, s otherwise
+         */
+        evalSlider: function (s) {
+            if (s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === 'function') {
+                s = s.Value();
+            }
+
+            return s;
         }
     });
 

@@ -45,8 +45,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'utils/type'
-], function (JXG, Const, Type) {
+    'jxg', 'base/constants', 'base/element', 'math/math', 'utils/type'
+], function (JXG, Const, GeometryElement, Mat, Type) {
 
     "use strict";
 
@@ -86,6 +86,8 @@ define([
         }
         delete this.type;
 
+        this.coords = {};
+
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -103,10 +105,6 @@ define([
                 }
             }
         }
-
-        this.suspendUpdate = false;
-        this.dX = 0;
-        this.dY = 0;
     };
 
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
@@ -128,42 +126,59 @@ define([
             }
         },
 
-        suspendUpdate: function () {
-            this.suspendUpdate = true;
-        },
-
-        unsuspendUpdate: function () {
-            this.suspendUpdate = false;
-        },
-
         /**
-         * Sends an update to all group members.
+         * Sends an update to all group members. This method is called from the points' coords object event listeners
+         * and not by the board.
          * @param {JXG.Point} point The point that caused the update.
          * @param {Number} dX
          * @param {Number} dY
          */
-        update: function (point, dX, dY) {
-            var obj = null,
-                el;
+        //update: function (point, dX, dY) {
+        update: function (fromParent) {
+            var el, trans, transObj, j,
+                obj = null;
 
-            if (!this.suspendUpdate) {
-                this.suspendUpdate = true;
+            for (el in this.objects) {
+                if (this.objects.hasOwnProperty(el)) {
+                    obj = this.objects[el].point;
 
+                    if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
+                        trans = [
+                            obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
+                            obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
+                        ];
+                        transObj = obj;
+                        break;
+                    }
+                }
+            }
+
+            if (Type.exists(transObj)) {
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el)) {
                         if (Type.exists(this.board.objects[el])) {
                             obj = this.objects[el].point;
-                            if (obj.id !== point.id) {
-                                obj.coords.setCoordinates(Const.COORDS_BY_USER, [obj.coords.usrCoords[1] + dX, obj.coords.usrCoords[2] + dY]);
+                            if (obj.id !== transObj.id) {
+                                obj.coords.setCoordinates(Const.COORDS_BY_USER, [this.coords[el].usrCoords[1] + trans[0], this.coords[el].usrCoords[2] + trans[1]]);
                             }
-                            this.objects[el].point.prepareUpdate().update(false).updateRenderer();
+                            //this.objects[el].point.prepareUpdate().update(false).updateRenderer();
                         } else {
                             delete this.objects[el];
                         }
+                        this.coords[obj.id] = {usrCoords: [obj.coords.usrCoords[0], obj.coords.usrCoords[1], obj.coords.usrCoords[2]]};
                     }
                 }
 
-                this.suspendUpdate = false;
+                for (el in this.objects) {
+                    if (this.objects.hasOwnProperty(el)) {
+                        for (j in this.objects[el].descendants) {
+                            if (this.objects[el].descendants.hasOwnProperty(j)) {
+                                this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
+                            }
+                        }
+                    }
+                }
+                this.board.updateElements(fromParent);
             }
 
             return this;
@@ -175,12 +190,9 @@ define([
          */
         addPoint: function (object) {
             this.objects[object.id] = {
-                point: object,
-                handler: function (ou) {
-                    this.update(object, object.coords.usrCoords[1] - ou[1], object.coords.usrCoords[2] - ou[2], object.coords.usrCoords[0] - ou[0]);
-                }
+                point: object
             };
-            object.coords.on('update', this.objects[object.id].handler, this);
+            this.coords[object.id] = {usrCoords: [object.coords.usrCoords[0], object.coords.usrCoords[1], object.coords.usrCoords[2]]};
         },
 
         /**
@@ -214,7 +226,6 @@ define([
          * @param {JXG.Point} point
          */
         removePoint: function (point) {
-            this.objects[point.id].point.coords.off('update', this.objects[point.id].handler);
             delete this.objects[point.id];
         },
 
