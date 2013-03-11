@@ -583,6 +583,7 @@ define([
             if (el.numberPoints <= 0) {
                 return '';
             }
+            
             len = Math.min(el.points.length, el.numberPoints);
 
             if (el.bezierDegree === 1) {
