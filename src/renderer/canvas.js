@@ -61,7 +61,7 @@ define([
      * @param {Node} container Reference to a DOM node containing the board.
      * @see JXG.AbstractRenderer
      */
-    JXG.CanvasRenderer = function (container) {
+    JXG.CanvasRenderer = function (container, dim) {
         var i;
 
         this.type = 'canvas';
@@ -81,8 +81,8 @@ define([
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', Env.getStyle(this.container,
-                'width'), '" height="', Env.getStyle(this.container, 'height'), '"><', '/canvas>'].join('');
+            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', dim.width, '" height="',
+                dim.height, '"><', '/canvas>'].join('');
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {

@@ -7,16 +7,14 @@
  */
 
 // use the (minified) core, i.e. jsxgraph in one single file, built with r.js
-var JXG = require('../../build/bin/jsxgraphcore.js');
+//var JXG = require('../../build/bin/jsxgraphcore.js');
 
 // use the dev version
-//var JXG = require('../../src/jsxgraphnode.js');
+var JXG = require('../../src/jsxgraphnode.js');
 
 console.log('version', JXG.version);
-
-JXG.Options.text.display = 'internal';
-// dirty hack
-JXG.Board.prototype.initInfobox = function () {};
+console.log('text display', JXG.Options.text.display);
+console.log('infobox display', JXG.Options.infobox.display);
 
 var board = JXG.JSXGraph.initBoard(null, {boundingbox: [-5, 5, 5, -5], showNavigation: false});
 board.create('point', [3, 4]);

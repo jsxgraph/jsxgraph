@@ -56,7 +56,7 @@ define([
      * @param {Node} container Reference to a DOM node containing the board.
      * @see JXG.AbstractRenderer
      */
-    JXG.SVGRenderer = function (container) {
+    JXG.SVGRenderer = function (container, dim) {
         var i;
 
         // docstring in AbstractRenderer
@@ -98,8 +98,8 @@ define([
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        this.svgRoot.style.width = Env.getStyle(this.container, 'width');
-        this.svgRoot.style.height = Env.getStyle(this.container, 'height');
+        this.svgRoot.style.width = dim.width;
+        this.svgRoot.style.height = dim.height;
 
         this.container.appendChild(this.svgRoot);
 

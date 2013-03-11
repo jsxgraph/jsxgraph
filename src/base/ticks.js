@@ -882,16 +882,15 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'ticks');
 
         if (parents.length < 2) {
-            dist = attributes.ticksDistance;
+            dist = attr.ticksdistance;
         } else {
             dist = parents[1];
         }
 
-        if ((parents[0].elementClass === Const.OBJECT_CLASS_LINE) &&
-                (Type.isFunction(parents[1]) || Type.isArray(parents[1]) || Type.isNumber(parents[1]))) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             el = new JXG.Ticks(parents[0], dist, attr);
         } else {
-            throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "'.");
         }
 
         if (typeof attr.generatelabelvalue === 'function') {

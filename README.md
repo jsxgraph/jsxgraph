@@ -48,16 +48,21 @@ https://github.com/jsxgraph/jsxgraph/issues
 Build JSXGraph
 --------------
 
-In order to build JSXGraph you need Python 2 or later, yuglify, and to build the
-reference docs you need jsdoc-toolkit 2.3.2 or later.
+In order to build JSXGraph you need [node.js](http://nodejs.org/) v0.6+. First, install all
+dependencies required to build JSXGraph using npm in the JSXGraph root directory:
 
-To build JSXGraph core type
+    $ npm install
 
-    $ python make.py --yuglify=/path/to/yuglify --output=/output/dir Core
+This will create a new subdirectory ```node_modules``` in the JSXGraph root directory which holds
+all tools and libraries required to build ```jsxgraphcore.js``` and run JSXGraph inside node. To build
+JSXGraph run
 
-This will concatenate all core files (basically all .js files in src/ except
-loadjsxgraph.js and all files in src/reader except file.js), strip all comments
-and minify the file into /output/dir/jsxgraphcore.js.
+    $ make core
+
+which will output an unminified version of ```jsxgraphcore.js``` in ```build/bin```. To build a minified
+version run
+
+    $ make core-min
 
 
 Usage

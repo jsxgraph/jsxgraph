@@ -2941,13 +2941,17 @@ define([
          * Change the height and width of the board's container.
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
+         * @param {Boolean} [dontset=false] Do not set the height of the DOM element.
          * @returns {JXG.Board} Reference to the board
          */
-        resizeContainer: function (canvasWidth, canvasHeight) {
+        resizeContainer: function (canvasWidth, canvasHeight, dontset) {
             this.canvasWidth = parseFloat(canvasWidth);
             this.canvasHeight = parseFloat(canvasHeight);
-            this.containerObj.style.width = (this.canvasWidth) + 'px';
-            this.containerObj.style.height = (this.canvasHeight) + 'px';
+
+            if (!dontset) {
+                this.containerObj.style.width = (this.canvasWidth) + 'px';
+                this.containerObj.style.height = (this.canvasHeight) + 'px';
+            }
 
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
 
