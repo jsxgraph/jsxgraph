@@ -1,4 +1,4 @@
-.PHONY: test test-server-start
+.PHONY: test test-server
 
 # build tools
 REQUIREJS=./node_modules/.bin/r.js
@@ -16,10 +16,12 @@ RM=rm
 CD=cd
 ZIP=zip
 
+# directories
 OUTPUT=distrib
 BUILD=build
 TMP=tmp
 BUILDBIN=$(BUILD)/bin
+BUILDREADERS=$(BUILDBIN)/readers
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2TPL=doc/jsdoc-tk/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
@@ -33,21 +35,21 @@ JSTESTPORT=4224
 JSTESTSERVER=localhost:4224
 JSTESTFLAGS=--reset --captureConsole --tests all
 
-# filelist - required for docs and linters
+# filelists - required for docs, linters, and to build the readers
 FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
+READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
 # rules
-
-all: core
+all: core core-min readers docs
 
 
 core:
 	$(REQUIREJS) -o $(BUILD)/core.build.json
 
+
 core-min:
-	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify out=$(BUILDBIN)/jsxgraphcore-min-nc.js
-	$(CAT) COPYRIGHT > $(BUILDBIN)/jsxgraphcore-min.js
-	$(CAT) $(BUILDBIN)/jsxgraphcore-min-nc.js >> $(BUILDBIN)/jsxgraphcore-min.js
+	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
+	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 
 
 release: core-min docs
@@ -89,6 +91,16 @@ docs: core core-min
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
 	
 	$(RM) $(RMFLAGS) tmp
+
+
+readers: $(READERSOUT)
+	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
+	$(CP) $(BUILDREADERS)/* $(OUTPUT)
+
+
+build/bin/readers/%.min.js: src/reader/%.js
+	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
+	{ $(CAT) COPYRIGHT; $(UGLIFYJS) $^; } > $@
 
 
 compressor: core
