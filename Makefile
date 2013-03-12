@@ -48,6 +48,7 @@ core:
 
 
 core-min:
+	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 
@@ -107,6 +108,7 @@ compressor: core
 
 
 plot:
+	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o build/plot.build.json
 
 hint:
