@@ -81,9 +81,6 @@ docs: core core-min
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 	
 	# run node-jsdoc2
-	# this is not the best method because all the source methods and properties
-	# will be reported "defined in jsxgraphcore.js". But it'll do for now.
-	#$(JSDOC2) $(JSDOC2FLAGS) $(BUILDBIN)/jsxgraphcore.js
 	$(JSDOC2) $(JSDOC2FLAGS) src/$(FILELIST).js
 	
 	# zip -r tmp/docs.zip tmp/docs/
