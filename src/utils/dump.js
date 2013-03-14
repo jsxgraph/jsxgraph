@@ -164,11 +164,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         prepareAttributes: function (board, obj) {
             var a, s;
 
-            a = this.minimizeObject(obj.getAttributes(), board.options[obj.elType]);
+            a = this.minimizeObject(obj.getAttributes(), JXG.Options[obj.elType]);
 
             for (s in obj.subs) {
                 if (obj.subs.hasOwnProperty(s)) {
-                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(), board.options[obj.elType][s], board.options[obj.subs[s].elType]);
+                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(), JXG.Options[obj.elType][s], JXG.Options[obj.subs[s].elType]);
                     a[s].id = obj.subs[s].id;
                     a[s].name = obj.subs[s].name;
                 }
