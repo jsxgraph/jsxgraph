@@ -56,7 +56,7 @@ core-min:
 release: core-min docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
-	$(CP) $(BUILDBIN)/jsxgraphcore-min.js $(TMP)/jsxgraphcore.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraphcore.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.js $(TMP)/jsxgraphsrc.js
 	$(CP) $(OUTPUT)/docs.zip $(TMP)/docs.zip
 	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph.css
@@ -75,7 +75,7 @@ docs: core core-min
 	
 	# update template related files
 	$(CP) distrib/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
-	$(CP) $(BUILDBIN)/jsxgraphcore-min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) distrib/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
 	
 	# update the plugin

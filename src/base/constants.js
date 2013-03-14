@@ -50,7 +50,7 @@ define(['jxg'], function (JXG) {
          * Represents the currently used JSXGraph version.
          * @type {String}
          */
-        version: '0.97.1',
+        version: '0.97RC1',
 
         /**
          * The small gray version indicator in the top left corner of every JSXGraph board (if
