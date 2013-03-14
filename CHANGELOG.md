@@ -12,7 +12,7 @@ Important Notes
    * trunc: Use Math.floor
    * sgn: No replacement
  * New makefile: make.py was replaced by a GNU make Makefile. Type make core-min to build a jsxgraphcore.js and see
-   the Makefile for other build targets (245c1e3, 8d8ed2c, 824725e, 8b5aa0e)
+   the Makefile for other build targets (245c1e3, 8d8ed2c, 824725e, 8b5aa0e, 160964c, b8f576f, 1c2ee4a, 057e05d, df4a13a)
  * The GeonextParser now outputs JessieCode (https://github.com/jsxgraph/JessieCode) instead of JavaScript.
  * Board attributes in JXG.Options were moved from JXG.Options to JXG.Options.board (3e39b82):
    showCopyright, showNavigation, takeSizeFromFile, renderer, takeFirst, animationDelay, zoom, and pan.
@@ -28,7 +28,10 @@ Important Notes
  * The unused methods JXG.readOption and JXG.collectionContains were removed (f322fa6, 8879354)
  * JXG.JSXGraph.registerElement was moved to JXG.registerElement (e202e15)
  * XML parsing routines were moved from JXG.FileReader to JXG.XML (c2e25ac)
-
+ * Bugfix texts in headless environments (like WebWorkers or node) (97cb102)
+ * Export JXG namespace to WebWorker environments (f4816e1)
+ * Fix the size definition of SVG and Canvas renderers (e202a54, c0b40cc)
+ * Fix Tick creator function (41d97be)
 
 New features
 ------------
@@ -66,6 +69,8 @@ New features
  * Allow specific Geonext tags in texts (935df2b)
  * loadBoardFrom*() functions now accept a callback function which is called when the file readers are finished
    loading the construction (#33, 25aa537)
+ * New linear regression algorithm TheilSenRegression in math/statistics (3fdd673)
+ * Expose Turtle methods and properties to JC (f11c037)
 
 
 Bug fixes
