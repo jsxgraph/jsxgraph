@@ -37,7 +37,14 @@ New features
 ------------
  * Prepared "virtual finger" (2bd4583, d71230a, 11548fd, 11548fd, 3e7d1e5, 5134b0b, 45d3d76)
  * Snap to grid for lines (86b2295)
- * Take CSS transformations of type matrix, scale, and translate into consideration (a1da3b7)
+ * Hash marks for lines (#7, f8a6723, c2179a4, 2643817, ffbd40e, b548f59)
+ * Implemented Pointer API support (#18, 8820f3f, 4d22876, 235ee34, 97a3f6e, 24827d3, 535f871)
+ * Take CSS transformations of type matrix, scale, and translate into consideration (a1da3b7). This ensures better combatibility with EaselJS.
+ * New element 'tapemeasure' (f1698c2, e6bb86a, 5717f14)
+ * JXG.Math.Numerics.regressionPolynomial now also accepts arrays of JXG.Coords (2fef545)
+ * New linear regression algorithm TheilSenRegression in math/statistics (3fdd673)
+ * Polygon vertices will snap to grid if the polygon is dragged (19a5a1d)
+ * Implemented *innerPoints* attribute for ellipse (#20, 3a9180e)
  * Configure and use linting tools, minor refactoring (c790fcb, 5ec6a53, 9f1b6c4, 2545716, 985ea61,
    ee2be46, b2d95ce, 18d32e0, 479e39c, 069033a, 3e39b82, e139837, 3234de5, 20c6b43, 7f58c56, 367596a,
    fa4f5ec, 99da70a, b8a9ebd, 85637c9, 224a2a8, 56a9bdc, 27ba870, fe457c9, ae9f7a3, 27a03fe, 9e9f429,
@@ -49,9 +56,6 @@ New features
  * A predefined div can now be provided to jessiecode/jessiescript tags (550dcd2)
  * New arrow head for the SVG renderer (9b161a9)
  * New tick property: tickEndings (7bfc59c)
- * New element 'tapemeasure' (f1698c2, e6bb86a, 5717f14)
- * JXG.Math.Numerics.regressionPolynomial now also accepts arrays of JXG.Coords (2fef545)
- * Implemented Pointer API support (#18, 8820f3f, 4d22876, 235ee34, 97a3f6e, 24827d3, 535f871)
  * The interpolation along an array of (x,y) coordinates in Point.moveAlong() can be overriden (2ef875c)
  * Implemented the AMD pattern (e1dd0fc, e202e15, e4d74e2, e2ef764, 2d76afc, c451f7c, 0aea31e, 0260f46, 14d1a1e,
    c53fb42, 1d13837, 3c2fa9a, 82dcf24, f707aab, 8695226)
@@ -60,16 +64,12 @@ New features
  * JXG.merge: merge one object into another one without creating a copy (99bc1bc)
  * New property for ticks: *anchor*, defines the position of the tick with value 0 and accepts 'left', 'middle', and
    'right' (f8a6723, c2179a4, 2643817)
- * Hash marks for lines (#7, f8a6723, c2179a4, 2643817, ffbd40e, b548f59)
- * Polygon vertices will snap to grid if the polygon is dragged (19a5a1d)
- * Implemented *innerPoints* attribute for ellipse (#20, 3a9180e)
  * Enable the use of the Google caja html sanitizer function if available. The use is controlled via the 'usecaja'
    attribute for texts (3a9180e, 3205b13)
  * Don't analyze the content of a text if its new attribute 'parse' is set to false (3205b13)
  * Allow specific Geonext tags in texts (935df2b)
  * loadBoardFrom*() functions now accept a callback function which is called when the file readers are finished
    loading the construction (#33, 25aa537)
- * New linear regression algorithm TheilSenRegression in math/statistics (3fdd673)
  * Expose Turtle methods and properties to JC (f11c037)
 
 
