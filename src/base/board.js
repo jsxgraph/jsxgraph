@@ -3300,12 +3300,8 @@ define([
                 }
             }
 
-            if (JXG.elements[elementType] !== null) {
-                if (typeof JXG.elements[elementType] === 'function') {
-                    el = JXG.elements[elementType](this, parents, attributes);
-                } else {
-                    el = JXG.elements[elementType].creator(this, parents, attributes);
-                }
+            if (typeof JXG.elements[elementType] === 'function') {
+                el = JXG.elements[elementType](this, parents, attributes);
             } else {
                 throw new Error("JSXGraph: create: Unknown element type given: " + elementType);
             }
