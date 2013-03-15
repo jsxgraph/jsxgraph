@@ -558,25 +558,38 @@ define([
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
-                a = d / (1 + Math.sin(Math.PI - phi)),
-                beta = l.getAngle();
+            var beta = l.getAngle(),
+                d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
+                a, det,
+                A = l.point1.coords.usrCoords,
+                B = l.point2.coords.usrCoords,
+                M = F1.coords.usrCoords;
             
+            det = ( (B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0 ) ? 1 : -1;
+            a = det * d / (1 - Math.sin(phi));
+
             if (!suspendUpdate) {
                 polarForm(phi, suspendUpdate);
             }
-            return F1.X() - Math.cos(beta + phi) * a;
+
+            return F1.X() + Math.cos(phi + beta) * a;
         };
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
-                a = d / (1 + Math.sin(Math.PI - phi)),
-                beta = l.getAngle();
-
-            return F1.Y() - Math.sin(beta + phi) * a;
+            var beta = l.getAngle(),
+                d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
+                a, det,
+                A = l.point1.coords.usrCoords,
+                B = l.point2.coords.usrCoords,
+                M = F1.coords.usrCoords;
+            
+            det = ( (B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0 ) ? 1 : -1;
+            a = det * d / (1 - Math.sin(phi));
+                    
+            return F1.Y() + Math.sin(phi + beta) * a;
         };
-
+        
         curve.type = Const.OBJECT_TYPE_CONIC;
         M.addChild(curve);
 
