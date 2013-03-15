@@ -10,6 +10,8 @@
     <script type="text/javascript" src="../src/renderer/canvas.js"></script>
 </head>
 <body id="body">
+    
+<input type="button" id="schalter" onClick="toggleTrace()" value="Spur an">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
 <script type='text/javascript'>
@@ -55,18 +57,14 @@ JXG.Options.point.label = {};
     };
 
 if (true) {
-var brd = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
-var A = brd.create('point', [0,0],{layer:1, label:{display:'internal', layer:0}});
-var B = brd.create('point', [1,0]);
-var C = brd.create('point', [0,2]);
-var D = brd.create('point', [2,2]);
-var E = brd.create('point', [-3,2]);
-var li = brd.create('line', [A,B]);
-var ell = brd.create('ellipse', [A,B,C], {fixed:false, hasInnerPoints:false, fillColor:'none'});
-//var ell = brd.create('circle', [A,C], {fixed:false, hasInnerPoints:false});
-var g = brd.create('glider', [0,0,ell]);
-var t = brd.create('tangent', [g]);
+var trace = false;
 
+var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
+var A = board.create('point', [-1,2]);
+var B = board.create('point', [-1,-2]);
+var l = board.create('line', [A,B]);
+var C = board.create('point', [-3,1]);
+var el = board.create('parabola',[C,l]);
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
 

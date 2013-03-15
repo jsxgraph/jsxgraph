@@ -573,7 +573,7 @@ define([
             var d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
                 a = d / (1 + Math.sin(Math.PI - phi)),
                 beta = l.getAngle();
-            
+
             return F1.Y() - Math.sin(beta + phi) * a;
         };
 
