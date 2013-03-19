@@ -65,6 +65,9 @@ var B = board.create('point', [1,0]);
 var l = board.create('line', [function(){ return B.X(); }, function(){ return A.X(); }, function(){ return A.Y(); }]);
 var C = board.create('point', [0,1]);
 var el = board.create('parabola',[C,l, 0, 4*Math.PI/2]);
+var gl = board.create('glider',[-0.5,1,el]);
+var ta = board.create('tangent',[gl]);
+var D = board.create('point', [2,2]);
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
 

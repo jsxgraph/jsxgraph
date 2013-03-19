@@ -1685,7 +1685,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 // Golden section ratio
                 r = (3.0 - Math.sqrt(5.0)) * 0.5,
                 tol = Mat.eps,
-                sqrteps = Math.sqrt(Mat.eps),
+                sqrteps = Mat.eps, //Math.sqrt(Mat.eps),
                 maxiter = this.maxIterationsMinimize,
                 niter = 0,
                 nfev = 0;
