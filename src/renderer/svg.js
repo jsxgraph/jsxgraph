@@ -409,7 +409,7 @@ define([
 
         // already documented in JXG.AbstractRenderer
         updateImageStyle: function (el, doHighlight) {
-            var css = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
+            var css = doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass;
 
             el.rendNode.setAttributeNS(null, 'class', css);
         },
@@ -583,7 +583,7 @@ define([
             if (el.numberPoints <= 0) {
                 return '';
             }
-            
+
             len = Math.min(el.points.length, el.numberPoints);
 
             if (el.bezierDegree === 1) {
@@ -1095,10 +1095,11 @@ define([
             if (this.touchpoints && i >= 0 && 2 * i < this.touchpoints.length) {
                 x = pos[0];
                 y = pos[1];
-                this.touchpoints[2 * i].setAttributeNS(null, 'd', 'M ' + (x - d) + ' ' + (y) + ' ' +
-                    'L ' + (x + d) + ' ' + (y) + ' ' +
-                    'M ' + (x) + ' ' + (y - d) + ' ' +
-                    'L ' + (x) + ' ' + (y + d));
+
+                this.touchpoints[2 * i].setAttributeNS(null, 'd', 'M ' + (x - d) + ' ' + y + ' ' +
+                    'L ' + (x + d) + ' ' + y + ' ' +
+                    'M ' + x + ' ' + (y - d) + ' ' +
+                    'L ' + x + ' ' + (y + d));
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
         }

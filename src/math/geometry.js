@@ -1339,8 +1339,8 @@ define([
                 }
 
                 //t = Numerics.root(Numerics.D(minfunc), t);
-                t = Numerics.fminbr(minfunc, [t-delta, t+delta]);
-                
+                t = Numerics.fminbr(minfunc, [t - delta, t + delta]);
+
                 if (t < curve.minX()) {
                     t = curve.maxX() + t - curve.minX();
                 }
@@ -1511,7 +1511,7 @@ define([
 
                         if (!suspendUpdate) {
                             d = points[0].Dist(points[diag]);
-                            beta = Mat.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[(diag) % nr]);
+                            beta = Mat.Geometry.rad([points[0].X() + 1, points[0].Y()], points[0], points[diag % nr]);
                         }
 
                         if (isNaN(j)) {

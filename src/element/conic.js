@@ -186,26 +186,25 @@ define([
                 ayby = ay - by;
                 f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
 
-                curve.quadraticform =
-                    [
+                curve.quadraticform = [
                     [f * f - bx * bx - by * by, f * axbx / r + bx,      f * ayby / r + by],
                     [f * axbx / r + bx,         (axbx * axbx) / rr - 1, axbx * ayby / rr ],
                     [f * ayby / r + by,         axbx * ayby / rr,       (ayby * ayby) / rr - 1]
-                    ];
+                ];
             }
         };
-        
+
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
             var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) - r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
-                
+
             if (!suspendUpdate) {
                 polarForm(phi, suspendUpdate);
             }
-            
+
             return F[0].X() + Math.cos(beta + phi) * b;
         };
 
@@ -397,12 +396,11 @@ define([
                 ayby = ay - by;
                 f = (rr - ax * ax - ay * ay + bx * bx + by * by) / (2 * r);
 
-                curve.quadraticform =
-                    [
+                curve.quadraticform = [
                     [f * f - bx * bx - by * by, f * axbx / r + bx,      f * ayby / r + by],
                     [f * axbx / r + bx,         (axbx * axbx) / rr - 1, axbx * ayby / rr ],
                     [f * ayby / r + by,         axbx * ayby / rr,       (ayby * ayby) / rr - 1]
-                    ];
+                ];
             }
         };
 
@@ -416,7 +414,7 @@ define([
             if (!suspendUpdate) {
                 polarForm(phi, suspendUpdate);
             }
-                
+
             return F[0].X() + Math.cos(beta + phi) * b;
         };
 
@@ -481,7 +479,7 @@ define([
      * </script><pre>
      */
     JXG.createParabola = function (board, parents, attributes) {
-        var polarForm, curve, M, i, 
+        var polarForm, curve, M, i,
             // focus
             F1 = parents[0],
             // directrix
@@ -538,7 +536,7 @@ define([
         /** @ignore */
         polarForm = function (t, suspendUpdate) {
             var a, b, c, ab, px, py;
-            
+
             if (!suspendUpdate) {
                 a = l.stdform[1];
                 b = l.stdform[2];
@@ -546,26 +544,25 @@ define([
                 ab = a * a + b * b;
                 px = F1.X();
                 py = F1.Y();
-                  
-                curve.quadraticform = 
-                    [
+
+                curve.quadraticform = [
                     [(c * c - ab * (px * px + py * py)), c * a + ab * px, c * b + ab * py],
                     [c * a + ab * px,                  -b * b,          a * b],
                     [c * b + ab * py,                  a * b,           -a * a]
-                    ];
+                ];
             }
         };
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var beta = l.getAngle(),
+            var a, det,
+                beta = l.getAngle(),
                 d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
-                a, det,
                 A = l.point1.coords.usrCoords,
                 B = l.point2.coords.usrCoords,
                 M = F1.coords.usrCoords;
-            
-            det = ( (B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0 ) ? 1 : -1;
+
+            det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;
             a = det * d / (1 - Math.sin(phi));
 
             if (!suspendUpdate) {
@@ -577,19 +574,19 @@ define([
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var beta = l.getAngle(),
+            var a, det,
+                beta = l.getAngle(),
                 d = Geometry.distPointLine(F1.coords.usrCoords, l.stdform),
-                a, det,
                 A = l.point1.coords.usrCoords,
                 B = l.point2.coords.usrCoords,
                 M = F1.coords.usrCoords;
-            
-            det = ( (B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0 ) ? 1 : -1;
+
+            det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;
             a = det * d / (1 - Math.sin(phi));
-                    
+
             return F1.Y() + Math.sin(phi + beta) * a;
         };
-        
+
         curve.type = Const.OBJECT_TYPE_CONIC;
         M.addChild(curve);
 
