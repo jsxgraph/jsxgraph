@@ -81,6 +81,14 @@ define([
         this.board = board;
         this.isNumericMatrix = false;
         this.setMatrix(board, type, params);
+
+        this.methodMap = {
+            apply: 'apply',
+            applyOnce: 'applyOnce',
+            bindTo: 'bindTo',
+            bind: 'bind',
+            melt: 'melt'
+        };
     };
 
     JXG.Transformation.prototype = {};

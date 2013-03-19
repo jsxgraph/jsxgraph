@@ -237,7 +237,11 @@ define([
             getName: 'getName',
             addTransform: 'addTransform',
             setProperty: 'setAttribute',
-            setAttribute: 'setAttribute'
+            setAttribute: 'setAttribute',
+            animate: 'animate',
+            on: 'on',
+            off: 'off',
+            trigger: 'trigger'
         };
 
         /**

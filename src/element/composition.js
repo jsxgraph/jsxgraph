@@ -1828,6 +1828,11 @@ define([
             p.subs.label = t;
         }
 
+        /** @ignore */
+        p.Value = function () {
+            return Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
+        };
+
         /**
          * documented in JXG.Curve
          * @ignore
@@ -1899,6 +1904,14 @@ define([
          * @type Glider
          */
         p.curveRight = pb_on_curve;
+
+        p.methodMap = JXG.deepCopy(p.methodMap, {
+            curveLeft: 'curveLeft',
+            baseLeft: 'baseLeft',
+            curveRight: 'curveRight',
+            baseRight: 'baseRight',
+            Value: 'Value'
+        });
 
         /**
          * documented in GeometryElement

@@ -128,9 +128,15 @@ define([
         // create label
         this.createLabel();
 
-        this.methodMap.borders = 'borders';
-        this.methodMap.vertices = 'vertices';
-
+        this.methodMap = JXG.deepCopy(this.methodMap, {
+            borders: 'borders',
+            vertices: 'vertices',
+            A: 'Area',
+            Area: 'Area',
+            addPoints: 'addPoints',
+            insertPoints: 'insertPoints',
+            removePoints: 'removePoints'
+        });
     };
 
     JXG.Polygon.prototype = new GeometryElement();

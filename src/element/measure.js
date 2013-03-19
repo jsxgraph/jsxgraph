@@ -131,6 +131,7 @@ define([
         }
 
         // override the segments's remove method to ensure the removal of all elements
+        /** @ignore */
         li.remove = function () {
             if (withTicks) {
                 li.removeTicks(ti);
@@ -140,6 +141,11 @@ define([
             board.removeObject(p1);
 
             GeometryElement.prototype.remove.call(this);
+        };
+
+        /** @ignore */
+        li.Value = function () {
+            return p1.Dist(p2);
         };
 
         p1.dump = false;
@@ -155,6 +161,10 @@ define([
         if (withTicks) {
             ti.dump = false;
         }
+
+        li.methodMap = JXG.deepCopy(li.methodMap, {
+            Value: 'Value'
+        });
 
         return li;
     };

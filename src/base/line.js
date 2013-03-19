@@ -138,6 +138,20 @@ define([
 
         // create Label
         this.createLabel();
+
+        this.methodMap = JXG.deepCopy(this.methodMap, {
+            point1: 'point1',
+            point2: 'point2',
+            getSlope: 'getSlope',
+            getRise: 'getRise',
+            getYIntersect: 'getRise',
+            getAngle: 'getAngle',
+            L: 'L',
+            length: 'L',
+            addTicks: 'addTicks',
+            removeTicks: 'removeTicks',
+            removeAllTicks: 'removeAllTicks'
+        });
     };
 
     JXG.Line.prototype = new GeometryElement();

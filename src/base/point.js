@@ -128,11 +128,18 @@ define([
         // documented in GeometryElement
         this.methodMap = Type.deepCopy(this.methodMap, {
             move: 'moveTo',
+            moveTo: 'moveTo',
+            moveAlong: 'moveAlong',
+            visit: 'visit',
             glide: 'makeGlider',
+            makeGlider: 'makeGlider',
             X: 'X',
             Y: 'Y',
             free: 'free',
-            setPosition: 'setGliderPosition'
+            setPosition: 'setGliderPosition',
+            setGliderPosition: 'setGliderPosition',
+            addConstraint: 'addConstraint',
+            dist: 'Dist'
         });
 
         /**

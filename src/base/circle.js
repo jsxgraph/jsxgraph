@@ -187,7 +187,10 @@ define([
         this.methodMap = Type.deepCopy(this.methodMap, {
             setRadius: 'setRadius',
             getRadius: 'getRadius',
-            radius: 'Radius'
+            radius: 'Radius',
+            center: 'center',
+            line: 'line',
+            point2: 'point2'
         });
     };
 

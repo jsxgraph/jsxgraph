@@ -122,6 +122,12 @@ define([
              */
             cent.p3 = p3;
 
+            cent.methodMap = JXG.deepCopy(cent.methodMap, {
+                p1: 'p1',
+                p2: 'p2',
+                p3: 'p3'
+            });
+
             /**
              * documented in geometry element
              * @ignore

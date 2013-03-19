@@ -393,6 +393,14 @@ define([
         // documentation in jxg.circle
         el.updateStdform = Circle.Circle.prototype.updateStdform;
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            getRadius: 'getRadius',
+            radius: 'Radius',
+            center: 'center',
+            radiuspoint: 'radiuspoint',
+            anglepoint: 'anglepoint'
+        });
+
         el.prepareUpdate().update();
         return el;
     };

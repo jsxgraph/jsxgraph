@@ -105,6 +105,18 @@ define([
                 }
             }
         }
+
+        this.methodMap = {
+            ungroup: 'ungroup',
+            add: 'addPoint',
+            addPoint: 'addPoint',
+            addPoints: 'addPoints',
+            addGroup: 'addGroup',
+            remove: 'removePoint',
+            removePoint: 'removePoint',
+            setAttribute: 'setAttribute',
+            setProperty: 'setAttribute'
+        };
     };
 
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {

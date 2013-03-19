@@ -145,6 +145,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         this.dump = true;
         this.subs = {};
+
+        this.methodMap = {
+            setAttribute: 'setAttribute',
+            setProperty: 'setAttribute',
+            add: 'add',
+            remove: 'remove'
+        };
     };
 
     JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
@@ -168,6 +175,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     this.elements[what] = element;
                 }
                 this[what] = element;
+
+                this.methodMap[what] = element;
 
                 return true;
             }

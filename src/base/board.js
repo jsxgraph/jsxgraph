@@ -157,7 +157,7 @@ define([
         this.containerObj = (Env.isBrowser ? document.getElementById(this.container) : null);
 
         if (Env.isBrowser && this.containerObj === null) {
-            throw new Error("\nJSXGraph: HTML container element '" + (container) + "' not found.");
+            throw new Error("\nJSXGraph: HTML container element '" + container + "' not found.");
         }
 
         /**
@@ -485,10 +485,22 @@ define([
             update: 'update',
             on: 'on',
             off: 'off',
+            trigger: 'trigger',
             setView: 'setBoundingBox',
             setBoundingBox: 'setBoundingBox',
             migratePoint: 'migratePoint',
-            colorblind: 'emulateColorblindness'
+            colorblind: 'emulateColorblindness',
+            suspendUpdate: 'suspendUpdate',
+            unsuspendUpdate: 'unsuspendUpdate',
+            clearTraces: 'clearTraces',
+            left: 'clickLeftArrow',
+            right: 'clickRightArrow',
+            up: 'clickUpArrow',
+            down: 'clickDownArrow',
+            zoomIn: 'zoomIn',
+            zoomOut: 'zoomOut',
+            zoom100: 'zoom100',
+            zoomElements: 'zoomElements'
         };
     };
 
@@ -2600,6 +2612,8 @@ define([
 
         /**
          * Zooms into the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
+         * @param {Number} [x]
+         * @param {Number} [y]
          * @returns {JXG.Board} Reference to the board
          */
         zoomIn: function (x, y) {
@@ -2626,6 +2640,8 @@ define([
 
         /**
          * Zooms out of the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
+         * @param {Number} [x]
+         * @param {Number} [y]
          * @returns {JXG.Board} Reference to the board
          */
         zoomOut: function (x, y) {

@@ -96,6 +96,10 @@ define([
             this.board.renderer.hide(this);
         }
 
+        this.methodMap = JXG.deepCopy(this.methodMap, {
+            addTransformation: 'addTransform',
+            trans: 'addTransform'
+        });
     };
 
     JXG.Image.prototype = new GeometryElement();

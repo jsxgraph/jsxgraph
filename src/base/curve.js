@@ -119,7 +119,8 @@ define([
         }
 
         this.methodMap = Type.deepCopy(this.methodMap, {
-            generateTerm: 'generateTerm'
+            generateTerm: 'generateTerm',
+            setTerm: 'generateTerm'
         });
     };
 

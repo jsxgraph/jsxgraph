@@ -148,6 +148,14 @@ define([
         // useDirection is necessary for circumCircleSectors
         el.useDirection = attributes.usedirection;
 
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            center: 'center',
+            radiuspoint: 'radiuspoint',
+            anglepoint: 'anglepoint',
+            radius: 'getRadius',
+            getRadius: 'getRadius'
+        });
+
         /**
          * documented in JXG.Curve
          * @ignore
@@ -663,11 +671,6 @@ define([
             el.Value = function () {
                 return Geometry.rad(this.point2, this.point1, this.point3);
             };
-
-            el.methodMap = Type.deepCopy(el.methodMap, {
-                Value: 'Value'
-            });
-
         } else {
             throw new Error("JSXGraph: Can't create angle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
@@ -713,6 +716,12 @@ define([
             }
             return this;
         };
+
+        el.methodMap = Type.deepCopy(el.methodMap, {
+            Value: 'Value',
+            setAngle: 'setAngle',
+            free: 'free'
+        });
 
         return el;
     };
