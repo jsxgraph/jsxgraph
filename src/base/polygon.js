@@ -248,17 +248,20 @@ define([
 
         /**
          * Hide the polygon including its border lines. It will still exist but not visible on the board.
+         * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
+         * borders, i.e. the borders will not be hidden.
          */
-        hideElement: function () {
+        hideElement: function (borderless) {
             var i;
 
             this.visProp.visible = false;
             this.board.renderer.hide(this);
 
-            /*
-             for(i = 0; i < this.borders.length; i++) {
-             this.borders[i].hideElement();
-             }*/
+            if (!borderless) {
+                for (i = 0; i < this.borders.length; i++) {
+                    this.borders[i].hideElement();
+                }
+            }
 
             if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
@@ -270,17 +273,20 @@ define([
 
         /**
          * Make the element visible.
+         * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
+         * borders, i.e. the borders will not be hidden.
          */
-        showElement: function () {
+        showElement: function (borderless) {
             var i;
 
             this.visProp.visible = true;
             this.board.renderer.show(this);
 
-            /*
-             for(i = 0; i < this.borders.length; i++) {
-             this.borders[i].showElement();
-             }*/
+            if (!borderless) {
+                for (i = 0; i < this.borders.length; i++) {
+                    this.borders[i].showElement();
+                }
+            }
 
             if (this.hasLabel && Type.exists(this.label)) {
                 if (this.label.content.visProp.visible) {
