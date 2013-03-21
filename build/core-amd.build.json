@@ -1,0 +1,14 @@
+{
+    "baseUrl": "../src/",
+    "name": "../node_modules/almond/almond",
+    "include": [
+        "../build/core-amd.deps.js"
+    ],
+    "wrap": {
+        "start": "define(function () {\n",
+        "end": "\n\nreturn require('../build/core-amd.deps.js');\n}());"
+    },
+    "out": './bin/jsxgraphcore-amd.js',
+    "optimize": "uglify2",
+    "preserveLicenseComments": false
+}

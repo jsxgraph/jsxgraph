@@ -44,6 +44,7 @@ all: core core-min readers docs
 
 
 core:
+	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json
 
 
@@ -51,6 +52,11 @@ core-min:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
+
+
+core-amd:
+	$(REQUIREJS) -o $(BUILD)/core-amd.build.json
+	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-amd.js; } > $(BUILDBIN)/jsxgraphcore.amd.js
 
 
 release: core-min docs
