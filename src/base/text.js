@@ -215,7 +215,7 @@ define([
                 this.needsSizeUpdate = true;
             } else {
                 if (Type.isNumber(text)) {
-                    this.content = (text).toFixed(this.visProp.digits);
+                    this.content = text.toFixed(this.visProp.digits);
                 } else {
                     if (this.visProp.useasciimathml) {
                         // Convert via ASCIIMathML
@@ -307,6 +307,17 @@ define([
             }
 
             return this;
+        },
+
+        /**
+         * Decode unicode entities into characters.
+         * @param {String} string
+         * @returns {String}
+         */
+        utf8_decode : function (string) {
+            return string.replace(/&#x(\w+);/g, function (m, p1) {
+                return String.fromCharCode(parseInt(p1, 16));
+            });
         },
 
         /**
@@ -436,6 +447,10 @@ define([
                     this.updateCoords();
                 }
                 this.updateText();
+
+                if (this.visProp.display === 'internal') {
+                    this.plaintext = this.utf8_decode(this.plaintext);
+                }
 
                 if (this.needsSizeUpdate) {
                     this.updateSize();
