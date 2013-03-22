@@ -293,10 +293,29 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateRenderer: function () {
+            var wasReal;
+            
             if (this.needsUpdate && this.visProp.visible) {
-                this.board.renderer.updateCurve(this);
-                this.needsUpdate = false;
+                wasReal = this.isReal;
+                this.checkReal();
 
+                if (this.isReal) {
+                    if (wasReal !== this.isReal) {
+                        this.board.renderer.show(this);
+                        if (this.hasLabel && this.label.content.visProp.visible) {
+                            this.board.renderer.show(this.label.content);
+                        }
+                    }
+                    this.board.renderer.updateCurve(this);
+                } else {
+                    if (wasReal !== this.isReal) {
+                        this.board.renderer.hide(this);
+                        if (this.hasLabel && this.label.content.visProp.visible) {
+                            this.board.renderer.hide(this.label.content);
+                        }
+                    }
+                }
+                
                 // Update the label if visible.
                 if (this.hasLabel && this.label.content.visProp.visible) {
                     this.label.content.update();
@@ -400,6 +419,23 @@ define([
             return this;
         },
 
+        /**
+         * Check if at least one point on the curve is finite and real.
+         **/
+        checkReal: function() {
+            var b = false, i, p,
+                len = this.numberPoints;
+            
+            for (i = 0; i < len; i++) {
+                p = this.points[i].usrCoords;
+                if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > Mat.eps) {
+                    b = true;
+                    break;
+                }
+            }
+            this.isReal = b;
+        },
+        
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>false</tt>.
          * @param {Number} mi Left bound of curve

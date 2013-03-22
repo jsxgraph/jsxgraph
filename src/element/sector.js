@@ -174,6 +174,12 @@ define([
                 z = B.Z(),
                 PI2 = Math.PI * 0.5;
 
+            if (!A.isReal || !B.isReal || !C.isReal) {
+                this.dataX = [NaN];
+                this.dataY = [NaN];
+                return;
+            }
+
             // This is true for circumCircleArcs. In that case there is
             // a fourth parent element: [midpoint, point1, point3, point2]
             if (this.useDirection) {

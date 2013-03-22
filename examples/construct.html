@@ -62,13 +62,14 @@ var trace = false;
 var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
 var A = board.create('point', [-2,0]);
 var B = board.create('point', [1,0]);
-var l = board.create('line', [function(){ return B.X(); }, function(){ return A.X(); }, function(){ return A.Y(); }]);
-var C = board.create('point', [0,1]);
-var el = board.create('parabola',[C,l, 0, 4*Math.PI/2]);
-var gl = board.create('glider',[-0.5,1,el]);
-var ta = board.create('tangent',[gl]);
-var D = board.create('point', [2,2]);
-var t = board.create('text',[1,1,"Š ŠĐŽĆČ šđžćč ЉЊШЂЖЋ љњшђжч"], {display:'internal', parse:false});
+var c = board.create('circle', [A,B]);
+var li = board.create('line', [0,1,0]);
+var I1 = board.create('intersection', [li,c,0], {withLabel:false, name:''});
+var I2 = board.create('intersection', [li,c,1], {withLabel:false, name:''});
+var C = board.create('point', [2,1]);
+
+var alpha = board.create('angle', [I1,C,I2]);
+var cu = board.create('functiongraph', [function(x){ return x*x*I1.Dist(I2);}], {withLabel:true});
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
 
