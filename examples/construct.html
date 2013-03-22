@@ -60,16 +60,9 @@ if (true) {
 var trace = false;
 
 var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
-var A = board.create('point', [-2,0]);
-var B = board.create('point', [1,0]);
-var c = board.create('circle', [A,B]);
-var li = board.create('line', [0,1,0]);
-var I1 = board.create('intersection', [li,c,0], {withLabel:false, name:''});
-var I2 = board.create('intersection', [li,c,1], {withLabel:false, name:''});
-var C = board.create('point', [2,1]);
+    var A = board.create('point', [-2,0]);
+    var T = board.create('text', [-0.5,0.2, 'Hallo'], {anchor:A.id});
 
-var alpha = board.create('angle', [I1,C,I2]);
-var cu = board.create('functiongraph', [function(x){ return x*x*I1.Dist(I2);}], {withLabel:true});
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
 
