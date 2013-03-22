@@ -698,7 +698,11 @@
 
                 case JXG.GENTYPE_TEXT:
                     set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
-                    set_str += attrid + ' name: \'' + step.dest_id + '\'>>; ' + step.dest_id + '.setText(' + step.args.str;
+                    set_str += attrid + ' name: \'' + step.dest_id + '\'';
+                    if (typeof step.args.anchor != 'undefined') {
+                        set_str += ', anchor: ' + step.args.anchor;
+                    }
+                    set_str += '>>; ' + step.dest_id + '.setText(' + step.args.str;
                     set_str += '); ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
