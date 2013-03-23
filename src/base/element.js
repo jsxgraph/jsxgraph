@@ -551,7 +551,7 @@ define([
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
                 if (this.label.content.visProp.visible) {
-                    this.board.renderer.hide(this.label.content);
+                    this.label.content.hideElement();
                 }
             }
             return this;
@@ -566,8 +566,8 @@ define([
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (this.label.content.visProp.visible) {
-                    this.board.renderer.show(this.label.content);
+                if (!this.label.content.visProp.visible) {
+                    this.label.content.showElement().updateRenderer();
                 }
             }
             return this;

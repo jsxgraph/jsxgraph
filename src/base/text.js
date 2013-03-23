@@ -440,8 +440,6 @@ define([
          * is called.
          */
         update: function () {
-            var anchor, sx, sy;
-
             if (this.needsUpdate) {
                 if (!this.visProp.frozen) {
                     this.updateCoords();
