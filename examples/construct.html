@@ -11,7 +11,7 @@
 </head>
 <body id="body">
     
-<input type="button" id="schalter" onClick="toggleTrace()" value="Spur an">
+<input type="button" id="schalter" onClick="stempel()" value="Spur an">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
 <script type='text/javascript'>
@@ -55,6 +55,10 @@ JXG.Options.point.label = {};
         c.prepareUpdate().update().updateRenderer();
         return c;
     };
+
+var stempel = function(element) {
+    element.cloneToBackground();
+};
 
 if (true) {
 var trace = false;
