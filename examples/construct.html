@@ -11,7 +11,7 @@
 </head>
 <body id="body">
     
-<input type="button" id="schalter" onClick="stempel()" value="Spur an">
+<input type="button" id="schalter" onClick="A.remove(); board.fullUpdate()" value="Spur an">
 <div id='jxgbox' class='jxgbox' style='width:600px; height:600px;'></div>
 
 <script type='text/javascript'>
@@ -63,10 +63,20 @@ var stempel = function(element) {
 if (true) {
 var trace = false;
 
-var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:true});
-    var A = board.create('point', [-2,0]);
-    var T = board.create('text', [-0.5,0.2, 'Hallo'], {anchor:A.id});
-
+var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:false});
+    var sli = board.create('slider', [[-2,1],[1,1],[0,1,10]]
+        ,{
+            point1: {visible:true, fixed:false, needsRegularUpdate:true},
+            point2: {visible:true, fixed:false, needsRegularUpdate:true},
+            baseline: {visible:true, needsRegularUpdate:true},
+            ticks: {visible:true, needsRegularUpdate:true}
+        }
+        );
+/*    
+    sli.point1.moveTo([0,0]);
+    sli.point2.moveTo([3,0]);
+    board.fullUpdate();
+*/
 } else {
 var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
 

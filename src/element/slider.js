@@ -259,13 +259,8 @@ define([
             if (withText) {
                 board.removeObject(t);
             }
-
+            
             board.removeObject(l2);
-
-            if (withTicks) {
-                l1.removeTicks(ti);
-            }
-
             board.removeObject(l1);
             board.removeObject(p2);
             board.removeObject(p1);
