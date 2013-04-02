@@ -298,7 +298,7 @@
                     reset_str += step.dest_sub_ids[3] + '; delete ' + step.dest_sub_ids[2] + '; delete ';
                     reset_str += step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
                     break;
-
+/*
                 case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
                     if (step.args.create_line) {
                         sub_id = step.dest_sub_ids[2];
@@ -308,7 +308,7 @@
                     } else {
                         sub_id = step.src_ids[2];
                     }
-
+/
                     set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
                     set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
                     set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
@@ -317,7 +317,7 @@
                     reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
                     break;
-
+*/
                 case JXG.GENTYPE_BISECTOR:
                     if (step.args.create_point) {
                         // TODO: use "if (options.useGlider) {"
@@ -417,17 +417,34 @@
                     break;
 
                 case JXG.GENTYPE_MIGRATE:
-                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + '); ';
+                    set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + ', false); ';
 
                     if (step.args && step.args.undoIsFreeing) {
+
+                        var o, gl, uc1, uc2;
+
                         reset_str = step.dest_id + '.free(); ' + step.dest_id;
                         reset_str += '.fillColor = \'' + step.args.fillColor + '\'; ' + step.dest_id;
                         reset_str += '.strokeColor = \'' + step.args.strokeColor + '\'; ';
 
-                        reset_str += 'point(' + step.dest_id + '.X(), ' + step.dest_id + '.Y())';
+                        uc1 = step.args.usrCoords[1];
+                        uc2 = step.args.usrCoords[2];
+
+                        reset_str += 'point(' + uc1 + ', ' + uc2 + ')';
                         reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
 
-                        reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + '); ';
+                        reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + ', false); ';
+
+                        o = GUI.board.objects[step.dest_id];
+                        gl = o.slideObject.id;
+
+                        uc1 = o.coords.usrCoords[1];
+                        uc2 = o.coords.usrCoords[2];
+
+                        reset_str +=  assign + 'point(' + uc1 + ', ' + uc2 + ') ';
+                        reset_str += '<<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                        reset_str += step.dest_id + '.glide(' + gl + '); ';
+
                     } else {
                         reset_str = 'delete ' + step.dest_id + '; ';
                     }
@@ -966,7 +983,7 @@
                     reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
 
                     break;
-
+/*
                 case JXG.GENTYPE_TRANSFORM:
 
                     set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
@@ -977,7 +994,7 @@
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
 
                     break;
-
+*/
                 case JXG.GENTYPE_MOVEMENT:
 
                     if (step.args.obj_type === JXG.OBJECT_TYPE_LINE) {

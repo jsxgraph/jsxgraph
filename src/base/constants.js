@@ -106,7 +106,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_TANGENT: 6,
         GENTYPE_PARALLEL: 7,
         GENTYPE_BISECTORLINES: 8,
-        GENTYPE_PERPENDICULAR_BISECTOR: 9,
+//        GENTYPE_PERPENDICULAR_BISECTOR: 9, // unused
         GENTYPE_BISECTOR: 10,
         GENTYPE_NORMAL: 11,
         GENTYPE_POINT: 12,
@@ -138,7 +138,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_ROTATE: 44,
         GENTYPE_ABLATION: 45,
         GENTYPE_MIGRATE: 46,
-        GENTYPE_TRANSFORM: 47,
+//        GENTYPE_TRANSFORM: 47, // unused
         // 48 ... 50 // unused ...
 
         // Important:

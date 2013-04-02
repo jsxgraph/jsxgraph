@@ -3559,6 +3559,9 @@ define([
             src = this.select(src);
             dest = this.select(dest);
 
+            if (src.label.content)
+                this.removeObject(src.label.content);
+
             for (childId in src.childElements) {
                 if (src.childElements.hasOwnProperty(childId)) {
                     child = src.childElements[childId];
