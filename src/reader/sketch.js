@@ -420,7 +420,7 @@
 
                     set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + ', false); ';
 
-                    if (step.args && step.args.undoIsFreeing) {
+                    if (step.args && step.args.migrateToGlider) {
 
                         var o, gl, uc1, uc2;
 
@@ -433,7 +433,6 @@
 
                         reset_str += 'point(' + uc1 + ', ' + uc2 + ')';
                         reset_str += ' <<id: \'' + step.src_ids[0] + '\', name: \'\'>>' + '; ';
-
                         reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + ', false); ';
                         reset_str += step.src_ids[0] + '.name = \'' + step.args.orig_name + '\'; ';
                         reset_str += step.src_ids[0] + '.label.setText(\'' + step.args.orig_name + '\'); ';
