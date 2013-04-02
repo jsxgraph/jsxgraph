@@ -396,7 +396,7 @@
 
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += ') <<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
 
@@ -408,7 +408,7 @@
 
                 case JXG.GENTYPE_INTERSECTION:
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
-                    set_str += ') <<' + attrid + ' fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    set_str += ') <<' + attrid + ' fillColor: \'' + JXG.Options.intersection.fillColor + '\'>>; ';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
                         reset_str = 'delete ' + step.dest_id + '; ';
@@ -417,6 +417,7 @@
                     break;
 
                 case JXG.GENTYPE_MIGRATE:
+
                     set_str = '$board.migratePoint(' + step.src_ids[0] + ', ' + step.dest_id + ', false); ';
 
                     if (step.args && step.args.undoIsFreeing) {
@@ -431,9 +432,11 @@
                         uc2 = step.args.usrCoords[2];
 
                         reset_str += 'point(' + uc1 + ', ' + uc2 + ')';
-                        reset_str += ' <<id: \'' + step.src_ids[0] + '\'>>' + '; ';
+                        reset_str += ' <<id: \'' + step.src_ids[0] + '\', name: \'\'>>' + '; ';
 
                         reset_str += '$board.migratePoint(' + step.dest_id + ', ' + step.src_ids[0] + ', false); ';
+                        reset_str += step.src_ids[0] + '.name = \'' + step.args.orig_name + '\'; ';
+                        reset_str += step.src_ids[0] + '.label.setText(\'' + step.args.orig_name + '\'); ';
 
                         o = GUI.board.objects[step.dest_id];
                         gl = o.slideObject.id;
@@ -442,7 +445,7 @@
                         uc2 = o.coords.usrCoords[2];
 
                         reset_str +=  assign + 'point(' + uc1 + ', ' + uc2 + ') ';
-                        reset_str += '<<' + attrid + 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                        reset_str += '<<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'>>; ';
                         reset_str += step.dest_id + '.glide(' + gl + '); ';
 
                     } else {
