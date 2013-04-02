@@ -438,7 +438,7 @@
                         reset_str += step.src_ids[0] + '.name = \'' + step.args.orig_name + '\'; ';
                         reset_str += step.src_ids[0] + '.label.setText(\'' + step.args.orig_name + '\'); ';
 
-                        o = GUI.board.objects[step.dest_id];
+                        o = board.objects[step.dest_id];
                         gl = o.slideObject.id;
 
                         uc1 = o.coords.usrCoords[1];
