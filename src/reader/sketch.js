@@ -976,13 +976,11 @@
 
                     set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ';
 
-                    if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
-                    } else {
-                        reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
-                    }
+                     }
 
-                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
 
                     break;
 /*
