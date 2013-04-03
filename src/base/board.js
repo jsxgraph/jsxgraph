@@ -1111,14 +1111,12 @@ define([
                 xy.push(obj.point2.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 xy.push(obj.center.coords.usrCoords);
-            } else if (obj.type === Const.OBJECT_TYPE_GLIDER) {
-                xy.push([obj.position, obj.position, obj.position]);
             } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
                 len = obj.vertices.length - 1;
                 for (i = 0; i < len; i++) {
                     xy.push(obj.vertices[i].coords.usrCoords);
                 }
-            } else if (obj.elementClass === Const.OBJECT_CLASS_POINT) {
+            } else if (obj.elementClass === Const.OBJECT_CLASS_POINT || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
             // TODO
