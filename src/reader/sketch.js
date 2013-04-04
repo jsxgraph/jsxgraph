@@ -131,7 +131,7 @@
          */
         generateJCode: function (step, board, step_log) {
             var i, j, k, sub_id, str, str1, str2, objects, pid1, pid2, pid3,
-                xstart, ystart, el, arr, step2, options, assign, attrid, type,
+                xstart, ystart, el, arr, step2, options, assign, attrid,
                 copy_log = [],
                 set_str = '',
                 reset_str = '',
@@ -381,7 +381,7 @@
                     set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                     set_str += ')' + (options.useSymbols ? '' : ' <<id: \'' + step.dest_id + '\''
                         + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
-                        + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + ';';
+                        + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>') + '; ';
 
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
