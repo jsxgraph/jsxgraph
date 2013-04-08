@@ -1422,6 +1422,18 @@ define([
             highlightFillColor: '#00FF00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
+            radiuspoint: {
+                visible: false,
+                withLabel: false
+            },
+            center: {
+                visible: false,
+                withLabel: false
+            },
+            anglepoint: {
+                visible: false,
+                withLabel: false
+            },
             label: {
                 offset: [0, 0]
             }
