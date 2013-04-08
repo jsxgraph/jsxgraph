@@ -814,7 +814,7 @@
                         if (step.args.isPolar)
                             set_str += 'curveType: \'polar\', ';
 
-                        set_str += attrid + ' name:\'' + step.dest_id + '\'>>; ';
+                        set_str += attrid + ' name:\'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
                         reset_str = 'delete ' + step.dest_id + '; ';
 
                     } else {
