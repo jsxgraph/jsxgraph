@@ -273,8 +273,8 @@ define([
      * @class This is used to construct a perpendicular point.
      * @pseudo
      * @description A perpendicular point is given by a point and a line. It is determined by projecting the given point
-     * orthogonal onto the given line. This used in GEONExTReader only. All other applications should use
-     * orthogonal projection.
+     * orthogonal onto the given line. This element should be used in GEONExTReader only. All other applications should
+     * use orthogonal projection {@link Orthogonalprojection}.
      * @constructor
      * @name PerpendicularPoint
      * @type JXG.Point
