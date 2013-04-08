@@ -49,7 +49,12 @@ define([], function () {
 
     var jxg = {};
 
-    if (typeof JXG === 'object') {
+    // make sure JXG.extend is not defined
+    // If jsxgraph is loaded via loadjsxgraph.js, this is required, but JXG.extend will be undefined
+    // If jsxgraph is compiled as an amd module, it is possible that another jsxgraph version is already loaded and we
+    // therefore must not re-use the global JXG variable. But in this case JXG.extend will already be defined.
+    // This is the reason for this check.
+    if (typeof JXG === 'object' && !JXG.extend) {
         jxg = JXG;
     }
 
