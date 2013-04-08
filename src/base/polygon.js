@@ -274,7 +274,7 @@ define([
         /**
          * Make the element visible.
          * @param {Boolean} [borderless=false] If set to true, the polygon is treated as a polygon without
-         * borders, i.e. the borders will not be hidden.
+         * borders, i.e. the borders will not be shown.
          */
         showElement: function (borderless) {
             var i;
@@ -285,6 +285,7 @@ define([
             if (!borderless) {
                 for (i = 0; i < this.borders.length; i++) {
                     this.borders[i].showElement();
+                    this.borders[i].updateRenderer();
                 }
             }
 
