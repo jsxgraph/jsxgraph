@@ -719,7 +719,9 @@ define([
             highlightcolors: null,
             fillcolor: null,
             highlightonsector: false,
-            highlightbysize: false
+            highlightbysize: false,
+            label: {
+            }
         },
 
         /*special circle options */

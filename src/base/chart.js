@@ -183,6 +183,7 @@ define([
             var i, strwidth, fill, fs, text, w, xp0, xp1, xp2, yp, colors,
                 pols = [],
                 p = [],
+                attr,
 
                 makeXpFun = function (i, f) {
                     return function () {
@@ -218,7 +219,9 @@ define([
             }
 
             fill = attributes.fillcolor;
-            fs = parseFloat(board.options.text.fontSize);
+
+            attr = Type.copyAttributes(attributes, board.options, 'chart', 'label');   
+            fs = parseFloat(attr.fontsize);
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
@@ -251,7 +254,7 @@ define([
                             yp -= fs * strwidth / board.unitX;
                         }
                         xp1 -= fs * 0.2 / board.unitY;
-                        text = board.create('text', [yp, xp1, attributes.labels[i]], attributes);
+                        text = board.create('text', [yp, xp1, attributes.labels[i]].toString(), attr);
                     }
                 } else { // vertical bars
                     p[0] = board.create('point', [xp0, 0], hiddenPoint);
@@ -270,7 +273,7 @@ define([
                             // Static offset for label
                             yp -= fs / board.unitY;
                         }
-                        text = board.create('text', [xp1 - strwidth * 0.5, yp, attributes.labels[i]], attributes);
+                        text = board.create('text', [xp1 - strwidth * 0.5, yp, attributes.labels[i].toString()], attr);
                     }
                 }
 

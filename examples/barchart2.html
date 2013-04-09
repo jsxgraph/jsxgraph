@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <title></title>
+        <script type="text/javascript" src="../distrib/jquery.min.js"></script>
+        <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    </head>
+    <body class="jsxgraph_body">
+        <div id="jxgbox" class="jxgbox" style="width:700; height:400;"></div>
+        <!-- Drawing area -->
+        <script type="text/javascript">
+            /* <![CDATA[ */
+            board = JXG.JSXGraph.initBoard('jxgbox', {keepaspectratio:false, boundingbox:[-0.5,8,9,-2],axis:true});
+
+            var f = [4,2,-1,3,6,7,2];
+            var chart = board.createElement('chart', f, 
+                {chartStyle:'bar',
+                 width:0.8,
+                 labels:f,
+                 colorArray:['#8E1B77','#BE1679','#DC1765','#DA2130','#DB311B','#DF4917','#E36317','#E87F1A',
+                             '#F1B112','#FCF302','#C1E212'],
+                 label: {fontSize:30, display:'internal', anchorX:'left', rotate:90}
+            });
+
+        /* ]]> */
+        </script>
+    </body>
+</html>
