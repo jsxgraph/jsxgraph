@@ -53,7 +53,12 @@ JXG.Options = JXG.merge(JXG.Options, {
             position: 'bot',
             offsets: [0,-12]
         }
+    },
+    
+    text: {
+        fontSize: 16
     }
+    
 /*
     line: {
         strokeColor: '#f00' // can't see red lines anymore for NOW ...

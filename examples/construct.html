@@ -60,8 +60,9 @@ var stempel = function(element) {
     element.cloneToBackground();
 };
 
-if (true) {
+if (false) {
 var trace = false;
+
 
 var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:false});
     var sli = board.create('slider', [[-2,1],[1,1],[0,1,10]]
@@ -78,12 +79,46 @@ var board = JXG.JSXGraph.initBoard('jxgbox',{boundingbox: [-4, 4, 4, -4], axis:f
     board.fullUpdate();
 */
 } else {
-var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true});
+	brdyy = JXG.JSXGraph.initBoard('jxgbox',{axis:false, boundingbox: [-2, 4.9, 15, 0]});
+	brdyy.options.text.anchorY = 'top';
+	
+	brdyy.create("text", [-1.5, 1.5, "<strong>b)</strong>"]);
+	brdyy.create("text", [-1.5, 3.5, "<strong>a)</strong>"]);
 
-    var f = board.create('functiongraph', [function (x) {
-        return (x<Math.PI*0.5) ? 8 * Math.sin(x) : 8.2;
-    }, -6], {fillColor:'yellow'} );
-    var g = board.create('glider', [f], {size: 7});
+	var p11 = brdyy.create("point", [0, 1.2], {fillcolor:'blue', name:''});
+	var p21 = brdyy.create("point", [0, 3.2], {fillcolor:'blue', name:''});
+	var p12 = brdyy.create("point", [10, 1.2], {fillcolor:'lightgray', name:'$10$', label:{offset:[-5,20]}});
+	var p22 = brdyy.create("point", [10, 3.2], {fillcolor:'lightgray', name:'$10$', label:{offset:[-5,20]}});
+	brdyy.create("segment", [p11,p12], {color:'lightgray', strokewidth:5});
+	brdyy.create("segment", [p21,p22], {color:'lightgray', strokewidth:5});
+	var l1 = brdyy.create("segment", [[0,1.2],[15,1.2]], {visible:false});
+	var l2 = brdyy.create("segment", [[0,3.2],[15,3.2]], {visible:false});
+	var p13 = brdyy.create("glider", [10, 1.2, l1], {fillcolor:'red', fixed:false, highlight:true, name:'', snapsizex:0.1, snaptogrid:true});
+	var p23 = brdyy.create("glider", [10, 3.2, l2], {fillcolor:'red', fixed:false, highlight:true, name:'', snapsizex:0.1, snaptogrid:true});
+	brdyy.create("segment", [p11,p13], {color:'orange', strokewidth:5});
+	brdyy.create("segment", [p21,p23], {color:'blue', strokewidth:5});
+
+	brdyy.create("text", [function() { return p13.X()-0.17;}, 2, function() { 
+		var pos = Math.floor(p13.X()*10)/10;
+		pos = pos.toString().replace(".",","); 
+		return "$" + pos + "$"; }]);
+	brdyy.create("text", [function() { return p23.X()-0.17;}, 3.9, function() { 		
+		var pos = Math.floor(p23.X()*10)/10;
+		pos = pos.toString().replace(".",","); 
+		return "$" + pos + "$"; }]);
+	
+	brdyy.create("text", [7, 4, "PRAVILNO"], {color:'red', opacity:function() {
+		if(Math.floor(p23.X()*10)/10 == 11.2)
+			return 1;
+		else
+			return 0;
+	}});
+	brdyy.create("text", [7, 2.1, "PRAVILNO"], {color:'red', opacity:function() {
+		if(Math.floor(p13.X()*10)/10 == 11.2)
+			return 1;
+		else
+			return 0;
+	}});
 }
     
 </script> 
