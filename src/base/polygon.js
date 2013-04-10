@@ -100,6 +100,7 @@ define([
                 i = (j + 1) % len;
                 attr_line.id = attr_line.ids && attr_line.ids[i];
                 attr_line.strokecolor = (Type.isArray(attr_line.colors) && attr_line.colors[i % attr_line.colors.length]) || attr_line.strokecolor;
+                attr_line.visible = Type.exists(attributes.borders.visible) ? attributes.borders.visible : attributes.visible;
 
                 if (attr_line.strokecolor === false) {
                     attr_line.strokecolor = 'none';
