@@ -87,6 +87,7 @@ define([
      */
     JXG.createEllipse = function (board, parents, attributes) {
         var polarForm, curve, M, C, majorAxis, i,
+            hasPointOrg,
             // focus 1 and focus 2
             F = [],
             attr_foci = Type.copyAttributes(attributes, board.options, 'conic', 'foci'),
@@ -171,6 +172,11 @@ define([
             parents[3],
             parents[4]], attr_curve);
 
+        curve.majorAxis = majorAxis;
+        
+        // Save the original hasPoint method. It will be called inside of the new hasPoint method.
+        hasPointOrg = curve.hasPoint;
+        
         /** @ignore */
         polarForm = function (phi, suspendUpdate) {
             var r, rr, ax, ay, bx, by, axbx, ayby, f;
@@ -230,21 +236,20 @@ define([
          * @private
          */
         curve.hasPoint =  function (x, y) {
-            var prec = this.board.options.precision.hasPoint,
-                ac = F[0].coords,
-                bc = F[1].coords,
-                cc = C.coords,
-                p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-                r = cc.distance(Const.COORDS_BY_SCREEN, ac) + cc.distance(Const.COORDS_BY_SCREEN, bc),
-                dist = p.distance(Const.COORDS_BY_SCREEN, ac) + p.distance(Const.COORDS_BY_SCREEN, bc);
+            var ac, bc, r, p, dist;
 
             if (this.visProp.hasinnerpoints) {
-                return (dist < r + prec);
+                ac = F[0].coords;
+                bc = F[1].coords;
+                r = this.majorAxis();
+                p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+                dist = p.distance(Const.COORDS_BY_USER, ac) + p.distance(Const.COORDS_BY_USER, bc);
+                
+                return (dist <= r);
+            } else {
+                return hasPointOrg.apply(this,arguments);
             }
-
-            return (Math.abs(dist - r) < prec);
         };
-
 
         M.addChild(curve);
         for (i = 0; i < 2; i++) {
@@ -379,6 +384,7 @@ define([
                 return 0;
             }, parents[3], parents[4]], attr_curve);
 
+        curve.majorAxis = majorAxis;
 
         // Hyperbola is defined by (a*sec(t),b*tan(t)) and sec(t) = 1/cos(t)
         /** @ignore */
@@ -406,7 +412,7 @@ define([
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var r = majorAxis(),
+            var r = this.majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -420,7 +426,7 @@ define([
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var r = majorAxis(),
+            var r = this.majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
