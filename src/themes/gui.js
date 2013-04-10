@@ -18,6 +18,14 @@ JXG.Options = JXG.merge(JXG.Options, {
         orthotype: 'sectordot'
     },
 
+    axis: {
+        ticks: {
+            label: {
+                fontSize: 14
+            }
+        }
+    },
+
     glider : {
         fillColor: '#ff0',
         strokeColor: '#000'
@@ -56,7 +64,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
     
     text: {
-        fontSize: 16
+        fontSize: 18
     }
     
 /*
