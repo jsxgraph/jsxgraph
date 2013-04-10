@@ -1106,7 +1106,7 @@ define([
          * @param {Array} q2 Second point of segment 2 using homogeneous coordinates [z,x,y]
          * @returns {Array} [Intersection point, t, u] The first entry contains the homogeneous coordinates
          * of the intersection point. The second and third entry gives the position of the intersection between the
-         * two defining points. For example, the second entry t is defined by: interestion point = t*p1 + (1-t)*p2.
+         * two defining points. For example, the second entry t is defined by: intersection point = t*p1 + (1-t)*p2.
          **/
         meetSegmentSegment: function (p1, p2, q1, q2) {
             var t, u, diff,
