@@ -20,9 +20,15 @@ JXG.Options = JXG.merge(JXG.Options, {
 
     axis: {
         ticks: {
+            strokeColor: '#666666',
+            strokeOpacity: 0.4,
             label: {
                 fontSize: 14
             }
+        },
+        label: {
+            position: 'urt',
+            offset: [-15, 30]
         }
     },
 

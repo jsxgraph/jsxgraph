@@ -861,8 +861,9 @@ define([
             hasGrid: false,
             gridX: 1,
             gridY: 1,
+            //strokeColor: '#C0C0C0',
             strokeColor: '#C0C0C0',
-            strokeOpacity: '0.5',
+            strokeOpacity: 0.5,
             strokeWidth: 1,
             dash: 0,    // dashed grids slow down the iPad considerably
             /* snap to grid options */
