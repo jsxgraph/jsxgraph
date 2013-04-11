@@ -294,7 +294,7 @@ define([
          */
         updateRenderer: function () {
             var wasReal;
-            
+
             if (this.needsUpdate && this.visProp.visible) {
                 wasReal = this.isReal;
                 this.checkReal();
@@ -315,7 +315,7 @@ define([
                         }
                     }
                 }
-                
+
                 // Update the label if visible.
                 if (this.hasLabel && this.label.content.visProp.visible) {
                     this.label.content.update();
@@ -422,10 +422,10 @@ define([
         /**
          * Check if at least one point on the curve is finite and real.
          **/
-        checkReal: function() {
+        checkReal: function () {
             var b = false, i, p,
                 len = this.numberPoints;
-            
+
             for (i = 0; i < len; i++) {
                 p = this.points[i].usrCoords;
                 if (!isNaN(p[1]) && !isNaN(p[2]) && Math.abs(p[0]) > Mat.eps) {
@@ -435,7 +435,7 @@ define([
             }
             this.isReal = b;
         },
-        
+
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>false</tt>.
          * @param {Number} mi Left bound of curve
@@ -851,11 +851,11 @@ define([
                 fy = Type.createFunction(yterm[1], this.board, '');
 
                 this.X = function (phi) {
-                    return (xterm)(phi) * Math.cos(phi) + fx();
+                    return xterm(phi) * Math.cos(phi) + fx();
                 };
 
                 this.Y = function (phi) {
-                    return (xterm)(phi) * Math.sin(phi) + fy();
+                    return xterm(phi) * Math.sin(phi) + fy();
                 };
 
                 this.visProp.curvetype = 'polar';

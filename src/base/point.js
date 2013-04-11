@@ -843,7 +843,7 @@ define([
             if (this.board.isSuspendedUpdate && this.type === Const.OBJECT_TYPE_GLIDER) {
                 this.updateGlider();
             }
-            
+
             return coords;
         },
 

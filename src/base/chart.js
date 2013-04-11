@@ -220,7 +220,7 @@ define([
 
             fill = attributes.fillcolor;
 
-            attr = Type.copyAttributes(attributes, board.options, 'chart', 'label');   
+            attr = Type.copyAttributes(attributes, board.options, 'chart', 'label');
             fs = parseFloat(attr.fontsize);
 
             for (i = 0; i < x.length; i++) {

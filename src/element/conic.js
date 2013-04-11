@@ -173,10 +173,10 @@ define([
             parents[4]], attr_curve);
 
         curve.majorAxis = majorAxis;
-        
+
         // Save the original hasPoint method. It will be called inside of the new hasPoint method.
         hasPointOrg = curve.hasPoint;
-        
+
         /** @ignore */
         polarForm = function (phi, suspendUpdate) {
             var r, rr, ax, ay, bx, by, axbx, ayby, f;
@@ -244,11 +244,11 @@ define([
                 r = this.majorAxis();
                 p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
                 dist = p.distance(Const.COORDS_BY_USER, ac) + p.distance(Const.COORDS_BY_USER, bc);
-                
+
                 return (dist <= r);
-            } else {
-                return hasPointOrg.apply(this,arguments);
             }
+
+            return hasPointOrg.apply(this, arguments);
         };
 
         M.addChild(curve);

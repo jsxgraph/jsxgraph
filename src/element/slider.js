@@ -259,7 +259,7 @@ define([
             if (withText) {
                 board.removeObject(t);
             }
-            
+
             board.removeObject(l2);
             board.removeObject(l1);
             board.removeObject(p2);
