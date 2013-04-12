@@ -890,7 +890,7 @@ define([
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @returns {JXG.Coords} intersection point
          */
-        meetCurveCurve: function (c1, c2, t1ini, t2ini, board) {
+        generalizedNewton: function (c1, c2, t1ini, t2ini, board) {
             var t1, t2,
                 a, b, c, d, disc,
                 e, f, F,
@@ -942,7 +942,15 @@ define([
 
             return (new Coords(Const.COORDS_BY_USER, [c2.X(t2), c2.Y(t2)], board));
         },
-
+        
+        meetCurveCurve: function (c1, c2, t1ini, t2ini, board, method) {
+            if (Type.exists(method) && method === 'newton') {
+                return generalizedNewton(c1, c2, t1ini, t2ini, board);
+            } else {
+                return generalizedNewton(c1, c2, t1ini, t2ini, board);
+            }
+        },
+    
         /**
          * Intersection of curve with line,
          * Order of input does not matter for el1 and el2.
