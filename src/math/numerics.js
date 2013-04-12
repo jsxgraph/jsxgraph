@@ -519,7 +519,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         /**
          * Abstract method to find roots of univariate functions.
          * @param {function} f We search for a solution of f(x)=0.
-         * @param {Number} x initial guess for the root, i.e. staring value.
+         * @param {Number} x initial guess for the root, i.e. starting value.
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.
@@ -1712,9 +1712,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 middle_range = (a + b) * 0.5;
 
                 // Actual tolerance
-                tol_act = sqrteps * Math.abs(x) + tol / 3;
+                tol_act = sqrteps * Math.abs(x) + tol / 3.0;
 
-                if (Math.abs(x - middle_range) + range * 0.5 <= 2 * tol_act) {
+                if (Math.abs(x - middle_range) + range * 0.5 <= 2.0 * tol_act) {
                     // Acceptable approx. is found
                     return x;
                 }
@@ -1722,7 +1722,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 // Obtain the golden section step
                 new_step = r * (x < middle_range ? b - x : a - x);
 
-                // Decide if the interpolation can be tried If x and w are distinct interpolatiom may be tried
+                // Decide if the interpolation can be tried. If x and w are distinct interpolatiom may be tried
                 if (Math.abs(x - w) >= tol_act) {
                     // Interpolation step is calculated as p/q;
                     // division operation is delayed until last moment 
