@@ -1049,7 +1049,7 @@ define([
         /**
          * Intersection of line and curve, continuous case.
          * Segments are treated as lines.
-         * Finding the nr-the intersection point should work for all nr.
+         * Finding the nr-th intersection point should work for all nr.
          * @param {JXG.Curve} cu
          * @param {JXG.Line} li
          * @param {Number} nr
