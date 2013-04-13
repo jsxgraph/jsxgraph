@@ -744,7 +744,7 @@ define([
                     break;
                 }
             }
-            if (isAvail) {
+            if (isAvail && JXG.exists(o.label)) {
                 a.label =  JXG.deepCopy(o.label, a.label);
             }
             a.label = JXG.deepCopy(options.label, a.label);
