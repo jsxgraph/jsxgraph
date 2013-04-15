@@ -855,14 +855,15 @@ define([
         },
 
         /**
-         * Compute an intersection of the curves c1 and c2
+         * Compute an intersection of the curves c1 and c2.
          * We want to find values t1, t2 such that
          * c1(t1) = c2(t2), i.e. (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
          *
          * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} nr the nr-th intersection point will be returned.
+         * @param {Number} t1ini the nr-th intersection point will be returned.
+         * @param {Number} t2ini not longer used.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @returns {JXG.Coords} intersection point
          */
@@ -873,7 +874,7 @@ define([
                 co = Numerics.generalizedNewton(c1, c2, t1ini, t2ini);
                 return (new Coords(Const.COORDS_BY_USER, co, board));                
             } else {
-                co = Numerics.generalizedNewton(c1, c2, t1ini, t2ini);
+                co = this.meetCurveRedBlueSegments(c1, c2, t1ini);
                 return (new Coords(Const.COORDS_BY_USER, co, board));                
             }
         },
@@ -989,7 +990,7 @@ define([
          * @param {JXG.Line} li
          * @param {Number} nr
          * @param {JXG.Board} board
-         * @param {Boolean} testSegment
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
             var i, p1, p2, q,
@@ -1033,6 +1034,61 @@ define([
             return q;
         },
 
+        /**
+         * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
+         * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
+         * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines 
+         * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
+         * the property bezierDegree of the curves.
+         * 
+         * @param {JXG.Curve} red
+         * @param {JXG.Curve} blue
+         * @param {Number} nr
+         */
+        meetCurveRedBlueSegments: function(red, blue, nr) {
+            var lenBlue = blue.points.length,
+                lenRed = red.points.length,
+                i, j, iFound = 0,
+                red1, red2, blue1, blue2, m, 
+                minX, maxX;
+        
+                if (lenBlue <= 1 || lenRed <= 1) {
+                    return [0, NaN, NaN];
+                }
+    
+                for (i = 1; i < lenRed; i++) {
+                    red1 = red.points[i - 1].usrCoords;
+                    red2 = red.points[i].usrCoords;
+                    minX = Math.min(red1[1], red2[1]);
+                    maxX = Math.max(red1[1], red2[1]);
+
+                    blue2 = blue.points[0].usrCoords;
+                    for (j = 1; j < lenBlue; j++) {
+                        blue1 = blue2;
+                        blue2 = blue.points[j].usrCoords;
+            
+                        if (Math.min(blue1[1], blue2[1]) > maxX || Math.max(blue1[1], blue2[1]) < minX) {
+                            continue;
+                        }
+            
+                        m = this.meetSegmentSegment(red1, red2, blue1, blue2);
+                        if (m[1] >= 0.0 && m[2] >= 0.0 && 
+                                ( (m[1] < 1.0 && m[2] < 1.0) ||           // The two segments meet in the interior or at the start points
+                                    (i == lenRed - 1 && m[1] == 1.0) ||   // One of the curve is intersected in the very last point
+                                    (j == lenBlue - 1 && m[2] == 1.0) ) ){
+                                
+                            if (iFound === nr) {
+                                return m[0];
+                            } else {
+                                iFound++;
+                            }
+                                
+                        }
+                    }
+                }
+                return [0, NaN, NaN];
+        },
+        
         /**
          * Intersection of two segments.
          * @param {Array} p1 First point of segment 1 using homogeneous coordinates [z,x,y]
