@@ -93,7 +93,7 @@
 
             // bounding box
             arr = meta.boundingBox;
-            board.setBoundingBox(arr);
+            board.jc.parse('$board.setView(' + JSON.stringify(arr) + ');');
 
             return '';
         };
