@@ -185,9 +185,9 @@ define([], function () {
 
             for (i = 0; i < arguments.length; i++) {
                 p = arguments[i];
-                if (window.console && console.log) {
+                if (typeof window === 'object' && window.console && console.log) {
                     console.log(p);
-                } else if (document.getElementById('debug')) {
+                } else if (typeof document === 'object' && document.getElementById('debug')) {
                     document.getElementById('debug').innerHTML += p + "<br/>";
                 }
             }
