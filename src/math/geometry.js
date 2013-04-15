@@ -856,98 +856,25 @@ define([
 
         /**
          * Compute an intersection of the curves c1 and c2
-         * with a generalized Newton method.
          * We want to find values t1, t2 such that
-         * c1(t1) = c2(t2), i.e.
-         * (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
-         * We set
-         * (e,f) := (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2))
+         * c1(t1) = c2(t2), i.e. (c1_x(t1)-c2_x(t2),c1_y(t1)-c2_y(t2)) = (0,0).
          *
-         * The Jacobian J is defined by
-         * J = (a, b)
-         *     (c, d)
-         * where
-         * a = c1_x'(t1)
-         * b = -c2_x'(t2)
-         * c = c1_y'(t1)
-         * d = -c2_y'(t2)
-         *
-         * The inverse J^(-1) of J is equal to
-         *  (d, -b)/
-         *  (-c, a) / (ad-bc)
-         *
-         * Then, (t1new, t2new) := (t1,t2) - J^(-1)*(e,f).
-         * If the function meetCurveCurve possesses the properties
-         * t1memo and t2memo then these are taken as start values
-         * for the Newton algorithm.
-         * After stopping of the Newton algorithm the values of t1 and t2 are stored in
-         * t1memo and t2memo.
-         *
+         * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} t1ini start value for t1
-         * @param {Number} t2ini start value for t2
+         * @param {Number} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @returns {JXG.Coords} intersection point
          */
-        generalizedNewton: function (c1, c2, t1ini, t2ini, board) {
-            var t1, t2,
-                a, b, c, d, disc,
-                e, f, F,
-                D00, D01,
-                D10, D11,
-                count = 0;
-
-            if (!Type.exists(board)) {
-                board = c1.board;
-            }
-
-            if (this.meetCurveCurve.t1memo) {
-                t1 = this.meetCurveCurve.t1memo;
-                t2 = this.meetCurveCurve.t2memo;
-            } else {
-                t1 = t1ini;
-                t2 = t2ini;
-            }
-
-            e = c1.X(t1) - c2.X(t2);
-            f = c1.Y(t1) - c2.Y(t2);
-            F = e * e + f * f;
-
-            D00 = Numerics.D(c1.X, c1);
-            D01 = Numerics.D(c2.X, c2);
-            D10 = Numerics.D(c1.Y, c1);
-            D11 = Numerics.D(c2.Y, c2);
-
-            while (F > Mat.eps && count < 10) {
-                a = D00(t1);
-                b = -D01(t2);
-                c = D10(t1);
-                d = -D11(t2);
-                disc = a * d - b * c;
-                t1 -= (d * e - b * f) / disc;
-                t2 -= (a * f - c * e) / disc;
-                e = c1.X(t1) - c2.X(t2);
-                f = c1.Y(t1) - c2.Y(t2);
-                F = e * e + f * f;
-                count += 1;
-            }
-
-            this.meetCurveCurve.t1memo = t1;
-            this.meetCurveCurve.t2memo = t2;
-
-            if (Math.abs(t1) < Math.abs(t2)) {
-                return (new Coords(Const.COORDS_BY_USER, [c1.X(t1), c1.Y(t1)], board));
-            }
-
-            return (new Coords(Const.COORDS_BY_USER, [c2.X(t2), c2.Y(t2)], board));
-        },
-        
         meetCurveCurve: function (c1, c2, t1ini, t2ini, board, method) {
+            var co;
+            
             if (Type.exists(method) && method === 'newton') {
-                return generalizedNewton(c1, c2, t1ini, t2ini, board);
+                co = Numerics.generalizedNewton(c1, c2, t1ini, t2ini);
+                return (new Coords(Const.COORDS_BY_USER, co, board));                
             } else {
-                return generalizedNewton(c1, c2, t1ini, t2ini, board);
+                co = Numerics.generalizedNewton(c1, c2, t1ini, t2ini);
+                return (new Coords(Const.COORDS_BY_USER, co, board));                
             }
         },
     
