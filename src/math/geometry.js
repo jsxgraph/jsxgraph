@@ -862,12 +862,12 @@ define([
          * Methods: segment-wise intersections (default) or generalized Newton method.
          * @param {JXG.Curve} c1 Curve, Line or Circle
          * @param {JXG.Curve} c2 Curve, Line or Circle
-         * @param {Number} t1ini the nr-th intersection point will be returned.
+         * @param {Number} nr the nr-th intersection point will be returned.
          * @param {Number} t2ini not longer used.
          * @param {JXG.Board} [board=c1.board] Reference to a board object.
          * @returns {JXG.Coords} intersection point
          */
-        meetCurveCurve: function (c1, c2, t1ini, t2ini, board, method) {
+        meetCurveCurve: function (c1, c2, nr, t2ini, board, method) {
             var co;
             
             if (Type.exists(method) && method === 'newton') {
