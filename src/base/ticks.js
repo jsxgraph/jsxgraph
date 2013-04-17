@@ -699,6 +699,7 @@ define([
          * @param {Boolean} drawLabels
          * @param {String} id Id of the ticks object
          * @param {Number} i
+         * @param {JXG.Coords} center
          * @returns {JXG.Text}
          * @private
          */
@@ -714,7 +715,7 @@ define([
             pos = this.generateLabelValue(newTick, center);
 
             labelText = pos.toString();
-            if (Math.abs(pos) < Mat.eps) {
+            if (newTick.distance(Const.COORDS_BY_USER, center) < Mat.eps) {
                 labelText = '0';
             }
 
