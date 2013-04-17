@@ -1335,9 +1335,9 @@ define([
                 for (j = 0; j < lenBlue - 3; j += 3) {
                     p = blue.points;
                     blueArr = [ [p[j].usrCoords[1], p[j].usrCoords[2]],
-                               [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
-                               [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
-                               [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
+                                [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
+                                [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
+                                [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
             
                     bbb = this._bezierBbox(blueArr);
                     if (!this._bezierOverlap(bbr, bbb)) {
