@@ -871,10 +871,14 @@ define([
             var co;
             
             if (Type.exists(method) && method === 'newton') {
-                co = Numerics.generalizedNewton(c1, c2, t1ini, t2ini);
+                co = Numerics.generalizedNewton(c1, c2, nr, t2ini);
                 return (new Coords(Const.COORDS_BY_USER, co, board));                
             } else {
-                co = this.meetCurveRedBlueSegments(c1, c2, t1ini);
+                if (c1.bezierDegree == 3 && c2.bezierDegree == 3) {
+                    co = this.meetBezierCurveRedBlueSegments(c1, c2, nr);
+                } else {
+                    co = this.meetCurveRedBlueSegments(c1, c2, nr);
+                }
                 return (new Coords(Const.COORDS_BY_USER, co, board));                
             }
         },
@@ -1257,26 +1261,96 @@ define([
                 }
             }
         },
-        
+ 
         /**
          * Find the nr-th intersection point of two Bezier curve segments.
          * @param {Array} red Array of four coordinate arrays of length 2 defining the first
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
-         * @param {Number} nr Find the nr-the intersection point
-         * @returns {Array} Array containing the homogeneous coordinates of the nr-th intersction point
+         * @param {Number} nr (Optional) Find the nr-the intersection point
+         * @returns {Array} Array containing the homogeneous coordinates of the nr-th intersction point or 
+         * if nr undefined return the list of all intersection points as homogeneous coordinate arrays.
          * of the two Bezier curve segments.
          * 
          */
         meetBeziersegmentBeziersegment: function(red, blue, nr) {
-            var L = this._bezierMeetSubdivision(red, blue, 0, nr);
-            
-            if (L.length <= nr) {
-                return [0, NaN, NaN];
+            var L, n, L2, i;
+
+            if (JXG.exists(nr)) {
+                n = nr;
             } else {
-                return L[nr][0];
+                n = Infinity;
             }
+            L = this._bezierMeetSubdivision(red, blue, 0, n);
+            
+            if (JXG.exists(nr)) {
+                // Return a single intersection point
+                if (L.length <= nr) {
+                    return [0, NaN, NaN];
+                } else {
+                    return L[nr][0];
+                }
+            } else {
+                L2 = [];
+                for (i = 0; i < L.length; i++) {
+                    // Remove consecutive double entries
+                    if (i > 0 && ( L[i][0][1] == L2[L2.length-1][1] && L[i][0][2] == L2[L2.length-1][2] ) ) {
+                        continue;
+                    }
+                    L2.push( L[i][0] );
+                }
+                return L2;
+            }
+        },
+
+        /**
+         * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierdegree == 3.
+         * @param {JXG.Curve} red Curve with bezierDegree == 3
+         * @param {JXG.Curve} blue Curve with bezierDegree == 3
+         * @param {Number} nr The number of the intersection point which should be returned.
+         * @returns {Array} The homogeneous coordinates of the nr-th intersection point.
+         */
+        meetBezierCurveRedBlueSegments: function(red, blue, nr) {
+            var lenBlue = blue.points.length,
+                lenRed = red.points.length,
+                p, L = [],
+                i, j, 
+                redArr, blueArr, 
+                bbr, bbb;
+        
+                if (lenBlue < 4 || lenRed < 4) {
+                    return [0, NaN, NaN];
+                }
+    
+                for (i = 0; i < lenRed - 3; i += 3) {
+                    p = red.points;
+                    redArr = [ [p[i].usrCoords[1], p[i].usrCoords[2]],
+                               [p[i + 1].usrCoords[1], p[i + 1].usrCoords[2]],
+                               [p[i + 2].usrCoords[1], p[i + 2].usrCoords[2]],
+                               [p[i + 3].usrCoords[1], p[i + 3].usrCoords[2]] ];
+
+                    bbr = this._bezierBbox(redArr);
+
+                    for (j = 0; j < lenBlue - 3; j += 3) {
+                        p = blue.points;
+                        blueArr = [ [p[j].usrCoords[1], p[j].usrCoords[2]],
+                                   [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
+                                   [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
+                                   [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
+            
+                        bbb = this._bezierBbox(blueArr);
+                        if (!_bezierOverlap(bbr, bbb)) {
+                            continue;
+                        }
+ 
+                        L = L.concat( this.meetBeziersegmentBeziersegment(redArr, blueArr) );
+                        if (L.length > nr) {
+                            return L[nr];
+                        }
+                    }
+                }
+                return [0, NaN, NaN];
         },
 
         /****************************************/
