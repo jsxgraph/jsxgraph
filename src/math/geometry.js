@@ -1186,7 +1186,7 @@ define([
          * Append list of intersection points to a list.
          * @private
          */
-        _bezierListConcat: function(L, Lnew) {
+        _bezierListConcat: function(L, Lnew, t1, t2) {
             var i, len = Lnew.length, le = L.length;
             
             for (i = 0; i < len; i++) {
@@ -1196,6 +1196,12 @@ define([
                           (L[le-1][2] == 1.0 && Lnew[0][2] == 0.0) ) ) {
                     continue;
                 }
+                
+                Lnew[i][1] *= 0.5;
+                Lnew[i][1] += t1;
+                Lnew[i][2] *= 0.5;
+                Lnew[i][2] += t2;
+                
                 L.push(Lnew[i]);
             }
         },
@@ -1208,11 +1214,10 @@ define([
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Number} level Recursion level
-         * @param {Number} nr Stop if the nr-th intersection point has been found. This enables early abort.
          * @returns {Array} List of intersection points (up to nine). Each intersction point is an 
-         * array of length three (homogeneous coordinates).
+         * array of length three (homogeneous coordinates) plus preimages.
          */
-        _bezierMeetSubdivision: function(red, blue, level, nr) {
+        _bezierMeetSubdivision: function(red, blue, level) {
             var L = [],
                 maxLev = 5,      // Maximum recursion level.
                 bbb, bbr, i, le,
@@ -1235,13 +1240,10 @@ define([
                 b0 = ar[0];
                 b1 = ar[1];
                 
-                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b0, level + 1, nr) );
-                if (L.length > nr) { return L; }
-                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b1, level + 1, nr) );
-                if (L.length > nr) { return L; }
-                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b0, level + 1, nr) );
-                if (L.length > nr) { return L; }
-                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b1, level + 1, nr) );
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b0, level + 1), 0.0, 0.0 );
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b1, level + 1), 0, 0.5 );
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b0, level + 1), 0.5, 0.0 );
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b1, level + 1), 0.5, 0.5);
                 
                 return L;
         
@@ -1268,40 +1270,25 @@ define([
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
-         * @param {Number} nr (Optional) Find the nr-the intersection point
-         * @returns {Array} Array containing the homogeneous coordinates of the nr-th intersction point or 
-         * if nr undefined return the list of all intersection points as homogeneous coordinate arrays.
-         * of the two Bezier curve segments.
+         * @returns {Array} Array containing the list of all intersection points as homogeneous coordinate arrays plus
+         * preimages [x,y], t_1, t_2] of the two Bezier curve segments.
          * 
          */
-        meetBeziersegmentBeziersegment: function(red, blue, nr) {
+        meetBeziersegmentBeziersegment: function(red, blue) {
             var L, n, L2, i;
 
-            if (JXG.exists(nr)) {
-                n = nr;
-            } else {
-                n = Infinity;
-            }
-            L = this._bezierMeetSubdivision(red, blue, 0, n);
+            L = this._bezierMeetSubdivision(red, blue, 0);
+            L.sort( function(a,b) { return (a[1] - b[1]) * 10.0 + (a[2] - b[2]); }); 
             
-            if (JXG.exists(nr)) {
-                // Return a single intersection point
-                if (L.length <= nr) {
-                    return [0, NaN, NaN];
-                } else {
-                    return L[nr][0];
+            L2 = [];
+            for (i = 0; i < L.length; i++) {
+                // Remove consecutive double entries
+                if (i > 0 && ( L[i][1] == L[i-1][1] && L[i][2] == L[i-1][2] ) ) {
+                    continue;
                 }
-            } else {
-                L2 = [];
-                for (i = 0; i < L.length; i++) {
-                    // Remove consecutive double entries
-                    if (i > 0 && ( L[i][0][1] == L2[L2.length-1][1] && L[i][0][2] == L2[L2.length-1][2] ) ) {
-                        continue;
-                    }
-                    L2.push( L[i][0] );
-                }
-                return L2;
+                L2.push( L[i] );
             }
+            return L2;
         },
 
         /**
@@ -1346,12 +1333,12 @@ define([
  
                     L = L.concat( this.meetBeziersegmentBeziersegment(redArr, blueArr) );
                     if (L.length > nr) {
-                        return L[nr];
+                        return L[nr][0];
                     }
                 }
             }
             if (L.length > nr) {
-                return L[nr];
+                return L[nr][0];
             } else {
                 return [0, NaN, NaN];
             }
