@@ -722,7 +722,7 @@ define([
             if (num && (labelText.length > 5 || labelText.indexOf('e') !== -1)) {
                 labelText = pos.toPrecision(3).toString();
             }
-            if (num && labelText.indexOf('.') > -1) {
+            if (num && labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
                 // trim trailing zeros
                 labelText = labelText.replace(/0+$/, '');
                 // trim trailing .
