@@ -1120,6 +1120,166 @@ define([
         },
 
         /****************************************/
+        /****   BEZIER CURVE ALGORITHMS      ****/
+        /****************************************/
+        
+        /**
+         * Splits a Bezier curve segment defined by four points into
+         * two Bezier curve segments. Dissection point is t=1/2.
+         * @param {Array} curve Array of four coordinate arrays of length 2 defining a
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @returns {Array} Array consisting of two coordinate arrays for Bezier curves.
+         */
+        _bezierSplit: function(curve) {
+            var a = [], b = [],
+                p0, p1, p2, p00, p22, p000;
+    
+                p0 = [(curve[0][0] + curve[1][0]) * 0.5, (curve[0][1] + curve[1][1]) * 0.5];
+                p1 = [(curve[1][0] + curve[2][0]) * 0.5, (curve[1][1] + curve[2][1]) * 0.5];
+                p2 = [(curve[2][0] + curve[3][0]) * 0.5, (curve[2][1] + curve[3][1]) * 0.5];
+    
+                p00 = [(p0[0] + p1[0]) * 0.5, (p0[1] + p1[1]) * 0.5];
+                p22 = [(p1[0] + p2[0]) * 0.5, (p1[1] + p2[1]) * 0.5];
+    
+                p000 = [(p00[0] + p22[0]) * 0.5, (p00[1] + p22[1]) * 0.5];
+    
+                return [[curve[0], p0, p00, p000], [p000, p22, p2, curve[3]]];
+        },
+        
+        /**
+         * Computes the bounding box [minX, maxY, maxX, minY] of a Bezier curve segment
+         * from its control points.
+         * @param {Array} curve Array of four coordinate arrays of length 2 defining a
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @returns {Array} Bounding box [minX, maxY, maxX, minY]
+         */
+        _bezierBbox: function(curve) {
+            var bb = [];
+    
+            bb[0] = Math.min(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // minX
+            bb[1] = Math.max(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // maxY
+            bb[2] = Math.max(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // maxX
+            bb[3] = Math.min(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // minY
+    
+            return bb;
+        },
+
+        /**
+         * Decide if two Bezier curve segments overlap by comparing their bounding boxes.
+         * @param {Array} bb1 Bounding box of the first Bezier curve segment
+         * @param {Array} bb2 Bounding box of the second Bezier curve segment
+         * @returns {Boolean} true if the bounding boxes overlap, false otherwise.
+         */
+        _bezierOverlap: function(bb1, bb2) {
+            if (bb1[2] >= bb2[0] && bb1[0] <= bb2[2] && bb1[1] >= bb2[3] && bb1[3] <= bb2[1]) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        
+        /**
+         * Append list of intersection points to a list.
+         * @private
+         */
+        _bezierListConcat: function(L, Lnew) {
+            var i, len = Lnew.length, le = L.length;
+            
+            for (i = 0; i < len; i++) {
+                // Skip intersection point if already in list.
+                if (i == 0 && le>0 &&
+                        ( (L[le-1][1] == 1.0 && Lnew[0][1] == 0.0) ||
+                          (L[le-1][2] == 1.0 && Lnew[0][2] == 0.0) ) ) {
+                    continue;
+                }
+                L.push(Lnew[i]);
+            }
+        },
+        
+        /**
+         * Find intersections of two Bezier curve segments by recursive subdivision.
+         * Below maxlevel determine intersections by intersection line segments.
+         * @param {Array} red Array of four coordinate arrays of length 2 defining the first
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @param {Number} level Recursion level
+         * @param {Number} nr Stop if the nr-th intersection point has been found. This enables early abort.
+         * @returns {Array} List of intersection points (up to nine). Each intersction point is an 
+         * array of length three (homogeneous coordinates).
+         */
+        _bezierMeetSubdivision: function(red, blue, level, nr) {
+            var L = [],
+                maxLev = 4,      // Maximum recursion level.
+                bbb, bbr, i, le,
+                ar, b0, b1, r0, r1, m, 
+                p0, p1, q0, q1;
+    
+            bbr = this._bezierBbox(blue);
+            bbb = this._bezierBbox(red);
+    
+            if (!_bezierOverlap(bbr, bbb)) {
+                return [];
+            }
+    
+            if (level < 4) {
+                ar = this._bezierSplit(red);
+                r0 = ar[0];
+                r1 = ar[1];
+
+                ar = this._bezierSplit(blue);
+                b0 = ar[0];
+                b1 = ar[1];
+                
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b0, level + 1, nr) );
+                if (L.length > nr) { return L; }
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r0, b1, level + 1, nr) );
+                if (L.length > nr) { return L; }
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b0, level + 1, nr) );
+                if (L.length > nr) { return L; }
+                this._bezierListConcat( L, this._bezierMeetSubdivision(r1, b1, level + 1, nr) );
+                
+                return L;
+        
+            } else {
+    
+                // Make homogeneous coordinates 
+                q0 = [1].concat(red[0]); 
+                q1 = [1].concat(red[3]);
+                p0 = [1].concat(blue[0]);
+                p1 = [1].concat(blue[3]); 
+    
+                m = this.meetSegmentSegment(q0, q1, p0, p1);
+                if (m[1] >= 0.0 && m[2] >= 0.0 && m[1] <= 1.0 && m[2] <= 1.0) {
+                    return [m];
+                } else {
+                    return [];
+                }
+            }
+        },
+        
+        /**
+         * Find the nr-th intersection point of two Bezier curve segments.
+         * @param {Array} red Array of four coordinate arrays of length 2 defining the first
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
+         * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @param {Number} nr Find the nr-the intersection point
+         * @returns {Array} Array containing the homogeneous coordinates of the nr-th intersction point
+         * of the two Bezier curve segments.
+         * 
+         */
+        meetBeziersegmentBeziersegment: function(red, blue, nr) {
+            var L = this._bezierMeetSubdivision(red, blue, 0, nr);
+            
+            if (L.length <= nr) {
+                return [0, NaN, NaN];
+            } else {
+                return L[nr][0];
+            }
+        },
+
+        /****************************************/
         /****           PROJECTIONS          ****/
         /****************************************/
 
