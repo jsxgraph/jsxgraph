@@ -1214,7 +1214,7 @@ define([
          */
         _bezierMeetSubdivision: function(red, blue, level, nr) {
             var L = [],
-                maxLev = 4,      // Maximum recursion level.
+                maxLev = 5,      // Maximum recursion level.
                 bbb, bbr, i, le,
                 ar, b0, b1, r0, r1, m, 
                 p0, p1, q0, q1;
@@ -1222,11 +1222,11 @@ define([
             bbr = this._bezierBbox(blue);
             bbb = this._bezierBbox(red);
     
-            if (!_bezierOverlap(bbr, bbb)) {
+            if (!this._bezierOverlap(bbr, bbb)) {
                 return [];
             }
     
-            if (level < 4) {
+            if (level < maxLev) {
                 ar = this._bezierSplit(red);
                 r0 = ar[0];
                 r1 = ar[1];
@@ -1340,7 +1340,7 @@ define([
                                    [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
             
                         bbb = this._bezierBbox(blueArr);
-                        if (!_bezierOverlap(bbr, bbb)) {
+                        if (!this._bezierOverlap(bbr, bbb)) {
                             continue;
                         }
  

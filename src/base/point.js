@@ -1758,10 +1758,8 @@ define([
         j = parents[3];
 
         if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                el2.elementClass === Const.OBJECT_CLASS_CURVE &&
-                (el1.type !== Const.OBJECT_TYPE_ARC || el2.type !== Const.OBJECT_TYPE_ARC)) {
-            // curve - curve, but not both are arcs
-            // TEMPORARY FIX!!!
+                el2.elementClass === Const.OBJECT_CLASS_CURVE) {
+            // curve - curve
             /** @ignore */
             func = function () {
                 return Geometry.meetCurveCurve(el1, el2, i, j, el1.board);
