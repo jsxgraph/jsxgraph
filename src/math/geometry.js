@@ -1319,38 +1319,42 @@ define([
                 redArr, blueArr, 
                 bbr, bbb;
         
-                if (lenBlue < 4 || lenRed < 4) {
-                    return [0, NaN, NaN];
-                }
+            if (lenBlue < 4 || lenRed < 4) {
+                return [0, NaN, NaN];
+            }
     
-                for (i = 0; i < lenRed - 3; i += 3) {
-                    p = red.points;
-                    redArr = [ [p[i].usrCoords[1], p[i].usrCoords[2]],
-                               [p[i + 1].usrCoords[1], p[i + 1].usrCoords[2]],
-                               [p[i + 2].usrCoords[1], p[i + 2].usrCoords[2]],
-                               [p[i + 3].usrCoords[1], p[i + 3].usrCoords[2]] ];
+            for (i = 0; i < lenRed - 3; i += 3) {
+                p = red.points;
+                redArr = [ [p[i].usrCoords[1], p[i].usrCoords[2]],
+                           [p[i + 1].usrCoords[1], p[i + 1].usrCoords[2]],
+                           [p[i + 2].usrCoords[1], p[i + 2].usrCoords[2]],
+                           [p[i + 3].usrCoords[1], p[i + 3].usrCoords[2]] ];
 
-                    bbr = this._bezierBbox(redArr);
+                bbr = this._bezierBbox(redArr);
 
-                    for (j = 0; j < lenBlue - 3; j += 3) {
-                        p = blue.points;
-                        blueArr = [ [p[j].usrCoords[1], p[j].usrCoords[2]],
-                                   [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
-                                   [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
-                                   [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
+                for (j = 0; j < lenBlue - 3; j += 3) {
+                    p = blue.points;
+                    blueArr = [ [p[j].usrCoords[1], p[j].usrCoords[2]],
+                               [p[j + 1].usrCoords[1], p[j + 1].usrCoords[2]],
+                               [p[j + 2].usrCoords[1], p[j + 2].usrCoords[2]],
+                               [p[j + 3].usrCoords[1], p[j + 3].usrCoords[2]] ];
             
-                        bbb = this._bezierBbox(blueArr);
-                        if (!this._bezierOverlap(bbr, bbb)) {
-                            continue;
-                        }
+                    bbb = this._bezierBbox(blueArr);
+                    if (!this._bezierOverlap(bbr, bbb)) {
+                        continue;
+                    }
  
-                        L = L.concat( this.meetBeziersegmentBeziersegment(redArr, blueArr) );
-                        if (L.length > nr) {
-                            return L[nr];
-                        }
+                    L = L.concat( this.meetBeziersegmentBeziersegment(redArr, blueArr) );
+                    if (L.length > nr) {
+                        return L[nr];
                     }
                 }
+            }
+            if (L.length > nr) {
+                return L[nr];
+            } else {
                 return [0, NaN, NaN];
+            }
         },
 
         /****************************************/
