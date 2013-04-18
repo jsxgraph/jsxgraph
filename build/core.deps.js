@@ -6,6 +6,7 @@ define([
     'utils/type',
     'utils/xml',
     'utils/event',
+    'utils/expect',
     'math/math',
     'math/numerics',
     'math/statistics',

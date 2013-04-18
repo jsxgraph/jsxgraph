@@ -572,7 +572,7 @@ define(['jxg'], function (JXG) {
         normalize: function (stdform) {
             var n, signr,
                 a2 = 2 * stdform[3],
-                r = stdform[4] / (a2);
+                r = stdform[4] / a2;
 
             stdform[5] = r;
             stdform[6] = -stdform[1] / a2;
@@ -611,7 +611,6 @@ define(['jxg'], function (JXG) {
          * back to the default JavaScript Array if Float32Array is not available.
          */
         toGL: function (m) {
-
             var v, i, j;
 
             if (typeof Float32Array === 'function') {
@@ -632,7 +631,6 @@ define(['jxg'], function (JXG) {
 
             return v;
         }
-
     };
 
     return JXG.Math;
