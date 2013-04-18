@@ -48,8 +48,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'utils/type'
-], function (JXG, Const, Coords, Mat, Numerics, Type) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/numerics', 'utils/type', 'utils/expect'
+], function (JXG, Const, Coords, Mat, Numerics, Type, Expect) {
 
     "use strict";
 
@@ -433,6 +433,130 @@ define([
             }
 
             return d;
+        },
+
+        /**
+         * Sort vertices counter clockwise starting with the point with the lowest y coordinate.
+         *
+         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         *
+         * @returns {Array}
+         */
+        sortVertices: function (p) {
+            var i, ll,
+                ps = Expect.each(p, Expect.coordsArray),
+                N = ps.length;
+
+            // find the point with the lowest y value
+            for (i = 1; i < N; i++) {
+                if ((ps[i][2] < ps[0][2]) ||
+                        // if the current and the lowest point have the same y value, pick the one with
+                        // the lowest x value.
+                        (Math.abs(ps[i][2] - ps[0][2]) < Mat.eps && ps[i][1] < ps[0][1])) {
+                    ps = Type.swap(ps, i, 0);
+                }
+            }
+
+            // sort ps in increasing order of the angle the points and the ll make with the x-axis
+            ll = ps.shift();
+            ps.sort(function (a, b) {
+                // atan is monotonically increasing, as we are only interested in the sign of the difference
+                // evaluating atan is not necessary
+                var rad1 = Math.atan2(a[2] - ll[2], a[1] - ll[1]),
+                    rad2 = Math.atan2(b[2] - ll[2], b[1] - ll[1]);
+
+                return rad1 - rad2;
+            });
+
+            // put ll back into the array
+            ps.unshift(ll);
+
+            // put the last element also in the beginning
+            ps.unshift(ps[ps.length - 1]);
+
+            return ps;
+        },
+
+        /**
+         * Signed triangle area of the three points given.
+         *
+         * @param {JXG.Point|JXG.Coords|Array} p1
+         * @param {JXG.Point|JXG.Coords|Array} p2
+         * @param {JXG.Point|JXG.Coords|Array} p3
+         *
+         * @returns {Number}
+         */
+        signedTriangle: function (p1, p2, p3) {
+            var A = Expect.coordsArray(p1),
+                B = Expect.coordsArray(p2),
+                C = Expect.coordsArray(p3);
+
+            return 0.5 * ((B[1] - A[1]) * (C[2] - A[2]) - (B[2] - A[2]) * (C[1] - A[1]));
+        },
+
+        /**
+         * Determine the signed area of a non-intersecting polygon.
+         *
+         * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         * @param {Boolean} [sort=true]
+         *
+         * @returns {Number}
+         */
+        signedPolygon: function (p, sort) {
+            var i, N,
+                A = 0,
+                ps = Expect.each(p, Expect.coordsArray);
+
+            if (!sort) {
+                ps = this.sortVertices(ps);
+            } else {
+                // make sure the polygon is closed. If it is already closed this won't change the sum because the last
+                // summand will be 0.
+                ps.unshift(ps[ps.length - 1]);
+            }
+
+            N = ps.length;
+
+            for (i = 1; i < N; i++) {
+                A += ps[i - 1][1] * ps[i][2] - ps[i][1] * ps[i - 1][2];
+            }
+
+            return 0.5 * A;
+        },
+
+        /**
+         * Calculate the complex hull of a point cloud.
+         *
+         * @param {Array} points An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
+         *
+         * @returns {Array}
+         */
+        GrahamScan: function (points) {
+            var i, ll,
+                M = 1,
+                ps = Expect.each(points, Expect.coordsArray),
+                N = ps.length;
+
+
+            ps = this.sortVertices(ps);
+            N = ps.length;
+
+            for (i = 2; i < N; i++) {
+                while (this.signedTriangle(ps[M - 1], ps[M], ps[i]) <= 0) {
+                    if (M > 1) {
+                        M -= 1;
+                    } else if (i === N - 1) {
+                        break;
+                    } else {
+                        i += 1;
+                    }
+                }
+
+                M += 1;
+                ps = Type.swap(ps, M, i);
+            }
+
+            return ps.slice(0, M);
         },
 
         /**
