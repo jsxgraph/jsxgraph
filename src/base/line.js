@@ -496,7 +496,7 @@ define([
          * @returns {Number}
          */
         getAngle: function () {
-            return Math.atan2(this.point2.Y() - this.point1.Y(), this.point2.X() - this.point1.X());
+            return Math.atan2(-this.stdform[1], this.stdform[2]);
         },
 
         /**
