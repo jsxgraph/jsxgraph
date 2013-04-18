@@ -1055,17 +1055,87 @@ define([
                 i, j, iFound = 0,
                 red1, red2, blue1, blue2, m, 
                 minX, maxX;
+                // slices = [], width, nslices = 100, minSlice, maxSlice, le, ri, mi, ma, k, l, jprev;
         
                 if (lenBlue <= 1 || lenRed <= 1) {
                     return [0, NaN, NaN];
                 }
     
+                // ------------------------
+                /*
+                minSlice = Infinity;
+                maxSlice = -Infinity;
+                for (j = 0; j < lenBlue; j++) {
+                    if (blue.points[j].usrCoords[0] == 0 || isNaN(blue.points[j].usrCoords[1]) || isNaN(blue.points[j].usrCoords[2])) {
+                        continue;
+                    }
+                    if (blue.points[j].usrCoords[1] < minSlice) {
+                        minSlice = blue.points[j].usrCoords[1];
+                    } else if (blue.points[j].usrCoords[1] > maxSlice) {
+                        maxSlice = blue.points[j].usrCoords[1];
+                    }
+                }
+                
+                width = maxSlice - minSlice;
+                for (i = 0; i <= nslices; i++) {
+                    slices[i] = [];
+                }
+                
+                blue2 = blue.points[0].usrCoords;
+                for (j = 1; j < lenBlue; j++) {
+                    blue1 = blue2;
+                    blue2 = blue.points[j].usrCoords;
+                    if (blue2[0] == 0 || isNaN(blue2[1]) || isNaN(blue2[2])) {
+                        continue;
+                    }
+                    mi = Math.min(blue1[1], blue2[1]);
+                    ma = Math.max(blue1[1], blue2[1]);
+                    
+                    le = Math.floor( nslices * (mi - minSlice) / width );
+                    ri = Math.ceil( nslices * (ma - minSlice) / width );
+                    
+                    for (i = le; i <= ri; i++) {
+                        slices[i].push(j);
+                    }
+                }
+                */
+                // ------------------------
+                    
                 for (i = 1; i < lenRed; i++) {
                     red1 = red.points[i - 1].usrCoords;
                     red2 = red.points[i].usrCoords;
                     minX = Math.min(red1[1], red2[1]);
                     maxX = Math.max(red1[1], red2[1]);
 
+                    /*
+                    le = Math.floor( nslices * (minX - minSlice) / width );
+                    ri = Math.ceil( nslices * (maxX - minSlice) / width );
+
+                    jprev = 0;
+                    for (k = Math.max(0, le); k <= Math.min(nslices, ri); k++) {
+                        for (l = 0; l < slices[k].length; l++) {
+                            j = slices[k][l];
+                            if (j <= jprev) { continue; }
+                            jprev = j;
+                            blue1 = blue.points[j-1].usrCoords;
+                            blue2 = blue.points[j].usrCoords;
+
+                            m = this.meetSegmentSegment(red1, red2, blue1, blue2);
+                            if (m[1] >= 0.0 && m[2] >= 0.0 && 
+                                    ( (m[1] < 1.0 && m[2] < 1.0) ||           // The two segments meet in the interior or at the start points
+                                        (i == lenRed - 1 && m[1] == 1.0) ||   // One of the curve is intersected in the very last point
+                                        (j == lenBlue - 1 && m[2] == 1.0) ) ){
+                                
+                                if (iFound === nr) {
+                                    return m[0];
+                                } else {
+                                    iFound++;
+                                }
+                            }
+                        }
+                    }
+                    */
+                    
                     blue2 = blue.points[0].usrCoords;
                     for (j = 1; j < lenBlue; j++) {
                         blue1 = blue2;
