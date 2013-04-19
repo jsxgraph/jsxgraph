@@ -1765,14 +1765,14 @@ define([
                 return Geometry.meetCurveCurve(el1, el2, i, j, el1.board);
             };
 
-        } else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+        //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+//                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
             // arc - line   (arcs are of class curve, but are intersected like circles)
             // TEMPORARY FIX!!!
             /** @ignore */
-            func = function () {
-                return Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
-            };
+//            func = function () {
+                //return Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
+            //};
 
         } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                 (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {

@@ -1111,7 +1111,7 @@ define([
         },
 
         /**
-         * Intersection of line and curve, continuous case.
+         * Intersection of line and curve, discrete case.
          * Segments are treated as lines.
          * Finding the nr-th intersection point should work for all nr.
          * @param {JXG.Curve} cu
@@ -1121,40 +1121,55 @@ define([
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i, p1, p2, q,
-                d, cnt = 0, res,
+            var i, j, p1, p2, q,
+                d, cnt = 0, res, 
                 p,
                 len = cu.numberPoints;
 
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
 
-            p2 = [1, cu.X(0), cu.Y(0)];
+            p2 = cu.points[0].usrCoords;
             for (i = 1; i < len; i++) {
                 p1 = p2.slice(0);
-                p2 = [1, cu.X(i), cu.Y(i)];
+                p2 = cu.points[i].usrCoords;
                 d = this.distance(p1, p2);
 
-                // The defining points are identical
+                // The defining points are not identical
                 if (d > Mat.eps) {
-                    res = this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords);
-                    if (0 <= res[1] && res[1] <= 1) {
-                        if (cnt === nr) {
-                            /**
-                             * If the intersection point is not part of the segment,
-                             * this intersection point is set to non-existent.
-                             * This prevents jumping of the intersection points.
-                             * But it may be discussed if it is the desired behavior.
-                             */
-                            if (testSegment && ((!li.visProp.straightfirst && res[2] < 0) ||
-                                    (!li.visProp.straightlast && res[2] > 1))) {
-                                break;
-                            }
+                    if (cu.bezierDegree == 3) {
+                        res = this.meetBeziersegmentBeziersegment(
+                            [cu.points[i-1].usrCoords.slice(1),
+                             cu.points[i].usrCoords.slice(1),
+                             cu.points[i+1].usrCoords.slice(1),
+                             cu.points[i+2].usrCoords.slice(1)
+                            ],
+                            [li.point1.coords.usrCoords.slice(1), li.point2.coords.usrCoords.slice(1)]);
+                        i += 2;
+                    } else {
+                        res = [this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords)];
+                    }
+                    
+                    for (j = 0; j < res.length; j++) {
+                        p = res[j];
+                        if (0 <= p[1] && p[1] <= 1) {
+                            if (cnt === nr) {
+                                /**
+                                * If the intersection point is not part of the segment,
+                                * this intersection point is set to non-existent.
+                                * This prevents jumping of the intersection points.
+                                * But it may be discussed if it is the desired behavior.
+                                */
+                                if (testSegment && ((!li.visProp.straightfirst && p[2] < 0) ||
+                                        (!li.visProp.straightlast && p[2] > 1))) {
+                                    return q;  // break;
+                                }
 
-                            q = new Coords(Const.COORDS_BY_USER, res[0], board);
-                            break;
+                                q = new Coords(Const.COORDS_BY_USER, p[0], board);
+                                return q;      // break;
+                            }
+                            cnt += 1;
                         }
-                        cnt += 1;
                     }
                 }
             }
@@ -1179,86 +1194,16 @@ define([
                 i, j, iFound = 0,
                 red1, red2, blue1, blue2, m, 
                 minX, maxX;
-                // slices = [], width, nslices = 100, minSlice, maxSlice, le, ri, mi, ma, k, l, jprev;
         
                 if (lenBlue <= 1 || lenRed <= 1) {
                     return [0, NaN, NaN];
                 }
     
-                // ------------------------
-                /*
-                minSlice = Infinity;
-                maxSlice = -Infinity;
-                for (j = 0; j < lenBlue; j++) {
-                    if (blue.points[j].usrCoords[0] == 0 || isNaN(blue.points[j].usrCoords[1]) || isNaN(blue.points[j].usrCoords[2])) {
-                        continue;
-                    }
-                    if (blue.points[j].usrCoords[1] < minSlice) {
-                        minSlice = blue.points[j].usrCoords[1];
-                    } else if (blue.points[j].usrCoords[1] > maxSlice) {
-                        maxSlice = blue.points[j].usrCoords[1];
-                    }
-                }
-                
-                width = maxSlice - minSlice;
-                for (i = 0; i <= nslices; i++) {
-                    slices[i] = [];
-                }
-                
-                blue2 = blue.points[0].usrCoords;
-                for (j = 1; j < lenBlue; j++) {
-                    blue1 = blue2;
-                    blue2 = blue.points[j].usrCoords;
-                    if (blue2[0] == 0 || isNaN(blue2[1]) || isNaN(blue2[2])) {
-                        continue;
-                    }
-                    mi = Math.min(blue1[1], blue2[1]);
-                    ma = Math.max(blue1[1], blue2[1]);
-                    
-                    le = Math.floor( nslices * (mi - minSlice) / width );
-                    ri = Math.ceil( nslices * (ma - minSlice) / width );
-                    
-                    for (i = le; i <= ri; i++) {
-                        slices[i].push(j);
-                    }
-                }
-                */
-                // ------------------------
-                    
                 for (i = 1; i < lenRed; i++) {
                     red1 = red.points[i - 1].usrCoords;
                     red2 = red.points[i].usrCoords;
                     minX = Math.min(red1[1], red2[1]);
                     maxX = Math.max(red1[1], red2[1]);
-
-                    /*
-                    le = Math.floor( nslices * (minX - minSlice) / width );
-                    ri = Math.ceil( nslices * (maxX - minSlice) / width );
-
-                    jprev = 0;
-                    for (k = Math.max(0, le); k <= Math.min(nslices, ri); k++) {
-                        for (l = 0; l < slices[k].length; l++) {
-                            j = slices[k][l];
-                            if (j <= jprev) { continue; }
-                            jprev = j;
-                            blue1 = blue.points[j-1].usrCoords;
-                            blue2 = blue.points[j].usrCoords;
-
-                            m = this.meetSegmentSegment(red1, red2, blue1, blue2);
-                            if (m[1] >= 0.0 && m[2] >= 0.0 && 
-                                    ( (m[1] < 1.0 && m[2] < 1.0) ||           // The two segments meet in the interior or at the start points
-                                        (i == lenRed - 1 && m[1] == 1.0) ||   // One of the curve is intersected in the very last point
-                                        (j == lenBlue - 1 && m[2] == 1.0) ) ){
-                                
-                                if (iFound === nr) {
-                                    return m[0];
-                                } else {
-                                    iFound++;
-                                }
-                            }
-                        }
-                    }
-                    */
                     
                     blue2 = blue.points[0].usrCoords;
                     for (j = 1; j < lenBlue; j++) {
@@ -1354,10 +1299,17 @@ define([
         _bezierBbox: function(curve) {
             var bb = [];
     
-            bb[0] = Math.min(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // minX
-            bb[1] = Math.max(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // maxY
-            bb[2] = Math.max(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // maxX
-            bb[3] = Math.min(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // minY
+            if (curve.length == 4) {   // bezierDegree == 3
+                bb[0] = Math.min(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // minX
+                bb[1] = Math.max(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // maxY
+                bb[2] = Math.max(curve[0][0], curve[1][0], curve[2][0], curve[3][0]); // maxX
+                bb[3] = Math.min(curve[0][1], curve[1][1], curve[2][1], curve[3][1]); // minY
+            } else {                   // bezierDegree == 1
+                bb[0] = Math.min(curve[0][0], curve[1][0]); // minX
+                bb[1] = Math.max(curve[0][1], curve[1][1]); // maxY
+                bb[2] = Math.max(curve[0][0], curve[1][0]); // maxX
+                bb[3] = Math.min(curve[0][1], curve[1][1]); // minY
+            }
     
             return bb;
         },
@@ -1384,18 +1336,27 @@ define([
             var i, len = Lnew.length, le = L.length;
             
             for (i = 0; i < len; i++) {
-                // Skip intersection point if already in list.
-                if (i == 0 && le>0 &&
-                        ( (L[le-1][1] == 1.0 && Lnew[0][1] == 0.0) ||
-                          (L[le-1][2] == 1.0 && Lnew[0][2] == 0.0) ) ) {
-                    continue;
-                }
+                if (typeof t2 != 'undefined') {
+                    // Skip intersection point if already in list.
+                    if (i == 0 && le>0 &&
+                            ( (L[le-1][1] == 1.0 && Lnew[0][1] == 0.0) ||
+                            (L[le-1][2] == 1.0 && Lnew[0][2] == 0.0) ) ) {
+                        continue;
+                    }
                 
+                    Lnew[i][2] *= 0.5;
+                    Lnew[i][2] += t2;
+                
+                } else {
+                    // Skip intersection point if already in list.
+                    if (i == 0 && le>0 &&
+                            ( (L[le-1][1] == 1.0 && Lnew[0][1] == 0.0) ) ) {
+                        continue;
+                    }
+                }
                 Lnew[i][1] *= 0.5;
                 Lnew[i][1] += t1;
-                Lnew[i][2] *= 0.5;
-                Lnew[i][2] += t2;
-                
+
                 L.push(Lnew[i]);
             }
         },
@@ -1457,6 +1418,47 @@ define([
                 }
             }
         },
+
+        _bezierLineMeetSubdivision: function(red, blue, level) {
+            var L = [],
+                maxLev = 5,      // Maximum recursion level.
+                bbb, bbr, i, le,
+                ar, r0, r1, m, 
+                p0, p1, q0, q1;
+    
+            bbb = this._bezierBbox(blue);
+            bbr = this._bezierBbox(red);
+
+            if (!this._bezierOverlap(bbr, bbb)) {
+                return [];
+            }
+    
+            if (level < maxLev) {
+                ar = this._bezierSplit(red);
+                r0 = ar[0];
+                r1 = ar[1];
+
+                this._bezierListConcat( L, this._bezierLineMeetSubdivision(r0, blue, level + 1), 0.0);
+                this._bezierListConcat( L, this._bezierLineMeetSubdivision(r1, blue, level + 1), 0.5);
+                
+                return L;
+        
+            } else {
+    
+                // Make homogeneous coordinates 
+                q0 = [1].concat(red[0]); 
+                q1 = [1].concat(red[3]);
+                p0 = [1].concat(blue[0]);
+                p1 = [1].concat(blue[1]); 
+    
+                m = this.meetSegmentSegment(q0, q1, p0, p1);
+                if (m[1] >= 0.0 && m[2] >= 0.0 && m[1] <= 1.0 && m[2] <= 1.0) {
+                    return [m];
+                } else {
+                    return [];
+                }
+            }
+        },
  
         /**
          * Find the nr-th intersection point of two Bezier curve segments.
@@ -1471,8 +1473,12 @@ define([
         meetBeziersegmentBeziersegment: function(red, blue) {
             var L, n, L2, i;
 
-            L = this._bezierMeetSubdivision(red, blue, 0);
-            L.sort( function(a,b) { return (a[1] - b[1]) * 10.0 + (a[2] - b[2]); }); 
+            if (red.length == 4 && blue.length == 4) {
+                L = this._bezierMeetSubdivision(red, blue, 0);
+            } else {
+                L = this._bezierLineMeetSubdivision(red, blue, 0);
+            }
+            L.sort( function(a,b) { return (a[1] - b[1]) * 10000000.0 + (a[2] - b[2]); }); 
             
             L2 = [];
             for (i = 0; i < L.length; i++) {
@@ -1486,7 +1492,7 @@ define([
         },
 
         /**
-         * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierdegree == 3.
+         * Find the nr-th intersection point of two Bezier curves, i.e. curves with bezierDegree == 3.
          * @param {JXG.Curve} red Curve with bezierDegree == 3
          * @param {JXG.Curve} blue Curve with bezierDegree == 3
          * @param {Number} nr The number of the intersection point which should be returned.
