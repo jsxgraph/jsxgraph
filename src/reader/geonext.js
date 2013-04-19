@@ -1110,7 +1110,7 @@
 
             tmp = this.readViewPort(xmlNode);
             if (tmp.length === 4) {
-                board.setBoundingBox(tmp, false);
+                board.setBoundingBox(tmp, true);
             } else {
                 // zoom level
                 tmp = this.gEBTN(xmlNode, 'zoom', 0, false);
@@ -1172,12 +1172,12 @@
             tmp = this.gEBTN(xmlNode,  'x');
             if (tmp) {
                 board.options.grid.gridX = 1 / parseFloat(tmp);
-                board.options.point.snapSizeX = parseFloat(tmp);
+                board.options.point.snapSizeX = 1 / parseFloat(tmp);
             }
             tmp = this.gEBTN(xmlNode,  'y');
             if (tmp) {
                 board.options.grid.gridY = 1 / parseFloat(tmp);
-                board.options.point.snapSizeY = parseFloat(tmp);
+                board.options.point.snapSizeY = 1 / parseFloat(tmp);
             }
 
             board.options.grid.gridDash = JXG.str2Bool(this.gEBTN(xmlNode, 'dash'));
