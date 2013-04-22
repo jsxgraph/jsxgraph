@@ -3436,7 +3436,7 @@ define([
 
             if (!this.animationIntervalCode) {
                 this.animationIntervalCode = window.setInterval(function () {
-                    JXG.boards[that.id].animate();
+                    that.animate();
                 }, element.board.attr.animationdelay);
             }
 
