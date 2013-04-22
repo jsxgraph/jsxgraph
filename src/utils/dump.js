@@ -110,7 +110,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Stringifies a string, i.e. puts some quotation marks around <tt>s</tt> if it is of type string.
-         * @param {%} s
+         * @param {*} s
          * @returns {String} " + s + "
          */
         str: function (s) {
@@ -188,9 +188,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         dump: function (board) {
             var e, obj, element, s,
-                elementList = [], len = board.objectsList.length;
+                props = [],
+                methods = [],
+                elementList = [],
+                len = board.objectsList.length;
 
             this.addMarkers(board, 'dumped', false);
+
+            methods.push({
+                obj: '$board',
+                method: 'setBoundingBox',
+                params: [board.getBoundingBox(), true]
+            });
 
             for (e = 0; e < len; e++) {
                 obj = board.objectsList[e];
@@ -211,6 +220,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     }
 
                     element.attributes = this.prepareAttributes(board, obj);
+                    if (element.type === 'glider' && obj.onPolygon) {
+                        props.push({
+                            obj: obj.id,
+                            prop: 'onPolygon',
+                            val: true
+                        });
+                    }
 
                     elementList.push(element);
                 }
@@ -218,7 +234,29 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             this.deleteMarkers(board, 'dumped');
 
-            return elementList;
+            return {
+                elements: elementList,
+                props: props,
+                methods: methods
+            };
+        },
+
+        /**
+         * Converts an array of different values into a parameter string that can be used by the code generators.
+         * @param {Array} a
+         * @param {function} converter A function that is used to transform the elements of <tt>a</tt>. Usually
+         * {@link JXG.toJSON} or {@link JXG.Dump.toJSAN} are used.
+         * @returns {String}
+         */
+        arrayToParamStr: function (a, converter) {
+            var i,
+                s = [];
+
+            for (i = 0; i < a.length; i++) {
+                s.push(converter.call(this, a[i]));
+            }
+
+            return s.join(', ');
         },
 
         /**
@@ -267,11 +305,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JessieScript
          */
         toJessie: function (board) {
-            var i,
-                elements = this.dump(board),
+            var i, elements,
+                dump = this.dump(board),
                 script = [];
 
-            script.push('$board.setView(' + Type.toJSON(board.getBoundingBox()) + ');');
+            elements = dump.elements;
 
             for (i = 0; i < elements.length; i++) {
                 if (elements[i].attributes.name.length > 0) {
@@ -279,6 +317,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 }
 
                 script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJSAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
+                script.push('');
+            }
+
+            for (i = 0; i < dump.methods.length; i++) {
+                script.push(dump.methods[i].obj + '.' + dump.methods[i].method + '(' + this.arrayToParamStr(dump.methods[i].params, this.toJSAN) + ');');
+                script.push('');
+            }
+
+            for (i = 0; i < dump.props.length; i++) {
+                script.push(dump.props[i].obj + '.' + dump.props[i].prop + ' = ' + this.toJSAN(dump.props[i].val) + ';');
                 script.push('');
             }
 
@@ -291,14 +339,24 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {String} JavaScript
          */
         toJavaScript: function (board) {
-            var i,
-                elements = this.dump(board),
+            var i, elements,
+                dump = this.dump(board),
                 script = [];
 
-            script.push('board.setBoundingBox(' + Type.toJSON(board.getBoundingBox()) + ');');
+            elements = dump.elements;
 
             for (i = 0; i < elements.length; i++) {
                 script.push('board.create("' + elements[i].type + '", [' + elements[i].parents.join(', ') + '], ' + Type.toJSON(elements[i].attributes) + ');');
+            }
+
+            for (i = 0; i < dump.methods.length; i++) {
+                script.push(dump.methods[i].obj + '.' + dump.methods[i].method + '(' + this.arrayToParamStr(dump.methods[i].params, Type.toJSON) + ');');
+                script.push('');
+            }
+
+            for (i = 0; i < dump.props.length; i++) {
+                script.push(dump.props[i].obj + '.' + dump.props[i].prop + ' = ' + Type.toJSON(dump.props[i].val) + ';');
+                script.push('');
             }
 
             return script.join('\n');

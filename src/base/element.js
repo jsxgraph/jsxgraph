@@ -796,6 +796,11 @@ define([
                             this.generateLabelValue = value;
                         }
                         break;
+                    case 'onpolygon':
+                        if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                            this.onPolygon = !!value;
+                        }
+                        break;
                     default:
                         if (Type.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
                                 JXG.Validator[key](value)) || (JXG.Validator[key] &&

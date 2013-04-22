@@ -139,7 +139,8 @@ define([
             setPosition: 'setGliderPosition',
             setGliderPosition: 'setGliderPosition',
             addConstraint: 'addConstraint',
-            dist: 'Dist'
+            dist: 'Dist',
+            onPolygon: 'onPolygon'
         });
 
         /**
