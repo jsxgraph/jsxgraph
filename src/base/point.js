@@ -297,6 +297,11 @@ define([
                             }
                         }
                     }
+
+                    // If the slide object has changed, save the change to the glider.
+                    if (slide.id !== this.slideObject.id) {
+                        this.slideObject = slide;
+                    }
                 }
 
                 p1c = slide.point1.coords;
