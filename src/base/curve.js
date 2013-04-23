@@ -180,14 +180,13 @@ define([
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
                 i, tX, tY,
-                xi, yi, x0, y0, x1, y1, xy, den, lbda,
+                res, 
                 steps = this.visProp.numberpointslow,
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint / this.board.unitX,
                 dist = Infinity,
                 suspendUpdate = true;
 
-            prec = prec * prec;
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
@@ -208,6 +207,8 @@ define([
                     this.visProp.curvetype === 'polar' ||
                     this.visProp.curvetype === 'functiongraph') {
 
+                prec = prec * prec;
+
                 // Brute force search for a point on the curve close to the mouse pointer
                 for (i = 0, t = this.minX(); i < steps; i++) {
                     tX = this.X(t, suspendUpdate);
@@ -226,29 +227,21 @@ define([
                     start = 0;
                 }
 
-                // Rough search quality
                 len = this.numberPoints;
                 for (i = start; i < len - 1; i++) {
-                    xi  = this.X(i);
-                    yi  = this.Y(i);
 
-                    x0  = x - xi;
-                    y0  = y - yi;
-
-                    x1  = this.X(i + 1) - xi;
-                    y1  = this.Y(i + 1) - yi;
-
-                    den = x1 * x1 + y1 * y1;
-                    dist = x0 * x0 + y0 * y0;
-
-                    if (den >= Mat.eps) {
-                        xy = x0 * x1 + y0 * y1;
-                        lbda = xy / den;
-                        dist -= lbda * xy;
+                    if (this.bezierDegree == 3) {
+                        res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
+                        //i += 2;
                     } else {
-                        lbda = 0;
+                        res = Geometry.projectCoordsToSegment(
+                                [1, x, y],
+                                [1, this.X(i), this.Y(i)], 
+                                [1, this.X(i + 1), this.Y(i + 1)]);
                     }
-                    if (lbda >= 0 && lbda <= 1 && dist < prec) {
+
+                    if (res[1] >= 0 && res[1] <= 1 &&
+                            Geometry.distance([1, x, y], res[0], 3) <= prec) {
                         return true;
                     }
                 }
@@ -757,7 +750,6 @@ define([
 
                 if (this.bezierDegree === 3) {
                     len /= 3;
-
                     if (t >= len) {
                         if (Type.isFunction(arr[arr.length - 1])) {
                             return arr[arr.length - 1]();

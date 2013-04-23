@@ -1544,6 +1544,32 @@ define([
             }
         },
 
+        bezierSegmentEval: function(t, curve) {
+            var t1 = 1.0 - t, 
+                f, x, y;
+            
+            x = 0;
+            y = 0;
+            
+            f = t1 * t1 * t1;
+            x += f * curve[0][0];
+            y += f * curve[0][1];
+
+            f = 3.0 * t * t1 * t1;
+            x += f * curve[1][0];
+            y += f * curve[1][1];
+            
+            f = 3.0 * t * t * t1;
+            x += f * curve[2][0];
+            y += f * curve[2][1];
+
+            f = t * t * t;
+            x += f * curve[3][0];
+            y += f * curve[3][1];
+            
+            return [1.0, x, y];
+        },
+
         /****************************************/
         /****           PROJECTIONS          ****/
         /****************************************/
@@ -1637,6 +1663,33 @@ define([
             return [ [1, t * s[0] + q1[1], t * s[1] + q1[2]], t];
         },
 
+        /**
+         * Finds the coordinates of the closest point on a Bezier segment of a
+         * {@link JXG.Curve} to a given coordinate array.
+         * @param {Array} p Point to project in homogeneous coordinates.
+         * @param {JXG.Curve} curve Curve of type "plot" having Bezier degree 3. 
+         * @param {Number} nr Number of the Bezier segment of the curve.
+         * @returns {Array} The coordinates of the projection of the given point 
+         * on the given Bezier segment and the preimage of the curve which 
+         * determines the closest point.
+         */
+        projectCoordsToBeziersegment: function(pos, curve, start) {
+            var t0,
+                minfunc = function(t) {
+                    var z = [1, curve.X(start + t), curve.Y(start + t)];             
+             
+                    z[1] -= pos[1];
+                    z[2] -= pos[2];
+
+                    return z[1] * z[1] + z[2] * z[2];
+                };
+        
+            
+            t0 = JXG.Math.Numerics.fminbr(minfunc, [0.0, 1.0]);
+            
+            return [[1, curve.X(t0 + start), curve.Y(t0 + start)], t0];
+        },
+        
         /**
          * Calculates the coordinates of the projection of a given point on a given curve.
          * Uses {@link #projectCoordsToCurve}.
