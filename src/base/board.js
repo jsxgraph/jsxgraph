@@ -1503,12 +1503,12 @@ define([
 
             // move origin - but only if we're not in drag mode
             if (this.mode === this.BOARD_MODE_NONE && this.mouseOriginMoveStart(evt)) {
-                this.triggerEventHandlers(['MSPointerDown', 'down'], [evt]);
+                this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
                 return false;
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['MSPointerDown', 'down'], [evt]);
+            this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
 
             return result;
         },
@@ -1580,7 +1580,7 @@ define([
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['MSPointerMove', 'move'], [evt, this.mode]);
+            this.triggerEventHandlers(['touchmove', 'move', 'MSPointerMove'], [evt, this.mode]);
 
             return this.mode === this.BOARD_MODE_NONE;
         },
@@ -1595,7 +1595,7 @@ define([
                 tmpTouches = [],
                 eps = this.options.precision.touch;
 
-            this.triggerEventHandlers(['MSPointerUp', 'up'], [evt]);
+            this.triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
 
             for (i = 0; i < this.touches.length; i++) {
@@ -1620,7 +1620,7 @@ define([
                     }
                 }
                 if (!found) {
-                    this.downObjects[i].triggerEventHandlers(['MSPointerUp', 'up'], [evt]);
+                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
                     this.downObjects[i].snapToGrid();
                     this.downObjects.splice(i, 1);
                 }
