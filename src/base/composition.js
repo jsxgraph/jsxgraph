@@ -137,6 +137,13 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         this.elements = {};
 
+        this.methodMap = {
+            setAttribute: 'setAttribute',
+            setProperty: 'setAttribute',
+            add: 'add',
+            remove: 'remove'
+        };
+
         for (e in elements) {
             if (elements.hasOwnProperty(e)) {
                 this.add(e, elements[e]);
@@ -145,13 +152,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         this.dump = true;
         this.subs = {};
-
-        this.methodMap = {
-            setAttribute: 'setAttribute',
-            setProperty: 'setAttribute',
-            add: 'add',
-            remove: 'remove'
-        };
     };
 
     JXG.extend(JXG.Composition.prototype, /** @lends JXG.Composition.prototype */ {
