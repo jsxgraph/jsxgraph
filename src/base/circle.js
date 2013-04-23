@@ -775,7 +775,7 @@ define([
             // Circle through three points
             // Check if circumcircle element is available
             if (JXG.elements.circumcircle) {
-                el = JXG.elements.circumcircle(board, p, attributes);
+                el = JXG.elements.circumcircle(board, p, attr);
             } else {
                 throw new Error('JSXGraph: Can\'t create circle with three points. Please include the circumcircle element (element/composition).');
             }
