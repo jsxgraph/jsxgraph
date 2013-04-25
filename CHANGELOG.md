@@ -17,7 +17,6 @@ Important Notes
  * Board attributes in JXG.Options were moved from JXG.Options to JXG.Options.board (3e39b82):
    showCopyright, showNavigation, takeSizeFromFile, renderer, takeFirst, animationDelay, zoom, and pan.
  * The list of boards and the list of available elements were moved from JXG.JSXGraph to JXG (c0048e7, e202e15)
- * Polygon borders won't be hidden automatically when the polygon is hidden (8e95f2c4)
  * Pstricks was removed
  * Board.getElement was renamed to Board.select and will replace JXG.getRef(erence) in a future release (c857dc4, 92c18ac)
  * Reorganization of the repository: All files in src/ were renamed to all lowercase and moved into subfolders (bb301e0,
@@ -39,7 +38,8 @@ New features
  * Snap to grid for lines (86b2295)
  * Hash marks for lines (#7, f8a6723, c2179a4, 2643817, ffbd40e, b548f59)
  * Implemented Pointer API support (#18, 8820f3f, 4d22876, 235ee34, 97a3f6e, 24827d3, 535f871)
- * Take CSS transformations of type matrix, scale, and translate into consideration (a1da3b7). This ensures better combatibility with EaselJS.
+ * Take CSS transformations of type matrix, scale, and translate into consideration (a1da3b7). This ensures better
+   combatibility with EaselJS.
  * New element 'tapemeasure' (f1698c2, e6bb86a, 5717f14)
  * JXG.Math.Numerics.regressionPolynomial now also accepts arrays of JXG.Coords (2fef545)
  * New linear regression algorithm TheilSenRegression in math/statistics (3fdd673)
@@ -71,6 +71,17 @@ New features
  * loadBoardFrom*() functions now accept a callback function which is called when the file readers are finished
    loading the construction (#33, 25aa537)
  * Expose Turtle methods and properties to JC (f11c037)
+ * JXG.Dump preserves snapToPoint attribute (228567c)
+ * Improved availability of element properties and methods in JessieCode(7af504a)
+ * Polygon can be hidden independently from their borders (8e95f2c4, 3d219f4)
+ * The label of a curve will disappear if the curve is not real (209cfc1)
+ * Allow multiple versions of JSXGraph (arbitrary many 0.97 or higher, one 0.96 or lower) simultaneously on the same
+   HTML page (2de1da4)
+ * Enhanced intersection methods for curves (c0491e7, ea23470, 1301d5e, afaa691, 2d5d668, 4c53147, 6fa16e8, 9de88fb,
+   be247fd, 4df27a3, 7ba41bf, d030108)
+ * Preparations for a better integration of parameter normalization (d3f4ead)
+ * New algorithm GrahamScan in math/geometry to determine the convex hull of a set of points (33a9add)
+
 
 
 Bug fixes
@@ -111,7 +122,15 @@ Bug fixes
  * Elements with the attribute *highlight* set to false now will never be automatically highlighted (25d986a)
  * JXG.Dump lost required attribute values (4e69297)
  * GeonextReader: Change the background color of the board (4e69297)
-
+ * Increase precision in MathNumerics.fminbr to make gliders stay constant on curves (5c8c02a)
+ * The labels of initially hidden elements will be shown when the element is made visible (a716501)
+ * Pass the visibility of a polygon down to its borders on creation (4b5af66)
+ * Bugfix ellipse hasPoint method (280f018)
+ * In case there is no label subelement in JXG.Options for a specified element the label attributes given by the
+   user were discarded (397208b)
+ * Bugfix tick label rounding for values close to zero (ae93bac, aeabd18)
+ * Fixed polygon gliders (2f68165, 5745c67)
+ * Circumcircles created with the circle creator will use circle default attributes (501e916)
 
 
 0.96
