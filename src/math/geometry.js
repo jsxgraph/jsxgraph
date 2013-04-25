@@ -1332,18 +1332,19 @@ define([
          */
         _bezierListConcat: function (L, Lnew, t1, t2) {
             var i,
+                t2exists = Type.exists(t2),
                 start = 0,
                 len = Lnew.length,
                 le = L.length;
 
             if (le > 0 &&
                     ((L[le - 1][1] === 1 && Lnew[0][1] === 0) ||
-                    (Type.exists(t2) && L[le - 1][2] === 1 && Lnew[0][2] === 0))) {
+                    (t2exists && L[le - 1][2] === 1 && Lnew[0][2] === 0))) {
                 start = 1;
             }
 
             for (i = start; i < len; i++) {
-                if (Type.exists(t2)) {
+                if (t2exists) {
                     Lnew[i][2] *= 0.5;
                     Lnew[i][2] += t2;
                 }
