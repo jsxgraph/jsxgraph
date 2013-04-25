@@ -179,8 +179,7 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, tX, tY,
-                res, 
+                i, tX, tY, res,
                 steps = this.visProp.numberpointslow,
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint / this.board.unitX,
@@ -230,14 +229,15 @@ define([
                 len = this.numberPoints;
                 for (i = start; i < len - 1; i++) {
 
-                    if (this.bezierDegree == 3) {
+                    if (this.bezierDegree === 3) {
                         res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
                         //i += 2;
                     } else {
                         res = Geometry.projectCoordsToSegment(
-                                [1, x, y],
-                                [1, this.X(i), this.Y(i)], 
-                                [1, this.X(i + 1), this.Y(i + 1)]);
+                            [1, x, y],
+                            [1, this.X(i), this.Y(i)],
+                            [1, this.X(i + 1), this.Y(i + 1)]
+                        );
                     }
 
                     if (res[1] >= 0 && res[1] <= 1 &&

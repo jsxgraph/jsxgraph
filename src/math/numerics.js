@@ -44,8 +44,7 @@
  * @author graphjs
  */
 
-define(['utils/type', 'math/math'], 
-      function (Type, Mat) {
+define(['utils/type', 'math/math'], function (Type, Mat) {
 
     "use strict";
 
@@ -613,7 +612,7 @@ define(['utils/type', 'math/math'],
 
             return [c2.X(t2), c2.Y(t2)];
         },
-        
+
         /**
          * Returns the Lagrange polynomials for curves with equidistant nodes, see
          * Jean-Paul Berrut, Lloyd N. Trefethen: Barycentric Lagrange Interpolation,
