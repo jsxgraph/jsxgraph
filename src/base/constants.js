@@ -50,14 +50,14 @@ define(['jxg'], function (JXG) {
          * Represents the currently used JSXGraph version.
          * @type {String}
          */
-        version: '0.97RC1',
+        version: '0.97.0',
 
         /**
          * The small gray version indicator in the top left corner of every JSXGraph board (if
          * showCopyright is not set to false on board creation).
          * @type String
          */
-        licenseText: 'JSXGraph v0.97.1 Copyright (C) see http://jsxgraph.org',
+        licenseText: 'JSXGraph v0.97 Copyright (C) see http://jsxgraph.org',
 
         // coords
         COORDS_BY_USER: 0x0001,
