@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -41,8 +41,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'utils/event', 'math/math'
-], function (JXG, Const, EventEmitter, Mat) {
+    'jxg', 'base/constants', 'utils/event', 'utils/type', 'math/math'
+], function (JXG, Const, EventEmitter, Type, Mat) {
 
     "use strict";
 
@@ -59,13 +59,14 @@ define([
      * @param {Number} method The type of coordinates given by the user. Accepted values are <b>COORDS_BY_SCREEN</b> and <b>COORDS_BY_USER</b>.
      * @param {Array} coordinates An array of affine coordinates.
      * @param {JXG.Board} board A reference to a board.
+     * @oaram {Boolean} [emitter=true]
      * @borrows JXG.EventEmitter#on as this.on
      * @borrows JXG.EventEmitter#off as this.off
      * @borrows JXG.EventEmitter#triggerEventHandlers as this.triggerEventHandlers
      * @borrows JXG.EventEmitter#eventHandlers as this.eventHandlers
      * @constructor
      */
-    JXG.Coords = function (method, coordinates, board) {
+    JXG.Coords = function (method, coordinates, board, emitter) {
         /**
          * Stores the board the object is used on.
          * @type JXG.Board
@@ -83,8 +84,18 @@ define([
          */
         this.scrCoords = [];
 
-        EventEmitter.eventify(this);
-        this.setCoordinates(method, coordinates);
+        /**
+         * If true, this coordinates object will emit update events every time
+         * the coordinates are set.
+         * @type {boolean}
+         * @default true
+         */
+        this.emitter = !Type.exists(emitter) || emitter;
+
+        if (this.emitter) {
+            EventEmitter.eventify(this);
+        }
+        this.setCoordinates(method, coordinates, true, true);
     };
 
     JXG.extend(JXG.Coords.prototype, /** @lends JXG.Coords.prototype */ {
@@ -180,9 +191,10 @@ define([
          * @param {Array} coordinates An array of affine coordinates the Coords object is set to.
          * @param {Boolean} [doRound=true] flag If true or null round the coordinates in usr2screen. This is used in smooth curve plotting.
          * The IE needs rounded coordinates. Id doRound==false we have to round in updatePathString.
+         * @param {Boolean} [noevent=false]
          * @returns {JXG.Coords} Reference to the coords object.
          */
-        setCoordinates: function (coord_type, coordinates, doRound) {
+        setCoordinates: function (coord_type, coordinates, doRound, noevent) {
             var uc = this.usrCoords,
                 sc = this.scrCoords,
                 ou = [uc[0], uc[1], uc[2]],
@@ -206,7 +218,7 @@ define([
                 this.screen2usr();
             }
 
-            if (os[1] !== sc[1] || os[2] !== sc[2]) {
+            if (this.emitter && !noevent && (os[1] !== sc[1] || os[2] !== sc[2])) {
                 this.triggerEventHandlers(['update'], [ou, os]);
             }
 

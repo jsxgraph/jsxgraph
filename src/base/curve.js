@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -461,7 +461,7 @@ define([
                 x, y, x0, y0, top, depth,
                 MAX_DEPTH, MAX_XDIST, MAX_YDIST,
                 suspendUpdate = false,
-                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board),
+                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 dyadicStack = [],
                 depthStack = [],
                 pointStack = [],
@@ -535,7 +535,7 @@ define([
             depth = 0;
 
             this.points = [];
-            this.points[j++] = new Coords(Const.COORDS_BY_SCREEN, [x0, y0], this.board);
+            this.points[j++] = new Coords(Const.COORDS_BY_SCREEN, [x0, y0], this.board, false);
 
             do {
                 distOK = this.isDistOK(x - x0, y - y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0, y0, x, y);
@@ -556,7 +556,7 @@ define([
                     // In that case, t is undefined and we will see a jump in the curve.
                     t = mi + i * divisors[depth];
 
-                    po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                    po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false, true);
                     x = po.scrCoords[1];
                     y = po.scrCoords[2];
                     distOK = this.isDistOK(x - x0, y - y0, MAX_XDIST, MAX_YDIST) || this.isSegmentOutside(x0, y0, x, y);
@@ -569,7 +569,7 @@ define([
                     }
                 }
 
-                this.points[j] = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+                this.points[j] = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
                 j += 1;
 
                 x0 = x;
