@@ -52,6 +52,7 @@ core-min:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
 
 core-amd:
@@ -70,7 +71,7 @@ release: core-min docs
 	$(CP) README.md LICENSE.MIT LICENSE.LGPL $(TMP)/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph.zip jsxgraph* themes/ docs.zip README.md LICENSE.*
 	$(CP) $(TMP)/jsxgraph.zip $(OUTPUT)/jsxgraph.zip
-	
+
 	$(RM) $(RMFLAGS) tmp
 
 
@@ -78,22 +79,22 @@ docs: core core-min
 	# set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
-	
+
 	# update template related files
 	$(CP) distrib/jquery.min.js $(JSDOC2TPLSTAT)/jquery.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(JSDOC2TPLSTAT)/jsxgraphcore.js
 	$(CP) distrib/jsxgraph.css $(JSDOC2TPLSTAT)/jsxgraph.css
-	
+
 	# update the plugin
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
-	
+
 	# run node-jsdoc2
 	$(JSDOC2) $(JSDOC2FLAGS) src/$(FILELIST).js
-	
+
 	# zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
-	
+
 	$(RM) $(RMFLAGS) tmp
 
 
