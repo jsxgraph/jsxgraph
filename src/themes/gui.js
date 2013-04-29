@@ -94,5 +94,5 @@ if (JXG.isAndroid() || JXG.isApple()) {
     JXG.Options.curve.RDPsmoothing = false;
     JXG.Options.curve.numberPointsHigh = 600;
     JXG.Options.curve.numberPointsLow = 100;
-    JXG.Options.curve.doAdvancedPlot = false;
+    JXG.Options.curve.doAdvancedPlot = true;
 }
