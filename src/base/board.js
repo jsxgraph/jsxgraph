@@ -1532,6 +1532,7 @@ define([
             }
 
             this.options.precision.hasPoint = this.options.precision.touch;
+            this.updateQuality = this.BOARD_QUALITY_LOW;
 
             // try with mouseOriginMove because the evt objects are quite similar
             if (!this.mouseOriginMove(evt)) {
@@ -1895,7 +1896,9 @@ define([
                 this.renderer.hide(this.infobox);
             }
 
-            this.updateQuality = this.BOARD_QUALITY_HIGH;
+            /*
+              this.updateQuality = this.BOARD_QUALITY_HIGH; is set in touchEnd
+            */
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
 
