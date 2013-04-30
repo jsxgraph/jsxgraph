@@ -375,13 +375,7 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                    if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW && (JXG.isAndroid() || JXG.isApple())) {
-                        this.numberPoints = this.visProp.numberpointslow;
-                        this.allocatePoints();
-                        this.updateParametricCurveNaive(mi, ma, this.numberPoints);                        
-                    } else {
                         this.updateParametricCurve(mi, ma, len);
-                    }
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
