@@ -728,10 +728,16 @@
 
                 case JXG.GENTYPE_RULER:
                     set_str = assign + 'tapemeasure([ ' + step.args.p1 + ' ], [ ' + step.args.p2 + ' ]) <<';
+                    /*
                     set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>, '
                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
                         + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
+                    */
+                    set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
+                        + JXG.Options.elements.snapToGrid + '>>, '
+                        + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
+                        + JXG.Options.elements.snapToGrid + '>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 

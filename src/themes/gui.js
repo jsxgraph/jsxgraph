@@ -68,7 +68,18 @@ JXG.Options = JXG.merge(JXG.Options, {
             offsets: [0,-12]
         }
     },
-    
+
+    tapemeasure: {
+        point1: {
+            snapToPoints: true,
+            attractorDistance: 0.2
+        },
+        point2: {
+            snapToPoints: true,
+            attractorDistance: 0.2
+        }
+    },
+   
     text: {
         fontSize: 18
     }
