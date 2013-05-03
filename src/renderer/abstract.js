@@ -336,15 +336,40 @@ define([
         updateLine: function (element) {
             var c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
-                margin = null;
+                margin = null,
+                s, d, d1x, d1y, d2x, d2y;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
                 margin = -4;
             }
             Geometry.calcStraight(element, c1, c2, margin);
+            
+            d1x = d1y = d2x = d2y = 0.0;
+            /* 
+               Handle arrow heads.
+               
+               The arrow head is an equilateral triangle with base length 10 and height 10.
+               These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
+            */
+            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, 10);
+            if (element.visProp.lastarrow) {
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                if (d > Mat.eps) {
+                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                }
+            }
+            if (element.visProp.firstarrow) {
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                if (d > Mat.eps) {
+                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                }
+            }
+
             this.updateLinePrim(element.rendNode,
-                c1.scrCoords[1], c1.scrCoords[2],
-                c2.scrCoords[1], c2.scrCoords[2], element.board);
+                c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
+                c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
 
             this.makeArrows(element);
             this._updateVisual(element, {fill: true});
