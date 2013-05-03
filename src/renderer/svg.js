@@ -195,9 +195,12 @@ define([
             node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(element.visProp.strokeopacity));
             node2.setAttributeNS(null, 'fill', Type.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(element.visProp.strokeopacity));
+            node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
+                                                            // Should be zero to make the positioning easy
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
+            
             s = parseInt(element.visProp.strokewidth, 10);
             //node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
             node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
@@ -211,8 +214,6 @@ define([
             
             node2.setAttributeNS(null, 'markerHeight', d);
             node2.setAttributeNS(null, 'markerWidth', d);
-            node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
-                                                            // Should be zero to make the positioning easy
 
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
 

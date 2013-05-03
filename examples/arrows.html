@@ -13,14 +13,14 @@
 <script type="text/javascript">
     /* <![CDATA[ */
 
-    JXG.Options.renderer = 'canvas';
-    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[0, 4, 4, 1], axis: false, grid: true, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
+    //JXG.Options.renderer = 'canvas';
+    var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-1, 4, 4, -1], axis: true, grid: true, keepaspectratio: true, showcopyright: false, zoom: true, pan: true}),
         out = document.getElementById('out');
 
     var p = board.create('point', [1, 2], {opacity:0.3, visible:false});
-    var q = board.create('point', [3, 2], {opacity:0.3, visible:false});
+    var q = board.create('point', [3, 2.5], {opacity:0.3, visible:false});
 
-    var l = board.create('segment', [p, q], {color:'black', strokeWidth:10, strokeOpacity:0.4});
+    var l = board.create('segment', [p, q], {color:'black', strokeWidth:2, strokeOpacity:1.0});
 
     l.setProperty({firstarrow: true, lastarrow: true});
 

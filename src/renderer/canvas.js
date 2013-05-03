@@ -412,13 +412,41 @@ define([
         // documented in AbstractRenderer
         drawLine: function (el) {
             var scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board);
+                scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+                margin = null,
+                s, d, d1x, d1y, d2x, d2y;
 
-            Geometry.calcStraight(el, scr1, scr2);
+            if (el.visProp.firstarrow || el.visProp.lastarrow) {
+                margin = -4;
+            }
+            Geometry.calcStraight(el, scr1, scr2, margin);
 
+            d1x = d1y = d2x = d2y = 0.0;
+            /* 
+               Handle arrow heads.
+               
+               The arrow head is an equilateral triangle with base length 10 and height 10.
+               These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
+            */
+            s = Math.max(parseInt(el.visProp.strokewidth, 10) * 3, 10);
+            if (el.visProp.lastarrow) {
+                d = scr1.distance(Const.COORDS_BY_SCREEN, scr2);
+                if (d > Mat.eps) {
+                    d2x = (scr2.scrCoords[1] - scr1.scrCoords[1]) * s / d;
+                    d2y = (scr2.scrCoords[2] - scr1.scrCoords[2]) * s / d;
+                }
+            }
+            if (el.visProp.firstarrow) {
+                d = scr1.distance(Const.COORDS_BY_SCREEN, scr2);
+                if (d > Mat.eps) {
+                    d1x = (scr2.scrCoords[1] - scr1.scrCoords[1]) * s / d;
+                    d1y = (scr2.scrCoords[2] - scr1.scrCoords[2]) * s / d;
+                }
+            }
+            
             this.context.beginPath();
-            this.context.moveTo(scr1.scrCoords[1], scr1.scrCoords[2]);
-            this.context.lineTo(scr2.scrCoords[1], scr2.scrCoords[2]);
+            this.context.moveTo(scr1.scrCoords[1] + d1x, scr1.scrCoords[2] + d1y);
+            this.context.lineTo(scr2.scrCoords[1] - d2x, scr2.scrCoords[2] - d2y);
             this._stroke(el);
 
             this.makeArrows(el, scr1, scr2);
@@ -716,6 +744,7 @@ define([
         // documented in AbstractRenderer
         makeArrows: function (el, scr1, scr2) {
             // not done yet for curves and arcs.
+            /*
             var x1, y1, x2, y2, ang,
                 w = Math.min(el.visProp.strokewidth / 2, 3),
                 arrowHead = [
@@ -730,7 +759,21 @@ define([
                     [ 10, 4 * w]
                 ],
                 context = this.context;
-
+            */
+            var x1, y1, x2, y2, ang,
+                w = Math.max(el.visProp.strokewidth * 3, 10),
+                arrowHead = [
+                    [ -w, -w * 0.5],
+                    [ 0.0,     0.0],
+                    [ -w,  w * 0.5]
+                ],
+                arrowTail = [
+                    [ w,   -w * 0.5],
+                    [ 0.0,      0.0],
+                    [ w,    w * 0.5]
+                ],
+                context = this.context;
+            
             if (el.visProp.strokecolor !== 'none' && (el.visProp.lastarrow || el.visProp.firstarrow)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
