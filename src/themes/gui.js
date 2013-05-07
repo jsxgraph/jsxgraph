@@ -1,9 +1,5 @@
 JXG.Options = JXG.merge(JXG.Options, {
 
-    axisScaleX: 1,
-
-    axisScaleY: 1,
-
     device: 'tablet',
 
     opacityLevel: 0.5,
@@ -11,6 +7,10 @@ JXG.Options = JXG.merge(JXG.Options, {
     sensitive_area: 20,
 
     lastRegPolCorners: 4,
+
+    lastSliderStart: 0,
+    lastSliderEnd: 2,
+    lastSliderIni: 1,
 
     angle: {
         fillColor: '#ddd',

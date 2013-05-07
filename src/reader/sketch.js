@@ -217,12 +217,10 @@
 
                     set_str += step.args.name[3] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[1] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[3] + '\', name: \'' + step.args.name[3] + '\', ticks: ';
-                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleX;
-                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
+                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: 1, drawLabels: true, drawZero: true>>>>; ';
                     set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
-                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: ' + JXG.Options.axisScaleY;
-                    set_str += ', drawLabels: true, drawZero: true>>>>; ';
+                    set_str += '<<minorHeight:0, majorHeight:10, ticksDistance: 1, drawLabels: true, drawZero: true>>>>; ';
 
                     set_str += step.dest_sub_ids[3] + '.visible = false; ';
                     set_str += step.dest_sub_ids[4] + '.visible = false; ';
