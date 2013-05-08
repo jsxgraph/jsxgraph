@@ -631,7 +631,8 @@ define([
 
             for (i = 0; i < len; i++) {
                 p = this.board.select(this.parents[i]);
-                p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));
+                // p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
+                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));
             }
 
             this.prepareUpdate().update();
