@@ -3228,7 +3228,6 @@ define([
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
             this.triggerEventHandlers(['update'], []);
-
             // To resolve dependencies between boards
             // for (var board in JXG.boards) {
             len = this.dependentBoards.length;

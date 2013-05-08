@@ -737,7 +737,11 @@ define([
 
                     if (pEl.elementClass === Const.OBJECT_CLASS_POINT && pEl !== this && pEl.visProp.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
+                        if (this.visProp.attractorunit === 'screen') {
+                            d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
+                        } else {
+                            d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
+                        }
 
                         if (d < this.visProp.attractordistance && d < dMax) {
                             dMax = d;
@@ -788,7 +792,11 @@ define([
                         projCoords = Geometry.projectPointToTurtle(this, el, this.board);
                     }
 
-                    d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
+                    if (this.visProp.attractorunit === 'screen') {
+                        d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
+                    } else {
+                        d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
+                    }
 
                     if (d < this.visProp.attractordistance) {
                         if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {

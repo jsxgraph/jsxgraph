@@ -1275,6 +1275,19 @@ define([
             attractors: [],
 
             /**
+             * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints. 
+             * Possible values are 'screen' and 'user.
+             * @see JXG.Point#attractorDistance
+             * @see JXG.Point#snatchDistance
+             * @see JXG.Point#snapToPoints
+             * @see JXG.Point#attractors
+             * @type string
+             * @name JXG.Point#attractorDistance
+             * @default 'user'
+             */
+            attractorUnit: 'user',    // 'screen', 'user' 
+
+            /**
              * If the distance of the point to one of its attractors is less
              * than this number the point will be a glider on this
              * attracting element.
@@ -1562,7 +1575,8 @@ define([
                 highlightFillOpacity: 0.1,
                 size: 6,
                 snapToPoints: true,
-                attractorDistance: 0.1,
+                attractorUnit: 'screen', 
+                attractorDistance: 20
                 showInfobox: false,
                 withLabel: false,
                 name: ''
@@ -1574,7 +1588,8 @@ define([
                 highlightFillOpacity: 0.1,
                 size: 6,
                 snapToPoints: true,
-                attractorDistance: 0.1,
+                attractorUnit: 'screen', 
+                attractorDistance: 20
                 showInfobox: false,
                 withLabel: false,
                 name: ''

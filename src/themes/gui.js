@@ -28,7 +28,8 @@ JXG.Options = JXG.merge(JXG.Options, {
         },
         label: {
             position: 'urt',
-            offset: [-15, 30]
+            offset: [-15, 30],
+            display: 'internal'
         }
     },
 
@@ -72,11 +73,13 @@ JXG.Options = JXG.merge(JXG.Options, {
     tapemeasure: {
         point1: {
             snapToPoints: true,
-            attractorDistance: 0.2
+            attractorUnit: 'screen', 
+            attractorDistance: 20
         },
         point2: {
             snapToPoints: true,
-            attractorDistance: 0.2
+            attractorUnit: 'screen', 
+            attractorDistance: 20
         }
     },
    
