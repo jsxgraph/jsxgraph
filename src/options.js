@@ -1576,7 +1576,7 @@ define([
                 size: 6,
                 snapToPoints: true,
                 attractorUnit: 'screen', 
-                attractorDistance: 20
+                attractorDistance: 20,
                 showInfobox: false,
                 withLabel: false,
                 name: ''
@@ -1589,7 +1589,7 @@ define([
                 size: 6,
                 snapToPoints: true,
                 attractorUnit: 'screen', 
-                attractorDistance: 20
+                attractorDistance: 20,
                 showInfobox: false,
                 withLabel: false,
                 name: ''

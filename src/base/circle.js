@@ -634,7 +634,7 @@ define([
                 p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));
             }
 
-            this.update();
+            this.prepareUpdate().update();
 
             return this;
         },
