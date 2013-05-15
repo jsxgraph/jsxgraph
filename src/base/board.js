@@ -887,7 +887,6 @@ define([
             this.updateInfobox(drag);
             this.update();
             drag.highlight(true);
-
         },
 
         /**

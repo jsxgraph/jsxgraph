@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -549,7 +549,7 @@ define([
             this.board.renderer.hide(this);
 
             if (Type.exists(this.label) && this.hasLabel) {
-                this.label.hiddenByParent = true;
+                this.label.content.hiddenByParent = true;
                 if (this.label.content.visProp.visible) {
                     this.label.content.hideElement();
                 }
@@ -564,8 +564,8 @@ define([
             this.visProp.visible = true;
             this.board.renderer.show(this);
 
-            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
-                this.label.hiddenByParent = false;
+            if (Type.exists(this.label) && this.hasLabel && this.label.content.hiddenByParent) {
+                this.label.content.hiddenByParent = false;
                 if (!this.label.content.visProp.visible) {
                     this.label.content.showElement().updateRenderer();
                 }
@@ -707,7 +707,7 @@ define([
                             }
                         }
                         if (Type.exists(this.label) && this.hasLabel) {
-                            this.label.color = value;
+                            this.label.content.visProp.strokecolor = value;
                             this.board.renderer.setObjectStrokeColor(this.label.content, value, opacity);
                         }
                         if (this.type === Const.OBJECT_TYPE_TEXT) {
@@ -845,7 +845,7 @@ define([
                 result = this.needsRegularUpdate;
                 break;
             case 'labelcolor':
-                result = this.label.color;
+                result = this.label.content.visProp.strokecolor;
                 break;
             case 'infoboxtext':
                 result = this.infoboxText;
@@ -955,24 +955,17 @@ define([
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
-                // why?
-                //this.nameHTML = GeonextParser.replaceSup(GeonextParser.replaceSub(this.name));
                 this.label = {};
 
                 if (this.visProp.withlabel) {
-                    this.label.relativeCoords = [0, 0];
-
-                    this.label.content = JXG.elements.text(this.board,
-                        [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name],
-                        attr);
+                    this.label.content = JXG.elements.text(this.board, [0, 0, this.name], attr);
                     this.label.content.needsUpdate = true;
                     this.label.content.update();
 
                     this.label.content.dump = false;
-                    this.label.color = this.label.content.visProp.strokecolor;
 
                     if (!this.visProp.visible) {
-                        this.label.hiddenByParent = true;
+                        this.label.content.hiddenByParent = true;
                         this.label.content.visProp.visible = false;
                     }
                     this.hasLabel = true;
