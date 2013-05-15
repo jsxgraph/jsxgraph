@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -187,9 +187,9 @@ define([
                 this.needsUpdate = false;
             }
 
-            if (this.hasLabel && this.label.content.visProp.visible) {
-                this.label.content.update();
-                this.board.renderer.updateText(this.label.content);
+            if (this.hasLabel && this.label.visProp.visible) {
+                this.label.update();
+                this.board.renderer.updateText(this.label);
             }
         },
 
@@ -266,8 +266,8 @@ define([
 
             if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
-                if (this.label.content.visProp.visible) {
-                    this.board.renderer.hide(this.label.content);
+                if (this.label.visProp.visible) {
+                    this.board.renderer.hide(this.label);
                 }
             }
         },
@@ -291,8 +291,8 @@ define([
             }
 
             if (this.hasLabel && Type.exists(this.label)) {
-                if (this.label.content.visProp.visible) {
-                    this.board.renderer.show(this.label.content);
+                if (this.label.visProp.visible) {
+                    this.board.renderer.show(this.label);
                 }
             }
         },

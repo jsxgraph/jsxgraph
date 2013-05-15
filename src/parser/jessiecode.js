@@ -6,9 +6,9 @@
         Alfred Wassermann
 
     JessieCode is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
@@ -772,26 +772,16 @@ define([
             // is it a geometry element or a board?
             if (e /*&& e.type && e.elementClass*/ && e.methodMap) {
                 // yeah, it is. but what does the user want?
-                if (v === 'label') {
-                    // he wants to access the label properties!
-                    // adjust the base object...
-                    e = e.label;
-                    // and the property we are accessing
-                    v = 'content';
+                if (Type.exists(e.subs) && Type.exists(e.subs[v])) {
+                    // a subelement it is, good sir.
+                    e = e.subs;
+                } else if (Type.exists(e.methodMap[v])) {
+                    // the user wants to call a method
+                    v = e.methodMap[v];
                 } else {
-                    // ok, it's not the label he wants to change
-                    // well, what then?
-                    if (Type.exists(e.subs) && Type.exists(e.subs[v])) {
-                        // a subelement it is, good sir.
-                        e = e.subs;
-                    } else if (Type.exists(e.methodMap[v])) {
-                        // the user wants to call a method
-                        v = e.methodMap[v];
-                    } else {
-                        // the user wants to change an attribute
-                        e = e.visProp;
-                        v = v.toLowerCase();
-                    }
+                    // the user wants to change an attribute
+                    e = e.visProp;
+                    v = v.toLowerCase();
                 }
             }
 
@@ -1807,16 +1797,16 @@ define([
 /*
     Default template driver for JS/CC generated parsers running as
     browser-based JavaScript/ECMAScript applications.
-    
+
     WARNING:     This parser template will only run together with JSXGraph on a website.
-    
+
     Features:
     - Parser trace messages
     - Integrated panic-mode error recovery
-    
+
     Written 2007, 2008 by Jan Max Meyer, J.M.K S.F. Software Technologies
     Modified 2011 by Michael Gerhaeuser, JSXGraph
-    
+
     This is in the public domain.
 */
 

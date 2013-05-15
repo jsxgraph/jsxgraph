@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -406,16 +406,16 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.content.visProp.visible) {
-                            this.board.renderer.show(this.label.content);
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.show(this.label);
                         }
                     }
                     this.board.renderer.updateLine(this);
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.content.visProp.visible) {
-                            this.board.renderer.hide(this.label.content);
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.hide(this.label);
                         }
                     }
                 }
@@ -424,9 +424,9 @@ define([
             }
 
             /* Update the label if visible. */
-            if (this.hasLabel && this.label.content.visProp.visible && this.isReal) {
-                this.label.content.update();
-                this.board.renderer.updateText(this.label.content);
+            if (this.hasLabel && this.label.visProp.visible && this.isReal) {
+                this.label.update();
+                this.board.renderer.updateText(this.label);
             }
 
             return this;
@@ -525,8 +525,8 @@ define([
          * @private
          */
         setLabelRelativeCoords: function (relCoords) {
-            if (Type.exists(this.label.content)) {
-                this.label.content.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [relCoords[0], -relCoords[1]], this.board);
+            if (Type.exists(this.label)) {
+                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [relCoords[0], -relCoords[1]], this.board);
             }
         },
 
@@ -546,11 +546,11 @@ define([
             c1 = c1.scrCoords;
             c2 = c2.scrCoords;
 
-            if (!Type.exists(this.label.content)) {
+            if (!Type.exists(this.label)) {
                 return new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board);
             }
 
-            switch (this.label.content.visProp.position) {
+            switch (this.label.visProp.position) {
             case 'lft':
             case 'llft':
             case 'ulft':
@@ -580,10 +580,10 @@ define([
 
             // Correct label offsets if the label seems to be outside of camvas.
             if (this.visProp.straightfirst || this.visProp.straightlast) {
-                if (Type.exists(this.label.content)) {  // Does not exist during createLabel
-                    sx = parseFloat(this.label.content.visProp.offset[0]);
-                    sy = parseFloat(this.label.content.visProp.offset[1]);
-                    fs = this.label.content.visProp.fontsize;
+                if (Type.exists(this.label)) {  // Does not exist during createLabel
+                    sx = parseFloat(this.label.visProp.offset[0]);
+                    sy = parseFloat(this.label.visProp.offset[1]);
+                    fs = this.label.visProp.fontsize;
                 }
 
                 if (Math.abs(x) < Mat.eps) {

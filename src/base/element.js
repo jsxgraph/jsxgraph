@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -234,6 +234,7 @@ define([
          */
         this.methodMap = {
             setLabel: 'setLabelText',
+            label: 'label',
             getName: 'getName',
             addTransform: 'addTransform',
             setProperty: 'setAttribute',
@@ -550,8 +551,8 @@ define([
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
-                if (this.label.content.visProp.visible) {
-                    this.label.content.hideElement();
+                if (this.label.visProp.visible) {
+                    this.label.hideElement();
                 }
             }
             return this;
@@ -566,8 +567,8 @@ define([
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (!this.label.content.visProp.visible) {
-                    this.label.content.showElement().updateRenderer();
+                if (!this.label.visProp.visible) {
+                    this.label.showElement().updateRenderer();
                 }
             }
             return this;
@@ -626,7 +627,7 @@ define([
             str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             if (this.label !== null) {
-                this.label.content.setText(str);
+                this.label.setText(str);
             }
 
             return this;
@@ -703,12 +704,12 @@ define([
                         value = value[0];
                         if (opacity === 0) {
                             if (Type.exists(this.label) && this.hasLabel) {
-                                this.label.content.hideElement();
+                                this.label.hideElement();
                             }
                         }
                         if (Type.exists(this.label) && this.hasLabel) {
-                            this.label.color = value;
-                            this.board.renderer.setObjectStrokeColor(this.label.content, value, opacity);
+                            this.label.visProp.strokecolor = value;
+                            this.board.renderer.setObjectStrokeColor(this.label, value, opacity);
                         }
                         if (this.type === Const.OBJECT_TYPE_TEXT) {
                             this.visProp.strokecolor = value;
@@ -763,18 +764,18 @@ define([
                     case 'withlabel':
                         this.visProp.withlabel = value;
                         if (!value) {
-                            if (this.label && this.label.content && this.hasLabel) {
-                                this.label.content.hideElement();
+                            if (this.label && this.hasLabel) {
+                                this.label.hideElement();
                             }
                         } else {
-                            if (this.label && this.label.content) {
+                            if (this.label) {
                                 if (this.visProp.visible) {
-                                    this.label.content.showElement();
+                                    this.label.showElement();
                                 }
                             } else {
                                 this.createLabel();
                                 if (!this.visProp.visible) {
-                                    this.label.content.hideElement();
+                                    this.label.hideElement();
                                 }
                             }
                         }
@@ -845,7 +846,7 @@ define([
                 result = this.needsRegularUpdate;
                 break;
             case 'labelcolor':
-                result = this.label.color;
+                result = this.label.visProp.strokecolor;
                 break;
             case 'infoboxtext':
                 result = this.infoboxText;
@@ -889,7 +890,7 @@ define([
             this.board.renderer.remove(this.board.renderer.getElementById(this.id));
 
             if (this.hasLabel) {
-                this.board.renderer.remove(this.board.renderer.getElementById(this.label.content.id));
+                this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
             }
             return this;
         },
@@ -955,25 +956,18 @@ define([
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
-                // why?
-                //this.nameHTML = GeonextParser.replaceSup(GeonextParser.replaceSub(this.name));
                 this.label = {};
 
                 if (this.visProp.withlabel) {
-                    this.label.relativeCoords = [0, 0];
+                    this.label = JXG.elements.text(this.board, [0, 0, this.name], attr);
+                    this.label.needsUpdate = true;
+                    this.label.update();
 
-                    this.label.content = JXG.elements.text(this.board,
-                        [this.label.relativeCoords[0], -this.label.relativeCoords[1], this.name],
-                        attr);
-                    this.label.content.needsUpdate = true;
-                    this.label.content.update();
-
-                    this.label.content.dump = false;
-                    this.label.color = this.label.content.visProp.strokecolor;
+                    this.label.dump = false;
 
                     if (!this.visProp.visible) {
                         this.label.hiddenByParent = true;
-                        this.label.content.visProp.visible = false;
+                        this.label.visProp.visible = false;
                     }
                     this.hasLabel = true;
                 }
