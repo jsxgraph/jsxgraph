@@ -3876,7 +3876,7 @@ define([
         /**
          * @ignore
          */
-        __evt: function () {}
+        __evt: function () {},
 
         //endregion
 
