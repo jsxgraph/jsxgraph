@@ -1613,7 +1613,7 @@ define([
                 }
             }
 
-            for (i = 0; i < this.downObjects.length; i++) {
+            for (i = this.downObjects.length - 1; i > -1; i--) {
                 found = false;
                 for (j = 0; j < this.touches.length; j++) {
                     if (this.touches[j].obj.id === this.downObjects[i].id) {
@@ -2000,7 +2000,7 @@ define([
                 this.touches.length = 0;
             }
 
-            for (i = 0; i < this.downObjects.length; i++) {
+            for (i = this.downObjects.length - 1; i > -1; i--) {
                 found = false;
                 for (j = 0; j < this.touches.length; j++) {
                     if (this.touches[j].obj.id === this.downObjects[i].id) {
