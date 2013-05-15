@@ -641,8 +641,8 @@ define([
         },
 
         finalizeLabel: function (obj) {
-            if (obj.hasLabel && !obj.label.content.visProp.islabel && !obj.label.content.visProp.visible) {
-                this.renderer.hide(obj.label.content);
+            if (obj.hasLabel && !obj.label.visProp.islabel && !obj.label.visProp.visible) {
+                this.renderer.hide(obj.label);
             }
         },
 
@@ -808,7 +808,7 @@ define([
                         // this only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!Type.exists(dragEl.label) || pEl !== dragEl.label.content) {
+                        if (!Type.exists(dragEl.label) || pEl !== dragEl.label) {
                             dragEl = pEl;
                             collect[0] = dragEl;
 
@@ -3560,8 +3560,8 @@ define([
             src = this.select(src);
             dest = this.select(dest);
 
-            if (src.label.content) {
-                this.removeObject(src.label.content);
+            if (src.label) {
+                this.removeObject(src.label);
             }
 
             for (childId in src.childElements) {
@@ -3595,13 +3595,13 @@ define([
             // The destination object should receive the name
             // and the label of the originating (src) object
 
-            if (src.label.content) {
-                delete dest.childElements[src.label.content.id];
-                delete dest.descendants[src.label.content.id];
+            if (src.label) {
+                delete dest.childElements[src.label.id];
+                delete dest.descendants[src.label.id];
             }
             if (copyName) {
-                if (dest.label.content) {
-                    this.removeObject(dest.label.content);
+                if (dest.label) {
+                    this.removeObject(dest.label);
                 }
                 delete this.elementsByName[dest.name];
                 dest.name = src.name;

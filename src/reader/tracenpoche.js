@@ -279,7 +279,7 @@ JXG.TracenpocheReader = function(board, str) {
 
         var original_scope = {
             define: function (n) {
-                //console.log("Add scope var " + n.value);            
+                //console.log("Add scope var " + n.value);
                 this.def[n.value] = n.value;
             },
             find: function (n) {
@@ -507,7 +507,7 @@ JXG.TracenpocheReader = function(board, str) {
 
         /*
          * Define the language
-         * 
+         *
          */
         symbol("(literal)").nud = function() { return (typeof this.value === "string")? "'" + this.value + "'" :this.value; };
         symbol("(end)");
@@ -678,13 +678,13 @@ JXG.TracenpocheReader = function(board, str) {
 
         /*
          * Here starts the parsing part
-         * 
+         *
          */
         token_nr = 0;
         new_scope();
         advance();
         var s = statements().join('\n');
-//console.log(s);        
+//console.log(s);
         return s;
     };
 
@@ -715,26 +715,26 @@ JXG.TracenpocheReader = function(board, str) {
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;
 
-//console.log(s);        
+//console.log(s);
         var fun = new Function("that", "tep", s);
         //console.log(fun.toString());
         fun(this, tep);
 //console.log(tep);
 
-        // Set the correct labels and names 
+        // Set the correct labels and names
         var el;
         for (el in tep) {
             if (JXG.exists(tep[el].setProperty)) {
                 tep[el].setProperty({name:el});
-                if (JXG.exists(tep[el].label) && JXG.exists(tep[el].label.content)) {
-                    tep[el].label.content.setText(el);
+                if (JXG.exists(tep[el].label) && JXG.exists(tep[el].label)) {
+                    tep[el].label.setText(el);
                 }
             }
         }
     };
 
-    // 
-    //--------------------------------------------------------------------- 
+    //
+    //---------------------------------------------------------------------
     //
     this.prepareString = function(fileStr) {
         //fileStr = JXG.Util.utf8Decode(fileStr);
@@ -748,8 +748,8 @@ JXG.TracenpocheReader = function(board, str) {
         return this.data;
     };
 
-    // 
-    //--------------------------------------------------------------------- 
+    //
+    //---------------------------------------------------------------------
     //
     this.handleAtts = function(attsArr) {
         var obj = {}, i, le = attsArr.length;
@@ -788,7 +788,7 @@ JXG.TracenpocheReader = function(board, str) {
     ];
 
     /*
-     * Points 
+     * Points
      */
     this.point = function(parents, attributes) {
         if (parents.length==0) {
@@ -967,7 +967,7 @@ JXG.TracenpocheReader = function(board, str) {
     };
 
 
-    /* 
+    /*
      * Circles
      */
     this.cercle = function(parents, attributes) {

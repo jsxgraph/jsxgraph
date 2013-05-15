@@ -187,9 +187,9 @@ define([
                 this.needsUpdate = false;
             }
 
-            if (this.hasLabel && this.label.content.visProp.visible) {
-                this.label.content.update();
-                this.board.renderer.updateText(this.label.content);
+            if (this.hasLabel && this.label.visProp.visible) {
+                this.label.update();
+                this.board.renderer.updateText(this.label);
             }
         },
 
@@ -265,9 +265,9 @@ define([
             }
 
             if (this.hasLabel && Type.exists(this.label)) {
-                this.label.content.hiddenByParent = true;
-                if (this.label.content.visProp.visible) {
-                    this.board.renderer.hide(this.label.content);
+                this.label.hiddenByParent = true;
+                if (this.label.visProp.visible) {
+                    this.board.renderer.hide(this.label);
                 }
             }
         },
@@ -291,8 +291,8 @@ define([
             }
 
             if (this.hasLabel && Type.exists(this.label)) {
-                if (this.label.content.visProp.visible) {
-                    this.board.renderer.show(this.label.content);
+                if (this.label.visProp.visible) {
+                    this.board.renderer.show(this.label);
                 }
             }
         },

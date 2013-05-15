@@ -549,9 +549,9 @@ define([
             this.board.renderer.hide(this);
 
             if (Type.exists(this.label) && this.hasLabel) {
-                this.label.content.hiddenByParent = true;
-                if (this.label.content.visProp.visible) {
-                    this.label.content.hideElement();
+                this.label.hiddenByParent = true;
+                if (this.label.visProp.visible) {
+                    this.label.hideElement();
                 }
             }
             return this;
@@ -564,10 +564,10 @@ define([
             this.visProp.visible = true;
             this.board.renderer.show(this);
 
-            if (Type.exists(this.label) && this.hasLabel && this.label.content.hiddenByParent) {
-                this.label.content.hiddenByParent = false;
-                if (!this.label.content.visProp.visible) {
-                    this.label.content.showElement().updateRenderer();
+            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+                this.label.hiddenByParent = false;
+                if (!this.label.visProp.visible) {
+                    this.label.showElement().updateRenderer();
                 }
             }
             return this;
@@ -626,7 +626,7 @@ define([
             str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             if (this.label !== null) {
-                this.label.content.setText(str);
+                this.label.setText(str);
             }
 
             return this;
@@ -703,12 +703,12 @@ define([
                         value = value[0];
                         if (opacity === 0) {
                             if (Type.exists(this.label) && this.hasLabel) {
-                                this.label.content.hideElement();
+                                this.label.hideElement();
                             }
                         }
                         if (Type.exists(this.label) && this.hasLabel) {
-                            this.label.content.visProp.strokecolor = value;
-                            this.board.renderer.setObjectStrokeColor(this.label.content, value, opacity);
+                            this.label.visProp.strokecolor = value;
+                            this.board.renderer.setObjectStrokeColor(this.label, value, opacity);
                         }
                         if (this.type === Const.OBJECT_TYPE_TEXT) {
                             this.visProp.strokecolor = value;
@@ -763,18 +763,18 @@ define([
                     case 'withlabel':
                         this.visProp.withlabel = value;
                         if (!value) {
-                            if (this.label && this.label.content && this.hasLabel) {
-                                this.label.content.hideElement();
+                            if (this.label && this.hasLabel) {
+                                this.label.hideElement();
                             }
                         } else {
-                            if (this.label && this.label.content) {
+                            if (this.label) {
                                 if (this.visProp.visible) {
-                                    this.label.content.showElement();
+                                    this.label.showElement();
                                 }
                             } else {
                                 this.createLabel();
                                 if (!this.visProp.visible) {
-                                    this.label.content.hideElement();
+                                    this.label.hideElement();
                                 }
                             }
                         }
@@ -845,7 +845,7 @@ define([
                 result = this.needsRegularUpdate;
                 break;
             case 'labelcolor':
-                result = this.label.content.visProp.strokecolor;
+                result = this.label.visProp.strokecolor;
                 break;
             case 'infoboxtext':
                 result = this.infoboxText;
@@ -889,7 +889,7 @@ define([
             this.board.renderer.remove(this.board.renderer.getElementById(this.id));
 
             if (this.hasLabel) {
-                this.board.renderer.remove(this.board.renderer.getElementById(this.label.content.id));
+                this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
             }
             return this;
         },
@@ -958,15 +958,15 @@ define([
                 this.label = {};
 
                 if (this.visProp.withlabel) {
-                    this.label.content = JXG.elements.text(this.board, [0, 0, this.name], attr);
-                    this.label.content.needsUpdate = true;
-                    this.label.content.update();
+                    this.label = JXG.elements.text(this.board, [0, 0, this.name], attr);
+                    this.label.needsUpdate = true;
+                    this.label.update();
 
-                    this.label.content.dump = false;
+                    this.label.dump = false;
 
                     if (!this.visProp.visible) {
-                        this.label.content.hiddenByParent = true;
-                        this.label.content.visProp.visible = false;
+                        this.label.hiddenByParent = true;
+                        this.label.visProp.visible = false;
                     }
                     this.hasLabel = true;
                 }

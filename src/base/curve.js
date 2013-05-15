@@ -295,24 +295,24 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.content.visProp.visible) {
-                            this.board.renderer.show(this.label.content);
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.show(this.label);
                         }
                     }
                     this.board.renderer.updateCurve(this);
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.content.visProp.visible) {
-                            this.board.renderer.hide(this.label.content);
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.hide(this.label);
                         }
                     }
                 }
 
                 // Update the label if visible.
-                if (this.hasLabel && this.label.content.visProp.visible) {
-                    this.label.content.update();
-                    this.board.renderer.updateText(this.label.content);
+                if (this.hasLabel && this.label.visProp.visible) {
+                    this.label.update();
+                    this.board.renderer.updateText(this.label);
                 }
             }
             return this;

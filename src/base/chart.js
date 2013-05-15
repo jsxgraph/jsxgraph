@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -346,9 +346,9 @@ define([
                     var dx = -this.point1.coords.usrCoords[1] + this.point2.coords.usrCoords[1],
                         dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
-                    if (Type.exists(this.label.content)) {
-                        this.label.content.rendNode.style.fontSize = (s * this.label.content.visProp.fontsize) + 'px';
-                        this.label.content.prepareUpdate().update().updateRenderer();
+                    if (Type.exists(this.label)) {
+                        this.label.rendNode.style.fontSize = (s * this.label.visProp.fontsize) + 'px';
+                        this.label.prepareUpdate().update().updateRenderer();
                     }
 
                     this.point2.coords = new Coords(Const.COORDS_BY_USER, [
