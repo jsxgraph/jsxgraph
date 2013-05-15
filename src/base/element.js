@@ -234,6 +234,7 @@ define([
          */
         this.methodMap = {
             setLabel: 'setLabelText',
+            label: 'label',
             getName: 'getName',
             addTransform: 'addTransform',
             setProperty: 'setAttribute',
