@@ -3876,34 +3876,9 @@ define([
         /**
          * @ignore
          */
-        __evt: function () {},
+        __evt: function () {}
 
         //endregion
-
-        /**
-         * Return all elements that somehow depend on the element <tt>root</tt> and satisfy one of the <tt>filter</tt> rules.
-         * <tt>filters</tt> are objects which's properties are compared to every element found in the dependency tree.
-         * @param {JXG.GeometryElement} root Dependency tree root element
-         * @param {Object} filt An arbitrary amount of objects which define filters for the elements to return. Only elements
-         * that fulfill at least one filter are returned. The comparison is a direct comparison, i.e. nested objects won't be
-         * compared.
-         * @example
-         * // This will return only points
-         * var partPoints = board.getPartialConstruction(p, {elementClass: JXG.OBJECT_CLASS_POINT});
-         *
-         * // This will return only points and lines
-         * var partPointsLines = board.getPartialConstruction(p, {elementClass: JXG.OBJECT_CLASS_POINT}, {elementClass: JXG.OBJECT_CLASS_LINE});
-         */
-        getPartialConstruction: function (root, filt) {
-            var i,
-                filters = [];
-
-            for (i = 1; i < arguments.length; i++) {
-                filters.push(arguments[i]);
-            }
-
-            // I guess this needs some implementation
-        },
 
         /**
          * Function to animate a curve rolling on another curve.
