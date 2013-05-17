@@ -312,8 +312,8 @@ define([
         },
 
         /**
-         * Eliminates duplicate entries in an array.
-         * @param {Array} a An array
+         * Eliminates duplicate entries in an array consisting of numbers and strings.
+         * @param {Array} a An array of numbers and/or strings.
          * @returns {Array} The array with duplicate entries eliminated.
          */
         eliminateDuplicates: function (a) {
@@ -909,6 +909,37 @@ define([
             }
 
             return str;
+        },
+
+        /**
+         * Filter an array of elements.
+         * @param {Array} list
+         * @param {Object} filter
+         * @returns {Array}
+         */
+        filterElements: function (list, filter) {
+            var i, f, pass,
+                l = list.length,
+                result = [];
+
+            for (i = 0; i < l; i++) {
+                pass = true;
+
+                for (f in filter) {
+                    if (filter.hasOwnProperty(f)) {
+                        if (!(list[i][f] === filter[f] || (list[i].visProp && list[i].visProp[f.toLowerCase()] === filter[f]))) {
+                            pass = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (pass) {
+                    result.push(list[i]);
+                }
+            }
+
+            return result;
         },
 
         /**

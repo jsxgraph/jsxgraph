@@ -3668,12 +3668,15 @@ define([
 
         /**
          * Select a single or multiple elements at once.
-         * @param {String} str The name, id or a reference to a JSXGraph element on this board.
-         * @returns {JXG.GeometryElement}
+         * @param {String|object} str The name, id or a reference to a JSXGraph element on this board. An object will
+         * be used as a filter to return multiple elements at once filtered by the properties of the object.
+         * @returns {JXG.GeometryElement|JXG.Composition}
          */
         select: function (str) {
-            var s = str;
+            var flist,
+                s = str;
 
+            // it's a string, most likely an id or a name.
             if (typeof s === 'string') {
                 // Search by ID
                 if (Type.exists(this.objects[s])) {
@@ -3685,6 +3688,11 @@ define([
                 } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
+            // it's an object, but not an element
+            } else if (typeof s === 'object' && typeof s.setAttribute !== 'function') {
+                flist = Type.filterElements(this.objectsList, str);
+
+                return flist;
             }
 
             return s;
