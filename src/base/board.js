@@ -67,9 +67,9 @@
 define([
     'jxg', 'base/constants', 'base/coords', 'options', 'math/numerics', 'math/math', 'math/geometry', 'math/complex',
     'parser/jessiecode', 'parser/geonext', 'utils/color', 'utils/type', 'utils/event', 'utils/env', 'base/transformation',
-    'base/point', 'base/line', 'base/text', 'element/composition'
+    'base/point', 'base/line', 'base/text', 'element/composition', 'base/composition'
 ], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, JessieCode, GeonextParser, Color, Type,
-                EventEmitter, Env, Transform, Point, Line, Text, Composition) {
+                EventEmitter, Env, Transform, Point, Line, Text, Composition, EComposition) {
 
     'use strict';
 
@@ -3680,13 +3680,13 @@ define([
          *   strokeColor: 'red'
          * });
          *
-         * // select all points on or below the x axis
+         * // select all points on or below the x axis and make them black.
          * board.select({
          *   elementClass: JXG.OBJECT_CLASS_POINT,
          *   Y: function (v) {
          *     return v <= 0;
          *   }
-         * });
+         * }).setAttribute({color: 'black'});
          *
          * // select all elements
          * board.select(function (el) {
@@ -3694,7 +3694,7 @@ define([
          * });
          */
         select: function (str) {
-            var flist,
+            var flist, olist, i, l,
                 s = str;
 
             // it's a string, most likely an id or a name.
@@ -3713,7 +3713,12 @@ define([
             } else if (typeof s === 'function' || (typeof s === 'object' && typeof s.setAttribute !== 'function')) {
                 flist = Type.filterElements(this.objectsList, str);
 
-                return flist;
+                olist = {};
+                l = flist.length;
+                for (i = 0; i < l; i++) {
+                    olist[flist[i].id] = flist[i];
+                }
+                return new EComposition(olist);
             }
 
             return s;
