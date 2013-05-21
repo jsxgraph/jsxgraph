@@ -3710,7 +3710,7 @@ define([
                     s = this.groups[s];
                 }
             // it's a function or an object, but not an element
-            } else if (typeof s === 'function' || (typeof s === 'object' && typeof s.setAttribute !== 'function')) {
+            } else if (typeof s === 'function' || (typeof s === 'object' && !JXG.isArray(s) && typeof s.setAttribute !== 'function')) {
                 flist = Type.filterElements(this.objectsList, str);
 
                 olist = {};
