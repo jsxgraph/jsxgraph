@@ -914,28 +914,56 @@ define([
         /**
          * Filter an array of elements.
          * @param {Array} list
-         * @param {Object} filter
+         * @param {Object|function} filter
          * @returns {Array}
          */
         filterElements: function (list, filter) {
-            var i, f, pass,
+            var i, f, item, flower, value, visPropValue, pass,
                 l = list.length,
                 result = [];
 
+            if (typeof filter !== 'function' && typeof filter !== 'object') {
+                return result;
+            }
+
             for (i = 0; i < l; i++) {
                 pass = true;
+                item = list[i];
 
-                for (f in filter) {
-                    if (filter.hasOwnProperty(f)) {
-                        if (!(list[i][f] === filter[f] || (list[i].visProp && list[i].visProp[f.toLowerCase()] === filter[f]))) {
-                            pass = false;
-                            break;
+                if (typeof filter === 'object') {
+                    for (f in filter) {
+                        if (filter.hasOwnProperty(f)) {
+                            flower = f.toLowerCase();
+
+                            if (typeof item[f] === 'function') {
+                                value = item[f]();
+                            } else {
+                                value = item[f];
+                            }
+
+                            if (item.visProp && typeof item.visProp[flower] === 'function') {
+                                visPropValue = item.visProp[flower]();
+                            } else {
+                                visPropValue = item.visProp && item.visProp[flower];
+                            }
+
+                            if (typeof filter[f] === 'function') {
+                                pass = filter[f](value) || filter[f](visPropValue);
+                            } else {
+                                pass = (value === filter[f] || visPropValue === filter[f]);
+                            }
+
+                            if (!pass) {
+                                break;
+                            }
                         }
                     }
+                } else if (typeof filter === 'function') {
+                    pass = filter(item);
                 }
 
                 if (pass) {
-                    result.push(list[i]);
+                    result.push(item);
                 }
             }
 

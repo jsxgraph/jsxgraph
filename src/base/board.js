@@ -3668,9 +3668,30 @@ define([
 
         /**
          * Select a single or multiple elements at once.
-         * @param {String|object} str The name, id or a reference to a JSXGraph element on this board. An object will
+         * @param {String|Object|function} str The name, id or a reference to a JSXGraph element on this board. An object will
          * be used as a filter to return multiple elements at once filtered by the properties of the object.
          * @returns {JXG.GeometryElement|JXG.Composition}
+         * @example
+         * // select the element with name A
+         * board.select('A');
+         *
+         * // select all elements with strokecolor set to 'red' (but not '#ff0000')
+         * board.select({
+         *   strokeColor: 'red'
+         * });
+         *
+         * // select all points on or below the x axis
+         * board.select({
+         *   elementClass: JXG.OBJECT_CLASS_POINT,
+         *   Y: function (v) {
+         *     return v <= 0;
+         *   }
+         * });
+         *
+         * // select all elements
+         * board.select(function (el) {
+         *   return true;
+         * });
          */
         select: function (str) {
             var flist,
@@ -3688,8 +3709,8 @@ define([
                 } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
-            // it's an object, but not an element
-            } else if (typeof s === 'object' && typeof s.setAttribute !== 'function') {
+            // it's a function or an object, but not an element
+            } else if (typeof s === 'function' || (typeof s === 'object' && typeof s.setAttribute !== 'function')) {
                 flist = Type.filterElements(this.objectsList, str);
 
                 return flist;
