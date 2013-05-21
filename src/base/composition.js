@@ -136,12 +136,20 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         }
 
         this.elements = {};
+        this.objects = this.elements;
+
+        this.elementsByName = {};
+        this.objectsList = [];
+
+        // unused, required for select()
+        this.groups = {};
 
         this.methodMap = {
             setAttribute: 'setAttribute',
             setProperty: 'setAttribute',
             add: 'add',
-            remove: 'remove'
+            remove: 'remove',
+            select: 'select'
         };
 
         for (e in elements) {
@@ -168,14 +176,23 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * using a reserved name and providing an invalid element.
          */
         add: function (what, element) {
+            var self = this;
+
             if (!Type.exists(this[what]) && Type.exists(element)) {
                 if (Type.exists(element.id)) {
                     this.elements[element.id] = element;
                 } else {
                     this.elements[what] = element;
                 }
-                this[what] = element;
 
+                if (Type.exists(element.name)) {
+                    this.elementsByName[element.name] = element;
+                }
+
+                element.on('attribute:name', this.nameListener, this);
+
+                this.objectsList.push(element);
+                this[what] = element;
                 this.methodMap[what] = element;
 
                 return true;
@@ -208,6 +225,20 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             }
 
             return found;
+        },
+
+        nameListener: function (oval, nval, el) {
+            delete this.elementsByName[oval];
+            this.elementsByName[nval] = el;
+        },
+
+        select: function (filter) {
+            // for now, hijack JXG.Board's select() method
+            if (Type.exists(JXG.Board)) {
+                return JXG.Board.prototype.select.call(this, filter);
+            }
+
+            return new JXG.Composition();
         },
 
         getParents: function () {

@@ -312,8 +312,8 @@ define([
         },
 
         /**
-         * Eliminates duplicate entries in an array.
-         * @param {Array} a An array
+         * Eliminates duplicate entries in an array consisting of numbers and strings.
+         * @param {Array} a An array of numbers and/or strings.
          * @returns {Array} The array with duplicate entries eliminated.
          */
         eliminateDuplicates: function (a) {
@@ -909,6 +909,65 @@ define([
             }
 
             return str;
+        },
+
+        /**
+         * Filter an array of elements.
+         * @param {Array} list
+         * @param {Object|function} filter
+         * @returns {Array}
+         */
+        filterElements: function (list, filter) {
+            var i, f, item, flower, value, visPropValue, pass,
+                l = list.length,
+                result = [];
+
+            if (typeof filter !== 'function' && typeof filter !== 'object') {
+                return result;
+            }
+
+            for (i = 0; i < l; i++) {
+                pass = true;
+                item = list[i];
+
+                if (typeof filter === 'object') {
+                    for (f in filter) {
+                        if (filter.hasOwnProperty(f)) {
+                            flower = f.toLowerCase();
+
+                            if (typeof item[f] === 'function') {
+                                value = item[f]();
+                            } else {
+                                value = item[f];
+                            }
+
+                            if (item.visProp && typeof item.visProp[flower] === 'function') {
+                                visPropValue = item.visProp[flower]();
+                            } else {
+                                visPropValue = item.visProp && item.visProp[flower];
+                            }
+
+                            if (typeof filter[f] === 'function') {
+                                pass = filter[f](value) || filter[f](visPropValue);
+                            } else {
+                                pass = (value === filter[f] || visPropValue === filter[f]);
+                            }
+
+                            if (!pass) {
+                                break;
+                            }
+                        }
+                    }
+                } else if (typeof filter === 'function') {
+                    pass = filter(item);
+                }
+
+                if (pass) {
+                    result.push(item);
+                }
+            }
+
+            return result;
         },
 
         /**

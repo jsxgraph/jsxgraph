@@ -690,6 +690,7 @@ define([
 
                     switch (key) {
                     case 'name':
+                        oldvalue = this.name;
                         delete this.board.elementsByName[this.name];
                         this.name = value;
                         this.board.elementsByName[this.name] = this;
@@ -811,11 +812,11 @@ define([
                         }
                         break;
                     }
-                    this.triggerEventHandlers(['attribute:' + key], [oldvalue]);
+                    this.triggerEventHandlers(['attribute:' + key], [oldvalue, value, this]);
                 }
             }
 
-            this.triggerEventHandlers(['attribute'], [properties]);
+            this.triggerEventHandlers(['attribute'], [properties, this]);
 
             if (!this.visProp.needsregularupdate) {
                 this.board.fullUpdate();
@@ -1445,8 +1446,9 @@ define([
          * @description Notify everytime an attribute is changed.
          * @name JXG.GeometryElement#attribute
          * @param {Object} o A list of changed attributes and their new value.
+         * @param {Object} el Reference to the element
          */
-        __evt__attribute: function (o) {},
+        __evt__attribute: function (o, el) {},
 
         /**
          * @event
@@ -1455,8 +1457,10 @@ define([
          * <tt>attribute:strokecolor</tt>.
          * @name JXG.GeometryElement#attribute:&lt;attribute&gt;
          * @param val The old value.
+         * @param nval The new value
+         * @param {Object} el Reference to the element
          */
-        __evt__attribute_: function (val) {},
+        __evt__attribute_: function (val, nval, el) {},
 
         /**
          * @ignore
