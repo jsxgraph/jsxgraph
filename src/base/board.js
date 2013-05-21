@@ -3312,7 +3312,7 @@ define([
             }
 
             for (i = 0; i < parents.length; i++) {
-                if (elementType !== 'text' || i !== 2) {
+                if (typeof parents[i] === 'string' && (elementType !== 'text' || i !== 2)) {
                     parents[i] = this.select(parents[i]);
                 }
             }
