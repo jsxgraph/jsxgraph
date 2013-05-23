@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -140,6 +140,18 @@ define([
          * @type Array
          */
         this.labels = [];
+
+        /**
+         * A list of labels that are currently unused and ready for reassignment.
+         * @type {Array}
+         */
+        this.labelsRepo = [];
+
+        /**
+         * To ensure the uniqueness of label ids this counter is used.
+         * @type {number}
+         */
+        this.labelCounter = 0;
 
         this.id = this.line.addTicks(this);
         this.board.setId(this, 'Ti');
@@ -310,7 +322,8 @@ define([
                 dxMaj, dyMaj,
                 dxMin, dyMin,
                 // ticks width and height in user units
-                dx, dy;
+                dx, dy,
+                oldRepoLength = this.labelsRepo.length;
             // END OF variable declaration
 
             // This will trap this update routine in an endless loop. Besides, there's not much we can show
@@ -549,6 +562,10 @@ define([
                 ny = center[2] + dir * deltaY * tickPosition;
             } while (dirs > 0);
 
+            for (i = oldRepoLength; i < this.labelsRepo.length; i++) {
+                this.labelsRepo[i].setAttribute({visible: false});
+            }
+
             this.needsUpdate = true;
             this.updateRenderer();
         },
@@ -738,7 +755,6 @@ define([
             }
 
             attr = {
-                id: id + i + 'Label',
                 isLabel: true,
                 layer: board.options.layer.line,
                 highlightStrokeColor: board.options.text.strokeColor,
@@ -748,7 +764,18 @@ define([
                 priv: this.visProp.priv
             };
             attr = Type.deepCopy(attr, this.visProp.label);
-            label = Text.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
+
+            if (this.labelsRepo.length > 0) {
+                label = this.labelsRepo.splice(this.labelsRepo.length - 1, 1)[0];
+                // this is done later on anyways
+                //label.setCoords(newTick.usrCoords[1], newTick.usrCoords[2]);
+                label.setText(labelText);
+                label.setAttribute(attr);
+            } else {
+                this.labelCounter += 1;
+                attr.id = id + i + 'Label' + this.labelCounter;
+                label = Text.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
+            }
             label.isDraggable = false;
             label.dump = false;
 
@@ -784,7 +811,8 @@ define([
                         !(this.board.renderer.type === 'canvas' && this.board.options.text.display === 'internal')) {
                     for (j = 0; j < this.labels.length; j++) {
                         if (Type.exists(this.labels[j])) {
-                            this.board.removeObject(this.labels[j]);
+                            //this.board.removeObject(this.labels[j]);
+                            this.labelsRepo.push(this.labels[j]);
                         }
                     }
                 }
