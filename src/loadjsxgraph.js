@@ -225,6 +225,6 @@ var JXG = {},
         'utils/type': checkJXG,
         'utils/uuid': makeCheck('Util'),
         'utils/xml': makeCheck('XML'),
-        'utils/zip': makeCheck('Util.Unzip')
+        'utils/zip': makeCheck('Util')
     };
 }());
