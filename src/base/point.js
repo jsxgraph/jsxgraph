@@ -803,7 +803,7 @@ define([
                             this.makeGlider(el);
                         }
 
-                        break;
+                        break;       // bind the point to the first attractor in its list.
                     } else {
                         if (el === this.slideObject && d >= this.visProp.snatchdistance) {
                             this.type = Const.OBJECT_TYPE_POINT;
