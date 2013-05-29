@@ -1,5 +1,5 @@
 /*jslint nomen: true*/
-/*global module: true, __dirname: true*/
+/*global module: true, __dirname: true, require: true*/
 
 var requirejs = require('requirejs');
 

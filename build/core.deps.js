@@ -49,6 +49,7 @@ define([
     'utils/uuid',
     'utils/encoding',
     'server/server',
+    'element/locus',
     'parser/datasource',
     'parser/jessiecode',
     'utils/dump',
