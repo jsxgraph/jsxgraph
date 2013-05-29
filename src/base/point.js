@@ -112,6 +112,13 @@ define([
          * @name Glider#slideObject
          */
         this.slideObject = null;
+        
+        /** 
+         * List of elements the point is bound to, i.e. the point glides on. 
+         * Only the last entry is active.
+         * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
+         */
+        this.slideObjects = [];
 
         /**
          * A {@link JXG.Point#updateGlider} call is usually followed by a general {@link JXG.Board#update} which calls
@@ -806,7 +813,7 @@ define([
                         break;       // bind the point to the first attractor in its list.
                     } else {
                         if (el === this.slideObject && d >= this.visProp.snatchdistance) {
-                            this.type = Const.OBJECT_TYPE_POINT;
+                            this.popSlideObject();
                         }
                     }
                 }
@@ -913,8 +920,9 @@ define([
          * @param {String|Object} glideObject The Object the point will be bound to.
          */
         makeGlider: function (glideObject) {
-            //var c = this.coords.usrCoords.slice(1);
             this.slideObject = this.board.select(glideObject);
+            this.slideObjects.push(this.slideObject);
+            
             this.type = Const.OBJECT_TYPE_GLIDER;
             this.elType = 'glider';
             this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
@@ -932,7 +940,30 @@ define([
         },
 
         /**
-         * Converts a glider into a free point.
+         * Remove the last slideObject. If there are more than one elements the point is bound to,
+         * the second last element is the new active slideObject.
+         */
+        popSlideObject: function() {
+            if (this.slideObjects.length > 0) {
+                this.slideObjects.pop();
+                
+                // It may not be sufficient to remove the point from 
+                // the list of childElement. For complex dependencies 
+                // one may have to go to the list of ancestor and descendants.  A.W.
+                delete this.slideObject.childElements[this.id];
+                
+                if (this.slideObjects === 0) {
+                    this.elType = 'point';
+                    this.type = Const.OBJECT_TYPE_POINT;
+                    this.slideObject = null;
+                } else {
+                    this.slideObject = this.slideObjects[this.slideObjects.length - 1];
+                }
+            }
+        },
+        
+        /**
+         * Converts a glider into a free point, regardless of how many slideObjects the point is bound to.
          */
         free: function () {
             var ancestorId, ancestor, child;
@@ -983,7 +1014,9 @@ define([
             // A free point does not depend on anything. Remove all ancestors.
             this.ancestors = {}; // only remove the reference
 
+            // Completely remove all slideObjects of the point
             this.slideObject = null;
+            this.slideObjects = [];
             this.elType = 'point';
             this.type = Const.OBJECT_TYPE_POINT;
         },
