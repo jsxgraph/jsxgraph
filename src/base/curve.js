@@ -290,16 +290,20 @@ define([
 
             if (this.needsUpdate && this.visProp.visible) {
                 wasReal = this.isReal;
+
+                if (this.isReal) {
+                    this.board.renderer.updateCurve(this);
+                }
+
                 this.checkReal();
 
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
-                            this.board.renderer.show(this.label);
+                        if (this.hasLabel && this.label.content.visProp.visible) {
+                            this.board.renderer.show(this.label.content);
                         }
                     }
-                    this.board.renderer.updateCurve(this);
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
