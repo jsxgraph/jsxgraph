@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -54,6 +54,9 @@ define([
      * @class JXG.AbstractRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
+     * @param {Object} dim The dimensions of the board
+     * @param {Number} dim.width
+     * @param {Number} dim.height
      * @see JXG.AbstractRenderer
      */
     JXG.SVGRenderer = function (container, dim) {
@@ -98,8 +101,8 @@ define([
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        this.svgRoot.style.width = dim.width;
-        this.svgRoot.style.height = dim.height;
+        this.svgRoot.style.width = dim.width + 'px';
+        this.svgRoot.style.height = dim.height + 'px';
 
         this.container.appendChild(this.svgRoot);
 
@@ -200,18 +203,18 @@ define([
 
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
-            
+
             s = parseInt(element.visProp.strokewidth, 10);
             //node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
             node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
-            
+
             /*
                The arrow head is an equilateral triangle with base length 10 and height 10.
                This 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
             */
             d = Math.max(s * 3, 10);
-            
+
             node2.setAttributeNS(null, 'markerHeight', d);
             node2.setAttributeNS(null, 'markerWidth', d);
 
@@ -244,8 +247,10 @@ define([
                 node.setAttributeNS(null, 'stroke-opacity', opacity);
                 node.setAttributeNS(null, 'fill', color);
                 node.setAttributeNS(null, 'fill-opacity', opacity);
-                node.setAttributeNS(null, 'stroke-width', 0 * width);  // This is the stroke-width of the arrow head.
-                                                                       // Should be zero to make the positioning easy
+
+                // This is the stroke-width of the arrow head.
+                // Should be zero to make the positioning easy
+                node.setAttributeNS(null, 'stroke-width', 0);
             }
         },
 

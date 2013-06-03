@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -59,6 +59,9 @@ define([
      * @class JXG.AbstractRenderer
      * @augments JXG.AbstractRenderer
      * @param {Node} container Reference to a DOM node containing the board.
+     * @param {Object} dim The dimensions of the board
+     * @param {Number} dim.width
+     * @param {Number} dim.height
      * @see JXG.AbstractRenderer
      */
     JXG.CanvasRenderer = function (container, dim) {
@@ -81,8 +84,8 @@ define([
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', dim.width, '" height="',
-                dim.height, '"><', '/canvas>'].join('');
+            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="',
+                dim.height, 'px"><', '/canvas>'].join('');
             this.canvasRoot = document.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
@@ -422,9 +425,9 @@ define([
             Geometry.calcStraight(el, scr1, scr2, margin);
 
             d1x = d1y = d2x = d2y = 0.0;
-            /* 
+            /*
                Handle arrow heads.
-               
+
                The arrow head is an equilateral triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
             */
@@ -443,7 +446,7 @@ define([
                     d1y = (scr2.scrCoords[2] - scr1.scrCoords[2]) * s / d;
                 }
             }
-            
+
             this.context.beginPath();
             this.context.moveTo(scr1.scrCoords[1] + d1x, scr1.scrCoords[2] + d1y);
             this.context.lineTo(scr2.scrCoords[1] - d2x, scr2.scrCoords[2] - d2y);
@@ -773,7 +776,7 @@ define([
                     [ w,    w * 0.5]
                 ],
                 context = this.context;
-            
+
             if (el.visProp.strokecolor !== 'none' && (el.visProp.lastarrow || el.visProp.firstarrow)) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];

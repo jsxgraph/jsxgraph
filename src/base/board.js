@@ -2963,8 +2963,8 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset) {
-            this.canvasWidth = parseFloat(canvasWidth);
-            this.canvasHeight = parseFloat(canvasHeight);
+            this.canvasWidth = parseInt(canvasWidth, 10);
+            this.canvasHeight = parseInt(canvasHeight, 10);
 
             if (!dontset) {
                 this.containerObj.style.width = (this.canvasWidth) + 'px';

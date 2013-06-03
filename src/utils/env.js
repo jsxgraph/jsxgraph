@@ -175,7 +175,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isMozilla: function () {
-            return ((Type.exists(navigator) && navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 && navigator.userAgent.toLowerCase().indexOf('apple') == -1));
+            return ((Type.exists(navigator) && navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 && navigator.userAgent.toLowerCase().indexOf('apple') === -1));
         },
 
         /**
@@ -228,7 +228,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             // Borrowed from prototype.js
             element = document.getElementById(elementId);
             if (!Type.exists(element)) {
-                throw new Error("\nJSXGraph: HTML container element '" + (elementId) + "' not found.");
+                throw new Error("\nJSXGraph: HTML container element '" + elementId + "' not found.");
             }
 
             display = element.style.display;
