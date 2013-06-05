@@ -23,7 +23,8 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeColor: '#666666',
             strokeOpacity: 0.4,
             label: {
-                fontSize: 14
+                fontSize: 14,
+                display: 'internal'
             }
         },
         label: {
@@ -73,20 +74,20 @@ JXG.Options = JXG.merge(JXG.Options, {
     tapemeasure: {
         point1: {
             snapToPoints: true,
-            attractorUnit: 'screen', 
+            attractorUnit: 'screen',
             attractorDistance: 20
         },
         point2: {
             snapToPoints: true,
-            attractorUnit: 'screen', 
+            attractorUnit: 'screen',
             attractorDistance: 20
         }
     },
-   
+
     text: {
         fontSize: 18
     }
-    
+
 /*
     line: {
         strokeColor: '#f00' // can't see red lines anymore for NOW ...
