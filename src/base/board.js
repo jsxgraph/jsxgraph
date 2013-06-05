@@ -770,6 +770,7 @@ define([
             this.drag_dy = y - this.origin.scrCoords[2];
 
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+            this.updateQuality = this.BOARD_QUALITY_LOW;
         },
 
         /**
@@ -1186,6 +1187,7 @@ define([
         },
 
         originMoveEnd: function () {
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
         },
 
