@@ -141,7 +141,7 @@ define([
                 return 0;
             }
 
-            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            leftCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board, false);
             return leftCoords.usrCoords[1];
         },
 
@@ -156,7 +156,7 @@ define([
             if (this.visProp.curvetype === 'polar') {
                 return 2 * Math.PI;
             }
-            rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board);
+            rightCoords = new Coords(Const.COORDS_BY_SCREEN, [this.board.canvasWidth, 0], this.board, false);
 
             return rightCoords.usrCoords[1];
         },
@@ -186,7 +186,7 @@ define([
                 dist = Infinity,
                 suspendUpdate = true;
 
-            checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+            checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
 
@@ -260,7 +260,7 @@ define([
 
             if (this.points.length < this.numberPoints) {
                 for (i = this.points.length; i < len; i++) {
-                    this.points[i] = new Coords(Const.COORDS_BY_USER, [0, 0], this.board);
+                    this.points[i] = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
                 }
             }
         },
@@ -379,7 +379,7 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                        this.updateParametricCurve(mi, ma, len);
+                    this.updateParametricCurve(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
@@ -688,7 +688,7 @@ define([
             // In the first case we simply transform the parents elements
             // In the second case we add a transform to the curve.
             //
-            coords = new Coords(method, coords, this.board);
+            coords = new Coords(method, coords, this.board, false);
             t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
 
             if (len > 0) {
@@ -715,8 +715,8 @@ define([
          * @returns {JXG.Curve} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var c = new Coords(method, coords, this.board),
-                oldc = new Coords(method, oldcoords, this.board),
+            var c = new Coords(method, coords, this.board, false),
+                oldc = new Coords(method, oldcoords, this.board, false),
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
 
             this.setPosition(Const.COORDS_BY_USER, dc);
@@ -918,7 +918,7 @@ define([
                 y = 0.5 * by;
             }
 
-            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
+            c = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             return Geometry.projectCoordsToCurve(c.usrCoords[1], c.usrCoords[2], 0, this, this.board)[0];
         },
 
