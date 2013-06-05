@@ -1076,6 +1076,10 @@ define([
                 this.canvasRoot.width = parseFloat(w);
                 this.canvasRoot.height = parseFloat(h);
             }
+        },
+
+        removeToInsertLater: function () {
+            return function () {};
         }
     });
 

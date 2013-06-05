@@ -282,23 +282,12 @@ define([
                 }
             }
 
-            // Labels
-            for (i = 0; i < len; i++) {
-                c = ticks.ticks[i].scrCoords;
-                if (ticks.ticks[i].major &&
-                        (ticks.board.needsFullUpdate || ticks.needsRegularUpdate) &&
-                        ticks.labels[i] &&
-                        ticks.labels[i].visProp.visible) {
-                    this.updateText(ticks.labels[i]);
-                }
-            }
-
-            node = this.getElementById(ticks.id);
+            node = ticks.rendNode;
 
             if (!Type.exists(node)) {
                 node = this.createPrim('path', ticks.id);
                 this.appendChildPrim(node, ticks.visProp.layer);
-                this.appendNodesToElement(ticks, 'path');
+                ticks.rendNode = node;
             }
 
             node.setAttributeNS(null, 'stroke', ticks.visProp.strokecolor);

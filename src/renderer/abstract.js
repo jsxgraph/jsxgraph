@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -343,11 +343,11 @@ define([
                 margin = -4;
             }
             Geometry.calcStraight(element, c1, c2, margin);
-            
+
             d1x = d1y = d2x = d2y = 0.0;
-            /* 
+            /*
                Handle arrow heads.
-               
+
                The arrow head is an equilateral triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
             */
@@ -1253,6 +1253,28 @@ define([
          */
         getElementById: function (id) {
             return document.getElementById(this.container.id + '_' + id);
+        },
+
+        /**
+         * Remove an element and provide a function that inserts it into its original position. This method
+         * is taken from this article {@link https://developers.google.com/speed/articles/javascript-dom}.
+         * @author KeeKim Heng, Google Web Developer
+         * @param {Element} element The element to be temporarily removed
+         * @returns {Function} A function that inserts the element into its original position
+         */
+        removeToInsertLater: function (element) {
+            var parentNode = element.parentNode,
+                nextSibling = element.nextSibling;
+
+            parentNode.removeChild(element);
+
+            return function () {
+                if (nextSibling) {
+                    parentNode.insertBefore(element, nextSibling);
+                } else {
+                    parentNode.appendChild(element);
+                }
+            };
         },
 
         /**
