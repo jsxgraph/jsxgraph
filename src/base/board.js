@@ -1357,7 +1357,7 @@ define([
 
             evt.preventDefault();
 
-            if (this.mode === this.BOARD_MODE_NONE) {
+            if (this.mode === this.BOARD_MODE_ZOOM) {
                 c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
 
                 this.attr.zoom.factorx = evt.scale / this.prevScale;
@@ -1379,6 +1379,7 @@ define([
          * @return {Boolean}
          */
         gestureStartListener: function (evt) {
+
             if (!this.attr.zoom.wheel) {
                 return true;
             }
@@ -1386,6 +1387,7 @@ define([
             evt.preventDefault();
             this.prevScale = 1;
 
+            this.mode = this.BOARD_MODE_ZOOM;
             return false;
         },
 
