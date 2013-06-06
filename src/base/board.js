@@ -1387,7 +1387,10 @@ define([
             evt.preventDefault();
             this.prevScale = 1;
 
-            this.mode = this.BOARD_MODE_ZOOM;
+            if (this.mode === this.BOARD_MODE_NONE) {
+                this.mode = this.BOARD_MODE_ZOOM;
+            }
+
             return false;
         },
 
