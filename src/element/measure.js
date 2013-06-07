@@ -119,7 +119,7 @@ define([
             } else {
                 n = '';
             }
-            li.label._setText(function () {
+            li.label.setText(function () {
                 return n + p1.Dist(p2).toFixed(precision);
             });
         }

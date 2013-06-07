@@ -957,8 +957,6 @@ define([
                 attr.anchor = this;
                 attr.priv = this.visProp.priv;
 
-                this.label = {};
-
                 if (this.visProp.withlabel) {
                     this.label = JXG.elements.text(this.board, [0, 0, this.name], attr);
                     this.label.needsUpdate = true;
