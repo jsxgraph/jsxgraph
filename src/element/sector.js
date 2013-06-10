@@ -553,7 +553,7 @@ define([
                     }
                 }
 
-                if (type !== 'sectordot' && this.dot.visProp.visible) {
+                if (!this.visProp.visible || (type !== 'sectordot' && this.dot.visProp.visible)) {
                     this.dot.setAttribute({visible: false});
                 }
             };
