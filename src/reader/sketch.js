@@ -647,7 +647,8 @@
                         if (step.args.create_point[i]) {
                             set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                            set_str += '\'>>; ';
+                            set_str +=  '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                         }
                     }
 
@@ -678,7 +679,9 @@
 
                     set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
                     set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]>>, ' + attrid + ' fillOpacity: ';
-                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints + ', scalable:true>>; ';
+                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
+                    set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
                     break;
 
                 case JXG.GENTYPE_QUADRILATERAL:
@@ -686,7 +689,8 @@
                         if (step.args.create_point[i]) {
                             set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                            set_str += '\'>>; ';
+                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                            set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                         }
                     }
 
@@ -710,7 +714,9 @@
                     set_str += '\', \'';
                     set_str += step.dest_sub_ids[6] + '\', \'' + step.dest_sub_ids[7] + '\' ]>>, ' + attrid;
                     set_str += ' fillOpacity: ';
-                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:true, scalable:true>>; ';
+                    set_str += JXG.Options.opacityLevel + ', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
+                    set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
+                    set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
                     break;
 
                 case JXG.GENTYPE_TEXT:
