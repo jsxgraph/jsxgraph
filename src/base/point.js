@@ -112,9 +112,9 @@ define([
          * @name Glider#slideObject
          */
         this.slideObject = null;
-        
-        /** 
-         * List of elements the point is bound to, i.e. the point glides on. 
+
+        /**
+         * List of elements the point is bound to, i.e. the point glides on.
          * Only the last entry is active.
          * Use {@link JXG.Point#popSlideObject} to remove the currently active slideObject.
          */
@@ -922,7 +922,7 @@ define([
         makeGlider: function (glideObject) {
             this.slideObject = this.board.select(glideObject);
             this.slideObjects.push(this.slideObject);
-            
+
             this.type = Const.OBJECT_TYPE_GLIDER;
             this.elType = 'glider';
             this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
@@ -943,15 +943,15 @@ define([
          * Remove the last slideObject. If there are more than one elements the point is bound to,
          * the second last element is the new active slideObject.
          */
-        popSlideObject: function() {
+        popSlideObject: function () {
             if (this.slideObjects.length > 0) {
                 this.slideObjects.pop();
-                
-                // It may not be sufficient to remove the point from 
-                // the list of childElement. For complex dependencies 
+
+                // It may not be sufficient to remove the point from
+                // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
                 delete this.slideObject.childElements[this.id];
-                
+
                 if (this.slideObjects === 0) {
                     this.elType = 'point';
                     this.type = Const.OBJECT_TYPE_POINT;
@@ -961,7 +961,7 @@ define([
                 }
             }
         },
-        
+
         /**
          * Converts a glider into a free point, regardless of how many slideObjects the point is bound to.
          */

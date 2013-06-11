@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -334,20 +334,20 @@ define([
          * @see JXG.AbstractRenderer#drawLine
          */
         updateLine: function (element) {
-            var c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
+            var s, d, d1x, d1y, d2x, d2y,
+                c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
-                margin = null,
-                s, d, d1x, d1y, d2x, d2y;
+                margin = null;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
                 margin = -4;
             }
             Geometry.calcStraight(element, c1, c2, margin);
-            
+
             d1x = d1y = d2x = d2y = 0.0;
-            /* 
+            /*
                Handle arrow heads.
-               
+
                The arrow head is an equilateral triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
             */

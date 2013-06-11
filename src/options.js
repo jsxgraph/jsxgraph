@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -1275,7 +1275,7 @@ define([
             attractors: [],
 
             /**
-             * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints. 
+             * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints.
              * Possible values are 'screen' and 'user.
              * @see JXG.Point#attractorDistance
              * @see JXG.Point#snatchDistance
@@ -1285,7 +1285,7 @@ define([
              * @name JXG.Point#attractorDistance
              * @default 'user'
              */
-            attractorUnit: 'user',    // 'screen', 'user' 
+            attractorUnit: 'user',    // 'screen', 'user'
 
             /**
              * If the distance of the point to one of its attractors is less
@@ -1575,7 +1575,7 @@ define([
                 highlightFillOpacity: 0.1,
                 size: 6,
                 snapToPoints: true,
-                attractorUnit: 'screen', 
+                attractorUnit: 'screen',
                 attractorDistance: 20,
                 showInfobox: false,
                 withLabel: false,
@@ -1588,7 +1588,7 @@ define([
                 highlightFillOpacity: 0.1,
                 size: 6,
                 snapToPoints: true,
-                attractorUnit: 'screen', 
+                attractorUnit: 'screen',
                 attractorDistance: 20,
                 showInfobox: false,
                 withLabel: false,

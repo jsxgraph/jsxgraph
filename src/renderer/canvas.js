@@ -414,10 +414,10 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+            var s, d, d1x, d1y, d2x, d2y,
+                scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
-                margin = null,
-                s, d, d1x, d1y, d2x, d2y;
+                margin = null;
 
             if (el.visProp.firstarrow || el.visProp.lastarrow) {
                 margin = -4;
