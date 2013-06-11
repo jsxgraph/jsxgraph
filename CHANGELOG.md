@@ -1,3 +1,32 @@
+0.98
+====
+
+Important Notes
+---------------
+ * The text element representing an element el's label was moved from el.label.content to el.label
+
+New Features
+------------
+ * Allow the user to forbid the emitting of events in JXG.Coords (49fa92d)
+ * New attribute "attractorUnit" for points (0a21d6e)
+ * Moved the label of an element el from el.label.content to el.label (d60dbd7, 4aecb4a, 087f2d2, 7e9d672, #34)
+ * Extend board.select() (14d8188, 8a3184b, bd18995, bec25a4, e8460a1)
+ * The grid element can be restrained to a fixed area (30bc74f)
+
+Bug fixes
+---------
+ * Set the board quality to low during touch and ms-pointer events (f17ec49, c4aa38f)
+ * Make arrow heads exact (0a39704, 939339f, f1682d3)
+ * Make circles centers snap to points if the circle line is dragged (a80c07e)
+ * Fix touch and ms-pointer events (16f07d8)
+ * Speed up axis updates (997eba4)
+ * Attracting a glider to a point fixed (801b964)
+ * Fix missing curve update when a curve's isReal flag switches (a8e1683)
+ * Fix Canvas and SVG root node size definitions (03a47fe)
+ * Hide the right angle indicator dot when the angle is hidden (e3f3bf3)
+
+
+
 0.97
 ====
 
@@ -148,7 +177,7 @@ New Features
  * JSXGraph can be used inside node.js; Rendering to PNG requires node-canvas (ab00ec3, 6106356, 8b00933)
  * Construction can be zoomed by dragging ticks (1215fba, bf01231, 818e013, 9ef977f, 31690db, bdf1159, b0e6f6a, cdb2ac7, 459fba6)
  * 'random' option for Riemann sums (d498fa2)
- * Documentation now lists events (a7ae116, da9b0a0, 63cc708, 66fb7a7, 13e4993, 
+ * Documentation now lists events (a7ae116, da9b0a0, 63cc708, 66fb7a7, 13e4993,
  * New interface EventEmitter which implements event handling (eeffbe1)
  * JSXGraph can be run inside Windows 8 "Metro" Apps (1281086, b1935d8)
  * GeometryElements fire events when an attribute gets changed (7fb8ab6)
@@ -225,7 +254,7 @@ New Features
  * New board option *animationDelay* which controls the animation fps (d093a9e)
  * New options for texts: **anchorX** 'left', 'middle', or 'right' and **anchorY** 'top', or 'bottom' (78608c0, f1aa9de, 8d7f467, bc8cbd6, bbb607b, 7e69d11)
    and **rotate** (181ee73)
- * Circles and lines have a new property **snapToGrid**. Whenever a line or circle is moved and this property is set, the parent points with the snapToGrid 
+ * Circles and lines have a new property **snapToGrid**. Whenever a line or circle is moved and this property is set, the parent points with the snapToGrid
    set to true will snap to grid once the users releases the circle or line (#3, 2a774e1)
  * New option **labels** for Ticks. In case of special ticks the *n* strings given in **labels** are taken as labels for the first *n* ticks (c188efe)
  * New options **type**, **orthoType** and **orthoSensitivity** for *angles*. See the docs for their meaning (8f0ed8c)
