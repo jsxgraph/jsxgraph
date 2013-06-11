@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -1958,11 +1958,22 @@ define([
         c.type = Const.OBJECT_TYPE_GRID;
 
         c.updateDataArray = function () {
-            var start, end, i,
+            var start, end, i, topLeft, bottomRight,
                 gridX = this.visProp.gridx,
-                gridY = this.visProp.gridy,
-                topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board),
+                gridY = this.visProp.gridy;
+
+            if (Type.isArray(this.visProp.topleft)) {
+                topLeft = new Coords(this.visProp.tltype || Const.COORDS_BY_USER, this.visProp.topleft, board);
+            } else {
+                topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
+            }
+
+            if (Type.isArray(this.visProp.bottomright)) {
+                bottomRight = new Coords(this.visProp.brtype || Const.COORDS_BY_USER, this.visProp.bottomright, board);
+            } else {
                 bottomRight = new Coords(Const.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
+            }
+
 
             //
             //      |         |         |
