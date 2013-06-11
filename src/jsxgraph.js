@@ -126,6 +126,11 @@ define([
 
             if (typeof document === 'object' && box !== null) {
                 boxid = document.getElementById(box);
+
+                // Remove everything from the container before initializing the renderer and the board
+                while (boxid.firstChild) {
+                    boxid.removeChild(boxid.firstChild);
+                }
             } else {
                 boxid = box;
             }
@@ -351,7 +356,6 @@ define([
             while (board.containerObj.firstChild) {
                 board.containerObj.removeChild(board.containerObj.firstChild);
             }
-            // board.containerObj.innerHTML = '';
 
             // Tell the browser the objects aren't needed anymore
             for (el in board.objects) {
@@ -392,8 +396,32 @@ define([
     // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
-            var scripts = document.getElementsByTagName('script'), type,
-                i, j, div, id, board, width, height, bbox, axis, grid, code;
+            var type, i, j, div, id, board, width, height, bbox, axis, grid, code,
+                scripts = document.getElementsByTagName('script'),
+                init = function (code, type, bbox) {
+                    var board = JXG.JSXGraph.initBoard(id, {boundingbox: bbox, keepaspectratio: true, grid: grid, axis: axis, showReload: true});
+
+                    if (type.toLowerCase().indexOf('script') > -1) {
+                        board.construct(code);
+                    } else {
+                        try {
+                            board.jc.parse(code);
+                        } catch (e2) {
+                            JXG.debug(e2);
+                        }
+                    }
+
+                    return board;
+                },
+                makeReload = function (board, code, type, bbox) {
+                    return function () {
+                        var newBoard;
+
+                        JXG.JSXGraph.freeBoard(board);
+                        newBoard = init(code, type, bbox);
+                        newBoard.reload = makeReload(newBoard, code, type, bbox);
+                    };
+                };
 
             for (i = 0; i < scripts.length; i++) {
                 type = scripts[i].getAttribute('type', false);
@@ -434,20 +462,12 @@ define([
                     }
 
                     if (document.getElementById(id)) {
-                        board = JXG.JSXGraph.initBoard(id, {boundingbox: bbox, keepaspectratio: true, grid: grid, axis: axis});
-
                         code = scripts[i].innerHTML;
                         code = code.replace(/<!\[CDATA\[/g, '').replace(/\]\]>/g, '');
                         scripts[i].innerHTML = code;
-                        if (type.toLowerCase().indexOf('script') > -1) {
-                            board.construct(code);
-                        } else {
-                            try {
-                                board.jc.parse(code);
-                            } catch (e2) {
-                                JXG.debug(e2);
-                            }
-                        }
+
+                        board = init(code, type, bbox);
+                        board.reload = makeReload(board, code, type, bbox);
                     } else {
                         JXG.debug('JSXGraph: Apparently the div injection failed. Can\'t create a board, sorry.');
                     }

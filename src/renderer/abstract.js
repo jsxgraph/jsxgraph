@@ -1234,6 +1234,16 @@ define([
                 node.style.bottom = board.options.navbar.bottom;
 
                 // For XHTML we need unicode instead of HTML entities
+
+                if (board.attr.showreload) {
+                    // full reload circle: \u27F2
+                    // the board.reload() method does not exist during the creation
+                    // of this button. That's why this anonymous function wrapper is required.
+                    createButton('\u00A0\u21BB\u00A0', function () {
+                        board.reload();
+                    });
+                }
+
                 createButton('\u00A0\u2013\u00A0', board.zoomOut);
                 createButton('\u00A0o\u00A0', board.zoom100);
                 createButton('\u00A0+\u00A0', board.zoomIn);

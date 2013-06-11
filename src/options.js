@@ -66,6 +66,7 @@ define([
             showCopyright: true,
             axis: false,
             showNavigation: true,
+            showReload: false,
             keepAspectRatio: false,
             // if true the first element with hasPoint==true is taken.
             takeFirst: false,
