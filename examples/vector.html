@@ -2,7 +2,7 @@
 <head>
     <title>JSXGraph vector element</title>
     <link rel="stylesheet" type="text/css" href="http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css" />
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.92/jsxgraphcore.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.97/jsxgraphcore.js"></script>
 
     <script type="text/javascript">
     /* <![CDATA[ */
@@ -50,7 +50,7 @@
     /* <![CDATA[ */
 
     var example = (function () {
-        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: true, grid: false, keepaspectratio: true, showcopyright: false});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4, 6, 10, -4], axis: true, zoom: {wheel: true}, grid: false, keepaspectratio: true, showcopyright: true});
 
         var p = board.create('point', [1, 2]);
         var v = board.create('vector', [p, [2, 3], 2]);
