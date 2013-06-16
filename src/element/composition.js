@@ -1723,7 +1723,7 @@ define([
         var interval, curve, attr,
             start, end, startx, starty, endx, endy,
             pa_on_curve, pa_on_axis, pb_on_curve, pb_on_axis,
-            t, p;
+            t = null, p;
 
         if (Type.isArray(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_CURVE) {
             interval = parents[0];
@@ -1737,6 +1737,10 @@ define([
                 "\nPossible parent types: [[number|function,number|function],curve]");
         }
 
+        attr = Type.copyAttributes(attributes, board.options, 'integral');
+        attr.withLabel = false;  // There is a custom 'label' below.
+        p = board.create('curve', [[0], [0]], attr);
+        
         // Correct the interval if necessary - NOT ANYMORE, GGB's fault
         start = interval[0];
         end = interval[1];
@@ -1767,10 +1771,21 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
+            function() {
+                if (p.visProp.axis === 'x') {
+                    return pa_on_curve.X();
+                } else {
+                    return 0;
+                }
+            },
             function () {
-                return pa_on_curve.X();
-            }, 0], attr);
-
+                if (p.visProp.axis === 'x') {
+                    return 0;
+                } else {
+                    return pa_on_curve.Y();
+                }
+            }], attr);
+        
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'curveRight');
         pb_on_curve = board.create('glider', [endx, endy, curve], attr);
         if (Type.isFunction(endx)) {
@@ -1779,12 +1794,23 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
+            function() {
+                if (p.visProp.axis === 'x') {
+                    return pb_on_curve.X();
+                } else {
+                    return 0;
+                }
+            },
             function () {
-                return pb_on_curve.X();
-            }, 0], attr);
-
+                if (p.visProp.axis === 'x') {
+                    return 0;
+                } else {
+                    return pb_on_curve.Y();
+                }
+            }], attr);
+        
         attr = Type.copyAttributes(attributes, board.options, 'integral');
-        if (attr.withLabel !== false) {
+        if (attr.withLabel !== false && attr.axis !== 'y') {
             attr = Type.copyAttributes(attributes, board.options, 'integral', 'label');
             t = board.create('text', [
                 function () {
@@ -1804,9 +1830,6 @@ define([
             pa_on_curve.addChild(t);
             pb_on_curve.addChild(t);
         }
-
-        attr = Type.copyAttributes(attributes, board.options, 'integral');
-        p = board.create('curve', [[0], [0]], attr);
 
         // dump stuff
         pa_on_curve.dump = false;
@@ -1839,34 +1862,68 @@ define([
          */
         p.updateDataArray = function () {
             var x, y,
-                i, left, right;
-
-            if (pa_on_axis.X() < pb_on_axis.X()) {
-                left = pa_on_axis.X();
-                right = pb_on_axis.X();
-            } else {
-                left = pb_on_axis.X();
-                right = pa_on_axis.X();
-            }
-
-            x = [left, left];
-            y = [0, curve.Y(left)];
-
-            for (i = 0; i < curve.numberPoints; i++) {
-                if ((left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right)) {
-                    x.push(curve.points[i].usrCoords[1]);
-                    y.push(curve.points[i].usrCoords[2]);
+                i, left, right,
+                lowx, upx,
+                lowy, upy;
+            
+            if (this.visProp.axis === 'x') {
+                if (pa_on_axis.X() < pb_on_axis.X()) {
+                    left = pa_on_axis.X();
+                    right = pb_on_axis.X();
+                } else {
+                    left = pb_on_axis.X();
+                    right = pa_on_axis.X();
                 }
+
+                x = [left, left];
+                y = [0, curve.Y(left)];
+    
+                for (i = 0; i < curve.numberPoints; i++) {
+                    if ((left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right)) {
+                        x.push(curve.points[i].usrCoords[1]);
+                        y.push(curve.points[i].usrCoords[2]);
+                    }
+                }
+                x.push(right);
+                y.push(curve.Y(right));
+                x.push(right);
+                y.push(0);
+
+                // close the curve
+                x.push(left);
+                y.push(0);
+            } else {
+                if (pa_on_curve.Y() < pb_on_curve.Y()) {
+                    lowx = pa_on_curve.X();
+                    lowy = pa_on_curve.Y();
+                    upx = pb_on_curve.X();
+                    upy = pb_on_curve.Y();
+                } else {
+                    lowx = pb_on_curve.X();
+                    lowy = pb_on_curve.Y();
+                    upx = pa_on_curve.X();
+                    upy = pa_on_curve.Y();
+                }
+
+                x = [0, lowx];
+                y = [lowy, lowy];
+
+                for (i = 0; i < curve.numberPoints; i++) {
+                    if ((lowy <= curve.points[i].usrCoords[2]) && (curve.points[i].usrCoords[2] <= upy)) {
+                        x.push(curve.points[i].usrCoords[1]);
+                        y.push(curve.points[i].usrCoords[2]);
+                    }
+                }
+                x.push(upx);
+                y.push(upy);
+                x.push(0);
+                y.push(upy);
+
+                // close the curve
+                x.push(0);
+                y.push(lowy);
             }
-            x.push(right);
-            y.push(curve.Y(right));
-            x.push(right);
-            y.push(0);
-
-            // close the curve
-            x.push(left);
-            y.push(0);
-
+            
             this.dataX = x;
             this.dataY = y;
         };

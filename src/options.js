@@ -946,12 +946,14 @@ define([
 
         /* special options for integral */
         integral: {
+            axis: 'x',        // 'x' or 'y'
             withLabel: true,    // Show integral value as text
             strokeWidth: 0,
             strokeOpacity: 0,
             fillOpacity: 0.8,
             curveLeft: {    // Start point
                 visible: true,
+                withLabel: false,
                 layer: 9
             },
             baseLeft: {    // Start point
@@ -962,6 +964,7 @@ define([
             },
             curveRight: {      // End point
                 visible: true,
+                withLabel: false,
                 layer: 9
             },
             baseRight: {      // End point
