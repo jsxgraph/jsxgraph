@@ -1772,17 +1772,17 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
             function() {
-                if (p.visProp.axis === 'x') {
-                    return pa_on_curve.X();
-                } else {
+                if (p.visProp.axis === 'y') {
                     return 0;
+                } else {
+                    return pa_on_curve.X();
                 }
             },
             function () {
-                if (p.visProp.axis === 'x') {
-                    return 0;
-                } else {
+                if (p.visProp.axis === 'y') {
                     return pa_on_curve.Y();
+                } else {
+                    return 0;
                 }
             }], attr);
         
@@ -1795,17 +1795,17 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
             function() {
-                if (p.visProp.axis === 'x') {
-                    return pb_on_curve.X();
-                } else {
+                if (p.visProp.axis === 'y') {
                     return 0;
+                } else {
+                    return pb_on_curve.X();
                 }
             },
             function () {
-                if (p.visProp.axis === 'x') {
-                    return 0;
-                } else {
+                if (p.visProp.axis === 'y') {
                     return pb_on_curve.Y();
+                } else {
+                    return 0;
                 }
             }], attr);
         
@@ -1866,33 +1866,7 @@ define([
                 lowx, upx,
                 lowy, upy;
             
-            if (this.visProp.axis === 'x') {
-                if (pa_on_axis.X() < pb_on_axis.X()) {
-                    left = pa_on_axis.X();
-                    right = pb_on_axis.X();
-                } else {
-                    left = pb_on_axis.X();
-                    right = pa_on_axis.X();
-                }
-
-                x = [left, left];
-                y = [0, curve.Y(left)];
-    
-                for (i = 0; i < curve.numberPoints; i++) {
-                    if ((left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right)) {
-                        x.push(curve.points[i].usrCoords[1]);
-                        y.push(curve.points[i].usrCoords[2]);
-                    }
-                }
-                x.push(right);
-                y.push(curve.Y(right));
-                x.push(right);
-                y.push(0);
-
-                // close the curve
-                x.push(left);
-                y.push(0);
-            } else {
+            if (this.visProp.axis === 'y') {
                 if (pa_on_curve.Y() < pb_on_curve.Y()) {
                     lowx = pa_on_curve.X();
                     lowy = pa_on_curve.Y();
@@ -1922,6 +1896,32 @@ define([
                 // close the curve
                 x.push(0);
                 y.push(lowy);
+            } else {
+                if (pa_on_axis.X() < pb_on_axis.X()) {
+                    left = pa_on_axis.X();
+                    right = pb_on_axis.X();
+                } else {
+                    left = pb_on_axis.X();
+                    right = pa_on_axis.X();
+                }
+
+                x = [left, left];
+                y = [0, curve.Y(left)];
+    
+                for (i = 0; i < curve.numberPoints; i++) {
+                    if ((left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right)) {
+                        x.push(curve.points[i].usrCoords[1]);
+                        y.push(curve.points[i].usrCoords[2]);
+                    }
+                }
+                x.push(right);
+                y.push(curve.Y(right));
+                x.push(right);
+                y.push(0);
+
+                // close the curve
+                x.push(left);
+                y.push(0);
             }
             
             this.dataX = x;
