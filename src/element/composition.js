@@ -1920,7 +1920,7 @@ define([
         p.label = {
             content: t
         };
-
+        
         return p;
     };
 

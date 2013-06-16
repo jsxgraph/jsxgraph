@@ -314,7 +314,7 @@ define([
                 }
 
                 // Update the label if visible.
-                if (this.hasLabel && this.label.visProp.visible) {
+                if (this.hasLabel && Type.exists(this.label.visProp) && this.label.visProp.visible) {
                     this.label.update();
                     this.board.renderer.updateText(this.label);
                 }
