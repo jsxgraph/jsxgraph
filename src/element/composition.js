@@ -1878,12 +1878,18 @@ define([
                     upx = pa_on_curve.X();
                     upy = pa_on_curve.Y();
                 }
-
+                left = Math.min(lowx, upx);
+                right = Math.max(lowx, upx);
+                
                 x = [0, lowx];
                 y = [lowy, lowy];
 
                 for (i = 0; i < curve.numberPoints; i++) {
-                    if ((lowy <= curve.points[i].usrCoords[2]) && (curve.points[i].usrCoords[2] <= upy)) {
+                    if (lowy <= curve.points[i].usrCoords[2] && 
+                        left <= curve.points[i].usrCoords[1] &&                     
+                        curve.points[i].usrCoords[2] <= upy  &&
+                        curve.points[i].usrCoords[1] <= right
+                        ) {
                         x.push(curve.points[i].usrCoords[1]);
                         y.push(curve.points[i].usrCoords[2]);
                     }
