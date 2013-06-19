@@ -1427,8 +1427,8 @@ define([
             // prevent accidental selection of text
             if (document.selection && typeof document.selection.empty === 'function') {
                 document.selection.empty();
-            } else if (window.getSelection) {
-                window.getSelection().removeAllRanges();
+            } else if (window.setCaretAtTouchClick) {
+                window.setCaretAtTouchClick().removeAllRanges();
             }
 
             this.options.precision.hasPoint = eps;
@@ -1676,8 +1676,8 @@ define([
             // prevent accidental selection of text
             if (document.selection && typeof document.selection.empty === 'function') {
                 document.selection.empty();
-            } else if (window.getSelection) {
-                window.getSelection().removeAllRanges();
+            } else if (window.setCaretAtTouchClick) {
+                window.setCaretAtTouchClick().removeAllRanges();
             }
 
             // multitouch
@@ -2050,8 +2050,8 @@ define([
             // prevent accidental selection of text
             if (document.selection && typeof document.selection.empty === 'function') {
                 document.selection.empty();
-            } else if (window.getSelection) {
-                window.getSelection().removeAllRanges();
+            } else if (window.setCaretAtTouchClick) {
+                window.setCaretAtTouchClick().removeAllRanges();
             }
 
             if (!this.hasMouseUp) {
