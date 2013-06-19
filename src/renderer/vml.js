@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -130,7 +130,7 @@ define([
 
         // documented in AbstractRenderer
         updateTicks: function (ticks, dxMaj, dyMaj, dxMin, dyMin) {
-            var i, len, c, ticksNode, x, y,
+            var i, len, c, x, y,
                 r = this.resolution,
                 tickArr = [];
 
@@ -145,22 +145,12 @@ define([
                         ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' ');
                 }
             }
-            // Labels
-            for (i = 0; i < len; i++) {
-                c = ticks.ticks[i].scrCoords;
-                if (ticks.ticks[i].major &&
-                        (ticks.board.needsFullUpdate || ticks.needsRegularUpdate) &&
-                        ticks.labels[i] &&
-                        ticks.labels[i].visProp.visible) {
-                    this.updateText(ticks.labels[i]);
-                }
+
+            if (!Type.exists(ticks.rendNode)) {
+                ticks.rendNode = this.createPrim('path', ticks.id);
+                this.appendChildPrim(ticks.rendNode, ticks.visProp.layer);
             }
 
-            if (!Type.exists(ticks)) {
-                ticksNode = this.createPrim('path', ticks.id);
-                this.appendChildPrim(ticksNode, ticks.visProp.layer);
-                this.appendNodesToElement(ticks, 'path');
-            }
             this._setAttr(ticks.rendNode, 'stroked', 'true');
             this._setAttr(ticks.rendNode, 'strokecolor', ticks.visProp.strokecolor, 1);
             this._setAttr(ticks.rendNode, 'strokeweight', ticks.visProp.strokewidth);

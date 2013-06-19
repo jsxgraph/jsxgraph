@@ -1266,6 +1266,28 @@ define([
         },
 
         /**
+         * Remove an element and provide a function that inserts it into its original position. This method
+         * is taken from this article {@link https://developers.google.com/speed/articles/javascript-dom}.
+         * @author KeeKim Heng, Google Web Developer
+         * @param {Element} element The element to be temporarily removed
+         * @returns {Function} A function that inserts the element into its original position
+         */
+        removeToInsertLater: function (element) {
+            var parentNode = element.parentNode,
+                nextSibling = element.nextSibling;
+
+            parentNode.removeChild(element);
+
+            return function () {
+                if (nextSibling) {
+                    parentNode.insertBefore(element, nextSibling);
+                } else {
+                    parentNode.appendChild(element);
+                }
+            };
+        },
+
+        /**
          * Resizes the rendering element
          * @param {Number} w New width
          * @param {Number} h New height

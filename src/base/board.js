@@ -770,6 +770,7 @@ define([
             this.drag_dy = y - this.origin.scrCoords[2];
 
             this.mode = this.BOARD_MODE_MOVE_ORIGIN;
+            this.updateQuality = this.BOARD_QUALITY_LOW;
         },
 
         /**
@@ -1186,6 +1187,7 @@ define([
         },
 
         originMoveEnd: function () {
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
         },
 
@@ -3076,7 +3078,8 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         updateRenderer: function () {
-            var el, pEl, len = this.objectsList.length;
+            var el, pEl,
+                len = this.objectsList.length;
 
             if (this.renderer.type === 'canvas') {
                 this.updateRendererCanvas();
@@ -3220,18 +3223,27 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         update: function (drag) {
-            var i, len, b;
+            var i, len, b, insert;
 
             if (this.inUpdate || this.isSuspendedUpdate) {
                 return this;
             }
             this.inUpdate = true;
 
+            if (this.containerObj) {
+                insert = this.renderer.removeToInsertLater(this.containerObj);
+            }
+
             this.prepareUpdate().updateElements(drag).updateConditions();
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();
             this.triggerEventHandlers(['update'], []);
+
+            if (insert) {
+                insert();
+            }
+
             // To resolve dependencies between boards
             // for (var board in JXG.boards) {
             len = this.dependentBoards.length;
