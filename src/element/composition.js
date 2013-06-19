@@ -1812,7 +1812,7 @@ define([
         ], attr);
 
         attr = Type.copyAttributes(attributes, board.options, 'integral');
-        if (attr.withLabel !== false && attr.axis !== 'y') {
+        if (attr.withlabel !== false && attr.axis !== 'y') {
             attr = Type.copyAttributes(attributes, board.options, 'integral', 'label');
             attr = Type.copyAttributes(attr, board.options, 'label');
 
