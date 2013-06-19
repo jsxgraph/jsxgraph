@@ -1740,7 +1740,7 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral');
         attr.withLabel = false;  // There is a custom 'label' below.
         p = board.create('curve', [[0], [0]], attr);
-        
+
         // Correct the interval if necessary - NOT ANYMORE, GGB's fault
         start = interval[0];
         end = interval[1];
@@ -1771,21 +1771,22 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
-            function() {
+            function () {
                 if (p.visProp.axis === 'y') {
                     return 0;
-                } else {
-                    return pa_on_curve.X();
                 }
+
+                return pa_on_curve.X();
             },
             function () {
                 if (p.visProp.axis === 'y') {
                     return pa_on_curve.Y();
-                } else {
-                    return 0;
                 }
-            }], attr);
-        
+
+                return 0;
+            }
+        ], attr);
+
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'curveRight');
         pb_on_curve = board.create('glider', [endx, endy, curve], attr);
         if (Type.isFunction(endx)) {
@@ -1794,34 +1795,47 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
-            function() {
+            function () {
                 if (p.visProp.axis === 'y') {
                     return 0;
-                } else {
-                    return pb_on_curve.X();
                 }
+
+                return pb_on_curve.X();
             },
             function () {
                 if (p.visProp.axis === 'y') {
                     return pb_on_curve.Y();
-                } else {
-                    return 0;
                 }
-            }], attr);
-        
+
+                return 0;
+            }
+        ], attr);
+
         attr = Type.copyAttributes(attributes, board.options, 'integral');
         if (attr.withLabel !== false && attr.axis !== 'y') {
             attr = Type.copyAttributes(attributes, board.options, 'integral', 'label');
+            attr = Type.copyAttributes(attr, board.options, 'label');
+
             t = board.create('text', [
                 function () {
-                    return pb_on_curve.X() + 0.2;
+                    var off = new Coords(Const.COORDS_BY_SCREEN, [
+                        this.visProp.offset[0] + this.board.origin.scrCoords[1],
+                        0
+                    ], this.board, false);
+
+                    return pb_on_curve.X() + off.usrCoords[1];
                 },
                 function () {
-                    return pb_on_curve.Y() - 0.8;
+                    var off = new Coords(Const.COORDS_BY_SCREEN, [
+                        0,
+                        this.visProp.offset[1] + this.board.origin.scrCoords[2]
+                    ], this.board, false);
+
+                    return pb_on_curve.Y() + off.usrCoords[2];
                 },
                 function () {
                     var Int = Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
-                    return '&int; = ' + (Int).toFixed(4);
+                    return '&int; = ' + Int.toFixed(4);
                 }
             ], attr);
 
@@ -1865,7 +1879,7 @@ define([
                 i, left, right,
                 lowx, upx,
                 lowy, upy;
-            
+
             if (this.visProp.axis === 'y') {
                 if (pa_on_curve.Y() < pb_on_curve.Y()) {
                     lowx = pa_on_curve.X();
@@ -1880,16 +1894,15 @@ define([
                 }
                 left = Math.min(lowx, upx);
                 right = Math.max(lowx, upx);
-                
+
                 x = [0, lowx];
                 y = [lowy, lowy];
 
                 for (i = 0; i < curve.numberPoints; i++) {
-                    if (lowy <= curve.points[i].usrCoords[2] && 
-                        left <= curve.points[i].usrCoords[1] &&                     
-                        curve.points[i].usrCoords[2] <= upy  &&
-                        curve.points[i].usrCoords[1] <= right
-                        ) {
+                    if (lowy <= curve.points[i].usrCoords[2] &&
+                            left <= curve.points[i].usrCoords[1] &&
+                            curve.points[i].usrCoords[2] <= upy  &&
+                            curve.points[i].usrCoords[1] <= right) {
                         x.push(curve.points[i].usrCoords[1]);
                         y.push(curve.points[i].usrCoords[2]);
                     }
@@ -1913,7 +1926,7 @@ define([
 
                 x = [left, left];
                 y = [0, curve.Y(left)];
-    
+
                 for (i = 0; i < curve.numberPoints; i++) {
                     if ((left <= curve.points[i].usrCoords[1]) && (curve.points[i].usrCoords[1] <= right)) {
                         x.push(curve.points[i].usrCoords[1]);
@@ -1929,7 +1942,7 @@ define([
                 x.push(left);
                 y.push(0);
             }
-            
+
             this.dataX = x;
             this.dataY = y;
         };
@@ -1980,10 +1993,8 @@ define([
          * documented in GeometryElement
          * @ignore
          */
-        p.label = {
-            content: t
-        };
-        
+        p.label = t;
+
         return p;
     };
 
