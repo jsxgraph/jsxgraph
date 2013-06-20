@@ -582,7 +582,7 @@ define([
 
             if (node.replaced) {
                 // these children exist, if node.replaced is set.
-                v = this.board.objects[node.children[1].children[0].value];
+                v = this.board.objects[node.children[1][0].value];
 
                 if (Type.exists(v) && v.name !== "") {
                     node.type = 'node_var';
