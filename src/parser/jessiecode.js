@@ -542,7 +542,6 @@ define([
 
                 code = cleaned.join('\n');
                 ast = parser.parse(code);
-                console.log(ast);
                 result = this.execute(ast);
             } finally {
                 // make sure the original text method is back in place
@@ -1330,7 +1329,6 @@ define([
                     break;
                 case 'op_function':
                     list = node.children[0];
-                    console.log('COMPILE op_function', node);
                     ret = ' function (' + list.join(', ') + ') ' + this.compile(node.children[1], js);
                     break;
                 case 'op_execfunmath':
@@ -2142,8 +2140,6 @@ parse: function parse(input) {
             for (i = 3; i < arguments.length; i++) {
                 n.children.push(arguments[i]);
             }
-
-console.log(type, value, children);
 
             n.line = pos[0];
             n.col = pos[1];
