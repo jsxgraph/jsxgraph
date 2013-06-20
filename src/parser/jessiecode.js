@@ -984,7 +984,7 @@ define([
 
                                 return fun;
                             } catch (e) {
-                                console.log('error compiling function', str, e);
+                                $jc$._warn('error compiling function\n\n' + str + '\n\n' + e.toString());
                                 return function () {};
                             }
                         }(this, list));
