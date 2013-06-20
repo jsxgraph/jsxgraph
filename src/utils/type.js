@@ -406,6 +406,33 @@ define([
         },
 
         /**
+         * Converts an array of {@link JXG.Coords} objects into a coordinate matrix.
+         * @param {Array} coords
+         * @param {Boolean} split
+         * @returns {Array}
+         */
+        coordsArrayToMatrix: function (coords, split) {
+            var i,
+                x = [],
+                m = [];
+
+            for (i = 0; i < coords.length; i++) {
+                if (split) {
+                    x.push(coords[i].usrCoords[1]);
+                    m.push(coords[i].usrCoords[2]);
+                } else {
+                    m.push([coords[i].usrCoords[1], coords[i].usrCoords[2]]);
+                }
+            }
+
+            if (split) {
+                m = [x, m];
+            }
+
+            return m;
+        },
+
+        /**
          * Compare two arrays.
          * @param {Array} a1
          * @param {Array} a2
