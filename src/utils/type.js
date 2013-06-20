@@ -993,7 +993,11 @@ define([
                 return html_sanitize(str, function () { return; }, function (id) { return id; });
             }
 
-            return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            if (str) {
+                str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            return str;
         },
 
         /**
