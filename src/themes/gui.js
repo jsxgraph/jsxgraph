@@ -86,7 +86,9 @@ JXG.Options = JXG.merge(JXG.Options, {
 
     text: {
         fontSize: 18
-    }
+    },
+
+    trunclen: 2
 
 /*
     line: {

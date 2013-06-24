@@ -154,5 +154,7 @@ JXG.Options = JXG.merge(JXG.Options, {
 
     chart: {
         fillOpacity: 0.6
-    }
+    },
+
+    trunclen: 2
 });

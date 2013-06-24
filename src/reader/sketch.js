@@ -200,6 +200,11 @@
             }
 
             switch (step.type) {
+
+                case JXG.GENTYPE_TRUNCATE:
+                    set_str = 'trunclen = ' + JXG.Options.trunclen + '; ';
+                    break;
+
                 case JXG.GENTYPE_JCODE:
                     set_str = step.args.code;
                     break;

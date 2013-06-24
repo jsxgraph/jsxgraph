@@ -124,7 +124,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_ANGLE: 24,
         GENTYPE_PLOT: 25,
         GENTYPE_SLIDER: 26,
-        GENTYPE_XYZ: 27, // unused ...
+        GENTYPE_TRUNCATE: 27,
         GENTYPE_JCODE: 28,
         GENTYPE_MOVEMENT: 29,
         GENTYPE_COMBINED: 30,
