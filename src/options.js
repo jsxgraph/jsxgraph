@@ -1623,17 +1623,101 @@ define([
              * @visprop
              */
 
+            /**
+             * The font size in pixels.
+             * @memberOf Text.prototype
+             * @default 12
+             * @name fontSize
+             * @type Number
+             */
             fontSize: 12,
+
+            /**
+             * Used to round texts given by a number.
+             * @memberOf Text.prototype
+             * @default 2
+             * @name digits
+             * @type Number
+             */
             digits: 2,
+
+            /**
+             * If set to
+             * @memberOf Text.prototype
+             * @default true
+             * @name parse
+             * @type Boolean
+             */
             parse: true,
+
+            /**
+             * If set to true and caja's sanitizeHTML function can be found it
+             * will be used to sanitize text output.
+             * @memberOf Text.prototype
+             * @default false
+             * @name useCaja
+             * @type Boolean
+             */
             useCaja: false,
+
+            /**
+             * If enabled, the text will be handled as label. Intended for internal use.
+             * @memberOf Text.prototype
+             * @default false
+             * @name isLabel
+             * @type Boolean
+             */
             isLabel: false,
+
             strokeColor: 'black',
+
+            /**
+             * If true the input will be given to ASCIIMathML before rendering.
+             * @memberOf Text.prototype
+             * @default false
+             * @name useASCIIMathML
+             * @type Boolean
+             */
             useASCIIMathML: false,
+
+            /**
+             * If true MathJax will be used to render the input string..
+             * @memberOf Text.prototype
+             * @default false
+             * @name useMathJax
+             * @type Boolean
+             */
             useMathJax: false,
-            display: 'html',                    // 'html' or 'internal'
-            anchorX: 'left',                     //  'left', 'middle', or 'right': horizontal alignment of the text.
-            anchorY: 'middle',                     //  'top', 'middle', or 'bottom': vertical alignment of the text.
+
+            /**
+             * Determines the rendering method of the text. Possible values
+             * include <tt>'html'</tt> and <tt>'internal</tt>.
+             * @memberOf Text.prototype
+             * @default 'html'
+             * @name display
+             * @type String
+             */
+            display: 'html',
+
+            /**
+             * The horizontal alignment of the text. Possible values include <tt>'left'</tt>, <tt>'middle'</tt>, and
+             * <tt>'right'</tt>.
+             * @memberOf Text.prototype
+             * @default 'left'
+             * @name anchorX
+             * @type String
+             */
+            anchorX: 'left',
+
+            /**
+             * The vertical alignment of the text. Possible values include <tt>'top'</tt>, <tt>'middle'</tt>, and
+             * <tt>'bottom'</tt>.
+             * @memberOf Text.prototype
+             * @default 'middle'
+             * @name anchorY
+             * @type String
+             */
+            anchorY: 'middle',
             /**
              * The precision of the slider value displayed in the optional text.
              * @memberOf Text.prototype
@@ -1663,6 +1747,14 @@ define([
              */
             strokeColor: '#000000',
             fillColor: 'none',
+
+            /**
+             * The number of evaluated data points.
+             * @memberOf Tracecurve.prototype
+             * @default 100
+             * @name numberPoints
+             * @type Number
+             */
             numberPoints: 100
 
             /**#@-*/
