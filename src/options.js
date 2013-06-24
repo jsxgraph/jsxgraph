@@ -1634,7 +1634,20 @@ define([
             display: 'html',                    // 'html' or 'internal'
             anchorX: 'left',                     //  'left', 'middle', or 'right': horizontal alignment of the text.
             anchorY: 'middle',                     //  'top', 'middle', or 'bottom': vertical alignment of the text.
+            /**
+             * The precision of the slider value displayed in the optional text.
+             * @memberOf Text.prototype
+             * @name cssClass
+             * @type String
+             */
             cssClass: 'JXGtext',
+
+            /**
+             * The precision of the slider value displayed in the optional text.
+             * @memberOf Text.prototype
+             * @name highlightCssClass
+             * @type String
+             */
             highlightCssClass: 'JXGtext',
             withLabel: false,
             rotate: 0,                        // works for non-zero values only in combination with display=='internal'
