@@ -167,7 +167,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_ANGLERADIUS: 70,
         GENTYPE_CTX_DOTVISIBILITY: 71,
         GENTYPE_CTX_FILLOPACITY: 72,
-        GENTYPE_CTX_BOARDIMG: 73
+        GENTYPE_CTX_BOARDIMG: 73,
+        GENTYPE_CTX_SCALE: 74
     };
 
     JXG.extend(JXG, constants);
