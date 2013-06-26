@@ -162,12 +162,21 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'highline');
         l2 = board.create('segment', [p1, p3],  attr);
 
+        /**
+         * Returns the current slider value.
+         * @memberOf Slider.prototype
+         * @name Value
+         * @returns {Number}
+         */
         p3.Value = function () {
-            return p3.visProp.snapwidth === -1 ? this.position * sdiff + smin : Math.round((this.position * sdiff + smin) / this.visProp.snapwidth) * this.visProp.snapwidth;
+            var sdiff = this._smax - this._smin;
+            return p3.visProp.snapwidth === -1 ? this.position * sdiff + this._smin : Math.round((this.position * sdiff + this._smin) / this.visProp.snapwidth) * this.visProp.snapwidth;
         };
 
         p3.methodMap = Type.deepCopy(p3.methodMap, {
-            Value: 'Value'
+            Value: 'Value',
+            smax: '_smax',
+            smin: '_smin'
         });
 
         /**
