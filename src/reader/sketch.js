@@ -682,7 +682,7 @@
 
                     set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
                     set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]';
-                    set_str += ', names: [ \'\', \'\', \'\' ]>>, ' + attrid + ' fillOpacity: ';
+                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                     set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
@@ -717,7 +717,7 @@
                     set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5];
                     set_str += '\', \'';
                     set_str += step.dest_sub_ids[6] + '\', \'' + step.dest_sub_ids[7] + '\' ]';
-                    set_str += ', names: [ \'\', \'\', \'\', \'\' ]>>, ' + attrid;
+                    set_str += ', name: \'\'>>, ' + attrid;
                     set_str += ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
@@ -769,15 +769,7 @@
                         }
                     }
 
-                    set_str += '\' ], names: [ \'';
-
-                    for (i = 0; i < step.dest_sub_ids.length; i++) {
-                        if (i < step.dest_sub_ids.length - 1) {
-                            set_str += '\', \'';
-                        }
-                    }
-
-                    set_str += '\' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
+                    set_str += '\' ], name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
