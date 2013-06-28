@@ -483,6 +483,7 @@ define([
 
         this.methodMap = {
             update: 'update',
+            fullUpdate: 'fullUpdate',
             on: 'on',
             off: 'off',
             trigger: 'trigger',
