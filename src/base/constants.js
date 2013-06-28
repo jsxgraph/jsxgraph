@@ -106,7 +106,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_TANGENT: 6,
         GENTYPE_PARALLEL: 7,
         GENTYPE_BISECTORLINES: 8,
-//        GENTYPE_PERPENDICULAR_BISECTOR: 9, // unused
+        GENTYPE_BOARDIMG: 9,
         GENTYPE_BISECTOR: 10,
         GENTYPE_NORMAL: 11,
         GENTYPE_POINT: 12,
@@ -169,12 +169,11 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_ANGLERADIUS: 70,
         GENTYPE_CTX_DOTVISIBILITY: 71,
         GENTYPE_CTX_FILLOPACITY: 72,
-        GENTYPE_CTX_BOARDIMG: 73,
+        GENTYPE_CTX_PLOT: 73,
         GENTYPE_CTX_SCALE: 74,
         GENTYPE_CTX_INTVAL: 75,
         GENTYPE_CTX_POINT1: 76,
-        GENTYPE_CTX_POINT2: 77,
-        GENTYPE_CTX_PLOT: 78
+        GENTYPE_CTX_POINT2: 77
     };
 
     JXG.extend(JXG, constants);
