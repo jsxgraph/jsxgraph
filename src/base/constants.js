@@ -141,10 +141,12 @@ define(['jxg'], function (JXG) {
 //        GENTYPE_TRANSFORM: 47, // unused
         // 48 ... 50 // unused ...
 
-        // Important:
-        // To be able to differentiate between the (GUI-specific) CTX and
-        // (CORE-specific) non-CTX steps, the non-CTX steps must not be changed
+        // IMPORTANT:
+        // ----------
+        // For being able to differentiate between the (GUI-specific) CTX and
+        // (CORE-specific) non-CTX steps, the non-CTX steps MUST NOT be changed
         // to values > 50.
+
         GENTYPE_CTX_TYPE_G: 51,
         GENTYPE_CTX_TYPE_P: 52,
         GENTYPE_CTX_TRACE: 53,
