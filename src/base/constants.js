@@ -173,7 +173,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_SCALE: 74,
         GENTYPE_CTX_INTVAL: 75,
         GENTYPE_CTX_POINT1: 76,
-        GENTYPE_CTX_POINT2: 77
+        GENTYPE_CTX_POINT2: 77,
+        GENTYPE_CTX_PLOT: 78
     };
 
     JXG.extend(JXG, constants);

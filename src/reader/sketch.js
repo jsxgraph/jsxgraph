@@ -693,7 +693,7 @@
                         if (step.args.create_point[i]) {
                             set_str += 'point(' + pn(step.args.coords[i].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[i].usrCoords[2]) + ') <<id: \'' + step.dest_sub_ids[i];
-                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                            set_str += '\', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                             set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
                         }
                     }
@@ -820,24 +820,13 @@
                     break;
 
                 case JXG.GENTYPE_PLOT:
+                    set_str = assign + step.args.plot_type + '(' + step.args.func + ') <<';
 
-                    if (typeof step.args.isUpdate == 'undefined') // backward compatibility
-                        step.args.isUpdate = false;
+                    if (step.args.isPolar)
+                        set_str += 'curveType: \'polar\', ';
 
-                    if (step.args.isUpdate == false) {
-
-                        set_str = assign + step.args.plot_type + '(' + step.args.func + ') <<';
-
-                        if (step.args.isPolar)
-                            set_str += 'curveType: \'polar\', ';
-
-                        set_str += attrid + ' name:\'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
-                        reset_str = 'delete ' + step.dest_id + '; ';
-
-                    } else {
-                        set_str = step.dest_id + ".generateTerm('x', 'x', '" + step.args.func.cleanTerm() + "'); $board.update();";
-                        reset_str = step.dest_id + ".generateTerm('x', 'x', '" + step.args.funcOld.cleanTerm() + "'); $board.update();";
-                    }
+                    set_str += attrid + ' name:\'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
 
