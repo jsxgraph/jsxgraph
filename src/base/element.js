@@ -300,7 +300,10 @@ define([
             if (!Type.exists(name)) {
                 name = this.board.generateName(this);
             }
-            this.board.elementsByName[name] = this;
+
+            if (name !== '') {
+                this.board.elementsByName[name] = this;
+            }
 
             /**
              * Not necessarily unique name for the element.

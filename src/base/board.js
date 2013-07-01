@@ -3627,7 +3627,10 @@ define([
 
             this.removeObject(src);
             dest.createLabel();
-            this.elementsByName[dest.name] = dest;
+
+            if (Type.exists(dest.name) && dest.name !== '') {
+                this.elementsByName[dest.name] = dest;
+            }
 
             this.update();
 
@@ -3716,7 +3719,7 @@ define([
                 s = str;
 
             // it's a string, most likely an id or a name.
-            if (typeof s === 'string') {
+            if (typeof s === 'string' && s !== '') {
                 // Search by ID
                 if (Type.exists(this.objects[s])) {
                     s = this.objects[s];
