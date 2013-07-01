@@ -113,6 +113,10 @@ define([
             }
         }
 
+        // Register polygon at board
+        // This needs to be done BEFORE the points get this polygon added in their descendants list
+        this.id = this.board.setId(this, 'Py');
+
         // Add polygon as child to defining points
         for (i = 0; i < this.vertices.length - 1; i++) {
             vertex = this.board.select(this.vertices[i]);
@@ -120,8 +124,6 @@ define([
         }
 
 
-        /* Register polygon at board */
-        this.id = this.board.setId(this, 'Py');
         this.board.renderer.drawPolygon(this);
         this.board.finalizeAdding(this);
         this.elType = 'polygon';
