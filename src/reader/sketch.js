@@ -815,7 +815,13 @@
                     break;
 
                 case JXG.GENTYPE_PLOT:
-                    set_str = assign + step.args.plot_type + '(' + step.args.func + ') <<';
+
+                    set_str = assign + step.args.plot_type + '(' + step.args.func;
+
+                    if (step.args.a != step.args.b)
+                        set_str += ', [ ' + step.args.a + ', ' + step.args.b + ']';
+
+                    set_str += ') <<';
 
                     if (step.args.isPolar)
                         set_str += 'curveType: \'polar\', ';
