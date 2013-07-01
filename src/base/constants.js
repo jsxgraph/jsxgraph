@@ -88,6 +88,7 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_VECTOR: 22,
         OBJECT_TYPE_OPROJECT: 23,
         OBJECT_TYPE_GRID: 24,
+        OBJECT_TYPE_TANGENT: 25,
 
         // object classes
         OBJECT_CLASS_POINT: 1,

@@ -1419,6 +1419,7 @@ define([
 
         if (c.elementClass === Const.OBJECT_CLASS_LINE) {
             tangent = board.create('line', [c.point1, c.point2], attributes);
+            tangent.glider = p;
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE && c.type !== Const.OBJECT_TYPE_CONIC) {
             if (c.visProp.curvetype !== 'plot') {
                 g = c.X;
@@ -1590,6 +1591,7 @@ define([
         }
 
         tangent.elType = 'tangent';
+        tangent.type = Const.OBJECT_TYPE_TANGENT;
         tangent.parents = [];
         for (i = 0; i < parents.length; i++) {
             tangent.parents.push(parents[i].id);

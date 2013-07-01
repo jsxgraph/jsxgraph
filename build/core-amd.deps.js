@@ -56,7 +56,8 @@ define([
     'renderer/svg',
     'renderer/vml',
     'renderer/canvas',
-    'renderer/no'
+    'renderer/no',
+    'element/slopetriangle'
 ], function (JXG) {
     "use strict";
 
