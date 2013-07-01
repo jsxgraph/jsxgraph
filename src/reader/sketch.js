@@ -302,7 +302,7 @@
                     reset_str += step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
                     break;
 
-                case JXG.GENTYPE_CTX_BOARDIMG:
+                case JXG.GENTYPE_BOARDIMG:
                     set_str = "image('" + step.args.s + "', [ " + step.args.anchor + " ], [ " + step.args.scale + " ]) ";
                     set_str += "<<id: '" + step.dest_id + "'>>; ";
 
@@ -363,6 +363,13 @@
                     }
 
                     set_str += assign + 'normal(' + sub_id + ', ' + step.src_ids[0] + ') <<' + attrid;
+                    set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
+                    set_str += '\'>> >>; ';
+                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                    break;
+
+                case JXG.GENTYPE_PERPSEGMENT:
+                    set_str += assign + 'perpendicularsegment(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
                     set_str += 'name: \'\', point: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
                     set_str += '\'>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
