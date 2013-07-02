@@ -2687,5 +2687,9 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
+
+    // Work around an issue with browsers that don't support Object.getPrototypeOf()
+    parser.yy.parseError = parser.parseError;
+
     return JXG.JessieCode;
 });
