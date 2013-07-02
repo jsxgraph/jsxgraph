@@ -1432,7 +1432,10 @@ define([
                 window.getSelection().removeAllRanges();
             }
 
-            this.options.precision.hasPoint = eps;
+            // Touch or pen device
+            if (JXG.isBrowser && (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) {
+                this.options.precision.hasPoint = eps;
+            }
 
             // This should be easier than the touch events. Every pointer device gets its own pointerId, e.g. the mouse
             // always has id 1, fingers and pens get unique ids every time a pointerDown event is fired and they will
@@ -1539,7 +1542,10 @@ define([
                 evt.stopPropagation();
             }
 
-            this.options.precision.hasPoint = this.options.precision.touch;
+            // Touch or pen device
+            if (JXG.isBrowser && (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) {
+                this.options.precision.hasPoint = this.options.precision.touch;
+            }
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
             // try with mouseOriginMove because the evt objects are quite similar
