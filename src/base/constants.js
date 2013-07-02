@@ -130,7 +130,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_MOVEMENT: 29,
         GENTYPE_COMBINED: 30,
         GENTYPE_RULER: 31,
-        // 32 // unused ...
+        GENTYPE_SLOPETRIANGLE: 32,
         GENTYPE_GRID: 33, // obsolete
         // 34 ... 39 // unused ...
         GENTYPE_DELETE: 41,

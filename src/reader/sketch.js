@@ -640,6 +640,17 @@
 
                     break;
 
+                case JXG.GENTYPE_SLOPETRIANGLE:
+                    set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
+                    set_str += attrid + ' name: \'\',';
+                    set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\'>>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\'>>,';
+                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\'>>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\'>>';
+                    set_str += '>>;';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+
+                    break;
+
                 case JXG.GENTYPE_TRIANGLE:
                     for (i = 0; i < step.args.create_point.length; i++) {
                         if (step.args.create_point[i]) {
