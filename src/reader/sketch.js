@@ -732,7 +732,7 @@
 
                 case JXG.GENTYPE_TEXT:
                     set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
-                    set_str += attrid + ' name: \'' + step.dest_id + '\'';
+                    set_str += attrid + 'name: \'' + step.dest_id + '\'';
                     if (typeof step.args.anchor != 'undefined') {
                         set_str += ', anchor: ' + step.args.anchor;
                     }
@@ -830,7 +830,7 @@
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
                     if (step.args.a != step.args.b)
-                        set_str += ', [ ' + step.args.a + ', ' + step.args.b + ']';
+                        set_str += ', ' + step.args.a + ', ' + step.args.b;
 
                     set_str += ') <<';
 
@@ -840,6 +840,11 @@
                     set_str += attrid + ' name:\'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
+                    break;
+
+                case JXG.GENTYPE_SLOPETRIANGLE:
+                    set_str = assign + 'slopetriangle(' + step.args.tangent + ') <<id: \'' + step.dest_id + '\', name: \'\'>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
                 case JXG.GENTYPE_SLIDER:
