@@ -126,7 +126,7 @@ define([
             });
 
             el.remove = function () {
-                console.log('polygon');
+                // console.log('polygon');
                 Polygon.Polygon.prototype.remove.call(this);
 
                 board.removeObject(toppoint);

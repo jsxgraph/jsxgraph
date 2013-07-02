@@ -1529,13 +1529,14 @@ define([
             var i, j, pos, time,
                 evtTouches = evt[JXG.touchProperty];
 
+            if (this.mode !== this.BOARD_MODE_DRAG) {
+                this.dehighlightAll();
+                this.renderer.hide(this.infobox);
+            }
+
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
-            }
-
-            if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
             }
 
             this.options.precision.hasPoint = this.options.precision.touch;
@@ -1557,6 +1558,7 @@ define([
                                 // Touch by two fingers: moving lines
                                 } else if (this.touches[i].targets.length === 2 &&
                                         this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                                            
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
 
@@ -1580,6 +1582,9 @@ define([
                         }
 
                     }
+                } else {
+                    pos = this.getMousePosition(evt);
+                    this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
 
@@ -2293,7 +2298,7 @@ define([
                 if (this.highlightedObjects.hasOwnProperty(el)) {
                     pEl = this.highlightedObjects[el];
 
-                    if (this.hasMouseHandlers) {
+                    if (this.hasMouseHandlers || this.hasPointerHandlers) {
                         pEl.noHighlight();
                     }
 
