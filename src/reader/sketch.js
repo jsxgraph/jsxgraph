@@ -540,6 +540,7 @@
                     break;
 
                 case JXG.GENTYPE_LINE:
+
                     k = 0;
                     j = 0;
 
