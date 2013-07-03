@@ -155,8 +155,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_CCVISIBILITY: 55,
         GENTYPE_CTX_MPVISIBILITY: 56,
         GENTYPE_CTX_WITHLABEL: 57,
-        GENTYPE_CTX_SETLABEL: 58,
-        GENTYPE_CTX_SETFIXED: 59,
+        GENTYPE_CTX_LABEL: 58,
+        GENTYPE_CTX_FIXED: 59,
         GENTYPE_CTX_STROKEWIDTH: 60,
         GENTYPE_CTX_LABELSIZE: 61,
         GENTYPE_CTX_SIZE: 62,
@@ -174,7 +174,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_CTX_SCALE: 74,
         GENTYPE_CTX_INTVAL: 75,
         GENTYPE_CTX_POINT1: 76,
-        GENTYPE_CTX_POINT2: 77
+        GENTYPE_CTX_POINT2: 77,
+        GENTYPE_CTX_LABELSTICKY: 78
     };
 
     JXG.extend(JXG, constants);
