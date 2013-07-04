@@ -830,7 +830,7 @@
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (step.args.a != step.args.b)
+                    if (step.args.a != step.args.b && !isNaN(step.args.a) && !isNaN(step.args.b))
                         set_str += ', ' + step.args.a + ', ' + step.args.b;
 
                     set_str += ') <<';
