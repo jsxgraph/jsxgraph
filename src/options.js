@@ -662,7 +662,7 @@ define([
             /* line ticks options */
             ticks: {
                 label: {
-                    offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
+                    offset: [4, -12 + 8],     // This seems to be a good offset for 12 point fonts
                     parse: false
                 },
                 needsRegularUpdate: false,
@@ -674,7 +674,7 @@ define([
                 insertTicks: true,
                 minTicksDistance: 10,
                 minorHeight: 10,          // if <0: full width and height
-                majorHeight: -1,         // if <0: full width and height
+                majorHeight: -1,          // if <0: full width and height
                 tickEndings: [0, 1],
                 minorTicks: 4,
                 ticksDistance: 1,         // TODO doc
