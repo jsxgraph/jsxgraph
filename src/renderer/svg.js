@@ -435,13 +435,17 @@ define([
             }
 
             this.layer[level].appendChild(node);
+            
+            return node;
         },
 
         // already documented in JXG.AbstractRenderer
+        /*
         appendNodesToElement: function (element) {
             element.rendNode = this.getElementById(element.id);
         },
-
+        */
+        
         // already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);

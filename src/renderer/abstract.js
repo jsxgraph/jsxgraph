@@ -237,11 +237,12 @@ define([
                 prim = 'path';
             }
 
-            this.appendChildPrim(this.createPrim(prim, element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim(prim, element.id), element.visProp.layer);
             this.appendNodesToElement(element, prim);
 
             // adjust visual propertys
             this._updateVisual(element, {dash: true, shadow: true}, true);
+
 
             // By now we only created the xml nodes and set some styles, in updatePoint
             // the attributes are filled with data.
@@ -321,7 +322,7 @@ define([
          * @see JXG.AbstractRenderer#updateLine
          */
         drawLine: function (element) {
-            this.appendChildPrim(this.createPrim('line', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('line', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'lines');
             this.updateLine(element);
         },
@@ -385,9 +386,8 @@ define([
          * @see JXG.AbstractRenderer#updateTicks
          */
         drawTicks: function (element) {
-            var node = this.createPrim('path', element.id);
 
-            this.appendChildPrim(node, element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'path');
         },
 
@@ -419,7 +419,7 @@ define([
          * @see JXG.AbstractRenderer#updateCurve
          */
         drawCurve: function (element) {
-            this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'path');
             this._updateVisual(element, {shadow: true}, true);
             this.updateCurve(element);
@@ -456,7 +456,7 @@ define([
          * @see JXG.AbstractRenderer#updateEllipse
          */
         drawEllipse: function (element) {
-            this.appendChildPrim(this.createPrim('ellipse', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('ellipse', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'ellipse');
             this.updateEllipse(element);
         },
@@ -495,7 +495,7 @@ define([
          * @see JXG.AbstractRenderer#updatePolygon
          */
         drawPolygon: function (element) {
-            this.appendChildPrim(this.createPrim('polygon', element.id), element.visProp.layer);
+            element.rendNode = this.appendChildPrim(this.createPrim('polygon', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'polygon');
             this.updatePolygon(element);
         },

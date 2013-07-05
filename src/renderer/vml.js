@@ -329,6 +329,8 @@ define([
 
             node.style.zIndex = level;
             this.container.appendChild(node);
+            
+            return node;
         },
 
         // already documented in JXG.AbstractRenderer
