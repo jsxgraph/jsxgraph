@@ -488,7 +488,7 @@
 
                         reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[0] + '; ';
                     } else {
-                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1];
+                        set_str = assign + 'circle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
                         set_str += ') <<center: <<id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0];
                         set_str += '\', visible: true>>, ' + attrid + 'name: \'\', fillOpacity: ' + JXG.Options.opacityLevel
                             + ', snaptogrid: ' + JXG.Options.elements.snapToGrid
