@@ -847,6 +847,9 @@ define([
                 drag = o.obj,
                 oldCoords;
 
+            if (!drag)
+                return;
+
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
