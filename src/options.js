@@ -662,7 +662,7 @@ define([
             /* line ticks options */
             ticks: {
                 label: {
-                    offset: [4, -12 + 8],     // This seems to be a good offset for 12 point fonts
+                    offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false
                 },
                 needsRegularUpdate: false,
