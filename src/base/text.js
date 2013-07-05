@@ -214,7 +214,7 @@ define([
                 this.updateText = function () {
                     this.plaintext = text;
                 };
-                this.needsSizeUpdate = true;
+                this.needsSizeUpdate = false;  // true;
             } else {
                 if (Type.isNumber(text)) {
                     this.content = text.toFixed(this.visProp.digits);
@@ -239,6 +239,11 @@ define([
             this.updateText();
 
             this.prepareUpdate().update().updateRenderer();
+            
+            // call updateSize() at least once.
+            if (this.needsSizeUpdate) {
+                this.updateSize();                              
+            }
 
             return this;
         },
