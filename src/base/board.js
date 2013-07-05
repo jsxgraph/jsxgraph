@@ -3245,7 +3245,7 @@ define([
             }
             this.inUpdate = true;
 
-            if (this.containerObj) {
+            if (this.containerObj && this.renderer.type !== 'vml') {
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
