@@ -297,15 +297,15 @@ define([
 
         /**
          * Calculates the coordinates of a point on the perpendicular to the given line through
-         * the given point.
+         * the given point.  
          * @param {JXG.Line} line A line.
-         * @param {JXG.Point} point Intersection point of line to perpendicular.
+         * @param {JXG.Point} point Point which is projected to the line.
          * @param {JXG.Board} [board=point.board] Reference to the board
-         * @returns {JXG.Coords} Coordinates of a point on the perpendicular to the given line through the given point.
+         * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line through the given point and boolean flag "change".
          */
         perpendicular: function (line, point, board) {
             var x, y, change,
-                fmd, emc, d0, d1, den,
+                c, z,
                 A = line.point1.coords.usrCoords,
                 B = line.point2.coords.usrCoords,
                 C = point.coords.usrCoords;
@@ -318,44 +318,57 @@ define([
             if (point === line.point1) {
                 x = A[1] + B[2] - A[2];
                 y = A[2] - B[1] + A[1];
+                z = A[0] * B[0];
+                
+                if (Math.abs(z) < Mat.eps) {
+                    x =  B[2];
+                    y = -B[1];
+                }
+                c = [z, x, y];
                 change = true;
+
             // special case: point is the second point of the line
             } else if (point === line.point2) {
                 x = B[1] + A[2] - B[2];
                 y = B[2] - A[1] + B[1];
+                z = A[0] * B[0];
+                
+                if (Math.abs(z) < Mat.eps) {
+                    x =  A[2];
+                    y = -A[1];
+                }
+                c = [z, x, y];
                 change = false;
+
             // special case: point lies somewhere else on the line
-            } else if (((Math.abs(A[1] - B[1]) > Mat.eps) &&
-                    (Math.abs(C[2] - (A[2] - B[2]) * (C[1] - A[1]) / (A[1] - B[1]) - A[2]) < Mat.eps)) ||
-                    ((Math.abs(A[1] - B[1]) <= Mat.eps) && (Math.abs(A[1] - C[1]) < Mat.eps))) {
+            } else if ( Math.abs(Mat.innerProduct(C, line.stdform, 3)) < Mat.eps )  {
                 x = C[1] + B[2] - C[2];
                 y = C[2] - B[1] + C[1];
+                z = B[0];
+                
+                if (Math.abs(z) < Mat.eps) {
+                    x =  B[2];
+                    y = -B[1];
+                }
                 change = true;
 
-                if (Math.abs(x - C[1]) < Mat.eps && Math.abs(y - C[2]) < Mat.eps) {
+                if (Math.abs(z) > Mat.eps && Math.abs(x - C[1]) < Mat.eps && Math.abs(y - C[2]) < Mat.eps) {
                     x = C[1] + A[2] - C[2];
                     y = C[2] - A[1] + C[1];
                     change = false;
                 }
+                c = [z, x, y];
+
             // general case: point does not lie on the line
             // -> calculate the foot of the dropped perpendicular
             } else {
-                fmd = A[2] - B[2];
-                emc = A[1] - B[1];
-                d0 = B[1] * fmd - B[2] * emc;
-                d1 = C[1] * emc + C[2] * fmd;
-                den = fmd * fmd + emc * emc;
-
-                if (Math.abs(den) < Mat.eps) {
-                    den = Mat.eps;
-                }
-
-                x = (d0 * fmd + d1 * emc) / den;
-                y = (d1 * fmd - d0 * emc) / den;
+                c = [0, line.stdform[1], line.stdform[2]];  
+                c = Mat.crossProduct(c, C);                  // perpendicuar to line
+                c = Mat.crossProduct(c, line.stdform);       // intersection of line and perpendicular
                 change = true;
             }
 
-            return [new Coords(Type.COORDS_BY_USER, [x, y], board), change];
+            return [new Coords(Type.COORDS_BY_USER, c, board), change];
         },
 
         /**
