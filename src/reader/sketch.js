@@ -830,7 +830,12 @@
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (step.args.a != step.args.b && !isNaN(step.args.a) && !isNaN(step.args.b))
+                    if (isNaN(step.args.a) || step.args.a == null)
+                        step.args.a = "-infinity";
+                    if (isNaN(step.args.b) || step.args.b == null)
+                        step.args.b = "infinity";
+
+                    if (step.args.a != step.args.b)
                         set_str += ', ' + step.args.a + ', ' + step.args.b;
 
                     set_str += ') <<';
@@ -838,7 +843,7 @@
                     if (step.args.isPolar)
                         set_str += 'curveType: \'polar\', ';
 
-                    set_str += attrid + ' name:\'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
+                    set_str += attrid + 'name: \'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
