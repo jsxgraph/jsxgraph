@@ -131,7 +131,7 @@ define(['jxg'], function (JXG) {
         GENTYPE_COMBINED: 30,
         GENTYPE_RULER: 31,
         GENTYPE_SLOPETRIANGLE: 32,
-        GENTYPE_GRID: 33, // obsolete
+        GENTYPE_PERPSEGMENT: 33,
         // 34 ... 39 // unused ...
         GENTYPE_DELETE: 41,
         GENTYPE_COPY: 42,
