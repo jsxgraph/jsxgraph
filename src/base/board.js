@@ -3732,6 +3732,10 @@ define([
             var flist, olist, i, l,
                 s = str;
 
+            if (s === null) {
+                return s;
+            }
+            
             // it's a string, most likely an id or a name.
             if (typeof s === 'string' && s !== '') {
                 // Search by ID

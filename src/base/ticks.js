@@ -312,7 +312,6 @@ define([
                 dirs = 2,
                 dir = -1,
 
-
                 // the following variables are used to define ticks height and slope
                 eps = Mat.eps,
                 pos, lb, ub,
@@ -457,6 +456,8 @@ define([
             }
             this.ticksDelta = ticksDelta;
 
+
+
             // We shoot into the middle of the canvas
             // to the tick position which is closest to the center
             // of the canvas. We do this by an orthogonal projection
@@ -584,7 +585,7 @@ define([
             }
 
             // If necessary, enlarge ticksDelta
-            while (distScr < this.minTicksDistance) {
+            while (distScr <= this.minTicksDistance) {
                 f *= factor;
                 factor = (factor === 5 ? 2 : 5);
                 nx = p1c.usrCoords[1] + deltaX * ticksDelta * f;
