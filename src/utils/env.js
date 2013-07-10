@@ -171,14 +171,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Detects if the user is using a Mozilla browser
-         * @returns {Boolean}
-         */
-        isMozilla: function () {
-            return ((Type.exists(navigator) && navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 && navigator.userAgent.toLowerCase().indexOf('apple') === -1));
-        },
-
-        /**
          * Returns true if the run inside a Windows 8 "Metro" App.
          * @return {Boolean}
          */
