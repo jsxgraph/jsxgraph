@@ -386,7 +386,6 @@ define([
          * @see JXG.AbstractRenderer#updateTicks
          */
         drawTicks: function (element) {
-
             element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'path');
         },

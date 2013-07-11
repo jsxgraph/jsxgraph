@@ -545,7 +545,7 @@ define([
             copy.visProp.layer = this.board.options.layer.trace;
 
             this.numTraces++;
-            Type.clearVisPropOld.call(copy);
+            Type.clearVisPropOld(copy);
 
             er = this.board.renderer.enhancedRendering;
             this.board.renderer.enhancedRendering = true;
