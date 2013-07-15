@@ -1643,8 +1643,11 @@ define([
             }
 
             if (this.touches.length === 0) {
-                Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
-                this.hasPointerUp = false;
+
+                if (this.hasPointerUp) {
+                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    this.hasPointerUp = false;
+                }
 
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
@@ -2034,8 +2037,11 @@ define([
             }
 
             if (!evtTouches || evtTouches.length === 0) {
-                Env.removeEvent(document, 'touchend', this.touchEndListener, this);
-                this.hasTouchEnd = false;
+
+                if (this.hasTouchEnd) {
+                    Env.removeEvent(document, 'touchend', this.touchEndListener, this);
+                    this.hasTouchEnd = false;
+                }
 
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
