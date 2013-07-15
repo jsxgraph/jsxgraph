@@ -658,41 +658,34 @@ define([
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
         getCoordsTopLeftCorner: function () {
-            var pCont = this.containerObj,
-                cPos = Env.getOffset(pCont),
-                doc = document.documentElement.ownerDocument,
-                getProp = function (css) {
-                    var n = parseInt(Env.getStyle(pCont, css), 10);
-                    return isNaN(n) ? 0 : n;
-                };
+            var docElement = document.documentElement,
+                docBody = document.body,
+                container = this.containerObj,
+                cPos = Env.getOffset(container),
+                doc = document.documentElement.ownerDocument;
 
             if (this.cPos.length > 0 && (this.mode === Const.BOARD_MODE_DRAG || this.mode === Const.BOARD_MODE_MOVE_ORIGIN)) {
                 return this.cPos;
             }
 
-            if (!pCont.currentStyle && doc.defaultView) {     // Non IE
-                pCont = document.documentElement;
-
+            if (!this.containerObj.currentStyle && doc.defaultView) {     // Non IE
                 // this is for hacks like this one used in wordpress for the admin bar:
                 // html { margin-top: 28px }
                 // seems like it doesn't work in IE
 
-                cPos[0] += getProp('margin-left');
-                cPos[1] += getProp('margin-top');
+                cPos[0] += Env.getProp(docElement, 'margin-left');
+                cPos[1] += Env.getProp(docElement, 'margin-top');
 
-                cPos[0] += getProp('border-left-width');
-                cPos[1] += getProp('border-top-width');
+                cPos[0] += Env.getProp(docElement, 'border-left-width');
+                cPos[1] += Env.getProp(docElement, 'border-top-width');
 
-                cPos[0] += getProp('padding-left');
-                cPos[1] += getProp('padding-top');
-
-                pCont = this.containerObj;
+                cPos[0] += Env.getProp(docElement, 'padding-left');
+                cPos[1] += Env.getProp(docElement, 'padding-top');
             }
 
-            if (document.body) {
-                pCont = document.body;
-                cPos[0] += getProp('left');
-                cPos[1] += getProp('top');
+            if (docBody) {
+                cPos[0] += Env.getProp(docBody, 'left');
+                cPos[1] += Env.getProp(docBody, 'top');
             }
 
             // Google Translate offers widgets for web authors. These widgets apparently tamper with the clientX
@@ -705,14 +698,14 @@ define([
             }
 
             // add border width
-            cPos[0] += getProp('border-left-width');
-            cPos[1] += getProp('border-top-width');
+            cPos[0] += Env.getProp(container, 'border-left-width');
+            cPos[1] += Env.getProp(container, 'border-top-width');
 
             // vml seems to ignore paddings
             if (this.renderer.type !== 'vml') {
                 // add padding
-                cPos[0] += getProp('padding-left');
-                cPos[1] += getProp('padding-top');
+                cPos[0] += Env.getProp(container, 'padding-left');
+                cPos[1] += Env.getProp(container, 'padding-top');
             }
 
             this.cPos = cPos;

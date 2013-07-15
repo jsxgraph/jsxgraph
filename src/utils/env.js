@@ -491,6 +491,18 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Reads css style sheets of a given element. This method is a getStyle wrapper and
+         * defaults the read value to <tt>0</tt> if it can't be parsed as an integer value.
+         * @param {DOMElement} el
+         * @param {string} css
+         * @returns {number}
+         */
+        getProp: function (el, css) {
+            var n = parseInt(this.getStyle(el, css), 10);
+            return isNaN(n) ? 0 : n;
+        },
+
+        /**
          * Correct position of upper left corner in case of
          * a CSS transformation. Here, only translations are
          * extracted. All scaling transformations are corrected
