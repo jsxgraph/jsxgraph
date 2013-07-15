@@ -1259,6 +1259,7 @@ define([
 
                 if (this.hasPointerUp) {
                     Env.removeEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
+                    this.hasPointerUp = false;
                 }
 
                 this.hasPointerHandlers = false;
