@@ -3098,7 +3098,20 @@ define([
         updateRenderer: function () {
             var el, pEl,
                 len = this.objectsList.length;
-
+                
+            /*
+            objs = this.objectsList.slice(0);
+            objs.sort(function(a, b) {
+                if (a.visProp.layer < b.visProp.layer) {
+                    return -1;
+                } else if (a.visProp.layer === b.visProp.layer) {
+                    return b.lastDragTime.getTime() - a.lastDragTime.getTime();
+                } else {
+                    return 1;
+                }
+            });
+            */
+            
             if (this.renderer.type === 'canvas') {
                 this.updateRendererCanvas();
             } else {
