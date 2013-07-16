@@ -797,7 +797,8 @@ define([
                         (!pEl.visProp.fixed) && (!pEl.visProp.frozen) &&
                         haspoint) {
                     // Elements in the highest layer get priority.
-                    if (pEl.visProp.layer >= dragEl.visProp.layer) {
+                    if (pEl.visProp.layer > dragEl.visProp.layer ||
+                        (pEl.visProp.layer === dragEl.visProp.layer && pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime())) {
                         // If an element and its label have the focus
                         // simultaneously, the element is taken
                         // this only works if we assume that every browser runs
@@ -885,6 +886,8 @@ define([
             this.updateInfobox(drag);
             this.update();
             drag.highlight(true);
+            
+            drag.lastDragTime = new Date();
         },
 
         /**

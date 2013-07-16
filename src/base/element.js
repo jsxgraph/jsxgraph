@@ -268,6 +268,8 @@ define([
          */
         this.mouseover = false;
 
+        this.lastDragTime = new Date();
+        
         if (arguments.length > 0) {
             /**
              * Reference to the board associated with the element.
