@@ -268,6 +268,11 @@ define([
          */
         this.mouseover = false;
 
+        /**
+         * Time stamp containing the last time this element has been dragged.
+         * @type Date
+         * @default creation time
+         */
         this.lastDragTime = new Date();
         
         if (arguments.length > 0) {
