@@ -91,8 +91,6 @@ define([
         // Three points?
         if (!(Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2]))) {
             
-/*---- Start new sector type ----*/                    
-            
             if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
                 Type.isArray(parents[2]) &&
@@ -154,7 +152,7 @@ define([
                         return;
                     }
                     
-                    ar = Geometry.bezierArc(A, B, C, true);
+                    ar = Geometry.bezierArc(A, B, C, true, 1);
 
                     this.dataX = ar[0];
                     this.dataY = ar[1];
@@ -271,7 +269,7 @@ define([
             B = B.coords.usrCoords;
             C = C.coords.usrCoords;
             
-            ar = Geometry.bezierArc(A, B, C, true);
+            ar = Geometry.bezierArc(A, B, C, true, 1);
             
             this.dataX = ar[0];
             this.dataY = ar[1];

@@ -157,24 +157,17 @@ define([
 
         // documented in JXG.Curve
         el.updateDataArray = function () {
-            var beta, co, si, matrix, phi, i,
+            var ar,
+                phi, 
                 v, det, p0c, p1c, p2c,
-                p1, p2, p3, p4,
-                k, ax, ay, bx, by, d, r,
                 sgn = 1,
-                PI2 = Math.PI * 0.5,
                 A = this.radiuspoint,
                 B = this.center,
-                C = this.anglepoint,
-                x = B.X(),
-                y = B.Y(),
-                z = B.Z();
+                C = this.anglepoint;
 
             phi = Geometry.rad(A, B, C);
-
             if ((this.visProp.type === 'minor' && phi > Math.PI) ||
-                    (this.visProp.type === 'major' && phi < Math.PI)) {
-                phi = 2 * Math.PI - phi;
+                (this.visProp.type === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -195,53 +188,15 @@ define([
                 }
             }
 
-            p1 = [A.Z(), A.X(), A.Y()];
-            p4 = p1.slice(0);
-            r = B.Dist(A);
-            x /= z;
-            y /= z;
-            this.dataX = [p1[1] / p1[0]];
-            this.dataY = [p1[2] / p1[0]];
-            while (phi > Mat.eps) {
-                if (phi >= PI2) {
-                    beta = PI2;
-                    phi -= PI2;
-                } else {
-                    beta = phi;
-                    phi = 0.0;
-                }
+            A = A.coords.usrCoords;
+            B = B.coords.usrCoords;
+            C = C.coords.usrCoords;
 
-                co = Math.cos(sgn * beta);
-                si = Math.sin(sgn * beta);
-                // z missing
-                matrix = [
-                    [1, 0, 0],
-                    [x * (1 - co) + y * si, co, -si],
-                    [y * (1 - co) - x * si, si, co]
-                ];
-                v = Mat.matVecMult(matrix, p1);
-                p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
-
-                ax = p1[1] - x;
-                ay = p1[2] - y;
-                bx = p4[1] - x;
-                by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
-
-                if (Math.abs(by - ay) > Mat.eps) {
-                    k = (ax + bx) * (r / d - 0.5) / (by - ay) * 8 / 3;
-                } else {
-                    k = (ay + by) * (r / d - 0.5) / (ax - bx) * 8 / 3;
-                }
-
-                p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
-                p3 = [1, p4[1] + k * by, p4[2] - k * bx];
-
-                this.dataX = this.dataX.concat([p2[1], p3[1], p4[1]]);
-                this.dataY = this.dataY.concat([p2[2], p3[2], p4[2]]);
-                p1 = p4.slice(0);
-            }
+            ar = Geometry.bezierArc(A, B, C, false, sgn);
+            
+            this.dataX = ar[0];
+            this.dataY = ar[1];
+            
             this.bezierDegree = 3;
 
             this.updateStdform();

@@ -1587,8 +1587,9 @@ define([
          * @param {Array} B Second point (intersection point)
          * @param {Array} C Third point
          * @param {Boolean} withLegs Flag. If true the legs to the intersection point are part of the curve.
+         * @param {Number} sgn Wither 1 or -1. Needed for minor and major arcs. In case of doubt, use 1.
          */
-        bezierArc: function(A, B, C, withLegs) {
+        bezierArc: function(A, B, C, withLegs, sgn) {
             var p1, p2, p3, p4, 
                 r, phi, beta,
                 PI2 = Math.PI * 0.5,
@@ -1605,7 +1606,10 @@ define([
             y /= z;
 
             phi = this.rad(A.slice(1), B.slice(1), C.slice(1));
-
+            if (sgn === -1) {
+                phi = 2 * Math.PI - phi;
+            }
+            
             p1 = A;
             p1[1] /= p1[0];
             p1[2] /= p1[0];
@@ -1630,8 +1634,8 @@ define([
                     phi = 0;
                 }
 
-                co = Math.cos(beta);
-                si = Math.sin(beta);
+                co = Math.cos(sgn * beta);
+                si = Math.sin(sgn * beta);
 
                 matrix = [
                     [1, 0, 0],
