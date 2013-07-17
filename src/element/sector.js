@@ -268,7 +268,7 @@ define([
             A = A.coords.usrCoords;
             B = B.coords.usrCoords;
             C = C.coords.usrCoords;
-            
+      
             ar = Geometry.bezierArc(A, B, C, true, 1);
             
             this.dataX = ar[0];
@@ -510,20 +510,35 @@ define([
 
             // Helper point: radius point
             // Start with dummy values until the sector has been created.
-            p = board.create('point', [0, 1, 0], attrsub);
-
+            // Why a dummy element?  A.W.
+            // Answer: attribute radius:x is not known
+            //p = board.create('point', [0, 1, 0], attrsub);
+            if (Type.exists(parents[0].coords)) {
+                p = board.create('point', parents[0].coords.usrCoords, attrsub);
+            } else if (Type.isArray(parents[0])) {
+                p = board.create('point', parents[0], attrsub);
+            } else {
+                p = board.create('point', [0, 1, 0], attrsub);
+            }
             p.dump = false;
 
             attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
 
             // Second helper point for square
             // Start with dummy values until the sector has been created.
-            q = board.create('point', [0, 1, 1], attrsub);
+            // q = board.create('point', [0, 1, 1], attrsub);
+            if (Type.exists(parents[0].coords)) {
+                q = board.create('point', parents[2].coords.usrCoords, attrsub);
+            } else if (Type.isArray(parents[0])) {
+                q = board.create('point', parents[2], attrsub);
+            } else {
+                q = board.create('point', [0, 1, 1], attrsub);
+            }
             q.dump = false;
 
             // Sector is just a curve with its own updateDataArray method
             el = board.create('sector', [parents[1], p, parents[2]], attr);
-
+            
             el.elType = 'angle';
             el.parents = [parents[0].id, parents[1].id, parents[2].id];
             el.subs = {
@@ -555,9 +570,10 @@ define([
             };
 
             el.updateDataArraySector = el.updateDataArray;
+
             el.updateDataArray = function () {
                 var type = this.visProp.type,
-                    deg = Geometry.trueAngle(parents[0], parents[1], parents[2]);
+                    deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
 
                 if (Math.abs(deg - 90) < this.visProp.orthosensitivity) {
                     type = this.visProp.orthotype;
@@ -584,7 +600,7 @@ define([
             /*
              * Supply the helper points with the correct function, which depends
              * on the visProp.radius property of the sector.
-             * With this trick, setAttributey({radius:...}) works.
+             * With this trick, setAttribute({radius:...}) works.
              */
             p.addConstraint([function () {
                 var A = parents[0], S = parents[1],
@@ -592,6 +608,7 @@ define([
                     d = S.Dist(A);
                 return [S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
             }]);
+            
             q.addConstraint([function () {
                 var A = parents[2], S = parents[1],
                     r = Type.evaluate(el.visProp.radius),
@@ -700,6 +717,7 @@ define([
             el.Value = function () {
                 return Geometry.rad(this.point2, this.point1, this.point3);
             };
+            
         } else {
             throw new Error("JSXGraph: Can't create angle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
