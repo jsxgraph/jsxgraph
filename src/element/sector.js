@@ -111,7 +111,7 @@ define([
                 el.line1 = board.select(parents[0]),
                 el.line2 = board.select(parents[1]);
                 
-                /* Intersection */
+                /* Intersection point*/
                 var s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
                 
                 /* project p1 to l1 */
@@ -121,153 +121,65 @@ define([
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.dir1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
                 
+                /* project p1 to l1 */
                 v = [0, el.line2.stdform[1], el.line2.stdform[2]];
                 v = Mat.crossProduct(v, parents[2]);
                 v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.dir2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
+                
                 el.updateDataArray = function () {
+                    var r, l1, l2, A, B, C, ar;
+
+                    l1 = this.line1;
+                    l2 = this.line2;
+            
+                    // Intersection point of the lines
+                    B = Mat.crossProduct(l1.stdform, l2.stdform);
+                    B[1] /= B[0];
+                    B[2] /= B[0];
+                    B[0] /= B[0];
+
+                    // First point
+                    r = this.dir1 * this.Radius();
+                    A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
+            
+                    // Second point
+                    r = this.dir2 * this.Radius();
+                    C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
+            
+                    if (Math.abs(A[0]) < Mat.eps || Math.abs(B[0]) < Mat.eps || Math.abs(C[0]) < Mat.eps) {
+                        this.dataX = [NaN];
+                        this.dataY = [NaN];
+                        return;
+                    }
                     
-            var i, v, beta, co, si, matrix,
-                det, p0c, p1c, p2c,
-                p1, p2, p3, p4,
-                k, ax, ay, bx, by, d, r,
-                l1, l2,
-                A, B, C,
-                phi,
-                x, y, z,
-                PI2 = Math.PI * 0.5;
+                    ar = Geometry.bezierArc(A, B, C, true);
 
-            l1 = this.line1;
-            l2 = this.line2;
-            
-            // Intersection point of the lines
-            B = Mat.crossProduct(l1.stdform, l2.stdform);
-            B[1] /= B[0];
-            B[2] /= B[0];
-            B[0] /= B[0];
-
-            // First point
-            r = this.dir1 * this.Radius();
-            A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
-            
-            // Second point
-            r = this.dir2 * this.Radius();
-            C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
-
-            phi = Geometry.rad(A.slice(1), B.slice(1), C.slice(1));
-            x = B[1];
-            y = B[2];
-            z = B[0];
-            
-            /*
-            if (!A.isReal || !B.isReal || !C.isReal) {
-                this.dataX = [NaN];
-                this.dataY = [NaN];
-                return;
-            }
-            */
-            
-            /*
-            // This is true for circumCircleArcs. In that case there is
-            // a fourth parent element: [midpoint, point1, point3, point2]
-            if (this.useDirection) {
-                p0c = parents[1].coords.usrCoords;
-                p1c = parents[3].coords.usrCoords;
-                p2c = parents[2].coords.usrCoords;
-                det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
-
-                if (det < 0) {
-                    this.point2 = parents[1];
-                    this.point3 = parents[2];
-                } else {
-                    this.point2 = parents[2];
-                    this.point3 = parents[1];
-                }
-            }
-            */
-            
-            r = Geometry.distance(B, A);
-
-            p1 = A;
-            p1[1] /= p1[0];
-            p1[2] /= p1[0];
-            p1[0] /= p1[0];
-    
-            p4 = p1.slice(0);
-            x /= z;
-            y /= z;
-            this.dataX = [x, x + 0.333 * (p1[1] - x), x + 0.666 * (p1[1] - x), p1[1]];
-            this.dataY = [y, y + 0.333 * (p1[2] - y), y + 0.666 * (p1[2] - y), p1[2]];
-
-            while (phi > Mat.eps) {
-                if (phi > PI2) {
-                    beta = PI2;
-                    phi -= PI2;
-                } else {
-                    beta = phi;
-                    phi = 0;
-                }
-
-                co = Math.cos(beta);
-                si = Math.sin(beta);
-
-                matrix = [
-                    [1, 0, 0],
-                    [x * (1 - co) + y * si, co, -si],
-                    [y * (1 - co) - x * si, si,  co]
-                ];
-                v = Mat.matVecMult(matrix, p1);
-                p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
-     
-                ax = p1[1] - x;
-                ay = p1[2] - y;
-                bx = p4[1] - x;
-                by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
-
-                if (Math.abs(by - ay) > Mat.eps) {
-                    k = (ax + bx) * (r / d - 0.5) / (by - ay) * 8 / 3;
-                } else {
-                    k = (ay + by) * (r / d - 0.5) / (ax - bx) * 8 / 3;
-                }
-
-                p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
-                p3 = [1, p4[1] + k * by, p4[2] - k * bx];
-
-                this.dataX = this.dataX.concat([p2[1], p3[1], p4[1]]);
-                this.dataY = this.dataY.concat([p2[2], p3[2], p4[2]]);
-                p1 = p4.slice(0);
-            }
-            this.dataX = this.dataX.concat([ p4[1] + 0.333 * (x - p4[1]), p4[1] + 0.666 * (x - p4[1]), x]);
-            this.dataY = this.dataY.concat([ p4[2] + 0.333 * (y - p4[2]), p4[2] + 0.666 * (y - p4[2]), y]);
-
-            this.bezierDegree = 3;
+                    this.dataX = ar[0];
+                    this.dataY = ar[1];
+                   
+                    this.bezierDegree = 3;
                 };    
             
-            el.prepareUpdate().update();
+                el.prepareUpdate().update();
 
-            return el;
-
-                    
+                return el;
+  
             } else {
-
-/*---- End new sector type ----*/                    
-
-            try {
-                for (i = 0; i < parents.length; i++) {
-                    if (!Type.isPoint(parents[i])) {
-                        attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
-                        parents[i] = board.create('point', parents[i], attr);
+                try {
+                    for (i = 0; i < parents.length; i++) {
+                        if (!Type.isPoint(parents[i])) {
+                            attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
+                            parents[i] = board.create('point', parents[i], attr);
+                        }
                     }
+                } catch (e) {
+                    throw new Error("JSXGraph: Can't create Sector with parent types '" +
+                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
+                        (typeof parents[2]) + "'.");
                 }
-            } catch (e) {
-                throw new Error("JSXGraph: Can't create Sector with parent types '" +
-                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
-                    (typeof parents[2]) + "'.");
-            }
-           }
+               }
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -327,18 +239,10 @@ define([
          * @ignore
          */
         el.updateDataArray = function () {
-            var i, v, beta, co, si, matrix,
-                det, p0c, p1c, p2c,
-                p1, p2, p3, p4,
-                k, ax, ay, bx, by, d, r,
+            var ar, det, p0c, p1c, p2c,
                 A = this.point2,
                 B = this.point1,
-                C = this.point3,
-                phi = Geometry.rad(A, B, C),
-                x = B.X(),
-                y = B.Y(),
-                z = B.Z(),
-                PI2 = Math.PI * 0.5;
+                C = this.point3;
 
             if (!A.isReal || !B.isReal || !C.isReal) {
                 this.dataX = [NaN];
@@ -362,60 +266,15 @@ define([
                     this.point3 = parents[1];
                 }
             }
-
-            r = B.Dist(A);
-            p1 = [A.Z(), A.X(), A.Y()];
-            p1[1] /= p1[0];
-            p1[2] /= p1[0];
-            p1[0] /= p1[0];
-            p4 = p1.slice(0);
-            x /= z;
-            y /= z;
-            this.dataX = [x, x + 0.333 * (p1[1] - x), x + 0.666 * (p1[1] - x), p1[1]];
-            this.dataY = [y, y + 0.333 * (p1[2] - y), y + 0.666 * (p1[2] - y), p1[2]];
-
-            while (phi > Mat.eps) {
-                if (phi >= PI2) {
-                    beta = PI2;
-                    phi -= PI2;
-                } else {
-                    beta = phi;
-                    phi = 0;
-                }
-
-                co = Math.cos(beta);
-                si = Math.sin(beta);
-                matrix = [
-                    [1, 0, 0],
-                    [x * (1 - co) + y * si, co, -si],
-                    [y * (1 - co) - x * si, si, co]
-                ];
-                v = Mat.matVecMult(matrix, p1);
-                p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
-
-                ax = p1[1] - x;
-                ay = p1[2] - y;
-                bx = p4[1] - x;
-                by = p4[2] - y;
-
-                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
-
-                if (Math.abs(by - ay) > Mat.eps) {
-                    k = (ax + bx) * (r / d - 0.5) / (by - ay) * 8 / 3;
-                } else {
-                    k = (ay + by) * (r / d - 0.5) / (ax - bx) * 8 / 3;
-                }
-
-                p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
-                p3 = [1, p4[1] + k * by, p4[2] - k * bx];
-
-                this.dataX = this.dataX.concat([p2[1], p3[1], p4[1]]);
-                this.dataY = this.dataY.concat([p2[2], p3[2], p4[2]]);
-                p1 = p4.slice(0);
-            }
-            this.dataX = this.dataX.concat([ p4[1] + 0.333 * (x - p4[1]), p4[1] + 0.666 * (x - p4[1]), x]);
-            this.dataY = this.dataY.concat([ p4[2] + 0.333 * (y - p4[2]), p4[2] + 0.666 * (y - p4[2]), y]);
-
+            
+            A = A.coords.usrCoords;
+            B = B.coords.usrCoords;
+            C = C.coords.usrCoords;
+            
+            ar = Geometry.bezierArc(A, B, C, true);
+            
+            this.dataX = ar[0];
+            this.dataY = ar[1];
             this.bezierDegree = 3;
         };
 

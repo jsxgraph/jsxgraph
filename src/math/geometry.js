@@ -1579,6 +1579,97 @@ define([
             return [1.0, x, y];
         },
 
+        /**
+         * Generate the defining points of a 3rd degree bezier curve that approximates
+         * a cricle sector defined by three arrays A, B,C, each of length three.
+         * The coordinate arrays are given in homogeneous coordinates.
+         * @param {Array} A First point
+         * @param {Array} B Second point (intersection point)
+         * @param {Array} C Third point
+         * @param {Boolean} withLegs Flag. If true the legs to the intersection point are part of the curve.
+         */
+        bezierArc: function(A, B, C, withLegs) {
+            var p1, p2, p3, p4, 
+                r, phi, beta,
+                PI2 = Math.PI * 0.5,
+                x = B[1],
+                y = B[2],
+                z = B[0],
+                dataX = [], dataY = [],
+                co, si, ax, ay, bx, by, k, v, d, matrix;
+            
+            r = this.distance(B, A);
+
+            // x,y, z is intersection point. Normalize it.
+            x /= z;
+            y /= z;
+
+            phi = this.rad(A.slice(1), B.slice(1), C.slice(1));
+
+            p1 = A;
+            p1[1] /= p1[0];
+            p1[2] /= p1[0];
+            p1[0] /= p1[0];
+    
+            p4 = p1.slice(0);
+
+            if (withLegs) {
+                dataX = [x, x + 0.333 * (p1[1] - x), x + 0.666 * (p1[1] - x), p1[1]];
+                dataY = [y, y + 0.333 * (p1[2] - y), y + 0.666 * (p1[2] - y), p1[2]];
+            } else {
+                dataX = [p1[1]];
+                dataY = [p1[2]];
+            }
+
+            while (phi > Mat.eps) {
+                if (phi > PI2) {
+                    beta = PI2;
+                    phi -= PI2;
+                } else {
+                    beta = phi;
+                    phi = 0;
+                }
+
+                co = Math.cos(beta);
+                si = Math.sin(beta);
+
+                matrix = [
+                    [1, 0, 0],
+                    [x * (1 - co) + y * si, co, -si],
+                    [y * (1 - co) - x * si, si,  co]
+                ];
+                v = Mat.matVecMult(matrix, p1);
+                p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
+     
+                ax = p1[1] - x;
+                ay = p1[2] - y;
+                bx = p4[1] - x;
+                by = p4[2] - y;
+
+                d = Math.sqrt((ax + bx) * (ax + bx) + (ay + by) * (ay + by));
+
+                if (Math.abs(by - ay) > Mat.eps) {
+                    k = (ax + bx) * (r / d - 0.5) / (by - ay) * 8 / 3;
+                } else {
+                    k = (ay + by) * (r / d - 0.5) / (ax - bx) * 8 / 3;
+                }
+
+                p2 = [1, p1[1] - k * ay, p1[2] + k * ax];
+                p3 = [1, p4[1] + k * by, p4[2] - k * bx];
+
+                dataX = dataX.concat([p2[1], p3[1], p4[1]]);
+                dataY = dataY.concat([p2[2], p3[2], p4[2]]);
+                p1 = p4.slice(0);
+            }
+            
+            if (withLegs) {
+                dataX = dataX.concat([ p4[1] + 0.333 * (x - p4[1]), p4[1] + 0.666 * (x - p4[1]), x]);
+                dataY = dataY.concat([ p4[2] + 0.333 * (y - p4[2]), p4[2] + 0.666 * (y - p4[2]), y]);
+            } 
+            
+            return [dataX, dataY];
+        },
+        
         /****************************************/
         /****           PROJECTIONS          ****/
         /****************************************/
