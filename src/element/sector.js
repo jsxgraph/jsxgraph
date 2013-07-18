@@ -86,308 +86,317 @@ define([
      */
     JXG.createSector = function (board, parents, attributes) {
         var el, i, attr,
+            type = 'invalid',
             s, v,
             points = ['center', 'radiuspoint', 'anglepoint'];
 
         // Three points?
-        if (!(Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2]))) {
-            
-            if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                Type.isNumber(parents[4])) {
-                    
-                attr = Type.copyAttributes(attributes, board.options, 'sector');
-                el = board.create('curve', [[0], [0]], attr);
-                el.type = Const.OBJECT_TYPE_SECTOR;
-
-                el.elType = 'sector';
-                el.Radius = function () {
-                    return parents[4];
-                };
-
-                el.line1 = board.select(parents[0]),
-                el.line2 = board.select(parents[1]);
-                
-                /* Intersection point*/
-                s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
-                
-                if (Type.isArray(parents[2])) {
-                    /* project p1 to l1 */
-                    v = [0, el.line1.stdform[1], el.line1.stdform[2]];
-                    v = Mat.crossProduct(v, parents[2]);
-                    v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
-                    v = Statistics.subtract(v.usrCoords, s.usrCoords);
-                    el.dir1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
-                } else {
-                    el.dir1 = (parents[2] >= 0) ? 1 : -1;
-                }
-                
-                if (Type.isArray(parents[2])) {
-                    /* project p2 to l2 */
-                    v = [0, el.line2.stdform[1], el.line2.stdform[2]];
-                    v = Mat.crossProduct(v, parents[2]);
-                    v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
-                    v = Statistics.subtract(v.usrCoords, s.usrCoords);
-                    el.dir2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
-                } else {
-                    el.dir2 = (parents[3] >= 0) ? 1 : -1;
-                }
-                
-                el.updateDataArray = function () {
-                    var r, l1, l2, A, B, C, ar;
-
-                    l1 = this.line1;
-                    l2 = this.line2;
-            
-                    // Intersection point of the lines
-                    B = Mat.crossProduct(l1.stdform, l2.stdform);
-                    B[1] /= B[0];
-                    B[2] /= B[0];
-                    B[0] /= B[0];
-
-                    // First point
-                    r = this.dir1 * this.Radius();
-                    A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
-            
-                    // Second point
-                    r = this.dir2 * this.Radius();
-                    C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
-            
-                    if (Math.abs(A[0]) < Mat.eps || Math.abs(B[0]) < Mat.eps || Math.abs(C[0]) < Mat.eps) {
-                        this.dataX = [NaN];
-                        this.dataY = [NaN];
-                        return;
-                    }
-                    
-                    ar = Geometry.bezierArc(A, B, C, true, 1);
-
-                    this.dataX = ar[0];
-                    this.dataY = ar[1];
-                   
-                    this.bezierDegree = 3;
-                };    
-            
-                el.prepareUpdate().update();
-
-                return el;
-  
-            } else {
-                try {
-                    for (i = 0; i < parents.length; i++) {
-                        if (!Type.isPoint(parents[i])) {
-                            attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
-                            parents[i] = board.create('point', parents[i], attr);
-                        }
-                    }
-                } catch (e) {
-                    throw new Error("JSXGraph: Can't create Sector with parent types '" +
-                        (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
-                        (typeof parents[2]) + "'.");
-                }
-               }
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+            type = '3points';
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                    (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+                    (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+            type = '2lines';
         }
 
+        if (type === 'invalid') {
+            /**
+             * Second try for 3 point sector
+             */
+            try {
+                
+                for (i = 0; i < parents.length; i++) {
+                    if (!Type.isPoint(parents[i])) {
+                        attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
+                        parents[i] = board.create('point', parents[i], attr);
+                    }
+                }
+               
+                type = '3points';
+                
+            } catch (e) {
+                throw new Error("JSXGraph: Can't create Sector with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
+                    (typeof parents[2]) + "'.");
+            }
+        }
+                    
         attr = Type.copyAttributes(attributes, board.options, 'sector');
-
         el = board.create('curve', [[0], [0]], attr);
-
         el.type = Const.OBJECT_TYPE_SECTOR;
-
         el.elType = 'sector';
         el.parents = [parents[0].id, parents[1].id, parents[2].id];
 
-        /**
-         * Midpoint of the sector.
-         * @memberOf Sector.prototype
-         * @name point1
-         * @type JXG.Point
-         */
-        el.point1 = board.select(parents[0]);
-        el.center = el.point1;
+        if (type === '2lines') {
+            el.Radius = function () {
+                return Type.evaluate(parents[4]);
+            };
 
-        /**
-         * This point together with {@link Sector#point1} defines the radius..
-         * @memberOf Sector.prototype
-         * @name point2
-         * @type JXG.Point
-         */
-        el.point2 = board.select(parents[1]);
-        el.radiuspoint = el.point2;
-
-        /**
-         * Defines the sector's angle.
-         * @memberOf Sector.prototype
-         * @name point3
-         * @type JXG.Point
-         */
-        el.point3 = board.select(parents[2]);
-        el.anglepoint = el.point3;
-
-        /* Add arc as child to defining points */
-        el.point1.addChild(el);
-        el.point2.addChild(el);
-        el.point3.addChild(el);
-
-        // useDirection is necessary for circumCircleSectors
-        el.useDirection = attributes.usedirection;
-
-        el.methodMap = JXG.deepCopy(el.methodMap, {
-            center: 'center',
-            radiuspoint: 'radiuspoint',
-            anglepoint: 'anglepoint',
-            radius: 'getRadius',
-            getRadius: 'getRadius'
-        });
-
-        /**
-         * documented in JXG.Curve
-         * @ignore
-         */
-        el.updateDataArray = function () {
-            var ar, det, p0c, p1c, p2c,
-                A = this.point2,
-                B = this.point1,
-                C = this.point3;
-
-            if (!A.isReal || !B.isReal || !C.isReal) {
-                this.dataX = [NaN];
-                this.dataY = [NaN];
-                return;
+            el.line1 = board.select(parents[0]),
+            el.line2 = board.select(parents[1]);
+            
+            /* Intersection point */
+            s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
+            
+            if (Type.isArray(parents[2])) {
+                /* project p1 to l1 */
+                v = [0, el.line1.stdform[1], el.line1.stdform[2]];
+                v = Mat.crossProduct(v, parents[2]);
+                v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
+                v = Statistics.subtract(v.usrCoords, s.usrCoords);
+                el.direction1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
+            } else {
+                el.direction1 = (parents[2] >= 0) ? 1 : -1;
             }
+            
+            if (Type.isArray(parents[2])) {
+                /* project p2 to l2 */
+                v = [0, el.line2.stdform[1], el.line2.stdform[2]];
+                v = Mat.crossProduct(v, parents[2]);
+                v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
+                v = Statistics.subtract(v.usrCoords, s.usrCoords);
+                el.direction2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
+            } else {
+                el.direction2 = (parents[3] >= 0) ? 1 : -1;
+            }
+            
+            el.updateDataArray = function () {
+                var r, l1, l2, A, B, C, ar;
 
-            // This is true for circumCircleArcs. In that case there is
-            // a fourth parent element: [midpoint, point1, point3, point2]
-            if (this.useDirection) {
-                p0c = parents[1].coords.usrCoords;
-                p1c = parents[3].coords.usrCoords;
-                p2c = parents[2].coords.usrCoords;
-                det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
+                l1 = this.line1;
+                l2 = this.line2;
+            
+                // Intersection point of the lines
+                B = Mat.crossProduct(l1.stdform, l2.stdform);
+                B[1] /= B[0];
+                B[2] /= B[0];
+                B[0] /= B[0];
 
-                if (det < 0) {
-                    this.point2 = parents[1];
-                    this.point3 = parents[2];
-                } else {
-                    this.point2 = parents[2];
-                    this.point3 = parents[1];
+                // First point
+                r = this.direction1 * this.Radius();
+                A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
+            
+                // Second point
+                r = this.direction2 * this.Radius();
+                C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
+            
+                if (Math.abs(A[0]) < Mat.eps || Math.abs(B[0]) < Mat.eps || Math.abs(C[0]) < Mat.eps) {
+                    this.dataX = [NaN];
+                    this.dataY = [NaN];
+                    return;
                 }
-            }
+                
+                ar = Geometry.bezierArc(A, B, C, true, 1);
+
+                this.dataX = ar[0];
+                this.dataY = ar[1];
+               
+                this.bezierDegree = 3;
+            };    
             
-            A = A.coords.usrCoords;
-            B = B.coords.usrCoords;
-            C = C.coords.usrCoords;
+            el.methodMap = JXG.deepCopy(el.methodMap, {
+                radius: 'getRadius',
+                getRadius: 'getRadius'
+            });
+            
+            el.prepareUpdate().update();
+
+        // end '2lines'
+        
+        }  else if (type === '3points') {
+
+            /**
+            * Midpoint of the sector.
+            * @memberOf Sector.prototype
+            * @name point1
+            * @type JXG.Point
+            */
+            el.point1 = board.select(parents[0]);
+            el.center = el.point1;
+
+            /**
+            * This point together with {@link Sector#point1} defines the radius..
+            * @memberOf Sector.prototype
+            * @name point2
+            * @type JXG.Point
+            */
+            el.point2 = board.select(parents[1]);
+            el.radiuspoint = el.point2;
+
+            /**
+            * Defines the sector's angle.
+            * @memberOf Sector.prototype
+            * @name point3
+            * @type JXG.Point
+            */
+            el.point3 = board.select(parents[2]);
+            el.anglepoint = el.point3;
+
+            /* Add arc as child to defining points */
+            el.point1.addChild(el);
+            el.point2.addChild(el);
+            el.point3.addChild(el);
+
+            // useDirection is necessary for circumCircleSectors
+            el.useDirection = attributes.usedirection;
+
+            el.methodMap = JXG.deepCopy(el.methodMap, {
+                center: 'center',
+                radiuspoint: 'radiuspoint',
+                anglepoint: 'anglepoint',
+                radius: 'getRadius',
+                getRadius: 'getRadius'
+            });
+
+            /**
+            * documented in JXG.Curve
+            * @ignore
+            */
+            el.updateDataArray = function () {
+                var ar, det, p0c, p1c, p2c,
+                    A = this.point2,
+                    B = this.point1,
+                    C = this.point3;
+
+                if (!A.isReal || !B.isReal || !C.isReal) {
+                    this.dataX = [NaN];
+                    this.dataY = [NaN];
+                    return;
+                }
+
+                // This is true for circumCircleArcs. In that case there is
+                // a fourth parent element: [midpoint, point1, point3, point2]
+                if (this.useDirection) {
+                    p0c = parents[1].coords.usrCoords;
+                    p1c = parents[3].coords.usrCoords;
+                    p2c = parents[2].coords.usrCoords;
+                    det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
+
+                    if (det < 0) {
+                        this.point2 = parents[1];
+                        this.point3 = parents[2];
+                    } else {
+                        this.point2 = parents[2];
+                        this.point3 = parents[1];
+                    }
+                }
+            
+                A = A.coords.usrCoords;
+                B = B.coords.usrCoords;
+                C = C.coords.usrCoords;
       
-            ar = Geometry.bezierArc(A, B, C, true, 1);
+                ar = Geometry.bezierArc(A, B, C, true, 1);
             
-            this.dataX = ar[0];
-            this.dataY = ar[1];
-            this.bezierDegree = 3;
-        };
+                this.dataX = ar[0];
+                this.dataY = ar[1];
+                this.bezierDegree = 3;
+            };
 
-        /**
-         * Returns the radius of the sector.
-         * @memberOf Sector.prototype
-         * @name Radius
-         * @function
-         * @returns {Number} The distance between {@link Sector#point1} and {@link Sector#point2}.
-         */
-        el.Radius = function () {
-            return this.point2.Dist(this.point1);
-        };
+            /**
+            * Returns the radius of the sector.
+            * @memberOf Sector.prototype
+            * @name Radius
+            * @function
+            * @returns {Number} The distance between {@link Sector#point1} and {@link Sector#point2}.
+            */
+            el.Radius = function () {
+                return this.point2.Dist(this.point1);
+            };
 
+            // documented in geometry element
+            el.hasPoint = function (x, y) {
+                var angle, alpha, beta,
+                    prec = this.board.options.precision.hasPoint / (this.board.unitX),
+                    checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+                    r = this.Radius(),
+                    dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
+                    has = (Math.abs(dist - r) < prec);
+
+                if (has) {
+                    angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
+                    alpha = 0;
+                    beta = Geometry.rad(this.point2, this.center, this.point3);
+
+                    if (angle < alpha || angle > beta) {
+                        has = false;
+                    }
+                }
+
+                return has;
+            };
+
+            /**
+            * Checks whether (x,y) is within the area defined by the sector.
+            * @memberOf Sector.prototype
+            * @name hasPointSector
+            * @function
+            * @param {Number} x Coordinate in x direction, screen coordinates.
+            * @param {Number} y Coordinate in y direction, screen coordinates.
+            * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
+            */
+            el.hasPointSector = function (x, y) {
+                var angle,
+                    checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+                    r = this.Radius(),
+                    dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
+                    has = (dist < r);
+
+                if (has) {
+                    angle = Geometry.rad(this.point2, this.point1, checkPoint.usrCoords.slice(1));
+
+                    if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
+                        has = false;
+                    }
+                }
+                return has;
+            };
+
+            // documented in GeometryElement
+            el.getTextAnchor = function () {
+                return this.point1.coords;
+            };
+
+            // documented in GeometryElement
+            // this method is very similar to arc.getLabelAnchor()
+            // there are some additions in the arc version though, mainly concerning
+            // "major" and "minor" arcs. but maybe these methods can be merged.
+            el.getLabelAnchor = function () {
+                var coords, vecx, vecy, len,
+                    angle = Geometry.rad(this.point2, this.point1, this.point3),
+                    dx = 13 / this.board.unitX,
+                    dy = 13 / this.board.unitY,
+                    p2c = this.point2.coords.usrCoords,
+                    pmc = this.point1.coords.usrCoords,
+                    bxminusax = p2c[1] - pmc[1],
+                    byminusay = p2c[2] - pmc[2];
+
+                if (Type.exists(this.label)) {
+                    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+                }
+
+                coords = new Coords(Const.COORDS_BY_USER, [
+                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+                ], this.board);
+
+                vecx = coords.usrCoords[1] - pmc[1];
+                vecy = coords.usrCoords[2] - pmc[2];
+
+                len = Math.sqrt(vecx * vecx + vecy * vecy);
+                vecx = vecx * (len + dx) / len;
+                vecy = vecy * (len + dy) / len;
+
+                return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
+            };
+        }   // end '3points'
         /**
          * deprecated
          * @ignore
          */
         el.getRadius = function () {
             return this.Radius();
-        };
-
-        // documented in geometry element
-        el.hasPoint = function (x, y) {
-            var angle, alpha, beta,
-                prec = this.board.options.precision.hasPoint / (this.board.unitX),
-                checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-                r = this.Radius(),
-                dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has = (Math.abs(dist - r) < prec);
-
-            if (has) {
-                angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
-                alpha = 0;
-                beta = Geometry.rad(this.point2, this.center, this.point3);
-
-                if (angle < alpha || angle > beta) {
-                    has = false;
-                }
-            }
-
-            return has;
-        };
-
-        /**
-         * Checks whether (x,y) is within the area defined by the sector.
-         * @memberOf Sector.prototype
-         * @name hasPointSector
-         * @function
-         * @param {Number} x Coordinate in x direction, screen coordinates.
-         * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
-         */
-        el.hasPointSector = function (x, y) {
-            var angle,
-                checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-                r = this.Radius(),
-                dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has = (dist < r);
-
-            if (has) {
-                angle = Geometry.rad(this.point2, this.point1, checkPoint.usrCoords.slice(1));
-
-                if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
-                    has = false;
-                }
-            }
-            return has;
-        };
-
-        // documented in GeometryElement
-        el.getTextAnchor = function () {
-            return this.point1.coords;
-        };
-
-        // documented in GeometryElement
-        // this method is very similar to arc.getLabelAnchor()
-        // there are some additions in the arc version though, mainly concerning
-        // "major" and "minor" arcs. but maybe these methods can be merged.
-        el.getLabelAnchor = function () {
-            var coords, vecx, vecy, len,
-                angle = Geometry.rad(this.point2, this.point1, this.point3),
-                dx = 13 / this.board.unitX,
-                dy = 13 / this.board.unitY,
-                p2c = this.point2.coords.usrCoords,
-                pmc = this.point1.coords.usrCoords,
-                bxminusax = p2c[1] - pmc[1],
-                byminusay = p2c[2] - pmc[2];
-
-            if (Type.exists(this.label)) {
-                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-            }
-
-            coords = new Coords(Const.COORDS_BY_USER, [
-                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-            ], this.board);
-
-            vecx = coords.usrCoords[1] - pmc[1];
-            vecy = coords.usrCoords[2] - pmc[2];
-
-            len = Math.sqrt(vecx * vecx + vecy * vecy);
-            vecx = vecx * (len + dx) / len;
-            vecy = vecy * (len + dy) / len;
-
-            return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
         };
 
         el.prepareUpdate().update();
