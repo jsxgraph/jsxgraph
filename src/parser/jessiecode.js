@@ -64,18 +64,24 @@ define([
         // Control structures
 
         /**
-         * Stores all variables, local and global. The current scope is determined by {@link JXG.JessieCode#scope}.
-         * @type Array
-         * @private
+         * The global scope.
+         * @type {Object}
          */
-        this.sstack = [{}];
+        this.scope = {
+            id: 0,
+            hasChild: true,
+            args: [],
+            locals: {},
+            context: null,
+            previous: null
+        };
 
         /**
-         * Defines the current variable scope.
-         * @type Number
-         * @private
+         * Keeps track of all possible scopes every required.
+         * @type {Array}
          */
-        this.scope = 0;
+        this.scopes = [];
+        this.scopes.push(this.scope);
 
         /**
          * A stack used to store the parameter lists for function definitions and calls.
@@ -217,6 +223,39 @@ define([
         },
 
         /**
+         * Create a new scope.
+         * @param {Array} args
+         * @returns {Object}
+         */
+        pushScope: function (args) {
+            var scope = {
+                    args: args,
+                    locals: {},
+                    context: null,
+                    previous: this.scope
+                };
+
+            this.scope.hasChild = true;
+            this.scope = scope;
+            scope.id = this.scopes.push(scope) - 1;
+
+            return scope;
+        },
+
+        /**
+         * Remove the current scope and reinstate the previous scope
+         * @returns {Object}
+         */
+        popScope: function () {
+            var s = this.scope.previous;
+
+            // make sure the global scope is not lost
+            this.scope = s !== null ? s : this.scope;
+
+            return this.scope;
+        },
+
+        /**
          * Looks up an {@link JXG.GeometryElement} by its id.
          * @param {String} id
          * @returns {JXG.GeometryElement}
@@ -289,23 +328,27 @@ define([
                 this._warn('"' + vname + '" is a predefined value.');
             }
 
-            this.sstack[this.scope][vname] = value;
+            //this.sstack[this.scope][vname] = value;
+            this.scope.locals[vname] = value;
         },
 
         /**
-         * Checks if the given variable name can be found in {@link JXG.JessieCode#sstack}.
+         * Checks if the given variable name can be found in the current scope chain.
          * @param {String} vname
-         * @returns {Number} The position in the local variable stack where the variable can be found. <tt>-1</tt> if it couldn't be found.
+         * @returns {Object} A reference to the scope object the variable can be found in or null if it can't be found.
          */
         isLocalVariable: function (vname) {
-            var s;
-            for (s = this.scope; s > -1; s--) {
-                if (Type.exists(this.sstack[s][vname])) {
+            var s = this.scope;
+
+            while (s !== null) {
+                if (Type.exists(s.locals[vname])) {
                     return s;
                 }
+
+                s = s.previous;
             }
 
-            return -1;
+            return null;
         },
 
         /**
@@ -348,8 +391,8 @@ define([
             local = Type.def(local, false);
 
             s = this.isLocalVariable(vname);
-            if (s > -1) {
-                return this.sstack[s][vname];
+            if (s !== null) {
+                return s.locals[vname];
             }
 
             // check for an element with this name
@@ -376,6 +419,26 @@ define([
         },
 
         /**
+         * Look up the value of a local variable.
+         * @param {string} vname
+         * @returns {*}
+         */
+        resolve: function (vname) {
+            var s = this.scope;
+
+            while (s !== null) {
+                if (Type.exists(s.locals[vname])) {
+                    return s.locals[vname];
+                }
+
+                s = s.previous;
+            }
+
+            return;
+        },
+
+        /**
+         * TODO this needs to be called from JS and should not generate JS code
          * Looks up a variable identifier in various tables and generates JavaScript code that could be eval'd to get the value.
          * @param {String} vname Identifier
          * @param {Boolean} [local=false] Don't resolve ids and names of elements
@@ -386,18 +449,22 @@ define([
 
             local = Type.def(local, false);
             withProps = Type.def(withProps, false);
-
-            if (Type.indexOf(this.plist[this.plist.length - 1], vname) > -1) {
+console.log('getvarjs', vname, this.scope);
+            if (Type.indexOf(this.scope.args, vname) > -1) {
+console.log('plist');
                 return vname;
             }
 
             s = this.isLocalVariable(vname);
-            if (s > -1 && !withProps) {
-                return '$jc$.sstack[' + s + '][\'' + vname + '\']';
+            if (s !== null && !withProps) {
+console.log('local');
+                //return '$jc$.sstack[' + s + '][\'' + vname + '\']';
+                return '$jc$.resolve(\'' + vname + '\')';
             }
 
             // check for an element with this name
             if (this.isCreator(vname)) {
+console.log('creator');
                 return '(function () { var a = Array.prototype.slice.call(arguments, 0), props = ' + (withProps ? 'a.pop()' : '{}') + '; return $jc$.board.create.apply($jc$.board, [\'' + vname + '\'].concat([a, props])); })';
             }
 
@@ -406,10 +473,12 @@ define([
             }
 
             if (this.isMathMethod(vname)) {
+console.log('math');
                 return 'Math.' + vname;
             }
 
             if (this.isBuiltIn(vname)) {
+console.log('built in');
                 // if src does not exist, it is a number. in that case, just return the value.
                 return this.builtIn[vname].src || this.builtIn[vname];
             }
@@ -422,9 +491,11 @@ define([
                 } else if (Type.isGroup(this.board, vname)) {
                     r = '$jc$.board.groups[\'' + vname + '\']';
                 }
-
+console.log('id');
                 return r;
             }
+
+console.log('not found');
 
             return '';
         },
@@ -440,6 +511,25 @@ define([
             return f;
         },
 
+        functionCodeJS: function (node) {
+            var p = node.children[0].join(', '),
+                bo = '',
+                bc = '';
+
+            if (node.value === 'op_map') {
+                bo = '{ return  ';
+                bc = ' }';
+            }
+
+            return 'function (' + p + ') {\n' +
+                    'var $oldscope$ = $jc$.scope;\n' +
+                    '$jc$.scope = $jc$.scopes[' + this.scope.id + '];\n' +
+                    'var r = (function () ' + bo + this.compile(node.children[1], true) + bc + ')();\n' +
+                    '$jc$.scope = $oldscope$;\n' +
+                    'return r;\n' +
+                '}';
+        },
+
         /**
          * Converts a node type <tt>node_op</tt> and value <tt>op_map</tt> or <tt>op_function</tt> into a executable
          * function.
@@ -450,21 +540,17 @@ define([
             var fun, i,
                 bo = '',
                 bc = '',
-                list = node.children[0];
+                list = node.children[0],
+                scope = this.pushScope(list);
+console.log('define function', node);
 
             if (this.board.options.jc.compile) {
-                this.sstack.push({});
-                this.scope++;
-
-                if (node.value === 'op_map') {
-                    bo = '{ return  ';
-                    bc = ' }';
-                }
-
                 this.isLHS = false;
 
+                // we currently need to put the parameters into the local scope
+                // until the compiled JS variable lookup code is fixed
                 for (i = 0; i < list.length; i++) {
-                    this.sstack[this.scope][list[i]] = list[i];
+                    scope.locals[list[i]] = list[i];
                 }
 
                 this.replaceNames(node.children[1]);
@@ -472,29 +558,8 @@ define([
                 fun = (function ($jc$, list) {
                     var fun,
                         p = list.join(', '),
-                        str = 'var f = function (' + p + ') {\n$jc$.sstack.push([]);\nvar $scope$ = ++$jc$.scope;\nvar r = (function () ' + bo + $jc$.compile(node.children[1], true) + bc + ')();\n$jc$.sstack.pop();\n$jc$.scope--;\nreturn r;\n}; f;';
-                    // the function code formatted: NEEDS REBUILDING
-                    /*
-                     var f = function (_parameters_) {
-                         // handle the stack
-                         $jc$.sstack.push([]);
-                         $jc$.scope++;
-
-                         // this is required for stack handling: usually at some point in a function
-                         // there's a return statement, that prevents the cleanup of the stack.
-                         var r = (function () {
-                             _compiledcode_;
-                        })();
-
-                         // clean up the stack
-                         $jc$.sstack.pop();
-                         $jc$.scope--;
-
-                         // return the result
-                         return r;
-                     };
-                     f;   // the return value of eval()
-                     */
+                        //str = 'var f = function (' + p + ') {\nvar $oldscope$ = $jc$.scope;\n$jc$.scope = $jc$.scopes[' + scope.id + '];\nvar r = (function () ' + bo + $jc$.compile(node.children[1], true) + bc + ')();\n$jc$.scope = $oldscope$;\nreturn r;\n}; f;';
+                        str = 'var f = ' + $jc$.functionCodeJS(node) + '; f;';
 
                     try {
                         // yeah, eval is evil, but we don't have much choice here.
@@ -512,29 +577,29 @@ define([
                 }(this, list));
 
                 // clean up scope
-                this.sstack.pop();
-                this.scope--;
+                this.popScope();
             } else {
-                fun = (function (_pstack, that) {
+                fun = (function (_pstack, that, id) {
                     return function () {
-                        var r;
+                        var r, oldscope;
 
-                        that.sstack.push({});
-                        that.scope++;
+                        oldscope = that.scope;
+                        that.scope = that.scopes[id];
+
                         for (r = 0; r < _pstack.length; r++) {
-                            that.sstack[that.scope][_pstack[r]] = arguments[r];
+                            that.scope.locals[_pstack[r]] = arguments[r];
                         }
 
                         r = that.execute(node.children[1]);
+                        that.scope = oldscope;
 
-                        that.sstack.pop();
-                        that.scope--;
                         return r;
                     };
-                }(list, this));
+                }(list, this, scope.id));
             }
 
             fun.node = node;
+            fun.scope = scope;
             fun.toJS = fun.toString;
             fun.toString = (function (_that) {
                 return function () {
@@ -869,7 +934,7 @@ define([
 
             if (node.type === 'node_var') {
                 res = {
-                    o: this.sstack[this.scope],
+                    o: this.scope.locals,
                     what: node.value
                 };
             } else if (node.type === 'node_op' && node.value === 'op_property') {
@@ -949,14 +1014,14 @@ define([
                 case 'op_assign':
                     v = this.getLHS(node.children[0]);
 
-                    this.lhs[this.scope] = v[1];
+                    this.lhs[this.scope.id] = v[1];
 
                     if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
                         this._error('Left-hand side of assignment is read-only.');
                     }
 
                     ret = this.execute(node.children[1]);
-                    if (v.o !== this.sstack[this.scope] || (Type.isArray(v.o) && typeof v.what === 'number')) {
+                    if (v.o !== this.scope.locals || (Type.isArray(v.o) && typeof v.what === 'number')) {
                         // it is either an array component being set or a property of an object.
                         this.setProp(v.o, v.what, ret);
                     } else {
@@ -964,7 +1029,7 @@ define([
                         this.letvar(v.what, ret);
                     }
 
-                    this.lhs[this.scope] = 0;
+                    this.lhs[this.scope.id] = 0;
                     break;
                 case 'op_if':
                     if (this.execute(node.children[0])) {
@@ -1277,7 +1342,7 @@ define([
          * @private
          */
         compile: function (node, js) {
-            var e, i, list,
+            var e, i, list, scope,
                 ret = '';
 
             if (!Type.exists(js)) {
@@ -1307,9 +1372,9 @@ define([
                             ret = '$jc$.setProp(' + e[0] + ', ' + e[1] + ', ' + this.compile(node.children[1], js) + ');\n';
                         } else {
                             if (this.isLocalVariable(e) !== this.scope) {
-                                this.sstack[this.scope][e] = true;
+                                this.scope.locals[e] = true;
                             }
-                            ret = '$jc$.sstack[' + this.scope + '][\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
+                            ret = '$jc$.scopes[' + this.scope.id + '].locals[\'' + e + '\'] = ' + this.compile(node.children[1], js) + ';\n';
                         }
                     } else {
                         e = this.compile(node.children[0]);
@@ -1382,7 +1447,13 @@ define([
                     break;
                 case 'op_function':
                     list = node.children[0];
-                    ret = ' function (' + list.join(', ') + ') ' + this.compile(node.children[1], js);
+                    scope = this.pushScope(list);
+                    if (js) {
+                        ret = this.functionCodeJS(node);
+                    } else {
+                        ret = ' function (' + list.join(', ') + ') ' + this.compile(node.children[1], js);
+                    }
+                    this.popScope();
                     break;
                 case 'op_execfunmath':
                     console.log('TODO');
@@ -1525,7 +1596,7 @@ define([
                 break;
 
             case 'node_str':
-                ret = '\'' + node.value.replace(/'/g, '\\\'') + '\'';
+                ret = '\'' + node.value + '\'';
                 break;
             }
 
@@ -1635,20 +1706,24 @@ define([
          * an empty array otherwise;
          */
         findSymbol: function (v, scope) {
-            var s, i;
+            var i, s;
 
             scope = Type.def(scope, -1);
 
             if (scope === -1) {
-                scope = this.scope;
+                s = this.scope;
+            } else {
+                s = this.scopes[scope];
             }
 
-            for (s = scope; s >= 0; s--) {
-                for (i in this.sstack[s]) {
-                    if (this.sstack[s].hasOwnProperty(i) && this.sstack[s][i] === v) {
+            while (s !== null) {
+                for (i in s.locals) {
+                    if (s.locals.hasOwnProperty(i) && s.locals[i] === v) {
                         return [i, s];
                     }
                 }
+
+                s = s.previous;
             }
 
             return [];
