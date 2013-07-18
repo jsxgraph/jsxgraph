@@ -492,10 +492,11 @@ define([
      * </script><pre>
      */
     JXG.createAngle = function (board, parents, attributes) {
-        var el, p, q, text, attr, attrsub, i, dot;
+        var el, p, q, radius, text, attr, attrsub, i, dot;
 
         // Test if three points are given
         if ((Type.isPoint(parents[0])) && (Type.isPoint(parents[1])) && (Type.isPoint(parents[2]))) {
+            
             attr = Type.copyAttributes(attributes, board.options, 'angle');
 
             //  If empty, create a new name
@@ -506,34 +507,46 @@ define([
                 attr.name = text;
             }
 
-            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
-
-            // Helper point: radius point
-            // Start with dummy values until the sector has been created.
-            // Why a dummy element?  A.W.
-            // Answer: attribute radius:x is not known
-            //p = board.create('point', [0, 1, 0], attrsub);
-            if (Type.exists(parents[0].coords)) {
-                p = board.create('point', parents[0].coords.usrCoords, attrsub);
-            } else if (Type.isArray(parents[0])) {
-                p = board.create('point', parents[0], attrsub);
+            if (Type.exists(attr.radius)) {
+                radius = attr.radius;
             } else {
-                p = board.create('point', [0, 1, 0], attrsub);
+                radius = 0;
             }
+            
+            /**
+             * Helper point: radius point
+             * We do this by using the closure variable radius.
+             * Later, the constraint function is replaced by nearly the same function, only the radius 
+             * is taken from el.visProp.radius.
+             */
+            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
+            p = board.create('point', [function() {                
+                    var A = parents[0], S = parents[1],
+                        r = Type.evaluate(radius),
+                        d = S.Dist(A);
+                    
+                    return [S.X() + (A.X() - S.X()) * r / d, 
+                        S.Y() + (A.Y() - S.Y()) * r / d];
+                }], attrsub);
+                    
             p.dump = false;
 
+            /**
+             * Second helper point for square
+             * Helper point: radius point
+             * We do this by using the closure variable radius.
+             * Later, the constraint function is replaced by nearly the same function, only the radius 
+             * is taken from el.visProp.radius.
+             */
             attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
-
-            // Second helper point for square
-            // Start with dummy values until the sector has been created.
-            // q = board.create('point', [0, 1, 1], attrsub);
-            if (Type.exists(parents[0].coords)) {
-                q = board.create('point', parents[2].coords.usrCoords, attrsub);
-            } else if (Type.isArray(parents[0])) {
-                q = board.create('point', parents[2], attrsub);
-            } else {
-                q = board.create('point', [0, 1, 1], attrsub);
-            }
+            q = board.create('point', [function() { 
+                    var A = parents[2], S = parents[1],
+                        r = Type.evaluate(radius),
+                        d = S.Dist(A);
+                    
+                    return [S.X() + (A.X() - S.X()) * r / d, 
+                            S.Y() + (A.Y() - S.Y()) * r / d];
+                }], attrsub);
             q.dump = false;
 
             // Sector is just a curve with its own updateDataArray method
@@ -541,6 +554,31 @@ define([
             
             el.elType = 'angle';
             el.parents = [parents[0].id, parents[1].id, parents[2].id];
+
+            /**
+             * The point defining the radius of the angle element.
+             * @type JXG.Point
+             * @name radiuspoint
+             * @memberOf Angle.prototype
+             */
+            el.radiuspoint = p;
+
+            /**
+             * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
+             * @type JXG.Point
+             * @name point
+             * @memberOf Angle.prototype
+             */
+            el.point = p;
+
+            /**
+             * Helper point for angles of type 'square'.
+             * @type JXG.Point
+             * @name pointsquare
+             * @memberOf Angle.prototype
+             */
+            el.pointsquare = q;
+
             el.subs = {
                 point: p,
                 pointsquare: q
@@ -606,41 +644,22 @@ define([
                 var A = parents[0], S = parents[1],
                     r = Type.evaluate(el.visProp.radius),
                     d = S.Dist(A);
-                return [S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+                    
+                return [S.X() + (A.X() - S.X()) * r / d, 
+                        S.Y() + (A.Y() - S.Y()) * r / d];
             }]);
             
             q.addConstraint([function () {
                 var A = parents[2], S = parents[1],
                     r = Type.evaluate(el.visProp.radius),
                     d = S.Dist(A);
-                return [S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+                    
+                return [S.X() + (A.X() - S.X()) * r / d, 
+                        S.Y() + (A.Y() - S.Y()) * r / d];
             }]);
 
-            /**
-             * The point defining the radius of the angle element.
-             * @type JXG.Point
-             * @name radiuspoint
-             * @memberOf Angle.prototype
-             */
-            el.radiuspoint = p;
-
-            /**
-             * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
-             * @type JXG.Point
-             * @name point
-             * @memberOf Angle.prototype
-             */
-            el.point = p;
-
-            /**
-             * Helper point for angles of type 'square'.
-             * @type JXG.Point
-             * @name pointsquare
-             * @memberOf Angle.prototype
-             */
-            el.pointsquare = q;
-
             dot = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
+            
             /**
              * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
              * Though this dot indicates a right angle, it can be visible even if the angle is not a right

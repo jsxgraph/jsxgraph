@@ -1276,7 +1276,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Compute coordinates for the rectangles showing the Riemann sum.
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezodial'.
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
@@ -1328,9 +1328,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                                 y = y1;
                             }
                         }
-                    // type 'random'
-                    } else {
+                    } else if (type === 'random') {
                         y = f(x + delta * Math.random());
+                    } else if (type === 'simpson') {
+                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
+                    } else {
+                        y = f(x);  // default is lower
                     }
 
                     j += 1;
@@ -1360,7 +1363,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @deprecated Replaced by JXG.Curve.Value(), see {@link JXG.Curve#riemannsum}
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random'. or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezodial'.
+         * 
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Number} The sum of the areas of the rectangles.
@@ -1407,10 +1411,14 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                                 y = y1;
                             }
                         }
-                    // type 'random'
-                    } else {
+                    } else if (type === 'random') {
                         y = f(x + delta * Math.random());
+                    } else if (type === 'simpson') {
+                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
+                    } else {
+                        y = f(x);  // default is lower
                     }
+                        
                     sum += delta * y;
                     x += delta;
                 }
