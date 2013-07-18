@@ -606,14 +606,18 @@ define([
                 var A = parents[0], S = parents[1],
                     r = Type.evaluate(el.visProp.radius),
                     d = S.Dist(A);
-                return [S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+                    
+                return [S.X() + (A.X() - S.X()) * r / d, 
+                        S.Y() + (A.Y() - S.Y()) * r / d];
             }]);
             
             q.addConstraint([function () {
                 var A = parents[2], S = parents[1],
                     r = Type.evaluate(el.visProp.radius),
                     d = S.Dist(A);
-                return [S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+                    
+                return [S.X() + (A.X() - S.X()) * r / d, 
+                        S.Y() + (A.Y() - S.Y()) * r / d];
             }]);
 
             /**
