@@ -449,22 +449,19 @@ define([
 
             local = Type.def(local, false);
             withProps = Type.def(withProps, false);
-console.log('getvarjs', vname, this.scope);
+
             if (Type.indexOf(this.scope.args, vname) > -1) {
-console.log('plist');
                 return vname;
             }
 
             s = this.isLocalVariable(vname);
             if (s !== null && !withProps) {
-console.log('local');
                 //return '$jc$.sstack[' + s + '][\'' + vname + '\']';
                 return '$jc$.resolve(\'' + vname + '\')';
             }
 
             // check for an element with this name
             if (this.isCreator(vname)) {
-console.log('creator');
                 return '(function () { var a = Array.prototype.slice.call(arguments, 0), props = ' + (withProps ? 'a.pop()' : '{}') + '; return $jc$.board.create.apply($jc$.board, [\'' + vname + '\'].concat([a, props])); })';
             }
 
@@ -473,12 +470,10 @@ console.log('creator');
             }
 
             if (this.isMathMethod(vname)) {
-console.log('math');
                 return 'Math.' + vname;
             }
 
             if (this.isBuiltIn(vname)) {
-console.log('built in');
                 // if src does not exist, it is a number. in that case, just return the value.
                 return this.builtIn[vname].src || this.builtIn[vname];
             }
@@ -491,11 +486,9 @@ console.log('built in');
                 } else if (Type.isGroup(this.board, vname)) {
                     r = '$jc$.board.groups[\'' + vname + '\']';
                 }
-console.log('id');
+
                 return r;
             }
-
-console.log('not found');
 
             return '';
         },
@@ -542,7 +535,6 @@ console.log('not found');
                 bc = '',
                 list = node.children[0],
                 scope = this.pushScope(list);
-console.log('define function', node);
 
             if (this.board.options.jc.compile) {
                 this.isLHS = false;
