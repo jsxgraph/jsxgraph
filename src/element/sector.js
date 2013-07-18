@@ -86,6 +86,7 @@ define([
      */
     JXG.createSector = function (board, parents, attributes) {
         var el, i, attr,
+            s, v,
             points = ['center', 'radiuspoint', 'anglepoint'];
 
         // Three points?
@@ -93,8 +94,8 @@ define([
             
             if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                Type.isArray(parents[2]) &&
-                Type.isArray(parents[3]) &&
+                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
                 Type.isNumber(parents[4])) {
                     
                 attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -110,21 +111,29 @@ define([
                 el.line2 = board.select(parents[1]);
                 
                 /* Intersection point*/
-                var s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
+                s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
                 
-                /* project p1 to l1 */
-                var v = [0, el.line1.stdform[1], el.line1.stdform[2]];
-                v = Mat.crossProduct(v, parents[2]);
-                v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
-                v = Statistics.subtract(v.usrCoords, s.usrCoords);
-                el.dir1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
+                if (Type.isArray(parents[2])) {
+                    /* project p1 to l1 */
+                    v = [0, el.line1.stdform[1], el.line1.stdform[2]];
+                    v = Mat.crossProduct(v, parents[2]);
+                    v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
+                    v = Statistics.subtract(v.usrCoords, s.usrCoords);
+                    el.dir1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
+                } else {
+                    el.dir1 = (parents[2] >= 0) ? 1 : -1;
+                }
                 
-                /* project p1 to l1 */
-                v = [0, el.line2.stdform[1], el.line2.stdform[2]];
-                v = Mat.crossProduct(v, parents[2]);
-                v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
-                v = Statistics.subtract(v.usrCoords, s.usrCoords);
-                el.dir2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
+                if (Type.isArray(parents[2])) {
+                    /* project p2 to l2 */
+                    v = [0, el.line2.stdform[1], el.line2.stdform[2]];
+                    v = Mat.crossProduct(v, parents[2]);
+                    v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
+                    v = Statistics.subtract(v.usrCoords, s.usrCoords);
+                    el.dir2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
+                } else {
+                    el.dir2 = (parents[3] >= 0) ? 1 : -1;
+                }
                 
                 el.updateDataArray = function () {
                     var r, l1, l2, A, B, C, ar;
