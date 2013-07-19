@@ -737,8 +737,8 @@ define([
                 labelText = '0';
             }
 
-            if (num && (labelText.length > 5 || labelText.indexOf('e') !== -1)) {
-                labelText = pos.toPrecision(3).toString();
+            if (num && (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1)) {
+                labelText = pos.toPrecision(this.visProp.precision).toString();
             }
             if (num && labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
                 // trim trailing zeros

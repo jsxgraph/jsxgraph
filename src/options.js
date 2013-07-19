@@ -497,6 +497,24 @@ define([
             labels: [],
 
             /**
+             * The maximum number of characters a tick label can use.
+             * @type Number
+             * @name JXG.Ticks#maxLabelLength
+             * @see JXG.Ticks#precision
+             * @default 3
+             */
+            maxLabelLength: 5,
+
+            /**
+             * If a label exceeds {@link JXG.Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * @type Number
+             * @name JXG.Ticks#precision
+             * @see JXG.Ticks#maxLabelLength
+             * @default 3
+             */
+            precision: 3,
+
+            /**
              * The default distance between two ticks. Please be aware that this value does not have
              * to be used if {@link JXG.Ticks#insertTicks} is set to true.
              * @type Boolean
