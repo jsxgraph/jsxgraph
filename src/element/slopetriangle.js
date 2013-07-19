@@ -47,6 +47,21 @@ define([
 
     "use strict";
 
+    var priv = {
+            removeSlopeTriangle: function () {
+                Polygon.Polygon.prototype.remove.call(this);
+
+                this.board.removeObject(this.toppoint);
+                this.board.removeObject(this.glider);
+
+                this.board.removeObject(this.baseline);
+                this.board.removeObject(this.basepoint);
+            },
+            Value: function () {
+                return this.tangent.getSlope();
+            }
+        };
+
     // default attributes
     Options.slopetriangle = {
         fillColor: 'red',
@@ -103,9 +118,7 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
             el = board.create('polygon', [tglide, glider, toppoint], attr);
 
-            el.Value = function () {
-                return tangent.getSlope();
-            };
+            el.Value = priv.Value;
 
             el.tangent = tangent;
             el.glider = glider;
@@ -125,16 +138,7 @@ define([
                 V: 'Value'
             });
 
-            el.remove = function () {
-                // console.log('polygon');
-                Polygon.Polygon.prototype.remove.call(this);
-
-                board.removeObject(toppoint);
-                board.removeObject(glider);
-
-                board.removeObject(baseline);
-                board.removeObject(basepoint);
-            };
+            el.remove = priv.removeSlopeTriangle;
 
             return el;
         }
