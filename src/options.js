@@ -1460,6 +1460,7 @@ define([
             highlightFillColor: '#00FF00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
+            highlightOnSector: false,
             radiuspoint: {
                 visible: false,
                 withLabel: false

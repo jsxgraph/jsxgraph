@@ -137,6 +137,13 @@ define([
             el.line1 = board.select(parents[0]),
             el.line2 = board.select(parents[1]);
             
+            el.line1.addChild(el);
+            el.line2.addChild(el);
+
+            el.point1 = {visProp:{}};
+            el.point2 = {visProp:{}};
+            el.point3 = {visProp:{}};
+            
             /* Intersection point */
             s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
             
@@ -182,6 +189,10 @@ define([
                 r = this.direction2 * this.Radius();
                 C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
             
+                this.point2.coords = new Coords(Const.COORDS_BY_USER, A, el.board);
+                this.point1.coords = new Coords(Const.COORDS_BY_USER, B, el.board);
+                this.point3.coords = new Coords(Const.COORDS_BY_USER, C, el.board);
+            
                 if (Math.abs(A[0]) < Mat.eps || Math.abs(B[0]) < Mat.eps || Math.abs(C[0]) < Mat.eps) {
                     this.dataX = [NaN];
                     this.dataY = [NaN];
@@ -205,7 +216,7 @@ define([
 
         // end '2lines'
         
-        }  else if (type === '3points') {
+        } else if (type === '3points') {
 
             /**
             * Midpoint of the sector.
@@ -214,7 +225,6 @@ define([
             * @type JXG.Point
             */
             el.point1 = board.select(parents[0]);
-            el.center = el.point1;
 
             /**
             * This point together with {@link Sector#point1} defines the radius..
@@ -223,7 +233,6 @@ define([
             * @type JXG.Point
             */
             el.point2 = board.select(parents[1]);
-            el.radiuspoint = el.point2;
 
             /**
             * Defines the sector's angle.
@@ -232,7 +241,6 @@ define([
             * @type JXG.Point
             */
             el.point3 = board.select(parents[2]);
-            el.anglepoint = el.point3;
 
             /* Add arc as child to defining points */
             el.point1.addChild(el);
@@ -241,6 +249,17 @@ define([
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
+
+            /**
+            * Defines the sectors orientation in case of circumCircleSectors.
+            * @memberOf Sector.prototype
+            * @name point4
+            * @type JXG.Point
+            */
+            if (Type.exists(parents[3])) {
+                el.point4 = board.select(parents[3]);
+                el.point4.addChild(el);
+            }
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
                 center: 'center',
@@ -266,20 +285,17 @@ define([
                     return;
                 }
 
-                // This is true for circumCircleArcs. In that case there is
+                // This is true for circumCircleSectors. In that case there is
                 // a fourth parent element: [midpoint, point1, point3, point2]
                 if (this.useDirection) {
-                    p0c = parents[1].coords.usrCoords;
-                    p1c = parents[3].coords.usrCoords;
-                    p2c = parents[2].coords.usrCoords;
+                    p0c = this.point2.coords.usrCoords; 
+                    p1c = this.point4.coords.usrCoords; 
+                    p2c = this.point3.coords.usrCoords; 
                     det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
 
-                    if (det < 0) {
-                        this.point2 = parents[1];
-                        this.point3 = parents[2];
-                    } else {
-                        this.point2 = parents[2];
-                        this.point3 = parents[1];
+                    if (det >= 0.0) {
+                        C = this.point2; 
+                        A = this.point3; 
                     }
                 }
             
@@ -305,92 +321,106 @@ define([
                 return this.point2.Dist(this.point1);
             };
 
-            // documented in geometry element
-            el.hasPoint = function (x, y) {
-                var angle, alpha, beta,
-                    prec = this.board.options.precision.hasPoint / (this.board.unitX),
-                    checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-                    r = this.Radius(),
-                    dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                    has = (Math.abs(dist - r) < prec);
-
-                if (has) {
-                    angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
-                    alpha = 0;
-                    beta = Geometry.rad(this.point2, this.center, this.point3);
-
-                    if (angle < alpha || angle > beta) {
-                        has = false;
-                    }
-                }
-
-                return has;
-            };
-
-            /**
-            * Checks whether (x,y) is within the area defined by the sector.
-            * @memberOf Sector.prototype
-            * @name hasPointSector
-            * @function
-            * @param {Number} x Coordinate in x direction, screen coordinates.
-            * @param {Number} y Coordinate in y direction, screen coordinates.
-            * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
-            */
-            el.hasPointSector = function (x, y) {
-                var angle,
-                    checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
-                    r = this.Radius(),
-                    dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                    has = (dist < r);
-
-                if (has) {
-                    angle = Geometry.rad(this.point2, this.point1, checkPoint.usrCoords.slice(1));
-
-                    if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
-                        has = false;
-                    }
-                }
-                return has;
-            };
-
-            // documented in GeometryElement
-            el.getTextAnchor = function () {
-                return this.point1.coords;
-            };
-
-            // documented in GeometryElement
-            // this method is very similar to arc.getLabelAnchor()
-            // there are some additions in the arc version though, mainly concerning
-            // "major" and "minor" arcs. but maybe these methods can be merged.
-            el.getLabelAnchor = function () {
-                var coords, vecx, vecy, len,
-                    angle = Geometry.rad(this.point2, this.point1, this.point3),
-                    dx = 13 / this.board.unitX,
-                    dy = 13 / this.board.unitY,
-                    p2c = this.point2.coords.usrCoords,
-                    pmc = this.point1.coords.usrCoords,
-                    bxminusax = p2c[1] - pmc[1],
-                    byminusay = p2c[2] - pmc[2];
-
-                if (Type.exists(this.label)) {
-                    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-                }
-
-                coords = new Coords(Const.COORDS_BY_USER, [
-                    pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
-                    pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
-                ], this.board);
-
-                vecx = coords.usrCoords[1] - pmc[1];
-                vecy = coords.usrCoords[2] - pmc[2];
-
-                len = Math.sqrt(vecx * vecx + vecy * vecy);
-                vecx = vecx * (len + dx) / len;
-                vecy = vecy * (len + dy) / len;
-
-                return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
-            };
         }   // end '3points'
+
+        el.center = el.point1;
+        el.radiuspoint = el.point2;
+        el.anglepoint = el.point3;
+
+        // Default hasPoint method. Documented in geometry element
+        el.hasPointCurve = function (x, y) {
+            var angle, alpha, beta,
+                prec = this.board.options.precision.hasPoint / (this.board.unitX),
+                checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+                r = this.Radius(),
+                dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
+                has = (Math.abs(dist - r) < prec);
+
+            if (has) {
+                angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
+                alpha = 0;
+                beta = Geometry.rad(this.point2, this.center, this.point3);
+
+                if (angle < alpha || angle > beta) {
+                    has = false;
+                }
+            }
+
+            return has;
+        };
+
+        /**
+        * Checks whether (x,y) is within the area defined by the sector.
+        * @memberOf Sector.prototype
+        * @name hasPointSector
+        * @function
+        * @param {Number} x Coordinate in x direction, screen coordinates.
+        * @param {Number} y Coordinate in y direction, screen coordinates.
+        * @returns {Boolean} True if (x,y) is within the sector defined by the arc, False otherwise.
+        */
+        el.hasPointSector = function (x, y) {
+            var angle,
+                checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
+                r = this.Radius(),
+                dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
+                has = (dist < r);
+
+            if (has) {
+                angle = Geometry.rad(this.point2, this.point1, checkPoint.usrCoords.slice(1));
+
+                if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
+                    has = false;
+                }
+            }
+            return has;
+        };
+
+        el.hasPoint = function (x, y) {
+            if (this.visProp.highlightonsector) {
+                return this.hasPointSector(x, y);
+            } else {
+                return this.hasPointCurve(x, y);
+            }
+        };
+
+        // documented in GeometryElement
+        el.getTextAnchor = function () {
+            return this.point1.coords;
+        };
+
+        // documented in GeometryElement
+        // this method is very similar to arc.getLabelAnchor()
+        // there are some additions in the arc version though, mainly concerning
+        // "major" and "minor" arcs. but maybe these methods can be merged.
+        el.getLabelAnchor = function () {
+            var coords, vecx, vecy, len,
+                angle = Geometry.rad(this.point2, this.point1, this.point3),
+                dx = 13 / this.board.unitX,
+                dy = 13 / this.board.unitY,
+                p2c = this.point2.coords.usrCoords,
+                pmc = this.point1.coords.usrCoords,
+                bxminusax = p2c[1] - pmc[1],
+                byminusay = p2c[2] - pmc[2];
+
+            if (Type.exists(this.label)) {
+                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            }
+
+            coords = new Coords(Const.COORDS_BY_USER, [
+                pmc[1] + Math.cos(angle * 0.5) * bxminusax - Math.sin(angle * 0.5) * byminusay,
+                pmc[2] + Math.sin(angle * 0.5) * bxminusax + Math.cos(angle * 0.5) * byminusay
+            ], this.board);
+
+            vecx = coords.usrCoords[1] - pmc[1];
+            vecy = coords.usrCoords[2] - pmc[2];
+
+            len = Math.sqrt(vecx * vecx + vecy * vecy);
+            vecx = vecx * (len + dx) / len;
+            vecy = vecy * (len + dy) / len;
+
+            return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
+        };
+            
         /**
          * deprecated
          * @ignore
