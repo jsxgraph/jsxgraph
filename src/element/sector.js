@@ -127,8 +127,7 @@ define([
         el = board.create('curve', [[0], [0]], attr);
         el.type = Const.OBJECT_TYPE_SECTOR;
         el.elType = 'sector';
-        el.parents = [parents[0].id, parents[1].id, parents[2].id];
-
+        
         if (type === '2lines') {
             el.Radius = function () {
                 return Type.evaluate(parents[4]);
@@ -139,6 +138,7 @@ define([
             
             el.line1.addChild(el);
             el.line2.addChild(el);
+            el.parents = [parents[0].id, parents[1].id];
 
             el.point1 = {visProp:{}};
             el.point2 = {visProp:{}};
@@ -158,10 +158,10 @@ define([
                 el.direction1 = (parents[2] >= 0) ? 1 : -1;
             }
             
-            if (Type.isArray(parents[2])) {
+            if (Type.isArray(parents[3])) {
                 /* project p2 to l2 */
                 v = [0, el.line2.stdform[1], el.line2.stdform[2]];
-                v = Mat.crossProduct(v, parents[2]);
+                v = Mat.crossProduct(v, parents[3]);
                 v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.direction2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
@@ -250,6 +250,8 @@ define([
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
 
+            el.parents = [parents[0].id, parents[1].id, parents[2].id];
+            
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
             * @memberOf Sector.prototype
@@ -259,6 +261,7 @@ define([
             if (Type.exists(parents[3])) {
                 el.point4 = board.select(parents[3]);
                 el.point4.addChild(el);
+                // el.parents.push(parents[3].id); // Not necessary. done in circumcirclesector.
             }
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
