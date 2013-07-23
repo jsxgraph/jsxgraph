@@ -249,7 +249,6 @@ define([
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
-
             el.parents = [parents[0].id, parents[1].id, parents[2].id];
             
             /**
@@ -261,7 +260,7 @@ define([
             if (Type.exists(parents[3])) {
                 el.point4 = board.select(parents[3]);
                 el.point4.addChild(el);
-                // el.parents.push(parents[3].id); // Not necessary. done in circumcirclesector.
+                // el.parents.push(parents[3].id);
             }
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
@@ -290,7 +289,7 @@ define([
 
                 // This is true for circumCircleSectors. In that case there is
                 // a fourth parent element: [midpoint, point1, point3, point2]
-                if (this.useDirection) {
+                if (this.useDirection && Type.exists(this.point4)) {
                     p0c = this.point2.coords.usrCoords; 
                     p1c = this.point4.coords.usrCoords; 
                     p2c = this.point3.coords.usrCoords; 
