@@ -565,7 +565,6 @@ define([
             
         }
 
-
         attr = Type.copyAttributes(attributes, board.options, 'angle');
         
         //  If empty, create a new name
@@ -582,32 +581,10 @@ define([
         }
 
         if (type === '2lines') {
-        } else {
+            el = board.create('sector', [parents[0], parents[1], parents[2], parents[3], radius], attr);
 
-            /**
-             * Helper point: radius point
-             */
-            A = parents[0];
-            S = parents[1];
-            r = Type.evaluate(radius),
-            d = S.Dist(A);
-            point2crds = [1, S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
-            
-            /**
-             * Second helper point for square
-             * Helper point: radius point
-             */
-            A = parents[2];
-            S = parents[1];
-            r = Type.evaluate(radius),
-            d = S.Dist(A);
-            point3crds = [1, S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
-            
-            // Sector is just a curve with its own updateDataArray method
-            el = board.create('sector', [parents[1], point2crds, point3crds], attr);
-            
-            el.elType = 'angle';
-            el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        } else {
+            el = board.create('sector', [parents[1], parents[0], parents[2]], attr);
 
             /**
              * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
@@ -736,19 +713,24 @@ define([
                     return [0, 0];
                 }
 
-                var c = el.point2.coords.usrCoords,
+                var A = el.point2.coords.usrCoords,
+                    B = el.point1.coords.usrCoords,
+                    r = el.Radius(),
+                    d = el.point1.Dist(el.point2),
                     a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5,
-                    x = c[1],
-                    y = c[2],
                     co = Math.cos(a2),
                     si = Math.sin(a2),
-                    mat = [
-                        [1, 0, 0],
-                        [x - 0.5 * x * co + 0.5 * y * si, co * 0.5, -si * 0.5],
-                        [y - 0.5 * x * si - 0.5 * y * co, si * 0.5,  co * 0.5]
-                    ];
+                    mat;
+                    
 
-                return Mat.matVecMult(mat, c);
+                A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
+
+                mat = [
+                        [1, 0, 0],
+                        [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                        [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
+                    ];
+                return Mat.matVecMult(mat, A);
             }], attrsub);
 
             el.dot.dump = false;
@@ -801,6 +783,10 @@ define([
             };
             
         } 
+        
+        el.elType = 'angle';
+        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        
         /**
          * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
          * the anglepoint is a free point.
