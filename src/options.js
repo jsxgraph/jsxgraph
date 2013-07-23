@@ -625,16 +625,24 @@ define([
             strokeColor: '#FF7F00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
+            
+            /**
+             * @deprecated
+             */
             radiuspoint: {
                 withLabel: false,
                 visible: false,
                 name: ''
             },
+            /**
+             * @deprecated
+             */
             pointsquare: {
                 withLabel: false,
                 visible: false,
                 name: ''
             },
+
             dot: {
                 visible: false,
                 strokeColor: 'none',

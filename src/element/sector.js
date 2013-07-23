@@ -583,6 +583,12 @@ define([
         if (type === '2lines') {
             el = board.create('sector', [parents[0], parents[1], parents[2], parents[3], radius], attr);
 
+            el.updateDataArraySector = el.updateDataArray;
+
+            // Todo
+            el.setAngle = function (val) {};
+            el.free = function (val) {};
+
         } else {
             el = board.create('sector', [parents[1], parents[0], parents[2]], attr);
 
@@ -605,46 +611,7 @@ define([
             el.Radius = function() {
                 return Type.evaluate(radius);
             };
-/*
-            el.subs = {
-                point: p,
-                pointsquare: q
-            };
-*/
 
-            el.updateDataArraySquare = function () {
-                var A = this.point2,
-                    B = this.point1,
-                    C = this.point3,
-                    r = this.Radius(),
-                    d1 = B.Dist(A),
-                    d2 = B.Dist(C),
-                    v, l1, l2;
-                    
-                A = A.coords.usrCoords;
-                B = B.coords.usrCoords;
-                C = C.coords.usrCoords;
-
-                A = [1, B[1] + (A[1] - B[1]) * r / d1, B[2] + (A[2] - B[2]) * r / d1];
-                C = [1, B[1] + (C[1] - B[1]) * r / d2, B[2] + (C[2] - B[2]) * r / d2];
-
-                v = Mat.crossProduct(C, B);
-                l1 = [-A[1] * v[1] - A[2] * v[2], A[0] * v[1], A[0] * v[2]];
-                v = Mat.crossProduct(A, B);
-                l2 = [-C[1] * v[1] - C[2] * v[2], C[0] * v[1], C[0] * v[2]];
-
-                v = Mat.crossProduct(l1, l2);
-                v[1] /= v[0];
-                v[2] /= v[0];
-            
-                this.dataX = [B[1], A[1], v[1], C[1], B[1]];
-                this.dataY = [B[2], A[2], v[2], C[2], B[2]];
-                
-                this.bezierDegree = 1;
-            };
-
-            // el.updateDataArraySector = el.updateDataArray;
-            
             el.updateDataArraySector = function() {
                 var A = this.point2,
                     B = this.point1,
@@ -667,165 +634,219 @@ define([
                 this.bezierDegree = 3;
             };
 
-            el.updateDataArrayNone = function () {
-                this.dataX = [NaN];
-                this.dataY = [NaN];
-                this.bezierDegree = 1;
-            };
+            /**
+            * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
+            * the anglepoint is a free point.
+            * @name setAngle
+            * @function
+            * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
+            * @returns {Object} Pointer to the angle element..
+            * @memberOf Angle.prototype
+            */
+            el.setAngle = function (val) {
+                var t,
+                    p = this.anglepoint,
+                    q = this.radiuspoint;
 
-            el.updateDataArray = function () {
-                var type = this.visProp.type,
-                    deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
-
-                if (Math.abs(deg - 90) < this.visProp.orthosensitivity) {
-                    type = this.visProp.orthotype;
+                if (p.draggable()) {
+                    t = this.board.create('transform', [val, this.center], {type: 'rotate'});
+                    p.addTransform(q, t);
+                    p.isDraggable = false;
+                    p.parents = [q];
                 }
-
-                if (type === 'none') {
-                    this.updateDataArrayNone();
-                } else if (type === 'square') {
-                    this.updateDataArraySquare();
-                } else if (type === 'sector') {
-                    this.updateDataArraySector();
-                } else if (type === 'sectordot') {
-                    this.updateDataArraySector();
-                    if (!this.dot.visProp.visible) {
-                        this.dot.setAttribute({visible: true});
-                    }
-                }
-
-                if (!this.visProp.visible || (type !== 'sectordot' && this.dot.visProp.visible)) {
-                    this.dot.setAttribute({visible: false});
-                }
+                return this;
             };
 
             /**
-             * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
-             * Though this dot indicates a right angle, it can be visible even if the angle is not a right
-             * one.
-             * @type JXG.Point
-             * @name dot
-             * @memberOf Angle.prototype
-             */
-            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
-            el.dot = board.create('point', [function () {
-                if (Type.exists(el.dot) && !el.dot.visProp.visible) {
-                    return [0, 0];
+            * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by
+            * setAngle() previously. The anglepoint is set to a free point.
+            * @name free
+            * @function
+            * @returns {Object} Pointer to the angle element..
+            * @memberOf Angle.prototype
+            */
+            el.free = function () {
+                var p = this.anglepoint;
+                if (p.transformations.length > 0) {
+                    p.transformations.pop();
+                    p.isDraggable = true;
+                    p.parents = [];
                 }
-
-                var A = el.point2.coords.usrCoords,
-                    B = el.point1.coords.usrCoords,
-                    r = el.Radius(),
-                    d = el.point1.Dist(el.point2),
-                    a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5,
-                    co = Math.cos(a2),
-                    si = Math.sin(a2),
-                    mat;
-                    
-
-                A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
-
-                mat = [
-                        [1, 0, 0],
-                        [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-                        [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
-                    ];
-                return Mat.matVecMult(mat, A);
-            }], attrsub);
-
-            el.dot.dump = false;
-            el.subs.dot = el.dot;
-
-            for (i = 0; i < 3; i++) {
-                board.select(parents[i]).addChild(el.dot);
-            }
-
-            el.type = Const.OBJECT_TYPE_ANGLE;
-
-            // Determine the midpoint of the angle sector line.
-            el.rot = board.create('transform', [
-                function () {
-                    return 0.5 * Geometry.rad(el.point2, el.point1, el.point3);
-                },
-                el.point1
-            ], {type: 'rotate'});
-
-            // documented in GeometryElement
-            el.getLabelAnchor = function () {
-                var vecx, vecy, len, vec,
-                    r = this.Radius(),
-                    dx = 12, dy = 12,
-                    pmc = this.point1.coords.usrCoords;
-
-                if (Type.exists(this.label)) {
-                    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-                }
-
-                if (Type.exists(this.label.visProp.fontSize)) {
-                    dx = this.label.visProp.fontSize;
-                    dy = this.label.visProp.fontSize;
-                }
-                dx /= this.board.unitX;
-                dy /= this.board.unitY;
-
-                this.rot.update();
-                vec = Mat.matVecMult(this.rot.matrix, this.point2.coords.usrCoords);
-                vecx = vec[1] - pmc[1];
-                vecy = vec[2] - pmc[2];
-                len = Math.sqrt(vecx * vecx + vecy * vecy);
-                vecx = vecx * (r + dx) / len;
-                vecy = vecy * (r + dy) / len;
-                return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
-            };
-
-            el.Value = function () {
-                return Geometry.rad(this.point2, this.point1, this.point3);
+                return this;
             };
             
-        } 
+        } // end '3points'
         
         el.elType = 'angle';
+        el.type = Const.OBJECT_TYPE_ANGLE;
         el.parents = [parents[0].id, parents[1].id, parents[2].id];
-        
-        /**
-         * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
-         * the anglepoint is a free point.
-         * @name setAngle
-         * @function
-         * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
-         * @returns {Object} Pointer to the angle element..
-         * @memberOf Angle.prototype
-         */
-        el.setAngle = function (val) {
-            var t,
-                p = this.anglepoint,
-                q = this.radiuspoint;
+        el.subs = {};
 
-            if (p.draggable()) {
-                t = this.board.create('transform', [val, this.center], {type: 'rotate'});
-                p.addTransform(q, t);
-                p.isDraggable = false;
-                p.parents = [q];
+        el.updateDataArraySquare = function () {
+            var A, B, C, 
+                r = this.Radius(),
+                d1, d2,
+                v, l1, l2;
+
+
+            if (type === '2lines') {
+                // This is necessary to update this.point1, this.point2, this.point3.
+                this.updateDataArraySector();
             }
-            return this;
+
+            A = this.point2;
+            B = this.point1;
+            C = this.point3;
+            
+            A = A.coords.usrCoords;
+            B = B.coords.usrCoords;
+            C = C.coords.usrCoords;
+
+            d1 = Geometry.distance(A, B, 3);
+            d2 = Geometry.distance(C, B, 3);
+
+            // In case of type=='2lines' this is redundant, because r == d1 == d2
+            A = [1, B[1] + (A[1] - B[1]) * r / d1, B[2] + (A[2] - B[2]) * r / d1];
+            C = [1, B[1] + (C[1] - B[1]) * r / d2, B[2] + (C[2] - B[2]) * r / d2];
+
+            v = Mat.crossProduct(C, B);
+            l1 = [-A[1] * v[1] - A[2] * v[2], A[0] * v[1], A[0] * v[2]];
+            v = Mat.crossProduct(A, B);
+            l2 = [-C[1] * v[1] - C[2] * v[2], C[0] * v[1], C[0] * v[2]];
+
+            v = Mat.crossProduct(l1, l2);
+            v[1] /= v[0];
+            v[2] /= v[0];
+        
+            this.dataX = [B[1], A[1], v[1], C[1], B[1]];
+            this.dataY = [B[2], A[2], v[2], C[2], B[2]];
+            
+            this.bezierDegree = 1;
+        };
+
+        el.updateDataArrayNone = function () {
+            this.dataX = [NaN];
+            this.dataY = [NaN];
+            this.bezierDegree = 1;
+        };
+
+        el.updateDataArray = function () {
+            var type = this.visProp.type,
+                deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
+
+            if (Math.abs(deg - 90) < this.visProp.orthosensitivity) {
+                type = this.visProp.orthotype;
+            }
+
+            if (type === 'none') {
+                this.updateDataArrayNone();
+            } else if (type === 'square') {
+                this.updateDataArraySquare();
+            } else if (type === 'sector') {
+                this.updateDataArraySector();
+            } else if (type === 'sectordot') {
+                this.updateDataArraySector();
+                if (!this.dot.visProp.visible) {
+                    this.dot.setAttribute({visible: true});
+                }
+            }
+
+            if (!this.visProp.visible || (type !== 'sectordot' && this.dot.visProp.visible)) {
+                this.dot.setAttribute({visible: false});
+            }
         };
 
         /**
-         * Frees an angle from a prescribed value. This is only relevant if the angle size has been set by
-         * setAngle() previously. The anglepoint is set to a free point.
-         * @name free
-         * @function
-         * @returns {Object} Pointer to the angle element..
+         * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
+         * Though this dot indicates a right angle, it can be visible even if the angle is not a right
+         * one.
+         * @type JXG.Point
+         * @name dot
          * @memberOf Angle.prototype
          */
-        el.free = function () {
-            var p = this.anglepoint;
-            if (p.transformations.length > 0) {
-                p.transformations.pop();
-                p.isDraggable = true;
-                p.parents = [];
+        attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
+        el.dot = board.create('point', [function () {
+            var A, B, r, d, a2, co, si, mat;
+                
+            if (Type.exists(el.dot) && !el.dot.visProp.visible) {
+                return [0, 0];
             }
-            return this;
+
+            A = el.point2.coords.usrCoords;
+            B = el.point1.coords.usrCoords;
+            r = el.Radius();
+            d = Geometry.distance(A, B, 3);
+            a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
+            co = Math.cos(a2);
+            si = Math.sin(a2);
+            
+            A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
+
+            mat = [
+                    [1, 0, 0],
+                    [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
+                ];
+            return Mat.matVecMult(mat, A);
+        }], attrsub);
+
+        el.dot.dump = false;
+        el.subs.dot = el.dot;
+
+        if (type === '2lines') {
+            for (i = 0; i < 2; i++) {
+                board.select(parents[i]).addChild(el.dot);
+            }
+        } else {
+            for (i = 0; i < 3; i++) {
+                board.select(parents[i]).addChild(el.dot);
+            }
+        }
+
+        // documented in GeometryElement
+        el.getLabelAnchor = function () {
+            var vec, dx = 12, dy = 12,
+                A, B, r, d, a2, co, si, mat;
+
+            if (Type.exists(this.label)) {
+                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            }
+
+            if (Type.exists(this.label.visProp.fontSize)) {
+                dx = this.label.visProp.fontSize;
+                dy = this.label.visProp.fontSize;
+            }
+            dx /= this.board.unitX;
+            dy /= this.board.unitY;
+                
+            A = el.point2.coords.usrCoords;
+            B = el.point1.coords.usrCoords;
+            r = el.Radius();
+            d = Geometry.distance(A, B, 3);
+            a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
+            co = Math.cos(a2);
+            si = Math.sin(a2);
+            
+            A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
+
+            mat = [
+                    [1, 0, 0],
+                    [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
+                ];
+            vec = Mat.matVecMult(mat, A);
+            vec[1] /= vec[0];
+            vec[2] /= vec[0];
+            vec[0] /= vec[0];
+            
+            d = Geometry.distance(vec, B, 3);
+            vec = [vec[0], B[1] + (vec[1] - B[1]) * (r + dx) / d,  B[2] + (vec[2] - B[2]) * (r + dx) / d];
+            
+            return new Coords(Const.COORDS_BY_USER, vec, this.board);
+        };
+
+        el.Value = function () {
+            return Geometry.rad(this.point2, this.point1, this.point3);
         };
 
         el.methodMap = Type.deepCopy(el.methodMap, {
