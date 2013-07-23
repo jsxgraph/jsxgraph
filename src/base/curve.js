@@ -300,7 +300,7 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.content.visProp.visible) {
+                        if (this.hasLabel && this.label.visProp.visible) {
                             this.board.renderer.show(this.label.content);
                         }
                     }
