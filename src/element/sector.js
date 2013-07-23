@@ -543,10 +543,7 @@ define([
      */
     JXG.createAngle = function (board, parents, attributes) {
         var el, radius, text, attr, attrsub, 
-            point2crds, point3crds,
             i, dot,
-            p, q, 
-            r, d, A, S, 
             type = 'invalid';
 
         // Three points?
