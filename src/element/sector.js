@@ -542,76 +542,72 @@ define([
      * </script><pre>
      */
     JXG.createAngle = function (board, parents, attributes) {
-        var el, p, q, radius, text, attr, attrsub, i, dot;
+        var el, radius, text, attr, attrsub, 
+            point2crds, point3crds,
+            i, dot,
+            p, q, 
+            r, d, A, S, 
+            type = 'invalid';
 
-        // Test if three points are given
-        if ((Type.isPoint(parents[0])) && (Type.isPoint(parents[1])) && (Type.isPoint(parents[2]))) {
+        // Three points?
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+            type = '3points';
+        } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                    (Type.isArray(parents[3]) || Type.isNumber(parents[3]))) {
+            type = '2lines';
+        }
+
+        if (type === 'invalid') {
+            throw new Error("JSXGraph: Can't create angle with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
             
-            attr = Type.copyAttributes(attributes, board.options, 'angle');
+        }
 
-            //  If empty, create a new name
-            text = attr.name;
 
-            if (!Type.exists(text) || text === '') {
-                text = board.generateName({type: Const.OBJECT_TYPE_ANGLE});
-                attr.name = text;
-            }
+        attr = Type.copyAttributes(attributes, board.options, 'angle');
+        
+        //  If empty, create a new name
+        text = attr.name;
+        if (!Type.exists(text) || text === '') {
+            text = board.generateName({type: Const.OBJECT_TYPE_ANGLE});
+            attr.name = text;
+        }
 
-            if (Type.exists(attr.radius)) {
-                radius = attr.radius;
-            } else {
-                radius = 0;
-            }
-            
+        if (Type.exists(attr.radius)) {
+            radius = attr.radius;
+        } else {
+            radius = 0;
+        }
+
+        if (type === '2lines') {
+        } else {
+
             /**
              * Helper point: radius point
-             * We do this by using the closure variable radius.
-             * Later, the constraint function is replaced by nearly the same function, only the radius 
-             * is taken from el.visProp.radius.
              */
-            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'radiuspoint');
-            p = board.create('point', [function() {                
-                    var A = parents[0], S = parents[1],
-                        r = Type.evaluate(radius),
-                        d = S.Dist(A);
-                    
-                    return [S.X() + (A.X() - S.X()) * r / d, 
-                        S.Y() + (A.Y() - S.Y()) * r / d];
-                }], attrsub);
-                    
-            p.dump = false;
-
+            A = parents[0];
+            S = parents[1];
+            r = Type.evaluate(radius),
+            d = S.Dist(A);
+            point2crds = [1, S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+            
             /**
              * Second helper point for square
              * Helper point: radius point
-             * We do this by using the closure variable radius.
-             * Later, the constraint function is replaced by nearly the same function, only the radius 
-             * is taken from el.visProp.radius.
              */
-            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'pointsquare');
-            q = board.create('point', [function() { 
-                    var A = parents[2], S = parents[1],
-                        r = Type.evaluate(radius),
-                        d = S.Dist(A);
-                    
-                    return [S.X() + (A.X() - S.X()) * r / d, 
-                            S.Y() + (A.Y() - S.Y()) * r / d];
-                }], attrsub);
-            q.dump = false;
-
+            A = parents[2];
+            S = parents[1];
+            r = Type.evaluate(radius),
+            d = S.Dist(A);
+            point3crds = [1, S.X() + (A.X() - S.X()) * r / d, S.Y() + (A.Y() - S.Y()) * r / d];
+            
             // Sector is just a curve with its own updateDataArray method
-            el = board.create('sector', [parents[1], p, parents[2]], attr);
+            el = board.create('sector', [parents[1], point2crds, point3crds], attr);
             
             el.elType = 'angle';
             el.parents = [parents[0].id, parents[1].id, parents[2].id];
-
-            /**
-             * The point defining the radius of the angle element.
-             * @type JXG.Point
-             * @name radiuspoint
-             * @memberOf Angle.prototype
-             */
-            el.radiuspoint = p;
 
             /**
              * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
@@ -619,7 +615,7 @@ define([
              * @name point
              * @memberOf Angle.prototype
              */
-            el.point = p;
+            el.point = el.point2 = el.radiuspoint = parents[0];
 
             /**
              * Helper point for angles of type 'square'.
@@ -627,28 +623,71 @@ define([
              * @name pointsquare
              * @memberOf Angle.prototype
              */
-            el.pointsquare = q;
+            el.pointsquare = el.point3 = el.anglepoint = parents[2];
 
+            el.Radius = function() {
+                return Type.evaluate(radius);
+            };
+/*
             el.subs = {
                 point: p,
                 pointsquare: q
             };
+*/
 
             el.updateDataArraySquare = function () {
-                var v, l1, l2, r,
-                    S = parents[1];
+                var A = this.point2,
+                    B = this.point1,
+                    C = this.point3,
+                    r = this.Radius(),
+                    d1 = B.Dist(A),
+                    d2 = B.Dist(C),
+                    v, l1, l2;
+                    
+                A = A.coords.usrCoords;
+                B = B.coords.usrCoords;
+                C = C.coords.usrCoords;
 
-                v = Mat.crossProduct(q.coords.usrCoords, S.coords.usrCoords);
-                l1 = [-p.X() * v[1] - p.Y() * v[2], p.Z() * v[1], p.Z() * v[2]];
-                v = Mat.crossProduct(p.coords.usrCoords, S.coords.usrCoords);
-                l2 = [-q.X() * v[1] - q.Y() * v[2], q.Z() * v[1], q.Z() * v[2]];
-                r = Mat.crossProduct(l1, l2);
-                r[1] /= r[0];
-                r[2] /= r[0];
+                A = [1, B[1] + (A[1] - B[1]) * r / d1, B[2] + (A[2] - B[2]) * r / d1];
+                C = [1, B[1] + (C[1] - B[1]) * r / d2, B[2] + (C[2] - B[2]) * r / d2];
 
-                this.dataX = [S.X(), p.X(), r[1], q.X(), S.X()];
-                this.dataY = [S.Y(), p.Y(), r[2], q.Y(), S.Y()];
+                v = Mat.crossProduct(C, B);
+                l1 = [-A[1] * v[1] - A[2] * v[2], A[0] * v[1], A[0] * v[2]];
+                v = Mat.crossProduct(A, B);
+                l2 = [-C[1] * v[1] - C[2] * v[2], C[0] * v[1], C[0] * v[2]];
+
+                v = Mat.crossProduct(l1, l2);
+                v[1] /= v[0];
+                v[2] /= v[0];
+            
+                this.dataX = [B[1], A[1], v[1], C[1], B[1]];
+                this.dataY = [B[2], A[2], v[2], C[2], B[2]];
+                
                 this.bezierDegree = 1;
+            };
+
+            // el.updateDataArraySector = el.updateDataArray;
+            
+            el.updateDataArraySector = function() {
+                var A = this.point2,
+                    B = this.point1,
+                    C = this.point3,
+                    r = this.Radius(),
+                    d = B.Dist(A),
+                    ar;
+           
+                A = A.coords.usrCoords;
+                B = B.coords.usrCoords;
+                C = C.coords.usrCoords;
+      
+                A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
+                C = [1, B[1] + (C[1] - B[1]) * r / d, B[2] + (C[2] - B[2]) * r / d];
+                
+                ar = Geometry.bezierArc(A, B, C, true, 1);
+            
+                this.dataX = ar[0];
+                this.dataY = ar[1];
+                this.bezierDegree = 3;
             };
 
             el.updateDataArrayNone = function () {
@@ -656,8 +695,6 @@ define([
                 this.dataY = [NaN];
                 this.bezierDegree = 1;
             };
-
-            el.updateDataArraySector = el.updateDataArray;
 
             el.updateDataArray = function () {
                 var type = this.visProp.type,
@@ -685,31 +722,6 @@ define([
                 }
             };
 
-            /*
-             * Supply the helper points with the correct function, which depends
-             * on the visProp.radius property of the sector.
-             * With this trick, setAttribute({radius:...}) works.
-             */
-            p.addConstraint([function () {
-                var A = parents[0], S = parents[1],
-                    r = Type.evaluate(el.visProp.radius),
-                    d = S.Dist(A);
-                    
-                return [S.X() + (A.X() - S.X()) * r / d, 
-                        S.Y() + (A.Y() - S.Y()) * r / d];
-            }]);
-            
-            q.addConstraint([function () {
-                var A = parents[2], S = parents[1],
-                    r = Type.evaluate(el.visProp.radius),
-                    d = S.Dist(A);
-                    
-                return [S.X() + (A.X() - S.X()) * r / d, 
-                        S.Y() + (A.Y() - S.Y()) * r / d];
-            }]);
-
-            dot = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
-            
             /**
              * Indicates a right angle. Invisible by default, use <tt>dot.visible: true</tt> to show.
              * Though this dot indicates a right angle, it can be visible even if the angle is not a right
@@ -718,34 +730,35 @@ define([
              * @name dot
              * @memberOf Angle.prototype
              */
+            attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
             el.dot = board.create('point', [function () {
                 if (Type.exists(el.dot) && !el.dot.visProp.visible) {
                     return [0, 0];
                 }
 
-                var c = p.coords.usrCoords,
-                    a2 = Geometry.rad(parents[0], parents[1], parents[2]) * 0.5,
-                    x = parents[1].X(),
-                    y = parents[1].Y(),
+                var c = el.point2.coords.usrCoords,
+                    a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5,
+                    x = c[1],
+                    y = c[2],
+                    co = Math.cos(a2),
+                    si = Math.sin(a2),
                     mat = [
                         [1, 0, 0],
-                        [x - 0.5 * x * Math.cos(a2) + 0.5 * y * Math.sin(a2), Math.cos(a2) * 0.5, -Math.sin(a2) * 0.5],
-                        [y - 0.5 * x * Math.sin(a2) - 0.5 * y * Math.cos(a2), Math.sin(a2) * 0.5,  Math.cos(a2) * 0.5]
+                        [x - 0.5 * x * co + 0.5 * y * si, co * 0.5, -si * 0.5],
+                        [y - 0.5 * x * si - 0.5 * y * co, si * 0.5,  co * 0.5]
                     ];
 
                 return Mat.matVecMult(mat, c);
-            }], dot);
+            }], attrsub);
 
             el.dot.dump = false;
             el.subs.dot = el.dot;
 
             for (i = 0; i < 3; i++) {
-                board.select(parents[i]).addChild(p);
                 board.select(parents[i]).addChild(el.dot);
             }
 
             el.type = Const.OBJECT_TYPE_ANGLE;
-            board.select(parents[0]).addChild(el);
 
             // Determine the midpoint of the angle sector line.
             el.rot = board.create('transform', [
@@ -758,8 +771,8 @@ define([
             // documented in GeometryElement
             el.getLabelAnchor = function () {
                 var vecx, vecy, len, vec,
-                    dx = 12,
-                    dy = 12,
+                    r = this.Radius(),
+                    dx = 12, dy = 12,
                     pmc = this.point1.coords.usrCoords;
 
                 if (Type.exists(this.label)) {
@@ -778,8 +791,8 @@ define([
                 vecx = vec[1] - pmc[1];
                 vecy = vec[2] - pmc[2];
                 len = Math.sqrt(vecx * vecx + vecy * vecy);
-                vecx = vecx * (len + dx) / len;
-                vecy = vecy * (len + dy) / len;
+                vecx = vecx * (r + dx) / len;
+                vecy = vecy * (r + dy) / len;
                 return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
             };
 
@@ -787,11 +800,7 @@ define([
                 return Geometry.rad(this.point2, this.point1, this.point3);
             };
             
-        } else {
-            throw new Error("JSXGraph: Can't create angle with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
-        }
-
+        } 
         /**
          * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
          * the anglepoint is a free point.
