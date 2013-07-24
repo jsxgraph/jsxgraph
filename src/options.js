@@ -1028,6 +1028,7 @@ define([
              * @visprop
              */
             strokeColor: 'black',
+            strokeOpacity: 1,
             highlightStrokeOpacity: 1,
             highlightStrokeColor: '#C3D9FF',
 
