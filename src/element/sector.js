@@ -62,11 +62,20 @@ define([
      * @constructor
      * @type JXG.Curve
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * 
+     * First possiblity of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 A sector is defined by three points: The sector's center <tt>p1</tt>,
      * a second point <tt>p2</tt> defining the radius and a third point <tt>p3</tt> defining the angle of the sector. The
      * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>
+     * 
+     * Second possibility of input parameters are:
+     * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines. 
+     * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1). 
+     * The last parameter is the radius of the sector. 
+     * 
+     * 
      * @example
-     * // Create an arc out of three free points
+     * // Create a sector out of three free points
      * var p1 = board.create('point', [1.5, 5.0]),
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [5.0, 3.0]),
@@ -81,6 +90,36 @@ define([
      *     p3 = board.create('point', [5.0, 3.0]),
      *
      *     a = board.create('sector', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     * 
+     * @example
+     * // Create a sector out of two lines, two directions and a radius
+     * var p1 = board.create('point', [-1, 4]),
+     *  p2 = board.create('point', [4, 1]),
+     *  q1 = board.create('point', [-2, -3]),
+     *  q2 = board.create('point', [4,3]),
+     *
+     *  li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
+     *  li2 = board.create('line', [q1,q2], {lastArrow:true}),
+     * 
+     *  sec1 = board.create('sector', [li1, li2, [5.5, 0], [4, 3], 3]),
+     *  sec2 = board.create('sector', [li1, li2, 1, -1, 4]);
+     * 
+     * </pre><div id="bb9e2809-9895-4ff1-adfa-c9c71d50aa53" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('bb9e2809-9895-4ff1-adfa-c9c71d50aa53', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [-1, 4]),
+     *     p2 = board.create('point', [4, 1]),
+     *     q1 = board.create('point', [-2, -3]),
+     *     q2 = board.create('point', [4,3]),
+     *
+     *     li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
+     *     li2 = board.create('line', [q1,q2], {lastArrow:true}),
+     * 
+     *     sec1 = board.create('sector', [li1, li2, [5.5, 0], [4, 3], 3]),
+     *     sec2 = board.create('sector', [li1, li2, 1, -1, 4]);
      * })();
      * </script><pre>
      */
@@ -149,6 +188,9 @@ define([
             
             if (Type.isArray(parents[2])) {
                 /* project p1 to l1 */
+                if (parents[2].length === 2) {
+                    parents[2] = [1].concat(parents[2]);
+                }
                 v = [0, el.line1.stdform[1], el.line1.stdform[2]];
                 v = Mat.crossProduct(v, parents[2]);
                 v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
@@ -160,6 +202,9 @@ define([
             
             if (Type.isArray(parents[3])) {
                 /* project p2 to l2 */
+                if (parents[3].length === 2) {
+                    parents[3] = [1].concat(parents[3]);
+                }
                 v = [0, el.line2.stdform[1], el.line2.stdform[2]];
                 v = Mat.crossProduct(v, parents[3]);
                 v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
@@ -520,10 +565,16 @@ define([
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * First possiblity of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
      * <tt>p3</tt> around <tt>p2</tt>.
+     * 
+     * Second possibility of input parameters are:
+     * @param {JXG.Line_JXG.Line_array,number_array,number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines. 
+     * The two legs which define the angle are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1). 
+     * 
      * @example
-     * // Create an arc out of three free points
+     * // Create an angle out of three free points
      * var p1 = board.create('point', [5.0, 3.0]),
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
@@ -538,6 +589,36 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('angle', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     * 
+     * @example
+     * // Create an angle out of two lines and two directions
+     * var p1 = board.create('point', [-1, 4]),
+     *  p2 = board.create('point', [4, 1]),
+     *  q1 = board.create('point', [-2, -3]),
+     *  q2 = board.create('point', [4,3]),
+     *
+     *  li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
+     *  li2 = board.create('line', [q1,q2], {lastArrow:true}),
+     * 
+     *  a1 = board.create('angle', [li1, li2, [5.5, 0], [4, 3]], { radius:1 }),
+     *  a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
+     * 
+     * </pre><div id="3a667ddd-63dc-4594-b5f1-afac969b371f" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('3a667ddd-63dc-4594-b5f1-afac969b371f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [-1, 4]),
+     *     p2 = board.create('point', [4, 1]),
+     *     q1 = board.create('point', [-2, -3]),
+     *     q2 = board.create('point', [4,3]),
+     *
+     *     li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
+     *     li2 = board.create('line', [q1,q2], {lastArrow:true}),
+     * 
+     *     a1 = board.create('angle', [li1, li2, [5.5, 0], [4, 3]], { radius:1 }),
+     *     a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
      * })();
      * </script><pre>
      */
