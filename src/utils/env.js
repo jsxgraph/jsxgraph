@@ -183,7 +183,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         isMozilla: function () {
-            return Type.exists(navigator) && (navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 && navigator.userAgent.toLowerCase().indexOf('apple') === -1);
+            return Type.exists(navigator) && 
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1 && 
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1;
+        },
+
+        /**
+         * Detects if the user is using a firefoxOS powered device.
+         * @returns {Boolean}
+         */
+        isFirefoxOS: function () {
+            return Type.exists(navigator) && 
+                navigator.userAgent.toLowerCase().indexOf('android') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('apple') === -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mobile') > -1 &&
+                navigator.userAgent.toLowerCase().indexOf('mozilla') > -1;
         },
 
         /**
