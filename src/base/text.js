@@ -293,17 +293,25 @@ define([
          * for aligning text.
          */
         updateSize: function () {
-            var tmp;
+            var tmp, that, s;
 
             if (!Env.isBrowser) {
                 return this;
             }
 
             if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
-                this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+                s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+                
+                if (s[0] === 0 && s[1] === 0) {
+                    // Some browsers need some time to set offsetWidth and offsertHeight
+                    that = this;
+                    setTimeout(function(){ that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight]; }, 0);
+                } else {
+                    this.size = s;
+                }
+                
             } else if (this.visProp.display === 'internal' && this.board.renderer.type === 'svg') {
                 try {
-                    // getBBox broken in FF 13? No.
                     tmp = this.rendNode.getBBox();
                     this.size = [tmp.width, tmp.height];
                 } catch (e) {
@@ -461,6 +469,7 @@ define([
                     this.updateSize();
                 }
                 this.updateTransform();
+                                  
             }
 
             return this;
