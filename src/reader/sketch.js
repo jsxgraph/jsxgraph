@@ -807,15 +807,18 @@
                     break;
 
                 case JXG.GENTYPE_SECTOR:
-                    set_str = assign + 'sector(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                    set_str += ') <<';
+                    // set_str = assign + 'sector(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
+                    // set_str += ') <<';
+                    set_str = assign + 'sector(' + step.src_ids.join(', ') + ') ';
+                    set_str += '<< ';
                     set_str += attrid + ' name: \'' + step.dest_id + '\', fillOpacity: ' + JXG.Options.opacityLevel;
                     set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
                 case JXG.GENTYPE_ANGLE:
-                    set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2] + ') ';
+                    // set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2] + ') ';
+                    set_str = assign + 'angle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<< ';
                     set_str += 'dot: << priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ' >>; ';
