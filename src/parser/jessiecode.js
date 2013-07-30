@@ -52,6 +52,15 @@ define([
 
     ;
 
+    var priv = {
+            modules: {
+                'math': Mat,
+                'math/geometry': Geometry,
+                'math/statistics': Statistics,
+                'math/numerics': Mat.Numerics
+            }
+        };
+
     /**
      * A JessieCode object provides an interfacce to the parser and stores all variables and objects used within a JessieCode script.
      * The optional argument <tt>code</tt> is interpreted after initializing. To evaluate more code after initializing a JessieCode instance
@@ -82,13 +91,6 @@ define([
          */
         this.scopes = [];
         this.scopes.push(this.scope);
-
-        /**
-         * A stack used to store the parameter lists for function definitions and calls.
-         * @type Array
-         * @private
-         */
-        this.plist = [];
 
         /**
          * A stack to store debug information (like line and column where it was defined) of a parameter
@@ -1109,13 +1111,8 @@ define([
                         this._error('In a map only function calls and mathematical expressions are allowed.');
                     }
 
-                    // TODO: Move to context object #7
-                    this.plist.push(node.children[0]);
-
                     fun = this.defineFunction(node);
                     fun.isMap = true;
-
-                    this.plist.pop();
 
                     ret = fun;
                     break;
@@ -1123,13 +1120,8 @@ define([
                     // parse the parameter list
                     // after this, the parameters are in pstack
 
-                    // TODO: Move to context object #7
-                    this.plist.push(node.children[0]);
-
                     fun = this.defineFunction(node);
                     fun.isMap = false;
-
-                    this.plist.pop();
 
                     ret = fun;
                     break;
@@ -1722,6 +1714,14 @@ define([
         },
 
         /**
+         * Import modules into a JessieCode script.
+         * @param {String} module
+         */
+        importModule: function (module) {
+            return priv.modules[module.toLowerCase()];
+        },
+
+        /**
          * Defines built in methods and constants.
          * @returns {Object} BuiltIn control object
          */
@@ -1740,6 +1740,7 @@ define([
                     factorial: Mat.factorial,
                     trunc: Type.trunc,
                     IfThen: that.ifthen,
+                    'import': that.importModule,
                     '$': that.getElementById,
                     '$board': that.board,
                     '$log': that.log
@@ -1763,6 +1764,7 @@ define([
             builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.trunc.src = 'JXG.trunc';
+            builtIn['import'].src = '$jc$.importModule]';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
