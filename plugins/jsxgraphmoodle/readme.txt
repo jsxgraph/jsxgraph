@@ -12,7 +12,7 @@ Usage:
 1. In a Moodle course: -> Add a resource -> Compose a website
 2. Write content. At the position the construction should appear, create a construction by:
 	* switching to the code input
-	* inserting a <jsxgraph>-tag wit hall required parameters
+	* inserting a <jsxgraph>-tag with all required parameters
 
 Be aware of the fact, that you dont't see the construction unless you leave the editor and save your document.
 On reopening it later, you will notice the code rather than the jsxgraph-tag.

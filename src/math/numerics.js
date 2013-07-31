@@ -1276,7 +1276,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Compute coordinates for the rectangles showing the Riemann sum.
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
@@ -1306,7 +1306,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         y = f(x + delta);
                     } else if (type === 'middle') {
                         y = f(x + delta * 0.5);
-                    } else if (type === 'left' || type === 'trapezodial') {
+                    } else if (type === 'left' || type === 'trapezoidal') {
                         y = f(x);
                     } else if (type === 'lower') {
                         y = f(x);
@@ -1342,7 +1342,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     j += 1;
                     x += delta;
 
-                    if (type === 'trapezodial') {
+                    if (type === 'trapezoidal') {
                         y = f(x);
                     }
 
@@ -1363,7 +1363,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @deprecated Replaced by JXG.Curve.Value(), see {@link JXG.Curve#riemannsum}
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
-         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezodial'.
+         * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezoidal'.
          * 
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
@@ -1388,7 +1388,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         y = f(x + delta);
                     } else if (type === 'middle') {
                         y = f(x + delta * 0.5);
-                    } else if (type === 'trapezodial') {
+                    } else if (type === 'trapezoidal') {
                         y = 0.5 * (f(x + delta) + f(x));
                     } else if (type === 'left') {
                         y = f(x);
