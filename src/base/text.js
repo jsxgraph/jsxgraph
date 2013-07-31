@@ -194,17 +194,6 @@ define([
         },
 
         /**
-         * Set this.size[] from this.rendNode.offsetWidth/Height.
-         * This is used for HTML texts in updateSize().
-         * Since sme browser do not provide these values immediately, it is
-         * called with setTimeout.
-         * @private
-         */
-        _readNodeSize: function() {
-            this.size = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-        },
-            
-        /**
          * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
          * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
          * @param {String|Function|Number} text
@@ -304,7 +293,7 @@ define([
          * for aligning text.
          */
         updateSize: function () {
-            var tmp, s;
+            var tmp, s, that;
 
             if (!Env.isBrowser) {
                 return this;
@@ -312,10 +301,10 @@ define([
 
             if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
                 s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-                
                 if (s[0] === 0 && s[1] === 0) {
                     // Some browsers need some time to set offsetWidth and offsetHeight
-                    setTimeout(this._readNodeSize, 0);
+                    that = this;
+                    setTimeout(function() { that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight]; }, 0);
                 } else {
                     this.size = s;
                 }
@@ -501,6 +490,9 @@ define([
             if (this.needsUpdate) {
                 this.board.renderer.updateText(this);
                 this.needsUpdate = false;
+if (this.id==='X'){            
+console.log(this.size);
+}         
             }
             return this;
         },
