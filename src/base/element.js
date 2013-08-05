@@ -792,6 +792,11 @@ define([
                         }
                         this.hasLabel = value;
                         break;
+                    case 'radius':
+                        if (this.type === Const.OBJECT_TYPE_ANGLE || this.type === Const.OBJECT_TYPE_SECTOR) {
+                            this.setRadius(value);
+                        }
+                        break;
                     case 'rotate':
                         if ((this.type === Const.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE) {

@@ -5,8 +5,10 @@ The current version has to be regarded as a pre alpha development version. Use w
 
 Installation: (by Moodle Admin)
 1. Upload the complete folder "jsxgraph" into the folder  moodle-->filter
-2. In Moodle, navigate to Moodle->Administration->Configuration->"Filter" and click on the entry
-   "jsxgraph" to activate the filter
+2. In Moodle, navigate to 
+    * Moodle->Administration->Configuration->"Filter" for moodle < 2.0 and click on the entry "jsxgraph" to activate the filter
+    * Moodle->Administration->Plugins->"Filter" for moodle >= 2.0 and change "Disabled" to "On" to activate the filter
+   
 
 Usage:
 1. In a Moodle course: -> Add a resource -> Compose a website

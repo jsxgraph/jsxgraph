@@ -467,6 +467,15 @@ define([
 
             return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
         };
+        
+        /**
+         * Overwrite the Radius method of the sector.
+         * Used in {@link GeometryElement#setAttribute}.
+         * @param {Number, Function} radius New radius.
+         */
+        el.setRadius = function (value) {
+            el.Radius = function() { return Type.evaluate(value); };
+        };
             
         /**
          * deprecated
