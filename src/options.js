@@ -1761,6 +1761,7 @@ define([
              * @type String
              */
             highlightCssClass: 'JXGtext',
+            dragArea: 'all',                  // 'all', or something else (may be extended to left, right, ...)
             withLabel: false,
             rotate: 0,                        // works for non-zero values only in combination with display=='internal'
             visible: true

@@ -188,9 +188,13 @@ define([
             }
             top = bot - this.size[1];
 
-            return (y >= top - r && y <= bot + r) &&
+            if (this.visProp.dragarea === 'all') {
+                return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r; 
+            } else {
+                return (y >= top - r && y <= bot + r) &&
                     ((x >= lft - r  && x <= lft + 2 * r) ||
                     (x >= rt - 2 * r && x <= rt + r));
+            }
         },
 
         /**
