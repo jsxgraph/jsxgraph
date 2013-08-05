@@ -74,7 +74,6 @@ release: core-min docs
 
 	$(RM) $(RMFLAGS) tmp
 
-
 docs: core core-min
 	# set up tmp dir
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
@@ -97,22 +96,35 @@ docs: core core-min
 
 	$(RM) $(RMFLAGS) tmp
 
+moodle: core core-min $(READERSOUT) 
+	$(MKDIR) $(MKDIRFLAGS) $(TMP)
+	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js	
+	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
+	$(CP) plugins/moodle/moodle2/*.php $(TMP)/jsxgraph/
+	$(CP) plugins/moodle/moodle2/styles.css $(TMP)/jsxgraph/
+	$(CP) plugins/moodle/moodle2/readme.txt $(TMP)/jsxgraph/
+	$(CP) -r plugins/moodle/moodle2/lang $(TMP)/jsxgraph/
+	$(CP) $(BUILDREADERS)/* $(TMP)/jsxgraph/
+
+	# zip -r tmp/jsxgraph.zip tmp/jsxgraph
+	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) jsxgraph_moodle.zip jsxgraph/
+	$(CP) $(TMP)/jsxgraph_moodle.zip $(OUTPUT)/jsxgraph_moodle.zip
+
+	$(RM) $(RMFLAGS) tmp
 
 readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDREADERS)/* $(OUTPUT)
 
-
 build/bin/readers/%.min.js: src/reader/%.js
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
 	{ $(CAT) COPYRIGHT; $(UGLIFYJS) $^; } > $@
-
 
 compressor: core
 	$(REQUIREJS) -o build/compressor.build.json
 	$(CP) build/bin/jsxcompressor.js JSXCompressor/jsxcompressor.js
 	$(CP) build/bin/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
-
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
