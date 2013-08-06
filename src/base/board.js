@@ -1446,7 +1446,13 @@ define([
             //    b. if an object is found, check the number of pointers. if appropriate, add the pointer.
 
             pos = this.getMousePosition(evt);
-            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+
+            if (object) {
+                elements = [ object ];
+                this.mode = this.BOARD_MODE_DRAG;
+            } else {
+                elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
+            }
 
             // if no draggable object can be found, get out here immediately
             if (elements.length > 0) {
@@ -1778,8 +1784,10 @@ define([
 
                             // For the UNDO/REDO of object moves
                             this.saveStartPos(obj, targets[0]);
+
                             this.touches.push({ obj: obj, targets: targets });
                             obj.highlight(true);
+
                         } else if (obj.elementClass === Const.OBJECT_CLASS_LINE ||
                                 obj.elementClass === Const.OBJECT_CLASS_CIRCLE ||
                                 obj.type === Const.OBJECT_TYPE_POLYGON) {
