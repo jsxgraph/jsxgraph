@@ -41,15 +41,15 @@ function createCurve(number)  {
         x.push(c[i].usrCoords[1]);
         y.push(c[i].usrCoords[2]);
     }
-    var graph = brd.createElement('curve', [x,y], 
+    var graph = brd.createElement('curve', [x,y],
                     {fillColor:JXG.hsv2rgb(col++,0.6,0.9),
                      highlightFillColor:'yellow',
                      strokeWidth:1,
                      strokeColor:'black',
                      highlightStrokeColor:'black'});
 
-    JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.highlight();}, graph);
-    JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.noHighlight();}, graph);
+    JXG.addEvent(graph.rendNode, 'mouseover', function(){graph.nohcol = graph.visProp.fillcolor; graph.setAttribute({fillColor: 'yellow'});}, graph);
+    JXG.addEvent(graph.rendNode, 'mouseout', function(){graph.setAttribute({fillColor: graph.nohcol});}, graph);
     graph.hasPoint = function(){return false; };
 }
 
