@@ -7,7 +7,9 @@ Important Notes
  * Speed improvements for SVG updates. This is realized by removing the whole SVG tree from the DOM, updating it
    and then re-adding it to the DOM. Please note that during some event handlers (e.g. update) the DOM elements that
    belong to the board that is updated CAN NOT BE FOUND by document.getElementById(). References to these elements need
-   to be stored before the event handler is called.
+   to be stored before the event handler is called. Also problematic are click handlers on elements on the board, in some
+   browsers these might be ignored. To establish backwards compatibility, a new board attribute called 'minimizeReflow'
+   is introduced and has to be set to 'false'.
  * New Moodle plugin for Moodle 2
 
 New Features
@@ -36,7 +38,7 @@ Bug fixes
  * Fix touch and ms-pointer events (16f07d8)
  * Speed up axis updates (997eba4)
  * Attracting a glider to a point fixed (801b964)
- * Fix missing curve update when a curve's isReal flag switches (a8e1683)
+ * Fix missing curve update when a curve's isReal flag switches (a8e1683, 35dc2a7)
  * Fix Canvas and SVG root node size definitions (03a47fe)
  * Hide the right angle indicator dot when the angle is hidden (e3f3bf3)
  * Improve epub handling in Sigil (69b04c1)
@@ -54,6 +56,10 @@ Bug fixes
  * Fix ticks scale attribute (4afb67c)
  * Reduce closures (6e06d65, fbd40ba, 6a8be48, 7c56513, e11c2a6, 7165e4a, #44)
  * Fix the radius attribute of the angle and sector elements (6d11868)
+ * Fix point attraction handling (0582747)
+ * Fix Text.hasPoint() (608e697)
+ * Text position in WebKit browsers was broken (89a6d6a)
+ * Work around a dashed path bug in webkit (9c5ab12)
 
 
 
