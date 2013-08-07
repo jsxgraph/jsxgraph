@@ -597,7 +597,7 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         updateText: function (el) {
-            var content = el.plaintext, v;
+            var content = el.plaintext, v, c;
 
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
@@ -605,15 +605,18 @@ define([
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                        c = el.coords.scrCoords[1];
+                        // webkit seems to fail for extremely large values for c.
+                        c = Math.abs(c) < 1000000 ? c : 1000000;
                         if (el.visProp.anchorx === 'right') {
-                            v = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]);
+                            v = Math.floor(el.board.canvasWidth - c);
                             if (el.visPropOld.right !== v) {
                                 el.rendNode.style.right = v + 'px';
                                 el.rendNode.style.left = 'auto';
                                 el.visPropOld.right = v;
                             }
                         } else if (el.visProp.anchorx === 'middle') {
-                            v = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]);
+                            v = Math.floor(c - 0.5 * el.size[0]);
                             if (el.visPropOld.left !== v) {
                                 el.rendNode.style.left = v + 'px';
                                 el.rendNode.style.right = 'auto';
@@ -621,7 +624,7 @@ define([
                             }
                         // 'left'
                         } else {
-                            v = Math.floor(el.coords.scrCoords[1]);
+                            v = Math.floor(c);
                             if (el.visPropOld.left !== v) {
                                 el.rendNode.style.left = v + 'px';
                                 el.rendNode.style.right = 'auto';
@@ -629,12 +632,14 @@ define([
                             }
                         }
 
+                        c = el.coords.scrCoords[2];
+                        c = Math.abs(c) < 1000000 ? c : 1000000;
                         if (el.visProp.anchory === 'top') {
-                            v = Math.floor(el.coords.scrCoords[2] + this.vOffsetText);
+                            v = Math.floor(c + this.vOffsetText);
                         } else if (el.visProp.anchory === 'middle') {
-                            v = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText);
+                            v = Math.floor(c - 0.5 * el.size[1] + this.vOffsetText);
                         } else {
-                            v = Math.floor(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText);
+                            v = Math.floor(c - el.size[1] + this.vOffsetText);
                         }
                         if (el.visPropOld.top !== v) {
                             el.rendNode.style.top = v + 'px';
