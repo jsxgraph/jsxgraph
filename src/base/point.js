@@ -952,7 +952,7 @@ define([
                 // one may have to go to the list of ancestor and descendants.  A.W.
                 delete this.slideObject.childElements[this.id];
 
-                if (this.slideObjects === 0) {
+                if (this.slideObjects.length === 0) {
                     this.elType = 'point';
                     this.type = Const.OBJECT_TYPE_POINT;
                     this.slideObject = null;

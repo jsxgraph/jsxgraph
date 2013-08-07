@@ -40,7 +40,7 @@ FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | 
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
 # rules
-all: core core-min readers docs
+all: core core-min readers docs moodle
 
 
 core:
