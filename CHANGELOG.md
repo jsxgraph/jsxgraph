@@ -4,14 +4,29 @@
 Important Notes
 ---------------
  * The text element representing an element el's label was moved from el.label.content to el.label
+ * Speed improvements for SVG updates. This is realized by removing the whole SVG tree from the DOM, updating it
+   and then re-adding it to the DOM. Please note that during some event handlers (e.g. update) the DOM elements that
+   belong to the board that is updated CAN NOT BE FOUND by document.getElementById(). References to these elements need
+   to be stored before the event handler is called.
+ * New Moodle plugin for Moodle 2
 
 New Features
 ------------
  * Allow the user to forbid the emitting of events in JXG.Coords (49fa92d)
  * New attribute "attractorUnit" for points (0a21d6e)
- * Moved the label of an element el from el.label.content to el.label (d60dbd7, 4aecb4a, 087f2d2, 7e9d672, #34)
+ * Moved the label of an element el from el.label.content to el.label (d60dbd7, 4aecb4a, 087f2d2, 7e9d672, e443a7a, 2467aa2, #34)
  * Extend board.select() (14d8188, 8a3184b, bd18995, bec25a4, e8460a1)
  * The grid element can be restrained to a fixed area (30bc74f)
+ * New option "axis" for integral; value can be 'x' or 'y' with a default of 'x' (40c5585, 9d87782, 42e00cd)
+ * Slider max and min values can now be changed by setting its properties _max and _min (cb51daa)
+ * New element "slopetriangle" (b6a8107)
+ * Change element selection based on what was dragged last (a994fec, c9141c5)
+ * Sectors (incl. angles etc) can now be defined by two lines instead of three points (5d50e28, 0ba4ba1, 3714dff, 4c56a3a)
+ * Unify Sectors and Arcs (608c4e4, 03fac4c, 36eaaa2, f2256cf)
+ * New type for the riemannsum element (674cb34, bd0d0d0)
+ * Allow the user to set the maximum length of a tick label and the max precision (f4b9076)
+ * New Moodle2 plugin (6d11868, 0ba96fe, a54d8d2)
+ * Texts may now be dragged by clicking anywhere in the text (a624b6d)
 
 Bug fixes
 ---------
@@ -24,6 +39,21 @@ Bug fixes
  * Fix missing curve update when a curve's isReal flag switches (a8e1683)
  * Fix Canvas and SVG root node size definitions (03a47fe)
  * Hide the right angle indicator dot when the angle is hidden (e3f3bf3)
+ * Improve epub handling in Sigil (69b04c1)
+ * The integral label now considers the offset attribute (396ca30)
+ * Fix utils/type.sanitizeHTML() (0001071)
+ * Fix polygons (231dd4a)
+ * Fix point constraints handling (d5da0d0)
+ * Element highlighting in IE fixed (c8fe0be)
+ * Improved ms pointer api event handlers (1bc85b0)
+ * Fixed jumping html texts (01716b3, 857f2e2, fb9a1b7)
+ * Extend math/geometry.perpendicular to handle points that are far away (5e6c3d0)
+ * Improving automatic tick handling (8ca2380)
+ * Bugfix traced circles (f1532b1)
+ * Fix Board.getCoordsTopLeftCorner() (47ecb27)
+ * Fix ticks scale attribute (4afb67c)
+ * Reduce closures (6e06d65, fbd40ba, 6a8be48, 7c56513, e11c2a6, 7165e4a, #44)
+ * Fix the radius attribute of the angle and sector elements (6d11868)
 
 
 
