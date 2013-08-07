@@ -293,8 +293,11 @@ define([
 
                 this.checkReal();
 
-                if (this.isReal) {
+                if (this.isReal || wasReal) {
                     this.board.renderer.updateCurve(this);
+                }
+
+                if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
                         if (this.hasLabel && this.label.visProp.visible) {
