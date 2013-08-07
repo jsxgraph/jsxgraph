@@ -75,6 +75,7 @@ define([
             renderer: 'svg',
             animationDelay: 35,
             registerEvents: true,
+            minimizeReflow: true,
             zoom: {
                 factorX: 1.25,
                 factorY: 1.25,
@@ -625,7 +626,7 @@ define([
             strokeColor: '#FF7F00',
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
-            
+
             /**
              * @deprecated
              */
