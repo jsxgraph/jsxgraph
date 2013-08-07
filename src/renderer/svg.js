@@ -511,6 +511,14 @@ define([
 
         // already documented in JXG.AbstractRenderer
         updateEllipsePrim: function (node, x, y, rx, ry) {
+            var huge = 1000000;
+
+            // webkit does not like huge values if the object is dashed
+            x = Math.abs(x) < huge ? x : huge * x / Math.abs(x);
+            y = Math.abs(y) < huge ? y : huge * y / Math.abs(y);
+            rx = Math.abs(rx) < huge ? rx : huge * rx / Math.abs(rx);
+            ry = Math.abs(ry) < huge ? ry : huge * ry / Math.abs(ry);
+            
             node.setAttributeNS(null, 'cx', x);
             node.setAttributeNS(null, 'cy', y);
             node.setAttributeNS(null, 'rx', Math.abs(rx));
@@ -519,7 +527,15 @@ define([
 
         // already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
+            var huge = 1000000;
+            
             if (!isNaN(p1x + p1y + p2x + p2y)) {
+                // webkit does not like huge values if the object is dashed
+                p1x = Math.abs(p1x) < huge ? p1x : huge * p1x / Math.abs(p1x);
+                p1y = Math.abs(p1y) < huge ? p1y : huge * p1y / Math.abs(p1y);
+                p2x = Math.abs(p2x) < huge ? p2x : huge * p2x / Math.abs(p2x);
+                p2y = Math.abs(p2y) < huge ? p2y : huge * p2y / Math.abs(p2y);
+
                 node.setAttributeNS(null, 'x1', p1x);
                 node.setAttributeNS(null, 'y1', p1y);
                 node.setAttributeNS(null, 'x2', p2x);
