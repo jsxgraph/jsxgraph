@@ -63,7 +63,7 @@
         solution = board.create('plot', [fSolution, function () { return cannonball.X(); }, 20], {visible: true, doAdvancedPlot: false});
 
 
-        $('#shoot').click(function () {
+        $('#shoot').on('mouseup', function () {
             cannonball.setProperty({
                 visible: false
             });
@@ -79,7 +79,7 @@
             });
         });
 
-        $('#reset').click(function () {
+        $('#reset').on('mouseup', function () {
             board.stopAllAnimation();
             //rp.moveTo([0, 1.4]);
             //cannonball.moveTo([3, 1.4]);

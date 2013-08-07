@@ -886,7 +886,7 @@ define([
             this.updateInfobox(drag);
             this.update();
             drag.highlight(true);
-            
+
             drag.lastDragTime = new Date();
         },
 
@@ -1570,7 +1570,7 @@ define([
                                 // Touch by two fingers: moving lines
                                 } else if (this.touches[i].targets.length === 2 &&
                                         this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-                                            
+
                                     this.touches[i].targets[j].X = evt.pageX;
                                     this.touches[i].targets[j].Y = evt.pageY;
 
@@ -3106,7 +3106,7 @@ define([
         updateRenderer: function () {
             var el, pEl,
                 len = this.objectsList.length;
-                
+
             /*
             objs = this.objectsList.slice(0);
             objs.sort(function(a, b) {
@@ -3119,7 +3119,7 @@ define([
                 }
             });
             */
-            
+
             if (this.renderer.type === 'canvas') {
                 this.updateRendererCanvas();
             } else {
@@ -3269,7 +3269,7 @@ define([
             }
             this.inUpdate = true;
 
-            if (this.containerObj && this.renderer.type !== 'vml') {
+            if (this.attr.minimizereflow && this.containerObj && this.renderer.type !== 'vml') {
                 insert = this.renderer.removeToInsertLater(this.containerObj);
             }
 
@@ -3759,7 +3759,7 @@ define([
             if (s === null) {
                 return s;
             }
-            
+
             // it's a string, most likely an id or a name.
             if (typeof s === 'string' && s !== '') {
                 // Search by ID
