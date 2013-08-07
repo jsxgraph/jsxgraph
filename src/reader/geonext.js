@@ -849,7 +849,8 @@
                 }
                 gxtEl.border = [];
                 gxtEl.borders = {
-                    ids: []
+                    ids: [],
+                    names: []
                 };
                 for (i = 0; i < Data.getElementsByTagName('border').length; i++) {
                     gxtEl.border[i] = {};
@@ -857,6 +858,8 @@
                     gxtEl.border[i].id = xmlNode.getElementsByTagName('id')[0].firstChild.data;
                     gxtEl.borders.ids.push(gxtEl.border[i].id);
                     gxtEl.border[i].name = xmlNode.getElementsByTagName('name')[0].firstChild.data;
+                    gxtEl.borders.names.push(gxtEl.border[i].name);
+                    
                     gxtEl.border[i].straightFirst = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('first')[0].firstChild.data);
                     gxtEl.border[i].straightLast = JXG.str2Bool(xmlNode.getElementsByTagName('straight')[0].getElementsByTagName('last')[0].firstChild.data);
                     try {

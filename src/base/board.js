@@ -2547,40 +2547,41 @@ define([
                 // Debug
                 if (!Type.exists(this.elementsByName[name])) {
                     JXG.debug("debug conditions: |" + name + "| undefined");
-                }
-                plaintext += "el = this.objects[\"" + el.id + "\"];\n";
+                } else {
+                    plaintext += "el = this.objects[\"" + el.id + "\"];\n";
 
-                switch (property) {
-                case 'x':
-                    functions.push(xyFun(this, el, right, 2));
-                    break;
-                case 'y':
-                    functions.push(xyFun(this, el, right, 1));
-                    break;
-                case 'visible':
-                    functions.push(visFun(this, el, right));
-                    break;
-                case 'position':
-                    functions.push(posFun(this, el, right));
-                    break;
-                case 'stroke':
-                    functions.push(colFun(this, el, right, 'stroke'));
-                    break;
-                case 'style':
-                    functions.push(styleFun(this, el, right));
-                    break;
-                case 'strokewidth':
-                    functions.push(colFun(this, el, right, 'strokewidth'));
-                    break;
-                case 'fill':
-                    functions.push(colFun(this, el, right, 'fill'));
-                    break;
-                case 'label':
-                    break;
-                default:
-                    JXG.debug("property '" + property + "' in conditions not yet implemented:" + right);
-                    break;
-                }
+                    switch (property) {
+                    case 'x':
+                        functions.push(xyFun(this, el, right, 2));
+                        break;
+                    case 'y':
+                        functions.push(xyFun(this, el, right, 1));
+                        break;
+                    case 'visible':
+                        functions.push(visFun(this, el, right));
+                        break;
+                    case 'position':
+                        functions.push(posFun(this, el, right));
+                        break;
+                    case 'stroke':
+                        functions.push(colFun(this, el, right, 'stroke'));
+                        break;
+                    case 'style':
+                        functions.push(styleFun(this, el, right));
+                        break;
+                    case 'strokewidth':
+                        functions.push(colFun(this, el, right, 'strokewidth'));
+                        break;
+                    case 'fill':
+                        functions.push(colFun(this, el, right, 'fill'));
+                        break;
+                    case 'label':
+                        break;
+                    default:
+                        JXG.debug("property '" + property + "' in conditions not yet implemented:" + right);
+                        break;
+                    }
+                    }
                 str = str.slice(j + 7); // cut off "</data>"
                 i = str.indexOf('<data>');
                 j = str.indexOf('<' + '/data>');
