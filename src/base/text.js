@@ -181,13 +181,13 @@ define([
 
             if (this.visProp.anchory === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (this.visProp.anchorx === 'middle') {
+            } else if (this.visProp.anchory === 'middle') {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
-
+           
             if (this.visProp.dragarea === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r; 
             } else {
