@@ -361,6 +361,7 @@ define([
                 highlightFun = function () {
                     if (!this.highlighted) {
                         this.highlighted = true;
+                        this.board.highlightedObjects[this.id] = this;
                         this.board.renderer.highlight(this);
 
                         highlightHandleLabel.call(this, 1.1, 2);
