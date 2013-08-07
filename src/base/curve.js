@@ -291,13 +291,10 @@ define([
             if (this.needsUpdate && this.visProp.visible) {
                 wasReal = this.isReal;
 
-                if (this.isReal) {
-                    this.board.renderer.updateCurve(this);
-                }
-
                 this.checkReal();
 
                 if (this.isReal) {
+                    this.board.renderer.updateCurve(this);
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
                         if (this.hasLabel && this.label.visProp.visible) {
@@ -808,7 +805,7 @@ define([
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
             var fx, fy;
-
+            
             // Generate the methods X() and Y()
             if (Type.isArray(xterm)) {
                 // Discrete data
