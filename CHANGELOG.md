@@ -38,7 +38,7 @@ Bug fixes
  * Fix touch and ms-pointer events (16f07d8)
  * Speed up axis updates (997eba4)
  * Attracting a glider to a point fixed (801b964)
- * Fix missing curve update when a curve's isReal flag switches (a8e1683, 35dc2a7)
+ * Fix missing curve update when a curve's isReal flag switches (a8e1683, 35dc2a7, 8589b8b)
  * Fix Canvas and SVG root node size definitions (03a47fe)
  * Hide the right angle indicator dot when the angle is hidden (e3f3bf3)
  * Improve epub handling in Sigil (69b04c1)
@@ -60,6 +60,7 @@ Bug fixes
  * Fix Text.hasPoint() (608e697)
  * Text position in WebKit browsers was broken (89a6d6a)
  * Work around a dashed path bug in webkit (9c5ab12)
+ * Pie chart highlight fixed (ab75d6e)
 
 
 
