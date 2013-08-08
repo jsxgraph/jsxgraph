@@ -121,14 +121,6 @@ define([
         this.propscope = 0;
 
         /**
-         * Whenever an element attribute is set via <tt>element.attribute = 'something';</tt>, the element is stored
-         * in here, so following attribute changes can be set without the element: <tt>.attribute = 'something else';</tt>.
-         * @type JXG.GeometryElement
-         * @private
-         */
-        this.propobj = 0;
-
-        /**
          * Store the left hand side of an assignment. If an element is constructed and no attributes are given, this is
          * used as the element's name.
          * @type Array
@@ -354,6 +346,25 @@ define([
         },
 
         /**
+         * Checks if the given variable name is a parameter in any scope from the current to the global scope.
+         * @param {String} vname
+         * @returns {Object} A reference to the scope object that contains the variable in its arg list.
+         */
+        isParameter: function (vname) {
+            var s = this.scope;
+
+            while (s !== null) {
+                if (Type.indexOf(s.args, vname) > -1) {
+                    return s;
+                }
+
+                s = s.previous;
+            }
+
+            return null;
+        },
+
+        /**
          * Checks if the given variable name is a valid creator method.
          * @param {String} vname
          * @returns {Boolean}
@@ -452,7 +463,8 @@ define([
             local = Type.def(local, false);
             withProps = Type.def(withProps, false);
 
-            if (Type.indexOf(this.scope.args, vname) > -1) {
+            s = this.isParameter(vname);
+            if (s !== null) {
                 return vname;
             }
 
@@ -624,7 +636,7 @@ define([
         },
 
         /**
-         * Sets the property <tt>what</tt> of {@link JXG.JessieCode#propobj} to <tt>value</tt>
+         * Sets the property <tt>what</tt> of <tt>o</tt> to <tt>value</tt>
          * @param {JXG.Point|JXG.Text} o
          * @param {String} what
          * @param value
@@ -1764,7 +1776,7 @@ define([
             builtIn.deg.src = 'JXG.Math.Geometry.trueAngle';
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.trunc.src = 'JXG.trunc';
-            builtIn['import'].src = '$jc$.importModule]';
+            builtIn['import'].src = '$jc$.importModule';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
