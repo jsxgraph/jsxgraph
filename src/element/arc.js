@@ -157,9 +157,7 @@ define([
 
         // documented in JXG.Curve
         el.updateDataArray = function () {
-            var ar,
-                phi, 
-                v, det, p0c, p1c, p2c,
+            var ar, phi, v, det, p0c, p1c, p2c,
                 sgn = 1,
                 A = this.radiuspoint,
                 B = this.center,
@@ -167,7 +165,7 @@ define([
 
             phi = Geometry.rad(A, B, C);
             if ((this.visProp.type === 'minor' && phi > Math.PI) ||
-                (this.visProp.type === 'major' && phi < Math.PI)) {
+                    (this.visProp.type === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -193,10 +191,10 @@ define([
             C = C.coords.usrCoords;
 
             ar = Geometry.bezierArc(A, B, C, false, sgn);
-            
+
             this.dataX = ar[0];
             this.dataY = ar[1];
-            
+
             this.bezierDegree = 3;
 
             this.updateStdform();

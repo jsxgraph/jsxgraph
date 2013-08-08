@@ -126,8 +126,6 @@ define([
             el.baseline = baseline;
             el.toppoint = toppoint;
 
-            window.toppoint = toppoint;
-
             el.methodMap = JXG.deepCopy(el.methodMap, {
                 tangent: 'tangent',
                 glider: 'glider',

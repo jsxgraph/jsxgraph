@@ -187,14 +187,14 @@ define([
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
-           
+
             if (this.visProp.dragarea === 'all') {
-                return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r; 
-            } else {
-                return (y >= top - r && y <= bot + r) &&
-                    ((x >= lft - r  && x <= lft + 2 * r) ||
-                    (x >= rt - 2 * r && x <= rt + r));
+                return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
             }
+
+            return (y >= top - r && y <= bot + r) &&
+                ((x >= lft - r  && x <= lft + 2 * r) ||
+                (x >= rt - 2 * r && x <= rt + r));
         },
 
         /**
@@ -243,10 +243,10 @@ define([
             this.updateText();
 
             this.prepareUpdate().update().updateRenderer();
-            
+
             // call updateSize() at least once.
             if (this.needsSizeUpdate) {
-                this.updateSize();                              
+                this.updateSize();
             }
 
             return this;
@@ -308,11 +308,13 @@ define([
                 if (s[0] === 0 && s[1] === 0) {
                     // Some browsers need some time to set offsetWidth and offsetHeight
                     that = this;
-                    setTimeout(function() { that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight]; }, 0);
+                    setTimeout(function () {
+                        that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
+                    }, 0);
                 } else {
                     this.size = s;
                 }
-                
+
             } else if (this.visProp.display === 'internal' && this.board.renderer.type === 'svg') {
                 try {
                     tmp = this.rendNode.getBBox();
@@ -472,7 +474,7 @@ define([
                     this.updateSize();
                 }
                 this.updateTransform();
-                                  
+
             }
 
             return this;
@@ -494,9 +496,6 @@ define([
             if (this.needsUpdate) {
                 this.board.renderer.updateText(this);
                 this.needsUpdate = false;
-if (this.id==='X'){            
-console.log(this.size);
-}         
             }
             return this;
         },

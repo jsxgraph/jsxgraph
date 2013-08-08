@@ -62,18 +62,18 @@ define([
      * @constructor
      * @type JXG.Curve
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * 
+     *
      * First possiblity of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 A sector is defined by three points: The sector's center <tt>p1</tt>,
      * a second point <tt>p2</tt> defining the radius and a third point <tt>p3</tt> defining the angle of the sector. The
      * Sector is always drawn counter clockwise from <tt>p2</tt> to <tt>p3</tt>
-     * 
+     *
      * Second possibility of input parameters are:
-     * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines. 
-     * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1). 
-     * The last parameter is the radius of the sector. 
-     * 
-     * 
+     * @param {JXG.Line_JXG.Line_array,number_array,number_number,function} line, line2, coords1 or direction1, coords2 or direction2, radius The sector is defined by two lines.
+     * The two legs which define the sector are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
+     * The last parameter is the radius of the sector.
+     *
+     *
      * @example
      * // Create a sector out of three free points
      * var p1 = board.create('point', [1.5, 5.0]),
@@ -92,7 +92,7 @@ define([
      *     a = board.create('sector', [p1, p2, p3]);
      * })();
      * </script><pre>
-     * 
+     *
      * @example
      * // Create a sector out of two lines, two directions and a radius
      * var p1 = board.create('point', [-1, 4]),
@@ -102,10 +102,10 @@ define([
      *
      *  li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
      *  li2 = board.create('line', [q1,q2], {lastArrow:true}),
-     * 
+     *
      *  sec1 = board.create('sector', [li1, li2, [5.5, 0], [4, 3], 3]),
      *  sec2 = board.create('sector', [li1, li2, 1, -1, 4]);
-     * 
+     *
      * </pre><div id="bb9e2809-9895-4ff1-adfa-c9c71d50aa53" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -117,7 +117,7 @@ define([
      *
      *     li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
      *     li2 = board.create('line', [q1,q2], {lastArrow:true}),
-     * 
+     *
      *     sec1 = board.create('sector', [li1, li2, [5.5, 0], [4, 3], 3]),
      *     sec2 = board.create('sector', [li1, li2, 1, -1, 4]);
      * })();
@@ -145,47 +145,47 @@ define([
              * Second try for 3 point sector
              */
             try {
-                
+
                 for (i = 0; i < parents.length; i++) {
                     if (!Type.isPoint(parents[i])) {
                         attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
                         parents[i] = board.create('point', parents[i], attr);
                     }
                 }
-               
+
                 type = '3points';
-                
+
             } catch (e) {
                 throw new Error("JSXGraph: Can't create Sector with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                     (typeof parents[2]) + "'.");
             }
         }
-                    
+
         attr = Type.copyAttributes(attributes, board.options, 'sector');
         el = board.create('curve', [[0], [0]], attr);
         el.type = Const.OBJECT_TYPE_SECTOR;
         el.elType = 'sector';
-        
+
         if (type === '2lines') {
             el.Radius = function () {
                 return Type.evaluate(parents[4]);
             };
 
-            el.line1 = board.select(parents[0]),
+            el.line1 = board.select(parents[0]);
             el.line2 = board.select(parents[1]);
-            
+
             el.line1.addChild(el);
             el.line2.addChild(el);
             el.parents = [parents[0].id, parents[1].id];
 
-            el.point1 = {visProp:{}};
-            el.point2 = {visProp:{}};
-            el.point3 = {visProp:{}};
-            
+            el.point1 = {visProp: {}};
+            el.point2 = {visProp: {}};
+            el.point3 = {visProp: {}};
+
             /* Intersection point */
             s = Geometry.meetLineLine(el.line1.stdform, el.line2.stdform, 0, board);
-            
+
             if (Type.isArray(parents[2])) {
                 /* project p1 to l1 */
                 if (parents[2].length === 2) {
@@ -199,7 +199,7 @@ define([
             } else {
                 el.direction1 = (parents[2] >= 0) ? 1 : -1;
             }
-            
+
             if (Type.isArray(parents[3])) {
                 /* project p2 to l2 */
                 if (parents[3].length === 2) {
@@ -213,13 +213,13 @@ define([
             } else {
                 el.direction2 = (parents[3] >= 0) ? 1 : -1;
             }
-            
+
             el.updateDataArray = function () {
                 var r, l1, l2, A, B, C, ar;
 
                 l1 = this.line1;
                 l2 = this.line2;
-            
+
                 // Intersection point of the lines
                 B = Mat.crossProduct(l1.stdform, l2.stdform);
                 B[1] /= B[0];
@@ -229,38 +229,38 @@ define([
                 // First point
                 r = this.direction1 * this.Radius();
                 A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
-            
+
                 // Second point
                 r = this.direction2 * this.Radius();
                 C = Statistics.add(B, [0, r * l2.stdform[2], -r * l2.stdform[1]]);
-            
+
                 this.point2.coords = new Coords(Const.COORDS_BY_USER, A, el.board);
                 this.point1.coords = new Coords(Const.COORDS_BY_USER, B, el.board);
                 this.point3.coords = new Coords(Const.COORDS_BY_USER, C, el.board);
-            
+
                 if (Math.abs(A[0]) < Mat.eps || Math.abs(B[0]) < Mat.eps || Math.abs(C[0]) < Mat.eps) {
                     this.dataX = [NaN];
                     this.dataY = [NaN];
                     return;
                 }
-                
+
                 ar = Geometry.bezierArc(A, B, C, true, 1);
 
                 this.dataX = ar[0];
                 this.dataY = ar[1];
-               
+
                 this.bezierDegree = 3;
-            };    
-            
+            };
+
             el.methodMap = JXG.deepCopy(el.methodMap, {
                 radius: 'getRadius',
                 getRadius: 'getRadius'
             });
-            
+
             el.prepareUpdate().update();
 
         // end '2lines'
-        
+
         } else if (type === '3points') {
 
             /**
@@ -295,7 +295,7 @@ define([
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
             el.parents = [parents[0].id, parents[1].id, parents[2].id];
-            
+
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
             * @memberOf Sector.prototype
@@ -335,23 +335,23 @@ define([
                 // This is true for circumCircleSectors. In that case there is
                 // a fourth parent element: [midpoint, point1, point3, point2]
                 if (this.useDirection && Type.exists(this.point4)) {
-                    p0c = this.point2.coords.usrCoords; 
-                    p1c = this.point4.coords.usrCoords; 
-                    p2c = this.point3.coords.usrCoords; 
+                    p0c = this.point2.coords.usrCoords;
+                    p1c = this.point4.coords.usrCoords;
+                    p2c = this.point3.coords.usrCoords;
                     det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
 
                     if (det >= 0.0) {
-                        C = this.point2; 
-                        A = this.point3; 
+                        C = this.point2;
+                        A = this.point3;
                     }
                 }
-            
+
                 A = A.coords.usrCoords;
                 B = B.coords.usrCoords;
                 C = C.coords.usrCoords;
-      
+
                 ar = Geometry.bezierArc(A, B, C, true, 1);
-            
+
                 this.dataX = ar[0];
                 this.dataY = ar[1];
                 this.bezierDegree = 3;
@@ -425,9 +425,9 @@ define([
         el.hasPoint = function (x, y) {
             if (this.visProp.highlightonsector) {
                 return this.hasPointSector(x, y);
-            } else {
-                return this.hasPointCurve(x, y);
             }
+
+            return this.hasPointCurve(x, y);
         };
 
         // documented in GeometryElement
@@ -467,16 +467,18 @@ define([
 
             return new Coords(Const.COORDS_BY_USER, [pmc[1] + vecx, pmc[2] + vecy], this.board);
         };
-        
+
         /**
          * Overwrite the Radius method of the sector.
          * Used in {@link GeometryElement#setAttribute}.
-         * @param {Number, Function} radius New radius.
+         * @param {Number, Function} value New radius.
          */
         el.setRadius = function (value) {
-            el.Radius = function() { return Type.evaluate(value); };
+            el.Radius = function () {
+                return Type.evaluate(value);
+            };
         };
-            
+
         /**
          * deprecated
          * @ignore
@@ -577,11 +579,11 @@ define([
      * First possiblity of input parameters are:
      * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p1 An angle is always drawn counterclockwise from <tt>p1</tt> to
      * <tt>p3</tt> around <tt>p2</tt>.
-     * 
+     *
      * Second possibility of input parameters are:
-     * @param {JXG.Line_JXG.Line_array,number_array,number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines. 
-     * The two legs which define the angle are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1). 
-     * 
+     * @param {JXG.Line_JXG.Line_array,number_array,number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines.
+     * The two legs which define the angle are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
+     *
      * @example
      * // Create an angle out of three free points
      * var p1 = board.create('point', [5.0, 3.0]),
@@ -600,7 +602,7 @@ define([
      *     a = board.create('angle', [p1, p2, p3]);
      * })();
      * </script><pre>
-     * 
+     *
      * @example
      * // Create an angle out of two lines and two directions
      * var p1 = board.create('point', [-1, 4]),
@@ -610,10 +612,10 @@ define([
      *
      *  li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
      *  li2 = board.create('line', [q1,q2], {lastArrow:true}),
-     * 
+     *
      *  a1 = board.create('angle', [li1, li2, [5.5, 0], [4, 3]], { radius:1 }),
      *  a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
-     * 
+     *
      * </pre><div id="3a667ddd-63dc-4594-b5f1-afac969b371f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -625,14 +627,14 @@ define([
      *
      *     li1 = board.create('line', [p1,p2], {strokeColor:'black', lastArrow:true}),
      *     li2 = board.create('line', [q1,q2], {lastArrow:true}),
-     * 
+     *
      *     a1 = board.create('angle', [li1, li2, [5.5, 0], [4, 3]], { radius:1 }),
      *     a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
      * })();
      * </script><pre>
      */
     JXG.createAngle = function (board, parents, attributes) {
-        var el, radius, text, attr, attrsub, 
+        var el, radius, text, attr, attrsub,
             i, dot,
             type = 'invalid';
 
@@ -649,11 +651,11 @@ define([
         if (type === 'invalid') {
             throw new Error("JSXGraph: Can't create angle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
-            
+
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'angle');
-        
+
         //  If empty, create a new name
         text = attr.name;
         if (!Type.exists(text) || text === '') {
@@ -695,27 +697,27 @@ define([
              */
             el.pointsquare = el.point3 = el.anglepoint = parents[2];
 
-            el.Radius = function() {
+            el.Radius = function () {
                 return Type.evaluate(radius);
             };
 
-            el.updateDataArraySector = function() {
+            el.updateDataArraySector = function () {
                 var A = this.point2,
                     B = this.point1,
                     C = this.point3,
                     r = this.Radius(),
                     d = B.Dist(A),
                     ar;
-           
+
                 A = A.coords.usrCoords;
                 B = B.coords.usrCoords;
                 C = C.coords.usrCoords;
-      
+
                 A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
                 C = [1, B[1] + (C[1] - B[1]) * r / d, B[2] + (C[2] - B[2]) * r / d];
-                
+
                 ar = Geometry.bezierArc(A, B, C, true, 1);
-            
+
                 this.dataX = ar[0];
                 this.dataY = ar[1];
                 this.bezierDegree = 3;
@@ -761,16 +763,16 @@ define([
                 }
                 return this;
             };
-            
+
         } // end '3points'
-        
+
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
         el.parents = [parents[0].id, parents[1].id, parents[2].id];
         el.subs = {};
 
         el.updateDataArraySquare = function () {
-            var A, B, C, 
+            var A, B, C,
                 r = this.Radius(),
                 d1, d2,
                 v, l1, l2;
@@ -784,7 +786,7 @@ define([
             A = this.point2;
             B = this.point1;
             C = this.point3;
-            
+
             A = A.coords.usrCoords;
             B = B.coords.usrCoords;
             C = C.coords.usrCoords;
@@ -804,10 +806,10 @@ define([
             v = Mat.crossProduct(l1, l2);
             v[1] /= v[0];
             v[2] /= v[0];
-        
+
             this.dataX = [B[1], A[1], v[1], C[1], B[1]];
             this.dataY = [B[2], A[2], v[2], C[2], B[2]];
-            
+
             this.bezierDegree = 1;
         };
 
@@ -854,7 +856,7 @@ define([
         attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
         el.dot = board.create('point', [function () {
             var A, B, r, d, a2, co, si, mat;
-                
+
             if (Type.exists(el.dot) && !el.dot.visProp.visible) {
                 return [0, 0];
             }
@@ -866,14 +868,14 @@ define([
             a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
             co = Math.cos(a2);
             si = Math.sin(a2);
-            
+
             A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
 
             mat = [
-                    [1, 0, 0],
-                    [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
-                ];
+                [1, 0, 0],
+                [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
+            ];
             return Mat.matVecMult(mat, A);
         }], attrsub);
 
@@ -905,7 +907,7 @@ define([
             }
             dx /= this.board.unitX;
             dy /= this.board.unitY;
-                
+
             A = el.point2.coords.usrCoords;
             B = el.point1.coords.usrCoords;
             r = el.Radius();
@@ -913,22 +915,22 @@ define([
             a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
             co = Math.cos(a2);
             si = Math.sin(a2);
-            
+
             A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
 
             mat = [
-                    [1, 0, 0],
-                    [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
-                    [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
-                ];
+                [1, 0, 0],
+                [B[1] - 0.5 * B[1] * co + 0.5 * B[2] * si, co * 0.5, -si * 0.5],
+                [B[2] - 0.5 * B[1] * si - 0.5 * B[2] * co, si * 0.5,  co * 0.5]
+            ];
             vec = Mat.matVecMult(mat, A);
             vec[1] /= vec[0];
             vec[2] /= vec[0];
             vec[0] /= vec[0];
-            
+
             d = Geometry.distance(vec, B, 3);
             vec = [vec[0], B[1] + (vec[1] - B[1]) * (r + dx) / d,  B[2] + (vec[2] - B[2]) * (r + dx) / d];
-            
+
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
 
