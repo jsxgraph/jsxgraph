@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -297,7 +297,7 @@ define([
 
         /**
          * Calculates the coordinates of a point on the perpendicular to the given line through
-         * the given point.  
+         * the given point.
          * @param {JXG.Line} line A line.
          * @param {JXG.Point} point Point which is projected to the line.
          * @param {JXG.Board} [board=point.board] Reference to the board
@@ -319,7 +319,7 @@ define([
                 x = A[1] + B[2] - A[2];
                 y = A[2] - B[1] + A[1];
                 z = A[0] * B[0];
-                
+
                 if (Math.abs(z) < Mat.eps) {
                     x =  B[2];
                     y = -B[1];
@@ -332,7 +332,7 @@ define([
                 x = B[1] + A[2] - B[2];
                 y = B[2] - A[1] + B[1];
                 z = A[0] * B[0];
-                
+
                 if (Math.abs(z) < Mat.eps) {
                     x =  A[2];
                     y = -A[1];
@@ -341,11 +341,11 @@ define([
                 change = false;
 
             // special case: point lies somewhere else on the line
-            } else if ( Math.abs(Mat.innerProduct(C, line.stdform, 3)) < Mat.eps )  {
+            } else if (Math.abs(Mat.innerProduct(C, line.stdform, 3)) < Mat.eps) {
                 x = C[1] + B[2] - C[2];
                 y = C[2] - B[1] + C[1];
                 z = B[0];
-                
+
                 if (Math.abs(z) < Mat.eps) {
                     x =  B[2];
                     y = -B[1];
@@ -362,7 +362,7 @@ define([
             // general case: point does not lie on the line
             // -> calculate the foot of the dropped perpendicular
             } else {
-                c = [0, line.stdform[1], line.stdform[2]];  
+                c = [0, line.stdform[1], line.stdform[2]];
                 c = Mat.crossProduct(c, C);                  // perpendicuar to line
                 c = Mat.crossProduct(c, line.stdform);       // intersection of line and perpendicular
                 change = true;
@@ -1195,10 +1195,10 @@ define([
         /**
          * Find the n-th intersection point of two curves named red (first parameter) and blue (second parameter).
          * We go through each segment of the red curve and search if there is an intersection with a segemnt of the blue curve.
-         * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines 
+         * This double loop, i.e. the outer loop runs along the red curve and the inner loop runs along the blue curve, defines
          * the n-th intersection point. The segments are either line segments or Bezier curves of degree 3. This depends on
          * the property bezierDegree of the curves.
-         * 
+         *
          * @param {JXG.Curve} red
          * @param {JXG.Curve} blue
          * @param {Number} nr
@@ -1377,7 +1377,7 @@ define([
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Number} level Recursion level
-         * @returns {Array} List of intersection points (up to nine). Each intersction point is an 
+         * @returns {Array} List of intersection points (up to nine). Each intersction point is an
          * array of length three (homogeneous coordinates) plus preimages.
          */
         _bezierMeetSubdivision: function (red, blue, level) {
@@ -1474,7 +1474,7 @@ define([
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @returns {Array} Array containing the list of all intersection points as homogeneous coordinate arrays plus
          * preimages [x,y], t_1, t_2] of the two Bezier curve segments.
-         * 
+         *
          */
         meetBeziersegmentBeziersegment: function (red, blue) {
             var L, n, L2, i;
@@ -1589,8 +1589,8 @@ define([
          * @param {Boolean} withLegs Flag. If true the legs to the intersection point are part of the curve.
          * @param {Number} sgn Wither 1 or -1. Needed for minor and major arcs. In case of doubt, use 1.
          */
-        bezierArc: function(A, B, C, withLegs, sgn) {
-            var p1, p2, p3, p4, 
+        bezierArc: function (A, B, C, withLegs, sgn) {
+            var p1, p2, p3, p4,
                 r, phi, beta,
                 PI2 = Math.PI * 0.5,
                 x = B[1],
@@ -1598,7 +1598,7 @@ define([
                 z = B[0],
                 dataX = [], dataY = [],
                 co, si, ax, ay, bx, by, k, v, d, matrix;
-            
+
             r = this.distance(B, A);
 
             // x,y, z is intersection point. Normalize it.
@@ -1609,12 +1609,12 @@ define([
             if (sgn === -1) {
                 phi = 2 * Math.PI - phi;
             }
-            
+
             p1 = A;
             p1[1] /= p1[0];
             p1[2] /= p1[0];
             p1[0] /= p1[0];
-    
+
             p4 = p1.slice(0);
 
             if (withLegs) {
@@ -1644,7 +1644,7 @@ define([
                 ];
                 v = Mat.matVecMult(matrix, p1);
                 p4 = [v[0] / v[0], v[1] / v[0], v[2] / v[0]];
-     
+
                 ax = p1[1] - x;
                 ay = p1[2] - y;
                 bx = p4[1] - x;
@@ -1665,15 +1665,15 @@ define([
                 dataY = dataY.concat([p2[2], p3[2], p4[2]]);
                 p1 = p4.slice(0);
             }
-            
+
             if (withLegs) {
                 dataX = dataX.concat([ p4[1] + 0.333 * (x - p4[1]), p4[1] + 0.666 * (x - p4[1]), x]);
                 dataY = dataY.concat([ p4[2] + 0.333 * (y - p4[2]), p4[2] + 0.666 * (y - p4[2]), y]);
-            } 
-            
+            }
+
             return [dataX, dataY];
         },
-        
+
         /****************************************/
         /****           PROJECTIONS          ****/
         /****************************************/
@@ -1771,10 +1771,10 @@ define([
          * Finds the coordinates of the closest point on a Bezier segment of a
          * {@link JXG.Curve} to a given coordinate array.
          * @param {Array} pos Point to project in homogeneous coordinates.
-         * @param {JXG.Curve} curve Curve of type "plot" having Bezier degree 3. 
+         * @param {JXG.Curve} curve Curve of type "plot" having Bezier degree 3.
          * @param {Number} start Number of the Bezier segment of the curve.
-         * @returns {Array} The coordinates of the projection of the given point 
-         * on the given Bezier segment and the preimage of the curve which 
+         * @returns {Array} The coordinates of the projection of the given point
+         * on the given Bezier segment and the preimage of the curve which
          * determines the closest point.
          */
         projectCoordsToBeziersegment: function (pos, curve, start) {

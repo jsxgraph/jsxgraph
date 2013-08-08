@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -184,7 +184,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
         /**
          * @private
-         * Gauss-Bareiss algorithm to compute the 
+         * Gauss-Bareiss algorithm to compute the
          * determinant of matrix without fractions.
          * See H. Cohen, "A course in computational
          * algebraic number thoery".
@@ -253,11 +253,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return s * M[n - 1][n - 1];
         },
 
-        /** 
+        /**
          * Computes the determinant of a square nxn matrix with the
          * Gauss-Bareiss algorithm.
-         * @param {Array} mat Matrix. 
-         * @returns {Number} The determinant pf the matrix mat. 
+         * @param {Array} mat Matrix.
+         * @returns {Number} The determinant pf the matrix mat.
          *                   The empty matrix returns 0.
          */
         det: function (mat) {
@@ -1097,7 +1097,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * points at position k with k mod 3 = 1 or 2 are the control points.
          * @returns {Array} An array consisting of two functions of one parameter t which return the
          * x resp. y coordinates of the Bezier curve in t, one zero value, and a third function accepting
-         * no parameters and returning one third of the length of the points. 
+         * no parameters and returning one third of the length of the points.
          */
         bezier: function (points) {
             var len, flen,
@@ -1364,7 +1364,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f Function, whose integral is approximated by the Riemann sum.
          * @param {Number} n number of rectangles.
          * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezoidal'.
-         * 
+         *
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Number} The sum of the areas of the rectangles.
@@ -1418,7 +1418,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else {
                         y = f(x);  // default is lower
                     }
-                        
+
                     sum += delta * y;
                     x += delta;
                 }
@@ -1586,7 +1586,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
-         * 
+         *
          * If x0 is an array containing lower and upper bound for the zero
          * algorithm 748 is applied. Otherwise, if x0 is a number,
          * the algorithm tries to bracket a zero of f starting from x0.
@@ -1768,7 +1768,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Algorithm:
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
-         * x0 
+         * x0
          **/
         fminbr: function (f, x0, context) {
             var a, b, x, v, w,
@@ -1818,14 +1818,14 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 // Decide if the interpolation can be tried. If x and w are distinct interpolatiom may be tried
                 if (Math.abs(x - w) >= tol_act) {
                     // Interpolation step is calculated as p/q;
-                    // division operation is delayed until last moment 
+                    // division operation is delayed until last moment
                     t = (x - w) * (fx - fv);
                     q = (x - v) * (fx - fw);
                     p = (x - v) * q - (x - w) * t;
                     q = 2 * (q - t);
 
                     if (q > 0) {                        // q was calculated with the op-
-                        p = -p;                         // posite sign; make q positive 
+                        p = -p;                         // posite sign; make q positive
                     } else {                            // and assign possible minus to
                         q = -q;                         // p
                     }
@@ -1834,10 +1834,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             p < q * (b - x - 2 * tol_act)) {        // b, and isn't too large
                         new_step = p / q;                          // it is accepted
                     }
-                    // If p/q is too large then the 
-                    // golden section procedure can   
-                    // reduce [a,b] range to more   
-                    // extent           
+                    // If p/q is too large then the
+                    // golden section procedure can
+                    // reduce [a,b] range to more
+                    // extent
                 }
 
                 // Adjust the step to be not less than tolerance
@@ -1849,7 +1849,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     }
                 }
 
-                // Obtain the next approximation to min 
+                // Obtain the next approximation to min
                 // and reduce the enveloping range
 
                 // Tentative point for the min

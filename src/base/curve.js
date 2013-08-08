@@ -808,7 +808,7 @@ define([
          */
         generateTerm: function (varname, xterm, yterm, mi, ma) {
             var fx, fy;
-            
+
             // Generate the methods X() and Y()
             if (Type.isArray(xterm)) {
                 // Discrete data

@@ -435,7 +435,7 @@ define([
             }
 
             this.layer[level].appendChild(node);
-            
+
             return node;
         },
 
@@ -445,7 +445,7 @@ define([
             element.rendNode = this.getElementById(element.id);
         },
         */
-        
+
         // already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {
             var node = this.container.ownerDocument.createElementNS(this.svgNamespace, type);
@@ -518,7 +518,7 @@ define([
             y = Math.abs(y) < huge ? y : huge * y / Math.abs(y);
             rx = Math.abs(rx) < huge ? rx : huge * rx / Math.abs(rx);
             ry = Math.abs(ry) < huge ? ry : huge * ry / Math.abs(ry);
-            
+
             node.setAttributeNS(null, 'cx', x);
             node.setAttributeNS(null, 'cy', y);
             node.setAttributeNS(null, 'rx', Math.abs(rx));
@@ -528,7 +528,7 @@ define([
         // already documented in JXG.AbstractRenderer
         updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
             var huge = 1000000;
-            
+
             if (!isNaN(p1x + p1y + p2x + p2y)) {
                 // webkit does not like huge values if the object is dashed
                 p1x = Math.abs(p1x) < huge ? p1x : huge * p1x / Math.abs(p1x);
