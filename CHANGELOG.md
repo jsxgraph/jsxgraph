@@ -8,8 +8,9 @@ Important Notes
    and then re-adding it to the DOM. Please note that during some event handlers (e.g. update) the DOM elements that
    belong to the board that is updated CAN NOT BE FOUND by document.getElementById(). References to these elements need
    to be stored before the event handler is called. Also problematic are click handlers on elements on the board, in some
-   browsers these might be ignored. To establish backwards compatibility, a new board attribute called 'minimizeReflow'
-   is introduced and has to be set to 'false'.
+   browsers these might be ignored. To establish full backwards compatibility, a new board attribute called 'minimizeReflow'
+   is introduced and has to be set to 'none'. To restrict this optimization to the SVG root node set it to 'svg' (default).
+   For best optimization use 'all'.
  * New Moodle plugin for Moodle 2
 
 New Features

@@ -13,7 +13,7 @@
     /* <![CDATA[ */
 
     (function () {
-        var board = JXG.JSXGraph.initBoard('cannon', {boundingbox: [0, 10, 20, 0], showCopyright: false, showNavigation: false}),
+        var board = JXG.JSXGraph.initBoard('cannon', {boundingbox: [0, 10, 20, 0], showCopyright: false, showNavigation: false, minimizeReflow: 'svg'}),
             bottom = board.create('image', ['img/cannon_bottom.png', [0, 0.3], [2, 1]], {layer: 1}),
             muzzle = board.create('image', ['img/cannon_muzzle.png', [0, 1.05], [3, 0.75]], {layer: 0}),
             shoot = board.create('text', [9, 9.5, '<button id="shoot">Shoot</button>']),
@@ -63,7 +63,7 @@
         solution = board.create('plot', [fSolution, function () { return cannonball.X(); }, 20], {visible: true, doAdvancedPlot: false});
 
 
-        $('#shoot').on('mouseup', function () {
+        $('#shoot').on('click', function () {
             cannonball.setProperty({
                 visible: false
             });
@@ -79,7 +79,7 @@
             });
         });
 
-        $('#reset').on('mouseup', function () {
+        $('#reset').on('click', function () {
             board.stopAllAnimation();
             //rp.moveTo([0, 1.4]);
             //cannonball.moveTo([3, 1.4]);

@@ -3270,8 +3270,12 @@ define([
             }
             this.inUpdate = true;
 
-            if (this.attr.minimizereflow && this.containerObj && this.renderer.type !== 'vml') {
+            if (this.attr.minimizereflow === 'all' && this.containerObj && this.renderer.type !== 'vml') {
                 insert = this.renderer.removeToInsertLater(this.containerObj);
+            }
+
+            if (this.attr.minimizereflow === 'svg' && this.renderer.type === 'svg') {
+                insert = this.renderer.removeToInsertLater(this.renderer.svgRoot);
             }
 
             this.prepareUpdate().updateElements(drag).updateConditions();
