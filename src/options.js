@@ -75,7 +75,7 @@ define([
             renderer: 'svg',
             animationDelay: 35,
             registerEvents: true,
-            minimizeReflow: true,
+            minimizeReflow: 'svg',
             zoom: {
                 factorX: 1.25,
                 factorY: 1.25,
