@@ -41,6 +41,6 @@ if __name__ == '__main__':
     f = open(filename, "r")
     text = f.read()
     #text = base64.b64encode(zlib.compress(urllib.quote(text), 9))
-    #text = urllib.unquote(zlib.decompress(base64.b64decode(text)))
-    text = zlib.decompress(base64.b64decode(text))
+    text = urllib.unquote(zlib.decompress(base64.b64decode(text)))
+    #text = zlib.decompress(base64.b64decode(text))
     print text
