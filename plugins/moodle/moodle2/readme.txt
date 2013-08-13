@@ -12,7 +12,21 @@ Usage:
 1. In a Moodle course: -> Add a resource -> Compose a website
 2. Write content. At the position the construction should appear, create a construction by:
 	* switching to the code input
-	* inserting a <jsxgraph>-tag wit hall required parameters
+	* inserting a <jsxgraph>-tag with all required parameters
+    * Example: 
+        <jsxgraph width="600" height="500">
+            (function() {
+                var brd = JXG.JSXGraph.initBoard('box0', {boundingbox:[-5,5,5,-5], axis:true});
+                var p = brd.create('point', [1,2]);
+            })();
+        </jsxgraph>
 
+        <jsxgraph width="600" height="500" box="mybox">
+            (function() {
+                var brd = JXG.JSXGraph.initBoard('mybox', {boundingbox:[-5,5,5,-5], axis:true});
+                var p = brd.create('point', [1,2]);
+            })();
+        </jsxgraph>
+ 
 Be aware of the fact, that you dont't see the construction unless you leave the editor and save your document.
 On reopening it later, you will notice the code rather than the jsxgraph-tag.
