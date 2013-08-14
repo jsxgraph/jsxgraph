@@ -35,11 +35,16 @@ class filter_jsxgraph extends moodle_text_filter {
         if ($strict==1) {
             $dom->loadXML($html);
         } else {
+            libxml_use_internal_errors(true);
             $dom->loadHTML($html);
+            libxml_use_internal_errors(false);
         }
 
         // discard white space 
         $dom->preserveWhiteSpace = false;
+        $dom->strictErrorChecking = false;
+        $dom->recover = true;
+        
 
         // the tag by its tag name
         $content = $dom->getElementsByTagname($tag);
@@ -116,7 +121,20 @@ class filter_jsxgraph extends moodle_text_filter {
             --$i;
         }
         
-        return $dom->saveXML();
+        // remove DOCTYPE
+        $dom->removeChild($dom->firstChild);            
+
+        // remove <html><body></body></html> 
+        //$dom->replaceChild($dom->firstChild->firstChild->firstChild, $dom->firstChild);        
+        //return $dom->saveXML();
+        
+        $str = $dom->saveHTML();
+        $str = str_replace("<body>", "", $str);
+        $str = str_replace("</body>", "", $str);
+        $str = str_replace("<html>", "", $str);
+        $str = str_replace("</html>", "", $str);
+
+        return $str;
     }
 
     public function filter($text, array $options = array()) {
