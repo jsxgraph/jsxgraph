@@ -802,7 +802,7 @@
                         reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '; ' + reset_str;
                     }
 
-                    set_str += ' ]>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
+                    set_str += ' ], name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
                     break;
 
