@@ -224,7 +224,7 @@ define([
          * values is of type string.
          * @param {String} variableName Only required if evalGeonext is set to true. Describes the variable name
          * of the variable in a GEONE<sub>X</sub>T string given as term.
-         * @param {Boolean} evalGeonext Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
+         * @param {Boolean} [evalGeonext=true] Set this true, if term should be treated as a GEONE<sub>X</sub>T string.
          * @returns {Function} A function evaluation the value given by term or null if term is not of type string,
          * function or number.
          */
