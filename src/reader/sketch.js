@@ -641,17 +641,6 @@
 
                     break;
 
-                case JXG.GENTYPE_SLOPETRIANGLE:
-                    set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
-                    set_str += attrid + ' name: \'\',';
-                    set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
-                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\'>>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\'>>,';
-                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\'>>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\'>>';
-                    set_str += '>>;';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-
-                    break;
-
                 case JXG.GENTYPE_TRIANGLE:
                     for (i = 0; i < step.args.create_point.length; i++) {
                         if (step.args.create_point[i]) {
@@ -781,7 +770,7 @@
                     break;
 
                 case JXG.GENTYPE_REGULARPOLYGON:
-                    set_str = assign + 'regularpolygon(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ';
+                    set_str = assign + 'regularpolygon(' + step.src_ids.join(', ') + ', ';
                     set_str += step.args.corners + ') <<borders: <<ids: [ ';
 
                     for (i = 0; i < step.args.corners; i++) {
@@ -807,8 +796,6 @@
                     break;
 
                 case JXG.GENTYPE_SECTOR:
-                    // set_str = assign + 'sector(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2];
-                    // set_str += ') <<';
                     set_str = assign + 'sector(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
                     set_str += attrid + ' name: \'' + step.dest_id + '\', fillOpacity: ' + JXG.Options.opacityLevel;
@@ -817,13 +804,23 @@
                     break;
 
                 case JXG.GENTYPE_ANGLE:
-                    // set_str = assign + 'angle(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.src_ids[2] + ') ';
                     set_str = assign + 'angle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
                     set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_SLOPETRIANGLE:
+                    set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
+                    set_str += attrid + ' name: \'\',';
+                    set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\'>>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\'>>,';
+                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\'>>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\'>>';
+                    set_str += '>>;';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+
                     break;
 
                 case JXG.GENTYPE_PLOT:
@@ -848,11 +845,6 @@
 
                     break;
 
-                case JXG.GENTYPE_SLOPETRIANGLE:
-                    set_str = assign + 'slopetriangle(' + step.args.tangent + ') <<id: \'' + step.dest_id + '\', name: \'\'>>; ';
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                    break;
-
                 case JXG.GENTYPE_SLIDER:
                     set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
                     set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';
@@ -869,6 +861,37 @@
                     reset_str += step.dest_sub_ids[0] + '; ';
                     break;
 
+                /*
+                 case JXG.GENTYPE_TRANSFORM:
+
+                 set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
+                 set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
+                 set_str += '\', visible: true>>; ';
+
+                 reset_str = 'delete ' + step.dest_id + '; ';
+                 reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+
+                 break;
+
+                 case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
+                 if (step.args.create_line) {
+                 sub_id = step.dest_sub_ids[2];
+                 set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
+                 set_str += '\', visible: true>>; ';
+                 reset_str = 'delete ' + sub_id + '; ';
+                 } else {
+                 sub_id = step.src_ids[2];
+                 }
+
+                 set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
+                 set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
+                 set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
+                 set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
+                 set_str += '\'>> >>; ';
+                 reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
+                 reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
+                 break;
+                 */
 
                 case JXG.GENTYPE_DELETE:
 
@@ -1012,37 +1035,7 @@
                     reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
 
                     break;
-/*
-                case JXG.GENTYPE_TRANSFORM:
 
-                    set_str = step.dest_sub_ids[0] + ' = transform(' + step.args.tmat + ') <<type: \'generic\'>>; ';
-                    set_str += 'point(' + step.src_ids[0] + ', ' + step.dest_sub_ids[0] + ') <<id: \'' + step.dest_id;
-                    set_str += '\', visible: true>>; ';
-
-                    reset_str = 'delete ' + step.dest_id + '; ';
-                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
-
-                    break;
-
-                case JXG.GENTYPE_PERPENDICULAR_BISECTOR:
-                    if (step.args.create_line) {
-                        sub_id = step.dest_sub_ids[2];
-                        set_str = 'line(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + sub_id;
-                        set_str += '\', visible: true>>; ';
-                        reset_str = 'delete ' + sub_id + '; ';
-                    } else {
-                        sub_id = step.src_ids[2];
-                    }
-
-                    set_str += 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<id: \'' + step.dest_sub_ids[0];
-                    set_str += '\', fillColor: \'' + step.args.fillColor + '\'>>; ';
-                    set_str += assign + 'normal(' + step.dest_sub_ids[0] + ', ' + sub_id + ') <<' + attrid;
-                    set_str += ' point: <<id: \'' + step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1];
-                    set_str += '\'>> >>; ';
-                    reset_str = 'delete ' + step.dest_sub_ids[0] + '; ' + reset_str;
-                    reset_str = 'delete ' + step.dest_id + '; delete ' + step.dest_sub_ids[1] + '; ' + reset_str;
-                    break;
-*/
                 case JXG.GENTYPE_MOVEMENT:
 
                     if (step.args.obj_type === JXG.OBJECT_TYPE_LINE) {
