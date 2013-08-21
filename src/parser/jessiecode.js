@@ -1323,7 +1323,10 @@ define([
                 break;
 
             case 'node_str':
-                ret = node.value;
+                //ret = node.value.replace(/\\'/, "'").replace(/\\"/, '"').replace(/\\\\/, '\\');
+                /*jslint regexp:true*/
+                ret = node.value.replace(/\\(.)/, '$1');
+                /*jslint regexp:false*/
                 break;
             }
 
