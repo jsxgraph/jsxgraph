@@ -529,8 +529,8 @@ define([
             contentStr = contentStr || '';
             contentStr = contentStr.replace(/\r/g, '');
             contentStr = contentStr.replace(/\n/g, '');
-            contentStr = contentStr.replace(/\"/g, '\'');
-            contentStr = contentStr.replace(/\'/g, "\\'");
+            contentStr = contentStr.replace(/"/g, '\'');
+            contentStr = contentStr.replace(/'/g, "\\'");
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
             contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
