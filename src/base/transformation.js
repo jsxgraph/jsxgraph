@@ -221,11 +221,11 @@ define([
                     }
                 };
             } else if (type === 'shear') {
-                this.evalParam = Type.createEvalFunction(board, params, 1);
+                this.evalParam = Type.createEvalFunction(board, params, 2);
 
                 this.update = function () {
-                    var beta = this.evalParam(0);
-                    this.matrix[1][1] = Math.tan(beta);
+                    this.matrix[1][2] = this.evalParam(0);
+                    this.matrix[2][1] = this.evalParam(1);
                 };
             } else if (type === 'generic') {
                 this.evalParam = Type.createEvalFunction(board, params, 9);
