@@ -30,3 +30,11 @@ Usage:
  
 Be aware of the fact, that you dont't see the construction unless you leave the editor and save your document.
 On reopening it later, you will notice the code rather than the jsxgraph-tag.
+
+Using JSXGraph in quiz questions needs a workaround since the HTML editor strips off the JSXGraph tag.
+Here, the wy to go is:
+The workaround is:
+* turn off the HTML-editor in your profile: 
+  ("When editing text" -> "Use standard web forms" instead of "Use HTML editor")
+* When editing a question, insert the jsxgraph tag and choose "HTML format".
+
