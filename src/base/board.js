@@ -1244,13 +1244,15 @@ define([
             }
         },
 
-        addTouchEventHandlers: function () {
+        addTouchEventHandlers: function (appleGestures) {
             if (!this.hasTouchHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
-                Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                if (typeof appleGestures == 'undefined' || appleGestures == true) {
+                    Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+                    Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                }
 
                 this.hasTouchHandlers = true;
             }
@@ -1287,7 +1289,7 @@ define([
             }
         },
 
-        removeTouchEventHandlers: function () {
+        removeTouchEventHandlers: function (appleGestures) {
             if (this.hasTouchHandlers && Env.isBrowser) {
                 Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
                 Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
@@ -1297,8 +1299,10 @@ define([
                     this.hasTouchEnd = false;
                 }
 
-                Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                if (typeof appleGestures == 'undefined' || appleGestures == true) {
+                    Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+                    Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                }
 
                 this.hasTouchHandlers = false;
             }
