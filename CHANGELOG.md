@@ -28,8 +28,9 @@ New Features
  * Unify Sectors and Arcs (608c4e4, 03fac4c, 36eaaa2, f2256cf)
  * New type for the riemannsum element (674cb34, bd0d0d0)
  * Allow the user to set the maximum length of a tick label and the max precision (f4b9076)
- * New Moodle2 plugin (6d11868, 0ba96fe, a54d8d2)
+ * New Moodle2 plugin (6d11868, 0ba96fe, a54d8d2, 8c8f2fa, 2b76da3, 8a8625f)
  * Texts may now be dragged by clicking anywhere in the text (a624b6d)
+ * Allow the user to not register mobile Safari specific gesture events (56b057a, 17a5179)
 
 Bug fixes
 ---------
@@ -62,6 +63,7 @@ Bug fixes
  * Text position in WebKit browsers was broken (89a6d6a)
  * Work around a dashed path bug in webkit (9c5ab12)
  * Pie chart highlight fixed (ab75d6e)
+ * Fixed shear transformation (e0e8140)
 
 
 
