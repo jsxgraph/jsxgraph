@@ -457,6 +457,13 @@ define([
         this.hasPointerHandlers = false;
 
         /**
+         * This bool flag stores the current state of the mobile Safari specific gesture event handlers.
+         * @type {boolean}
+         * @default false
+         */
+        this.hasGestureHandlers = false;
+
+        /**
          * A flag which tells if the board the JXG.Board#mouseUpListener is currently registered.
          * @type Boolean
          * @default false
@@ -1210,6 +1217,9 @@ define([
             }
         },
 
+        /**
+         * Registers the MSPointer* event handlers.
+         */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
@@ -1219,6 +1229,9 @@ define([
             }
         },
 
+        /**
+         * Registers mouse move, down and wheel event handlers.
+         */
         addMouseEventHandlers: function () {
             if (!this.hasMouseHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
@@ -1244,20 +1257,29 @@ define([
             }
         },
 
+        /**
+         * Register touch start and move and gesture start and change event handlers.
+         * @param {Boolean} appleGestures If set to false the gesturestart and gesturechange event handlers
+         * will not be registered.
+         */
         addTouchEventHandlers: function (appleGestures) {
             if (!this.hasTouchHandlers && Env.isBrowser) {
                 Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
-                if (typeof appleGestures == 'undefined' || appleGestures == true) {
+                if (!Type.exists(appleGestures) || appleGestures) {
                     Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
                     Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                    this.hasGestureHandlers = true;
                 }
 
                 this.hasTouchHandlers = true;
             }
         },
 
+        /**
+         * Remove MSPointer* Event handlers.
+         */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
                 Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
@@ -1272,6 +1294,9 @@ define([
             }
         },
 
+        /**
+         * De-register mouse event handlers.
+         */
         removeMouseEventHandlers: function () {
             if (this.hasMouseHandlers && Env.isBrowser) {
                 Env.removeEvent(this.containerObj, 'mousedown', this.mouseDownListener, this);
@@ -1289,7 +1314,10 @@ define([
             }
         },
 
-        removeTouchEventHandlers: function (appleGestures) {
+        /**
+         * Remove all registered touch event handlers.
+         */
+        removeTouchEventHandlers: function () {
             if (this.hasTouchHandlers && Env.isBrowser) {
                 Env.removeEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
                 Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
@@ -1299,9 +1327,10 @@ define([
                     this.hasTouchEnd = false;
                 }
 
-                if (typeof appleGestures == 'undefined' || appleGestures == true) {
+                if (this.hasGestureHandlers) {
                     Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
                     Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                    this.hasGestureHandlers = false;
                 }
 
                 this.hasTouchHandlers = false;
