@@ -76,6 +76,18 @@ define([
             animationDelay: 35,
             registerEvents: true,
             minimizeReflow: 'svg',
+            /**
+             * A number that will be added to the absolute position of the board used in mouse coordinate
+             * calculations in {@link #getCoordsTopLeftCorner}.
+             * @type {number}
+             */
+            offsetX: 0,
+            /**
+             * A number that will be added to the absolute position of the board used in mouse coordinate
+             * calculations in {@link #getCoordsTopLeftCorner}.
+             * @type {number}
+             */
+            offsetY: 0,
             zoom: {
                 factorX: 1.25,
                 factorY: 1.25,

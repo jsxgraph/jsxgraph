@@ -715,6 +715,9 @@ define([
                 cPos[1] += Env.getProp(container, 'padding-top');
             }
 
+            cPos[0] += this.attr.offsetx;
+            cPos[1] += this.attr.offsety;
+
             this.cPos = cPos;
 
             return cPos;
