@@ -1225,29 +1225,13 @@ define([
 
                     break;
                 case 'op_use':
-                    // node.children:
-                    //   [0]: A string providing the id of the div the board is in.
-                    found = false;
-
-                    // search all the boards for the one with the appropriate container div
-                    for (b in JXG.boards) {
-                        if (JXG.boards.hasOwnProperty(b) && JXG.boards[b].container === node.children[0].toString()) {
-                            this.use(JXG.boards[b]);
-                            found = true;
-                        }
-                    }
-
-                    if (!found) {
-                        this._error('Board \'' + node.children[0].toString() + '\' not found!');
-                    }
-
+                    this._warn('Use of the \'use\' operator is deprecated.');
+                    this.use(node.children[0].toString());
                     break;
                 case 'op_delete':
+                    this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
                     v = this.getvar(node.children[0]);
-
-                    if (typeof v === 'object' && JXG.exists(v.type) && JXG.exists(v.elementClass)) {
-                        this.board.removeObject(v);
-                    }
+                    ret = this.del(v);
                     break;
                 case 'op_equ':
                     // == is intentional
@@ -1491,14 +1475,24 @@ define([
                     }
                     break;
                 case 'op_use':
+                    this._warn('Use of the \'use\' operator is deprecated.');
                     if (js) {
-                        ret = '$jc$.use(JXG.boards[\'' + node.children[0] + '\'])';
+                        ret = '$jc$.use(\'';
                     } else {
-                        ret = 'use ' + node.children[0] + ';';
+                        ret = 'use(\'';
                     }
+
+                    ret += node.children[0].toString() + '\');';
                     break;
                 case 'op_delete':
-                    ret = 'delete ' + node.children[0];
+                    this._warn('Use of the \'delete\' operator is deprecated. Please use the remove() function.');
+                    if (js) {
+                        ret = '$jc$.del(';
+                    } else {
+                        ret = 'remove(';
+                    }
+
+                    ret += this.compile(node.children[0], js) + ')';
                     break;
                 case 'op_equ':
                     ret = '(' + this.compile(node.children[0], js) + ' == ' + this.compile(node.children[1], js) + ')';
@@ -1683,6 +1677,13 @@ define([
             return Math.pow(a, b);
         },
 
+        /**
+         * Implementation of the ?: operator
+         * @param {Boolean} cond Condition
+         * @param {*} v1
+         * @param {*} v2
+         * @returns {*} Either v1 or v2.
+         */
         ifthen: function (cond, v1, v2) {
             if (cond) {
                 return v1;
@@ -1691,10 +1692,45 @@ define([
             return v2;
         },
 
+        /**
+         * Implementation of the delete() builtin function
+         * @param {JXG.GeometryElement} element
+         */
+        del: function (element) {
+            if (typeof element === 'object' && JXG.exists(element.type) && JXG.exists(element.elementClass)) {
+                this.board.removeObject(element);
+            }
+        },
+
+        /**
+         * Implementation of the use() builtin function
+         * @param {String} board
+         */
         use: function (board) {
-            this.board = board;
-            this.builtIn.$board = board;
-            this.builtIn.$board.src = '$jc$.board';
+            var b, ref,
+                found = false;
+
+            if (typeof board === 'string') {
+                // search all the boards for the one with the appropriate container div
+                for (b in JXG.boards) {
+                    if (JXG.boards.hasOwnProperty(b) && JXG.boards[b].container === board) {
+                        ref = JXG.boards[b];
+                        found = true;
+                        break;
+                    }
+                }
+            } else {
+                ref = board;
+                found = true;
+            }
+
+            if (found) {
+                this.board = ref;
+                this.builtIn.$board = ref;
+                this.builtIn.$board.src = '$jc$.board';
+            } else {
+                this._error('Board \'' + board + '\' not found!');
+            }
         },
 
         /**
@@ -1756,6 +1792,8 @@ define([
                     trunc: Type.trunc,
                     IfThen: that.ifthen,
                     'import': that.importModule,
+                    'use': that.use,
+                    'remove': that.del,
                     '$': that.getElementById,
                     '$board': that.board,
                     '$log': that.log
@@ -1780,6 +1818,8 @@ define([
             builtIn.factorial.src = 'JXG.Math.factorial';
             builtIn.trunc.src = 'JXG.trunc';
             builtIn['import'].src = '$jc$.importModule';
+            builtIn.use.src = '$jc$.use';
+            builtIn.remove.src = '$jc$.del';
             builtIn.IfThen.src = '$jc$.ifthen';
             // usually unused, see node_op > op_execfun
             builtIn.$.src = '(function (n) { return $jc$.board.select(n); })';
