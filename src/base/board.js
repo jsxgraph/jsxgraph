@@ -508,7 +508,9 @@ define([
             zoomIn: 'zoomIn',
             zoomOut: 'zoomOut',
             zoom100: 'zoom100',
-            zoomElements: 'zoomElements'
+            zoomElements: 'zoomElements',
+            remove: 'removeObject',
+            removeObject: 'removeObject'
         };
     };
 
