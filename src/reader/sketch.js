@@ -162,8 +162,8 @@
                     var o;
 
                     if (options.useSymbols) {
-                        if (board.jc.sstack[0][v]) {
-                            o = board.jc.sstack[0][v];
+                        if (board.jc.scope.locals[v]) {
+                            o = board.jc.scope.locals[v];
                         } else {
                             o = objects[v];
                         }
