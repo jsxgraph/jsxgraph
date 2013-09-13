@@ -963,12 +963,16 @@ define([
         },
 
         /**
-         * Converts a glider into a free point, regardless of how many slideObjects the point is bound to.
+         * Converts a calculated point into a free point, i.e. it will delete all ancestors and transformations and,
+         * if the point is currently a glider, will remove the slideObject reference.
          */
         free: function () {
             var ancestorId, ancestor, child;
 
             if (this.type !== Const.OBJECT_TYPE_GLIDER) {
+                // remove all transformations
+                this.transformations.length = 0;
+
                 if (!this.isDraggable) {
                     this.isDraggable = true;
                     this.type = Const.OBJECT_TYPE_POINT;
