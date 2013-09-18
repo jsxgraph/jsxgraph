@@ -1664,6 +1664,10 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'point');
 
+        if (parents.length === 1 && Type.isArray(parents[0]) && parents[0].length > 1 && parents[0].length < 4) {
+            parents = parents[0];
+        }
+
         for (i = 0; i < parents.length; i++) {
             if (typeof parents[i] === 'function' || typeof parents[i] === 'string') {
                 isConstrained = true;
