@@ -412,6 +412,14 @@ define([
              */
 
             /**
+             * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
+             * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * @type function
+             * @name JXG.Ticks#generateLabelValue
+             */
+            generateLabelValue: null,
+
+            /**
              * Draw labels yes/no
              * @type Boolean
              * @name JXG.Ticks#drawLabels

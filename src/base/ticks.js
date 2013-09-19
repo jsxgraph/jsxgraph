@@ -730,7 +730,9 @@ define([
             }
 
             // Correct label also for frozen tick lines.
-            pos = this.generateLabelValue(newTick, center) / this.visProp.scale;
+            if (this.equidistant) {
+                pos = this.generateLabelValue(newTick, center) / this.visProp.scale;
+            }
 
             labelText = pos.toString();
             if (newTick.distance(Const.COORDS_BY_USER, center) < Mat.eps) {
