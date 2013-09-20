@@ -959,7 +959,8 @@ define([
          * @see #addLabelToElement
          */
         createLabel: function () {
-            var attr;
+            var attr,
+                that = this;
 
             // this is a dirty hack to resolve the text-dependency. If there is no text element available,
             // just don't create a label. This method is usually not called by a user, so we won't throw
@@ -973,7 +974,9 @@ define([
                 attr.priv = this.visProp.priv;
 
                 if (this.visProp.withlabel) {
-                    this.label = JXG.elements.text(this.board, [0, 0, this.name], attr);
+                    this.label = JXG.elements.text(this.board, [0, 0, function () {
+                        return that.name;
+                    }], attr);
                     this.label.needsUpdate = true;
                     this.label.update();
 
