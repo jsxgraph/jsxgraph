@@ -95,7 +95,7 @@ define([
      */
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
-            p1, p2, l1, ticks, ti, startx, starty, p3, l2, n, t,
+            p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
             withText, withTicks, snapWidth, attr, precision;
 
         pos0 = parents[0];
@@ -196,11 +196,6 @@ define([
         p3._smin = smin;
 
         if (withText) {
-            if (attributes.name && attributes.name !== '') {
-                n = attributes.name + ' = ';
-            } else {
-                n = '';
-            }
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
             t = board.create('text', [
                 function () {
@@ -210,6 +205,14 @@ define([
                     return (p2.Y() - p1.Y()) * 0.05 + p2.Y();
                 },
                 function () {
+                    var n;
+
+                    if (p3.name && p3.name !== '') {
+                        n = p3.name + ' = ';
+                    } else {
+                        n = '';
+                    }
+
                     return n + (p3.Value()).toFixed(precision);
                 }
             ], attr);
