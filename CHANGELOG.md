@@ -31,6 +31,9 @@ New Features
  * New Moodle2 plugin (6d11868, 0ba96fe, a54d8d2, 8c8f2fa, 2b76da3, 8a8625f)
  * Texts may now be dragged by clicking anywhere in the text (a624b6d)
  * Allow the user to not register mobile Safari specific gesture events (56b057a, 17a5179)
+ * Add new board attributes offsetX/Y (f8a0262)
+ * Points can now also be created with a coordinate array instead of 2 resp. 3 numbers (cfe4a43)
+ * Element name changes are now automatically reflected by its label (8aa9269, e9a9cf1)
 
 Bug fixes
 ---------
@@ -64,6 +67,9 @@ Bug fixes
  * Work around a dashed path bug in webkit (9c5ab12)
  * Pie chart highlight fixed (ab75d6e)
  * Fixed shear transformation (e0e8140)
+ * Element 'hash' renamed to 'hatch', 'hash' is kept as an alias (5b7ecd4)
+ * Point.free() now also removes transformations (8baa48d)
+ * generateLabelValue() should not be used for fixed ticks (d5f3821)
 
 
 
