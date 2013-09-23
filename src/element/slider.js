@@ -228,6 +228,7 @@ define([
 
             // reset the withlabel attribute
             p3.visProp.withlabel = true;
+            p3.hasLabel = true;
         }
 
         /**
