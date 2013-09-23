@@ -553,7 +553,7 @@ define([
             /**#@-*/
         },
 
-        hash: {
+        hatch: {
             drawLabels: false,
             drawZero: true,
             majorHeight: 20,

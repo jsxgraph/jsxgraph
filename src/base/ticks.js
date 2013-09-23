@@ -938,19 +938,19 @@ define([
      * @class Hashes can be used to mark congruent lines.
      * @pseudo
      * @description
-     * @name Hash
+     * @name Hatch
      * @augments JXG.Ticks
      * @constructor
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line,Number} line,numberofhashes The parents consist of the line the hash marks are going to be attached to and the
+     * @param {JXG.Line,Number} line,numberofhashes The parents consist of the line the hatch marks are going to be attached to and the
      * number of dashes.
      * @example
      * // Create an axis providing two coord pairs.
      *   var p1 = board.create('point', [0, 3]);
      *   var p2 = board.create('point', [1, 3]);
      *   var l1 = board.create('line', [p1, p2]);
-     *   var t = board.create('hash', [l1, 3]);
+     *   var t = board.create('hatch', [l1, 3]);
      * </pre><div id="4a20af06-4395-451c-b7d1-002757cf01be" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -958,17 +958,17 @@ define([
      *   var p1 = board.create('point', [0, 3]);
      *   var p2 = board.create('point', [1, 3]);
      *   var l1 = board.create('line', [p1, p2]);
-     *   var t = board.create('hash', [l1, 3]);
+     *   var t = board.create('hatch', [l1, 3]);
      * })();
      * </script><pre>
      */
-    JXG.createHashmark = function (board, parents, attributes) {
-        var num, i, base, width, totalwidth,
+    JXG.createHatchmark = function (board, parents, attributes) {
+        var num, i, base, width, totalwidth, el,
             pos = [],
-            attr = Type.copyAttributes(attributes, board.options, 'hash');
+            attr = Type.copyAttributes(attributes, board.options, 'hatch');
 
         if (parents[0].elementClass !== Const.OBJECT_CLASS_LINE || typeof parents[1] !== 'number') {
-            throw new Error("JSXGraph: Can't create Hash with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create Hatch mark with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
         }
 
         num = parents[1];
@@ -980,15 +980,18 @@ define([
             pos[i] = base + i * width;
         }
 
-        return board.create('ticks', [parents[0], pos], attr);
+        el = board.create('ticks', [parents[0], pos], attr);
+        el.elType = 'hatch';
     };
 
     JXG.registerElement('ticks', JXG.createTicks);
-    JXG.registerElement('hash', JXG.createHashmark);
+    JXG.registerElement('hash', JXG.createHatchmark);
+    JXG.registerElement('hatch', JXG.createHatchmark);
 
     return {
         Ticks: JXG.Ticks,
         createTicks: JXG.createTicks,
-        createHashmark: JXG.createHashmark
+        createHashmark: JXG.createHatchmark,
+        createHatchmark: JXG.createHatchmark
     };
 });
