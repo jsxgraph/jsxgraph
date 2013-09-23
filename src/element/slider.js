@@ -153,6 +153,7 @@ define([
         // glider point
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         // overwrite this in any case; the sliders label is a special text element, not the gliders label.
+        // this will be set back to true after the text was created (and only if withlabel was true initially).
         attr.withLabel = false;
         // gliders set snapwidth=-1 by default (i.e. deactivate them)
         p3 = board.create('glider', [startx, starty, l1], attr);
@@ -224,6 +225,9 @@ define([
              * @type JXG.Text
              */
             p3.label = t;
+
+            // reset the withlabel attribute
+            p3.visProp.withlabel = true;
         }
 
         /**
