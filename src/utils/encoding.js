@@ -1,4 +1,4 @@
-/*global JXG: true, define: true*/
+/*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
 /* depends:
@@ -28,6 +28,10 @@ define(['jxg'], function (JXG) {
                 len = string.length;
 
             string = string.replace(/\r\n/g, '\n');
+
+            if (typeof unescape === 'function' && typeof encodeURIComponent === 'function') {
+                return unescape(encodeURIComponent(string));
+            }
 
             for (n = 0; n < len; n++) {
                 c = string.charCodeAt(n);
@@ -60,6 +64,12 @@ define(['jxg'], function (JXG) {
                 c2 = 0,
                 c3 = 0,
                 len = utftext.length;
+
+            console.log('decode called', utftext);
+            if (typeof decodeURIComponent === 'function' && typeof escape === 'function') {
+                console.log('short way');
+                return decodeURIComponent(escape(utftext));
+            }
 
             while (i < len) {
                 c = utftext.charCodeAt(i);
