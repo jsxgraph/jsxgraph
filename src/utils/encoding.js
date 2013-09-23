@@ -29,6 +29,9 @@ define(['jxg'], function (JXG) {
 
             string = string.replace(/\r\n/g, '\n');
 
+            // See
+            // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+            // http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
             if (typeof unescape === 'function' && typeof encodeURIComponent === 'function') {
                 return unescape(encodeURIComponent(string));
             }
@@ -65,9 +68,10 @@ define(['jxg'], function (JXG) {
                 c3 = 0,
                 len = utftext.length;
 
-            console.log('decode called', utftext);
+            // See
+            // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+            // http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
             if (typeof decodeURIComponent === 'function' && typeof escape === 'function') {
-                console.log('short way');
                 return decodeURIComponent(escape(utftext));
             }
 
