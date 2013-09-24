@@ -1813,8 +1813,8 @@ define([
         el1 = board.select(parents[0]);
         el2 = board.select(parents[1]);
 
-        i = parents[2];
-        j = parents[3];
+        i = parents[2] || 0;
+        j = parents[3] || 0;
 
         if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                 el2.elementClass === Const.OBJECT_CLASS_CURVE) {

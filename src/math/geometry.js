@@ -1028,7 +1028,7 @@ define([
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
          * @param {Number} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
-         * @param {Boolean} alwaysIntersect
+         * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection 
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,1,0] is returned.
          */
@@ -1048,7 +1048,7 @@ define([
             }
 
             if (cu.visProp.curvetype === 'plot') {
-                v = this.meetCurveLineDiscrete(cu, li, nr, board, alwaysIntersect);
+                v = this.meetCurveLineDiscrete(cu, li, nr, board, !alwaysIntersect);
             } else {
                 v = this.meetCurveLineContinuous(cu, li, nr, board);
             }
@@ -1135,8 +1135,9 @@ define([
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i, j, p1, p2, q,
-                d, res, p,
+            var i, j, 
+                p1, p2, p, q,
+                d, res, 
                 cnt = 0,
                 len = cu.numberPoints;
 
@@ -1154,12 +1155,14 @@ define([
                     if (cu.bezierDegree === 3) {
                         res = this.meetBeziersegmentBeziersegment([
                             cu.points[i - 1].usrCoords.slice(1),
-                            cu.points[i].usrCoords.slice(1),
+                            cu.points[i    ].usrCoords.slice(1),
                             cu.points[i + 1].usrCoords.slice(1),
                             cu.points[i + 2].usrCoords.slice(1)
-                        ], [
-                            li.point1.coords.usrCoords.slice(1), li.point2.coords.usrCoords.slice(1)
-                        ]);
+                        ], 
+                        [li.point1.coords.usrCoords.slice(1), 
+                         li.point2.coords.usrCoords.slice(1)], 
+                        testSegment);
+                        
                         i += 2;
                     } else {
                         res = [this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords)];
@@ -1425,8 +1428,11 @@ define([
 
             return [];
         },
-
-        _bezierLineMeetSubdivision: function (red, blue, level) {
+        
+        /**
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
+         */
+        _bezierLineMeetSubdivision: function (red, blue, level, testSegment) {
             var bbb, bbr, i, le,
                 ar, r0, r1, m,
                 p0, p1, q0, q1,
@@ -1436,7 +1442,7 @@ define([
             bbb = this._bezierBbox(blue);
             bbr = this._bezierBbox(red);
 
-            if (!this._bezierOverlap(bbr, bbb)) {
+            if (testSegment && !this._bezierOverlap(bbr, bbb)) {
                 return [];
             }
 
@@ -1459,8 +1465,10 @@ define([
 
             m = this.meetSegmentSegment(q0, q1, p0, p1);
 
-            if (m[1] >= 0.0 && m[2] >= 0.0 && m[1] <= 1.0 && m[2] <= 1.0) {
-                return [m];
+            if (m[1] >= 0.0 && m[1] <= 1.0) {
+                if (!testSegment || (m[2] >= 0.0 && m[2] <= 1.0)) {
+                    return [m];
+                }
             }
 
             return [];
@@ -1472,18 +1480,20 @@ define([
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          * @returns {Array} Array containing the list of all intersection points as homogeneous coordinate arrays plus
          * preimages [x,y], t_1, t_2] of the two Bezier curve segments.
          *
          */
-        meetBeziersegmentBeziersegment: function (red, blue) {
+        meetBeziersegmentBeziersegment: function (red, blue, testSegment) {
             var L, n, L2, i;
 
             if (red.length === 4 && blue.length === 4) {
                 L = this._bezierMeetSubdivision(red, blue, 0);
             } else {
-                L = this._bezierLineMeetSubdivision(red, blue, 0);
+                L = this._bezierLineMeetSubdivision(red, blue, 0, testSegment);
             }
+            
             L.sort(function (a, b) {
                 return (a[1] - b[1]) * 10000000.0 + (a[2] - b[2]);
             });
