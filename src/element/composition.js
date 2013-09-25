@@ -1754,7 +1754,7 @@ define([
             starty = curve.Y(start);
         }
 
-        if (Type.isFunction(start)) {
+        if (Type.isFunction(end)) {
             endx = end;
             endy = function () { return curve.Y(endx()); };
             end = endx();
