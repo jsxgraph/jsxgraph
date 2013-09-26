@@ -9,6 +9,30 @@ define(['jxg'], function (JXG) {
 
     "use strict";
 
+    // constants
+    var UTF8_ACCEPT = 0,
+        UTF8_REJECT = 12,
+        UTF8D = [
+            // The first part of the table maps bytes to character classes that
+            // to reduce the size of the transition table and create bitmasks.
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,   9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+            7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
+            8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 3,  11, 6, 6, 6, 5, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+
+            // The second part is a transition table that maps a combination
+            // of a state of the automaton and a character class to a state.
+            0, 12, 24, 36, 60, 96, 84, 12, 12, 12, 48, 72,  12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+            12,  0, 12, 12, 12, 12, 12,  0, 12,  0, 12, 12,  12, 24, 12, 12, 12, 12, 12, 24, 12, 24, 12, 12,
+            12, 12, 12, 12, 12, 12, 12, 24, 12, 12, 12, 12,  12, 24, 12, 12, 12, 12, 12, 12, 12, 24, 12, 12,
+            12, 12, 12, 12, 12, 12, 12, 36, 12, 36, 12, 12,  12, 36, 12, 12, 12, 12, 12, 36, 12, 36, 12, 12,
+            12, 36, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12
+        ];
+
     // Util namespace
     JXG.Util = JXG.Util || {};
 
@@ -61,37 +85,48 @@ define(['jxg'], function (JXG) {
          * @return {String} utf8 decoded string
          */
         decode : function (utftext) {
-            var string = [],
-                i = 0,
-                c = 0,
-                c2 = 0,
-                c3 = 0,
+
+            /*
+                 The following code is a translation from C99 to JavaScript.
+
+                 The original C99 code can be found at
+                 http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
+
+                 Original copyright note:
+
+                 Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
+
+                 License: MIT License (see LICENSE.MIT)
+            */
+
+            var codep, i, byte, type, char,
+                state = UTF8_ACCEPT,
+                string = [],
                 len = utftext.length;
 
-            // See
-            // http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
-            // http://monsur.hossa.in/2012/07/20/utf-8-in-javascript.html
-            if (typeof decodeURIComponent === 'function' && typeof escape === 'function') {
-                return decodeURIComponent(escape(utftext));
-            }
+            for (i = 0; i < len; i++) {
+                codep = 0;
+                byte = utftext.charCodeAt(i);
+                type = UTF8D[byte];
 
-            while (i < len) {
-                c = utftext.charCodeAt(i);
-
-                if (c < 128) {
-                    string.push(String.fromCharCode(c));
-                    i++;
-                } else if ((c > 191) && (c < 224)) {
-                    c2 = utftext.charCodeAt(i + 1);
-                    string.push(String.fromCharCode(((c & 31) << 6) | (c2 & 63)));
-                    i += 2;
+                if (state !== UTF8_ACCEPT) {
+                    codep = (byte & 0x3f) | (codep << 6);
                 } else {
-                    c2 = utftext.charCodeAt(i + 1);
-                    c3 = utftext.charCodeAt(i + 2);
-                    string.push(String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)));
-                    i += 3;
+                    codep = (0xff >> type) & byte;
+                }
+
+                state = UTF8D[256 + state + type];
+
+                if (state === UTF8_ACCEPT) {
+                    if (codep > 0xffff) {
+                        string.push(String.fromCharCode(0xD7C0 + (codep >> 10)));
+                        string.push(String.fromCharCode(0xDC00 + (codep & 0x3FF)));
+                    } else {
+                        string.push(String.fromCharCode(codep));
+                    }
                 }
             }
+
             return string.join('');
         },
 
