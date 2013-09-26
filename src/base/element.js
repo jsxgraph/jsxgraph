@@ -364,7 +364,7 @@ define([
                 }
             }
 
-            for (el in this.ancestors) {
+            for (el in this.ancestors) { 
                 if (this.ancestors.hasOwnProperty(el)) {
                     for (el2 in this.descendants) {
                         if (this.descendants.hasOwnProperty(el2)) {
@@ -393,6 +393,63 @@ define([
             }
             return this;
         },
+        
+        /**
+         * Remove an element as a child from the current element. 
+         * @param {JXG.GeometryElement} obj The dependent object.
+         */
+        removeChild: function (obj) {
+            var el, el2;
+
+            delete this.childElements[obj.id];
+            this.removeDescendants(obj);
+            delete obj.ancestors[this.id];
+            
+            /*
+             // I do not know if these addDescendants stuff has to be adapted to removeChild. A.W.
+            for (el in this.descendants) {
+                if (this.descendants.hasOwnProperty(el)) {
+                    delete this.descendants[el].ancestors[this.id];
+
+                    for (el2 in this.ancestors) {
+                        if (this.ancestors.hasOwnProperty(el2)) {
+                            this.descendants[el].ancestors[this.ancestors[el2].id] = this.ancestors[el2];
+                        }
+                    }
+                }
+            }
+
+            for (el in this.ancestors) {
+                if (this.ancestors.hasOwnProperty(el)) {
+                    for (el2 in this.descendants) {
+                        if (this.descendants.hasOwnProperty(el2)) {
+                            this.ancestors[el].descendants[this.descendants[el2].id] = this.descendants[el2];
+                        }
+                    }
+                }
+            }
+            */
+            return this;
+        },
+
+        /**
+         * Removes the given object from the descendants list of this object and all its child objects.
+         * @param {JXG.GeometryElement} obj The element that is to be removed from the descendants list.
+         * @private
+         * @return
+         */
+        removeDescendants: function (obj) {
+            var el;
+
+            delete this.descendants[obj.id];
+            for (el in obj.childElements) {
+                if (obj.childElements.hasOwnProperty(el)) {
+                    this.removeDescendants(obj.childElements[el]);
+                }
+            }
+            return this;
+        },
+        
 
         /**
          * Counts the direct children of an object without counting labels.

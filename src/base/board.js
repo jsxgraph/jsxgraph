@@ -3816,9 +3816,11 @@ define([
                 } else if (Type.exists(this.groups[s])) {
                     s = this.groups[s];
                 }
+
             // it's a function or an object, but not an element
             } else if (typeof s === 'function' || (typeof s === 'object' && !JXG.isArray(s) && typeof s.setAttribute !== 'function')) {
-                flist = Type.filterElements(this.objectsList, str);
+
+                flist = Type.filterElements(this.objectsList, s);
 
                 olist = {};
                 l = flist.length;
@@ -3826,8 +3828,12 @@ define([
                     olist[flist[i].id] = flist[i];
                 }
                 return new EComposition(olist);
+            
+            // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
+            } else if (typeof s === 'object' && JXG.exists(s.id) && !JXG.exists(this.objects[s.id])) {
+                return null;
             }
-
+            
             return s;
         },
 

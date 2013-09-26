@@ -950,7 +950,9 @@ define([
                 // It may not be sufficient to remove the point from
                 // the list of childElement. For complex dependencies
                 // one may have to go to the list of ancestor and descendants.  A.W.
-                delete this.slideObject.childElements[this.id];
+                // yes indeed, see #51 on github bugtracker
+                //delete this.slideObject.childElements[this.id];
+                this.slideObject.removeChild(this);
 
                 if (this.slideObjects.length === 0) {
                     this.elType = 'point';
