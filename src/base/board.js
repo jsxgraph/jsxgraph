@@ -2076,10 +2076,6 @@ define([
                     }
                 }
                 if (!found) {
-                    if (this.downObjects[i].type === Const.OBJECT_TYPE_GLIDER) {
-                        this.downObjects[i].needsUpdateFromParent = false;
-                    }
-
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
                     this.downObjects[i].snapToGrid();
                     this.downObjects.splice(i, 1);
@@ -2194,10 +2190,6 @@ define([
             if (this.mouse && this.mouse.obj) {
                 // The parameter is needed for lines with snapToGrid enabled
                 this.mouse.obj.snapToGrid(this.mouse.targets[0]);
-            }
-
-            if (this.mode === this.BOARD_MODE_DRAG && this.mouse.obj.type === Const.OBJECT_TYPE_GLIDER) {
-                this.mouse.obj.needsUpdateFromParent = false;
             }
 
             this.originMoveEnd();
