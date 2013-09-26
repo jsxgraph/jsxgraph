@@ -99,13 +99,13 @@ define(['jxg'], function (JXG) {
                  License: MIT License (see LICENSE.MIT)
             */
 
-            var codep, i, byte, type, char,
+            var i, byte, type, char,
+                codep = 0,
                 state = UTF8_ACCEPT,
                 string = [],
                 len = utftext.length;
 
             for (i = 0; i < len; i++) {
-                codep = 0;
                 byte = utftext.charCodeAt(i);
                 type = UTF8D[byte];
 
