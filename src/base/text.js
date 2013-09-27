@@ -30,7 +30,7 @@
  */
 
 
-/*global JXG: true, define: true*/
+/*global JXG: true, define: true, window: true*/
 /*jslint nomen: true, plusplus: true*/
 
 /* depends:
@@ -308,7 +308,7 @@ define([
                 if (s[0] === 0 && s[1] === 0) {
                     // Some browsers need some time to set offsetWidth and offsetHeight
                     that = this;
-                    setTimeout(function () {
+                    window.setTimeout(function () {
                         that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
                     }, 0);
                 } else {

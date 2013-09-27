@@ -364,7 +364,7 @@ define([
                 }
             }
 
-            for (el in this.ancestors) { 
+            for (el in this.ancestors) {
                 if (this.ancestors.hasOwnProperty(el)) {
                     for (el2 in this.descendants) {
                         if (this.descendants.hasOwnProperty(el2)) {
@@ -393,7 +393,7 @@ define([
             }
             return this;
         },
-        
+
         /**
          * Remove an element as a child from the current element. 
          * @param {JXG.GeometryElement} obj The dependent object.
@@ -404,7 +404,7 @@ define([
             delete this.childElements[obj.id];
             this.removeDescendants(obj);
             delete obj.ancestors[this.id];
-            
+
             /*
              // I do not know if these addDescendants stuff has to be adapted to removeChild. A.W.
             for (el in this.descendants) {
@@ -449,7 +449,6 @@ define([
             }
             return this;
         },
-        
 
         /**
          * Counts the direct children of an object without counting labels.
