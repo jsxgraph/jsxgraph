@@ -85,7 +85,6 @@ define(['jxg'], function (JXG) {
          * @return {String} utf8 decoded string
          */
         decode : function (utftext) {
-
             /*
                  The following code is a translation from C99 to JavaScript.
 
@@ -99,34 +98,34 @@ define(['jxg'], function (JXG) {
                  License: MIT License (see LICENSE.MIT)
             */
 
-            var i, byte, type, char,
-                codep = 0,
+            var i, charCode, type,
+                codepoint = 0,
                 state = UTF8_ACCEPT,
-                string = [],
+                chars = [],
                 len = utftext.length;
 
             for (i = 0; i < len; i++) {
-                byte = utftext.charCodeAt(i);
-                type = UTF8D[byte];
+                charCode = utftext.charCodeAt(i);
+                type = UTF8D[charCode];
 
                 if (state !== UTF8_ACCEPT) {
-                    codep = (byte & 0x3f) | (codep << 6);
+                    codepoint = (charCode & 0x3f) | (codepoint << 6);
                 } else {
-                    codep = (0xff >> type) & byte;
+                    codepoint = (0xff >> type) & charCode;
                 }
 
                 state = UTF8D[256 + state + type];
 
                 if (state === UTF8_ACCEPT) {
-                    if (codep > 0xffff) {
-                        string.push(0xD7C0 + (codep >> 10), 0xDC00 + (codep & 0x3FF));
+                    if (codepoint > 0xffff) {
+                        chars.push(0xD7C0 + (codepoint >> 10), 0xDC00 + (codepoint & 0x3FF));
                     } else {
-                        string.push(codep);
+                        chars.push(codepoint);
                     }
                 }
             }
 
-            return String.fromCharCode.apply(null, string);
+            return String.fromCharCode.apply(null, chars);
         },
 
         /**
