@@ -44,7 +44,7 @@ define(['jxg'], function (JXG) {
     var major = 0,
         minor = 98,
         patch = 0,
-        add = 'rc1',
+        add = '',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 

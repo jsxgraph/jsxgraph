@@ -50,7 +50,7 @@
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
- * @version 0.97
+ * @version 0.98
  */
 
 define([

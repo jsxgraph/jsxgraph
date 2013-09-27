@@ -60,8 +60,6 @@
 /**
  * @fileoverview The JXG.Board class is defined in this file. JXG.Board controls all properties and methods
  * used to manage a geonext board like managing geometric elements, managing mouse and touch events, etc.
- * @author graphjs
- * @version 0.1
  */
 
 define([
