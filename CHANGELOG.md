@@ -70,6 +70,12 @@ Bug fixes
  * Element 'hash' renamed to 'hatch', 'hash' is kept as an alias (5b7ecd4)
  * Point.free() now also removes transformations (8baa48d)
  * generateLabelValue() should not be used for fixed ticks (d5f3821)
+ * Bugfix and performance enhancement of UTF8.decode() (#50, ecbf4af, 6044803, 576efbe, 53dadce, 124d94c, 88c9b44)
+ * Fix slider attributes and properties (11f2250, 2684070)
+ * Fix intersection arcs with lines (cb42d77)
+ * Fix integral start/end interval (b8365bf)
+ * Update the glider when the user leaves the drag mode (b75ad28)
+ * Fixed deleting an attractor (2a91eb2)
 
 
 
