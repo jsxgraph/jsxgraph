@@ -119,14 +119,14 @@ define(['jxg'], function (JXG) {
 
                 if (state === UTF8_ACCEPT) {
                     if (codep > 0xffff) {
-                        string.push(String.fromCharCode(0xD7C0 + (codep >> 10), 0xDC00 + (codep & 0x3FF)));
+                        string.push(0xD7C0 + (codep >> 10), 0xDC00 + (codep & 0x3FF));
                     } else {
-                        string.push(String.fromCharCode(codep));
+                        string.push(codep);
                     }
                 }
             }
 
-            return string.join('');
+            return String.fromCharCode.apply(null, string);
         },
 
         /**
