@@ -1135,9 +1135,9 @@ define([
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
-            var i, j, 
+            var i, j,
                 p1, p2, p, q,
-                d, res, 
+                d, res,
                 cnt = 0,
                 len = cu.numberPoints;
 
@@ -1155,14 +1155,14 @@ define([
                     if (cu.bezierDegree === 3) {
                         res = this.meetBeziersegmentBeziersegment([
                             cu.points[i - 1].usrCoords.slice(1),
-                            cu.points[i    ].usrCoords.slice(1),
+                            cu.points[i].usrCoords.slice(1),
                             cu.points[i + 1].usrCoords.slice(1),
                             cu.points[i + 2].usrCoords.slice(1)
-                        ], 
-                        [li.point1.coords.usrCoords.slice(1), 
-                         li.point2.coords.usrCoords.slice(1)], 
-                        testSegment);
-                        
+                        ], [
+                            li.point1.coords.usrCoords.slice(1),
+                            li.point2.coords.usrCoords.slice(1)
+                        ], testSegment);
+
                         i += 2;
                     } else {
                         res = [this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords)];
@@ -1384,7 +1384,7 @@ define([
          * array of length three (homogeneous coordinates) plus preimages.
          */
         _bezierMeetSubdivision: function (red, blue, level) {
-            var bbb, bbr, i, le,
+            var bbb, bbr,
                 ar, b0, b1, r0, r1, m,
                 p0, p1, q0, q1,
                 L = [],
@@ -1428,12 +1428,12 @@ define([
 
             return [];
         },
-        
+
         /**
          * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
          */
         _bezierLineMeetSubdivision: function (red, blue, level, testSegment) {
-            var bbb, bbr, i, le,
+            var bbb, bbr,
                 ar, r0, r1, m,
                 p0, p1, q0, q1,
                 L = [],
@@ -1493,7 +1493,7 @@ define([
             } else {
                 L = this._bezierLineMeetSubdivision(red, blue, 0, testSegment);
             }
-            
+
             L.sort(function (a, b) {
                 return (a[1] - b[1]) * 10000000.0 + (a[2] - b[2]);
             });
