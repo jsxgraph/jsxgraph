@@ -15,6 +15,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     angle: {
         fillColor: '#ddd',
         strokeColor: '#000',
+        radius: 1.0, 
         orthotype: 'sectordot'
     },
 
