@@ -684,9 +684,13 @@
                     gxtEl.outPoint = this.visualProperties(gxtEl.outPoint, xmlNode);
                     gxtEl.outPoint = this.firstLevelProperties(gxtEl.outPoint, xmlNode);
                     gxtEl.outPoint = this.transformProperties(gxtEl.outPoint);
-                    gxtEl.out.point = gxtEl.outPoint;
 
-                    board.create('arrowparallel', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.out);
+                    // construct this by hand, because arrowparallel uses projective geometry now
+                    p =  board.create('parallelpoint', [gxtEl.defEl[1], gxtEl.defEl[0]], gxtEl.outPoint);
+                    gxtEl.out.firstArrow = false;
+                    gxtEl.out.lastArrow = true;
+                    el = board.create('segment', [gxtEl.defEl[0], p], gxtEl.out);
+                    el.parallelpoint = p;
                     break;
 
                 // BISECTOR
