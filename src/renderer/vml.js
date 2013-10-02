@@ -61,6 +61,9 @@ define([
 
         this.container = container;
         this.container.style.overflow = 'hidden';
+        if (this.container.style.position === '') {
+            this.container.style.position = 'relative';
+        }
         this.container.onselectstart = function () {
             return false;
         };
