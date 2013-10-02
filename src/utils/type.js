@@ -218,7 +218,7 @@ define([
 
         /**
          * Convert a String, number or function into a function.
-         * @param term A variable of type string, function or number.
+         * @param {String|Number|Function} term A variable of type string, function or number.
          * @param {JXG.Board} board Reference to a JSXGraph board. It is required to resolve dependencies given
          * by a GEONE<sub>X</sub>T string, thus it must be a valid reference only in case one of the param
          * values is of type string.
