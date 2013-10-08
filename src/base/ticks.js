@@ -211,16 +211,17 @@ define([
         generateLabelValue: function (tick, center) {
             var anchor = this.visProp.anchor,
                 f = -1,
+                isAxis = this.line.type === Const.OBJECT_TYPE_AXIS,
                 p1 = this.line.point1,
                 p2 = this.line.point2;
 
             // horizontal axis
-            if (anchor === 'left' && Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
+            if (anchor === 'left' && isAxis && Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
                 return tick.usrCoords[1];
             }
 
             // vertical axis
-            if (anchor === 'left' && Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
+            if (anchor === 'left' && isAxis && Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
                 return tick.usrCoords[2];
             }
 
