@@ -358,7 +358,11 @@ define([
 
             // enforce board coordinate system for axes
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                coordsZero = new Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
+                coordsZero = Geometry.projectPointToLine({
+                    coords: {
+                        usrCoords: [1, 0, 0]
+                    }
+                }, this.line, this.board);
             }
 
             // Set lower and upper bound for the tick distance.
