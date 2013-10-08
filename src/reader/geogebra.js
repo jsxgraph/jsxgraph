@@ -2718,7 +2718,7 @@
                     return false;
                 }
                 break;
-            case 'function':
+                case 'function':
                 attr = this.boardProperties(gxtEl, element, attr);
                 attr = this.colorProperties(element, attr);
                 gxtEl = this.coordinates(gxtEl, element);
@@ -2740,6 +2740,16 @@
                 JXG.debug(func);
 
                 range = [(input && input[1]) ? input[1] : null, (input && input[2]) ? input[2] : null];
+
+                // fix the range input. This might by x(<point>) or y(point) but JSXGraph only allows X(<point>)
+                // and Y(point) so we need to convert this.
+                rx = /([x|y])\((\w+)\)/;
+                for (i = 0; i < 2; i++) {
+                    match = rx.exec(range[i]);
+                    if (match) {
+                        range[i] = match[1].toUpperCase() + '(' + match[2] + ')';
+                    }
+                }
 
                 // all validated by ggbParse and functionParse
                 try {
