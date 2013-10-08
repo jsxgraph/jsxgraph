@@ -1140,7 +1140,7 @@
                 info.att = '';
 
                 if (!err_off) {
-                    err_off	= [];
+                    err_off = [];
                 }
 
                 if (!err_la) {
@@ -1879,7 +1879,7 @@
             var p, res, re2, poly, t2, t, m, i, l2, p2, l1, p1, slopeWidth,
                 tmp, attr2, t1, i2, i1, pol, type, d2, d1, d, startpoint,
                 inp, borderatts, borders, element, gxtEl, attr, exp, coord, points,
-                length, match, rx, q, c, s, e, sx, sy, ex, ey, func, range,
+                length, match, matchDep, rx, q, c, s, e, sx, sy, ex, ey, func, range,
 
                 // for use with closures
                 that = this,
@@ -1943,12 +1943,19 @@
 
                 try {
                     match = /Circle\[\s*(\w+)\s*,\s*([\d\.]+)\s*\]/.exec(input);
+                    matchDep = /Circle\[\s*(\w+)\s*,\s*(\w+)\s*\]/.exec(input);
 
                     if (JXG.exists(input)) {
                         if (JXG.exists(match) && match.length === 3) {
                             // from Circle[A, 5] take "A" and "5", stored in ma[1] and ma[2]
                             q = this.checkElement(match[1]);
                             c = this.board.create('circle', [q, parseFloat(match[2])], {fillColor: 'none', visible: false, name: ''});
+                            p = this.board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
+                        } else if (JXG.exists(matchDep) && matchDep.length === 3) {
+                            // Circle around point ma[1] with radius defined by another elements Value-function ma[2]
+                            q = this.checkElement(matchDep[1]);
+                            m = this.checkElement(matchDep[2]);
+                            c = this.board.create('circle', [q, function () { return m.Value(); }], {fillColor: 'none', visible: false, name: ''});
                             p = this.board.create('glider', [gxtEl.x, gxtEl.y, c], attr);
                         } else if (JXG.isArray(input)) {
                             p = this.board.create('glider', [gxtEl.x, gxtEl.y, input[0]], attr);
@@ -1969,6 +1976,16 @@
                 attr = this.colorProperties(element, attr);
                 gxtEl = this.coordinates(gxtEl, element);
                 attr = this.visualProperties(element, attr);
+
+                if (typeof input === 'undefined') {
+                    input = [
+                        parseFloat(element.getElementsByTagName('coords')[0].getAttribute('z')),
+                        parseFloat(element.getElementsByTagName('coords')[0].getAttribute('x')),
+                        parseFloat(element.getElementsByTagName('coords')[0].getAttribute('y'))
+                    ];
+                } else if (this.board.select(input[1].id).elementClass === JXG.OBJECT_CLASS_LINE) {
+                    type = 'parallel';
+                }
 
                 try {
                     JXG.debug("* Segment: (" + attr.name + ") First: " + input[0].name + ", Last: " + input[1].name);
@@ -2361,7 +2378,7 @@
                 attr = this.visualProperties(element, attr);
 
                 try {
-                    JXG.debug("* CircleArc: First: " + input[0].name + ", Second: " + input[1].name);
+                    JXG.debug("* CircleArc: First: " + input[0].name + ", Second: " + input[1].name + ", Third: " + input[2].name);
                     p = this.board.create('arc', input, attr);
                     return p;
                 } catch (exc14) {
