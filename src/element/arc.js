@@ -223,6 +223,17 @@ define([
             return this.Radius();
         };
 
+        /**
+         * Returns the length of the arc.
+         * @memberOf Arc.prototype
+         * @name Value
+         * @function
+         * @returns {Number} The arc length
+         */
+        el.Value = function () {
+            return this.Radius() * Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
+        };
+
         // documented in geometry element
         el.hasPoint = function (x, y) {
             var dist, checkPoint,
