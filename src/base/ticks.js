@@ -356,6 +356,11 @@ define([
                 coordsZero = p1.coords;
             }
 
+            // enforce board coordinate system for axes
+            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+                coordsZero = new Coords(JXG.COORDS_BY_USER, [0, 0], this.board);
+            }
+
             // Set lower and upper bound for the tick distance.
             // This is necessary for segments.
             if (this.line.visProp.straightfirst) {
