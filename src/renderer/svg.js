@@ -204,6 +204,9 @@ define([
             node2.setAttributeNS(null, 'orient', 'auto');
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
+            /*
+            * Changes here are also necessary in _setArrowAtts()
+            */
             s = parseInt(element.visProp.strokewidth, 10);
             //node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
             node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
@@ -214,7 +217,6 @@ define([
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
             */
             d = Math.max(s * 3, 10);
-
             node2.setAttributeNS(null, 'markerHeight', d);
             node2.setAttributeNS(null, 'markerWidth', d);
 
@@ -242,6 +244,8 @@ define([
          * @param {Number} width
          */
         _setArrowAtts: function (node, color, opacity, width) {
+            var s, d;
+            
             if (node) {
                 node.setAttributeNS(null, 'stroke', color);
                 node.setAttributeNS(null, 'stroke-opacity', opacity);
@@ -251,7 +255,16 @@ define([
                 // This is the stroke-width of the arrow head.
                 // Should be zero to make the positioning easy
                 node.setAttributeNS(null, 'stroke-width', 0);
+                
+                // The next lines are important if the strokeWidth of the line is changed.
+                s = width;
+                node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
+                d = Math.max(s * 3, 10);
+
+                node.setAttributeNS(null, 'markerHeight', d);
+                node.setAttributeNS(null, 'markerWidth', d);
             }
+                
         },
 
         /* ******************************** *
