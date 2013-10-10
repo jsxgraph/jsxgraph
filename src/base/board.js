@@ -1289,7 +1289,7 @@ define([
                 Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
 
                 if (this.hasPointerUp) {
-                    Env.removeEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
                     this.hasPointerUp = false;
                 }
 
@@ -1689,7 +1689,6 @@ define([
             }
 
             if (this.touches.length === 0) {
-
                 if (this.hasPointerUp) {
                     Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
                     this.hasPointerUp = false;
@@ -1712,10 +1711,9 @@ define([
         /**
          * This method is called by the browser when a finger touches the surface of the touch-device.
          * @param {Event} evt The browsers event object.
-         * @param {Object} object If the object to be dragged is already known, it can be submitted via this parameter
          * @returns {Boolean} ...
          */
-        touchStartListener: function (evt, object) {
+        touchStartListener: function (evt) {
             var i, pos, elements, j, k, time,
                 eps = this.options.precision.touch,
                 obj, found, targets,
@@ -1801,15 +1799,9 @@ define([
 
             // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
             for (i = 0; i < evtTouches.length; i++) {
-                if (object || !evtTouches[i].jxg_isused) {
+                if (!evtTouches[i].jxg_isused) {
                     pos = this.getMousePosition(evt, i);
-
-                    if (object) {
-                        elements = [ object ];
-                        this.mode = this.BOARD_MODE_DRAG;
-                    } else {
-                        elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
-                    }
+                    elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
 
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
@@ -2100,10 +2092,9 @@ define([
         /**
          * This method is called by the browser when the mouse button is clicked.
          * @param {Event} evt The browsers event object.
-         * @param {JXG.GeometryElement} object If the object to be dragged is already known, it can be submitted via this parameter
          * @returns {Boolean} True if no element is found under the current mouse pointer, false otherwise.
          */
-        mouseDownListener: function (evt, object) {
+        mouseDownListener: function (evt) {
             var pos, elements, result;
 
             // prevent accidental selection of text
@@ -2119,13 +2110,7 @@ define([
             }
 
             pos = this.getMousePosition(evt);
-
-            if (object) {
-                elements = [object];
-                this.mode = this.BOARD_MODE_DRAG;
-            } else {
-                elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
-            }
+            elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
 
             // if no draggable object can be found, get out here immediately
             if (elements.length === 0) {
@@ -2166,9 +2151,7 @@ define([
                 result = this.mouseOriginMoveStart(evt);
             }
 
-            if (!object) {
-                this.triggerEventHandlers(['mousedown', 'down'], [evt]);
-            }
+            this.triggerEventHandlers(['mousedown', 'down'], [evt]);
 
             return result;
         },
