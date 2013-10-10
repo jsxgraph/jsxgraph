@@ -1,3 +1,29 @@
+0.99
+====
+
+Important Notes
+---------------
+
+
+New Features
+------------
+ * Add new method Value() to Arc which returns the arc length (12e64c9)
+
+
+Bug fixes
+---------
+ * Fix and update documentation (9ec97a5)
+ * Fix arrowparallel element in reader/geonext (71c8799)
+ * Fix renderer/vml css position (#53, 149ffff)
+ * Remove CSS .navbar class definition (c4bc15f)
+ * Fix segment and glider on circle elements in reader/geogebra (6238190)
+ * Fix dynamic domain for function plots in reader/geogebra (d6479b6)
+ * Enforce the board's coordinate system for axes (#54, 25b6bc5, 8f7ff59, e4f6798)
+ * Fix SVG arrow head positioning (2899284)
+ * Remove pointerUpListener from document instead of the board container (bbcc73a)
+
+
+
 0.98
 ====
 
