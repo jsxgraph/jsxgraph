@@ -121,10 +121,10 @@ build/bin/readers/%.min.js: src/reader/%.js
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDREADERS)
 	{ $(CAT) COPYRIGHT; $(UGLIFYJS) $^; } > $@
 
-compressor: core
+compressor: core-min
 	$(REQUIREJS) -o build/compressor.build.json
-	$(CP) build/bin/jsxcompressor.js JSXCompressor/jsxcompressor.js
-	$(CP) build/bin/jsxgraphcore.js JSXCompressor/jsxgraphcore.js
+	{ $(CAT) JSXCompressor/COPYING; $(CAT) $(BUILDBIN)/jsxcompressor.js; } > JSXCompressor/jsxcompressor.min.js
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js JSXCompressor/jsxgraphcore.min.js
 
 plot:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
