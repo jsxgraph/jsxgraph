@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-    Copyright 2009
+    Copyright 2009-2013
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,

@@ -12,7 +12,7 @@ function jxgcompress($filename)
 ?>
 
 <head>
-<script src="./jsxcompressor.js" type="text/javascript"></script>
+<script src="./jsxcompressor.min.js" type="text/javascript"></script>
 </head>
 <body>
 <h1>Using the JSX Compressor</h1>
