@@ -280,7 +280,7 @@ define([
          * **************************/
 
         // documented in AbstractRenderer
-        updateTicks: function (ticks, dxMaj, dyMaj, dxMin, dyMin, minStyle, majStyle) {
+        updateTicks: function (ticks) {
             var i, c, node, x, y,
                 tickStr = '',
                 len = ticks.ticks.length;

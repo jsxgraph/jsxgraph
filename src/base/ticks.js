@@ -134,6 +134,12 @@ define([
         this.maxTicksDistance = attributes.maxticksdistance;
 
         /**
+         * Stores the ticks coordinates
+         * @type {Array}
+         */
+        this.ticks = [];
+
+        /**
          * Array where the labels are saved. There is an array element for every tick,
          * even for minor ticks which don't have labels. In this case the array element
          * contains just <tt>null</tt>.
@@ -850,9 +856,7 @@ define([
          */
         updateRenderer: function () {
             if (this.needsUpdate) {
-                if (this.ticks) {
-                    this.board.renderer.updateTicks(this, this.dxMaj, this.dyMaj, this.dxMin, this.dyMin, this.minStyle, this.majStyle);
-                }
+                this.board.renderer.updateTicks(this);
                 this.needsUpdate = false;
             }
 
