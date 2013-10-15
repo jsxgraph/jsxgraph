@@ -37,9 +37,8 @@ class filter_jsxgraph extends moodle_text_filter {
             $dom->loadXML($html);
         } else {
             libxml_use_internal_errors(true);
-            $html_cvt = mb_convert_encoding($html, 'HTML-ENTITIES', $encoding); 
-            //$dom->loadHTML('<?xml version="1.0" encoding="UTF-8"?>' . $html);
-            @$dom->loadHTML($html_cvt);
+            $htmlutf8 = mb_convert_encoding($html, 'HTML-ENTITIES', $encoding); 
+            $dom->loadHTML($htmlutf8);
             libxml_use_internal_errors(false);
         }
 
@@ -147,7 +146,7 @@ class filter_jsxgraph extends moodle_text_filter {
             return $text;
         }
         
-        return $this->getTextBetweenTags("jsxgraph", $text, 0);
+        return $this->getTextBetweenTags("jsxgraph", $text, 0, "UTF-8");
     }
 }
 
