@@ -17,9 +17,10 @@ class filter_jsxgraph extends moodle_text_filter {
     * @param string $tag The tag name
     * @param string $html The XML or XHTML string
     * @param int $strict Whether to use strict mode
+    * @param string $encoding
     * @return array
     */
-    private function getTextBetweenTags($tag, $html, $strict=0) {
+    private function getTextBetweenTags($tag, $html, $strict=0, $encoding = "UTF-8") {
         global $PAGE, $CFG;
 
         if (!isset($CFG->filter_jsxgraph_divid)) { set_config( 'filter_jsxgraph_divid', 'box' ); }
@@ -36,7 +37,9 @@ class filter_jsxgraph extends moodle_text_filter {
             $dom->loadXML($html);
         } else {
             libxml_use_internal_errors(true);
-            $dom->loadHTML('<?xml version="1.0" encoding="UTF-8"?>' . $html);
+            $html_cvt = mb_convert_encoding($html, 'HTML-ENTITIES', $encoding); 
+            //$dom->loadHTML('<?xml version="1.0" encoding="UTF-8"?>' . $html);
+            @$dom->loadHTML($html_cvt);
             libxml_use_internal_errors(false);
         }
 
@@ -45,7 +48,6 @@ class filter_jsxgraph extends moodle_text_filter {
         $dom->strictErrorChecking = false;
         $dom->recover = true;
         
-
         // the tag by its tag name
         $content = $dom->getElementsByTagname($tag);
 
