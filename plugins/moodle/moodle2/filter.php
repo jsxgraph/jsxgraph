@@ -144,7 +144,6 @@ class filter_jsxgraph extends moodle_text_filter {
         if (!is_int(strpos($text, '<jsxgraph'))) {
             return $text;
         }
-        // $jsxgraph_version = '0.98';
         
         return $this->getTextBetweenTags("jsxgraph", $text, 0);
     }
