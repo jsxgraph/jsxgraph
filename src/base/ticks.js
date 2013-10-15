@@ -140,6 +140,12 @@ define([
         this.ticks = [];
 
         /**
+         * Distance between two major ticks in user coordinates
+         * @type {Number}
+         */
+        this.ticksDelta = 1;
+
+        /**
          * Array where the labels are saved. There is an array element for every tick,
          * even for minor ticks which don't have labels. In this case the array element
          * contains just <tt>null</tt>.
@@ -214,31 +220,6 @@ define([
             return false;
         },
 
-        generateLabelValue: function (tick, center) {
-            var anchor = this.visProp.anchor,
-                f = -1,
-                isAxis = this.line.type === Const.OBJECT_TYPE_AXIS,
-                p1 = this.line.point1,
-                p2 = this.line.point2;
-
-            // horizontal axis
-            if (anchor === 'left' && isAxis && Math.abs(p1.coords.usrCoords[2] - p2.coords.usrCoords[2]) < Mat.eps) {
-                return tick.usrCoords[1];
-            }
-
-            // vertical axis
-            if (anchor === 'left' && isAxis && Math.abs(p1.coords.usrCoords[1] - p2.coords.usrCoords[1]) < Mat.eps) {
-                return tick.usrCoords[2];
-            }
-
-            if ((this.visProp.anchor === 'right' && !Geometry.isSameDirection(p2.coords, p1.coords, tick)) ||
-                    (this.visProp.anchor !== 'right' && Geometry.isSameDirection(p1.coords, p2.coords, tick))) {
-                f = 1;
-            }
-
-            return f * center.distance(Const.COORDS_BY_USER, tick);
-        },
-
         /**
          * Sets x and y coordinate of the tick.
          * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
@@ -274,360 +255,417 @@ define([
             return this;
         },
 
-        /**
+         /**
          * (Re-)calculates the ticks coordinates.
+         * @private
          */
         calculateTicksCoordinates: function () {
-            var center, d, bb, perp, coordsZero,
-                symbTicksDelta, f,
-                // Point 1 of the line
-                p1 = this.line.point1,
-                // Point 2 of the line
-                p2 = this.line.point2,
-                // Distance between the two points from above
-                distP1P2 = p1.Dist(p2),
-                // Distance of X coordinates of two major ticks
-                // Initialized with the distance of Point 1 to a point between Point 1 and Point 2 on the line and with distance 1
-                // this equals always 1 for lines parallel to x = 0 or y = 0. It's only important for lines other than that.
-                deltaX = (p2.coords.usrCoords[1] - p1.coords.usrCoords[1]) / distP1P2,
-                // The same thing for Y coordinates
-                deltaY = (p2.coords.usrCoords[2] - p1.coords.usrCoords[2]) / distP1P2,
-                // Distance of p1 to the unit point in screen coordinates
-                distScr = p1.coords.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltaX, p1.coords.usrCoords[2] + deltaY], this.board)),
-                // Distance between two major ticks in user coordinates
-                ticksDelta = (this.equidistant ? this.ticksFunction(1) : 1),
-                // This factor is for enlarging ticksDelta and it switches between 5 and 2
-                // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
-                // if they're still too close together, they'll be expanded to a distance of 10 etc
-                factor = 5,
-                // Coordinates of the current tick
-                tickCoords,
-                // Coordinates of the first drawn tick
-                startTick, symbStartTick,
-                // two counters
-                i, j,
-                // the distance of the tick to p1. Is displayed on the board using a label
-                // for majorTicks
-                tickPosition,
-                symbTickPosition,
-                // infinite or finite tick length
-                style,
-                // new position
-                nx = 0,
-                ny = 0,
-                ti,
-                dirs = 2,
-                dir = -1,
-
-                // the following variables are used to define ticks height and slope
-                eps = Mat.eps,
-                pos, lb, ub,
-                distMaj = this.visProp.majorheight * 0.5,
-                distMin = this.visProp.minorheight * 0.5,
-                // ticks width and height in screen units
-                dxMaj, dyMaj,
-                dxMin, dyMin,
-                // ticks width and height in user units
-                dx, dy,
+            var coordsZero, bounds, i,
                 oldRepoLength = this.labelsRepo.length;
-            // END OF variable declaration
 
-            // This will trap this update routine in an endless loop. Besides, there's not much we can show
-            // on such a tiny board, so we just get out of here immediately.
-            if (this.board.canvasWidth === 0 || this.board.canvasHeight === 0) {
+            // Calculate Ticks width and height in Screen and User Coordinates
+            this.setTicksSizeVariables();
+            // If the parent line is not finite, we can stop here.
+            if (Math.abs(this.dx) < Mat.eps && Math.abs(this.dy) < Mat.eps) {
                 return;
             }
 
-            // Grid-like ticks
+            // Get Zero
+            coordsZero = this.getZeroCoordinates();
+
+            // Calculate lower bound and upper bound limits based on distance between p1 and centre and p2 and centre
+            bounds = this.getLowerAndUpperBounds(coordsZero);
+
+            // Clean up
+            this.removeTickLabels();
+            this.ticks = [];
+            this.labels = [];
+
+            // Create Ticks Coordinates and Labels
+            if (this.equidistant) {
+                this.generateEquidistantTicks(coordsZero, bounds);
+            } else {
+                this.generateFixedTicks(coordsZero, bounds);
+            }
+
+            // Hide unused labels in labelsRepo
+            for (i = oldRepoLength; i < this.labelsRepo.length; i++) {
+                this.labelsRepo[i].setAttribute({visible: false});
+            }
+        },
+
+        /**
+         * Sets the variables used to set the height and slope of each tick.
+         *
+         * @private
+         */
+        setTicksSizeVariables: function () {
+            var d,
+                distMaj = this.visProp.majorheight * 0.5,
+                distMin = this.visProp.minorheight * 0.5;
+
+            // ticks width and height in screen units
+            this.dxMaj = this.line.stdform[1];
+            this.dyMaj = this.line.stdform[2];
+            this.dxMin = this.dxMaj;
+            this.dyMin = this.dyMaj;
+
+            // ticks width and height in user units
+            this.dx = this.dxMaj;
+            this.dy = this.dyMaj;
+
+            // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
+            d = Math.sqrt(
+                this.dxMaj * this.dxMaj * this.board.unitX * this.board.unitX +
+                this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
+            );
+            this.dxMaj *= distMaj / d * this.board.unitX;
+            this.dyMaj *= distMaj / d * this.board.unitY;
+            this.dxMin *= distMin / d * this.board.unitX;
+            this.dyMin *= distMin / d * this.board.unitY;
+
+            // Grid-like ticks?
+            this.minStyle = 'finite';
             if (this.visProp.minorheight < 0) {
                 this.minStyle = 'infinite';
-            } else {
-                this.minStyle = 'finite';
             }
 
+            this.majStyle = 'finite';
             if (this.visProp.majorheight < 0) {
                 this.majStyle = 'infinite';
-            } else {
-                this.majStyle = 'finite';
             }
+        },
 
-            if (this.visProp.anchor === 'right') {
-                coordsZero = p2.coords;
-            } else if (this.visProp.anchor === 'middle') {
-                coordsZero = new Coords(JXG.COORDS_BY_USER, [
-                    (p1.coords.usrCoords[1] + p2.coords.usrCoords[1]) / 2,
-                    (p1.coords.usrCoords[2] + p2.coords.usrCoords[2]) / 2
-                ], this.board);
-            } else {
-                coordsZero = p1.coords;
-            }
-
-            // enforce board coordinate system for axes
+        /**
+         * Returns the coordinates of the point zero of the line.
+         *
+         * If the line is an {@link Axis}, the coordinates of the projection of the board's zero point is returned
+         *
+         * Otherwise, the coordinates of the point that acts as zero are established depending on the value of {@link JXG.Ticks#anchor}
+         *
+         * @return {JXG.Coords} Coords object for the Zero point on the line
+         * @private
+         */
+        getZeroCoordinates: function () {
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                coordsZero = Geometry.projectPointToLine({
+                return Geometry.projectPointToLine({
                     coords: {
                         usrCoords: [1, 0, 0]
                     }
                 }, this.line, this.board);
-            }
-
-            // Set lower and upper bound for the tick distance.
-            // This is necessary for segments.
-            if (this.line.visProp.straightfirst) {
-                lb = Number.NEGATIVE_INFINITY;
+            } else if (this.visProp.anchor === 'right') {
+                return  this.line.point2.coords;
+            } else if (this.visProp.anchor === 'middle') {
+                return new Coords(JXG.COORDS_BY_USER, [
+                    (this.line.point1.coords.usrCoords[1] + this.line.point2.coords.usrCoords[1]) / 2,
+                    (this.line.point1.coords.usrCoords[2] + this.line.point2.coords.usrCoords[2]) / 2
+                ], this.board);
             } else {
-                if (this.visProp.anchor === 'middle') {
-                    lb = -distP1P2 / 2 + eps;
-                } else if (this.visProp.anchor === 'right') {
-                    lb = -distP1P2 + eps;
-                } else {
-                    lb = eps;
-                }
+                return this.line.point1.coords;
             }
-
-            if (this.line.visProp.straightlast) {
-                ub = Number.POSITIVE_INFINITY;
-            } else {
-                if (this.visProp.anchor === 'middle') {
-                    ub = distP1P2 / 2 - eps;
-                } else if (this.visProp.anchor === 'right') {
-                    ub = -eps;
-                } else {
-                    ub = distP1P2 - eps;
-                }
-            }
-
-            // This piece of code used to be in AbstractRenderer.updateAxisTicksInnerLoop
-            // and has been moved in here to clean up the renderers code.
-            //
-            // The code above only calculates the position of the ticks. The following code parts
-            // calculate the dx and dy values which make ticks out of this positions, i.e. from the
-            // position (p_x, p_y) calculated above we have to draw a line from
-            // (p_x - dx, py - dy) to (p_x + dx, p_y + dy) to get a tick.
-            dxMaj = this.line.stdform[1];
-            dyMaj = this.line.stdform[2];
-            dxMin = dxMaj;
-            dyMin = dyMaj;
-            dx = dxMaj;
-            dy = dyMaj;
-
-            // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
-            d = Math.sqrt(dxMaj * dxMaj * this.board.unitX * this.board.unitX + dyMaj * dyMaj * this.board.unitY * this.board.unitY);
-            dxMaj *= distMaj / d * this.board.unitX;
-            dyMaj *= distMaj / d * this.board.unitY;
-            dxMin *= distMin / d * this.board.unitX;
-            dyMin *= distMin / d * this.board.unitY;
-
-            // Begin cleanup
-            this.removeTickLabels();
-
-            // If the parent line is not finite, we can stop here.
-            if (Math.abs(dx) < Mat.eps && Math.abs(dy) < Mat.eps) {
-                return;
-            }
-
-            // initialize storage arrays
-            // ticks stores the ticks coordinates
-            this.ticks = [];
-
-            // labels stores the text to display beside the ticks
-            this.labels = [];
-            // END cleanup
-
-            // we have an array of fixed ticks we have to draw
-            if (!this.equidistant) {
-                for (i = 0; i < this.fixedTicks.length; i++) {
-                    nx = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltaX;
-                    ny = coordsZero.usrCoords[2] + this.fixedTicks[i] * deltaY;
-                    tickCoords = new Coords(Const.COORDS_BY_USER, [nx, ny], this.board);
-                    ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, /*major:*/ true);
-
-                    // Compute the start position and the end position of a tick.
-                    // If both positions are out of the canvas, ti is empty.
-                    if (ti.length === 3 && this.fixedTicks[i] >= lb && this.fixedTicks[i] < ub) {
-                        this.ticks.push(ti);
-                    }
-
-                    this.labels.push(this._makeLabel(this.visProp.labels[i] || this.fixedTicks[i], tickCoords, this.board, this.visProp.drawlabels, this.id, i, coordsZero));
-                    // visibility test missing
-                }
-                return;
-            }
-
-            // ok, we have equidistant ticks and not special ticks, so we continue here with generating them:
-
-            symbTicksDelta = ticksDelta;
-            ticksDelta *= this.visProp.scale;
-
-            // adjust distances
-            if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                f = this._adjustTickDistance(ticksDelta, distScr, factor, coordsZero, deltaX, deltaY);
-                ticksDelta *= f;
-                symbTicksDelta *= f;
-            }
-
-            if (!this.visProp.insertticks) {
-                ticksDelta /= this.visProp.minorticks + 1;
-                symbTicksDelta /= this.visProp.minorticks + 1;
-            }
-            this.ticksDelta = ticksDelta;
-
-
-
-            // We shoot into the middle of the canvas
-            // to the tick position which is closest to the center
-            // of the canvas. We do this by an orthogonal projection
-            // of the canvas center to the line and by rounding of the
-            // distance of the projected point to point1 of the line.
-            // This position is saved in
-            // center and startTick.
-            bb = this.board.getBoundingBox();
-            nx = (bb[0] + bb[2]) * 0.5;
-            ny = (bb[1] + bb[3]) * 0.5;
-
-            // Project the center of the canvas to the line.
-            perp = [
-                nx * this.line.stdform[2] - ny * this.line.stdform[1],
-                -this.line.stdform[2],
-                this.line.stdform[1]
-            ];
-            center = Mat.crossProduct(this.line.stdform, perp);
-            center[1] /= center[0];
-            center[2] /= center[0];
-            center[0] = 1;
-
-            // Round the distance of center to point1
-            tickCoords = new Coords(Const.COORDS_BY_USER, center, this.board);
-            d = coordsZero.distance(Const.COORDS_BY_USER, tickCoords);
-
-            if ((p2.X() - p1.X()) * (center[1] - p1.X()) < 0 || (p2.Y() - p1.Y()) * (center[2] - p1.Y()) < 0) {
-                d *= -1;
-            }
-            tickPosition = Math.round(d / ticksDelta) * ticksDelta;
-
-            // Find the correct direction of center from point1
-            if (Math.abs(tickPosition) > Mat.eps) {
-                dir = Math.abs(tickPosition) / tickPosition;
-            }
-
-            // From now on, we jump around center
-            center[1] = coordsZero.usrCoords[1] + deltaX * tickPosition;
-            center[2] = coordsZero.usrCoords[2] + deltaY * tickPosition;
-            startTick = tickPosition;
-            tickPosition = 0;
-
-            symbTickPosition = 0;
-            // this could be done more elaborate to prevent rounding errors
-            symbStartTick = startTick / this.visProp.scale;
-
-            nx = center[1];
-            ny = center[2];
-
-            // counter for label ids
-            i = 0;
-            j = 0;
-
-            // Now, we jump around the center
-            // until we are outside of the canvas.
-            // If this is the case we proceed in the other
-            // direction until we are out of the canvas in this direction, too.
-            // Then we are done.
-            do {
-                tickCoords = new Coords(Const.COORDS_BY_USER, [nx, ny], this.board);
-
-                // Test if tick is a major tick.
-                // This is the case if (dir*tickPosition+startTick)/ticksDelta is
-                // a multiple of the number of minorticks+1
-                tickCoords.major = Math.round((dir * tickPosition + startTick) / ticksDelta) % (this.visProp.minorticks + 1) === 0;
-
-                // Compute the start position and the end position of a tick.
-                // If both positions are out of the canvas, ti is empty.
-                ti = this._tickEndings(tickCoords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, tickCoords.major);
-
-                // The tick has an overlap with the board?
-                if (ti.length === 3) {
-                    pos = dir * symbTickPosition + symbStartTick;
-                    if ((Math.abs(pos) >= eps || this.visProp.drawzero) && (pos > lb && pos < ub)) {
-                        this.ticks.push(ti);
-
-                        if (tickCoords.major) {
-                            this.labels.push(this._makeLabel(pos, tickCoords, this.board, this.visProp.drawlabels, this.id, i, coordsZero));
-                        } else {
-                            this.labels.push(null);
-                        }
-                        i++;
-                    }
-
-                    // Toggle direction
-                    if (dirs === 2) {
-                        dir *= (-1);
-                    }
-
-                    // Increase distance from center
-                    if (j % 2 === 0 || dirs === 1) {
-                        tickPosition += ticksDelta;
-                        symbTickPosition += symbTicksDelta;
-                    }
-                } else {
-                    dir *= (-1);
-                    dirs -= 1;
-                }
-
-                j++;
-
-                nx = center[1] + dir * deltaX * tickPosition;
-                ny = center[2] + dir * deltaY * tickPosition;
-            } while (dirs > 0);
-
-            for (i = oldRepoLength; i < this.labelsRepo.length; i++) {
-                this.labelsRepo[i].setAttribute({visible: false});
-            }
-
-            this.needsUpdate = true;
-            this.updateRenderer();
         },
 
         /**
+         * Calculate the lower and upper bounds for tick rendering
+         * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
+         *
+         * @param  {JXG.Coords} coordsZero
+         * @return {Object}                contains the lower and upper bounds
          * @private
          */
-        _adjustTickDistance: function (ticksDelta, distScr, factor, p1c, deltaX, deltaY) {
-            var nx, ny, f = 1;
+        getLowerAndUpperBounds: function (coordsZero) {
+            var lowerBound, upperBound,
+                // The line's defining points that will be adjusted to be within the board limits
+                point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board),
+                point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board),
+                // Are the original defining points within the board?
+                isPoint1inBoard = Math.abs(point1.usrCoords[0]) >= Mat.eps &&
+                    point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= this.board.canvasWidth &&
+                    point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= this.board.canvasHeight,
+                isPoint2inBoard = Math.abs(point2.usrCoords[0]) >= Mat.eps &&
+                    point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= this.board.canvasWidth &&
+                    point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight,
+                // We use the distance from zero to P1 and P2 to establish lower and higher points
+                dZeroPoint1, dZeroPoint2;
+
+            // Adjust line limit points to be within the board
+            Geometry.calcLineDelimitingPoints(this.line, point1, point2, 0);
+
+            // Calculate distance from Zero to P1 and to P2
+            dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
+            dZeroPoint2 = this.getDistanceFromZero(coordsZero, point2);
+
+            // We have to establish if the direction is P1->P2 or P2->P1 to set the lower and upper
+            // boundaries appropriately. As the distances contain also a sign to indicate direction,
+            // we can compare dZeroPoint1 and dZeroPoint2 to establish the line direction
+            if (dZeroPoint1 < dZeroPoint2) { // Line goes P1->P2
+                lowerBound = dZeroPoint1;
+                if (!this.line.visProp.straightfirst && isPoint1inBoard && !this.visProp.includeboundaries) {
+                    lowerBound += Mat.eps;
+                }
+                upperBound = dZeroPoint2;
+                if (!this.line.visProp.straightlast && isPoint2inBoard && !this.visProp.includeboundaries) {
+                    upperBound -= Mat.eps;
+                }
+            } else if (dZeroPoint2 < dZeroPoint1) { // Line goes P2->P1
+                lowerBound = dZeroPoint2;
+                if (!this.line.visProp.straightlast && isPoint2inBoard && !this.visProp.includeboundaries) {
+                    lowerBound += Mat.eps;
+                }
+                upperBound = dZeroPoint1;
+                if (!this.line.visProp.straightfirst && isPoint1inBoard && !this.visProp.includeboundaries) {
+                    upperBound -= Mat.eps;
+                }
+            } else { // P1 = P2 = Zero, we can't do a thing
+                lowerBound = 0;
+                upperBound = 0;
+            }
+
+            return {
+                lower: lowerBound,
+                upper: upperBound
+            };
+        },
+
+        /**
+         * Calculates the distance in user coordinates from zero to a given point including its sign
+         *
+         * @param  {JXG.Coords} zero  coordinates of the point considered zero
+         * @param  {JXG.Coords} point coordinates of the point to find out the distance
+         * @return {Number}           distance between zero and point, including its sign
+         * @private
+         */
+        getDistanceFromZero: function (zero, point) {
+            var distance = zero.distance(Const.COORDS_BY_USER, point);
+            // Establish sign
+            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+                if (zero.usrCoords[1] > point.usrCoords[1] ||
+                    (zero.usrCoords[1] == point.usrCoords[1] && zero.usrCoords[2] > point.usrCoords[2])
+                ) {
+                    distance *= -1;
+                }
+            } else if (this.visProp.anchor === 'right') {
+                if (Geometry.isSameDirection(zero, this.line.point1.coords, point)) {
+                    distance *= -1;
+                }
+            } else {
+                if (!Geometry.isSameDirection(zero, this.line.point2.coords, point)) {
+                    distance *= -1;
+                }
+            }
+            return distance;
+        },
+
+        /**
+         * Creates ticks coordinates and labels automatically.
+         * The frequency of ticks is affected by the values of {@link JXG.Ticks#insertTicks} and {@link JXG.Ticks#ticksDistance}
+         *
+         * @param  {JXG.Coords} coordsZero coordinates of the point considered zero
+         * @param  {Object}     bounds     contains the lower and upper boundaries for ticks placement
+         * @private
+         */
+        generateEquidistantTicks: function (coordsZero, bounds) {
+            var tickPosition,
+                // Point 1 of the line
+                p1 = this.line.point1,
+                // Point 2 of the line
+                p2 = this.line.point2,
+                // Calculate X and Y distance between two major ticks
+                deltas = this.getXandYdeltas(),
+                // Distance between two major ticks in screen coordinates
+                distScr = p1.coords.distance(
+                    Const.COORDS_BY_SCREEN,
+                    new Coords(Const.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltas.x, p1.coords.usrCoords[2] + deltas.y], this.board)
+                ),
+                // Distance between two major ticks in user coordinates
+                ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta);
+
+            // adjust ticks distance
+            ticksDelta *= this.visProp.scale;
+            if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
+                ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas);
+            } else if (!this.visProp.insertticks) {
+                ticksDelta /= this.visProp.minorticks + 1;
+            }
+            this.ticksDelta = ticksDelta;
+
+            // Position ticks from zero to the positive side while not reaching the upper boundary
+            tickPosition = 0;
+            if (!this.visProp.drawzero) {
+                tickPosition = ticksDelta;
+            }
+            while (tickPosition <= bounds.upper) {
+                // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
+                if (tickPosition >= bounds.lower) {
+                    this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
+                }
+                tickPosition += ticksDelta;
+            }
+
+            // Position ticks from zero (not inclusive) to the negative side while not reaching the lower boundary
+            tickPosition = -ticksDelta;
+            while (tickPosition >= bounds.lower) {
+                // Only draw ticks when we are within bounds, ignore case where lower < upper < tickPosition
+                if (tickPosition <= bounds.upper) {
+                    this.processTickPosition(coordsZero, tickPosition, ticksDelta, deltas);
+                }
+                tickPosition -= ticksDelta;
+            }
+        },
+
+        /**
+         * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to adjust the
+         * distance between two ticks depending on {@link JXG.Ticks#minTicksDistance} value
+         *
+         * @param  {Number}     ticksDelta  distance between two major ticks in user coordinates
+         * @param  {Number}     distScr     distance between two major ticks in screen coordinates
+         * @param  {JXG.Coords} coordsZero  coordinates of the point considered zero
+         * @param  {Object}     deltas      x and y distance between two major ticks
+         * @private
+         */
+        adjustTickDistance: function (ticksDelta, distScr, coordsZero, deltas) {
+            var nx, ny, f = 1,
+                // This factor is for enlarging ticksDelta and it switches between 5 and 2
+                // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
+                // if they're still too close together, they'll be expanded to a distance of 10 etc
+                factor = 5;
 
             while (distScr > 4 * this.minTicksDistance) {
                 f /= 10;
-                nx = p1c.usrCoords[1] + deltaX * ticksDelta * f;
-                ny = p1c.usrCoords[2] + deltaY * ticksDelta * f;
-                distScr = p1c.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
+                nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta * f;
+                ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta * f;
+                distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
 
             // If necessary, enlarge ticksDelta
             while (distScr <= this.minTicksDistance) {
                 f *= factor;
                 factor = (factor === 5 ? 2 : 5);
-                nx = p1c.usrCoords[1] + deltaX * ticksDelta * f;
-                ny = p1c.usrCoords[2] + deltaY * ticksDelta * f;
-                distScr = p1c.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
+                nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta * f;
+                ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta * f;
+                distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
 
             return f;
         },
 
+
+        /**
+         * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to create a tick
+         * in the line at the given tickPosition.
+         *
+         * @param  {JXG.Coords} coordsZero    coordinates of the point considered zero
+         * @param  {Number}     tickPosition  current tick position relative to zero
+         * @param  {Number}     ticksDelta    distance between two major ticks in user coordinates
+         * @param  {Object}     deltas      x and y distance between two major ticks
+         * @private
+         */
+        processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
+            var x, y, tickCoords, ti, labelText;
+            // Calculates tick coordinates
+            x = coordsZero.usrCoords[1] + tickPosition * deltas.x;
+            y = coordsZero.usrCoords[2] + tickPosition * deltas.y;
+            tickCoords = new Coords(Const.COORDS_BY_USER, [x, y], this.board);
+
+            // Test if tick is a major tick.
+            // This is the case if tickPosition/ticksDelta is
+            // a multiple of the number of minorticks+1
+            tickCoords.major = Math.round(tickPosition / ticksDelta) % (this.visProp.minorticks + 1) === 0;
+
+            // Compute the start position and the end position of a tick.
+            // If both positions are out of the canvas, ti is empty.
+            ti = this.tickEndings(tickCoords, tickCoords.major);
+            if (ti.length === 3) {
+                this.ticks.push(ti);
+
+                if (tickCoords.major && this.visProp.drawlabels) {
+                    labelText = this.generateLabelText(tickCoords, coordsZero);
+                    this.labels.push(this.generateLabel(labelText, tickCoords, this.ticks.length));
+                } else {
+                    this.labels.push(null);
+                }
+            }
+        },
+
+        /**
+         * Creates ticks coordinates and labels based on {@link JXG.Ticks#fixedTicks} and {@link JXG.Ticks#labels}.
+         *
+         * @param  {JXG.Coords} coordsZero Coordinates of the point considered zero
+         * @param  {Object}     bounds     contains the lower and upper boundaries for ticks placement
+         * @private
+         */
+        generateFixedTicks: function (coordsZero, bounds) {
+            var tickCoords, labelText, i, ti,
+                x, y,
+                // Calculate X and Y distance between two major points in the line
+                deltas = this.getXandYdeltas();
+
+            for (i = 0; i < this.fixedTicks.length; i++) {
+                x = coordsZero.usrCoords[1] + this.fixedTicks[i] * deltas.x;
+                y = coordsZero.usrCoords[2] + this.fixedTicks[i] * deltas.y;
+                tickCoords = new Coords(Const.COORDS_BY_USER, [x, y], this.board);
+
+                // Compute the start position and the end position of a tick.
+                // If tick is out of the canvas, ti is empty.
+                ti = this.tickEndings(tickCoords, true);
+                if (ti.length === 3 && this.fixedTicks[i] > bounds.lower && this.fixedTicks[i] < bounds.upper) {
+                    this.ticks.push(ti);
+
+                    if (this.visProp.drawlabels) {
+                        labelText = this.generateLabelText(tickCoords, coordsZero, this.visProp.labels[i] || this.fixedTicks[i]);
+                        this.labels.push(this.generateLabel(labelText, tickCoords, i));
+                    } else {
+                        this.labels.push(null);
+                    }
+                }
+            }
+        },
+
+        /**
+         * Calculates the x and y distance between two major ticks
+         *
+         * @return {Object}
+         * @private
+         */
+        getXandYdeltas: function () {
+            var distP1P2 = this.line.point1.Dist(this.line.point2),
+                // Auxiliary points to store the start and end of the line according to its direction
+                point1UsrCoords, point2UsrCoords;
+
+            if (this.line.type === Const.OBJECT_TYPE_AXIS) {
+                // When line is an Axis, direction depends on Board Coordinates system
+
+                // assume line.point1 and line.point2 are in correct order
+                point1UsrCoords = this.line.point1.coords.usrCoords;
+                point2UsrCoords = this.line.point2.coords.usrCoords;
+                // Check if direction is incorrect, then swap
+                if (point1UsrCoords[1] > point2UsrCoords[1] ||
+                    (point1UsrCoords[1] == point2UsrCoords[1] && point1UsrCoords[2] > point2UsrCoords[2])
+                ) {
+                    point1UsrCoords = this.line.point2.coords.usrCoords;
+                    point2UsrCoords = this.line.point1.coords.usrCoords;
+                }
+            } else {
+                // line direction is always from P1 to P2 for non Axis types
+                point1UsrCoords = this.line.point1.coords.usrCoords;
+                point2UsrCoords = this.line.point2.coords.usrCoords;
+            }
+            return {
+                x: (point2UsrCoords[1] - point1UsrCoords[1]) / distP1P2,
+                y: (point2UsrCoords[2] - point1UsrCoords[2]) / distP1P2
+            };
+        },
+
         /**
          * @param {JXG.Coords} coords Coordinates of the tick on the line.
-         * @param {Number} dx horizontal tick extension in user coordinates.
-         * @param {Number} dy vertical tick extension in user coordinates.
-         * @param {Number} dxMaj horizontal tick direction in screen coordinates.
-         * @param {Number} dyMaj vertical tick direction in screen coordinates.
-         * @param {Number} dxMin horizontal tick direction in screen coordinates.
-         * @param {Number} dyMin vertical tick direction in screen coordinates.
          * @param {Boolean} major True if tick is major tick.
          * @return {Array} Array of length 3 containing start and end coordinates in screen coordinates
          *                 of the tick (arrays of length 2). 3rd entry is true if major tick otherwise false.
          *                 If the tick is outside of the canvas, the return array is empty.
          * @private
          */
-        _tickEndings: function (coords, dx, dy, dxMaj, dyMaj, dxMin, dyMin, major) {
-            var i, c,
+        tickEndings: function (coords, major) {
+            var i, c, lineStdForm, intersection,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x = [-1000 * cw, -1000 * ch],
@@ -639,73 +677,24 @@ define([
 
             c = coords.scrCoords;
             if (major) {
-                dxs = dxMaj;
-                dys = dyMaj;
+                dxs = this.dxMaj;
+                dys = this.dyMaj;
                 style = this.majStyle;
             } else {
-                dxs = dxMin;
-                dys = dyMin;
+                dxs = this.dxMin;
+                dys = this.dyMin;
                 style = this.minStyle;
             }
+            lineStdForm = [-dys * c[1] - dxs * c[2], dys, dxs];
 
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-
-            // horizontal line and vertical tick
-            if (Math.abs(dx) < Mat.eps) {
-                x[0] = c[1];
-                x[1] = c[1];
-                y[0] = 0;
-                y[1] = ch;
-                // vertical line and horizontal tick
-            } else if (Math.abs(dy) < Mat.eps) {
-                x[0] = 0;
-                x[1] = cw;
-                y[0] = c[2];
-                y[1] = c[2];
-                // other
-            } else {
-                count = 0;
-
-                // intersect with top
-                s = Mat.crossProduct([0, 0, 1], [-dys * c[1] - dxs * c[2], dys, dxs]);
-                s[1] /= s[0];
-                if (s[1] >= 0 && s[1] <= cw) {
-                    x[count] = s[1];
-                    y[count] = 0;
-                    count++;
-                }
-
-                // intersect with left
-                s = Mat.crossProduct([0, 1, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
-                s[2] /= s[0];
-                if (s[2] >= 0 && s[2] <= ch) {
-                    x[count] = 0;
-                    y[count] = s[2];
-                    count++;
-                }
-
-                if (count < 2) {
-                    // intersect with bottom
-                    s = Mat.crossProduct([ch * ch, 0, -ch], [-dys * c[1] - dxs * c[2], dys, dxs]);
-                    s[1] /= s[0];
-                    if (s[1] >= 0 && s[1] <= cw) {
-                        x[count] = s[1];
-                        y[count] = ch;
-                        count++;
-                    }
-                }
-                if (count < 2) {
-                    // intersect with right
-                    s = Mat.crossProduct([cw * cw, -cw, 0], [-dys * c[1] - dxs * c[2], dys, dxs]);
-                    s[2] /= s[0];
-                    if (s[2] >= 0 && s[2] <= ch) {
-                        x[count] = cw;
-                        y[count] = s[2];
-                    }
-                }
-            }
+            intersection = Geometry.meetLineBoard(lineStdForm, this.board);
+            x[0] = intersection[0].scrCoords[1];
+            x[1] = intersection[1].scrCoords[1];
+            y[0] = intersection[0].scrCoords[2];
+            y[1] = intersection[1].scrCoords[2];
 
             isInsideCanvas = (x[0] >= 0 && x[0] <= cw && y[0] >= 0 && y[0] <= ch) ||
                 (x[1] >= 0 && x[1] <= cw && y[1] >= 0 && y[1] <= ch);
@@ -720,99 +709,103 @@ define([
 
             if (isInsideCanvas) {
                 return [x, y, major];
+            } else {
+                return [];
+            }
+        },
+
+        /**
+         * Creates the label text for a given tick. A value for the text can be provided as a number or string
+         *
+         * @param  {JXG.Coords}    tick  The Coords of the tick to create a label for
+         * @param  {JXG.Coords}    zero  The Coords of line's zero
+         * @param  {Number|String} value A predefined value for this tick
+         * @return {String}
+         * @private
+         */
+        generateLabelText: function (tick, zero, value) {
+            var labelText,
+                distance = this.getDistanceFromZero(zero, tick);
+
+            if (Math.abs(distance) < Mat.eps) { // Point is zero
+                labelText = '0';
+            } else {
+                // No value provided, equidistant, so assign distance as value
+                if (value == null) { // could be null or undefined
+                    value = distance / this.visProp.scale;
+                }
+
+                labelText = value.toString();
+
+                // if value is Number
+                if (Object.prototype.toString.call(value) === '[object Number]') {
+                    if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {
+                        labelText = value.toPrecision(this.visProp.precision).toString();
+                    }
+                    if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
+                        // trim trailing zeros
+                        labelText = labelText.replace(/0+$/, '');
+                        // trim trailing .
+                        labelText = labelText.replace(/\.$/, '');
+                    }
+                }
+
+                if (this.visProp.scalesymbol.length > 0) {
+                    if (labelText === '1') {
+                        labelText = this.visProp.scalesymbol;
+                    } else if (labelText === '-1') {
+                        labelText = '-' + this.visProp.scalesymbol;
+                    } else if (labelText !== '0') {
+                        labelText = labelText + this.visProp.scalesymbol;
+                    }
+                }
             }
 
-            return [];
+            return labelText;
         },
 
         /**
          * Create a tick label
-         * @param {Number} pos
-         * @param {JXG.Coords} newTick
-         * @param {JXG.Board} board
-         * @param {Boolean} drawLabels
-         * @param {String} id Id of the ticks object
-         * @param {Number} i
-         * @param {JXG.Coords} center
-         * @returns {JXG.Text}
+         * @param  {String}     labelText
+         * @param  {JXG.Coords} tick
+         * @param  {Number}     tickNumber
+         * @return {JXG.Text}
          * @private
          */
-        _makeLabel: function (pos, newTick, board, drawLabels, id, i, center) {
-            var labelText, label, attr,
-                num = (typeof pos === 'number');
+        generateLabel: function (labelText, tick, tickNumber) {
+            var label,
+                attr = {
+                    isLabel: true,
+                    layer: this.board.options.layer.line,
+                    highlightStrokeColor: this.board.options.text.strokeColor,
+                    highlightStrokeWidth: this.board.options.text.strokeWidth,
+                    highlightStrokeOpacity: this.board.options.text.strokeOpacity,
+                    visible: this.visProp.visible,
+                    priv: this.visProp.priv
+                };
 
-            if (!drawLabels) {
-                return null;
-            }
-
-            // Correct label also for frozen tick lines.
-            if (this.equidistant) {
-                pos = this.generateLabelValue(newTick, center) / this.visProp.scale;
-            }
-
-            labelText = pos.toString();
-            if (newTick.distance(Const.COORDS_BY_USER, center) < Mat.eps) {
-                labelText = '0';
-            }
-
-            if (num && (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1)) {
-                labelText = pos.toPrecision(this.visProp.precision).toString();
-            }
-            if (num && labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
-                // trim trailing zeros
-                labelText = labelText.replace(/0+$/, '');
-                // trim trailing .
-                labelText = labelText.replace(/\.$/, '');
-            }
-
-            if (this.visProp.scalesymbol.length > 0 && labelText === '1') {
-                labelText = this.visProp.scalesymbol;
-            } else if (this.visProp.scalesymbol.length > 0 && labelText === '0') {
-                labelText = '0';
-            } else {
-                labelText = labelText + this.visProp.scalesymbol;
-            }
-
-            attr = {
-                isLabel: true,
-                layer: board.options.layer.line,
-                highlightStrokeColor: board.options.text.strokeColor,
-                highlightStrokeWidth: board.options.text.strokeWidth,
-                highlightStrokeOpacity: board.options.text.strokeOpacity,
-                visible: this.visProp.visible,
-                priv: this.visProp.priv
-            };
             attr = Type.deepCopy(attr, this.visProp.label);
 
             if (this.labelsRepo.length > 0) {
-                label = this.labelsRepo.splice(this.labelsRepo.length - 1, 1)[0];
-                // this is done later on anyways
-                //label.setCoords(newTick.usrCoords[1], newTick.usrCoords[2]);
+                label = this.labelsRepo.pop();
                 label.setText(labelText);
                 label.setAttribute(attr);
             } else {
                 this.labelCounter += 1;
-                attr.id = id + i + 'Label' + this.labelCounter;
-                label = Text.createText(board, [newTick.usrCoords[1], newTick.usrCoords[2], labelText], attr);
+                attr.id = this.id + tickNumber + 'Label' + this.labelCounter;
+                label = Text.createText(this.board, [tick.usrCoords[1], tick.usrCoords[2], labelText], attr);
             }
+
             label.isDraggable = false;
             label.dump = false;
 
-            /*
-             * Ticks have their own label handling which is done below and not
-             * in Text.update().
-             * The reason is that there is no parent element for the labels
-             * which can determine the label position.
-             */
-            //label.distanceX = 4;
-            //label.distanceY = -parseInt(label.visProp.fontsize)+3; //-9;
             label.distanceX = this.visProp.label.offset[0];
             label.distanceY = this.visProp.label.offset[1];
-            label.setCoords(newTick.usrCoords[1] + label.distanceX / (board.unitX),
-                newTick.usrCoords[2] + label.distanceY / (board.unitY));
+            label.setCoords(
+                tick.usrCoords[1] + label.distanceX / (this.board.unitX),
+                tick.usrCoords[2] + label.distanceY / (this.board.unitY)
+            );
 
-            label.visProp.visible = drawLabels;
-            //label.prepareUpdate().update().updateRenderer();
             return label;
         },
 
@@ -844,7 +837,10 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                this.calculateTicksCoordinates();
+                // A canvas with no width or height will create an endless loop, so ignore it
+                if (this.board.canvasWidth !== 0 && this.board.canvasHeight !== 0) {
+                    this.calculateTicksCoordinates();
+                }
             }
 
             return this;

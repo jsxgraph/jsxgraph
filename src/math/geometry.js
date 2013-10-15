@@ -712,6 +712,148 @@ define([
             }
         },
 
+
+        /**
+         * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2
+         * calcLineDelimitingPoints determines the visual start point and end point of the line. A segment is only drawn
+         * from start to end point, a straight line or ray is drawn until it meets the boards boundaries.
+         * @param {JXG.Line} el Reference to a line object, that needs calculation of start and end point.
+         * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and
+         * set by this method.
+         * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set
+         * by this method.
+         * @see Line
+         * @see JXG.Line
+         */
+        calcLineDelimitingPoints: function (el, point1, point2) {
+            var takePoint1 = false, takePoint2 = false, distP1P2,
+                intersection, intersect1, intersect2, straightFirst, straightLast,
+                c, s, i, j, p1, p2;
+
+            straightFirst = el.visProp.straightfirst;
+            straightLast = el.visProp.straightlast;
+
+            // If one of the point is an ideal point in homogeneous coordinates
+            // drawing of line segments or rays are not possible.
+            if (Math.abs(point1.scrCoords[0]) < Mat.eps) {
+                straightFirst = true;
+            }
+            if (Math.abs(point2.scrCoords[0]) < Mat.eps) {
+                straightLast = true;
+            }
+
+            // Compute the stdform of the line in screen coordinates.
+            c = [];
+            c[0] = el.stdform[0] -
+                el.stdform[1] * el.board.origin.scrCoords[1] / el.board.unitX +
+                el.stdform[2] * el.board.origin.scrCoords[2] / el.board.unitY;
+            c[1] =  el.stdform[1] / el.board.unitX;
+            c[2] = -el.stdform[2] / el.board.unitY;
+
+            // p1=p2
+            if (isNaN(c[0] + c[1] + c[2])) {
+                return;
+            }
+
+            // Line starts at point1 and point1 is inside the board
+            takePoint1 = !straightFirst &&
+                Math.abs(point1.usrCoords[0]) >= Mat.eps &&
+                point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
+                point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight;
+
+            // Line ends at point2 and point2 is inside the board
+            takePoint2 = !straightLast &&
+                Math.abs(point2.usrCoords[0]) >= Mat.eps &&
+                point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
+                point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight;
+
+            // Intersect the line with the four borders of the board.
+            intersection = this.meetLineBoard(c, el.board);
+            intersect1 = intersection[0];
+            intersect2 = intersection[1];
+
+            /**
+             * we have four points:
+             * point1 and point2 are the first and the second defining point on the line,
+             * intersect1, intersect2 are the intersections of the line with border around the board.
+             */
+
+            /*
+             * Here we handle rays/segments where both defining points are outside of the board.
+             */
+            if (!takePoint1 && !takePoint2) {
+                // Segment, if segment does not cross the board, do nothing
+                if (!straightFirst && !straightLast) {
+                    distP1P2 = point1.distance(Const.COORDS_BY_USER, point2);
+                    // if  intersect1 not between point1 and point2
+                    if (Math.abs(point1.distance(Const.COORDS_BY_USER, intersect1) +
+                            intersect1.distance(Const.COORDS_BY_USER, point2) - distP1P2) > Mat.eps) {
+                        return;
+                    }
+                    // if insersect2 not between point1 and point2
+                    if (Math.abs(point1.distance(Const.COORDS_BY_USER, intersect2) +
+                            intersect2.distance(Const.COORDS_BY_USER, point2) - distP1P2) > Mat.eps) {
+                        return;
+                    }
+                }
+
+                // If both points are outside and the complete ray is outside we do nothing
+                // Ray starting at point 1
+                if (!straightFirst && straightLast &&
+                        !this.isSameDirection(point1, point2, intersect1) && !this.isSameDirection(point1, point2, intersect2)) {
+                    return;
+                }
+
+                // Ray starting at point 2
+                if (straightFirst && !straightLast &&
+                        !this.isSameDirection(point2, point1, intersect1) && !this.isSameDirection(point2, point1, intersect2)) {
+                    return;
+                }
+            }
+
+            /*
+             * If at least one of the defining points is outside of the board
+             * we take intersect1 or intersect2 as one of the end points
+             * The order is also important for arrows of axes
+             */
+            if (!takePoint1) {
+                if (!takePoint2) {
+                    // Two border intersection points are used
+                    if (this.isSameDir(point1, point2, intersect1, intersect2)) {
+                        p1 = intersect1;
+                        p2 = intersect2;
+                    } else {
+                        p2 = intersect1;
+                        p1 = intersect2;
+                    }
+                } else {
+                    // One border intersection points is used
+                    if (this.isSameDir(point1, point2, intersect1, intersect2)) {
+                        p1 = intersect1;
+                    } else {
+                        p1 = intersect2;
+                    }
+                }
+            } else {
+                if (!takePoint2) {
+                    // One border intersection points is used
+                    if (this.isSameDir(point1, point2, intersect1, intersect2)) {
+                        p2 = intersect2;
+                    } else {
+                        p2 = intersect1;
+                    }
+                }
+            }
+
+            if (p1) {
+                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
+            }
+
+            if (p2) {
+                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
+            }
+        },
+
         /**
          * The vectors <tt>p2-p1</tt> and <tt>i2-i1</tt> are supposed to be collinear. If their cosine is positive
          * they point into the same direction otherwise they point in opposite direction.
