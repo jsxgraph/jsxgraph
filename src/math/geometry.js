@@ -586,7 +586,7 @@ define([
          * @see JXG.Line
          */
         calcStraight: function (el, point1, point2, margin) {
-            var takePoint1, takePoint2, intersect1, intersect2, straightFirst, straightLast,
+            var takePoint1, takePoint2, intersection, intersect1, intersect2, straightFirst, straightLast,
                 c, s, i, j, p1, p2;
 
             if (!Type.exists(margin)) {
@@ -625,28 +625,6 @@ define([
                 return;
             }
 
-            // Intersect the line with the four borders of the board.
-            s = [];
-
-            // top
-            s[0] = Mat.crossProduct(c, [margin, 0, 1]);
-            // left
-            s[1] = Mat.crossProduct(c, [margin, 1, 0]);
-            // bottom
-            s[2] = Mat.crossProduct(c, [-margin - el.board.canvasHeight, 0, 1]);
-            // right
-            s[3] = Mat.crossProduct(c, [-margin - el.board.canvasWidth, 1, 0]);
-
-            // Normalize the intersections
-            for (i = 0; i < 4; i++) {
-                if (Math.abs(s[i][0]) > Mat.eps) {
-                    for (j = 2; j > 0; j--) {
-                        s[i][j] /= s[i][0];
-                    }
-                    s[i][0] = 1.0;
-                }
-            }
-
             takePoint1 = false;
             takePoint2 = false;
 
@@ -662,50 +640,10 @@ define([
                 point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
                 point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight;
 
-            // line is parallel to "left", take "top" and "bottom"
-            if (Math.abs(s[1][0]) < Mat.eps) {
-                intersect1 = s[0];                          // top
-                intersect2 = s[2];                          // bottom
-            // line is parallel to "top", take "left" and "right"
-            } else if (Math.abs(s[0][0]) < Mat.eps) {
-                intersect1 = s[1];                          // left
-                intersect2 = s[3];                          // right
-            // left intersection out of board (above)
-            } else if (s[1][2] < 0) {
-                intersect1 = s[0];                          // top
-
-                // right intersection out of board (below)
-                if (s[3][2] > el.board.canvasHeight) {
-                    intersect2 = s[2];                      // bottom
-                } else {
-                    intersect2 = s[3];                      // right
-                }
-            // left intersection out of board (below)
-            } else if (s[1][2] > el.board.canvasHeight) {
-                intersect1 = s[2];                          // bottom
-
-                // right intersection out of board (above)
-                if (s[3][2] < 0) {
-                    intersect2 = s[0];                      // top
-                } else {
-                    intersect2 = s[3];                      // right
-                }
-            } else {
-                intersect1 = s[1];                          // left
-
-                // right intersection out of board (above)
-                if (s[3][2] < 0) {
-                    intersect2 = s[0];                      // top
-                // right intersection out of board (below)
-                } else if (s[3][2] > el.board.canvasHeight) {
-                    intersect2 = s[2];                      // bottom
-                } else {
-                    intersect2 = s[3];                      // right
-                }
-            }
-
-            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), el.board);
-            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), el.board);
+            // Intersect the line with the four borders of the board.
+            intersection = this.meetLineBoard(c, el.board, margin);
+            intersect1 = intersection[0];
+            intersect2 = intersection[1];
 
             /**
              * At this point we have four points:
@@ -876,6 +814,87 @@ define([
             }
 
             return result;
+        },
+
+        /**
+         * Intersection of the line with the board
+         * @param  {Array}     line   stdform of the line
+         * @param  {JXG.Board} board  reference to a board.
+         * @param  {Number}    margin optional margin, to avoid the display of the small sides of lines.
+         * @return {Array}            [intersection coords 1, intersection coords 2]
+         */
+        meetLineBoard: function (line, board, margin) {
+             // Intersect the line with the four borders of the board.
+            var s = [], intersect1, intersect2, i, j;
+
+            if (margin == null) {
+                margin = 0;
+            }
+
+            // top
+            s[0] = Mat.crossProduct(line, [margin, 0, 1]);
+            // left
+            s[1] = Mat.crossProduct(line, [margin, 1, 0]);
+            // bottom
+            s[2] = Mat.crossProduct(line, [-margin - board.canvasHeight, 0, 1]);
+            // right
+            s[3] = Mat.crossProduct(line, [-margin - board.canvasWidth, 1, 0]);
+
+            // Normalize the intersections
+            for (i = 0; i < 4; i++) {
+                if (Math.abs(s[i][0]) > Mat.eps) {
+                    for (j = 2; j > 0; j--) {
+                        s[i][j] /= s[i][0];
+                    }
+                    s[i][0] = 1.0;
+                }
+            }
+
+            // line is parallel to "left", take "top" and "bottom"
+            if (Math.abs(s[1][0]) < Mat.eps) {
+                intersect1 = s[0];                          // top
+                intersect2 = s[2];                          // bottom
+            // line is parallel to "top", take "left" and "right"
+            } else if (Math.abs(s[0][0]) < Mat.eps) {
+                intersect1 = s[1];                          // left
+                intersect2 = s[3];                          // right
+            // left intersection out of board (above)
+            } else if (s[1][2] < 0) {
+                intersect1 = s[0];                          // top
+
+                // right intersection out of board (below)
+                if (s[3][2] > board.canvasHeight) {
+                    intersect2 = s[2];                      // bottom
+                } else {
+                    intersect2 = s[3];                      // right
+                }
+            // left intersection out of board (below)
+            } else if (s[1][2] > board.canvasHeight) {
+                intersect1 = s[2];                          // bottom
+
+                // right intersection out of board (above)
+                if (s[3][2] < 0) {
+                    intersect2 = s[0];                      // top
+                } else {
+                    intersect2 = s[3];                      // right
+                }
+            } else {
+                intersect1 = s[1];                          // left
+
+                // right intersection out of board (above)
+                if (s[3][2] < 0) {
+                    intersect2 = s[0];                      // top
+                // right intersection out of board (below)
+                } else if (s[3][2] > board.canvasHeight) {
+                    intersect2 = s[2];                      // bottom
+                } else {
+                    intersect2 = s[3];                      // right
+                }
+            }
+
+            intersect1 = new Coords(Const.COORDS_BY_SCREEN, intersect1.slice(1), board);
+            intersect2 = new Coords(Const.COORDS_BY_SCREEN, intersect2.slice(1), board);
+            return [intersect1, intersect2];
         },
 
         /**
