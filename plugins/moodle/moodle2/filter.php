@@ -36,7 +36,7 @@ class filter_jsxgraph extends moodle_text_filter {
             $dom->loadXML($html);
         } else {
             libxml_use_internal_errors(true);
-            $dom->loadHTML($html);
+            $dom->loadHTML('<?xml version="1.0" encoding="UTF-8"?>' . $html);
             libxml_use_internal_errors(false);
         }
 
