@@ -233,7 +233,6 @@ define([
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
 
-
             if (!this.line.visProp.scalable) {
                 return this;
             }
@@ -317,7 +316,7 @@ define([
             // After this, the length of the vector (dxMaj, dyMaj) in screen coordinates is equal to distMaj pixel.
             d = Math.sqrt(
                 this.dxMaj * this.dxMaj * this.board.unitX * this.board.unitX +
-                this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
+                    this.dyMaj * this.dyMaj * this.board.unitY * this.board.unitY
             );
             this.dxMaj *= distMaj / d * this.board.unitX;
             this.dyMaj *= distMaj / d * this.board.unitY;
@@ -353,16 +352,20 @@ define([
                         usrCoords: [1, 0, 0]
                     }
                 }, this.line, this.board);
-            } else if (this.visProp.anchor === 'right') {
-                return  this.line.point2.coords;
-            } else if (this.visProp.anchor === 'middle') {
-                return new Coords(JXG.COORDS_BY_USER, [
+            }
+
+            if (this.visProp.anchor === 'right') {
+                return this.line.point2.coords;
+            }
+
+            if (this.visProp.anchor === 'middle') {
+                return new Coords(Const.COORDS_BY_USER, [
                     (this.line.point1.coords.usrCoords[1] + this.line.point2.coords.usrCoords[1]) / 2,
                     (this.line.point1.coords.usrCoords[2] + this.line.point2.coords.usrCoords[2]) / 2
                 ], this.board);
-            } else {
-                return this.line.point1.coords;
             }
+
+            return this.line.point1.coords;
         },
 
         /**
@@ -379,12 +382,12 @@ define([
                 point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board),
                 point2 = new Coords(Const.COORDS_BY_USER, this.line.point2.coords.usrCoords, this.board),
                 // Are the original defining points within the board?
-                isPoint1inBoard = Math.abs(point1.usrCoords[0]) >= Mat.eps &&
+                isPoint1inBoard = (Math.abs(point1.usrCoords[0]) >= Mat.eps &&
                     point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= this.board.canvasWidth &&
-                    point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= this.board.canvasHeight,
-                isPoint2inBoard = Math.abs(point2.usrCoords[0]) >= Mat.eps &&
+                    point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= this.board.canvasHeight),
+                isPoint2inBoard = (Math.abs(point2.usrCoords[0]) >= Mat.eps &&
                     point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= this.board.canvasWidth &&
-                    point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight,
+                    point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= this.board.canvasHeight),
                 // We use the distance from zero to P1 and P2 to establish lower and higher points
                 dZeroPoint1, dZeroPoint2;
 
@@ -437,11 +440,12 @@ define([
          */
         getDistanceFromZero: function (zero, point) {
             var distance = zero.distance(Const.COORDS_BY_USER, point);
+
             // Establish sign
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
                 if (zero.usrCoords[1] > point.usrCoords[1] ||
-                    (zero.usrCoords[1] == point.usrCoords[1] && zero.usrCoords[2] > point.usrCoords[2])
-                ) {
+                        (Math.abs(zero.usrCoords[1] - point.usrCoords[1]) < Mat.eps &&
+                        zero.usrCoords[2] > point.usrCoords[2])) {
                     distance *= -1;
                 }
             } else if (this.visProp.anchor === 'right') {
@@ -628,9 +632,10 @@ define([
          * @private
          */
         getXandYdeltas: function () {
-            var distP1P2 = this.line.point1.Dist(this.line.point2),
+            var
                 // Auxiliary points to store the start and end of the line according to its direction
-                point1UsrCoords, point2UsrCoords;
+                point1UsrCoords, point2UsrCoords,
+                distP1P2 = this.line.point1.Dist(this.line.point2);
 
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
                 // When line is an Axis, direction depends on Board Coordinates system
@@ -638,10 +643,11 @@ define([
                 // assume line.point1 and line.point2 are in correct order
                 point1UsrCoords = this.line.point1.coords.usrCoords;
                 point2UsrCoords = this.line.point2.coords.usrCoords;
+
                 // Check if direction is incorrect, then swap
                 if (point1UsrCoords[1] > point2UsrCoords[1] ||
-                    (point1UsrCoords[1] == point2UsrCoords[1] && point1UsrCoords[2] > point2UsrCoords[2])
-                ) {
+                        (Math.abs(point1UsrCoords[1] - point2UsrCoords[1]) < Mat.eps &&
+                        point1UsrCoords[2] > point2UsrCoords[2])) {
                     point1UsrCoords = this.line.point2.coords.usrCoords;
                     point2UsrCoords = this.line.point1.coords.usrCoords;
                 }
@@ -666,12 +672,12 @@ define([
          */
         tickEndings: function (coords, major) {
             var i, c, lineStdForm, intersection,
+                dxs, dys,
+                s, style,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x = [-1000 * cw, -1000 * ch],
                 y = [-1000 * cw, -1000 * ch],
-                dxs, dys,
-                s, style,
                 count = 0,
                 isInsideCanvas = false;
 
@@ -709,9 +715,9 @@ define([
 
             if (isInsideCanvas) {
                 return [x, y, major];
-            } else {
-                return [];
             }
+
+            return [];
         },
 
         /**
@@ -731,14 +737,14 @@ define([
                 labelText = '0';
             } else {
                 // No value provided, equidistant, so assign distance as value
-                if (value == null) { // could be null or undefined
+                if (!Type.exists(value)) { // could be null or undefined
                     value = distance / this.visProp.scale;
                 }
 
                 labelText = value.toString();
 
                 // if value is Number
-                if (Object.prototype.toString.call(value) === '[object Number]') {
+                if (Type.isNumber(value)) {
                     if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {
                         labelText = value.toPrecision(this.visProp.precision).toString();
                     }
@@ -823,7 +829,6 @@ define([
                         !(this.board.renderer.type === 'canvas' && this.board.options.text.display === 'internal')) {
                     for (j = 0; j < this.labels.length; j++) {
                         if (Type.exists(this.labels[j])) {
-                            //this.board.removeObject(this.labels[j]);
                             this.labelsRepo.push(this.labels[j]);
                         }
                     }

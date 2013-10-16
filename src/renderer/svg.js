@@ -245,7 +245,7 @@ define([
          */
         _setArrowAtts: function (node, color, opacity, width) {
             var s, d;
-            
+
             if (node) {
                 node.setAttributeNS(null, 'stroke', color);
                 node.setAttributeNS(null, 'stroke-opacity', opacity);
@@ -255,7 +255,7 @@ define([
                 // This is the stroke-width of the arrow head.
                 // Should be zero to make the positioning easy
                 node.setAttributeNS(null, 'stroke-width', 0);
-                
+
                 // The next lines are important if the strokeWidth of the line is changed.
                 s = width;
                 node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
@@ -264,7 +264,7 @@ define([
                 node.setAttributeNS(null, 'markerHeight', d);
                 node.setAttributeNS(null, 'markerWidth', d);
             }
-                
+
         },
 
         /* ******************************** *

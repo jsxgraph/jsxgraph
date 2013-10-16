@@ -726,9 +726,10 @@ define([
          * @see JXG.Line
          */
         calcLineDelimitingPoints: function (el, point1, point2) {
-            var takePoint1 = false, takePoint2 = false, distP1P2,
-                intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, s, i, j, p1, p2;
+            var distP1P2, intersection, intersect1, intersect2, straightFirst, straightLast,
+                c, s, i, j, p1, p2,
+                takePoint1 = false,
+                takePoint2 = false;
 
             straightFirst = el.visProp.straightfirst;
             straightLast = el.visProp.straightlast;
@@ -969,7 +970,7 @@ define([
              // Intersect the line with the four borders of the board.
             var s = [], intersect1, intersect2, i, j;
 
-            if (margin == null) {
+            if (!Type.exists(margin)) {
                 margin = 0;
             }
 
