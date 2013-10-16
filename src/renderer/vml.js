@@ -132,7 +132,7 @@ define([
          * **************************/
 
         // documented in AbstractRenderer
-        updateTicks: function (ticks, dxMaj, dyMaj, dxMin, dyMin) {
+        updateTicks: function (ticks) {
             var i, len, c, x, y,
                 r = this.resolution,
                 tickArr = [];

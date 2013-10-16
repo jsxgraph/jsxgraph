@@ -394,17 +394,13 @@ define([
          * Update {@link Ticks} on a {@link JXG.Line}. This method is only a stub and has to be implemented
          * in any descendant renderer class.
          * @param {JXG.Ticks} element Reference of a ticks object that has to be updated.
-         * @param {Number} dxMaj Number of pixels a major tick counts in x direction.
-         * @param {Number} dyMaj Number of pixels a major tick counts in y direction.
-         * @param {Number} dxMin Number of pixels a minor tick counts in x direction.
-         * @param {Number} dyMin Number of pixels a minor tick counts in y direction.
          * @see Line
          * @see Ticks
          * @see JXG.Line
          * @see JXG.Ticks
          * @see JXG.AbstractRenderer#drawTicks
          */
-        updateTicks: function (element, dxMaj, dyMaj, dxMin, dyMin) { /* stub */ },
+        updateTicks: function (element) { /* stub */ },
 
         /* **************************
          *    Curves

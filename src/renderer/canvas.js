@@ -468,7 +468,7 @@ define([
         },
 
         // documented in AbstractRenderer
-        updateTicks: function (ticks, dxMaj, dyMaj, dxMin, dyMin) {
+        updateTicks: function (ticks) {
             var i, c, x, y,
                 len = ticks.ticks.length,
                 context = this.context;
