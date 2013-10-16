@@ -611,7 +611,7 @@ define([
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
                 ti = this.tickEndings(tickCoords, true);
-                if (ti.length === 3 && this.fixedTicks[i] > bounds.lower && this.fixedTicks[i] < bounds.upper) {
+                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower && this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
                     if (this.visProp.drawlabels) {
