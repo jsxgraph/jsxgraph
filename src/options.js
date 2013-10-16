@@ -430,7 +430,8 @@ define([
 
             /**
              * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
-             * and 'middle' is equivalent to the midpoint of the defining points.
+             * and 'middle' is equivalent to the midpoint of the defining points. This attribute is ignored if the parent
+             * line is of type axis and is parallel to either the x (i.e. y = 0) or the y (i.e. x = 0) axis.
              * @type String
              * @name JXG.Ticks#anchor
              * @default 'left'
