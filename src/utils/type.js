@@ -96,7 +96,7 @@ define([
          * @returns {Boolean} True, if v is of type number.
          */
         isNumber: function (v) {
-            return typeof v === "number";
+            return typeof v === "number" || Object.prototype.toString.call(v) === '[Object Number]';
         },
 
         /**
