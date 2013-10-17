@@ -430,7 +430,8 @@ define([
 
             /**
              * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
-             * and 'middle' is equivalent to the midpoint of the defining points.
+             * and 'middle' is equivalent to the midpoint of the defining points. This attribute is ignored if the parent
+             * line is of type axis and is parallel to either the x (i.e. y = 0) or the y (i.e. x = 0) axis.
              * @type String
              * @name JXG.Ticks#anchor
              * @default 'left'
@@ -538,7 +539,7 @@ define([
             /**
              * The default distance between two ticks. Please be aware that this value does not have
              * to be used if {@link JXG.Ticks#insertTicks} is set to true.
-             * @type Boolean
+             * @type Number
              * @name JXG.Ticks#ticksDistance
              * @see JXG.Ticks#equidistant
              * @see JXG.Ticks#insertTicks
@@ -548,7 +549,16 @@ define([
             strokeOpacity: 1,
             strokeWidth: 1,
             strokeColor: 'black',
-            highlightStrokeColor: '#888888'
+            highlightStrokeColor: '#888888',
+
+            /**
+             * Whether line boundaries should be counted or not in the lower and upper bounds when
+             * creating ticks.
+             * @type {Boolean}
+             * @name {JXG.Ticks#includeBoundaries}
+             * @default  false
+             */
+            includeBoundaries: false
             // close the meta tag
             /**#@-*/
         },
