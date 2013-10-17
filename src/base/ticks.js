@@ -696,22 +696,23 @@ define([
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-            intersection = Geometry.meetLineBoard(lineStdForm, this.board);
-            x[0] = intersection[0].scrCoords[1];
-            x[1] = intersection[1].scrCoords[1];
-            y[0] = intersection[0].scrCoords[2];
-            y[1] = intersection[1].scrCoords[2];
 
-            isInsideCanvas = (x[0] >= 0 && x[0] <= cw && y[0] >= 0 && y[0] <= ch) ||
-                (x[1] >= 0 && x[1] <= cw && y[1] >= 0 && y[1] <= ch);
-
-            // finite tick length
-            if (style === 'finite') {
+            if (style === 'infinite') {
+                intersection = Geometry.meetLineBoard(lineStdForm, this.board);
+                x[0] = intersection[0].scrCoords[1];
+                x[1] = intersection[1].scrCoords[1];
+                y[0] = intersection[0].scrCoords[2];
+                y[1] = intersection[1].scrCoords[2];
+            } else {
                 x[0] = c[1] + dxs * this.visProp.tickendings[0];
                 y[0] = c[2] - dys * this.visProp.tickendings[0];
                 x[1] = c[1] - dxs * this.visProp.tickendings[1];
                 y[1] = c[2] + dys * this.visProp.tickendings[1];
             }
+
+            // check if (parts of) the tick is inside the canvas.
+            isInsideCanvas = (x[0] >= 0 && x[0] <= cw && y[0] >= 0 && y[0] <= ch) ||
+                (x[1] >= 0 && x[1] <= cw && y[1] >= 0 && y[1] <= ch);
 
             if (isInsideCanvas) {
                 return [x, y, major];
