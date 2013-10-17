@@ -392,7 +392,10 @@ define([
                 dZeroPoint1, dZeroPoint2;
 
             // Adjust line limit points to be within the board
-            Geometry.calcLineDelimitingPoints(this.line, point1, point2, 0);
+            Geometry.calcLineDelimitingPoints(
+                this.line, point1, point2,
+               (this.majStyle === 'infinite' || (this.minStyle === 'infinite' && this.visProp.minorticks > 0))
+            );
 
             // Calculate distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
@@ -612,7 +615,7 @@ define([
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
                 ti = this.tickEndings(tickCoords, true);
-                if (ti.length === 3 && this.fixedTicks[i] > bounds.lower && this.fixedTicks[i] < bounds.upper) {
+                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower && this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
                     if (this.visProp.drawlabels) {
