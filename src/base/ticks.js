@@ -392,10 +392,7 @@ define([
                 dZeroPoint1, dZeroPoint2;
 
             // Adjust line limit points to be within the board
-            Geometry.calcLineDelimitingPoints(
-                this.line, point1, point2,
-               (this.majStyle === 'infinite' || (this.minStyle === 'infinite' && this.visProp.minorticks > 0))
-            );
+            Geometry.calcLineDelimitingPoints(this.line, point1, point2);
 
             // Calculate distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);

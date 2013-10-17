@@ -717,7 +717,7 @@ define([
          * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2.
          *
          * This method adjusts the line's delimiting points taking into account its nature, the viewport defined
-         * by the board and if the line has ticks that are infinite.
+         * by the board.
          *
          * A segment is delimited by start and end point, a straight line or ray is delimited until it meets the
          * boards boundaries. However, if the line has infinite ticks, it will be delimited by the projection of
@@ -727,17 +727,16 @@ define([
          * @param {JXG.Coords} point1 Coordinates of the point where line drawing begins. This value is calculated and
          * set by this method.
          * @param {JXG.Coords} point2 Coordinates of the point where line drawing ends. This value is calculated and set
-         * @param {Boolean}    lineHasInfiniteTicks
          * by this method.
          * @see Line
          * @see JXG.Line
          */
-        calcLineDelimitingPoints: function (el, point1, point2, lineHasInfiniteTicks) {
+        calcLineDelimitingPoints: function (el, point1, point2) {
             var distP1P2, boundingBox, lineSlope,
                 intersection, intersect1, intersect2, straightFirst, straightLast,
                 c, s, i, j, p1, p2,
                 takePoint1 = false,
-                takePoint2 = false; 
+                takePoint2 = false;
 
             straightFirst = el.visProp.straightfirst;
             straightLast = el.visProp.straightlast;
@@ -764,41 +763,22 @@ define([
                 return;
             }
 
+            takePoint1 = !straightFirst;
+            takePoint2 = !straightLast;
+            // Intersect the board vertices on the line to establish the available visual space for the infinite ticks
+            // Based on the slope of the line we can optimise and only project the two outer vertices
 
-            if (!lineHasInfiniteTicks) {
-                // Line starts at point1 and point1 is inside the board
-                takePoint1 = !straightFirst &&
-                    Math.abs(point1.usrCoords[0]) >= Mat.eps &&
-                    point1.scrCoords[1] >= 0.0 && point1.scrCoords[1] <= el.board.canvasWidth &&
-                    point1.scrCoords[2] >= 0.0 && point1.scrCoords[2] <= el.board.canvasHeight;
-
-                // Line ends at point2 and point2 is inside the board
-                takePoint2 = !straightLast &&
-                    Math.abs(point2.usrCoords[0]) >= Mat.eps &&
-                    point2.scrCoords[1] >= 0.0 && point2.scrCoords[1] <= el.board.canvasWidth &&
-                    point2.scrCoords[2] >= 0.0 && point2.scrCoords[2] <= el.board.canvasHeight;
-                // Intersect the line with the four borders of the board.
-                intersection = this.meetLineBoard(c, el.board);
-                intersect1 = intersection[0];
-                intersect2 = intersection[1];
+            // boundingBox = [x1, y1, x2, y2] upper left, lower right vertices
+            boundingBox = el.board.getBoundingBox();
+            lineSlope = el.getSlope();
+            if (lineSlope >= 0) {
+                // project vertices (x2,y1) (x1, y2)
+                intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[1]] } }, el, el.board);
+                intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[3]] } }, el, el.board);
             } else {
-                takePoint1 = !straightFirst;
-                takePoint2 = !straightLast;
-                // Intersect the board vertices on the line to establish the available visual space for the infinite ticks
-                // Based on the slope of the line we can optimise and only project the two outer vertices
-
-                // boundingBox = [x1, y1, x2, y2] upper left, lower right vertices
-                boundingBox = el.board.getBoundingBox();
-                lineSlope = el.getSlope();
-                if (lineSlope >= 0) {
-                    // project vertices (x2,y1) (x1, y2)
-                    intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[1]] } }, el, el.board);
-                    intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[3]] } }, el, el.board);
-                } else {
-                    // project vertices (x1, y1) (x2, y2)
-                    intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[1]] } }, el, el.board);
-                    intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[3]] } }, el, el.board);
-                }
+                // project vertices (x1, y1) (x2, y2)
+                intersect1 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[0], boundingBox[1]] } }, el, el.board);
+                intersect2 = this.projectPointToLine({ coords: { usrCoords: [1, boundingBox[2], boundingBox[3]] } }, el, el.board);
             }
 
             /**
