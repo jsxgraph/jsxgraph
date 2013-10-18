@@ -1891,7 +1891,7 @@ define([
         touchMoveListener: function (evt) {
             var i, pos, time,
                 evtTouches = evt[JXG.touchProperty];
-
+            
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
