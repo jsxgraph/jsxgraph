@@ -373,7 +373,7 @@ define([
         this.xmlString = '';
 
         /**
-         * Cached ressult of getCoordsTopLeftCorner for touch/mouseMove-Events to save some DOM operations.
+         * Cached result of getCoordsTopLeftCorner for touch/mouseMove-Events to save some DOM operations.
          * @type Array
          */
         this.cPos = [];
@@ -668,13 +668,16 @@ define([
             var docElement = document.documentElement,
                 docBody = document.body,
                 container = this.containerObj,
-                cPos = Env.getOffset(container),
-                doc = document.documentElement.ownerDocument;
+                cPos, doc;
 
-            if (this.cPos.length > 0 && (this.mode === Const.BOARD_MODE_DRAG || this.mode === Const.BOARD_MODE_MOVE_ORIGIN)) {
+            if (this.cPos.length > 0 && 
+                (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN)) {
                 return this.cPos;
             }
 
+            cPos = Env.getOffset(container);
+            doc = document.documentElement.ownerDocument;
+            
             if (!this.containerObj.currentStyle && doc.defaultView) {     // Non IE
                 // this is for hacks like this one used in wordpress for the admin bar:
                 // html { margin-top: 28px }
