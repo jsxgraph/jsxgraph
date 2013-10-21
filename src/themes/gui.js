@@ -11,6 +11,10 @@ JXG.Options = JXG.merge(JXG.Options, {
     lastSliderStart: 0,
     lastSliderEnd: 2,
     lastSliderIni: 1,
+    
+    board: {
+        minimizeReflow: 'all'
+    },
 
     angle: {
         fillColor: '#ddd',
