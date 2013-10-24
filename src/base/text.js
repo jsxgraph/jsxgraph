@@ -467,12 +467,12 @@ define([
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
 
-                if (this !== this.board.infobox) {
-                    //this.checkForSizeUpdate();
+                //if (this !== this.board.infobox) {
+                    this.checkForSizeUpdate();
                     if (this.needsSizeUpdate) {
                         this.updateSize();
                     }     
-                }
+                //}
                 this.updateTransform();
             }
 
@@ -481,15 +481,23 @@ define([
     
         /**
          * Used to save updateSize() calls.
-         * This is called in updateText of the renderer.
+         * Called in JXG.Text.update 
          * That means this.update() has been called.
-         * 
+         * More tests are in JXG.Renderer.updateTextStyle. The latter tests
+         * are one update off. But this should pose not too many problems, since
+         * it affects fontSize and cssClass changes. 
+         *
          * @private
          */
         checkForSizeUpdate: function() {
-            this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+            // For some magic reason it is more efficient on the iPad to 
+            // call updateSize() for EVERY text element EVERY time.
+            if (this.visProp.display === 'html') {
+                this.needsSizeUpdate = true;
+            } else {
+                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+            }
             this.plaintextOld = this.plaintext;
-//console.log(this.plaintext, this.needsSizeUpdate);
         },
     
         /**

@@ -596,7 +596,6 @@ define([
             var content = el.plaintext, v, c;
 
             if (el.visProp.visible) {
-                el.checkForSizeUpdate();
                 this.updateTextStyle(el, false);
 
                 if (el.visProp.display === 'html') {
