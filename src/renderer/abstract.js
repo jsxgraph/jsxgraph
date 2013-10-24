@@ -598,11 +598,11 @@ define([
             if (el.visProp.visible) {
                 el.checkForSizeUpdate();
                 this.updateTextStyle(el, false);
-                
+
                 if (el.needsSizeUpdate && el !== el.board.infobox) {
                     el.updateSize();
                 }
-
+                
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
