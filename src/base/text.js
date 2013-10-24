@@ -70,9 +70,11 @@ define([
 
         this.content = '';
         this.plaintext = '';
+        this.plaintextOld = null;
 
         this.isDraggable = false;
         this.needsSizeUpdate = false;
+        
         this.element = this.board.select(attributes.anchor);
 
         this.hiddenByParent = false;
@@ -133,7 +135,7 @@ define([
         this.board.renderer.drawText(this);
 
         this.setText(content);
-        this.updateSize();
+        // this.updateSize();
 
         if (!this.visProp.visible) {
             this.board.renderer.hide(this);
@@ -207,18 +209,14 @@ define([
         _setText: function (text) {
             var updateText;
 
-            this.needsSizeUpdate = false;
-
             if (typeof text === 'function') {
                 this.updateText = function () {
                     this.plaintext = text();
                 };
-                this.needsSizeUpdate = true;
             } else if (Type.isString(text) && !this.visProp.parse) {
                 this.updateText = function () {
                     this.plaintext = text;
                 };
-                this.needsSizeUpdate = false;  // true;
             } else {
                 if (Type.isNumber(text)) {
                     this.content = text.toFixed(this.visProp.digits);
@@ -226,7 +224,6 @@ define([
                     if (this.visProp.useasciimathml) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
-                        this.needsSizeUpdate = true;
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         this.content = this.generateTerm(text);
@@ -241,12 +238,11 @@ define([
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
             this.updateText();
-
             this.prepareUpdate().update().updateRenderer();
-
-            // call updateSize() at least once.
-            if (this.needsSizeUpdate) {
-                this.updateSize();
+            
+            // We do not call updateSize for the infobox to speed up rendering
+            if (this.id !== this.board.infobox) {
+                this.updateSize();    // updateSize() is called at least once.
             }
 
             return this;
@@ -270,11 +266,10 @@ define([
                     s = text;
                 } else {
                     s = Type.sanitizeHTML(text);
-
                 }
             }
 
-            return this._setText(s);
+            this._setText(s);
         },
 
         /**
@@ -460,26 +455,36 @@ define([
          * is called.
          */
         update: function () {
+            
             if (this.needsUpdate) {
                 if (!this.visProp.frozen) {
                     this.updateCoords();
                 }
+                
                 this.updateText();
 
                 if (this.visProp.display === 'internal') {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
 
-                if (this.needsSizeUpdate) {
-                    this.updateSize();
-                }
                 this.updateTransform();
-
             }
 
             return this;
         },
-
+    
+        /**
+         * Used to save updateSize() calls.
+         * This is called in updateText of the renderer.
+         * That means this.update() has been called.
+         * 
+         * @private
+         */
+        checkForSizeUpdate: function() {
+            this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+            this.plaintextOld = this.plaintext;
+        },
+    
         /**
          * Updates the coordinates of the text element.
          */
@@ -542,7 +547,6 @@ define([
             i = contentStr.indexOf('<value>');
             j = contentStr.indexOf('</value>');
             if (i >= 0) {
-                this.needsSizeUpdate = true;
                 while (i >= 0) {
                     plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);

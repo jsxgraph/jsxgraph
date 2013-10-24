@@ -596,7 +596,12 @@ define([
             var content = el.plaintext, v, c;
 
             if (el.visProp.visible) {
+                el.checkForSizeUpdate();
                 this.updateTextStyle(el, false);
+                
+                if (el.needsSizeUpdate && el !== el.board.infobox) {
+                    el.updateSize();
+                }
 
                 if (el.visProp.display === 'html') {
                     // Set the position
@@ -698,6 +703,7 @@ define([
             if (display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
+                    element.needsSizeUpdate = true;
                     try {
                         element.rendNode.style.fontSize = fs + 'px';
                     } catch (e) {
@@ -713,6 +719,7 @@ define([
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
+                    element.needsSizeUpdate = true;
                 }
                 this.setObjectStrokeColor(element, sc, so);
             } else {

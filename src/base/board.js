@@ -2268,7 +2268,7 @@ define([
         updateInfobox: function (el) {
             var x, y, xc, yc;
 
-            if (!el.visProp.showinfobox) {
+            if (!el.visProp.showinfobox || !this.infobox.visProp.visible) {
                 return this;
             }
             if (el.elementClass === Const.OBJECT_CLASS_POINT) {
@@ -2306,7 +2306,9 @@ define([
          * @returns {JXG.Board} Reference to the board.
          */
         highlightCustomInfobox: function (text, el) {
-            this.infobox.setText(text);
+            if (this.infobox.visProp.visible) {
+                this.infobox.setText(text);
+            }
             return this;
         },
 
@@ -2318,7 +2320,9 @@ define([
          * @returns {JXG.Board} Reference to the board.
          */
         highlightInfobox: function (x, y, el) {
-            this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
+            if (this.infobox.visProp.visible) {
+                this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
+            }
             return this;
         },
 
@@ -2996,7 +3000,7 @@ define([
 
             this.infobox.distanceX = -20;
             this.infobox.distanceY = 25;
-            this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
+            // this.infobox.needsUpdateSize = false;  // That is not true, but it speeds drawing up.
 
             this.infobox.dump = false;
 
