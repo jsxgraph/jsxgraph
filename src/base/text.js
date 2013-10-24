@@ -297,7 +297,7 @@ define([
             if (!Env.isBrowser) {
                 return this;
             }
-
+//console.log("UPDATESIZE", this.plaintext);
             if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
                 s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
                 if (s[0] === 0 && s[1] === 0) {
@@ -467,6 +467,12 @@ define([
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
 
+                if (this !== this.board.infobox) {
+                    //this.checkForSizeUpdate();
+                    if (this.needsSizeUpdate) {
+                        this.updateSize();
+                    }     
+                }
                 this.updateTransform();
             }
 
@@ -483,6 +489,7 @@ define([
         checkForSizeUpdate: function() {
             this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
             this.plaintextOld = this.plaintext;
+//console.log(this.plaintext, this.needsSizeUpdate);
         },
     
         /**
