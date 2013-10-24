@@ -269,7 +269,7 @@ define([
                 }
             }
 
-            this._setText(s);
+            return this._setText(s);
         },
 
         /**

@@ -2268,7 +2268,7 @@ define([
         updateInfobox: function (el) {
             var x, y, xc, yc;
 
-            if (!el.visProp.showinfobox || !this.infobox.visProp.visible) {
+            if (!el.visProp.showinfobox) {
                 return this;
             }
             if (el.elementClass === Const.OBJECT_CLASS_POINT) {
@@ -2306,9 +2306,7 @@ define([
          * @returns {JXG.Board} Reference to the board.
          */
         highlightCustomInfobox: function (text, el) {
-            if (this.infobox.visProp.visible) {
-                this.infobox.setText(text);
-            }
+            this.infobox.setText(text);
             return this;
         },
 
@@ -2320,9 +2318,7 @@ define([
          * @returns {JXG.Board} Reference to the board.
          */
         highlightInfobox: function (x, y, el) {
-            if (this.infobox.visProp.visible) {
-                this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
-            }
+            this.highlightCustomInfobox('(' + x + ', ' + y + ')', el);
             return this;
         },
 
