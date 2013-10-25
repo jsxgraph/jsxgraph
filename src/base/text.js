@@ -239,7 +239,7 @@ define([
             // We need this for display='internal' and Canvas
             this.updateText();
             this.prepareUpdate().update().updateRenderer();
-            
+
             // We do not call updateSize for the infobox to speed up rendering
             if (this !== this.board.infobox) {
                 this.updateSize();    // updateSize() is called at least once.
