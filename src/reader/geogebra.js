@@ -2718,7 +2718,7 @@
                     return false;
                 }
                 break;
-                case 'function':
+            case 'function':
                 attr = this.boardProperties(gxtEl, element, attr);
                 attr = this.colorProperties(element, attr);
                 gxtEl = this.coordinates(gxtEl, element);
@@ -2899,13 +2899,18 @@
                         /*jslint evil:false, regexp:false*/
                     } else {
                         JXG.debug(this.getElement(attr.name, true).getAttribute('exp'));
-                        t = this.ggbParse(this.functionParse(false, this.getElement(attr.name, true).getAttribute('exp')));
+                        t = this.functionParse(false, this.getElement(attr.name, true).getAttribute('exp'));
+                        t = this.ggbParse(t);
                         JXG.debug(t[1]);
 
-                        // res is verified by ggbParse
-                        /*jslint evil:true*/
-                        p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(' + this.decimals + '));') ], attr);
-                        /*jslint evil:false*/
+                        if (JXG.isArray(t)) {
+                            // input string is verified by ggbParse
+                            /*jslint evil:true*/
+                            p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(' + this.decimals + '));') ], attr);
+                            /*jslint evil:false*/
+                        } else {
+                            p = this.board.create('text', [gxtEl.x, gxtEl.y, t], attr);
+                        }
                     }
                     JXG.debug("* Text: " + t);
                     return p;
