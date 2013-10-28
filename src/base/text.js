@@ -590,7 +590,7 @@ define([
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
             plaintext = plaintext.replace(/<overline>/g, '<span style=text-decoration:overline>');
-            plaintext = plaintext.replace(/&lt;overline&lt;/g, '<span style=text-decoration:overline>');
+            plaintext = plaintext.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
             plaintext = plaintext.replace(/<\/overline>/g, '</span>');
             plaintext = plaintext.replace(/&lt;\/overline&gt;/g, '</span>');
             plaintext = plaintext.replace(/<arrow>/g, '<span style=text-decoration:overline>');
