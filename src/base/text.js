@@ -211,7 +211,7 @@ define([
 
             if (typeof text === 'function') {
                 this.updateText = function () {
-                    this.plaintext = text();
+                    this.plaintext = this.convertGeonext2CSS(text());
                 };
             } else if (Type.isString(text) && !this.visProp.parse) {
                 this.updateText = function () {
@@ -297,7 +297,6 @@ define([
             if (!Env.isBrowser) {
                 return this;
             }
-//console.log("UPDATESIZE", this.plaintext);
             if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
                 s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
                 if (s[0] === 0 && s[1] === 0) {
@@ -551,10 +550,12 @@ define([
             contentStr = contentStr.replace(/\n/g, '');
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
+            
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
             contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
             contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
+            
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
 
@@ -589,15 +590,8 @@ define([
             }
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
-            plaintext = plaintext.replace(/<overline>/g, '<span style=text-decoration:overline>');
-            plaintext = plaintext.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
-            plaintext = plaintext.replace(/<\/overline>/g, '</span>');
-            plaintext = plaintext.replace(/&lt;\/overline&gt;/g, '</span>');
-            plaintext = plaintext.replace(/<arrow>/g, '<span style=text-decoration:overline>');
-            plaintext = plaintext.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
-            plaintext = plaintext.replace(/<\/arrow>/g, '</span>');
-            plaintext = plaintext.replace(/&lt;\/arrow&gt;/g, '</span>');
-
+            plaintext = this.convertGeonext2CSS(plaintext);
+            
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
@@ -605,6 +599,24 @@ define([
             return plaintext;
         },
 
+        /**
+         * Converts the GEONExT tags <overline> and <arrow> to 
+         * HTML span tags with proper CSS formating.
+         * @private
+         * @see JXG.Text.generateTerm @see .JXG.Text._setText
+         */
+        convertGeonext2CSS: function(s) {
+            s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
+            s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
+            s = s.replace(/<\/overline>/g, '</span>');
+            s = s.replace(/&lt;\/overline&gt;/g, '</span>');
+            s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
+            s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
+            s = s.replace(/<\/arrow>/g, '</span>');
+            s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+            return s;
+        },
+        
         /**
          * Finds dependencies in a given term and notifies the parents by adding the
          * dependent object to the found objects child elements.
