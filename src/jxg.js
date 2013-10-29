@@ -7,9 +7,10 @@
         Alfred Wassermann,
         Peter Wilfahrt
 
-    This file is part of JSXGraph.
+    This file is part of JSXGraph and JSXCompressor.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    JSXCompressor is free software dual licensed under the GNU LGPL or Apache License.
     
     You can redistribute it and/or modify it under the terms of the
     
@@ -18,15 +19,19 @@
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+      OR
+      * Apache License Version 2.0
     
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
     
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    You should have received a copy of the GNU Lesser General Public License, Apache
+    License, and the MIT License along with JSXGraph. If not, see
+    <http://www.gnu.org/licenses/>, <https://www.apache.org/licenses/LICENSE-2.0.html>,
     and <http://opensource.org/licenses/MIT/>.
+
  */
 
 
