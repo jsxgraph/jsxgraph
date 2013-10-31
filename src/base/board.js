@@ -2891,7 +2891,7 @@ define([
                         this.objectsList[el]._pos--;
                     }
                 } else {
-                    JXG.debug('object ' + object.id + ' not found in list.');
+                    JXG.debug('Board.removeObject: object ' + object.id + ' not found in list.');
                 }
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];

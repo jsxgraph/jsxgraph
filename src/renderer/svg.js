@@ -793,6 +793,7 @@ define([
         show: function (el) {
             var node;
 
+//console.log((typeof el.rendNode) + ' ' + (typeof el.rendNode.style));
             if (el && el.rendNode) {
                 node = el.rendNode;
                 node.setAttributeNS(null, 'display', 'inline');

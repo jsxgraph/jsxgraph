@@ -715,7 +715,7 @@ define([
                 if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
                     this.point1.snapToGrid();
                     this.point2.snapToGrid();
-                } else {
+                } else if (JXG.exists(pos)) {
                     sX = this.visProp.snapsizex;
                     sY = this.visProp.snapsizey;
 
