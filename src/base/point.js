@@ -189,7 +189,7 @@ define([
                 r = this.board.options.precision.hasPoint;
             }
 
-            return ((Math.abs(coordsScr[1] - x) < r + 2) && (Math.abs(coordsScr[2] - y)) < r + 2);
+            return ((Math.abs(coordsScr[1] - x) < r + 2) && (Math.abs(coordsScr[2] - y) < r + 2));
         },
 
         /**
