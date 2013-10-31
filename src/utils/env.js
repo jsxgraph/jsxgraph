@@ -396,7 +396,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             evtTouches = e[JXG.touchProperty];
 
-            if (Type.exists(index)) {
+            if (Type.exists(index) && Type.exists(evtTouches)) {
                 if (index === -1) {
                     len = evtTouches.length;
 
