@@ -554,8 +554,8 @@ define([
             /**
              * Whether line boundaries should be counted or not in the lower and upper bounds when
              * creating ticks.
-             * @type {Boolean}
-             * @name {JXG.Ticks#includeBoundaries}
+             * @type Boolean
+             * @name JXG.Ticks#includeBoundaries
              * @default  false
              */
             includeBoundaries: false
