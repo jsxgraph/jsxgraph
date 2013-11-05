@@ -124,10 +124,12 @@ define(['jxg'], function (JXG) {
                     } else {
                         chars.push(codepoint);
                     }
+
                     j++;
-                    if (j % 10000) {
-                       results.push(String.fromCharCode.apply(null, chars));
-                       chars = [];
+
+                    if (j % 10000 === 0) {
+                        results.push(String.fromCharCode.apply(null, chars));
+                        chars = [];
                     }
                 }
             }
