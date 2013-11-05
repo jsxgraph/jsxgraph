@@ -99,10 +99,12 @@ define(['jxg'], function (JXG) {
             */
 
             var i, charCode, type,
+                j = 0,
                 codepoint = 0,
                 state = UTF8_ACCEPT,
                 chars = [],
-                len = utftext.length;
+                len = utftext.length,
+                results = [];
 
             for (i = 0; i < len; i++) {
                 charCode = utftext.charCodeAt(i);
@@ -122,10 +124,15 @@ define(['jxg'], function (JXG) {
                     } else {
                         chars.push(codepoint);
                     }
+                    j++;
+                    if (j % 10000) {
+                       results.push(String.fromCharCode.apply(null, chars));
+                       chars = [];
+                    }
                 }
             }
-
-            return String.fromCharCode.apply(null, chars);
+            results.push(String.fromCharCode.apply(null, chars)); 
+            return results.join("");
         },
 
         /**
