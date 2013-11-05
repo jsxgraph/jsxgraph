@@ -352,6 +352,13 @@ define([
         this.drag_dy = 0;
 
         /**
+         * The last position where a drag event has been fired.
+         * @type Array
+         * @see JXG.Board#moveObject
+         */
+        this.drag_position = [0, 0];
+        
+        /**
          * References to the object that is dragged with the mouse on the board.
          * @type {@link JXG.GeometryElement}.
          * @see {JXG.Board#touches}
@@ -857,7 +864,12 @@ define([
             if (!drag) {
                 return;
             }
-
+            
+            /*
+             * Save the position.
+             */
+            this.drag_position = newPos.scrCoords.slice(1);
+            
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
