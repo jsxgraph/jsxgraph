@@ -96,6 +96,7 @@ define([
      * @constructor
      * @type JXG.Polygon
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * Parameter options:
      * @param {JXG.Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
      * @param {JXG.Line_JXG.Point} li, p A line and a point on that line. 
      *  The user has to take care that the point is a member of the line.
