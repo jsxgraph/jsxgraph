@@ -67,7 +67,10 @@ define([
         fillColor: 'red',
         fillOpacity: 0.4,
 
-        glider: {},
+        glider: {
+            fixed: true,
+            withLabel: false
+        },
         baseline: {
             visible: false,
             withLabel: false,
