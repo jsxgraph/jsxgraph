@@ -315,7 +315,8 @@ define([
                     this.size = [tmp.width, tmp.height];
                 } catch (e) {
                 }
-            } else if (this.board.renderer.type === 'vml' || (this.visProp.display === 'internal' && this.board.renderer.type === 'canvas')) {
+            } else if (this.board.renderer.type === 'vml' || 
+                        (this.visProp.display === 'internal' && this.board.renderer.type === 'canvas')) {
                 // Here comes a very crude estimation of the dimensions of the textbox.
                 this.size = [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
             }

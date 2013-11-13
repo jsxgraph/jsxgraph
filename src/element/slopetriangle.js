@@ -86,11 +86,57 @@ define([
     };
 
     /**
-     * Creates a new slope triangle using a tangent on a curve, circle, line or turtle.
-     * @param {JXG.Board} board The board the triangle is put on.
-     * @param {Array} parents A tangent line.
-     * @param {Object} attributes Visual properties that are assigned to the constructed lines.
-     * @returns {JXG.Point} A glider
+     * @class Slope triangle for a point on a line.
+     * @pseudo
+     * @name Slopetriangle
+     * @augments JXG.Line
+     * @constructor
+     * @type JXG.Polygon
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
+     * @param {JXG.Line_JXG.Point} li, p A line and a point on that line. 
+     *  The user has to take care that the point is a member of the line.
+     * @example
+     * // Create a slopetriangle on a tangent
+     * var f = board.create('plot', ['sin(x)']),
+     *     g = board.create('glider', [1, 2, f]),
+     *     t = board.create('tangent', [g]),
+     *     
+     *     st = board.create('slopetriangle', [t]);
+     *     
+     * </pre><div id="951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *     f = board.create('plot', ['sin(x)']),
+     *     g = board.create('glider', [1, 2, f]),
+     *     t = board.create('tangent', [g]),
+     *     
+     *     st = board.create('slopetriangle', [t]);
+     * })();
+     * </script><pre>
+     * 
+     * @example
+     * // Create a on a line and a point on that line
+     * var p1 = board.create('point', [-2, 3]),
+     *     p2 = board.create('point', [2, -3]),
+     *     li = board.create('line', [p1, p2]),
+     *     p = board.create('glider', [0, 0, line]),
+     * 
+     *     st = board.create('slopetriangle', [li, p]);
+     *
+     * </pre><div id="b52f451c-22cf-4677-852a-0bb9d764ee95" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('b52f451c-22cf-4677-852a-0bb9d764ee95', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [-2, 3]),
+     *     p2 = board.create('point', [2, -3]),
+     *     li = board.create('line', [p1, p2]),
+     *     p = board.create('glider', [0, 0, line]),
+     * 
+     *     st = board.create('slopetriangle', [li, p]);
+     * })();
+     * </script><pre>
      */
     JXG.createSlopeTriangle = function (board, parents, attributes) {
         var el, tangent, tglide, glider, toppoint, baseline, basepoint, attr;
