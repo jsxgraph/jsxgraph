@@ -360,6 +360,7 @@ define([
                     el.visPropOld.left = el.visProp.anchorx + v;
                 }
     
+                // Vertical
                 v = el.coords.scrCoords[2];
                 if (el.visPropOld.top !== (el.visProp.anchory + v)) {
                     el.rendNode.setAttributeNS(null, 'y', (v + this.vOffsetText * 0.5) + 'px');

@@ -95,53 +95,57 @@ define([
     JXG.createSlopeTriangle = function (board, parents, attributes) {
         var el, tangent, tglide, glider, toppoint, baseline, basepoint, attr;
 
-        if (parents[0].type === Const.OBJECT_TYPE_TANGENT) {
+        if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
             tangent = parents[0];
             tglide = tangent.glider;
+        } else if (parents.length === 2 && 
+                   parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+            tangent = parents[0];
+            tglide = parents[1];
+        } else {
+            throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
+        }    
+        
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
+        basepoint = board.create('point', [function () {
+            return [tglide.X() + 1,  tglide.Y()];
+        }], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
-            basepoint = board.create('point', [function () {
-                return [tglide.X() + 1,  tglide.Y()];
-            }], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'baseline');
+        baseline = board.create('line', [tglide, basepoint], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'baseline');
-            baseline = board.create('line', [tglide, basepoint], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'glider');
+        glider = board.create('glider', [tglide.X() + 1, tglide.Y(), baseline], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'glider');
-            glider = board.create('glider', [tglide.X() + 1, tglide.Y(), baseline], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'toppoint');
+        toppoint = board.create('point', [function () {
+            return [glider.X(), glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope()];
+        }], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'toppoint');
-            toppoint = board.create('point', [function () {
-                return [glider.X(), glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope()];
-            }], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
+        el = board.create('polygon', [tglide, glider, toppoint], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
-            el = board.create('polygon', [tglide, glider, toppoint], attr);
+        el.Value = priv.Value;
 
-            el.Value = priv.Value;
+        el.tangent = tangent;
+        el.glider = glider;
+        el.basepoint = basepoint;
+        el.baseline = baseline;
+        el.toppoint = toppoint;
 
-            el.tangent = tangent;
-            el.glider = glider;
-            el.basepoint = basepoint;
-            el.baseline = baseline;
-            el.toppoint = toppoint;
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            tangent: 'tangent',
+            glider: 'glider',
+            basepoint: 'basepoint',
+            baseline: 'baseline',
+            toppoint: 'toppoint',
+            Value: 'Value',
+            V: 'Value'
+        });
 
-            el.methodMap = JXG.deepCopy(el.methodMap, {
-                tangent: 'tangent',
-                glider: 'glider',
-                basepoint: 'basepoint',
-                baseline: 'baseline',
-                toppoint: 'toppoint',
-                Value: 'Value',
-                V: 'Value'
-            });
+        el.remove = priv.removeSlopeTriangle;
 
-            el.remove = priv.removeSlopeTriangle;
-
-            return el;
-        }
-
-        throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
+        return el;
     };
 
     JXG.registerElement('slopetriangle', JXG.createSlopeTriangle);
