@@ -601,45 +601,52 @@ define([
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                        
+                        // Horizontal
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
+                        
                         if (el.visProp.anchorx === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
-                            if (el.visPropOld.right !== v) {
-                                el.rendNode.style.right = v + 'px';
-                                el.rendNode.style.left = 'auto';
-                                el.visPropOld.right = v;
-                            }
                         } else if (el.visProp.anchorx === 'middle') {
                             v = Math.floor(c - 0.5 * el.size[0]);
-                            if (el.visPropOld.left !== v) {
-                                el.rendNode.style.left = v + 'px';
-                                el.rendNode.style.right = 'auto';
-                                el.visPropOld.left = v;
-                            }
-                        // 'left'
-                        } else {
+                        } else { // 'left'
                             v = Math.floor(c);
-                            if (el.visPropOld.left !== v) {
+                        }
+                        
+                        if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                            if (el.visProp.anchorx === 'right') {
+                                el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
+                            } else {
                                 el.rendNode.style.left = v + 'px';
                                 el.rendNode.style.right = 'auto';
-                                el.visPropOld.left = v;
                             }
+                            el.visPropOld.left = el.visProp.anchorx + v;
                         }
 
-                        c = el.coords.scrCoords[2];
+                        // Vertical
+                        c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        if (el.visProp.anchory === 'top') {
-                            v = Math.floor(c + this.vOffsetText);
+                        
+                        if (el.visProp.anchory === 'bottom') {
+                            v = Math.floor(el.board.canvasHeight - c);
                         } else if (el.visProp.anchory === 'middle') {
-                            v = Math.floor(c - 0.5 * el.size[1] + this.vOffsetText);
-                        } else {
-                            v = Math.floor(c - el.size[1] + this.vOffsetText);
+                            v = Math.floor(c - 0.5 * el.size[1]);
+                        } else { // top
+                            v = Math.floor(c);
                         }
-                        if (el.visPropOld.top !== v) {
-                            el.rendNode.style.top = v + 'px';
-                            el.visPropOld.top = v;
+                        
+                        if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                            if (el.visProp.anchory === 'bottom') {
+                                el.rendNode.style.top = 'auto';
+                                el.rendNode.style.bottom = v + 'px';
+                            } else {
+                                el.rendNode.style.bottom = 'auto';
+                                el.rendNode.style.top = v + 'px';
+                            }
+                            el.visPropOld.top = el.visProp.anchory + v;
                         }
                     }
 

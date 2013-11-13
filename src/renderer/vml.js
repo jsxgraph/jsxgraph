@@ -210,24 +210,46 @@ define([
                 content = el.plaintext;
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                // Horizontal
                 if (el.visProp.anchorx === 'right') {
-                    el.rendNode.style.right = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
-                    el.rendNode.style.left = 'auto';
+                    v = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]);
                 } else if (el.visProp.anchorx === 'middle') {
-                    el.rendNode.style.left = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]) + 'px';
-                    el.rendNode.style.right = 'auto';
+                    v = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]);
                 } else {
-                    el.rendNode.style.left = Math.floor(el.coords.scrCoords[1]) + 'px';
-                    el.rendNode.style.right = 'auto';
+                    v = Math.floor(el.coords.scrCoords[1]);
                 }
 
-                if (el.visProp.anchory === 'top') {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
-                } else if (el.visProp.anchory === 'middle') {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText) + 'px';
-                } else {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
+                if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                    if (el.visProp.anchorx === 'right') {
+                        el.rendNode.style.right = v + 'px';
+                        el.rendNode.style.left = 'auto';
+                    } else {
+                        el.rendNode.style.left = v + 'px';
+                        el.rendNode.style.right = 'auto';
+                    }
+                    el.visPropOld.left = el.visProp.anchorx + v;
                 }
+                
+                // Vertical
+                if (el.visProp.anchory === 'top') {
+                    v = Math.floor(el.coords.scrCoords[2] + this.vOffsetText);
+                } else if (el.visProp.anchory === 'middle') {
+                    v = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText);
+                } else {
+                    v = Math.floor(el.board.canvasHeight - el.coords.scrCoords[2] - this.vOffsetText);
+                }
+
+                if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                    if (el.visProp.anchory === 'bottom') {
+                        el.rendNode.style.bottom = v + 'px';
+                        el.rendNode.style.top = 'auto';
+                    } else {
+                        el.rendNode.style.top = v + 'px';
+                        el.rendNode.style.bottom = 'auto';
+                    }
+                    el.visPropOld.top = el.visProp.anchory + v;
+                }
+
             }
 
             if (el.htmlStr !== content) {

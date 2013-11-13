@@ -861,7 +861,6 @@ define([
                 cssclass: '',
                 fontsize: -1,
                 left: -100000,
-                right: 100000,
                 top: -100000
             };
 
