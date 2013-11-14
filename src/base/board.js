@@ -393,6 +393,12 @@ define([
         this.touchMoveLast = 0;
 
         /**
+         * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
+         * @type Number
+         */
+        this.positionAccessLast = 0;
+
+        /**
          * Collects all elements that triggered a mouse down event.
          * @type Array
          */
@@ -677,11 +683,18 @@ define([
                 container = this.containerObj,
                 cPos, doc;
 
+            /**
+             * During drags and origin moves the container element is usually not changed.
+             * Check the position of the upper left corner at most every 500 msecs
+             */
             if (this.cPos.length > 0 && 
-                (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN)) {
+                (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN || 
+                 (new Date()).getTime() - this.positionAccessLast < 500 )) {
                 return this.cPos;
             }
-
+            
+            this.positionAccessLast = (new Date()).getTime();
+            
             cPos = Env.getOffset(container);
             doc = document.documentElement.ownerDocument;
             
@@ -2288,7 +2301,6 @@ define([
                 yc = el.coords.usrCoords[2];
 
                 this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
-console.log("IIII", this.infobox.id);
 
                 if (typeof el.infoboxText !== 'string') {
                     if (el.visProp.infoboxdigits === 'auto') {
