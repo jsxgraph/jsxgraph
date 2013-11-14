@@ -286,7 +286,7 @@ define([
          * Update array this.size with pixel values.
          * The result may differ from browser to browser
          * by some pixels.
-         * In IE and canvas we use a very crude estimation of the dimensions of
+         * In canvas an old IEs we use a very crude estimation of the dimensions of
          * the textbox.
          * In JSXGraph this.size is necessary for applying rotations in IE and
          * for aligning text.
@@ -294,36 +294,57 @@ define([
         updateSize: function () {
             var tmp, s, that;
 
-            if (!Env.isBrowser) {
+            if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-            if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
-                s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-                if (s[0] === 0 && s[1] === 0) {
-                    // Some browsers need some time to set offsetWidth and offsetHeight
-                    that = this;
-                    window.setTimeout(function () {
-                        that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
-                    }, 0);
+            
+            /**
+             * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
+             */
+            if (this.visProp.display === 'html' || this.board.renderer.type === 'vml') {
+                if (JXG.exists(this.rendNode.offsetWidth)) {
+                    s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+                        that = this;
+                        window.setTimeout(function () {
+                            that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
+                        }, 0);
+                    } else {
+                        this.size = s;
+                    }
+                } else if (JXG.exists(this.rendNode.style.pixelWidth)) {
+                    s = [this.rendNode.style.pixelWidth, this.rendNode.style.pixelHeight];
+                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+                        that = this;
+                        window.setTimeout(function () {
+                            that.size = [that.rendNode.style.pixelWidth, that.rendNode.style.pixelHeight];
+                        }, 0);
+                    }
                 } else {
-                    this.size = s;
+                    this.size = this.crudeSizeEstimate();
                 }
-
-            } else if (this.visProp.display === 'internal' && this.board.renderer.type === 'svg') {
-                try {
-                    tmp = this.rendNode.getBBox();
-                    this.size = [tmp.width, tmp.height];
-                } catch (e) {
+            } else if (this.visProp.display === 'internal') {
+                if (this.board.renderer.type === 'svg') {
+                    try {
+                        tmp = this.rendNode.getBBox();
+                        this.size = [tmp.width, tmp.height];
+                    } catch (e) {}
+                } else if (this.board.renderer.type === 'canvas') {
+                    this.size = this.crudeSizeEstimate();
                 }
-            } else if (this.board.renderer.type === 'vml' || 
-                        (this.visProp.display === 'internal' && this.board.renderer.type === 'canvas')) {
-                // Here comes a very crude estimation of the dimensions of the textbox.
-                this.size = [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
             }
 
             return this;
         },
 
+        /**
+         * A very crude estimation of the dimensions of the textbox in case nothing else is available.
+         * @return {Array}
+         */
+        crudeSizeEstimate: function() {
+            return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
+        },
+        
         /**
          * Decode unicode entities into characters.
          * @param {String} string
