@@ -517,12 +517,12 @@ define([
             } else {
                 // For some magic reason it is more efficient on the iPad to 
                 // call updateSize() for EVERY text element EVERY time.
-                // Turned off!
-                if (this.visProp.display === 'OFFhtml') {
-                    this.needsSizeUpdate = true;
-                } else {
+                // Turned off, 
+                //if (this.visProp.display === 'html') {
+                //    this.needsSizeUpdate = true;
+                //} else {
                     this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
-                }
+                //}
             
                 if (this.needsSizeUpdate) {
                     this.plaintextOld = this.plaintext;
