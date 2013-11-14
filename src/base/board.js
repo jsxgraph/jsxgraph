@@ -2288,6 +2288,7 @@ define([
                 yc = el.coords.usrCoords[2];
 
                 this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
+console.log("IIII", this.infobox.id);
 
                 if (typeof el.infoboxText !== 'string') {
                     if (el.visProp.infoboxdigits === 'auto') {

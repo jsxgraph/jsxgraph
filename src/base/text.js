@@ -240,8 +240,8 @@ define([
             this.updateText();
             this.prepareUpdate().update().updateRenderer();
 
-            // We do not call updateSize for the infobox to speed up rendering
-            if (this !== this.board.infobox) {
+            // We do not call updateSize for the infobox to speed up rendering            
+            if (!this.board.infobox || this.id !== this.board.infobox.id) {
                 this.updateSize();    // updateSize() is called at least once.
             }
 
@@ -511,14 +511,23 @@ define([
          * @private
          */
         checkForSizeUpdate: function() {
-            // For some magic reason it is more efficient on the iPad to 
-            // call updateSize() for EVERY text element EVERY time.
-            if (this.visProp.display === 'html') {
-                this.needsSizeUpdate = true;
+            
+            if (this.board.infobox && this.id === this.board.infobox.id) {
+                this.needsSizeUpdate = false;
             } else {
-                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+                // For some magic reason it is more efficient on the iPad to 
+                // call updateSize() for EVERY text element EVERY time.
+                if (this.visProp.display === 'html') {
+                    this.needsSizeUpdate = true;
+                } else {
+                    this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+                }
+            
+                if (this.needsSizeUpdate) {
+                    this.plaintextOld = this.plaintext;
+                }
             }
-            this.plaintextOld = this.plaintext;
+
         },
     
         /**
