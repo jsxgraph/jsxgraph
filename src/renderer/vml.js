@@ -291,9 +291,6 @@ define([
                 p = [],
                 len = t.length;
 
-            if (el.type === Const.OBJECT_TYPE_TEXT) {
-                el.updateSize();
-            }
             if (len > 0) {
                 nt = el.rendNode.style.filter.toString();
                 if (!nt.match(/DXImageTransform/)) {

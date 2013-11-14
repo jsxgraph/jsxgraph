@@ -115,12 +115,18 @@ define([
             }
 
             if (type === 'translate') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: translate transformation needs 2 parameters.");
+                }
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][0] = this.evalParam(0);
                     this.matrix[2][0] = this.evalParam(1);
                 };
             } else if (type === 'scale') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: scale transformation needs 2 parameters.");
+                }
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][1] = this.evalParam(0); // x
@@ -188,13 +194,13 @@ define([
                 if (params.length === 3) {
                     this.evalParam = Type.createEvalFunction(board, params, 3);
                 // angle, p or angle
-                } else if (params.length <= 2) {
+                } else if (params.length > 0 && params.length <= 2) {
                     this.evalParam = Type.createEvalFunction(board, params, 1);
 
                     if (params.length === 2) {
                         params[1] = board.select(params[1]);
                     }
-                }
+                } 
 
                 this.update = function () {
                     var x, y,
@@ -221,13 +227,20 @@ define([
                     }
                 };
             } else if (type === 'shear') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: shear transformation needs 2 parameters.");
+                }
+                
                 this.evalParam = Type.createEvalFunction(board, params, 2);
-
                 this.update = function () {
                     this.matrix[1][2] = this.evalParam(0);
                     this.matrix[2][1] = this.evalParam(1);
                 };
             } else if (type === 'generic') {
+                if (params.length !== 9) {
+                    throw new Error("JSXGraph: generic transformation needs 9 parameters.");
+                }
+
                 this.evalParam = Type.createEvalFunction(board, params, 9);
 
                 this.update = function () {
