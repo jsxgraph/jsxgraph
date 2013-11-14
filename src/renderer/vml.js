@@ -292,6 +292,13 @@ define([
                 len = t.length;
 
             if (len > 0) {
+                /*
+                // Seems to be not longer necessary
+                if (el.type === Const.OBJECT_TYPE_TEXT) {
+                    el.updateSize();
+                }
+                */
+                
                 nt = el.rendNode.style.filter.toString();
                 if (!nt.match(/DXImageTransform/)) {
                     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
