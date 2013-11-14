@@ -604,18 +604,21 @@ define([
          * Converts the GEONExT tags <overline> and <arrow> to 
          * HTML span tags with proper CSS formating.
          * @private
-         * @see JXG.Text.generateTerm @see .JXG.Text._setText
+         * @see JXG.Text.generateTerm @see JXG.Text._setText
          */
         convertGeonext2CSS: function(s) {
-            s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
-            s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
-            s = s.replace(/<\/overline>/g, '</span>');
-            s = s.replace(/&lt;\/overline&gt;/g, '</span>');
-            s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
-            s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
-            s = s.replace(/<\/arrow>/g, '</span>');
-            s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+            if (typeof s === 'string') {
+                s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
+                s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
+                s = s.replace(/<\/overline>/g, '</span>');
+                s = s.replace(/&lt;\/overline&gt;/g, '</span>');
+                s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
+                s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
+                s = s.replace(/<\/arrow>/g, '</span>');
+                s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+            }
             return s;
+            
         },
         
         /**
