@@ -297,7 +297,7 @@ define([
             if (!Env.isBrowser) {
                 return this;
             }
-            if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
+            if (this.visProp.display === 'html' && this.board.renderer.type !== 'no') {
                 s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
                 if (s[0] === 0 && s[1] === 0) {
                     // Some browsers need some time to set offsetWidth and offsetHeight
