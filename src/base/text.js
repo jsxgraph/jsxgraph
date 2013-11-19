@@ -132,10 +132,12 @@ define([
         this.Z = Type.createFunction(1, this.board, '');
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
-        this.board.renderer.drawText(this);
 
-        this.setText(content);
-        // this.updateSize();
+        // Set text before drawing
+        this._setUpdateText(content);
+        this.updateText();
+
+        this.board.renderer.drawText(this);
 
         if (!this.visProp.visible) {
             this.board.renderer.hide(this);
@@ -200,13 +202,12 @@ define([
         },
 
         /**
-         * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
-         * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+         * This sets the updateText function of this element that depending on the type of text content passed.
+         * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
          * @param {String|Function|Number} text
-         * @return {JXG.Text}
          * @private
          */
-        _setText: function (text) {
+        _setUpdateText: function (text) {
             var updateText;
 
             if (typeof text === 'function') {
@@ -234,6 +235,17 @@ define([
                     this.plaintext = updateText();
                 };
             }
+        },
+
+        /**
+         * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
+         * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+         * @param {String|Function|Number} text
+         * @return {JXG.Text}
+         * @private
+         */
+        _setText: function (text) {
+            this._setUpdateText(text);
 
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
