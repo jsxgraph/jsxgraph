@@ -313,7 +313,8 @@ define([
                 radiuspoint: 'radiuspoint',
                 anglepoint: 'anglepoint',
                 radius: 'getRadius',
-                getRadius: 'getRadius'
+                getRadius: 'getRadius',
+                setRadius: 'setRadius'
             });
 
             /**
