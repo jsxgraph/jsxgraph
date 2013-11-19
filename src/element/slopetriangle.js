@@ -69,6 +69,7 @@ define([
 
         glider: {
             fixed: true,
+            visible: false,
             withLabel: false
         },
         baseline: {
