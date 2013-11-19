@@ -254,7 +254,8 @@ define([
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
                 radius: 'getRadius',
-                getRadius: 'getRadius'
+                getRadius: 'getRadius',
+                setRadius: 'setRadius'
             });
 
             el.prepareUpdate().update();
