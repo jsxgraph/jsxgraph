@@ -324,14 +324,6 @@ define([
                     } else {
                         this.size = s;
                     }
-                } else if (JXG.exists(this.rendNode.style.pixelWidth)) {
-                    s = [this.rendNode.style.pixelWidth, this.rendNode.style.pixelHeight];
-                    if (s[0] === 0 && s[1] === 0) { // Some browsers may need some time to set pixelWidth and pixelHeight
-                        that = this;
-                        window.setTimeout(function () {
-                            that.size = [that.rendNode.style.pixelWidth, that.rendNode.style.pixelHeight];
-                        }, 0);
-                    }
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
