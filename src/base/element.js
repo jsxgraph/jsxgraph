@@ -1333,7 +1333,7 @@ define([
          * @returns {Array}
          */
         getParents: function () {
-            return this.parents;
+            return Type.isArray(this.parents) ? this.parents : [];
         },
 
         /**
