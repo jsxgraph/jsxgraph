@@ -1216,8 +1216,17 @@ define([
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    Env.addEvent(button, 'click', handler, board);
+                    Env.addEvent(button, 'mouseover', function() {
+                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                    }, button);
+                    Env.addEvent(button, 'mouseover', function() {
+                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                    }, button);
+                    Env.addEvent(button, 'mouseout', function() {
+                        this.style.backgroundColor = board.options.navbar.fillColor;
+                    }, button);
 
+                    Env.addEvent(button, 'click', handler, board);
                     // prevent the click from bubbling down to the board
                     Env.addEvent(button, 'mouseup', cancelbubble, board);
                     Env.addEvent(button, 'mousedown', cancelbubble, board);

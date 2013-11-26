@@ -104,15 +104,18 @@ define([
 
         /* navbar options */
         navbar: {
-            strokeColor: '#aaaaaa',
-            fillColor: '#f5f5f5',
+            strokeColor: '#333333', //'#aaaaaa',
+            fillColor: 'transparent', //#f5f5f5',
+            highlightFillColor: '#aaaaaa',
             padding: '2px',
             position: 'absolute',
-            fontSize: '10px',
+            fontSize: '14px',
             cursor: 'pointer',
             zIndex: '100',
             right: '5px',
             bottom: '5px'
+            //border: 'none 1px black',
+            //borderRadius: '4px'
         },
 
         /**
