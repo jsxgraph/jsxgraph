@@ -1358,6 +1358,17 @@ define([
         },
 
         /**
+         * Snaps the element to points. Only works for points. Points will snap to the next point
+         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}. 
+         * Lines and circles 
+         * will snap their parent points to points.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        snapToPoints: function () {
+            return this;
+        },
+
+        /**
          * Retrieve a copy of the current visProp.
          * @returns {Object}
          */

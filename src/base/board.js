@@ -1712,6 +1712,7 @@ define([
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
                     this.downObjects[i].snapToGrid();
+                    this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -2096,6 +2097,7 @@ define([
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
                     this.downObjects[i].snapToGrid();
+                    this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -2199,6 +2201,7 @@ define([
             if (this.mouse && this.mouse.obj) {
                 // The parameter is needed for lines with snapToGrid enabled
                 this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+                this.mouse.obj.snapToPoints();
             }
 
             this.originMoveEnd();

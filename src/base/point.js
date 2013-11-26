@@ -701,21 +701,23 @@ define([
          * The function uses the coords object of the point as
          * its actual position.
          **/
-        handleSnapToGrid: function () {
-            var x, y,
+        handleSnapToGrid: function (forceSnapToGrid) {
+            var x, y, ticks,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
 
-            if (this.visProp.snaptogrid) {
+            if (this.visProp.snaptogrid || forceSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
 
                 if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                    sX = this.board.defaultAxes.x.defaultTicks.ticksDelta * (this.board.defaultAxes.x.defaultTicks.visProp.minorticks + 1);
+                    ticks = this.board.defaultAxes.x.defaultTicks;
+                    sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                 }
 
                 if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                    sY = this.board.defaultAxes.y.defaultTicks.ticksDelta * (this.board.defaultAxes.y.defaultTicks.visProp.minorticks + 1);
+                    ticks = this.board.defaultAxes.y.defaultTicks;
+                    sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                 }
 
                 // if no valid snap sizes are available, don't change the coords.
@@ -732,13 +734,13 @@ define([
          * The function uses the coords object of the point as
          * its actual position.
          **/
-        handleSnapToPoints: function () {
+        handleSnapToPoints: function (forceSnapToPoints) {
             var i, pEl, pCoords,
                 d = 0,
                 dMax = Infinity,
                 c = null;
 
-            if (this.visProp.snaptopoints) {
+            if (this.visProp.snaptopoints || forceSnapToPoints) {
                 for (i = 0; i < this.board.objectsList.length; i++) {
                     pEl = this.board.objectsList[i];
 
@@ -764,7 +766,11 @@ define([
 
             return this;
         },
-
+        
+        snapToPoints: function() {
+            return this.handleSnapToPoints();
+        },
+        
         /**
          * A point can change its type from free point to glider
          * and vice versa. If it is given an array of attractor elements

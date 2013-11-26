@@ -577,14 +577,25 @@ define([
             return this;
         },
 
-        // see geometryelement.js
+        // see element.js
         snapToGrid: function () {
-            if (this.visProp.snaptogrid) {
-                this.center.snapToGrid();
+            var forceIt = this.visProp.snaptogrid;
+            
+            this.center.snapToGrid(forceIt);
+            if (this.method === 'twoPoints') {
+                this.point2.snapToGrid(forceIt);
+            }
 
-                if (this.method === 'twoPoints') {
-                    this.point2.snapToGrid();
-                }
+            return this;
+        },
+
+        // see element.js
+        snapToPoints: function () {
+            var forceIt = this.visProp.snaptopoints;
+            
+            this.center.handleSnapToPoints(forceIt);
+            if (this.method === 'twoPoints') {
+                this.point2.handleSnapToPoints(forceIt);
             }
 
             return this;
@@ -615,28 +626,35 @@ define([
          * @returns {JXG.Circle} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, diffc,
+            var i, p, dc, t, arr, 
                 len = this.parents.length;
+
+            arr = [];
+            for (i = 0; i < len; i++) {
+                p = this.board.select(this.parents[i]);
+                if (!p.draggable()) {
+                    return this;
+                }
+                arr.push(p);
+            }
 
             coords = new Coords(method, coords, this.board);
             oldcoords = new Coords(method, oldcoords, this.board);
+            dc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
 
-            diffc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
-
-            for (i = 0; i < len; i++) {
-                if (!this.board.select(this.parents[i]).draggable()) {
-                    return this;
-                }
-            }
-
+            t = this.board.create('transform', dc.slice(1), {type: 'translate'});
+            t.applyOnce(arr);
+            
+            /*
             for (i = 0; i < len; i++) {
                 p = this.board.select(this.parents[i]);
-                // p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
-                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));
+                //p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
+                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, dc));
             }
-
+            
             this.prepareUpdate().update();
-
+            */
+            
             return this;
         },
 

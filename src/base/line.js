@@ -708,14 +708,19 @@ define([
 
         // see GeometryElement.js
         snapToGrid: function (pos) {
-            var c1, c2, dc, t, v,
+            var c1, c2, dc, t, v, ticks,
                 x, y, sX, sY;
 
             if (this.visProp.snaptogrid) {
+                if (this.parents.length < 3) {    // Line through two points
+                    this.point1.handleSnapToGrid(true);
+                    this.point2.handleSnapToGrid(true);
+                /*
                 if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
                     this.point1.snapToGrid();
                     this.point2.snapToGrid();
-                } else if (JXG.exists(pos)) {
+                */
+                } else if (JXG.exists(pos)) {       // Free line
                     sX = this.visProp.snapsizex;
                     sY = this.visProp.snapsizey;
 
@@ -725,10 +730,12 @@ define([
                     y = c1.usrCoords[2];
 
                     if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                        sX = this.board.defaultAxes.x.defaultTicks.ticksDelta * (this.board.defaultAxes.x.defaultTicks.visProp.minorticks + 1);
+                        ticks = this.board.defaultAxes.x.defaultTicks;
+                        sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                     }
                     if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                        sY = this.board.defaultAxes.y.defaultTicks.ticksDelta * (this.board.defaultAxes.y.defaultTicks.visProp.minorticks + 1);
+                        ticks = this.board.defaultAxes.y.defaultTicks;
+                        sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                     }
 
                     // if no valid snap sizes are available, don't change the coords.
@@ -743,11 +750,27 @@ define([
                         t.applyOnce([this.point1, this.point2]);
                     }
                 }
+            } else {
+                this.point1.snapToGrid();
+                this.point2.snapToGrid();
             }
+                
 
             return this;
         },
 
+        // see element.js
+        snapToPoints: function () {
+            var forceIt = this.visProp.snaptopoints;
+            
+            if (this.parents.length < 3) {    // Line through two points
+                this.point1.handleSnapToPoints(forceIt);
+                this.point2.handleSnapToPoints(forceIt);
+            }
+            
+            return this;
+        },
+            
         /**
          * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
          * First we transform the interval [0,1] to [-1,1].
