@@ -413,12 +413,12 @@ define([
                 return this.creator(vname);
             }
 
-            if (this.isMathMethod(vname)) {
-                return Math[vname];
-            }
-
             if (this.isBuiltIn(vname)) {
                 return this.builtIn[vname];
+            }
+
+            if (this.isMathMethod(vname)) {
+                return Math[vname];
             }
 
             if (!local) {
@@ -483,13 +483,13 @@ define([
                 this._error('Syntax error (attribute values are allowed with element creators only)');
             }
 
-            if (this.isMathMethod(vname)) {
-                return 'Math.' + vname;
-            }
-
             if (this.isBuiltIn(vname)) {
                 // if src does not exist, it is a number. in that case, just return the value.
                 return this.builtIn[vname].src || this.builtIn[vname];
+            }
+
+            if (this.isMathMethod(vname)) {
+                return 'Math.' + vname;
             }
 
             if (!local) {
