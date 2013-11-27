@@ -131,6 +131,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Checks if the environments supports the W3C Pointer Events API {@link http://www.w3.org/Submission/pointer-events/}
+         * @return {Boolean}
+         */
+        supportsPointerEvents: function () {
+            return JXG.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled);
+        },
+
+        /**
          * Determine if the current browser supports touch events
          * @returns {Boolean} True, if the browser supports touch events.
          */

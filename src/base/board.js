@@ -1253,9 +1253,13 @@ define([
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
-                Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
-
+                if (window.navigator.pointerEnabled) {
+                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                } else {
+                    Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                }
                 this.hasPointerHandlers = true;
             }
         },
@@ -1313,11 +1317,21 @@ define([
          */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
-                Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
-
+                if (window.navigator.pointerEnabled) {
+                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                } else {
+                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                }
+                
                 if (this.hasPointerUp) {
-                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    
+                    if (window.navigator.pointerEnabled) {
+                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    }    
                     this.hasPointerUp = false;
                 }
 
@@ -1478,7 +1492,11 @@ define([
                 found, target, result;
 
             if (!this.hasPointerUp) {
-                Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                if (window.navigator.pointerEnabled) {
+                    Env.addEvent(document, 'pointerup', this.pointerUpListener, this);
+                } else {
+                    Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                }
                 this.hasPointerUp = true;
             }
 
@@ -1584,12 +1602,12 @@ define([
 
             // move origin - but only if we're not in drag mode
             if (this.mode === this.BOARD_MODE_NONE && this.mouseOriginMoveStart(evt)) {
-                this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
+                this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
                 return false;
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
+            this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
             return result;
         },
@@ -1670,7 +1688,7 @@ define([
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['touchmove', 'move', 'MSPointerMove'], [evt, this.mode]);
+            this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
 
             return this.mode === this.BOARD_MODE_NONE;
         },
@@ -1685,7 +1703,7 @@ define([
                 tmpTouches = [],
                 eps = this.options.precision.touch;
 
-            this.triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
+            this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
 
             for (i = 0; i < this.touches.length; i++) {
@@ -1710,7 +1728,7 @@ define([
                     }
                 }
                 if (!found) {
-                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
+                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
                     this.downObjects[i].snapToGrid();
                     this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
@@ -1719,7 +1737,11 @@ define([
 
             if (this.touches.length === 0) {
                 if (this.hasPointerUp) {
-                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    if (window.navigator.pointerEnabled) {
+                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    }
                     this.hasPointerUp = false;
                 }
 
