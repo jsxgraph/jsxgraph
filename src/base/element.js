@@ -691,9 +691,9 @@ define([
          * @param {String} str
          */
         setLabelText: function (str) {
-            str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-            if (this.label !== null) {
+            if (Type.exists(this.label)) {
+                str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 this.label.setText(str);
             }
 

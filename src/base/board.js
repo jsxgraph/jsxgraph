@@ -3681,12 +3681,14 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         migratePoint: function (src, dest, copyName) {
-            var child, childId, prop, found, i;
+            var child, childId, prop, found, i, srcLabelId, srcHasLabel = false;
 
             src = this.select(src);
             dest = this.select(dest);
 
-            if (src.label) {
+            if (JXG.exists(src.label)) {
+                srcLabelId = src.label.id;
+                srcHasLabel = true;
                 this.removeObject(src.label);
             }
 
@@ -3720,21 +3722,24 @@ define([
 
             // The destination object should receive the name
             // and the label of the originating (src) object
-
-            if (src.label) {
-                delete dest.childElements[src.label.id];
-                delete dest.descendants[src.label.id];
-            }
             if (copyName) {
+                if (srcHasLabel) {
+                    delete dest.childElements[srcLabelId];
+                    delete dest.descendants[srcLabelId];
+                }
+                
                 if (dest.label) {
                     this.removeObject(dest.label);
                 }
+                
                 delete this.elementsByName[dest.name];
                 dest.name = src.name;
+                if (srcHasLabel) {
+                    dest.createLabel();
+                }
             }
 
             this.removeObject(src);
-            dest.createLabel();
 
             if (Type.exists(dest.name) && dest.name !== '') {
                 this.elementsByName[dest.name] = dest;
