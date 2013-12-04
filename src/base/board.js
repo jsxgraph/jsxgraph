@@ -1150,6 +1150,9 @@ define([
                 xy.push(obj.point2.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 xy.push(obj.center.coords.usrCoords);
+                if (obj.method === "twoPoints") {
+                    xy.push(obj.point2.coords.usrCoords);
+                }
             } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
                 len = obj.vertices.length - 1;
                 for (i = 0; i < len; i++) {
