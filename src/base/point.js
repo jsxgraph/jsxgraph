@@ -692,21 +692,28 @@ define([
             return r;
         },
 
-        snapToGrid: function () {
-            return this.handleSnapToGrid();
+        /**
+         * Alias for {@link #handleSnapToGrid}
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToGrid: function (force) {
+            return this.handleSnapToGrid(force);
         },
 
         /**
          * Move a point to its nearest grid point.
          * The function uses the coords object of the point as
          * its actual position.
-         **/
-        handleSnapToGrid: function (forceSnapToGrid) {
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleSnapToGrid: function (force) {
             var x, y, ticks,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
 
-            if (this.visProp.snaptogrid || forceSnapToGrid) {
+            if (this.visProp.snaptogrid || force) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
 
@@ -733,14 +740,16 @@ define([
          * {@link JXG.Point#attractorDistance}.
          * The function uses the coords object of the point as
          * its actual position.
-         **/
-        handleSnapToPoints: function (forceSnapToPoints) {
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleSnapToPoints: function (force) {
             var i, pEl, pCoords,
                 d = 0,
                 dMax = Infinity,
                 c = null;
 
-            if (this.visProp.snaptopoints || forceSnapToPoints) {
+            if (this.visProp.snaptopoints || force) {
                 for (i = 0; i < this.board.objectsList.length; i++) {
                     pEl = this.board.objectsList[i];
 
@@ -766,11 +775,16 @@ define([
 
             return this;
         },
-        
-        snapToPoints: function() {
-            return this.handleSnapToPoints();
+
+        /**
+         * Alias for {@link #handleSnapToPoints}.
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToPoints: function (force) {
+            return this.handleSnapToPoints(force);
         },
-        
+
         /**
          * A point can change its type from free point to glider
          * and vice versa. If it is given an array of attractor elements
@@ -779,7 +793,8 @@ define([
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
-         **/
+         * @returns {JXG.Point} Reference to this element
+         */
         handleAttractors: function () {
             var i, el, projCoords,
                 d = 0.0,
