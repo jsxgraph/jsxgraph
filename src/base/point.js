@@ -713,7 +713,7 @@ define([
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
 
-            if (this.visProp.snaptogrid || force) {
+            if (this.visProp.snaptogrid || force === true) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
 
