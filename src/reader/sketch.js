@@ -62,7 +62,8 @@
             }
 
             unzipped = JXG.Util.UTF8.decode(unzipped[0][0]);
-            constr = JSON.parse(unzipped);
+            //constr = JSON.parse(unzipped);
+            constr = jQuery.parseJSON(unzipped);
 
             meta = constr.pop();
 
