@@ -35,7 +35,6 @@ JXG.Options = JXG.merge(JXG.Options, {
             drawZero : false,
             insertTicks : false,
             minTicksDistance : 50,
-            maxTicksDistance : 300,
             minorHeight : 4,
             majorHeight : 10,
             minorTicks : 4,

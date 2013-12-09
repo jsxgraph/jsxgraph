@@ -452,15 +452,40 @@ define([
             /**
              * If the distance between two ticks is too big we could insert new ticks. If insertTicks
              * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
-             * This option is ignored if equidistant is false.
+             * This option is ignored if equidistant is false. In the example below the distance between
+             * two ticks is given as <tt>1</tt> but because insertTicks is set to true many ticks will
+             * be omitted in the rendering process to keep the display clear.
              * @type Boolean
              * @name JXG.Ticks#insertTicks
              * @see JXG.Ticks#equidistant
-             * @see JXG.Ticks#maxTicksDistance
+             * @see JXG.Ticks#minTicksDistance
              * @default false
+             * @example
+             * // Create an axis providing two coord pairs.
+             *   var p1 = board.create('point', [0, 0]);
+             *   var p2 = board.create('point', [50, 25]);
+             *   var l1 = board.create('line', [p1, p2]);
+             *   var t = board.create('ticks', [l1, 1], {
+             *      insertTicks: true,
+             *      majorHeight: -1,
+             *      label: {
+             *          offset: [4, -9]
+             *      },
+             *      drawLabels: true
+             *  });
+             * </pre><div id="2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             * (function () {
+             *   var board = JXG.JSXGraph.initBoard('2f6fb842-40bd-4223-aa28-3e9369d2097f', {boundingbox: [-100, 70, 70, -100], showcopyright: false, shownavigation: false});
+             *   var p1 = board.create('point', [0, 0]);
+             *   var p2 = board.create('point', [50, 25]);
+             *   var l1 = board.create('line', [p1, p2]);
+             *   var t = board.create('ticks', [l1, 1], {insertTicks: true, majorHeight: -1, label: {offset: [4, -9]}, drawLabels: true});
+             * })();
+             * </script><pre>
              */
             insertTicks: false,
-            minTicksDistance: 50,
+            minTicksDistance: 10,
 
             /**
              * Total height of a minor tick. If negative the full height of the board is taken.
@@ -1138,7 +1163,6 @@ define([
                 drawZero: false,
                 insertTicks: false,
                 minTicksDistance: 50,
-                maxTicksDistance: 300,
                 minorHeight: 4,          // if <0: full width and height
                 majorHeight: -1,         // if <0: full width and height
                 minorTicks: 4,
@@ -1919,7 +1943,6 @@ define([
                 //: validateScreenCoords,
                 lastArrow: false,
                 majorHeight: validateInteger,
-                maxTicksDistance: validatePositiveInteger,
                 minorHeight: validateInteger,
                 minorTicks: validatePositiveInteger,
                 minTicksDistance: validatePositiveInteger,

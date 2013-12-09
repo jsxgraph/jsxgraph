@@ -125,15 +125,6 @@ define([
         this.minTicksDistance = attributes.minticksdistance;
 
         /**
-         * Maximum distance between two ticks, measured in pixels. Is used only when insertTicks
-         * is set to true.
-         * @type int
-         * @see #insertTicks
-         * @deprecated This value will be ignored.
-         */
-        this.maxTicksDistance = attributes.maxticksdistance;
-
-        /**
          * Stores the ticks coordinates
          * @type {Array}
          */
