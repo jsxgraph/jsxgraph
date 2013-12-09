@@ -1,6 +1,32 @@
-/**
- *  Base64 encoding / decoding
- *  @see http://www.webtoolkit.info/
+/*
+    Copyright 2008-2013
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
  */
 
 
@@ -16,94 +42,159 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
     "use strict";
 
-    var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+        pad = '=';
 
     // Util namespace
     JXG.Util = JXG.Util || {};
+
+    // Local helper functions
+    /**
+     * Extracts one byte from a string and ensures the result is less than or equal to 255.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number} <= 255
+     * @private
+     */
+    function _getByte(s, i) {
+        return s.charCodeAt(i) & 0xff;
+    }
+
+    /**
+     * Determines the index of a base64 character in the base64 alphabet.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number}
+     * @throws {Error} If the character can not be found in the alphabet.
+     * @private
+     */
+    function _getIndex(s, i) {
+        var idx = alphabet.indexOf(s.charAt(i));
+
+        if (idx === -1) {
+            throw new Error('JSXGraph/utils/base64: Can\'t decode string (invalid character).');
+        }
+
+        return idx;
+    }
 
     /**
      * Base64 routines
      * @namespace
      */
     JXG.Util.Base64 = {
+        /**
+         * Encode the given string.
+         * @param {String} input
+         * @returns {string} base64 encoded version of the input string.
+         */
         encode : function (input) {
-            var chr1, chr2, chr3, enc1, enc2, enc3, enc4,
-                output = [],
-                i = 0;
+            var i, bin, len, padLen, encInput,
+                buffer = [];
 
-            input = Encoding.encode(input);
+            encInput =  Encoding.encode(input);
+            len = encInput.length;
+            padLen = len % 3;
 
-            while (i < input.length) {
-                chr1 = input.charCodeAt(i++);
-                chr2 = input.charCodeAt(i++);
-                chr3 = input.charCodeAt(i++);
-
-                enc1 = chr1 >> 2;
-                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                enc4 = chr3 & 63;
-
-                if (isNaN(chr2)) {
-                    enc3 = enc4 = 64;
-                } else if (isNaN(chr3)) {
-                    enc4 = 64;
-                }
-
-                output.push([keyStr.charAt(enc1),
-                    keyStr.charAt(enc2),
-                    keyStr.charAt(enc3),
-                    keyStr.charAt(enc4)].join(''));
+            for (i = 0; i < len - padLen; i += 3) {
+                bin = (_getByte(encInput, i) << 16) | (_getByte(encInput, i + 1) << 8) | (_getByte(encInput, i + 2));
+                buffer.push(
+                    alphabet.charAt(bin >> 18),
+                    alphabet.charAt((bin >> 12) & 63),
+                    alphabet.charAt((bin >> 6) & 63),
+                    alphabet.charAt(bin & 63)
+                );
             }
 
-            return output.join('');
+            switch (padLen) {
+            case 1:
+                bin = _getByte(encInput, len - 1);
+                buffer.push(alphabet.charAt(bin >> 2), alphabet.charAt((bin << 4) & 63), pad, pad);
+                break;
+            case 2:
+                bin = (_getByte(encInput, len - 2) << 8) | _getByte(encInput, len - 1);
+                buffer.push(
+                    alphabet.charAt(bin >> 10),
+                    alphabet.charAt((bin >> 4) & 63),
+                    alphabet.charAt((bin << 2) & 63),
+                    pad
+                );
+                break;
+            }
+
+            return buffer.join('');
         },
 
-        // public method for decoding
+        /**
+         * Decode from Base64
+         * @param {String} input Base64 encoded data
+         * @param {Boolean} utf8 In case this parameter is true {@link JXG.Util.UTF8.decode} will be applied to
+         * the result of the base64 decoder.
+         * @throws {Error} If the string has the wrong length.
+         * @returns {String}
+         */
         decode : function (input, utf8) {
-            var chr1, chr2, chr3,
-                enc1, enc2, enc3, enc4,
-                output = [],
-                i = 0,
-                len = input.length;
+            var encInput, i, len, padLen, bin, output,
+                result = [],
+                buffer = [];
 
-            // deactivate regexp linting. Our regex is secure, because we're replacing everything with ''
+            // deactivate regexp linting. Our regex is secure, because we replace everything with ''
             /*jslint regexp:true*/
-            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+            encInput = input.replace(/[^A-Za-z0-9\+\/=]/g, '');
             /*jslint regexp:false*/
 
-            while (i < len) {
-                enc1 = keyStr.indexOf(input.charAt(i++));
-                enc2 = keyStr.indexOf(input.charAt(i++));
-                enc3 = keyStr.indexOf(input.charAt(i++));
-                enc4 = keyStr.indexOf(input.charAt(i++));
+            len = encInput.length;
 
-                chr1 = (enc1 << 2) | (enc2 >> 4);
-                chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                chr3 = ((enc3 & 3) << 6) | enc4;
+            if (len % 4 !== 0) {
+                throw new Error('JSXGraph/utils/base64: Can\'t decode string (invalid input length).');
+            }
 
-                output.push(String.fromCharCode(chr1));
+            if (encInput.charAt(len - 1) === pad) {
+                padLen = 1;
 
-                if (enc3 !== 64) {
-                    output.push(String.fromCharCode(chr2));
+                if (encInput.charAt(len - 2) === pad) {
+                    padLen = 2;
                 }
 
-                if (enc4 !== 64) {
-                    output.push(String.fromCharCode(chr3));
+                // omit the last four bytes (taken care of after the for loop)
+                len -= 4;
+            }
+
+            for (i = 0; i < len; i += 4) {
+                bin = (_getIndex(encInput, i) << 18) | (_getIndex(encInput, i + 1) << 12) | (_getIndex(encInput, i + 2) << 6) | _getIndex(encInput, i + 3);
+                buffer.push(bin >> 16, (bin >> 8) & 255, bin & 255);
+
+                // flush the buffer, if it gets too big fromCharCode will crash
+                if (i % 10000 === 0) {
+                    result.push(String.fromCharCode.apply(null, buffer));
+                    buffer = [];
                 }
             }
 
-            output = output.join('');
+            switch (padLen) {
+            case 1:
+                bin = (_getIndex(encInput, len) << 12) | (_getIndex(encInput, len + 1) << 6) | (_getIndex(encInput, len + 2));
+                buffer.push(bin >> 10, (bin >> 2) & 255);
+                break;
+
+            case 2:
+                bin = (_getIndex(encInput, i) << 6) | (_getIndex(encInput, i + 1));
+                buffer.push(bin >> 4);
+                break;
+            }
+
+            result.push(String.fromCharCode.apply(null, buffer));
+            output = result.join('');
 
             if (utf8) {
                 output = Encoding.decode(output);
             }
 
             return output;
-
         },
 
         /**
-         * Disas
+         * Decode the base64 input data as an array
          * @param {string} input
          * @return {Array}
          */
