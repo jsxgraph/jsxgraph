@@ -357,7 +357,7 @@ define([
          * @see JXG.Board#moveObject
          */
         this.drag_position = [0, 0];
-        
+
         /**
          * References to the object that is dragged with the mouse on the board.
          * @type {@link JXG.GeometryElement}.
@@ -678,8 +678,8 @@ define([
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
         getCoordsTopLeftCorner: function () {
-            var cPos, doc, crect,
-                docElement = document.documentElement,
+            var cPos, doc, crect, scrollLeft, scrollTop,
+                docElement = document.documentElement || document.body.parentNode,
                 docBody = document.body,
                 container = this.containerObj;
 
@@ -687,17 +687,37 @@ define([
              * During drags and origin moves the container element is usually not changed.
              * Check the position of the upper left corner at most every 500 msecs
              */
-            if (this.cPos.length > 0 && 
+            if (this.cPos.length > 0 &&
                     (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
-                    (new Date()).getTime() - this.positionAccessLast < 500 )) {
+                    (new Date()).getTime() - this.positionAccessLast < 500)) {
                 return this.cPos;
             }
 
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             if (container.getBoundingClientRect) {
+                if (typeof window.pageXOffset === 'number') {
+                    scrollLeft = window.pageXOffset;
+                } else {
+                    if (docElement.ScrollLeft === 'number') {
+                        scrollLeft = docElement.ScrollLeft;
+                    } else {
+                        scrollLeft = document.body.scrollLeft;
+                    }
+                }
+
+                if (typeof window.pageYOffset === 'number') {
+                    scrollTop = window.pageYOffset;
+                } else {
+                    if (docElement.ScrollTop === 'number') {
+                        scrollTop = docElement.ScrollTop;
+                    } else {
+                        scrollTop = document.body.scrollTop;
+                    }
+                }
+
                 crect = container.getBoundingClientRect();
-                this.cpos = [crect.left, crect.top];
+                this.cpos = [crect.left + scrollLeft, crect.top + scrollTop];
 
                 return this.cpos;
             }
@@ -886,12 +906,12 @@ define([
             if (!drag) {
                 return;
             }
-            
+
             /*
              * Save the position.
              */
             this.drag_position = newPos.scrCoords.slice(1);
-            
+
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
@@ -1336,14 +1356,13 @@ define([
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
                 }
-                
+
                 if (this.hasPointerUp) {
-                    
                     if (window.navigator.pointerEnabled) {  // IE11+
                         Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
                     } else {
                         Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
-                    }    
+                    }
                     this.hasPointerUp = false;
                 }
 
@@ -1951,7 +1970,7 @@ define([
         touchMoveListener: function (evt) {
             var i, pos, time,
                 evtTouches = evt[JXG.touchProperty];
-            
+
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -3739,11 +3758,11 @@ define([
                     delete dest.childElements[srcLabelId];
                     delete dest.descendants[srcLabelId];
                 }
-                
+
                 if (dest.label) {
                     this.removeObject(dest.label);
                 }
-                
+
                 delete this.elementsByName[dest.name];
                 dest.name = src.name;
                 if (srcHasLabel) {
