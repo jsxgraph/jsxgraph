@@ -678,26 +678,35 @@ define([
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
         getCoordsTopLeftCorner: function () {
-            var docElement = document.documentElement,
+            var cPos, doc, crect,
+                docElement = document.documentElement,
                 docBody = document.body,
-                container = this.containerObj,
-                cPos, doc;
+                container = this.containerObj;
 
             /**
              * During drags and origin moves the container element is usually not changed.
              * Check the position of the upper left corner at most every 500 msecs
              */
             if (this.cPos.length > 0 && 
-                (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN || 
-                 (new Date()).getTime() - this.positionAccessLast < 500 )) {
+                    (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
+                    (new Date()).getTime() - this.positionAccessLast < 500 )) {
                 return this.cPos;
             }
-            
+
+            // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
+            // even CSS3D transformations etc.
+            if (container.getBoundingClientRect) {
+                crect = container.getBoundingClientRect();
+                this.cpos = [crect.left, crect.top];
+
+                return this.cpos;
+            }
+
             this.positionAccessLast = (new Date()).getTime();
-            
+
             cPos = Env.getOffset(container);
             doc = document.documentElement.ownerDocument;
-            
+
             if (!this.containerObj.currentStyle && doc.defaultView) {     // Non IE
                 // this is for hacks like this one used in wordpress for the admin bar:
                 // html { margin-top: 28px }
