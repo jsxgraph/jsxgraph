@@ -171,7 +171,8 @@ define(['jxg'], function (JXG) {
 
         function readBit() {
             var carry;
-
+            
+            try {   // Prevent problems on iOS7 with >>
             bits++;
             carry = (bb & 1);
             bb >>= 1;
@@ -183,12 +184,14 @@ define(['jxg'], function (JXG) {
             }
 
             return carry;
+            }catch(e) { throw e};
         }
 
         function readBits(a) {
             var res = 0,
                 i = a;
 
+            try{   // Prevent problems on iOS7 with >>
             while (i--) {
                 res = (res << 1) | readBit();
             }
@@ -196,6 +199,7 @@ define(['jxg'], function (JXG) {
             if (a) {
                 res = bitReverse[res] >> (8 - a);
             }
+            }catch(e) { throw e};
 
             return res;
         }
@@ -570,7 +574,8 @@ define(['jxg'], function (JXG) {
         function nextFile() {
             var i, c, extralen, filelen, size, compSize, crc, method,
                 tmp = [];
-
+            
+            try {  // Prevent problems on iOS7 with >>
             outputArr = [];
             modeZIP = false;
             tmp[0] = readByte();
@@ -668,6 +673,8 @@ define(['jxg'], function (JXG) {
                     skipdir();
                 }
             }
+            }catch(e) { throw e};
+            
         }
 
         skipdir = function () {
