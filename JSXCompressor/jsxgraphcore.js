@@ -1704,7 +1704,6 @@ define('utils/type',[
                 cssclass: '',
                 fontsize: -1,
                 left: -100000,
-                right: 100000,
                 top: -100000
             };
 
@@ -2024,7 +2023,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports touch events.
          */
         isTouchDevice: function () {
-            return this.isBrowser && document.documentElement.hasOwnProperty('ontouchstart');
+            return this.isBrowser && ('ontouchstart' in window);
         },
 
         /**
@@ -4507,8 +4506,32 @@ define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Ma
         return color;
     };
 
+    /**
+     * Determines highlight color to a given color. Done by reducing (or increasing) the opacity,
+     * @param {String} color HTML RGBA string containing the HTML color code.
+     * @returns {String} Returns a HTML RGBA color string
+     */
+    JXG.autoHighlight = function (colstr) {
+        var col = JXG.rgba2rgbo(colstr),
+            c = col[0],
+            opa = col[1];
+        
+        if (colstr.charAt(0) === '#') {
+            if (opa < 0.3) {
+                opa *= 1.333333;
+            } else {
+                opa *= 0.666666;
+            }
+        
+            return JXG.rgbo2rgba(c, opa);
+        } else {
+            return colstr;
+        }
+    };
+
     return JXG;
 });
+
 /*
     Copyright 2008-2013
         Matthias Ehmann,
@@ -4615,15 +4638,18 @@ define('options',[
 
         /* navbar options */
         navbar: {
-            strokeColor: '#aaaaaa',
-            fillColor: '#f5f5f5',
+            strokeColor: '#333333', //'#aaaaaa',
+            fillColor: 'transparent', //#f5f5f5',
+            highlightFillColor: '#aaaaaa',
             padding: '2px',
             position: 'absolute',
-            fontSize: '10px',
+            fontSize: '14px',
             cursor: 'pointer',
             zIndex: '100',
             right: '5px',
             bottom: '5px'
+            //border: 'none 1px black',
+            //borderRadius: '4px'
         },
 
         /**
@@ -4960,15 +4986,40 @@ define('options',[
             /**
              * If the distance between two ticks is too big we could insert new ticks. If insertTicks
              * is <tt>true</tt>, we'll do so, otherwise we leave the distance as is.
-             * This option is ignored if equidistant is false.
+             * This option is ignored if equidistant is false. In the example below the distance between
+             * two ticks is given as <tt>1</tt> but because insertTicks is set to true many ticks will
+             * be omitted in the rendering process to keep the display clear.
              * @type Boolean
              * @name JXG.Ticks#insertTicks
              * @see JXG.Ticks#equidistant
-             * @see JXG.Ticks#maxTicksDistance
+             * @see JXG.Ticks#minTicksDistance
              * @default false
+             * @example
+             * // Create an axis providing two coord pairs.
+             *   var p1 = board.create('point', [0, 0]);
+             *   var p2 = board.create('point', [50, 25]);
+             *   var l1 = board.create('line', [p1, p2]);
+             *   var t = board.create('ticks', [l1, 1], {
+             *      insertTicks: true,
+             *      majorHeight: -1,
+             *      label: {
+             *          offset: [4, -9]
+             *      },
+             *      drawLabels: true
+             *  });
+             * </pre><div id="2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
+             * <script type="text/javascript">
+             * (function () {
+             *   var board = JXG.JSXGraph.initBoard('2f6fb842-40bd-4223-aa28-3e9369d2097f', {boundingbox: [-100, 70, 70, -100], showcopyright: false, shownavigation: false});
+             *   var p1 = board.create('point', [0, 0]);
+             *   var p2 = board.create('point', [50, 25]);
+             *   var l1 = board.create('line', [p1, p2]);
+             *   var t = board.create('ticks', [l1, 1], {insertTicks: true, majorHeight: -1, label: {offset: [4, -9]}, drawLabels: true});
+             * })();
+             * </script><pre>
              */
             insertTicks: false,
-            minTicksDistance: 50,
+            minTicksDistance: 10,
 
             /**
              * Total height of a minor tick. If negative the full height of the board is taken.
@@ -5646,7 +5697,6 @@ define('options',[
                 drawZero: false,
                 insertTicks: false,
                 minTicksDistance: 50,
-                maxTicksDistance: 300,
                 minorHeight: 4,          // if <0: full width and height
                 majorHeight: -1,         // if <0: full width and height
                 minorTicks: 4,
@@ -6427,7 +6477,6 @@ define('options',[
                 //: validateScreenCoords,
                 lastArrow: false,
                 majorHeight: validateInteger,
-                maxTicksDistance: validatePositiveInteger,
                 minorHeight: validateInteger,
                 minorTicks: validatePositiveInteger,
                 minTicksDistance: validatePositiveInteger,
@@ -11696,6 +11745,7 @@ define('base/element',[
         this.methodMap = {
             setLabel: 'setLabelText',
             label: 'label',
+            setName: 'setName',
             getName: 'getName',
             addTransform: 'addTransform',
             setProperty: 'setAttribute',
@@ -12151,15 +12201,25 @@ define('base/element',[
          * @param {String} str
          */
         setLabelText: function (str) {
-            str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-            if (this.label !== null) {
+            if (Type.exists(this.label)) {
+                str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 this.label.setText(str);
             }
 
             return this;
         },
 
+        /**
+         * Updates the element's label text and the element's attribute "name", strips all html.
+         * @param {String} str
+         */
+        setName: function(str) {
+            str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            this.setLabelText(str);
+            this.setAttribute({name: str});
+        },
+        
         /**
          * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
@@ -12794,7 +12854,7 @@ define('base/element',[
          * @returns {Array}
          */
         getParents: function () {
-            return this.parents;
+            return Type.isArray(this.parents) ? this.parents : [];
         },
 
         /**
@@ -12804,6 +12864,17 @@ define('base/element',[
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         snapToGrid: function () {
+            return this;
+        },
+
+        /**
+         * Snaps the element to points. Only works for points. Points will snap to the next point
+         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}. 
+         * Lines and circles 
+         * will snap their parent points to points.
+         * @returns {JXG.GeometryElement} Reference to the element.
+         */
+        snapToPoints: function () {
             return this;
         },
 
@@ -13123,12 +13194,18 @@ define('base/transformation',[
             }
 
             if (type === 'translate') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: translate transformation needs 2 parameters.");
+                }
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][0] = this.evalParam(0);
                     this.matrix[2][0] = this.evalParam(1);
                 };
             } else if (type === 'scale') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: scale transformation needs 2 parameters.");
+                }
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][1] = this.evalParam(0); // x
@@ -13196,13 +13273,13 @@ define('base/transformation',[
                 if (params.length === 3) {
                     this.evalParam = Type.createEvalFunction(board, params, 3);
                 // angle, p or angle
-                } else if (params.length <= 2) {
+                } else if (params.length > 0 && params.length <= 2) {
                     this.evalParam = Type.createEvalFunction(board, params, 1);
 
                     if (params.length === 2) {
                         params[1] = board.select(params[1]);
                     }
-                }
+                } 
 
                 this.update = function () {
                     var x, y,
@@ -13229,13 +13306,20 @@ define('base/transformation',[
                     }
                 };
             } else if (type === 'shear') {
+                if (params.length !== 2) {
+                    throw new Error("JSXGraph: shear transformation needs 2 parameters.");
+                }
+                
                 this.evalParam = Type.createEvalFunction(board, params, 2);
-
                 this.update = function () {
                     this.matrix[1][2] = this.evalParam(0);
                     this.matrix[2][1] = this.evalParam(1);
                 };
             } else if (type === 'generic') {
+                if (params.length !== 9) {
+                    throw new Error("JSXGraph: generic transformation needs 9 parameters.");
+                }
+
                 this.evalParam = Type.createEvalFunction(board, params, 9);
 
                 this.update = function () {
@@ -13366,6 +13450,7 @@ define('base/transformation',[
         createTransform: JXG.createTransform
     };
 });
+
 /*
     Copyright 2008-2013
         Matthias Ehmann,
@@ -14060,30 +14145,39 @@ define('base/point',[
             return r;
         },
 
-        snapToGrid: function () {
-            return this.handleSnapToGrid();
+        /**
+         * Alias for {@link #handleSnapToGrid}
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToGrid: function (force) {
+            return this.handleSnapToGrid(force);
         },
 
         /**
          * Move a point to its nearest grid point.
          * The function uses the coords object of the point as
          * its actual position.
-         **/
-        handleSnapToGrid: function () {
-            var x, y,
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleSnapToGrid: function (force) {
+            var x, y, ticks,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
 
-            if (this.visProp.snaptogrid) {
+            if (this.visProp.snaptogrid || force === true) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
 
                 if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                    sX = this.board.defaultAxes.x.defaultTicks.ticksDelta * (this.board.defaultAxes.x.defaultTicks.visProp.minorticks + 1);
+                    ticks = this.board.defaultAxes.x.defaultTicks;
+                    sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                 }
 
                 if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                    sY = this.board.defaultAxes.y.defaultTicks.ticksDelta * (this.board.defaultAxes.y.defaultTicks.visProp.minorticks + 1);
+                    ticks = this.board.defaultAxes.y.defaultTicks;
+                    sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                 }
 
                 // if no valid snap sizes are available, don't change the coords.
@@ -14099,14 +14193,16 @@ define('base/point',[
          * {@link JXG.Point#attractorDistance}.
          * The function uses the coords object of the point as
          * its actual position.
-         **/
-        handleSnapToPoints: function () {
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleSnapToPoints: function (force) {
             var i, pEl, pCoords,
                 d = 0,
                 dMax = Infinity,
                 c = null;
 
-            if (this.visProp.snaptopoints) {
+            if (this.visProp.snaptopoints || force) {
                 for (i = 0; i < this.board.objectsList.length; i++) {
                     pEl = this.board.objectsList[i];
 
@@ -14134,6 +14230,15 @@ define('base/point',[
         },
 
         /**
+         * Alias for {@link #handleSnapToPoints}.
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToPoints: function (force) {
+            return this.handleSnapToPoints(force);
+        },
+
+        /**
          * A point can change its type from free point to glider
          * and vice versa. If it is given an array of attractor elements
          * (attribute attractors) and the attribute attractorDistance
@@ -14141,7 +14246,8 @@ define('base/point',[
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
-         **/
+         * @returns {JXG.Point} Reference to this element
+         */
         handleAttractors: function () {
             var i, el, projCoords,
                 d = 0.0,
@@ -16152,7 +16258,8 @@ define('utils/zip',['jxg'], function (JXG) {
 
         function readBit() {
             var carry;
-
+            
+            try {   // Prevent problems on iOS7 with >>
             bits++;
             carry = (bb & 1);
             bb >>= 1;
@@ -16164,12 +16271,14 @@ define('utils/zip',['jxg'], function (JXG) {
             }
 
             return carry;
+            }catch(e) { throw e};
         }
 
         function readBits(a) {
             var res = 0,
                 i = a;
 
+            try{   // Prevent problems on iOS7 with >>
             while (i--) {
                 res = (res << 1) | readBit();
             }
@@ -16177,6 +16286,7 @@ define('utils/zip',['jxg'], function (JXG) {
             if (a) {
                 res = bitReverse[res] >> (8 - a);
             }
+            }catch(e) { throw e};
 
             return res;
         }
@@ -16551,7 +16661,8 @@ define('utils/zip',['jxg'], function (JXG) {
         function nextFile() {
             var i, c, extralen, filelen, size, compSize, crc, method,
                 tmp = [];
-
+            
+            try {  // Prevent problems on iOS7 with >>
             outputArr = [];
             modeZIP = false;
             tmp[0] = readByte();
@@ -16649,6 +16760,8 @@ define('utils/zip',['jxg'], function (JXG) {
                     skipdir();
                 }
             }
+            }catch(e) { throw e};
+            
         }
 
         skipdir = function () {
@@ -16781,6 +16894,7 @@ define('utils/zip',['jxg'], function (JXG) {
 
     return JXG.Util;
 });
+
 /*global JXG: true, define: true, escape: true, unescape: true*/
 /*jslint nomen: true, plusplus: true, bitwise: true*/
 
@@ -17024,9 +17138,35 @@ define('utils/encoding',['jxg'], function (JXG) {
     return JXG.Util.UTF8;
 });
 
-/**
- *  Base64 encoding / decoding
- *  @see http://www.webtoolkit.info/
+/*
+    Copyright 2008-2013
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
  */
 
 
@@ -17042,94 +17182,159 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
     
 
-    var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+        pad = '=';
 
     // Util namespace
     JXG.Util = JXG.Util || {};
+
+    // Local helper functions
+    /**
+     * Extracts one byte from a string and ensures the result is less than or equal to 255.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number} <= 255
+     * @private
+     */
+    function _getByte(s, i) {
+        return s.charCodeAt(i) & 0xff;
+    }
+
+    /**
+     * Determines the index of a base64 character in the base64 alphabet.
+     * @param {String} s
+     * @param {Number} i
+     * @returns {Number}
+     * @throws {Error} If the character can not be found in the alphabet.
+     * @private
+     */
+    function _getIndex(s, i) {
+        var idx = alphabet.indexOf(s.charAt(i));
+
+        if (idx === -1) {
+            throw new Error('JSXGraph/utils/base64: Can\'t decode string (invalid character).');
+        }
+
+        return idx;
+    }
 
     /**
      * Base64 routines
      * @namespace
      */
     JXG.Util.Base64 = {
+        /**
+         * Encode the given string.
+         * @param {String} input
+         * @returns {string} base64 encoded version of the input string.
+         */
         encode : function (input) {
-            var chr1, chr2, chr3, enc1, enc2, enc3, enc4,
-                output = [],
-                i = 0;
+            var i, bin, len, padLen, encInput,
+                buffer = [];
 
-            input = Encoding.encode(input);
+            encInput =  Encoding.encode(input);
+            len = encInput.length;
+            padLen = len % 3;
 
-            while (i < input.length) {
-                chr1 = input.charCodeAt(i++);
-                chr2 = input.charCodeAt(i++);
-                chr3 = input.charCodeAt(i++);
-
-                enc1 = chr1 >> 2;
-                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                enc4 = chr3 & 63;
-
-                if (isNaN(chr2)) {
-                    enc3 = enc4 = 64;
-                } else if (isNaN(chr3)) {
-                    enc4 = 64;
-                }
-
-                output.push([keyStr.charAt(enc1),
-                    keyStr.charAt(enc2),
-                    keyStr.charAt(enc3),
-                    keyStr.charAt(enc4)].join(''));
+            for (i = 0; i < len - padLen; i += 3) {
+                bin = (_getByte(encInput, i) << 16) | (_getByte(encInput, i + 1) << 8) | (_getByte(encInput, i + 2));
+                buffer.push(
+                    alphabet.charAt(bin >> 18),
+                    alphabet.charAt((bin >> 12) & 63),
+                    alphabet.charAt((bin >> 6) & 63),
+                    alphabet.charAt(bin & 63)
+                );
             }
 
-            return output.join('');
+            switch (padLen) {
+            case 1:
+                bin = _getByte(encInput, len - 1);
+                buffer.push(alphabet.charAt(bin >> 2), alphabet.charAt((bin << 4) & 63), pad, pad);
+                break;
+            case 2:
+                bin = (_getByte(encInput, len - 2) << 8) | _getByte(encInput, len - 1);
+                buffer.push(
+                    alphabet.charAt(bin >> 10),
+                    alphabet.charAt((bin >> 4) & 63),
+                    alphabet.charAt((bin << 2) & 63),
+                    pad
+                );
+                break;
+            }
+
+            return buffer.join('');
         },
 
-        // public method for decoding
+        /**
+         * Decode from Base64
+         * @param {String} input Base64 encoded data
+         * @param {Boolean} utf8 In case this parameter is true {@link JXG.Util.UTF8.decode} will be applied to
+         * the result of the base64 decoder.
+         * @throws {Error} If the string has the wrong length.
+         * @returns {String}
+         */
         decode : function (input, utf8) {
-            var chr1, chr2, chr3,
-                enc1, enc2, enc3, enc4,
-                output = [],
-                i = 0,
-                len = input.length;
+            var encInput, i, len, padLen, bin, output,
+                result = [],
+                buffer = [];
 
-            // deactivate regexp linting. Our regex is secure, because we're replacing everything with ''
+            // deactivate regexp linting. Our regex is secure, because we replace everything with ''
             /*jslint regexp:true*/
-            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+            encInput = input.replace(/[^A-Za-z0-9\+\/=]/g, '');
             /*jslint regexp:false*/
 
-            while (i < len) {
-                enc1 = keyStr.indexOf(input.charAt(i++));
-                enc2 = keyStr.indexOf(input.charAt(i++));
-                enc3 = keyStr.indexOf(input.charAt(i++));
-                enc4 = keyStr.indexOf(input.charAt(i++));
+            len = encInput.length;
 
-                chr1 = (enc1 << 2) | (enc2 >> 4);
-                chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                chr3 = ((enc3 & 3) << 6) | enc4;
+            if (len % 4 !== 0) {
+                throw new Error('JSXGraph/utils/base64: Can\'t decode string (invalid input length).');
+            }
 
-                output.push(String.fromCharCode(chr1));
+            if (encInput.charAt(len - 1) === pad) {
+                padLen = 1;
 
-                if (enc3 !== 64) {
-                    output.push(String.fromCharCode(chr2));
+                if (encInput.charAt(len - 2) === pad) {
+                    padLen = 2;
                 }
 
-                if (enc4 !== 64) {
-                    output.push(String.fromCharCode(chr3));
+                // omit the last four bytes (taken care of after the for loop)
+                len -= 4;
+            }
+
+            for (i = 0; i < len; i += 4) {
+                bin = (_getIndex(encInput, i) << 18) | (_getIndex(encInput, i + 1) << 12) | (_getIndex(encInput, i + 2) << 6) | _getIndex(encInput, i + 3);
+                buffer.push(bin >> 16, (bin >> 8) & 255, bin & 255);
+
+                // flush the buffer, if it gets too big fromCharCode will crash
+                if (i % 10000 === 0) {
+                    result.push(String.fromCharCode.apply(null, buffer));
+                    buffer = [];
                 }
             }
 
-            output = output.join('');
+            switch (padLen) {
+            case 1:
+                bin = (_getIndex(encInput, len) << 12) | (_getIndex(encInput, len + 1) << 6) | (_getIndex(encInput, len + 2));
+                buffer.push(bin >> 10, (bin >> 2) & 255);
+                break;
+
+            case 2:
+                bin = (_getIndex(encInput, i) << 6) | (_getIndex(encInput, i + 1));
+                buffer.push(bin >> 4);
+                break;
+            }
+
+            result.push(String.fromCharCode.apply(null, buffer));
+            output = result.join('');
 
             if (utf8) {
                 output = Encoding.decode(output);
             }
 
             return output;
-
         },
 
         /**
-         * Disas
+         * Decode the base64 input data as an array
          * @param {string} input
          * @return {Array}
          */
@@ -18981,45 +19186,52 @@ define('renderer/abstract',[
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                        
+                        // Horizontal
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
+                        
                         if (el.visProp.anchorx === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
-                            if (el.visPropOld.right !== v) {
-                                el.rendNode.style.right = v + 'px';
-                                el.rendNode.style.left = 'auto';
-                                el.visPropOld.right = v;
-                            }
                         } else if (el.visProp.anchorx === 'middle') {
                             v = Math.floor(c - 0.5 * el.size[0]);
-                            if (el.visPropOld.left !== v) {
-                                el.rendNode.style.left = v + 'px';
-                                el.rendNode.style.right = 'auto';
-                                el.visPropOld.left = v;
-                            }
-                        // 'left'
-                        } else {
+                        } else { // 'left'
                             v = Math.floor(c);
-                            if (el.visPropOld.left !== v) {
+                        }
+                        
+                        if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                            if (el.visProp.anchorx === 'right') {
+                                el.rendNode.style.right = v + 'px';
+                                el.rendNode.style.left = 'auto';
+                            } else {
                                 el.rendNode.style.left = v + 'px';
                                 el.rendNode.style.right = 'auto';
-                                el.visPropOld.left = v;
                             }
+                            el.visPropOld.left = el.visProp.anchorx + v;
                         }
 
-                        c = el.coords.scrCoords[2];
+                        // Vertical
+                        c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        if (el.visProp.anchory === 'top') {
-                            v = Math.floor(c + this.vOffsetText);
+                        
+                        if (el.visProp.anchory === 'bottom') {
+                            v = Math.floor(el.board.canvasHeight - c);
                         } else if (el.visProp.anchory === 'middle') {
-                            v = Math.floor(c - 0.5 * el.size[1] + this.vOffsetText);
-                        } else {
-                            v = Math.floor(c - el.size[1] + this.vOffsetText);
+                            v = Math.floor(c - 0.5 * el.size[1]);
+                        } else { // top
+                            v = Math.floor(c);
                         }
-                        if (el.visPropOld.top !== v) {
-                            el.rendNode.style.top = v + 'px';
-                            el.visPropOld.top = v;
+                        
+                        if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                            if (el.visProp.anchory === 'bottom') {
+                                el.rendNode.style.top = 'auto';
+                                el.rendNode.style.bottom = v + 'px';
+                            } else {
+                                el.rendNode.style.bottom = 'auto';
+                                el.rendNode.style.top = v + 'px';
+                            }
+                            el.visPropOld.top = el.visProp.anchory + v;
                         }
                     }
 
@@ -19589,8 +19801,17 @@ define('renderer/abstract',[
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    Env.addEvent(button, 'click', handler, board);
+                    Env.addEvent(button, 'mouseover', function() {
+                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                    }, button);
+                    Env.addEvent(button, 'mouseover', function() {
+                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                    }, button);
+                    Env.addEvent(button, 'mouseout', function() {
+                        this.style.backgroundColor = board.options.navbar.fillColor;
+                    }, button);
 
+                    Env.addEvent(button, 'click', handler, board);
                     // prevent the click from bubbling down to the board
                     Env.addEvent(button, 'mouseup', cancelbubble, board);
                     Env.addEvent(button, 'mousedown', cancelbubble, board);
@@ -20710,10 +20931,12 @@ define('base/text',[
         this.Z = Type.createFunction(1, this.board, '');
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
-        this.board.renderer.drawText(this);
 
-        this.setText(content);
-        // this.updateSize();
+        // Set text before drawing
+        this._setUpdateText(content);
+        this.updateText();
+
+        this.board.renderer.drawText(this);
 
         if (!this.visProp.visible) {
             this.board.renderer.hide(this);
@@ -20778,13 +21001,12 @@ define('base/text',[
         },
 
         /**
-         * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
-         * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+         * This sets the updateText function of this element that depending on the type of text content passed.
+         * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
          * @param {String|Function|Number} text
-         * @return {JXG.Text}
          * @private
          */
-        _setText: function (text) {
+        _setUpdateText: function (text) {
             var updateText;
 
             if (typeof text === 'function') {
@@ -20812,14 +21034,25 @@ define('base/text',[
                     this.plaintext = updateText();
                 };
             }
+        },
+
+        /**
+         * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
+         * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
+         * @param {String|Function|Number} text
+         * @return {JXG.Text}
+         * @private
+         */
+        _setText: function (text) {
+            this._setUpdateText(text);
 
             // First evaluation of the string.
             // We need this for display='internal' and Canvas
             this.updateText();
             this.prepareUpdate().update().updateRenderer();
 
-            // We do not call updateSize for the infobox to speed up rendering
-            if (this !== this.board.infobox) {
+            // We do not call updateSize for the infobox to speed up rendering            
+            if (!this.board.infobox || this.id !== this.board.infobox.id) {
                 this.updateSize();    // updateSize() is called at least once.
             }
 
@@ -20864,7 +21097,7 @@ define('base/text',[
          * Update array this.size with pixel values.
          * The result may differ from browser to browser
          * by some pixels.
-         * In IE and canvas we use a very crude estimation of the dimensions of
+         * In canvas an old IEs we use a very crude estimation of the dimensions of
          * the textbox.
          * In JSXGraph this.size is necessary for applying rotations in IE and
          * for aligning text.
@@ -20872,35 +21105,49 @@ define('base/text',[
         updateSize: function () {
             var tmp, s, that;
 
-            if (!Env.isBrowser) {
+            if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-            if (this.visProp.display === 'html' && this.board.renderer.type !== 'vml' && this.board.renderer.type !== 'no') {
-                s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
-                if (s[0] === 0 && s[1] === 0) {
-                    // Some browsers need some time to set offsetWidth and offsetHeight
-                    that = this;
-                    window.setTimeout(function () {
-                        that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
-                    }, 0);
+            
+            /**
+             * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
+             */
+            if (this.visProp.display === 'html' || this.board.renderer.type === 'vml') {
+                if (JXG.exists(this.rendNode.offsetWidth)) {
+                    s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+                        that = this;
+                        window.setTimeout(function () {
+                            that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
+                        }, 0);
+                    } else {
+                        this.size = s;
+                    }
                 } else {
-                    this.size = s;
+                    this.size = this.crudeSizeEstimate();
                 }
-
-            } else if (this.visProp.display === 'internal' && this.board.renderer.type === 'svg') {
-                try {
-                    tmp = this.rendNode.getBBox();
-                    this.size = [tmp.width, tmp.height];
-                } catch (e) {
+            } else if (this.visProp.display === 'internal') {
+                if (this.board.renderer.type === 'svg') {
+                    try {
+                        tmp = this.rendNode.getBBox();
+                        this.size = [tmp.width, tmp.height];
+                    } catch (e) {}
+                } else if (this.board.renderer.type === 'canvas') {
+                    this.size = this.crudeSizeEstimate();
                 }
-            } else if (this.board.renderer.type === 'vml' || (this.visProp.display === 'internal' && this.board.renderer.type === 'canvas')) {
-                // Here comes a very crude estimation of the dimensions of the textbox.
-                this.size = [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
             }
 
             return this;
         },
 
+        /**
+         * A very crude estimation of the dimensions of the textbox in case nothing else is available.
+         * @return {Array}
+         */
+        crudeSizeEstimate: function() {
+            return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
+        },
+        
         /**
          * Decode unicode entities into characters.
          * @param {String} string
@@ -21067,14 +21314,24 @@ define('base/text',[
          * @private
          */
         checkForSizeUpdate: function() {
-            // For some magic reason it is more efficient on the iPad to 
-            // call updateSize() for EVERY text element EVERY time.
-            if (this.visProp.display === 'html') {
-                this.needsSizeUpdate = true;
+            
+            if (this.board.infobox && this.id === this.board.infobox.id) {
+                this.needsSizeUpdate = false;
             } else {
-                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+                // For some magic reason it is more efficient on the iPad to 
+                // call updateSize() for EVERY text element EVERY time.
+                // Turned off, 
+                //if (this.visProp.display === 'html') {
+                //    this.needsSizeUpdate = true;
+                //} else {
+                    this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+                //}
+            
+                if (this.needsSizeUpdate) {
+                    this.plaintextOld = this.plaintext;
+                }
             }
-            this.plaintextOld = this.plaintext;
+
         },
     
         /**
@@ -21181,18 +21438,21 @@ define('base/text',[
          * Converts the GEONExT tags <overline> and <arrow> to 
          * HTML span tags with proper CSS formating.
          * @private
-         * @see JXG.Text.generateTerm @see .JXG.Text._setText
+         * @see JXG.Text.generateTerm @see JXG.Text._setText
          */
         convertGeonext2CSS: function(s) {
-            s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
-            s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
-            s = s.replace(/<\/overline>/g, '</span>');
-            s = s.replace(/&lt;\/overline&gt;/g, '</span>');
-            s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
-            s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
-            s = s.replace(/<\/arrow>/g, '</span>');
-            s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+            if (typeof s === 'string') {
+                s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
+                s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
+                s = s.replace(/<\/overline>/g, '</span>');
+                s = s.replace(/&lt;\/overline&gt;/g, '</span>');
+                s = s.replace(/<arrow>/g, '<span style=text-decoration:overline>');
+                s = s.replace(/&lt;arrow&gt;/g, '<span style=text-decoration:overline>');
+                s = s.replace(/<\/arrow>/g, '</span>');
+                s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
+            }
             return s;
+            
         },
         
         /**
@@ -21807,12 +22067,12 @@ define('parser/jessiecode',[
                 return this.creator(vname);
             }
 
-            if (this.isMathMethod(vname)) {
-                return Math[vname];
-            }
-
             if (this.isBuiltIn(vname)) {
                 return this.builtIn[vname];
+            }
+
+            if (this.isMathMethod(vname)) {
+                return Math[vname];
             }
 
             if (!local) {
@@ -21877,13 +22137,13 @@ define('parser/jessiecode',[
                 this._error('Syntax error (attribute values are allowed with element creators only)');
             }
 
-            if (this.isMathMethod(vname)) {
-                return 'Math.' + vname;
-            }
-
             if (this.isBuiltIn(vname)) {
                 // if src does not exist, it is a number. in that case, just return the value.
                 return this.builtIn[vname].src || this.builtIn[vname];
+            }
+
+            if (this.isMathMethod(vname)) {
+                return 'Math.' + vname;
             }
 
             if (!local) {
@@ -24477,15 +24737,6 @@ define('base/ticks',[
         this.minTicksDistance = attributes.minticksdistance;
 
         /**
-         * Maximum distance between two ticks, measured in pixels. Is used only when insertTicks
-         * is set to true.
-         * @type int
-         * @see #insertTicks
-         * @deprecated This value will be ignored.
-         */
-        this.maxTicksDistance = attributes.maxticksdistance;
-
-        /**
          * Stores the ticks coordinates
          * @type {Array}
          */
@@ -26074,14 +26325,19 @@ define('base/line',[
 
         // see GeometryElement.js
         snapToGrid: function (pos) {
-            var c1, c2, dc, t, v,
+            var c1, c2, dc, t, v, ticks,
                 x, y, sX, sY;
 
             if (this.visProp.snaptogrid) {
+                if (this.parents.length < 3) {    // Line through two points
+                    this.point1.handleSnapToGrid(true);
+                    this.point2.handleSnapToGrid(true);
+                /*
                 if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
                     this.point1.snapToGrid();
                     this.point2.snapToGrid();
-                } else if (JXG.exists(pos)) {
+                */
+                } else if (JXG.exists(pos)) {       // Free line
                     sX = this.visProp.snapsizex;
                     sY = this.visProp.snapsizey;
 
@@ -26091,10 +26347,12 @@ define('base/line',[
                     y = c1.usrCoords[2];
 
                     if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
-                        sX = this.board.defaultAxes.x.defaultTicks.ticksDelta * (this.board.defaultAxes.x.defaultTicks.visProp.minorticks + 1);
+                        ticks = this.board.defaultAxes.x.defaultTicks;
+                        sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                     }
                     if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
-                        sY = this.board.defaultAxes.y.defaultTicks.ticksDelta * (this.board.defaultAxes.y.defaultTicks.visProp.minorticks + 1);
+                        ticks = this.board.defaultAxes.y.defaultTicks;
+                        sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
                     }
 
                     // if no valid snap sizes are available, don't change the coords.
@@ -26109,11 +26367,27 @@ define('base/line',[
                         t.applyOnce([this.point1, this.point2]);
                     }
                 }
+            } else {
+                this.point1.snapToGrid();
+                this.point2.snapToGrid();
             }
+                
 
             return this;
         },
 
+        // see element.js
+        snapToPoints: function () {
+            var forceIt = this.visProp.snaptopoints;
+            
+            if (this.parents.length < 3) {    // Line through two points
+                this.point1.handleSnapToPoints(forceIt);
+                this.point2.handleSnapToPoints(forceIt);
+            }
+            
+            return this;
+        },
+            
         /**
          * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
          * First we transform the interval [0,1] to [-1,1].
@@ -27563,14 +27837,25 @@ define('base/circle',[
             return this;
         },
 
-        // see geometryelement.js
+        // see element.js
         snapToGrid: function () {
-            if (this.visProp.snaptogrid) {
-                this.center.snapToGrid();
+            var forceIt = this.visProp.snaptogrid;
+            
+            this.center.snapToGrid(forceIt);
+            if (this.method === 'twoPoints') {
+                this.point2.snapToGrid(forceIt);
+            }
 
-                if (this.method === 'twoPoints') {
-                    this.point2.snapToGrid();
-                }
+            return this;
+        },
+
+        // see element.js
+        snapToPoints: function () {
+            var forceIt = this.visProp.snaptopoints;
+            
+            this.center.handleSnapToPoints(forceIt);
+            if (this.method === 'twoPoints') {
+                this.point2.handleSnapToPoints(forceIt);
             }
 
             return this;
@@ -27601,28 +27886,35 @@ define('base/circle',[
          * @returns {JXG.Circle} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, diffc,
+            var i, p, dc, t, arr, 
                 len = this.parents.length;
+
+            arr = [];
+            for (i = 0; i < len; i++) {
+                p = this.board.select(this.parents[i]);
+                if (!p.draggable()) {
+                    return this;
+                }
+                arr.push(p);
+            }
 
             coords = new Coords(method, coords, this.board);
             oldcoords = new Coords(method, oldcoords, this.board);
+            dc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
 
-            diffc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
-
-            for (i = 0; i < len; i++) {
-                if (!this.board.select(this.parents[i]).draggable()) {
-                    return this;
-                }
-            }
-
+            t = this.board.create('transform', dc.slice(1), {type: 'translate'});
+            t.applyOnce(arr);
+            
+            /*
             for (i = 0; i < len; i++) {
                 p = this.board.select(this.parents[i]);
-                // p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
-                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));
+                //p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
+                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, dc));
             }
-
+            
             this.prepareUpdate().update();
-
+            */
+            
             return this;
         },
 
@@ -32142,7 +32434,7 @@ define('base/board',[
          * @see JXG.Board#moveObject
          */
         this.drag_position = [0, 0];
-        
+
         /**
          * References to the object that is dragged with the mouse on the board.
          * @type {@link JXG.GeometryElement}.
@@ -32176,6 +32468,12 @@ define('base/board',[
          * @type Number
          */
         this.touchMoveLast = 0;
+
+        /**
+         * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
+         * @type Number
+         */
+        this.positionAccessLast = 0;
 
         /**
          * Collects all elements that triggered a mouse down event.
@@ -32457,19 +32755,68 @@ define('base/board',[
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
         getCoordsTopLeftCorner: function () {
-            var docElement = document.documentElement,
+            var cPos, doc, crect, scrollLeft, scrollTop,
+                docElement = document.documentElement || document.body.parentNode,
                 docBody = document.body,
-                container = this.containerObj,
-                cPos, doc;
+                container = this.containerObj;
 
-            if (this.cPos.length > 0 && 
-                (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN)) {
+            /**
+             * During drags and origin moves the container element is usually not changed.
+             * Check the position of the upper left corner at most every 500 msecs
+             */
+            if (this.cPos.length > 0 &&
+                    (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
+                    (new Date()).getTime() - this.positionAccessLast < 500)) {
                 return this.cPos;
             }
 
+            // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
+            // even CSS3D transformations etc.
+            if (container.getBoundingClientRect) {
+                if (typeof window.pageXOffset === 'number') {
+                    scrollLeft = window.pageXOffset;
+                } else {
+                    if (docElement.ScrollLeft === 'number') {
+                        scrollLeft = docElement.ScrollLeft;
+                    } else {
+                        scrollLeft = document.body.scrollLeft;
+                    }
+                }
+
+                if (typeof window.pageYOffset === 'number') {
+                    scrollTop = window.pageYOffset;
+                } else {
+                    if (docElement.ScrollTop === 'number') {
+                        scrollTop = docElement.ScrollTop;
+                    } else {
+                        scrollTop = document.body.scrollTop;
+                    }
+                }
+
+                crect = container.getBoundingClientRect();
+                cPos = [crect.left + scrollLeft, crect.top + scrollTop];
+
+                // add border width
+                cPos[0] += Env.getProp(container, 'border-left-width');
+                cPos[1] += Env.getProp(container, 'border-top-width');
+
+                // vml seems to ignore paddings
+                if (this.renderer.type !== 'vml') {
+                    // add padding
+                    cPos[0] += Env.getProp(container, 'padding-left');
+                    cPos[1] += Env.getProp(container, 'padding-top');
+                }
+
+                this.cpos = cPos;
+
+                return this.cpos;
+            }
+
+            this.positionAccessLast = (new Date()).getTime();
+
             cPos = Env.getOffset(container);
             doc = document.documentElement.ownerDocument;
-            
+
             if (!this.containerObj.currentStyle && doc.defaultView) {     // Non IE
                 // this is for hacks like this one used in wordpress for the admin bar:
                 // html { margin-top: 28px }
@@ -32649,12 +32996,12 @@ define('base/board',[
             if (!drag) {
                 return;
             }
-            
+
             /*
              * Save the position.
              */
             this.drag_position = newPos.scrCoords.slice(1);
-            
+
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
@@ -32922,6 +33269,9 @@ define('base/board',[
                 xy.push(obj.point2.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 xy.push(obj.center.coords.usrCoords);
+                if (obj.method === "twoPoints") {
+                    xy.push(obj.point2.coords.usrCoords);
+                }
             } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
                 len = obj.vertices.length - 1;
                 for (i = 0; i < len; i++) {
@@ -33025,9 +33375,13 @@ define('base/board',[
          */
         addPointerEventHandlers: function () {
             if (!this.hasPointerHandlers && Env.isBrowser) {
-                Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
-
+                if (window.navigator.pointerEnabled) {  // IE11+
+                    Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                } else {
+                    Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                }
                 this.hasPointerHandlers = true;
             }
         },
@@ -33085,11 +33439,20 @@ define('base/board',[
          */
         removePointerEventHandlers: function () {
             if (this.hasPointerHandlers && Env.isBrowser) {
-                Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
-                Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                if (window.navigator.pointerEnabled) {  // IE11+
+                    Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
+                    Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                } else {
+                    Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
+                    Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                }
 
                 if (this.hasPointerUp) {
-                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    if (window.navigator.pointerEnabled) {  // IE11+
+                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    }
                     this.hasPointerUp = false;
                 }
 
@@ -33250,7 +33613,11 @@ define('base/board',[
                 found, target, result;
 
             if (!this.hasPointerUp) {
-                Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                if (window.navigator.pointerEnabled) {  // IE11+
+                    Env.addEvent(document, 'pointerup', this.pointerUpListener, this);
+                } else {
+                    Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                }
                 this.hasPointerUp = true;
             }
 
@@ -33356,12 +33723,12 @@ define('base/board',[
 
             // move origin - but only if we're not in drag mode
             if (this.mode === this.BOARD_MODE_NONE && this.mouseOriginMoveStart(evt)) {
-                this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
+                this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
                 return false;
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['touchstart', 'down', 'MSPointerDown'], [evt]);
+            this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
             return result;
         },
@@ -33442,7 +33809,7 @@ define('base/board',[
             }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['touchmove', 'move', 'MSPointerMove'], [evt, this.mode]);
+            this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
 
             return this.mode === this.BOARD_MODE_NONE;
         },
@@ -33457,7 +33824,7 @@ define('base/board',[
                 tmpTouches = [],
                 eps = this.options.precision.touch;
 
-            this.triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
+            this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
 
             for (i = 0; i < this.touches.length; i++) {
@@ -33482,15 +33849,20 @@ define('base/board',[
                     }
                 }
                 if (!found) {
-                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'MSPointerUp'], [evt]);
+                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
                     this.downObjects[i].snapToGrid();
+                    this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
 
             if (this.touches.length === 0) {
                 if (this.hasPointerUp) {
-                    Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    if (window.navigator.pointerEnabled) {  // IE11+
+                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    }
                     this.hasPointerUp = false;
                 }
 
@@ -33688,7 +34060,7 @@ define('base/board',[
         touchMoveListener: function (evt) {
             var i, pos, time,
                 evtTouches = evt[JXG.touchProperty];
-            
+
             if (this.mode !== this.BOARD_MODE_NONE) {
                 evt.preventDefault();
                 evt.stopPropagation();
@@ -33868,6 +34240,7 @@ define('base/board',[
                 if (!found) {
                     this.downObjects[i].triggerEventHandlers(['touchup', 'up'], [evt]);
                     this.downObjects[i].snapToGrid();
+                    this.downObjects[i].snapToPoints();
                     this.downObjects.splice(i, 1);
                 }
             }
@@ -33971,6 +34344,7 @@ define('base/board',[
             if (this.mouse && this.mouse.obj) {
                 // The parameter is needed for lines with snapToGrid enabled
                 this.mouse.obj.snapToGrid(this.mouse.targets[0]);
+                this.mouse.obj.snapToPoints();
             }
 
             this.originMoveEnd();
@@ -35428,12 +35802,14 @@ define('base/board',[
          * @returns {JXG.Board} Reference to the board
          */
         migratePoint: function (src, dest, copyName) {
-            var child, childId, prop, found, i;
+            var child, childId, prop, found, i, srcLabelId, srcHasLabel = false;
 
             src = this.select(src);
             dest = this.select(dest);
 
-            if (src.label) {
+            if (JXG.exists(src.label)) {
+                srcLabelId = src.label.id;
+                srcHasLabel = true;
                 this.removeObject(src.label);
             }
 
@@ -35467,21 +35843,24 @@ define('base/board',[
 
             // The destination object should receive the name
             // and the label of the originating (src) object
-
-            if (src.label) {
-                delete dest.childElements[src.label.id];
-                delete dest.descendants[src.label.id];
-            }
             if (copyName) {
+                if (srcHasLabel) {
+                    delete dest.childElements[srcLabelId];
+                    delete dest.descendants[srcLabelId];
+                }
+
                 if (dest.label) {
                     this.removeObject(dest.label);
                 }
+
                 delete this.elementsByName[dest.name];
                 dest.name = src.name;
+                if (srcHasLabel) {
+                    dest.createLabel();
+                }
             }
 
             this.removeObject(src);
-            dest.createLabel();
 
             if (Type.exists(dest.name) && dest.name !== '') {
                 this.elementsByName[dest.name] = dest;
@@ -36353,8 +36732,9 @@ define('renderer/svg',[
             // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
+                // Horizontal
                 v = el.coords.scrCoords[1];
-                if (el.visPropOld.left !== el.visProp.anchorx + v) {
+                if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                     el.rendNode.setAttributeNS(null, 'x', v + 'px');
 
                     if (el.visProp.anchorx === 'left') {
@@ -36366,10 +36746,11 @@ define('renderer/svg',[
                     }
                     el.visPropOld.left = el.visProp.anchorx + v;
                 }
-
+    
+                // Vertical
                 v = el.coords.scrCoords[2];
-                if (el.visPropOld.top !== el.visProp.anchory + v) {
-                    el.rendNode.setAttributeNS(null, 'y', (el.coords.scrCoords[2] + this.vOffsetText * 0.5) + 'px');
+                if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                    el.rendNode.setAttributeNS(null, 'y', (v + this.vOffsetText * 0.5) + 'px');
 
                     if (el.visProp.anchory === 'bottom') {
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
@@ -37370,24 +37751,46 @@ define('renderer/vml',[
                 content = el.plaintext;
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+                // Horizontal
                 if (el.visProp.anchorx === 'right') {
-                    el.rendNode.style.right = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]) + 'px';
-                    el.rendNode.style.left = 'auto';
+                    v = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]);
                 } else if (el.visProp.anchorx === 'middle') {
-                    el.rendNode.style.left = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]) + 'px';
-                    el.rendNode.style.right = 'auto';
+                    v = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]);
                 } else {
-                    el.rendNode.style.left = Math.floor(el.coords.scrCoords[1]) + 'px';
-                    el.rendNode.style.right = 'auto';
+                    v = Math.floor(el.coords.scrCoords[1]);
                 }
 
-                if (el.visProp.anchory === 'top') {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] + this.vOffsetText) + 'px';
-                } else if (el.visProp.anchory === 'middle') {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText) + 'px';
-                } else {
-                    el.rendNode.style.top = Math.floor(el.coords.scrCoords[2] - el.size[1] + this.vOffsetText) + 'px';
+                if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                    if (el.visProp.anchorx === 'right') {
+                        el.rendNode.style.right = v + 'px';
+                        el.rendNode.style.left = 'auto';
+                    } else {
+                        el.rendNode.style.left = v + 'px';
+                        el.rendNode.style.right = 'auto';
+                    }
+                    el.visPropOld.left = el.visProp.anchorx + v;
                 }
+                
+                // Vertical
+                if (el.visProp.anchory === 'top') {
+                    v = Math.floor(el.coords.scrCoords[2] + this.vOffsetText);
+                } else if (el.visProp.anchory === 'middle') {
+                    v = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText);
+                } else {
+                    v = Math.floor(el.board.canvasHeight - el.coords.scrCoords[2] - this.vOffsetText);
+                }
+
+                if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                    if (el.visProp.anchory === 'bottom') {
+                        el.rendNode.style.bottom = v + 'px';
+                        el.rendNode.style.top = 'auto';
+                    } else {
+                        el.rendNode.style.top = v + 'px';
+                        el.rendNode.style.bottom = 'auto';
+                    }
+                    el.visPropOld.top = el.visProp.anchory + v;
+                }
+
             }
 
             if (el.htmlStr !== content) {
@@ -37429,10 +37832,14 @@ define('renderer/vml',[
                 p = [],
                 len = t.length;
 
-            if (el.type === Const.OBJECT_TYPE_TEXT) {
-                el.updateSize();
-            }
             if (len > 0) {
+                /*
+                // Seems to be not longer necessary
+                if (el.type === Const.OBJECT_TYPE_TEXT) {
+                    el.updateSize();
+                }
+                */
+                
                 nt = el.rendNode.style.filter.toString();
                 if (!nt.match(/DXImageTransform/)) {
                     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
@@ -42448,7 +42855,8 @@ define('element/sector',[
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
                 radius: 'getRadius',
-                getRadius: 'getRadius'
+                getRadius: 'getRadius',
+                setRadius: 'setRadius'
             });
 
             el.prepareUpdate().update();
@@ -42507,7 +42915,8 @@ define('element/sector',[
                 radiuspoint: 'radiuspoint',
                 anglepoint: 'anglepoint',
                 radius: 'getRadius',
-                getRadius: 'getRadius'
+                getRadius: 'getRadius',
+                setRadius: 'setRadius'
             });
 
             /**
@@ -46542,7 +46951,11 @@ define('element/slopetriangle',[
         fillColor: 'red',
         fillOpacity: 0.4,
 
-        glider: {},
+        glider: {
+            fixed: true,
+            visible: false,
+            withLabel: false
+        },
         baseline: {
             visible: false,
             withLabel: false,
@@ -46561,62 +46974,113 @@ define('element/slopetriangle',[
     };
 
     /**
-     * Creates a new slope triangle using a tangent on a curve, circle, line or turtle.
-     * @param {JXG.Board} board The board the triangle is put on.
-     * @param {Array} parents A tangent line.
-     * @param {Object} attributes Visual properties that are assigned to the constructed lines.
-     * @returns {JXG.Point} A glider
+     * @class Slope triangle for a point on a line.
+     * @pseudo
+     * @name Slopetriangle
+     * @augments JXG.Line
+     * @constructor
+     * @type JXG.Polygon
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * Parameter options:
+     * @param {JXG.Line} t A tangent based on a glider on some object, e.g. curve, circle, line or turtle.
+     * @param {JXG.Line_JXG.Point} li, p A line and a point on that line. 
+     *  The user has to take care that the point is a member of the line.
+     * @example
+     * // Create a slopetriangle on a tangent
+     * var f = board.create('plot', ['sin(x)']),
+     *     g = board.create('glider', [1, 2, f]),
+     *     t = board.create('tangent', [g]),
+     *     
+     *     st = board.create('slopetriangle', [t]);
+     *     
+     * </pre><div id="951ccb6a-52bc-4dc2-80e9-43db064f0f1b" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('951ccb6a-52bc-4dc2-80e9-43db064f0f1b', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *     f = board.create('plot', ['sin(x)']),
+     *     g = board.create('glider', [1, 2, f]),
+     *     t = board.create('tangent', [g]),
+     *     
+     *     st = board.create('slopetriangle', [t]);
+     * })();
+     * </script><pre>
+     * 
+     * @example
+     * // Create a on a line and a point on that line
+     * var p1 = board.create('point', [-2, 3]),
+     *     p2 = board.create('point', [2, -3]),
+     *     li = board.create('line', [p1, p2]),
+     *     p = board.create('glider', [0, 0, line]),
+     * 
+     *     st = board.create('slopetriangle', [li, p]);
+     *
+     * </pre><div id="b52f451c-22cf-4677-852a-0bb9d764ee95" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('b52f451c-22cf-4677-852a-0bb9d764ee95', {boundingbox: [-5, 5, 5, -5], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [-2, 3]),
+     *     p2 = board.create('point', [2, -3]),
+     *     li = board.create('line', [p1, p2]),
+     *     p = board.create('glider', [0, 0, line]),
+     * 
+     *     st = board.create('slopetriangle', [li, p]);
+     * })();
+     * </script><pre>
      */
     JXG.createSlopeTriangle = function (board, parents, attributes) {
         var el, tangent, tglide, glider, toppoint, baseline, basepoint, attr;
 
-        if (parents[0].type === Const.OBJECT_TYPE_TANGENT) {
+        if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
             tangent = parents[0];
             tglide = tangent.glider;
+        } else if (parents.length === 2 && 
+                   parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+            tangent = parents[0];
+            tglide = parents[1];
+        } else {
+            throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
+        }    
+        
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
+        basepoint = board.create('point', [function () {
+            return [tglide.X() + 1,  tglide.Y()];
+        }], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
-            basepoint = board.create('point', [function () {
-                return [tglide.X() + 1,  tglide.Y()];
-            }], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'baseline');
+        baseline = board.create('line', [tglide, basepoint], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'baseline');
-            baseline = board.create('line', [tglide, basepoint], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'glider');
+        glider = board.create('glider', [tglide.X() + 1, tglide.Y(), baseline], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'glider');
-            glider = board.create('glider', [tglide.X() + 1, tglide.Y(), baseline], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'toppoint');
+        toppoint = board.create('point', [function () {
+            return [glider.X(), glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope()];
+        }], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'toppoint');
-            toppoint = board.create('point', [function () {
-                return [glider.X(), glider.Y() + (glider.X() - tglide.X()) * tangent.getSlope()];
-            }], attr);
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
+        el = board.create('polygon', [tglide, glider, toppoint], attr);
 
-            attr = Type.copyAttributes(attributes, board.options, 'slopetriangle');
-            el = board.create('polygon', [tglide, glider, toppoint], attr);
+        el.Value = priv.Value;
 
-            el.Value = priv.Value;
+        el.tangent = tangent;
+        el.glider = glider;
+        el.basepoint = basepoint;
+        el.baseline = baseline;
+        el.toppoint = toppoint;
 
-            el.tangent = tangent;
-            el.glider = glider;
-            el.basepoint = basepoint;
-            el.baseline = baseline;
-            el.toppoint = toppoint;
+        el.methodMap = JXG.deepCopy(el.methodMap, {
+            tangent: 'tangent',
+            glider: 'glider',
+            basepoint: 'basepoint',
+            baseline: 'baseline',
+            toppoint: 'toppoint',
+            Value: 'Value',
+            V: 'Value'
+        });
 
-            el.methodMap = JXG.deepCopy(el.methodMap, {
-                tangent: 'tangent',
-                glider: 'glider',
-                basepoint: 'basepoint',
-                baseline: 'baseline',
-                toppoint: 'toppoint',
-                Value: 'Value',
-                V: 'Value'
-            });
+        el.remove = priv.removeSlopeTriangle;
 
-            el.remove = priv.removeSlopeTriangle;
-
-            return el;
-        }
-
-        throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
+        return el;
     };
 
     JXG.registerElement('slopetriangle', JXG.createSlopeTriangle);
@@ -46677,7 +47141,6 @@ define('../build/core.deps.js',[
     'utils/uuid',
     'utils/encoding',
     'server/server',
-    'element/locus',
     'parser/datasource',
     'parser/jessiecode',
     'utils/dump',
