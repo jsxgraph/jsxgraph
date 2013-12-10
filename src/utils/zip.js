@@ -171,35 +171,40 @@ define(['jxg'], function (JXG) {
 
         function readBit() {
             var carry;
-            
+
             try {   // Prevent problems on iOS7 with >>
-            bits++;
-            carry = (bb & 1);
-            bb >>= 1;
-
-            if (bb === 0) {
-                bb = readByte();
+                bits++;
                 carry = (bb & 1);
-                bb = (bb >> 1) | 0x80;
-            }
+                bb >>= 1;
 
-            return carry;
-            }catch(e) { throw e};
+                if (bb === 0) {
+                    bb = readByte();
+                    carry = (bb & 1);
+                    bb = (bb >> 1) | 0x80;
+                }
+
+                return carry;
+            } catch (e) {
+                throw e;
+            }
         }
 
         function readBits(a) {
             var res = 0,
                 i = a;
 
-            try{   // Prevent problems on iOS7 with >>
-            while (i--) {
-                res = (res << 1) | readBit();
-            }
+            // Prevent problems on iOS7 with >>
+            try {
+                while (i--) {
+                    res = (res << 1) | readBit();
+                }
 
-            if (a) {
-                res = bitReverse[res] >> (8 - a);
+                if (a) {
+                    res = bitReverse[res] >> (8 - a);
+                }
+            } catch (e) {
+                throw e;
             }
-            }catch(e) { throw e};
 
             return res;
         }
@@ -574,107 +579,109 @@ define(['jxg'], function (JXG) {
         function nextFile() {
             var i, c, extralen, filelen, size, compSize, crc, method,
                 tmp = [];
-            
-            try {  // Prevent problems on iOS7 with >>
-            outputArr = [];
-            modeZIP = false;
-            tmp[0] = readByte();
-            tmp[1] = readByte();
 
-            //GZIP
-            if (tmp[0] === 0x78 && tmp[1] === 0xda) {
-                deflateLoop();
-                unzipped[files] = [outputArr.join(''), 'geonext.gxt'];
-                files++;
-            }
+            // Prevent problems on iOS7 with >>
+            try {
+                outputArr = [];
+                modeZIP = false;
+                tmp[0] = readByte();
+                tmp[1] = readByte();
 
-            //GZIP
-            if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
-                skipdir();
-                unzipped[files] = [outputArr.join(''), 'file'];
-                files++;
-            }
-
-            //ZIP
-            if (tmp[0] === 0x50 && tmp[1] === 0x4b) {
-                modeZIP = true;
-                tmp[2] = readByte();
-                tmp[3] = readByte();
-
-                if (tmp[2] === 0x03 && tmp[3] === 0x04) {
-                    //MODE_ZIP
-                    tmp[0] = readByte();
-                    tmp[1] = readByte();
-
-                    gpflags = readByte();
-                    gpflags |= (readByte() << 8);
-
-                    method = readByte();
-                    method |= (readByte() << 8);
-
-                    readByte();
-                    readByte();
-                    readByte();
-                    readByte();
-
-                    crc = readByte();
-                    crc |= (readByte() << 8);
-                    crc |= (readByte() << 16);
-                    crc |= (readByte() << 24);
-
-                    compSize = readByte();
-                    compSize |= (readByte() << 8);
-                    compSize |= (readByte() << 16);
-                    compSize |= (readByte() << 24);
-
-                    size = readByte();
-                    size |= (readByte() << 8);
-                    size |= (readByte() << 16);
-                    size |= (readByte() << 24);
-
-                    filelen = readByte();
-                    filelen |= (readByte() << 8);
-
-                    extralen = readByte();
-                    extralen |= (readByte() << 8);
-
-                    i = 0;
-                    nameBuf = [];
-
-                    while (filelen--) {
-                        c = readByte();
-                        if (c === '/' | c === ':') {
-                            i = 0;
-                        } else if (i < NAMEMAX - 1) {
-                            nameBuf[i++] = String.fromCharCode(c);
-                        }
-                    }
-
-                    if (!fileout) {
-                        fileout = nameBuf;
-                    }
-
-                    i = 0;
-                    while (i < extralen) {
-                        c = readByte();
-                        i++;
-                    }
-
-                    SIZE = 0;
-
-                    if (method === 8) {
-                        deflateLoop();
-                        unzipped[files] = new Array(2);
-                        unzipped[files][0] = outputArr.join('');
-                        unzipped[files][1] = nameBuf.join('');
-                        files++;
-                    }
-
-                    skipdir();
+                //GZIP
+                if (tmp[0] === 0x78 && tmp[1] === 0xda) {
+                    deflateLoop();
+                    unzipped[files] = [outputArr.join(''), 'geonext.gxt'];
+                    files++;
                 }
+
+                //GZIP
+                if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
+                    skipdir();
+                    unzipped[files] = [outputArr.join(''), 'file'];
+                    files++;
+                }
+
+                //ZIP
+                if (tmp[0] === 0x50 && tmp[1] === 0x4b) {
+                    modeZIP = true;
+                    tmp[2] = readByte();
+                    tmp[3] = readByte();
+
+                    if (tmp[2] === 0x03 && tmp[3] === 0x04) {
+                        //MODE_ZIP
+                        tmp[0] = readByte();
+                        tmp[1] = readByte();
+
+                        gpflags = readByte();
+                        gpflags |= (readByte() << 8);
+
+                        method = readByte();
+                        method |= (readByte() << 8);
+
+                        readByte();
+                        readByte();
+                        readByte();
+                        readByte();
+
+                        crc = readByte();
+                        crc |= (readByte() << 8);
+                        crc |= (readByte() << 16);
+                        crc |= (readByte() << 24);
+
+                        compSize = readByte();
+                        compSize |= (readByte() << 8);
+                        compSize |= (readByte() << 16);
+                        compSize |= (readByte() << 24);
+
+                        size = readByte();
+                        size |= (readByte() << 8);
+                        size |= (readByte() << 16);
+                        size |= (readByte() << 24);
+
+                        filelen = readByte();
+                        filelen |= (readByte() << 8);
+
+                        extralen = readByte();
+                        extralen |= (readByte() << 8);
+
+                        i = 0;
+                        nameBuf = [];
+
+                        while (filelen--) {
+                            c = readByte();
+                            if (c === '/' | c === ':') {
+                                i = 0;
+                            } else if (i < NAMEMAX - 1) {
+                                nameBuf[i++] = String.fromCharCode(c);
+                            }
+                        }
+
+                        if (!fileout) {
+                            fileout = nameBuf;
+                        }
+
+                        i = 0;
+                        while (i < extralen) {
+                            c = readByte();
+                            i++;
+                        }
+
+                        SIZE = 0;
+
+                        if (method === 8) {
+                            deflateLoop();
+                            unzipped[files] = new Array(2);
+                            unzipped[files][0] = outputArr.join('');
+                            unzipped[files][1] = nameBuf.join('');
+                            files++;
+                        }
+
+                        skipdir();
+                    }
+                }
+            } catch (e) {
+                throw e;
             }
-            }catch(e) { throw e};
-            
         }
 
         skipdir = function () {

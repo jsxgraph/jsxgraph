@@ -200,7 +200,7 @@ define([
                     if (params.length === 2) {
                         params[1] = board.select(params[1]);
                     }
-                } 
+                }
 
                 this.update = function () {
                     var x, y,
@@ -230,7 +230,7 @@ define([
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: shear transformation needs 2 parameters.");
                 }
-                
+
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][2] = this.evalParam(0);

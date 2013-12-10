@@ -580,7 +580,7 @@ define([
         // see element.js
         snapToGrid: function () {
             var forceIt = this.visProp.snaptogrid;
-            
+
             this.center.snapToGrid(forceIt);
             if (this.method === 'twoPoints') {
                 this.point2.snapToGrid(forceIt);
@@ -592,7 +592,7 @@ define([
         // see element.js
         snapToPoints: function () {
             var forceIt = this.visProp.snaptopoints;
-            
+
             this.center.handleSnapToPoints(forceIt);
             if (this.method === 'twoPoints') {
                 this.point2.handleSnapToPoints(forceIt);
@@ -626,7 +626,7 @@ define([
          * @returns {JXG.Circle} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, dc, t, arr, 
+            var i, p, dc, t, arr,
                 len = this.parents.length;
 
             arr = [];
@@ -644,17 +644,7 @@ define([
 
             t = this.board.create('transform', dc.slice(1), {type: 'translate'});
             t.applyOnce(arr);
-            
-            /*
-            for (i = 0; i < len; i++) {
-                p = this.board.select(this.parents[i]);
-                //p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
-                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, dc));
-            }
-            
-            this.prepareUpdate().update();
-            */
-            
+
             return this;
         },
 

@@ -704,12 +704,12 @@ define([
          * Updates the element's label text and the element's attribute "name", strips all html.
          * @param {String} str
          */
-        setName: function(str) {
+        setName: function (str) {
             str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             this.setLabelText(str);
             this.setAttribute({name: str});
         },
-        
+
         /**
          * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.

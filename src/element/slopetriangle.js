@@ -149,14 +149,14 @@ define([
         if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
             tangent = parents[0];
             tglide = tangent.glider;
-        } else if (parents.length === 2 && 
-                   parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+        } else if (parents.length === 2 &&
+                parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
             tangent = parents[0];
             tglide = parents[1];
         } else {
             throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
-        }    
-        
+        }
+
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
         basepoint = board.create('point', [function () {
             return [tglide.X() + 1,  tglide.Y()];

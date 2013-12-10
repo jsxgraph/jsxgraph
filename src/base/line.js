@@ -754,7 +754,6 @@ define([
                 this.point1.snapToGrid();
                 this.point2.snapToGrid();
             }
-                
 
             return this;
         },
@@ -762,15 +761,15 @@ define([
         // see element.js
         snapToPoints: function () {
             var forceIt = this.visProp.snaptopoints;
-            
+
             if (this.parents.length < 3) {    // Line through two points
                 this.point1.handleSnapToPoints(forceIt);
                 this.point2.handleSnapToPoints(forceIt);
             }
-            
+
             return this;
         },
-            
+
         /**
          * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
          * First we transform the interval [0,1] to [-1,1].

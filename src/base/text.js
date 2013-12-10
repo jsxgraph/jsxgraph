@@ -74,7 +74,7 @@ define([
 
         this.isDraggable = false;
         this.needsSizeUpdate = false;
-        
+
         this.element = this.board.select(attributes.anchor);
 
         this.hiddenByParent = false;
@@ -309,7 +309,7 @@ define([
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-            
+
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
@@ -345,10 +345,10 @@ define([
          * A very crude estimation of the dimensions of the textbox in case nothing else is available.
          * @return {Array}
          */
-        crudeSizeEstimate: function() {
+        crudeSizeEstimate: function () {
             return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
         },
-        
+
         /**
          * Decode unicode entities into characters.
          * @param {String} string
@@ -480,30 +480,27 @@ define([
          * is called.
          */
         update: function () {
-            
             if (this.needsUpdate) {
                 if (!this.visProp.frozen) {
                     this.updateCoords();
                 }
-                
+
                 this.updateText();
 
                 if (this.visProp.display === 'internal') {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
 
-                //if (this !== this.board.infobox) {
-                    this.checkForSizeUpdate();
-                    if (this.needsSizeUpdate) {
-                        this.updateSize();
-                    }     
-                //}
+                this.checkForSizeUpdate();
+                if (this.needsSizeUpdate) {
+                    this.updateSize();
+                }
                 this.updateTransform();
             }
 
             return this;
         },
-    
+
         /**
          * Used to save updateSize() calls.
          * Called in JXG.Text.update 
@@ -514,27 +511,21 @@ define([
          *
          * @private
          */
-        checkForSizeUpdate: function() {
-            
+        checkForSizeUpdate: function () {
             if (this.board.infobox && this.id === this.board.infobox.id) {
                 this.needsSizeUpdate = false;
             } else {
-                // For some magic reason it is more efficient on the iPad to 
+                // For some magic reason it is more efficient on the iPad to
                 // call updateSize() for EVERY text element EVERY time.
-                // Turned off, 
-                //if (this.visProp.display === 'html') {
-                //    this.needsSizeUpdate = true;
-                //} else {
-                    this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
-                //}
-            
+                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+
                 if (this.needsSizeUpdate) {
                     this.plaintextOld = this.plaintext;
                 }
             }
 
         },
-    
+
         /**
          * Updates the coordinates of the text element.
          */
@@ -586,12 +577,12 @@ define([
             contentStr = contentStr.replace(/\n/g, '');
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
-            
+
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
             contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
             contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
-            
+
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
 
@@ -627,7 +618,7 @@ define([
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
             plaintext = this.convertGeonext2CSS(plaintext);
-            
+
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
@@ -641,7 +632,7 @@ define([
          * @private
          * @see JXG.Text.generateTerm @see JXG.Text._setText
          */
-        convertGeonext2CSS: function(s) {
+        convertGeonext2CSS: function (s) {
             if (typeof s === 'string') {
                 s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
                 s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
@@ -652,10 +643,10 @@ define([
                 s = s.replace(/<\/arrow>/g, '</span>');
                 s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
             }
+
             return s;
-            
         },
-        
+
         /**
          * Finds dependencies in a given term and notifies the parents by adding the
          * dependent object to the found objects child elements.

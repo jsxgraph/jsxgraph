@@ -135,7 +135,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports touch events.
          */
         isTouchDevice: function () {
-            return this.isBrowser && ('ontouchstart' in window);
+            return this.isBrowser && window.ontouchstart !== undefined;
         },
 
         /**

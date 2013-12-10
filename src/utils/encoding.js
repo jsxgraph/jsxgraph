@@ -133,7 +133,7 @@ define(['jxg'], function (JXG) {
                     }
                 }
             }
-            results.push(String.fromCharCode.apply(null, chars)); 
+            results.push(String.fromCharCode.apply(null, chars));
             return results.join("");
         },
 

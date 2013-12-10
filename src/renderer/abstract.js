@@ -601,12 +601,12 @@ define([
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-                        
+
                         // Horizontal
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        
+
                         if (el.visProp.anchorx === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
                         } else if (el.visProp.anchorx === 'middle') {
@@ -614,7 +614,7 @@ define([
                         } else { // 'left'
                             v = Math.floor(c);
                         }
-                        
+
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                             if (el.visProp.anchorx === 'right') {
                                 el.rendNode.style.right = v + 'px';
@@ -629,7 +629,7 @@ define([
                         // Vertical
                         c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        
+
                         if (el.visProp.anchory === 'bottom') {
                             v = Math.floor(el.board.canvasHeight - c);
                         } else if (el.visProp.anchory === 'middle') {
@@ -637,7 +637,7 @@ define([
                         } else { // top
                             v = Math.floor(c);
                         }
-                        
+
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
                             if (el.visProp.anchory === 'bottom') {
                                 el.rendNode.style.top = 'auto';
@@ -849,7 +849,7 @@ define([
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
+            el.rendNode.className = doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass;
         },
 
 
@@ -1216,13 +1216,13 @@ define([
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    Env.addEvent(button, 'mouseover', function() {
+                    Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);
-                    Env.addEvent(button, 'mouseover', function() {
+                    Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);
-                    Env.addEvent(button, 'mouseout', function() {
+                    Env.addEvent(button, 'mouseout', function () {
                         this.style.backgroundColor = board.options.navbar.fillColor;
                     }, button);
 

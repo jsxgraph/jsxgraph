@@ -805,18 +805,18 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         var col = JXG.rgba2rgbo(colstr),
             c = col[0],
             opa = col[1];
-        
+
         if (colstr.charAt(0) === '#') {
             if (opa < 0.3) {
                 opa *= 1.333333;
             } else {
                 opa *= 0.666666;
             }
-        
+
             return JXG.rgbo2rgba(c, opa);
-        } else {
-            return colstr;
         }
+
+        return colstr;
     };
 
     return JXG;
