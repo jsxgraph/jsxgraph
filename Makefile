@@ -37,6 +37,10 @@ JSTESTFLAGS=--reset --captureConsole --tests all
 
 # filelists - required for docs, linters, and to build the readers
 FILELIST=$(shell cat src/loadjsxgraph.js | grep "baseFiles\s*=\s*'\(\w*,\)\+" | awk -F \' '{ print $$2 }' | sed 's/,/.js src\//g')
+
+# Lintlist - jessiecode.js is developed externally (github:jsxgraph/jessiecode) and won't be linted in here
+LINTLIST=$(shell echo $(FILELIST) | sed 's/src\/parser\/jessiecode\.js//')
+
 READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js build/bin/readers/intergeo.min.js build/bin/readers/sketch.min.js
 
 # rules
@@ -132,10 +136,10 @@ plot:
 	$(REQUIREJS) -o build/plot.build.json
 
 hint:
-	$(HINT) src/$(FILELIST).js
+	$(HINT) src/$(LINTLIST).js
 
 lint:
-	$(LINT) src/$(FILELIST).js
+	$(LINT) src/$(LINTLIST).js
 
 test-server:
 	$(JSTESTDRIVER) --port $(JSTESTPORT)
