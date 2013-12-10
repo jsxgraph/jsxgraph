@@ -717,7 +717,20 @@ define([
                 }
 
                 crect = container.getBoundingClientRect();
-                this.cpos = [crect.left + scrollLeft, crect.top + scrollTop];
+                cPos = [crect.left + scrollLeft, crect.top + scrollTop];
+
+                // add border width
+                cPos[0] += Env.getProp(container, 'border-left-width');
+                cPos[1] += Env.getProp(container, 'border-top-width');
+
+                // vml seems to ignore paddings
+                if (this.renderer.type !== 'vml') {
+                    // add padding
+                    cPos[0] += Env.getProp(container, 'padding-left');
+                    cPos[1] += Env.getProp(container, 'padding-top');
+                }
+
+                this.cpos = cPos;
 
                 return this.cpos;
             }
