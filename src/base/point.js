@@ -938,10 +938,19 @@ define([
 
         /**
          * Convert the point to glider and update the construction.
-         * @param {String|Object} glideObject The Object the point will be bound to.
+         * @param {String|Object} slide The Object the point will be bound to.
          */
-        makeGlider: function (glideObject) {
-            this.slideObject = this.board.select(glideObject);
+        makeGlider: function (slide) {
+            var slideobj = this.board.select(slide);
+            
+            /* Gliders on Ticks are forbidden */
+            if (!Type.exists(slideobj)) {
+                throw new Error("JSXGraph: slide object undefined.");
+            } else if (slideobj.type === Const.OBJECT_TYPE_TICKS) {
+                throw new Error("JSXGraph: gliders on ticks are not possible.");
+            }
+            
+            this.slideObject = this.board.select(slide);
             this.slideObjects.push(this.slideObject);
 
             this.type = Const.OBJECT_TYPE_GLIDER;
