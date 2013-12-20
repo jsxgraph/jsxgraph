@@ -54,8 +54,8 @@
 
 define([
     'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'math/numerics',
-    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform) {
+    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation', 'math/qdt'
+], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform, QDT) {
 
     "use strict";
 
@@ -85,6 +85,13 @@ define([
 
         this.dataX = null;
         this.dataY = null;
+
+        /**
+         * Stores a quad tree if it is required. The quad tree is generated in the curve
+         * updates and can be used to speed up the hasPoint method.
+         * @type {JXG.Math.Quadtree}
+         */
+        this.qdt = null;
 
         if (Type.exists(parents[0])) {
             this.varname = parents[0];
@@ -179,7 +186,7 @@ define([
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, tX, tY, res,
+                i, j, tX, tY, res, points, qdt,
                 steps = this.visProp.numberpointslow,
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint / this.board.unitX,
@@ -203,8 +210,7 @@ define([
             }
 
             if (this.visProp.curvetype === 'parameter' ||
-                    this.visProp.curvetype === 'polar' ||
-                    this.visProp.curvetype === 'functiongraph') {
+                    this.visProp.curvetype === 'polar') {
 
                 prec = prec * prec;
 
@@ -221,28 +227,60 @@ define([
 
                     t += d;
                 }
-            } else if (this.visProp.curvetype === 'plot') {
+            } else if (this.visProp.curvetype === 'plot' ||
+                    this.visProp.curvetype === 'functiongraph') {
+
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
 
-                len = this.numberPoints;
-                for (i = start; i < len - 1; i++) {
+                if (Type.exists(this.qdt) && this.visProp.useqdt && this.bezierDegree !== 3) {
+                    qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
+                    points = qdt.points;
+                    len = points.length;
+                } else {
+                    points = this.points;
+                    len = this.numberPoints - 1;
+                }
 
+                for (i = start; i < len; i++) {
+                    res = [];
                     if (this.bezierDegree === 3) {
-                        res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
-                        //i += 2;
+                        res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
                     } else {
-                        res = Geometry.projectCoordsToSegment(
-                            [1, x, y],
-                            [1, this.X(i), this.Y(i)],
-                            [1, this.X(i + 1), this.Y(i + 1)]
-                        );
+                        if (qdt) {
+                            if (points[i].prev) {
+                                res.push(Geometry.projectCoordsToSegment(
+                                    [1, x, y],
+                                    points[i].prev.usrCoords,
+                                    points[i].usrCoords
+                                ));
+                            }
+
+                            // If the next point in the array is the same as the current points
+                            // next neighbor we don't have to project it onto that segment because
+                            // that will already be done in the next iteration of this loop.
+                            if (points[i].next && points[i + 1] !== points[i].next) {
+                                res.push(Geometry.projectCoordsToSegment(
+                                    [1, x, y],
+                                    points[i].usrCoords,
+                                    points[i].next.usrCoords
+                                ));
+                            }
+                        } else {
+                            res.push(Geometry.projectCoordsToSegment(
+                                [1, x, y],
+                                points[i].usrCoords,
+                                points[i + 1].usrCoords
+                            ));
+                        }
                     }
 
-                    if (res[1] >= 0 && res[1] <= 1 &&
-                            Geometry.distance([1, x, y], res[0], 3) <= prec) {
-                        return true;
+                    for (j = 0; j < res.length; j++) {
+                        if (res[j][1] >= 0 && res[j][1] <= 1 &&
+                                Geometry.distance([1, x, y], res[j][0], 3) <= prec) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -392,6 +430,21 @@ define([
                     this.updateParametricCurveNaive(mi, ma, this.numberPoints);
                 }
                 len = this.numberPoints;
+
+                if (this.visProp.useqdt && this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
+                    this.qdt = new QDT(this.board.getBoundingBox());
+                    for (i = 0; i < this.points.length; i++) {
+                        this.qdt.insert(this.points[i]);
+
+                        if (i > 0) {
+                            this.points[i].prev = this.points[i - 1];
+                        }
+
+                        if (i < len - 1) {
+                            this.points[i].next = this.points[i + 1];
+                        }
+                    }
+                }
 
                 for (i = 0; i < len; i++) {
                     this.updateTransform(this.points[i]);

@@ -894,6 +894,8 @@ define([
             fillColor: 'none',
             fixed: true,
 
+            useQDT: false,
+
             /**#@+
              * @visprop
              */
