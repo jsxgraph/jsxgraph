@@ -44,88 +44,11 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
     var
         /**
-         * A simple point class in the 2D plane, possibly faster than using JXG.Coords.
-         * @param {Number|JXG.Coords|XY} xp
-         * @param {Number} [y]
-         * @constructor
-         */
-        XY = function (xp, y) {
-            /**
-             * Used to quickly identify XY instances.
-             * @type {boolean}
-             * @default true
-             */
-            this.isXY = true;
-
-            if (xp.isXY) {
-                return xp;
-            }
-
-            if (Type.exists(y)) {
-                /**
-                 * X coordinate
-                 * @type {Number}
-                 */
-                this.x = xp;
-
-                /**
-                 * Y coordinate
-                 * @type {Number}
-                 */
-                this.y = y;
-            } else {
-                this.x = xp.usrCoords[1];
-                this.y = xp.usrCoords[2];
-            }
-        },
-
-        /**
-         * Axis aligned bounding box represented by its center and half dimension.
-         * @param {XY} center
-         * @param {XY} halfdim
-         * @constructor
-         */
-        AABB = function (center, halfdim) {
-            /**
-             * Used to quickly identify AABB instances.
-             * @type {boolean}
-             * @default true
-             */
-            this.isAABB = true;
-
-            /**
-             * Center
-             * @type {XY}
-             */
-            this.c = center;
-
-            /**
-             * Half dimension
-             * @type {XY}
-             */
-            this.hd = halfdim;
-        },
-
-        /**
          * Instantiate a new quad tree.
-         * @param {AABB|Array} bbox Bounding box of the new. Can be either given as an array
-         * or an instance of the AABB class.
+         * @param {Array} bbox Bounding box of the new quad (sub)tree.
          * @constructor
          */
         Quadtree = function (bbox) {
-            var w, h, aabb;
-
-            if (bbox.isAABB) {
-                aabb = bbox;
-            } else {
-                w = (bbox[2] - bbox[0]) / 2;
-                h = (bbox[1] - bbox[3]) / 2;
-                aabb = new AABB(
-                    new XY(bbox[0] + w, bbox[3] + h),
-                    new XY(w, h)
-                );
-            }
-
             /**
              * The maximum number of points stored in a quad tree node
              * before it is subdivided.
@@ -140,11 +63,10 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
              */
             this.points = [];
 
-            /**
-             * The bounding box the quad tree represents.
-             * @type {AABB}
-             */
-            this.boundary = aabb;
+            this.xlb = bbox[0];
+            this.xub = bbox[2];
+            this.ylb = bbox[3];
+            this.yub = bbox[1];
 
             /**
              * In a subdivided quad tree this represents the top left subtree.
@@ -171,32 +93,24 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
             this.southWest = null;
         };
 
-    Type.extend(AABB.prototype, /** @lends AABB.prototype */ {
+    Type.extend(Quadtree.prototype, /** @lends JXG.Quadtree.prototype */ {
         /**
-         * Check if the given point is inside this AABB.
-         * @param {XY} p
+         * Checks if the given coordinates are inside the quad tree.
+         * @param {Number} x
+         * @param {Number} y
          * @returns {Boolean}
          */
-        contains: function (p) {
-            var w = this.hd.x,
-                h = this.hd.y,
-                x = this.c.x,
-                y = this.c.y;
+        contains: function (x, y) {
+            return this.xlb < x && x <= this.xub && this.ylb < y && y <= this.yub;
+        },
 
-            return (x - w) < p.x && p.x <= (x + w) && (y - h) <= p.y && p.y < (y + h);
-        }
-    });
-
-    Type.extend(Quadtree.prototype, /** @lends JXG.Quadtree.prototype */ {
         /**
          * Insert a new point into this quad tree.
          * @param {JXG.Coords} p
          * @returns {Boolean}
          */
         insert: function (p) {
-            var _p = new XY(p);
-
-            if (!this.boundary.contains(_p)) {
+            if (!this.contains(p.usrCoords[1], p.usrCoords[2])) {
                 return false;
             }
 
@@ -233,18 +147,16 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
          */
         subdivide: function () {
             var i,
-                x = this.boundary.c.x,
-                y = this.boundary.c.y,
-                w2 = this.boundary.hd.x / 2,
-                h2 = this.boundary.hd.y / 2,
-                nhd = new XY(w2, h2);
+                l = this.points.length,
+                mx = this.xlb + (this.xub - this.xlb) / 2,
+                my = this.ylb + (this.yub - this.ylb) / 2;
 
-            this.northWest = new Quadtree(new AABB(new XY(x - w2, y - h2), nhd));
-            this.northEast = new Quadtree(new AABB(new XY(x + w2, y - h2), nhd));
-            this.southEast = new Quadtree(new AABB(new XY(x + w2, y + h2), nhd));
-            this.southWest = new Quadtree(new AABB(new XY(x - w2, y + h2), nhd));
+            this.northWest = new Quadtree([this.xlb, this.yub, mx, my]);
+            this.northEast = new Quadtree([mx, this.yub, this.xub, my]);
+            this.southEast = new Quadtree([this.xlb, my, mx, this.ylb]);
+            this.southWest = new Quadtree([mx, my, this.xub, this.ylb]);
 
-            for (i = 0; i < this.points.length; i += 1) {
+            for (i = 0; i < l; i += 1) {
                 this.northWest.insert(this.points[i]);
                 this.northEast.insert(this.points[i]);
                 this.southEast.insert(this.points[i]);
@@ -254,36 +166,37 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Internal _query method that lacks adjustment of the parameter.
-         * @param {XY} p
+         * @param {Number} x
+         * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
          * if none of the quad trees contains the point (i.e. the point is not inside
          * the root tree's AABB).
          * @private
          */
-        _query: function (p) {
+        _query: function (x, y) {
             var r;
 
-            if (this.boundary.contains(p)) {
+            if (this.contains(x, y)) {
                 if (this.northWest === null) {
                     return this;
                 }
 
-                r = this.northWest._query(p);
+                r = this.northWest._query(x, y);
                 if (r) {
                     return r;
                 }
 
-                r = this.northEast._query(p);
+                r = this.northEast._query(x, y);
                 if (r) {
                     return r;
                 }
 
-                r = this.southEast._query(p);
+                r = this.southEast._query(x, y);
                 if (r) {
                     return r;
                 }
 
-                r = this.southWest._query(p);
+                r = this.southWest._query(x, y);
                 if (r) {
                     return r;
                 }
@@ -294,7 +207,7 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
 
         /**
          * Retrieve the smallest quad tree that contains the given point.
-         * @param {XY|JXG.Coords|Number} xp
+         * @param {JXG.Coords|Number} xp
          * @param {Number} y
          * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
          * if none of the quad trees contains the point (i.e. the point is not inside
@@ -302,10 +215,17 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
          * @private
          */
         query: function (xp, y) {
-            var r,
-                _p = new XY(xp, y);
+            var _x, _y;
 
-            return this._query(_p);
+            if (Type.exists(y)) {
+                _x = xp;
+                _y = y;
+            } else {
+                _x = xp.usrCoords[1];
+                _y = xp.usrCoords[2];
+            }
+
+            return this._query(_x, _y);
         }
     });
 
