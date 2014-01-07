@@ -373,7 +373,7 @@ define([
                 c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
 
             this.makeArrows(element);
-            this._updateVisual(element, {fill: true});
+            this._updateVisual(element);
         },
 
         /**
