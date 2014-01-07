@@ -1750,16 +1750,18 @@ define([
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
 
-            for (i = 0; i < this.touches.length; i++) {
-                for (j = 0; j < this.touches[i].targets.length; j++) {
-                    if (this.touches[i].targets[j].num === evt.pointerId) {
-                        this.touches[i].targets.splice(j, 1);
+            if (evt) {
+                for (i = 0; i < this.touches.length; i++) {
+                    for (j = 0; j < this.touches[i].targets.length; j++) {
+                        if (this.touches[i].targets[j].num === evt.pointerId) {
+                            this.touches[i].targets.splice(j, 1);
 
-                        if (this.touches[i].targets.length === 0) {
-                            this.touches.splice(i, 1);
+                            if (this.touches[i].targets.length === 0) {
+                                this.touches.splice(i, 1);
+                            }
+
+                            break;
                         }
-
-                        break;
                     }
                 }
             }
@@ -2067,12 +2069,12 @@ define([
             var i, j, k,
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
-                evtTouches = evt[JXG.touchProperty];
+                evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.renderer.hide(this.infobox);
 
-            if (evtTouches.length > 0) {
+            if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
                 }
