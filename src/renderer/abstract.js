@@ -353,25 +353,20 @@ define([
                These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
             */
             s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, 10);
-            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml') {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > Mat.eps) {
-                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                }
+            d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= 10/*Mat.eps*/) {
+                d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
-            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml') {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > Mat.eps) {
-                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                }
+            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= 10 /* Mat.eps*/) {
+                d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
 
             this.updateLinePrim(element.rendNode,
                 c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
                 c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
-
+            
             this.makeArrows(element);
             this._updateVisual(element);
         },
