@@ -338,6 +338,7 @@ define([
             var s, d, d1x, d1y, d2x, d2y,
                 c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
+                minlen = 10,
                 margin = null;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
@@ -350,15 +351,15 @@ define([
                Handle arrow heads.
 
                The arrow head is an equilateral triangle with base length 10 and height 10.
-               These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
+               These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
-            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, 10);
+            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
             d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= 10/*Mat.eps*/) {
+            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen/*Mat.eps*/) {
                 d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                 d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
-            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= 10 /* Mat.eps*/) {
+            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen /* Mat.eps*/) {
                 d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                 d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
