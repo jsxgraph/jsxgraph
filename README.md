@@ -3,7 +3,7 @@ JSXGraph
 
 Interactive Math Library for the Web.
 
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
