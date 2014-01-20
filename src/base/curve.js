@@ -1514,12 +1514,12 @@ define([
      * @see JXG.Curve
      * @example
      * // Create step function.
-     var curve = board.create('tracecurve', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+     var curve = board.create('stepfunction', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
 
      * </pre><div id="32342ec9-ad17-4339-8a97-ff23dc34f51a" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var tc1_board = JXG.JSXGraph.initBoard('32342ec9-ad17-4339-8a97-ff23dc34f51a', {boundingbox: [-1, 5, 6, -2], axis: true, showcopyright: false, shownavigation: false});
-     *   var curve = board.create('tracecurve', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+     *   var curve = board.create('stepfunction', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
      * </script><pre>
      */
     JXG.createStepfunction = function (board, parents, attributes) {
