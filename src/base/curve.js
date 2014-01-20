@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1358,7 +1358,7 @@ define([
     JXG.registerElement('riemannsum', JXG.createRiemannsum);
 
     /**
-     * @class This element is used to provide a constructor for travce curve (simple locus curve), which is realized as a special curve.
+     * @class This element is used to provide a constructor for trace curve (simple locus curve), which is realized as a special curve.
      * @pseudo
      * @description
      * @name Tracecurve
@@ -1502,6 +1502,65 @@ define([
 
     JXG.registerElement('tracecurve', JXG.createTracecurve);
 
+    /**
+     * @class This element is used to provide a constructor for step function, which is realized as a special curve.
+     * @pseudo
+     * @description
+     * @name Stepfunction
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @param {Array,Array} Parent elements of Stepfunction are two arrays containing the coordinates.
+     * @see JXG.Curve
+     * @example
+     * // Create step function.
+     var curve = board.create('tracecurve', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+
+     * </pre><div id="32342ec9-ad17-4339-8a97-ff23dc34f51a" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var tc1_board = JXG.JSXGraph.initBoard('32342ec9-ad17-4339-8a97-ff23dc34f51a', {boundingbox: [-1, 5, 6, -2], axis: true, showcopyright: false, shownavigation: false});
+     *   var curve = board.create('tracecurve', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+     * </script><pre>
+     */
+    JXG.createStepfunction = function (board, parents, attributes) {
+        var c, attr;
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create step function with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'stepfunction');
+        c = board.create('curve', parents, attr);
+        c.updateDataArray = function () {
+            var i, j = 0,
+                len = this.xterm.length;
+                
+            this.dataX = [];
+            this.dataY = [];
+
+            if (len == 0) {
+                return;
+            }
+            
+            this.dataX[j] = this.xterm[0];
+            this.dataY[j] = this.yterm[0];
+            ++j;
+            
+            for (i = 1; i < len; ++i) {
+                this.dataX[j] = this.xterm[i];
+                this.dataY[j] = this.dataY[j - 1];
+                ++j;
+                this.dataX[j] = this.xterm[i];
+                this.dataY[j] = this.yterm[i];
+                ++j;
+            }
+        };
+        
+        return c;
+    };
+
+    JXG.registerElement('stepfunction', JXG.createStepfunction);
+
     return {
         Curve: JXG.Curve,
         createCurve: JXG.createCurve,
@@ -1509,6 +1568,7 @@ define([
         createPlot: JXG.createPlot,
         createSpline: JXG.createSpline,
         createRiemannsum: JXG.createRiemannsum,
-        createTracecurve: JXG.createTracecurve
+        createTracecurve: JXG.createTracecurve,
+        createStepfunction: JXG.createStepfunction
     };
 });

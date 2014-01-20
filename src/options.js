@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1648,6 +1648,10 @@ define([
             label: {
                 strokeColor: '#000000'
             }
+        },
+        
+        /* special options for step functions */
+        stepfunction: {
         },
 
         /* special tape measure options */
