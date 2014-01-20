@@ -1504,6 +1504,8 @@ define([
 
     /**
      * @class This element is used to provide a constructor for step function, which is realized as a special curve.
+     * 
+     * In case the data points should be updated after creation time, they can be accessed by curve.xterm and curve.yterm.
      * @pseudo
      * @description
      * @name Stepfunction
