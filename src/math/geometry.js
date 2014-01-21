@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -1937,7 +1937,7 @@ define([
              * the projection is equal to that point.
              */
             if (Math.abs(s[0]) < Mat.eps && Math.abs(s[1]) < Mat.eps) {
-                return q1;
+                return [q1, 0];
             }
 
             t = Mat.innerProduct(v, s);
@@ -2011,7 +2011,7 @@ define([
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
-            var newCoords, i,
+            var newCoords, newCoordsObj, i,
                 x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
                 p1, p2, q1, q2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
@@ -2064,7 +2064,7 @@ define([
                     }
                 }
 
-                newCoords = new Coords(Const.COORDS_BY_USER, newCoords, board);
+                newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
 
                 // Function to minimize
@@ -2102,10 +2102,10 @@ define([
                     t = curve.minX() + t - curve.maxX();
                 }
 
-                newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
+                newCoordsObj = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
             }
 
-            return [curve.updateTransform(newCoords), t];
+            return [curve.updateTransform(newCoordsObj), t];
         },
 
         /**
