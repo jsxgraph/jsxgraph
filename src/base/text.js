@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -779,8 +779,63 @@ define([
 
     JXG.registerElement('text', JXG.createText);
 
+    /**
+     * [[x,y], [w px, h px], [range]
+     */
+    JXG.createHTMLSlider = function (board, parents, attributes) {
+        var t,
+            attr = Type.copyAttributes(attributes, board.options, 'htmlslider'),
+            par;
+
+        // downwards compatibility
+        attr.anchor = attr.parent || attr.anchor;
+        attr.fixed = attr.fixed || true;
+        
+        par = [parents[0][0], parents[0][1], '<input type="range">'];
+        
+        t = JXG.createText(board, par, attr);
+        
+        t.rendNodeRange = t.rendNode.childNodes[0];
+        t.rendNodeRange.min = parents[1][0];
+        t.rendNodeRange.max = parents[1][2];
+        t.rendNodeRange.step = attr.step;
+        t.rendNodeRange.value = parents[1][1];
+        t._val = parents[1][1];
+
+        t.rendNodeRange.style.width = attr.width + 'px';
+
+        Env.addEvent(t.rendNodeRange, 'input', function () {
+            this._val = 1.0 * t.rendNodeRange.value;
+            t.board.update();
+        }, t);
+        Env.addEvent(t.rendNodeRange, 'change', function () {
+            this._val = 1.0 * t.rendNodeRange.value;
+            t.board.update();
+        }, t);
+
+        t.Value = function() {
+            return this._val;
+        };
+        
+        /*
+        if (typeof parents[parents.length - 1] !== 'function') {
+            t.parents = parents;
+        }
+        
+        if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
+            t.addRotation(Type.evaluate(attr.rotate));
+        }
+        */
+        
+        return t;
+    };
+
+    JXG.registerElement('htmlslider', JXG.createHTMLSlider);
+
+    
     return {
         Text: JXG.Text,
-        createText: JXG.createText
+        createText: JXG.createText,
+        createHTMLSlider: JXG.createHTMLSlider
     };
 });

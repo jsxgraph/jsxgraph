@@ -972,6 +972,32 @@ define([
             /**#@-*/
         },
 
+        /* special html slider options */
+        htmlslider: {
+            /**#@+
+             * @visprop
+             */
+            
+            /**
+             * 
+             * These affect the DOM element input type="range".
+             * The other attributes affect the DOM element div containing the range element.
+             */
+            width: 100,
+            step: 0.01,
+            
+            frozen: true,
+            isLabel: false,
+            strokeColor: 'black',
+            display: 'html',
+            anchorX: 'left',
+            anchorY: 'middle',
+            withLabel: false
+
+            /**#@-*/
+        },
+
+
         /* special grid options */
         image: {
             imageString: null,
