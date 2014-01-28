@@ -783,27 +783,54 @@ define([
      * [[x,y], [w px, h px], [range]
      */
     JXG.createHTMLSlider = function (board, parents, attributes) {
-        var t,
+        var t, 
             attr = Type.copyAttributes(attributes, board.options, 'htmlslider'),
             par;
 
-        // downwards compatibility
+        // backwards compatibility
         attr.anchor = attr.parent || attr.anchor;
         attr.fixed = attr.fixed || true;
         
-        par = [parents[0][0], parents[0][1], '<input type="range">'];
+        par = [parents[0][0], parents[0][1], 
+            '<form style="display:inline">' +        
+            '<input type="range" /><span></span><input type="text" />' +
+            '</form>'];
         
         t = JXG.createText(board, par, attr);
         
-        t.rendNodeRange = t.rendNode.childNodes[0];
+        t.rendNodeForm = t.rendNode.childNodes[0];
+        t.rendNodeForm.id = t.rendNode.id + '_form';
+        
+        t.rendNodeRange = t.rendNodeForm.childNodes[0];
+        t.rendNodeRange.id = t.rendNode.id + '_range';
         t.rendNodeRange.min = parents[1][0];
         t.rendNodeRange.max = parents[1][2];
         t.rendNodeRange.step = attr.step;
         t.rendNodeRange.value = parents[1][1];
-        t._val = parents[1][1];
+        
+        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+        t.rendNodeLabel.id = t.rendNode.id + '_label';
+        
+        console.log(attr.withlabel, t.name);
+        if (attr.withlabel) {
+            t.rendNodeLabel.innerHTML = t.name + '=';
+        }
+        
+        t.rendNodeOut = t.rendNodeForm.childNodes[2];
+        t.rendNodeOut.id = t.rendNode.id + '_out';
+        t.rendNodeOut.value = parents[1][1];
 
         t.rendNodeRange.style.width = attr.width + 'px';
+        t.rendNodeOut.style.width = 40 + 'px';
 
+        t._val = parents[1][1];
+        Env.addEvent(t.rendNodeForm, 'input', function () {
+            this._val = 1.0 * t.rendNodeRange.value;
+            t.rendNodeOut.value = t.rendNodeRange.value;
+            t.board.update();
+        }, t);
+
+/*
         Env.addEvent(t.rendNodeRange, 'input', function () {
             this._val = 1.0 * t.rendNodeRange.value;
             t.board.update();
@@ -812,7 +839,7 @@ define([
             this._val = 1.0 * t.rendNodeRange.value;
             t.board.update();
         }, t);
-
+*/
         t.Value = function() {
             return this._val;
         };
