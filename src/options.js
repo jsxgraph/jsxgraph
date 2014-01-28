@@ -983,7 +983,8 @@ define([
              * These affect the DOM element input type="range".
              * The other attributes affect the DOM element div containing the range element.
              */
-            width: 100,
+            widthRange: 100,
+            widthOut: 34,
             step: 0.01,
             
             frozen: true,

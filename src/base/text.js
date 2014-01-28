@@ -820,8 +820,9 @@ define([
         t.rendNodeOut.id = t.rendNode.id + '_out';
         t.rendNodeOut.value = parents[1][1];
 
-        t.rendNodeRange.style.width = attr.width + 'px';
-        t.rendNodeOut.style.width = 40 + 'px';
+        t.rendNodeRange.style.width = attr.widthrange + 'px';
+        t.rendNodeRange.style.verticalAlign = 'middle';
+        t.rendNodeOut.style.width = attr.widthout + 'px';
 
         t._val = parents[1][1];
         /*
