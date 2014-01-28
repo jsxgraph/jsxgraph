@@ -825,24 +825,27 @@ define([
         t.rendNodeOut.style.width = attr.widthout + 'px';
 
         t._val = parents[1][1];
-        /*
-         * This is used for non-IE browsers
-         */
-        Env.addEvent(t.rendNodeForm, 'input', function () {
-            this._val = 1.0 * t.rendNodeRange.value;
-            t.rendNodeOut.value = t.rendNodeRange.value;
-            t.board.update();
-        }, t);
-
-        /*
-         * This is needed for IE browsers
-         * The range element is supported since IE10
-         */
-        Env.addEvent(t.rendNodeForm, 'change', function () {
-            this._val = 1.0 * t.rendNodeRange.value;
-            t.rendNodeOut.value = t.rendNodeRange.value;
-            t.board.update();
-        }, t);
+        
+        if (JXG.supportsVML()) {
+            /*
+            * This is needed for IE browsers
+            * The range element is supported since IE10
+            */
+            Env.addEvent(t.rendNodeForm, 'change', function () {
+                this._val = 1.0 * t.rendNodeRange.value;
+                t.rendNodeOut.value = t.rendNodeRange.value;
+                t.board.update();
+            }, t);
+        } else {
+            /*
+            * This is used for non-IE browsers
+            */
+            Env.addEvent(t.rendNodeForm, 'input', function () {
+                this._val = 1.0 * t.rendNodeRange.value;
+                t.rendNodeOut.value = t.rendNodeRange.value;
+                t.board.update();
+            }, t);
+        }
 
         t.Value = function() {
             return this._val;
