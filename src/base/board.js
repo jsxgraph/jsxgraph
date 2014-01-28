@@ -693,6 +693,8 @@ define([
                 return this.cPos;
             }
 
+            this.positionAccessLast = (new Date()).getTime();
+
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             if (container.getBoundingClientRect) {
@@ -734,8 +736,6 @@ define([
 
                 return this.cpos;
             }
-
-            this.positionAccessLast = (new Date()).getTime();
 
             cPos = Env.getOffset(container);
             doc = document.documentElement.ownerDocument;
