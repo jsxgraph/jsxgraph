@@ -811,7 +811,6 @@ define([
         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         
-        console.log(attr.withlabel, t.name);
         if (attr.withlabel) {
             t.rendNodeLabel.innerHTML = t.name + '=';
         }
