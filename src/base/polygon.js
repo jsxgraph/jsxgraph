@@ -185,7 +185,7 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
+            if (this.needsUpdate && this.visProp.visible) {
                 this.board.renderer.updatePolygon(this);
                 this.needsUpdate = false;
             }
