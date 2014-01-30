@@ -1800,7 +1800,7 @@ define([
             useASCIIMathML: false,
 
             /**
-             * If true MathJax will be used to render the input string..
+             * If true MathJax will be used to render the input string.
              * @memberOf Text.prototype
              * @default false
              * @name useMathJax
