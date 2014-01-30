@@ -229,7 +229,6 @@ define([
                 }
                 this.context.globalAlpha = oo;
 
-
                 this.context[targetType + 'Style'] = c;
 
             } else {
@@ -418,6 +417,10 @@ define([
                 scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null;
+
+            if (!el.visProp.visible) {
+                return;
+            }
 
             if (el.visProp.firstarrow || el.visProp.lastarrow) {
                 margin = -4;
@@ -950,7 +953,7 @@ define([
                 context = this.context,
                 isReal = true;
 
-            if (len <= 0) {
+            if (len <= 0 || !el.visProp.visible) {
                 return;
             }
 
@@ -1051,7 +1054,6 @@ define([
         // documented in AbstractRenderer
         suspendRedraw: function (board) {
             this.context.save();
-
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && board.showCopyright) {
