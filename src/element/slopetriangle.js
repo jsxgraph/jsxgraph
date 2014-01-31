@@ -56,6 +56,8 @@ define([
 
                 this.board.removeObject(this.baseline);
                 this.board.removeObject(this.basepoint);
+
+                this.board.removeObject(this.label);
             },
             Value: function () {
                 return this.tangent.getSlope();
@@ -66,6 +68,8 @@ define([
     Options.slopetriangle = {
         fillColor: 'red',
         fillOpacity: 0.4,
+        highlightFillColor: 'red',
+        highlightFillOpacity: 0.3,
 
         glider: {
             fixed: true,
@@ -86,6 +90,9 @@ define([
             visible: false,
             withLabel: false,
             name: ''
+        },
+        label: {
+            visible: true
         }
     };
 
@@ -144,7 +151,7 @@ define([
      * </script><pre>
      */
     JXG.createSlopeTriangle = function (board, parents, attributes) {
-        var el, tangent, tglide, glider, toppoint, baseline, basepoint, attr;
+        var el, tangent, tglide, glider, toppoint, baseline, basepoint, label, attr;
 
         if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
             tangent = parents[0];
@@ -177,19 +184,31 @@ define([
         el = board.create('polygon', [tglide, glider, toppoint], attr);
 
         el.Value = priv.Value;
-
         el.tangent = tangent;
+
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'label');
+        label = board.create('text', [
+                function() { return glider.X() + 0.1;}, 
+                function() { return (glider.Y() + toppoint.Y()) * 0.5;},
+                function() { return ''; }
+            ], attr);
+        
+        label._setText(function() { return el.Value().toFixed(label.visProp.digits)});
+        label.prepareUpdate().update().updateRenderer();
+        
         el.glider = glider;
         el.basepoint = basepoint;
         el.baseline = baseline;
         el.toppoint = toppoint;
-
+        el.label = label;
+        
         el.methodMap = JXG.deepCopy(el.methodMap, {
             tangent: 'tangent',
             glider: 'glider',
             basepoint: 'basepoint',
             baseline: 'baseline',
             toppoint: 'toppoint',
+            label: 'label',
             Value: 'Value',
             V: 'Value'
         });
