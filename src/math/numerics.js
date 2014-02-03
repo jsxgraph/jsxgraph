@@ -876,27 +876,38 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         },
 
         /**
-         * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
+         * Computes the cubic cardinal spline curve through a given set of points. The curve
          * is uniformly parametrized.
          * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
+         * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is beteen 0 and 1.
+         * tau=1/2 give Catmull-Rom splines.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
         */
-        CatmullRomSpline: function (points) {
+        CardinalSpline: function (points, tau) {
             var p,
                 coeffs = [],
                 // control point at the beginning and at the end
                 first = {},
                 last = {},
+                makeFct,
+                _tau;
+                
+                if (Type.isFunction(tau)) {
+                    _tau = tau;
+                } else {
+                    _tau = function() { return tau; }
+                };
 
                 /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
                         var s, c,
-                            len = points.length;
-
+                            len = points.length,
+                            tau = _tau();
+                            
                         if (len < 2) {
                             return NaN;
                         }
@@ -915,10 +926,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                             for (s = 0; s < len - 1; s++) {
                                 coeffs[which][s] = [
-                                    2 * p[s + 1][which](),
+                                    1 / tau * p[s + 1][which](),
                                     -p[s][which]() +   p[s + 2][which](),
-                                    2 * p[s][which]() - 5 * p[s + 1][which]() + 4 * p[s + 2][which]() - p[s + 3][which](),
-                                    -p[s][which]() + 3 * p[s + 1][which]() - 3 * p[s + 2][which]() + p[s + 3][which]()
+                                    2 * p[s][which]() + (- 3 / tau + 1) * p[s + 1][which]() + (3 / tau - 2) * p[s + 2][which]() - p[s + 3][which](),
+                                    -p[s][which]() + (2 / tau - 1) * p[s + 1][which]() + (- 2 / tau + 1) * p[s + 2][which]() + p[s + 3][which]()
                                 ];
                             }
                         }
@@ -946,7 +957,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         t -= s;
                         c = coeffs[which][s];
 
-                        return 0.5 * (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
+                        return tau * (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
                     };
                 };
 
@@ -956,6 +967,18 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 }];
         },
 
+        /**
+         * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
+         * is uniformly parametrized. The curve is the cardinal spline curve for tau=0.5.
+         * Two artificial control points at the beginning and the end are added.
+         * @param {Array} points Array consisting of JXG.Points.
+         * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
+         * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
+         * returning the length of the points array minus three.
+        */
+        CatmullRomSpline: function (points) {
+            return this.CardinalSpline(points, 0.5);
+        },
 
         /**
          * Computes the regression polynomial of a given degree through a given set of coordinates.
