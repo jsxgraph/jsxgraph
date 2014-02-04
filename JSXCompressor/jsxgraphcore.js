@@ -17653,7 +17653,6 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
                 len = dec.length;
 
             for (i = 0; i < len; i++) {
-                console.log(">>"+dec.charCodeAt(i).toString(16)+' '+dec.charCodeAt(i));
                 ar[i] = dec.charCodeAt(i);
             }
 
