@@ -454,7 +454,6 @@ define("../node_modules/almond/almond", function(){});
  * @fileoverview The JSXGraph object is defined in this file. JXG.JSXGraph controls all boards.
  * It has methods to create, save, load and free boards. Additionally some helper functions are
  * defined in this file directly in the JXG namespace.
- * @version 0.83
  */
 
 define('jxg',[], function () {
@@ -652,7 +651,7 @@ define('jxg',[], function () {
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -695,8 +694,8 @@ define('base/constants',['jxg'], function (JXG) {
     
 
     var major = 0,
-        minor = 98,
-        patch = 2,
+        minor = 99,
+        patch = 1,
         add = 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
@@ -2023,7 +2022,7 @@ define('utils/env',['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports touch events.
          */
         isTouchDevice: function () {
-            return this.isBrowser && ('ontouchstart' in window);
+            return this.isBrowser && window.ontouchstart !== undefined;
         },
 
         /**
@@ -2827,7 +2826,7 @@ define('utils/event',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -3463,6 +3462,7 @@ define('math/math',['jxg'], function (JXG) {
 
     return JXG.Math;
 });
+
 /*
     Copyright 2008-2013
         Matthias Ehmann,
@@ -4515,25 +4515,25 @@ define('utils/color',['jxg', 'utils/type', 'math/math'], function (JXG, Type, Ma
         var col = JXG.rgba2rgbo(colstr),
             c = col[0],
             opa = col[1];
-        
+
         if (colstr.charAt(0) === '#') {
             if (opa < 0.3) {
                 opa *= 1.333333;
             } else {
                 opa *= 0.666666;
             }
-        
+
             return JXG.rgbo2rgba(c, opa);
-        } else {
-            return colstr;
         }
+
+        return colstr;
     };
 
     return JXG;
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -5428,6 +5428,8 @@ define('options',[
             fillColor: 'none',
             fixed: true,
 
+            useQDT: false,
+
             /**#@+
              * @visprop
              */
@@ -5503,6 +5505,33 @@ define('options',[
 
             /**#@-*/
         },
+
+        /* special html slider options */
+        htmlslider: {
+            /**#@+
+             * @visprop
+             */
+            
+            /**
+             * 
+             * These affect the DOM element input type="range".
+             * The other attributes affect the DOM element div containing the range element.
+             */
+            widthRange: 100,
+            widthOut: 34,
+            step: 0.01,
+            
+            frozen: true,
+            isLabel: false,
+            strokeColor: 'black',
+            display: 'html',
+            anchorX: 'left',
+            anchorY: 'middle',
+            withLabel: false
+
+            /**#@-*/
+        },
+
 
         /* special grid options */
         image: {
@@ -6181,6 +6210,10 @@ define('options',[
                 strokeColor: '#000000'
             }
         },
+        
+        /* special options for step functions */
+        stepfunction: {
+        },
 
         /* special tape measure options */
         tapemeasure: {
@@ -6301,7 +6334,7 @@ define('options',[
             useASCIIMathML: false,
 
             /**
-             * If true MathJax will be used to render the input string..
+             * If true MathJax will be used to render the input string.
              * @memberOf Text.prototype
              * @default false
              * @name useMathJax
@@ -7568,27 +7601,38 @@ define('math/numerics',['utils/type', 'math/math'], function (Type, Mat) {
         },
 
         /**
-         * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
+         * Computes the cubic cardinal spline curve through a given set of points. The curve
          * is uniformly parametrized.
          * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
+         * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is beteen 0 and 1.
+         * tau=1/2 give Catmull-Rom splines.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
         */
-        CatmullRomSpline: function (points) {
+        CardinalSpline: function (points, tau) {
             var p,
                 coeffs = [],
                 // control point at the beginning and at the end
                 first = {},
                 last = {},
+                makeFct,
+                _tau;
+                
+                if (Type.isFunction(tau)) {
+                    _tau = tau;
+                } else {
+                    _tau = function() { return tau; }
+                };
 
                 /** @ignore */
                 makeFct = function (which) {
                     return function (t, suspendedUpdate) {
                         var s, c,
-                            len = points.length;
-
+                            len = points.length,
+                            tau = _tau();
+                            
                         if (len < 2) {
                             return NaN;
                         }
@@ -7607,10 +7651,10 @@ define('math/numerics',['utils/type', 'math/math'], function (Type, Mat) {
 
                             for (s = 0; s < len - 1; s++) {
                                 coeffs[which][s] = [
-                                    2 * p[s + 1][which](),
+                                    1 / tau * p[s + 1][which](),
                                     -p[s][which]() +   p[s + 2][which](),
-                                    2 * p[s][which]() - 5 * p[s + 1][which]() + 4 * p[s + 2][which]() - p[s + 3][which](),
-                                    -p[s][which]() + 3 * p[s + 1][which]() - 3 * p[s + 2][which]() + p[s + 3][which]()
+                                    2 * p[s][which]() + (- 3 / tau + 1) * p[s + 1][which]() + (3 / tau - 2) * p[s + 2][which]() - p[s + 3][which](),
+                                    -p[s][which]() + (2 / tau - 1) * p[s + 1][which]() + (- 2 / tau + 1) * p[s + 2][which]() + p[s + 3][which]()
                                 ];
                             }
                         }
@@ -7638,7 +7682,7 @@ define('math/numerics',['utils/type', 'math/math'], function (Type, Mat) {
                         t -= s;
                         c = coeffs[which][s];
 
-                        return 0.5 * (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
+                        return tau * (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
                     };
                 };
 
@@ -7648,6 +7692,18 @@ define('math/numerics',['utils/type', 'math/math'], function (Type, Mat) {
                 }];
         },
 
+        /**
+         * Computes the cubic Catmull-Rom spline curve through a given set of points. The curve
+         * is uniformly parametrized. The curve is the cardinal spline curve for tau=0.5.
+         * Two artificial control points at the beginning and the end are added.
+         * @param {Array} points Array consisting of JXG.Points.
+         * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
+         * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
+         * returning the length of the points array minus three.
+        */
+        CatmullRomSpline: function (points) {
+            return this.CardinalSpline(points, 0.5);
+        },
 
         /**
          * Computes the regression polynomial of a given degree through a given set of coordinates.
@@ -8718,7 +8774,7 @@ define('math/numerics',['utils/type', 'math/math'], function (Type, Mat) {
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -10656,7 +10712,7 @@ define('math/geometry',[
              * the projection is equal to that point.
              */
             if (Math.abs(s[0]) < Mat.eps && Math.abs(s[1]) < Mat.eps) {
-                return q1;
+                return [q1, 0];
             }
 
             t = Mat.innerProduct(v, s);
@@ -10730,7 +10786,7 @@ define('math/geometry',[
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
-            var newCoords, i,
+            var newCoords, newCoordsObj, i,
                 x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
                 p1, p2, q1, q2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
@@ -10783,7 +10839,7 @@ define('math/geometry',[
                     }
                 }
 
-                newCoords = new Coords(Const.COORDS_BY_USER, newCoords, board);
+                newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
 
                 // Function to minimize
@@ -10821,10 +10877,10 @@ define('math/geometry',[
                     t = curve.minX() + t - curve.maxX();
                 }
 
-                newCoords = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
+                newCoordsObj = new Coords(Const.COORDS_BY_USER, [curve.X(t), curve.Y(t)], board);
             }
 
-            return [curve.updateTransform(newCoords), t];
+            return [curve.updateTransform(newCoordsObj), t];
         },
 
         /**
@@ -12214,12 +12270,12 @@ define('base/element',[
          * Updates the element's label text and the element's attribute "name", strips all html.
          * @param {String} str
          */
-        setName: function(str) {
+        setName: function (str) {
             str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             this.setLabelText(str);
             this.setAttribute({name: str});
         },
-        
+
         /**
          * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
@@ -13279,7 +13335,7 @@ define('base/transformation',[
                     if (params.length === 2) {
                         params[1] = board.select(params[1]);
                     }
-                } 
+                }
 
                 this.update = function () {
                     var x, y,
@@ -13309,7 +13365,7 @@ define('base/transformation',[
                 if (params.length !== 2) {
                     throw new Error("JSXGraph: shear transformation needs 2 parameters.");
                 }
-                
+
                 this.evalParam = Type.createEvalFunction(board, params, 2);
                 this.update = function () {
                     this.matrix[1][2] = this.evalParam(0);
@@ -13452,7 +13508,7 @@ define('base/transformation',[
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -14391,10 +14447,19 @@ define('base/point',[
 
         /**
          * Convert the point to glider and update the construction.
-         * @param {String|Object} glideObject The Object the point will be bound to.
+         * @param {String|Object} slide The Object the point will be bound to.
          */
-        makeGlider: function (glideObject) {
-            this.slideObject = this.board.select(glideObject);
+        makeGlider: function (slide) {
+            var slideobj = this.board.select(slide);
+            
+            /* Gliders on Ticks are forbidden */
+            if (!Type.exists(slideobj)) {
+                throw new Error("JSXGraph: slide object undefined.");
+            } else if (slideobj.type === Const.OBJECT_TYPE_TICKS) {
+                throw new Error("JSXGraph: gliders on ticks are not possible.");
+            }
+            
+            this.slideObject = this.board.select(slide);
             this.slideObjects.push(this.slideObject);
 
             this.type = Const.OBJECT_TYPE_GLIDER;
@@ -15651,6 +15716,242 @@ define('utils/expect',[
  */
 
 
+/*global JXG:true, define: true*/
+/*jslint nomen: true, plusplus: true*/
+
+/* depends:
+ math/math
+ utils/type
+ */
+
+define('math/qdt',['math/math', 'utils/type'], function (Mat, Type) {
+
+    
+
+    var
+        /**
+         * Instantiate a new quad tree.
+         * @param {Array} bbox Bounding box of the new quad (sub)tree.
+         * @constructor
+         */
+        Quadtree = function (bbox) {
+            /**
+             * The maximum number of points stored in a quad tree node
+             * before it is subdivided.
+             * @type {Number}
+             * @default 10
+             */
+            this.capacity = 10;
+
+            /**
+             * Point storage.
+             * @type {Array}
+             */
+            this.points = [];
+
+            this.xlb = bbox[0];
+            this.xub = bbox[2];
+            this.ylb = bbox[3];
+            this.yub = bbox[1];
+
+            /**
+             * In a subdivided quad tree this represents the top left subtree.
+             * @type {JXG.Quadtree}
+             */
+            this.northWest = null;
+
+            /**
+             * In a subdivided quad tree this represents the top right subtree.
+             * @type {JXG.Quadtree}
+             */
+            this.northEast = null;
+
+            /**
+             * In a subdivided quad tree this represents the bottom right subtree.
+             * @type {JXG.Quadtree}
+             */
+            this.southEast = null;
+
+            /**
+             * In a subdivided quad tree this represents the bottom left subtree.
+             * @type {JXG.Quadtree}
+             */
+            this.southWest = null;
+        };
+
+    Type.extend(Quadtree.prototype, /** @lends JXG.Quadtree.prototype */ {
+        /**
+         * Checks if the given coordinates are inside the quad tree.
+         * @param {Number} x
+         * @param {Number} y
+         * @returns {Boolean}
+         */
+        contains: function (x, y) {
+            return this.xlb < x && x <= this.xub && this.ylb < y && y <= this.yub;
+        },
+
+        /**
+         * Insert a new point into this quad tree.
+         * @param {JXG.Coords} p
+         * @returns {Boolean}
+         */
+        insert: function (p) {
+            if (!this.contains(p.usrCoords[1], p.usrCoords[2])) {
+                return false;
+            }
+
+            if (this.points.length < this.capacity) {
+                this.points.push(p);
+                return true;
+            }
+
+            if (this.northWest === null) {
+                this.subdivide();
+            }
+
+            if (this.northWest.insert(p)) {
+                return true;
+            }
+
+            if (this.northEast.insert(p)) {
+                return true;
+            }
+
+            if (this.southEast.insert(p)) {
+                return true;
+            }
+
+            if (this.southWest.insert(p)) {
+                return true;
+            }
+
+            return false;
+        },
+
+        /**
+         * Subdivide the quad tree.
+         */
+        subdivide: function () {
+            var i,
+                l = this.points.length,
+                mx = this.xlb + (this.xub - this.xlb) / 2,
+                my = this.ylb + (this.yub - this.ylb) / 2;
+
+            this.northWest = new Quadtree([this.xlb, this.yub, mx, my]);
+            this.northEast = new Quadtree([mx, this.yub, this.xub, my]);
+            this.southEast = new Quadtree([this.xlb, my, mx, this.ylb]);
+            this.southWest = new Quadtree([mx, my, this.xub, this.ylb]);
+
+            for (i = 0; i < l; i += 1) {
+                this.northWest.insert(this.points[i]);
+                this.northEast.insert(this.points[i]);
+                this.southEast.insert(this.points[i]);
+                this.southWest.insert(this.points[i]);
+            }
+        },
+
+        /**
+         * Internal _query method that lacks adjustment of the parameter.
+         * @param {Number} x
+         * @param {Number} y
+         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
+         * if none of the quad trees contains the point (i.e. the point is not inside
+         * the root tree's AABB).
+         * @private
+         */
+        _query: function (x, y) {
+            var r;
+
+            if (this.contains(x, y)) {
+                if (this.northWest === null) {
+                    return this;
+                }
+
+                r = this.northWest._query(x, y);
+                if (r) {
+                    return r;
+                }
+
+                r = this.northEast._query(x, y);
+                if (r) {
+                    return r;
+                }
+
+                r = this.southEast._query(x, y);
+                if (r) {
+                    return r;
+                }
+
+                r = this.southWest._query(x, y);
+                if (r) {
+                    return r;
+                }
+            }
+
+            return false;
+        },
+
+        /**
+         * Retrieve the smallest quad tree that contains the given point.
+         * @param {JXG.Coords|Number} xp
+         * @param {Number} y
+         * @returns {Boolean|JXG.Quadtree} The quad tree if the point is found, false
+         * if none of the quad trees contains the point (i.e. the point is not inside
+         * the root tree's AABB).
+         * @private
+         */
+        query: function (xp, y) {
+            var _x, _y;
+
+            if (Type.exists(y)) {
+                _x = xp;
+                _y = y;
+            } else {
+                _x = xp.usrCoords[1];
+                _y = xp.usrCoords[2];
+            }
+
+            return this._query(_x, _y);
+        }
+    });
+
+    Mat.Quadtree = Quadtree;
+
+    return Quadtree;
+});
+
+/*
+    Copyright 2008-2013
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+    
+    You can redistribute it and/or modify it under the terms of the
+    
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+    
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+    
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
+    and <http://opensource.org/licenses/MIT/>.
+ */
+
+
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -16258,35 +16559,40 @@ define('utils/zip',['jxg'], function (JXG) {
 
         function readBit() {
             var carry;
-            
+
             try {   // Prevent problems on iOS7 with >>
-            bits++;
-            carry = (bb & 1);
-            bb >>= 1;
-
-            if (bb === 0) {
-                bb = readByte();
+                bits++;
                 carry = (bb & 1);
-                bb = (bb >> 1) | 0x80;
-            }
+                bb >>= 1;
 
-            return carry;
-            }catch(e) { throw e};
+                if (bb === 0) {
+                    bb = readByte();
+                    carry = (bb & 1);
+                    bb = (bb >> 1) | 0x80;
+                }
+
+                return carry;
+            } catch (e) {
+                throw e;
+            }
         }
 
         function readBits(a) {
             var res = 0,
                 i = a;
 
-            try{   // Prevent problems on iOS7 with >>
-            while (i--) {
-                res = (res << 1) | readBit();
-            }
+            // Prevent problems on iOS7 with >>
+            try {
+                while (i--) {
+                    res = (res << 1) | readBit();
+                }
 
-            if (a) {
-                res = bitReverse[res] >> (8 - a);
+                if (a) {
+                    res = bitReverse[res] >> (8 - a);
+                }
+            } catch (e) {
+                throw e;
             }
-            }catch(e) { throw e};
 
             return res;
         }
@@ -16661,107 +16967,109 @@ define('utils/zip',['jxg'], function (JXG) {
         function nextFile() {
             var i, c, extralen, filelen, size, compSize, crc, method,
                 tmp = [];
-            
-            try {  // Prevent problems on iOS7 with >>
-            outputArr = [];
-            modeZIP = false;
-            tmp[0] = readByte();
-            tmp[1] = readByte();
 
-            //GZIP
-            if (tmp[0] === 0x78 && tmp[1] === 0xda) {
-                deflateLoop();
-                unzipped[files] = [outputArr.join(''), 'geonext.gxt'];
-                files++;
-            }
+            // Prevent problems on iOS7 with >>
+            try {
+                outputArr = [];
+                modeZIP = false;
+                tmp[0] = readByte();
+                tmp[1] = readByte();
 
-            //GZIP
-            if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
-                skipdir();
-                unzipped[files] = [outputArr.join(''), 'file'];
-                files++;
-            }
-
-            //ZIP
-            if (tmp[0] === 0x50 && tmp[1] === 0x4b) {
-                modeZIP = true;
-                tmp[2] = readByte();
-                tmp[3] = readByte();
-
-                if (tmp[2] === 0x03 && tmp[3] === 0x04) {
-                    //MODE_ZIP
-                    tmp[0] = readByte();
-                    tmp[1] = readByte();
-
-                    gpflags = readByte();
-                    gpflags |= (readByte() << 8);
-
-                    method = readByte();
-                    method |= (readByte() << 8);
-
-                    readByte();
-                    readByte();
-                    readByte();
-                    readByte();
-
-                    crc = readByte();
-                    crc |= (readByte() << 8);
-                    crc |= (readByte() << 16);
-                    crc |= (readByte() << 24);
-
-                    compSize = readByte();
-                    compSize |= (readByte() << 8);
-                    compSize |= (readByte() << 16);
-                    compSize |= (readByte() << 24);
-
-                    size = readByte();
-                    size |= (readByte() << 8);
-                    size |= (readByte() << 16);
-                    size |= (readByte() << 24);
-
-                    filelen = readByte();
-                    filelen |= (readByte() << 8);
-
-                    extralen = readByte();
-                    extralen |= (readByte() << 8);
-
-                    i = 0;
-                    nameBuf = [];
-
-                    while (filelen--) {
-                        c = readByte();
-                        if (c === '/' | c === ':') {
-                            i = 0;
-                        } else if (i < NAMEMAX - 1) {
-                            nameBuf[i++] = String.fromCharCode(c);
-                        }
-                    }
-
-                    if (!fileout) {
-                        fileout = nameBuf;
-                    }
-
-                    i = 0;
-                    while (i < extralen) {
-                        c = readByte();
-                        i++;
-                    }
-
-                    SIZE = 0;
-
-                    if (method === 8) {
-                        deflateLoop();
-                        unzipped[files] = new Array(2);
-                        unzipped[files][0] = outputArr.join('');
-                        unzipped[files][1] = nameBuf.join('');
-                        files++;
-                    }
-
-                    skipdir();
+                //GZIP
+                if (tmp[0] === 0x78 && tmp[1] === 0xda) {
+                    deflateLoop();
+                    unzipped[files] = [outputArr.join(''), 'geonext.gxt'];
+                    files++;
                 }
+
+                //GZIP
+                if (tmp[0] === 0x1f && tmp[1] === 0x8b) {
+                    skipdir();
+                    unzipped[files] = [outputArr.join(''), 'file'];
+                    files++;
+                }
+
+                //ZIP
+                if (tmp[0] === 0x50 && tmp[1] === 0x4b) {
+                    modeZIP = true;
+                    tmp[2] = readByte();
+                    tmp[3] = readByte();
+
+                    if (tmp[2] === 0x03 && tmp[3] === 0x04) {
+                        //MODE_ZIP
+                        tmp[0] = readByte();
+                        tmp[1] = readByte();
+
+                        gpflags = readByte();
+                        gpflags |= (readByte() << 8);
+
+                        method = readByte();
+                        method |= (readByte() << 8);
+
+                        readByte();
+                        readByte();
+                        readByte();
+                        readByte();
+
+                        crc = readByte();
+                        crc |= (readByte() << 8);
+                        crc |= (readByte() << 16);
+                        crc |= (readByte() << 24);
+
+                        compSize = readByte();
+                        compSize |= (readByte() << 8);
+                        compSize |= (readByte() << 16);
+                        compSize |= (readByte() << 24);
+
+                        size = readByte();
+                        size |= (readByte() << 8);
+                        size |= (readByte() << 16);
+                        size |= (readByte() << 24);
+
+                        filelen = readByte();
+                        filelen |= (readByte() << 8);
+
+                        extralen = readByte();
+                        extralen |= (readByte() << 8);
+
+                        i = 0;
+                        nameBuf = [];
+
+                        while (filelen--) {
+                            c = readByte();
+                            if (c === '/' | c === ':') {
+                                i = 0;
+                            } else if (i < NAMEMAX - 1) {
+                                nameBuf[i++] = String.fromCharCode(c);
+                            }
+                        }
+
+                        if (!fileout) {
+                            fileout = nameBuf;
+                        }
+
+                        i = 0;
+                        while (i < extralen) {
+                            c = readByte();
+                            i++;
+                        }
+
+                        SIZE = 0;
+
+                        if (method === 8) {
+                            deflateLoop();
+                            unzipped[files] = new Array(2);
+                            unzipped[files][0] = outputArr.join('');
+                            unzipped[files][1] = nameBuf.join('');
+                            files++;
+                        }
+
+                        skipdir();
+                    }
+                }
+            } catch (e) {
+                throw e;
             }
-            }catch(e) { throw e};
-            
         }
 
         skipdir = function () {
@@ -17030,7 +17338,7 @@ define('utils/encoding',['jxg'], function (JXG) {
                     }
                 }
             }
-            results.push(String.fromCharCode.apply(null, chars)); 
+            results.push(String.fromCharCode.apply(null, chars));
             return results.join("");
         },
 
@@ -17345,6 +17653,7 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
                 len = dec.length;
 
             for (i = 0; i < len; i++) {
+                console.log(">>"+dec.charCodeAt(i).toString(16)+' '+dec.charCodeAt(i));
                 ar[i] = dec.charCodeAt(i);
             }
 
@@ -17354,6 +17663,7 @@ define('utils/base64',['jxg', 'utils/encoding'], function (JXG, Encoding) {
 
     return JXG.Util.Base64;
 });
+
 /*
     Copyright 2008-2013
         Matthias Ehmann,
@@ -17973,7 +18283,7 @@ define('math/symbolic',[
     return Mat.Symbolic;
 });
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -18272,6 +18582,7 @@ define('math/poly',['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type)
 
     return Mat.Poly;
 });
+
 /*
     Copyright 2008-2013
         Matthias Ehmann,
@@ -18923,6 +19234,7 @@ define('renderer/abstract',[
             var s, d, d1x, d1y, d2x, d2y,
                 c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
+                minlen = 10,
                 margin = null;
 
             if (element.visProp.firstarrow || element.visProp.lastarrow) {
@@ -18935,30 +19247,25 @@ define('renderer/abstract',[
                Handle arrow heads.
 
                The arrow head is an equilateral triangle with base length 10 and height 10.
-               These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
+               These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
-            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, 10);
-            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml') {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > Mat.eps) {
-                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                }
+            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
+            d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen/*Mat.eps*/) {
+                d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
-            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml') {
-                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (d > Mat.eps) {
-                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                }
+            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen /* Mat.eps*/) {
+                d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
             }
 
             this.updateLinePrim(element.rendNode,
                 c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
                 c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
-
+            
             this.makeArrows(element);
-            this._updateVisual(element, {fill: true});
+            this._updateVisual(element);
         },
 
         /**
@@ -19186,12 +19493,12 @@ define('renderer/abstract',[
                 if (el.visProp.display === 'html') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
-                        
+
                         // Horizontal
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        
+
                         if (el.visProp.anchorx === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
                         } else if (el.visProp.anchorx === 'middle') {
@@ -19199,7 +19506,7 @@ define('renderer/abstract',[
                         } else { // 'left'
                             v = Math.floor(c);
                         }
-                        
+
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                             if (el.visProp.anchorx === 'right') {
                                 el.rendNode.style.right = v + 'px';
@@ -19214,7 +19521,7 @@ define('renderer/abstract',[
                         // Vertical
                         c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
-                        
+
                         if (el.visProp.anchory === 'bottom') {
                             v = Math.floor(el.board.canvasHeight - c);
                         } else if (el.visProp.anchory === 'middle') {
@@ -19222,7 +19529,7 @@ define('renderer/abstract',[
                         } else { // top
                             v = Math.floor(c);
                         }
-                        
+
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
                             if (el.visProp.anchory === 'bottom') {
                                 el.rendNode.style.top = 'auto';
@@ -19434,7 +19741,7 @@ define('renderer/abstract',[
          * @see JXG.AbstractRenderer#noHighlight
          */
         updateImageStyle: function (el, doHighlight) {
-            el.rendNode.className = (doHighlight) ? el.visProp.highlightcssclass : el.visProp.cssclass;
+            el.rendNode.className = doHighlight ? el.visProp.highlightcssclass : el.visProp.cssclass;
         },
 
 
@@ -19801,13 +20108,13 @@ define('renderer/abstract',[
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(document.createTextNode(label));
-                    Env.addEvent(button, 'mouseover', function() {
+                    Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);
-                    Env.addEvent(button, 'mouseover', function() {
+                    Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);
-                    Env.addEvent(button, 'mouseout', function() {
+                    Env.addEvent(button, 'mouseout', function () {
                         this.style.backgroundColor = board.options.navbar.fillColor;
                     }, button);
 
@@ -20798,7 +21105,7 @@ End Function\n\
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -20873,7 +21180,7 @@ define('base/text',[
 
         this.isDraggable = false;
         this.needsSizeUpdate = false;
-        
+
         this.element = this.board.select(attributes.anchor);
 
         this.hiddenByParent = false;
@@ -21108,7 +21415,7 @@ define('base/text',[
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
-            
+
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
@@ -21144,10 +21451,10 @@ define('base/text',[
          * A very crude estimation of the dimensions of the textbox in case nothing else is available.
          * @return {Array}
          */
-        crudeSizeEstimate: function() {
+        crudeSizeEstimate: function () {
             return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
         },
-        
+
         /**
          * Decode unicode entities into characters.
          * @param {String} string
@@ -21279,30 +21586,27 @@ define('base/text',[
          * is called.
          */
         update: function () {
-            
             if (this.needsUpdate) {
                 if (!this.visProp.frozen) {
                     this.updateCoords();
                 }
-                
+
                 this.updateText();
 
                 if (this.visProp.display === 'internal') {
                     this.plaintext = this.utf8_decode(this.plaintext);
                 }
 
-                //if (this !== this.board.infobox) {
-                    this.checkForSizeUpdate();
-                    if (this.needsSizeUpdate) {
-                        this.updateSize();
-                    }     
-                //}
+                this.checkForSizeUpdate();
+                if (this.needsSizeUpdate) {
+                    this.updateSize();
+                }
                 this.updateTransform();
             }
 
             return this;
         },
-    
+
         /**
          * Used to save updateSize() calls.
          * Called in JXG.Text.update 
@@ -21313,27 +21617,21 @@ define('base/text',[
          *
          * @private
          */
-        checkForSizeUpdate: function() {
-            
+        checkForSizeUpdate: function () {
             if (this.board.infobox && this.id === this.board.infobox.id) {
                 this.needsSizeUpdate = false;
             } else {
-                // For some magic reason it is more efficient on the iPad to 
+                // For some magic reason it is more efficient on the iPad to
                 // call updateSize() for EVERY text element EVERY time.
-                // Turned off, 
-                //if (this.visProp.display === 'html') {
-                //    this.needsSizeUpdate = true;
-                //} else {
-                    this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
-                //}
-            
+                this.needsSizeUpdate = (this.plaintextOld !== this.plaintext);
+
                 if (this.needsSizeUpdate) {
                     this.plaintextOld = this.plaintext;
                 }
             }
 
         },
-    
+
         /**
          * Updates the coordinates of the text element.
          */
@@ -21385,12 +21683,12 @@ define('base/text',[
             contentStr = contentStr.replace(/\n/g, '');
             contentStr = contentStr.replace(/"/g, '\'');
             contentStr = contentStr.replace(/'/g, "\\'");
-            
+
             contentStr = contentStr.replace(/&amp;arc;/g, '&ang;');
             contentStr = contentStr.replace(/<arc\s*\/>/g, '&ang;');
             contentStr = contentStr.replace(/&lt;arc\s*\/&gt;/g, '&ang;');
             contentStr = contentStr.replace(/&lt;sqrt\s*\/&gt;/g, '&radic;');
-            
+
             contentStr = contentStr.replace(/&lt;value&gt;/g, '<value>');
             contentStr = contentStr.replace(/&lt;\/value&gt;/g, '</value>');
 
@@ -21426,7 +21724,7 @@ define('base/text',[
 
             plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr)) + '"';
             plaintext = this.convertGeonext2CSS(plaintext);
-            
+
             // This should replace &amp;pi; by &pi;
             plaintext = plaintext.replace(/&amp;/g, '&');
             plaintext = plaintext.replace(/"/g, "'");
@@ -21440,7 +21738,7 @@ define('base/text',[
          * @private
          * @see JXG.Text.generateTerm @see JXG.Text._setText
          */
-        convertGeonext2CSS: function(s) {
+        convertGeonext2CSS: function (s) {
             if (typeof s === 'string') {
                 s = s.replace(/<overline>/g, '<span style=text-decoration:overline>');
                 s = s.replace(/&lt;overline&gt;/g, '<span style=text-decoration:overline>');
@@ -21451,10 +21749,10 @@ define('base/text',[
                 s = s.replace(/<\/arrow>/g, '</span>');
                 s = s.replace(/&lt;\/arrow&gt;/g, '</span>');
             }
+
             return s;
-            
         },
-        
+
         /**
          * Finds dependencies in a given term and notifies the parents by adding the
          * dependent object to the found objects child elements.
@@ -21587,9 +21885,97 @@ define('base/text',[
 
     JXG.registerElement('text', JXG.createText);
 
+    /**
+     * [[x,y], [w px, h px], [range]
+     */
+    JXG.createHTMLSlider = function (board, parents, attributes) {
+        var t, 
+            attr = Type.copyAttributes(attributes, board.options, 'htmlslider'),
+            par;
+
+        // backwards compatibility
+        attr.anchor = attr.parent || attr.anchor;
+        attr.fixed = attr.fixed || true;
+        
+        par = [parents[0][0], parents[0][1], 
+            '<form style="display:inline">' +        
+            '<input type="range" /><span></span><input type="text" />' +
+            '</form>'];
+        
+        t = JXG.createText(board, par, attr);
+        
+        t.rendNodeForm = t.rendNode.childNodes[0];
+        t.rendNodeForm.id = t.rendNode.id + '_form';
+        
+        t.rendNodeRange = t.rendNodeForm.childNodes[0];
+        t.rendNodeRange.id = t.rendNode.id + '_range';
+        t.rendNodeRange.min = parents[1][0];
+        t.rendNodeRange.max = parents[1][2];
+        t.rendNodeRange.step = attr.step;
+        t.rendNodeRange.value = parents[1][1];
+        
+        t.rendNodeLabel = t.rendNodeForm.childNodes[1];
+        t.rendNodeLabel.id = t.rendNode.id + '_label';
+        
+        if (attr.withlabel) {
+            t.rendNodeLabel.innerHTML = t.name + '=';
+        }
+        
+        t.rendNodeOut = t.rendNodeForm.childNodes[2];
+        t.rendNodeOut.id = t.rendNode.id + '_out';
+        t.rendNodeOut.value = parents[1][1];
+
+        t.rendNodeRange.style.width = attr.widthrange + 'px';
+        t.rendNodeRange.style.verticalAlign = 'middle';
+        t.rendNodeOut.style.width = attr.widthout + 'px';
+
+        t._val = parents[1][1];
+        
+        if (JXG.supportsVML()) {
+            /*
+            * This is needed for IE browsers
+            * The range element is supported since IE10
+            */
+            Env.addEvent(t.rendNodeForm, 'change', function () {
+                this._val = 1.0 * t.rendNodeRange.value;
+                t.rendNodeOut.value = t.rendNodeRange.value;
+                t.board.update();
+            }, t);
+        } else {
+            /*
+            * This is used for non-IE browsers
+            */
+            Env.addEvent(t.rendNodeForm, 'input', function () {
+                this._val = 1.0 * t.rendNodeRange.value;
+                t.rendNodeOut.value = t.rendNodeRange.value;
+                t.board.update();
+            }, t);
+        }
+
+        t.Value = function() {
+            return this._val;
+        };
+        
+        /*
+        if (typeof parents[parents.length - 1] !== 'function') {
+            t.parents = parents;
+        }
+        
+        if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
+            t.addRotation(Type.evaluate(attr.rotate));
+        }
+        */
+        
+        return t;
+    };
+
+    JXG.registerElement('htmlslider', JXG.createHTMLSlider);
+
+    
     return {
         Text: JXG.Text,
-        createText: JXG.createText
+        createText: JXG.createText,
+        createHTMLSlider: JXG.createHTMLSlider
     };
 });
 
@@ -26371,7 +26757,6 @@ define('base/line',[
                 this.point1.snapToGrid();
                 this.point2.snapToGrid();
             }
-                
 
             return this;
         },
@@ -26379,15 +26764,15 @@ define('base/line',[
         // see element.js
         snapToPoints: function () {
             var forceIt = this.visProp.snaptopoints;
-            
+
             if (this.parents.length < 3) {    // Line through two points
                 this.point1.handleSnapToPoints(forceIt);
                 this.point2.handleSnapToPoints(forceIt);
             }
-            
+
             return this;
         },
-            
+
         /**
          * Treat the line as parametric curve in homogeneous coordinates, where the parameter t runs from 0 to 1.
          * First we transform the interval [0,1] to [-1,1].
@@ -27840,7 +28225,7 @@ define('base/circle',[
         // see element.js
         snapToGrid: function () {
             var forceIt = this.visProp.snaptogrid;
-            
+
             this.center.snapToGrid(forceIt);
             if (this.method === 'twoPoints') {
                 this.point2.snapToGrid(forceIt);
@@ -27852,7 +28237,7 @@ define('base/circle',[
         // see element.js
         snapToPoints: function () {
             var forceIt = this.visProp.snaptopoints;
-            
+
             this.center.handleSnapToPoints(forceIt);
             if (this.method === 'twoPoints') {
                 this.point2.handleSnapToPoints(forceIt);
@@ -27886,7 +28271,7 @@ define('base/circle',[
          * @returns {JXG.Circle} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, dc, t, arr, 
+            var i, p, dc, t, arr,
                 len = this.parents.length;
 
             arr = [];
@@ -27904,17 +28289,7 @@ define('base/circle',[
 
             t = this.board.create('transform', dc.slice(1), {type: 'translate'});
             t.applyOnce(arr);
-            
-            /*
-            for (i = 0; i < len; i++) {
-                p = this.board.select(this.parents[i]);
-                //p.coords.setCoordinates(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, diffc));  // This missed snapToPoints
-                p.setPositionDirectly(Const.COORDS_BY_USER, Statistics.add(p.coords.usrCoords, dc));
-            }
-            
-            this.prepareUpdate().update();
-            */
-            
+
             return this;
         },
 
@@ -28354,7 +28729,7 @@ define('base/composition',['jxg', 'utils/type'], function (JXG, Type) {
 });
 
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -28409,8 +28784,8 @@ define('base/composition',['jxg', 'utils/type'], function (JXG, Type) {
 
 define('base/curve',[
     'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'math/numerics',
-    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform) {
+    'math/geometry', 'parser/geonext', 'utils/type', 'base/transformation', 'math/qdt'
+], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Numerics, Geometry, GeonextParser, Type, Transform, QDT) {
 
     
 
@@ -28440,6 +28815,13 @@ define('base/curve',[
 
         this.dataX = null;
         this.dataY = null;
+
+        /**
+         * Stores a quad tree if it is required. The quad tree is generated in the curve
+         * updates and can be used to speed up the hasPoint method.
+         * @type {JXG.Math.Quadtree}
+         */
+        this.qdt = null;
 
         if (Type.exists(parents[0])) {
             this.varname = parents[0];
@@ -28534,7 +28916,7 @@ define('base/curve',[
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
-                i, tX, tY, res,
+                i, j, tX, tY, res, points, qdt,
                 steps = this.visProp.numberpointslow,
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint / this.board.unitX,
@@ -28558,8 +28940,7 @@ define('base/curve',[
             }
 
             if (this.visProp.curvetype === 'parameter' ||
-                    this.visProp.curvetype === 'polar' ||
-                    this.visProp.curvetype === 'functiongraph') {
+                    this.visProp.curvetype === 'polar') {
 
                 prec = prec * prec;
 
@@ -28576,28 +28957,60 @@ define('base/curve',[
 
                     t += d;
                 }
-            } else if (this.visProp.curvetype === 'plot') {
+            } else if (this.visProp.curvetype === 'plot' ||
+                    this.visProp.curvetype === 'functiongraph') {
+
                 if (!Type.exists(start) || start < 0) {
                     start = 0;
                 }
 
-                len = this.numberPoints;
-                for (i = start; i < len - 1; i++) {
+                if (Type.exists(this.qdt) && this.visProp.useqdt && this.bezierDegree !== 3) {
+                    qdt = this.qdt.query(new Coords(Const.COORDS_BY_USER, [x, y], this.board));
+                    points = qdt.points;
+                    len = points.length;
+                } else {
+                    points = this.points;
+                    len = this.numberPoints - 1;
+                }
 
+                for (i = start; i < len; i++) {
+                    res = [];
                     if (this.bezierDegree === 3) {
-                        res = Geometry.projectCoordsToBeziersegment([1, x, y], this, i);
-                        //i += 2;
+                        res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
                     } else {
-                        res = Geometry.projectCoordsToSegment(
-                            [1, x, y],
-                            [1, this.X(i), this.Y(i)],
-                            [1, this.X(i + 1), this.Y(i + 1)]
-                        );
+                        if (qdt) {
+                            if (points[i].prev) {
+                                res.push(Geometry.projectCoordsToSegment(
+                                    [1, x, y],
+                                    points[i].prev.usrCoords,
+                                    points[i].usrCoords
+                                ));
+                            }
+
+                            // If the next point in the array is the same as the current points
+                            // next neighbor we don't have to project it onto that segment because
+                            // that will already be done in the next iteration of this loop.
+                            if (points[i].next && points[i + 1] !== points[i].next) {
+                                res.push(Geometry.projectCoordsToSegment(
+                                    [1, x, y],
+                                    points[i].usrCoords,
+                                    points[i].next.usrCoords
+                                ));
+                            }
+                        } else {
+                            res.push(Geometry.projectCoordsToSegment(
+                                [1, x, y],
+                                points[i].usrCoords,
+                                points[i + 1].usrCoords
+                            ));
+                        }
                     }
 
-                    if (res[1] >= 0 && res[1] <= 1 &&
-                            Geometry.distance([1, x, y], res[0], 3) <= prec) {
-                        return true;
+                    for (j = 0; j < res.length; j++) {
+                        if (res[j][1] >= 0 && res[j][1] <= 1 &&
+                                Geometry.distance([1, x, y], res[j][0], 3) <= prec) {
+                            return true;
+                        }
                     }
                 }
                 return false;
@@ -28747,6 +29160,21 @@ define('base/curve',[
                     this.updateParametricCurveNaive(mi, ma, this.numberPoints);
                 }
                 len = this.numberPoints;
+
+                if (this.visProp.useqdt && this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
+                    this.qdt = new QDT(this.board.getBoundingBox());
+                    for (i = 0; i < this.points.length; i++) {
+                        this.qdt.insert(this.points[i]);
+
+                        if (i > 0) {
+                            this.points[i].prev = this.points[i - 1];
+                        }
+
+                        if (i < len - 1) {
+                            this.points[i].next = this.points[i + 1];
+                        }
+                    }
+                }
 
                 for (i = 0; i < len; i++) {
                     this.updateTransform(this.points[i]);
@@ -29660,7 +30088,7 @@ define('base/curve',[
     JXG.registerElement('riemannsum', JXG.createRiemannsum);
 
     /**
-     * @class This element is used to provide a constructor for travce curve (simple locus curve), which is realized as a special curve.
+     * @class This element is used to provide a constructor for trace curve (simple locus curve), which is realized as a special curve.
      * @pseudo
      * @description
      * @name Tracecurve
@@ -29804,6 +30232,67 @@ define('base/curve',[
 
     JXG.registerElement('tracecurve', JXG.createTracecurve);
 
+    /**
+     * @class This element is used to provide a constructor for step function, which is realized as a special curve.
+     * 
+     * In case the data points should be updated after creation time, they can be accessed by curve.xterm and curve.yterm.
+     * @pseudo
+     * @description
+     * @name Stepfunction
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
+     * @param {Array,Array} Parent elements of Stepfunction are two arrays containing the coordinates.
+     * @see JXG.Curve
+     * @example
+     * // Create step function.
+     var curve = board.create('stepfunction', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+
+     * </pre><div id="32342ec9-ad17-4339-8a97-ff23dc34f51a" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var sf1_board = JXG.JSXGraph.initBoard('32342ec9-ad17-4339-8a97-ff23dc34f51a', {boundingbox: [-1, 5, 6, -2], axis: true, showcopyright: false, shownavigation: false});
+     *   var curve = sf1_board.create('stepfunction', [[0,1,2,3,4,5], [1,3,0,2,2,1]]);
+     * </script><pre>
+     */
+    JXG.createStepfunction = function (board, parents, attributes) {
+        var c, attr;
+        if (parents.length !== 2) {
+            throw new Error("JSXGraph: Can't create step function with given parent'" +
+                "\nPossible parent types: [array, array|function]");
+        }
+
+        attr = Type.copyAttributes(attributes, board.options, 'stepfunction');
+        c = board.create('curve', parents, attr);
+        c.updateDataArray = function () {
+            var i, j = 0,
+                len = this.xterm.length;
+                
+            this.dataX = [];
+            this.dataY = [];
+
+            if (len == 0) {
+                return;
+            }
+            
+            this.dataX[j] = this.xterm[0];
+            this.dataY[j] = this.yterm[0];
+            ++j;
+            
+            for (i = 1; i < len; ++i) {
+                this.dataX[j] = this.xterm[i];
+                this.dataY[j] = this.dataY[j - 1];
+                ++j;
+                this.dataX[j] = this.xterm[i];
+                this.dataY[j] = this.yterm[i];
+                ++j;
+            }
+        };
+        
+        return c;
+    };
+
+    JXG.registerElement('stepfunction', JXG.createStepfunction);
+
     return {
         Curve: JXG.Curve,
         createCurve: JXG.createCurve,
@@ -29811,7 +30300,8 @@ define('base/curve',[
         createPlot: JXG.createPlot,
         createSpline: JXG.createSpline,
         createRiemannsum: JXG.createRiemannsum,
-        createTracecurve: JXG.createTracecurve
+        createTracecurve: JXG.createTracecurve,
+        createStepfunction: JXG.createStepfunction
     };
 });
 
@@ -32770,6 +33260,8 @@ define('base/board',[
                 return this.cPos;
             }
 
+            this.positionAccessLast = (new Date()).getTime();
+
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             if (container.getBoundingClientRect) {
@@ -32811,8 +33303,6 @@ define('base/board',[
 
                 return this.cpos;
             }
-
-            this.positionAccessLast = (new Date()).getTime();
 
             cPos = Env.getOffset(container);
             doc = document.documentElement.ownerDocument;
@@ -33827,16 +34317,18 @@ define('base/board',[
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
 
-            for (i = 0; i < this.touches.length; i++) {
-                for (j = 0; j < this.touches[i].targets.length; j++) {
-                    if (this.touches[i].targets[j].num === evt.pointerId) {
-                        this.touches[i].targets.splice(j, 1);
+            if (evt) {
+                for (i = 0; i < this.touches.length; i++) {
+                    for (j = 0; j < this.touches[i].targets.length; j++) {
+                        if (this.touches[i].targets[j].num === evt.pointerId) {
+                            this.touches[i].targets.splice(j, 1);
 
-                        if (this.touches[i].targets.length === 0) {
-                            this.touches.splice(i, 1);
+                            if (this.touches[i].targets.length === 0) {
+                                this.touches.splice(i, 1);
+                            }
+
+                            break;
                         }
-
-                        break;
                     }
                 }
             }
@@ -34144,12 +34636,12 @@ define('base/board',[
             var i, j, k,
                 eps = this.options.precision.touch,
                 tmpTouches = [], found, foundNumber,
-                evtTouches = evt[JXG.touchProperty];
+                evtTouches = evt && evt[JXG.touchProperty];
 
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.renderer.hide(this.infobox);
 
-            if (evtTouches.length > 0) {
+            if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
                 }
@@ -36746,7 +37238,7 @@ define('renderer/svg',[
                     }
                     el.visPropOld.left = el.visProp.anchorx + v;
                 }
-    
+
                 // Vertical
                 v = el.coords.scrCoords[2];
                 if (el.visPropOld.top !== (el.visProp.anchory + v)) {
@@ -37770,7 +38262,7 @@ define('renderer/vml',[
                     }
                     el.visPropOld.left = el.visProp.anchorx + v;
                 }
-                
+
                 // Vertical
                 if (el.visProp.anchory === 'top') {
                     v = Math.floor(el.coords.scrCoords[2] + this.vOffsetText);
@@ -37833,13 +38325,6 @@ define('renderer/vml',[
                 len = t.length;
 
             if (len > 0) {
-                /*
-                // Seems to be not longer necessary
-                if (el.type === Const.OBJECT_TYPE_TEXT) {
-                    el.updateSize();
-                }
-                */
-                
                 nt = el.rendNode.style.filter.toString();
                 if (!nt.match(/DXImageTransform/)) {
                     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
@@ -38726,7 +39211,6 @@ define('renderer/canvas',[
                 }
                 this.context.globalAlpha = oo;
 
-
                 this.context[targetType + 'Style'] = c;
 
             } else {
@@ -38915,6 +39399,10 @@ define('renderer/canvas',[
                 scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null;
+
+            if (!el.visProp.visible) {
+                return;
+            }
 
             if (el.visProp.firstarrow || el.visProp.lastarrow) {
                 margin = -4;
@@ -39447,7 +39935,7 @@ define('renderer/canvas',[
                 context = this.context,
                 isReal = true;
 
-            if (len <= 0) {
+            if (len <= 0 || !el.visProp.visible) {
                 return;
             }
 
@@ -39548,7 +40036,6 @@ define('renderer/canvas',[
         // documented in AbstractRenderer
         suspendRedraw: function (board) {
             this.context.save();
-
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
             if (board && board.showCopyright) {
@@ -41455,7 +41942,7 @@ define('base/polygon',[
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
+            if (this.needsUpdate && this.visProp.visible) {
                 this.board.renderer.updatePolygon(this);
                 this.needsUpdate = false;
             }
@@ -46940,6 +47427,8 @@ define('element/slopetriangle',[
 
                 this.board.removeObject(this.baseline);
                 this.board.removeObject(this.basepoint);
+
+                this.board.removeObject(this.label);
             },
             Value: function () {
                 return this.tangent.getSlope();
@@ -46950,6 +47439,8 @@ define('element/slopetriangle',[
     Options.slopetriangle = {
         fillColor: 'red',
         fillOpacity: 0.4,
+        highlightFillColor: 'red',
+        highlightFillOpacity: 0.3,
 
         glider: {
             fixed: true,
@@ -46970,6 +47461,9 @@ define('element/slopetriangle',[
             visible: false,
             withLabel: false,
             name: ''
+        },
+        label: {
+            visible: true
         }
     };
 
@@ -47028,19 +47522,19 @@ define('element/slopetriangle',[
      * </script><pre>
      */
     JXG.createSlopeTriangle = function (board, parents, attributes) {
-        var el, tangent, tglide, glider, toppoint, baseline, basepoint, attr;
+        var el, tangent, tglide, glider, toppoint, baseline, basepoint, label, attr;
 
         if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_TANGENT) {
             tangent = parents[0];
             tglide = tangent.glider;
-        } else if (parents.length === 2 && 
-                   parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+        } else if (parents.length === 2 &&
+                parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
             tangent = parents[0];
             tglide = parents[1];
         } else {
             throw new Error("JSXGraph: Can't create slope triangle with parent types '" + (typeof parents[0]) + "'.");
-        }    
-        
+        }
+
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'basepoint');
         basepoint = board.create('point', [function () {
             return [tglide.X() + 1,  tglide.Y()];
@@ -47061,19 +47555,31 @@ define('element/slopetriangle',[
         el = board.create('polygon', [tglide, glider, toppoint], attr);
 
         el.Value = priv.Value;
-
         el.tangent = tangent;
+
+        attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'label');
+        label = board.create('text', [
+                function() { return glider.X() + 0.1;}, 
+                function() { return (glider.Y() + toppoint.Y()) * 0.5;},
+                function() { return ''; }
+            ], attr);
+        
+        label._setText(function() { return el.Value().toFixed(label.visProp.digits)});
+        label.prepareUpdate().update().updateRenderer();
+        
         el.glider = glider;
         el.basepoint = basepoint;
         el.baseline = baseline;
         el.toppoint = toppoint;
-
+        el.label = label;
+        
         el.methodMap = JXG.deepCopy(el.methodMap, {
             tangent: 'tangent',
             glider: 'glider',
             basepoint: 'basepoint',
             baseline: 'baseline',
             toppoint: 'toppoint',
+            label: 'label',
             Value: 'Value',
             V: 'Value'
         });
@@ -47100,6 +47606,7 @@ define('../build/core.deps.js',[
     'utils/event',
     'utils/expect',
     'math/math',
+    'math/qdt',
     'math/numerics',
     'math/statistics',
     'math/symbolic',

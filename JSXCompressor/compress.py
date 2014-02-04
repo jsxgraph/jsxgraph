@@ -42,3 +42,4 @@ if __name__ == '__main__':
     text = f.read()
     text = base64.b64encode(zlib.compress(urllib.quote(text), 9))
     print text
+    
