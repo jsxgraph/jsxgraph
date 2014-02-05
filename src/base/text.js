@@ -787,6 +787,12 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'htmlslider'),
             par;
 
+        if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
+            throw new Error("JSXGraph: Can't create htmlslider with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parents are: [[x,y], [min, start, max]]");
+        }
+
         // backwards compatibility
         attr.anchor = attr.parent || attr.anchor;
         attr.fixed = attr.fixed || true;
@@ -797,6 +803,7 @@ define([
             '</form>'];
         
         t = JXG.createText(board, par, attr);
+        t.type = Type.OBJECT_TYPE_HTMLSLIDER;
         
         t.rendNodeForm = t.rendNode.childNodes[0];
         t.rendNodeForm.id = t.rendNode.id + '_form';
@@ -827,22 +834,22 @@ define([
         
         if (JXG.supportsVML()) {
             /*
-            * This is needed for IE browsers
+            * OnChange event is used for IE browsers
             * The range element is supported since IE10
             */
             Env.addEvent(t.rendNodeForm, 'change', function () {
-                this._val = 1.0 * t.rendNodeRange.value;
-                t.rendNodeOut.value = t.rendNodeRange.value;
-                t.board.update();
+                this._val = 1.0 * this.rendNodeRange.value;
+                this.rendNodeOut.value = this.rendNodeRange.value;
+                this.board.update();
             }, t);
         } else {
             /*
-            * This is used for non-IE browsers
+            * OnInput event is used for non-IE browsers
             */
             Env.addEvent(t.rendNodeForm, 'input', function () {
-                this._val = 1.0 * t.rendNodeRange.value;
-                t.rendNodeOut.value = t.rendNodeRange.value;
-                t.board.update();
+                this._val = 1.0 * this.rendNodeRange.value;
+                this.rendNodeOut.value = this.rendNodeRange.value;
+                this.board.update();
             }, t);
         }
 
@@ -851,10 +858,6 @@ define([
         };
         
         /*
-        if (typeof parents[parents.length - 1] !== 'function') {
-            t.parents = parents;
-        }
-        
         if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
             t.addRotation(Type.evaluate(attr.rotate));
         }
