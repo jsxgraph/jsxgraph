@@ -592,6 +592,7 @@ define([
         generateFixedTicks: function (coordsZero, bounds) {
             var tickCoords, labelText, i, ti,
                 x, y,
+                hasLabelOverrides = Type.isArray(this.visProp.labels),
                 // Calculate X and Y distance between two major points in the line
                 deltas = this.getXandYdeltas();
 
@@ -606,9 +607,13 @@ define([
                 if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower && this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
-                    if (this.visProp.drawlabels) {
-                        labelText = this.generateLabelText(tickCoords, coordsZero, this.visProp.labels[i] || this.fixedTicks[i]);
-                        this.labels.push(this.generateLabel(labelText, tickCoords, i));
+                    if (this.visProp.drawlabels && (!hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
+                        labelText = hasLabelOverrides ? this.visProp.labels[i] : this.fixedTicks[i];
+                        this.labels.push(
+                            this.generateLabel(
+                                this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i
+                            )
+                        );
                     } else {
                         this.labels.push(null);
                     }
