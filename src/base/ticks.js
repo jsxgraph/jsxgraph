@@ -108,7 +108,7 @@ define([
         } else if (Type.isArray(ticks)) {
             this.fixedTicks = ticks;
         } else {
-            if (Math.abs(ticks) < Mat.eps) {
+            if (Math.abs(ticks) < Mat.eps || ticks < 0) {
                 ticks = attributes.defaultdistance;
             }
 
