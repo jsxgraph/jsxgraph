@@ -3533,7 +3533,9 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         suspendUpdate: function () {
-            this.isSuspendedUpdate = true;
+            if (!this.inUpdate) {
+                this.isSuspendedUpdate = true;
+            }
             return this;
         },
 
@@ -3542,8 +3544,10 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         unsuspendUpdate: function () {
-            this.isSuspendedUpdate = false;
-            this.update();
+            if (this.isSuspendedUpdate) {
+                this.isSuspendedUpdate = false;
+                this.update();
+            }
             return this;
         },
 
