@@ -552,12 +552,12 @@ define([
 
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 MAX_DEPTH = 15;
-                MAX_XDIST = 10;
-                MAX_YDIST = 10;
+                MAX_XDIST = 10; // 10
+                MAX_YDIST = 10; // 10
             } else {
                 MAX_DEPTH = 21;
-                MAX_XDIST = 0.7;
-                MAX_YDIST = 0.7;
+                MAX_XDIST = 0.7; // 0.7
+                MAX_YDIST = 0.7; // 0.7
             }
 
             divisors[0] = ma - mi;
