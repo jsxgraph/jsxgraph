@@ -677,6 +677,9 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
+        updateParametricCurveNew: function (mi, ma) {
+        },
+
         /**
          * Applies the transformations of the curve to the given point <tt>p</tt>.
          * Before using it, {@link JXG.Curve#updateTransformMatrix} has to be called.
@@ -853,6 +856,7 @@ define([
                 return f[0] + (f[1] - f[0]) * (t - i);
             };
         },
+        
         /**
          * Converts the GEONExT syntax of the defining function term into JavaScript.
          * New methods X() and Y() for the Curve object are generated, further
@@ -1194,7 +1198,6 @@ define([
 
     JXG.registerElement('functiongraph', JXG.createFunctiongraph);
     JXG.registerElement('plot', JXG.createFunctiongraph);
-
 
     /**
      * TODO
