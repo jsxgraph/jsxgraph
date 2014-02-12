@@ -417,7 +417,7 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                    this.updateParametricCurve(mi, ma, len);
+                    this.updateParametricCurveNew(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
@@ -678,6 +678,54 @@ define([
         },
 
         updateParametricCurveNew: function (mi, ma) {
+            var t, ta, tb, tc,
+                j = 0,
+                a, b, c, a1, b1,
+                suspendUpdate = false,
+                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                depth = 1;
+
+            this.points = [];
+            
+            t = mi;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            a = po.scrCoords.slice(1);
+            suspendUpdate = true,
+
+            t = ma;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            c = po.scrCoords.slice(1);
+            
+            do {
+                // b = (a+c)/2
+                t = (ma + mi) * 0.5;
+                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                b = po.scrCoords.slice(1);
+
+                // a1 = (a+b)/2
+                t = (ma + 3 * mi) * 0.25;
+                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                a1 = po.scrCoords.slice(1);
+                
+                // b1 = (b+c)/2
+                t = (3* ma + mi) * 0.25;
+                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+                b1 = po.scrCoords.slice(1);
+                
+                --depth;
+            } while (depth > 0);
+            
+            if (depth <= 0) {
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
+            }
+
+            this.numberPoints = this.points.length;
+
+            return this;
         },
 
         /**
