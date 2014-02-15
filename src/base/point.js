@@ -173,7 +173,6 @@ define([
      */
     JXG.Point.prototype = new GeometryElement();
 
-
     JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         /**
          * Checks whether (x,y) is near the point.

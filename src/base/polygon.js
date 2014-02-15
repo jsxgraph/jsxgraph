@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -123,7 +123,6 @@ define([
             vertex = this.board.select(this.vertices[i]);
             vertex.addChild(this);
         }
-
 
         this.board.renderer.drawPolygon(this);
         this.board.finalizeAdding(this);
@@ -293,9 +292,10 @@ define([
                 }
             }
 
-            if (this.hasLabel && Type.exists(this.label)) {
-                if (this.label.visProp.visible) {
-                    this.board.renderer.show(this.label);
+            if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
+                this.label.hiddenByParent = false;
+                if (!this.label.visProp.visible) {
+                    this.label.showElement().updateRenderer();
                 }
             }
         },
