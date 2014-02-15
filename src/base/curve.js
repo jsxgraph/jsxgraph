@@ -417,7 +417,7 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                    this.updateParametricCurveNew(mi, ma, len);
+                    this.updateParametricCurve(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
