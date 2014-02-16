@@ -704,7 +704,6 @@ define([
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
                 this._plotRecursive(a, ta, a1, ta1, b, tb, depth);
                 this._plotRecursive(b, tb, b1, tb1, c, tc, depth);
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
             }
 
             return this;
@@ -735,7 +734,8 @@ define([
             b = po.scrCoords.slice(1);
                   
             this._plotRecursive(a, ta, b, tb, c, tc, depth);
- 
+            this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
+
             this.numberPoints = this.points.length;
 
             return this;
