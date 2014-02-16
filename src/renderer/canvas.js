@@ -302,6 +302,10 @@ define([
                 stroke05 = parseFloat(el.visProp.strokewidth) / 2.0,
                 context = this.context;
 
+            if (!el.visProp.visible) {
+                return;
+            }
+
             switch (f) {
             case 'cross':  // x
             case 'x':
