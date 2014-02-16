@@ -417,7 +417,7 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                    this.updateParametricCurve(mi, ma, len);
+                    this.updateParametricCurveNew(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
@@ -677,52 +677,65 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
+        _plotRecursive: function (a, ta, b, tb, c, tc, depth) {
+            var ta1, tb1,
+                j = 0,
+                a1, b1,
+                suspendUpdate = true,
+                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+
+            // a1 = (a+b)/2
+            ta1 = (ta + tb) * 0.5;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(ta1, suspendUpdate), this.Y(ta1, suspendUpdate)], false);
+            a1 = po.scrCoords.slice(1);
+                
+            // b1 = (b+c)/2
+            tb1 = (tb + tc) * 0.5;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb1, suspendUpdate), this.Y(tb1, suspendUpdate)], false);
+            b1 = po.scrCoords.slice(1);
+                
+            --depth;
+            
+            if (depth <= 0) {
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
+            } else {
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
+                this._plotRecursive(a, ta, a1, ta1, b, tb, depth);
+                this._plotRecursive(b, tb, b1, tb1, c, tc, depth);
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
+            }
+
+            return this;
+        },
+
         updateParametricCurveNew: function (mi, ma) {
-            var t, ta, tb, tc,
+            var ta, tb, tc,
                 j = 0,
                 a, b, c, a1, b1,
                 suspendUpdate = false,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth = 1;
+                depth = 10;
 
             this.points = [];
             
-            t = mi;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            ta = mi;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
             a = po.scrCoords.slice(1);
             suspendUpdate = true,
 
-            t = ma;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
+            tc = ma;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
             c = po.scrCoords.slice(1);
             
-            do {
-                // b = (a+c)/2
-                t = (ma + mi) * 0.5;
-                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
-                b = po.scrCoords.slice(1);
-
-                // a1 = (a+b)/2
-                t = (ma + 3 * mi) * 0.25;
-                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
-                a1 = po.scrCoords.slice(1);
-                
-                // b1 = (b+c)/2
-                t = (3* ma + mi) * 0.25;
-                po.setCoordinates(Const.COORDS_BY_USER, [this.X(t, suspendUpdate), this.Y(t, suspendUpdate)], false);
-                b1 = po.scrCoords.slice(1);
-                
-                --depth;
-            } while (depth > 0);
-            
-            if (depth <= 0) {
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
-            }
-
+            // b = (a+c)/2
+            tb = (ma + mi) * 0.5;
+            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
+            b = po.scrCoords.slice(1);
+                  
+            this._plotRecursive(a, ta, b, tb, c, tc, depth);
+ 
             this.numberPoints = this.points.length;
 
             return this;
