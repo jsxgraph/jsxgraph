@@ -677,6 +677,21 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
+        _isZigZag: function(a, a1, b, b1, c) {
+            var i, diff1 = [], diff2 = [], s = 0;
+            
+            for (i = 0; i < 4; ++i) {
+                diff1[i] = (arguments[i][1] < arguments[i + 1][1]) ? 1 : -1;
+            }
+
+            for (i = 0; i < 3; ++i) {
+                diff2[i] = diff1[i] * diff1[i + 1];
+                s += diff2[i];
+            }
+//console.log(s);            
+            return (s < 0);
+        },
+
         _plotRecursive: function (a, ta, b, tb, c, tc, depth) {
             var ta1, tb1,
                 j = 0,
@@ -694,6 +709,8 @@ define([
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb1, suspendUpdate), this.Y(tb1, suspendUpdate)], false);
             b1 = po.scrCoords.slice(1);
                 
+            //this._isZigZag(a, a1, b, b1, c);
+
             --depth;
             
             if (depth <= 0) {
@@ -715,7 +732,7 @@ define([
                 a, b, c, a1, b1,
                 suspendUpdate = false,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth = 10;
+                depth = 11;
 
             this.points = [];
             
@@ -737,6 +754,7 @@ define([
             this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
 
             this.numberPoints = this.points.length;
+console.log(this.numberPoints);
 
             return this;
         },
