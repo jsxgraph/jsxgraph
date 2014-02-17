@@ -692,10 +692,21 @@ define([
             return (s < 0);
         },
 
-        _plotRecursive: function (a, ta, b, tb, c, tc, depth) {
+        _newtonCotesCmp: function(a, a1, b, b1, c, delta) {
+            var f0 = Math.min(a[1], a1[1], b[1], b1[1], c[1]),
+                f1 = 5 / 12 * (b[1] - f0) + 2 / 3 * (b1[1] - f0) - (c[1] - f0) / 12,
+                f2 = 3 / 8 * (a[1] - f0) + 19 / 24 * (a1[1] - f0) - 5 / 24 * (b[1] - f0) + (b1[1] - f0) / 24,
+                d = Math.abs(f1 - f2);
+            
+            //console.log(d < delta * f1);
+            
+            return (d < delta * f1);
+        },
+        
+        _plotRecursive: function (a, ta, b, tb, c, tc, depth, delta) {
             var ta1, tb1,
                 j = 0,
-                a1, b1,
+                a1, b1, zigzag,
                 suspendUpdate = true,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
@@ -709,18 +720,18 @@ define([
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb1, suspendUpdate), this.Y(tb1, suspendUpdate)], false);
             b1 = po.scrCoords.slice(1);
                 
-            //this._isZigZag(a, a1, b, b1, c);
-
+            zigzag = this._isZigZag(a, a1, b, b1, c);
+            
             --depth;
             
-            if (depth <= 0) {
+            if (!zigzag && (depth <= 0 || this._newtonCotesCmp(a, a1, b, b1, c, delta))) {
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
             } else {
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
-                this._plotRecursive(a, ta, a1, ta1, b, tb, depth);
-                this._plotRecursive(b, tb, b1, tb1, c, tc, depth);
+                this._plotRecursive(a, ta, a1, ta1, b, tb, depth, delta * 2);
+                this._plotRecursive(b, tb, b1, tb1, c, tc, depth, delta * 2);
             }
 
             return this;
@@ -732,8 +743,18 @@ define([
                 a, b, c, a1, b1,
                 suspendUpdate = false,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth = 11;
-
+                depth,
+                delta; 
+            
+            if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
+                depth = 10;
+                delta = 1 / 100;
+                console.log("LOW");
+            } else {
+                depth = 16;
+                delta = 1 / 1024;
+            }
+            
             this.points = [];
             
             ta = mi;
@@ -750,7 +771,7 @@ define([
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
             b = po.scrCoords.slice(1);
                   
-            this._plotRecursive(a, ta, b, tb, c, tc, depth);
+            this._plotRecursive(a, ta, b, tb, c, tc, depth, delta);
             this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
 
             this.numberPoints = this.points.length;
