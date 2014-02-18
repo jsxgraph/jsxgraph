@@ -678,35 +678,58 @@ define([
         },
 
         _isZigZag: function(a, a1, b, b1, c) {
-            var i, diff1 = [], diff2 = [], s = 0;
+            var i, diff1 = [], diff2 = [], s = 0,
+                isInfty = isNaN(a[1]);
             
             for (i = 0; i < 4; ++i) {
                 diff1[i] = (arguments[i][1] < arguments[i + 1][1]) ? 1 : -1;
+                isInfty = isInfty || isNaN(arguments[i + 1][1]);
+                
+                if (isInfty) {
+                    return 'i';
+                }
             }
 
             for (i = 0; i < 3; ++i) {
                 diff2[i] = diff1[i] * diff1[i + 1];
                 s += diff2[i];
             }
-//console.log(s);            
-            return (s < 0);
+//console.log(s); 
+            if (s < 0) {
+                return 'z';
+            } else {
+                return 'o';
+            }
         },
 
         _newtonCotesCmp: function(a, a1, b, b1, c, delta) {
             var f0 = Math.min(a[1], a1[1], b[1], b1[1], c[1]),
-                f1 = 5 / 12 * (b[1] - f0) + 2 / 3 * (b1[1] - f0) - (c[1] - f0) / 12,
-                f2 = 3 / 8 * (a[1] - f0) + 19 / 24 * (a1[1] - f0) - 5 / 24 * (b[1] - f0) + (b1[1] - f0) / 24,
+                f1 = (a[1] + c[1] - 2 * f0) * (c[0] - a[0]) * 0.5,
+                f2 = (7 * (a[1] - f0) + 32 * (a1[1] - f0) + 12 * (b[1] - f0) + 
+                                        32 * (b1[1] - f0) + 7 * (c[1] - f0)) * (c[0] - a[0]) / 90,
                 d = Math.abs(f1 - f2);
             
-            //console.log(d < delta * f1);
+            return (d < delta);
+        },
+        
+        _newtonCotesCmpNew: function(a, a1, b, b1, c, delta) {
+            var j, f = [], f1, f2, d;
             
-            return (d < delta * f1);
+            for (j = 0; j < 5; ++j) {
+                f.push(Math.sqrt(arguments[j][0] * arguments[j][0] + arguments[j][1] * arguments[j][1]));
+            }
+
+            f1 = (f[0] + f[4]) * 0.5;
+            f2 = (7 * f[0] + 32 * f[1] + 12 * f[2] + 32 * f[3] + 7 * f[4]) / 90;
+            d = Math.abs(f1 - f2);
+console.log(d < delta);            
+            return (d < delta);
         },
         
         _plotRecursive: function (a, ta, b, tb, c, tc, depth, delta) {
             var ta1, tb1,
-                j = 0,
-                a1, b1, zigzag,
+                j = 0, th = 2 * this.board.canvasHeight,
+                a1, b1, zigzag, isSmooth, ar,
                 suspendUpdate = true,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
@@ -721,17 +744,30 @@ define([
             b1 = po.scrCoords.slice(1);
                 
             zigzag = this._isZigZag(a, a1, b, b1, c);
+            isSmooth = this._newtonCotesCmp(a, a1, b, b1, c, delta);
             
             --depth;
             
-            if (!zigzag && (depth <= 0 || this._newtonCotesCmp(a, a1, b, b1, c, delta))) {
+            if (/*zigzag === 'o' &&*/ (depth <= 0 || (depth <= 7 && isSmooth))) {
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
+            } else if (zigzag === 'i' && depth <= 5 && isNaN(a1[1]) && isNaN(b[1]) || isNaN(b1[1])) {
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
+                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
+            } else if (zigzag === 'z' && depth <= 1) {
+                ar = [a, a1, b, b1, c];
+                for (j = 0; j < 4; ++j) {
+                    if ((ar[j][1] < -th && ar[j + 1][1] > th) || 
+                        (ar[j][1] > th && ar[j + 1][1] < -th)) {
+                        this.points.push(new Coords(Const.COORDS_BY_SCREEN, [arguments[j][0], NaN], this.board, false));
+                    }
+                }
             } else {
                 this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
-                this._plotRecursive(a, ta, a1, ta1, b, tb, depth, delta * 2);
-                this._plotRecursive(b, tb, b1, tb1, c, tc, depth, delta * 2);
+                this._plotRecursive(a, ta, a1, ta1, b, tb, depth, delta);
+                this._plotRecursive(b, tb, b1, tb1, c, tc, depth, delta);
             }
 
             return this;
@@ -747,12 +783,12 @@ define([
                 delta; 
             
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = 10;
-                delta = 1 / 100;
+                depth = 9;
+                delta = 2;
                 console.log("LOW");
             } else {
-                depth = 16;
-                delta = 1 / 1024;
+                depth = 17;
+                delta = 2;
             }
             
             this.points = [];
