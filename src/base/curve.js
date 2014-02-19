@@ -706,6 +706,24 @@ define([
             return false;
         },
 
+        _hasCusp: function(a, ta, b, tb, c, tc, depth) {
+            var d_ab, d_ac, d_cb, f = 0.5;
+            if (depth >= this.smoothLevel) {
+                return false;
+            }
+            
+            d_ab = Geometry.distance(a, b, 3);
+            d_ac = Geometry.distance(a, c, 3);
+            d_cb = Geometry.distance(b, c, 3);
+            
+            if (d_ab < f * d_ac && d_ab < f * d_cb) {
+console.log("CUSP", c[1]);                
+                return true;
+            }
+            
+            return false;
+        },
+
         /**
          * a, b are endpoints, c is a point inbetween.
          * It is tested if the curve between a and b can be approximated 
@@ -785,10 +803,13 @@ define([
             --depth;
             
             if (this._hasJump(a, ta, b, tb, c, tc, depth)) {
+console.log("hasjump");
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
-            } else if (depth <= 0 || isSmooth) {
+            } else if ((depth <= 0 || isSmooth) && !this._hasCusp(a, ta, b, tb, c, tc, depth)) {
                 this._insertPoint(pnt);
             } else {
+                this._hasCusp(a, ta, b, tb, c, tc, depth);
+                
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, a.slice(1), this.board, false));
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
@@ -834,6 +855,7 @@ define([
             tb = ma;
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
             b = po.scrCoords.slice(0);
+console.log("--------------------------");
             
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(new Coords(Const.COORDS_BY_SCREEN, b.slice(1), this.board, false));
