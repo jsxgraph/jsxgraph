@@ -677,138 +677,132 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
-        _isZigZag: function(a, a1, b, b1, c) {
-            var i, diff1 = [], diff2 = [], s = 0,
-                isInfty = isNaN(a[1]);
+        /**
+         * a, b are endpoints, c is a point inbetween.
+         */
+        _hasJump: function(a, ta, b, tb, c, tc, depth) {
+            var d_ab, d_ac, d_cb;
+            if (depth >= this.jumpLevel) {
+                return false;
+            }
             
-            for (i = 0; i < 4; ++i) {
-                diff1[i] = (arguments[i][1] < arguments[i + 1][1]) ? 1 : -1;
-                isInfty = isInfty || isNaN(arguments[i + 1][1]);
+            /*
+            if (isNaN(a[1] + a[2] + b[1] + b[2] + c[1] + c[3]) || a[0] * b[0] * c[0] === 0) {
+                return true;
+            }
+            */
+            
+            d_ab = Geometry.distance(a, b, 3);
+            d_ac = Geometry.distance(a, c, 3);
+            if (d_ac > 0.99 * d_ab) {
+                return true;
+            }
+            
+            d_cb = Geometry.distance(b, c, 3);
+            if (d_cb > 0.99 * d_ab) {
+                return true;
+            }
+            
+            return false;
+        },
+
+        /**
+         * a, b are endpoints, c is a point inbetween.
+         * It is tested if the curve between a and b can be approximated 
+         * by a straight line.
+         */
+        _isSmooth: function(a, b, c, depth, delta) {
+            var d;
+            if (depth >=  this.smoothLevel) {
+                return false;
+            }
+            d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
                 
-                if (isInfty) {
-                    return 'i';
-                }
-            }
-
-            for (i = 0; i < 3; ++i) {
-                diff2[i] = diff1[i] * diff1[i + 1];
-                s += diff2[i];
-            }
-//console.log(s); 
-            if (s < 0) {
-                return 'z';
-            } else {
-                return 'o';
-            }
-        },
-
-        _newtonCotesCmp: function(a, a1, b, b1, c, delta) {
-            var f0 = Math.min(a[1], a1[1], b[1], b1[1], c[1]),
-                f1 = (a[1] + c[1] - 2 * f0) * (c[0] - a[0]) * 0.5,
-                f2 = (7 * (a[1] - f0) + 32 * (a1[1] - f0) + 12 * (b[1] - f0) + 
-                                        32 * (b1[1] - f0) + 7 * (c[1] - f0)) * (c[0] - a[0]) / 90,
-                d = Math.abs(f1 - f2);
-            
-            return (d < delta);
+            return (Geometry.distance(c, d) < delta);
         },
         
-        _newtonCotesCmpNew: function(a, a1, b, b1, c, delta) {
-            var j, f = [], f1, f2, d;
-            
-            for (j = 0; j < 5; ++j) {
-                f.push(Math.sqrt(arguments[j][0] * arguments[j][0] + arguments[j][1] * arguments[j][1]));
-            }
+        _insertPoint: function(pnt) {
+            if (!isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]) ||                  // New point is real point
+                this.points.length === 0 ||                                     // There is already a point in the array
+                !isNaN(this.points[this.points.length - 1].scrCoords[2])        // The last point was real
+                                                                                // This prevents two consecutive NaNs
+               ) {
 
-            f1 = (f[0] + f[4]) * 0.5;
-            f2 = (7 * f[0] + 32 * f[1] + 12 * f[2] + 32 * f[3] + 7 * f[4]) / 90;
-            d = Math.abs(f1 - f2);
-console.log(d < delta);            
-            return (d < delta);
+                this.points.push(pnt);
+            }
         },
         
-        _plotRecursive: function (a, ta, b, tb, c, tc, depth, delta) {
-            var ta1, tb1,
-                j = 0, th = 2 * this.board.canvasHeight,
-                a1, b1, zigzag, isSmooth, ar,
+        _plotRecursive: function (a, ta, b, tb, depth, delta) {
+            var tc, c, lbda, 
+                isSmooth, 
                 suspendUpdate = true,
-                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             // a1 = (a+b)/2
-            ta1 = (ta + tb) * 0.5;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(ta1, suspendUpdate), this.Y(ta1, suspendUpdate)], false);
-            a1 = po.scrCoords.slice(1);
-                
-            // b1 = (b+c)/2
-            tb1 = (tb + tc) * 0.5;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb1, suspendUpdate), this.Y(tb1, suspendUpdate)], false);
-            b1 = po.scrCoords.slice(1);
-                
-            zigzag = this._isZigZag(a, a1, b, b1, c);
-            isSmooth = this._newtonCotesCmp(a, a1, b, b1, c, delta);
+            lbda = 0.5;
+            tc = lbda * ta  + (1.0 - lbda) * tb;
+            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
+            c = pnt.scrCoords;
+
+            isSmooth = this._isSmooth(a, b, c, depth, delta);
             
             --depth;
             
-            if (/*zigzag === 'o' &&*/ (depth <= 0 || (depth <= 7 && isSmooth))) {
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
-            } else if (zigzag === 'i' && depth <= 5 && isNaN(a1[1]) && isNaN(b[1]) || isNaN(b1[1])) {
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a1, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b, this.board, false));
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, b1, this.board, false));
-            } else if (zigzag === 'z' && depth <= 1) {
-                ar = [a, a1, b, b1, c];
-                for (j = 0; j < 4; ++j) {
-                    if ((ar[j][1] < -th && ar[j + 1][1] > th) || 
-                        (ar[j][1] > th && ar[j + 1][1] < -th)) {
-                        this.points.push(new Coords(Const.COORDS_BY_SCREEN, [arguments[j][0], NaN], this.board, false));
-                    }
-                }
+            if (this._hasJump(a, ta, b, tb, c, tc, depth)) {
+                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
+            } else if (depth <= 0 || isSmooth) {
+                this._insertPoint(pnt);
             } else {
-                this.points.push(new Coords(Const.COORDS_BY_SCREEN, a, this.board, false));
-                this._plotRecursive(a, ta, a1, ta1, b, tb, depth, delta);
-                this._plotRecursive(b, tb, b1, tb1, c, tc, depth, delta);
+                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, a.slice(1), this.board, false));
+                this._plotRecursive(a, ta, c, tc, depth, delta);
+                this._plotRecursive(c, tc, b, tb, depth, delta);
             }
+
+            if (this.numberPoints > 65536) return;
 
             return this;
         },
 
         updateParametricCurveNew: function (mi, ma) {
-            var ta, tb, tc,
+            var ta, tb, 
                 j = 0,
-                a, b, c, a1, b1,
+                a, b, 
                 suspendUpdate = false,
                 po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 depth,
                 delta; 
             
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = 9;
+                depth = 12;
                 delta = 2;
-                console.log("LOW");
+                this.smoothLevel = 8;
+                this.jumpLevel = 2;
             } else {
-                depth = 17;
-                delta = 2;
+                depth = 20;
+                delta = 0.9;
+                this.smoothLevel = depth - 10;
+                this.jumpLevel = 3;
             }
             
             this.points = [];
             
             ta = mi;
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
-            a = po.scrCoords.slice(1);
+            a = po.scrCoords.slice(0);
             suspendUpdate = true,
 
+            /*
             tc = ma;
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
             c = po.scrCoords.slice(1);
+            */
             
-            // b = (a+c)/2
-            tb = (ma + mi) * 0.5;
+            tb = ma;
             po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-            b = po.scrCoords.slice(1);
-                  
-            this._plotRecursive(a, ta, b, tb, c, tc, depth, delta);
-            this.points.push(new Coords(Const.COORDS_BY_SCREEN, c, this.board, false));
+            b = po.scrCoords.slice(0);
+            
+            this._plotRecursive(a, ta, b, tb, depth, delta);
+            this.points.push(new Coords(Const.COORDS_BY_SCREEN, b.slice(1), this.board, false));
 
             this.numberPoints = this.points.length;
 console.log(this.numberPoints);
