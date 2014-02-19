@@ -738,12 +738,48 @@ define([
                 suspendUpdate = true,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
+            if (this.numberPoints > 65536) return;
+
             // a1 = (a+b)/2
             lbda = 0.5;
-            tc = lbda * ta  + (1.0 - lbda) * tb;
+            tc = lbda * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
             c = pnt.scrCoords;
 
+            /*
+             * Detect vertical asymptotes.
+             */
+            if (depth < this.smoothLevel) {
+                 
+                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2]) &&
+                    Math.abs(c[1] - b[1]) < 0.5 &&
+                    (b[2] > 0.0 || b[2] < this.board.canvasHeight)
+                   ) {
+                        
+                    if (c[2] < b[2] && b[2] > 0.0) {
+                        c = [1, b[1], 0];
+                    } else if (c[2] > b[2] && b[2] < this.board.canvasHeight) {
+                        c = [1, b[1], this.board.canvasHeight];
+                    }
+                    
+                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
+                    return this;
+                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2]) &&
+                    Math.abs(c[1] - a[1]) < 0.5 &&
+                    (a[2] > 0.0 || a[2] < this.board.canvasHeight)
+                   ) {
+                        
+                    if (c[2] < a[2] && a[2] > 0.0) {
+                        c = [1, a[1], 0];
+                    } else if (c[2] > a[2] && a[2] < this.board.canvasHeight) {
+                        c = [1, a[1], this.board.canvasHeight];
+                    }
+                    
+                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
+                    return this;
+                }
+            }
+            
             isSmooth = this._isSmooth(a, b, c, depth, delta);
             
             --depth;
@@ -757,8 +793,6 @@ define([
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
-
-            if (this.numberPoints > 65536) return;
 
             return this;
         },
@@ -778,9 +812,9 @@ define([
                 this.smoothLevel = 8;
                 this.jumpLevel = 2;
             } else {
-                depth = 20;
+                depth = 18;
                 delta = 0.9;
-                this.smoothLevel = depth - 10;
+                this.smoothLevel = depth - 9;
                 this.jumpLevel = 3;
             }
             
