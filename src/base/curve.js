@@ -750,23 +750,12 @@ console.log("CUSP", c[1]);
             }
         },
         
-        _plotRecursive: function (a, ta, b, tb, depth, delta) {
-            var tc, c, lbda, 
-                isSmooth, 
-                suspendUpdate = true,
-                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-
-            if (this.numberPoints > 65536) return;
-
-            // a1 = (a+b)/2
-            lbda = 0.5;
-            tc = lbda * (ta  + tb);
-            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
-            c = pnt.scrCoords;
-
-            /*
-             * Detect vertical asymptotes.
-             */
+        /*
+         * Detect vertical asymptotes at the border of areas where
+         * the function is not defined, e.g. log(x) at x = 0.
+         * 
+         */
+        _addAsymptote: function(a, b, c, depth) {
             if (depth < this.smoothLevel) {
                  
                 if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2]) &&
@@ -797,13 +786,30 @@ console.log("CUSP", c[1]);
                     return this;
                 }
             }
+        },
+        
+        _plotRecursive: function (a, ta, b, tb, depth, delta) {
+            var tc, c, lbda, 
+                isSmooth, 
+                suspendUpdate = true,
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+
+            if (this.numberPoints > 65536) return;
+
+            // a1 = (a+b)/2
+            lbda = 0.5;
+            tc = lbda * (ta  + tb);
+            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
+            c = pnt.scrCoords;
+
+            this._addAsymptote(a, b, c, depth);
             
+            /*
             isSmooth = this._isSmooth(a, b, c, depth, delta);
             
             --depth;
             
             if (this._hasJump(a, ta, b, tb, c, tc, depth)) {
-console.log("hasjump");
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
             } else if ((depth <= 0 || isSmooth) && !this._hasCusp(a, ta, b, tb, c, tc, depth)) {
                 this._insertPoint(pnt);
@@ -814,10 +820,25 @@ console.log("hasjump");
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
-
+            */
+            
             return this;
         },
 
+        _triangleDists: function(a, b, c) {
+            var d, d_ab, d_ac, d_cb, d_dc;
+            
+            d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
+            
+            d_ab = Geometry.distance(a, b);
+            d_ac = Geometry.distance(a, c);
+            d_cb = Geometry.distance(c, b);
+            d_cd = Geometry.distance(c, d);
+            
+            return [d_ab, d_ac, d_cb, d_cd];
+        },
+            
+            
         updateParametricCurveNew: function (mi, ma) {
             var ta, tb, 
                 j = 0,
