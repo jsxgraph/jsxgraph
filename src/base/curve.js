@@ -677,77 +677,15 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
-        /**
-         * a, b are endpoints, c is a point inbetween.
-         */
-        _hasJump: function(a, ta, b, tb, c, tc, depth) {
-            var d_ab, d_ac, d_cb;
-            if (depth >= this.jumpLevel) {
-                return false;
-            }
-            
-            /*
-            if (isNaN(a[1] + a[2] + b[1] + b[2] + c[1] + c[3]) || a[0] * b[0] * c[0] === 0) {
-                return true;
-            }
-            */
-            
-            d_ab = Geometry.distance(a, b, 3);
-            d_ac = Geometry.distance(a, c, 3);
-            if (d_ac > 0.99 * d_ab) {
-                return true;
-            }
-            
-            d_cb = Geometry.distance(b, c, 3);
-            if (d_cb > 0.99 * d_ab) {
-                return true;
-            }
-            
-            return false;
-        },
-
-        _hasCusp: function(a, ta, b, tb, c, tc, depth) {
-            var d_ab, d_ac, d_cb, f = 0.5;
-            if (depth >= this.smoothLevel) {
-                return false;
-            }
-            
-            d_ab = Geometry.distance(a, b, 3);
-            d_ac = Geometry.distance(a, c, 3);
-            d_cb = Geometry.distance(b, c, 3);
-            
-            if (d_ab < f * d_ac && d_ab < f * d_cb) {
-console.log("CUSP", c[1]);                
-                return true;
-            }
-            
-            return false;
-        },
-
-        /**
-         * a, b are endpoints, c is a point inbetween.
-         * It is tested if the curve between a and b can be approximated 
-         * by a straight line.
-         */
-        _isSmooth: function(a, b, c, depth, delta) {
-            var d;
-            if (depth >=  this.smoothLevel) {
-                return false;
-            }
-            d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
-                
-            return (Geometry.distance(c, d) < delta);
-        },
-        
         _insertPoint: function(pnt) {
             if (!isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]) ||                  // New point is real point
                 this.points.length === 0 ||                                     // There is already a point in the array
                 !isNaN(this.points[this.points.length - 1].scrCoords[2])        // The last point was real
                                                                                 // This prevents two consecutive NaNs
                ) {
-
+                
                 this.points.push(pnt);
-            }
+            } 
         },
         
         /*
@@ -756,10 +694,11 @@ console.log("CUSP", c[1]);
          * 
          */
         _addAsymptote: function(a, b, c, depth) {
+            var mind = 0.5;
             if (depth < this.smoothLevel) {
-                 
+
                 if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2]) &&
-                    Math.abs(c[1] - b[1]) < 0.5 &&
+                    Math.abs(c[1] - b[1]) < mind &&
                     (b[2] > 0.0 || b[2] < this.board.canvasHeight)
                    ) {
                         
@@ -768,11 +707,12 @@ console.log("CUSP", c[1]);
                     } else if (c[2] > b[2] && b[2] < this.board.canvasHeight) {
                         c = [1, b[1], this.board.canvasHeight];
                     }
-                    
+
                     this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
-                    return this;
+                    return true;
+                    
                 } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2]) &&
-                    Math.abs(c[1] - a[1]) < 0.5 &&
+                    Math.abs(c[1] - a[1]) < mind &&
                     (a[2] > 0.0 || a[2] < this.board.canvasHeight)
                    ) {
                         
@@ -783,15 +723,16 @@ console.log("CUSP", c[1]);
                     }
                     
                     this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
-                    return this;
+                    return true;
                 }
             }
+            return false;
         },
         
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c, lbda, 
-                isSmooth, 
-                suspendUpdate = true,
+                ds, mindepth = 0,
+                isSmooth, isJump, isCusp, cuspf,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             if (this.numberPoints > 65536) return;
@@ -799,41 +740,50 @@ console.log("CUSP", c[1]);
             // a1 = (a+b)/2
             lbda = 0.5;
             tc = lbda * (ta  + tb);
-            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
+            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
 
-            this._addAsymptote(a, b, c, depth);
+            if (this._addAsymptote(a, b, c, depth)) {
+console.log("Asympt");                
+                return this;
+            }
             
-            /*
-            isSmooth = this._isSmooth(a, b, c, depth, delta);
+            ds = this._triangleDists(a, b, c);    // [d_ab, d_ac, d_cb, d_cd]
+            isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
+            isJump = (depth < this.jumpLevel) && (ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity ||
+                        (ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]));
+            cuspf = 0.5;
+            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cuspf * (ds[1] + ds[2])); 
             
+            if (isCusp) { 
+                mindepth = 0; 
+                isSmooth = false;
+            }
+
             --depth;
             
-            if (this._hasJump(a, ta, b, tb, c, tc, depth)) {
+            if (isJump) {
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
-            } else if ((depth <= 0 || isSmooth) && !this._hasCusp(a, ta, b, tb, c, tc, depth)) {
+            } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt);
             } else {
-                this._hasCusp(a, ta, b, tb, c, tc, depth);
-                
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, a.slice(1), this.board, false));
                 this._plotRecursive(a, ta, c, tc, depth, delta);
+                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
-            */
             
             return this;
         },
-
+        
         _triangleDists: function(a, b, c) {
-            var d, d_ab, d_ac, d_cb, d_dc;
+            var d, d_ab, d_ac, d_cb, d_cd;
             
             d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
             
-            d_ab = Geometry.distance(a, b);
-            d_ac = Geometry.distance(a, c);
-            d_cb = Geometry.distance(c, b);
-            d_cd = Geometry.distance(c, d);
+            d_ab = Geometry.distance(a, b, 3);
+            d_ac = Geometry.distance(a, c, 3);
+            d_cb = Geometry.distance(c, b, 3);
+            d_cd = Geometry.distance(c, d, 3);
             
             return [d_ab, d_ac, d_cb, d_cd];
         },
@@ -878,6 +828,7 @@ console.log("CUSP", c[1]);
             b = po.scrCoords.slice(0);
 console.log("--------------------------");
             
+            this.points.push(new Coords(Const.COORDS_BY_SCREEN, a.slice(1), this.board, false));
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(new Coords(Const.COORDS_BY_SCREEN, b.slice(1), this.board, false));
 
