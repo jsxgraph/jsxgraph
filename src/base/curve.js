@@ -678,13 +678,20 @@ define([
         },
 
         _insertPoint: function(pnt) {
-            if (!isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]) ||                  // New point is real point
-                this.points.length === 0 ||                                     // There is already a point in the array
-                !isNaN(this.points[this.points.length - 1].scrCoords[2])        // The last point was real
-                                                                                // This prevents two consecutive NaNs
-               ) {
+            var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
+                newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]);        // New point is real point
                 
+            /*
+             * Prevents two consecutive NaNs or points wich are too close
+             */
+            if ( (!newReal && lastReal) ||
+                 (newReal &&
+                  (!lastReal ||
+                   Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
+                   Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7)) ) {
+                     
                 this.points.push(pnt);
+                this._lastCrds = pnt.scrCoords.slice();
             } 
         },
         
@@ -729,28 +736,39 @@ define([
             return false;
         },
         
+        _triangleDists: function(a, b, c) {
+            var d, d_ab, d_ac, d_cb, d_cd;
+            
+            d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
+            
+            d_ab = Geometry.distance(a, b, 3);
+            d_ac = Geometry.distance(a, c, 3);
+            d_cb = Geometry.distance(c, b, 3);
+            d_cd = Geometry.distance(c, d, 3);
+            
+            return [d_ab, d_ac, d_cb, d_cd];
+        },
+            
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
-            var tc, c, lbda, 
+            var tc, c, 
                 ds, mindepth = 0,
                 isSmooth, isJump, isCusp, cuspf,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             if (this.numberPoints > 65536) return;
 
-            // a1 = (a+b)/2
-            lbda = 0.5;
-            tc = lbda * (ta  + tb);
+            tc = 0.5 * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
 
             if (this._addAsymptote(a, b, c, depth)) {
-console.log("Asympt");                
                 return this;
             }
             
-            ds = this._triangleDists(a, b, c);    // [d_ab, d_ac, d_cb, d_cd]
+            ds = this._triangleDists(a, b, c);                            // returns [d_ab, d_ac, d_cb, d_cd]
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
-            isJump = (depth < this.jumpLevel) && (ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity ||
+            isJump = (depth < this.jumpLevel) && 
+                        (ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity ||
                         (ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]));
             cuspf = 0.5;
             isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cuspf * (ds[1] + ds[2])); 
@@ -768,35 +786,20 @@ console.log("Asympt");
                 this._insertPoint(pnt);
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
-                this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
+                this._insertPoint(pnt);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
             
             return this;
         },
         
-        _triangleDists: function(a, b, c) {
-            var d, d_ab, d_ac, d_cb, d_cd;
-            
-            d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
-            
-            d_ab = Geometry.distance(a, b, 3);
-            d_ac = Geometry.distance(a, c, 3);
-            d_cb = Geometry.distance(c, b, 3);
-            d_cd = Geometry.distance(c, d, 3);
-            
-            return [d_ab, d_ac, d_cb, d_cd];
-        },
-            
-            
+          
         updateParametricCurveNew: function (mi, ma) {
-            var ta, tb, 
-                j = 0,
-                a, b, 
+            var ta, tb, a, b, 
                 suspendUpdate = false,
-                po = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth,
-                delta; 
+                pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
+                depth, delta; 
             
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
@@ -811,29 +814,23 @@ console.log("Asympt");
             }
             
             this.points = [];
+            this._lastCrds = [0, NaN, NaN];   // Used in _insertPoint
             
             ta = mi;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
-            a = po.scrCoords.slice(0);
+            pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
+            a = pa.scrCoords.slice();
             suspendUpdate = true,
 
-            /*
-            tc = ma;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, suspendUpdate), this.Y(tc, suspendUpdate)], false);
-            c = po.scrCoords.slice(1);
-            */
-            
             tb = ma;
-            po.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-            b = po.scrCoords.slice(0);
-console.log("--------------------------");
+            pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
+            b = pb.scrCoords.slice();
             
-            this.points.push(new Coords(Const.COORDS_BY_SCREEN, a.slice(1), this.board, false));
+            this.points.push(pa);
             this._plotRecursive(a, ta, b, tb, depth, delta);
-            this.points.push(new Coords(Const.COORDS_BY_SCREEN, b.slice(1), this.board, false));
+            this.points.push(pb);
 
             this.numberPoints = this.points.length;
-console.log(this.numberPoints);
+//console.log(this.numberPoints);
 
             return this;
         },
