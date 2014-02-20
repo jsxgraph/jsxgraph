@@ -380,6 +380,7 @@ define([
          */
         updateCurve: function () {
             var len, mi, ma, x, y, i,
+                t1, t2, l1,
                 suspendUpdate = false;
 
             this.updateTransformMatrix();
@@ -417,7 +418,18 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
+                    
+                    t1 = new Date();
+                    //this.updateParametricCurve(mi, ma, len);
+                    l1 = this.numberPoints;
+                    t1 = ((new Date()).getTime() - t1.getTime()) / 1000.0;
+                    
+                    t2 = new Date();
                     this.updateParametricCurveNew(mi, ma, len);
+                    t2 = ((new Date()).getTime() - t2.getTime()) / 1000.0;
+if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)                    
+    console.log(t1, t2, l1, this.numberPoints);
+    
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
@@ -689,7 +701,6 @@ define([
                   (!lastReal ||
                    Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
                    Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7)) ) {
-                     
                 this.points.push(pnt);
                 this._lastCrds = pnt.scrCoords.slice();
             } 
@@ -745,6 +756,7 @@ define([
             d_ac = Geometry.distance(a, c, 3);
             d_cb = Geometry.distance(c, b, 3);
             d_cd = Geometry.distance(c, d, 3);
+            //d_cd = Math.abs(c[2] - d[2]);
             
             return [d_ab, d_ac, d_cb, d_cd];
         },
@@ -760,16 +772,17 @@ define([
             tc = 0.5 * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
-
+              
             if (this._addAsymptote(a, b, c, depth)) {
                 return this;
             }
             
             ds = this._triangleDists(a, b, c);                            // returns [d_ab, d_ac, d_cb, d_cd]
-            isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
+            isSmooth = false; (depth < this.smoothLevel) && (ds[3] < delta);
+            
             isJump = (depth < this.jumpLevel) && 
-                        (ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity ||
-                        (ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]));
+                        ((ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]) ||
+                        ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
             cuspf = 0.5;
             isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cuspf * (ds[1] + ds[2])); 
             
@@ -793,7 +806,6 @@ define([
             return this;
         },
         
-          
         updateParametricCurveNew: function (mi, ma) {
             var ta, tb, a, b, 
                 suspendUpdate = false,
@@ -803,11 +815,11 @@ define([
             
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
-                delta = 2;
-                this.smoothLevel = 8;
-                this.jumpLevel = 2;
+                delta = 3;
+                this.smoothLevel = depth - 5;
+                this.jumpLevel = 5;
             } else {
-                depth = 18;
+                depth = 17;
                 delta = 0.9;
                 this.smoothLevel = depth - 9;
                 this.jumpLevel = 3;
