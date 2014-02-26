@@ -1647,6 +1647,7 @@ define([
             },
             baseline: {
                 needsRegularUpdate: false,
+                fixed: true,
                 name: '',
                 strokeWidth: 1,
                 strokeColor: '#000000',
@@ -1655,6 +1656,7 @@ define([
             /* line ticks options */
             ticks: {
                 needsRegularUpdate: false,
+                fixed: true,
                 drawLabels: false,
                 drawZero: true,
                 insertTicks: true,
@@ -1668,6 +1670,7 @@ define([
             },
             highline: {
                 strokeWidth: 3,
+                fixed: true,
                 name: '',
                 strokeColor: '#000000',
                 highlightStrokeColor: '#888888'

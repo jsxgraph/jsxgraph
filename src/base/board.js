@@ -1905,7 +1905,6 @@ define([
 
                         if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_TEXT || obj.type === Const.OBJECT_TYPE_TICKS) {
                             // it's a point, so it's single touch, so we just push it to our touches
-
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
                             // For the UNDO/REDO of object moves
@@ -2014,7 +2013,6 @@ define([
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
             if (!this.touchOriginMove(evt)) {
-
                 if (this.mode === this.BOARD_MODE_DRAG) {
                     // Runs over through all elements which are touched
                     // by at least one finger.
