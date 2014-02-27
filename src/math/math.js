@@ -529,6 +529,14 @@ define(['jxg'], function (JXG) {
             return NaN;
         },
 
+        log10: function(x) {
+            return Math.log(x) / Math.log(10.0);
+        },
+
+        log2: function(x) {
+            return Math.log(x) / Math.log(2.0);
+        },
+        
         /**
          * A square & multiply algorithm to compute base to the power of exponent.
          * Implementated by Wolfgang Riedl.
