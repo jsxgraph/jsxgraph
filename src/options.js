@@ -1280,6 +1280,9 @@ define([
                 fixed: false,
                 withLabel: false,
                 name: ''
+            },
+            label: {
+                position: 'llft'
             }
         },
 
