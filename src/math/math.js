@@ -529,10 +529,20 @@ define(['jxg'], function (JXG) {
             return NaN;
         },
 
+        /**
+         * Logarithm to base 10.
+         * @param {Number} x
+         * @returns {Number} log10(x) Logarithm of x to base 10.
+         */
         log10: function(x) {
             return Math.log(x) / Math.log(10.0);
         },
 
+        /**
+         * Logarithm to base 2.
+         * @param {Number} x
+         * @returns {Number} log2(x) Logarithm of x to base 2.
+         */
         log2: function(x) {
             return Math.log(x) / Math.log(2.0);
         },
