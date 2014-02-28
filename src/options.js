@@ -1364,7 +1364,7 @@ define([
             face: 'o',
 
             /**
-             * Determines the size of a point.
+             * Size of a point.
              * Means radius resp. half the width of a point (depending on the face).
              * @see JXG.Point#face
              * @type number
