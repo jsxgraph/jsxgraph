@@ -706,51 +706,14 @@ define([
             } 
         },
         
-        /*
-         * Detect vertical asymptotes at the border of areas where
+        /**
+         * Investigate a function term at the border of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
          * 
-         */
-        _addAsymptoteOld: function(a, b, c, depth) {
-            var mind = 0.5;
-            if (depth < this.smoothLevel) {
-
-                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2]) &&
-                    Math.abs(c[1] - b[1]) < mind &&
-                    (b[2] > 0.0 || b[2] < this.board.canvasHeight)
-                   ) {
-                        
-                    if (c[2] < b[2] && b[2] > 0.0) {
-                        c = [1, b[1], 0];
-                    } else if (c[2] > b[2] && b[2] < this.board.canvasHeight) {
-                        c = [1, b[1], this.board.canvasHeight];
-                    }
-
-                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
-                    return true;
-                    
-                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2]) &&
-                    Math.abs(c[1] - a[1]) < mind &&
-                    (a[2] > 0.0 || a[2] < this.board.canvasHeight)
-                   ) {
-                        
-                    if (c[2] < a[2] && a[2] > 0.0) {
-                        c = [1, a[1], 0];
-                    } else if (c[2] > a[2] && a[2] < this.board.canvasHeight) {
-                        c = [1, a[1], this.board.canvasHeight];
-                    }
-                    
-                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, c.slice(1), this.board, false));
-                    return true;
-                }
-            }
-            return false;
-        },
-
-        /**
          * c is inbetween a and b
+         * 
          */
-        _addAsymptote: function(a, b, c, ta, tb, tc, depth) {
+        _borderCase: function(a, b, c, ta, tb, tc, depth) {
             var t, pnt, p, p_good = null,
                 i, j, maxit = 5,
                 maxdepth = 70,
@@ -848,7 +811,7 @@ define([
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
               
-            if (this._addAsymptote(a, b, c, ta, tb, tc, depth)) {
+            if (this._borderCase(a, b, c, ta, tb, tc, depth)) {
                 return this;
             }
             
