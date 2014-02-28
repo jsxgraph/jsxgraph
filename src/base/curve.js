@@ -380,7 +380,7 @@ define([
          */
         updateCurve: function () {
             var len, mi, ma, x, y, i,
-                t1, t2, l1,
+                //t1, t2, l1,
                 suspendUpdate = false;
 
             this.updateTransformMatrix();
@@ -419,16 +419,16 @@ define([
             } else {
                 if (this.visProp.doadvancedplot) {
                     
-                    t1 = new Date();
-                    //this.updateParametricCurve(mi, ma, len);
-                    l1 = this.numberPoints;
-                    t1 = ((new Date()).getTime() - t1.getTime()) / 1000.0;
+                    //t1 = new Date();
+                    //this.updateParametricCurveOld(mi, ma, len);
+                    //l1 = this.numberPoints;
+                    //t1 = ((new Date()).getTime() - t1.getTime()) / 1000.0;
                     
-                    t2 = new Date();
-                    this.updateParametricCurveNew(mi, ma, len);
-                    t2 = ((new Date()).getTime() - t2.getTime()) / 1000.0;
-if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)                    
-    console.log(t1, t2, l1, this.numberPoints);
+                    //t2 = new Date();
+                    this.updateParametricCurve(mi, ma, len);
+                    //t2 = ((new Date()).getTime() - t2.getTime()) / 1000.0;
+                    //if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)                    
+                    //    console.log(t1, t2, l1, this.numberPoints);
     
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
@@ -525,7 +525,7 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
          * @param {Number} ma Right bound of curve
          * @returns {JXG.Curve} Reference to the curve object.
          */
-        updateParametricCurve: function (mi, ma) {
+        updateParametricCurveOld: function (mi, ma) {
             var i, t, t0, d,
                 x, y, x0, y0, top, depth,
                 MAX_DEPTH, MAX_XDIST, MAX_YDIST,
@@ -711,7 +711,7 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
          * the function is not defined, e.g. log(x) at x = 0.
          * 
          */
-        _addAsymptote: function(a, b, c, depth) {
+        _addAsymptoteOld: function(a, b, c, depth) {
             var mind = 0.5;
             if (depth < this.smoothLevel) {
 
@@ -746,6 +746,80 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
             }
             return false;
         },
+
+        /**
+         * c is inbetween a and b
+         */
+        _addAsymptote: function(a, b, c, ta, tb, tc, depth) {
+            var t, pnt, p, p_good = null,
+                i, j, maxit = 5,
+                maxdepth = 70,
+                is_undef = false;
+            
+            if (depth < this.smoothLevel) {
+                pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+                
+                
+                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2])) {
+                    // a is outside of the definition interval, c and b are inside
+                    
+                    for (i = 0; i < maxdepth; ++i) {
+                        j = 0;
+                        
+                        // Bisect a and c until the new point is inside of the definition interval
+                        do {
+                            t = 0.5 * (ta + tc); 
+                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);        
+                            p = pnt.scrCoords;
+                            is_undef = isNaN(p[1] + p[2]);
+
+                            if (is_undef) {
+                                ta = t;
+                            }
+                            ++j;
+                        } while (is_undef && j < maxit);
+                        
+                        // If bisection was successful, remember this point
+                        if (j < maxit) {
+                            tc = t;
+                            p_good = p.slice();
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2]))  {
+                    // b is outside of the definition interval, a and c are inside
+                    
+                    for (i = 0; i < maxdepth; ++i) {
+                        j = 0;
+                        do {
+                            t = 0.5 * (tc + tb); 
+                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);        
+                            p = pnt.scrCoords;
+                            is_undef = isNaN(p[1] + p[2]);
+
+                            if (is_undef) {
+                                tb = t;
+                            }
+                            ++j;
+                        } while (is_undef && j < maxit);
+                        if (j < maxit) {
+                            tc = t;
+                            p_good = p.slice();
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                
+                if (p_good !== null) {  
+                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, p_good.slice(1), this.board, false));
+                    return true;
+                }
+            }
+            return false;
+        },
         
         _triangleDists: function(a, b, c) {
             var d, d_ab, d_ac, d_cb, d_cd;
@@ -764,7 +838,8 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c, 
                 ds, mindepth = 0,
-                isSmooth, isJump, isCusp, cuspf,
+                isSmooth, isJump, isCusp, 
+                cusp_threshold = 0.5,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
             if (this.numberPoints > 65536) return;
@@ -773,18 +848,17 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
               
-            if (this._addAsymptote(a, b, c, depth)) {
+            if (this._addAsymptote(a, b, c, ta, tb, tc, depth)) {
                 return this;
             }
             
-            ds = this._triangleDists(a, b, c);                            // returns [d_ab, d_ac, d_cb, d_cd]
-            isSmooth = false; (depth < this.smoothLevel) && (ds[3] < delta);
+            ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
+            isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
             
             isJump = (depth < this.jumpLevel) && 
                         ((ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]) ||
                         ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
-            cuspf = 0.5;
-            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cuspf * (ds[1] + ds[2])); 
+            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2])); 
             
             if (isCusp) { 
                 mindepth = 0; 
@@ -806,7 +880,7 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
             return this;
         },
         
-        updateParametricCurveNew: function (mi, ma) {
+        updateParametricCurve: function (mi, ma) {
             var ta, tb, a, b, 
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
@@ -842,7 +916,6 @@ if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
-//console.log(this.numberPoints);
 
             return this;
         },
