@@ -241,9 +241,7 @@ define([
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
 
-            if (attr.shownavigation) {
-                board.renderer.drawZoomBar(board);
-            }
+            board.renderer.drawZoomBar(board);
             board.unsuspendUpdate();
 
             return board;
@@ -282,11 +280,9 @@ define([
 
             FileReader.parseFileContent(file, board, format, true, callback);
 
-            if (board.attr.shownavigation) {
-                board.renderer.drawZoomBar(board);
-            }
-
+            board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
+            
             return board;
         },
 
@@ -323,11 +319,9 @@ define([
 
             FileReader.parseString(string, board, format, true, callback);
 
-            if (board.attr.shownavigation) {
-                board.renderer.drawZoomBar(board);
-            }
-
+            board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
+            
             return board;
         },
 

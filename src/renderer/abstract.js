@@ -1257,14 +1257,23 @@ define([
                         board.reload();
                     });
                 }
+                
+                if (board.attr.showcleartraces) {
+                    // clear traces symbol (otimes): \u27F2
+                    createButton('\u00A0\u2297\u00A0', function () {
+                        board.clearTraces();
+                    });
+                }
 
-                createButton('\u00A0\u2013\u00A0', board.zoomOut);
-                createButton('\u00A0o\u00A0', board.zoom100);
-                createButton('\u00A0+\u00A0', board.zoomIn);
-                createButton('\u00A0\u2190\u00A0', board.clickLeftArrow);
-                createButton('\u00A0\u2193\u00A0', board.clickUpArrow);
-                createButton('\u00A0\u2191\u00A0', board.clickDownArrow);
-                createButton('\u00A0\u2192\u00A0', board.clickRightArrow);
+                if (board.attr.shownavigation) {
+                    createButton('\u00A0\u2013\u00A0', board.zoomOut);
+                    createButton('\u00A0o\u00A0', board.zoom100);
+                    createButton('\u00A0+\u00A0', board.zoomIn);
+                    createButton('\u00A0\u2190\u00A0', board.clickLeftArrow);
+                    createButton('\u00A0\u2193\u00A0', board.clickUpArrow);
+                    createButton('\u00A0\u2191\u00A0', board.clickDownArrow);
+                    createButton('\u00A0\u2192\u00A0', board.clickRightArrow);
+                }
             }
         },
 
