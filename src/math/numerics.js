@@ -939,8 +939,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         if (isNaN(t)) {
                             return NaN;
                         }
+
                         // This is necessary for our advanced plotting algorithm:
-                        if (t < 0) {
+                        if (t <= 0.0) {
                             return p[1][which]();
                         }
 
