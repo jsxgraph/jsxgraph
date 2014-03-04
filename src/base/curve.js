@@ -418,18 +418,9 @@ define([
             // continuous x data
             } else {
                 if (this.visProp.doadvancedplot) {
-                    
-                    //t1 = new Date();
-                    //this.updateParametricCurveOld(mi, ma, len);
-                    //l1 = this.numberPoints;
-                    //t1 = ((new Date()).getTime() - t1.getTime()) / 1000.0;
-                    
-                    //t2 = new Date();
                     this.updateParametricCurve(mi, ma, len);
-                    //t2 = ((new Date()).getTime() - t2.getTime()) / 1000.0;
-                    //if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH)                    
-                    //    console.log(t1, t2, l1, this.numberPoints);
-    
+                } else if (this.visProp.doadvancedplotold) {
+                    this.updateParametricCurveOld(mi, ma, len);
                 } else {
                     if (this.board.updateQuality === this.board.BOARD_QUALITY_HIGH) {
                         this.numberPoints = this.visProp.numberpointshigh;
@@ -521,6 +512,7 @@ define([
 
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * Since 0.99 this algorithm is deprecated. It still can be used if {@link JXG.Curve#doadvancedplotold} is <tt>true</tt>.
          * @param {Number} mi Left bound of curve
          * @param {Number} ma Right bound of curve
          * @returns {JXG.Curve} Reference to the curve object.
@@ -689,6 +681,13 @@ define([
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
 
+        /**
+         * Add a point to the curve plot. If the new point is too close to the previously inserted point,
+         * it is skipped.
+         * Used in {@link JXG.Curve._plotRecursive}.
+         * @private
+         * @param {JXG.Coords} pnt Coords to add to the list of points
+         */
         _insertPoint: function(pnt) {
             var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]);        // New point is real point
@@ -707,11 +706,19 @@ define([
         },
         
         /**
-         * Investigate a function term at the border of intervals where
+         * Investigate a function term at the bounds of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
          * 
          * c is inbetween a and b
-         * 
+         * @private
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
+         * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
+         * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
+         * @param {Number} tc (ta + tb) / 2 = tc. Parameter which evaluates to b, i.e. [1, X(tc), Y(tc)] = c in screen coordinates
+         * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
+         * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
         _borderCase: function(a, b, c, ta, tb, tc, depth) {
             var t, pnt, p, p_good = null,
@@ -784,6 +791,16 @@ define([
             return false;
         },
         
+        /**
+         * Compute distances in screen coordinates between the points ab,
+         * ac, cb, and cd, where d = (a + b)/2.
+         * cd is used for the smoothness test, ab, ac, cb are used to detect jumps, cusps and poles.
+         * 
+         * @private
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
+         * @returns {Array} array of distances in screen coordinates between: ab, ac, cb, and cd.
         _triangleDists: function(a, b, c) {
             var d, d_ab, d_ac, d_cb, d_cd;
             
@@ -798,6 +815,19 @@ define([
             return [d_ab, d_ac, d_cb, d_cd];
         },
             
+        /**
+         * Recursive interval bisection algorithm for curve plotting. 
+         * Used in {@link JXG.Curve.updateParametricCurve}.
+         * @private
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
+         * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
+         * @param {Number} delta If the distance of the bisection point at (ta + tb) / 2 from the point (a + b) / 2 is less then delta,
+         *                 the segement [a,b] is regarded as straight line.
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
             var tc, c, 
                 ds, mindepth = 0,
@@ -843,6 +873,12 @@ define([
             return this;
         },
         
+        /**
+         * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
+         * @param {Number} mi Left bound of curve
+         * @param {Number} ma Right bound of curve
+         * @returns {JXG.Curve} Reference to the curve object.
+         */
         updateParametricCurve: function (mi, ma) {
             var ta, tb, a, b, 
                 suspendUpdate = false,
