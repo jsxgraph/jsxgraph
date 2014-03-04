@@ -513,6 +513,8 @@ define([
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
          * Since 0.99 this algorithm is deprecated. It still can be used if {@link JXG.Curve#doadvancedplotold} is <tt>true</tt>.
+         *
+         * @deprecated
          * @param {Number} mi Left bound of curve
          * @param {Number} ma Right bound of curve
          * @returns {JXG.Curve} Reference to the curve object.
@@ -653,6 +655,8 @@ define([
         /**
          * Crude and cheap test if the segment defined by the two points <tt>(x0, y0)</tt> and <tt>(x1, y1)</tt> is
          * outside the viewport of the board. All parameters have to be given in screen coordinates.
+         *
+         * @private
          * @param {Number} x0
          * @param {Number} y0
          * @param {Number} x1
@@ -667,6 +671,8 @@ define([
         /**
          * Compares the absolute value of <tt>dx</tt> with <tt>MAXX</tt> and the absolute value of <tt>dy</tt>
          * with <tt>MAXY</tt>.
+         *
+         * @private
          * @param {Number} dx
          * @param {Number} dy
          * @param {Number} MAXX
@@ -677,6 +683,9 @@ define([
             return (Math.abs(dx) < MAXX && Math.abs(dy) < MAXY) && !isNaN(dx + dy);
         },
 
+         /**
+         * @private
+         */
         isSegmentDefined: function (x0, y0, x1, y1) {
             return !(isNaN(x0 + y0) && isNaN(x1 + y1));
         },
@@ -685,6 +694,7 @@ define([
          * Add a point to the curve plot. If the new point is too close to the previously inserted point,
          * it is skipped.
          * Used in {@link JXG.Curve._plotRecursive}.
+         *
          * @private
          * @param {JXG.Coords} pnt Coords to add to the list of points
          */
@@ -801,6 +811,7 @@ define([
          * @param {Array} b Screen coordinates of the right interval bound
          * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
          * @returns {Array} array of distances in screen coordinates between: ab, ac, cb, and cd.
+         */
         _triangleDists: function(a, b, c) {
             var d, d_ab, d_ac, d_cb, d_cd;
             
