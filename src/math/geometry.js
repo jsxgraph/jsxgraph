@@ -301,7 +301,8 @@ define([
          * @param {JXG.Line} line A line.
          * @param {JXG.Point} point Point which is projected to the line.
          * @param {JXG.Board} [board=point.board] Reference to the board
-         * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line through the given point and boolean flag "change".
+         * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line 
+         *                  through the given point and boolean flag "change".
          */
         perpendicular: function (line, point, board) {
             var x, y, change,

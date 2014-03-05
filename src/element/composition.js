@@ -2190,7 +2190,15 @@ define([
                         usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
                     }
                 };
-                dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
+                
+                // If dp is on the line, Geometry.perpendicular will return a point not on the line.
+                // Since this somewhat odd behavior of Geometry.perpendicular is needed in GEONExT,
+                // it is circumvented here.
+                if (Math.abs(Mat.innerProduct(dp.coords.usrCoords, parents[0].stdform, 3)) >= Mat.eps) {
+                    dp = Geometry.perpendicular(parents[0], dp, board)[0].usrCoords;
+                } else {
+                    dp = dp.coords.usrCoords;
+                }
                 i1 = [1, dp[1] + slope1[1] * w, dp[2] - slope1[0] * w];
                 i2 = [1, dp[1] - slope2[1] * w, dp[2] + slope2[0] * w];
 
