@@ -69,18 +69,18 @@ define([
             /**
              * Display of navigation arrors and zoom buttons
              */
-            showNavigation: false,
+            showNavigation: true,
             
             /**
              * Show a button to force reload of a construction.
              * Works only with the JessieCode tag
              */
-            showReload: true,
+            showReload: false,
             
             /**
              * Show a buttons which allows to clear all traces of a board.
              */
-            showClearTraces: true,
+            showClearTraces: false,
             
             keepAspectRatio: false,
             // if true the first element with hasPoint==true is taken.
