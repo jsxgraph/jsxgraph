@@ -6,7 +6,7 @@ UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=node ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
-JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
+JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar 
 
 # general tools
 CP=cp

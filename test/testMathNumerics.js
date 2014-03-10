@@ -105,6 +105,11 @@ TestCase("MathNumerics", {
         assertEquals("JXG.Math.Numerics.gaussBareiss, incorrect result", 5, JXG.Math.Numerics.gaussBareiss(A2));
         assertEquals("JXG.Math.Numerics.gaussBareiss, incorrect result", 1, JXG.Math.Numerics.gaussBareiss(A3));
         assertEquals("JXG.Math.Numerics.gaussBareiss, incorrect result", 1, JXG.Math.Numerics.gaussBareiss(A4));
+
+        A3 = [[0,0,1],[14,2,999],[-32,1,999]];
+        assertEquals("JXG.Math.Numerics.gaussBareiss, incorrect result", 78, JXG.Math.Numerics.gaussBareiss(A3));        
+        A3 = [[0,14,-32],[0,2,1],[1,999,999]];
+        assertEquals("JXG.Math.Numerics.gaussBareiss, incorrect result", 78, JXG.Math.Numerics.gaussBareiss(A3));        
     },
 
     testJacobi: function () {

@@ -186,8 +186,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @private
          * Gauss-Bareiss algorithm to compute the
          * determinant of matrix without fractions.
-         * See H. Cohen, "A course in computational
-         * algebraic number thoery".
+         * See Henri Cohen, "A Course in Computational
+         * Algebraic Number Theory (Graduate texts
+         * in mathematics; 138)", Springer-Verlag,
+         * ISBN 3-540-55640-0 / 0-387-55640-0
+         * Third, Corrected Printing 1996
+         * "Algorithm 2.2.6", pg. 52-53
          */
         gaussBareiss: function (mat) {
             var k, c, s, i, j, p, n, M, t,
@@ -218,7 +222,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                 // Pivot step
                 if (Math.abs(p) < eps) {
-                    for (i = 0; i < n; i++) {
+                    for (i = k + 1; i < n; i++) {
                         if (Math.abs(M[i][k]) >= eps) {
                             break;
                         }
