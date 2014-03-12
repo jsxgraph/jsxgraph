@@ -1623,11 +1623,80 @@ define([
     };
 
     /**
+     * @class This element is used to provide a constructor for the radical axis with respect to two circles with distinct centers.
+     * The angular bisector of the polar lines of the circle centers with respect to the other circle is always the radical axis.
+     * The radical axis passes through the intersection points when the circles intersect.
+     * When a circle about the midpoint of circle centers, passing through the circle centers, intersects the circles, the polar lines pass through those intersection points.
+     * @pseudo
+     * @description
+     * @name RadicalAxis
+     * @augments JXG.Line
+     * @constructor
+     * @type JXG.Line
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Circle} circle Circle one of the two respective circles.
+     * @param {JXG.Circle} circle Circle the other of the two respective circles.
+     * @example
+     * // Create the radical axis line with respect to two circles
+     *   var board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     *   var p1 = board.create('point', [2, 3]);
+     *   var p2 = board.create('point', [1, 4]);
+     *   var c1 = board.create('circle', [p1, p2]);
+     *   var p3 = board.create('point', [6, 5]);
+     *   var p4 = board.create('point', [8, 6]);
+     *   var c2 = board.create('circle', [p3, p4]);
+     *   var r1 = board.create('radicalaxis', [c1, c2]);
+     * </pre><div id='7b7233a0-f363-47dd-9df5-5018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * <script type='text/javascript'>
+     *   var rlex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     *   var rlex1_p1 = rlex1_board.create('point', [2, 3]);
+     *   var rlex1_p2 = rlex1_board.create('point', [1, 4]);
+     *   var rlex1_c1 = rlex1_board.create('circle', [rlex1_p1, rlex1_p2]);
+     *   var rlex1_p3 = rlex1_board.create('point', [6, 5]);
+     *   var rlex1_p4 = rlex1_board.create('point', [8, 6]);
+     *   var rlex1_c2 = rlex1_board.create('circle', [rlex1_p3, rlex1_p4]);
+     *   var rlex1_r1 = rlex1_board.create('radicalaxis', [rlex1_c1, rlex1_c2]);
+     * </script><pre>
+     */
+    JXG.createRadicalAxis = function (board, parents, attributes) {
+        var el, el1, el2;
+
+        if (parents.length !== 2 ||
+                parents[0].elementClass !== Const.OBJECT_CLASS_CIRCLE ||
+                parents[1].elementClass !== Const.OBJECT_CLASS_CIRCLE) {
+            // Failure
+            throw new Error("JSXGraph: Can't create 'radical axis' with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent type: [circle,circle]");
+        }
+
+        el1 = board.select(parents[0]);
+        el2 = board.select(parents[1]);
+
+        el = board.create('line', [function () {
+                var a = el1.stdform,
+                    b = el2.stdform;
+                    
+                return JXG.Math.matVecMult(
+                    JXG.Math.transpose([a.slice(0,3), b.slice(0,3)]), [b[3] , -a[3]]);
+             }]);
+
+        el.elType = 'radicalaxis';
+        el.parents = [el1.id, el2.id];
+
+        el1.addChild(el);
+        el2.addChild(el);
+
+        return el;
+    };
+
+    /**
      * Register the element type tangent at JSXGraph
      * @private
      */
     JXG.registerElement('tangent', JXG.createTangent);
     JXG.registerElement('polar', JXG.createTangent);
+    JXG.registerElement('radicalaxis', JXG.createRadicalAxis);
 
     return {
         Line: JXG.Line,
@@ -1636,6 +1705,7 @@ define([
         createPolar: JXG.createTangent,
         createSegment: JXG.createSegment,
         createAxis: JXG.createAxis,
-        createArrow: JXG.createArrow
+        createArrow: JXG.createArrow,
+        createRadicalAxis: JXG.createRadicalAxis
     };
 });

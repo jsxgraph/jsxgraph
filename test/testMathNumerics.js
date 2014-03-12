@@ -91,7 +91,7 @@ TestCase("MathNumerics", {
     },
 
     testGaussBareiss: function () {
-        expectAsserts(4);
+        expectAsserts(6);
 
         var A1 = JXG.Math.identity(1,1),
             A2 = JXG.Math.identity(2,2),
