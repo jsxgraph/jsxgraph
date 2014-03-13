@@ -1240,10 +1240,13 @@ define([
          */
         meetCurveLineContinuous: function (cu, li, nr, board) {
             var t, t2, i, func, z,
-                tnew, steps, delta, tstart, tend, cux, cuy;
+                tnew, steps, delta, tstart, tend, cux, cuy,
+                eps = Mat.eps * 10;
 
             func = function (t) {
-                return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
+//                return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
+                var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
+                return v * v;
             };
 
             // Find some intersection point
@@ -1254,6 +1257,7 @@ define([
                 tstart = cu.minX();
                 tend = cu.maxX();
                 t = Numerics.root(func, [tstart, tend]);
+console.log(t);                
             }
 
             this.meetCurveLineContinuous.t1memo = t;
@@ -1264,8 +1268,8 @@ define([
             if (nr === 1) {
                 if (this.meetCurveLineContinuous.t2memo) {
                     tstart = this.meetCurveLineContinuous.t2memo;
-                    t2 = Numerics.root(func, tstart);
                 }
+                t2 = Numerics.root(func, tstart);
 
                 if (!(Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1)) {
                     steps = 20;
@@ -1275,7 +1279,7 @@ define([
                     for (i = 0; i < steps; i++) {
                         t2 = Numerics.root(func, [tnew, tnew + delta]);
 
-                        if (Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1) {
+                        if (Math.abs(func(t2)) <= eps && Math.abs(t2 - t) > 0.1 && Math.abs(cux - cu.X(t2)) > 0.1 && Math.abs(cuy - cu.Y(t2)) > 0.1) {
                             break;
                         }
 
@@ -1286,7 +1290,8 @@ define([
                 this.meetCurveLineContinuous.t2memo = t;
             }
 
-            if (Math.abs(func(t)) > Mat.eps) {
+            // Is the point on the line?
+            if (Math.abs(func(t)) > eps) {
                 z = NaN;
             } else {
                 z = 1.0;
