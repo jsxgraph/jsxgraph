@@ -90,7 +90,11 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     text: {
-        fontSize: 18
+        fontSize: 18,
+        strokeColor: '#000000',
+        highlightStrokeColor: '#000000',
+        strokeOpacity: 1,
+        highlightStrokeOpacity: 0.66666
     },
 
     trunclen: 2
