@@ -1229,8 +1229,58 @@ define([
 
         /**
          * Intersection of line and curve, continuous case.
+         * Finds the nr-the intersection point
+         * Uses {@link JXG.Math.Geometry#meetCurveLineDiscrete} as a first approximation. 
+         * A more exact solution is then found with {@link JXG.Math.Numerics#meetCurveLineDiscrete}.
+         * 
+         * @param {JXG.Curve} cu Curve
+         * @param {JXG.Line} li Line
+         * @param {Number} nr Will return the nr-th intersection point.
+         * @param {JXG.Board} board
+         *
+         */
+        meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
+            var t, func0, func1, v, x, y, z,
+                eps = Mat.eps * 10;
+
+            v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
+            x = v.usrCoords[1];
+            y = v.usrCoords[2];
+            
+            func0 = function (t) {
+                var c1 = x - cu.X(t),
+                    c2 = y - cu.Y(t);
+                    
+                return Math.sqrt(c1 * c1 + c2 * c2);
+            };
+
+            func1 = function (t) {
+                var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
+                return v * v;
+            };
+            
+            // Find t
+            t = Numerics.root(func0, [cu.minX(), cu.maxX()]);
+            // Compute "exect" t
+            t = Numerics.root(func1, t);
+
+            // Is the point on the line?
+            if (Math.abs(func1(t)) > eps) {
+                z = NaN;
+            } else {
+                z = 1.0;
+            }
+
+            return (new Coords(Const.COORDS_BY_USER, [z, cu.X(t), cu.Y(t)], board));
+        },
+
+        /**
+         * Intersection of line and curve, continuous case.
          * Segments are treated as lines. Finding the nr-the intersection point
          * works for nr=0,1 only.
+         * 
+         * @private
+         * @deprecated
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
          * @param {Number} nr Will return the nr-th intersection point.
@@ -1238,7 +1288,7 @@ define([
          *
          * BUG: does not respect cu.minX() and cu.maxX()
          */
-        meetCurveLineContinuous: function (cu, li, nr, board) {
+        meetCurveLineContinuousOld: function (cu, li, nr, board) {
             var t, t2, i, func, z,
                 tnew, steps, delta, tstart, tend, cux, cuy,
                 eps = Mat.eps * 10;
@@ -1257,7 +1307,6 @@ define([
                 tstart = cu.minX();
                 tend = cu.maxX();
                 t = Numerics.root(func, [tstart, tend]);
-console.log(t);                
             }
 
             this.meetCurveLineContinuous.t1memo = t;
@@ -1308,7 +1357,11 @@ console.log(t);
          * @param {JXG.Line} li
          * @param {Number} nr
          * @param {JXG.Board} board
-         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the line defined by the segment
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the 
+         * line defined by the segment
+         * 
+         * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
+         * the ideal point [0,1,0] is returned.
          */
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
             var i, j,
