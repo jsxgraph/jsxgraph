@@ -1133,8 +1133,8 @@ define([
              */
             strokeColor: 'black',
             strokeOpacity: 1,
-            highlightStrokeOpacity: 1,
-            highlightStrokeColor: '#C3D9FF',
+            highlightStrokeOpacity: 0.666666,
+            highlightStrokeColor: 'black',
 
             fixed: true,
             /**
@@ -1811,7 +1811,9 @@ define([
             isLabel: false,
 
             strokeColor: 'black',
-
+            highlightStrokeColor: 'black',
+            highlightStrokeOpacity: 0.666666,
+            
             /**
              * If true the input will be given to ASCIIMathML before rendering.
              * @memberOf Text.prototype

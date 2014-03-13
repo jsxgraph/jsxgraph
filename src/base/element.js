@@ -1042,6 +1042,9 @@ define([
 
                 if (this.visProp.withlabel) {
                     this.label = JXG.elements.text(this.board, [0, 0, function () {
+                        if (typeof that.name === 'function') {
+                            return that.name();
+                        }
                         return that.name;
                     }], attr);
                     this.label.needsUpdate = true;
