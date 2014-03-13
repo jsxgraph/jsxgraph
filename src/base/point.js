@@ -432,6 +432,7 @@ define([
                         if ((angle < alpha && angle > alpha * 0.5) || (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             newPos = alpha;
                         }
+                        this.needsUpdateFromParent = true;
                         this.updateGliderFromParent();
                     }
 
@@ -473,7 +474,8 @@ define([
          */
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
-                slide = this.slideObject, alpha;
+                slide = this.slideObject, 
+                baseangle, alpha, angle, beta, newPos;
 
             if (!this.needsUpdateFromParent) {
                 this.needsUpdateFromParent = true;
@@ -538,12 +540,34 @@ define([
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
 
                 if (slide.type === Const.OBJECT_TYPE_ARC || slide.type === Const.OBJECT_TYPE_SECTOR) {
-                    alpha = Geometry.rad([slide.center.X() + 1, slide.center.Y()], slide.center, slide.radiuspoint);
+                    
+                    baseangle = Geometry.rad([slide.center.X() + 1, slide.center.Y()], slide.center, slide.radiuspoint);
+
+                    alpha = 0.0;
+                    beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
+
+                    if ((slide.visProp.type === 'minor' && beta > Math.PI) ||
+                            (slide.visProp.type === 'major' && beta < Math.PI)) {
+                        alpha = beta;
+                        beta = 2 * Math.PI;
+                    }
+
+                    // Correct the position if we are outside of the sector/arc
+                    if (this.position < alpha || this.position > beta) {
+                        this.position = beta;
+
+                        if ((this.position < alpha && this.position > alpha * 0.5) || 
+                            (this.position > beta && this.position > beta * 0.5 + Math.PI)) {
+                            this.position = alpha;
+                        }
+                    }
+
                     r = slide.Radius();
                     c = [
-                        slide.center.X() + r * Math.cos(this.position + alpha),
-                        slide.center.Y() + r * Math.sin(this.position + alpha)
+                        slide.center.X() + r * Math.cos(this.position + baseangle),
+                        slide.center.Y() + r * Math.sin(this.position + baseangle)
                     ];
+                    
                 } else {
                     // In case, the point is a constrained glider.
                     // side-effect: this.position is overwritten
@@ -964,6 +988,8 @@ define([
 
             // Determine the initial value of this.position
             this.updateGlider();
+            this.needsUpdateFromParent = true;
+            this.updateGliderFromParent();
 
             return this;
         },
