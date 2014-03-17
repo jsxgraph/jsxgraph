@@ -1768,12 +1768,13 @@ define([
         }
 
         //el = board.create('line', [function () {return JXG.Math.matVecMult(el1.quadraticform.slice(0,3),el2.coords.usrCoords.slice(0,3));}]);
+        // Polar lines have been already provided in the tangent element.
         el = board.create('tangent', [el1, el2], attributes);
 
         el.elType = 'polarline';
         return el;
     };
-
+    
     /**
      * Register the element type tangent at JSXGraph
      * @private

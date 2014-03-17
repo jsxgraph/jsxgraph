@@ -2057,17 +2057,122 @@ define([
         return el;
     };
 
+    /**
+     * @class This element is used to provide a constructor for the pole point of a line with respect to a conic or a circle.
+     * @pseudo
+     * @description The pole point is the unique reciprocal relationship of a line with respect to a conic.
+     * The lines tangent to the intersections of a conic and a line intersect at the pole point of that line with respect to that conic.
+     * A line tangent to a conic has the pole point of that line with respect to that conic as the tangent point.
+     * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+     * @name PolePoint
+     * @augments JXG.Point
+     * @constructor
+     * @type JXG.Point
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Conic,JXG.Circle_JXG.Point} el1,el2 or
+     * @param {JXG.Point_JXG.Conic,JXG.Circle} el1,el2 The result will be the pole point of the line with respect to the conic or the circle.
+     * @example
+     * // Create the pole point of a line with respect to a conic
+     * var p1 = board.create('point', [-1, 2]);
+     * var p2 = board.create('point', [ 1, 4]);
+     * var p3 = board.create('point', [-1,-2]);
+     * var p4 = board.create('point', [ 0, 0]);
+     * var p5 = board.create('point', [ 4,-2]);
+     * var c1 = board.create('conic',[p1,p2,p3,p4,p5]);
+     * var p6 = board.create('point', [-1, 4]);
+     * var p7 = board.create('point', [2, -2]);
+     * var l1 = board.create('line', [p6, p7]);
+     * var p8 = board.create('polepoint', [c1, l1]);
+     * </pre><div id='7b7233a0-f363-47dd-9df5-8018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * <script type='text/javascript'>
+     * var ppex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-8018d0d17a98', {boundingbox: [-3, 5, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     * var ppex1_p1 = ppex1_board.create('point', [-1, 2]);
+     * var ppex1_p2 = ppex1_board.create('point', [ 1, 4]);
+     * var ppex1_p3 = ppex1_board.create('point', [-1,-2]);
+     * var ppex1_p4 = ppex1_board.create('point', [ 0, 0]);
+     * var ppex1_p5 = ppex1_board.create('point', [ 4,-2]);
+     * var ppex1_c1 = ppex1_board.create('conic',[ppex1_p1,ppex1_p2,ppex1_p3,ppex1_p4,ppex1_p5]);
+     * var ppex1_p6 = ppex1_board.create('point', [-1, 4]);
+     * var ppex1_p7 = ppex1_board.create('point', [2, -2]);
+     * var ppex1_l1 = ppex1_board.create('line', [ppex1_p6, ppex1_p7]);
+     * var ppex1_p8 = ppex1_board.create('polepoint', [ppex1_c1, ppex1_l1]);
+     * </script><pre>
+     * @example
+     * // Create the pole point of a line with respect to a circle
+     * var p1 = board.create('point', [1, 1]);
+     * var p2 = board.create('point', [2, 3]);
+     * var c1 = board.create('circle',[p1,p2]);
+     * var p3 = board.create('point', [-1, 4]);
+     * var p4 = board.create('point', [4, -1]);
+     * var l1 = board.create('line', [p3, p4]);
+     * var p5 = board.create('polepoint', [c1, l1]);
+     * </pre><div id='7b7233a0-f363-47dd-9df5-9018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * <script type='text/javascript'>
+     * var ppex2_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-9018d0d17a98', {boundingbox: [-3, 7, 7, -3], axis: true, showcopyright: false, shownavigation: false});
+     * var ppex2_p1 = ppex2_board.create('point', [1, 1]);
+     * var ppex2_p2 = ppex2_board.create('point', [2, 3]);
+     * var ppex2_c1 = ppex2_board.create('circle',[ppex2_p1,ppex2_p2]);
+     * var ppex2_p3 = ppex2_board.create('point', [-1, 4]);
+     * var ppex2_p4 = ppex2_board.create('point', [4, -1]);
+     * var ppex2_l1 = ppex2_board.create('line', [ppex2_p3, ppex2_p4]);
+     * var ppex2_p5 = ppex2_board.create('polepoint', [ppex2_c1, ppex2_l1]);
+     * </script><pre>
+     */
+    JXG.createPolePoint = function (board, parents, attributes) {
+        var el, el1, el2;
+
+        if (parents.length !== 2 || !((
+                parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) &&
+                parents[1].elementClass === Const.OBJECT_CLASS_LINE ||
+                parents[0].elementClass === Const.OBJECT_CLASS_LINE && (
+                parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {
+            // Failure
+            throw new Error("JSXGraph: Can't create 'pole point' with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent type: [conic|circle,line], [line,conic|circle]");
+        }
+
+        if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+            el1 = board.select(parents[0]);
+            el2 = board.select(parents[1]);
+        } else {
+            el1 = board.select(parents[1]);
+            el2 = board.select(parents[0]);
+        }
+
+        el = board.create('point', 
+            [function () {
+                var q = el1.quadraticform,
+                    s = el2.stdform.slice(0,3);
+                    
+                return [JXG.Math.Numerics.det([s, q[1], q[2]]),
+                        JXG.Math.Numerics.det([q[0], s, q[2]]),
+                        JXG.Math.Numerics.det([q[0], q[1], s])];
+            }], attributes);
+
+        el.elType = 'polepoint';
+        el.parents = [el1.id, el2.id];
+
+        el1.addChild(el);
+        el2.addChild(el);
+
+        return el;
+    };
 
     JXG.registerElement('point', JXG.createPoint);
     JXG.registerElement('glider', JXG.createGlider);
     JXG.registerElement('intersection', JXG.createIntersectionPoint);
     JXG.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
+    JXG.registerElement('polarpoint', JXG.createPolarPoint);
 
     return {
         Point: JXG.Point,
         createPoint: JXG.createPoint,
         createGlider: JXG.createGlider,
         createIntersection: JXG.createIntersectionPoint,
-        createOtherIntersection: JXG.createOtherIntersectionPoint
+        createOtherIntersection: JXG.createOtherIntersectionPoint,
+        createPolarPoint: JXG.createPolarPoint
     };
 });
