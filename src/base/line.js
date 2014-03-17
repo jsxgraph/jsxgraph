@@ -1679,7 +1679,7 @@ define([
                     
                 return JXG.Math.matVecMult(
                     JXG.Math.transpose([a.slice(0,3), b.slice(0,3)]), [b[3] , -a[3]]);
-             }]);
+             }], attributes);
 
         el.elType = 'radicalaxis';
         el.parents = [el1.id, el2.id];
@@ -1691,12 +1691,97 @@ define([
     };
 
     /**
+     * @class This element is used to provide a constructor for the polar line of a point with respect to a conic or a circle.
+     * @pseudo
+     * @description The polar line is the unique reciprocal relationship of a point with respect to a conic.
+     * The lines through the intersections of a conic and the polar line of a point with respect to that conic and through that point are tangent to the conic.
+     * A point on a conic has the polar line of that point with respect to that conic as the tangent line to that conic at that point.
+     * See {@link http://en.wikipedia.org/wiki/Pole_and_polar} for more information on pole and polar.
+     * @name PolarLine
+     * @augments JXG.Line
+     * @constructor
+     * @type JXG.Line
+     * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Conic,JXG.Circle_JXG.Point} el1,el2 or
+     * @param {JXG.Point_JXG.Conic,JXG.Circle} el1,el2 The result will be the polar line of the point with respect to the conic or the circle.
+     * @example
+     * // Create the polar line of a point with respect to a conic
+     * var p1 = board.create('point', [-1, 2]);
+     * var p2 = board.create('point', [ 1, 4]);
+     * var p3 = board.create('point', [-1,-2]);
+     * var p4 = board.create('point', [ 0, 0]);
+     * var p5 = board.create('point', [ 4,-2]);
+     * var c1 = board.create('conic',[p1,p2,p3,p4,p5]);
+     * var p6 = board.create('point', [-1, 1]);
+     * var l1 = board.create('polarline', [c1, p6]);
+     * </pre><div id='7b7233a0-f363-47dd-9df5-6018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * <script type='text/javascript'>
+     * var plex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-6018d0d17a98', {boundingbox: [-3, 5, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     * var plex1_p1 = plex1_board.create('point', [-1, 2]);
+     * var plex1_p2 = plex1_board.create('point', [ 1, 4]);
+     * var plex1_p3 = plex1_board.create('point', [-1,-2]);
+     * var plex1_p4 = plex1_board.create('point', [ 0, 0]);
+     * var plex1_p5 = plex1_board.create('point', [ 4,-2]);
+     * var plex1_c1 = plex1_board.create('conic',[plex1_p1,plex1_p2,plex1_p3,plex1_p4,plex1_p5]);
+     * var plex1_p6 = plex1_board.create('point', [-1, 1]);
+     * var plex1_l1 = plex1_board.create('polarline', [plex1_c1, plex1_p6]);
+     * </script><pre>
+     * @example
+     * // Create the polar line of a point with respect to a circle.
+     * var p1 = board.create('point', [ 1, 1]);
+     * var p2 = board.create('point', [ 2, 3]);
+     * var c1 = board.create('circle',[p1,p2]);
+     * var p3 = board.create('point', [ 6, 6]);
+     * var l1 = board.create('polarline', [c1, p3]);
+     * </pre><div id='7b7233a0-f363-47dd-9df5-7018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * <script type='text/javascript'>
+     * var plex2_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-7018d0d17a98', {boundingbox: [-3, 7, 7, -3], axis: true, showcopyright: false, shownavigation: false});
+     * var plex2_p1 = plex2_board.create('point', [ 1, 1]);
+     * var plex2_p2 = plex2_board.create('point', [ 2, 3]);
+     * var plex2_c1 = plex2_board.create('circle',[plex2_p1,plex2_p2]);
+     * var plex2_p3 = plex2_board.create('point', [ 6, 6]);
+     * var plex2_l1 = plex2_board.create('polarline', [plex2_c1, plex2_p3]);
+     * </script><pre>
+     */
+    JXG.createPolarLine = function (board, parents, attributes) {
+        var el, el1, el2;
+
+        if (parents.length !== 2 || !((
+                parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) &&
+                parents[1].elementClass === Const.OBJECT_CLASS_POINT ||
+                parents[0].elementClass === Const.OBJECT_CLASS_POINT && (
+                parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {
+            // Failure
+            throw new Error("JSXGraph: Can't create 'polar line' with parent types '" +
+                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                "\nPossible parent type: [conic|circle,point], [point,conic|circle]");
+        }
+
+        if (parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+            el1 = board.select(parents[0]);
+            el2 = board.select(parents[1]);
+        } else {
+            el1 = board.select(parents[1]);
+            el2 = board.select(parents[0]);
+        }
+
+        //el = board.create('line', [function () {return JXG.Math.matVecMult(el1.quadraticform.slice(0,3),el2.coords.usrCoords.slice(0,3));}]);
+        el = board.create('tangent', [el1, el2], attributes);
+
+        el.elType = 'polarline';
+        return el;
+    };
+
+    /**
      * Register the element type tangent at JSXGraph
      * @private
      */
     JXG.registerElement('tangent', JXG.createTangent);
     JXG.registerElement('polar', JXG.createTangent);
     JXG.registerElement('radicalaxis', JXG.createRadicalAxis);
+    JXG.registerElement('polarline', JXG.createPolarLine);
 
     return {
         Line: JXG.Line,
@@ -1706,6 +1791,7 @@ define([
         createSegment: JXG.createSegment,
         createAxis: JXG.createAxis,
         createArrow: JXG.createArrow,
-        createRadicalAxis: JXG.createRadicalAxis
+        createRadicalAxis: JXG.createRadicalAxis,
+        createPolarLine: JXG.createPolarLine
     };
 });
