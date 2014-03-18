@@ -15,8 +15,8 @@
 
     <div style="width: 800px; margin-top: 10px;">
   <form>
-      <input type="button" onclick="chooseCoordinateSystem(p14_1);" value="Choose coordinate system" />
-      <input type="button" onclick="generatePolynomials(p14_1);" value="Generate system of polynomial equations" />
+      <input type="button" onclick="chooseCoordinateSystem();" value="Choose coordinate system" />
+      <input type="button" onclick="generatePolynomials();" value="Generate system of polynomial equations" />
       <br />
       <input type="button" onclick="calculateLocus();" value="Calculate locus of T" />
       <input type="button" onclick="showLocusEquation();" value="Show locus equation" />
@@ -26,13 +26,10 @@
       <input type="button" onclick="extend();" value="Extend the construction (with glider)" />
       <input type="button" onclick="extendedLocus();" value="Calculate extended locus (based on glider C)" />
       <input type="button" onclick="showLocusTime(loc2)" value="Show locus time" />
-      <input type="button" onclick="chooseCoordinateSystem(tm);" value="Choose coordinate system" />
-      <input type="button" onclick="generatePolynomials(tm);" value="Generate system of polynomial equations (from glider)" />
       <br />
       <input type="button" onclick="extend2();" value="Extend the construction" />
       <input type="button" onclick="extendedLocus2();" value="Calculate extended locus" />
       <input type="button" onclick="showLocusTime(loc3)" value="Show locus time" />
-      <input type="button" onclick="chooseCoordinateSystem(tm2);" value="Choose coordinate system" />
       <input type="button" onclick="generatePolynomials2()" value="Equations 2" />
       <br />
       <input type="text" value="0.2" id="dim" size="3" />
@@ -52,26 +49,21 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-2, 20, 20, -2], axis: false, grid: false,
+    board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], axis: true, grid: false,
                                    keepaspectratio: true, showcopyright: false});
 
+    A = board.createElement('point', [0, 0]);
+    B = board.createElement('point', [8, 0]);
+    c1 = board.createElement('circle', [A, 4]);//, {strokeOpacity: 0.3});
 
-    p1 = board.createElement('point', [8, 7]);
-    c1 = board.createElement('circle', [p1, 4], {withLabel: false, name: 'c_{1}'});
-    
-    p2 = board.create('point', [14, 7]);
-    l1 = board.create('line', [p1, p2], {withLabel: true, name: 'g', strokeWidth: 1});
-    
-    g = board.create('glider', [11.5, 9, c1], {name: 'G'});
-    c2 = board.create('circle', [g, 4], {withLabel: false, name: 'c_{2}'});
-    
-    i = board.create('intersection', [c2, l1, 0], {name: 'I_1'});
-    
-    p14_1 = board.create('midpoint', [i, g], {trace: false, name: 'M'});
-    
-    
-    
-    
+    c2 = board.create('circle', [B, 3]);
+    G = board.create('glider', [c1], {name: 'G'});
+
+    c3 = board.create('circle', [G, 6]);
+    D = board.create('intersection', [c2, c3], {name: 'D'});
+
+    E = board.create('midpoint', [G, D], {name: 'E'});
+
 
 
     loc = null;
@@ -89,24 +81,15 @@
 
     opt = false;
     
-    //board.options.locus.translateToOrigin = true;
-//    p14_2 = board.createElement('intersection', [c2,g,1]);
-
-//    loc = board.createElement('locus', [p14_1], {strokeColor: 'red', strokeWidth: '1px', strokeOpacity: 0.3});
-
-//    board.unsuspendUpdate();
-
-//    tl = board.create('locus', [tm], {strokeWidth: '3px', strokeOpacity: 0.9, strokeColor: 'black'});
-
-    function chooseCoordinateSystem(point) {
+    function chooseCoordinateSystem() {
         var k, o;
         document.getElementById('polynomials').style.display = 'none';
         document.getElementById('jxgbox').style.display = 'block';
-        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, point, 'u', 'brace');
+        JXG.Math.Symbolic.generateSymbolicCoordinatesPartial(board, E, 'u', 'brace');
 
         for(k in board.objects) {
             o = board.objects[k];
-            if(o.elementClass == JXG.OBJECT_CLASS_POINT) {
+            if(o.elementClass == JXG.OBJECT_CLASS_POINT && o.label) {
                 o.label.setText(o.name + ' (' + o.symbolic.x + ', ' + o.symbolic.y + ')');
             }
         }
@@ -115,8 +98,8 @@
         JXG.Math.Symbolic.clearSymbolicCoordinates(board);
     }
 
-    function generatePolynomials(point) {
-        var res = JXG.Math.Symbolic.generatePolynomials(board, point, true),
+    function generatePolynomials() {
+        var res = JXG.Math.Symbolic.generatePolynomials(board, E, true),
             i, out = document.getElementById('polynomials');
 
         out.innerHTML = '<ul>';
@@ -128,7 +111,7 @@
     }
 
     function calculateLocus() {
-        loc = board.create('locus', [p14_1], {strokeColor: 'red', strokeWidth: 2, dash: 1});
+        loc = board.create('locus', [E], {strokeColor: 'black', strokeWidth: '2px'});
     }
 
     function showLocusEquation() {
@@ -183,13 +166,11 @@
             return;
 
         board.suspendUpdate();
-        tg = board.create('glider', [3.5, 8.3, loc]);
+        tg = board.create('glider', [loc]);
 
-    c3 = board.create('circle', [tg, 3]);
-    
-    // war: p5
-    tm = board.create('intersection', [l1, c3, 0], {trace: false, name: 'I_2'});
-    //tm = board.create('midpoint', [p5, p14_1], {trace: true, size: 1});
+        tc = board.create('circle', [tg, 3]);
+        ti = board.create('intersection', [tc, c1, 0], {color: 'blue'});
+        tm = board.create('midpoint', [tg, ti], {color: 'green'});
         board.unsuspendUpdate();
     }
 
@@ -212,15 +193,15 @@
     }
 
     function extendedLocus() {
-        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: 3, dash: 3});
+        loc2 = board.create('locus', [tm], {strokeColor: 'black', strokeWidth: '4px'});
     }
 
     function extend2() {
-    c3 = board.create('circle', [p14_1, 3]);
-   
-    // war: p6 
-    tm2 = board.create('intersection', [l1, c3, 0], {trace: false});
-    //tm2 = board.create('midpoint', [p6, p14_1], {trace: true});
+        board.suspendUpdate();
+        tc2 = board.create('circle', [p14_1, 3]);
+        ti2 = board.create('intersection', [tc2, c1, 0], {color: 'blue'});
+        tm2 = board.create('midpoint', [p14_1, ti2], {color: 'green'});
+        board.unsuspendUpdate();
     }
 
     function dimExtension2() {
@@ -238,7 +219,7 @@
     }
 
     function extendedLocus2() {
-        loc3 = board.create('locus', [tm2], {strokeColor: 'green', strokeWidth: 2});
+        loc3 = board.create('locus', [tm2], {strokeColor: 'green', strokeWidth: '2px'});
     }
 
     function showLocusTime(l) {
