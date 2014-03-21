@@ -904,6 +904,9 @@ define([
 
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, 'stroke-width', w);
+                if (w === 0 && Type.exists(el.rendNodeStroke)) {
+                    this._setAttr(el.rendNodeStroke, 'opacity', '0%');
+                }
             }
 
             el.visPropOld.strokewidth = w;
