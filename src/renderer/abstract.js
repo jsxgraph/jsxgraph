@@ -182,8 +182,8 @@ define([
 
                 if (!element.visProp.draft) {
                     if (!not.stroke) {
-                        this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                         this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
+                        this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     }
 
                     if (!not.fill) {

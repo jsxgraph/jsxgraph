@@ -903,13 +903,15 @@ define([
             this.setPropertyPrim(node, 'stroked', 'true');
 
             if (Type.exists(w)) {
+                
                 this.setPropertyPrim(node, 'stroke-width', w);
                 if (w === 0 && Type.exists(el.rendNodeStroke)) {
-                    this._setAttr(el.rendNodeStroke, 'opacity', '0%');
+                    this._setAttr(node, 'stroked', 'false');
                 }
             }
 
             el.visPropOld.strokewidth = w;
+
         },
 
         // already documented in JXG.AbstractRenderer
