@@ -923,11 +923,15 @@ define([
             /*
              * Save the position.
              */
-            this.drag_position = newPos.scrCoords.slice(1);
+            //this.drag_position = newPos.scrCoords.slice(1);
+            this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
 
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
-                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, newPos.scrCoords.slice(1), [o.targets[0].Xprev, o.targets[0].Yprev]);
+                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, 
+                    //newPos.scrCoords.slice(1), 
+                    [newPos.scrCoords[1], newPos.scrCoords[2]], 
+                    [o.targets[0].Xprev, o.targets[0].Yprev]);
                 }
                 // Remember the actual position for the next move event. Then we are able to
                 // compute the difference vector.

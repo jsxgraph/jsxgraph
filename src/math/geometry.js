@@ -705,11 +705,13 @@ define([
             }
 
             if (p1) {
-                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
+                //point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
+                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords);
             }
 
             if (p2) {
-                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
+                //point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
+                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords);
             }
         },
 
@@ -856,11 +858,13 @@ define([
             }
 
             if (p1) {
-                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
+                //point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords.slice(1));
+                point1.setCoordinates(Const.COORDS_BY_USER, p1.usrCoords);
             }
 
             if (p2) {
-                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
+                //point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords.slice(1));
+                point2.setCoordinates(Const.COORDS_BY_USER, p2.usrCoords);
             }
         },
 

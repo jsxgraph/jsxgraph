@@ -640,20 +640,12 @@ define([
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
+                        scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
+                        scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
 
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
                         // Attention: first coordinate may be inaccurate if far way
                         //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
-                        pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster on now (webkit and firefox)
+                        pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster now (webkit and firefox)
                         nextSymb = symbl;
                     }
                 }
@@ -710,21 +702,13 @@ define([
                         nextSymb = symbm;
                     } else {
                         // Chrome has problems with values being too far away.
-                        if (scr[1] > maxSize) {
-                            scr[1] = maxSize;
-                        } else if (scr[1] < -maxSize) {
-                            scr[1] = -maxSize;
-                        }
-
-                        if (scr[2] > maxSize) {
-                            scr[2] = maxSize;
-                        } else if (scr[2] < -maxSize) {
-                            scr[2] = -maxSize;
-                        }
+                        scr[1] = Math.max(Math.min(scr[1], maxSize), -maxSize);
+                        scr[2] = Math.max(Math.min(scr[2], maxSize), -maxSize);
 
                         // Attention: first coordinate may be inaccurate if far way
                         if (nextSymb === symbm) {
-                            pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                            //pStr += [nextSymb, scr[1], ' ', scr[2]].join('');
+                            pStr += nextSymb + scr[1] + ' ' + scr[2];   // Seems to be faster now (webkit and firefox)
                         } else {
                             k = 2 * j;
                             pStr += [nextSymb,

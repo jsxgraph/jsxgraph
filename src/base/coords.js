@@ -78,11 +78,14 @@ define([
          * @type Array
          */
         this.usrCoords = [];
+        //this.usrCoords = new Float64Array(3);
+        
         /**
          * Stores coordinates for screen view as homogeneous coordinates.
          * @type Array
          */
         this.scrCoords = [];
+        //this.scrCoords = new Float64Array(3);
 
         /**
          * If true, this coordinates object will emit update events every time
@@ -225,6 +228,28 @@ define([
             return this;
         },
 
+        /**
+        * Copy array, either srcCoords or usrCoords
+        * Uses slice() in case of standard arrays and set() in case of
+        * typed arrays.
+        * @private
+        * @param {String) obj Either 'srcCoords' or 'usrCoords'
+        * @param {Number} offset Offset, defaults to 0 if not given
+        * @returns {Array} Returns copy of the coords array either as standard array or as
+        *   typed array.
+        */
+        copy: function(obj, offset) {
+            if (typeof offset === 'undefined') {
+                offset = 0;
+            }
+            
+            return this[obj].slice(offset);
+            
+            //var dest = new Float64Array(3);
+            //dest.set(this[obj]);
+            //return dest;
+        },
+        
         /**
          * Triggered whenever the coordinates change.
          * @name JXG.Coords#update

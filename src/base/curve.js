@@ -711,7 +711,7 @@ define([
                    Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
                    Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7)) ) {
                 this.points.push(pnt);
-                this._lastCrds = pnt.scrCoords.slice();
+                this._lastCrds = pnt.copy('scrCoords');
             } 
         },
         
@@ -914,12 +914,12 @@ define([
             
             ta = mi;
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
-            a = pa.scrCoords.slice();
+            a = pa.copy('scrCoords');
             suspendUpdate = true,
 
             tb = ma;
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
-            b = pb.scrCoords.slice();
+            b = pb.copy('scrCoords');
             
             this.points.push(pa);
             this._plotRecursive(a, ta, b, tb, depth, delta);
