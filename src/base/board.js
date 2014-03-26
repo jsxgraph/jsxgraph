@@ -2207,6 +2207,11 @@ define([
             if (!this.hasMouseUp) {
                 Env.addEvent(document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = true;
+            } else {
+                // In case this.hasMouseUp==true, it may be that there was a 
+                // mousedown event before which was not followed by an mouseup event.
+                // This seems to happen with interactive whiteboard pens sometimes.
+                return;
             }
 
             pos = this.getMousePosition(evt);
