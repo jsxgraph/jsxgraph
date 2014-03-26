@@ -1546,8 +1546,8 @@ define([
                     Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
-            }
-
+            } 
+            
             if (this.hasMouseHandlers) {
                 this.removeMouseEventHandlers();
             }
