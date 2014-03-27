@@ -172,8 +172,10 @@ define([
         },
 
         /**
-         * Calculates the bisection between the three points A, B, C. The bisection is defined by two points:
-         * Parameter B and a point with the coordinates calculated in this function.
+         * Calculates a point on the bisection line between the three points A, B, C. 
+         * As a result, the bisection line is defined by two points:
+         * Parameter B and the point with the coordinates calculated in this function.
+         * Does not work for ideal points.
          * @param {JXG.Point} A Point
          * @param {JXG.Point} B Point
          * @param {JXG.Point} C Point
@@ -185,41 +187,27 @@ define([
                 Ac = A.coords.usrCoords,
                 Bc = B.coords.usrCoords,
                 Cc = C.coords.usrCoords,
-                x = Ac[1] - Bc[1],
-                y = Ac[2] - Bc[2],
-                d = Math.sqrt(x * x + y * y);
+                x, y;
 
             if (!Type.exists(board)) {
                 board = A.board;
             }
-
-            x /= d;
-            y /= d;
-            phiA = Math.acos(x);
-
-            if (y < 0) {
-                phiA *= -1;
+            
+            // Parallel lines
+            if (Bc[0] === 0) {
+                return new Coords(Const.COORDS_BY_USER, 
+                    [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5], board);
             }
-
-            if (phiA < 0) {
-                phiA += 2 * Math.PI;
-            }
+            
+            // Non-parallel lines
+            x = Ac[1] - Bc[1];
+            y = Ac[2] - Bc[2];
+            phiA =  Math.atan2(y, x);
 
             x = Cc[1] - Bc[1];
             y = Cc[2] - Bc[2];
-            d = Math.sqrt(x * x + y * y);
-            x /= d;
-            y /= d;
-            phiC = Math.acos(x);
-
-            if (y < 0) {
-                phiC *= -1;
-            }
-
-            if (phiC < 0) {
-                phiC += 2 * Math.PI;
-            }
-
+            phiC =  Math.atan2(y, x);
+            
             phi = (phiA + phiC) * 0.5;
 
             if (phiA > phiC) {
@@ -229,7 +217,7 @@ define([
             x = Math.cos(phi) + Bc[1];
             y = Math.sin(phi) + Bc[2];
 
-            return new Coords(Const.COORDS_BY_USER, [x, y], board);
+            return new Coords(Const.COORDS_BY_USER, [1, x, y], board);
         },
 
         /**
