@@ -1401,6 +1401,44 @@ define([
         hasPoint: function (x, y) {
             return false;
         },
+        
+        /**
+         * Move an element to its nearest grid point.
+         * The function uses the coords object of the element as
+         * its actual position. If there is no coords object, nothing is done.
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Element} Reference to this element
+         */
+        handleSnapToGrid: function (force) {
+            var x, y, ticks,
+                sX = this.visProp.snapsizex,
+                sY = this.visProp.snapsizey;
+
+            if (!JXG.exists(this.coords)) {
+                return this;
+            }
+            
+            if (this.visProp.snaptogrid || force === true) {
+                x = this.coords.usrCoords[1];
+                y = this.coords.usrCoords[2];
+
+                if (sX <= 0 && this.board.defaultAxes && this.board.defaultAxes.x.defaultTicks) {
+                    ticks = this.board.defaultAxes.x.defaultTicks;
+                    sX = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                }
+
+                if (sY <= 0 && this.board.defaultAxes && this.board.defaultAxes.y.defaultTicks) {
+                    ticks = this.board.defaultAxes.y.defaultTicks;
+                    sY = ticks.ticksDelta * (ticks.visProp.minorticks + 1);
+                }
+
+                // if no valid snap sizes are available, don't change the coords.
+                if (sX > 0 && sY > 0) {
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, [Math.round(x / sX) * sX, Math.round(y / sY) * sY]);
+                }
+            }
+            return this;
+        },
 
         /**
          * Alias of {@link JXG.GeometryElement#on}.

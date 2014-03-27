@@ -708,9 +708,30 @@ define([
                 v = [this.Z(), this.X(), this.Y()];
                 this.X = Type.createFunction(v[1] + dc[1], this.board, '');
                 this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
+                
+                /*
+                * In case of snapToGrid===true, first the coordinates of 
+                * the new position is set, then they are rounded to the grid.
+                * The resulting coordinates are set as functions X(), Y(),
+                * becasue they are set again in updateCoords().
+                */
+                if (this.visProp.snaptogrid) {
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
+                    this.snapToGrid();
+                    this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
+                    this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
+                }
             }
-
+            
             return this;
+        },
+        
+        /**
+         * Alias for {@link JXG.Element#handleSnapToGrid}
+         * @returns {JXG.Text} Reference to this element
+         */
+        snapToGrid: function () {
+            return this.handleSnapToGrid();
         }
 
     });

@@ -1021,7 +1021,35 @@ define([
             fillOpacity: 1.0,
             cssClass: 'JXGimage',
             highlightCssClass: 'JXGimageHighlight',
-            rotate: 0
+            rotate: 0,
+            
+            /**
+             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+             * of the default ticks of the default x axes of the board.
+             * @see JXG.Point#snapToGrid
+             * @see JXG.Point#snapSizeY
+             * @see JXG.Board#defaultAxes
+             * @type Number
+             * @name JXG.Point#snapSizeX
+             * @default 1
+             */
+            snapSizeX: 1,
+
+            /**
+             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+             * of the default ticks of the default y axes of the board.
+             * @see JXG.Point#snapToGrid
+             * @see JXG.Point#snapSizeX
+             * @see JXG.Board#defaultAxes
+             * @type Number
+             * @name JXG.Point#snapSizeY
+             * @default 1
+             */
+            snapSizeY: 1            
         },
 
         /* special options for incircle of 3 points */
@@ -1232,7 +1260,7 @@ define([
 
             /**
              * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
-             * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
              * @see JXG.Point#snapToGrid
@@ -1246,7 +1274,7 @@ define([
 
             /**
              * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
-             * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
              * @see JXG.Point#snapToGrid
@@ -1459,7 +1487,7 @@ define([
 
             /**
              * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
-             * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
              * @see JXG.Point#snapToGrid
@@ -1473,7 +1501,7 @@ define([
 
             /**
              * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
-             * The point will only snap on values multiple to snapSizeX in x and snapSizeY in y direction.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
              * @see JXG.Point#snapToGrid
@@ -1616,7 +1644,7 @@ define([
              */
 
             /**
-             * The slider only returns multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
+             * The slider only returns integer multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
              * continuous results set this to <tt>-1</tt>.
              * @memberOf Slider.prototype
              * @name snapWidth
@@ -1879,7 +1907,35 @@ define([
             dragArea: 'all',                  // 'all', or something else (may be extended to left, right, ...)
             withLabel: false,
             rotate: 0,                        // works for non-zero values only in combination with display=='internal'
-            visible: true
+            visible: true,
+            
+            /**
+             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+             * of the default ticks of the default x axes of the board.
+             * @see JXG.Point#snapToGrid
+             * @see JXG.Point#snapSizeY
+             * @see JXG.Board#defaultAxes
+             * @type Number
+             * @name JXG.Point#snapSizeX
+             * @default 1
+             */
+            snapSizeX: 1,
+
+            /**
+             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
+             * of the default ticks of the default y axes of the board.
+             * @see JXG.Point#snapToGrid
+             * @see JXG.Point#snapSizeX
+             * @see JXG.Board#defaultAxes
+             * @type Number
+             * @name JXG.Point#snapSizeY
+             * @default 1
+             */
+            snapSizeY: 1
 
             /**#@-*/
         },
