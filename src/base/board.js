@@ -3573,7 +3573,7 @@ define([
          */
         setBoundingBox: function (bbox, keepaspectratio) {
             var h, w,
-                dim = Env.getDimensions(this.container);
+                dim = Env.getDimensions(this.container, this.document);
 
             if (!Type.isArray(bbox)) {
                 return this;
