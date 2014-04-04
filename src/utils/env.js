@@ -228,7 +228,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @param {String} elementId The HTML id of an HTML DOM node.
          * @returns {Object} An object with the two properties width and height.
          */
-        getDimensions: function (elementId) {
+        getDimensions: function (elementId, doc) {
             var element, display, els, originalVisibility, originalPosition,
                 originalDisplay, originalWidth, originalHeight;
 
@@ -239,8 +239,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 };
             }
 
+            doc = doc || document;
             // Borrowed from prototype.js
-            element = document.getElementById(elementId);
+            element = doc.getElementById(elementId);
             if (!Type.exists(element)) {
                 throw new Error("\nJSXGraph: HTML container element '" + elementId + "' not found.");
             }
@@ -383,9 +384,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * Cross browser mouse / touch coordinates retrieval relative to the board's top left corner.
          * @param {Object} [e] The browsers event object. If omitted, <tt>window.event</tt> will be used.
          * @param {Number} [index] If <tt>e</tt> is a touch event, this provides the index of the touch coordinates, i.e. it determines which finger.
+         * @param {Object} [doc] The document object.
          * @returns {Array} Contains the position as x,y-coordinates in the first resp. second component.
          */
-        getPosition: function (e, index) {
+        getPosition: function (e, index, doc) {
             var i, len, evtTouches,
                 posx = 0,
                 posy = 0;
@@ -393,7 +395,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (!e) {
                 e = window.event;
             }
-
+            
+            doc = doc || document;
             evtTouches = e[JXG.touchProperty];
 
             if (Type.exists(index) && Type.exists(evtTouches)) {
@@ -415,8 +418,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 posx = e.pageX;
                 posy = e.pageY;
             } else if (e.clientX || e.clientY) {
-                posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                posx = e.clientX + doc.body.scrollLeft + doc.documentElement.scrollLeft;
+                posy = e.clientY + doc.body.scrollTop + doc.documentElement.scrollTop;
             }
 
             return [posx, posy];
@@ -483,12 +486,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
          */
         getStyle: function (obj, stylename) {
-            var r;
+            var r, doc;
 
+            doc = obj.ownerDocument;
+            
             // Non-IE
             if (window.getComputedStyle) {
-                r = document.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
-                // IE
+                r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
+            // IE
             } else if (obj.currentStyle && JXG.ieVersion >= 9) {
                 r = obj.currentStyle[stylename];
             } else {

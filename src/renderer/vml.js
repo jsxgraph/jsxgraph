@@ -110,7 +110,7 @@ define([
          */
         _setAttr: function (node, key, val, iFlag) {
             try {
-                if (document.documentMode === 8) {
+                if (this.container.ownerDocument.documentMode === 8) {
                     node[key] = val;
                 } else {
                     node.setAttribute(key, val, iFlag);
@@ -181,7 +181,7 @@ define([
             this._setAttr(node, 'opacity', '30%');
             node.style.filter = 'alpha(opacity = 30)';
 
-            t = document.createTextNode(str);
+            t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
             this.appendChildPrim(node, 0);
         },
@@ -192,13 +192,13 @@ define([
             node = this.createNode('textbox');
             node.style.position = 'absolute';
             /*
-             if (document.documentMode === 8) {                 // IE 8
+             if (this.container.ownerDocument.documentMode === 8) {                 // IE 8
              node.setAttribute('class', el.visProp.cssclass);
              } else {
-             node.setAttribute(document.all ? 'className' : 'class', el.visProp.cssclass);
+             node.setAttribute(this.container.ownerDocument.all ? 'className' : 'class', el.visProp.cssclass);
              }
              */
-            el.rendNodeText = document.createTextNode('');
+            el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
             return node;

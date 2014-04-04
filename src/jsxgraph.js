@@ -121,11 +121,12 @@ define([
             return Options.renderer;
         }()),
 
-        initRenderer: function (box, dim) {
+        initRenderer: function (box, dim, doc) {
             var boxid, renderer;
 
-            if (typeof document === 'object' && box !== null) {
-                boxid = document.getElementById(box);
+            doc = doc || document;
+            if (typeof doc === 'object' && box !== null) {
+                boxid = doc.getElementById(box);
 
                 // Remove everything from the container before initializing the renderer and the board
                 while (boxid.firstChild) {
@@ -173,13 +174,14 @@ define([
                 bbox, attr, axattr,
                 board;
 
-            dimensions = Env.getDimensions(box);
             attributes = attributes || {};
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
+
+            dimensions = Env.getDimensions(box, attr.document);
 
             if (attr.unitx || attr.unity) {
                 originX = Type.def(attr.originx, 150);
@@ -213,7 +215,7 @@ define([
                 originY = unitY * bbox[1];
             }
 
-            renderer = this.initRenderer(box, dimensions);
+            renderer = this.initRenderer(box, dimensions, attr.document);
 
             // create the board
             board = new Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
@@ -264,14 +266,15 @@ define([
         loadBoardFromFile: function (box, file, format, attributes, callback) {
             var attr, renderer, board, dimensions;
 
-            dimensions = Env.getDimensions(box);
-            renderer = this.initRenderer(box, dimensions);
             attributes = attributes || {};
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+
+            dimensions = Env.getDimensions(box, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1, 1, 50, 50, dimensions.width, dimensions.height, attr);
@@ -303,14 +306,15 @@ define([
         loadBoardFromString: function (box, string, format, attributes, callback) {
             var attr, renderer, dimensions, board;
 
-            dimensions = Env.getDimensions(box);
-            renderer = this.initRenderer(box, dimensions);
             attributes = attributes || {};
 
             // merge attributes
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+
+            dimensions = Env.getDimensions(box, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document);
 
             /* User default parameters, in parse* the values in the gxt files are submitted to board */
             board = new Board(box, renderer, '', [150, 150], 1.0, 1.0, 50, 50, dimensions.width, dimensions.height, attr);

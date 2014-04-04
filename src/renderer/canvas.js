@@ -86,7 +86,7 @@ define([
 
             this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="',
                 dim.height, 'px"><', '/canvas>'].join('');
-            this.canvasRoot = document.getElementById(this.canvasId);
+            this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
             this.canvasId = (typeof module === 'object' ? module.require('canvas') : require('canvas'));

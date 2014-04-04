@@ -320,7 +320,7 @@ define([
             node.setAttributeNS(null, 'x', '20px');
             node.setAttributeNS(null, 'y', (2 + fontsize) + 'px');
             node.setAttributeNS(null, "style", "font-family:Arial,Helvetica,sans-serif; font-size:" + fontsize + "px; fill:#356AA0;  opacity:0.3;");
-            t = document.createTextNode(str);
+            t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
             this.appendChildPrim(node, 0);
         },
@@ -331,7 +331,7 @@ define([
 
             node.setAttributeNS(null, "class", el.visProp.cssclass);
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
-            el.rendNodeText = document.createTextNode('');
+            el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node,  el.visProp.layer);
 
@@ -453,13 +453,6 @@ define([
 
             return node;
         },
-
-        // already documented in JXG.AbstractRenderer
-        /*
-        appendNodesToElement: function (element) {
-            element.rendNode = this.getElementById(element.id);
-        },
-        */
 
         // already documented in JXG.AbstractRenderer
         createPrim: function (type, id) {

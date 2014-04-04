@@ -773,7 +773,7 @@ define([
     JXG.createChart = function (board, parents, attributes) {
         var data, row, i, j, col, charts = [], w, x, showRows, attr,
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len,
-            table = Env.isBrowser ? document.getElementById(parents[0]) : null;
+            table = Env.isBrowser ? board.document.getElementById(parents[0]) : null;
 
         if ((parents.length === 1) && (typeof parents[0] === 'string')) {
             if (Type.exists(table)) {

@@ -1211,7 +1211,7 @@ define([
 
                     button = doc.createElement('span');
                     node.appendChild(button);
-                    button.appendChild(document.createTextNode(label));
+                    button.appendChild(board.containerObj.ownerDocument.createTextNode(label));
                     Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);
@@ -1285,7 +1285,7 @@ define([
          * node.
          */
         getElementById: function (id) {
-            return document.getElementById(this.container.id + '_' + id);
+            return this.container.ownerDocument.getElementById(this.container.id + '_' + id);
         },
 
         /**

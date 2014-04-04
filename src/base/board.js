@@ -143,6 +143,12 @@ define([
         this.BOARD_MODE_ZOOM = 0x0011;
 
         /**
+         * Pointer to the document element containing the board.
+         * @type Object
+         */
+        this.document = attributes.document || document;
+        
+        /**
          * The html-id of the html element containing the board.
          * @type String
          */
@@ -152,7 +158,7 @@ define([
          * Pointer to the html element containing the board.
          * @type Object
          */
-        this.containerObj = (Env.isBrowser ? document.getElementById(this.container) : null);
+        this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
 
         if (Env.isBrowser && this.containerObj === null) {
             throw new Error("\nJSXGraph: HTML container element '" + container + "' not found.");
@@ -235,7 +241,7 @@ define([
         this.canvasHeight = canvasHeight;
 
         // If the given id is not valid, generate an unique id
-        if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(document.getElementById(id))) {
+        if (Type.exists(id) && id !== '' && Env.isBrowser && !Type.exists(this.document.getElementById(id))) {
             this.id = id;
         } else {
             this.id = this.generateId();
@@ -679,8 +685,8 @@ define([
          */
         getCoordsTopLeftCorner: function () {
             var cPos, doc, crect, scrollLeft, scrollTop,
-                docElement = document.documentElement || document.body.parentNode,
-                docBody = document.body,
+                docElement = this.document.documentElement || this.document.body.parentNode,
+                docBody = this.document.body,
                 container = this.containerObj;
 
             /**
@@ -704,7 +710,7 @@ define([
                     if (docElement.ScrollLeft === 'number') {
                         scrollLeft = docElement.ScrollLeft;
                     } else {
-                        scrollLeft = document.body.scrollLeft;
+                        scrollLeft = this.document.body.scrollLeft;
                     }
                 }
 
@@ -714,7 +720,7 @@ define([
                     if (docElement.ScrollTop === 'number') {
                         scrollTop = docElement.ScrollTop;
                     } else {
-                        scrollTop = document.body.scrollTop;
+                        scrollTop = this.document.body.scrollTop;
                     }
                 }
 
@@ -738,7 +744,7 @@ define([
             }
 
             cPos = Env.getOffset(container);
-            doc = document.documentElement.ownerDocument;
+            doc = this.document.documentElement.ownerDocument;
 
             if (!this.containerObj.currentStyle && doc.defaultView) {     // Non IE
                 // this is for hacks like this one used in wordpress for the admin bar:
@@ -809,7 +815,7 @@ define([
             //}
 
             // position of mouse cursor relative to containers position of container
-            absPos = Env.getPosition(e, i);
+            absPos = Env.getPosition(e, i, this.document);
 
             /**
              * In case there has been no down event before.
@@ -1376,9 +1382,9 @@ define([
 
                 if (this.hasPointerUp) {
                     if (window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -1396,7 +1402,7 @@ define([
                 Env.removeEvent(this.containerObj, 'mousemove', this.mouseMoveListener, this);
 
                 if (this.hasMouseUp) {
-                    Env.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+                    Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
                     this.hasMouseUp = false;
                 }
 
@@ -1416,7 +1422,7 @@ define([
                 Env.removeEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
                 if (this.hasTouchEnd) {
-                    Env.removeEvent(document, 'touchend', this.touchEndListener, this);
+                    Env.removeEvent(this.document, 'touchend', this.touchEndListener, this);
                     this.hasTouchEnd = false;
                 }
 
@@ -1541,9 +1547,9 @@ define([
 
             if (!this.hasPointerUp) {
                 if (window.navigator.pointerEnabled) {  // IE11+
-                    Env.addEvent(document, 'pointerup', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
                 } else {
-                    Env.addEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
             } 
@@ -1557,8 +1563,8 @@ define([
             }
 
             // prevent accidental selection of text
-            if (document.selection && typeof document.selection.empty === 'function') {
-                document.selection.empty();
+            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+                this.document.selection.empty();
             } else if (window.getSelection) {
                 window.getSelection().removeAllRanges();
             }
@@ -1788,9 +1794,9 @@ define([
             if (this.touches.length === 0) {
                 if (this.hasPointerUp) {
                     if (window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(document, 'pointerup', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                     } else {
-                        Env.removeEvent(document, 'MSPointerUp', this.pointerUpListener, this);
+                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                     }
                     this.hasPointerUp = false;
                 }
@@ -1822,7 +1828,7 @@ define([
                 target;
 
             if (!this.hasTouchEnd) {
-                Env.addEvent(document, 'touchend', this.touchEndListener, this);
+                Env.addEvent(this.document, 'touchend', this.touchEndListener, this);
                 this.hasTouchEnd = true;
             }
 
@@ -1831,8 +1837,8 @@ define([
             }
 
             // prevent accidental selection of text
-            if (document.selection && typeof document.selection.empty === 'function') {
-                document.selection.empty();
+            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+                this.document.selection.empty();
             } else if (window.getSelection) {
                 window.getSelection().removeAllRanges();
             }
@@ -2175,7 +2181,7 @@ define([
             if (!evtTouches || evtTouches.length === 0) {
 
                 if (this.hasTouchEnd) {
-                    Env.removeEvent(document, 'touchend', this.touchEndListener, this);
+                    Env.removeEvent(this.document, 'touchend', this.touchEndListener, this);
                     this.hasTouchEnd = false;
                 }
 
@@ -2198,14 +2204,14 @@ define([
             var pos, elements, result;
 
             // prevent accidental selection of text
-            if (document.selection && typeof document.selection.empty === 'function') {
-                document.selection.empty();
+            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+                this.document.selection.empty();
             } else if (window.getSelection) {
                 window.getSelection().removeAllRanges();
             }
 
             if (!this.hasMouseUp) {
-                Env.addEvent(document, 'mouseup', this.mouseUpListener, this);
+                Env.addEvent(this.document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = true;
             } else {
                 // In case this.hasMouseUp==true, it may be that there was a 
@@ -2290,7 +2296,7 @@ define([
             this.downObjects.length = 0;
 
             if (this.hasMouseUp) {
-                Env.removeEvent(document, 'mouseup', this.mouseUpListener, this);
+                Env.removeEvent(this.document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = false;
             }
 
@@ -2483,7 +2489,7 @@ define([
          */
         getUsrCoordsOfMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
-                absPos = Env.getPosition(evt),
+                absPos = Env.getPosition(evt, null, this.document),
                 x = absPos[0] - cPos[0],
                 y = absPos[1] - cPos[1],
                 newCoords = new Coords(Const.COORDS_BY_SCREEN, [x, y], this);
@@ -2510,7 +2516,7 @@ define([
          */
         getAllObjectsUnderMouse: function (evt) {
             var cPos = this.getCoordsTopLeftCorner(),
-                absPos = Env.getPosition(evt),
+                absPos = Env.getPosition(evt, null, this.document),
                 dx = absPos[0] - cPos[0],
                 dy = absPos[1] - cPos[1],
                 elList = [],
