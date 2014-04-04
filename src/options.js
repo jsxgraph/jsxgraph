@@ -83,6 +83,10 @@ define([
             showClearTraces: false,
             
             keepAspectRatio: false,
+            
+            // The window.document object containing the JSXhraph div element
+            document: document,
+
             // if true the first element with hasPoint==true is taken.
             takeFirst: false,
             // If true, the construction - when read from a file or string - the size of the div can be changed.
