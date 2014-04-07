@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -870,8 +870,10 @@ define([
                     pEl.triggerEventHandlers([type + 'down', 'down'], [evt]);
                     this.downObjects.push(pEl);
                 }
+
                 if (((this.geonextCompatibilityMode &&
-                        (pEl.elementClass === Const.OBJECT_CLASS_POINT || pEl.type === Const.OBJECT_TYPE_TEXT)) ||
+                        (pEl.elementClass === Const.OBJECT_CLASS_POINT || 
+                          pEl.type === Const.OBJECT_TYPE_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
@@ -1913,7 +1915,10 @@ define([
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
 
-                        if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_TEXT || obj.type === Const.OBJECT_TYPE_TICKS) {
+                        if (Type.isPoint(obj) || 
+                            obj.type === Const.OBJECT_TYPE_TEXT || 
+                            obj.type === Const.OBJECT_TYPE_TICKS ||
+                            obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // it's a point, so it's single touch, so we just push it to our touches
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 
