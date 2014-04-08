@@ -2062,7 +2062,7 @@ define([
          * the position on the curve.
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
-            var newCoords, newCoordsObj, i,
+            var newCoords, newCoordsObj, i, j,
                 x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
                 p1, p2, q1, q2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
@@ -2083,12 +2083,20 @@ define([
                 }
 
                 if (curve.numberPoints > 1) {
-                    p1 = [curve.Z(0), curve.X(0), curve.Y(0)];
 
+                    v = [1, x, y];
+                    if (curve.bezierDegree === 3) {
+                        j = 0;
+                    } else {
+                        p1 = [curve.Z(0), curve.X(0), curve.Y(0)];
+                    }
                     for (i = 0; i < curve.numberPoints - 1; i++) {
-                        p2 = [curve.Z(i + 1), curve.X(i + 1), curve.Y(i + 1)];
-                        v = [1, x, y];
-                        res = this.projectCoordsToSegment(v, p1, p2);
+                        if (curve.bezierDegree === 3) {
+                            res = this.projectCoordsToBeziersegment(v, curve, j);
+                        } else {
+                            p2 = [curve.Z(i + 1), curve.X(i + 1), curve.Y(i + 1)];
+                            res = this.projectCoordsToSegment(v, p1, p2);
+                        }
                         lbda = res[1];
                         coords = res[0];
 
@@ -2111,7 +2119,12 @@ define([
                             newCoords = coords;
                         }
 
-                        p1 = p2;
+                        if (curve.bezierDegree === 3) {
+                            j++;
+                            i += 2;
+                        } else {
+                            p1 = p2;
+                        }
                     }
                 }
 
