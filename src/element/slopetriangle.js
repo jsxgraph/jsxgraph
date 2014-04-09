@@ -64,38 +64,6 @@ define([
             }
         };
 
-    // default attributes
-    Options.slopetriangle = {
-        fillColor: 'red',
-        fillOpacity: 0.4,
-        highlightFillColor: 'red',
-        highlightFillOpacity: 0.3,
-
-        glider: {
-            fixed: true,
-            visible: false,
-            withLabel: false
-        },
-        baseline: {
-            visible: false,
-            withLabel: false,
-            name: ''
-        },
-        basepoint: {
-            visible: false,
-            withLabel: false,
-            name: ''
-        },
-        toppoint: {
-            visible: false,
-            withLabel: false,
-            name: ''
-        },
-        label: {
-            visible: true
-        }
-    };
-
     /**
      * @class Slope triangle for a point on a line.
      * @pseudo
