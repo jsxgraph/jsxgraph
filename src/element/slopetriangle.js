@@ -193,7 +193,7 @@ define([
                 function() { return ''; }
             ], attr);
         
-        label._setText(function() { return el.Value().toFixed(label.visProp.digits)});
+        label._setText(function() { return el.Value().toFixed(label.visProp.digits); });
         label.prepareUpdate().update().updateRenderer();
         
         el.glider = glider;

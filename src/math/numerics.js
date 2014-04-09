@@ -902,8 +902,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 if (Type.isFunction(tau)) {
                     _tau = tau;
                 } else {
-                    _tau = function() { return tau; }
-                };
+                    _tau = function() { return tau; };
+                }
 
                 /** @ignore */
                 makeFct = function (which) {

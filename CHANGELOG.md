@@ -3,13 +3,27 @@
 
 Important Notes
 ---------------
-
+ * This release contains a completely new plotting algorithm for function graphs and curves. 
+   If one wants to use the plotting algorithm of version 0.98, the attribute doAdvancedPlotOld:true
+   can be supplied.
 
 New Features
 ------------
  * Add new method Value() to Arc which returns the arc length (12e64c9)
-
-
+ * Allow jsxgraph board in a new window (opened by window.open()) (97742e7)
+ * Enable snapToGrid for text and image elements. (bf4bd35)
+ * New elements: polarline, polarpoint, radicalaxis (3d3154a2, 5f38b01b)
+ * New element: stepfunction (989cb1f15)
+ * Improved plotting algorithm (69f2f065b)
+ * New board attribute "showClearTraces:true/false" (988a855b)
+ * New function CardinalSpline. Catmull-Rom splines are a special case (33272063de1)
+ * Use the MS pointer API starting with IE11
+ * Improve the visual appearance of the navigation bar (b4cc30f08)
+ * New method for GeometryElement: setName() (9c6009c07)
+ * Speed improvements for text elements
+ * Improved positioning of text elements (39c6be44)
+ 
+ 
 Bug fixes
 ---------
  * Fix and update documentation (9ec97a5)
@@ -21,9 +35,32 @@ Bug fixes
  * Enforce the board's coordinate system for axes (#54, 25b6bc5, 8f7ff59, e4f6798)
  * Fix SVG arrow head positioning (2899284)
  * Remove pointerUpListener from document instead of the board container (bbcc73a)
-
-
-
+ * Fix visibility of labels on default axes (#73, 2dd0f4b)
+ * Fix attractors on curves with bezierDegree==3 (d8bcee9)
+ * Fix dragging of images on touch devices (#88, 04018a6d)
+ * Fix: angular bisector of parallel lines (#16, 2f8eb20fd)
+ * Fix: multiple mousedown events (338c7eb2c)
+ * Fix: VML renderer displays strokes with strokewidth==0 (565eeb9429)
+ * Improved intersection line-curve ()2fed72fff3)
+ * Bug fix Gauss-Bareiss determinant (a6a74c9ab)
+ * Fix inequalities (01a06bdac5)
+ * Fix case t=0 for cardinal splines (921a296)
+ * Fix slopetriangle issue #79 (374a8632)
+ * Fix visibility issue of polygon label (36a7e75f)
+ * Fix ticks with negative distance (#82, c821364a385)
+ * Fix visibility of polygon lines (#78, a82c50a1dc)
+ * Bug fix: very short arrow heads (a794ef81a)
+ * Bug fix: fill attribute for lines (5d7fc25c6f)
+ * Bug fix: Circumvent a bug in the Safari JIT comiler on iOS which affects JSXGraph's unzip (d965574c)
+ * Bug fix: snapToPoint, snapToGrid for linelines and circles (c1988ab5)
+ * Fix getParents() for GeometryElement (120f536f2)
+ * Bug fixes IE8 (eeeb0395d29)
+ * Fix UTF8.decode() (5bb5dd66)
+ * Fix text content parsing (ce157f194)
+ 
+ 
+ 
+ 
 0.98
 ====
 

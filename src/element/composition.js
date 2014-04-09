@@ -1128,7 +1128,7 @@ define([
                 parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
             // hidden and fixed helper
             attr = Type.copyAttributes(attributes, board.options, 'bisector', 'point');
-            attr['snapToGrid'] = false;
+            attr.snapToGrid = false;
             
             p = board.create('point', [
                 function () {

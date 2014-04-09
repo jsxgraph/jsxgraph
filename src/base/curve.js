@@ -1793,7 +1793,7 @@ define([
             this.dataX = [];
             this.dataY = [];
 
-            if (len == 0) {
+            if (len === 0) {
                 return;
             }
             
