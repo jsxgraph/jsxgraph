@@ -795,7 +795,7 @@ define([
             },
             label: {
                 position: 'lft',
-                offset: [10, -20]
+                offset: [10, 10]
             }
         },
 
