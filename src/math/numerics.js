@@ -84,9 +84,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
      * @name JXG.Math.Numerics
      * @namespace
      */
-    Mat.Numerics = {};
+    //Mat.Numerics = {};
     
-    JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
+    Mat.Numerics = {
+    
+    //JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
         /**
          * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
          * The algorithm runs in-place. I.e. the entries of A and b are changed.
@@ -2049,7 +2051,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return newPts;
         }
-    });
+    };
 
     return Mat.Numerics;
 });
