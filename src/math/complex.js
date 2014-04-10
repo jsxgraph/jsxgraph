@@ -41,7 +41,6 @@
  * @fileoverview A class for complex arithmetics JXG.Complex is defined in this
  * file. Also a namespace JXG.C is included to provide instance-independent
  * arithmetic functions.
- * @author graphjs
  */
 
 define(['jxg', 'math/math'], function (JXG) {

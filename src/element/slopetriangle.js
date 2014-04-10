@@ -101,7 +101,7 @@ define([
      * var p1 = board.create('point', [-2, 3]),
      *     p2 = board.create('point', [2, -3]),
      *     li = board.create('line', [p1, p2]),
-     *     p = board.create('glider', [0, 0, line]),
+     *     p = board.create('glider', [0, 0, li]),
      * 
      *     st = board.create('slopetriangle', [li, p]);
      *
@@ -112,7 +112,7 @@ define([
      *     p1 = board.create('point', [-2, 3]),
      *     p2 = board.create('point', [2, -3]),
      *     li = board.create('line', [p1, p2]),
-     *     p = board.create('glider', [0, 0, line]),
+     *     p = board.create('glider', [0, 0, li]),
      * 
      *     st = board.create('slopetriangle', [li, p]);
      * })();

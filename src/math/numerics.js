@@ -81,11 +81,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
     /**
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
-     * @name JXG.Math.Numerics
      * @namespace
+     * @name JXG.Math.Numerics
      */
-    //Mat.Numerics = {};
-    
     Mat.Numerics = {
     
     //JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
@@ -96,6 +94,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} b A vector containing the linear equation system's right hand side.
          * @throws {Error} If a non-square-matrix is given or if b has not the right length or A's rank is not full.
          * @returns {Array} A vector that solves the linear equation system.
+         * @memberof JXG.Math.Numerics
          */
         Gauss: function (A, b) {
             var i, j, k,
@@ -160,6 +159,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} b Right hand side of the linear equation system.
          * @param {Boolean} [canModify=false] If true, the right hand side vector is allowed to be changed by this method.
          * @returns {Array} An array representing a vector that solves the system of linear equations.
+         * @memberof JXG.Math.Numerics
          */
         backwardSolve: function (R, b, canModify) {
             var x, m, n, i, j;
@@ -195,6 +195,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * ISBN 3-540-55640-0 / 0-387-55640-0
          * Third, Corrected Printing 1996
          * "Algorithm 2.2.6", pg. 52-53
+         * @memberof JXG.Math.Numerics
          */
         gaussBareiss: function (mat) {
             var k, c, s, i, j, p, n, M, t,
@@ -266,6 +267,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} mat Matrix.
          * @returns {Number} The determinant pf the matrix mat.
          *                   The empty matrix returns 0.
+         * @memberof JXG.Math.Numerics
          */
         det: function (mat) {
             var n = mat.length;
@@ -282,6 +284,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Adaption of a FORTRAN program by Ed Wilson, Dec. 25, 1990
          * @param {Array} Ain A symmetric 3x3 matrix.
          * @returns {Array} [A,V] the matrices A and V. The diagonal of A contains the Eigenvalues, V contains the Eigenvectors.
+         * @memberof JXG.Math.Numerics
          */
         Jacobi: function (Ain) {
             var i, j, k, aa, si, co, tt, ssum, amax,
@@ -397,6 +400,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * // use trapez rule with 16 nodes
          * var area3 = JXG.Math.Numerics.NewtonCotes([0, 2], f,
          *                                   {number_of_nodes: 16, intergration_type: 'trapez'});
+         * @memberof JXG.Math.Numerics
          */
         NewtonCotes: function (interval, f, config) {
             var evaluation_point, i, number_of_intervals,
@@ -480,6 +484,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @returns {Number} The value of the integral of f over interval
          * @see JXG.Math.Numerics.NewtonCotes
+         * @memberof JXG.Math.Numerics
          */
         I: function (interval, f) {
             return this.NewtonCotes(interval, f, {number_of_nodes: 16, integration_type: 'milne'});
@@ -492,6 +497,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.
+         * @memberof JXG.Math.Numerics
          */
         Newton: function (f, x, context) {
             var df,
@@ -530,11 +536,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Object} context optional object that is treated as "this" in the function body. This is useful if
          * the function is a method of an object and contains a reference to its parent object via "this".
          * @returns {Number} A root of the function f.
+         * @memberof JXG.Math.Numerics
          */
         root: function (f, x, context) {
             return this.fzero(f, x, context);
         },
-
 
         /**
          * Compute an intersection of the curves c1 and c2
@@ -570,6 +576,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Number} t1ini start value for t1
          * @param {Number} t2ini start value for t2
          * @returns {JXG.Coords} intersection point
+         * @memberof JXG.Math.Numerics
          */
         generalizedNewton: function (c1, c2, t1ini, t2ini) {
             var t1, t2,
@@ -628,6 +635,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} p Array of JXG.Points
          * @returns {Array} An array consisting of two functions x(t), y(t) which define a parametric curve
          * f(t) = (x(t), y(t)) and two numbers x1 and x2 defining the curve's domain. x1 always equals zero.
+         * @memberof JXG.Math.Numerics
          */
         Neville: function (p) {
             var w = [],
@@ -678,6 +686,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} y y values of knots
          * @returns {Array} Second derivatives of the interpolated function at the knots.
          * @see #splineEval
+         * @memberof JXG.Math.Numerics
          */
         splineDef: function (x, y) {
             var pair, i, l,
@@ -748,6 +757,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} F Second derivatives at knots, calculated by {@link #splineDef}
          * @see #splineDef
          * @returns {Number,Array} A single value or an array, depending on what is given as x0.
+         * @memberof JXG.Math.Numerics
          */
         splineEval: function (x0, x, y, F) {
             var i, j, a, b, c, d, x_,
@@ -805,6 +815,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {String} varname Name of the variable (usually 'x')
          * @param {Number} prec Precision
          * @returns {String} A string containg the function term of the polynomial.
+         * @memberof JXG.Math.Numerics
          */
         generatePolynomialTerm: function (coeffs, deg, varname, prec) {
             var i, t = [];
@@ -829,6 +840,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * SIAM Review, Vol 46, No 3, (2004) 501-517.
          * @param {Array} p Array of JXG.Points
          * @returns {function} A function of one parameter which returns the value of the polynomial, whose graph runs through the given points.
+         * @memberof JXG.Math.Numerics
          */
         lagrangePolynomial: function (p) {
             var w = [],
@@ -892,6 +904,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
+         * @memberof JXG.Math.Numerics
         */
         CardinalSpline: function (points, tau) {
             var p,
@@ -983,6 +996,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
+         * @memberof JXG.Math.Numerics
         */
         CatmullRomSpline: function (points) {
             return this.CardinalSpline(points, 0.5);
@@ -998,6 +1012,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} dataY Array containing the y-coordinates of the data set,
          * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
          * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
+         * @memberof JXG.Math.Numerics
          */
         regressionPolynomial: function (degree, dataX, dataY) {
             var coeffs, deg, dX, dY, inputType, fct,
@@ -1129,6 +1144,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Array} An array consisting of two functions of one parameter t which return the
          * x resp. y coordinates of the Bezier curve in t, one zero value, and a third function accepting
          * no parameters and returning one third of the length of the points.
+         * @memberof JXG.Math.Numerics
          */
         bezier: function (points) {
             var len, flen,
@@ -1173,6 +1189,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the B-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus one.
+         * @memberof JXG.Math.Numerics
          */
         bspline: function (points, order) {
             var knots, N = [],
@@ -1286,6 +1303,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {object} [obj] Optional object that is treated as "this" in the function body. This is useful, if the function is a
          * method of an object and contains a reference to its parent object via "this".
          * @returns {function} Derivative function of a given function f.
+         * @memberof JXG.Math.Numerics
          */
         D: function (f, obj) {
             var h = 0.00001,
@@ -1313,6 +1331,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Array} An array of two arrays containing the x and y coordinates for the rectangles showing the Riemann sum. This
          * array may be used as parent array of a {@link JXG.Curve}. The third parameteris the riemann sum, i.e. the sum of the volumes of all
          * rectangles.
+         * @memberof JXG.Math.Numerics
          */
         riemann: function (f, n, type, start, end) {
             var i, x1, y1, delta1, delta,
@@ -1399,6 +1418,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Number} start Left border of the approximation interval
          * @param {Number} end Right border of the approximation interval
          * @returns {Number} The sum of the areas of the rectangles.
+         * @memberof JXG.Math.Numerics
          */
         riemannsum: function (f, n, type, start, end) {
             var i, x1, y1, delta1, delta, y,
@@ -1516,6 +1536,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * }
          * var g = board.create('curve', [dataX, dataY], {strokeColor:'red', strokeWidth:'2px'});
          * </script><pre>
+         * @memberof JXG.Math.Numerics
          */
         rungeKutta: function (butcher, x0, I, N, f) {
             var e, i, j, k, l, s,
@@ -1597,6 +1618,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Maximum number of iterations in {@link JXG.Math.Numerics#fzero}
          * @type Number
          * @default 80
+         * @memberof JXG.Math.Numerics
          */
         maxIterationsRoot: 80,
 
@@ -1604,6 +1626,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Maximum number of iterations in {@link JXG.Math.Numerics#fminbr}
          * @type Number
          * @default 500
+         * @memberof JXG.Math.Numerics
          */
         maxIterationsMinimize: 500,
 
@@ -1622,6 +1645,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * algorithm 748 is applied. Otherwise, if x0 is a number,
          * the algorithm tries to bracket a zero of f starting from x0.
          * If this fails, we fall back to Newton's method.
+         * @memberof JXG.Math.Numerics
          */
         fzero: function (f, x0, object) {
             var a, b, c,
@@ -1800,6 +1824,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *  G.Forsythe, M.Malcolm, C.Moler, Computer methods for mathematical
          *  computations. M., Mir, 1980, p.180 of the Russian edition
          * x0
+         * @memberof JXG.Math.Numerics
          **/
         fminbr: function (f, x0, context) {
             var a, b, x, v, w,
@@ -1938,6 +1963,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} pts Array of {@link JXG.Coords}
          * @param {Number} eps If the absolute value of a given number <tt>x</tt> is smaller than <tt>eps</tt> it is considered to be equal <tt>0</tt>.
          * @returns {Array} An array containing points which represent an apparently identical curve as the points of pts do, but contains fewer points.
+         * @memberof JXG.Math.Numerics
          */
         RamerDouglasPeuker: function (pts, eps) {
             var newPts = [], i, k, len,

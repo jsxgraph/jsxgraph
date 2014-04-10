@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -53,6 +53,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * Sums up all elements of the given array.
          * @param {Array} arr An array of numbers.
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         sum: function (arr) {
             var i,
@@ -69,6 +70,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * Multiplies all elements of the given array.
          * @param {Array} arr An array of numbers.
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         prod: function (arr) {
             var i,
@@ -85,6 +87,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * Determines the mean value of the values given in an array.
          * @param {Array} arr
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         mean: function (arr) {
             if (arr.length > 0) {
@@ -99,6 +102,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * into two equal sized subsets.
          * @param {Array} arr The set of values.
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         median: function (arr) {
             var tmp, len;
@@ -125,6 +129,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * set of numbers are spread out from each other.
          * @param {Array} arr
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         variance: function (arr) {
             var m, res, i, len = arr.length;
@@ -146,6 +151,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * variation there is from the average value of a set of numbers.
          * @param {Array} arr
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         sd: function (arr) {
             return Math.sqrt(this.variance(arr));
@@ -159,6 +165,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array} arr Set of alues.
          * @param {Array} w Weight values.
          * @returns {Number}
+         * @memberof JXG.Math.Statistics
          */
         weightedMean: function (arr, w) {
             if (arr.length !== w.length) {
@@ -178,6 +185,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @returns {Number} The highest number from the array. It returns <tt>NaN</tt> if not every element could be
          * interpreted as a number and <tt>-Infinity</tt> if an empty array is given or no element could be interpreted
          * as a number.
+         * @memberof JXG.Math.Statistics
          */
         max: function (arr) {
             return Math.max.apply(this, arr);
@@ -189,6 +197,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @returns {Number} The lowest number from the array. It returns <tt>NaN</tt> if not every element could be
          * interpreted as a number and <tt>Infinity</tt> if an empty array is given or no element could be interpreted
          * as a number.
+         * @memberof JXG.Math.Statistics
          */
         min: function (arr) {
             return Math.min.apply(this, arr);
@@ -198,6 +207,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * Determines the lowest and the highest value from the given array.
          * @param {Array} arr
          * @returns {Array} The minimum value as the first and the maximum value as the second value.
+         * @memberof JXG.Math.Statistics
          */
         range: function (arr) {
             return [this.min(arr), this.max(arr)];
@@ -207,6 +217,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * Determines the absolute value of every given value.
          * @param {Array|Number} arr
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         abs: function (arr) {
             var i, len, res;
@@ -232,6 +243,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array|Number} arr1
          * @param {Array|Number} arr2
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         add: function (arr1, arr2) {
             var i, len, res = [];
@@ -270,6 +282,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array|Number} arr1 Dividend
          * @param {Array|Number} arr2 Divisor
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         div: function (arr1, arr2) {
             var i, len, res = [];
@@ -305,6 +318,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
         /**
          * @function
          * @deprecated Use {@link JXG.Math.Statistics#div} instead.
+         * @memberof JXG.Math.Statistics
          */
         divide: JXG.shortcut(Mat.Statistics, 'div'),
 
@@ -315,6 +329,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array|Number} arr2 Divisor
          * @param {Boolean} [math=false] Mathematical mod or symmetric mod? Default is symmetric, the JavaScript <tt>%</tt> operator.
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         mod: function (arr1, arr2, math) {
             var i, len, res = [], mod = function (a, m) {
@@ -362,6 +377,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array|Number} arr1
          * @param {Array|Number} arr2
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         multiply: function (arr1, arr2) {
             var i, len, res = [];
@@ -400,6 +416,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * @param {Array|Number} arr1 Minuend
          * @param {Array|Number} arr2 Subtrahend
          * @returns {Array|Number}
+         * @memberof JXG.Math.Statistics
          */
         subtract: function (arr1, arr2) {
             var i, len, res = [];
@@ -437,6 +454,7 @@ define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Cons
          * points than least squares regression in {@link JXG.Math.Numerics.regressionPolynomial}.
          * @param {Array} coords Array of {@link JXG.Coords}.
          * @returns {Array} The stdform of the regression line.
+         * @memberof JXG.Math.Statistics
          */
         TheilSenRegression: function (coords) {
             var i, j,

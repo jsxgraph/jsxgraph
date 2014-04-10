@@ -141,9 +141,7 @@ define([
         }
 
         if (type === 'invalid') {
-            /**
-             * Second try for 3 point sector
-             */
+             // Second try for 3 point sector
             try {
 
                 for (i = 0; i < parents.length; i++) {

@@ -50,6 +50,8 @@ define([
     /**
      * Options Namespace
      * @description These are the default options of the board and of all geometry elements.
+     * @namespace
+     * @name JXG.Options
      */
     JXG.Options = {
         jc: {
@@ -57,7 +59,9 @@ define([
             compile: true
         },
 
-        /* Options that are used directly within the board class */
+        /** 
+         * Options that are used directly within the board class 
+         */
         board: {
             boundingBox: [-5, 5, 5, -5],
             zoomFactor: 1,
@@ -124,7 +128,9 @@ define([
             }
         },
 
-        /* navbar options */
+        /**
+         * Options that are used for by the navigation bar
+         */
         navbar: {
             strokeColor: '#333333', //'#aaaaaa',
             fillColor: 'transparent', //#f5f5f5',
@@ -140,11 +146,7 @@ define([
             //borderRadius: '4px'
         },
 
-        /**
-         * Generic options
-         */
-
-        /* geometry element options */
+         /* Generic options used by {@link JXG.GeometryElement} */
         elements: {
             // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
@@ -653,11 +655,12 @@ define([
             trace: 0
         },
 
-        /**
-         * element type specific options
-         */
-        /* special angle options */
+        /* element type specific options */
         angle: {
+            /**#@+
+             * @visprop
+             */
+
             withLabel: true,
 
             /**
@@ -738,10 +741,16 @@ define([
                 offset: [0, 0],
                 strokeColor: '#0000FF'
             }
+
+            /**#@-*/
         },
 
         /* special arc options */
         arc: {
+            /**#@+
+             * @visprop
+             */
+
             label: {},
             firstArrow: false,
             lastArrow: false,
@@ -750,10 +759,15 @@ define([
             strokeColor: '#0000ff',
             highlightStrokeColor: '#C3D9FF',
             useDirection: false
+            /**#@-*/
         },
 
         /* special axis options */
         axis: {
+            /**#@+
+             * @visprop
+             */
+
             name: '',                            // By default, do not generate names for axes.
             needsRegularUpdate: false,         // Axes only updated after zooming and moving of the origin.
             strokeWidth: 1,
@@ -797,10 +811,15 @@ define([
                 position: 'lft',
                 offset: [10, 10]
             }
+            /**#@-*/
         },
 
         /* special options for bisector of 3 points */
         bisector: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000', // Bisector line
             point: {               // Bisector point
                 visible: false,
@@ -808,20 +827,30 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special options for the 2 bisectors of 2 lines */
         bisectorlines: {
+            /**#@+
+             * @visprop
+             */
+
             line1: {               //
                 strokeColor: 'black'
             },
             line2: {               //
                 strokeColor: 'black'
             }
+            /**#@-*/
         },
 
         /* special chart options */
         chart: {
+            /**#@+
+             * @visprop
+             */
+
             chartStyle: 'line',
             colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00'],
             highlightcolors: null,
@@ -830,10 +859,15 @@ define([
             highlightbysize: false,
             label: {
             }
+            /**#@-*/
         },
 
         /*special circle options */
         circle: {
+            /**#@+
+             * @visprop
+             */
+
             hasInnerPoints: false,
             fillColor: 'none',
             highlightFillColor: 'none',
@@ -848,10 +882,15 @@ define([
             label: {
                 position: 'urt'
             }
+            /**#@-*/
         },
 
         /* special options for circumcircle of 3 points */
         circumcircle: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
@@ -862,9 +901,14 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         circumcirclearc: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
@@ -875,10 +919,15 @@ define([
                 fixed: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special options for circumcircle sector of 3 points */
         circumcirclesector: {
+            /**#@+
+             * @visprop
+             */
+
             useDirection: true,
             fillColor: '#00FF00',
             highlightFillColor: '#00FF00',
@@ -892,10 +941,15 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special conic options */
         conic: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
@@ -907,6 +961,7 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special curve options */
@@ -958,7 +1013,12 @@ define([
         },
 
         glider: {
+            /**#@+
+             * @visprop
+             */
+
             label: {}
+            /**#@-*/
         },
 
         /* special grid options */
@@ -1024,6 +1084,10 @@ define([
 
         /* special grid options */
         image: {
+            /**#@+
+             * @visprop
+             */
+
             imageString: null,
             fillOpacity: 1.0,
             cssClass: 'JXGimage',
@@ -1057,10 +1121,15 @@ define([
              * @default 1
              */
             snapSizeY: 1            
+            /**#@-*/
         },
 
         /* special options for incircle of 3 points */
         incircle: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
@@ -1071,9 +1140,14 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         inequality: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'red',
             fillOpacity: 0.2,
             strokeColor: 'none',
@@ -1087,6 +1161,7 @@ define([
              * @visprop
              */
             inverse: false
+            /**#@-*/
         },
 
         infobox: {
@@ -1111,6 +1186,10 @@ define([
 
         /* special options for integral */
         integral: {
+            /**#@+
+             * @visprop
+             */
+
             axis: 'x',        // 'x' or 'y'
             withLabel: true,    // Show integral value as text
             strokeWidth: 0,
@@ -1141,6 +1220,7 @@ define([
             label: {
                 fontSize: 20
             }
+            /**#@-*/
         },
 
         /* special intersection point options */
@@ -1203,6 +1283,7 @@ define([
             style: 'vertical',
             labels: ['1', '2', '3', '4', '5', '6', '7', '8'],
             colors: ['#B02B2C', '#3F4C6B', '#C79810', '#D15600', '#FFFF88', '#C3D9FF', '#4096EE', '#008C00']
+            /**#@-*/
         },
 
         /* special line options */
@@ -1220,8 +1301,6 @@ define([
             strokeColor: '#0000ff',
             highlightStrokeColor: '#888888',
             withTicks: false,
-
-            /**#@-*/
 
             point1: {                  // Default values for point1 if created by line
                 visible: false,
@@ -1292,6 +1371,7 @@ define([
              * @default 1
              */
             snapSizeY: 1
+            /**#@-*/
         },
 
         /* special options for locus curves */
@@ -1310,6 +1390,10 @@ define([
 
         /* special options for normal lines */
         normal: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000', //  normal line
             point: {
                 visible: false,
@@ -1317,14 +1401,25 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special options for orthogonal projectionn points */
         orthogonalprojection: {
+            /**#@+
+             * @visprop
+             */
+             
+             
+            /**#@-*/
         },
 
         /* special options for parallel lines */
         parallel: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000', // Parallel line
             point: {
                 visible: false,
@@ -1335,17 +1430,27 @@ define([
             label: {
                 position: 'llft'
             }
+            /**#@-*/
         },
 
         /* special perpendicular options */
         perpendicular: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000', // Perpendicular line
             straightFirst: true,
             straightLast: true
+            /**#@-*/
         },
 
         /* special perpendicular options */
         perpendicularsegment: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000', // Perpendicular segment
             straightFirst: false,
             straightLast: false,
@@ -1355,6 +1460,7 @@ define([
                 withLabel: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special point options */
@@ -1590,22 +1696,36 @@ define([
 
         /* special prescribed angle options */
         prescribedangle: {
+            /**#@+
+             * @visprop
+             */
+
             anglepoint: {
                 size: 2,
                 visible: false,
                 withLabel: false
             }
+            /**#@-*/
         },
 
         /* special options for riemann sums */
         riemannsum: {
+            /**#@+
+             * @visprop
+             */
+
             withLabel: false,
             fillOpacity: 0.3,
             fillColor: '#ffff00'
+            /**#@-*/
         },
 
         /* special sector options */
         sector: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: '#00FF00',
             highlightFillColor: '#00FF00',
             fillOpacity: 0.3,
@@ -1626,22 +1746,33 @@ define([
             label: {
                 offset: [0, 0]
             }
+            /**#@-*/
         },
 
         /* special segment options */
         segment: {
+            /**#@+
+             * @visprop
+             */
+
             label: {
                 position: 'top'
             }
+            /**#@-*/
         },
 
         semicircle: {
+            /**#@+
+             * @visprop
+             */
+
             midpoint: {
                 visible: false,
                 withLabel: false,
                 fixed: false,
                 name: ''
             }
+            /**#@-*/
         },
 
         /* special slider options */
@@ -1736,6 +1867,10 @@ define([
 
         /* special options for slope triangle */
         slopetriangle: {
+            /**#@+
+             * @visprop
+             */
+
             fillColor: 'red',
             fillOpacity: 0.4,
             highlightFillColor: 'red',
@@ -1768,14 +1903,24 @@ define([
             label: {
                 visible: true
             }
+            /**#@-*/
         },
         
         /* special options for step functions */
         stepfunction: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
         },
 
         /* special tape measure options */
         tapemeasure: {
+            /**#@+
+             * @visprop
+             */
+
             strokeColor: '#000000',
             strokeWidth: 2,
             highlightStrokeColor: '#000000',
@@ -1827,6 +1972,7 @@ define([
             label: {
                 position: 'top'
             }
+            /**#@-*/
         },
 
         /* special text options */
@@ -2005,6 +2151,10 @@ define([
 
         /*special turtle options */
         turtle: {
+            /**#@+
+             * @visprop
+             */
+
             strokeWidth: 1,
             fillColor: 'none',
             strokeColor: '#000000',
@@ -2013,6 +2163,7 @@ define([
                 withLabel: false,
                 strokeColor: '#ff0000'
             }
+            /**#@-*/
         },
 
 
