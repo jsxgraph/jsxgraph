@@ -15,6 +15,7 @@ MKDIR=mkdir
 RM=rm
 CD=cd
 ZIP=zip
+UNZIP=unzip
 
 # directories
 OUTPUT=distrib
@@ -99,6 +100,9 @@ docs: core core-min
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
 
 	$(RM) $(RMFLAGS) tmp
+	
+	# Test
+	$(CD) $(OUTPUT) && $(UNZIP) docs.zip
 
 moodle: core core-min $(READERSOUT) 
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)

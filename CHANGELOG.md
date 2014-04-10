@@ -1,3 +1,12 @@
+0.99.1
+====
+
+Bug fixes
+---------
+ * Typo: polepoint
+ * Docs: JXG.Math.Numerics has been ignored
+ 
+
 0.99
 ====
 

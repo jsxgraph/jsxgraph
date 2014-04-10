@@ -50,7 +50,10 @@
 define([], function () {
 
     "use strict";
-
+    
+    /**
+     * JXG is the top object of JSXGraph and defines the namespace
+     */
     var jxg = {};
 
     // make sure JXG.extend is not defined
