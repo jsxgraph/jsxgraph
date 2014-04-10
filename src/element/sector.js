@@ -581,8 +581,10 @@ define([
      * <tt>p3</tt> around <tt>p2</tt>.
      *
      * Second possibility of input parameters are:
-     * @param {JXG.Line_JXG.Line_array,number_array,number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines.
-     * The two legs which define the angle are given by two coordinates arrays which are project initially two the two lines or by two directions (+/- 1).
+     * @param {JXG.Line_JXG.Line_array|number_array|number} line, line2, coords1 or direction1, coords2 or direction2, radius The angle is defined by two lines.
+     * The two legs which define the angle are given by two coordinate arrays.
+     * The points given by these coordinate arrays are projected initially (i.e. only once) onto the two lines.
+     * The other possibility is to supply directions (+/- 1).
      *
      * @example
      * // Create an angle out of three free points
