@@ -47,7 +47,6 @@ READERSOUT=build/bin/readers/geonext.min.js build/bin/readers/geogebra.min.js bu
 # rules
 all: core core-min readers docs moodle
 
-
 core:
 	$(MKDIR) $(MKDIRFLAGS) $(BUILDBIN)
 	$(REQUIREJS) -o $(BUILD)/core.build.json
@@ -58,7 +57,6 @@ core-min:
 	$(REQUIREJS) -o $(BUILD)/core.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-min.js;
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
-
 
 core-amd:
 	$(REQUIREJS) -o $(BUILD)/core-amd.build.json
@@ -102,7 +100,7 @@ docs: core core-min
 	$(RM) $(RMFLAGS) tmp
 	
 	# Test
-	$(CD) $(OUTPUT) && $(UNZIP) docs.zip
+	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
 moodle: core core-min $(READERSOUT) 
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
