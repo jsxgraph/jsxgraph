@@ -2131,7 +2131,7 @@ define([
     JXG.registerElement('glider', JXG.createGlider);
     JXG.registerElement('intersection', JXG.createIntersectionPoint);
     JXG.registerElement('otherintersection', JXG.createOtherIntersectionPoint);
-    JXG.registerElement('polarpoint', JXG.createPolarPoint);
+    JXG.registerElement('polepoint', JXG.createPolePoint);
 
     return {
         Point: JXG.Point,
@@ -2139,6 +2139,6 @@ define([
         createGlider: JXG.createGlider,
         createIntersection: JXG.createIntersectionPoint,
         createOtherIntersection: JXG.createOtherIntersectionPoint,
-        createPolarPoint: JXG.createPolarPoint
+        createPolePoint: JXG.createPolePoint
     };
 });

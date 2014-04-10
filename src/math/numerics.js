@@ -884,7 +884,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * is uniformly parametrized.
          * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
-         * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is beteen 0 and 1.
+         * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
          * tau=1/2 give Catmull-Rom splines.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply

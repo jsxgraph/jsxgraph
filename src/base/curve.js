@@ -1765,7 +1765,7 @@ define([
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
-     * @param {Array,Array} Parent elements of Stepfunction are two arrays containing the coordinates.
+     * @param {Array,Array|Function} Parent elements of Stepfunction are two arrays containing the coordinates.
      * @see JXG.Curve
      * @example
      * // Create step function.
