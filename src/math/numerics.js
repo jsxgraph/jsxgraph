@@ -41,7 +41,6 @@
 /**
  * @fileoverview In this file the namespace Math.Numerics is defined, which holds numerical
  * algorithms for solving linear equations etc.
- * @author graphjs
  */
 
 define(['utils/type', 'math/math'], function (Type, Mat) {
@@ -82,10 +81,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
     /**
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
-     * @name JXG.Math.Geometry
+     * @name JXG.Math.Numerics
      * @namespace
      */
-    Mat.Numerics = {
+    Mat.Numerics = {};
+    
+    JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
         /**
          * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
          * The algorithm runs in-place. I.e. the entries of A and b are changed.
@@ -2048,7 +2049,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return newPts;
         }
-    };
+    });
 
     return Mat.Numerics;
 });
