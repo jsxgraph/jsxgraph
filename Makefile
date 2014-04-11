@@ -119,7 +119,7 @@ moodle: core core-min $(READERSOUT)
 
 	$(RM) $(RMFLAGS) tmp
 
-readers: $(READERSOUT)
+readers: $(READERSOUT) 
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDREADERS)/* $(OUTPUT)
 
