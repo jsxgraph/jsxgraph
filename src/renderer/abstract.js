@@ -335,7 +335,7 @@ define([
          * @see JXG.AbstractRenderer#drawLine
          */
         updateLine: function (element) {
-            var s, d, d1x, d1y, d2x, d2y,
+            var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
                 minlen = 10,
@@ -353,17 +353,40 @@ define([
                The arrow head is an equilateral triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
-            s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
-            d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen/*Mat.eps*/) {
-                d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+            if (element.visProp.lastarrow || element.visProp.firstarrow) {
+                
+                s1 = element.point1.visProp.size;
+                s2 = element.point2.visProp.size;
+                s = s1 + s2;
+                if (element.visProp.lastarrow && element.visProp.touchlastpoint) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s2 / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s2 / d;
+                        c2 = new Coords(Const.COORDS_BY_SCREEN, [c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y], element.board);
+                    }
+                }
+                if (element.visProp.firstarrow && element.visProp.touchfirstpoint) {
+                    d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                    if (d > s) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s1 / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s1 / d;
+                        c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], element.board);
+                    }
+                }
+                
+                s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
+                d = c1.distance(Const.COORDS_BY_SCREEN, c2);
+                if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen/*Mat.eps*/) {
+                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                }
+                if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen /* Mat.eps*/) {
+                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                }
             }
-            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen /* Mat.eps*/) {
-                d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-            }
-
+            
             this.updateLinePrim(element.rendNode,
                 c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
                 c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);

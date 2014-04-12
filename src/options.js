@@ -1339,7 +1339,7 @@ define([
              * @see JXG.Point#snapSizeX
              * @see JXG.Point#snapSizeY
              * @type Boolean
-             * @name JXG.Point#snapToGrid
+             * @name JXG.Line#snapToGrid
              * @default false
              */
             snapToGrid: false,
@@ -1353,7 +1353,7 @@ define([
              * @see JXG.Point#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeX
+             * @name JXG.Line#snapSizeX
              * @default 1
              */
             snapSizeX: 1,
@@ -1367,10 +1367,31 @@ define([
              * @see JXG.Point#snapSizeX
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeY
+             * @name JXG.Line#snapSizeY
              * @default 1
              */
-            snapSizeY: 1
+            snapSizeY: 1,
+            
+            /**
+             * If set to true and {@link JXG.Line#firstArrow} is set to true, the arrow head will just touch
+             * the circle line of the start point of the line.
+             * @see JXG.Line#firstArrow
+             * @type Boolean
+             * @name JXG.Line#touchFirstPoint
+             * @default false
+             */
+            touchFirstPoint: false,
+
+            /**
+             * If set to true and {@link JXG.Line#lastArrow is set to true, the arrow head will just touch
+             * the circle line of the start point of the line.
+             * @see JXG.Line#firstArrow
+             * @type Boolean
+             * @name JXG.Line#touchLastPoint
+             * @default false
+             */
+            touchLastPoint: false
+            
             /**#@-*/
         },
 
