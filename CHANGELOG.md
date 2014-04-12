@@ -1,3 +1,17 @@
+0.99.2
+====
+
+Important Notes
+---------------
+
+New Features
+------------
+ * New options touchFirstPoint and touchLastPoint for lines with arrow heads (60b613f1)
+ 
+Bug fixes
+---------
+
+
 0.99.1
 ====
 
