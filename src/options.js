@@ -63,6 +63,10 @@ define([
          * Options that are used directly within the board class 
          */
         board: {
+            /**#@+
+             * @visprop
+             */
+
             boundingBox: [-5, 5, 5, -5],
             zoomFactor: 1,
             zoomX: 1,
@@ -126,6 +130,7 @@ define([
                 needTwoFingers: true,
                 enabled: true
             }
+            /**#@-*/
         },
 
         /**

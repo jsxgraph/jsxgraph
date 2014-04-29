@@ -567,7 +567,13 @@ define([
                 A = l.point1.coords.usrCoords,
                 B = l.point2.coords.usrCoords,
                 M = F1.coords.usrCoords;
-
+                
+            // Handle the case if one of the two defining points of the line is an ideal point
+            if (A[0] == 0) {
+                A = [1, B[1] + l.stdform[2], B[2] - l.stdform[1]];
+            } else if (B[0] == 0) {
+                B = [1, A[1] + l.stdform[2], A[2] - l.stdform[1]];
+            }
             det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;
             a = det * d / (1 - Math.sin(phi));
 
@@ -587,6 +593,12 @@ define([
                 B = l.point2.coords.usrCoords,
                 M = F1.coords.usrCoords;
 
+            // Handle the case if one of the two defining points of the line is an ideal point
+            if (A[0] == 0) {
+                A = [1, B[1] + l.stdform[2], B[2] - l.stdform[1]];
+            } else if (B[0] == 0) {
+                B = [1, A[1] + l.stdform[2], A[2] - l.stdform[1]];
+            }
             det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;
             a = det * d / (1 - Math.sin(phi));
 
