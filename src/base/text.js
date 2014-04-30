@@ -212,7 +212,7 @@ define([
 
             if (typeof text === 'function') {
                 this.updateText = function () {
-                    if (this.visProp.parse) {
+                    if (this.visProp.parse && !this.visProp.usemathjax) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(text())));
                     } else {
                         this.plaintext = text();
