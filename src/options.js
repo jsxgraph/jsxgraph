@@ -2026,7 +2026,10 @@ define([
             digits: 2,
 
             /**
-             * If set to
+             * If set to true, the text is parsed and evaluated. 
+             * For labels parse==true results in converting names of the form k_a to subscripts.
+             * If the text is given by string and parse==true, the string is parsed as 
+             * JessieCode expression.
              * @memberOf Text.prototype
              * @default true
              * @name parse

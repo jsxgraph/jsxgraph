@@ -212,7 +212,11 @@ define([
 
             if (typeof text === 'function') {
                 this.updateText = function () {
-                    this.plaintext = this.convertGeonext2CSS(text());
+                    if (this.visProp.parse) {
+                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(text())));
+                    } else {
+                        this.plaintext = text();
+                    }
                 };
             } else if (Type.isString(text) && !this.visProp.parse) {
                 this.updateText = function () {
