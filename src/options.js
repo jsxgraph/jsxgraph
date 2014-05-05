@@ -745,6 +745,10 @@ define([
                 position: 'top',
                 offset: [0, 0],
                 strokeColor: '#0000FF'
+            },
+            
+            arc: {
+                visible: false
             }
 
             /**#@-*/

@@ -251,7 +251,6 @@ define([
             };
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
-                arc: 'arc',
                 radius: 'getRadius',
                 getRadius: 'getRadius',
                 setRadius: 'setRadius'
@@ -369,17 +368,17 @@ define([
             el.Radius = function () {
                 return this.point2.Dist(this.point1);
             };
+            
+            attr = Type.copyAttributes(attributes, board.options, 'sector', 'arc');
+            attr.withLabel = false;
+            attr.name += '_arc';
+            el.arc = board.create('arc', [el.point1, el.point2, el.point3], attr);
 
         }   // end '3points'
 
         el.center = el.point1;
         el.radiuspoint = el.point2;
         el.anglepoint = el.point3;
-
-        attr = Type.copyAttributes(attributes, board.options, 'sector', 'arc');
-        attr.withLabel = false;
-        attr.name += '_arc';
-        el.arc = board.create('arc', [el.center, el.radiuspoint, el.anglepoint], attr);
 
         // Default hasPoint method. Documented in geometry element
         el.hasPointCurve = function (x, y) {
