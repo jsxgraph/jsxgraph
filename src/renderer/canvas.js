@@ -235,7 +235,11 @@ define([
                 hasColor = false;
             }
             if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth))) {
-                this.context.lineWidth = parseFloat(ev.strokewidth);
+                if (parseFloat(ev.strokewidth) === 0) {
+                    this.context.globalAlpha = 0;
+                } else {
+                    this.context.lineWidth = parseFloat(ev.strokewidth);
+                }
             }
             return hasColor;
         },

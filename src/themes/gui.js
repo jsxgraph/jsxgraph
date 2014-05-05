@@ -78,7 +78,6 @@ JXG.Options = JXG.merge(JXG.Options, {
         }
     },
         
-
     segment: {
         label: {
             position: 'bot',
