@@ -251,6 +251,7 @@ define([
             };
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
+                arc: 'arc',
                 radius: 'getRadius',
                 getRadius: 'getRadius',
                 setRadius: 'setRadius'
@@ -308,6 +309,7 @@ define([
             }
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
+                arc: 'arc',
                 center: 'center',
                 radiuspoint: 'radiuspoint',
                 anglepoint: 'anglepoint',
@@ -373,6 +375,11 @@ define([
         el.center = el.point1;
         el.radiuspoint = el.point2;
         el.anglepoint = el.point3;
+
+        attr = Type.copyAttributes(attributes, board.options, 'sector', 'arc');
+        attr.withLabel = false;
+        attr.name += '_arc';
+        el.arc = board.create('arc', [el.center, el.radiuspoint, el.anglepoint], attr);
 
         // Default hasPoint method. Documented in geometry element
         el.hasPointCurve = function (x, y) {

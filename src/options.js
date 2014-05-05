@@ -1757,6 +1757,11 @@ define([
             fillOpacity: 0.3,
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
+            highlightStrokeWidth: 0,
+            arc: {
+                visible: false,
+                fillColor: 'none'
+            },
             radiuspoint: {
                 visible: false,
                 withLabel: false

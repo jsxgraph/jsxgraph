@@ -68,6 +68,16 @@ JXG.Options = JXG.merge(JXG.Options, {
     precision: {
         touchMax: Infinity
     },
+    
+    sector: {
+        strokeWidth: 0,
+        highlightStrokeWidth: 0,
+        arc: {
+            visible: true,
+            fillColor: 'none'
+        }
+    },
+        
 
     segment: {
         label: {
