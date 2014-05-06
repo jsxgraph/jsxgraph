@@ -723,7 +723,7 @@
 
                 case JXG.GENTYPE_TEXT:
                     set_str = assign + 'text(' + pn(step.args.x) + ', ' + pn(step.args.y) + ', ' + step.args.str + ') <<';
-                    set_str += attrid + 'name: \'' + step.dest_id + '\'';
+                    set_str += attrid + 'name: \'\'';
                     if (typeof step.args.anchor != 'undefined') {
                         set_str += ', anchor: ' + step.args.anchor;
                     }
@@ -799,7 +799,7 @@
                 case JXG.GENTYPE_SECTOR:
                     set_str = assign + 'sector(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
-                    set_str += attrid + ' name: \'' + step.dest_id + '\', fillOpacity: ' + JXG.Options.opacityLevel;
+                    set_str += attrid + ' name: \'\', fillOpacity: ' + JXG.Options.opacityLevel;
                     set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
@@ -842,7 +842,7 @@
                     if (step.args.isPolar)
                         set_str += 'curveType: \'polar\', ';
 
-                    set_str += attrid + 'name: \'' + step.dest_id + '\', strokeColor: \'' + step.args.color + '\'>>; ';
+                    set_str += attrid + 'name: \'\', strokeColor: \'' + step.args.color + '\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
