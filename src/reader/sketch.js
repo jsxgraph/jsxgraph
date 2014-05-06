@@ -800,7 +800,7 @@
                     set_str = assign + 'sector(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
                     set_str += attrid + ' name: \'\', fillOpacity: ' + JXG.Options.opacityLevel;
-                    set_str += '>>; ';
+                    set_str += ', arc: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true>> >>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 

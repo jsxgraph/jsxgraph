@@ -1358,6 +1358,8 @@ define([
         meetCurveLineDiscrete: function (cu, li, nr, board, testSegment) {
             var i, j,
                 p1, p2, p, q,
+                lip1 = li.point1.coords.usrCoords,
+                lip2 = li.point2.coords.usrCoords,
                 d, res,
                 cnt = 0,
                 len = cu.numberPoints;
@@ -1365,6 +1367,12 @@ define([
             // In case, no intersection will be found we will take this
             q = new Coords(Const.COORDS_BY_USER, [0, NaN, NaN], board);
 
+            if (lip1[0] === 0.0) {
+                lip1 = [1, lip2[1] + li.stdform[2], lip2[2] - li.stdform[1]];
+            } else if (lip2[0] === 0.0) {
+                lip2 = [1, lip1[1] + li.stdform[2], lip1[2] - li.stdform[1]];
+            }
+            
             p2 = cu.points[0].usrCoords;
             for (i = 1; i < len; i++) {
                 p1 = p2.slice(0);
@@ -1380,13 +1388,13 @@ define([
                             cu.points[i + 1].usrCoords.slice(1),
                             cu.points[i + 2].usrCoords.slice(1)
                         ], [
-                            li.point1.coords.usrCoords.slice(1),
-                            li.point2.coords.usrCoords.slice(1)
+                            lip1.slice(1),
+                            lip2.slice(1)
                         ], testSegment);
 
                         i += 2;
                     } else {
-                        res = [this.meetSegmentSegment(p1, p2, li.point1.coords.usrCoords, li.point2.coords.usrCoords)];
+                        res = [this.meetSegmentSegment(p1, p2, lip1, lip2)];
                     }
 
                     for (j = 0; j < res.length; j++) {
@@ -1574,7 +1582,7 @@ define([
                 len = Lnew.length,
                 le = L.length;
 
-            if (le > 0 &&
+            if (le > 0 && len > 0 && 
                     ((L[le - 1][1] === 1 && Lnew[0][1] === 0) ||
                     (t2exists && L[le - 1][2] === 1 && Lnew[0][2] === 0))) {
                 start = 1;
