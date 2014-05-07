@@ -607,7 +607,7 @@ define([
                 if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower && this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
-                    if (this.visProp.drawlabels && (!hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
+                    if (this.visProp.drawlabels && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
                         labelText = hasLabelOverrides ? this.visProp.labels[i] : this.fixedTicks[i];
                         this.labels.push(
                             this.generateLabel(
