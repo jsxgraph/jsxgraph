@@ -85,7 +85,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
      * @name JXG.Math.Numerics
      */
     Mat.Numerics = {
-    
+
     //JXG.extend(Mat.Numerics, /** @lends JXG.Math.Numerics */ {
         /**
          * Solves a system of linear equations given by A and b using the Gauss-Jordan-elimination.
@@ -914,7 +914,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 last = {},
                 makeFct,
                 _tau;
-                
+
                 if (Type.isFunction(tau)) {
                     _tau = tau;
                 } else {
@@ -927,7 +927,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         var s, c,
                             len = points.length,
                             tau = _tau();
-                            
+
                         if (len < 2) {
                             return NaN;
                         }
@@ -1361,22 +1361,32 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else if (type === 'lower') {
                         y = f(x);
 
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                        for (x1 = x; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
 
                             if (y1 < y) {
                                 y = y1;
                             }
                         }
+
+                        y1 = f(x + delta);
+                        if (y1 < y) {
+                            y = y1;
+                        }
                     } else if (type === 'upper') {
                         y = f(x);
 
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                        for (x1 = x; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
 
                             if (y1 > y) {
                                 y = y1;
                             }
+                        }
+
+                        y1 = f(x + delta);
+                        if (y1 > y) {
+                            y = y1;
                         }
                     } else if (type === 'random') {
                         y = f(x + delta * Math.random());
@@ -1452,6 +1462,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                                 y = y1;
                             }
                         }
+
+                        y1 = f(x + delta);
+                        if (y1 < y) {
+                            y = y1;
+                        }
                     } else if (type === 'upper') {
                         y = f(x);
 
@@ -1461,6 +1476,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                             if (y1 > y) {
                                 y = y1;
                             }
+                        }
+
+                        y1 = f(x + delta);
+                        if (y1 > y) {
+                            y = y1;
                         }
                     } else if (type === 'random') {
                         y = f(x + delta * Math.random());
