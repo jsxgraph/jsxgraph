@@ -156,20 +156,20 @@ define([
 
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'label');
         label = board.create('text', [
-                function() { return glider.X() + 0.1;}, 
-                function() { return (glider.Y() + toppoint.Y()) * 0.5;},
-                function() { return ''; }
-            ], attr);
-        
-        label._setText(function() { return el.Value().toFixed(label.visProp.digits); });
+            function () { return glider.X() + 0.1; },
+            function () { return (glider.Y() + toppoint.Y()) * 0.5; },
+            function () { return ''; }
+        ], attr);
+
+        label._setText(function () { return el.Value().toFixed(label.visProp.digits); });
         label.prepareUpdate().update().updateRenderer();
-        
+
         el.glider = glider;
         el.basepoint = basepoint;
         el.baseline = baseline;
         el.toppoint = toppoint;
         el.label = label;
-        
+
         el.methodMap = JXG.deepCopy(el.methodMap, {
             tangent: 'tangent',
             glider: 'glider',

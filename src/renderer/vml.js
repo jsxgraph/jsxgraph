@@ -903,7 +903,7 @@ define([
             this.setPropertyPrim(node, 'stroked', 'true');
 
             if (Type.exists(w)) {
-                
+
                 this.setPropertyPrim(node, 'stroke-width', w);
                 if (w === 0 && Type.exists(el.rendNodeStroke)) {
                     this._setAttr(node, 'stroked', 'false');

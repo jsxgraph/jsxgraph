@@ -395,7 +395,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (!e) {
                 e = window.event;
             }
-            
+
             doc = doc || document;
             evtTouches = e[JXG.touchProperty];
 
@@ -489,7 +489,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var r, doc;
 
             doc = obj.ownerDocument;
-            
+
             // Non-IE
             if (window.getComputedStyle) {
                 r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);

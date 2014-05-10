@@ -172,7 +172,7 @@ define([
         },
 
         /**
-         * Calculates a point on the bisection line between the three points A, B, C. 
+         * Calculates a point on the bisection line between the three points A, B, C.
          * As a result, the bisection line is defined by two points:
          * Parameter B and the point with the coordinates calculated in this function.
          * Does not work for ideal points.
@@ -192,13 +192,13 @@ define([
             if (!Type.exists(board)) {
                 board = A.board;
             }
-            
+
             // Parallel lines
             if (Bc[0] === 0) {
-                return new Coords(Const.COORDS_BY_USER, 
+                return new Coords(Const.COORDS_BY_USER,
                     [1, (Ac[1] + Cc[1]) * 0.5, (Ac[2] + Cc[2]) * 0.5], board);
             }
-            
+
             // Non-parallel lines
             x = Ac[1] - Bc[1];
             y = Ac[2] - Bc[2];
@@ -207,7 +207,7 @@ define([
             x = Cc[1] - Bc[1];
             y = Cc[2] - Bc[2];
             phiC =  Math.atan2(y, x);
-            
+
             phi = (phiA + phiC) * 0.5;
 
             if (phiA > phiC) {
@@ -289,7 +289,7 @@ define([
          * @param {JXG.Line} line A line.
          * @param {JXG.Point} point Point which is projected to the line.
          * @param {JXG.Board} [board=point.board] Reference to the board
-         * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line 
+         * @returns {Array} Array of length two containing coordinates of a point on the perpendicular to the given line
          *                  through the given point and boolean flag "change".
          */
         perpendicular: function (line, point, board) {
@@ -1191,7 +1191,7 @@ define([
          * @param {JXG.Curve,JXG.Line} el2 Curve or Line
          * @param {Number} nr the nr-th intersection point will be returned.
          * @param {JXG.Board} [board=el1.board] Reference to a board object.
-         * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection 
+         * @param {Boolean} alwaysIntersect If false just the segment between the two defining points are tested for intersection
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,1,0] is returned.
          */
@@ -1222,9 +1222,9 @@ define([
         /**
          * Intersection of line and curve, continuous case.
          * Finds the nr-the intersection point
-         * Uses {@link JXG.Math.Geometry#meetCurveLineDiscrete} as a first approximation. 
+         * Uses {@link JXG.Math.Geometry#meetCurveLineDiscrete} as a first approximation.
          * A more exact solution is then found with {@link JXG.Math.Numerics#meetCurveLineDiscrete}.
-         * 
+         *
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
          * @param {Number} nr Will return the nr-th intersection point.
@@ -1238,11 +1238,11 @@ define([
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
             y = v.usrCoords[2];
-            
+
             func0 = function (t) {
                 var c1 = x - cu.X(t),
                     c2 = y - cu.Y(t);
-                    
+
                 return Math.sqrt(c1 * c1 + c2 * c2);
             };
 
@@ -1250,7 +1250,7 @@ define([
                 var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 return v * v;
             };
-            
+
             // Find t
             t = Numerics.root(func0, [cu.minX(), cu.maxX()]);
             // Compute "exect" t
@@ -1270,7 +1270,7 @@ define([
          * Intersection of line and curve, continuous case.
          * Segments are treated as lines. Finding the nr-the intersection point
          * works for nr=0,1 only.
-         * 
+         *
          * @private
          * @deprecated
          * @param {JXG.Curve} cu Curve
@@ -1349,9 +1349,9 @@ define([
          * @param {JXG.Line} li
          * @param {Number} nr
          * @param {JXG.Board} board
-         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the 
+         * @param {Boolean} testSegment Test if intersection has to be inside of the segment or somewhere on the
          * line defined by the segment
-         * 
+         *
          * @returns {JXG.Coords} Intersection point. In case no intersection point is detected,
          * the ideal point [0,1,0] is returned.
          */
@@ -1372,7 +1372,7 @@ define([
             } else if (lip2[0] === 0.0) {
                 lip2 = [1, lip1[1] + li.stdform[2], lip1[2] - li.stdform[1]];
             }
-            
+
             p2 = cu.points[0].usrCoords;
             for (i = 1; i < len; i++) {
                 p1 = p2.slice(0);
@@ -1582,7 +1582,7 @@ define([
                 len = Lnew.length,
                 le = L.length;
 
-            if (le > 0 && len > 0 && 
+            if (le > 0 && len > 0 &&
                     ((L[le - 1][1] === 1 && Lnew[0][1] === 0) ||
                     (t2exists && L[le - 1][2] === 1 && Lnew[0][2] === 0))) {
                 start = 1;

@@ -396,7 +396,7 @@ define([
         },
 
         /**
-         * Remove an element as a child from the current element. 
+         * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
          */
         removeChild: function (obj) {
@@ -1362,8 +1362,8 @@ define([
 
         /**
          * Snaps the element to points. Only works for points. Points will snap to the next point
-         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}. 
-         * Lines and circles 
+         * as defined in their properties {@link JXG.Point#attractorDistance} and {@link JXG.Point#attractorUnit}.
+         * Lines and circles
          * will snap their parent points to points.
          * @returns {JXG.GeometryElement} Reference to the element.
          */
@@ -1401,7 +1401,7 @@ define([
         hasPoint: function (x, y) {
             return false;
         },
-        
+
         /**
          * Move an element to its nearest grid point.
          * The function uses the coords object of the element as
@@ -1417,7 +1417,7 @@ define([
             if (!JXG.exists(this.coords)) {
                 return this;
             }
-            
+
             if (this.visProp.snaptogrid || force === true) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];

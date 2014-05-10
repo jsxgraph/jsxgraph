@@ -1674,12 +1674,11 @@ define([
         el2 = board.select(parents[1]);
 
         el = board.create('line', [function () {
-                var a = el1.stdform,
-                    b = el2.stdform;
-                    
-                return JXG.Math.matVecMult(
-                    JXG.Math.transpose([a.slice(0,3), b.slice(0,3)]), [b[3] , -a[3]]);
-             }], attributes);
+            var a = el1.stdform,
+                b = el2.stdform;
+
+            return Mat.matVecMult(Mat.transpose([a.slice(0, 3), b.slice(0, 3)]), [b[3], -a[3]]);
+        }], attributes);
 
         el.elType = 'radicalaxis';
         el.parents = [el1.id, el2.id];
@@ -1744,22 +1743,30 @@ define([
      * </script><pre>
      */
     JXG.createPolarLine = function (board, parents, attributes) {
-        var el, el1, el2;
+        var el, el1, el2,
+            firstParentIsConic, secondParentIsConic,
+            firstParentIsPoint, secondParentIsPoint;
 
-        if (parents.length !== 2 || !((
-                parents[0].type === Const.OBJECT_TYPE_CONIC ||
-                parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) &&
-                parents[1].elementClass === Const.OBJECT_CLASS_POINT ||
-                parents[0].elementClass === Const.OBJECT_CLASS_POINT && (
-                parents[1].type === Const.OBJECT_TYPE_CONIC ||
-                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {
+        if (parents.length > 1) {
+            firstParentIsConic = (parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                parents[0].elementClass === Const.OBJECT_TYPE_CIRCLE);
+            secondParentIsConic = (parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE);
+
+            firstParentIsPoint = (parents[0].elementClass === Const.OBJECT_CLASS_POINT);
+            secondParentIsPoint = (parents[1].elementClass === Const.OBJECT_CLASS_POINT);
+        }
+
+        if (parents.length !== 2 ||
+                !((firstParentIsConic && secondParentIsPoint) ||
+                    (firstParentIsPoint && secondParentIsConic))) {
             // Failure
             throw new Error("JSXGraph: Can't create 'polar line' with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent type: [conic|circle,point], [point,conic|circle]");
         }
 
-        if (parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+        if (secondParentIsPoint) {
             el1 = board.select(parents[0]);
             el2 = board.select(parents[1]);
         } else {
@@ -1767,14 +1774,13 @@ define([
             el2 = board.select(parents[0]);
         }
 
-        //el = board.create('line', [function () {return JXG.Math.matVecMult(el1.quadraticform.slice(0,3),el2.coords.usrCoords.slice(0,3));}]);
         // Polar lines have been already provided in the tangent element.
         el = board.create('tangent', [el1, el2], attributes);
 
         el.elType = 'polarline';
         return el;
     };
-    
+
     /**
      * Register the element type tangent at JSXGraph
      * @private

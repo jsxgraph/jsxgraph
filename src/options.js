@@ -59,8 +59,8 @@ define([
             compile: true
         },
 
-        /** 
-         * Options that are used directly within the board class 
+        /**
+         * Options that are used directly within the board class
          */
         board: {
             /**#@+
@@ -73,31 +73,31 @@ define([
             zoomY: 1,
             showCopyright: true,
             axis: false,
-            
+
             /**
              * Display of navigation arrors and zoom buttons
              */
             showNavigation: true,
-            
+
             /**
              * Show a button to force reload of a construction.
              * Works only with the JessieCode tag
              */
             showReload: false,
-            
+
             /**
              * Show a buttons which allows to clear all traces of a board.
              */
             showClearTraces: false,
-            
+
             keepAspectRatio: false,
-         
+
             /**
              * Supply the document object.
              * Defaults to window.document
              */
             document: false, // document
-       
+
             // if true the first element with hasPoint==true is taken.
             takeFirst: false,
             // If true, the construction - when read from a file or string - the size of the div can be changed.
@@ -746,7 +746,7 @@ define([
                 offset: [0, 0],
                 strokeColor: '#0000FF'
             },
-            
+
             arc: {
                 visible: false
             }
@@ -1069,16 +1069,16 @@ define([
             /**#@+
              * @visprop
              */
-            
+
             /**
-             * 
+             *
              * These affect the DOM element input type="range".
              * The other attributes affect the DOM element div containing the range element.
              */
             widthRange: 100,
             widthOut: 34,
             step: 0.01,
-            
+
             frozen: true,
             isLabel: false,
             strokeColor: 'black',
@@ -1102,7 +1102,7 @@ define([
             cssClass: 'JXGimage',
             highlightCssClass: 'JXGimageHighlight',
             rotate: 0,
-            
+
             /**
              * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
@@ -1129,7 +1129,7 @@ define([
              * @name JXG.Point#snapSizeY
              * @default 1
              */
-            snapSizeY: 1            
+            snapSizeY: 1
             /**#@-*/
         },
 
@@ -1380,7 +1380,7 @@ define([
              * @default 1
              */
             snapSizeY: 1,
-            
+
             /**
              * If set to true and {@link JXG.Line#firstArrow} is set to true, the arrow head will just touch
              * the circle line of the start point of the line.
@@ -1400,7 +1400,7 @@ define([
              * @default false
              */
             touchLastPoint: false
-            
+
             /**#@-*/
         },
 
@@ -1439,8 +1439,8 @@ define([
             /**#@+
              * @visprop
              */
-             
-             
+
+
             /**#@-*/
         },
 
@@ -1916,31 +1916,31 @@ define([
                 visible: false,
                 withLabel: false
             },
-            
+
             baseline: {
                 visible: false,
                 withLabel: false,
                 name: ''
             },
-        
+
             basepoint: {
                 visible: false,
                 withLabel: false,
                 name: ''
             },
-        
+
             toppoint: {
                 visible: false,
                 withLabel: false,
                 name: ''
             },
-        
+
             label: {
                 visible: true
             }
             /**#@-*/
         },
-        
+
         /* special options for step functions */
         stepfunction: {
             /**#@+
@@ -2035,9 +2035,9 @@ define([
             digits: 2,
 
             /**
-             * If set to true, the text is parsed and evaluated. 
+             * If set to true, the text is parsed and evaluated.
              * For labels parse==true results in converting names of the form k_a to subscripts.
-             * If the text is given by string and parse==true, the string is parsed as 
+             * If the text is given by string and parse==true, the string is parsed as
              * JessieCode expression.
              * @memberOf Text.prototype
              * @default true
@@ -2068,7 +2068,7 @@ define([
             strokeColor: 'black',
             highlightStrokeColor: 'black',
             highlightStrokeOpacity: 0.666666,
-            
+
             /**
              * If true the input will be given to ASCIIMathML before rendering.
              * @memberOf Text.prototype
@@ -2135,7 +2135,7 @@ define([
             withLabel: false,
             rotate: 0,                        // works for non-zero values only in combination with display=='internal'
             visible: true,
-            
+
             /**
              * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.

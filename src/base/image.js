@@ -287,18 +287,17 @@ define([
                 this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
                 this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
             }
-            
+
             return this;
         },
-        
+
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
          * @returns {JXG.Text} Reference to this element
          */
         snapToGrid: function () {
             return this.handleSnapToGrid();
-        }    
-
+        }
     });
 
     /**

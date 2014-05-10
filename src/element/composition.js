@@ -1129,7 +1129,7 @@ define([
             // hidden and fixed helper
             attr = Type.copyAttributes(attributes, board.options, 'bisector', 'point');
             attr.snapToGrid = false;
-            
+
             p = board.create('point', [
                 function () {
                     return Geometry.angleBisector(parents[0], parents[1], parents[2], board);
@@ -2192,7 +2192,7 @@ define([
                         usrCoords: [1, (bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]
                     }
                 };
-                
+
                 // If dp is on the line, Geometry.perpendicular will return a point not on the line.
                 // Since this somewhat odd behavior of Geometry.perpendicular is needed in GEONExT,
                 // it is circumvented here.

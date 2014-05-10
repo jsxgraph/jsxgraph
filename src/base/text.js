@@ -712,7 +712,7 @@ define([
                 v = [this.Z(), this.X(), this.Y()];
                 this.X = Type.createFunction(v[1] + dc[1], this.board, '');
                 this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
-                
+
                 /*
                 * In case of snapToGrid===true, first the coordinates of 
                 * the new position is set, then they are rounded to the grid.
@@ -726,10 +726,10 @@ define([
                     this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
                 }
             }
-            
+
             return this;
         },
-        
+
         /**
          * Alias for {@link JXG.Element#handleSnapToGrid}
          * @returns {JXG.Text} Reference to this element
@@ -808,9 +808,8 @@ define([
      * [[x,y], [w px, h px], [range]
      */
     JXG.createHTMLSlider = function (board, parents, attributes) {
-        var t, 
-            attr = Type.copyAttributes(attributes, board.options, 'htmlslider'),
-            par;
+        var t, par,
+            attr = Type.copyAttributes(attributes, board.options, 'htmlslider');
 
         if (parents.length !== 2 || parents[0].length !== 2 || parents[1].length !== 3) {
             throw new Error("JSXGraph: Can't create htmlslider with parent types '" +
@@ -821,32 +820,32 @@ define([
         // backwards compatibility
         attr.anchor = attr.parent || attr.anchor;
         attr.fixed = attr.fixed || true;
-        
-        par = [parents[0][0], parents[0][1], 
-            '<form style="display:inline">' +        
+
+        par = [parents[0][0], parents[0][1],
+            '<form style="display:inline">' +
             '<input type="range" /><span></span><input type="text" />' +
             '</form>'];
-        
+
         t = JXG.createText(board, par, attr);
         t.type = Type.OBJECT_TYPE_HTMLSLIDER;
-        
+
         t.rendNodeForm = t.rendNode.childNodes[0];
         t.rendNodeForm.id = t.rendNode.id + '_form';
-        
+
         t.rendNodeRange = t.rendNodeForm.childNodes[0];
         t.rendNodeRange.id = t.rendNode.id + '_range';
         t.rendNodeRange.min = parents[1][0];
         t.rendNodeRange.max = parents[1][2];
         t.rendNodeRange.step = attr.step;
         t.rendNodeRange.value = parents[1][1];
-        
+
         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
         t.rendNodeLabel.id = t.rendNode.id + '_label';
-        
+
         if (attr.withlabel) {
             t.rendNodeLabel.innerHTML = t.name + '=';
         }
-        
+
         t.rendNodeOut = t.rendNodeForm.childNodes[2];
         t.rendNodeOut.id = t.rendNode.id + '_out';
         t.rendNodeOut.value = parents[1][1];
@@ -856,14 +855,14 @@ define([
         t.rendNodeOut.style.width = attr.widthout + 'px';
 
         t._val = parents[1][1];
-        
+
         if (JXG.supportsVML()) {
             /*
             * OnChange event is used for IE browsers
             * The range element is supported since IE10
             */
             Env.addEvent(t.rendNodeForm, 'change', function () {
-                this._val = 1.0 * this.rendNodeRange.value;
+                this._val = parseFloat(this.rendNodeRange.value);
                 this.rendNodeOut.value = this.rendNodeRange.value;
                 this.board.update();
             }, t);
@@ -872,28 +871,21 @@ define([
             * OnInput event is used for non-IE browsers
             */
             Env.addEvent(t.rendNodeForm, 'input', function () {
-                this._val = 1.0 * this.rendNodeRange.value;
+                this._val = parseFloat(this.rendNodeRange.value);
                 this.rendNodeOut.value = this.rendNodeRange.value;
                 this.board.update();
             }, t);
         }
 
-        t.Value = function() {
+        t.Value = function () {
             return this._val;
         };
-        
-        /*
-        if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
-            t.addRotation(Type.evaluate(attr.rotate));
-        }
-        */
-        
+
         return t;
     };
 
     JXG.registerElement('htmlslider', JXG.createHTMLSlider);
 
-    
     return {
         Text: JXG.Text,
         createText: JXG.createText,

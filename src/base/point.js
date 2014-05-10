@@ -474,7 +474,7 @@ define([
          */
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
-                slide = this.slideObject, 
+                slide = this.slideObject,
                 baseangle, alpha, angle, beta, newPos;
 
             if (!this.needsUpdateFromParent) {
@@ -540,7 +540,6 @@ define([
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [slide.Z(this.position), slide.X(this.position), slide.Y(this.position)]);
 
                 if (slide.type === Const.OBJECT_TYPE_ARC || slide.type === Const.OBJECT_TYPE_SECTOR) {
-                    
                     baseangle = Geometry.rad([slide.center.X() + 1, slide.center.Y()], slide.center, slide.radiuspoint);
 
                     alpha = 0.0;
@@ -556,8 +555,8 @@ define([
                     if (this.position < alpha || this.position > beta) {
                         this.position = beta;
 
-                        if ((this.position < alpha && this.position > alpha * 0.5) || 
-                            (this.position > beta && this.position > beta * 0.5 + Math.PI)) {
+                        if ((this.position < alpha && this.position > alpha * 0.5) ||
+                                (this.position > beta && this.position > beta * 0.5 + Math.PI)) {
                             this.position = alpha;
                         }
                     }
@@ -567,7 +566,6 @@ define([
                         slide.center.X() + r * Math.cos(this.position + baseangle),
                         slide.center.Y() + r * Math.sin(this.position + baseangle)
                     ];
-                    
                 } else {
                     // In case, the point is a constrained glider.
                     // side-effect: this.position is overwritten
@@ -931,14 +929,14 @@ define([
          */
         makeGlider: function (slide) {
             var slideobj = this.board.select(slide);
-            
+
             /* Gliders on Ticks are forbidden */
             if (!Type.exists(slideobj)) {
                 throw new Error("JSXGraph: slide object undefined.");
             } else if (slideobj.type === Const.OBJECT_TYPE_TICKS) {
                 throw new Error("JSXGraph: gliders on ticks are not possible.");
             }
-            
+
             this.slideObject = this.board.select(slide);
             this.slideObjects.push(this.slideObject);
 
@@ -2085,22 +2083,37 @@ define([
      * </script><pre>
      */
     JXG.createPolePoint = function (board, parents, attributes) {
-        var el, el1, el2;
+        var el, el1, el2,
+            firstParentIsConic, secondParentIsConic,
+            firstParentIsLine, secondParentIsLine;
 
-        if (parents.length !== 2 || !((
+        if (parents.length > 1) {
+            firstParentIsConic = (parents[0].type === Const.OBJECT_TYPE_CONIC ||
+                parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE);
+            secondParentIsConic = (parents[1].type === Const.OBJECT_TYPE_CONIC ||
+                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE);
+
+            firstParentIsLine = (parents[0].elementClass === Const.OBJECT_CLASS_LINE);
+            secondParentIsLine = (parents[1].elementClass === Const.OBJECT_CLASS_LINE);
+        }
+
+/*        if (parents.length !== 2 || !((
                 parents[0].type === Const.OBJECT_TYPE_CONIC ||
                 parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE) &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE ||
                 parents[0].elementClass === Const.OBJECT_CLASS_LINE && (
                 parents[1].type === Const.OBJECT_TYPE_CONIC ||
-                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {
+                parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE))) {*/
+        if (parents.length !== 2 ||
+                !((firstParentIsConic && secondParentIsLine) ||
+                    (firstParentIsLine && secondParentIsConic))) {
             // Failure
             throw new Error("JSXGraph: Can't create 'pole point' with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent type: [conic|circle,line], [line,conic|circle]");
         }
 
-        if (parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (secondParentIsLine) {
             el1 = board.select(parents[0]);
             el2 = board.select(parents[1]);
         } else {
@@ -2108,11 +2121,11 @@ define([
             el2 = board.select(parents[0]);
         }
 
-        el = board.create('point', 
+        el = board.create('point',
             [function () {
                 var q = el1.quadraticform,
-                    s = el2.stdform.slice(0,3);
-                    
+                    s = el2.stdform.slice(0, 3);
+
                 return [JXG.Math.Numerics.det([s, q[1], q[2]]),
                         JXG.Math.Numerics.det([q[0], s, q[2]]),
                         JXG.Math.Numerics.det([q[0], q[1], s])];

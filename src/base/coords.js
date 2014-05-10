@@ -79,7 +79,7 @@ define([
          */
         this.usrCoords = [];
         //this.usrCoords = new Float64Array(3);
-        
+
         /**
          * Stores coordinates for screen view as homogeneous coordinates.
          * @type Array
@@ -238,18 +238,14 @@ define([
         * @returns {Array} Returns copy of the coords array either as standard array or as
         *   typed array.
         */
-        copy: function(obj, offset) {
+        copy: function (obj, offset) {
             if (typeof offset === 'undefined') {
                 offset = 0;
             }
-            
+
             return this[obj].slice(offset);
-            
-            //var dest = new Float64Array(3);
-            //dest.set(this[obj]);
-            //return dest;
         },
-        
+
         /**
          * Triggered whenever the coordinates change.
          * @name JXG.Coords#update

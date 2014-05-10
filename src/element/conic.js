@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -228,7 +228,7 @@ define([
         curve.type = Const.OBJECT_TYPE_CONIC;
 
         /**
-         * Checks whether (x,y) is near the ellipse line or inside of the ellipse 
+         * Checks whether (x,y) is near the ellipse line or inside of the ellipse
          * (in case JXG.Options.conic#hasInnerPoints is true).
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
@@ -567,11 +567,11 @@ define([
                 A = l.point1.coords.usrCoords,
                 B = l.point2.coords.usrCoords,
                 M = F1.coords.usrCoords;
-                
+
             // Handle the case if one of the two defining points of the line is an ideal point
-            if (A[0] == 0) {
+            if (A[0] === 0) {
                 A = [1, B[1] + l.stdform[2], B[2] - l.stdform[1]];
-            } else if (B[0] == 0) {
+            } else if (B[0] === 0) {
                 B = [1, A[1] + l.stdform[2], A[2] - l.stdform[1]];
             }
             det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;
@@ -594,9 +594,9 @@ define([
                 M = F1.coords.usrCoords;
 
             // Handle the case if one of the two defining points of the line is an ideal point
-            if (A[0] == 0) {
+            if (A[0] === 0) {
                 A = [1, B[1] + l.stdform[2], B[2] - l.stdform[1]];
-            } else if (B[0] == 0) {
+            } else if (B[0] === 0) {
                 B = [1, A[1] + l.stdform[2], A[2] - l.stdform[1]];
             }
             det = ((B[1] - A[1]) * (M[2] - A[2]) - (B[2] - A[2]) * (M[1] - A[1]) >= 0) ? 1 : -1;

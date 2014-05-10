@@ -354,7 +354,7 @@ define([
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
             if (element.visProp.lastarrow || element.visProp.firstarrow) {
-                
+
                 s1 = element.point1.visProp.size;
                 s2 = element.point2.visProp.size;
                 s = s1 + s2;
@@ -374,23 +374,23 @@ define([
                         c1 = new Coords(Const.COORDS_BY_SCREEN, [c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y], element.board);
                     }
                 }
-                
+
                 s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen/*Mat.eps*/) {
+                if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen) {
                     d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                     d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
                 }
-                if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen /* Mat.eps*/) {
+                if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen) {
                     d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                     d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
                 }
             }
-            
+
             this.updateLinePrim(element.rendNode,
                 c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
                 c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
-            
+
             this.makeArrows(element);
             this._updateVisual(element);
         },
@@ -1280,7 +1280,7 @@ define([
                         board.reload();
                     });
                 }
-                
+
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
                     createButton('\u00A0\u2297\u00A0', function () {

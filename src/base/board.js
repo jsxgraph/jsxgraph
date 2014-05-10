@@ -147,7 +147,7 @@ define([
          * @type Object
          */
         this.document = attributes.document || document;
-        
+
         /**
          * The html-id of the html element containing the board.
          * @type String
@@ -872,7 +872,7 @@ define([
                 }
 
                 if (((this.geonextCompatibilityMode &&
-                        (pEl.elementClass === Const.OBJECT_CLASS_POINT || 
+                        (pEl.elementClass === Const.OBJECT_CLASS_POINT ||
                           pEl.type === Const.OBJECT_TYPE_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
@@ -936,10 +936,10 @@ define([
 
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
-                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, 
-                    //newPos.scrCoords.slice(1), 
-                    [newPos.scrCoords[1], newPos.scrCoords[2]], 
-                    [o.targets[0].Xprev, o.targets[0].Yprev]);
+                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
+                        [newPos.scrCoords[1], newPos.scrCoords[2]],
+                        [o.targets[0].Xprev, o.targets[0].Yprev]
+                        );
                 }
                 // Remember the actual position for the next move event. Then we are able to
                 // compute the difference vector.
@@ -1554,8 +1554,8 @@ define([
                     Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 }
                 this.hasPointerUp = true;
-            } 
-            
+            }
+
             if (this.hasMouseHandlers) {
                 this.removeMouseEventHandlers();
             }
@@ -1915,10 +1915,10 @@ define([
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
 
-                        if (Type.isPoint(obj) || 
-                            obj.type === Const.OBJECT_TYPE_TEXT || 
-                            obj.type === Const.OBJECT_TYPE_TICKS ||
-                            obj.type === Const.OBJECT_TYPE_IMAGE) {
+                        if (Type.isPoint(obj) ||
+                                obj.type === Const.OBJECT_TYPE_TEXT ||
+                                obj.type === Const.OBJECT_TYPE_TICKS ||
+                                obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // it's a point, so it's single touch, so we just push it to our touches
                             targets = [{ num: i, X: evtTouches[i].screenX, Y: evtTouches[i].screenY, Xprev: NaN, Yprev: NaN, Xstart: [], Ystart: [], Zstart: [] }];
 

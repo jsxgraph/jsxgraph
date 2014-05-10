@@ -285,7 +285,7 @@ define([
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
-            
+
             return board;
         },
 
@@ -325,7 +325,7 @@ define([
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
-            
+
             return board;
         },
 

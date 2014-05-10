@@ -698,23 +698,22 @@ define([
          * @private
          * @param {JXG.Coords} pnt Coords to add to the list of points
          */
-        _insertPoint: function(pnt) {
+        _insertPoint: function (pnt) {
             var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]);        // New point is real point
-                
+
             /*
              * Prevents two consecutive NaNs or points wich are too close
              */
-            if ( (!newReal && lastReal) ||
-                 (newReal &&
-                  (!lastReal ||
-                   Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
-                   Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7)) ) {
+            if ((!newReal && lastReal) ||
+                    (newReal && (!lastReal ||
+                        Math.abs(pnt.scrCoords[1] - this._lastCrds[1]) > 0.7 ||
+                        Math.abs(pnt.scrCoords[2] - this._lastCrds[2]) > 0.7))) {
                 this.points.push(pnt);
                 this._lastCrds = pnt.copy('scrCoords');
-            } 
+            }
         },
-        
+
         /**
          * Investigate a function term at the bounds of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
@@ -730,26 +729,25 @@ define([
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-        _borderCase: function(a, b, c, ta, tb, tc, depth) {
+        _borderCase: function (a, b, c, ta, tb, tc, depth) {
             var t, pnt, p, p_good = null,
                 i, j, maxit = 5,
                 maxdepth = 70,
                 is_undef = false;
-            
+
             if (depth < this.smoothLevel) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-                
-                
+
                 if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2])) {
                     // a is outside of the definition interval, c and b are inside
-                    
+
                     for (i = 0; i < maxdepth; ++i) {
                         j = 0;
-                        
+
                         // Bisect a and c until the new point is inside of the definition interval
                         do {
-                            t = 0.5 * (ta + tc); 
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);        
+                            t = 0.5 * (ta + tc);
+                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
                             p = pnt.scrCoords;
                             is_undef = isNaN(p[1] + p[2]);
 
@@ -758,7 +756,7 @@ define([
                             }
                             ++j;
                         } while (is_undef && j < maxit);
-                        
+
                         // If bisection was successful, remember this point
                         if (j < maxit) {
                             tc = t;
@@ -767,15 +765,13 @@ define([
                             break;
                         }
                     }
-                    
-                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2]))  {
+                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2])) {
                     // b is outside of the definition interval, a and c are inside
-                    
                     for (i = 0; i < maxdepth; ++i) {
                         j = 0;
                         do {
-                            t = 0.5 * (tc + tb); 
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);        
+                            t = 0.5 * (tc + tb);
+                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
                             p = pnt.scrCoords;
                             is_undef = isNaN(p[1] + p[2]);
 
@@ -792,15 +788,15 @@ define([
                         }
                     }
                 }
-                
-                if (p_good !== null) {  
+
+                if (p_good !== null) {
                     this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, p_good.slice(1), this.board, false));
                     return true;
                 }
             }
             return false;
         },
-        
+
         /**
          * Compute distances in screen coordinates between the points ab,
          * ac, cb, and cd, where d = (a + b)/2.
@@ -812,20 +808,19 @@ define([
          * @param {Array} c Screen coordinates of the bisection point at (ta + tb) / 2
          * @returns {Array} array of distances in screen coordinates between: ab, ac, cb, and cd.
          */
-        _triangleDists: function(a, b, c) {
+        _triangleDists: function (a, b, c) {
             var d, d_ab, d_ac, d_cb, d_cd;
-            
+
             d = [a[0] * b[0], (a[1] + b[1]) * 0.5, (a[2] + b[2]) * 0.5];
-            
+
             d_ab = Geometry.distance(a, b, 3);
             d_ac = Geometry.distance(a, c, 3);
             d_cb = Geometry.distance(c, b, 3);
             d_cd = Geometry.distance(c, d, 3);
-            //d_cd = Math.abs(c[2] - d[2]);
-            
+
             return [d_ab, d_ac, d_cb, d_cd];
         },
-            
+
         /**
          * Recursive interval bisection algorithm for curve plotting. 
          * Used in {@link JXG.Curve.updateParametricCurve}.
@@ -840,37 +835,39 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
-            var tc, c, 
+            var tc, c,
                 ds, mindepth = 0,
-                isSmooth, isJump, isCusp, 
+                isSmooth, isJump, isCusp,
                 cusp_threshold = 0.5,
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
 
-            if (this.numberPoints > 65536) return;
+            if (this.numberPoints > 65536) {
+                return;
+            }
 
             tc = 0.5 * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
-              
+
             if (this._borderCase(a, b, c, ta, tb, tc, depth)) {
                 return this;
             }
-            
+
             ds = this._triangleDists(a, b, c);           // returns [d_ab, d_ac, d_cb, d_cd]
             isSmooth = (depth < this.smoothLevel) && (ds[3] < delta);
-            
-            isJump = (depth < this.jumpLevel) && 
+
+            isJump = (depth < this.jumpLevel) &&
                         ((ds[2] > 0.99 * ds[0]) || (ds[1] > 0.99 * ds[0]) ||
                         ds[0] === Infinity || ds[1] === Infinity || ds[2] === Infinity);
-            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2])); 
-            
-            if (isCusp) { 
-                mindepth = 0; 
+            isCusp = (depth < this.smoothLevel + 2) && (ds[0] < cusp_threshold * (ds[1] + ds[2]));
+
+            if (isCusp) {
+                mindepth = 0;
                 isSmooth = false;
             }
 
             --depth;
-            
+
             if (isJump) {
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
             } else if (depth <= mindepth || isSmooth) {
@@ -880,10 +877,10 @@ define([
                 this._insertPoint(pnt);
                 this._plotRecursive(c, tc, b, tb, depth, delta);
             }
-            
+
             return this;
         },
-        
+
         /**
          * Updates the data points of a parametric curve. This version is used if {@link JXG.Curve#doadvancedplot} is <tt>true</tt>.
          * @param {Number} mi Left bound of curve
@@ -891,12 +888,12 @@ define([
          * @returns {JXG.Curve} Reference to the curve object.
          */
         updateParametricCurve: function (mi, ma) {
-            var ta, tb, a, b, 
+            var ta, tb, a, b,
                 suspendUpdate = false,
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
-                depth, delta; 
-            
+                depth, delta;
+
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
                 delta = 3;
@@ -908,19 +905,19 @@ define([
                 this.smoothLevel = depth - 9;
                 this.jumpLevel = 3;
             }
-            
+
             this.points = [];
             this._lastCrds = [0, NaN, NaN];   // Used in _insertPoint
-            
+
             ta = mi;
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
             a = pa.copy('scrCoords');
-            suspendUpdate = true,
+            suspendUpdate = true;
 
             tb = ma;
             pb.setCoordinates(Const.COORDS_BY_USER, [this.X(tb, suspendUpdate), this.Y(tb, suspendUpdate)], false);
             b = pb.copy('scrCoords');
-            
+
             this.points.push(pa);
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(pb);
@@ -1106,7 +1103,7 @@ define([
                 return f[0] + (f[1] - f[0]) * (t - i);
             };
         },
-        
+
         /**
          * Converts the GEONExT syntax of the defining function term into JavaScript.
          * New methods X() and Y() for the Curve object are generated, further
@@ -1789,18 +1786,18 @@ define([
         c.updateDataArray = function () {
             var i, j = 0,
                 len = this.xterm.length;
-                
+
             this.dataX = [];
             this.dataY = [];
 
             if (len === 0) {
                 return;
             }
-            
+
             this.dataX[j] = this.xterm[0];
             this.dataY[j] = this.yterm[0];
             ++j;
-            
+
             for (i = 1; i < len; ++i) {
                 this.dataX[j] = this.xterm[i];
                 this.dataY[j] = this.dataY[j - 1];
@@ -1810,7 +1807,7 @@ define([
                 ++j;
             }
         };
-        
+
         return c;
     };
 

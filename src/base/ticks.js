@@ -610,9 +610,7 @@ define([
                     if (this.visProp.drawlabels && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
                         labelText = hasLabelOverrides ? this.visProp.labels[i] : this.fixedTicks[i];
                         this.labels.push(
-                            this.generateLabel(
-                                this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i
-                            )
+                            this.generateLabel(this.generateLabelText(tickCoords, coordsZero, labelText), tickCoords, i)
                         );
                     } else {
                         this.labels.push(null);
