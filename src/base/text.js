@@ -54,6 +54,14 @@ define([
 
     "use strict";
 
+    var priv = {
+            HTMLSliderInputEventHandler: function () {
+                this._val = parseFloat(this.rendNodeRange.value);
+                this.rendNodeOut.value = this.rendNodeRange.value;
+                this.board.update();
+            }
+        };
+
     /**
      * Construct and handle texts.
      * @class Text: On creation the GEONExT syntax
@@ -861,20 +869,12 @@ define([
             * OnChange event is used for IE browsers
             * The range element is supported since IE10
             */
-            Env.addEvent(t.rendNodeForm, 'change', function () {
-                this._val = parseFloat(this.rendNodeRange.value);
-                this.rendNodeOut.value = this.rendNodeRange.value;
-                this.board.update();
-            }, t);
+            Env.addEvent(t.rendNodeForm, 'change', priv.HTMLSliderInputEventHandler, t);
         } else {
             /*
             * OnInput event is used for non-IE browsers
             */
-            Env.addEvent(t.rendNodeForm, 'input', function () {
-                this._val = parseFloat(this.rendNodeRange.value);
-                this.rendNodeOut.value = this.rendNodeRange.value;
-                this.board.update();
-            }, t);
+            Env.addEvent(t.rendNodeForm, 'input', priv.HTMLSliderInputEventHandler, t);
         }
 
         t.Value = function () {
