@@ -1361,7 +1361,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else if (type === 'lower') {
                         y = f(x);
 
-                        for (x1 = x; x1 <= x + delta; x1 += delta1) {
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
 
                             if (y1 < y) {
@@ -1376,7 +1376,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else if (type === 'upper') {
                         y = f(x);
 
-                        for (x1 = x; x1 <= x + delta; x1 += delta1) {
+                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
                             y1 = f(x1);
 
                             if (y1 > y) {
