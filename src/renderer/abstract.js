@@ -1234,7 +1234,7 @@ define([
 
                     button = doc.createElement('span');
                     node.appendChild(button);
-                    button.appendChild(board.containerObj.ownerDocument.createTextNode(label));
+                    button.appendChild(doc.createTextNode(label));
                     Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = board.options.navbar.highlightFillColor;
                     }, button);

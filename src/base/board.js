@@ -1739,9 +1739,11 @@ define([
                 }
             }
 
-            if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.renderer.hide(this.infobox);
-            }
+            // Hiding the infobox is commentet out, since it prevents showing the infobox
+            // on IE 11+ on 'over'
+            //if (this.mode !== this.BOARD_MODE_DRAG) {
+                //this.renderer.hide(this.infobox);
+            //}
 
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchmove', 'move', 'pointermove', 'MSPointerMove'], [evt, this.mode]);
