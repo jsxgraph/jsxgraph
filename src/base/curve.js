@@ -822,6 +822,39 @@ define([
         },
 
         /**
+         * Test if the function is undefined on an interval:
+         * If th interval borders a and b are undefined, 20 random values
+         * are tested if they are undefined, too.
+         * Only if all values are undefined, we declare the function to be undefined in this interval.
+         * 
+         * @private
+         * @param {Array} a Screen coordinates of the left interval bound
+         * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
+         * @param {Array} b Screen coordinates of the right interval bound
+         * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
+         */
+        _isUndefined: function (a, ta, b, tb) {
+            var t, i, pnt;
+            
+            if (!isNaN(a[1] + a[2]) || !isNaN(b[1] + b[2])) {
+                return false;
+            }
+            
+            pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
+            
+            for (i = 0; i < 20; ++i) {
+                t = ta + Math.random() * (tb - ta);
+                pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                if (!isNaN(pnt.scrCoords[0] + pnt.scrCoords[1] + pnt.scrCoords[2])) {
+                    return false;
+                }
+            }
+            
+            return true;
+        },
+            
+
+        /**
          * Recursive interval bisection algorithm for curve plotting. 
          * Used in {@link JXG.Curve.updateParametricCurve}.
          * @private
@@ -845,6 +878,11 @@ define([
                 return;
             }
 
+            // Test if the function is undefined on an interval
+            if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
+                return this;
+            }
+            
             tc = 0.5 * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
@@ -893,7 +931,7 @@ define([
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 depth, delta;
-
+//var stime = new Date();
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
                 delta = 3;
@@ -905,6 +943,7 @@ define([
                 this.smoothLevel = depth - 9;
                 this.jumpLevel = 3;
             }
+            this.nanLevel = depth - 4;
 
             this.points = [];
             this._lastCrds = [0, NaN, NaN];   // Used in _insertPoint
@@ -923,6 +962,8 @@ define([
             this.points.push(pb);
 
             this.numberPoints = this.points.length;
+//var etime = new Date();            
+//console.log(this.name, this.numberPoints, etime.getTime() - stime.getTime());
 
             return this;
         },
