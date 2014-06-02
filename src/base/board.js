@@ -146,7 +146,11 @@ define([
          * Pointer to the document element containing the board.
          * @type Object
          */
-        this.document = attributes.document || document;
+        if (Type.exists(attributes.document)) {
+            this.document = attributes.document;
+        } else if (typeof document === 'object') {
+            this.document = document;
+        }
 
         /**
          * The html-id of the html element containing the board.
@@ -2221,7 +2225,7 @@ define([
                 Env.addEvent(this.document, 'mouseup', this.mouseUpListener, this);
                 this.hasMouseUp = true;
             } else {
-                // In case this.hasMouseUp==true, it may be that there was a 
+                // In case this.hasMouseUp==true, it may be that there was a
                 // mousedown event before which was not followed by an mouseup event.
                 // This seems to happen with interactive whiteboard pens sometimes.
                 return;

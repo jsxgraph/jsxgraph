@@ -124,7 +124,10 @@ define([
         initRenderer: function (box, dim, doc) {
             var boxid, renderer;
 
-            doc = doc || document;
+            if (!Type.exists(doc) && typeof document === 'object') {
+                doc = document;
+            }
+
             if (typeof doc === 'object' && box !== null) {
                 boxid = doc.getElementById(box);
 
