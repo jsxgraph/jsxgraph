@@ -148,8 +148,10 @@ define([
          */
         if (Type.exists(attributes.document)) {
             this.document = attributes.document;
+console.log("First");            
         } else if (typeof document === 'object') {
             this.document = document;
+console.log("Second");            
         }
 
         /**

@@ -125,6 +125,7 @@ define([
             var boxid, renderer;
 
             if (!Type.exists(doc) && typeof document === 'object') {
+console.log("Yeah");                
                 doc = document;
             }
 
