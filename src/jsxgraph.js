@@ -124,8 +124,9 @@ define([
         initRenderer: function (box, dim, doc) {
             var boxid, renderer;
 
-            if (!Type.exists(doc) && typeof document === 'object') {
-console.log("Yeah");                
+            // Former version:
+            // doc = doc || document
+            if ((!Type.exists(doc) || doc === false) && typeof document === 'object') {
                 doc = document;
             }
 

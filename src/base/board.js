@@ -146,12 +146,12 @@ define([
          * Pointer to the document element containing the board.
          * @type Object
          */
-        if (Type.exists(attributes.document)) {
+        // Former version:
+        // this.document = attributes.document || document;
+        if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-console.log("First");            
         } else if (typeof document === 'object') {
             this.document = document;
-console.log("Second");            
         }
 
         /**
