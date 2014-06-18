@@ -655,6 +655,7 @@ define([
             angle: 3,
             integral: 3,
             axis: 2,
+            ticks: 2,
             grid: 1,
             image: 0,
             trace: 0
