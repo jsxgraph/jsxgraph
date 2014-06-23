@@ -457,21 +457,29 @@ define([
          * @return {object} reference to the text object.
          */
         setCoords: function (x, y) {
+            var coordsAnchor, dx, dy;
             if (Type.isArray(x) && x.length > 1) {
                 y = x[1];
                 x = x[0];
             }
 
-            this.X = function () {
-                return x;
-            };
+            if (this.visProp.islabel && Type.exists(this.element)) {
+                coordsAnchor = this.element.getTextAnchor();
+                dx = x - this.relativeCoords.scrCoords[1] + coordsAnchor.scrCoords[1];
+                dy = y - this.relativeCoords.scrCoords[2] + coordsAnchor.scrCoords[2];
+                this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [x, y]);
+            } else {
+                this.X = function () {
+                    return x;
+                };
 
-            this.Y = function () {
-                return y;
-            };
+                this.Y = function () {
+                    return y;
+                };
 
-            this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
-
+                this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
+            }
+            
             // this should be a local update, otherwise there might be problems
             // with the tick update routine resulting in orphaned tick labels
             this.prepareUpdate().update().updateRenderer();

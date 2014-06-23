@@ -138,7 +138,8 @@ define(['jxg'], function (JXG) {
         GENTYPE_RULER: 31,
         GENTYPE_SLOPETRIANGLE: 32,
         GENTYPE_PERPSEGMENT: 33,
-        // 34 ... 39 // unused ...
+        GENTYPE_LABELMOVEMENT: 34,
+        // 35 ... 39 // unused ...
         GENTYPE_DELETE: 41,
         GENTYPE_COPY: 42,
         GENTYPE_MIRROR: 43,
