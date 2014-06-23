@@ -464,10 +464,11 @@ define([
             }
 
             if (this.visProp.islabel && Type.exists(this.element)) {
-                coordsAnchor = this.element.getTextAnchor();
-                dx = x - this.relativeCoords.scrCoords[1] + coordsAnchor.scrCoords[1];
-                dy = y - this.relativeCoords.scrCoords[2] + coordsAnchor.scrCoords[2];
-                this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [x, y]);
+                coordsAnchor = this.element.getLabelAnchor();
+                dx = (x - coordsAnchor.usrCoords[1]) * this.board.unitX;
+                dy = -(y - coordsAnchor.usrCoords[2]) * this.board.unitY;
+
+                this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [dx, dy]);
             } else {
                 this.X = function () {
                     return x;
