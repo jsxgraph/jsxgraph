@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -39,7 +39,7 @@
  utils/type
  */
 
-/** 
+/**
  * @fileoverview In this file the class Group is defined, a class for
  * managing grouping of points.
  */
@@ -97,7 +97,7 @@ define([
         for (i = 0; i < objArray.length; i++) {
             obj = this.board.select(objArray[i]);
 
-            if ((!obj.visProp.fixed) && ((obj.type === Const.OBJECT_TYPE_POINT) || (obj.type === Const.OBJECT_TYPE_GLIDER))) {
+            if ((!obj.visProp.fixed) && Type.exists(obj.coords) && Type.exists(obj.group)) {
                 if (obj.group.length !== 0) {
                     this.addGroup(obj.group[obj.group.length - 1]);
                 } else {
@@ -169,6 +169,7 @@ define([
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el)) {
                         if (Type.exists(this.board.objects[el])) {
+
                             obj = this.objects[el].point;
                             if (obj.id !== transObj.id) {
                                 obj.coords.setCoordinates(Const.COORDS_BY_USER, [this.coords[el].usrCoords[1] + trans[0], this.coords[el].usrCoords[2] + trans[1]]);

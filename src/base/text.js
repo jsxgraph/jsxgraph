@@ -87,6 +87,14 @@ define([
 
         this.hiddenByParent = false;
 
+        /**
+         * Stores the groups of this point in an array of Group.
+         * @type array
+         * @see JXG.Group
+         * @private
+         */
+        this.group = [];
+
         if (this.element) {
             if (this.visProp.islabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
@@ -264,7 +272,7 @@ define([
             this.updateText();
             this.prepareUpdate().update().updateRenderer();
 
-            // We do not call updateSize for the infobox to speed up rendering            
+            // We do not call updateSize for the infobox to speed up rendering
             if (!this.board.infobox || this.id !== this.board.infobox.id) {
                 this.updateSize();    // updateSize() is called at least once.
             }
@@ -480,7 +488,7 @@ define([
 
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
             }
-            
+
             // this should be a local update, otherwise there might be problems
             // with the tick update routine resulting in orphaned tick labels
             this.prepareUpdate().update().updateRenderer();
@@ -524,11 +532,11 @@ define([
 
         /**
          * Used to save updateSize() calls.
-         * Called in JXG.Text.update 
+         * Called in JXG.Text.update
          * That means this.update() has been called.
          * More tests are in JXG.Renderer.updateTextStyle. The latter tests
          * are one update off. But this should pose not too many problems, since
-         * it affects fontSize and cssClass changes. 
+         * it affects fontSize and cssClass changes.
          *
          * @private
          */
@@ -648,7 +656,7 @@ define([
         },
 
         /**
-         * Converts the GEONExT tags <overline> and <arrow> to 
+         * Converts the GEONExT tags <overline> and <arrow> to
          * HTML span tags with proper CSS formating.
          * @private
          * @see JXG.Text.generateTerm @see JXG.Text._setText
@@ -731,7 +739,7 @@ define([
                 this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
 
                 /*
-                * In case of snapToGrid===true, first the coordinates of 
+                * In case of snapToGrid===true, first the coordinates of
                 * the new position is set, then they are rounded to the grid.
                 * The resulting coordinates are set as functions X(), Y(),
                 * becasue they are set again in updateCoords().
