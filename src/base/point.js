@@ -700,12 +700,14 @@ define([
                 ucr = this.coords.usrCoords;
 
             if (this.isReal && point2.isReal) {
-                f = ucr[0] - c[0];
-                sum = f * f;
-                f = ucr[1] - c[1];
-                sum += f * f;
-                f = ucr[2] - c[2];
-                sum += f * f;
+                if (c[0] === 0 || ucr[0] === 0) {
+                    r = Number.POSITIVE_INFINITY;
+                } else {
+                    f = ucr[1] - c[1];
+                    sum = f * f;
+                    f = ucr[2] - c[2];
+                    sum += f * f;
+                }
 
                 r = Math.sqrt(sum);
             }
