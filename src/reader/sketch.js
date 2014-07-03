@@ -247,7 +247,8 @@
 
                 case JXG.GENTYPE_REFLECTION:
                     set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                    set_str += ', name: "' + step.args.name + '">>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
