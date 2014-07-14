@@ -140,6 +140,8 @@ define([
             visit: 'visit',
             glide: 'makeGlider',
             makeGlider: 'makeGlider',
+            intersect: 'makeIntersection',
+            makeIntersection: 'makeIntersection',
             X: 'X',
             Y: 'Y',
             free: 'free',
@@ -927,7 +929,8 @@ define([
 
         /**
          * Convert the point to glider and update the construction.
-         * @param {String|Object} slide The Object the point will be bound to.
+         * To move the point visual onto the glider, a call of board update is necessary.
+         * @param {String|Object} slide The object the point will be bound to.
          */
         makeGlider: function (slide) {
             var slideobj = this.board.select(slide);
@@ -959,7 +962,48 @@ define([
 
             return this;
         },
+        
+        /**
+         * Convert the point to intersection point and update the construction.
+         * To move the point visual onto the intersection, a call of board update is necessary.
+         * TODO docu.
+         * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
+         **/
+        makeIntersection: function(el1, el2, i, j) {
+            var func;
+            
+            el1 = this.board.select(el1);
+            el2 = this.board.select(el2);
+            
+            func = Geometry.intersectionFunction(this.board, el1, el2, i, j, this.visProp.alwaysintersect);
+            this.addConstraint([func]);
 
+            try {
+                el1.addChild(this);
+                el2.addChild(this);
+            } catch (e) {
+                throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            }
+
+            this.type = Const.OBJECT_TYPE_INTERSECTION;
+            this.elType = 'intersection';
+            this.parents = [el1.id, el2.id, i, j];
+
+            this.generatePolynomial = function () {
+                var poly1 = el1.generatePolynomial(this),
+                    poly2 = el2.generatePolynomial(this);
+    
+                if ((poly1.length === 0) || (poly2.length === 0)) {
+                    return [];
+                }
+
+                return [poly1[0], poly2[0]];
+            };
+            
+            this.prepareUpdate().update();
+        },
+    
         /**
          * Remove the last slideObject. If there are more than one elements the point is bound to,
          * the second last element is the new active slideObject.
