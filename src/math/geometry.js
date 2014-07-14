@@ -930,6 +930,97 @@ define([
         /****************************************/
 
         /**
+         * Generate the function which computes the coordinates of the intersection point. 
+         * Primarily used in {@link JXG.Point#createIntersectionPoint}.
+         * @param {JXG.Board} board object
+         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. 
+         * i determines the intersection point if two points are available: <ul>
+         *   <li>i==0: use the positive square root,</li>
+         *   <li>i==1: use the negative square root.</li></ul>
+         * See further {@see JXG.Point#createIntersectionPoint}.
+         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point 
+         * on their defining line or circle.
+         * @returns {Function} Function returning a {@see JXG.Coords} object that determines the intersection point.
+         */
+        intersectionFunction: function(board, el1, el2, i, j, alwaysintersect) {
+            var el1, el2, i, j, func,
+                that = this;
+    
+            if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
+                    el2.elementClass === Const.OBJECT_CLASS_CURVE) {
+                // curve - curve
+                /** @ignore */
+                func = function () {
+                    return that.meetCurveCurve(el1, el2, i, j, el1.board);
+                };
+    
+            //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+//  //                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                // arc - line   (arcs are of class curve, but are intersected like circles)
+                // TEMPORARY FIX!!!
+                /** @ignore */
+//  //            func = function () {
+                    //return that..meet(el1.stdform, el2.stdform, i, el1.board);
+                //};
+    
+            } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
+                    (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
+                // curve - line (this includes intersections between conic sections and lines
+                /** @ignore */
+                func = function () {
+                    return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
+                };
+    
+            } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
+                // line - line, lines may also be segments.
+                /** @ignore */
+                func = function () {
+                    var res, c,
+                        first1 = el1.visProp.straightfirst,
+                        first2 = el2.visProp.straightfirst,
+                        last1 = el1.visProp.straightlast,
+                        last2 = el2.visProp.straightlast;
+    
+                    /**
+                     * If one of the lines is a segment or ray and
+                     * the the intersection point shpould disappear if outside
+                     * of the segment or ray we call
+                     * meetSegmentSegment
+                     */
+                    if (!alwaysintersect && (!first1 || !last1 || !first2 || !last2)) {
+                        res = that.meetSegmentSegment(
+                            el1.point1.coords.usrCoords,
+                            el1.point2.coords.usrCoords,
+                            el2.point1.coords.usrCoords,
+                            el2.point2.coords.usrCoords,
+                            el1.board
+                        );
+    
+                        if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
+                                (!first2 && res[2] < 0) || (!last2 && res[2] > 1)) {
+                            // Non-existent
+                            c = [0, NaN, NaN];
+                        } else {
+                            c = res[0];
+                        }
+    
+                        return (new Coords(Const.COORDS_BY_USER, c, el1.board));
+                    }
+    
+                    return that.meet(el1.stdform, el2.stdform, i, el1.board);
+                };
+            } else {
+                // All other combinations of circles and lines
+                /** @ignore */
+                func = function () {
+                    return that.meet(el1.stdform, el2.stdform, i, el1.board);
+                };
+            }
+            
+            return func;
+        },
+
+        /**
          * Computes the intersection of a pair of lines, circles or both.
          * It uses the internal data array stdform of these elements.
          * @param {Array} el1 stdform of the first element (line or circle)
