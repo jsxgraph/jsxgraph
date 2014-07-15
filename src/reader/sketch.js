@@ -448,7 +448,8 @@
                         reset_str += step.dest_id + '.glide(' + gl + '); ';
 
                     } else {
-                        reset_str = 'delete ' + step.dest_id + '; ';
+                        // Do nothing
+                        //reset_str = 'delete ' + step.dest_id + '; ';
                     }
 
                     break;
