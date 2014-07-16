@@ -240,6 +240,7 @@ define([
             addTransform: 'addTransform',
             setProperty: 'setAttribute',
             setAttribute: 'setAttribute',
+            addChild: 'addChild',
             animate: 'animate',
             on: 'on',
             off: 'off',

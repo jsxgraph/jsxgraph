@@ -1023,7 +1023,7 @@
                     set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', withLabel: false>>; ';
                     set_str += 'circle(\'' + step.dest_sub_ids[0] + '\', 1) <<id: \'' + step.dest_sub_ids[1];
-                    set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', strokeColor: \'#888888\', visible: true>>; ';
+                    set_str += '\', fillOpacity: ' + JXG.Options.opacityLevel + ', strokeColor: \'#888888\', visible: true, withLabel: false>>; ';
 
                     if (step.args.fids.length === 1) {
                         step.args.func = step.args.fids[0] + '.radius()';
@@ -1032,7 +1032,12 @@
                     }
 
                     set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ';
-
+                    
+                    for (j = 0; j < step.src_ids.length; j++) {
+                        set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[0] + '); ';
+                        set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
+                    }
+                    
                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
