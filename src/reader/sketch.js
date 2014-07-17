@@ -254,7 +254,8 @@
 
                 case JXG.GENTYPE_MIRRORPOINT:
                     set_str = assign + 'mirrorpoint(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
-                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                    set_str += ', name: "' + step.args.name + '">>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
