@@ -2272,6 +2272,34 @@ define([
         },
 
         /**
+         * Calculates the coordinates of the closest orthogonal projection of a given coordinate array onto the
+         * border of a polygon.
+         * @param {Array} p Point to project.
+         * @param {JXG.Polygon} pol Polygon element
+         * @returns {Array} The coordinates of the closest projection of the given point to the border of the polygon.
+         */
+        projectCoordsToPolygon: function(p, pol) {
+            var i, 
+                len = pol.vertices.length,
+                d_best = Infinity, 
+                d, projection, bestprojection; 
+ 
+            for (i = 0; i < len; i++) {
+                projection = JXG.Math.Geometry.projectCoordsToSegment(
+                                p,
+                                pol.vertices[i].coords.usrCoords,
+                                pol.vertices[(i + 1) % len].coords.usrCoords);
+            
+                d = JXG.Math.Geometry.distance(projection[0], p, 3);
+                if (0 <= projection[1] && projection[1] <= 1 && d < d_best) {
+                    bestprojection = projection[0].slice(0);
+                    d_best = d;
+                }
+            }
+            return bestprojection;
+        },
+
+        /**
          * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
          * one or more curves of curveType 'plot'. Uses {@link #projectPointToCurve}.
          * @param {JXG.Point} point Point to project.
