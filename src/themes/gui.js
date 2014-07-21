@@ -107,6 +107,15 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightStrokeOpacity: 0.66666
     },
 
+    slider: {
+        highlightFillColor: '#ffffff',
+        face: '[]',
+        ticks: { tickEndings: [0, 1],
+                 minTicksDistance: 15
+            }
+    },
+
+
     trunclen: 2
 
 /*
