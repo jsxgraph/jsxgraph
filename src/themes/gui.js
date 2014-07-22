@@ -40,6 +40,11 @@ JXG.Options = JXG.merge(JXG.Options, {
         }
     },
     
+    circle: {
+        strokeOpacity: 0.7,
+        strokeWidth: 3
+    },
+
     curve: {
         strokeWidth: 3,
         strokeOpacity: 0.7
@@ -65,7 +70,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         size: 4,
         fillColor:   '#c00',
         strokeColor: '#c00',
-        strokeOpacity: 0.8,
+        strokeOpacity: 0.9,
         //fillOpacity: 0.7,
         highlightFillColor:   '#c00',
         highlightStrokeColor: '#c00',
@@ -81,7 +86,13 @@ JXG.Options = JXG.merge(JXG.Options, {
     polygon: {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
-        hasInnerPoints: false
+        hasInnerPoints: false,
+        
+        borders: {
+            strokeColor: '#444444',
+            strokeOpacity: 0.7,
+            strokeWidth: 2
+        }
     },
 
     precision: {
@@ -139,22 +150,32 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     tapemeasure: {
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        highlightStrokeColor: '#000000',
+        strokeOpacity: 0.7,
+        
         point1: {
+            strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: 'screen',
             attractorDistance: 20
         },
         point2: {
+            strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: 'screen',
             attractorDistance: 20
+        },
+        ticks: {
+            strokeOpacity: 0.7
         }
     },
 
     text: {
         fontSize: 18,
-        strokeColor: '#000000',
-        highlightStrokeColor: '#000000',
+        strokeColor: '#222',
+        highlightStrokeColor: '#222',
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.66666
     },
