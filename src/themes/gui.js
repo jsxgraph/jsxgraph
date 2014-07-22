@@ -39,20 +39,38 @@ JXG.Options = JXG.merge(JXG.Options, {
             display: 'internal'
         }
     },
-
+    
+    curve: {
+        strokeWidth: 3,
+        strokeOpacity: 0.7
+    },
+    
     glider : {
         fillColor: '#ff0',
-        strokeColor: '#000'
+        strokeColor: '#000',
+        opacity: 1
     },
 
     intersection: {
-        fillColor: '#fff'
+        fillColor: '#fff',
+        opacity: 1
     },
 
+    line: {
+        strokeOpacity: 0.7,
+        strokeWidth: 3
+    },
+    
     point: {
         size: 4,
         fillColor:   '#c00',
-        strokeColor: '#000',
+        strokeColor: '#c00',
+        strokeOpacity: 0.8,
+        //fillOpacity: 0.7,
+        highlightFillColor:   '#c00',
+        highlightStrokeColor: '#c00',
+        highlightFillOpacity: 0.4,
+        highlightStrokeOpacity: 0.4,
 
         // snap on majorTicks
 
@@ -86,6 +104,40 @@ JXG.Options = JXG.merge(JXG.Options, {
         }
     },
 
+    slider: {
+        highlightFillColor: '#ffffff',
+        strokeOpacity: 0.5,
+        strokeColor: '#444444',
+        
+        face: '[]',
+        point1: { needsRegularUpdate: true },
+        point2: { needsRegularUpdate: true },
+        ticks: { tickEndings: [0, 1],
+            minTicksDistance: 15,
+            strokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true
+            },
+        baseline: {
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true
+        },
+        highline: {
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true
+        }
+
+    },
+
     tapemeasure: {
         point1: {
             snapToPoints: true,
@@ -107,28 +159,11 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightStrokeOpacity: 0.66666
     },
 
-    slider: {
-        highlightFillColor: '#ffffff',
-        face: '[]',
-        ticks: { tickEndings: [0, 1],
-                 minTicksDistance: 15
-            }
-    },
-
-
     trunclen: 2
 
 /*
     line: {
         strokeColor: '#f00' // can't see red lines anymore for NOW ...
-    },
-
-    slider: {
-        point1: { needsRegularUpdate: true },
-        point2: { needsRegularUpdate: true },
-        baseline: { needsRegularUpdate: true },
-        highline: { needsRegularUpdate: true },
-        ticks: { needsRegularUpdate: true }
     },
 
     renderer: 'canvas'

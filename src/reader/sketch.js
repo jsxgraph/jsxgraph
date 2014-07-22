@@ -1084,10 +1084,13 @@
                         }
 
                     } else {
-                        set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
-                        set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-
-                        reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+                        // Upwards compatibility of pre 1.0 files
+                        if (JXG.exists(step.args.coords[0])) {
+                            set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
+                            set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
+    
+                            reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
+                        } 
                     }
 
                     break;
