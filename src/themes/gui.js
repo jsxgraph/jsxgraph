@@ -134,14 +134,16 @@ JXG.Options = JXG.merge(JXG.Options, {
             highlightStrokeColor: '#444444',
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
-            needsRegularUpdate: true
+            needsRegularUpdate: true,
+            fixed: false
             },
         baseline: {
             strokeColor: '#444444',
             highlightStrokeColor: '#444444',
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
-            needsRegularUpdate: true
+            needsRegularUpdate: true,
+            fixed: false
         },
         highline: {
             strokeColor: '#444444',
@@ -149,8 +151,17 @@ JXG.Options = JXG.merge(JXG.Options, {
             strokeOpacity: 0.5,
             highlightStrokeOpacity: 0.5,
             needsRegularUpdate: true
+        },
+        point1: {
+            fixed: false, 
+            needsRegularUpdate: true, 
+            snapToGrid: true
+        }, 
+        point2: {
+            fixed: false, 
+            needsRegularUpdate: true,
+            snapToGrid: true
         }
-
     },
 
     tapemeasure: {
