@@ -808,9 +808,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         if (colstr.charAt(0) === '#') {
             if (opa < 0.3) {
-                opa *= 1.333333;
+                opa *= 1.8;
             } else {
-                opa *= 0.666666;
+                opa *= 0.4;
             }
 
             return JXG.rgbo2rgba(c, opa);

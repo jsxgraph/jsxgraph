@@ -41,13 +41,13 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
     
     circle: {
-        strokeOpacity: 0.7,
+        strokeOpacity: 0.9,
         strokeWidth: 3
     },
 
     curve: {
         strokeWidth: 3,
-        strokeOpacity: 0.7
+        strokeOpacity: 0.9
     },
     
     glider : {
@@ -62,7 +62,8 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
 
     line: {
-        strokeOpacity: 0.7,
+        //highlightStrokeOpacity: 0.3,
+        strokeOpacity: 0.9,
         strokeWidth: 3
     },
     
@@ -90,7 +91,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         
         borders: {
             strokeColor: '#444444',
-            strokeOpacity: 0.7,
+            strokeOpacity: 0.9,
             strokeWidth: 2
         }
     },
