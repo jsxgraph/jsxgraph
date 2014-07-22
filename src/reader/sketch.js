@@ -914,22 +914,23 @@
                     ctx_reset_str = [];
 
                     for (i = 0; i < step.args.steps.length; i++) {
+
                         if (step_log[step.args.steps[i]].type > 50) {
                             arr = this.generateJCodeMeta(step_log[step.args.steps[i]], board);
                         } else {
                             arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
                         }
-
-                        if (JXG.trim(arr[2]) !== '') {
+                        
+                        if (arr.length >= 3 && JXG.trim(arr[2]) !== '') {
                             set_str = arr[2] + set_str;
                         }
-                        if (JXG.isFunction(arr[3])) {
+                        if (arr.length >= 4 && JXG.isFunction(arr[3])) {
                             ctx_set_str.unshift(arr[3]);
                         }
-                        if (JXG.trim(arr[0]) !== '') {
+                        if (arr.length >= 1 && JXG.trim(arr[0]) !== '') {
                             reset_str += arr[0];
                         }
-                        if (JXG.isFunction(arr[1])) {
+                        if (arr.length >= 2 && JXG.isFunction(arr[1])) {
                             ctx_reset_str.push(arr[1]);
                         }
                     }
