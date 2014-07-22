@@ -41,6 +41,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
     
     circle: {
+        strokeColor: '#36f',
         strokeOpacity: 0.9,
         strokeWidth: 3
     },
@@ -51,30 +52,32 @@ JXG.Options = JXG.merge(JXG.Options, {
     },
     
     glider : {
-        fillColor: '#ff0',
-        strokeColor: '#000',
+        strokeColor: 'orange',
+        fillColor: 'orange',
         opacity: 1
     },
 
     intersection: {
-        fillColor: '#fff',
+        strokeColor: '#808080',
+        fillColor: '#808080',
         opacity: 1
     },
 
     line: {
         //highlightStrokeOpacity: 0.3,
+        strokeColor: '#36f',
         strokeOpacity: 0.9,
         strokeWidth: 3
     },
     
     point: {
         size: 4,
-        fillColor:   '#c00',
-        strokeColor: '#c00',
+        fillColor:   '#cc0000',
+        strokeColor: '#cc0000',
         strokeOpacity: 0.9,
         //fillOpacity: 0.7,
-        highlightFillColor:   '#c00',
-        highlightStrokeColor: '#c00',
+        highlightFillColor:   '#cc0000',
+        highlightStrokeColor: '#cc0000',
         highlightFillOpacity: 0.4,
         highlightStrokeOpacity: 0.4,
 

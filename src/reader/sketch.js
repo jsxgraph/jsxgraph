@@ -263,7 +263,11 @@
                     if (step.args.create_point) {
                         sub_id = step.dest_sub_ids[2];
                         set_str = 'point(' + pn(step.args.usrCoords[1]) + ',' + pn(step.args.usrCoords[2]) + ') <<id: \'';
-                        set_str += sub_id + '\', fillColor: \'' + step.args.fillColor + '\'>>; ' + sub_id + '.glide(';
+                        set_str += sub_id + '\', fillColor: \'' + step.args.fillColor + '\'';
+                        if (JXG.exists(step.args.strokeColor)) {
+                            set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
+                        }
+                        set_str += '>>; ' + sub_id + '.glide(';
                         set_str += step.src_ids[0] + '); ';
                         reset_str = 'delete ' + sub_id + '; ';
                     } else {
@@ -397,7 +401,9 @@
 
                     } else {
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
-                        set_str += ') <<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'>>; ' + step.dest_id;
+                        set_str += ') <<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'';
+                        set_str += ', strokeColor: \'' +  JXG.Options.glider.strokeColor + '\'';
+                        set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     }
 
@@ -409,7 +415,9 @@
 
                 case JXG.GENTYPE_INTERSECTION:
                     set_str = assign + 'intersection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ', ' + step.args.choice;
-                    set_str += ') <<' + attrid + ' fillColor: \'' + JXG.Options.intersection.fillColor + '\'>>; ';
+                    set_str += ') <<' + attrid + ' fillColor: \'' + JXG.Options.intersection.fillColor + '\'';
+                    set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
+                    set_str += '>>; ';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
                         reset_str = 'delete ' + step.dest_id + '; ';
