@@ -8,8 +8,8 @@ JXG.Options = JXG.merge(JXG.Options, {
 
     lastRegPolCorners: 4,
 
-    lastSliderStart: 0,
-    lastSliderEnd: 2,
+    lastSliderStart: -10,
+    lastSliderEnd: 10,
     lastSliderIni: 1,
     
     board: {
