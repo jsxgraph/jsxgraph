@@ -707,7 +707,9 @@ define([
          */
         setName: function (str) {
             str = str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            this.setLabelText(str);
+            if (this.elType !== 'slider') {
+                this.setLabelText(str);
+            }
             this.setAttribute({name: str});
         },
 
