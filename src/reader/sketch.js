@@ -72,7 +72,7 @@
             } else {
                 t = meta.unredo;
             }
-
+            
             for (i = 0; i <= t; i++) {
                 if (constr[i].type !== 0) {
                     try {
@@ -90,7 +90,6 @@
                     board.jc.parse(arr[0], true);
                 }
             }
-
 
             // bounding box
             arr = meta.boundingBox;

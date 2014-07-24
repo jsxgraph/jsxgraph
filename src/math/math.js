@@ -547,6 +547,20 @@ define(['jxg'], function (JXG) {
         },
 
         /**
+         * Logarithm to arbitrary base b. If b is not given, natural log is taken, i.e. b = e.
+         * @param {Number} x
+         * @param {Number} b base
+         * @returns {Number} log(x, b) Logarithm of x to base b, that is log(x)/log(b).
+         */
+        log: function (x, b) {
+            if (!(typeof b === 'undefined') && Type.isNumber(b)) {
+                return Math.log(x) / Math.log(b);
+            } else {
+                return Math.log(x);
+            }
+        },
+
+        /**
          * A square & multiply algorithm to compute base to the power of exponent.
          * Implementated by Wolfgang Riedl.
          * @param {Number} base

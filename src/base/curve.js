@@ -935,12 +935,16 @@ define([
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
                 delta = 3;
+
+                delta = 2;
                 this.smoothLevel = depth - 5;
                 this.jumpLevel = 5;
             } else {
                 depth = 17;
                 delta = 0.9;
-                this.smoothLevel = depth - 9;
+                
+                delta = 2;
+                this.smoothLevel = depth - 7; // 9
                 this.jumpLevel = 3;
             }
             this.nanLevel = depth - 4;
@@ -960,6 +964,7 @@ define([
             this.points.push(pa);
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(pb);
+//console.log("NUmber points", this.points.length, this.board.updateQuality, this.board.BOARD_QUALITY_LOW);
 
             this.numberPoints = this.points.length;
 //var etime = new Date();            
