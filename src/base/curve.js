@@ -1222,7 +1222,24 @@ define([
          * @param {String} contentStr String containing dependencies for the given object.
          */
         notifyParents: function (contentStr) {
-            GeonextParser.findDependencies(this, contentStr, this.board);
+            var fstr, dep, 
+                isJessieCode = false;
+            
+            // Read dependencies found by the JessieCode parser
+            for (fstr in {'xterm':1, 'yterm':1}) {
+                if (this.hasOwnProperty(fstr) && this[fstr].origin) {
+                    isJessieCode = true;
+                    for (dep in this[fstr].origin.deps) {
+                        if (this[fstr].origin.deps.hasOwnProperty(dep)) {
+                            this[fstr].origin.deps[dep].addChild(this);
+                        }
+                    }
+                }
+            }
+            
+            if (!isJessieCode) {
+                GeonextParser.findDependencies(this, contentStr, this.board);
+            }
         },
 
         // documented in geometry element
