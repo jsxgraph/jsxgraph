@@ -691,9 +691,10 @@
                         }
                     }
 
-                    set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
-                    set_str += '\', \'' + step.dest_sub_ids[5] + '\' ]';
-                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ';
+                    set_str += ') <<borders: <<ids: [\'' + step.dest_sub_ids[3] + '\', \'' + step.dest_sub_ids[4];
+                    set_str += '\', \'' + step.dest_sub_ids[5] + '\']';
+                    set_str += ', names: [\'\', \'\', \'\']';
+                    set_str += '>>, ' + attrid + ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
                     set_str += ', snaptopoints: ' + JXG.Options.elements.snapToPoints + ', scalable:true>>; ';
@@ -728,7 +729,8 @@
                     set_str += ') <<borders: <<ids: [ \'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5];
                     set_str += '\', \'';
                     set_str += step.dest_sub_ids[6] + '\', \'' + step.dest_sub_ids[7] + '\' ]';
-                    set_str += ', name: \'\'>>, ' + attrid;
+                    set_str += ', names: [\'\', \'\', \'\', \'\']';
+                    set_str += '>>, ' + attrid;
                     set_str += ' fillOpacity: ';
                     set_str += JXG.Options.opacityLevel + ', name: \'\', hasInnerPoints:' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', snaptogrid: ' + JXG.Options.elements.snapToGrid;
@@ -771,7 +773,7 @@
                         }
                     }
 
-                    set_str += ') <<borders: <<ids: [ \'';
+                    set_str += ') <<borders: <<ids: [\'';
 
                     for (i = 0; i < step.dest_sub_ids.length; i++) {
                         set_str += step.dest_sub_ids[i];
@@ -779,8 +781,17 @@
                             set_str += '\', \'';
                         }
                     }
+                    set_str += '\']';
 
-                    set_str += '\' ], name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
+                    set_str += ', names: [';
+                    for (i = 0; i < step.dest_sub_ids.length; i++) {
+                        set_str += '\'\'';
+                        if (i < step.dest_sub_ids.length - 1) {
+                            set_str += ', ';
+                        }
+                    }
+                    set_str += ']';
+                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
