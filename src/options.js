@@ -2290,7 +2290,7 @@ define([
                 lastArrow: false,
                 majorHeight: validateInteger,
                 minorHeight: validateInteger,
-                minorTicks: validatePositiveInteger,
+                minorTicks: validateNotNegative,
                 minTicksDistance: validatePositiveInteger,
                 numberPointsHigh: validatePositiveInteger,
                 numberPointsLow: validatePositiveInteger,
