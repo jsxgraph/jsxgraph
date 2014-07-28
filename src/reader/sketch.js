@@ -240,7 +240,11 @@
 
                 case JXG.GENTYPE_MID:
                     set_str = assign + 'midpoint(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
-                    set_str += 'fillColor: \'' + step.args.fillColor + '\'>>; ';
+                    set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                    if (JXG.exists(step.args.strokeColor)) {
+                        set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
+                    }
+                    set_str += '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 

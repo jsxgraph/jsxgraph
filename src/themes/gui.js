@@ -70,6 +70,12 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeWidth: 3
     },
     
+    midpoint: {
+        strokeColor: '#808080',
+        fillColor: '#808080',
+        opacity: 1
+    },
+
     point: {
         size: 4,
         fillColor:   '#cc0000',
