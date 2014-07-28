@@ -96,7 +96,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     polygon: {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
-        hasInnerPoints: false,
+        hasInnerPoints: true,
         
         borders: {
             strokeColor: '#444444',

@@ -791,7 +791,8 @@
                         }
                     }
                     set_str += ']';
-                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
+                    set_str += ', name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel;
+                    set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
 
@@ -806,9 +807,18 @@
                         }
                         reset_str = 'delete ' + step.dest_sub_ids[i] + '; ' + reset_str;
                     }
+                    set_str += ']';
 
-                    set_str += ' ]>>, vertices: <<ids: [ ';
+                    set_str += ', names: [';
+                    for (i = 0; i < step.args.corners; i++) {
+                        set_str += '\'\'';
+                        if (i < step.args.corners - 1) {
+                            set_str += ', ';
+                        }
+                    }
+                    set_str += ']';
 
+                    set_str += '>>, vertices: <<ids: [ ';
                     for (i = 0; i < step.args.corners - 2; i++) {
                         set_str += '\'' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '\'';
                         if (i !== step.args.corners - 3) {
@@ -816,9 +826,14 @@
                         }
                         reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '; ' + reset_str;
                     }
-
-                    set_str += ' ], name: \'\'>>, ' + attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + ', name: \'\'>>; ';
+                    set_str += ' ]';
+                    set_str += ', name: \'\'>>, ' + attrid;
+                    set_str += ' fillOpacity: ' + JXG.Options.opacityLevel;
+                    set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
+                    set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
+                    set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+                    
                     break;
 
                 case JXG.GENTYPE_SECTOR:
