@@ -269,7 +269,7 @@ define([
             if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
                 if (this.label.visProp.visible) {
-                    this.board.renderer.hide(this.label);
+                    this.label.hideElement();
                 }
             }
         },
