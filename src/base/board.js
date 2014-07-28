@@ -3201,7 +3201,13 @@ define([
          */
         prepareUpdate: function () {
             var el, pEl, len = this.objectsList.length;
-
+            
+            /*
+            if (this.attr.updatetype === 'hierarchical') {
+                return this;
+            }
+            */
+            
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
@@ -3216,15 +3222,36 @@ define([
          */
         updateElements: function (drag) {
             var el, pEl;
+            //var childId, i = 0;
 
             drag = this.select(drag);
-
+            
+            /*
+            if (Type.exists(drag)) {
+                for (el = 0; el < this.objectsList.length; el++) {
+                    pEl = this.objectsList[el];
+                    if (pEl.id === drag.id) {
+                        i = el;
+                        break;
+                    }
+                }
+            }
+            */
+            
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 // For updates of an element we distinguish if the dragged element is updated or
                 // other elements are updated.
                 // The difference lies in the treatment of gliders.
                 pEl.update(!Type.exists(drag) || pEl.id !== drag.id);
+
+                /*
+                if (this.attr.updatetype === 'hierarchical') {
+                    for (childId in pEl.childElements) {
+                        pEl.childElements[childId].needsUpdate = pEl.childElements[childId].needsRegularUpdate;
+                    }
+                }
+                */
             }
 
             // update groups last
@@ -3416,6 +3443,7 @@ define([
             }
 
             this.prepareUpdate().updateElements(drag).updateConditions();
+
             this.renderer.suspendRedraw(this);
             this.updateRenderer();
             this.renderer.unsuspendRedraw();

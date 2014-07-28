@@ -67,6 +67,7 @@ define([
              * @visprop
              */
 
+            //updateType: 'hierarchical', // 'all'
             boundingBox: [-5, 5, 5, -5],
             zoomFactor: 1,
             zoomX: 1,

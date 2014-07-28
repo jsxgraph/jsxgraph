@@ -357,6 +357,7 @@ define([
                     this.board.renderer.updateText(this.label);
                 }
             }
+            this.needsUpdate = false;
             return this;
         },
 
