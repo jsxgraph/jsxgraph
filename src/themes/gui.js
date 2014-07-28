@@ -1,11 +1,9 @@
 JXG.Options = JXG.merge(JXG.Options, {
 
+    //renderer: 'canvas',
     device: 'tablet',
-
     opacityLevel: 0.5,
-
     sensitive_area: 20,
-
     lastRegPolCorners: 4,
 
     lastSliderStart: -10,
