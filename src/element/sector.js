@@ -373,6 +373,7 @@ define([
             attr.withLabel = false;
             attr.name += '_arc';
             el.arc = board.create('arc', [el.point1, el.point2, el.point3], attr);
+            el.addChild(el.arc);
         }   // end '3points'
 
         el.center = el.point1;
