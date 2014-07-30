@@ -193,6 +193,8 @@ define([
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
+            
+            return this;
         },
 
         /**
