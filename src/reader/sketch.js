@@ -258,6 +258,10 @@
                 case JXG.GENTYPE_REFLECTION:
                     set_str = assign + 'reflection(' + step.src_ids[0] + ', ' + step.src_ids[1] + ') <<' + attrid;
                     set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                    if (JXG.exists(step.args.strokeColor)) {
+                        set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                    }
                     set_str += ', name: "' + step.args.name + '">>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
@@ -265,6 +269,10 @@
                 case JXG.GENTYPE_MIRRORPOINT:
                     set_str = assign + 'mirrorpoint(' + step.src_ids[1] + ', ' + step.src_ids[0] + ') <<' + attrid;
                     set_str += 'fillColor: \'' + step.args.fillColor + '\'';
+                    if (JXG.exists(step.args.strokeColor)) {
+                        set_str += ', strokeColor: \'' + step.args.strokeColor + '\'';
+                        set_str += ', opacity: \'' + step.args.opacity + '\'';
+                    }
                     set_str += ', name: "' + step.args.name + '">>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     break;
@@ -834,7 +842,11 @@
                         reset_str = 'delete ' + step.dest_sub_ids[i + parseInt(step.args.corners, 10)] + '; ' + reset_str;
                     }
                     set_str += ' ]';
-                    set_str += ', name: \'\'>>, ' + attrid;
+                    set_str += ', name: \'\'';
+                    set_str += ', fillColor: \'' + JXG.Options.intersection.fillColor + '\'';
+                    set_str += ', strokeColor: \'' + JXG.Options.intersection.strokeColor + '\'';
+                    set_str += ', opacity: \'' + JXG.Options.intersection.opacity + '\'';
+                    set_str += '>>, ' + attrid;
                     set_str += ' fillOpacity: ' + JXG.Options.opacityLevel;
                     set_str += ', hasInnerPoints_Org: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
