@@ -460,7 +460,7 @@ define([
             node.setAttributeNS(null, 'id', this.container.id + '_' + id);
             node.style.position = 'absolute';
             if (type === 'path') {
-                node.setAttributeNS(null, 'stroke-linecap', 'butt');
+                node.setAttributeNS(null, 'stroke-linecap', 'round');
                 node.setAttributeNS(null, 'stroke-linejoin', 'round');
             }
             return node;

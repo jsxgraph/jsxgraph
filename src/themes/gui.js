@@ -1,15 +1,13 @@
 JXG.Options = JXG.merge(JXG.Options, {
 
+    //renderer: 'canvas',
     device: 'tablet',
-
     opacityLevel: 0.5,
-
     sensitive_area: 20,
-
     lastRegPolCorners: 4,
 
-    lastSliderStart: 0,
-    lastSliderEnd: 2,
+    lastSliderStart: -10,
+    lastSliderEnd: 10,
     lastSliderIni: 1,
     
     board: {
@@ -39,20 +37,53 @@ JXG.Options = JXG.merge(JXG.Options, {
             display: 'internal'
         }
     },
+    
+    circle: {
+        strokeColor: '#36f',
+        strokeOpacity: 0.9,
+        strokeWidth: 3
+    },
 
+    curve: {
+        strokeWidth: 3,
+        strokeOpacity: 0.9
+    },
+    
     glider : {
-        fillColor: '#ff0',
-        strokeColor: '#000'
+        strokeColor: 'orange',
+        fillColor: 'orange',
+        opacity: 1
     },
 
     intersection: {
-        fillColor: '#fff'
+        strokeColor: '#808080',
+        fillColor: '#808080',
+        opacity: 1
+    },
+
+    line: {
+        //highlightStrokeOpacity: 0.3,
+        strokeColor: '#36f',
+        strokeOpacity: 0.9,
+        strokeWidth: 3
+    },
+    
+    midpoint: {
+        strokeColor: '#808080',
+        fillColor: '#808080',
+        opacity: 1
     },
 
     point: {
         size: 4,
-        fillColor:   '#c00',
-        strokeColor: '#000',
+        fillColor:   '#cc0000',
+        strokeColor: '#cc0000',
+        strokeOpacity: 0.9,
+        //fillOpacity: 0.7,
+        highlightFillColor:   '#cc0000',
+        highlightStrokeColor: '#cc0000',
+        highlightFillOpacity: 0.4,
+        highlightStrokeOpacity: 0.4,
 
         // snap on majorTicks
 
@@ -63,7 +94,13 @@ JXG.Options = JXG.merge(JXG.Options, {
     polygon: {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
-        hasInnerPoints: false
+        hasInnerPoints: true,
+        
+        borders: {
+            strokeColor: '#444444',
+            strokeOpacity: 0.9,
+            strokeWidth: 2
+        }
     },
 
     precision: {
@@ -86,23 +123,78 @@ JXG.Options = JXG.merge(JXG.Options, {
         }
     },
 
-    tapemeasure: {
+    slider: {
+        highlightFillColor: '#ffffff',
+        strokeOpacity: 0.5,
+        strokeColor: '#444444',
+        
+        face: '[]',
+        point1: { needsRegularUpdate: true },
+        point2: { needsRegularUpdate: true },
+        ticks: { tickEndings: [0, 1],
+            minTicksDistance: 15,
+            strokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true,
+            fixed: false
+            },
+        baseline: {
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true,
+            fixed: false
+        },
+        highline: {
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            needsRegularUpdate: true
+        },
         point1: {
+            fixed: false, 
+            needsRegularUpdate: true, 
+            snapToGrid: true
+        }, 
+        point2: {
+            fixed: false, 
+            needsRegularUpdate: true,
+            snapToGrid: true
+        }
+    },
+
+    tapemeasure: {
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        highlightStrokeColor: '#000000',
+        strokeOpacity: 0.7,
+        
+        point1: {
+            strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: 'screen',
             attractorDistance: 20
         },
         point2: {
+            strokeOpacity: 0.7,
             snapToPoints: true,
             attractorUnit: 'screen',
             attractorDistance: 20
+        },
+        ticks: {
+            strokeOpacity: 0.7
         }
     },
 
     text: {
         fontSize: 18,
-        strokeColor: '#000000',
-        highlightStrokeColor: '#000000',
+        strokeColor: '#222',
+        highlightStrokeColor: '#222',
         strokeOpacity: 1,
         highlightStrokeOpacity: 0.66666
     },
@@ -112,14 +204,6 @@ JXG.Options = JXG.merge(JXG.Options, {
 /*
     line: {
         strokeColor: '#f00' // can't see red lines anymore for NOW ...
-    },
-
-    slider: {
-        point1: { needsRegularUpdate: true },
-        point2: { needsRegularUpdate: true },
-        baseline: { needsRegularUpdate: true },
-        highline: { needsRegularUpdate: true },
-        ticks: { needsRegularUpdate: true }
     },
 
     renderer: 'canvas'

@@ -399,6 +399,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             doc = doc || document;
             evtTouches = e[JXG.touchProperty];
 
+            // touchend events have their position in "changedTouches"
+            if (Type.exists(evtTouches) && evtTouches.length == 0) {
+                evtTouches = e['changedTouches'];
+            }
+
             if (Type.exists(index) && Type.exists(evtTouches)) {
                 if (index === -1) {
                     len = evtTouches.length;
@@ -409,6 +414,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             break;
                         }
                     }
+
                 } else {
                     e = evtTouches[index];
                 }

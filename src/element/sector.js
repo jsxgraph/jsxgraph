@@ -373,6 +373,7 @@ define([
             attr.withLabel = false;
             attr.name += '_arc';
             el.arc = board.create('arc', [el.point1, el.point2, el.point3], attr);
+            el.addChild(el.arc);
         }   // end '3points'
 
         el.center = el.point1;
@@ -687,6 +688,7 @@ define([
 
         } else {
             el = board.create('sector', [parents[1], parents[0], parents[2]], attr);
+            el.arc.visProp.priv = true;
 
             /**
              * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
@@ -729,7 +731,7 @@ define([
                 this.dataY = ar[1];
                 this.bezierDegree = 3;
             };
-
+            
             /**
             * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
             * the anglepoint is a free point.
@@ -830,7 +832,7 @@ define([
             var type = this.visProp.type,
                 deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
 
-            if (Math.abs(deg - 90) < this.visProp.orthosensitivity) {
+            if (Math.abs(deg - 90) < this.visProp.orthosensitivity + Mat.eps) {
                 type = this.visProp.orthotype;
             }
 

@@ -125,14 +125,14 @@ define([
                 uc = this.usrCoords,
                 oc = b.origin.scrCoords;
 
-            if (doRound === null || doRound) {
-                this.scrCoords[0] = mround(uc[0]);
-                this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
-                this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
-            } else {
+            if (doRound === false) {
                 this.scrCoords[0] = uc[0];
                 this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
                 this.scrCoords[2] = uc[0] * oc[2] - uc[2] * b.unitY;
+            } else {
+                this.scrCoords[0] = mround(uc[0]);
+                this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
+                this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
             }
         },
 

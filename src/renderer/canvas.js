@@ -318,6 +318,8 @@ define([
                 context.lineTo(scr[1] + size, scr[2] + size);
                 context.moveTo(scr[1] + size, scr[2] - size);
                 context.lineTo(scr[1] - size, scr[2] + size);
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
                 context.closePath();
                 this._stroke(el);
                 break;
@@ -352,6 +354,8 @@ define([
                 context.lineTo(scr[1] + size, scr[2]);
                 context.moveTo(scr[1], scr[2] - size);
                 context.lineTo(scr[1], scr[2] + size);
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
                 context.closePath();
                 this._stroke(el);
                 break;
@@ -502,6 +506,7 @@ define([
                     this.updateText(ticks.labels[i]);
                 }
             }
+            context.lineCap = 'round';
             this._stroke(ticks);
         },
 
@@ -884,6 +889,7 @@ define([
                     i += 1;
                 }
             }
+            context.lineCap = 'round';
             this._fill(el);
             this._stroke(el);
         },
@@ -950,6 +956,7 @@ define([
                     }
                 }
             }
+            context.lineCap = 'round';
             this._fill(el);
             this._stroke(el);
         },

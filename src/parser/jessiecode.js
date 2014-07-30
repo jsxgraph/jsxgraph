@@ -1932,6 +1932,7 @@ define([
                     deg: Geometry.trueAngle,
                     factorial: Mat.factorial,
                     trunc: Type.trunc,
+                    log: Mat.log,
                     ln: Math.log,
                     log10: Mat.log10,
                     lg: Mat.log10,

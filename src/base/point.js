@@ -140,6 +140,8 @@ define([
             visit: 'visit',
             glide: 'makeGlider',
             makeGlider: 'makeGlider',
+            intersect: 'makeIntersection',
+            makeIntersection: 'makeIntersection',
             X: 'X',
             Y: 'Y',
             free: 'free',
@@ -927,7 +929,8 @@ define([
 
         /**
          * Convert the point to glider and update the construction.
-         * @param {String|Object} slide The Object the point will be bound to.
+         * To move the point visual onto the glider, a call of board update is necessary.
+         * @param {String|Object} slide The object the point will be bound to.
          */
         makeGlider: function (slide) {
             var slideobj = this.board.select(slide);
@@ -959,7 +962,48 @@ define([
 
             return this;
         },
+        
+        /**
+         * Convert the point to intersection point and update the construction.
+         * To move the point visual onto the intersection, a call of board update is necessary.
+         * TODO docu.
+         * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
+         **/
+        makeIntersection: function(el1, el2, i, j) {
+            var func;
+            
+            el1 = this.board.select(el1);
+            el2 = this.board.select(el2);
+            
+            func = Geometry.intersectionFunction(this.board, el1, el2, i, j, this.visProp.alwaysintersect);
+            this.addConstraint([func]);
 
+            try {
+                el1.addChild(this);
+                el2.addChild(this);
+            } catch (e) {
+                throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            }
+
+            this.type = Const.OBJECT_TYPE_INTERSECTION;
+            this.elType = 'intersection';
+            this.parents = [el1.id, el2.id, i, j];
+
+            this.generatePolynomial = function () {
+                var poly1 = el1.generatePolynomial(this),
+                    poly2 = el2.generatePolynomial(this);
+    
+                if ((poly1.length === 0) || (poly2.length === 0)) {
+                    return [];
+                }
+
+                return [poly1[0], poly2[0]];
+            };
+            
+            this.prepareUpdate().update();
+        },
+    
         /**
          * Remove the last slideObject. If there are more than one elements the point is bound to,
          * the second last element is the new active slideObject.
@@ -1788,6 +1832,7 @@ define([
         return el;
     };
 
+
     /**
      * @class This element is used to provide a constructor for an intersection point.
      * @pseudo
@@ -1827,89 +1872,18 @@ define([
         var el, el1, el2, func, i, j,
             attr = Type.copyAttributes(attributes, board.options, 'intersection');
 
-
         // make sure we definitely have the indices
         parents.push(0, 0);
-
-        el = board.create('point', [0, 0, 0], attr);
-
+            
         el1 = board.select(parents[0]);
         el2 = board.select(parents[1]);
-
+    
         i = parents[2] || 0;
         j = parents[3] || 0;
+    
+        el = board.create('point', [0, 0, 0], attr);
 
-        if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
-                el2.elementClass === Const.OBJECT_CLASS_CURVE) {
-            // curve - curve
-            /** @ignore */
-            func = function () {
-                return Geometry.meetCurveCurve(el1, el2, i, j, el1.board);
-            };
-
-        //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-//                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-            // arc - line   (arcs are of class curve, but are intersected like circles)
-            // TEMPORARY FIX!!!
-            /** @ignore */
-//            func = function () {
-                //return Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
-            //};
-
-        } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
-                (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
-            // curve - line (this includes intersections between conic sections and lines
-            /** @ignore */
-            func = function () {
-                return Geometry.meetCurveLine(el1, el2, i, el1.board, el.visProp.alwaysintersect);
-            };
-
-        } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
-            // line - line, lines may also be segments.
-            /** @ignore */
-            func = function () {
-                var res, c,
-                    first1 = el1.visProp.straightfirst,
-                    first2 = el2.visProp.straightfirst,
-                    last1 = el1.visProp.straightlast,
-                    last2 = el2.visProp.straightlast;
-
-                /**
-                 * If one of the lines is a segment or ray and
-                 * the the intersection point shpould disappear if outside
-                 * of the segment or ray we call
-                 * meetSegmentSegment
-                 */
-                if (!el.visProp.alwaysintersect && (!first1 || !last1 || !first2 || !last2)) {
-                    res = Geometry.meetSegmentSegment(
-                        el1.point1.coords.usrCoords,
-                        el1.point2.coords.usrCoords,
-                        el2.point1.coords.usrCoords,
-                        el2.point2.coords.usrCoords,
-                        el1.board
-                    );
-
-                    if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
-                            (!first2 && res[2] < 0) || (!last2 && res[2] > 1)) {
-                        // Non-existent
-                        c = [0, NaN, NaN];
-                    } else {
-                        c = res[0];
-                    }
-
-                    return (new Coords(Const.COORDS_BY_USER, c, el1.board));
-                }
-
-                return Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
-            };
-        } else {
-            // All other combinations of circles and lines
-            /** @ignore */
-            func = function () {
-                return Geometry.meet(el1.stdform, el2.stdform, i, el1.board);
-            };
-        }
-
+        func = Geometry.intersectionFunction(board, el1, el2, i, j, el.visProp.alwaysintersect);
         el.addConstraint([func]);
 
         try {

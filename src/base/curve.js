@@ -357,6 +357,7 @@ define([
                     this.board.renderer.updateText(this.label);
                 }
             }
+            this.needsUpdate = false;
             return this;
         },
 
@@ -935,12 +936,16 @@ define([
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 12;
                 delta = 3;
+
+                delta = 2;
                 this.smoothLevel = depth - 5;
                 this.jumpLevel = 5;
             } else {
                 depth = 17;
                 delta = 0.9;
-                this.smoothLevel = depth - 9;
+                
+                delta = 2;
+                this.smoothLevel = depth - 7; // 9
                 this.jumpLevel = 3;
             }
             this.nanLevel = depth - 4;
@@ -960,6 +965,7 @@ define([
             this.points.push(pa);
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(pb);
+//console.log("NUmber points", this.points.length, this.board.updateQuality, this.board.BOARD_QUALITY_LOW);
 
             this.numberPoints = this.points.length;
 //var etime = new Date();            
@@ -1217,7 +1223,24 @@ define([
          * @param {String} contentStr String containing dependencies for the given object.
          */
         notifyParents: function (contentStr) {
-            GeonextParser.findDependencies(this, contentStr, this.board);
+            var fstr, dep, 
+                isJessieCode = false;
+            
+            // Read dependencies found by the JessieCode parser
+            for (fstr in {'xterm':1, 'yterm':1}) {
+                if (this.hasOwnProperty(fstr) && this[fstr].origin) {
+                    isJessieCode = true;
+                    for (dep in this[fstr].origin.deps) {
+                        if (this[fstr].origin.deps.hasOwnProperty(dep)) {
+                            this[fstr].origin.deps[dep].addChild(this);
+                        }
+                    }
+                }
+            }
+            
+            if (!isJessieCode) {
+                GeonextParser.findDependencies(this, contentStr, this.board);
+            }
         },
 
         // documented in geometry element

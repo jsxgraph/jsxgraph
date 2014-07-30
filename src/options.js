@@ -67,6 +67,7 @@ define([
              * @visprop
              */
 
+            //updateType: 'hierarchical', // 'all'
             boundingBox: [-5, 5, 5, -5],
             zoomFactor: 1,
             zoomX: 1,
@@ -2290,7 +2291,7 @@ define([
                 lastArrow: false,
                 majorHeight: validateInteger,
                 minorHeight: validateInteger,
-                minorTicks: validatePositiveInteger,
+                minorTicks: validateNotNegative,
                 minTicksDistance: validatePositiveInteger,
                 numberPointsHigh: validatePositiveInteger,
                 numberPointsLow: validatePositiveInteger,
