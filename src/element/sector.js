@@ -832,7 +832,7 @@ define([
             var type = this.visProp.type,
                 deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
 
-            if (Math.abs(deg - 90) < this.visProp.orthosensitivity) {
+            if (Math.abs(deg - 90) < this.visProp.orthosensitivity + Mat.eps) {
                 type = this.visProp.orthotype;
             }
 
