@@ -688,6 +688,7 @@ define([
 
         } else {
             el = board.create('sector', [parents[1], parents[0], parents[2]], attr);
+            el.arc.visProp.priv = true;
 
             /**
              * The point defining the radius of the angle element. Alias for {@link Angle.prototype#radiuspoint}.
@@ -730,7 +731,7 @@ define([
                 this.dataY = ar[1];
                 this.bezierDegree = 3;
             };
-
+            
             /**
             * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
             * the anglepoint is a free point.
