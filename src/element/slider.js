@@ -98,13 +98,6 @@ define([
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
             withText, withTicks, snapWidth, attr, precision;
 
-        pos0 = parents[0];
-        pos1 = parents[1];
-        smin = parents[2][0];
-        start = parents[2][1];
-        smax = parents[2][2];
-        sdiff = smax - smin;
-
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
         withText = attr.withlabel;
@@ -113,11 +106,11 @@ define([
 
         // start point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point1');
-        p1 = board.create('point', pos0,  attr);
+        p1 = board.create('point', parents[0],  attr);
 
         // end point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point2');
-        p2 = board.create('point', pos1,  attr);
+        p2 = board.create('point', parents[1],  attr);
         board.create('group', [p1, p2]);
 
         // slide line
@@ -126,6 +119,13 @@ define([
 
         // this is required for a correct projection of the glider onto the segment below
         l1.updateStdform();
+
+        pos0 = p1.coords.usrCoords.slice(1);
+        pos1 = p2.coords.usrCoords.slice(1);
+        smin = parents[2][0];
+        start = parents[2][1];
+        smax = parents[2][2];
+        sdiff = smax - smin;
 
         if (withTicks) {
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'ticks');
