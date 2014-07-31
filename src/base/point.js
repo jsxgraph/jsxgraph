@@ -1769,11 +1769,11 @@ define([
             el.addConstraint(parents);
         }
 
-        if (!board.isSuspendedUpdate) {
+        //if (!board.isSuspendedUpdate) {
             el.handleSnapToGrid();
             el.handleSnapToPoints();
             el.handleAttractors();
-        }
+        //}
 
         return el;
     };
