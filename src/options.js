@@ -795,7 +795,8 @@ define([
             ticks: {
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
-                    parse: false
+                    parse: false,
+                    needsRegularUpdate: false
                 },
                 needsRegularUpdate: false,
                 strokeWidth: 1,
@@ -1189,7 +1190,8 @@ define([
             cssClass: 'JXGinfobox',
             rotate: 0,                           // works for non-zero values only in combination with display=='internal'
             visible: true,
-            parse: false
+            parse: false,
+            needsRegularUpdate: false
 
             /**#@-*/
         },
