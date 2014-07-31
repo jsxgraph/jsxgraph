@@ -129,8 +129,6 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeColor: '#444444',
         
         face: '[]',
-        point1: { needsRegularUpdate: true },
-        point2: { needsRegularUpdate: true },
         ticks: { tickEndings: [0, 1],
             minTicksDistance: 15,
             strokeColor: '#444444',

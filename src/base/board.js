@@ -701,7 +701,7 @@ define([
              */
             if (this.cPos.length > 0 &&
                     (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
-                    (new Date()).getTime() - this.positionAccessLast < 500)) {
+                    (new Date()).getTime() - this.positionAccessLast < 1000)) {
                 return this.cPos;
             }
 
@@ -744,9 +744,8 @@ define([
                     cPos[1] += Env.getProp(container, 'padding-top');
                 }
 
-                this.cpos = cPos;
-
-                return this.cpos;
+                this.cPos = cPos.slice();
+                return this.cPos;
             }
 
             cPos = Env.getOffset(container);
@@ -795,9 +794,8 @@ define([
             cPos[0] += this.attr.offsetx;
             cPos[1] += this.attr.offsety;
 
-            this.cPos = cPos;
-
-            return cPos;
+            this.cPos = cPos.slice();
+            return this.Pos;
         },
 
         /**
