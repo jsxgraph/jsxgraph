@@ -339,7 +339,7 @@ define([
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
                         if (this.hasLabel && this.label.visProp.visible) {
-                            this.board.renderer.show(this.label.content);
+                            this.board.renderer.show(this.label);
                         }
                     }
                 } else {
