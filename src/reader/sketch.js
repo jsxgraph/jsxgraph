@@ -771,7 +771,9 @@
                      + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\''+ ', snaptogrid: '
                      + JXG.Options.elements.snapToGrid + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>> >>; ';
                      */
-                    set_str += attrid + 'name: \'\', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
+                    set_str += attrid + 'name: \'\''
+                        + ', precision: ' + JXG.Options.trunclen
+                        + ', point1: <<id: \'' + step.dest_sub_ids[0] + '\', snaptogrid: '
                         + JXG.Options.elements.snapToGrid + '>>, '
                         + 'point2: <<id: \'' + step.dest_sub_ids[1] + '\'' + ', snaptogrid: '
                         + JXG.Options.elements.snapToGrid + '>> >>; ';
