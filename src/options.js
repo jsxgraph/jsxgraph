@@ -1717,6 +1717,7 @@ define([
              *  Points for regular polygons
              */
             vertices: {
+                layer: 9,
                 withLabel: true,
                 strokeColor: '#ff0000',
                 fillColor: '#ff0000',
