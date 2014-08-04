@@ -459,7 +459,8 @@ define([
              * @default false
              */
             drawLabels: false,
-            label: {},
+            label: {
+                },
 
             /**
              * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,

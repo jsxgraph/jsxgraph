@@ -64,6 +64,8 @@ define([
 
         // docstring in AbstractRenderer
         this.type = 'svg';
+        
+        this.isIE = navigator.appVersion.indexOf("MSIE") !== -1 || navigator.userAgent.match(/Trident\//);
 
         /**
          * SVG root node
@@ -243,7 +245,7 @@ define([
          * @param {Number} opacity
          * @param {Number} width
          */
-        _setArrowAtts: function (node, color, opacity, width) {
+        _setArrowAtts: function (node, color, opacity, width, parentNode) {
             var s, d;
 
             if (node) {
@@ -263,6 +265,10 @@ define([
 
                 node.setAttributeNS(null, 'markerHeight', d);
                 node.setAttributeNS(null, 'markerWidth', d);
+                
+                if (this.isIE) {
+                    parentNode.parentNode.insertBefore(parentNode, parentNode);
+                }
             }
 
         },
@@ -477,7 +483,8 @@ define([
         makeArrows: function (el) {
             var node2;
 
-            if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
+            if (!this.isIE &&
+                el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
                 return;
             }
 
@@ -515,6 +522,11 @@ define([
             }
             el.visPropOld.firstarrow = el.visProp.firstarrow;
             el.visPropOld.lastarrow = el.visProp.lastarrow;
+            
+            if ((el.visProp.firstarrow || el.visProp.lastarrow) && this.isIE) {
+                el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
+            }
+            
         },
 
         // already documented in JXG.AbstractRenderer
@@ -974,14 +986,14 @@ define([
                 }
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowAtts(el.rendNodeTriangle, c, oo, el.visProp.strokewidth);
+                    this._setArrowAtts(el.rendNodeTriangle, c, oo, el.visProp.strokewidth, el.rendNode);
                 } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleStart, c, oo, el.visProp.strokewidth);
+                        this._setArrowAtts(el.rendNodeTriangleStart, c, oo, el.visProp.strokewidth, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleEnd, c, oo, el.visProp.strokewidth);
+                        this._setArrowAtts(el.rendNodeTriangleEnd, c, oo, el.visProp.strokewidth, el.rendNode);
                     }
                 }
             }
@@ -1005,14 +1017,14 @@ define([
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowAtts(el.rendNodeTriangle, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+                    this._setArrowAtts(el.rendNodeTriangle, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
                 } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleStart, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+                        this._setArrowAtts(el.rendNodeTriangleStart, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleEnd, el.visProp.strokecolor, el.visProp.strokeopacity, w);
+                        this._setArrowAtts(el.rendNodeTriangleEnd, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
                     }
                 }
             }
