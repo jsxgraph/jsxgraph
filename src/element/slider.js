@@ -55,8 +55,9 @@
  */
 
 define([
-    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group', 'base/line', 'base/ticks', 'base/text'
-], function (JXG, Mat, Const, Type, Point, Group, Line, Ticks, Text) {
+    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group', 
+    'base/element', 'base/line', 'base/ticks', 'base/text'
+], function (JXG, Mat, Const, Type, Point, Group, GeometryElement, Line, Ticks, Text) {
 
     "use strict";
 
@@ -96,7 +97,7 @@ define([
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
-            withText, withTicks, snapWidth, attr, precision;
+            withText, withTicks, snapWidth, attr, precision, el;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
         withTicks = attr.withticks;
@@ -304,6 +305,34 @@ define([
             ti.dump = false;
             p3.subs.ticks = ti;
         }
+
+        // Save the visibility attribute of the sub-elements
+        for (el in p3.subs) {
+            p3.subs[el].status = {
+                    visible: p3.subs[el].visProp.visible
+                }
+        }
+        
+        p3.hideElement = function () {
+            var el;
+            GeometryElement.prototype.hideElement.call(this);
+
+            for (el in this.subs) {
+                this.subs[el].status.visible = this.subs[el].visProp.visible;
+                this.subs[el].hideElement();
+            }
+        };
+
+        p3.showElement = function () {
+            var el;
+            GeometryElement.prototype.showElement.call(this);
+
+            for (el in this.subs) {
+                if (this.subs[el].status.visible) {
+                    this.subs[el].showElement();
+                }
+            }
+        };
 
         return p3;
     };
