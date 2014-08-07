@@ -478,9 +478,9 @@ define([
             // adjust ticks distance
             ticksDelta *= this.visProp.scale;
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas);
+                ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas, bounds);
             } else if (!this.visProp.insertticks) {
-                ticksDelta /= this.visProp.minorticks + 1;
+                ticksDelta /= (this.visProp.minorticks + 1);
             }
             this.ticksDelta = ticksDelta;
 
@@ -518,7 +518,7 @@ define([
          * @param  {Object}     deltas      x and y distance between two major ticks
          * @private
          */
-        adjustTickDistance: function (ticksDelta, distScr, coordsZero, deltas) {
+        adjustTickDistance: function (ticksDelta, distScr, coordsZero, deltas, bounds) {
             var nx, ny, f = 1,
                 // This factor is for enlarging ticksDelta and it switches between 5 and 2
                 // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
@@ -543,7 +543,6 @@ define([
 
             return f;
         },
-
 
         /**
          * Auxiliary method used by {@link JXG.Ticks#generateEquidistantTicks} to create a tick

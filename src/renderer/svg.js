@@ -483,8 +483,10 @@ define([
         makeArrows: function (el) {
             var node2;
 
-            if (!this.isIE &&
-                el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
+            if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
+                if (this.isIE && el.visProp.visible && (el.visProp.firstarrow || el.visProp.lastarrow)) {
+                    el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
+                }
                 return;
             }
 
@@ -522,11 +524,6 @@ define([
             }
             el.visPropOld.firstarrow = el.visProp.firstarrow;
             el.visPropOld.lastarrow = el.visProp.lastarrow;
-            
-            if ((el.visProp.firstarrow || el.visProp.lastarrow) && this.isIE) {
-                el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
-            }
-            
         },
 
         // already documented in JXG.AbstractRenderer
