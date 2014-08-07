@@ -213,17 +213,23 @@ define([
             }
 
             el.updateDataArray = function () {
-                var r, l1, l2, A, B, C, ar;
+                var r, l1, l2, 
+                    A = [0, 0, 0], 
+                    B = [0, 0, 0], 
+                    C = [0, 0, 0], 
+                    ar;
 
                 l1 = this.line1;
                 l2 = this.line2;
 
                 // Intersection point of the lines
                 B = Mat.crossProduct(l1.stdform, l2.stdform);
-                B[1] /= B[0];
-                B[2] /= B[0];
-                B[0] /= B[0];
 
+                if (Math.abs(B[0]) > Mat.eps * Mat.eps) {
+                    B[1] /= B[0];
+                    B[2] /= B[0];
+                    B[0] /= B[0];
+                }
                 // First point
                 r = this.direction1 * this.Radius();
                 A = Statistics.add(B, [0, r * l1.stdform[2], -r * l1.stdform[1]]);
