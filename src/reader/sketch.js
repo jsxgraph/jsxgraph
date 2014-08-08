@@ -421,9 +421,10 @@
                         set_str = assign + 'point(' + pn(step.args.usrCoords[1]) + ', ' + pn(step.args.usrCoords[2]);
                         set_str += ') <<' + attrid + 'fillColor: \'' +  JXG.Options.glider.fillColor + '\'';
                         set_str += ', strokeColor: \'' +  JXG.Options.glider.strokeColor + '\'';
+                        set_str += ', snapToGrid: false, snapToPoints: false';
                         set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
-                    }
+                    } 
 
                     if (!(step.args && step.args.undoIsEmpty)) {
                         reset_str = 'delete ' + step.dest_id + '; ';

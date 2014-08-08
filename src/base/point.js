@@ -1190,7 +1190,8 @@ define([
             /**
             * We have to do an update. Otherwise, elements relying on this point will receive NaN.
             */
-            this.update();
+            this.prepareUpdate().update();
+            
             if (!this.board.isSuspendedUpdate) {
                 this.updateRenderer();
             }
