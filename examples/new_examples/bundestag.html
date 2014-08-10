@@ -52,7 +52,7 @@
             colors = ['#333', '#555', 'red', 'yellow', 'green', '#8B00FF', 'orange', '#965220', '#96abee', '#888', '#965220', 'red', 'blue', 'lightgray'],
             years = [1949, 1953, 1957, 1961, 1965, 1969, 1972, 1976, 1980, 1983, 1987, 1990, 1994, 1998, 2002, 2005, 2009],
             chart, slider, last = 0, table, ticks, i,
-        
+
             select_years = function (year) {
                 var i, data, col;
 
@@ -76,7 +76,8 @@
                     board.create('legend', [13, 47], {
                         labels: table.rowHeaders,
                         colors: colors
-                    })
+                    });
+                    board.fullUpdate();
                 }
             };
 
@@ -97,7 +98,7 @@
                 fontSize: 14
             }
         });
-        slider.label.content.setText(function () {
+        slider.label.setText(function () {
             var t = 'Year: ' + Math.floor(slider.Value()),
                 i, found = false;
 
