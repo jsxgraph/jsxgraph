@@ -46,15 +46,3 @@
     */
 }
 
-.navbar {
-    color: #aaaaaa;
-    background-color: #f5f5f5;
-    padding: 2px;
-    position: absolute;
-    font-size: 10px;
-    cursor: pointer;
-    z-index: 100;
-    right: 5px;
-    bottom: 5px;
-}
-
