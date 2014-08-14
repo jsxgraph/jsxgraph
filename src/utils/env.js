@@ -175,7 +175,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @return {Boolean}
          */
         isMetroApp: function () {
-            return typeof window === 'object' && window.clientInformation && window.clientInformation.appName && window.clientInformation.appName.indexOf('MSAppHost') > -1;
+            return typeof window === 'object' && window.clientInformation && window.clientInformation.appVersion && window.clientInformation.appVersion.indexOf('MSAppHost') > -1;
         },
 
         /**
