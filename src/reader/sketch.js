@@ -912,7 +912,9 @@
                 case JXG.GENTYPE_SLIDER:
                     set_str = assign + 'slider([' + pn(step.args.x1) + ', ' + pn(step.args.y1) + '], [' + pn(step.args.x2);
                     set_str += ', ' + pn(step.args.y2) + '], [' + pn(step.args.start) + ', ' + pn(step.args.ini) + ', ';
-                    set_str += pn(step.args.end) + ']) <<' + attrid + 'baseline: <<id: \'';
+                    set_str += pn(step.args.end) + ']) <<' + attrid;
+                    set_str += ' snapWidth: 0.1, ';
+                    set_str += 'baseline: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
                     set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true>>, point2: <<id: \'';
