@@ -136,6 +136,7 @@ define([
             vertices: 'vertices',
             A: 'Area',
             Area: 'Area',
+            boundingBox: 'boundingBox',
             addPoints: 'addPoints',
             insertPoints: 'insertPoints',
             removePoints: 'removePoints'
@@ -303,7 +304,8 @@ define([
         },
 
         /**
-         * returns the area of the polygon
+         * Returns the area of (convex) polygon
+         * @returns {Number} Area of polygon
          */
         Area: function () {
             //Surveyor's Formula
@@ -318,6 +320,50 @@ define([
             return Math.abs(area);
         },
 
+        /**
+         * Returns bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
+         * determine the upper left corner, the last two number determine the lower right corner of the bounding box.
+         * 
+         * The width and height of a polygon can then determined like this:
+         * @example
+         * var box = polygon.boundingBox();
+         * var width = box[2] - box[0];
+         * var height = box[1] - box[3];
+         * 
+         * @returns {Array} Array containing four numbers: [minX, maxY, maxX, minY]
+         */
+        boundingBox: function() {
+            var box = [0, 0, 0, 0], 
+                i, v, 
+                le = this.vertices.length; 
+            
+            if (le === 0) {
+                return box;
+            }
+            box[0] = this.vertices[0].X();
+            box[2] = box[0];
+            box[1] = this.vertices[0].Y();
+            box[3] = box[1];
+            
+            for (i = 1; i < le; ++i) {
+                v = this.vertices[i].X();
+                if (v < box[0]) {
+                    box[0] = v;
+                } else if (v > box[2]) {
+                    box[2] = v;
+                }
+
+                v = this.vertices[i].Y();
+                if (v > box[1]) {
+                    box[1] = v;
+                } else if (v < box[3]) {
+                    box[3] = v;
+                }
+            }
+            
+            return box;
+        },
+        
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
