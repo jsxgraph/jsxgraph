@@ -304,8 +304,8 @@ define([
         },
 
         /**
-         * Returns the area of (convex) polygon
-         * @returns {Number} Area of polygon
+         * Area of (not self-intersecting) polygon
+         * @returns {Number} Area of (not self-intersecting) polygon
          */
         Area: function () {
             //Surveyor's Formula
