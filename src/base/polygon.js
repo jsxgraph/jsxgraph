@@ -321,7 +321,7 @@ define([
         },
 
         /**
-         * Returns bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
+         * Bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
          * determine the upper left corner, the last two number determine the lower right corner of the bounding box.
          * 
          * The width and height of a polygon can then determined like this:
@@ -335,7 +335,7 @@ define([
         boundingBox: function() {
             var box = [0, 0, 0, 0], 
                 i, v, 
-                le = this.vertices.length; 
+                le = this.vertices.length - 1; 
             
             if (le === 0) {
                 return box;
