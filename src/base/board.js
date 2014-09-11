@@ -233,6 +233,12 @@ define([
          * @type Number
          */
         this.unitY = unitY * this.zoomY;
+        
+        /**
+         * Keep aspect ratio if bounding box is set and the width/height ratio differs from the 
+         * width/height ratio of the canvas.
+         */ 
+        this.keepaspectratio = false;
 
         /**
          * Canvas width.
@@ -3126,12 +3132,22 @@ define([
 
         /**
          * Change the height and width of the board's container.
+         * After doing so, {@link JXG.JSXGraph#setBoundingBox} is called using
+         * the actual size of the bounding box and the actual value of keepaspectratio.
+         * If setBoundingbox() should not be called automatically, 
+         * call resizeContainer with dontSetBoundingBox == true.
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
          * @param {Boolean} [dontset=false] Do not set the height of the DOM element.
+         * @param {Boolean} [dontSetBoundingBox=false] Do not call setBoundingBox().
          * @returns {JXG.Board} Reference to the board
          */
-        resizeContainer: function (canvasWidth, canvasHeight, dontset) {
+        resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
+            var box;
+            
+            if (!dontSetBoundingBox) {
+                box = this.getBoundingBox();
+            }
             this.canvasWidth = parseInt(canvasWidth, 10);
             this.canvasHeight = parseInt(canvasHeight, 10);
 
@@ -3141,6 +3157,10 @@ define([
             }
 
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
+            
+            if (!dontSetBoundingBox) {
+                this.setBoundingBox(box, this.keepaspectratio)
+            }
 
             return this;
         },
@@ -3633,9 +3653,11 @@ define([
                 } else {
                     this.unitX = Math.abs(this.unitY) * this.unitX / Math.abs(this.unitX);
                 }
+                this.keepaspectratio = true;
             } else {
                 this.unitX = w / (bbox[2] - bbox[0]);
                 this.unitY = h / (bbox[1] - bbox[3]);
+                this.keepaspectratio = false;
             }
 
             this.moveOrigin(-this.unitX * bbox[0], this.unitY * bbox[1]);
