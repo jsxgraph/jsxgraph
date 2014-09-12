@@ -57,7 +57,8 @@ define([
     'renderer/vml',
     'renderer/canvas',
     'renderer/no',
-    'element/slopetriangle'
+    'element/slopetriangle',
+    'element/checkbox'
 ], function (JXG, Env) {
     "use strict";
 

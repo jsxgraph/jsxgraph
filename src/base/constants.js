@@ -95,6 +95,7 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_GRID: 24,
         OBJECT_TYPE_TANGENT: 25,
         OBJECT_TYPE_HTMLSLIDER: 26,
+        OBJECT_TYPE_CHECKBOX: 27,
 
         // object classes
         OBJECT_CLASS_POINT: 1,

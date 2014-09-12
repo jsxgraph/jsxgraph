@@ -2210,6 +2210,15 @@ define([
             /**#@-*/
         },
 
+        /* special html slider options */
+        checkbox: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
+        },
+
 
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties

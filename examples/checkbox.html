@@ -1,0 +1,33 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Checkbox example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 600, unitY: 200});
+        b1axisx = board.create('axis', [[0,0], [1,0]], {});
+        b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+        var checkbox = board.create('checkbox', [0.25, 0.5, 'Change Y'], {});
+
+        var p = board.create('point', [
+            function(){ return 0.5;}, // X-coordinate
+            function() {
+                y = 0.5;
+                if (checkbox.Value()) {
+                    y += 0.5;
+                }
+                return y;
+            }]);
+  /* ]]> */
+  </script>
+</body>
+</html>
