@@ -675,7 +675,7 @@ define([
                 }
 
                 this.board.update();
-            } else if (o.type === Const.OBJECT_TYPE_TEXT && (what === 'X' || what === 'Y')) {
+            } else if (o.elementClass === Const.OBJECT_CLASS_TEXT && (what === 'X' || what === 'Y')) {
                 if (typeof value === 'number') {
                     o[what] = function () { return value; };
                 } else if (typeof value === 'function') {

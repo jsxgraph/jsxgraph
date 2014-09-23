@@ -969,7 +969,7 @@ define([
 
                 node = el.rendNode;
 
-                if (el.type === Const.OBJECT_TYPE_TEXT) {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (el.visProp.display === 'html') {
                         node.style.color = c;
                         node.style.opacity = oo;

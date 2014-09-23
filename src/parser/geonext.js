@@ -448,7 +448,7 @@ define([
             for (el in elements) {
                 if (elements.hasOwnProperty(el)) {
                     if (el !== me.name) {
-                        if (elements[el].type === Const.OBJECT_TYPE_TEXT) {
+                        if (elements[el].elementClass === Const.OBJECT_CLASS_TEXT) {
                             if (!elements[el].visProp.islabel) {
                                 elmask = el.replace(/\[/g, '\\[');
                                 elmask = elmask.replace(/\]/g, '\\]');

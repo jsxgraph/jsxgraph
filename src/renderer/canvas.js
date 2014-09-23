@@ -663,7 +663,7 @@ define([
                     oo = o * rgbo[1];
                 }
                 node = el.rendNode;
-                if (el.type === Const.OBJECT_TYPE_TEXT && el.visProp.display === 'html') {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
                     node.style.color = c;
                     node.style.opacity = oo;
                 }
@@ -1038,7 +1038,7 @@ define([
 
         // documented in AbstractRenderer
         highlight: function (obj) {
-            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, true);
             } else {
                 obj.board.prepareUpdate();
@@ -1051,7 +1051,7 @@ define([
 
         // documented in AbstractRenderer
         noHighlight: function (obj) {
-            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, false);
             } else {
                 obj.board.prepareUpdate();

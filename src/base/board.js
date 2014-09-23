@@ -588,7 +588,7 @@ define([
                     pre = 'P_{';
                 } else if (object.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                     pre = 'k_{';
-                } else if (object.type === Const.OBJECT_TYPE_TEXT) {
+                } else if (object.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pre = 't_{';
                 } else {
                     pre = 's_{';
@@ -883,7 +883,7 @@ define([
 
                 if (((this.geonextCompatibilityMode &&
                         (pEl.elementClass === Const.OBJECT_CLASS_POINT ||
-                          pEl.type === Const.OBJECT_TYPE_TEXT)) ||
+                          pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
@@ -1928,7 +1928,7 @@ define([
                         obj = elements[elements.length - 1];
 
                         if (Type.isPoint(obj) ||
-                                obj.type === Const.OBJECT_TYPE_TEXT ||
+                                obj.elementClass === Const.OBJECT_CLASS_TEXT ||
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // it's a point, so it's single touch, so we just push it to our touches

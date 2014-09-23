@@ -1164,7 +1164,7 @@ define([
                             element.borders[i].visProp.highlightstrokeopacity);
                     }
                 } else {
-                    if (element.type === Const.OBJECT_TYPE_TEXT) {
+                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(element, true);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, true);
@@ -1198,7 +1198,7 @@ define([
                             element.borders[i].visProp.strokeopacity);
                     }
                 } else {
-                    if (element.type === Const.OBJECT_TYPE_TEXT) {
+                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(element, false);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, false);

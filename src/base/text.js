@@ -72,7 +72,7 @@ define([
      * @return A new geometry element Text
      */
     JXG.Text = function (board, content, coords, attributes) {
-        this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_OTHER);
+        this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
         var i, anchor;
 

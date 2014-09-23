@@ -870,7 +870,7 @@ define([
                     c = rgbo[0];
                     oo = o * rgbo[1];
                 }
-                if (el.type === Const.OBJECT_TYPE_TEXT) {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     oo = Math.round(oo * 100);
                     node.style.filter = ' alpha(opacity = ' + oo + ')';
                     node.style.color = c;
