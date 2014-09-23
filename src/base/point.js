@@ -867,7 +867,7 @@ define([
                     }
                     this.initialCoords.setCoordinates(Const.COORDS_BY_USER, Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords));
                 }
-                this.update();
+                this.prepareUpdate().update();
             }
 
             // if the user suspends the board updates we need to recalculate the relative position of
@@ -898,7 +898,7 @@ define([
                 this.addTransform(this, t);
             }
 
-            this.update();
+            this.prepareUpdate().update();
 
             return this;
         },
