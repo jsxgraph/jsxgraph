@@ -2219,6 +2219,14 @@ define([
             /**#@-*/
         },
 
+        /* special input options */
+        input: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
+        },
 
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
