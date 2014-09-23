@@ -94,14 +94,11 @@ define([
         };
 
         t.update = function() {
-            this._value = this.rendNodeCheckbox.checked;
+            if (this.needsUpdate) {
+                this._value = this.rendNodeCheckbox.checked;
+            }
             return this;
         };
-
-        /*t.prepareUpdate = function () {
-            this.needsUpdate = true;
-            return this;
-        }*/
 
         Env.addEvent(t.rendNodeCheckbox, 'change', priv.CheckboxChangeEventHandler, t);
 

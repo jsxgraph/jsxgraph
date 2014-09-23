@@ -95,7 +95,9 @@ define([
         };
 
         t.update = function() {
-            this._value = this.rendNodeInput.value;
+            if (this.needsUpdate) {
+                this._value = this.rendNodeInput.value;
+            }
             return this;
         };
 
