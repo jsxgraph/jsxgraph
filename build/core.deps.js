@@ -58,7 +58,8 @@ define([
     'renderer/canvas',
     'renderer/no',
     'element/slopetriangle',
-    'element/checkbox'
+    'element/checkbox',
+    'element/input'
 ], function (JXG, Env) {
     "use strict";
 
