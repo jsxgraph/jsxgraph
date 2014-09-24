@@ -2228,6 +2228,15 @@ define([
             /**#@-*/
         },
 
+        /* special button options */
+        button: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
+        },
+
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
          * to the same value.

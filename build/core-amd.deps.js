@@ -60,7 +60,8 @@ define([
     'renderer/no',
     'element/slopetriangle',
     'element/checkbox',
-    'element/input'
+    'element/input',
+    'element/button'
 ], function (JXG) {
     "use strict";
 
