@@ -1,0 +1,32 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Input example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {originX: 50, originY: 250, unitX: 600, unitY: 200});
+        b1axisx = board.create('axis', [[0,0], [1,0]], {});
+        b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+        var p = board.create('point', [0.5, 0.5], {id: 'p1'});
+
+        var button1 = board.create('button', [0.1, 0.5, 'Change Y with JavaScript', function() {
+            p.moveTo([p.X(), p.Y() + 0.1], 100);
+        }], {});
+
+        var button2 = board.create('button', [0.1, 0.25, 'Change Y with JessieCode',
+            "$('p1').Y = $('p1').Y() - 0.1;"
+        ], {});
+
+  /* ]]> */
+  </script>
+</body>
+</html>
