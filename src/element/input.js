@@ -57,7 +57,70 @@ define([
         };
 
     /**
-     * [x, y, value, label]
+     * @class This element is used to provide a constructor for special texts containing a form input element.
+     * 
+     * @pseudo
+     * @description
+     * @name Input
+     * @augments JXG.GeometryElement
+     * @constructor
+     * @type JXG.Text
+     *
+     * @param {number,function_number,function_String_String} x,y,value,label Parent elements for input elements.
+     *                     <p>
+     *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
+     *                     x and y are numbers. The position is variable if x or y are functions.
+     *                     <p>
+     *                     The default value of the input element may be given as string.
+     *                     <p>
+     *                     The label of the input element may be given  as string.
+     *
+     * @example
+     *  // Create an input element at position [1,4].
+     *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {});
+     *  var f = board.jc.snippet(input.Value(), true, 'x', false);
+     *  var graph = board.create('functiongraph',[f,
+     *          function() {
+     *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+     *            return c.usrCoords[1];
+     *          },
+     *          function() {
+     *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+     *            return c.usrCoords[1];
+     *          }
+     *        ]);
+     *
+     *  board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
+     *
+     *  var updateGraph = function() {
+     *      graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
+     *      graph.updateCurve();
+     *      board.update();
+     *  }
+     * </pre><div id="c70f55f1-21ba-4719-a37d-a93ae2943faa" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var t1_board = JXG.JSXGraph.initBoard('c70f55f1-21ba-4719-a37d-a93ae2943faa', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var input = t1_board.create('input', [1, 4, 'sin(x)*x', 'f(x)='], {});
+     *   var f = t1_board.jc.snippet(input.Value(), true, 'x', false);
+     *   var graph = t1_board.create('functiongraph',[f,
+     *          function() {
+     *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],t1_board);
+     *            return c.usrCoords[1];
+     *          },
+     *          function() {
+     *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[t1_board.canvasWidth,0],t1_board);
+     *            return c.usrCoords[1];
+     *          }
+     *        ]);
+     *
+     *  t1_board.create('text', [1, 3, '<button onclick="updateGraph()">Update graph</button>']);
+     *
+     *  var updateGraph = function() {
+     *      graph.Y = t1_board.jc.snippet(input.Value(), true, 'x', false);
+     *      graph.updateCurve();
+     *      t1_board.update();
+     *  }
+     * </script><pre>
      */
     JXG.createInput = function (board, parents, attributes) {
         var t, par,

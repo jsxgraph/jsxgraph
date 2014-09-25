@@ -59,6 +59,54 @@ define([
         };
 
     /**
+     * @class This element is used to provide a constructor for special texts containing a form button element.
+     * 
+     * @pseudo
+     * @description
+     * @name Button
+     * @augments JXG.GeometryElement
+     * @constructor
+     * @type JXG.Text
+     *
+     * @param {number,function_number,function_String_function} x,y,label,handler Parent elements for button elements.
+     *                     <p>
+     *                     x and y are the coordinates of the lower left corner of the text box. 
+     *                      The position of the text is fixed,
+     *                     x and y are numbers. The position is variable if x or y are functions.
+     *                     <p>
+     *                     The label of the input element may be given  as string.
+     *                     <p>
+     *                     The (optional) handler function which is called when the button is pressed.
+     *
+     * @example
+     *  var p = board.create('point', [0.5, 0.5], {id: 'p1'});
+     *
+     *  // Create a button element at position [1,2].
+     *  var button1 = board.create('button', [1, 2, 'Change Y with JavaScript', function() {
+     *      p.moveTo([p.X(), p.Y() + 0.5], 100);
+     *  }], {});
+     *
+     *  // Create a button element at position [1,4].
+     *  var button2 = board.create('button', [1, 4, 'Change Y with JessieCode',
+     *      "$('p1').Y = $('p1').Y() - 0.5;"
+     *  ], {});
+     * 
+     * </pre><div id="f19b1bce-dd00-4e35-be97-ff1817d11514" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  var t1_board = JXG.JSXGraph.initBoard('f19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *  var p = t1_board.create('point', [0, -1], {id: 'p1'});
+     *
+     *  // Create a button element at position [1,2].
+     *  var button1 = t1_board.create('button', [1, 2, 'Change Y with JavaScript', function() {
+     *      p.moveTo([p.X(), p.Y() + 0.5], 100);
+     *  }], {});
+     *
+     *  // Create a button element at position [1,4].
+     *  var button2 = t1_board.create('button', [1, 4, 'Change Y with JessieCode',
+     *      "$('p1').Y = $('p1').Y() - 0.5;"
+     *  ], {});
+     * 
+     * </script><pre>
      * [x, y, label, handler]
      */
     JXG.createButton = function (board, parents, attributes) {
