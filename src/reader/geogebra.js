@@ -1698,6 +1698,9 @@
                         if (name === Data.getAttribute("label")) {
                             return Data;
                         }
+                        if (name === Data.getAttribute("exp")) {
+                            return this.getElement(Data.getAttribute("label"));
+                        }
                     }
                 }
             }
@@ -1733,7 +1736,7 @@
             // } else
 
             if (!JXG.exists(this.ggbElements[name]) || this.ggbElements[name] === '') {
-                input = this.getElement(name);
+                input = this.getElement(name) || this.getElement(name, true);
                 this.ggbElements[name] = this.writeElement(input);
             }
 
