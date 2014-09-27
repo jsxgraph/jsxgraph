@@ -425,6 +425,7 @@
                         set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
                     } 
+                    set_str += step.dest_id + '.onPolygon = ' + !!step.args.onPolygon + ';';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
                         reset_str = 'delete ' + step.dest_id + '; ';
