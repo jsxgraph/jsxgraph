@@ -1749,7 +1749,7 @@ define([
 
         if (parents.length > 1) {
             firstParentIsConic = (parents[0].type === Const.OBJECT_TYPE_CONIC ||
-                parents[0].elementClass === Const.OBJECT_TYPE_CIRCLE);
+                parents[0].elementClass === Const.OBJECT_CLASS_CIRCLE);
             secondParentIsConic = (parents[1].type === Const.OBJECT_TYPE_CONIC ||
                 parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE);
 
