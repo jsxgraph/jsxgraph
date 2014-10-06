@@ -79,6 +79,7 @@ define([
         this.content = '';
         this.plaintext = '';
         this.plaintextOld = null;
+        this.orgText = '';
 
         this.isDraggable = false;
         this.needsSizeUpdate = false;
@@ -225,7 +226,8 @@ define([
          */
         _setUpdateText: function (text) {
             var updateText;
-
+            
+            this.orgText = text;
             if (typeof text === 'function') {
                 this.updateText = function () {
                     if (this.visProp.parse && !this.visProp.usemathjax) {
