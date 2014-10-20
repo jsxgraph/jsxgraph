@@ -847,7 +847,7 @@ define([
 
         // already documented in JXG.AbstractRenderer
         setObjectStrokeColor: function (el, color, opacity) {
-            var rgba = Type.evaluate(color), c, rgbo,
+            var rgba = Type.evaluate(color), c, rgbo, t,
                 o = Type.evaluate(opacity), oo,
                 node = el.rendNode, nodeStroke;
 
@@ -872,7 +872,17 @@ define([
                 }
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     oo = Math.round(oo * 100);
-                    node.style.filter = ' alpha(opacity = ' + oo + ')';
+                    //node.style.filter = ' alpha(opacity = ' + oo + ')';
+                    
+                    t = node.style.filter.toString();
+                    if (t.match(/alpha/)) {
+                        node.style.filter = 
+                        t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + oo + ')');
+                    } else {
+                        node.style.filter += ' alpha(opacity = ' + oo + ')';
+                    }
+
+
                     node.style.color = c;
                 } else {
                     if (c !== false) {
