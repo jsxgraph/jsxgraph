@@ -868,7 +868,7 @@ define([
                         }
                         break;
                     case 'rotate':
-                        if ((this.type === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
+                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
@@ -1190,7 +1190,7 @@ define([
             var tOffInv, tOff, tS, tSInv, tRot,
                 that = this;
 
-            if (((this.type === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
+            if (((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
                     this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
 
                 tOffInv = this.board.create('transform', [
