@@ -179,7 +179,7 @@ define([
             node.style.color = '#356AA0';
             node.style.fontFamily = 'Arial,Helvetica,sans-serif';
             this._setAttr(node, 'opacity', '30%');
-            node.style.filter = 'alpha(opacity = 30)';
+            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 30, enabled = true)";            
 
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
@@ -201,6 +201,8 @@ define([
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
+            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";;
+            
             return node;
         },
 
@@ -278,8 +280,10 @@ define([
 
             // Adding the rotation filter. This is always filter item 0:
             // node.filters.item(0), see transformImage
+            // Also add the alpha filter. This is always filter item 1
+            // node.filters.item(1), see setObjectFillColor and setObjectSTrokeColor
             //node.style.filter = node.style['-ms-filter'] = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand')";
+            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
             el.rendNode = node;
             this.updateImage(el);
         },
@@ -292,10 +296,12 @@ define([
                 len = t.length;
 
             if (len > 0) {
+                /*
                 nt = el.rendNode.style.filter.toString();
                 if (!nt.match(/DXImageTransform/)) {
                     node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand') " + nt;
                 }
+                */
 
                 m = this.joinTransforms(el, t);
                 p[0] = Mat.matVecMult(m, el.coords.scrCoords);
@@ -328,6 +334,7 @@ define([
                 node.filters.item(0).M12 = m[1][2];
                 node.filters.item(0).M21 = m[2][1];
                 node.filters.item(0).M22 = m[2][2];
+                node.filters.item(0).enabled = true;
             }
         },
 
@@ -833,12 +840,20 @@ define([
                     }
                 }
                 if (el.type === Const.OBJECT_TYPE_IMAGE) {
+                    /*
                     t = el.rendNode.style.filter.toString();
                     if (t.match(/alpha/)) {
                         el.rendNode.style.filter = t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + (oo * 100) + ')');
                     } else {
                         el.rendNode.style.filter += ' alpha(opacity = ' + (oo * 100) + ')';
                     }
+                    */
+                    if (node.filters.length>1) { 
+                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
+                        // Setting axes:true shows text labels!
+                        node.filters.item(1).opacity = Math.round(oo * 100); // Why does setObjectFillColor not use Math.round?
+                        node.filters.item(1).enabled = true;
+                    }                    
                 }
             }
             el.visPropOld.fillcolor = rgba;
@@ -871,9 +886,8 @@ define([
                     oo = o * rgbo[1];
                 }
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                    oo = Math.round(oo * 100);
                     //node.style.filter = ' alpha(opacity = ' + oo + ')';
-                    
+                    /*
                     t = node.style.filter.toString();
                     if (t.match(/alpha/)) {
                         node.style.filter = 
@@ -881,7 +895,13 @@ define([
                     } else {
                         node.style.filter += ' alpha(opacity = ' + oo + ')';
                     }
-
+                    */
+                    if (node.filters.length > 1) { 
+                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
+                        // Setting axes:true shows text labels!
+                        node.filters.item(1).opacity = Math.round(oo * 100); 
+                        node.filters.item(1).enabled = true;
+                    }                    
 
                     node.style.color = c;
                 } else {
