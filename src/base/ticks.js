@@ -934,6 +934,10 @@ define([
             throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "'.");
         }
 
+        // deprecated
+        if (typeof attr.generatelabelvalue === 'function') {
+            el.generateLabelText = attr.generatelabelvalue;
+        }
         if (typeof attr.generatelabeltext === 'function') {
             el.generateLabelText = attr.generatelabeltext;
         }
