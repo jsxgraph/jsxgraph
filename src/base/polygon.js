@@ -629,7 +629,13 @@ define([
 
 
     /**
-     * @class A polygon is an area enclosed by a set of border lines which are determined by a list of points. Each two
+     * @class A polygon is an area enclosed by a set of border lines which are determined by 
+     * <ul>
+     *    <li> a list of points or 
+     *    <li> a list of coordinate arrays or
+     *    <li> a function returning a list of coordinate arrays.
+     * </ul>
+     * Each two
      * consecutive points of the list define a line.
      * @pseudo
      * @constructor
@@ -649,28 +655,53 @@ define([
      * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
- *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
- *       p1 = board.create('point', [0.0, 2.0]),
- *       p2 = board.create('point', [2.0, 1.0]),
- *       p3 = board.create('point', [4.0, 6.0]),
- *       p4 = board.create('point', [1.0, 3.0]),
- *       cc1 = board.create('polygon', [p1, p2, p3, p4]);
- *  })();
+     *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+     *       p1 = board.create('point', [0.0, 2.0]),
+     *       p2 = board.create('point', [2.0, 1.0]),
+     *       p3 = board.create('point', [4.0, 6.0]),
+     *       p4 = board.create('point', [1.0, 3.0]),
+     *       cc1 = board.create('polygon', [p1, p2, p3, p4]);
+     *  })();
      * </script><pre>
      */
     JXG.createPolygon = function (board, parents, attributes) {
-        var el, i,
-            attr = Type.copyAttributes(attributes, board.options, 'polygon');
+        var el, i, points = [],
+            attr, p;
 
-        // Sind alles Punkte?
-        for (i = 0; i < parents.length; i++) {
-            parents[i] = board.select(parents[i]);
-            if (!Type.isPoint(parents[i])) {
-                throw new Error("JSXGraph: Can't create polygon with parent types other than 'point'.");
+        attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
+        
+        // Type checks
+        if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length > 1)) {
+            p = parents[0]();
+            for (i = 0; i < p.length; i++) {
+                if (!Type.isArray(p[i])) {
+                    throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
+                }
+            }
+            
+            for (i = 0; i < p.length; i++) {
+                points.push(
+                    board.create('point', [
+                        (function(j) { return function() { return parents[0]()[j]; }; })(i) 
+                    ], attr)
+                );
+            }
+        } else {
+            for (i = 0; i < parents.length; i++) {
+                if (Type.isArray(parents[i]) && parents[i].length > 1) {
+                    points.push(board.create('point', parents[i], attr));
+                } else {
+                    points.push(board.select(parents[i]));
+                }
+            
+                if (!Type.isPoint(parents[i]) && !Type.isArray(parents[i])) {
+                    throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays'.");
+                }
             }
         }
 
-        el = new JXG.Polygon(board, parents, attr);
+        attr = Type.copyAttributes(attributes, board.options, 'polygon');
+        el = new JXG.Polygon(board, points, attr);
         el.isDraggable = true;
 
         return el;
@@ -750,7 +781,7 @@ define([
 
         p[0] = parents[0];
         p[1] = parents[1];
-        attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
+        attr = Type.copyAttributes(attributes, board.options, 'regularpolygon', 'vertices');
         for (i = 2; i < n; i++) {
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
