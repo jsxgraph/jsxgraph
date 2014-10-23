@@ -717,8 +717,8 @@ define([
         /**
          * Creates the label text for a given tick. A value for the text can be provided as a number or string
          *
-         * @param  {JXG.Coords}    tick  The Coords of the tick to create a label for
-         * @param  {JXG.Coords}    zero  The Coords of line's zero
+         * @param  {JXG.Coords}    tick  The Coords-object of the tick to create a label for
+         * @param  {JXG.Coords}    zero  The Coords-object of line's zero
          * @param  {Number|String} value A predefined value for this tick
          * @return {String}
          * @private
@@ -934,8 +934,8 @@ define([
             throw new Error("JSXGraph: Can't create Ticks with parent types '" + (typeof parents[0]) + "'.");
         }
 
-        if (typeof attr.generatelabelvalue === 'function') {
-            el.generateLabelValue = attr.generatelabelvalue;
+        if (typeof attr.generatelabeltext === 'function') {
+            el.generateLabelText = attr.generatelabeltext;
         }
 
         el.isDraggable = true;
