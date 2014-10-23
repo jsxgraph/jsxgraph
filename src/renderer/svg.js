@@ -633,7 +633,7 @@ define([
 
             if (el.bezierDegree === 1) {
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
                 }
 
                 for (i = 0; i < len; i++) {
@@ -691,7 +691,7 @@ define([
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-                el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
             }
 
             len = Math.min(el.points.length, el.numberPoints);
