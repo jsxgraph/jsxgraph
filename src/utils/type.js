@@ -261,6 +261,9 @@ define([
             return f;
         },
 
+        /**
+         *
+         */
         providePoints: function(board, parents, attributes, attrClass, attrArray) {
             var i, j, 
                 len = parents.length, 
@@ -270,6 +273,7 @@ define([
             /*
              * Parent is one function returning coordinates of all points
              */
+             /*
             if ((len === 1) && (this.isFunction(parents[0])) && (parents[0]().length > 1)) {
                 p = parents[0]();
                 len = p.length;
@@ -288,7 +292,9 @@ define([
                             ], attr)
                         );
                 }
+                
             } else {
+            */
                 for (i = 0; i < len; ++i) {
                     if (this.isArray(parents[i]) && parents[i].length > 1) {
                         j = Math.min(i, lenAttr - 1);
@@ -306,7 +312,7 @@ define([
                         return false;
                     }
                 }
-            }   
+            //}   
             
             return points; 
         },

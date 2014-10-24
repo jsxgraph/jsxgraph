@@ -678,15 +678,22 @@ define([
      * </script><pre>
      *
      * @example
-     * var f = function() { return [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]]; };
+     *   var f1 = function() { return [0.0, 2.0]; }, 
+     *       f2 = function() { return [2.0, 1.0]; }, 
+     *       f3 = function() { return [4.0, 6.0]; }, 
+     *       f4 = function() { return [1.0, 3.0]; }, 
+     *   cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *
      * var pol = board.create('polygon', [f]);
      * </pre><div id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('ceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
-     *       var f = function() { return [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]]; },
-     *       cc1 = board.create('polygon', [f]);
+     *       var f1 = function() { return [0.0, 2.0]; }, 
+     *           f2 = function() { return [2.0, 1.0]; }, 
+     *           f3 = function() { return [4.0, 6.0]; }, 
+     *           f4 = function() { return [1.0, 3.0]; }, 
+     *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *  })();
      * </script><pre>
      */
