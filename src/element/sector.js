@@ -264,7 +264,7 @@ define([
             * @name point1
             * @type JXG.Point
             */
-            el.point1 = board.select(points[0]);
+            el.point1 = points[0];
 
             /**
             * This point together with {@link Sector#point1} defines the radius..
@@ -272,7 +272,7 @@ define([
             * @name point2
             * @type JXG.Point
             */
-            el.point2 = board.select(points[1]);
+            el.point2 = points[1];
 
             /**
             * Defines the sector's angle.
@@ -280,7 +280,7 @@ define([
             * @name point3
             * @type JXG.Point
             */
-            el.point3 = board.select(points[2]);
+            el.point3 = points[2];
 
             /* Add arc as child to defining points */
             el.point1.addChild(el);
@@ -298,7 +298,7 @@ define([
             * @type JXG.Point
             */
             if (Type.exists(points[3])) {
-                el.point4 = board.select(points[3]);
+                el.point4 = points[3];
                 el.point4.addChild(el);
             }
 
@@ -528,34 +528,33 @@ define([
      * </script><pre>
      */
     JXG.createCircumcircleSector = function (board, parents, attributes) {
-        var el, mp, attr;
-
-        if ((Type.isPointType(parents[0])) && (Type.isPointType(parents[1])) && (Type.isPointType(parents[2]))) {
-            attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector', 'center');
-            mp = board.create('circumcenter', [parents[0], parents[1], parents[2]], attr);
-
-            mp.dump = false;
-
-            attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector');
-            el = board.create('sector', [mp, parents[0], parents[2], parents[1]], attr);
-
-            el.elType = 'circumcirclesector';
-            el.parents = [parents[0].id, parents[1].id, parents[2].id];
-
-            /**
-             * Center of the circumcirclesector
-             * @memberOf CircumcircleSector.prototype
-             * @name center
-             * @type Circumcenter
-             */
-            el.center = mp;
-            el.subs = {
-                center: mp
-            };
-        } else {
+        var el, mp, attr, points, i;
+        
+        points = Type.providePoints(board, parents, attributes, 'point');
+        if (points === false) {
             throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
         }
+            
+        mp = board.create('circumcenter', points.slice(0, 3), attr);
+        mp.dump = false;
+
+        attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector');
+        el = board.create('sector', [mp, points[0], points[2], points[1]], attr);
+
+        el.elType = 'circumcirclesector';
+        el.parents = [points[0].id, points[1].id, points[2].id];
+
+        /**
+         * Center of the circumcirclesector
+         * @memberOf CircumcircleSector.prototype
+         * @name center
+         * @type Circumcenter
+         */
+        el.center = mp;
+        el.subs = {
+            center: mp
+        };
 
         return el;
     };

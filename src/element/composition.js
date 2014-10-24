@@ -1331,15 +1331,15 @@ define([
     JXG.createCircumcenter = function (board, parents, attributes) {
         var p, i, a, b, c;
 
-        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT && parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+
             a = parents[0];
             b = parents[1];
             c = parents[2];
 
             p = Point.createPoint(board, [
                 function () {
-                    return Geometry.circumcenterMidpoint(a, b, c, board);
+                    return Geometry.circumcenter(a, b, c, board);
                 }
             ], attributes);
 

@@ -90,13 +90,12 @@ define([
      * </script><pre>
      */
     JXG.createArc = function (board, parents, attributes) {
-        var el, attr, i;
+        var el, attr, i, points;
 
-
-        // this method is used to create circumccirclearcs, too. if a circumcirclearc is created we get a fourth
+        // This method is used to create circumcirclearcs, too. If a circumcirclearc is created we get a fourth
         // point, that's why we need to check that case, too.
-        if (parents.length < 3 || parents[0].elementClass !== Const.OBJECT_CLASS_POINT || parents[1].elementClass !== Const.OBJECT_CLASS_POINT ||
-                parents[2].elementClass !== Const.OBJECT_CLASS_POINT || (parents[3] && parents[3].elementClass !== Const.OBJECT_CLASS_POINT)) {
+        points = Type.providePoints(board, parents, attributes, 'point');
+        if (points === false || points.length < 3) {
             throw new Error("JSXGraph: Can't create Arc with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                 (typeof parents[2]) + "'." +
@@ -109,9 +108,9 @@ define([
         el.elType = 'arc';
 
         el.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            if (parents[i].id) {
-                el.parents.push(parents[i].id);
+        for (i = 0; i < points.length; i++) {
+            if (points[i].id) {
+                el.parents.push(points[i].id);
             }
         }
 
@@ -127,7 +126,7 @@ define([
          * @name center
          * @type JXG.Point
          */
-        el.center = board.select(parents[0]);
+        el.center = points[0];
 
         /**
          * Point defining the arc's radius.
@@ -135,7 +134,7 @@ define([
          * @name radiuspoint
          * @type JXG.Point
          */
-        el.radiuspoint = board.select(parents[1]);
+        el.radiuspoint = points[1];
         el.point2 = el.radiuspoint;
 
         /**
@@ -144,7 +143,7 @@ define([
          * @name anglepoint
          * @type JXG.Point
          */
-        el.anglepoint = board.select(parents[2]);
+        el.anglepoint = points[2];
         el.point3 = el.anglepoint;
 
         // Add arc as child to defining points
@@ -165,24 +164,24 @@ define([
 
             phi = Geometry.rad(A, B, C);
             if ((this.visProp.type === 'minor' && phi > Math.PI) ||
-                    (this.visProp.type === 'major' && phi < Math.PI)) {
+                (this.visProp.type === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
             // This is true for circumCircleArcs. In that case there is
             // a fourth parent element: [center, point1, point3, point2]
             if (this.useDirection) {
-                p0c = parents[1].coords.usrCoords;
-                p1c = parents[3].coords.usrCoords;
-                p2c = parents[2].coords.usrCoords;
+                p0c = points[1].coords.usrCoords;
+                p1c = points[3].coords.usrCoords;
+                p2c = points[2].coords.usrCoords;
                 det = (p0c[1] - p2c[1]) * (p0c[2] - p1c[2]) - (p0c[2] - p2c[2]) * (p0c[1] - p1c[1]);
 
                 if (det < 0) {
-                    this.radiuspoint = parents[1];
-                    this.anglepoint = parents[2];
+                    this.radiuspoint = points[1];
+                    this.anglepoint = points[2];
                 } else {
-                    this.radiuspoint = parents[2];
-                    this.anglepoint = parents[1];
+                    this.radiuspoint = points[2];
+                    this.anglepoint = points[1];
                 }
             }
 
@@ -399,36 +398,35 @@ define([
      * </script><pre>
      */
     JXG.createSemicircle = function (board, parents, attributes) {
-        var el, mp, attr;
+        var el, mp, attr, points;
 
         // we need 2 points
-        if ((Type.isPoint(parents[0])) && (Type.isPoint(parents[1]))) {
-            attr = Type.copyAttributes(attributes, board.options, 'semicircle', 'midpoint');
-            mp = board.create('midpoint', [parents[0], parents[1]], attr);
-
-            mp.dump = false;
-
-            attr = Type.copyAttributes(attributes, board.options, 'semicircle');
-            el = board.create('arc', [mp, parents[1], parents[0]], attr);
-
-            el.elType = 'semicircle';
-            el.parents = [parents[0].id, parents[1].id];
-            el.subs = {
-                midpoint: mp
-            };
-
-            /**
-             * The midpoint of the two defining points.
-             * @memberOf Semicircle.prototype
-             * @name midpoint
-             * @type Midpoint
-             */
-            el.midpoint = el.center = mp;
-        } else {
+        points = Type.providePoints(board, parents, attributes, 'point');
+        if (points === false || points.length !== 2) {
             throw new Error("JSXGraph: Can't create Semicircle with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point,point]");
         }
+            
+        attr = Type.copyAttributes(attributes, board.options, 'semicircle', 'midpoint');
+        mp = board.create('midpoint', points, attr);
+        mp.dump = false;
+
+        attr = Type.copyAttributes(attributes, board.options, 'semicircle');
+        el = board.create('arc', [mp, points[1], points[0]], attr);
+        el.elType = 'semicircle';
+        el.parents = [points[0].id, points[1].id];
+        el.subs = {
+            midpoint: mp
+        };
+
+        /**
+         * The midpoint of the two defining points.
+         * @memberOf Semicircle.prototype
+         * @name midpoint
+         * @type Midpoint
+         */
+        el.midpoint = el.center = mp;
 
         return el;
     };
@@ -466,37 +464,37 @@ define([
      * </script><pre>
      */
     JXG.createCircumcircleArc = function (board, parents, attributes) {
-        var el, mp, attr;
+        var el, mp, attr, points;
 
         // We need three points
-        if ((Type.isPoint(parents[0])) && (Type.isPoint(parents[1])) && (Type.isPoint(parents[2]))) {
-            attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc', 'center');
-            mp = board.create('circumcenter', [parents[0], parents[1], parents[2]], attr);
-
-            mp.dump = false;
-
-            attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc');
-            attr.usedirection = true;
-            el = board.create('arc', [mp, parents[0], parents[2], parents[1]], attr);
-
-            el.elType = 'circumcirclearc';
-            el.parents = [parents[0].id, parents[1].id, parents[2].id];
-            el.subs = {
-                center: mp
-            };
-
-            /**
-             * The midpoint of the circumcircle of the three points defining the circumcircle arc.
-             * @memberOf CircumcircleArc.prototype
-             * @name center
-             * @type Circumcenter
-             */
-            el.center = mp;
-        } else {
+        points = Type.providePoints(board, parents, attributes, 'point');
+        if (points === false || points.length !== 3) {
             throw new Error("JSXGraph: create Circumcircle Arc with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                 "\nPossible parent types: [point,point,point]");
         }
+        
+        attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc', 'center');
+        mp = board.create('circumcenter', points, attr);
+        mp.dump = false;
+
+        attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc');
+        attr.usedirection = true;
+        el = board.create('arc', [mp, points[0], points[2], points[1]], attr);
+
+        el.elType = 'circumcirclearc';
+        el.parents = [points[0].id, points[1].id, points[2].id];
+        el.subs = {
+            center: mp
+        };
+
+        /**
+         * The midpoint of the circumcircle of the three points defining the circumcircle arc.
+         * @memberOf CircumcircleArc.prototype
+         * @name center
+         * @type Circumcenter
+         */
+        el.center = mp;
 
         return el;
     };

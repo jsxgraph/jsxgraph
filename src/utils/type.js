@@ -287,8 +287,12 @@ define([
         providePoints: function(board, parents, attributes, attrClass, attrArray) {
             var i, j, 
                 len = parents.length, 
-                lenAttr = attrArray.length, 
+                lenAttr = 0, 
                 points = [], attr, p;
+
+            if (JXG.exists(attrArray)) {
+                lenAttr = attrArray.length;
+            }
             
             /*
              * Parent is one function returning coordinates of all points
@@ -318,11 +322,19 @@ define([
                 for (i = 0; i < len; ++i) {
                     if (this.isArray(parents[i]) && parents[i].length > 1) {
                         j = Math.min(i, lenAttr - 1);
-                        attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        if (lenAttr == 0) {
+                            attr = this.copyAttributes(attributes, board.options, attrClass);
+                        } else {
+                            attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        }
                         points.push(board.create('point', parents[i], attr));
                     } else if (this.isFunction(parents[i]) && (parents[i])().length > 1) {
                         j = Math.min(i, lenAttr - 1);
-                        attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        if (lenAttr == 0) {
+                            attr = this.copyAttributes(attributes, board.options, attrClass);
+                        } else {
+                            attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        }
                         points.push(board.create('point', [parents[i]], attr));
                     } else {
                         points.push(board.select(parents[i]));
