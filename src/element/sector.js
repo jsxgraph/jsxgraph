@@ -133,10 +133,10 @@ define([
         if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
             type = '3points';
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                    (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                    (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+                   parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                   (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                   (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+                   (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
             type = '2lines';
         }
 

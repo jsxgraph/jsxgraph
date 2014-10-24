@@ -766,7 +766,7 @@ define([
 
         p = [];
         for (i = 0; i < parents.length; i++) {
-            if (Type.isPoint(parents[i]) || Type.isArray(parents[i]) || Type.isFunction(parents[i])) {
+            if (Type.isPointType(parents[i])) {
                 p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
                 if (p[p.length - 1] === false) {
                     throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');

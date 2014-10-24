@@ -148,6 +148,26 @@ define([
         },
 
         /**
+         * Checks if a given variable is a reference of a JSXGraph Point element or an array of length at least two or
+         * a function returning an array of length two or three.
+         * @param v A variable of any type.
+         * @returns {Boolean} True, if v is of type JXG.Point.
+         */
+        isPointType: function (v) {
+            if (typeof v === 'object') {
+                return (v.elementClass === Const.OBJECT_CLASS_POINT);
+            }
+            if (this.isArray(v)) {
+                return true;
+            }
+            if (this.isFunction(v) || (v)().length > 1) {
+                return true;
+            }
+            
+            return false;
+        },
+
+        /**
          * Checks if a given variable is neither undefined nor null. You should not use this together with global
          * variables!
          * @param v A variable of any type.
@@ -308,7 +328,7 @@ define([
                         points.push(board.select(parents[i]));
                     }
                 
-                    if (!this.isPoint(parents[i]) && !this.isArray(parents[i]) && !this.isFunction(parents[i])) {
+                    if (!this.isPoint(points[i])) {
                         return false;
                     }
                 }
