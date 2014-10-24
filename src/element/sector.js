@@ -127,37 +127,27 @@ define([
         var el, i, attr,
             type = 'invalid',
             s, v,
-            points = ['center', 'radiuspoint', 'anglepoint'];
+            attrPoints = ['center', 'radiuspoint', 'anglepoint'],
+            points;
 
         // Three points?
-        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
-            type = '3points';
-        } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                   parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                   (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                   (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-                   (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+            parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+            (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+            (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+            (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+            
             type = '2lines';
-        }
-
-        if (type === 'invalid') {
-             // Second try for 3 point sector
-            try {
-
-                for (i = 0; i < parents.length; i++) {
-                    if (!Type.isPoint(parents[i])) {
-                        attr = Type.copyAttributes(attributes, board.options, 'sector', points[i]);
-                        parents[i] = board.create('point', parents[i], attr);
-                    }
-                }
-
-                type = '3points';
-
-            } catch (e) {
+            
+        } else {
+            points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
+            if (points === false) {
                 throw new Error("JSXGraph: Can't create Sector with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" +
                     (typeof parents[2]) + "'.");
             }
+
+            type = '3points';
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'sector');
@@ -274,7 +264,7 @@ define([
             * @name point1
             * @type JXG.Point
             */
-            el.point1 = board.select(parents[0]);
+            el.point1 = board.select(points[0]);
 
             /**
             * This point together with {@link Sector#point1} defines the radius..
@@ -282,7 +272,7 @@ define([
             * @name point2
             * @type JXG.Point
             */
-            el.point2 = board.select(parents[1]);
+            el.point2 = board.select(points[1]);
 
             /**
             * Defines the sector's angle.
@@ -290,7 +280,7 @@ define([
             * @name point3
             * @type JXG.Point
             */
-            el.point3 = board.select(parents[2]);
+            el.point3 = board.select(points[2]);
 
             /* Add arc as child to defining points */
             el.point1.addChild(el);
@@ -299,7 +289,7 @@ define([
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
-            el.parents = [parents[0].id, parents[1].id, parents[2].id];
+            el.parents = [points[0].id, points[1].id, points[2].id];
 
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
@@ -307,10 +297,9 @@ define([
             * @name point4
             * @type JXG.Point
             */
-            if (Type.exists(parents[3])) {
-                el.point4 = board.select(parents[3]);
+            if (Type.exists(points[3])) {
+                el.point4 = board.select(points[3]);
                 el.point4.addChild(el);
-                // el.parents.push(parents[3].id);
             }
 
             el.methodMap = JXG.deepCopy(el.methodMap, {
@@ -541,7 +530,7 @@ define([
     JXG.createCircumcircleSector = function (board, parents, attributes) {
         var el, mp, attr;
 
-        if ((Type.isPoint(parents[0])) && (Type.isPoint(parents[1])) && (Type.isPoint(parents[2]))) {
+        if ((Type.isPointType(parents[0])) && (Type.isPointType(parents[1])) && (Type.isPointType(parents[2]))) {
             attr = Type.copyAttributes(attributes, board.options, 'circumcirclesector', 'center');
             mp = board.create('circumcenter', [parents[0], parents[1], parents[2]], attr);
 
@@ -572,7 +561,6 @@ define([
     };
 
     JXG.registerElement('circumcirclesector', JXG.createCircumcircleSector);
-
 
     /**
      * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
@@ -653,7 +641,7 @@ define([
             type = 'invalid';
 
         // Three points?
-        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
+        if (Type.isPointType(parents[0]) && Type.isPointType(parents[1]) && Type.isPointType(parents[2])) {
             type = '3points';
         } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
                     parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
