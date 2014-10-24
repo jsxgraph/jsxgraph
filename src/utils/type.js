@@ -153,7 +153,8 @@ define([
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
-        isPointType: function (v) {
+        isPointType: function (v, board) {
+            v = board.select(v);
             if (typeof v === 'object') {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
             }
