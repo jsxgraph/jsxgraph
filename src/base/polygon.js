@@ -663,6 +663,32 @@ define([
      *       cc1 = board.create('polygon', [p1, p2, p3, p4]);
      *  })();
      * </script><pre>
+     *
+     * @example
+     * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]];
+     *
+     * var pol = board.create('polygon', p);
+     * </pre><div id="9f9a5946-112a-4768-99ca-f30792bcdefb" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *   var board = JXG.JSXGraph.initBoard('9f9a5946-112a-4768-99ca-f30792bcdefb', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+     *       var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]],
+     *       cc1 = board.create('polygon', p);
+     *  })();
+     * </script><pre>
+     *
+     * @example
+     * var f = function() { return [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]]; };
+     *
+     * var pol = board.create('polygon', [f]);
+     * </pre><div id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *   var board = JXG.JSXGraph.initBoard('ceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+     *       var f = function() { return [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]]; },
+     *       cc1 = board.create('polygon', [f]);
+     *  })();
+     * </script><pre>
      */
     JXG.createPolygon = function (board, parents, attributes) {
         var el, i, points = [],
