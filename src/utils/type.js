@@ -266,7 +266,10 @@ define([
                 len = parents.length, 
                 lenAttr = attrArray.length, 
                 points = [], attr, p;
-
+            
+            /*
+             * Parent is one function returning coordinates of all points
+             */
             if ((len === 1) && (this.isFunction(parents[0])) && (parents[0]().length > 1)) {
                 p = parents[0]();
                 len = p.length;
@@ -291,11 +294,15 @@ define([
                         j = Math.min(i, lenAttr - 1);
                         attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
                         points.push(board.create('point', parents[i], attr));
+                    } else if (this.isFunction(parents[i]) && (parents[i])().length > 1) {
+                        j = Math.min(i, lenAttr - 1);
+                        attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        points.push(board.create('point', [parents[i]], attr));
                     } else {
                         points.push(board.select(parents[i]));
                     }
                 
-                    if (!this.isPoint(parents[i]) && !this.isArray(parents[i])) {
+                    if (!this.isPoint(parents[i]) && !this.isArray(parents[i]) && !this.isFunction(parents[i])) {
                         return false;
                     }
                 }

@@ -753,8 +753,7 @@ define([
             } else if (Type.isArray(parents[i]) && parents[i].length > 1) {
                 attr = Type.copyAttributes(attributes, board.options, 'circle', 'center');
                 p[i] = board.create('point', parents[i], attr);
-            // Something else (number, function, string)
-            } else {
+            } else { // Something else (number, function, string)
                 p[i] = parents[i];
             }
         }
