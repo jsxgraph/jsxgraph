@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -636,23 +636,23 @@ define([
      */
     JXG.createAngle = function (board, parents, attributes) {
         var el, radius, text, attr, attrsub,
-            i, dot,
+            i, dot, points,
             type = 'invalid';
 
-        // Three points?
-        if (Type.isPointType(parents[0]) && Type.isPointType(parents[1]) && Type.isPointType(parents[2])) {
-            type = '3points';
-        } else if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-                    parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-                    (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-                    (Type.isArray(parents[3]) || Type.isNumber(parents[3]))) {
+        // Two lines or three points?
+        if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
+            parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+            (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+            (Type.isArray(parents[3]) || Type.isNumber(parents[3]))) {
+         
             type = '2lines';
-        }
-
-        if (type === 'invalid') {
-            throw new Error("JSXGraph: Can't create angle with parent types '" +
-                (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
-
+        } else {
+            points = Type.providePoints(board, parents, attributes, 'point');
+            if (points === false) {
+                throw new Error("JSXGraph: Can't create angle with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
+            }
+            type = '3points';
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'angle');
@@ -671,16 +671,16 @@ define([
         }
 
         if (type === '2lines') {
-            el = board.create('sector', [parents[0], parents[1], parents[2], parents[3], radius], attr);
-
+            parents.push(radius);
+            el = board.create('sector', parents, attr);
             el.updateDataArraySector = el.updateDataArray;
 
-            // Todo
+            // TODO
             el.setAngle = function (val) {};
             el.free = function (val) {};
 
         } else {
-            el = board.create('sector', [parents[1], parents[0], parents[2]], attr);
+            el = board.create('sector', [points[1], points[0], points[2]], attr);
             el.arc.visProp.priv = true;
 
             /**
@@ -689,7 +689,7 @@ define([
              * @name point
              * @memberOf Angle.prototype
              */
-            el.point = el.point2 = el.radiuspoint = parents[0];
+            el.point = el.point2 = el.radiuspoint = points[0];
 
             /**
              * Helper point for angles of type 'square'.
@@ -697,7 +697,7 @@ define([
              * @name pointsquare
              * @memberOf Angle.prototype
              */
-            el.pointsquare = el.point3 = el.anglepoint = parents[2];
+            el.pointsquare = el.point3 = el.anglepoint = points[2];
 
             el.Radius = function () {
                 return Type.evaluate(radius);
@@ -770,7 +770,7 @@ define([
 
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
-        el.parents = [parents[0].id, parents[1].id, parents[2].id];
+        // el.parents = [points[0].id, points[1].id, points[2].id];
         el.subs = {};
 
         el.updateDataArraySquare = function () {
@@ -890,7 +890,7 @@ define([
             }
         } else {
             for (i = 0; i < 3; i++) {
-                board.select(parents[i]).addChild(el.dot);
+                board.select(points[i]).addChild(el.dot);
             }
         }
 
