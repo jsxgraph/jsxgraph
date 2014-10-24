@@ -459,7 +459,7 @@ define([
                         newPos = this.position; // save position for the overwriting below
                     }
                 }
-            } else if (slide.elementClass === Const.OBJECT_CLASS_POINT) {
+            } else if (Type.isPoint(slide)) {
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToPoint(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToPoint(this, slide, this.board);
                 newPos = this.position; // save position for the overwriting below
@@ -575,7 +575,7 @@ define([
                     c = Geometry.projectPointToCurve(this, slide, this.board).usrCoords;
                 }
 
-            } else if (slide.elementClass === Const.OBJECT_CLASS_POINT) {
+            } else if (Type.isPoint(slide)) {
                 c = Geometry.projectPointToPoint(this, slide, this.board).usrCoords;
             }
 
@@ -744,7 +744,7 @@ define([
                 for (i = 0; i < this.board.objectsList.length; i++) {
                     pEl = this.board.objectsList[i];
 
-                    if (pEl.elementClass === Const.OBJECT_CLASS_POINT && pEl !== this && pEl.visProp.visible) {
+                    if (Type.isPoint(pEl) && pEl !== this && pEl.visProp.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
                         if (this.visProp.attractorunit === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
@@ -799,7 +799,7 @@ define([
                 el = this.board.select(this.visProp.attractors[i]);
 
                 if (Type.exists(el) && el !== this) {
-                    if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+                    if (Type.isPoint(el)) {
                         projCoords = Geometry.projectPointToPoint(this, el, this.board);
                     } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                         projCoords = Geometry.projectPointToLine(this, el, this.board);
@@ -1818,14 +1818,15 @@ define([
      * </script><pre>
      */
     JXG.createGlider = function (board, parents, attributes) {
-        var el,
+        var el, coords,
             attr = Type.copyAttributes(attributes, board.options, 'glider');
 
         if (parents.length === 1) {
-            el = board.create('point', [0, 0], attr);
+            coords = [0, 0];
         } else {
-            el = board.create('point', parents.slice(0, 2), attr);
+            coords = parents.slice(0, 2)
         }
+        el = board.create('point', coords, attr);
 
         // eltype is set in here
         el.makeGlider(parents[parents.length - 1]);

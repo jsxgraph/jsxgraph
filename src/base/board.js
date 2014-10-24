@@ -567,7 +567,7 @@ define([
                 return '';
             }
 
-            if (object.elementClass === Const.OBJECT_CLASS_POINT) {
+            if (Type.isPoint(object)) {
                 // points have capital letters
                 possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -581,7 +581,7 @@ define([
                     'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
             }
 
-            if (object.elementClass !== Const.OBJECT_CLASS_POINT &&
+            if (!Type.isPoint(object) &&
                     object.elementClass !== Const.OBJECT_CLASS_LINE &&
                     object.type !== Const.OBJECT_TYPE_ANGLE) {
                 if (object.type === Const.OBJECT_TYPE_POLYGON) {
@@ -882,7 +882,7 @@ define([
                 }
 
                 if (((this.geonextCompatibilityMode &&
-                        (pEl.elementClass === Const.OBJECT_CLASS_POINT ||
+                        (Type.isPoint(pEl) ||
                           pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
@@ -1222,7 +1222,7 @@ define([
                 for (i = 0; i < len; i++) {
                     xy.push(obj.vertices[i].coords.usrCoords);
                 }
-            } else if (obj.elementClass === Const.OBJECT_CLASS_POINT || obj.type === Const.OBJECT_TYPE_GLIDER) {
+            } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
             // TODO
@@ -2397,7 +2397,7 @@ define([
             if (!el.visProp.showinfobox) {
                 return this;
             }
-            if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+            if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -572,7 +572,7 @@ define([
                         animateColor(this.visProp[p], hash[r], p);
                         break;
                     case 'size':
-                        if (this.elementClass !== Const.OBJECT_CLASS_POINT) {
+                        if (!Type.isPoint(this)) {
                             break;
                         }
                         animateFloat(this.visProp[p], hash[r], p, true);
@@ -815,7 +815,7 @@ define([
                         }
                         break;
                     case 'face':
-                        if (this.elementClass === Const.OBJECT_CLASS_POINT) {
+                        if (Type.isPoint(this)) {
                             this.visProp.face = value;
                             this.board.renderer.changePointStyle(this);
                         }

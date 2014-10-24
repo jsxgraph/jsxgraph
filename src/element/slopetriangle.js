@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -125,7 +125,7 @@ define([
             tangent = parents[0];
             tglide = tangent.glider;
         } else if (parents.length === 2 &&
-                parents[0].elementClass === Const.OBJECT_CLASS_LINE && parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+                parents[0].elementClass === Const.OBJECT_CLASS_LINE && Type.isPoint(parents[1])) {
             tangent = parents[0];
             tglide = parents[1];
         } else {

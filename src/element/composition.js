@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -614,18 +614,18 @@ define([
     JXG.createParallelPoint = function (board, parents, attributes) {
         var a, b, c, p;
 
-        if (parents.length === 3 && parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+        if (parents.length === 3 && Type.isPoint(parents[0]) &&
+                Type.isPoint(parents[1]) &&
+                Type.isPoint(parents[2])) {
             a = parents[0];
             b = parents[1];
             c = parents[2];
-        } else if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
+        } else if (Type.isPoint(parents[0]) &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             c = parents[0];
             a = parents[1].point1;
             b = parents[1].point2;
-        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
+        } else if (Type.isPoint(parents[1]) &&
                 parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             c = parents[1];
             a = parents[0].point1;
@@ -753,14 +753,14 @@ define([
             li = function () {
                 return Mat.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
             };
-        } else if (parents[0].elementClass === Const.OBJECT_CLASS_POINT) {
+        } else if (Type.isPoint(parents[0])) {
             // Parallel to line parents[1] through point parents[0]
             p = parents[0];
             /** @ignore */
             li = function () {
                 return parents[1].stdform;
             };
-        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+        } else if (Type.isPoint(parents[1])) {
             // Parallel to line parents[0] through point parents[1]
             p = parents[1];
             /** @ignore */
@@ -1123,9 +1123,7 @@ define([
     JXG.createBisector = function (board, parents, attributes) {
         var p, l, i, attr;
 
-        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[1].elementClass === Const.OBJECT_CLASS_POINT &&
-                parents[2].elementClass === Const.OBJECT_CLASS_POINT) {
+        if (Type.isPoint(parents[0]) && Type.isPoint(parents[1]) && Type.isPoint(parents[2])) {
             // hidden and fixed helper
             attr = Type.copyAttributes(attributes, board.options, 'bisector', 'point');
             attr.snapToGrid = false;
@@ -1597,10 +1595,10 @@ define([
     JXG.createReflection = function (board, parents, attributes) {
         var l, p, r, t;
 
-        if (parents[0].elementClass === Const.OBJECT_CLASS_POINT && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[0];
             l = parents[1];
-        } else if (parents[1].elementClass === Const.OBJECT_CLASS_POINT && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = parents[1];
             l = parents[0];
         } else {

@@ -1000,9 +1000,9 @@ define([
             if (Type.isArray(parents[0]) && parents[0].length > 1) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
                 p1 = board.create('point', parents[0], attr);
-            } else if (Type.isString(parents[0]) || parents[0].elementClass === Const.OBJECT_CLASS_POINT) {
+            } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
                 p1 =  board.select(parents[0]);
-            } else if ((typeof parents[0] === 'function') && (parents[0]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[0] === 'function') && ( Type.isPoint(parents[0]()) )) {
                 p1 = parents[0]();
                 constrained = true;
             } else if ((typeof parents[0] === 'function') && (parents[0]().length && parents[0]().length === 2)) {
@@ -1019,9 +1019,9 @@ define([
             if (Type.isArray(parents[1]) && parents[1].length > 1) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = board.create('point', parents[1], attr);
-            } else if (Type.isString(parents[1]) || parents[1].elementClass === Const.OBJECT_CLASS_POINT) {
+            } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
                 p2 =  board.select(parents[1]);
-            } else if ((typeof parents[1] === 'function') && (parents[1]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[1] === 'function') && ( Type.isPoint(parents[1]()) )) {
                 p2 = parents[1]();
                 constrained = true;
             } else if ((typeof parents[1] === 'function') && (parents[1]().length && parents[1]().length === 2)) {
@@ -1124,8 +1124,8 @@ define([
             }
         // The parent array contains a function which returns two points.
         } else if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length === 2) &&
-                (parents[0]()[0].elementClass === Const.OBJECT_CLASS_POINT) &&
-                (parents[0]()[1].elementClass === Const.OBJECT_CLASS_POINT)) {
+                (Type.isPoint(parents[0]()[0])) &&
+                (Type.isPoint(parents[0]()[1]))) {
             ps = parents[0]();
             attr = Type.copyAttributes(attributes, board.options, 'line');
             el = new JXG.Line(board, ps[0], ps[1], attr);
@@ -1753,8 +1753,8 @@ define([
             secondParentIsConic = (parents[1].type === Const.OBJECT_TYPE_CONIC ||
                 parents[1].elementClass === Const.OBJECT_CLASS_CIRCLE);
 
-            firstParentIsPoint = (parents[0].elementClass === Const.OBJECT_CLASS_POINT);
-            secondParentIsPoint = (parents[1].elementClass === Const.OBJECT_CLASS_POINT);
+            firstParentIsPoint = (Type.isPoint(parents[0]));
+            secondParentIsPoint = (Type.isPoint(parents[1]));
         }
 
         if (parents.length !== 2 ||
