@@ -668,38 +668,11 @@ define([
         var el, i, points = [],
             attr, p;
 
-        attr = Type.copyAttributes(attributes, board.options, 'polygon', 'vertices');
-        
-        // Type checks
-        if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length > 1)) {
-            p = parents[0]();
-            for (i = 0; i < p.length; i++) {
-                if (!Type.isArray(p[i])) {
-                    throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
-                }
-            }
-            
-            for (i = 0; i < p.length; i++) {
-                points.push(
-                    board.create('point', [
-                        (function(j) { return function() { return parents[0]()[j]; }; })(i) 
-                    ], attr)
-                );
-            }
-        } else {
-            for (i = 0; i < parents.length; i++) {
-                if (Type.isArray(parents[i]) && parents[i].length > 1) {
-                    points.push(board.create('point', parents[i], attr));
-                } else {
-                    points.push(board.select(parents[i]));
-                }
-            
-                if (!Type.isPoint(parents[i]) && !Type.isArray(parents[i])) {
-                    throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays'.");
-                }
-            }
+        points = Type.providePoints(board, parents, attributes, 'polygon', ['vertices']);
+        if (points === false) {
+            throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
         }
-
+        
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
         el = new JXG.Polygon(board, points, attr);
         el.isDraggable = true;
@@ -726,11 +699,11 @@ define([
      * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
- *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
- *       p1 = board.create('point', [0.0, 2.0]),
- *       p2 = board.create('point', [2.0, 1.0]),
- *       cc1 = board.create('regularpolygon', [p1, p2, 5]);
- *  })();
+     *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+     *       p1 = board.create('point', [0.0, 2.0]),
+     *       p2 = board.create('point', [2.0, 1.0]),
+     *       cc1 = board.create('regularpolygon', [p1, p2, 5]);
+     *  })();
      * </script><pre>
      * @example
      * var p1 = board.create('point', [0.0, 2.0]);
@@ -741,52 +714,44 @@ define([
      * </pre><div id="096a78b3-bd50-4bac-b958-3be5e7df17ed" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function () {
- *   var board = JXG.JSXGraph.initBoard('096a78b3-bd50-4bac-b958-3be5e7df17ed', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
- *       p1 = board.create('point', [0.0, 2.0]),
- *       p2 = board.create('point', [4.0, 4.0]),
- *       p3 = board.create('point', [2.0,0.0]),
- *       cc1 = board.create('regularpolygon', [p1, p2, p3]);
- * })();
+     *   var board = JXG.JSXGraph.initBoard('096a78b3-bd50-4bac-b958-3be5e7df17ed', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+     *       p1 = board.create('point', [0.0, 2.0]),
+     *       p2 = board.create('point', [4.0, 4.0]),
+     *       p3 = board.create('point', [2.0,0.0]),
+     *       cc1 = board.create('regularpolygon', [p1, p2, p3]);
+     * })();
      * </script><pre>
      */
     JXG.createRegularPolygon = function (board, parents, attributes) {
-        var el, i, n, p = [], rot, c, len, pointsExist, attr;
-
-        if (Type.isNumber(parents[parents.length - 1]) && parents.length !== 3) {
-            throw new Error("JSXGraph: A regular polygon needs two points and a number as input.");
-        }
+        var el, i, n, 
+            p = [], rot, c, len, pointsExist, attr;
 
         len = parents.length;
         n = parents[len - 1];
-        if ((!Type.isNumber(n) && !Type.isPoint(board.select(n))) || n < 3) {
-            throw new Error("JSXGraph: The third parameter has to be number greater than 2 or a point.");
-        }
 
-        // Regular polygon given by n points
-        if (Type.isPoint(board.select(n))) {
-            n = len;
-            pointsExist = true;
-        } else {
+        if (Type.isNumber(n) && (parents.length !== 3 || n < 3)) {
+            throw new Error("JSXGraph: A regular polygon needs two point types and a number > 2 as input.");
+        } 
+        
+        if (Type.isNumber(board.select(n))) { // Regular polygon given by 2 points and a number
             len--;
             pointsExist = false;
+        } else {                              // Regular polygon given by n points
+            n = len;
+            pointsExist = true;
+        }
+        
+        p = Type.providePoints(board, parents.slice(0, len), attributes, 'regularpolygon', ['vertices']);
+        if (p === false) {
+            throw new Error("JSXGraph: Can't create regular polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
         }
 
-        // The first two parent elements have to be points
-        for (i = 0; i < len; i++) {
-            parents[i] = board.select(parents[i]);
-            if (!Type.isPoint(parents[i])) {
-                throw new Error("JSXGraph: Can't create regular polygon if the first two parameters aren't points.");
-            }
-        }
-
-        p[0] = parents[0];
-        p[1] = parents[1];
         attr = Type.copyAttributes(attributes, board.options, 'regularpolygon', 'vertices');
         for (i = 2; i < n; i++) {
             rot = board.create('transform', [Math.PI * (2 - (n - 2) / n), p[i - 1]], {type: 'rotate'});
             if (pointsExist) {
-                p[i] = parents[i];
-                p[i].addTransform(parents[i - 2], rot);
+                p[i].addTransform(p[i - 2], rot);
+                p[i].prepareUpdate().update().updateRenderer();
             } else {
                 if (Type.isArray(attr.ids) && attr.ids.length >= n - 2) {
                     attr.id = attr.ids[i - 2];
@@ -794,12 +759,13 @@ define([
                 p[i] = board.create('point', [p[i - 2], rot], attr);
                 p[i].type = Const.OBJECT_TYPE_CAS;
 
-                // The next two lines of code are need to make regular polgonmes draggable
+                // The next two lines of code are needed to make regular polgonmes draggable
                 // The new helper points are set to be draggable.
                 p[i].isDraggable = true;
                 p[i].visProp.fixed = false;
             }
         }
+
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
         el = board.create('polygon', p, attr);
         el.elType = 'regularpolygon';

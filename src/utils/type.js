@@ -261,6 +261,49 @@ define([
             return f;
         },
 
+        providePoints: function(board, parents, attributes, attrClass, attrArray) {
+            var i, j, 
+                len = parents.length, 
+                lenAttr = attrArray.length, 
+                points = [], attr, p;
+
+            if ((len === 1) && (this.isFunction(parents[0])) && (parents[0]().length > 1)) {
+                p = parents[0]();
+                len = p.length;
+                for (i = 0; i < len; ++i) {
+                    if (!this.isArray(p[i])) {
+                        return false;
+                    }
+                }
+            
+                for (i = 0; i < len; ++i) {
+                    j = Math.min(i, lenAttr - 1);
+                    attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                    points.push(
+                        board.create('point', [
+                            (function(j) { return function() { return parents[0]()[j]; }; })(i) 
+                            ], attr)
+                        );
+                }
+            } else {
+                for (i = 0; i < len; ++i) {
+                    if (this.isArray(parents[i]) && parents[i].length > 1) {
+                        j = Math.min(i, lenAttr - 1);
+                        attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
+                        points.push(board.create('point', parents[i], attr));
+                    } else {
+                        points.push(board.select(parents[i]));
+                    }
+                
+                    if (!this.isPoint(parents[i]) && !this.isArray(parents[i])) {
+                        return false;
+                    }
+                }
+            }   
+            
+            return points; 
+        },
+        
         /**
          * Generates a function which calls the function fn in the scope of owner.
          * @param {Function} fn Function to call.
