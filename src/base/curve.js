@@ -1525,7 +1525,7 @@ define([
             var D, x = [], y = [];
 
             return function (t, suspended) {
-                var i, j;
+                var i, j, c;
 
                 if (!suspended) {
                     x = [];
@@ -1553,19 +1553,23 @@ define([
                                 y.push(parents[i].Y());
                             // given as [[x1,y1], [x2, y2], ...]
                             } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
-                                for (i = 0; i < parents.length; i++) {
-                                    if (typeof parents[i][0] === 'function') {
-                                        x.push(parents[i][0]());
+                                for (j = 0; j < parents.length; j++) {
+                                    if (typeof parents[j][0] === 'function') {
+                                        x.push(parents[j][0]());
                                     } else {
-                                        x.push(parents[i][0]);
+                                        x.push(parents[j][0]);
                                     }
 
-                                    if (typeof parents[i][1] === 'function') {
-                                        y.push(parents[i][1]());
+                                    if (typeof parents[j][1] === 'function') {
+                                        y.push(parents[j][1]());
                                     } else {
-                                        y.push(parents[i][1]);
+                                        y.push(parents[j][1]);
                                     }
                                 }
+                            } else if (Type.isFunctiun(parents[i]) && parents[i]().length === 2) {
+                                c = parents[i]();
+                                x.push(c[0]);
+                                y.push(c[1]);
                             }
                         }
                     }
