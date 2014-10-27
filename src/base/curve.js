@@ -1566,7 +1566,7 @@ define([
                                         y.push(parents[j][1]);
                                     }
                                 }
-                            } else if (Type.isFunctiun(parents[i]) && parents[i]().length === 2) {
+                            } else if (Type.isFunction(parents[i]) && parents[i]().length === 2) {
                                 c = parents[i]();
                                 x.push(c[0]);
                                 y.push(c[1]);
