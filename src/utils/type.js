@@ -287,10 +287,14 @@ define([
          */
         providePoints: function(board, parents, attributes, attrClass, attrArray) {
             var i, j, 
-                len = parents.length, 
+                len, 
                 lenAttr = 0, 
                 points = [], attr, p;
 
+            if (!this.isArray(parents)) {
+                parents = [parents];
+            }
+            len = parents.length;
             if (JXG.exists(attrArray)) {
                 lenAttr = attrArray.length;
             }

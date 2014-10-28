@@ -202,7 +202,6 @@ define([
         return t;
     };
 
-
     /**
 
      * @class This element is used to provide a constructor for a perpendicular.
@@ -635,12 +634,12 @@ define([
             c = parents[2];
         } else if (Type.isPointType(parents[0], board) &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
-            c = Type.providePoints(board, parents[0], attributes, 'point')[0];
+            c = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             a = parents[1].point1;
             b = parents[1].point2;
         } else if (Type.isPointType(parents[1], board) &&
                 parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
-            c = Type.providePoints(board, parents[1], attributes, 'point')[0];
+            c = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             a = parents[0].point1;
             b = parents[0].point2;
         } else {
@@ -772,14 +771,14 @@ define([
             };
         } else if (Type.isPointType(parents[0], board)) {
             // Parallel to line parents[1] through point parents[0]
-            p = Type.providePoints(board, parents[0], attributes, 'point')[0];
+            p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             /** @ignore */
             li = function () {
                 return parents[1].stdform;
             };
         } else if (Type.isPointType(parents[1], board)) {
             // Parallel to line parents[0] through point parents[1]
-            p = Type.providePoints(board, parents[1], attributes, 'point')[0];
+            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             /** @ignore */
             li = function () {
                 return parents[0].stdform;
@@ -913,11 +912,11 @@ define([
         // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
         } else if (parents.length === 2) {
             if (Type.isPointType(parents[0], board)) {
-                p = Type.providePoints(board, parents[0], attributes, 'point')[0];
+                p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
                 c = parents[1];
             } else if (Type.isPointType(parents[1], board)) {
                 c = parents[0];
-                p = Type.providePoints(board, parents[1], attributes, 'point')[0];
+                p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             } else {
                 throw new Error("JSXGraph: Can't create normal with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -1635,10 +1634,10 @@ define([
             parents[i] = board.select(parents[i]);
         }
         if (Type.isPoint(parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
-            p = Type.providePoints(board, parents[0], attributes, 'point')[0];
+            p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             l = parents[1];
         } else if (Type.isPoint(parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
-            p = Type.providePoints(board, parents[1], attributes, 'point')[0];
+            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             l = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create reflection point with parent types '" +
