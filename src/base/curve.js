@@ -454,6 +454,13 @@ define([
                     this.updateTransform(this.points[i]);
                 }
             }
+            
+            if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
+console.log("B", this.numberPoints);                
+                this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
+                this.numberPoints = this.points.length;
+console.log("A", this.numberPoints);                
+            }
 
             return this;
         },

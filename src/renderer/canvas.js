@@ -826,7 +826,7 @@ define([
                 symbc = 'C',
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                isNotPlot = (el.visProp.curvetype !== 'plot'),
+                //isNotPlot = (el.visProp.curvetype !== 'plot'),
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -837,10 +837,12 @@ define([
             context.beginPath();
 
             if (el.bezierDegree === 1) {
+                /*
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
                     el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
                 }
-
+                */
+                
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 

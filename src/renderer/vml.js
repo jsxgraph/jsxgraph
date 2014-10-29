@@ -603,7 +603,7 @@ define([
                 symbl = ' l ',
                 symbc = ' c ',
                 nextSymb = symbm,
-                isNotPlot = (el.visProp.curvetype !== 'plot'),
+                // isNotPlot = (el.visProp.curvetype !== 'plot'),
                 len = Math.min(el.numberPoints, 8192); // otherwise IE 7 crashes in hilbert.html
 
             if (el.numberPoints <= 0) {
@@ -612,10 +612,12 @@ define([
             len = Math.min(len, el.points.length);
 
             if (el.bezierDegree === 1) {
+                /*
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
                     el.points = Numerics.RamerDouglasPeucker(el.points, 1.0);
                 }
-
+                */
+                
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
