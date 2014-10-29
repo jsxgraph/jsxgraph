@@ -893,11 +893,11 @@ define([
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
                             (pEl.visProp.layer === dragEl.visProp.layer && pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime())) {
                         // If an element and its label have the focus
-                        // simultaneously, the element is taken
-                        // this only works if we assume that every browser runs
+                        // simultaneously, the element is taken.
+                        // This only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!Type.exists(dragEl.label) || pEl !== dragEl.label) {
+                        if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect[0] = dragEl;
 
