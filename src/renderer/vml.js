@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -209,20 +209,66 @@ define([
         // documented in AbstractRenderer
         updateInternalText: function (el) {
             var v,
-                content = el.plaintext;
+                content = el.plaintext,
+                m = this.joinTransforms(el, el.transformations),
+                offset = [0, 0],
+                maxX, maxY, minX, minY, i,
+                node = el.rendNode,
+                p = [];
+                
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
                 if (el.visProp.anchorx === 'right') {
-                    v = Math.floor(el.board.canvasWidth - el.coords.scrCoords[1]);
+                    offset[0] = 1;
                 } else if (el.visProp.anchorx === 'middle') {
-                    v = Math.floor(el.coords.scrCoords[1] - 0.5 * el.size[0]);
-                } else {
-                    v = Math.floor(el.coords.scrCoords[1]);
+                    offset[0] = 0.5;
+                } // default (el.visProp.anchorx === 'left') offset[0] = 0;
+
+                // Vertical
+                if (el.visProp.anchory === 'bottom') {
+                    offset[1] = 1;
+                } else if (el.visProp.anchory === 'middle') {
+                    offset[1] = 0.5;
+                } // default (el.visProp.anchory === 'top') offset[1] = 0;
+
+                // Compute maxX, maxY, minX, minY
+                p[0] = Mat.matVecMult(m, [1, 
+                                          el.coords.scrCoords[1] - offset[0] * el.size[0], 
+                                          el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
+                p[0][1] /= p[0][0];
+                p[0][2] /= p[0][0];
+                p[1] = Mat.matVecMult(m, [1, 
+                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0], 
+                                          el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
+                p[1][1] /= p[1][0];
+                p[1][2] /= p[1][0];
+                p[2] = Mat.matVecMult(m, [1, 
+                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0], 
+                                          el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
+                p[2][1] /= p[2][0];
+                p[2][2] /= p[2][0];
+                p[3] = Mat.matVecMult(m, [1, 
+                                          el.coords.scrCoords[1] - offset[0] * el.size[0], 
+                                          el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
+                p[3][1] /= p[3][0];
+                p[3][2] /= p[3][0];
+                maxX = p[0][1];
+                minX = p[0][1];
+                maxY = p[0][2];
+                minY = p[0][2];
+
+                for (i = 1; i < 4; i++) {
+                    maxX = Math.max(maxX, p[i][1]);
+                    minX = Math.min(minX, p[i][1]);
+                    maxY = Math.max(maxY, p[i][2]);
+                    minY = Math.min(minY, p[i][2]);
                 }
 
+                // Horizontal
+                v = offset[0] === 1 ? Math.floor(el.board.canvasWidth - maxX) : Math.floor(minX);
                 if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
-                    if (el.visProp.anchorx === 'right') {
+                    if (offset[0] === 1) {
                         el.rendNode.style.right = v + 'px';
                         el.rendNode.style.left = 'auto';
                     } else {
@@ -233,16 +279,9 @@ define([
                 }
 
                 // Vertical
-                if (el.visProp.anchory === 'top') {
-                    v = Math.floor(el.coords.scrCoords[2] + this.vOffsetText);
-                } else if (el.visProp.anchory === 'middle') {
-                    v = Math.floor(el.coords.scrCoords[2] - 0.5 * el.size[1] + this.vOffsetText);
-                } else {
-                    v = Math.floor(el.board.canvasHeight - el.coords.scrCoords[2] - this.vOffsetText);
-                }
-
+                v = offset[1] === 1 ? Math.floor(el.board.canvasHeight - maxY) : Math.floor(minY);
                 if (el.visPropOld.top !== (el.visProp.anchory + v)) {
-                    if (el.visProp.anchory === 'bottom') {
+                    if (offset[1] === 1) {
                         el.rendNode.style.bottom = v + 'px';
                         el.rendNode.style.top = 'auto';
                     } else {
@@ -259,7 +298,12 @@ define([
                 el.htmlStr = content;
             }
 
-            this.transformImage(el, el.transformations);
+            //this.transformImage(el, el.transformations);
+            node.filters.item(0).M11 = m[1][1];
+            node.filters.item(0).M12 = m[1][2];
+            node.filters.item(0).M21 = m[2][1];
+            node.filters.item(0).M22 = m[2][2];
+            node.filters.item(0).enabled = true;
         },
 
         /* **************************
