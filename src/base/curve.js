@@ -701,8 +701,15 @@ define([
          */
         _insertPoint: function (pnt) {
             var lastReal = !isNaN(this._lastCrds[1] + this._lastCrds[2]),     // The last point was real
-                newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]);        // New point is real point
-
+                newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
+                cw = this.board.canvasWidth,
+                ch = this.board.canvasHeight,
+                off = 20;
+                
+            newReal = newReal && 
+                        (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
+                         pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
+                        
             /*
              * Prevents two consecutive NaNs or points wich are too close
              */
@@ -824,7 +831,7 @@ define([
 
         /**
          * Test if the function is undefined on an interval:
-         * If th interval borders a and b are undefined, 20 random values
+         * If the interval borders a and b are undefined, 20 random values
          * are tested if they are undefined, too.
          * Only if all values are undefined, we declare the function to be undefined in this interval.
          * 
@@ -854,6 +861,21 @@ define([
             return true;
         },
             
+        _isOutside: function (a, ta, b, tb) {
+            var off = 10,
+                cw = this.board.canvasWidth,
+                ch = this.board.canvasHeight;
+
+            if ((a[1] < -off && b[1] < -off) ||
+                (a[2] < -off && b[2] < -off) ||
+                (a[1] > cw + off && b[1] > cw + off) ||
+                (a[2] > ch + off && b[2] > ch + off)) {
+                    
+                return true;
+            } else {
+                return false;
+            }
+        },
 
         /**
          * Recursive interval bisection algorithm for curve plotting. 
@@ -865,7 +887,7 @@ define([
          * @param {Number} tb Parameter which evaluates to b, i.e. [1, X(tb), Y(tb)] = b in screen coordinates
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @param {Number} delta If the distance of the bisection point at (ta + tb) / 2 from the point (a + b) / 2 is less then delta,
-         *                 the segement [a,b] is regarded as straight line.
+         *                 the segment [a,b] is regarded as straight line.
          * @returns {JXG.Curve} Reference to the curve object.
          */
         _plotRecursive: function (a, ta, b, tb, depth, delta) {
@@ -881,6 +903,10 @@ define([
 
             // Test if the function is undefined on an interval
             if (depth < this.nanLevel && this._isUndefined(a, ta, b, tb)) {
+                return this;
+            }
+
+            if (depth < this.nanLevel && this._isOutside(a, ta, b, tb)) {
                 return this;
             }
             
@@ -969,7 +995,7 @@ define([
 
             this.numberPoints = this.points.length;
 //var etime = new Date();            
-//console.log(this.name, this.numberPoints, etime.getTime() - stime.getTime());
+//console.log(this.name, this.numberPoints, etime.getTime() - stime.getTime(), this.board.updateQuality===this.board.BOARD_QUALITY_HIGH);
 
             return this;
         },
