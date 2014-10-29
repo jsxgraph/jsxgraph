@@ -2012,12 +2012,19 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     ci = pts[i].scrCoords;
                     cj = pts[j].scrCoords;
 
-                    if (isNaN(ci[1] + ci[2] + cj[1] + cj[2])) {
+                    if (isNaN(ci[1] + ci[2])) {
+                        return [NaN, i];
+                    }
+                    if (isNaN(cj[1] + cj[2])) {
                         return [NaN, j];
                     }
 
                     for (k = i + 1; k < j; k++) {
                         ck = pts[k].scrCoords;
+                        if (isNaN(ck[1] + ck[2])) {
+                            return [NaN, k];
+                        }
+
                         x0 = ck[1] - ci[1];
                         y0 = ck[2] - ci[2];
                         x1 = cj[1] - ci[1];
@@ -2066,11 +2073,22 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                  * @private
                  */
                 RDP = function (pts, i, j, eps, newPts) {
-                    var result = findSplit(pts, i, j);
+                    var result = findSplit(pts, i, j),
+                        k = result[1];
 
-                    if (result[0] > eps) {
-                        RDP(pts, i, result[1], eps, newPts);
-                        RDP(pts, result[1], j, eps, newPts);
+                    if (isNaN(result[0])) {
+                        RDP(pts, i, k - 1, eps, newPts);
+                        newPts.push(pts[k]);
+                        do {
+                            ++k;
+                        } while (k <= j && isNaN(pts[k].scrCoords[1] + pts[k].scrCoords[2]));
+                        if (k <= j) {
+                            newPts.push(pts[k]);
+                        }
+                        RDP(pts, k + 1, j, eps, newPts);
+                    } else if (result[0] > eps) {
+                        RDP(pts, i, k, eps, newPts);
+                        RDP(pts, k, j, eps, newPts);
                     } else {
                         newPts.push(pts[j]);
                     }
