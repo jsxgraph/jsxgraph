@@ -945,7 +945,9 @@ define([
             setAngle: 'setAngle',
             free: 'free'
         });
-
+        
+        el.parents = [points[0].id, points[1].id, points[2].id]; // Important: This overwrites the parents order in underlying sector
+        
         return el;
     };
 
