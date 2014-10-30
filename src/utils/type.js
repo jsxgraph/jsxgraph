@@ -294,7 +294,7 @@ define([
             var i, j, 
                 len, 
                 lenAttr = 0, 
-                points = [], attr, p;
+                points = [], attr, p, val;
 
             if (!this.isArray(parents)) {
                 parents = [parents];
@@ -303,58 +303,30 @@ define([
             if (JXG.exists(attrArray)) {
                 lenAttr = attrArray.length;
             }
+            if (lenAttr == 0) {
+                attr = this.copyAttributes(attributes, board.options, attrClass);
+            }
             
-            /*
-             * Parent is one function returning coordinates of all points
-             */
-             /*
-            if ((len === 1) && (this.isFunction(parents[0])) && (parents[0]().length > 1)) {
-                p = parents[0]();
-                len = p.length;
-                for (i = 0; i < len; ++i) {
-                    if (!this.isArray(p[i])) {
-                        return false;
-                    }
-                }
-            
-                for (i = 0; i < len; ++i) {
+            for (i = 0; i < len; ++i) {
+                if (lenAttr > 0) {
                     j = Math.min(i, lenAttr - 1);
                     attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
-                    points.push(
-                        board.create('point', [
-                            (function(j) { return function() { return parents[0]()[j]; }; })(i) 
-                            ], attr)
-                        );
                 }
-                
-            } else {
-            */
-                for (i = 0; i < len; ++i) {
-                    if (this.isArray(parents[i]) && parents[i].length > 1) {
-                        j = Math.min(i, lenAttr - 1);
-                        if (lenAttr == 0) {
-                            attr = this.copyAttributes(attributes, board.options, attrClass);
-                        } else {
-                            attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
-                        }
-                        points.push(board.create('point', parents[i], attr));
-                    } else if (this.isFunction(parents[i]) && (parents[i])().length > 1) {
-                        j = Math.min(i, lenAttr - 1);
-                        if (lenAttr == 0) {
-                            attr = this.copyAttributes(attributes, board.options, attrClass);
-                        } else {
-                            attr = this.copyAttributes(attributes, board.options, attrClass, attrArray[j]);
-                        }
+                if (this.isArray(parents[i]) && parents[i].length > 1) {
+                    points.push(board.create('point', parents[i], attr));
+                } else if (this.isFunction(parents[i])) {
+                    val = parents[i]();
+                    if (this.isArray(val) && (val.length > 1)) {
                         points.push(board.create('point', [parents[i]], attr));
-                    } else {
-                        points.push(board.select(parents[i]));
                     }
-                
-                    if (!this.isPoint(points[i])) {
-                        return false;
-                    }
+                } else {
+                    points.push(board.select(parents[i]));
                 }
-            //}   
+            
+                if (!this.isPoint(points[i])) {
+                    return false;
+                }
+            }
             
             return points; 
         },
