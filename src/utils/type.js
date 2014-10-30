@@ -154,6 +154,8 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPointType: function (v, board) {
+            var val;
+            
             v = board.select(v);
             if (typeof v === 'object') {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
@@ -161,8 +163,11 @@ define([
             if (this.isArray(v)) {
                 return true;
             }
-            if (this.isFunction(v) || (v)().length > 1) {
-                return true;
+            if (this.isFunction(v)) {
+                val = v();
+                if (this.isArray(val) && val.length > 1) {
+                    return true;
+                } 
             }
             
             return false;
