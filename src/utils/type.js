@@ -288,7 +288,24 @@ define([
         },
 
         /**
-         *
+         *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or function returning coordinate arrays
+         *  free points with these coordinates are created. 
+         * 
+         * @param {JXG.Board} board Board object
+         * @param {Array} parents Array containing parent elements for a new object. This array may contain
+         *    <ul>
+         *      <li> {@link JXG.Point} objects
+         *      <li> {@link JXG.Element#name} of {@link JXG.Point} objects
+         *      <li> {@link JXG.Element#id} of {@link JXG.Point} objects
+         *      <li> Coordinates of points given as array of numbers of length two or three, e.g. [2, 3].
+         *      <li> Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
+         *           [function(){ return 2; }, function(){ return 3; }]
+         *      <li> Function returning coordinates, e.g. function() { return [2, 3]; }
+         *    </ul>  
+         *  In the last three cases a new point will be created.
+         * @param {String} attrClass Main attribute class of newly created points, see {@link JXG@copyAttributes}
+         * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
+         * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
         providePoints: function(board, parents, attributes, attrClass, attrArray) {
             var i, j, 

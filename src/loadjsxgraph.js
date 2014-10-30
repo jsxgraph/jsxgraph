@@ -38,7 +38,7 @@
 
 /**
  * JSXGraph namespace. Holds all classes, objects, functions and variables belonging to JSXGraph
- * to reduce the risc of interfering with other JavaScript code.
+ * to reduce the risk of interfering with other JavaScript code.
  * @namespace
  */
 var JXG = {},
