@@ -656,7 +656,6 @@ define([
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'angle');
-
         //  If empty, create a new name
         text = attr.name;
         if (!Type.exists(text) || text === '') {
