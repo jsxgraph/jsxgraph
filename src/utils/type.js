@@ -157,9 +157,6 @@ define([
             var val;
             
             v = board.select(v);
-            if (typeof v === 'object') {
-                return (v.elementClass === Const.OBJECT_CLASS_POINT);
-            }
             if (this.isArray(v)) {
                 return true;
             }
@@ -169,8 +166,7 @@ define([
                     return true;
                 } 
             }
-            
-            return false;
+            return this.isPoint(v);
         },
 
         /**

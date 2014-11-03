@@ -772,13 +772,13 @@ define([
                     throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
                 }
             } else {
-                p[i] = parents[i];
+                p.push(parents[i]);
             }
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'circle');
 
-        if (parents.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
+        if (p.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
             // Point/Point
             el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
         } else if ((Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) && Type.isPoint(p[1])) {
