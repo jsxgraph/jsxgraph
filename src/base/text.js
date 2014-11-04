@@ -49,8 +49,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'parser/geonext', 'math/statistics', 'utils/env', 'utils/type'
-], function (JXG, Const, Coords, GeometryElement, GeonextParser, Statistics, Env, Type) {
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'parser/geonext', 'math/statistics', 'utils/env', 'utils/type', 'math/math'
+], function (JXG, Const, Coords, GeometryElement, GeonextParser, Statistics, Env, Type, Mat) {
 
     "use strict";
 
@@ -183,6 +183,8 @@ define([
          * Test if the the screen coordinates (x,y) are in a small stripe
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
+         * If dragarea is set to 'all' (default), tests if the the screen 
+	     * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
          * @return {Boolean}
@@ -190,6 +192,16 @@ define([
         hasPoint: function (x, y) {
             var lft, rt, top, bot,
                 r = this.board.options.precision.hasPoint;
+
+            if (this.transformations.length > 0) {
+                /**
+                 * Transform the mouse/touch coordinates
+                 * back to the original position of the text.
+                 */
+                lft = Mat.matVecMult(Mat.inverse(this.board.renderer.joinTransforms(this, this.transformations)), [1, x, y]);
+                x = lft[1];
+                y = lft[2];
+            }
 
             if (this.visProp.anchorx === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
