@@ -466,9 +466,10 @@ define([
                 bxminusax = p2c[1] - pmc[1],
                 byminusay = p2c[2] - pmc[2];
 
-            if (Type.exists(this.label)) {
-                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-            }
+            // If this is uncommented, the angle label can not be dragged
+            //if (Type.exists(this.label)) {
+            //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            //}
 
             if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
                 (this.visProp.selection === 'major' && angle < Math.PI)) {
@@ -1017,10 +1018,11 @@ define([
         el.getLabelAnchor = function () {
             var vec, dx = 12, dy = 12,
                 A, B, r, d, a2, co, si, mat;
-
-            if (Type.exists(this.label)) {
-                this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-            }
+            
+            // If this is uncommented, the angle label can not be dragged
+            //if (Type.exists(this.label)) {
+            //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            //}
 
             if (Type.exists(this.label.visProp.fontSize)) {
                 dx = this.label.visProp.fontSize;
