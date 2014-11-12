@@ -471,7 +471,7 @@ define([
             }
 
             if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
-                    (this.visProp.selection === 'major' && angle < Math.PI)) {
+                (this.visProp.selection === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -613,7 +613,6 @@ define([
      * })();
      * </script><pre>
      */
-
     JXG.createMinorSector = function (board, parents, attributes) {
         attributes.selection = 'minor';
         return JXG.createSector(board, parents, attributes);
@@ -1077,6 +1076,37 @@ define([
 
     JXG.registerElement('angle', JXG.createAngle);
 
+    /**
+     * @class A non-reflex angle is the acute or obtuse instance of an angle. 
+     * It is defined by a center, one point that
+     * defines the radius, and a third point that defines the angle of the sector.
+     * @pseudo
+     * @name Angle
+     * @augments Sector
+     * @constructor
+     * @type Sector
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
+     * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+     * @example
+     * // Create a non-reflex angle out of three free points
+     * var p1 = board.create('point', [5.0, 3.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [1.5, 5.0]),
+     *
+     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     * </pre><div id="d0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('d0ab6d6b-63a7-48b2-8749-b02bb5e744f9', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [5.0, 3.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [1.5, 5.0]),
+     *
+     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     */
     JXG.createNonreflexAngle = function (board, parents, attributes) {
         attributes.selection = 'minor';
         return JXG.createAngle(board, parents, attributes);
@@ -1084,6 +1114,37 @@ define([
 
     JXG.registerElement('nonreflexangle', JXG.createNonreflexAngle);
 
+    /**
+     * @class A reflex angle is the neither acute nor obtuse instance of an angle. 
+     * It is defined by a center, one point that
+     * defines the radius, and a third point that defines the angle of the sector.
+     * @pseudo
+     * @name Angle
+     * @augments Sector
+     * @constructor
+     * @type Sector
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
+     * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+     * @example
+     * // Create a non-reflex angle out of three free points
+     * var p1 = board.create('point', [5.0, 3.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [1.5, 5.0]),
+     *
+     *     a = board.create('reflexangle', [p1, p2, p3]);
+     * </pre><div id="f2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('f2a577f2-553d-4f9f-a895-2d6d4b8c60e8', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *     p1 = board.create('point', [5.0, 3.0]),
+     *     p2 = board.create('point', [1.0, 0.5]),
+     *     p3 = board.create('point', [1.5, 5.0]),
+     *
+     *     a = board.create('reflexangle', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     */
     JXG.createReflexAngle = function (board, parents, attributes) {
         attributes.selection = 'major';
         return JXG.createAngle(board, parents, attributes);
