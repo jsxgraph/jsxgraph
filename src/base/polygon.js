@@ -600,7 +600,7 @@ define([
         },
 
         /**
-         * Moves the line by the difference of two coordinates.
+         * Moves the polygon by the difference of two coordinates.
          * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units

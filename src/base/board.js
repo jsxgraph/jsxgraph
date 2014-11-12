@@ -1222,6 +1222,10 @@ define([
                 for (i = 0; i < len; i++) {
                     xy.push(obj.vertices[i].coords.usrCoords);
                 }
+            } else if (obj.type === Const.OBJECT_TYPE_SECTOR) {
+                xy.push(obj.point1.coords.usrCoords);
+                xy.push(obj.point2.coords.usrCoords);
+                xy.push(obj.point3.coords.usrCoords);
             } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {

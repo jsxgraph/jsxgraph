@@ -440,7 +440,7 @@ define([
         };
 
         el.hasPoint = function (x, y) {
-            if (this.visProp.highlightonsector) {
+            if (this.visProp.highlightonsector || this.visProp.hasinnerpoints) {
                 return this.hasPointSector(x, y);
             }
 
@@ -509,6 +509,31 @@ define([
         el.getRadius = function () {
             return this.Radius();
         };
+
+        /**
+         * Moves the sector by the difference of two coordinates.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates in screen/user units
+         * @param {Array} oldcoords previous coordinates in screen/user units
+         * @returns {JXG.Curve} this element
+         */
+        if (type === '3points') {
+            el.setPositionDirectly = function (method, coords, oldcoords) {
+                var dc, t, i, len,
+                    c = new Coords(method, coords, this.board),
+                    oldc = new Coords(method, oldcoords, this.board);
+
+                if (!el.point1.draggable() || !el.point2.draggable() || !el.point3.draggable()) {
+                        return this;
+                }
+
+                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
+                t = this.board.create('transform', dc.slice(1), {type: 'translate'});
+                t.applyOnce([el.point1, el.point2, el.point3]);
+    
+                return this;
+            };
+        }
 
         el.prepareUpdate().update();
 
