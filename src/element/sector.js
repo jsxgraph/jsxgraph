@@ -320,12 +320,19 @@ define([
                 var ar, det, p0c, p1c, p2c,
                     A = this.point2,
                     B = this.point1,
-                    C = this.point3;
+                    C = this.point3,
+                    phi, sgn = 1;
 
                 if (!A.isReal || !B.isReal || !C.isReal) {
                     this.dataX = [NaN];
                     this.dataY = [NaN];
                     return;
+                }
+
+                phi = Geometry.rad(A, B, C);
+                if ((this.visProp.type === 'minor' && phi > Math.PI) ||
+                    (this.visProp.type === 'major' && phi < Math.PI)) {
+                    sgn = -1;
                 }
 
                 // This is true for circumCircleSectors. In that case there is
@@ -346,7 +353,7 @@ define([
                 B = B.coords.usrCoords;
                 C = C.coords.usrCoords;
 
-                ar = Geometry.bezierArc(A, B, C, true, 1);
+                ar = Geometry.bezierArc(A, B, C, true, sgn);
 
                 this.dataX = ar[0];
                 this.dataY = ar[1];
@@ -411,12 +418,21 @@ define([
                 checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
+                alpha, beta,
                 has = (dist < r);
 
             if (has) {
-                angle = Geometry.rad(this.point2, this.point1, checkPoint.usrCoords.slice(1));
+                angle = Geometry.rad(this.radiuspoint, this.center, checkPoint.usrCoords.slice(1));
+                alpha = 0.0;
+                beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
+                if ((this.visProp.type === 'minor' && beta > Math.PI) ||
+                        (this.visProp.type === 'major' && beta < Math.PI)) {
+                    alpha = beta;
+                    beta = 2 * Math.PI;
+                }
+                //if (angle > Geometry.rad(this.point2, this.point1, this.point3)) {
+                if (angle < alpha || angle > beta) {
                     has = false;
                 }
             }
@@ -452,6 +468,11 @@ define([
 
             if (Type.exists(this.label)) {
                 this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            }
+
+            if ((this.visProp.type === 'minor' && angle > Math.PI) ||
+                    (this.visProp.type === 'major' && angle < Math.PI)) {
+                angle = -(2 * Math.PI - angle);
             }
 
             coords = new Coords(Const.COORDS_BY_USER, [
@@ -560,6 +581,84 @@ define([
     };
 
     JXG.registerElement('circumcirclesector', JXG.createCircumcircleSector);
+
+    /**
+     * @class A minor sector is a sector of a circle having measure less than or equal to
+     * 180 degrees (pi radians). It is defined by a center, one point that
+     * defines the radius, and a third point that defines the angle of the sector.
+     * @pseudo
+     * @name MinorSector
+     * @augments Curve
+     * @constructor
+     * @type JXG.Curve
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Minor sector is a sector of a circle around p1 having measure less than or equal to
+     * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+     * @example
+     * // Create sector out of three free points
+     * var p1 = board.create('point', [2.0, 2.0]);
+     * var p2 = board.create('point', [1.0, 0.5]);
+     * var p3 = board.create('point', [3.5, 1.0]);
+     *
+     * var a = board.create('minorsector', [p1, p2, p3]);
+     * </pre><div id="af27ddcc-265f-428f-90dd-d31ace945800" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('af27ddcc-265f-428f-90dd-d31ace945800', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *       p1 = board.create('point', [2.0, 2.0]),
+     *       p2 = board.create('point', [1.0, 0.5]),
+     *       p3 = board.create('point', [3.5, 1.0]),
+     *
+     *       a = board.create('minorsector', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     */
+
+    JXG.createMinorSector = function (board, parents, attributes) {
+        attributes.type = 'minor';
+        return JXG.createSector(board, parents, attributes);
+    };
+
+    JXG.registerElement('minorsector', JXG.createMinorSector);
+
+    /**
+     * @class A major sector is a sector of a circle having measure greater than or equal to
+     * 180 degrees (pi radians). It is defined by a center, one point that
+     * defines the radius, and a third point that defines the angle of the sector.
+     * @pseudo
+     * @name MajorSector
+     * @augments Curve
+     * @constructor
+     * @type JXG.Curve
+     * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
+     * @param {JXG.Point_JXG.Point_JXG.Point} p1,p2,p3 . Major sector is a sector of a circle around p1 having measure greater than or equal to
+     * 180 degrees (pi radians) and starts at p2. The radius is determined by p2, the angle by p3.
+     * @example
+     * // Create an arc out of three free points
+     * var p1 = board.create('point', [2.0, 2.0]);
+     * var p2 = board.create('point', [1.0, 0.5]);
+     * var p3 = board.create('point', [3.5, 1.0]);
+     *
+     * var a = board.create('majorsector', [p1, p2, p3]);
+     * </pre><div id="83c6561f-7561-4047-b98d-036248a00932" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *   var board = JXG.JSXGraph.initBoard('83c6561f-7561-4047-b98d-036248a00932', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *       p1 = board.create('point', [2.0, 2.0]),
+     *       p2 = board.create('point', [1.0, 0.5]),
+     *       p3 = board.create('point', [3.5, 1.0]),
+     *
+     *       a = board.create('majorsector', [p1, p2, p3]);
+     * })();
+     * </script><pre>
+     */
+    JXG.createMajorSector = function (board, parents, attributes) {
+        attributes.type = 'major';
+        return JXG.createSector(board, parents, attributes);
+    };
+
+    JXG.registerElement('majorsector', JXG.createMajorSector);
+
 
     /**
      * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}

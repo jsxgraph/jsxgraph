@@ -520,10 +520,10 @@ define([
      * var p3 = board.create('point', [3.5, 1.0]);
      *
      * var a = board.create('arc', [p1, p2, p3]);
-     * </pre><div id="af27ddcc-265f-428f-90dd-d31ace945800" style="width: 300px; height: 300px;"></div>
+     * </pre><div id="64ba7ca2-8728-45f3-96e5-3c7a4414de2f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('af27ddcc-265f-428f-90dd-d31ace945800', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('64ba7ca2-8728-45f3-96e5-3c7a4414de2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),
@@ -545,7 +545,7 @@ define([
      * 180 degrees (pi radians). It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the arc.
      * @pseudo
-     * @name MinorArc
+     * @name MajorArc
      * @augments Curve
      * @constructor
      * @type JXG.Curve
@@ -558,11 +558,11 @@ define([
      * var p2 = board.create('point', [1.0, 0.5]);
      * var p3 = board.create('point', [3.5, 1.0]);
      *
-     * var a = board.create('arc', [p1, p2, p3]);
-     * </pre><div id="83c6561f-7561-4047-b98d-036248a00932" style="width: 300px; height: 300px;"></div>
+     * var a = board.create('minorarc', [p1, p2, p3]);
+     * </pre><div id="17a10d38-5629-40a4-b150-f41806edee9f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('83c6561f-7561-4047-b98d-036248a00932', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     *   var board = JXG.JSXGraph.initBoard('17a10d38-5629-40a4-b150-f41806edee9f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *       p1 = board.create('point', [2.0, 2.0]),
      *       p2 = board.create('point', [1.0, 0.5]),
      *       p3 = board.create('point', [3.5, 1.0]),

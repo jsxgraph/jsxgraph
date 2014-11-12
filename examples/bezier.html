@@ -14,16 +14,19 @@
    <script type="text/javascript">
     /* <![CDATA[ */
 
-        var board, i, p, col;
+        var board, i, p, col, nseq;
         board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-4,4,4,-4], keepaspectratio:true, axis:true});
+        
+        nseq = 2;
         p = [];
-        for (i=0;i<2*3+1;i++) {
+        for (i=0;i<nseq*3+1;i++) {
             if (i%3==0) {
                 col = 'red';
             } else {
                 col = 'blue';
             }
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
+            p[i].isDraggable = true;
         }
 /*        
         bezier = [function(t) {
@@ -50,7 +53,7 @@
                     }, 0, function() {return Math.floor(p.length/3);}];
 */                    
         var c = board.createElement('curve', JXG.Math.Numerics.bezier(p),{strokeColor:'blue', name:"curve", strokeWidth:5, lastArrow:true}); 
-
+/*
         for (i=0;i<2*3;i++) {
             if (i%3==2) {
                 col = 'yellow';
@@ -60,7 +63,7 @@
             p.push(board.createElement('point',[Math.random()*8-4,Math.random()*8-4],{strokeColor:col,fillColor:col}));
             board.update();
         }
-        
+*/        
   /* ]]> */
   </script>
 </body>
