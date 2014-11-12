@@ -57,7 +57,49 @@ define([
         };
 
     /**
-     * [[x,y], [w px, h px], [range]
+     * @class This element is used to provide a constructor for special texts containing a form checkbox element.
+     * 
+     * @pseudo
+     * @description
+     * @name Checkbox
+     * @augments JXG.GeometryElement
+     * @constructor
+     * @type JXG.Text
+     *
+     * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
+     *                     <p>
+     *                     x and y are the coordinates of the lower left corner of the text box. 
+     *                      The position of the text is fixed,
+     *                     x and y are numbers. The position is variable if x or y are functions.
+     *                     <p>
+     *                     The label of the input element may be given  as string.
+     *
+     * @example
+     *   // Create a checkbox element at position [0,3].
+     *   var checkbox = board.create('checkbox', [0, 3, 'Change Y'], {});
+     *   var p = board.create('point', [
+     *       function(){ return 0.5;}, // X-coordinate
+     *       function() {
+     *           y = 0.5;
+     *           if (checkbox.Value()) {
+     *               y += 0.5;
+     *           }
+     *           return y;
+     *       }]);
+     * </pre><div id="0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var t1_board = JXG.JSXGraph.initBoard('0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var checkbox = t1_board.create('checkbox', [0, 3, 'Change Y'], {});
+     *   var p = t1_board.create('point', [
+     *       function(){ return 0.5;}, // X-coordinate
+     *       function() {
+     *           y = 0.5;
+     *           if (checkbox.Value()) {
+     *               y += 0.5;
+     *           }
+     *           return y;
+     *       }]);
+     * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
         var t, par,
@@ -66,7 +108,7 @@ define([
         if (parents.length !==3) {
             //throw new Error("JSXGraph: Can't create checkbox with parent types '" +
             //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-            //    "\nPossible parents are: [[x,y], start]");
+            //    "\nPossible parents are: [[x,y], label]");
         }
 
         par = [parents[0], parents[1],
@@ -94,14 +136,11 @@ define([
         };
 
         t.update = function() {
-            this._value = this.rendNodeCheckbox.checked;
+            if (this.needsUpdate) {
+                this._value = this.rendNodeCheckbox.checked;
+            }
             return this;
         };
-
-        /*t.prepareUpdate = function () {
-            this.needsUpdate = true;
-            return this;
-        }*/
 
         Env.addEvent(t.rendNodeCheckbox, 'change', priv.CheckboxChangeEventHandler, t);
 

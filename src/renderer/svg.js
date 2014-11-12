@@ -622,8 +622,8 @@ define([
                 symbc = ' C ',
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                pStr = '',
-                isNotPlot = (el.visProp.curvetype !== 'plot');
+                pStr = '';
+                // isNotPlot = (el.visProp.curvetype !== 'plot');
 
             if (el.numberPoints <= 0) {
                 return '';
@@ -632,10 +632,13 @@ define([
             len = Math.min(el.points.length, el.numberPoints);
 
             if (el.bezierDegree === 1) {
-                if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                /*
+                if (isNotPlot && el.visProp.rdpsmoothing) {
+                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
+                    el.numberPoints = el.points.length;
                 }
-
+                */
+                
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
@@ -691,7 +694,7 @@ define([
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-                el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -969,7 +972,7 @@ define([
 
                 node = el.rendNode;
 
-                if (el.type === Const.OBJECT_TYPE_TEXT) {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (el.visProp.display === 'html') {
                         node.style.color = c;
                         node.style.opacity = oo;

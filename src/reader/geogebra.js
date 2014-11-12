@@ -1698,6 +1698,9 @@
                         if (name === Data.getAttribute("label")) {
                             return Data;
                         }
+                        if (name === Data.getAttribute("exp")) {
+                            return this.getElement(Data.getAttribute("label"));
+                        }
                     }
                 }
             }
@@ -1733,7 +1736,7 @@
             // } else
 
             if (!JXG.exists(this.ggbElements[name]) || this.ggbElements[name] === '') {
-                input = this.getElement(name);
+                input = this.getElement(name) || this.getElement(name, true);
                 this.ggbElements[name] = this.writeElement(input);
             }
 
@@ -1862,9 +1865,14 @@
 
             grid = (evSettings.getAttribute("grid") === "true") ? this.board.create('grid') : null;
 
-            if (evSettings.getAttribute("axes") && evSettings.getAttribute("axes") === "true") {
-                this.ggbElements.xAxis = this.board.create('axis', [[0, 0], [1, 0]], {strokeColor: 'black', minorTicks: 0});
-                this.ggbElements.yAxis = this.board.create('axis', [[0, 0], [0, 1]], {strokeColor: 'black', minorTicks: 0});
+            if (evSettings.getAttribute("axes")) {
+                if(evSettings.getAttribute("axes") === "true") {
+                    this.ggbElements.xAxis = this.board.create('axis', [[0, 0], [1, 0]], {strokeColor: 'transparent', minorTicks: 0});
+                    this.ggbElements.yAxis = this.board.create('axis', [[0, 0], [0, 1]], {strokeColor: 'black', minorTicks: 0});
+                } else {
+                    this.ggbElements.xAxis = this.board.create('axis', [[0, 0], [1, 0]], {strokeColor: 'transparent', ticks: {drawLabels: false}});
+                    this.ggbElements.yAxis = this.board.create('axis', [[0, 0], [0, 1]], {strokeColor: 'transparent', ticks: {drawLabels: false}});
+                }
             }
         },
 

@@ -96,6 +96,8 @@ define(['jxg'], function (JXG) {
         OBJECT_TYPE_TANGENT: 25,
         OBJECT_TYPE_HTMLSLIDER: 26,
         OBJECT_TYPE_CHECKBOX: 27,
+        OBJECT_TYPE_INPUT: 28,
+        OBJECT_TYPE_BUTTON: 29,
 
         // object classes
         OBJECT_CLASS_POINT: 1,
@@ -104,6 +106,7 @@ define(['jxg'], function (JXG) {
         OBJECT_CLASS_CURVE: 4,
         OBJECT_CLASS_AREA: 5,
         OBJECT_CLASS_OTHER: 6,
+        OBJECT_CLASS_TEXT: 7,
 
         // SketchReader constants
         GENTYPE_ABC: 1, // unused

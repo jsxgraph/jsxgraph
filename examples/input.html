@@ -1,0 +1,42 @@
+<html>
+<head>
+   <title>JSXGraph example</title>
+   <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
+   <script type="text/javascript" src="../distrib/prototype.js"></script>
+   <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+</head>
+<body>
+  <h2>Input example</h2>
+  <div id="jxgbox" class="jxgbox" style="width:700px; height:500px;"></div>
+  <div id="debug" style="display:none;"></div>
+   <script type="text/javascript">
+    /* <![CDATA[ */
+
+        board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[-5,8,8,-5], axis:true});
+        b1axisx = board.create('axis', [[0,0], [1,0]], {});
+        b1axisy = board.create('axis', [[0,0], [0,1]], {});
+
+        var input = board.create('input', [-4, 7, 'sin(x)*x', 'f(x)='], {});
+        var f = board.jc.snippet(input.Value(), true, 'x', false);
+        var graph = board.create('functiongraph',[f,
+                function() {
+                  var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
+                  return c.usrCoords[1];
+                },
+                function() {
+                  var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[board.canvasWidth,0],board);
+                  return c.usrCoords[1];
+                }
+              ]);
+
+        board.create('text', [1, 6.7, '<button onclick="updateGraph()">Update graph</button>']);
+
+        var updateGraph = function() {
+            graph.Y = board.jc.snippet(input.Value(), true, 'x', false);
+            graph.updateCurve();
+            board.update();
+        }
+  /* ]]> */
+  </script>
+</body>
+</html>

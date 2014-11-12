@@ -397,7 +397,7 @@ define([
         }
     };
 
-    // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interpret them.
+    // JessieScript/JessieCode startup: Search for script tags of type text/jessiescript and interprete them.
     if (Env.isBrowser && typeof window === 'object' && typeof document === 'object') {
         Env.addEvent(window, 'load', function () {
             var type, i, j, div, id, board, width, height, bbox, axis, grid, code,

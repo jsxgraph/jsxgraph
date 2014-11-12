@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -572,7 +572,7 @@ define([
                         animateColor(this.visProp[p], hash[r], p);
                         break;
                     case 'size':
-                        if (this.elementClass !== Const.OBJECT_CLASS_POINT) {
+                        if (!Type.isPoint(this)) {
                             break;
                         }
                         animateFloat(this.visProp[p], hash[r], p, true);
@@ -792,7 +792,7 @@ define([
                             this.label.visProp.strokecolor = value;
                             this.board.renderer.setObjectStrokeColor(this.label, value, opacity);
                         }
-                        if (this.type === Const.OBJECT_TYPE_TEXT) {
+                        if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
                             this.visProp.strokecolor = value;
                             this.visProp.strokeopacity = opacity;
                             this.board.renderer.setObjectStrokeColor(this, this.visProp.strokecolor, this.visProp.strokeopacity);
@@ -815,7 +815,7 @@ define([
                         }
                         break;
                     case 'face':
-                        if (this.elementClass === Const.OBJECT_CLASS_POINT) {
+                        if (Type.isPoint(this)) {
                             this.visProp.face = value;
                             this.board.renderer.changePointStyle(this);
                         }
@@ -868,7 +868,7 @@ define([
                         }
                         break;
                     case 'rotate':
-                        if ((this.type === Const.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
+                        if ((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
                                 this.type === Const.OBJECT_TYPE_IMAGE) {
                             this.addRotation(value);
                         }
@@ -1190,7 +1190,7 @@ define([
             var tOffInv, tOff, tS, tSInv, tRot,
                 that = this;
 
-            if (((this.type === Const.OBJECT_TYPE_TEXT && this.visProp.display === 'internal') ||
+            if (((this.elementClass === Const.OBJECT_CLASS_TEXT && this.visProp.display === 'internal') ||
                     this.type === Const.OBJECT_TYPE_IMAGE) && angle !== 0) {
 
                 tOffInv = this.board.create('transform', [

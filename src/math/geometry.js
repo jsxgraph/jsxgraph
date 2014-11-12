@@ -2229,8 +2229,6 @@ define([
 
                 newCoordsObj = new Coords(Const.COORDS_BY_USER, newCoords, board);
             } else {   // 'parameter', 'polar', 'functiongraph'
-
-                // Function to minimize
                 minfunc = function (t) {
                     var dx = x - curve.X(t),
                         dy = y - curve.Y(t);

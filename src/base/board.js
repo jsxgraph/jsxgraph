@@ -567,7 +567,7 @@ define([
                 return '';
             }
 
-            if (object.elementClass === Const.OBJECT_CLASS_POINT) {
+            if (Type.isPoint(object)) {
                 // points have capital letters
                 possibleNames = ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -581,14 +581,14 @@ define([
                     'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
             }
 
-            if (object.elementClass !== Const.OBJECT_CLASS_POINT &&
+            if (!Type.isPoint(object) &&
                     object.elementClass !== Const.OBJECT_CLASS_LINE &&
                     object.type !== Const.OBJECT_TYPE_ANGLE) {
                 if (object.type === Const.OBJECT_TYPE_POLYGON) {
                     pre = 'P_{';
                 } else if (object.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                     pre = 'k_{';
-                } else if (object.type === Const.OBJECT_TYPE_TEXT) {
+                } else if (object.elementClass === Const.OBJECT_CLASS_TEXT) {
                     pre = 't_{';
                 } else {
                     pre = 's_{';
@@ -882,8 +882,8 @@ define([
                 }
 
                 if (((this.geonextCompatibilityMode &&
-                        (pEl.elementClass === Const.OBJECT_CLASS_POINT ||
-                          pEl.type === Const.OBJECT_TYPE_TEXT)) ||
+                        (Type.isPoint(pEl) ||
+                          pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
@@ -893,11 +893,11 @@ define([
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
                             (pEl.visProp.layer === dragEl.visProp.layer && pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime())) {
                         // If an element and its label have the focus
-                        // simultaneously, the element is taken
-                        // this only works if we assume that every browser runs
+                        // simultaneously, the element is taken.
+                        // This only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!Type.exists(dragEl.label) || pEl !== dragEl.label) {
+                        if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect[0] = dragEl;
 
@@ -1222,7 +1222,7 @@ define([
                 for (i = 0; i < len; i++) {
                     xy.push(obj.vertices[i].coords.usrCoords);
                 }
-            } else if (obj.elementClass === Const.OBJECT_CLASS_POINT || obj.type === Const.OBJECT_TYPE_GLIDER) {
+            } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
             // TODO
@@ -1928,7 +1928,7 @@ define([
                         obj = elements[elements.length - 1];
 
                         if (Type.isPoint(obj) ||
-                                obj.type === Const.OBJECT_TYPE_TEXT ||
+                                obj.elementClass === Const.OBJECT_CLASS_TEXT ||
                                 obj.type === Const.OBJECT_TYPE_TICKS ||
                                 obj.type === Const.OBJECT_TYPE_IMAGE) {
                             // it's a point, so it's single touch, so we just push it to our touches
@@ -2397,7 +2397,7 @@ define([
             if (!el.visProp.showinfobox) {
                 return this;
             }
-            if (el.elementClass === Const.OBJECT_CLASS_POINT) {
+            if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
 

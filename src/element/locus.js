@@ -1,5 +1,5 @@
 /*
- Copyright 2008-2013
+ Copyright 2008-2014
  Matthias Ehmann,
  Michael Gerhaeuser,
  Carsten Miller,
@@ -98,7 +98,7 @@ define([
     JXG.createLocus = function (board, parents, attributes) {
         var c, p;
 
-        if (Type.isArray(parents) && parents.length === 1 && parents[0].elementClass === Const.OBJECT_CLASS_POINT) {
+        if (Type.isArray(parents) && parents.length === 1 && Type.isPoint(parents[0])) {
             p = parents[0];
         } else {
             throw new Error("JSXGraph: Can't create locus with parent of type other than point." +

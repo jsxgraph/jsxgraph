@@ -92,6 +92,16 @@ define([
             showClearTraces: false,
 
             keepAspectRatio: false,
+            
+            /**
+             * If set true and 
+             * hasPoint() is true for both an element and it's label, 
+             * the element (and not the label) is taken as drag element.
+             * 
+             * If set false and hasPoint() is true for both an element and it's label, 
+             * the label is taken (if it is on a higher layer than the element)
+             */
+            ignoreLabels: true,
 
             /**
              * Supply the document object.
@@ -447,6 +457,15 @@ define([
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * @type function
+             * @name JXG.Ticks#generateLabelText
+             */
+            generateLabelText: null,
+
+            /**
+             * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
+             * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * @deprecated Use {@link JGX.Options@generateLabelValue}
              * @type function
              * @name JXG.Ticks#generateLabelValue
              */
@@ -1715,14 +1734,15 @@ define([
             },
 
             /**
-             *  Points for regular polygons
+             *  Points for polygons
              */
             vertices: {
                 layer: 9,
-                withLabel: true,
+                withLabel: false,
+                name: '',
                 strokeColor: '#ff0000',
                 fillColor: '#ff0000',
-                fixed: true
+                fixed: false
             },
 
             label: {
@@ -1742,6 +1762,62 @@ define([
                 withLabel: false
             }
             /**#@-*/
+        },
+
+        /* special regular polygon options */
+        regularpolygon: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+             * @see JXG.GeometryElement#hasPoint
+             * @name JXG.Polygon#hasInnerPoints
+             * @type Boolean
+             * @default false
+             */
+            hasInnerPoints: false,
+            fillColor: '#00FF00',
+            highlightFillColor: '#00FF00',
+            fillOpacity: 0.3,
+            highlightFillOpacity: 0.3,
+
+            /**
+             * Is the polygon bordered by lines?
+             * @type Boolean
+             * @name JXG.Polygon#withLines
+             * @default true
+             */
+            withLines: true,
+
+            /**#@-*/
+
+            borders: {
+                withLabel: false,
+                strokeWidth: 1,
+                highlightStrokeWidth: 1,
+                // Polygon layer + 1
+                layer: 5,
+                label: {
+                    position: 'top'
+                }
+            },
+
+            /**
+             *  Points for regular polygons
+             */
+            vertices: {
+                layer: 9,
+                withLabel: true,
+                strokeColor: '#ff0000',
+                fillColor: '#ff0000',
+                fixed: false
+            },
+
+            label: {
+                offset: [0, 0]
+            }
         },
 
         /* special options for riemann sums */
@@ -2219,6 +2295,23 @@ define([
             /**#@-*/
         },
 
+        /* special input options */
+        input: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
+        },
+
+        /* special button options */
+        button: {
+            /**#@+
+             * @visprop
+             */
+
+            /**#@-*/
+        },
 
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties

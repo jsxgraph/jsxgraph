@@ -718,26 +718,46 @@ define([
      * @constructor
      * @type JXG.Circle
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, but the radius can be given
+     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius The center must be given as a {@link JXG.Point}, see {@link JXG.providePoints}, but the radius can be given
      * as a number (which will create a circle with a fixed radius), another {@link JXG.Point}, a {@link JXG.Line} (the distance of start and end point of the
      * line will determine the radius), or another {@link JXG.Circle}.
      * @example
      * // Create a circle providing two points
-     * var p1 = board.create('point', [2.0, 2.0]);
-     * var p2 = board.create('point', [2.0, 0.0]);
-     * var c1 = board.create('circle', [p1, p2]);
+     * var p1 = board.create('point', [2.0, 2.0]),
+     *     p2 = board.create('point', [2.0, 0.0]),
+     *     c1 = board.create('circle', [p1, p2]);
      *
      * // Create another circle using the above circle
-     * var p3 = board.create('point', [3.0, 2.0]);
-     * var c2 = board.create('circle', [p3, c1]);
+     * var p3 = board.create('point', [3.0, 2.0]),
+     *     c2 = board.create('circle', [p3, c1]);
      * </pre><div id="5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
+     * (function() {
      *   var cex1_board = JXG.JSXGraph.initBoard('5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var cex1_p1 = cex1_board.create('point', [2.0, 2.0]);
-     *   var cex1_p2 = cex1_board.create('point', [2.0, 0.0]);
-     *   var cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]);
-     *   var cex1_p3 = cex1_board.create('point', [3.0, 2.0]);
-     *   var cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
+     *       cex1_p1 = cex1_board.create('point', [2.0, 2.0]),
+     *       cex1_p2 = cex1_board.create('point', [2.0, 0.0]),
+     *       cex1_c1 = cex1_board.create('circle', [cex1_p1, cex1_p2]),
+     *       cex1_p3 = cex1_board.create('point', [3.0, 2.0]),
+     *       cex1_c2 = cex1_board.create('circle', [cex1_p3, cex1_c1]);
+     * })();
+     * </script><pre>
+     * @example
+     * // Create a circle providing two points
+     * var p1 = board.create('point', [2.0, 2.0]),
+     *     c1 = board.create('circle', [p1, 3]);
+     *
+     * // Create another circle using the above circle
+     * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
+     * </pre><div id="54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     * (function() {
+     * var cex1_board = JXG.JSXGraph.initBoard('54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     * var p1 = board.create('point', [2.0, 2.0]);
+     * var c1 = board.create('circle', [p1, 3]);
+     *
+     * // Create another circle using the above circle
+     * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
+     * })();
      * </script><pre>
      */
     JXG.createCircle = function (board, parents, attributes) {
@@ -746,22 +766,19 @@ define([
 
         p = [];
         for (i = 0; i < parents.length; i++) {
-            // Point
-            if (Type.isPoint(parents[i])) {
-                p[i] = parents[i];
-            // Coordinates
-            } else if (Type.isArray(parents[i]) && parents[i].length > 1) {
-                attr = Type.copyAttributes(attributes, board.options, 'circle', 'center');
-                p[i] = board.create('point', parents[i], attr);
-            // Something else (number, function, string)
+            if (Type.isPointType(parents[i], board)) {
+                p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
+                if (p[p.length - 1] === false) {
+                    throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');
+                }
             } else {
-                p[i] = parents[i];
+                p.push(parents[i]);
             }
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'circle');
 
-        if (parents.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
+        if (p.length === 2 && Type.isPoint(p[0]) && Type.isPoint(p[1])) {
             // Point/Point
             el = new JXG.Circle(board, 'twoPoints', p[0], p[1], attr);
         } else if ((Type.isNumber(p[0]) || Type.isFunction(p[0]) || Type.isString(p[0])) && Type.isPoint(p[1])) {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -102,7 +102,7 @@ define([
             } else if (Type.isPoint(parents[i])) {
                 F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
                 F[i] = parents[i]();
             // focus i given by point name
             } else if (Type.isString(parents[i])) {
@@ -127,7 +127,7 @@ define([
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[2] === 'function') && (Type.isPoint(parents[2]()) )) {
                 C = parents[2]();
             // focus i given by point name
             } else if (Type.isString(parents[2])) {
@@ -316,7 +316,7 @@ define([
             } else if (Type.isPoint(parents[i])) {
                 F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
                 F[i] = parents[i]();
             // focus i given by point name
             } else if (Type.isString(parents[i])) {
@@ -341,7 +341,7 @@ define([
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (parents[2]().elementClass === Const.OBJECT_CLASS_POINT)) {
+            } else if ((typeof parents[2] === 'function') && (Type.isPoint(parents[2]()))) {
                 C = parents[2]();
             // focus i given by point name
             } else if (Type.isString(parents[2])) {
@@ -500,7 +500,7 @@ define([
         } else if (Type.isPoint(parents[0])) {
             F1 = board.select(parents[0]);
         // given by function
-        } else if ((typeof parents[0] === 'function') && (parents[0]().elementClass === Const.OBJECT_CLASS_POINT)) {
+        } else if ((typeof parents[0] === 'function') && (Type.isPoint(parents[0]()) )) {
             F1 = parents[0]();
         // focus i given by point name
         } else if (Type.isString(parents[0])) {
@@ -691,7 +691,7 @@ define([
                 } else if (Type.isPoint(parents[i])) {
                     points[i] = board.select(parents[i]);
                 // given by function
-                } else if ((typeof parents[i] === 'function') && (parents[i]().elementClass === Const.OBJECT_CLASS_POINT)) {
+                } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
                     points[i] = parents[i]();
                 // point i given by point name
                 } else if (Type.isString(parents[i])) {

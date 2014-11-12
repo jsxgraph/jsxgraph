@@ -815,7 +815,7 @@ define([
         /**
          * Multiplication of transformations without updating. That means, at that point it is expected that the
          * matrices contain numbers only. First, the origin in user coords is translated to <tt>(0,0)</tt> in screen
-         * coords. Then, the stretch factors are divided out. After the transformations in user coords, the  stretch
+         * coords. Then, the stretch factors are divided out. After the transformations in user coords, the stretch
          * factors are multiplied in again, and the origin in user coords is translated back to its position. This
          * method does not have to be implemented in a new renderer.
          * @param {JXG.GeometryElement} element A JSXGraph element. We only need its board property.
@@ -825,12 +825,13 @@ define([
          */
         joinTransforms: function (element, transformations) {
             var i,
-                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
                 ox = element.board.origin.scrCoords[1],
                 oy = element.board.origin.scrCoords[2],
                 ux = element.board.unitX,
                 uy = element.board.unitY,
                 // Translate to 0,0 in screen coords
+                /*
+                m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
                 mpre1 =  [[1,   0, 0],
                     [-ox, 1, 0],
                     [-oy, 0, 1]],
@@ -846,15 +847,24 @@ define([
                 mpost1 = [[1,  0, 0],
                     [ox, 1, 0],
                     [oy, 0, 1]],
-                len = transformations.length;
+                */
+                len = transformations.length,
+                // Translate to 0,0 in screen coords and then scale
+                m = [[1,        0,       0], 
+                     [-ox / ux, 1 / ux,  0], 
+                     [ oy / uy, 0, -1 / uy]];
 
             for (i = 0; i < len; i++) {
-                m = Mat.matMatMult(mpre1, m);
-                m = Mat.matMatMult(mpre2, m);
+                //m = Mat.matMatMult(mpre1, m);
+                //m = Mat.matMatMult(mpre2, m);
                 m = Mat.matMatMult(transformations[i].matrix, m);
-                m = Mat.matMatMult(mpost2, m);
-                m = Mat.matMatMult(mpost1, m);
+                //m = Mat.matMatMult(mpost2, m);
+                //m = Mat.matMatMult(mpost1, m);
             }
+            // Scale back and then translate back
+            m = Mat.matMatMult([[1,   0, 0], 
+                                [ox, ux, 0], 
+                                [oy,  0, -uy]], m);
             return m;
         },
 
@@ -1164,7 +1174,7 @@ define([
                             element.borders[i].visProp.highlightstrokeopacity);
                     }
                 } else {
-                    if (element.type === Const.OBJECT_TYPE_TEXT) {
+                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(element, true);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, true);
@@ -1198,7 +1208,7 @@ define([
                             element.borders[i].visProp.strokeopacity);
                     }
                 } else {
-                    if (element.type === Const.OBJECT_TYPE_TEXT) {
+                    if (element.elementClass === Const.OBJECT_CLASS_TEXT) {
                         this.updateTextStyle(element, false);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, false);

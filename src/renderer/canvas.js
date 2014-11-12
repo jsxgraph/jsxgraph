@@ -663,7 +663,7 @@ define([
                     oo = o * rgbo[1];
                 }
                 node = el.rendNode;
-                if (el.type === Const.OBJECT_TYPE_TEXT && el.visProp.display === 'html') {
+                if (el.elementClass === Const.OBJECT_CLASS_TEXT && el.visProp.display === 'html') {
                     node.style.color = c;
                     node.style.opacity = oo;
                 }
@@ -826,7 +826,7 @@ define([
                 symbc = 'C',
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                isNotPlot = (el.visProp.curvetype !== 'plot'),
+                //isNotPlot = (el.visProp.curvetype !== 'plot'),
                 context = this.context;
 
             if (el.numberPoints <= 0) {
@@ -837,10 +837,12 @@ define([
             context.beginPath();
 
             if (el.bezierDegree === 1) {
+                /*
                 if (isNotPlot && el.board.options.curve.RDPsmoothing) {
-                    el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                    el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
                 }
-
+                */
+                
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 
@@ -910,7 +912,7 @@ define([
             }
 
             if (isNoPlot && el.board.options.curve.RDPsmoothing) {
-                el.points = Numerics.RamerDouglasPeuker(el.points, 0.5);
+                el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
             }
 
             len = Math.min(el.points.length, el.numberPoints);
@@ -1038,7 +1040,7 @@ define([
 
         // documented in AbstractRenderer
         highlight: function (obj) {
-            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, true);
             } else {
                 obj.board.prepareUpdate();
@@ -1051,7 +1053,7 @@ define([
 
         // documented in AbstractRenderer
         noHighlight: function (obj) {
-            if (obj.type === Const.OBJECT_TYPE_TEXT && obj.visProp.display === 'html') {
+            if (obj.elementClass === Const.OBJECT_CLASS_TEXT && obj.visProp.display === 'html') {
                 this.updateTextStyle(obj, false);
             } else {
                 obj.board.prepareUpdate();
