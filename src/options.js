@@ -338,7 +338,6 @@ define([
              */
             layer: 0,
 
-
             /**
              * Determines the elements border-style.
              * Possible values are:

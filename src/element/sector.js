@@ -777,7 +777,6 @@ define([
             el.free = function (val) {};
 
         } else {
-            a
             el = board.create('sector', [points[1], points[0], points[2]], attr);
             el.arc.visProp.priv = true;
 
