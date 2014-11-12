@@ -330,8 +330,8 @@ define([
                 }
 
                 phi = Geometry.rad(A, B, C);
-                if ((this.visProp.type === 'minor' && phi > Math.PI) ||
-                    (this.visProp.type === 'major' && phi < Math.PI)) {
+                if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
+                    (this.visProp.selection === 'major' && phi < Math.PI)) {
                     sgn = -1;
                 }
 
@@ -426,8 +426,8 @@ define([
                 alpha = 0.0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.type === 'minor' && beta > Math.PI) ||
-                        (this.visProp.type === 'major' && beta < Math.PI)) {
+                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
+                        (this.visProp.selection === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -470,8 +470,8 @@ define([
                 this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             }
 
-            if ((this.visProp.type === 'minor' && angle > Math.PI) ||
-                    (this.visProp.type === 'major' && angle < Math.PI)) {
+            if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
+                    (this.visProp.selection === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -615,7 +615,7 @@ define([
      */
 
     JXG.createMinorSector = function (board, parents, attributes) {
-        attributes.type = 'minor';
+        attributes.selection = 'minor';
         return JXG.createSector(board, parents, attributes);
     };
 
@@ -653,7 +653,7 @@ define([
      * </script><pre>
      */
     JXG.createMajorSector = function (board, parents, attributes) {
-        attributes.type = 'major';
+        attributes.selection = 'major';
         return JXG.createSector(board, parents, attributes);
     };
 
@@ -778,6 +778,7 @@ define([
             el.free = function (val) {};
 
         } else {
+            a
             el = board.create('sector', [points[1], points[0], points[2]], attr);
             el.arc.visProp.priv = true;
 
@@ -807,7 +808,14 @@ define([
                     C = this.point3,
                     r = this.Radius(),
                     d = B.Dist(A),
-                    ar;
+                    ar,
+                    phi, sgn = 1;
+
+                phi = Geometry.rad(A, B, C);
+                if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
+                    (this.visProp.selection === 'major' && phi < Math.PI)) {
+                    sgn = -1;
+                }
 
                 A = A.coords.usrCoords;
                 B = B.coords.usrCoords;
@@ -816,7 +824,7 @@ define([
                 A = [1, B[1] + (A[1] - B[1]) * r / d, B[2] + (A[2] - B[2]) * r / d];
                 C = [1, B[1] + (C[1] - B[1]) * r / d, B[2] + (C[2] - B[2]) * r / d];
 
-                ar = Geometry.bezierArc(A, B, C, true, 1);
+                ar = Geometry.bezierArc(A, B, C, true, sgn);
 
                 this.dataX = ar[0];
                 this.dataY = ar[1];
@@ -925,7 +933,12 @@ define([
             var type = this.visProp.type,
                 deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
 
-            if (Math.abs(deg - 90) < this.visProp.orthosensitivity + Mat.eps) {
+            if ((this.visProp.selection === 'minor' && deg > 180.0) ||
+                (this.visProp.selection === 'major' && deg < 180.0)) {
+                deg = 360.0 - deg;
+            }
+
+            if (Math.abs(deg - 90.0) < this.visProp.orthosensitivity + Mat.eps) {
                 type = this.visProp.orthotype;
             }
 
@@ -957,7 +970,8 @@ define([
          */
         attrsub = Type.copyAttributes(attributes, board.options, 'angle', 'dot');
         el.dot = board.create('point', [function () {
-            var A, B, r, d, a2, co, si, mat;
+            var A, B, r, d, a2, co, si, mat,
+                point1, point2, point3;
 
             if (Type.exists(el.dot) && !el.dot.visProp.visible) {
                 return [0, 0];
@@ -1051,9 +1065,28 @@ define([
 
     JXG.registerElement('angle', JXG.createAngle);
 
+    JXG.createNonreflexAngle = function (board, parents, attributes) {
+        attributes.selection = 'minor';
+        return JXG.createAngle(board, parents, attributes);
+    };
+
+    JXG.registerElement('nonreflexangle', JXG.createNonreflexAngle);
+
+    JXG.createReflexAngle = function (board, parents, attributes) {
+        attributes.selection = 'major';
+        return JXG.createAngle(board, parents, attributes);
+    };
+
+    JXG.registerElement('reflexangle', JXG.createReflexAngle);
+
+
     return {
         createSector: JXG.createSector,
         createCircumcircleSector: JXG.createCircumcircleSector,
-        createAngle: JXG.createAngle
+        createMinorSector: JXG.createMinorSector,
+        createMajorSector: JXG.createMajorSector,
+        createAngle: JXG.createAngle,
+        createReflexAngle: JXG.createReflexAngle,
+        createNonreflexAngle: JXG.createNonreflexAngle
     };
 });

@@ -163,8 +163,8 @@ define([
                 C = this.anglepoint;
 
             phi = Geometry.rad(A, B, C);
-            if ((this.visProp.type === 'minor' && phi > Math.PI) ||
-                (this.visProp.type === 'major' && phi < Math.PI)) {
+            if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
+                (this.visProp.selection === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -263,8 +263,8 @@ define([
                 alpha = 0.0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.type === 'minor' && beta > Math.PI) ||
-                        (this.visProp.type === 'major' && beta < Math.PI)) {
+                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
+                        (this.visProp.selection === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -297,8 +297,8 @@ define([
                 alpha = 0;
                 beta = Geometry.rad(this.radiuspoint, this.center, this.anglepoint);
 
-                if ((this.visProp.type === 'minor' && beta > Math.PI) ||
-                        (this.visProp.type === 'major' && beta < Math.PI)) {
+                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
+                        (this.visProp.selection === 'major' && beta < Math.PI)) {
                     alpha = beta;
                     beta = 2 * Math.PI;
                 }
@@ -330,8 +330,8 @@ define([
                 this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             }
 
-            if ((this.visProp.type === 'minor' && angle > Math.PI) ||
-                    (this.visProp.type === 'major' && angle < Math.PI)) {
+            if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
+                    (this.visProp.selection === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -534,7 +534,7 @@ define([
      */
 
     JXG.createMinorArc = function (board, parents, attributes) {
-        attributes.type = 'minor';
+        attributes.selection = 'minor';
         return JXG.createArc(board, parents, attributes);
     };
 
@@ -572,7 +572,7 @@ define([
      * </script><pre>
      */
     JXG.createMajorArc = function (board, parents, attributes) {
-        attributes.type = 'major';
+        attributes.selection = 'major';
         return JXG.createArc(board, parents, attributes);
     };
 
