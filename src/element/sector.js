@@ -981,7 +981,14 @@ define([
             B = el.point1.coords.usrCoords;
             r = el.Radius();
             d = Geometry.distance(A, B, 3);
-            a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
+            a2 = Geometry.rad(el.point2, el.point1, el.point3);
+
+            if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
+                (el.visProp.selection === 'major' && a2 < Math.PI)) {
+                a2 = -(2 * Math.PI - a2);
+            }
+            a2 *= 0.5;
+            
             co = Math.cos(a2);
             si = Math.sin(a2);
 
@@ -1028,7 +1035,12 @@ define([
             B = el.point1.coords.usrCoords;
             r = el.Radius();
             d = Geometry.distance(A, B, 3);
-            a2 = Geometry.rad(el.point2, el.point1, el.point3) * 0.5;
+            a2 = Geometry.rad(el.point2, el.point1, el.point3);
+            if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
+                (el.visProp.selection === 'major' && a2 < Math.PI)) {
+                a2 = -(2 * Math.PI - a2);
+            }
+            a2 *= 0.5;
             co = Math.cos(a2);
             si = Math.sin(a2);
 
