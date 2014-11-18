@@ -178,7 +178,7 @@ define([
                         } else {
                             delete this.objects[el];
                         }
-                        this.coords[obj.id] = {usrCoords: [obj.coords.usrCoords[0], obj.coords.usrCoords[1], obj.coords.usrCoords[2]]};
+                        this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
                     }
                 }
 
@@ -205,7 +205,7 @@ define([
             this.objects[object.id] = {
                 point: object
             };
-            this.coords[object.id] = {usrCoords: [object.coords.usrCoords[0], object.coords.usrCoords[1], object.coords.usrCoords[2]]};
+            this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
         },
 
         /**
