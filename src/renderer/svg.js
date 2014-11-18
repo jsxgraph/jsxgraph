@@ -126,7 +126,7 @@ define([
         this.filter.setAttributeNS(null, 'width', '300%');
         this.filter.setAttributeNS(null, 'height', '300%');
         this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
-
+        
         this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
         this.feOffset.setAttributeNS(null, 'result', 'offOut');
         this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
