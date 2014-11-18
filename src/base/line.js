@@ -702,6 +702,17 @@ define([
             dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
             t = this.board.create('transform', dc.slice(1), {type: 'translate'});
             t.applyOnce([this.point1, this.point2]);
+            
+            /*
+             * If - against the default configuration - defining gliders are marked as 
+             * draggable, then their position has to be updated now.
+             */
+            if (this.point1.type === Const.OBJECT_TYPE_GLIDER)  {
+                this.point1.updateGlider();
+            }
+            if (this.point2.type === Const.OBJECT_TYPE_GLIDER)  {
+                this.point2.updateGlider();
+            }
 
             return this;
         },

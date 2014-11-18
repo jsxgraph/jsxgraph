@@ -468,6 +468,8 @@ define([
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in screen coordinates
+                // should be replace by 
+                // Math.sqrt(deltas.x * deltas.x + deltas.y * deltas.y)
                 distScr = p1.coords.distance(
                     Const.COORDS_BY_SCREEN,
                     new Coords(Const.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltas.x, p1.coords.usrCoords[2] + deltas.y], this.board)
