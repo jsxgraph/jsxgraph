@@ -572,12 +572,16 @@ define([
 
             /*jslint bitwise: true*/
 
-            if (p === 0) {
-                n = ~n;
-                n = ~n;
-            } else {
-                n = n.toFixed(p);
-            }
+            /* 
+             * The performance gain of this bitwise trick is marginal and the behavior 
+             * is different from toFixed: toFixed rounds, the bitweise operation truncateds
+             */
+            //if (p === 0) {
+            //    n = ~n;
+            //    n = ~n;
+            //} else {
+            n = n.toFixed(p);
+            //}
 
             return n;
         },
