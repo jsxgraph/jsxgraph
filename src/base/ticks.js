@@ -112,9 +112,26 @@ define([
                 ticks = attributes.defaultdistance;
             }
 
-            this.ticksFunction = function () {
-                return ticks;
-            };
+            if (this.visProp.insertticks) {
+                this.ticksFunction = function () {
+                    var delta,
+                        b = this.getLowerAndUpperBounds(this.getZeroCoordinates()),
+                        dist = b.upper - b.lower;
+
+                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10 ));
+                    if (dist <= 6 * delta) {
+                        delta *= 0.5;
+                    }
+
+                    return delta;
+                };
+            } else {
+                // upto 0.99.1
+                this.ticksFunction = function () {
+                    return ticks;
+                };
+            }
+
             this.equidistant = true;
         }
 
@@ -364,7 +381,7 @@ define([
          * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
          *
          * @param  {JXG.Coords} coordsZero
-         * @return {Object}                contains the lower and upper bounds
+         * @return {Object}     contains the lower and upper bounds
          * @private
          */
         getLowerAndUpperBounds: function (coordsZero) {
@@ -480,7 +497,8 @@ define([
             // adjust ticks distance
             ticksDelta *= this.visProp.scale;
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas, bounds);
+                //ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas, bounds);
+                ticksDelta /= (this.visProp.minorticks + 1);
             } else if (!this.visProp.insertticks) {
                 ticksDelta /= (this.visProp.minorticks + 1);
             }
@@ -526,7 +544,7 @@ define([
                 // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
                 // if they're still too close together, they'll be expanded to a distance of 10 etc
                 factor = 5;
-
+console.log(distScr);
             while (distScr > 4 * this.minTicksDistance) {
                 f /= 10;
                 nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta * f;
@@ -542,6 +560,7 @@ define([
                 ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta * f;
                 distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
+console.log(f);
 
             return f;
         },
