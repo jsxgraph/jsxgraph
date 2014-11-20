@@ -126,12 +126,11 @@ define([
                     if (dist <= 6 * delta) {
                         delta *= 0.5;
                     }
+                    return delta;
                 } else {
                     // upto 0.99.1
                     return ticks;
                 }
-
-                return delta;
             };
 
             this.equidistant = true;
@@ -402,7 +401,9 @@ define([
                 dZeroPoint1, dZeroPoint2;
 
             // Adjust line limit points to be within the board
-            Geometry.calcLineDelimitingPoints(this.line, point1, point2);
+            // Wrong result for non-vertical/non-horizontal lines
+            //Geometry.calcLineDelimitingPoints(this.line, point1, point2); 
+            Geometry.calcStraight(this.line, point1, point2);   // The good old calcStraight is correct.
 
             // Calculate distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
