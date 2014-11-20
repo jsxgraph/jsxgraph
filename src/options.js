@@ -824,7 +824,7 @@ define([
                 drawLabels: true,
                 drawZero: false,
                 insertTicks: true,
-                minTicksDistance: 10,
+                minTicksDistance: 5,
                 minorHeight: 10,          // if <0: full width and height
                 majorHeight: -1,          // if <0: full width and height
                 tickEndings: [0, 1],

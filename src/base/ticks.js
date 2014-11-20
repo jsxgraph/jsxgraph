@@ -112,6 +112,10 @@ define([
                 ticks = attributes.defaultdistance;
             }
 
+            /*
+             * Ticks function:
+             * determines the distance (in user units) of two major ticks
+             */
             if (this.visProp.insertticks) {
                 this.ticksFunction = function () {
                     var delta,
@@ -120,7 +124,7 @@ define([
 
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10 ));
                     if (dist <= 6 * delta) {
-                    //    delta *= 0.5;
+                        delta *= 0.5;
                     }
 
                     return delta;
@@ -484,20 +488,13 @@ define([
                 p2 = this.line.point2,
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
-                // Distance between two major ticks in screen coordinates
-                // should be replace by 
-                // Math.sqrt(deltas.x * deltas.x + deltas.y * deltas.y)
-                distScr = p1.coords.distance(
-                    Const.COORDS_BY_SCREEN,
-                    new Coords(Const.COORDS_BY_USER, [p1.coords.usrCoords[1] + deltas.x, p1.coords.usrCoords[2] + deltas.y], this.board)
-                ),
                 // Distance between two major ticks in user coordinates
                 ticksDelta = (this.equidistant ? this.ticksFunction(1) : this.ticksDelta);
 
             // adjust ticks distance
             ticksDelta *= this.visProp.scale;
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                //ticksDelta *= this.adjustTickDistance(ticksDelta, distScr, coordsZero, deltas, bounds);
+                ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas, bounds);
                 ticksDelta /= (this.visProp.minorticks + 1);
             } else if (!this.visProp.insertticks) {
                 ticksDelta /= (this.visProp.minorticks + 1);
@@ -533,36 +530,33 @@ define([
          * distance between two ticks depending on {@link JXG.Ticks#minTicksDistance} value
          *
          * @param  {Number}     ticksDelta  distance between two major ticks in user coordinates
-         * @param  {Number}     distScr     distance between two major ticks in screen coordinates
          * @param  {JXG.Coords} coordsZero  coordinates of the point considered zero
-         * @param  {Object}     deltas      x and y distance between two major ticks
+         * @param  {Object}     deltas      x and y distance in pixel between two user units
+         * @param  {Object}     bounds      upper and lower bound of the tick positions in user units.
          * @private
          */
-        adjustTickDistance: function (ticksDelta, distScr, coordsZero, deltas, bounds) {
-            var nx, ny, f = 1,
-                // This factor is for enlarging ticksDelta and it switches between 5 and 2
-                // Hence, if two major ticks are too close together they'll be expanded to a distance of 5
-                // if they're still too close together, they'll be expanded to a distance of 10 etc
-                factor = 5;
-console.log(distScr);
-            while (distScr > 4 * this.minTicksDistance) {
-                f /= 10;
-                nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta * f;
-                ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta * f;
+        adjustTickDistance: function (ticksDelta, coordsZero, deltas, bounds) {
+            var nx, ny, 
+                distScr, dist,
+                sgn = 1;
+
+            nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
+            ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
+            distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
+            dist = bounds.upper - bounds.lower;
+            while (distScr / (this.visProp.minorticks + 1) < this.minTicksDistance) {
+                if (sgn == 1) { 
+                    ticksDelta *= 2;
+                } else {
+                    ticksDelta *= 5;
+                }
+                sgn *= -1;
+
+                nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
+                ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
                 distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             }
-
-            // If necessary, enlarge ticksDelta
-            while (distScr <= this.minTicksDistance) {
-                f *= factor;
-                factor = (factor === 5 ? 2 : 5);
-                nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta * f;
-                ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta * f;
-                distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
-            }
-console.log(f);
-
-            return f;
+            return ticksDelta;
         },
 
         /**
@@ -640,7 +634,7 @@ console.log(f);
         },
 
         /**
-         * Calculates the x and y distance between two major ticks
+         * Calculates the x and y distance in pixel between two units in user space.
          *
          * @return {Object}
          * @private
