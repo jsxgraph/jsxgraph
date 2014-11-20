@@ -116,25 +116,23 @@ define([
              * Ticks function:
              * determines the distance (in user units) of two major ticks
              */
-            if (this.visProp.insertticks) {
-                this.ticksFunction = function () {
-                    var delta,
-                        b = this.getLowerAndUpperBounds(this.getZeroCoordinates()),
-                        dist = b.upper - b.lower;
+            this.ticksFunction = function () {
+                var delta, b, dist;
 
+                if (this.visProp.insertticks) {
+                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates());
+                    dist = b.upper - b.lower;
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10 ));
                     if (dist <= 6 * delta) {
                         delta *= 0.5;
                     }
-
-                    return delta;
-                };
-            } else {
-                // upto 0.99.1
-                this.ticksFunction = function () {
+                } else {
+                    // upto 0.99.1
                     return ticks;
-                };
-            }
+                }
+
+                return delta;
+            };
 
             this.equidistant = true;
         }
