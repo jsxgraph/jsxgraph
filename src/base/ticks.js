@@ -120,7 +120,7 @@ define([
                 var delta, b, dist;
 
                 if (this.visProp.insertticks) {
-                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates());
+                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
                     dist = b.upper - b.lower;
                     delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10 ));
                     if (dist <= 6 * delta) {
@@ -382,10 +382,14 @@ define([
          * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
          *
          * @param  {JXG.Coords} coordsZero
+         * @return {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
+         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically 
+         *              generate ticks. The second case is for drawing of the ticks.
          * @return {Object}     contains the lower and upper bounds
+         *                     
          * @private
          */
-        getLowerAndUpperBounds: function (coordsZero) {
+        getLowerAndUpperBounds: function (coordsZero, type) {
             var lowerBound, upperBound,
                 // The line's defining points that will be adjusted to be within the board limits
                 point1 = new Coords(Const.COORDS_BY_USER, this.line.point1.coords.usrCoords, this.board),
@@ -401,9 +405,15 @@ define([
                 dZeroPoint1, dZeroPoint2;
 
             // Adjust line limit points to be within the board
-            // Wrong result for non-vertical/non-horizontal lines
-            //Geometry.calcLineDelimitingPoints(this.line, point1, point2); 
-            Geometry.calcStraight(this.line, point1, point2);   // The good old calcStraight is correct.
+            if (JXG.exists(type) || type === 'tickdistance') {
+                // The good old calcStraight is needed for determining the distance between major ticks.
+                // Here, only the visual area is of importance
+                Geometry.calcStraight(this.line, point1, point2);   
+            } else {
+                // This function projects the corners of the board to the line.
+                // This is important for diagonal lines with infinite tick lines.
+                Geometry.calcLineDelimitingPoints(this.line, point1, point2); 
+            }
 
             // Calculate distance from Zero to P1 and to P2
             dZeroPoint1 = this.getDistanceFromZero(coordsZero, point1);
@@ -480,7 +490,7 @@ define([
          * @private
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
-            var tickPosition,
+            var tickPosition, bounds,
                 // Point 1 of the line
                 p1 = this.line.point1,
                 // Point 2 of the line
@@ -493,7 +503,7 @@ define([
             // adjust ticks distance
             ticksDelta *= this.visProp.scale;
             if (this.visProp.insertticks && this.minTicksDistance > Mat.eps) {
-                ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas, bounds);
+                ticksDelta = this.adjustTickDistance(ticksDelta, coordsZero, deltas);
                 ticksDelta /= (this.visProp.minorticks + 1);
             } else if (!this.visProp.insertticks) {
                 ticksDelta /= (this.visProp.minorticks + 1);
@@ -534,11 +544,12 @@ define([
          * @param  {Object}     bounds      upper and lower bound of the tick positions in user units.
          * @private
          */
-        adjustTickDistance: function (ticksDelta, coordsZero, deltas, bounds) {
-            var nx, ny, 
+        adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
+            var nx, ny, bounds,
                 distScr, dist,
                 sgn = 1;
-
+            
+            bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
