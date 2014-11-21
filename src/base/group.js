@@ -59,10 +59,11 @@ define([
      * @param {String} name Not necessarily unique name, displayed on the board.  If null or an
      * empty string is given, an unique name will be generated.
      * @param {Array} objects Array of points to add to this group.
+     * @param {Object} attributes Defines the visual appearance of the group.
      * @constructor
      */
-    JXG.Group = function (board, id, name, objects) {
-        var number, objArray, i, obj;
+    JXG.Group = function (board, id, name, objects, attributes) {
+        var number, objArray, i, obj, att;
 
         this.board = board;
         this.objects = {};
@@ -88,6 +89,9 @@ define([
 
         this.coords = {};
 
+console.log(attributes);        
+        this.needsRegularUpdate = attributes['needsregularupdate']; 
+        
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -147,8 +151,12 @@ define([
          */
         //update: function (point, dX, dY) {
         update: function (fromParent) {
-            var el, trans, transObj, j,
+            var el, trans, transObjId, j,
                 obj = null;
+
+            if (!this.needsUpdate) {
+                return this;
+            }
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
@@ -159,20 +167,25 @@ define([
                             obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
                             obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
                         ];
-                        transObj = obj;
+                        transObjId = obj.id;
                         break;
                     }
                 }
             }
 
-            if (Type.exists(transObj)) {
+            if (Type.exists(transObjId)) {
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el)) {
                         if (Type.exists(this.board.objects[el])) {
 
                             obj = this.objects[el].point;
-                            if (obj.id !== transObj.id) {
-                                obj.coords.setCoordinates(Const.COORDS_BY_USER, [this.coords[el].usrCoords[1] + trans[0], this.coords[el].usrCoords[2] + trans[1]]);
+                            if (obj.id !== transObjId) {
+                                //obj.coords.setCoordinates(Const.COORDS_BY_USER, 
+                                //    [this.coords[el].usrCoords[1] + trans[0], 
+                                //     this.coords[el].usrCoords[2] + trans[1]]);
+                                obj.setPositionDirectly(Const.COORDS_BY_USER, 
+                                    [this.coords[el].usrCoords[1] + trans[0], 
+                                     this.coords[el].usrCoords[2] + trans[1]]);
                             }
                             //this.objects[el].point.prepareUpdate().update(false).updateRenderer();
                         } else {
@@ -267,7 +280,9 @@ define([
      * @returns {JXG.Group}
      */
     JXG.createGroup = function (board, parents, attributes) {
-        var i, g = new JXG.Group(board, attributes.id, attributes.name, parents);
+        var i, 
+            attr = Type.copyAttributes(attributes, board.options, 'group');
+            g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';
         g.parents = [];

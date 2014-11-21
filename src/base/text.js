@@ -140,10 +140,9 @@ define([
             if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
                 this.isDraggable = true;
             }
-            this.X = Type.createFunction(coords[0], this.board, null, true);
-            this.Y = Type.createFunction(coords[1], this.board, null, true);
-
-            this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
+            this.coords = new Coords(Const.COORDS_BY_USER, coords.slice(0, 2), this.board);
+            this.X = function() { return this.coords.usrCoords[1]; };
+            this.Y = function() { return this.coords.usrCoords[2]; };
         }
 
         this.Z = Type.createFunction(1, this.board, '');
@@ -494,6 +493,7 @@ define([
 
                 this.relativeCoords.setCoordinates(Const.COORDS_BY_SCREEN, [dx, dy]);
             } else {
+                /*
                 this.X = function () {
                     return x;
                 };
@@ -501,7 +501,7 @@ define([
                 this.Y = function () {
                     return y;
                 };
-
+                */
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
             }
 
@@ -525,23 +525,25 @@ define([
          * is called.
          */
         update: function () {
-            if (this.needsUpdate) {
-                if (!this.visProp.frozen) {
-                    this.updateCoords();
-                }
-
-                this.updateText();
-
-                if (this.visProp.display === 'internal') {
-                    this.plaintext = this.utf8_decode(this.plaintext);
-                }
-
-                this.checkForSizeUpdate();
-                if (this.needsSizeUpdate) {
-                    this.updateSize();
-                }
-                this.updateTransform();
+            if (!this.needsUpdate) {
+                return this;
             }
+            
+            if (!this.visProp.frozen) {
+                this.updateCoords();
+            }
+
+            this.updateText();
+
+            if (this.visProp.display === 'internal') {
+                this.plaintext = this.utf8_decode(this.plaintext);
+            }
+
+            this.checkForSizeUpdate();
+            if (this.needsSizeUpdate) {
+                this.updateSize();
+            }
+            this.updateTransform();
 
             return this;
         },
@@ -575,7 +577,7 @@ define([
          * Updates the coordinates of the text element.
          */
         updateCoords: function () {
-            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.X(), this.Y()]);
+            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.Z(), this.X(), this.Y()]);
         },
 
         /**
@@ -735,10 +737,15 @@ define([
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var dc, v,
-                c = new Coords(method, coords, this.board),
-                oldc = new Coords(method, oldcoords, this.board);
+                c, oldc;
 
+            c = new Coords(method, coords, this.board);
             if (this.relativeCoords) {
+                if (!JXG.exists(oldcoords)) {
+                    return this;
+                }
+                oldc = new Coords(method, oldcoords, this.board);
+                
                 if (this.visProp.islabel) {
                     dc = Statistics.subtract(c.scrCoords, oldc.scrCoords);
                     this.relativeCoords.scrCoords[1] += dc[1];
@@ -749,11 +756,18 @@ define([
                     this.relativeCoords.usrCoords[2] += dc[2];
                 }
             } else {
+                /*
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
                 v = [this.Z(), this.X(), this.Y()];
                 this.X = Type.createFunction(v[1] + dc[1], this.board, '');
                 this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
-
+                */
+                
+                this.coords.setCoordinates(method, coords);
+                //this.X = Type.createFunction(c.usrCoords[1], this.board, '');
+                //this.Y = Type.createFunction(c.usrCoords[2], this.board, '');
+                //this.Z = Type.createFunction(c.usrCoords[0], this.board, '');
+                
                 /*
                 * In case of snapToGrid===true, first the coordinates of
                 * the new position is set, then they are rounded to the grid.
@@ -761,10 +775,11 @@ define([
                 * becasue they are set again in updateCoords().
                 */
                 if (this.visProp.snaptogrid) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
+                    //this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
                     this.snapToGrid();
-                    this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
-                    this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
+                    //this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
+                    //this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
+                    //this.Z = Type.createFunction(this.coords.usrCoords[0], this.board, '');
                 }
             }
 

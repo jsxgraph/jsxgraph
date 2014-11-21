@@ -3234,6 +3234,14 @@ define([
                 pEl = this.objectsList[el];
                 pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
             }
+            
+            for (el in this.groups) {
+                if (this.groups.hasOwnProperty(el)) {
+                    pEl = this.groups[el];
+                    pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
+                }
+            }
+            
             return this;
         },
 

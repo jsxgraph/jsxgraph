@@ -1085,6 +1085,10 @@ define([
 
             /**#@-*/
         },
+        
+        group: {
+            needsRegularUpdate: true
+        },
 
         /* special html slider options */
         htmlslider: {
