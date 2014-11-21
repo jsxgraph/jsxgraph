@@ -292,6 +292,13 @@ define([
             this.type = type;
 
             /**
+             * Original type of the element at construction time. Used for removing glider property.
+             * @constant
+             * @type number
+             */
+            this._org_type = type;
+
+            /**
              * The element's class.
              * @constant
              * @type number

@@ -866,6 +866,15 @@ define([
             return a;
         },
 
+        copyPrototypeMethods: function(subObject, superObject, constructorName) {
+            var key;
+            
+            subObject.prototype[constructorName] = superObject.prototype.constructor;
+            for (key in superObject.prototype)  {
+                subObject.prototype[key] = superObject.prototype[key];
+            }
+        },
+
         /**
          * Converts a JavaScript object into a JSON string.
          * @param {Object} obj A JavaScript object, functions will be ignored.
