@@ -1155,7 +1155,17 @@ define([
              * @name JXG.Point#snapSizeY
              * @default 1
              */
-            snapSizeY: 1
+            snapSizeY: 1,
+            
+            /**
+             * List of attractor elements. If the distance of the image is less than
+             * attractorDistance the image is made to glider of this element.
+             * @type array
+             * @name JXG.Image#attractors
+             * @default empty
+             */
+            attractors: []
+            
             /**#@-*/
         },
 
@@ -2247,7 +2257,16 @@ define([
              * @name JXG.Point#snapSizeY
              * @default 1
              */
-            snapSizeY: 1
+            snapSizeY: 1,
+            
+            /**
+             * List of attractor elements. If the distance of the text is less than
+             * attractorDistance the text is made to glider of this element.
+             * @type array
+             * @name JXG.Text#attractors
+             * @default empty
+             */
+            attractors: []
 
             /**#@-*/
         },

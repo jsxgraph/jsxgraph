@@ -77,11 +77,7 @@ define([
      */
     JXG.Point = function (board, coordinates, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
-        this.coordsConstructor(coordinates, attributes);
-
-        if (!Type.exists(coordinates)) {
-            coordinates = [0, 0];
-        }
+        this.coordsConstructor(coordinates);
 
         this.elType = 'point';
 
@@ -216,6 +212,11 @@ define([
 
             this.needsUpdate = false;
             return this;
+        },
+
+        // documented in JXG.GeometryElement
+        bounds: function () {
+            return this.coords.usrCoords.slice(1).concat(this.coords.usrCoords.slice(1));
         },
 
         /**

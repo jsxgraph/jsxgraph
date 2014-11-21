@@ -74,78 +74,19 @@ define([
     JXG.Text = function (board, content, coords, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
-        var i, anchor;
+        this.element = this.board.select(attributes.anchor);
+        this.isDraggable = false;
+        this.coordsConstructor(coords, this.visProp.islabel);
 
         this.content = '';
         this.plaintext = '';
         this.plaintextOld = null;
         this.orgText = '';
 
-        this.isDraggable = false;
         this.needsSizeUpdate = false;
-
-        this.element = this.board.select(attributes.anchor);
 
         this.hiddenByParent = false;
 
-        /**
-         * Stores the groups of this point in an array of Group.
-         * @type array
-         * @see JXG.Group
-         * @private
-         */
-        this.group = [];
-
-        if (this.element) {
-            if (this.visProp.islabel) {
-                this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
-            } else {
-                this.relativeCoords = new Coords(Const.COORDS_BY_USER, [parseFloat(coords[0]), parseFloat(coords[1])], this.board);
-            }
-            this.element.addChild(this);
-
-            this.X = function () {
-                var sx, coords, anchor;
-
-                if (this.visProp.islabel) {
-                    sx =  parseFloat(this.visProp.offset[0]);
-                    anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
-
-                    return coords.usrCoords[1];
-                }
-
-                anchor = this.element.getTextAnchor();
-                return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
-            };
-
-            this.Y = function () {
-                var sy, coords, anchor;
-
-                if (this.visProp.islabel) {
-                    sy = -parseFloat(this.visProp.offset[1]);
-                    anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
-
-                    return coords.usrCoords[2];
-                }
-
-                anchor = this.element.getTextAnchor();
-                return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
-            };
-
-            this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
-            this.isDraggable = true;
-        } else {
-            if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
-                this.isDraggable = true;
-            }
-            this.coords = new Coords(Const.COORDS_BY_USER, coords.slice(0, 2), this.board);
-            this.X = function() { return this.coords.usrCoords[1]; };
-            this.Y = function() { return this.coords.usrCoords[2]; };
-        }
-
-        this.Z = Type.createFunction(1, this.board, '');
         this.size = [1.0, 1.0];
         this.id = this.board.setId(this, 'T');
 
@@ -167,7 +108,7 @@ define([
 
         this.methodMap = Type.deepCopy(this.methodMap, {
             setText: 'setTextJessieCode',
-            free: 'free',
+            // free: 'free',
             move: 'setCoords'
         });
 
@@ -175,6 +116,7 @@ define([
     };
 
     JXG.Text.prototype = new GeometryElement();
+    Type.copyPrototypeMethods(JXG.Text, JXG.CoordsElement, 'coordsConstructor');
 
     JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         /**
@@ -512,12 +454,14 @@ define([
             return this;
         },
 
+        /*
         free: function () {
             this.X = Type.createFunction(this.X(), this.board, '');
             this.Y = Type.createFunction(this.Y(), this.board, '');
 
             this.isDraggable = true;
         },
+        */
 
         /**
          * Evaluates the text.
@@ -529,7 +473,7 @@ define([
                 return this;
             }
             
-            if (!this.visProp.frozen) {
+            if (!this.visProp.frozen && JXG.exists(this.element)) {
                 this.updateCoords();
             }
 
@@ -593,6 +537,7 @@ define([
             return this;
         },
 
+        /*
         updateTransform: function () {
             var i;
 
@@ -606,7 +551,8 @@ define([
 
             return this;
         },
-
+        */
+        
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
@@ -735,6 +681,7 @@ define([
          * @param {Array} oldcoords previous coordinates in screen/user units
          * @returns {JXG.Text} this element
          */
+/*         
         setPositionDirectly: function (method, coords, oldcoords) {
             var dc, v,
                 c, oldc;
@@ -756,44 +703,12 @@ define([
                     this.relativeCoords.usrCoords[2] += dc[2];
                 }
             } else {
-                /*
-                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
-                v = [this.Z(), this.X(), this.Y()];
-                this.X = Type.createFunction(v[1] + dc[1], this.board, '');
-                this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
-                */
-                
                 this.coords.setCoordinates(method, coords);
-                //this.X = Type.createFunction(c.usrCoords[1], this.board, '');
-                //this.Y = Type.createFunction(c.usrCoords[2], this.board, '');
-                //this.Z = Type.createFunction(c.usrCoords[0], this.board, '');
-                
-                /*
-                * In case of snapToGrid===true, first the coordinates of
-                * the new position is set, then they are rounded to the grid.
-                * The resulting coordinates are set as functions X(), Y(),
-                * becasue they are set again in updateCoords().
-                */
-                if (this.visProp.snaptogrid) {
-                    //this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
-                    this.snapToGrid();
-                    //this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
-                    //this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
-                    //this.Z = Type.createFunction(this.coords.usrCoords[0], this.board, '');
-                }
             }
 
             return this;
         },
-
-        /**
-         * Alias for {@link JXG.Element#handleSnapToGrid}
-         * @returns {JXG.Text} Reference to this element
-         */
-        snapToGrid: function () {
-            return this.handleSnapToGrid();
-        }
-
+*/
     });
 
     /**
@@ -845,7 +760,7 @@ define([
         // downwards compatibility
         attr.anchor = attr.parent || attr.anchor;
 
-        t = new JXG.Text(board, parents[parents.length - 1], parents, attr);
+        t = new JXG.Text(board, parents[parents.length - 1], parents.slice(0, -1), attr);
 
         if (typeof parents[parents.length - 1] !== 'function') {
             t.parents = parents;

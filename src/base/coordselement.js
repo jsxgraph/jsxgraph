@@ -47,37 +47,38 @@
  */
 
 /**
- * @fileoverview The geometry object Point is defined in this file. Point stores all
- * style and functional properties that are required to draw and move a point on
- * a board.
+ * @fileoverview The geometry object CoordsElement is defined in this file. 
+ * This object proveides the coordinate handling of points, images and texts. 
  */
 
 define([
-    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'base/coords', 'base/constants', 'base/element',
+    'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/coords', 'base/constants', 'base/element',
     'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Options, Mat, Geometry, Numerics, Coords, Const, GeometryElement, GeonextParser, Type, Transform) {
+], function (JXG, Options, Mat, Geometry, Numerics, Statistics, Coords, Const, GeometryElement, GeonextParser, Type, Transform) {
 
     "use strict";
 
     /**
-     * An element containg coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
+     * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
      * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
      * all kind of points like free points, gliders, and intersection points.
-     * @class Creates a new point object. Do not use this constructor to create a point. Use {@link JXG.Board#create} with
+     * @class Creates a new  object. Do not use this constructor to create a point. Use {@link JXG.Board#create} with
      * type {@link Point}, {@link Glider}, or {@link Intersection} instead.
      * @augments JXG.GeometryElement
-     * @param {string|JXG.Board} board The board the new point is drawn on.
      * @param {Array} coordinates An array with the affine user coordinates of the point.
-     * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point} and
      * {@link JXG.Options#elements}, and optional a name and a id.
-     * @see JXG.Board#generateName
-     * @see JXG.Board#addPoint
      */
-    JXG.CoordsElement = function (coordinates, attributes) {
+    JXG.CoordsElement = function (coordinates, isLabel) {
+        var i;
+        
         if (!Type.exists(coordinates)) {
-            coordinates = [0, 0];
+            coordinates = [1, 0, 0];
         }
 
+        for (i = 0; i < coordinates.length; ++i) {
+            coordinates[i] = parseFloat(coordinates[i]);
+        }
+        
         /**
          * Coordinates of the element.
          * @type JXG.Coords
@@ -158,6 +159,55 @@ define([
          * @private
          */
         this.group = [];
+
+        if (JXG.exists(this.element)) {
+            if (isLabel) {
+                this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
+            } else {
+                this.relativeCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
+            }
+            this.element.addChild(this);
+
+            this.X = function () {
+                var sx, coords, anchor;
+
+                if (this.visProp.islabel) {
+                    sx =  parseFloat(this.visProp.offset[0]);
+                    anchor = this.element.getLabelAnchor();
+                    coords = new Coords(Const.COORDS_BY_SCREEN, [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
+
+                    return coords.usrCoords[1];
+                }
+
+                anchor = this.element.getTextAnchor();
+                return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
+            };
+
+            this.Y = function () {
+                var sy, coords, anchor;
+
+                if (this.visProp.islabel) {
+                    sy = -parseFloat(this.visProp.offset[1]);
+                    anchor = this.element.getLabelAnchor();
+                    coords = new Coords(Const.COORDS_BY_SCREEN, [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
+
+                    return coords.usrCoords[2];
+                }
+
+                anchor = this.element.getTextAnchor();
+                return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
+            };
+
+            this.Z = Type.createFunction(1, this.board, '');
+
+            this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
+            this.isDraggable = true;
+        } else {
+            if (Type.isNumber(coordinates[0]) && Type.isNumber(coordinates[1])) {
+                this.isDraggable = true;
+            }
+        }
+        
     };
 
     JXG.extend(JXG.CoordsElement.prototype, /** @lends JXG.CoordsElement.prototype */ {
@@ -551,11 +601,6 @@ define([
             return this.coords.usrCoords[0];
         },
 
-        // documented in JXG.GeometryElement
-        bounds: function () {
-            return this.coords.usrCoords.slice(1).concat(this.coords.usrCoords.slice(1));
-        },
-
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
          * Here, function inlining seems to be worthwile  (for plotting).
@@ -708,9 +753,26 @@ define([
          * @returns {JXG.Point} this element
          */
         setPositionDirectly: function (method, coords) {
-            var i, dx, dy, dz, el, p,
+            var i, //dx, dy, dz, el, p,
+                c, dc,
                 oldCoords = this.coords,
                 newCoords;
+
+            if (this.relativeCoords) {
+                c = new Coords(method, coords, this.board);
+                if (this.visProp.islabel) {
+                    dc = Statistics.subtract(c.scrCoords, oldCoords.scrCoords);
+                    this.relativeCoords.scrCoords[1] += dc[1];
+                    this.relativeCoords.scrCoords[2] += dc[2];
+                } else {
+                    dc = Statistics.subtract(c.usrCoords, oldCoords.usrCoords);
+                    this.relativeCoords.usrCoords[1] += dc[1];
+                    this.relativeCoords.usrCoords[2] += dc[2];
+                }
+                
+                return this;
+            } 
+
 
             this.coords.setCoordinates(method, coords);
             this.handleSnapToGrid();
@@ -744,7 +806,7 @@ define([
                 this.updateGlider();
             }
 
-            return coords;
+            return this;
         },
 
         /**
