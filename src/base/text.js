@@ -259,6 +259,8 @@ define([
                     if (this.visProp.useasciimathml) {
                         // Convert via ASCIIMathML
                         this.content = "'`" + text + "`'";
+                    } else if (this.visProp.usemathjax) {
+                        this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
                         this.content = this.generateTerm(text);
