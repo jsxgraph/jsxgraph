@@ -114,14 +114,6 @@ define([
         },
 
         /**
-         * Dummy function for unconstrained points or gliders.
-         * @private
-         */
-        updateConstraint: function () {
-            return this;
-        },
-
-        /**
          * Updates the position of the point.
          */
         update: function (fromParent) {
@@ -153,9 +145,9 @@ define([
              * If point is a calculated point, call updateConstraint() to calculate new coords.
              * The second test is for dynamic axes.
              */
-            if (this.type === Const.OBJECT_TYPE_CAS || this.type === Const.OBJECT_TYPE_INTERSECTION || this.type === Const.OBJECT_TYPE_AXISPOINT) {
-                this.updateConstraint();
-            }
+            //if (this.type === Const.OBJECT_TYPE_CAS || this.type === Const.OBJECT_TYPE_INTERSECTION || this.type === Const.OBJECT_TYPE_AXISPOINT) {
+            this.updateConstraint();
+            //}
 
             this.updateTransform();
 

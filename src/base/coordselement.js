@@ -126,6 +126,14 @@ define([
          */
         this.needsUpdateFromParent = true;
         
+        /**
+         * Dummy function for unconstrained points or gliders.
+         * @private
+         */
+        this.updateConstraint = function() {
+            return this;
+        };
+        
         /*
          * Do we need this?
          */
@@ -168,7 +176,7 @@ define([
             }
             this.element.addChild(this);
 
-            this.X = function () {
+            this.Xeval = function () {
                 var sx, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -183,7 +191,7 @@ define([
                 return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
             };
 
-            this.Y = function () {
+            this.Yeval = function () {
                 var sy, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -198,7 +206,11 @@ define([
                 return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
             };
 
-            this.Z = Type.createFunction(1, this.board, '');
+            this.Zeval = Type.createFunction(1, this.board, '');
+
+            this.updateConstraint = function () {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+            };
 
             this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             this.isDraggable = true;
