@@ -176,7 +176,7 @@ define([
             }
             this.element.addChild(this);
 
-            this.Xeval = function () {
+            this.X = function () {
                 var sx, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -191,7 +191,7 @@ define([
                 return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
             };
 
-            this.Yeval = function () {
+            this.Y = function () {
                 var sy, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -206,11 +206,11 @@ define([
                 return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
             };
 
-            this.Zeval = Type.createFunction(1, this.board, '');
+            this.Z = Type.createFunction(1, this.board, '');
 
-            this.updateConstraint = function () {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
-            };
+            //this.updateConstraint = function () {
+            //    this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+            //};
 
             this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             this.isDraggable = true;
