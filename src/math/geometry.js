@@ -2063,8 +2063,9 @@ define([
             }
 
             v = Mat.crossProduct(v, point.coords.usrCoords);
-
-            return this.meetLineLine(v, line.stdform, 0, board);
+            
+            //return this.meetLineLine(v, line.stdform, 0, board);
+            return new Coords(Const.COORDS_BY_USER, Mat.crossProduct(v, line.stdform), board);
         },
 
         /**
