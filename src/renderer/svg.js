@@ -123,6 +123,13 @@ define([
          */
         this.filter = this.container.ownerDocument.createElementNS(this.svgNamespace, 'filter');
         this.filter.setAttributeNS(null, 'id', this.container.id + '_' + 'f1');
+        /*
+        this.filter.setAttributeNS(null, 'x', '-100%');
+        this.filter.setAttributeNS(null, 'y', '-100%');
+        this.filter.setAttributeNS(null, 'width', '400%');
+        this.filter.setAttributeNS(null, 'height', '400%');
+        //this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
+        */
         this.filter.setAttributeNS(null, 'width', '300%');
         this.filter.setAttributeNS(null, 'height', '300%');
         this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
