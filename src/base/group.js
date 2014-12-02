@@ -89,7 +89,6 @@ define([
 
         this.coords = {};
 
-console.log(attributes);        
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
         if (Type.isArray(objects)) {

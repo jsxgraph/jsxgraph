@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/math', 'options', 'parser/geonext', 'utils/event', 'utils/color', 'utils/type'
-], function (JXG, Const, Coords, Mat, Options, GeonextParser, EventEmitter, Color, Type) {
+    'jxg', 'base/constants', 'base/coords', 'math/math', 'math/statistics', 'options', 'parser/geonext', 'utils/event', 'utils/color', 'utils/type'
+], function (JXG, Const, Coords, Mat, Statistics, Options, GeonextParser, EventEmitter, Color, Type) {
 
     "use strict";
 
@@ -155,11 +155,17 @@ define([
         this.descendants = {};
 
         /**
-         * Elements on which this elements depends on are stored here.
+         * Elements on which this element depends on are stored here.
          * @type Object
          */
         this.ancestors = {};
 
+        /**
+         * Ids of elements on which this element depends directly are stored here.
+         * @type Object
+         */
+        this.parents = [];
+        
         /**
          * Stores variables for symbolic computations
          * @type Object
@@ -488,7 +494,7 @@ define([
         },
 
         /**
-         * Decides whether an element can be dragged. This is used in setPositionDirectly methods
+         * Decides whether an element can be dragged. This is used in {@link JXG.Element#setPositionDirectly} methods
          * where all parent elements are checked if they may be dragged, too.
          * @private
          * @return {boolean}
@@ -496,6 +502,81 @@ define([
         draggable: function () {
             return this.isDraggable && !this.visProp.fixed &&
                 !this.visProp.frozen && this.type !== Const.OBJECT_TYPE_GLIDER;
+        },
+
+        /**
+         * Translates the object by <tt>(x, y)</tt>.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords array of translation vector.
+         * @returns {JXG.Element} Reference to the element object.
+         */
+        setPosition: function (method, coords) {
+            var parents = [], el, i, len, 
+                t;
+
+            if (!JXG.exists(this.parents)) {
+                return this;
+            }
+            
+            len = this.parents.length;
+            for (i = 0; i < len; ++i) {
+                el = this.board.select(this.parents[i]);
+                if (//!Type.isPoint(el) ||
+                   !el.draggable()) {
+                    return this;
+                }
+                parents.push(el);
+            }
+                    
+            t = this.board.create('transform', coords.slice(1), {type: 'translate'});
+            t.applyOnce(parents);
+
+            // We distinguish two cases:
+            // 1) elements which depend on free elements, i.e. arcs and sectors
+            // 2) other elements
+            //
+            // In the first case we simply transform the parents elements
+            // In the second case we add a transform to the element.
+            //
+            if (len > 0) {
+                t.applyOnce(parents);
+            } else {
+                if (this.transformations.length > 0 &&
+                        this.transformations[this.transformations.length - 1].isNumericMatrix) {
+                    this.transformations[this.transformations.length - 1].melt(t);
+                } else {
+                    this.addTransform(t);
+                }
+            }
+            
+            /*
+             * If - against the default configuration - defining gliders are marked as 
+             * draggable, then their position has to be updated now.
+             */
+            for (i = 0; i < len; ++i) {
+                if (parents[i].type === Const.OBJECT_TYPE_GLIDER)  {
+                    parents[i].updateGlider();
+                }
+            }
+
+            return this;
+        },
+
+        /**
+         * Moves an by the difference of two coordinates.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates in screen/user units
+         * @param {Array} oldcoords previous coordinates in screen/user units
+         * @returns {JXG.Element} this element
+         */
+        setPositionDirectly: function (method, coords, oldcoords) {
+            var c = new Coords(method, coords, this.board, false),
+                oldc = new Coords(method, oldcoords, this.board, false),
+                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
+
+            this.setPosition(Const.COORDS_BY_USER, dc);
+
+            return this;
         },
 
         /**

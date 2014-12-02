@@ -1228,8 +1228,13 @@ define([
                 xy.push(obj.point3.coords.usrCoords);
             } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
-            //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
-            // TODO
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
+                if (JXG.exists(obj.parents)) {
+                    len = obj.parents.length;
+                    for (i = 0; i < len; i++) {
+                        xy.push(this.select(obj.parents[i]).coords.usrCoords);
+                    }
+                }
             } else {
                 try {
                     xy.push(obj.coords.usrCoords);
