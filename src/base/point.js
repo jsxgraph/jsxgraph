@@ -691,30 +691,16 @@ define([
 
         /**
          * Getter method for the distance to a second point, this is required for CAS-elements.
-         * Here, function inlining seems to be worthwile  (for plotting).
+         * Here, function inlining was worthwile (for plotting), but in newer generations of browsers
+         * this is no longer an issue.
          * @param {JXG.Point} point2 The point to which the distance shall be calculated.
          * @returns {Number} Distance in user coordinate to the given point
          */
         Dist: function (point2) {
-            var sum, f,
-                r = NaN,
-                c = point2.coords.usrCoords,
-                ucr = this.coords.usrCoords;
-
             if (this.isReal && point2.isReal) {
-                if (c[0] === 0 || ucr[0] === 0) {
-                    r = Number.POSITIVE_INFINITY;
-                } else {
-                    f = ucr[1] - c[1];
-                    sum = f * f;
-                    f = ucr[2] - c[2];
-                    sum += f * f;
-                }
-
-                r = Math.sqrt(sum);
+                return this.coords.distance(Const.COORDS_BY_USER, point2.coords);
             }
-
-            return r;
+            return NaN;
         },
 
         /**

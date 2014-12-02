@@ -364,10 +364,17 @@ define([
          * @private
          */
         updateStdform: function () {
+            var r = this.stdform[5];
+            
             this.stdform[3] = 0.5;
             this.stdform[4] = this.Radius();
             this.stdform[1] = -this.center.coords.usrCoords[1];
             this.stdform[2] = -this.center.coords.usrCoords[2];
+            if (r === Infinity || isNaN(r)) {
+                this.stdform[0] = Type.exists(this.point2) ? -(
+                    this.stdform[1] * this.point2.coords.usrCoords[1] +
+                    this.stdform[2] * this.point2.coords.usrCoords[2]) : 0;
+            }            
             this.normalize();
         },
 
@@ -446,11 +453,12 @@ define([
             }
 
             if (this.method === 'twoPoints') {
-                if (Geometry.distance(this.point2.coords.usrCoords, [0, 0, 0]) === 0 ||
-                        Geometry.distance(this.center.coords.usrCoords, [0, 0, 0]) === 0) {
+                if (Type.cmpArrays(this.point2.coords.usrCoords, [0, 0, 0]) ||
+                    Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])) {
+                    
                     return NaN;
                 }
-
+                
                 return this.center.Dist(this.point2);
             }
 
