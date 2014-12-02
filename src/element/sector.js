@@ -179,9 +179,12 @@ define([
                 if (parents[2].length === 2) {
                     parents[2] = [1].concat(parents[2]);
                 }
+                /*
                 v = [0, el.line1.stdform[1], el.line1.stdform[2]];
                 v = Mat.crossProduct(v, parents[2]);
                 v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
+                */
+                v = Geometry.projectPointToLine({coords: {usrCoords: parents[2]}}, el.line1, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.direction1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
             } else {
@@ -193,9 +196,12 @@ define([
                 if (parents[3].length === 2) {
                     parents[3] = [1].concat(parents[3]);
                 }
+                /*
                 v = [0, el.line2.stdform[1], el.line2.stdform[2]];
                 v = Mat.crossProduct(v, parents[3]);
                 v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
+                */
+                v = Geometry.projectPointToLine({coords: {usrCoords: parents[3]}}, el.line2, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.direction2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
             } else {

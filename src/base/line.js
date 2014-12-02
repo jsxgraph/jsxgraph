@@ -752,9 +752,12 @@ define([
                     // if no valid snap sizes are available, don't change the coords.
                     if (sX > 0 && sY > 0) {
                         // projectCoordsToLine
+                        /*
                         v = [0, this.stdform[1], this.stdform[2]];
                         v = Mat.crossProduct(v, c1.usrCoords);
                         c2 = Geometry.meetLineLine(v, this.stdform, 0, this.board);
+                        */
+                        c2 = Geometry.projectPointToLine({coords: c1}, this, this.board);
 
                         dc = Statistics.subtract([1, Math.round(x / sX) * sX, Math.round(y / sY) * sY], c2.usrCoords);
                         t = this.board.create('transform', dc.slice(1), {type: 'translate'});
