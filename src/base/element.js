@@ -403,6 +403,33 @@ define([
         },
 
         /**
+         * Adds ids of elements to the array this.parents.
+         * @param {Array} parents Array of elements or ids of elements.
+         * Alternatively, one can give a list of objects as parameters.
+         * @returns {JXG.Object} reference to the object itself.
+         **/
+        addParents: function(parents) {
+            var i, len, par;
+
+            if (Type.isArray(parents)) {
+                par = parents;
+            } else {
+                par = arguments;
+            }
+                
+            len = par.length;
+            for (i = 0; i < len; ++i) {
+                if (Type.isId(par[i])) {
+                    this.parents.push(par[i]);
+                } else if (Type.exists(par[i].id)) {
+                    this.parents.push(par[i].id);
+                }
+            }
+                        
+            this.parents = Type.uniqueArray(this.parents);
+        },
+        
+        /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
          */
