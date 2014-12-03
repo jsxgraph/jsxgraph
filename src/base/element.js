@@ -532,8 +532,10 @@ define([
         },
 
         /**
-         * Translates the object by <tt>(x, y)</tt>.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
+         * translated, e.g. a circle constructed by a center point and a point on the circle line.
+         * @param {Number} method The type of coordinates used here. 
+         * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
          * @returns {JXG.Element} Reference to the element object.
          */
@@ -555,8 +557,11 @@ define([
                 parents.push(el);
             }
                     
-            t = this.board.create('transform', coords.slice(1), {type: 'translate'});
-            t.applyOnce(parents);
+            if (coords.length === 3) {
+                coords = coords.slice(1);
+            }
+            
+            t = this.board.create('transform', coords, {type: 'translate'});
 
             // We distinguish two cases:
             // 1) elements which depend on free elements, i.e. arcs and sectors

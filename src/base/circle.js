@@ -612,53 +612,6 @@ define([
         },
 
         /**
-         * Sets the position of the circle by translating the center and - in case of {@link JXG.Circle#method} equals
-         * 'twoPoints' - the point on the circle by the amount given in the coords parameter.
-         * @param {Number} method Either {@link JXG#COORDS_BY_SCREEN} or {@link JXG#COORDS_BY_USER}.
-         * @param {Array} coords
-         * @returns {JXG.Circle}
-         */
-        setPosition: function (method, coords) {
-            var t;
-
-            coords = new Coords(method, coords, this.board);
-            t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
-            this.addTransform(t);
-
-            return this;
-        },
-
-        /**
-         * Sets x and y coordinate and calls the circle's update() method.
-         * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinate in screen/user units
-         * @param {Array} oldcoords previous coordinate in screen/user units
-         * @returns {JXG.Circle} this element
-         */
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, dc, t, arr,
-                len = this.parents.length;
-
-            arr = [];
-            for (i = 0; i < len; i++) {
-                p = this.board.select(this.parents[i]);
-                if (!p.draggable()) {
-                    return this;
-                }
-                arr.push(p);
-            }
-
-            coords = new Coords(method, coords, this.board);
-            oldcoords = new Coords(method, oldcoords, this.board);
-            dc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
-
-            t = this.board.create('transform', dc.slice(1), {type: 'translate'});
-            t.applyOnce(arr);
-
-            return this;
-        },
-
-        /**
          * Treats the circle as parametric curve and calculates its X coordinate.
          * @param {Number} t Number between 0 and 1.
          * @returns {Number} <tt>X(t)= radius*cos(t)+centerX</tt>.
