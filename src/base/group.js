@@ -171,7 +171,7 @@ define([
                     obj = this.objects[el].point;
                     
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
-                        if (Type.isInArray(this.rotationPoints, obj)) {
+                        if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
                             isRotation = true;
                         } else {
                             isTranslation = true;
