@@ -2629,9 +2629,9 @@ define([
                         t = e.coords.usrCoords[what];
 
                         if (what === 2) {
-                            e.setPositionDirectly(JXG.COORDS_BY_USER, [f(), t]);
+                            e.setPositionDirectly(Type.COORDS_BY_USER, [f(), t]);
                         } else {
-                            e.setPositionDirectly(JXG.COORDS_BY_USER, [t, f()]);
+                            e.setPositionDirectly(Type.COORDS_BY_USER, [t, f()]);
                         }
                         e.prepareUpdate().update();
                     };

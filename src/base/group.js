@@ -92,6 +92,7 @@ define([
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
         this.rotationCenter = null;
+        this.scaleCenter = null;
         this.rotationPoints = [];
         this.translationPoints = [];
         this.scalePoints = [];
@@ -160,7 +161,9 @@ define([
                 dragObjId, 
                 isTranslation = false,
                 isRotation = false,
-                trans, 
+                isScale = false,
+                actionCenter,
+                trans, s, 
                 alpha, t, center, len, 
                 obj = null;
 
@@ -174,6 +177,8 @@ define([
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
                             isRotation = true;
+                        } else if (Type.isInArray(this.scalePoints, obj)) {
+                            isScale = true;
                         } else if (Type.isInArray(this.translationPoints, obj)) {
                             isTranslation = true;
                         } else {
@@ -185,21 +190,28 @@ define([
                 }
             }
 
-            if (!isRotation && !isTranslation) {
+            if (!isRotation && !isTranslation && !isScale) {
                 return this;
             }
             
             // Prepare translation or rotation
+            obj = this.objects[dragObjId].point;
             if (isTranslation) {
-                obj = this.objects[dragObjId].point;
                 trans = [
                         obj.coords.usrCoords[1] - this.coords[dragObjId].usrCoords[1],
                         obj.coords.usrCoords[2] - this.coords[dragObjId].usrCoords[2]
                     ];
-            } else if (isRotation) {
-                if (Type.isPoint(this.rotationCenter)) {
-                    center = this.rotationCenter.coords.usrCoords.slice(1);
-                } else if (this.rotationCenter === 'centroid') {
+                    
+            } else if (isRotation || isScale) {
+                if (isRotation) {
+                    actionCenter = 'rotationCenter';
+                } else {
+                    actionCenter = 'scaleCenter';
+                }
+                    
+                if (Type.isPoint(this[actionCenter])) {
+                    center = this[actionCenter].coords.usrCoords.slice(1);
+                } else if (this[actionCenter] === 'centroid') {
                     center = [0, 0];
                     len = 0;
                     for (el in this.coords) if (this.coords.hasOwnProperty(el)) {
@@ -211,17 +223,26 @@ define([
                         center[0] /= len;
                         center[1] /= len;
                     }
-                } else if (Type.isArray(this.rotationCenter)) {
-                    center = this.rotationCenter;
-                } else if (Type.isFunction(this.rotationCenter)) {
-                    center = this.rotationCenter();
+                } else if (Type.isArray(this[actionCenter])) {
+                    center = this[actionCenter];
+                } else if (Type.isFunction(this[actionCenter])) {
+                    center = this[actionCenter]();
                 } else {
                     return this;
                 }
                 
-                alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
-                
-                t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
+                if (isRotation) {
+                    alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
+                    t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
+                } else if (isScale) {
+                    s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / Geometry.distance(this.coords[dragObjId].usrCoords.slice(1), center);
+                    t = this.board.create('transform', 
+                            [1, 0, 0, 
+                             center[0] * (1 -  s), s, 0,
+                             center[1] * (1 -  s), 0, s], {type: 'generic'});
+                } else{
+                    return this;
+                }
             }
             
             // Do the transformation
@@ -234,11 +255,11 @@ define([
                             obj.setPositionDirectly(Const.COORDS_BY_USER, 
                                 [this.coords[el].usrCoords[1] + trans[0], 
                                  this.coords[el].usrCoords[2] + trans[1]]);
-                        } else if (isRotation) {
+                        } else if (isRotation || isScale) {
                             t.applyOnce([obj]);
                         }
                     } else {
-                        if (isRotation) {
+                        if (isRotation || isScale) {
                             obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
                         }
                     }
@@ -360,7 +381,7 @@ define([
         },
 
         /**
-         * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group
+         * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group.
          * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
          * 
          * By default, all points of the group are translation points.
@@ -371,7 +392,7 @@ define([
         },
 
         /**
-         * Adds a point to the set of the translation points of the group. Dragging at one of these points results into a translation of the whole group
+         * Adds a point to the set of the translation points of the group. Dragging at one of these points results into a translation of the whole group.
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
@@ -386,6 +407,47 @@ define([
          */
         removeTranslationPoint: function(point) {
             return this._removeActionPoint('translation', point);
+        },
+
+        /**
+         * Sets the center of scaling for the group. This is either a point or the centroid of the group.
+         * @param {JXG.Point|String} object A point which will be the center of scaling, the string "centroid", or
+         * an array of length two, or a function returning an array of length two.
+         * @returns {JXG.Group} returns this group
+         */
+        setScaleCenter: function(object) {
+            this.scaleCenter = object;
+            
+            return this;
+        },
+
+        /**
+         * Sets the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * 
+         * By default, all points of the group are translation points.
+         * @returns {JXG.Group} returns this group
+         */
+        setScalePoints: function(objects) {
+            return this._setActionPoints('scale', objects);
+        },
+
+        /**
+         * Adds a point to the set of the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addScalePoint: function(point) {
+            return this._addActionPoint('scale', point);
+        },
+
+        /**
+         * Removes the scaling property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeScalePoint: function(point) {
+            return this._removeActionPoint('scale', point);
         },
 
         /**
