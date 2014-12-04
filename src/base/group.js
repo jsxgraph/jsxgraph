@@ -94,6 +94,7 @@ define([
         this.rotationCenter = null;
         this.rotationPoints = [];
         this.translationPoints = [];
+        this.scalePoints = [];
                 
         if (Type.isArray(objects)) {
             objArray = objects;
@@ -210,6 +211,12 @@ define([
                         center[0] /= len;
                         center[1] /= len;
                     }
+                } else if (Type.isArray(this.rotationCenter)) {
+                    center = this.rotationCenter;
+                } else if (Type.isFunction(this.rotationCenter)) {
+                    center = this.rotationCenter();
+                } else {
+                    return this;
                 }
                 
                 alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
@@ -313,7 +320,8 @@ define([
 
         /**
          * Sets the center of rotation for the group. This is either a point or the centroid of the group.
-         * @param {JXG.Point|String} object A point which will be the center of rotation or the string "centroid"
+         * @param {JXG.Point|String} object A point which will be the center of rotation, the string "centroid", or
+         * an array of length two, or a function returning an array of length two.
          * @returns {JXG.Group} returns this group
          */
         setRotationCenter: function(object) {
