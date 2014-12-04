@@ -144,12 +144,9 @@ define([
         /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners
          * and not by the board.
-         * @param {JXG.Point} point The point that caused the update.
-         * @param {Number} dX
-         * @param {Number} dY
+         * @param{JXG.GeometryElement} drag Element that caused the update.
          */
-        //update: function (point, dX, dY) {
-        update: function (fromParent) {
+        update: function (drag) {
             var el, trans, transObjId, j,
                 obj = null;
 
@@ -203,7 +200,7 @@ define([
                         }
                     }
                 }
-                this.board.updateElements(fromParent);
+                this.board.updateElements(drag);
             }
 
             return this;

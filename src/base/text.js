@@ -787,7 +787,7 @@ define([
         },
 
         /**
-         * Alias for {@link JXG.Element#handleSnapToGrid}
+         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
          * @returns {JXG.Text} Reference to this element
          */
         snapToGrid: function () {

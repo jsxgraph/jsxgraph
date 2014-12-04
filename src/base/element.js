@@ -521,7 +521,7 @@ define([
         },
 
         /**
-         * Decides whether an element can be dragged. This is used in {@link JXG.Element#setPositionDirectly} methods
+         * Decides whether an element can be dragged. This is used in {@link JXG.GeometryElement#setPositionDirectly} methods
          * where all parent elements are checked if they may be dragged, too.
          * @private
          * @return {boolean}
@@ -537,7 +537,7 @@ define([
          * @param {Number} method The type of coordinates used here. 
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
-         * @returns {JXG.Element} Reference to the element object.
+         * @returns {JXG.GeometryElement} Reference to the element object.
          */
         setPosition: function (method, coords) {
             var parents = [], el, i, len, 
@@ -602,7 +602,7 @@ define([
          * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.Element} this element
+         * @returns {JXG.GeometryElement} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
             var c = new Coords(method, coords, this.board, false),
@@ -1526,7 +1526,7 @@ define([
          * The function uses the coords object of the element as
          * its actual position. If there is no coords object, nothing is done.
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
-         * @returns {JXG.Element} Reference to this element
+         * @returns {JXG.GeometryElement} Reference to this element
          */
         handleSnapToGrid: function (force) {
             var x, y, ticks,

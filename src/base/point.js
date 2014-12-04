@@ -704,7 +704,7 @@ define([
         },
 
         /**
-         * Alias for {@link JXG.Element#handleSnapToGrid}
+         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
          * @returns {JXG.Point} Reference to this element
          */
