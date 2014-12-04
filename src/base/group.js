@@ -45,8 +45,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/element', 'math/math', 'utils/type'
-], function (JXG, Const, GeometryElement, Mat, Type) {
+    'jxg', 'base/constants', 'base/element', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, GeometryElement, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -91,6 +91,9 @@ define([
 
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
+        this.rotationCenter = null;
+        this.rotationPoints = [];
+                
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -125,6 +128,7 @@ define([
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         /**
          * Releases the group added to the points in this group, but only if this group is the last group.
+         * @returns {JXG.Group} returns this group
          */
         ungroup: function () {
             var el;
@@ -139,15 +143,23 @@ define([
                     this.removePoint(this.objects[el].point);
                 }
             }
+            
+            return this;
         },
 
         /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners
          * and not by the board.
          * @param{JXG.GeometryElement} drag Element that caused the update.
+         * @returns {JXG.Group} returns this group
          */
         update: function (drag) {
-            var el, trans, transObjId, j,
+            var el, 
+                dragObjId, 
+                isTranslation = false,
+                isRotation = false,
+                trans, 
+                alpha, t, center, len, 
                 obj = null;
 
             if (!this.needsUpdate) {
@@ -157,51 +169,90 @@ define([
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
                     obj = this.objects[el].point;
-
+                    
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
-                        trans = [
-                            obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
-                            obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
-                        ];
-                        transObjId = obj.id;
+                        if (Type.isInArray(this.rotationPoints, obj)) {
+                            isRotation = true;
+                        } else {
+                            isTranslation = true;
+                            trans = [
+                                obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
+                                obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
+                            ];
+                        }
+                        dragObjId = obj.id;
                         break;
                     }
                 }
             }
 
-            if (Type.exists(transObjId)) {
-                for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el)) {
-                        if (Type.exists(this.board.objects[el])) {
-
-                            obj = this.objects[el].point;
-                            if (obj.id !== transObjId) {
-                                //obj.coords.setCoordinates(Const.COORDS_BY_USER, 
-                                //    [this.coords[el].usrCoords[1] + trans[0], 
-                                //     this.coords[el].usrCoords[2] + trans[1]]);
-                                obj.setPositionDirectly(Const.COORDS_BY_USER, 
-                                    [this.coords[el].usrCoords[1] + trans[0], 
-                                     this.coords[el].usrCoords[2] + trans[1]]);
-                            }
-                            //this.objects[el].point.prepareUpdate().update(false).updateRenderer();
-                        } else {
-                            delete this.objects[el];
-                        }
-                        this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
-                    }
-                }
-
-                for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el)) {
-                        for (j in this.objects[el].descendants) {
-                            if (this.objects[el].descendants.hasOwnProperty(j)) {
-                                this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
-                            }
-                        }
-                    }
-                }
-                this.board.updateElements(drag);
+            if (!isRotation && !isTranslation) {
+                return this;
             }
+            
+            // Prepare translation or rotation
+            if (isTranslation) {
+                obj = this.objects[dragObjId].point;
+                trans = [
+                        obj.coords.usrCoords[1] - this.coords[dragObjId].usrCoords[1],
+                        obj.coords.usrCoords[2] - this.coords[dragObjId].usrCoords[2]
+                    ];
+            } else if (isRotation) {
+                if (Type.isPoint(this.rotationCenter)) {
+                    center = this.rotationCenter.coords.usrCoords.slice(1);
+                } else if (this.rotationCenter === 'centroid') {
+                    center = [0, 0];
+                    len = 0;
+                    for (el in this.coords) if (this.coords.hasOwnProperty(el)) {
+                        center[0] += this.coords[el].usrCoords[1];
+                        center[1] += this.coords[el].usrCoords[2];
+                        ++len;
+                    }
+                    if (len > 0) {
+                        center[0] /= len;
+                        center[1] /= len;
+                    }
+                }
+                
+                alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
+                
+                t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
+            }
+            
+            // Do the transformation
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                if (Type.exists(this.board.objects[el])) {
+                    obj = this.objects[el].point;
+                    
+                    if (obj.id !== dragObjId) {
+                        if (isTranslation) {
+                            obj.setPositionDirectly(Const.COORDS_BY_USER, 
+                                [this.coords[el].usrCoords[1] + trans[0], 
+                                 this.coords[el].usrCoords[2] + trans[1]]);
+                        } else if (isRotation) {
+                            t.applyOnce([obj]);
+                        }
+                    } else {
+                        if (isRotation) {
+                            obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
+                        }
+                    }
+
+                    this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                } else {
+                    delete this.objects[el];
+                }
+            }
+
+            // Prepare dependent objects for update
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                for (desc in this.objects[el].descendants) {
+                    if (this.objects[el].descendants.hasOwnProperty(desc)) {
+                        this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
+                    }
+                }
+            }
+            this.board.updateElements(drag);
 
             return this;
         },
@@ -209,17 +260,21 @@ define([
         /**
          * Adds an Point to this group.
          * @param {JXG.Point} object The point added to the group.
+         * @returns {JXG.Group} returns this group
          */
         addPoint: function (object) {
             this.objects[object.id] = {
                 point: object
             };
             this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
+            
+            return this;
         },
 
         /**
          * Adds multiple points to this group.
          * @param {Array} objects An array of points to add to the group.
+         * @returns {JXG.Group} returns this group
          */
         addPoints: function (objects) {
             var p;
@@ -227,11 +282,48 @@ define([
             for (p = 0; p < objects.length; p++) {
                 this.addPoint(objects[p]);
             }
+            
+            return this;
         },
 
         /**
+         * Sets the center of rotation for the group. This is either a point or the centroid of the group.
+         * @param {JXG.Point|String} object A point which will be the center of rotation or the string "centroid"
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationCenter: function(object) {
+            this.rotationCenter = object;
+            
+            return this;
+        },
+
+        /**
+         * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whol group around
+         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationPoints: function(objects) {
+            var objs, i, len;
+            if (Type.isArray(objects)) {
+                objs = objects;
+            } else {
+                objs = arguments;
+            }
+                
+            len = objs.length;
+            this.rotationPoints = [];
+            for (i = 0; i < len; ++i) {
+                this.rotationPoints.push(objs[i]);
+            }
+            
+            return this;
+        },
+        
+        /**
          * Adds all points in a group to this group.
          * @param {JXG.Group} group The group added to this group.
+         * @returns {JXG.Group} returns this group
          */
         addGroup: function (group) {
             var el;
@@ -241,14 +333,19 @@ define([
                     this.addPoint(group.objects[el].point);
                 }
             }
+            
+            return this;
         },
 
         /**
          * Removes a point from the group.
          * @param {JXG.Point} point
+         * @returns {JXG.Group} returns this group
          */
         removePoint: function (point) {
             delete this.objects[point.id];
+
+            return this;
         },
 
         /**
@@ -265,6 +362,8 @@ define([
                     this.objects[el].point.setAttribute.apply(this.objects[el].point, arguments);
                 }
             }
+            
+            return this;
         }
     });
 
