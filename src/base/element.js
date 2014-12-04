@@ -550,11 +550,13 @@ define([
             len = this.parents.length;
             for (i = 0; i < len; ++i) {
                 el = this.board.select(this.parents[i]);
-                if (//!Type.isPoint(el) ||
-                   !el.draggable()) {
-                    return this;
+                if (Type.isPoint(el)) {
+                    if (!el.draggable()) {
+                        return this;
+                    } else {
+                        parents.push(el);
+                    }
                 }
-                parents.push(el);
             }
                     
             if (coords.length === 3) {
@@ -570,6 +572,7 @@ define([
             // In the first case we simply transform the parents elements
             // In the second case we add a transform to the element.
             //
+            len = parents.length;
             if (len > 0) {
                 t.applyOnce(parents);
             } else {
