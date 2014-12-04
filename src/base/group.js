@@ -235,7 +235,11 @@ define([
                     alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
                     t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
                 } else if (isScale) {
-                    s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / Geometry.distance(this.coords[dragObjId].usrCoords.slice(1), center);
+                    s = Geometry.distance(this.coords[dragObjId].usrCoords.slice(1), center);
+                    if (Math.abs(s) < Mat.eps) {
+                        return this;
+                    }
+                    s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
                     t = this.board.create('transform', 
                             [1, 0, 0, 
                              center[0] * (1 -  s), s, 0,
