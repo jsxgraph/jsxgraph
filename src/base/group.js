@@ -240,6 +240,8 @@ define([
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
+                    
+                    // Shift scale center to origin, scale and shift the scale center back.
                     t = this.board.create('transform', 
                             [1, 0, 0, 
                              center[0] * (1 -  s), s, 0,
