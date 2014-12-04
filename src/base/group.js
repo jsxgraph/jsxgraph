@@ -93,6 +93,7 @@ define([
         
         this.rotationCenter = null;
         this.rotationPoints = [];
+        this.translationPoints = [];
                 
         if (Type.isArray(objects)) {
             objArray = objects;
@@ -165,7 +166,6 @@ define([
             if (!this.needsUpdate) {
                 return this;
             }
-
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
                     obj = this.objects[el].point;
@@ -173,12 +173,10 @@ define([
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
                             isRotation = true;
-                        } else {
+                        } else if (Type.isInArray(this.translationPoints, obj)) {
                             isTranslation = true;
-                            trans = [
-                                obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
-                                obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
-                            ];
+                        } else {
+                            this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};                        
                         }
                         dragObjId = obj.id;
                         break;
@@ -263,10 +261,9 @@ define([
          * @returns {JXG.Group} returns this group
          */
         addPoint: function (object) {
-            this.objects[object.id] = {
-                point: object
-            };
+            this.objects[object.id] = {point: object};
             this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
+            this.translationPoints.push(object);
             
             return this;
         },
@@ -286,40 +283,6 @@ define([
             return this;
         },
 
-        /**
-         * Sets the center of rotation for the group. This is either a point or the centroid of the group.
-         * @param {JXG.Point|String} object A point which will be the center of rotation or the string "centroid"
-         * @returns {JXG.Group} returns this group
-         */
-        setRotationCenter: function(object) {
-            this.rotationCenter = object;
-            
-            return this;
-        },
-
-        /**
-         * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whol group around
-         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
-         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
-         * @returns {JXG.Group} returns this group
-         */
-        setRotationPoints: function(objects) {
-            var objs, i, len;
-            if (Type.isArray(objects)) {
-                objs = objects;
-            } else {
-                objs = arguments;
-            }
-                
-            len = objs.length;
-            this.rotationPoints = [];
-            for (i = 0; i < len; ++i) {
-                this.rotationPoints.push(objs[i]);
-            }
-            
-            return this;
-        },
-        
         /**
          * Adds all points in a group to this group.
          * @param {JXG.Group} group The group added to this group.
@@ -348,6 +311,119 @@ define([
             return this;
         },
 
+        /**
+         * Sets the center of rotation for the group. This is either a point or the centroid of the group.
+         * @param {JXG.Point|String} object A point which will be the center of rotation or the string "centroid"
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationCenter: function(object) {
+            this.rotationCenter = object;
+            
+            return this;
+        },
+
+        /**
+         * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
+         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationPoints: function(objects) {
+            return this._setActionPoints('rotation', objects);
+        },
+
+        /**
+         * Adds a point to the set of rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
+         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addRotationPoint: function(point) {
+            return this._addActionPoint('rotation', point);
+        },
+
+        /**
+         * Removes the rotation property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeRotationPoint: function(point) {
+            return this._removeActionPoint('rotation', point);
+        },
+
+        /**
+         * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * 
+         * By default, all points of the group are translation points.
+         * @returns {JXG.Group} returns this group
+         */
+        setTranslationPoints: function(objects) {
+            return this._setActionPoints('translation', objects);
+        },
+
+        /**
+         * Adds a point to the set of the translation points of the group. Dragging at one of these points results into a translation of the whole group
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addTranslationPoint: function(point) {
+            return this._addActionPoint('translation', point);
+        },
+
+        /**
+         * Removes the translation property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeTranslationPoint: function(point) {
+            return this._removeActionPoint('translation', point);
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@setTranslationPoints} and {@link JXG.Group@setRotationPoints}
+         * @private
+         */
+        _setActionPoints: function(action, objects) {
+            var objs, i, len;
+            if (Type.isArray(objects)) {
+                objs = objects;
+            } else {
+                objs = arguments;
+            }
+                
+            len = objs.length;
+            this[action + 'Points'] = [];
+            for (i = 0; i < len; ++i) {
+                this[action + 'Points'].push(objs[i]);
+            }
+            
+            return this;
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@addTranslationPoint} and {@link JXG.Group@addRotationPoint}
+         * @private
+         */
+        _addActionPoint: function(action, point) {
+            this[action + 'Points'].push(point);
+            
+            return this;
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@removeTranslationPoint} and {@link JXG.Group@removeRotationPoint}
+         * @private
+         */
+        _removeActionPoint: function(action, point) {
+            var idx = this[action + 'Points'].indexOf(point);
+            if (idx > -1) {
+                this[action + 'Points'].splice(idx, 1);
+            }
+            
+            return this;
+        },
+        
         /**
          * @deprecated
          * Use setAttribute
