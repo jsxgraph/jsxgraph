@@ -170,6 +170,8 @@ define([
             if (!this.needsUpdate) {
                 return this;
             }
+
+            // Determine type of action: translation, scaling or rotation
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
                     obj = this.objects[el].point;
@@ -177,7 +179,7 @@ define([
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
                             isRotation = true;
-                        } else if (Type.isInArray(this.scalePoints, obj)) {
+                        } else if (Type.isInArray(this.scalePoints, obj) && Type.exists(this.scaleCenter)) {
                             isScale = true;
                         } else if (Type.isInArray(this.translationPoints, obj)) {
                             isTranslation = true;
@@ -234,7 +236,8 @@ define([
                 if (isRotation) {
                     alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
                     t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
-                } else if (isScale) {
+                    t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
+               } else if (isScale) {
                     s = Geometry.distance(this.coords[dragObjId].usrCoords.slice(1), center);
                     if (Math.abs(s) < Mat.eps) {
                         return this;
@@ -246,12 +249,13 @@ define([
                             [1, 0, 0, 
                              center[0] * (1 -  s), s, 0,
                              center[1] * (1 -  s), 0, s], {type: 'generic'});
+                    t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else{
                     return this;
                 }
             }
             
-            // Do the transformation
+            // Apply the transformation
             for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
                 if (Type.exists(this.board.objects[el])) {
                     obj = this.objects[el].point;
