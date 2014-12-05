@@ -178,9 +178,18 @@ define([
                     
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
-                            isRotation = true;
+                            if (Type.exists(drag) && obj.id === drag.id) {
+                                isRotation = true;
+                            } else {
+                                // This is necessary if an edge of a polygon is dragged.
+                                isTranslation = true; 
+                            }
                         } else if (Type.isInArray(this.scalePoints, obj) && Type.exists(this.scaleCenter)) {
-                            isScale = true;
+                            if (Type.exists(drag) && obj.id === drag.id) {
+                                isScale = true;
+                            } else {
+                                isTranslation = true;
+                            }
                         } else if (Type.isInArray(this.translationPoints, obj)) {
                             isTranslation = true;
                         } else {
@@ -191,11 +200,11 @@ define([
                     }
                 }
             }
-
+            
             if (!isRotation && !isTranslation && !isScale) {
                 return this;
             }
-            
+        
             // Prepare translation or rotation
             obj = this.objects[dragObjId].point;
             if (isTranslation) {
