@@ -987,7 +987,7 @@ define([
             drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
 
             this.updateInfobox(drag);
-            this.update(drag);
+            this.update();
             drag.highlight(true);
 
             drag.lastDragTime = new Date();
@@ -1095,7 +1095,7 @@ define([
                     t1.applyOnce(drag.vertices.slice(0, -1));
                 }
 
-                this.update(drag);
+                this.update();
                 drag.highlight(true);
             }
         },

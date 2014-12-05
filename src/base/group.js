@@ -165,38 +165,43 @@ define([
                 actionCenter,
                 trans, s, 
                 alpha, t, center, len, 
-                obj = null;
+                obj = null,
+                changed = [];
 
             if (!this.needsUpdate) {
                 return this;
             }
 
-            // Determine type of action: translation, scaling or rotation
-            for (el in this.objects) {
-                if (this.objects.hasOwnProperty(el)) {
-                    obj = this.objects[el].point;
+            // Determine how many elements have changed their position
+            // If more than one element changed its position, it is a translation.
+            // If exactly one element changed its position we have to find the type of the point.
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                obj = this.objects[el].point;
                     
-                    if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
-                        if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
-                            if (Type.exists(drag) && obj.id === drag.id) {
-                                isRotation = true;
-                            } else {
-                                // This is necessary if an edge of a polygon is dragged.
-                                isTranslation = true; 
-                            }
-                        } else if (Type.isInArray(this.scalePoints, obj) && Type.exists(this.scaleCenter)) {
-                            if (Type.exists(drag) && obj.id === drag.id) {
-                                isScale = true;
-                            } else {
-                                isTranslation = true;
-                            }
-                        } else if (Type.isInArray(this.translationPoints, obj)) {
-                            isTranslation = true;
-                        } else {
-                            this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};                        
-                        }
-                        dragObjId = obj.id;
-                        break;
+                if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
+                    changed.push(obj.id);
+                }
+                if (changed.length > 1) { // Now, we know enough. It is a translation
+                    break;
+                }
+            }
+            
+            // Determine type of action: translation, scaling or rotation
+            if (changed.length == 0) {
+                return this;
+            } else {
+                dragObjId = changed[0];
+                obj = this.objects[dragObjId].point;
+
+                if (changed.length > 1) { // More than one point moved => translation
+                    isTranslation = true;
+                } else {                        // One point moved => we have to determine the type
+                    if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
+                        isRotation = true;
+                    } else if (Type.isInArray(this.scalePoints, obj) && Type.exists(this.scaleCenter)) {
+                        isScale = true;
+                    } else if (Type.isInArray(this.translationPoints, obj)) {
+                        isTranslation = true;
                     }
                 }
             }
@@ -205,8 +210,7 @@ define([
                 return this;
             }
         
-            // Prepare translation or rotation
-            obj = this.objects[dragObjId].point;
+            // Prepare translation, scaling or rotation
             if (isTranslation) {
                 trans = [
                         obj.coords.usrCoords[1] - this.coords[dragObjId].usrCoords[1],
