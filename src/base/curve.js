@@ -1019,7 +1019,7 @@ define([
 
             if (len > 0) {
                 c = Mat.matVecMult(this.transformMat, p.usrCoords);
-                p.setPosition(Const.COORDS_BY_USER, [c[1], c[2]]);
+                p.setCoordinates(Const.COORDS_BY_USER, [c[1], c[2]], false, true);
             }
 
             return p;
