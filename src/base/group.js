@@ -91,7 +91,7 @@ define([
 
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
-        this.rotationCenter = null;
+        this.rotationCenter = 'centroid';
         this.scaleCenter = null;
         this.rotationPoints = [];
         this.translationPoints = [];
@@ -366,6 +366,7 @@ define([
          * Sets the center of rotation for the group. This is either a point or the centroid of the group.
          * @param {JXG.Point|String} object A point which will be the center of rotation, the string "centroid", or
          * an array of length two, or a function returning an array of length two.
+         * @default 'centroid'
          * @returns {JXG.Group} returns this group
          */
         setRotationCenter: function(object) {
