@@ -312,7 +312,7 @@ define([
          * @returns {JXG.Group} returns this group
          */
         addPoint: function (object) {
-            this.objects[object.id] = {point: object};
+            this.objects[object.id] = {point: this.board.select(object)};
             this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
             this.translationPoints.push(object);
             
@@ -489,7 +489,7 @@ define([
             len = objs.length;
             this[action + 'Points'] = [];
             for (i = 0; i < len; ++i) {
-                this[action + 'Points'].push(objs[i]);
+                this[action + 'Points'].push(this.board.select(objs[i]));
             }
             
             return this;
@@ -500,7 +500,7 @@ define([
          * @private
          */
         _addActionPoint: function(action, point) {
-            this[action + 'Points'].push(point);
+            this[action + 'Points'].push(this.board.select(point));
             
             return this;
         },
@@ -510,7 +510,7 @@ define([
          * @private
          */
         _removeActionPoint: function(action, point) {
-            var idx = this[action + 'Points'].indexOf(point);
+            var idx = this[action + 'Points'].indexOf(this.board.select(point));
             if (idx > -1) {
                 this[action + 'Points'].splice(idx, 1);
             }
