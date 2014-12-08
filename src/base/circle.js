@@ -364,13 +364,11 @@ define([
          * @private
          */
         updateStdform: function () {
-            var r = this.stdform[5];
-            
             this.stdform[3] = 0.5;
             this.stdform[4] = this.Radius();
             this.stdform[1] = -this.center.coords.usrCoords[1];
             this.stdform[2] = -this.center.coords.usrCoords[2];
-            if (r === Infinity || isNaN(r)) {
+            if (!isFinite(this.stdform[4])) {
                 this.stdform[0] = Type.exists(this.point2) ? -(
                     this.stdform[1] * this.point2.coords.usrCoords[1] +
                     this.stdform[2] * this.point2.coords.usrCoords[2]) : 0;
