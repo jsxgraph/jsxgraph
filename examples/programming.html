@@ -8,8 +8,8 @@
 <body>
 <h2>Funktionsplotter-Beispiel mit Eingabefenster</h2>
 <div style="width:960px">
-<div id="jxgbox" class="jxgbox" style="width:600px; height:400px; float:left; "></div>
-<p style="float:right">
+<div id="jxgbox" class="jxgbox" style="width:600px; height:400px; /* float:left;*/ "></div>
+<p style="/*float:right*/">
 <textarea id="eingabe" rows=15 cols=35 wrap="off" >
 function f(x) {
    return Math.sin(x)*Math.cos(x)*p.X();
@@ -47,6 +47,34 @@ board.createElement('integral', [interval, c]);
         
         // Simplified plotting function
         function plot(func, atts) {
+            if (atts==null) {
+                return funktionsPlotter(board, func, {strokewidth:2});
+            } else {
+                return funktionsPlotter(board, func, atts);
+            }    
+        }
+
+        /**
+         * Expand math expression which suppressed multiplication dot.
+         * Examples
+         *      2x -> 2*x
+         *      (2+3)(3+1) -> (2+3)*(3+1)
+         * Attention with exponention:
+         *      x^2x -> x^2*x
+         */
+        expandShortMath = function(expr) {
+            var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
+            return expr.replace(re, '$1*$2');
+        };
+        
+        function plotjc(func, atts) {
+            /*String func */
+            
+            
+            func = expandShortMath(func);
+            console.log(func);
+            
+            
             if (atts==null) {
                 return funktionsPlotter(board, func, {strokewidth:2});
             } else {

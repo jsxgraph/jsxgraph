@@ -690,7 +690,6 @@ define([
 
     JXG.registerElement('majorsector', JXG.createMajorSector);
 
-
     /**
      * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
      * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
@@ -1113,7 +1112,7 @@ define([
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
-     * @name Angle
+     * @name NonReflexAngle
      * @augments Sector
      * @constructor
      * @type Sector
@@ -1126,7 +1125,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
      * </pre><div id="d0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1135,7 +1134,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
      * })();
      * </script><pre>
      */
@@ -1151,7 +1150,7 @@ define([
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
-     * @name Angle
+     * @name ReflexAngle
      * @augments Sector
      * @constructor
      * @type Sector
@@ -1164,7 +1163,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3]);
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
      * </pre><div id="f2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1173,7 +1172,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3]);
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
      * })();
      * </script><pre>
      */

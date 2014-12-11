@@ -6,12 +6,68 @@ Important Notes
 
 New Features
 ------------
- * New options touchFirstPoint and touchLastPoint for lines with arrow heads (60b613f1)
+ * New element "checkbox" (ae3a29a1)
+ * New element "input" (a21b20d3)
+ * New element "button" (54b075ef)
+ * New elements "majorsector" and "minorsector" (13eaed86)
+ * New elements "nonreflexangle" and "reflexangle" (cae9ac35)
+ * New attributes touchFirstPoint and touchLastPoint for lines with arrow heads (60b613f1)
+ * New board attribute "ignoreLabels" to control when labels are chosen as drag elements (c8fb1063)
+ * New functions sinh and cosh in JessieCode (6302869d)
+ * New function log(x, b) in JessieCode (acc263dd)
+ * New method for points: makeIntersection() (93f25574)
+ * New method boundingBox() for polygons (23ee2d67)
+ * Every element which accepts a point as parent element, now also accepts 
+   a coordinate array or a function returning a coordinate array as parent element. 
+   An invisible point having these coordiantes will be constructed. (aa9e4738)
+ * Major speed up function graphs (a150405e, 13c3086c)
+ * Improved automatic ticks positioning for axes and lines (4a44a516)
+ * Enable dragging of sectors defined by three points (d00aec2b)
+ * Groups: Allow manipulations of group by translation, rotation and scaling.
+ 
+   New group methods setRotationCenter(), setScaleCenter(), setRotationPoints(), addRotationPoint(),
+   removeRotationPoint(), setScalePoints(), addScalePoint(), removeScalePoint(), 
+   setTranslationPoints(), addTranslationPoint(), removeTranslationPoint() (d21cb9b6)
+ * Add arc as a subobject to sectors (82a7002a)
+ * Improved docs (e9eaeed7)
+ * Axis: allow zero minorTicks (59a72325)
+ * Update moodle plugin (750c70df)
+ * Introduce new elementClass OBJECT_CLASS_TEXT (49638421)
+ * New generic method addParents() for GeometryElement (152ee279)
+ * Enable dragging of curves (152ee279)
+ 
  
 Bug fixes
 ---------
-
-
+ * Rotation of parabola based on a line defined by an ideal point (f6840b0)
+ * Subscripts in labels work again (82a7002a)
+ * Canvas renderer ignored line width zero (71669733)
+ * Consider corner cases for upper/lower riemannsums (bc398d2d)
+ * IE 11: show infobox on "over" event (1f82c9f50)
+ * setName(): slider labels are not longer overwritten (99877c0d)
+ * SVG line-endings of paths are set to "round" (e475c5e1)
+ * hide/show polygons having labels (519c0a7b)
+ * All edges of a polygon disappear if one of the defining points of the polygon is not real (5d3de96936)
+ * labels of curves, sectors, angles stayed invisible in case they were previously non existing (62eb6b94)
+ * Set attribute "needsRegularUpdate" of axis-ticks-labels to false. This speeds up rendering (6e9ce207)
+ * Fix typo in Board.getCoordsTopLeftCorner, which forced JSXGraph to access the DOM during DRAG mode (f5b8af8f)
+ * SVG markers in IE 10/11 (a35a2fee)
+ * Sector defined by two lines was visible (at the wrong position) if the lines were parallel (6acb23fe)
+ * Geogebra reader: Search for expression if element is not found (981ccd63)
+ * Geogebra reader: Support hidden axes (4bd103e1)
+ * CreatePolarLine: elementClass was compared with OBJECT_TYPE_CIRCLE (bc6b4bdd)
+ * Rotation of internal texts (0fa3fa9e)
+ * Rotation of VML texts and images (bc58740d)
+ * Rename the method RamenDouglasPeuker to RamenDouglasPeucker (18042970)
+ * Attribute generateLabelValue replaced by attribute generateLabelText (d5172614)
+ * Simplify joinTransforms() in abstractRenderer (5eb86b1f)
+ * Labels for sectors and arcs were not draggable (b914bba0)
+ * Type.trunc(n, p) did truncate for p=0 and round for p>0 (09331d4c)
+ * Do not generate sub and sup tags in texts if MathJax is used (ed9d94a4)
+ * Ignore touch move events triggered outside the board (8a7e22e8)
+ * Intersections involving circles with NaN radius (31d2900c)
+ * Circumcircle of colinear points has wrong intersections (0998a284)
+ 
 0.99.1
 ====
 
@@ -19,7 +75,6 @@ Bug fixes
 ---------
  * Typo: polepoint
  * Docs: JXG.Math.Numerics has been ignored
- 
 
 0.99
 ====
