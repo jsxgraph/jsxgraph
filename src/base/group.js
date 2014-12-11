@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -538,10 +538,19 @@ define([
     });
 
     /**
-     * Groups points.
+     * @class This element combines a given set of {@link JXG.Point} elements to a 
+     *  group. The elements of the group and dependent elements can be translated, rotated and scaled by
+     *  dragging one of the group elements.
+     * 
+     * 
+     * @pseudo
+     * @description
+     * @name Group
+     * @constructor
+     * @type JXG.Group
      * @param {JXG.Board} board The board the points are on.
      * @param {Array} parents Array of points to group.
-     * @param {Object} attributes Visual properties.
+     * @param {Object} attributes Visual properties (unused).
      * @returns {JXG.Group}
      */
     JXG.createGroup = function (board, parents, attributes) {
