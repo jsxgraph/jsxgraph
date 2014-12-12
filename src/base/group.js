@@ -626,8 +626,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
@@ -643,8 +643,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p);
@@ -666,8 +666,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
@@ -681,8 +681,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
@@ -701,8 +701,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
@@ -717,8 +717,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
@@ -739,8 +739,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
      *
@@ -757,8 +757,8 @@ define([
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
-     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
-     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
      *
