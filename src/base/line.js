@@ -1176,15 +1176,15 @@ define([
      * </pre><div id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var slex2_board = JXG.JSXGraph.initBoard('617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var slex2_p1 = slex1_board.create('point', [4.0, 1.0]);
-     *   var slex2_p2 = slex1_board.create('point', [1.0, 1.0]);
-     *   var slex2_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
-     *   var slex2_p3 = slex1_board.create('point', [4.0, 2.0]);
-     *   var slex2_p4 = slex1_board.create('point', [1.0, 2.0]);
-     *   var slex2_l2 = slex1_board.create('segment', [slex1_p3, slex1_p4, 3]);
-     *   var slex2_p5 = slex1_board.create('point', [4.0, 2.0]);
-     *   var slex2_p6 = slex1_board.create('point', [1.0, 2.0]);
-     *   var slex2_l3 = slex1_board.create('segment', [slex1_p5, slex1_p6, function(){ return slex2_l1.L();}]);
+     *   var slex2_p1 = slex2_board.create('point', [4.0, 1.0]);
+     *   var slex2_p2 = slex2_board.create('point', [1.0, 1.0]);
+     *   var slex2_l1 = slex2_board.create('segment', [slex2_p1, slex2_p2]);
+     *   var slex2_p3 = slex2_board.create('point', [4.0, 2.0]);
+     *   var slex2_p4 = slex2_board.create('point', [1.0, 2.0]);
+     *   var slex2_l2 = slex2_board.create('segment', [slex2_p3, slex2_p4, 3]);
+     *   var slex2_p5 = slex2_board.create('point', [4.0, 2.0]);
+     *   var slex2_p6 = slex2_board.create('point', [1.0, 2.0]);
+     *   var slex2_l3 = slex2_board.create('segment', [slex2_p5, slex2_p6, function(){ return slex2_l1.L();}]);
      * </script><pre>
      *
      */

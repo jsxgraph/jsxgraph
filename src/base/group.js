@@ -181,9 +181,6 @@ define([
                 if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                     changed.push(obj.id);
                 }
-                if (changed.length > 1) { // Now, we know enough. It is a translation
-                    break;
-                }
             }
             
             // Determine type of action: translation, scaling or rotation
@@ -209,7 +206,7 @@ define([
             if (!isRotation && !isTranslation && !isScale) {
                 return this;
             }
-        
+
             // Prepare translation, scaling or rotation
             if (isTranslation) {
                 trans = [
@@ -275,9 +272,11 @@ define([
                     
                     if (obj.id !== dragObjId) {
                         if (isTranslation) {
-                            obj.setPositionDirectly(Const.COORDS_BY_USER, 
-                                [this.coords[el].usrCoords[1] + trans[0], 
-                                 this.coords[el].usrCoords[2] + trans[1]]);
+                            if (!Type.isInArray(changed, obj.id)) {
+                                obj.setPositionDirectly(Const.COORDS_BY_USER, 
+                                    [this.coords[el].usrCoords[1] + trans[0], 
+                                     this.coords[el].usrCoords[2] + trans[1]]);
+                            }
                         } else if (isRotation || isScale) {
                             t.applyOnce([obj]);
                         }
@@ -546,16 +545,235 @@ define([
      * @pseudo
      * @description
      * @name Group
+     * @augments JXG.Group
      * @constructor
      * @type JXG.Group
      * @param {JXG.Board} board The board the points are on.
      * @param {Array} parents Array of points to group.
      * @param {Object} attributes Visual properties (unused).
      * @returns {JXG.Group}
+     * 
+     * @example
+     *
+     *  // Create some free points. e.g. A, B, C, D
+     *  // Create a group 
+     * 
+     *  var p, col, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  g = board.create('group', p);
+     * 
+     * </pre><div id="a2204533-db91-4af9-b720-70394de4d367" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, g;
+     *  board = JXG.JSXGraph.initBoard('a2204533-db91-4af9-b720-70394de4d367', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  g = board.create('group', p);
+     *  })();
+     * </script><pre>
+     * 
+     * 
+     * @example
+     *
+     *  // Create some free points. e.g. A, B, C, D
+     *  // Create a group 
+     *  // If the points define a polygon and the polygon has the attribute hasInnerPoints:true, 
+     *  // the polygon can be dragged around.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     * 
+     * </pre><div id="781b5564-a671-4327-81c6-de915c8f924e" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('781b5564-a671-4327-81c6-de915c8f924e', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  })();
+     * </script><pre>
+     * 
+     *  @example
+     *  
+     *  // Allow rotations:
+     *  // Define a center of rotation and declare points of the group as "rotation points".
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  g.setRotationCenter(p[0]);
+     *  g.setRotationPoints([p[1], p[2]]);
+     * 
+     * </pre><div id="f0491b62-b377-42cb-b55c-4ef5374b39fc" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('f0491b62-b377-42cb-b55c-4ef5374b39fc', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  g.setRotationCenter(p[0]);
+     *  g.setRotationPoints([p[1], p[2]]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow rotations:
+     *  // As rotation center, arbitrary points, coordinate arrays, 
+     *  // or functions returning coordinate arrays can be given. 
+     *  // Another possibility is to use the predefined string 'centroid'.
+     * 
+     *  // The methods to define the rotation points can be chained.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
+     * 
+     * </pre><div id="8785b099-a75e-4769-bfd8-47dd4376fe27" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('8785b099-a75e-4769-bfd8-47dd4376fe27', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow scaling:
+     *  // As for rotation one can declare points of the group to trigger a scaling operation. 
+     *  // For this, one has to define a scaleCenter, in analogy to rotations. 
+     * 
+     *  // Here, the yellow  point enables scaling, the red point a rotation.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     * 
+     * </pre><div id="c3ca436b-e4fc-4de5-bab4-09790140c675" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('c3ca436b-e4fc-4de5-bab4-09790140c675', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow Translations:
+     *  // By default, every point of a group triggers a translation.
+     *  // There may be situations, when this is not wanted.
+     * 
+     *  // In this example, E triggers nothing, but itself is rotation center 
+     *  // and is translated, if other points are moved around.
+     * 
+     *  var p, q, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p.concat(q)).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  g.removeTranslationPoint(q);
+     * 
+     * </pre><div id="d19b800a-57a9-4303-b49a-8f5b7a5488f0" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, q, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('d19b800a-57a9-4303-b49a-8f5b7a5488f0', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p.concat(q)).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  g.removeTranslationPoint(q);
+     *  })();
+     * </script><pre>
+     *
+     * 
      */
     JXG.createGroup = function (board, parents, attributes) {
         var i, 
-            attr = Type.copyAttributes(attributes, board.options, 'group');
+            attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';
