@@ -133,7 +133,6 @@ define([
 
     JXG.Curve.prototype = new GeometryElement();
 
-
     JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         /**
@@ -1417,6 +1416,39 @@ define([
      *   var a = c2_board.create('slider',[[0,2],[2,2],[0,1,2]]);
      *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
      * </script><pre>
+     * 
+     * @example
+     *  // Draggable Bezier curve
+     *  var col, p, c;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
+     *  
+     *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
+     *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
+     *  c.addParents(p);
+     * </pre><div id="7bcc6280-f6eb-433e-8281-c837c3387849" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function(){
+     *  var board, col, p, c;
+     *  board = JXG.JSXGraph.initBoard('7bcc6280-f6eb-433e-8281-c837c3387849', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
+     *  
+     *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
+     *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
+     *  c.addParents(p);
+     * })();
+     * </script><pre>
+     * 
+     * 
      */
     JXG.createCurve = function (board, parents, attributes) {
         var attr = Type.copyAttributes(attributes, board.options, 'curve');

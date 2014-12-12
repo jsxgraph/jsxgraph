@@ -571,7 +571,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, g;
-     *  board = JXG.JSXGraph.initBoard('a2204533-db91-4af9-b720-70394de4d367', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('a2204533-db91-4af9-b720-70394de4d367', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
@@ -605,7 +605,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
-     *  board = JXG.JSXGraph.initBoard('781b5564-a671-4327-81c6-de915c8f924e', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('781b5564-a671-4327-81c6-de915c8f924e', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
@@ -639,7 +639,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
-     *  board = JXG.JSXGraph.initBoard('f0491b62-b377-42cb-b55c-4ef5374b39fc', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('f0491b62-b377-42cb-b55c-4ef5374b39fc', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
@@ -677,7 +677,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
-     *  board = JXG.JSXGraph.initBoard('8785b099-a75e-4769-bfd8-47dd4376fe27', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('8785b099-a75e-4769-bfd8-47dd4376fe27', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
@@ -713,7 +713,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
-     *  board = JXG.JSXGraph.initBoard('c3ca436b-e4fc-4de5-bab4-09790140c675', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('c3ca436b-e4fc-4de5-bab4-09790140c675', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
@@ -753,7 +753,7 @@ define([
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, q, col, pol, g;
-     *  board = JXG.JSXGraph.initBoard('d19b800a-57a9-4303-b49a-8f5b7a5488f0', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true});
+     *  board = JXG.JSXGraph.initBoard('d19b800a-57a9-4303-b49a-8f5b7a5488f0', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
      *  col = 'blue';
      *  p = [];
      *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
