@@ -179,9 +179,12 @@ define([
                 if (parents[2].length === 2) {
                     parents[2] = [1].concat(parents[2]);
                 }
+                /*
                 v = [0, el.line1.stdform[1], el.line1.stdform[2]];
                 v = Mat.crossProduct(v, parents[2]);
                 v = Geometry.meetLineLine(v, el.line1.stdform, 0, board);
+                */
+                v = Geometry.projectPointToLine({coords: {usrCoords: parents[2]}}, el.line1, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.direction1 = (Mat.innerProduct(v, [0, el.line1.stdform[2], -el.line1.stdform[1]], 3) >= 0) ? +1 : -1;
             } else {
@@ -193,9 +196,12 @@ define([
                 if (parents[3].length === 2) {
                     parents[3] = [1].concat(parents[3]);
                 }
+                /*
                 v = [0, el.line2.stdform[1], el.line2.stdform[2]];
                 v = Mat.crossProduct(v, parents[3]);
                 v = Geometry.meetLineLine(v, el.line2.stdform, 0, board);
+                */
+                v = Geometry.projectPointToLine({coords: {usrCoords: parents[3]}}, el.line2, board);
                 v = Statistics.subtract(v.usrCoords, s.usrCoords);
                 el.direction2 = (Mat.innerProduct(v, [0, el.line2.stdform[2], -el.line2.stdform[1]], 3) >= 0) ? +1 : -1;
             } else {
@@ -684,7 +690,6 @@ define([
 
     JXG.registerElement('majorsector', JXG.createMajorSector);
 
-
     /**
      * @class The angle element is used to denote an angle defined by three points. Visually it is just a {@link Sector}
      * element with a radius not defined by the parent elements but by an attribute <tt>radius</tt>. As opposed to the sector,
@@ -1107,7 +1112,7 @@ define([
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
-     * @name Angle
+     * @name NonReflexAngle
      * @augments Sector
      * @constructor
      * @type Sector
@@ -1120,7 +1125,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
      * </pre><div id="d0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1129,7 +1134,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3]);
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
      * })();
      * </script><pre>
      */
@@ -1145,7 +1150,7 @@ define([
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
-     * @name Angle
+     * @name ReflexAngle
      * @augments Sector
      * @constructor
      * @type Sector
@@ -1158,7 +1163,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3]);
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
      * </pre><div id="f2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1167,7 +1172,7 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3]);
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
      * })();
      * </script><pre>
      */

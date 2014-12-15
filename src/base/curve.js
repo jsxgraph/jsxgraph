@@ -133,7 +133,6 @@ define([
 
     JXG.Curve.prototype = new GeometryElement();
 
-
     JXG.extend(JXG.Curve.prototype, /** @lends JXG.Curve.prototype */ {
 
         /**
@@ -1019,7 +1018,7 @@ define([
 
             if (len > 0) {
                 c = Mat.matVecMult(this.transformMat, p.usrCoords);
-                p.setPosition(Const.COORDS_BY_USER, [c[1], c[2]]);
+                p.setCoordinates(Const.COORDS_BY_USER, [c[1], c[2]], false, true);
             }
 
             return p;
@@ -1038,71 +1037,6 @@ define([
             for (i = 0; i < len; i++) {
                 this.transformations.push(list[i]);
             }
-
-            return this;
-        },
-
-        /**
-         * Translates the object by <tt>(x, y)</tt>.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords array of translation vector.
-         * @returns {JXG.Curve} Reference to the curve object.
-         */
-        setPosition: function (method, coords) {
-            var t, obj, i,
-                len = 0;
-
-            if (Type.exists(this.parents)) {
-                len = this.parents.length;
-            }
-
-            for (i = 0; i < len; i++) {
-                obj = this.board.select(this.parents[i]);
-
-                if (!obj.draggable()) {
-                    return this;
-                }
-            }
-
-            // We distinguish two cases:
-            // 1) curves which depend on free elements, i.e. arcs and sectors
-            // 2) other curves
-            //
-            // In the first case we simply transform the parents elements
-            // In the second case we add a transform to the curve.
-            //
-            coords = new Coords(method, coords, this.board, false);
-            t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
-
-            if (len > 0) {
-                for (i = 0; i < len; i++) {
-                    obj = this.board.select(this.parents[i]);
-                    t.applyOnce(obj);
-                }
-            } else {
-                if (this.transformations.length > 0 &&
-                        this.transformations[this.transformations.length - 1].isNumericMatrix) {
-                    this.transformations[this.transformations.length - 1].melt(t);
-                } else {
-                    this.addTransform(t);
-                }
-            }
-            return this;
-        },
-
-        /**
-         * Moves the cuvre by the difference of two coordinates.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates in screen/user units
-         * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.Curve} this element
-         */
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var c = new Coords(method, coords, this.board, false),
-                oldc = new Coords(method, oldcoords, this.board, false),
-                dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
-
-            this.setPosition(Const.COORDS_BY_USER, dc);
 
             return this;
         },
@@ -1482,6 +1416,39 @@ define([
      *   var a = c2_board.create('slider',[[0,2],[2,2],[0,1,2]]);
      *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
      * </script><pre>
+     * 
+     * @example
+     *  // Draggable Bezier curve
+     *  var col, p, c;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
+     *  
+     *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
+     *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
+     *  c.addParents(p);
+     * </pre><div id="7bcc6280-f6eb-433e-8281-c837c3387849" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * (function(){
+     *  var board, col, p, c;
+     *  board = JXG.JSXGraph.initBoard('7bcc6280-f6eb-433e-8281-c837c3387849', {boundingbox: [-3,3,3,-3], axis: true, showcopyright: false, shownavigation: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
+     *  
+     *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
+     *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
+     *  c.addParents(p);
+     * })();
+     * </script><pre>
+     * 
+     * 
      */
     JXG.createCurve = function (board, parents, attributes) {
         var attr = Type.copyAttributes(attributes, board.options, 'curve');

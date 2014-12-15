@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -45,8 +45,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/element', 'math/math', 'utils/type'
-], function (JXG, Const, GeometryElement, Mat, Type) {
+    'jxg', 'base/constants', 'base/element', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, GeometryElement, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -90,6 +90,12 @@ define([
         this.coords = {};
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
+        this.rotationCenter = 'centroid';
+        this.scaleCenter = null;
+        this.rotationPoints = [];
+        this.translationPoints = [];
+        this.scalePoints = [];
+                
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -124,6 +130,7 @@ define([
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         /**
          * Releases the group added to the points in this group, but only if this group is the last group.
+         * @returns {JXG.Group} returns this group
          */
         ungroup: function () {
             var el;
@@ -138,72 +145,161 @@ define([
                     this.removePoint(this.objects[el].point);
                 }
             }
+            
+            return this;
         },
 
         /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners
          * and not by the board.
-         * @param {JXG.Point} point The point that caused the update.
-         * @param {Number} dX
-         * @param {Number} dY
+         * @param{JXG.GeometryElement} drag Element that caused the update.
+         * @returns {JXG.Group} returns this group
          */
-        //update: function (point, dX, dY) {
-        update: function (fromParent) {
-            var el, trans, transObjId, j,
-                obj = null;
+        update: function (drag) {
+            var el, 
+                dragObjId, 
+                isTranslation = false,
+                isRotation = false,
+                isScale = false,
+                actionCenter,
+                trans, s, 
+                alpha, t, center, len, 
+                obj = null,
+                changed = [];
 
             if (!this.needsUpdate) {
                 return this;
             }
 
-            for (el in this.objects) {
-                if (this.objects.hasOwnProperty(el)) {
-                    obj = this.objects[el].point;
+            // Determine how many elements have changed their position
+            // If more than one element changed its position, it is a translation.
+            // If exactly one element changed its position we have to find the type of the point.
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                obj = this.objects[el].point;
+                    
+                if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
+                    changed.push(obj.id);
+                }
+            }
+            
+            // Determine type of action: translation, scaling or rotation
+            if (changed.length == 0) {
+                return this;
+            } else {
+                dragObjId = changed[0];
+                obj = this.objects[dragObjId].point;
 
-                    if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
-                        trans = [
-                            obj.coords.usrCoords[1] - this.coords[obj.id].usrCoords[1],
-                            obj.coords.usrCoords[2] - this.coords[obj.id].usrCoords[2]
-                        ];
-                        transObjId = obj.id;
-                        break;
+                if (changed.length > 1) { // More than one point moved => translation
+                    isTranslation = true;
+                } else {                        // One point moved => we have to determine the type
+                    if (Type.isInArray(this.rotationPoints, obj) && Type.exists(this.rotationCenter)) {
+                        isRotation = true;
+                    } else if (Type.isInArray(this.scalePoints, obj) && Type.exists(this.scaleCenter)) {
+                        isScale = true;
+                    } else if (Type.isInArray(this.translationPoints, obj)) {
+                        isTranslation = true;
                     }
                 }
             }
+            
+            if (!isRotation && !isTranslation && !isScale) {
+                return this;
+            }
 
-            if (Type.exists(transObjId)) {
-                for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el)) {
-                        if (Type.exists(this.board.objects[el])) {
-
-                            obj = this.objects[el].point;
-                            if (obj.id !== transObjId) {
-                                //obj.coords.setCoordinates(Const.COORDS_BY_USER, 
-                                //    [this.coords[el].usrCoords[1] + trans[0], 
-                                //     this.coords[el].usrCoords[2] + trans[1]]);
+            // Prepare translation, scaling or rotation
+            if (isTranslation) {
+                trans = [
+                        obj.coords.usrCoords[1] - this.coords[dragObjId].usrCoords[1],
+                        obj.coords.usrCoords[2] - this.coords[dragObjId].usrCoords[2]
+                    ];
+                    
+            } else if (isRotation || isScale) {
+                if (isRotation) {
+                    actionCenter = 'rotationCenter';
+                } else {
+                    actionCenter = 'scaleCenter';
+                }
+                    
+                if (Type.isPoint(this[actionCenter])) {
+                    center = this[actionCenter].coords.usrCoords.slice(1);
+                } else if (this[actionCenter] === 'centroid') {
+                    center = [0, 0];
+                    len = 0;
+                    for (el in this.coords) if (this.coords.hasOwnProperty(el)) {
+                        center[0] += this.coords[el].usrCoords[1];
+                        center[1] += this.coords[el].usrCoords[2];
+                        ++len;
+                    }
+                    if (len > 0) {
+                        center[0] /= len;
+                        center[1] /= len;
+                    }
+                } else if (Type.isArray(this[actionCenter])) {
+                    center = this[actionCenter];
+                } else if (Type.isFunction(this[actionCenter])) {
+                    center = this[actionCenter]();
+                } else {
+                    return this;
+                }
+                
+                if (isRotation) {
+                    alpha = Geometry.rad(this.coords[dragObjId].usrCoords.slice(1), center, this.objects[dragObjId].point);
+                    t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
+                    t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
+               } else if (isScale) {
+                    s = Geometry.distance(this.coords[dragObjId].usrCoords.slice(1), center);
+                    if (Math.abs(s) < Mat.eps) {
+                        return this;
+                    }
+                    s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
+                    
+                    // Shift scale center to origin, scale and shift the scale center back.
+                    t = this.board.create('transform', 
+                            [1, 0, 0, 
+                             center[0] * (1 -  s), s, 0,
+                             center[1] * (1 -  s), 0, s], {type: 'generic'});
+                    t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
+                } else{
+                    return this;
+                }
+            }
+            
+            // Apply the transformation
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                if (Type.exists(this.board.objects[el])) {
+                    obj = this.objects[el].point;
+                    
+                    if (obj.id !== dragObjId) {
+                        if (isTranslation) {
+                            if (!Type.isInArray(changed, obj.id)) {
                                 obj.setPositionDirectly(Const.COORDS_BY_USER, 
                                     [this.coords[el].usrCoords[1] + trans[0], 
                                      this.coords[el].usrCoords[2] + trans[1]]);
                             }
-                            //this.objects[el].point.prepareUpdate().update(false).updateRenderer();
-                        } else {
-                            delete this.objects[el];
+                        } else if (isRotation || isScale) {
+                            t.applyOnce([obj]);
                         }
-                        this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                    } else {
+                        if (isRotation || isScale) {
+                            obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
+                        }
                     }
-                }
 
-                for (el in this.objects) {
-                    if (this.objects.hasOwnProperty(el)) {
-                        for (j in this.objects[el].descendants) {
-                            if (this.objects[el].descendants.hasOwnProperty(j)) {
-                                this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
-                            }
-                        }
+                    this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                } else {
+                    delete this.objects[el];
+                }
+            }
+
+            // Prepare dependent objects for update
+            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
+                for (desc in this.objects[el].descendants) {
+                    if (this.objects[el].descendants.hasOwnProperty(desc)) {
+                        this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
                     }
                 }
-                this.board.updateElements(fromParent);
             }
+            this.board.updateElements(drag);
 
             return this;
         },
@@ -211,17 +307,20 @@ define([
         /**
          * Adds an Point to this group.
          * @param {JXG.Point} object The point added to the group.
+         * @returns {JXG.Group} returns this group
          */
         addPoint: function (object) {
-            this.objects[object.id] = {
-                point: object
-            };
+            this.objects[object.id] = {point: this.board.select(object)};
             this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
+            this.translationPoints.push(object);
+            
+            return this;
         },
 
         /**
          * Adds multiple points to this group.
          * @param {Array} objects An array of points to add to the group.
+         * @returns {JXG.Group} returns this group
          */
         addPoints: function (objects) {
             var p;
@@ -229,11 +328,14 @@ define([
             for (p = 0; p < objects.length; p++) {
                 this.addPoint(objects[p]);
             }
+            
+            return this;
         },
 
         /**
          * Adds all points in a group to this group.
          * @param {JXG.Group} group The group added to this group.
+         * @returns {JXG.Group} returns this group
          */
         addGroup: function (group) {
             var el;
@@ -243,16 +345,177 @@ define([
                     this.addPoint(group.objects[el].point);
                 }
             }
+            
+            return this;
         },
 
         /**
          * Removes a point from the group.
          * @param {JXG.Point} point
+         * @returns {JXG.Group} returns this group
          */
         removePoint: function (point) {
             delete this.objects[point.id];
+
+            return this;
         },
 
+        /**
+         * Sets the center of rotation for the group. This is either a point or the centroid of the group.
+         * @param {JXG.Point|String} object A point which will be the center of rotation, the string "centroid", or
+         * an array of length two, or a function returning an array of length two.
+         * @default 'centroid'
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationCenter: function(object) {
+            this.rotationCenter = object;
+            
+            return this;
+        },
+
+        /**
+         * Sets the rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
+         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * @returns {JXG.Group} returns this group
+         */
+        setRotationPoints: function(objects) {
+            return this._setActionPoints('rotation', objects);
+        },
+
+        /**
+         * Adds a point to the set of rotation points of the group. Dragging at one of these points results into a rotation of the whole group around
+         * the rotation center of the group {@see JXG.Group#setRotationCenter}.
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addRotationPoint: function(point) {
+            return this._addActionPoint('rotation', point);
+        },
+
+        /**
+         * Removes the rotation property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeRotationPoint: function(point) {
+            return this._removeActionPoint('rotation', point);
+        },
+
+        /**
+         * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * 
+         * By default, all points of the group are translation points.
+         * @returns {JXG.Group} returns this group
+         */
+        setTranslationPoints: function(objects) {
+            return this._setActionPoints('translation', objects);
+        },
+
+        /**
+         * Adds a point to the set of the translation points of the group. Dragging at one of these points results into a translation of the whole group.
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addTranslationPoint: function(point) {
+            return this._addActionPoint('translation', point);
+        },
+
+        /**
+         * Removes the translation property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeTranslationPoint: function(point) {
+            return this._removeActionPoint('translation', point);
+        },
+
+        /**
+         * Sets the center of scaling for the group. This is either a point or the centroid of the group.
+         * @param {JXG.Point|String} object A point which will be the center of scaling, the string "centroid", or
+         * an array of length two, or a function returning an array of length two.
+         * @returns {JXG.Group} returns this group
+         */
+        setScaleCenter: function(object) {
+            this.scaleCenter = object;
+            
+            return this;
+        },
+
+        /**
+         * Sets the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
+         * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * 
+         * By default, all points of the group are translation points.
+         * @returns {JXG.Group} returns this group
+         */
+        setScalePoints: function(objects) {
+            return this._setActionPoints('scale', objects);
+        },
+
+        /**
+         * Adds a point to the set of the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        addScalePoint: function(point) {
+            return this._addActionPoint('scale', point);
+        },
+
+        /**
+         * Removes the scaling property from a point of the group. 
+         * @param {JXG.Point} point {@link JXG.Point} element.
+         * @returns {JXG.Group} returns this group
+         */
+        removeScalePoint: function(point) {
+            return this._removeActionPoint('scale', point);
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@setTranslationPoints} and {@link JXG.Group@setRotationPoints}
+         * @private
+         */
+        _setActionPoints: function(action, objects) {
+            var objs, i, len;
+            if (Type.isArray(objects)) {
+                objs = objects;
+            } else {
+                objs = arguments;
+            }
+                
+            len = objs.length;
+            this[action + 'Points'] = [];
+            for (i = 0; i < len; ++i) {
+                this[action + 'Points'].push(this.board.select(objs[i]));
+            }
+            
+            return this;
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@addTranslationPoint} and {@link JXG.Group@addRotationPoint}
+         * @private
+         */
+        _addActionPoint: function(action, point) {
+            this[action + 'Points'].push(this.board.select(point));
+            
+            return this;
+        },
+
+        /**
+         * Generic method for {@link JXG.Group@removeTranslationPoint} and {@link JXG.Group@removeRotationPoint}
+         * @private
+         */
+        _removeActionPoint: function(action, point) {
+            var idx = this[action + 'Points'].indexOf(this.board.select(point));
+            if (idx > -1) {
+                this[action + 'Points'].splice(idx, 1);
+            }
+            
+            return this;
+        },
+        
         /**
          * @deprecated
          * Use setAttribute
@@ -267,19 +530,249 @@ define([
                     this.objects[el].point.setAttribute.apply(this.objects[el].point, arguments);
                 }
             }
+            
+            return this;
         }
     });
 
     /**
-     * Groups points.
+     * @class This element combines a given set of {@link JXG.Point} elements to a 
+     *  group. The elements of the group and dependent elements can be translated, rotated and scaled by
+     *  dragging one of the group elements.
+     * 
+     * 
+     * @pseudo
+     * @description
+     * @name Group
+     * @augments JXG.Group
+     * @constructor
+     * @type JXG.Group
      * @param {JXG.Board} board The board the points are on.
      * @param {Array} parents Array of points to group.
-     * @param {Object} attributes Visual properties.
+     * @param {Object} attributes Visual properties (unused).
      * @returns {JXG.Group}
+     * 
+     * @example
+     *
+     *  // Create some free points. e.g. A, B, C, D
+     *  // Create a group 
+     * 
+     *  var p, col, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  g = board.create('group', p);
+     * 
+     * </pre><div id="a2204533-db91-4af9-b720-70394de4d367" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, g;
+     *  board = JXG.JSXGraph.initBoard('a2204533-db91-4af9-b720-70394de4d367', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  g = board.create('group', p);
+     *  })();
+     * </script><pre>
+     * 
+     * 
+     * @example
+     *
+     *  // Create some free points. e.g. A, B, C, D
+     *  // Create a group 
+     *  // If the points define a polygon and the polygon has the attribute hasInnerPoints:true, 
+     *  // the polygon can be dragged around.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     * 
+     * </pre><div id="781b5564-a671-4327-81c6-de915c8f924e" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('781b5564-a671-4327-81c6-de915c8f924e', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  })();
+     * </script><pre>
+     * 
+     *  @example
+     *  
+     *  // Allow rotations:
+     *  // Define a center of rotation and declare points of the group as "rotation points".
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  g.setRotationCenter(p[0]);
+     *  g.setRotationPoints([p[1], p[2]]);
+     * 
+     * </pre><div id="f0491b62-b377-42cb-b55c-4ef5374b39fc" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('f0491b62-b377-42cb-b55c-4ef5374b39fc', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p);
+     *  g.setRotationCenter(p[0]);
+     *  g.setRotationPoints([p[1], p[2]]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow rotations:
+     *  // As rotation center, arbitrary points, coordinate arrays, 
+     *  // or functions returning coordinate arrays can be given. 
+     *  // Another possibility is to use the predefined string 'centroid'.
+     * 
+     *  // The methods to define the rotation points can be chained.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
+     * 
+     * </pre><div id="8785b099-a75e-4769-bfd8-47dd4376fe27" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('8785b099-a75e-4769-bfd8-47dd4376fe27', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow scaling:
+     *  // As for rotation one can declare points of the group to trigger a scaling operation. 
+     *  // For this, one has to define a scaleCenter, in analogy to rotations. 
+     * 
+     *  // Here, the yellow  point enables scaling, the red point a rotation.
+     * 
+     *  var p, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     * 
+     * </pre><div id="c3ca436b-e4fc-4de5-bab4-09790140c675" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('c3ca436b-e4fc-4de5-bab4-09790140c675', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  })();
+     * </script><pre>
+     *
+     *  @example
+     *  
+     *  // Allow Translations:
+     *  // By default, every point of a group triggers a translation.
+     *  // There may be situations, when this is not wanted.
+     * 
+     *  // In this example, E triggers nothing, but itself is rotation center 
+     *  // and is translated, if other points are moved around.
+     * 
+     *  var p, q, col, pol, g;
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p.concat(q)).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  g.removeTranslationPoint(q);
+     * 
+     * </pre><div id="d19b800a-57a9-4303-b49a-8f5b7a5488f0" style="width: 400px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *  (function () {
+     *  var board, p, q, col, pol, g;
+     *  board = JXG.JSXGraph.initBoard('d19b800a-57a9-4303-b49a-8f5b7a5488f0', {boundingbox:[-5,5,5,-5], keepaspectratio:true, axis:true, showcopyright: false});
+     *  col = 'blue';
+     *  p = [];
+     *  p.push(board.create('point',[-2, -1 ], {size: 5, strokeColor:col, fillColor:col}));
+     *  p.push(board.create('point',[2, -1 ], {size: 5, strokeColor:'yellow', fillColor:'yellow'}));
+     *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:'red', fillColor:'red'}));
+     *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
+     *  q = board.create('point',[0, 0], {size: 5, strokeColor:col, fillColor:col});
+     *
+     *  pol = board.create('polygon', p, {hasInnerPoints: true});
+     *  g = board.create('group', p.concat(q)).setRotationCenter('centroid').setRotationPoints([p[2]]);
+     *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
+     *  g.removeTranslationPoint(q);
+     *  })();
+     * </script><pre>
+     *
+     * 
      */
     JXG.createGroup = function (board, parents, attributes) {
         var i, 
-            attr = Type.copyAttributes(attributes, board.options, 'group');
+            attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';

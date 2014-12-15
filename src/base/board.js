@@ -1228,8 +1228,13 @@ define([
                 xy.push(obj.point3.coords.usrCoords);
             } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
-            //} else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
-            // TODO
+            } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
+                if (JXG.exists(obj.parents)) {
+                    len = obj.parents.length;
+                    for (i = 0; i < len; i++) {
+                        xy.push(this.select(obj.parents[i]).coords.usrCoords);
+                    }
+                }
             } else {
                 try {
                     xy.push(obj.coords.usrCoords);
@@ -2013,7 +2018,7 @@ define([
          * @return {Boolean}
          */
         touchMoveListener: function (evt) {
-            var i, pos, time,
+            var i, pos1, pos2, time,
                 evtTouches = evt[JXG.touchProperty];
 
             if (this.mode !== this.BOARD_MODE_NONE) {
@@ -2051,25 +2056,28 @@ define([
                         // Touch by one finger:  this is possible for all elements that can be dragged
                         if (this.touches[i].targets.length === 1) {
                             if (evtTouches[this.touches[i].targets[0].num]) {
+                                pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight) {
+                                    return;
+                                }
                                 this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
                                 this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                                pos = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                                this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
+                                this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
                             }
                             // Touch by two fingers: moving lines
                         } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
                             if (evtTouches[this.touches[i].targets[0].num] && evtTouches[this.touches[i].targets[1].num]) {
+                                pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
+                                if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight ||
+                                    pos2[0] < 0 || pos2[0] > this.canvasWidth ||  pos2[1] < 0 || pos2[1] > this.canvasHeight) {
+                                    return;
+                                }
                                 this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
                                 this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
                                 this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
                                 this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                                this.twoFingerMove(
-                                    this.getMousePosition(evt, this.touches[i].targets[0].num),
-                                    this.getMousePosition(evt, this.touches[i].targets[1].num),
-                                    this.touches[i],
-                                    evt
-                                );
-
+                                this.twoFingerMove(pos1, pos2, this.touches[i], evt);
                             }
                         }
                     }
@@ -2621,9 +2629,9 @@ define([
                         t = e.coords.usrCoords[what];
 
                         if (what === 2) {
-                            e.setPositionDirectly(JXG.COORDS_BY_USER, [f(), t]);
+                            e.setPositionDirectly(Type.COORDS_BY_USER, [f(), t]);
                         } else {
-                            e.setPositionDirectly(JXG.COORDS_BY_USER, [t, f()]);
+                            e.setPositionDirectly(Type.COORDS_BY_USER, [t, f()]);
                         }
                         e.prepareUpdate().update();
                     };

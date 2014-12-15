@@ -635,8 +635,7 @@ define([
      *    <li> a list of coordinate arrays or
      *    <li> a function returning a list of coordinate arrays.
      * </ul>
-     * Each two
-     * consecutive points of the list define a line.
+     * Each two consecutive points of the list define a line.
      * @pseudo
      * @constructor
      * @name Polygon
@@ -649,7 +648,7 @@ define([
      * var p1 = board.create('point', [0.0, 2.0]);
      * var p2 = board.create('point', [2.0, 1.0]);
      * var p3 = board.create('point', [4.0, 6.0]);
-     * var p4 = board.create('point', [1.0, 3.0]);
+     * var p4 = board.create('point', [1.0, 4.0]);
      *
      * var pol = board.create('polygon', [p1, p2, p3, p4]);
      * </pre><div id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
@@ -659,7 +658,7 @@ define([
      *       p1 = board.create('point', [0.0, 2.0]),
      *       p2 = board.create('point', [2.0, 1.0]),
      *       p3 = board.create('point', [4.0, 6.0]),
-     *       p4 = board.create('point', [1.0, 3.0]),
+     *       p4 = board.create('point', [1.0, 4.0]),
      *       cc1 = board.create('polygon', [p1, p2, p3, p4]);
      *  })();
      * </script><pre>
@@ -667,13 +666,13 @@ define([
      * @example
      * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]];
      *
-     * var pol = board.create('polygon', p);
+     * var pol = board.create('polygon', p, {hasInnerPoints: true});
      * </pre><div id="9f9a5946-112a-4768-99ca-f30792bcdefb" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('9f9a5946-112a-4768-99ca-f30792bcdefb', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
-     *       var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]],
-     *       cc1 = board.create('polygon', p);
+     *       p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 4.0]],
+     *       cc1 = board.create('polygon', p, {hasInnerPoints: true});
      *  })();
      * </script><pre>
      *
@@ -681,18 +680,17 @@ define([
      *   var f1 = function() { return [0.0, 2.0]; }, 
      *       f2 = function() { return [2.0, 1.0]; }, 
      *       f3 = function() { return [4.0, 6.0]; }, 
-     *       f4 = function() { return [1.0, 3.0]; }, 
-     *   cc1 = board.create('polygon', [f1, f2, f3, f4]);
+     *       f4 = function() { return [1.0, 4.0]; }, 
+     *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *
-     * var pol = board.create('polygon', [f]);
      * </pre><div id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('ceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
-     *       var f1 = function() { return [0.0, 2.0]; }, 
-     *           f2 = function() { return [2.0, 1.0]; }, 
-     *           f3 = function() { return [4.0, 6.0]; }, 
-     *           f4 = function() { return [1.0, 3.0]; }, 
+     *       f1 = function() { return [0.0, 2.0]; }, 
+     *       f2 = function() { return [2.0, 1.0]; }, 
+     *       f3 = function() { return [4.0, 6.0]; }, 
+     *       f4 = function() { return [1.0, 4.0]; }, 
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *  })();
      * </script><pre>

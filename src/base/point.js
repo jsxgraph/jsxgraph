@@ -212,6 +212,861 @@ define([
         },
 
         /**
+         * Getter method for the distance to a second point, this is required for CAS-elements.
+         * Here, function inlining was worthwile (for plotting), but in newer generations of browsers
+         * this is no longer an issue.
+         * @param {JXG.Point} point2 The point to which the distance shall be calculated.
+         * @returns {Number} Distance in user coordinate to the given point
+         */
+        Dist: function (point2) {
+            if (this.isReal && point2.isReal) {
+                return this.coords.distance(Const.COORDS_BY_USER, point2.coords);
+            }
+            return NaN;
+        },
+
+        /**
+         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToGrid: function (force) {
+            return this.handleSnapToGrid(force);
+        },
+
+        /**
+         * Let a point snap to the nearest point in distance of
+         * {@link JXG.Point#attractorDistance}.
+         * The function uses the coords object of the point as
+         * its actual position.
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleSnapToPoints: function (force) {
+            var i, pEl, pCoords,
+                d = 0,
+                dMax = Infinity,
+                c = null;
+
+            if (this.visProp.snaptopoints || force) {
+                for (i = 0; i < this.board.objectsList.length; i++) {
+                    pEl = this.board.objectsList[i];
+
+                    if (Type.isPoint(pEl) && pEl !== this && pEl.visProp.visible) {
+                        pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
+                        if (this.visProp.attractorunit === 'screen') {
+                            d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
+                        } else {
+                            d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
+                        }
+
+                        if (d < this.visProp.attractordistance && d < dMax) {
+                            dMax = d;
+                            c = pCoords;
+                        }
+                    }
+                }
+
+                if (c !== null) {
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
+                }
+            }
+
+            return this;
+        },
+
+        /**
+         * Alias for {@link #handleSnapToPoints}.
+         * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @returns {JXG.Point} Reference to this element
+         */
+        snapToPoints: function (force) {
+            return this.handleSnapToPoints(force);
+        },
+
+        /**
+         * A point can change its type from free point to glider
+         * and vice versa. If it is given an array of attractor elements
+         * (attribute attractors) and the attribute attractorDistance
+         * then the pint will be made a glider if it less than attractorDistance
+         * apart from one of its attractor elements.
+         * If attractorDistance is equal to zero, the point stays in its
+         * current form.
+         * @returns {JXG.Point} Reference to this element
+         */
+        handleAttractors: function () {
+            var i, el, projCoords,
+                d = 0.0,
+                len = this.visProp.attractors.length;
+
+            if (this.visProp.attractordistance === 0.0) {
+                return;
+            }
+
+            for (i = 0; i < len; i++) {
+                el = this.board.select(this.visProp.attractors[i]);
+
+                if (Type.exists(el) && el !== this) {
+                    if (Type.isPoint(el)) {
+                        projCoords = Geometry.projectPointToPoint(this, el, this.board);
+                    } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
+                        projCoords = Geometry.projectPointToLine(this, el, this.board);
+                    } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                        projCoords = Geometry.projectPointToCircle(this, el, this.board);
+                    } else if (el.elementClass === Const.OBJECT_CLASS_CURVE) {
+                        projCoords = Geometry.projectPointToCurve(this, el, this.board);
+                    } else if (el.type === Const.OBJECT_TYPE_TURTLE) {
+                        projCoords = Geometry.projectPointToTurtle(this, el, this.board);
+                    }
+
+                    if (this.visProp.attractorunit === 'screen') {
+                        d = projCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
+                    } else {
+                        d = projCoords.distance(Const.COORDS_BY_USER, this.coords);
+                    }
+
+                    if (d < this.visProp.attractordistance) {
+                        if (!(this.type === Const.OBJECT_TYPE_GLIDER && this.slideObject === el)) {
+                            this.makeGlider(el);
+                        }
+
+                        break;       // bind the point to the first attractor in its list.
+                    } else {
+                        if (el === this.slideObject && d >= this.visProp.snatchdistance) {
+                            this.popSlideObject();
+                        }
+                    }
+                }
+            }
+
+            return this;
+        },
+
+        /**
+         * Sets coordinates and calls the point's update() method.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates <tt>(z, x, y)</tt> in screen/user units
+         * @returns {JXG.Point} this element
+         */
+        setPositionDirectly: function (method, coords) {
+            var i, dx, dy, dz, el, p,
+                oldCoords = this.coords,
+                newCoords;
+
+            this.coords.setCoordinates(method, coords);
+            this.handleSnapToGrid();
+            this.handleSnapToPoints();
+            this.handleAttractors();
+
+            if (this.group.length === 0) {
+                // Here used to be the udpate of the groups. I'm not sure why we don't need to execute
+                // the else branch if there are groups defined on this point, hence I'll let the if live.
+
+                // Update the initial coordinates. This is needed for free points
+                // that have a transformation bound to it.
+                for (i = this.transformations.length - 1; i >= 0; i--) {
+                    if (method === Const.COORDS_BY_SCREEN) {
+                        newCoords = (new Coords(method, coords, this.board)).usrCoords;
+                    } else {
+                        if (coords.length === 2) {
+                            coords = [1].concat(coords);
+                        }
+                        newCoords = coords;
+                    }
+                    this.initialCoords.setCoordinates(Const.COORDS_BY_USER, Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords));
+                }
+                this.prepareUpdate().update();
+            }
+
+            // if the user suspends the board updates we need to recalculate the relative position of
+            // the point on the slide object. this is done in updateGlider() which is NOT called during the
+            // update process triggered by unsuspendUpdate.
+            if (this.board.isSuspendedUpdate && this.type === Const.OBJECT_TYPE_GLIDER) {
+                this.updateGlider();
+            }
+
+            return coords;
+        },
+
+        /**
+         * Translates the point by <tt>tv = (x, y)</tt>.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Number} tv (x, y)
+         * @returns {JXG.Point}
+         */
+        setPositionByTransform: function (method, tv) {
+            var t;
+
+            tv = new Coords(method, tv, this.board);
+            t = this.board.create('transform', tv.usrCoords.slice(1), {type: 'translate'});
+
+            if (this.transformations.length > 0 && this.transformations[this.transformations.length - 1].isNumericMatrix) {
+                this.transformations[this.transformations.length - 1].melt(t);
+            } else {
+                this.addTransform(this, t);
+            }
+
+            this.prepareUpdate().update();
+
+            return this;
+        },
+
+        /**
+         * Sets coordinates and calls the point's update() method.
+         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Array} coords coordinates in screen/user units
+         * @returns {JXG.Point}
+         */
+        setPosition: function (method, coords) {
+            return this.setPositionDirectly(method, coords);
+        },
+
+        /**
+         * Sets the position of a glider relative to the defining elements of the {@link JXG.Point#slideObject}.
+         * @param {Number} x
+         * @returns {JXG.Point} Reference to the point element.
+         */
+        setGliderPosition: function (x) {
+            if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                this.position = x;
+                this.board.update();
+            }
+
+            return this;
+        },
+
+        /**
+         * Convert the point to glider and update the construction.
+         * To move the point visual onto the glider, a call of board update is necessary.
+         * @param {String|Object} slide The object the point will be bound to.
+         */
+        makeGlider: function (slide) {
+            var slideobj = this.board.select(slide);
+
+            /* Gliders on Ticks are forbidden */
+            if (!Type.exists(slideobj)) {
+                throw new Error("JSXGraph: slide object undefined.");
+            } else if (slideobj.type === Const.OBJECT_TYPE_TICKS) {
+                throw new Error("JSXGraph: gliders on ticks are not possible.");
+            }
+
+            this.slideObject = this.board.select(slide);
+            this.slideObjects.push(this.slideObject);
+
+            this.type = Const.OBJECT_TYPE_GLIDER;
+            this.elType = 'glider';
+            this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
+            this.slideObject.addChild(this);
+            this.isDraggable = true;
+
+            this.generatePolynomial = function () {
+                return this.slideObject.generatePolynomial(this);
+            };
+
+            // Determine the initial value of this.position
+            this.updateGlider();
+            this.needsUpdateFromParent = true;
+            this.updateGliderFromParent();
+
+            return this;
+        },
+        
+        /**
+         * Convert the point to intersection point and update the construction.
+         * To move the point visual onto the intersection, a call of board update is necessary.
+         * TODO docu.
+         * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
+         **/
+        makeIntersection: function(el1, el2, i, j) {
+            var func;
+            
+            el1 = this.board.select(el1);
+            el2 = this.board.select(el2);
+            
+            func = Geometry.intersectionFunction(this.board, el1, el2, i, j, this.visProp.alwaysintersect);
+            this.addConstraint([func]);
+
+            try {
+                el1.addChild(this);
+                el2.addChild(this);
+            } catch (e) {
+                throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            }
+
+            this.type = Const.OBJECT_TYPE_INTERSECTION;
+            this.elType = 'intersection';
+            this.parents = [el1.id, el2.id, i, j];
+
+            this.generatePolynomial = function () {
+                var poly1 = el1.generatePolynomial(this),
+                    poly2 = el2.generatePolynomial(this);
+    
+                if ((poly1.length === 0) || (poly2.length === 0)) {
+                    return [];
+                }
+
+                return [poly1[0], poly2[0]];
+            };
+            
+            this.prepareUpdate().update();
+        },
+    
+        /**
+         * Remove the last slideObject. If there are more than one elements the point is bound to,
+         * the second last element is the new active slideObject.
+         */
+        popSlideObject: function () {
+            if (this.slideObjects.length > 0) {
+                this.slideObjects.pop();
+
+                // It may not be sufficient to remove the point from
+                // the list of childElement. For complex dependencies
+                // one may have to go to the list of ancestor and descendants.  A.W.
+                // yes indeed, see #51 on github bugtracker
+                //delete this.slideObject.childElements[this.id];
+                this.slideObject.removeChild(this);
+
+                if (this.slideObjects.length === 0) {
+                    this.elType = 'point';
+                    this.type = Const.OBJECT_TYPE_POINT;
+                    this.slideObject = null;
+                } else {
+                    this.slideObject = this.slideObjects[this.slideObjects.length - 1];
+                }
+            }
+        },
+
+        /**
+         * Converts a calculated point into a free point, i.e. it will delete all ancestors and transformations and,
+         * if the point is currently a glider, will remove the slideObject reference.
+         */
+        free: function () {
+            var ancestorId, ancestor, child;
+
+            if (this.type !== Const.OBJECT_TYPE_GLIDER) {
+                // remove all transformations
+                this.transformations.length = 0;
+
+                if (!this.isDraggable) {
+                    this.isDraggable = true;
+                    this.type = Const.OBJECT_TYPE_POINT;
+
+                    this.XEval = function () {
+                        return this.coords.usrCoords[1];
+                    };
+
+                    this.YEval = function () {
+                        return this.coords.usrCoords[2];
+                    };
+
+                    this.ZEval = function () {
+                        return this.coords.usrCoords[0];
+                    };
+
+                    this.Xjc = null;
+                    this.Yjc = null;
+                } else {
+                    return;
+                }
+            }
+
+            // a free point does not depend on anything. And instead of running through tons of descendants and ancestor
+            // structures, where we eventually are going to visit a lot of objects twice or thrice with hard to read and
+            // comprehend code, just run once through all objects and delete all references to this point and its label.
+            for (ancestorId in this.board.objects) {
+                if (this.board.objects.hasOwnProperty(ancestorId)) {
+                    ancestor = this.board.objects[ancestorId];
+
+                    if (ancestor.descendants) {
+                        delete ancestor.descendants[this.id];
+                        delete ancestor.childElements[this.id];
+
+                        if (this.hasLabel) {
+                            delete ancestor.descendants[this.label.id];
+                            delete ancestor.childElements[this.label.id];
+                        }
+                    }
+                }
+            }
+
+            // A free point does not depend on anything. Remove all ancestors.
+            this.ancestors = {}; // only remove the reference
+
+            // Completely remove all slideObjects of the point
+            this.slideObject = null;
+            this.slideObjects = [];
+            this.elType = 'point';
+            this.type = Const.OBJECT_TYPE_POINT;
+        },
+
+        /**
+         * Convert the point to CAS point and call update().
+         * @param {Array} terms [[zterm], xterm, yterm] defining terms for the z, x and y coordinate.
+         * The z-coordinate is optional and it is used for homogeneous coordinates.
+         * The coordinates may be either <ul>
+         *   <li>a JavaScript function,</li>
+         *   <li>a string containing GEONExT syntax. This string will be converted into a JavaScript
+         *     function here,</li>
+         *   <li>a Number</li>
+         *   <li>a pointer to a slider object. This will be converted into a call of the Value()-method
+         *     of this slider.</li>
+         *   </ul>
+         * @see JXG.GeonextParser#geonext2JS
+         */
+        addConstraint: function (terms) {
+            var fs, i, v, t,
+                newfuncs = [],
+                what = ['X', 'Y'],
+
+                makeConstFunction = function (z) {
+                    return function () {
+                        return z;
+                    };
+                },
+
+                makeSliderFunction = function (a) {
+                    return function () {
+                        return a.Value();
+                    };
+                };
+
+            this.type = Const.OBJECT_TYPE_CAS;
+            this.isDraggable = false;
+
+            for (i = 0; i < terms.length; i++) {
+                v = terms[i];
+
+                if (typeof v === 'string') {
+                    // Convert GEONExT syntax into  JavaScript syntax
+                    //t  = JXG.GeonextParser.geonext2JS(v, this.board);
+                    //newfuncs[i] = new Function('','return ' + t + ';');
+                    //v = GeonextParser.replaceNameById(v, this.board);
+                    newfuncs[i] = this.board.jc.snippet(v, true, null, true);
+
+                    if (terms.length === 2) {
+                        this[what[i] + 'jc'] = terms[i];
+                    }
+                } else if (typeof v === 'function') {
+                    newfuncs[i] = v;
+                } else if (typeof v === 'number') {
+                    newfuncs[i] = makeConstFunction(v);
+                // Slider
+                } else if (typeof v === 'object' && typeof v.Value === 'function') {
+                    newfuncs[i] = makeSliderFunction(v);
+                }
+
+                newfuncs[i].origin = v;
+            }
+
+            // Intersection function
+            if (terms.length === 1) {
+                this.updateConstraint = function () {
+                    var c = newfuncs[0]();
+
+                    // Array
+                    if (Type.isArray(c)) {
+                        this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+                    // Coords object
+                    } else {
+                        this.coords = c;
+                    }
+                };
+            // Euclidean coordinates
+            } else if (terms.length === 2) {
+                this.XEval = newfuncs[0];
+                this.YEval = newfuncs[1];
+
+                this.parents = [newfuncs[0].origin, newfuncs[1].origin];
+
+                this.updateConstraint = function () {
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, [this.XEval(), this.YEval()]);
+                };
+            // Homogeneous coordinates
+            } else {
+                this.ZEval = newfuncs[0];
+                this.XEval = newfuncs[1];
+                this.YEval = newfuncs[2];
+
+                this.parents = [newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin];
+
+                this.updateConstraint = function () {
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+                };
+            }
+
+            /**
+            * We have to do an update. Otherwise, elements relying on this point will receive NaN.
+            */
+            this.prepareUpdate().update();
+            
+            if (!this.board.isSuspendedUpdate) {
+                this.updateRenderer();
+            }
+
+            return this;
+        },
+
+        /**
+         * Applies the transformations of the curve to {@link JXG.Point#baseElement}.
+         * @returns {JXG.Point} Reference to this point object.
+         */
+        updateTransform: function () {
+            var c, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            // case of bindTo
+            if (this === this.baseElement) {
+                c = this.transformations[0].apply(this.baseElement, 'self');
+            // case of board.create('point',[baseElement,transform]);
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
+            }
+
+            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+
+            for (i = 1; i < this.transformations.length; i++) {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));
+            }
+            return this;
+        },
+
+        /**
+         * Add transformations to this point.
+         * @param {JXG.GeometryElement} el
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation} or an array of {@link JXG.Transformation}s.
+         * @returns {JXG.Point} Reference to this point object.
+         */
+        addTransform: function (el, transform) {
+            var i,
+                list = Type.isArray(transform) ? transform : [transform],
+                len = list.length;
+
+            // There is only one baseElement possible
+            if (this.transformations.length === 0) {
+                this.baseElement = el;
+            }
+
+            for (i = 0; i < len; i++) {
+                this.transformations.push(list[i]);
+            }
+
+            return this;
+        },
+
+        /**
+         * Animate the point.
+         * @param {Number} direction The direction the glider is animated. Can be +1 or -1.
+         * @param {Number} stepCount The number of steps.
+         * @name Glider#startAnimation
+         * @see Glider#stopAnimation
+         * @function
+         */
+        startAnimation: function (direction, stepCount) {
+            var that = this;
+
+            if ((this.type === Const.OBJECT_TYPE_GLIDER) && !Type.exists(this.intervalCode)) {
+                this.intervalCode = window.setInterval(function () {
+                    that._anim(direction, stepCount);
+                }, 250);
+
+                if (!Type.exists(this.intervalCount)) {
+                    this.intervalCount = 0;
+                }
+            }
+            return this;
+        },
+
+        /**
+         * Stop animation.
+         * @name Glider#stopAnimation
+         * @see Glider#startAnimation
+         * @function
+         */
+        stopAnimation: function () {
+            if (Type.exists(this.intervalCode)) {
+                window.clearInterval(this.intervalCode);
+                delete this.intervalCode;
+            }
+
+            return this;
+        },
+
+        /**
+         * Starts an animation which moves the point along a given path in given time.
+         * @param {Array|function} path The path the point is moved on. This can be either an array of arrays containing x and y values of the points of
+         * the path, or  function taking the amount of elapsed time since the animation has started and returns an array containing a x and a y value or NaN.
+         * In case of NaN the animation stops.
+         * @param {Number} time The time in milliseconds in which to finish the animation
+         * @param {Object} [options] Optional settings for the animation.
+         * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong() will interpolate the path
+         * using {@link JXG.Math.Numerics#Neville}. Set this flag to false if you don't want to use interpolation.
+         * @returns {JXG.Point} Reference to the point.
+         */
+        moveAlong: function (path, time, options) {
+            options = options || {};
+
+            var i, neville,
+                interpath = [],
+                p = [],
+                delay = this.board.attr.animationdelay,
+                steps = time / delay,
+
+                makeFakeFunction = function (i, j) {
+                    return function () {
+                        return path[i][j];
+                    };
+                };
+
+            if (Type.isArray(path)) {
+                for (i = 0; i < path.length; i++) {
+                    if (Type.isPoint(path[i])) {
+                        p[i] = path[i];
+                    } else {
+                        p[i] = {
+                            elementClass: Const.OBJECT_CLASS_POINT,
+                            X: makeFakeFunction(i, 0),
+                            Y: makeFakeFunction(i, 1)
+                        };
+                    }
+                }
+
+                time = time || 0;
+                if (time === 0) {
+                    this.setPosition(Const.COORDS_BY_USER, [p[p.length - 1].X(), p[p.length - 1].Y()]);
+                    return this.board.update(this);
+                }
+
+                if (!Type.exists(options.interpolate) || options.interpolate) {
+                    neville = Numerics.Neville(p);
+                    for (i = 0; i < steps; i++) {
+                        interpath[i] = [];
+                        interpath[i][0] = neville[0]((steps - i) / steps * neville[3]());
+                        interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
+                    }
+                } else {
+                    for (i = 0; i < steps; i++) {
+                        interpath[i] = [];
+                        interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
+                        interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
+                    }
+                }
+
+                this.animationPath = interpath;
+            } else if (Type.isFunction(path)) {
+                this.animationPath = path;
+                this.animationStart = new Date().getTime();
+            }
+
+            this.animationCallback = options.callback;
+            this.board.addAnimation(this);
+
+            return this;
+        },
+
+        /**
+         * Starts an animated point movement towards the given coordinates <tt>where</tt>. The animation is done after <tt>time</tt> milliseconds.
+         * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} [time] Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+         * the whole animation.
+         * @returns {JXG.Point} Reference to itself.
+         * @see #animate
+         */
+        moveTo: function (where, time, options) {
+            options = options || {};
+            where = new Coords(Const.COORDS_BY_USER, where, this.board);
+
+            var i,
+                delay = this.board.attr.animationdelay,
+                steps = Math.ceil(time / delay),
+                coords = [],
+                X = this.coords.usrCoords[1],
+                Y = this.coords.usrCoords[2],
+                dX = (where.usrCoords[1] - X),
+                dY = (where.usrCoords[2] - Y),
+
+                /** @ignore */
+                stepFun = function (i) {
+                    if (options.effect && options.effect === '<>') {
+                        return Math.pow(Math.sin((i / steps) * Math.PI / 2), 2);
+                    }
+                    return i / steps;
+                };
+
+            if (!Type.exists(time) || time === 0 || (Math.abs(where.usrCoords[0] - this.coords.usrCoords[0]) > Mat.eps)) {
+                this.setPosition(Const.COORDS_BY_USER, where.usrCoords);
+                return this.board.update(this);
+            }
+
+            if (Math.abs(dX) < Mat.eps && Math.abs(dY) < Mat.eps) {
+                return this;
+            }
+
+            for (i = steps; i >= 0; i--) {
+                coords[steps - i] = [where.usrCoords[0], X + dX * stepFun(i), Y + dY * stepFun(i)];
+            }
+
+            this.animationPath = coords;
+            this.animationCallback = options.callback;
+            this.board.addAnimation(this);
+
+            return this;
+        },
+
+        /**
+         * Starts an animated point movement towards the given coordinates <tt>where</tt>. After arriving at
+         * <tt>where</tt> the point moves back to where it started. The animation is done after <tt>time</tt>
+         * milliseconds.
+         * @param {Array} where Array containing the x and y coordinate of the target location.
+         * @param {Number} time Number of milliseconds the animation should last.
+         * @param {Object} [options] Optional settings for the animation
+         * @param {function} [options.callback] A function that is called as soon as the animation is finished.
+         * @param {String} [options.effect='<>'] animation effects like speed fade in and out. possible values are
+         * '<>' for speed increase on start and slow down at the end (default) and '--' for constant speed during
+         * the whole animation.
+         * @param {Number} [options.repeat=1] How often this animation should be repeated.
+         * @returns {JXG.Point} Reference to itself.
+         * @see #animate
+         */
+        visit: function (where, time, options) {
+            where = new Coords(Const.COORDS_BY_USER, where, this.board);
+
+            var i, j, steps,
+                delay = this.board.attr.animationdelay,
+                coords = [],
+                X = this.coords.usrCoords[1],
+                Y = this.coords.usrCoords[2],
+                dX = (where.usrCoords[1] - X),
+                dY = (where.usrCoords[2] - Y),
+
+                /** @ignore */
+                stepFun = function (i) {
+                    var x = (i < steps / 2 ? 2 * i / steps : 2 * (steps - i) / steps);
+
+                    if (options.effect && options.effect === '<>') {
+                        return Math.pow(Math.sin(x * Math.PI / 2), 2);
+                    }
+
+                    return x;
+                };
+
+            // support legacy interface where the third parameter was the number of repeats
+            if (typeof options === 'number') {
+                options = {repeat: options};
+            } else {
+                options = options || {};
+                if (!Type.exists(options.repeat)) {
+                    options.repeat = 1;
+                }
+            }
+
+            steps = Math.ceil(time / (delay * options.repeat));
+
+            for (j = 0; j < options.repeat; j++) {
+                for (i = steps; i >= 0; i--) {
+                    coords[j * (steps + 1) + steps - i] = [where.usrCoords[0], X + dX * stepFun(i), Y + dY * stepFun(i)];
+                }
+            }
+            this.animationPath = coords;
+            this.animationCallback = options.callback;
+            this.board.addAnimation(this);
+
+            return this;
+        },
+
+        /**
+         * Animates a glider. Is called by the browser after startAnimation is called.
+         * @param {Number} direction The direction the glider is animated.
+         * @param {Number} stepCount The number of steps.
+         * @see #startAnimation
+         * @see #stopAnimation
+         * @private
+         */
+        _anim: function (direction, stepCount) {
+            var distance, slope, dX, dY, alpha, startPoint, newX, radius,
+                factor = 1;
+
+            this.intervalCount += 1;
+            if (this.intervalCount > stepCount) {
+                this.intervalCount = 0;
+            }
+
+            if (this.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {
+                distance = this.slideObject.point1.coords.distance(Const.COORDS_BY_SCREEN, this.slideObject.point2.coords);
+                slope = this.slideObject.getSlope();
+                if (slope !== Infinity) {
+                    alpha = Math.atan(slope);
+                    dX = Math.round((this.intervalCount / stepCount) * distance * Math.cos(alpha));
+                    dY = Math.round((this.intervalCount / stepCount) * distance * Math.sin(alpha));
+                } else {
+                    dX = 0;
+                    dY = Math.round((this.intervalCount / stepCount) * distance);
+                }
+
+                if (direction < 0) {
+                    startPoint = this.slideObject.point2;
+
+                    if (this.slideObject.point2.coords.scrCoords[1] - this.slideObject.point1.coords.scrCoords[1] > 0) {
+                        factor = -1;
+                    } else if (this.slideObject.point2.coords.scrCoords[1] - this.slideObject.point1.coords.scrCoords[1] === 0) {
+                        if (this.slideObject.point2.coords.scrCoords[2] - this.slideObject.point1.coords.scrCoords[2] > 0) {
+                            factor = -1;
+                        }
+                    }
+                } else {
+                    startPoint = this.slideObject.point1;
+
+                    if (this.slideObject.point1.coords.scrCoords[1] - this.slideObject.point2.coords.scrCoords[1] > 0) {
+                        factor = -1;
+                    } else if (this.slideObject.point1.coords.scrCoords[1] - this.slideObject.point2.coords.scrCoords[1] === 0) {
+                        if (this.slideObject.point1.coords.scrCoords[2] - this.slideObject.point2.coords.scrCoords[2] > 0) {
+                            factor = -1;
+                        }
+                    }
+                }
+
+                this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [
+                    startPoint.coords.scrCoords[1] + factor * dX,
+                    startPoint.coords.scrCoords[2] + factor * dY
+                ]);
+            } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CURVE) {
+                if (direction > 0) {
+                    newX = Math.round(this.intervalCount / stepCount * this.board.canvasWidth);
+                } else {
+                    newX = Math.round((stepCount - this.intervalCount) / stepCount * this.board.canvasWidth);
+                }
+
+                this.coords.setCoordinates(Const.COORDS_BY_SCREEN, [newX, 0]);
+                this.coords = Geometry.projectPointToCurve(this, this.slideObject, this.board);
+            } else if (this.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                if (direction < 0) {
+                    alpha = this.intervalCount / stepCount * 2 * Math.PI;
+                } else {
+                    alpha = (stepCount - this.intervalCount) / stepCount * 2 * Math.PI;
+                }
+
+                radius = this.slideObject.Radius();
+
+                this.coords.setCoordinates(Const.COORDS_BY_USER, [
+                    this.slideObject.center.coords.usrCoords[1] + radius * Math.cos(alpha),
+                    this.slideObject.center.coords.usrCoords[2] + radius * Math.sin(alpha)
+                ]);
+            }
+
+            this.board.update(this);
+            return this;
+        },
+
+        /**
          * Set the style of a point. Used for GEONExT import and should not be used to set the point's face and size.
          * @param {Number} i Integer to determine the style.
          * @private

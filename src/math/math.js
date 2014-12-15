@@ -609,7 +609,7 @@ define(['jxg'], function (JXG) {
             stdform[6] = -stdform[1] / a2;
             stdform[7] = -stdform[2] / a2;
 
-            if (r === Infinity || isNaN(r)) {
+            if (!isFinite(r)) {
                 n = Math.sqrt(stdform[1] * stdform[1] + stdform[2] * stdform[2]);
 
                 stdform[0] /= n;

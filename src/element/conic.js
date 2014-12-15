@@ -523,10 +523,12 @@ define([
 
         M = board.create('point', [
             function () {
+                /*
                 var v = [0, l.stdform[1], l.stdform[2]];
-
                 v = Mat.crossProduct(v, F1.coords.usrCoords);
                 return Geometry.meetLineLine(v, l.stdform, 0, board).usrCoords;
+                */
+                return Geometry.projectPointToLine(F1, l, board).usrCoords;
             }
         ], attr_foci);
 

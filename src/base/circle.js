@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2014
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -368,6 +368,11 @@ define([
             this.stdform[4] = this.Radius();
             this.stdform[1] = -this.center.coords.usrCoords[1];
             this.stdform[2] = -this.center.coords.usrCoords[2];
+            if (!isFinite(this.stdform[4])) {
+                this.stdform[0] = Type.exists(this.point2) ? -(
+                    this.stdform[1] * this.point2.coords.usrCoords[1] +
+                    this.stdform[2] * this.point2.coords.usrCoords[2]) : 0;
+            }            
             this.normalize();
         },
 
@@ -446,11 +451,12 @@ define([
             }
 
             if (this.method === 'twoPoints') {
-                if (Geometry.distance(this.point2.coords.usrCoords, [0, 0, 0]) === 0 ||
-                        Geometry.distance(this.center.coords.usrCoords, [0, 0, 0]) === 0) {
+                if (Type.cmpArrays(this.point2.coords.usrCoords, [0, 0, 0]) ||
+                    Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])) {
+                    
                     return NaN;
                 }
-
+                
                 return this.center.Dist(this.point2);
             }
 
@@ -599,53 +605,6 @@ define([
             if (this.method === 'twoPoints') {
                 this.point2.handleSnapToPoints(forceIt);
             }
-
-            return this;
-        },
-
-        /**
-         * Sets the position of the circle by translating the center and - in case of {@link JXG.Circle#method} equals
-         * 'twoPoints' - the point on the circle by the amount given in the coords parameter.
-         * @param {Number} method Either {@link JXG#COORDS_BY_SCREEN} or {@link JXG#COORDS_BY_USER}.
-         * @param {Array} coords
-         * @returns {JXG.Circle}
-         */
-        setPosition: function (method, coords) {
-            var t;
-
-            coords = new Coords(method, coords, this.board);
-            t = this.board.create('transform', coords.usrCoords.slice(1), {type: 'translate'});
-            this.addTransform(t);
-
-            return this;
-        },
-
-        /**
-         * Sets x and y coordinate and calls the circle's update() method.
-         * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinate in screen/user units
-         * @param {Array} oldcoords previous coordinate in screen/user units
-         * @returns {JXG.Circle} this element
-         */
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var i, p, dc, t, arr,
-                len = this.parents.length;
-
-            arr = [];
-            for (i = 0; i < len; i++) {
-                p = this.board.select(this.parents[i]);
-                if (!p.draggable()) {
-                    return this;
-                }
-                arr.push(p);
-            }
-
-            coords = new Coords(method, coords, this.board);
-            oldcoords = new Coords(method, oldcoords, this.board);
-            dc = Statistics.subtract(coords.usrCoords, oldcoords.usrCoords);
-
-            t = this.board.create('transform', dc.slice(1), {type: 'translate'});
-            t.applyOnce(arr);
 
             return this;
         },

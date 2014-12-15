@@ -709,6 +709,14 @@ define([
             return this;
         },
 */
+
+        /**
+         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
+         * @returns {JXG.Text} Reference to this element
+         */
+        snapToGrid: function () {
+            return this.handleSnapToGrid();
+        }
     });
 
     /**

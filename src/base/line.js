@@ -657,66 +657,6 @@ define([
             return this;
         },
 
-        /**
-         * Apply a translation by <tt>tv = (x, y)</tt> to the line.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} tv (x, y)
-         * @returns {JXG.Line} Reference to this line object.
-         */
-        setPosition: function (method, tv) {
-            var t;
-
-            tv = new Coords(method, tv, this.board);
-            t = this.board.create('transform', tv.usrCoords.slice(1), {type: 'translate'});
-
-            if (this.point1.transformations.length > 0 && this.point1.transformations[this.point1.transformations.length - 1].isNumericMatrix) {
-                this.point1.transformations[this.point1.transformations.length - 1].melt(t);
-            } else {
-                this.point1.addTransform(this.point1, t);
-            }
-            if (this.point2.transformations.length > 0 && this.point2.transformations[this.point2.transformations.length - 1].isNumericMatrix) {
-                this.point2.transformations[this.point2.transformations.length - 1].melt(t);
-            } else {
-                this.point2.addTransform(this.point2, t);
-            }
-
-            return this;
-        },
-
-        /**
-         * Moves the line by the difference of two coordinates.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates in screen/user units
-         * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.Line} this element
-         */
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var dc, t,
-                c = new Coords(method, coords, this.board),
-                oldc = new Coords(method, oldcoords, this.board);
-
-            if (!this.point1.draggable() || !this.point2.draggable()) {
-                return this;
-            }
-
-            dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
-            t = this.board.create('transform', dc.slice(1), {type: 'translate'});
-            t.applyOnce([this.point1, this.point2]);
-            
-            /*
-             * If - against the default configuration - defining gliders are marked as 
-             * draggable, then their position has to be updated now.
-             */
-            if (this.point1.type === Const.OBJECT_TYPE_GLIDER)  {
-                this.point1.updateGlider();
-            }
-            if (this.point2.type === Const.OBJECT_TYPE_GLIDER)  {
-                this.point2.updateGlider();
-            }
-
-            return this;
-        },
-
         // see GeometryElement.js
         snapToGrid: function (pos) {
             var c1, c2, dc, t, v, ticks,
@@ -752,9 +692,12 @@ define([
                     // if no valid snap sizes are available, don't change the coords.
                     if (sX > 0 && sY > 0) {
                         // projectCoordsToLine
+                        /*
                         v = [0, this.stdform[1], this.stdform[2]];
                         v = Mat.crossProduct(v, c1.usrCoords);
                         c2 = Geometry.meetLineLine(v, this.stdform, 0, this.board);
+                        */
+                        c2 = Geometry.projectPointToLine({coords: c1}, this, this.board);
 
                         dc = Statistics.subtract([1, Math.round(x / sX) * sX, Math.round(y / sY) * sY], c2.usrCoords);
                         t = this.board.create('transform', dc.slice(1), {type: 'translate'});
@@ -1233,15 +1176,15 @@ define([
      * </pre><div id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var slex2_board = JXG.JSXGraph.initBoard('617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
-     *   var slex2_p1 = slex1_board.create('point', [4.0, 1.0]);
-     *   var slex2_p2 = slex1_board.create('point', [1.0, 1.0]);
-     *   var slex2_l1 = slex1_board.create('segment', [slex1_p1, slex1_p2]);
-     *   var slex2_p3 = slex1_board.create('point', [4.0, 2.0]);
-     *   var slex2_p4 = slex1_board.create('point', [1.0, 2.0]);
-     *   var slex2_l2 = slex1_board.create('segment', [slex1_p3, slex1_p4, 3]);
-     *   var slex2_p5 = slex1_board.create('point', [4.0, 2.0]);
-     *   var slex2_p6 = slex1_board.create('point', [1.0, 2.0]);
-     *   var slex2_l3 = slex1_board.create('segment', [slex1_p5, slex1_p6, function(){ return slex2_l1.L();}]);
+     *   var slex2_p1 = slex2_board.create('point', [4.0, 1.0]);
+     *   var slex2_p2 = slex2_board.create('point', [1.0, 1.0]);
+     *   var slex2_l1 = slex2_board.create('segment', [slex2_p1, slex2_p2]);
+     *   var slex2_p3 = slex2_board.create('point', [4.0, 2.0]);
+     *   var slex2_p4 = slex2_board.create('point', [1.0, 2.0]);
+     *   var slex2_l2 = slex2_board.create('segment', [slex2_p3, slex2_p4, 3]);
+     *   var slex2_p5 = slex2_board.create('point', [4.0, 2.0]);
+     *   var slex2_p6 = slex2_board.create('point', [1.0, 2.0]);
+     *   var slex2_l3 = slex2_board.create('segment', [slex2_p5, slex2_p6, function(){ return slex2_l1.L();}]);
      * </script><pre>
      *
      */

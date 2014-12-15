@@ -1141,6 +1141,7 @@ define([
          * @returns {JXG.Coords} Coordinates of the intersection point.
          */
         meetLineLine: function (l1, l2, i, board) {
+            /*
             var s = Mat.crossProduct(l1, l2);
 
             if (Math.abs(s[0]) > Mat.eps) {
@@ -1148,6 +1149,8 @@ define([
                 s[2] /= s[0];
                 s[0] = 1.0;
             }
+            */
+            var s = isNaN(l1[5] + l2[5]) ? [0, 0, 0] : Mat.crossProduct(l1, l2);
             return new Coords(Const.COORDS_BY_USER, s, board);
         },
 
@@ -2063,8 +2066,8 @@ define([
             }
 
             v = Mat.crossProduct(v, point.coords.usrCoords);
-
-            return this.meetLineLine(v, line.stdform, 0, board);
+            //return this.meetLineLine(v, line.stdform, 0, board);
+            return new Coords(Const.COORDS_BY_USER, Mat.crossProduct(v, line.stdform), board);
         },
 
         /**
@@ -2383,7 +2386,7 @@ define([
                     l = Mat.normalize(l);
 
                     // project point
-                    coords = this.projectPointToLine({coords: coords, board: brd}, {stdform: l});
+                    coords = this.projectPointToLine({coords: coords}, {stdform: l}, brd);
                 }
             }
 
