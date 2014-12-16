@@ -168,7 +168,10 @@ define([
          */
         this.group = [];
 
-        if (JXG.exists(this.element)) {
+        /*
+         * this.element may have been set by the object constructor.
+         */
+        if (Type.exists(this.element)) {
             if (isLabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
             } else {
