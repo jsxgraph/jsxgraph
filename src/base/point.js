@@ -1413,7 +1413,7 @@ define([
          * the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.Point} Reference to itself.
-         * @see #animate
+         * @see JXG.GeometryElement#animate
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);

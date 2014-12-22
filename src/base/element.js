@@ -627,7 +627,7 @@ define([
         /**
          * Animates properties for that object like stroke or fill color, opacity and maybe
          * even more later.
-         * @param {Object} hash Object containing propiertes with target values for the animation.
+         * @param {Object} hash Object containing properties with target values for the animation.
          * @param {number} time Number of milliseconds to complete the animation.
          * @param {Object} [options] Optional settings for the animation:<ul><li>callback: A function that is called as soon as the animation is finished.</li></ul>
          * @returns {JXG.GeometryElement} A reference to the object
