@@ -1586,17 +1586,6 @@ define([
             return Options.normalizePointFace(s);
         },
 
-        /**
-         * Remove the point from the drawing. This only removes the SVG or VML node of the point and its label from the renderer, to remove
-         * the object completely you should use {@link JXG.Board#removeObject}.
-         */
-        remove: function () {
-            if (this.hasLabel) {
-                this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
-            }
-            this.board.renderer.remove(this.board.renderer.getElementById(this.id));
-        },
-
         // documented in GeometryElement
         getTextAnchor: function () {
             return this.coords;
