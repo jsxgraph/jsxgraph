@@ -269,7 +269,6 @@ define([
             this.needsUpdateFromParent = false;
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
                 newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / (2.0 * Math.PI);
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
@@ -422,8 +421,8 @@ define([
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
                     newPos = angle;
 
-                    if ((slide.visProp.type === 'minor' && beta > Math.PI) ||
-                            (slide.visProp.type === 'major' && beta < Math.PI)) {
+                    if ((slide.visProp.selection === 'minor' && beta > Math.PI) ||
+                            (slide.visProp.selection === 'major' && beta < Math.PI)) {
                         alpha = beta;
                         beta = 2 * Math.PI;
                     }
@@ -439,6 +438,7 @@ define([
                         this.needsUpdateFromParent = true;
                         this.updateGliderFromParent();
                     }
+                    
                     delta = beta - alpha;
                     if (Math.abs(delta) > Mat.eps) {
                         newPos /= delta;
@@ -483,7 +483,7 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                baseangle, alpha, angle, beta, newPos;
+                baseangle, alpha, angle, beta, delta, newPos;
 
             if (!this.needsUpdateFromParent) {
                 this.needsUpdateFromParent = true;
@@ -553,26 +553,34 @@ define([
                     alpha = 0.0;
                     beta = Geometry.rad(slide.radiuspoint, slide.center, slide.anglepoint);
 
-                    if ((slide.visProp.type === 'minor' && beta > Math.PI) ||
-                            (slide.visProp.type === 'major' && beta < Math.PI)) {
+                    if ((slide.visProp.selection === 'minor' && beta > Math.PI) ||
+                            (slide.visProp.selection === 'major' && beta < Math.PI)) {
                         alpha = beta;
                         beta = 2 * Math.PI;
                     }
 
+                    delta = beta - alpha;
+                    angle = this.position * delta;
+                    
                     // Correct the position if we are outside of the sector/arc
-                    if (this.position < alpha || this.position > beta) {
-                        this.position = beta;
+                    if (angle < alpha || angle > beta) {
+                        angle = beta;
 
-                        if ((this.position < alpha && this.position > alpha * 0.5) ||
-                                (this.position > beta && this.position > beta * 0.5 + Math.PI)) {
-                            this.position = alpha;
+                        if ((angle < alpha && angle > alpha * 0.5) ||
+                                (angle > beta && angle > beta * 0.5 + Math.PI)) {
+                            angle = alpha;
+                        }
+                        
+                        this.position = angle;
+                        if (Math.abs(delta) > Mat.eps) {
+                            this.position /= delta;
                         }
                     }
 
                     r = slide.Radius();
                     c = [
-                        slide.center.X() + r * Math.cos(this.position * (beta - alpha) + baseangle),
-                        slide.center.Y() + r * Math.sin(this.position * (beta - alpha) + baseangle)
+                        slide.center.X() + r * Math.cos(this.position * delta + baseangle),
+                        slide.center.Y() + r * Math.sin(this.position * delta + baseangle)
                     ];
                 } else {
                     // In case, the point is a constrained glider.
