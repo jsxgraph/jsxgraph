@@ -249,6 +249,8 @@ define([
         /**
          * Update of glider in case of dragging the glider or setting the postion of the glider.
          * The relative position of the glider has to be updated.
+         * 
+         * In case of a glider on a line:
          * If the second point is an ideal point, then -1 < this.position < 1,
          * this.position==+/-1 equals point2, this.position==0 equals point1
          *
@@ -259,7 +261,7 @@ define([
          */
         updateGlider: function () {
             var i, p1c, p2c, d, v, poly, cc, pos, sgn,
-                alpha, beta, angle,
+                alpha, beta, delta, angle,
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
                 slide = this.slideObject;
@@ -269,7 +271,7 @@ define([
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
-                newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this);
+                newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / (2.0 * Math.PI);
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 /*
                  * onPolygon==true: the point is a slider on a segment and this segment is one of the
@@ -413,7 +415,6 @@ define([
             } else if (slide.elementClass === Const.OBJECT_CLASS_CURVE) {
                 if ((slide.type === Const.OBJECT_TYPE_ARC ||
                         slide.type === Const.OBJECT_TYPE_SECTOR)) {
-                    //this.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                     newCoords = Geometry.projectPointToCircle(this, slide, this.board);
 
                     angle = Geometry.rad(slide.radiuspoint, slide.center, this);
@@ -434,8 +435,13 @@ define([
                         if ((angle < alpha && angle > alpha * 0.5) || (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             newPos = alpha;
                         }
+                        
                         this.needsUpdateFromParent = true;
                         this.updateGliderFromParent();
+                    }
+                    delta = beta - alpha;
+                    if (Math.abs(delta) > Mat.eps) {
+                        newPos /= delta;
                     }
 
                 } else {
@@ -487,8 +493,8 @@ define([
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = slide.Radius();
                 c = [
-                    slide.center.X() + r * Math.cos(this.position),
-                    slide.center.Y() + r * Math.sin(this.position)
+                    slide.center.X() + r * Math.cos(this.position * 2.0 * Math.PI),
+                    slide.center.Y() + r * Math.sin(this.position * 2.0 * Math.PI)
                 ];
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 p1c = slide.point1.coords.usrCoords;
@@ -565,8 +571,8 @@ define([
 
                     r = slide.Radius();
                     c = [
-                        slide.center.X() + r * Math.cos(this.position + baseangle),
-                        slide.center.Y() + r * Math.sin(this.position + baseangle)
+                        slide.center.X() + r * Math.cos(this.position * (beta - alpha) + baseangle),
+                        slide.center.Y() + r * Math.sin(this.position * (beta - alpha) + baseangle)
                     ];
                 } else {
                     // In case, the point is a constrained glider.
