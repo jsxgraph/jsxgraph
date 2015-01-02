@@ -225,16 +225,17 @@ define([
             }
             
             this._update_apply_transformation(drag, t);
+            
+            this.needsUpdate = false;  // This is needed here to prevent infinite recursion because 
+                                        // of the board.updateElements call below,
 
             // Prepare dependent objects for update
             for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
-                for (desc in this.objects[el].descendants) {
-                    if (this.objects[el].descendants.hasOwnProperty(desc)) {
-                        this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
-                    }
+                for (desc in this.objects[el].descendants) if (this.objects[el].descendants.hasOwnProperty(desc)) {
+                    this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
                 }
             }
-            //this.board.updateElements(drag);
+            this.board.updateElements(drag);
 
             return this;
         },
