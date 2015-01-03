@@ -935,7 +935,7 @@ define([
          * the whole animation.
          * @param {Number} [options.repeat=1] How often this animation should be repeated.
          * @returns {JXG.Point} Reference to itself.
-         * @see #animate
+         * @see JXG.GeometryElement#animate
          */
         visit: function (where, time, options) {
             where = new Coords(Const.COORDS_BY_USER, where, this.board);
@@ -1106,17 +1106,6 @@ define([
          */
         normalizeFace: function (s) {
             return Options.normalizePointFace(s);
-        },
-
-        /**
-         * Remove the point from the drawing. This only removes the SVG or VML node of the point and its label from the renderer, to remove
-         * the object completely you should use {@link JXG.Board#removeObject}.
-         */
-        remove: function () {
-            if (this.hasLabel) {
-                this.board.renderer.remove(this.board.renderer.getElementById(this.label.id));
-            }
-            this.board.renderer.remove(this.board.renderer.getElementById(this.id));
         },
 
         /**

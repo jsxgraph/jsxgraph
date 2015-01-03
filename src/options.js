@@ -1975,7 +1975,7 @@ define([
                 drawLabels: false,
                 drawZero: true,
                 insertTicks: true,
-                minorHeight: 4,          // if <0: full width and height
+                minorHeight: 4,         // if <0: full width and height
                 majorHeight: 10,        // if <0: full width and height
                 minorTicks: 0,
                 defaultDistance: 1,

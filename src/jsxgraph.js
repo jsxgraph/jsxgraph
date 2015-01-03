@@ -223,12 +223,8 @@ define([
             renderer = this.initRenderer(box, dimensions, attr.document);
 
             // create the board
-            board = new Board(box, renderer, '', [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
+            board = new Board(box, renderer, attr.id, [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
 
-            // this is deprecated, but we'll keep it for now until everything is migrated
-            JXG.boards[board.id] = board;
-
-            // the new board storage
             JXG.boards[board.id] = board;
 
             board.keepaspectratio = attr.keepaspectratio;
