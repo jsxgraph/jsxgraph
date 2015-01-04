@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -59,20 +59,22 @@ define([
      * It inherits from @see GeometryElement.
      * @constructor
      */
-    JXG.Image = function (board, url, coords, size, attributes) {
+    JXG.Image = function (board, coords, attributes, url, size) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_IMAGE, Const.OBJECT_CLASS_OTHER);
+        this.coordsConstructor(coords);
 
-        this.initialCoords = new Coords(Const.COORDS_BY_USER, coords, this.board);  // Still needed?
-
+/*
         if (!Type.isFunction(coords[0]) && !Type.isFunction(coords[1])) {
             this.isDraggable = true;
         }
         this.X = Type.createFunction(coords[0], this.board, '');
         this.Y = Type.createFunction(coords[1], this.board, '');
         this.Z = Type.createFunction(1, this.board, '');
+        this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
+*/
+        
         this.W = Type.createFunction(size[0], this.board, '');
         this.H = Type.createFunction(size[1], this.board, '');
-        this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
         this.usrSize = [this.W(), this.H()];
         this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
         this.url = url;
@@ -82,19 +84,16 @@ define([
         // span contains the anchor point and the two vectors
         // spanning the image rectangle.
         this.span = [
-            [this.Z(), this.X(), this.Y()],
-            [this.Z(), this.W(), 0],
-            [this.Z(), 0, this.H()]
+            this.coords.usrCoords.slice(0),
+            [this.coords.usrCoords[0], this.W(), 0],
+            [this.coords.usrCoords[0], 0, this.H()]
         ];
 
         this.parent = board.select(attributes.anchor);
-
         this.id = this.board.setId(this, 'Im');
 
         this.board.renderer.drawImage(this);
-        if (!this.visProp.visible) {
-            this.board.renderer.hide(this);
-        }
+        this.board.finalizeAdding(this);
 
         this.methodMap = JXG.deepCopy(this.methodMap, {
             addTransformation: 'addTransform',
@@ -103,6 +102,7 @@ define([
     };
 
     JXG.Image.prototype = new GeometryElement();
+    Type.copyPrototypeMethods(JXG.Image, JXG.CoordsElement, 'coordsConstructor');
 
     JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 
@@ -190,13 +190,6 @@ define([
         },
 
         /**
-         * Updates the coordinates of the top left corner of the image.
-         */
-        updateCoords: function () {
-            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.X(), this.Y()]);
-        },
-
-        /**
          * Updates the size of the image.
          */
         updateSize: function () {
@@ -258,40 +251,6 @@ define([
         },
 
         /**
-         * Sets x and y coordinate of the image.
-         * @param {number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates in screen/user units of the mouse/touch position
-         * @param {Array} oldcoords coordinates in screen/user units of the previous mouse/touch position
-         * @returns {JXG.Image} this element
-         */
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var dc,
-                c = new Coords(method, coords, this.board),
-                oldc = new Coords(method, oldcoords, this.board),
-                v = [this.Z(), this.X(), this.Y()];
-
-            dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
-
-            this.X = Type.createFunction(v[1] + dc[1], this.board, '');
-            this.Y = Type.createFunction(v[2] + dc[2], this.board, '');
-
-            /*
-            * In case of snapToGrid===true, first the coordinates of
-            * the new position is set, then they are rounded to the grid.
-            * The resulting coordinates are set as functions X(), Y(),
-            * becasue they are set again in updateCoords().
-            */
-            if (this.visProp.snaptogrid) {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, c.usrCoords);
-                this.snapToGrid();
-                this.X = Type.createFunction(this.coords.usrCoords[1], this.board, '');
-                this.Y = Type.createFunction(this.coords.usrCoords[2], this.board, '');
-            }
-
-            return this;
-        },
-
-        /**
          * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
          * @returns {JXG.Text} Reference to this element
          */
@@ -321,10 +280,18 @@ define([
      * </script><pre>
      */
     JXG.createImage = function (board, parents, attributes) {
-        var attr, im;
+        var attr, im,
+            url = parents[0],
+            coords = parents[1],
+            size = parents[2];
 
         attr = Type.copyAttributes(attributes, board.options, 'image');
-        im = new JXG.Image(board, parents[0], parents[1], parents[2], attr);
+        im = JXG.CoordsElement.create(JXG.Image, board, coords, attr, url, size);
+        if (!im) {
+            throw new Error("JSXGraph: Can't create image with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                    "\nPossible parent types: [x,y], [z,x,y], [text,transformation]");
+        }
 
         if (Type.evaluate(attr.rotate) !== 0) {
             im.addRotation(Type.evaluate(attr.rotate));

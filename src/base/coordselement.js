@@ -179,7 +179,7 @@ define([
             }
             this.element.addChild(this);
 
-            this.X = function () {
+            this.XEval = function () {
                 var sx, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -194,7 +194,7 @@ define([
                 return this.relativeCoords.usrCoords[1] + anchor.usrCoords[1];
             };
 
-            this.Y = function () {
+            this.YEval = function () {
                 var sy, coords, anchor;
 
                 if (this.visProp.islabel) {
@@ -209,11 +209,11 @@ define([
                 return this.relativeCoords.usrCoords[2] + anchor.usrCoords[2];
             };
 
-            this.Z = Type.createFunction(1, this.board, '');
+            this.ZEval = Type.createFunction(1, this.board, '');
 
-            //this.updateConstraint = function () {
-            //    this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
-            //};
+            this.updateConstraint = function () {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
+            };
 
             this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
             this.isDraggable = true;
@@ -237,6 +237,49 @@ define([
          *
          * @private
          */
+        /**
+         * Updates the coordinates of the element.
+         */
+        updateCoords: function (fromParent) {
+            if (!this.needsUpdate) {
+                return this;
+            }
+
+            if (!Type.exists(fromParent)) {
+                fromParent = false;
+            }
+
+            /*
+             * We need to calculate the new coordinates no matter of the elements visibility because
+             * a child could be visible and depend on the coordinates of the element/point (e.g. perpendicular).
+             *
+             * Check if the element is a glider and calculate new coords in dependency of this.slideObject.
+             * This function is called with fromParent==true in case it is a glider element for example if
+             * the defining elements of the line or circle have been changed.
+             */
+            if (this.type === Const.OBJECT_TYPE_GLIDER) {
+                if (fromParent) {
+                    this.updateGliderFromParent();
+                } else {
+                    this.updateGlider();
+                }
+            }
+
+            /**
+             * If the element is a calculated elemented, call updateConstraint() to calculate new coords.
+             * The second test is for dynamic axes.
+             */
+            //if (this.type === Const.OBJECT_TYPE_CAS || 
+            //    this.type === Const.OBJECT_TYPE_INTERSECTION || 
+            //    this.type === Const.OBJECT_TYPE_AXISPOINT) {
+            this.updateConstraint();
+            //}
+
+            this.updateTransform();
+
+            return this;
+        },
+         
 // TODO
 // Patch with master point.updateGlider
         updateGlider: function () {
@@ -1057,7 +1100,7 @@ define([
                 v = terms[i];
 
                 if (typeof v === 'string') {
-                    // Convert GEONExT syntax into  JavaScript syntax
+                    // Convert GEONExT syntax into JavaScript syntax
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
                     //v = GeonextParser.replaceNameById(v, this.board);
@@ -1118,7 +1161,7 @@ define([
             * We have to do an update. Otherwise, elements relying on this point will receive NaN.
             */
             this.prepareUpdate().update();
-            
+
             if (!this.board.isSuspendedUpdate) {
                 this.updateRenderer();
             }
@@ -1553,10 +1596,10 @@ define([
                 return false;
             }
         } else {
-            argArray[2] = [NaN, NaN];
+            //argArray[2] = [NaN, NaN];
+            argArray[2] = [0, 0];
             el = new (callback.bind.apply(callback, argArray))();
             el.addConstraint(coords);
-console.log(el.id);            
         }
 
         //if (!board.isSuspendedUpdate) {

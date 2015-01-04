@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -95,10 +95,7 @@ define([
         this.updateText();
 
         this.board.renderer.drawText(this);
-
-        if (!this.visProp.visible) {
-            this.board.renderer.hide(this);
-        }
+        this.board.finalizeAdding(this);
 
         if (typeof this.content === 'string') {
             this.notifyParents(this.content);
@@ -468,15 +465,16 @@ define([
          * Then, the update function of the renderer
          * is called.
          */
-        update: function () {
+        update: function (fromParent) {
             if (!this.needsUpdate) {
                 return this;
             }
             
-            if (!this.visProp.frozen && JXG.exists(this.element)) {
-                this.updateCoords();
-            }
-
+            //if (!this.visProp.frozen && JXG.exists(this.element)) {
+                //this.updateCoords(fromParent);
+                //this.updateCoords();
+            //}
+            this.updateCoords(fromParent);
             this.updateText();
 
             if (this.visProp.display === 'internal') {
@@ -520,10 +518,11 @@ define([
         /**
          * Updates the coordinates of the text element.
          */
+/*         
         updateCoords: function () {
             this.coords.setCoordinates(Const.COORDS_BY_USER, [this.Z(), this.X(), this.Y()]);
         },
-
+*/
         /**
          * The update function of the renderert
          * is called.
@@ -777,10 +776,6 @@ define([
                     "\nPossible parent types: [x,y], [z,x,y], [text,transformation]");
         }
         
-/*        
-        t = new JXG.Text(board, parents[parents.length - 1], coords, attr);
-*/
-
         if (typeof parents[parents.length - 1] !== 'function') {
             t.parents = parents;
         }
