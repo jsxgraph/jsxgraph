@@ -71,7 +71,7 @@ define([
      * @constructor
      * @return A new geometry element Text
      */
-    JXG.Text = function (board, content, coords, attributes) {
+    JXG.Text = function (board, coords, attributes, content) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
         this.element = this.board.select(attributes.anchor);
@@ -763,17 +763,28 @@ define([
      */
     JXG.createText = function (board, parents, attributes) {
         var t,
-            attr = Type.copyAttributes(attributes, board.options, 'text');
+            attr = Type.copyAttributes(attributes, board.options, 'text'),
+            coords = parents.slice(0, -1),
+            content = parents[parents.length -1];
 
         // downwards compatibility
         attr.anchor = attr.parent || attr.anchor;
-
-        t = new JXG.Text(board, parents[parents.length - 1], parents.slice(0, -1), attr);
+        t = JXG.CoordsElement.create(JXG.Text, board, coords, attr, content);
+        
+        if (!t) {
+            throw new Error("JSXGraph: Can't create text with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                    "\nPossible parent types: [x,y], [z,x,y], [text,transformation]");
+        }
+        
+/*        
+        t = new JXG.Text(board, parents[parents.length - 1], coords, attr);
+*/
 
         if (typeof parents[parents.length - 1] !== 'function') {
             t.parents = parents;
         }
-
+        
         if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
             t.addRotation(Type.evaluate(attr.rotate));
         }

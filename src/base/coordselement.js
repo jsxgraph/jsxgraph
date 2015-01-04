@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -237,6 +237,8 @@ define([
          *
          * @private
          */
+// TODO
+// Patch with master point.updateGlider
         updateGlider: function () {
             var i, p1c, p2c, d, v, poly, cc, pos, sgn,
                 alpha, beta, angle,
@@ -1506,7 +1508,64 @@ define([
             }
 
             return p;
-        }
+        },
+        
     });
+
+    JXG.CoordsElement.create = function(callback, board, coords, attr) {
+        var el, isConstrained = false, i,
+            // argArray is an array containing the arguments of this function.
+            // Below, we use it in the form
+            //     el = new (callback.bind.apply(callback, argArray))();
+            // This is equivalent to 
+            //     el = new callback(board, coords, attr, ...)
+            // but it allows a varibale number of arguments.
+            // In the above call the first element of argArray, i.e. callback,
+            // is ignored.
+            argArray = Array.prototype.slice.call(arguments);
+
+        for (i = 0; i < coords.length; i++) {
+            if (typeof coords[i] === 'function' || typeof coords[i] === 'string') {
+                isConstrained = true;
+            }
+        }
+
+        if (!isConstrained) {
+            if ((Type.isNumber(coords[0])) && (Type.isNumber(coords[1]))) {
+                el = new (callback.bind.apply(callback, argArray))();
+
+                if (Type.exists(attr.slideobject)) {
+                    el.makeGlider(attr.slideobject);
+                } else {
+                    // Free element
+                    el.baseElement = el;
+                }
+                el.isDraggable = true;
+            } else if ((typeof coords[0] === 'object') && (typeof coords[1] === 'object')) {
+                // Transformation
+                argArray[2] = [0, 0];
+                el = new (callback.bind.apply(callback, argArray))();
+                el.addTransform(coords[0], coords[1]);
+                el.isDraggable = false;
+
+                el.parents = [coords[0].id];
+            } else {
+                return false;
+            }
+        } else {
+            argArray[2] = [NaN, NaN];
+            el = new (callback.bind.apply(callback, argArray))();
+            el.addConstraint(coords);
+console.log(el.id);            
+        }
+
+        //if (!board.isSuspendedUpdate) {
+            el.handleSnapToGrid();
+            el.handleSnapToPoints();
+            el.handleAttractors();
+        //}
+
+        return el;
+    };
 
 });

@@ -1201,10 +1201,17 @@ define([
      * </script><pre>
      */
     JXG.createPoint = function (board, parents, attributes) {
-        var el, isConstrained = false, i, attr;
+        var el, attr;
 
         attr = Type.copyAttributes(attributes, board.options, 'point');
+        el = JXG.CoordsElement.create(JXG.Point, board, parents, attr);
+        if (!el) {
+            throw new Error("JSXGraph: Can't create point with parent types '" +
+                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
+                    "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
+        }
 
+/*        
         if (parents.length === 1 && Type.isArray(parents[0]) && parents[0].length > 1 && parents[0].length < 4) {
             parents = parents[0];
         }
@@ -1248,7 +1255,7 @@ define([
             el.handleSnapToPoints();
             el.handleAttractors();
         //}
-
+*/
         return el;
     };
 
