@@ -230,7 +230,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         getDimensions: function (elementId, doc) {
             var element, display, els, originalVisibility, originalPosition,
-                originalDisplay, originalWidth, originalHeight;
+                originalDisplay, originalWidth, originalHeight, style,
+                pixelDimRegExp = /\d+(\.\d*)?px/;
 
             if (!JXG.isBrowser || elementId === null) {
                 return {
@@ -250,7 +251,15 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Work around a bug in Safari
             if (display !== 'none' && display !== null) {
-                return {width: element.offsetWidth, height: element.offsetHeight};
+                if (element.offsetWidth > 0 && element.offsetHeight > 0) {
+                    return {width: element.offsetWidth, height: element.offsetHeight};
+                } else { // a parent might be set to display:none; try reading them from styles
+                    style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
+                    return {
+                        width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
+                        height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
+                    };
+                }
             }
 
             // All *Width and *Height properties give 0 on elements with display set to none,
