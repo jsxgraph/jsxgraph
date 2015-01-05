@@ -344,6 +344,10 @@ define([
 
             node.setAttributeNS(null, "class", el.visProp.cssclass);
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
+
+            // Preserve spaces 
+            node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
+
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node,  el.visProp.layer);
