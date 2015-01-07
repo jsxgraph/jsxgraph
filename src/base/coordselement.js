@@ -188,7 +188,7 @@ define([
          * @private
          */
         updateCoords: function (fromParent) {
-            if (!this.needsUpdate || this.visProp.frozen) {
+            if (!this.needsUpdate) {
                 return this;
             }
 
@@ -212,7 +212,9 @@ define([
                 }
             }
 
-            this.updateConstraint();
+            if (!this.visProp.frozen) {
+                this.updateConstraint();
+            }
             this.updateTransform();
 
             return this;
