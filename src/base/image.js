@@ -48,8 +48,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'utils/type'
-], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Type) {
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'math/math', 'math/statistics', 'utils/type', 'base/coordselement'
+], function (JXG, Const, Coords, GeometryElement, Mat, Statistics, Type, CoordsElement) {
 
     "use strict";
 
@@ -93,7 +93,7 @@ define([
     };
 
     JXG.Image.prototype = new GeometryElement();
-    Type.copyPrototypeMethods(JXG.Image, JXG.CoordsElement, 'coordsConstructor');
+    Type.copyPrototypeMethods(JXG.Image, CoordsElement, 'coordsConstructor');
 
     JXG.extend(JXG.Image.prototype, /** @lends JXG.Image.prototype */ {
 
@@ -257,7 +257,7 @@ define([
             size = parents[2];
 
         attr = Type.copyAttributes(attributes, board.options, 'image');
-        im = JXG.CoordsElement.create(JXG.Image, board, coords, attr, url, size);
+        im = CoordsElement.create(JXG.Image, board, coords, attr, url, size);
         if (!im) {
             throw new Error("JSXGraph: Can't create image with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

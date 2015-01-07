@@ -49,8 +49,9 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'base/element', 'parser/geonext', 'math/statistics', 'utils/env', 'utils/type', 'math/math'
-], function (JXG, Const, Coords, GeometryElement, GeonextParser, Statistics, Env, Type, Mat) {
+    'jxg', 'base/constants', 'base/coords', 'base/element', 'parser/geonext', 'math/statistics',
+    'utils/env', 'utils/type', 'math/math', 'base/coordselement'
+], function (JXG, Const, Coords, GeometryElement, GeonextParser, Statistics, Env, Type, Mat, CoordsElement) {
 
     "use strict";
 
@@ -112,7 +113,7 @@ define([
     };
 
     JXG.Text.prototype = new GeometryElement();
-    Type.copyPrototypeMethods(JXG.Text, JXG.CoordsElement, 'coordsConstructor');
+    Type.copyPrototypeMethods(JXG.Text, CoordsElement, 'coordsConstructor');
 
     JXG.extend(JXG.Text.prototype, /** @lends JXG.Text.prototype */ {
         /**
@@ -685,7 +686,7 @@ define([
 
         // downwards compatibility
         attr.anchor = attr.parent || attr.anchor;
-        t = JXG.CoordsElement.create(JXG.Text, board, coords, attr, content);
+        t = CoordsElement.create(JXG.Text, board, coords, attr, content);
         
         if (!t) {
             throw new Error("JSXGraph: Can't create text with parent types '" +
