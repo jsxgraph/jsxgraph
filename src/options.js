@@ -1976,11 +1976,12 @@ define([
                 drawZero: true,
                 insertTicks: true,
                 minorHeight: 4,         // if <0: full width and height
-                majorHeight: 10,        // if <0: full width and height
+                majorHeight: 5,        // if <0: full width and height
                 minorTicks: 0,
                 defaultDistance: 1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
+                tickEndings: [0, 1],
                 strokeColor: '#000000'
             },
             highline: {
