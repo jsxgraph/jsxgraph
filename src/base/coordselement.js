@@ -1138,8 +1138,16 @@ define([
             return this;
         },
 
-
-
+        /**
+         * In case there is an attribute "anchor", the element is bound to 
+         * this anchor element. 
+         * This is handled with this.relativeCoords. If the element is a label
+         * relativeCoords are given in scrCoords, otherwise in usrCoords.
+         * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords. 
+         * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
+         * @param{Boolean} isLabel Yes/no
+         * @private
+         */
         addAnchor: function(coordinates, isLabel) {
             if (isLabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
