@@ -1,0 +1,24 @@
+<html>
+<head>
+   <title>JSXGraph require.js example</title>
+   <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
+   <script src="require.js"></script>
+   <script>
+    requirejs.config({
+      baseUrl: '../../src/'
+    });
+   </script>
+</head>
+<body>
+<h2>Angle</h2>
+<div id="jxgbox" class="jxgbox" style="width:600px; height:450px;"></div>
+<script type="text/javascript">
+    require(['jsxgraph', 'base/image'], function(JSXGraph) {
+      var board = JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -10], keepaspectratio: true});
+
+      var p = board.create('point', [3, 4]);
+      var c = board.create('image', ['http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-5, -5], [10, 10]]);
+    });
+</script>
+</body>
+</html>
