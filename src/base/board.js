@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -946,7 +946,7 @@ define([
 
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
-                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
+                    drag.setPosition(Const.COORDS_BY_SCREEN,
                         [newPos.scrCoords[1], newPos.scrCoords[2]],
                         [o.targets[0].Xprev, o.targets[0].Yprev]
                         );

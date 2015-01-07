@@ -775,15 +775,24 @@ define([
          * Sets coordinates and calls the point's update() method.
          * @param {Number} method The type of coordinates used here. 
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates <tt>(z, x, y)</tt> in screen/user units
+         * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
+         * @param {Array} lastPosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last position.
+         * Usually this is the position where the last drag event had occurred. This is needed to prevent jumps
+         * to the lower left corner when dragging an image.
          * @returns {JXG.Point} this element
          */
-        setPositionDirectly: function (method, coords) {
-            var i, //dx, dy, dz, el, p,
+        setPositionDirectly: function (method, coords, lastPosition) {
+            var i, 
+                offset,
                 c, dc,
                 oldCoords = this.coords,
                 newCoords;
 
+            if (Type.exists(lastPosition)) {
+                offset = Statistics.subtract(this.coords.scrCoords.slice(1), lastPosition);
+                coords = Statistics.add(coords, offset);
+            }
+            
             if (this.relativeCoords) {
                 c = new Coords(method, coords, this.board);
                 if (this.visProp.islabel) {
@@ -798,7 +807,6 @@ define([
                 
                 return this;
             } 
-
 
             this.coords.setCoordinates(method, coords);
             this.handleSnapToGrid();
@@ -825,7 +833,7 @@ define([
                 this.prepareUpdate().update();
             }
 
-            // if the user suspends the board updates we need to recalculate the relative position of
+            // If the user suspends the board updates we need to recalculate the relative position of
             // the point on the slide object. this is done in updateGlider() which is NOT called during the
             // update process triggered by unsuspendUpdate.
             if (this.board.isSuspendedUpdate && this.type === Const.OBJECT_TYPE_GLIDER) {
@@ -865,10 +873,13 @@ define([
          * @param {Number} method The type of coordinates used here. 
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
+         * @param {Array} lastPosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last position.
+         * Usually this is the position where the last drag event had occurred. This is needed to prevent jumps
+         * to the lower left corner when dragging an image.
          * @returns {JXG.Point}
          */
-        setPosition: function (method, coords) {
-            return this.setPositionDirectly(method, coords);
+        setPosition: function (method, coords, lastPosition) {
+            return this.setPositionDirectly(method, coords, lastPosition);
         },
 
         /**
