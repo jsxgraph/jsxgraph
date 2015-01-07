@@ -198,7 +198,7 @@ define([
          * Updates the coordinates of the element.
          */
         updateCoords: function (fromParent) {
-            if (!this.needsUpdate) {
+            if (!this.needsUpdate || this.visProp.frozen) {
                 return this;
             }
 

@@ -451,15 +451,6 @@ define([
             return this;
         },
 
-        /*
-        free: function () {
-            this.X = Type.createFunction(this.X(), this.board, '');
-            this.Y = Type.createFunction(this.Y(), this.board, '');
-
-            this.isDraggable = true;
-        },
-        */
-
         /**
          * Evaluates the text.
          * Then, the update function of the renderer
@@ -470,10 +461,6 @@ define([
                 return this;
             }
             
-            //if (!this.visProp.frozen && JXG.exists(this.element)) {
-                //this.updateCoords(fromParent);
-                //this.updateCoords();
-            //}
             this.updateCoords(fromParent);
             this.updateText();
 
@@ -485,7 +472,6 @@ define([
             if (this.needsSizeUpdate) {
                 this.updateSize();
             }
-            this.updateTransform();
 
             return this;
         },
@@ -516,14 +502,6 @@ define([
         },
 
         /**
-         * Updates the coordinates of the text element.
-         */
-/*         
-        updateCoords: function () {
-            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.Z(), this.X(), this.Y()]);
-        },
-*/
-        /**
          * The update function of the renderert
          * is called.
          * @private
@@ -536,22 +514,6 @@ define([
             return this;
         },
 
-        /*
-        updateTransform: function () {
-            var i;
-
-            if (this.transformations.length === 0) {
-                return this;
-            }
-
-            for (i = 0; i < this.transformations.length; i++) {
-                this.transformations[i].update();
-            }
-
-            return this;
-        },
-        */
-        
         /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
@@ -672,50 +634,6 @@ define([
 
             return this.visProp.islabel ? [0, 0, 0, 0] : [c[1], c[2] + this.size[1], c[1] + this.size[0], c[2]];
         },
-
-        /**
-         * Sets x and y coordinate of the text.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Array} coords coordinates in screen/user units
-         * @param {Array} oldcoords previous coordinates in screen/user units
-         * @returns {JXG.Text} this element
-         */
-/*         
-        setPositionDirectly: function (method, coords, oldcoords) {
-            var dc, v,
-                c, oldc;
-
-            c = new Coords(method, coords, this.board);
-            if (this.relativeCoords) {
-                if (!JXG.exists(oldcoords)) {
-                    return this;
-                }
-                oldc = new Coords(method, oldcoords, this.board);
-                
-                if (this.visProp.islabel) {
-                    dc = Statistics.subtract(c.scrCoords, oldc.scrCoords);
-                    this.relativeCoords.scrCoords[1] += dc[1];
-                    this.relativeCoords.scrCoords[2] += dc[2];
-                } else {
-                    dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
-                    this.relativeCoords.usrCoords[1] += dc[1];
-                    this.relativeCoords.usrCoords[2] += dc[2];
-                }
-            } else {
-                this.coords.setCoordinates(method, coords);
-            }
-
-            return this;
-        },
-*/
-
-        /**
-         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
-         * @returns {JXG.Text} Reference to this element
-         */
-        snapToGrid: function () {
-            return this.handleSnapToGrid();
-        }
     });
 
     /**
@@ -773,7 +691,7 @@ define([
         if (!t) {
             throw new Error("JSXGraph: Can't create text with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [x,y], [z,x,y], [text,transformation]");
+                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
         
         if (typeof parents[parents.length - 1] !== 'function') {

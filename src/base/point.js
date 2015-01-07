@@ -366,7 +366,7 @@ define([
         if (!el) {
             throw new Error("JSXGraph: Can't create point with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [x,y], [z,x,y], [point,transformation]");
+                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
 
         return el;

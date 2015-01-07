@@ -154,12 +154,10 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                if (!this.visProp.frozen) {
-                    this.updateCoords();
-                }
+                this.updateCoords();
+
                 this.usrSize = [this.W(), this.H()];
                 this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
-                this.updateTransform();
                 this.updateSpan();
             }
             return this;
@@ -172,18 +170,6 @@ define([
             if (this.needsUpdate) {
                 this.board.renderer.updateImage(this);
                 this.needsUpdate = false;
-            }
-
-            return this;
-        },
-
-        updateTransform: function () {
-            var i, len = this.transformations.length;
-
-            if (len > 0) {
-                for (i = 0; i < len; i++) {
-                    this.transformations[i].update();
-                }
             }
 
             return this;
@@ -249,14 +235,6 @@ define([
                 this.transformations.push(transform);
             }
         },
-
-        /**
-         * Alias for {@link JXG.GeometryElement#handleSnapToGrid}
-         * @returns {JXG.Text} Reference to this element
-         */
-        snapToGrid: function () {
-            return this.handleSnapToGrid();
-        }
     });
 
     /**
@@ -290,7 +268,7 @@ define([
         if (!im) {
             throw new Error("JSXGraph: Can't create image with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
-                    "\nPossible parent types: [x,y], [z,x,y], [text,transformation]");
+                    "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
 
         if (Type.evaluate(attr.rotate) !== 0) {
