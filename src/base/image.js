@@ -61,17 +61,8 @@ define([
      */
     JXG.Image = function (board, coords, attributes, url, size) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_IMAGE, Const.OBJECT_CLASS_OTHER);
+        this.element = this.board.select(attributes.anchor);
         this.coordsConstructor(coords);
-
-/*
-        if (!Type.isFunction(coords[0]) && !Type.isFunction(coords[1])) {
-            this.isDraggable = true;
-        }
-        this.X = Type.createFunction(coords[0], this.board, '');
-        this.Y = Type.createFunction(coords[1], this.board, '');
-        this.Z = Type.createFunction(1, this.board, '');
-        this.coords = new Coords(Const.COORDS_BY_USER, [this.X(), this.Y()], this.board);
-*/
         
         this.W = Type.createFunction(size[0], this.board, '');
         this.H = Type.createFunction(size[1], this.board, '');
@@ -152,14 +143,16 @@ define([
          * Recalculate the coordinates of lower left corner and the width amd the height.
          * @private
          */
-        update: function () {
-            if (this.needsUpdate) {
-                this.updateCoords();
-
-                this.usrSize = [this.W(), this.H()];
-                this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
-                this.updateSpan();
+        update: function (fromParent) {
+            if (!this.needsUpdate) {
+                return this;
             }
+
+            this.updateCoords(fromParent);
+            this.usrSize = [this.W(), this.H()];
+            this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
+            this.updateSpan();
+
             return this;
         },
 

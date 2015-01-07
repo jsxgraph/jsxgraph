@@ -222,16 +222,7 @@ define([
                 }
             }
 
-            /**
-             * If the element is a calculated elemented, call updateConstraint() to calculate new coords.
-             * The second test is for dynamic axes.
-             */
-            //if (this.type === Const.OBJECT_TYPE_CAS || 
-            //    this.type === Const.OBJECT_TYPE_INTERSECTION || 
-            //    this.type === Const.OBJECT_TYPE_AXISPOINT) {
             this.updateConstraint();
-            //}
-
             this.updateTransform();
 
             return this;
@@ -1133,6 +1124,8 @@ define([
             return this;
         },
 
+
+
         addAnchor: function(coordinates, isLabel) {
             if (isLabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
@@ -1174,6 +1167,8 @@ define([
             };
 
             this.ZEval = Type.createFunction(1, this.board, '');
+
+console.log("AddAnchor",this.name);
 
             this.updateConstraint = function () {
                 this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);

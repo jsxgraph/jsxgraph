@@ -75,7 +75,6 @@ define([
         this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
 
         this.element = this.board.select(attributes.anchor);
-        this.isDraggable = false;
         this.coordsConstructor(coords, this.visProp.islabel);
 
         this.content = '';

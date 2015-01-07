@@ -77,6 +77,7 @@ define([
      */
     JXG.Point = function (board, coordinates, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);
+        this.element = this.board.select(attributes.anchor);
         this.coordsConstructor(coordinates);
 
         this.elType = 'point';
