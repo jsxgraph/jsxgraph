@@ -1198,29 +1198,21 @@ define([
         },
         
         /**
-         * Applies the transformations of the curve to {@link JXG.Point#baseElement}.
-         * @returns {JXG.Point} Reference to this point object.
+         * Applies the transformations of the element.
+         * This method applies to text and images. Point transformations are handled differently.
+         * @returns {JXG.CoordsElement} Reference to this object.
          */
         updateTransform: function () {
-            var c, i;
+            var i;
 
-            if (this.transformations.length === 0 || this.baseElement === null) {
+            if (this.transformations.length === 0) {
                 return this;
             }
 
-            // case of bindTo
-            if (this === this.baseElement) {
-                c = this.transformations[0].apply(this.baseElement, 'self');
-            // case of board.create('point',[baseElement,transform]);
-            } else {
-                c = this.transformations[0].apply(this.baseElement);
+            for (i = 0; i < this.transformations.length; i++) {
+                this.transformations[i].update();
             }
 
-            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
-
-            for (i = 1; i < this.transformations.length; i++) {
-                this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));
-            }
             return this;
         },
 

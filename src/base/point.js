@@ -132,6 +132,34 @@ define([
         },
 
         /**
+         * Applies the transformations of the element to {@link JXG.Point#baseElement}.
+         * Point transformations are relative to a base element.
+         * @returns {JXG.CoordsElement} Reference to this object.
+         */
+        updateTransform: function () {
+            var c, i;
+
+            if (this.transformations.length === 0 || this.baseElement === null) {
+                return this;
+            }
+
+            // case of bindTo
+            if (this === this.baseElement) {
+                c = this.transformations[0].apply(this.baseElement, 'self');
+            // case of board.create('point',[baseElement,transform]);
+            } else {
+                c = this.transformations[0].apply(this.baseElement);
+            }
+
+            this.coords.setCoordinates(Const.COORDS_BY_USER, c);
+
+            for (i = 1; i < this.transformations.length; i++) {
+                this.coords.setCoordinates(Const.COORDS_BY_USER, this.transformations[i].apply(this));
+            }
+            return this;
+        },
+
+        /**
          * Calls the renderer to update the drawing.
          * @private
          */
