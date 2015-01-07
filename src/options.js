@@ -1155,7 +1155,17 @@ define([
              * @name JXG.Point#snapSizeY
              * @default 1
              */
-            snapSizeY: 1
+            snapSizeY: 1,
+            
+            /**
+             * List of attractor elements. If the distance of the image is less than
+             * attractorDistance the image is made to glider of this element.
+             * @type array
+             * @name JXG.Image#attractors
+             * @default empty
+             */
+            attractors: []
+            
             /**#@-*/
         },
 
@@ -1966,11 +1976,12 @@ define([
                 drawZero: true,
                 insertTicks: true,
                 minorHeight: 4,         // if <0: full width and height
-                majorHeight: 10,        // if <0: full width and height
+                majorHeight: 5,        // if <0: full width and height
                 minorTicks: 0,
                 defaultDistance: 1,
                 strokeOpacity: 1,
                 strokeWidth: 1,
+                tickEndings: [0, 1],
                 strokeColor: '#000000'
             },
             highline: {
@@ -2247,7 +2258,16 @@ define([
              * @name JXG.Point#snapSizeY
              * @default 1
              */
-            snapSizeY: 1
+            snapSizeY: 1,
+            
+            /**
+             * List of attractor elements. If the distance of the text is less than
+             * attractorDistance the text is made to glider of this element.
+             * @type array
+             * @name JXG.Text#attractors
+             * @default empty
+             */
+            attractors: []
 
             /**#@-*/
         },

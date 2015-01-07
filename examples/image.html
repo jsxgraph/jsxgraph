@@ -4,6 +4,17 @@
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <!--<script type="text/javascript" src="../distrib/prototype.js"></script>-->
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+
+<style type="text/css">
+.JXGimageHighlight {
+    opacity: 0.1;
+}
+
+.JXGimage {
+    opacity: 1.0;
+}
+
+</style>
 </head>
 <body>
   <h2>Images</h2>
@@ -27,7 +38,7 @@
         var li = board.create('line', [p0,p1]); 
         */
         var im = board.create('image',[picStr, [1,1], [3,2]],
-            {opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);}, rotate:60, frozen:true }); 
+            {id:'imx', opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);}, rotate:60, frozen:true }); 
 
         /*
         // 

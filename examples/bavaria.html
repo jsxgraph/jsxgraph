@@ -2,7 +2,6 @@
 <head>
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
-   <script type="text/javascript" src="../distrib/prototype.js"></script>
    <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
    <script type="text/javascript" src="germany.js"></script>
 </head>
@@ -103,9 +102,13 @@ for(i=0;i<xArr.length;i++) {
     }
 }
 
-    var brd = JXG.JSXGraph.initBoard('jxgbox', {boundingbox:[minX-5000,maxY+5000,maxX+5000,minY-5000]});
+    var brd = JXG.JSXGraph.initBoard('jxgbox', {
+        boundingbox:[minX-5000,maxY+5000,maxX+5000,minY-5000]});
+
+
     brd.suspendUpdate();
 for(i=0;i<xArr.length;i++) {
+    
     var graph;
     if(i%3==0) {
         graph = brd.createElement('curve', [xArr[i],yArr[i]], {strokeColor:'black',fillColor:'#32CD32',highlightFillColor:'#90EE90',name:wahlkreiseBY[i]});

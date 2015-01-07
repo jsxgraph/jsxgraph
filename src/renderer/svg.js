@@ -947,6 +947,7 @@ define([
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
                     node.setAttributeNS(null, 'opacity', oo);
+                    //node.style['opacity'] = oo;  // This would overwrite values set y CSS class.
                 } else {
                     node.setAttributeNS(null, 'fill-opacity', oo);
                 }

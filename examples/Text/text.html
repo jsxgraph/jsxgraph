@@ -4,7 +4,7 @@
     <!--<script type="text/javascript" src="../distrib/MathJax/MathJax.js"></script>-->
     <link rel="stylesheet" type="text/css" href="../../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../../src/loadjsxgraph.js"></script>
-   <script type="text/javascript" src="../../src/CanvasRenderer.js"></script>
+    <script type="text/javascript" src="../../src/CanvasRenderer.js"></script>
 </head>
 <body>
 <h1>Text and transformations</h1>
@@ -19,13 +19,14 @@
     p0 = brd.create('point', [0,0], {style:5, name:'offset'}); 
     p1 = brd.create('point', [3,0], {style:5, name:'rot+scale'}); 
     p2 = brd.create('point', [0,4], {color:'blue', trace:true}); 
-    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], {fontSize:'64'});
+    txt = brd.create('text',[function(){return p0.X()},function(){return p0.Y()}, JXG.JSXGraph.rendererType], 
+        {id:'txt', fontSize:'48'});
     /*
     txt.rendNode.style.fill = "#ff00ff";
     txt.rendNode.style.stroke = "#000000";
     txt.rendNode.style.strokeWidth = "3px";
 */
-    //im = brd.create('image',["../uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
+    im = brd.create('image',["../uccellino.jpg", [0,0], [3,10]], {opacity:0.5});
     //txt2 = brd.create('text',[2,-3, function(){ return txt.getSize().toString();}], {});
 
     var tOffInv = brd.create('transform', [function(){return -p0.X()},function(){return -p0.Y()}], {type:'translate'}); 
@@ -45,9 +46,9 @@
     
     // Rotate text around point "offset" by dragging point "rot+scale"
     tOffInv.bindTo(txt); ts1.bindTo(txt); tRot.bindTo(txt); ts2.bindTo(txt); tOff.bindTo(txt);
-    // tOffInv.bindTo(im); ts1.bindTo(im); tRot.bindTo(im); ts2.bindTo(im); tOff.bindTo(im);
+    tOffInv.bindTo(im); ts1.bindTo(im); tRot.bindTo(im); ts2.bindTo(im); tOff.bindTo(im);
 
-    // tRot.bindTo(p2);  // For comparison, a rotation in user coordinates.
+    tRot.bindTo(p2);  // For comparison, a rotation in user coordinates.
     
     brd.update();
 /*

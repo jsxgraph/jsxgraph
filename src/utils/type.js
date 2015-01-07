@@ -867,6 +867,25 @@ define([
         },
 
         /**
+         * Copy all prototype methods from object "superObject" to object
+         * "subObject". The constructor of superObject will be available 
+         * in subObject as subObject.constructor[constructorName].
+         * @param {Object} subObj A JavaScript object which receives new methods.
+         * @param {Object} superObj A JavaScript object which lends its prototype methods to subObject
+         * @returns {String} constructorName Under this name the constructor of superObj will be available 
+         * in subObject.
+         * @private
+         */
+        copyPrototypeMethods: function(subObject, superObject, constructorName) {
+            var key;
+            
+            subObject.prototype[constructorName] = superObject.prototype.constructor;
+            for (key in superObject.prototype)  {
+                subObject.prototype[key] = superObject.prototype[key];
+            }
+        },
+
+        /**
          * Converts a JavaScript object into a JSON string.
          * @param {Object} obj A JavaScript object, functions will be ignored.
          * @param {Boolean} [noquote=false] No quotes around the name of a property.

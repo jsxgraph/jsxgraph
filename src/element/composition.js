@@ -2164,25 +2164,43 @@ define([
      * @class Creates an area indicating the solution of a linear inequality.
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
-     * @param {JXG.Line} l The area drawn will be the area below this line.
+     * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
+     * inverse:true, the inequlity 'greater than or equal to' is shown.
      * @constructor
      * @name Inequality
      * @type JXG.Curve
      * @augments JXG.Curve
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
      * @example
-     * p = board.create('point', [1, 3]);
-     * q = board.create('point', [-2, -4]);
-     * l = board.create('line', [p, q]);
+     * var p = board.create('point', [1, 3]),
+     *     q = board.create('point', [-2, -4]),
+     *     l = board.create('line', [p, q]),
+     *     ineq = board.create('inequality', [l]);
      * ineq = board.create('inequality', [l]);
      * </pre><div id="2b703006-fd98-11e1-b79e-ef9e591c002e" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *  board = JXG.JSXGraph.initBoard('2b703006-fd98-11e1-b79e-ef9e591c002e', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true});
-     *  p = board.create('point', [1, 3]);
-     *  q = board.create('point', [-2, -4]);
-     *  l = board.create('line', [p, q]);
-     *  ineq = board.create('inequality', [l]);
+     *  var board = JXG.JSXGraph.initBoard('2b703006-fd98-11e1-b79e-ef9e591c002e', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true}),
+     *      p = board.create('point', [1, 3]),
+     *      q = board.create('point', [-2, -4]),
+     *      l = board.create('line', [p, q]),
+     *      ineq = board.create('inequality', [l]);
+     * })();
+     * </script><pre>
+     *
+     * @example
+     * // Plot the inequality 
+     * //     y >= 2/3 x + 1 
+     * // or 
+     * //     0 >= -3y + 2x +1
+     * var l = board.create('line', [1, 2, -3]),
+     *     ineq = board.create('inequality', [l], {inverse:true});
+     * </pre><div id="1ded3812-2da4-4323-abaf-1db4bad1bfbd" style="width: 400px; height: 400px;"></div>
+     * <script type="text/javascript">
+     * (function () {
+     *  var board = JXG.JSXGraph.initBoard('1ded3812-2da4-4323-abaf-1db4bad1bfbd', {boundingbox:[-4, 6, 10, -6], axis: false, grid: false, keepaspectratio: true}),
+     *      l = board.create('line', [1, 2, -3]),
+     *      ineq = board.create('inequality', [l], {inverse:true});
      * })();
      * </script><pre>
      */

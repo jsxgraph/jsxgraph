@@ -88,7 +88,6 @@ define([
         delete this.type;
 
         this.coords = {};
-
         this.needsRegularUpdate = attributes['needsregularupdate']; 
         
         this.rotationCenter = 'centroid';
