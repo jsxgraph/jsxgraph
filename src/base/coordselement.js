@@ -48,7 +48,7 @@
 
 /**
  * @fileoverview The geometry object CoordsElement is defined in this file.
- * This object proveides the coordinate handling of points, images and texts.
+ * This object provides the coordinate handling of points, images and texts.
  */
 
 define([
