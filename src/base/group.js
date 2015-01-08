@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -88,14 +88,14 @@ define([
         delete this.type;
 
         this.coords = {};
-        this.needsRegularUpdate = attributes['needsregularupdate']; 
-        
+        this.needsRegularUpdate = attributes.needsregularupdate;
+
         this.rotationCenter = 'centroid';
         this.scaleCenter = null;
         this.rotationPoints = [];
         this.translationPoints = [];
         this.scalePoints = [];
-                
+
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -145,7 +145,7 @@ define([
                     this.removePoint(this.objects[el].point);
                 }
             }
-            
+
             return this;
         },
 
@@ -156,39 +156,34 @@ define([
          * @returns {JXG.Group} returns this group
          */
         update: function (drag) {
-            var drag,             
-                el, 
-                actionCenter,
-                trans, s, 
-                alpha, t, center, 
-                obj = null;
+            var el, actionCenter, desc, trans, s, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;
             }
 
             drag = this._update_find_type();
-                        
+
             if (drag.action === 'nothing') {
                 return this;
             }
 
             obj = this.objects[drag.id].point;
-            
+
             // Prepare translation, scaling or rotation
             if (drag.action === 'translation') {
                 t = [
-                        obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
-                        obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
-                    ];
-                    
+                    obj.coords.usrCoords[1] - this.coords[drag.id].usrCoords[1],
+                    obj.coords.usrCoords[2] - this.coords[drag.id].usrCoords[2]
+                ];
+
             } else if (drag.action === 'rotation' || drag.action === 'scaling') {
                 if (drag.action === 'rotation') {
                     actionCenter = 'rotationCenter';
                 } else {
                     actionCenter = 'scaleCenter';
                 }
-                    
+
                 if (Type.isPoint(this[actionCenter])) {
                     center = this[actionCenter].coords.usrCoords.slice(1);
                 } else if (this[actionCenter] === 'centroid') {
@@ -200,76 +195,82 @@ define([
                 } else {
                     return this;
                 }
-                
+
                 if (drag.action === 'rotation') {
                     alpha = Geometry.rad(this.coords[drag.id].usrCoords.slice(1), center, this.objects[drag.id].point);
                     t = this.board.create('transform', [alpha, center[0], center[1]], {type: 'rotate'});
                     t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
-               } else if (drag.action === 'scaling') {
+                } else if (drag.action === 'scaling') {
                     s = Geometry.distance(this.coords[drag.id].usrCoords.slice(1), center);
                     if (Math.abs(s) < Mat.eps) {
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
-                    
+
                     // Shift scale center to origin, scale and shift the scale center back.
-                    t = this.board.create('transform', 
-                            [1, 0, 0, 
+                    t = this.board.create('transform',
+                            [1, 0, 0,
                              center[0] * (1 -  s), s, 0,
                              center[1] * (1 -  s), 0, s], {type: 'generic'});
                     t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
-                } else{
+                } else {
                     return this;
                 }
             }
-            
+
             this._update_apply_transformation(drag, t);
-            
+
             this.needsUpdate = false;  // This is needed here to prevent infinite recursion because 
                                         // of the board.updateElements call below,
 
             // Prepare dependent objects for update
-            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
-                for (desc in this.objects[el].descendants) if (this.objects[el].descendants.hasOwnProperty(desc)) {
-                    this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
+            for (el in this.objects) {
+                if (this.objects.hasOwnProperty(el)) {
+                    for (desc in this.objects[el].descendants) {
+                        if (this.objects[el].descendants.hasOwnProperty(desc)) {
+                            this.objects[el].descendants.needsUpdate = this.objects[el].descendants.needsRegularUpdate || this.board.needsFullUpdate;
+                        }
+                    }
                 }
             }
             this.board.updateElements(drag);
 
             return this;
         },
-    
+
         /**
          * @private 
          * Determine what the dragging of a group element should do:
          * rotation, translation, scaling or nothing.
-         */ 
-        _update_find_type: function() {
+         */
+        _update_find_type: function () {
             var el, obj,
                 action = 'nothing',
                 changed = [],
                 dragObjId;
-                
+
             // Determine how many elements have changed their position
             // If more than one element changed its position, it is a translation.
             // If exactly one element changed its position we have to find the type of the point.
-            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
-                obj = this.objects[el].point;
-                    
-                if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
-                    changed.push(obj.id);
+            for (el in this.objects) {
+                if (this.objects.hasOwnProperty(el)) {
+                    obj = this.objects[el].point;
+
+                    if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
+                        changed.push(obj.id);
+                    }
                 }
             }
-            
+
             // Determine type of action: translation, scaling or rotation
-            if (changed.length == 0) {
+            if (changed.length === 0) {
                 return {
-                    'action': action, 
+                    'action': action,
                     'id': '',
                     'changed': changed
                 };
-            } 
-            
+            }
+
             dragObjId = changed[0];
             obj = this.objects[dragObjId].point;
 
@@ -284,34 +285,36 @@ define([
                     action = 'translation';
                 }
             }
-            
+
             return {
-                'action': action, 
+                'action': action,
                 'id': dragObjId,
                 'changed': changed
             };
-        },   
+        },
 
         /**
          * @private 
          * Determine the Euclidean coordinates of the centroid of the group.
          * @returns {Array} array of length two,
          */
-        _update_centroid_center: function() {
+        _update_centroid_center: function () {
             var center, len, el;
-            
+
             center = [0, 0];
             len = 0;
-            for (el in this.coords) if (this.coords.hasOwnProperty(el)) {
-                center[0] += this.coords[el].usrCoords[1];
-                center[1] += this.coords[el].usrCoords[2];
-                ++len;
+            for (el in this.coords) {
+                if (this.coords.hasOwnProperty(el)) {
+                    center[0] += this.coords[el].usrCoords[1];
+                    center[1] += this.coords[el].usrCoords[2];
+                    ++len;
+                }
             }
             if (len > 0) {
                 center[0] /= len;
                 center[1] /= len;
             }
-            
+
             return center;
         },
 
@@ -319,36 +322,38 @@ define([
          * @private
          * Apply the transformation to all elements of the group
          */
-        _update_apply_transformation: function(drag, t) {
-            var el, obj; 
-            
-            for (el in this.objects) if (this.objects.hasOwnProperty(el)) {
-                if (Type.exists(this.board.objects[el])) {
-                    obj = this.objects[el].point;
-                    
-                    if (obj.id !== drag.id) {
-                        if (drag.action === 'translation') {
-                            if (!Type.isInArray(drag.changed, obj.id)) {
-                                obj.setPositionDirectly(Const.COORDS_BY_USER, 
-                                    [this.coords[el].usrCoords[1] + t[0], 
-                                     this.coords[el].usrCoords[2] + t[1]]);
-                            }
-                        } else if (drag.action === 'rotation' || drag.action === 'scaling') {
-                            t.applyOnce([obj]);
-                        }
-                    } else {
-                        if (drag.action === 'rotation' || drag.action === 'scaling') {
-                            obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
-                        }
-                    }
+        _update_apply_transformation: function (drag, t) {
+            var el, obj;
 
-                    this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
-                } else {
-                    delete this.objects[el];
+            for (el in this.objects) {
+                if (this.objects.hasOwnProperty(el)) {
+                    if (Type.exists(this.board.objects[el])) {
+                        obj = this.objects[el].point;
+
+                        if (obj.id !== drag.id) {
+                            if (drag.action === 'translation') {
+                                if (!Type.isInArray(drag.changed, obj.id)) {
+                                    obj.setPositionDirectly(Const.COORDS_BY_USER,
+                                        [this.coords[el].usrCoords[1] + t[0],
+                                            this.coords[el].usrCoords[2] + t[1]]);
+                                }
+                            } else if (drag.action === 'rotation' || drag.action === 'scaling') {
+                                t.applyOnce([obj]);
+                            }
+                        } else {
+                            if (drag.action === 'rotation' || drag.action === 'scaling') {
+                                obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
+                            }
+                        }
+
+                        this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                    } else {
+                        delete this.objects[el];
+                    }
                 }
             }
         },
-        
+
         /**
          * Adds an Point to this group.
          * @param {JXG.Point} object The point added to the group.
@@ -356,9 +361,9 @@ define([
          */
         addPoint: function (object) {
             this.objects[object.id] = {point: this.board.select(object)};
-            this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) }; 
+            this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) };
             this.translationPoints.push(object);
-            
+
             return this;
         },
 
@@ -373,7 +378,7 @@ define([
             for (p = 0; p < objects.length; p++) {
                 this.addPoint(objects[p]);
             }
-            
+
             return this;
         },
 
@@ -390,7 +395,7 @@ define([
                     this.addPoint(group.objects[el].point);
                 }
             }
-            
+
             return this;
         },
 
@@ -412,9 +417,9 @@ define([
          * @default 'centroid'
          * @returns {JXG.Group} returns this group
          */
-        setRotationCenter: function(object) {
+        setRotationCenter: function (object) {
             this.rotationCenter = object;
-            
+
             return this;
         },
 
@@ -424,7 +429,7 @@ define([
          * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
          * @returns {JXG.Group} returns this group
          */
-        setRotationPoints: function(objects) {
+        setRotationPoints: function (objects) {
             return this._setActionPoints('rotation', objects);
         },
 
@@ -434,7 +439,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        addRotationPoint: function(point) {
+        addRotationPoint: function (point) {
             return this._addActionPoint('rotation', point);
         },
 
@@ -443,7 +448,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        removeRotationPoint: function(point) {
+        removeRotationPoint: function (point) {
             return this._removeActionPoint('rotation', point);
         },
 
@@ -454,7 +459,7 @@ define([
          * By default, all points of the group are translation points.
          * @returns {JXG.Group} returns this group
          */
-        setTranslationPoints: function(objects) {
+        setTranslationPoints: function (objects) {
             return this._setActionPoints('translation', objects);
         },
 
@@ -463,7 +468,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        addTranslationPoint: function(point) {
+        addTranslationPoint: function (point) {
             return this._addActionPoint('translation', point);
         },
 
@@ -472,7 +477,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        removeTranslationPoint: function(point) {
+        removeTranslationPoint: function (point) {
             return this._removeActionPoint('translation', point);
         },
 
@@ -482,9 +487,9 @@ define([
          * an array of length two, or a function returning an array of length two.
          * @returns {JXG.Group} returns this group
          */
-        setScaleCenter: function(object) {
+        setScaleCenter: function (object) {
             this.scaleCenter = object;
-            
+
             return this;
         },
 
@@ -495,7 +500,7 @@ define([
          * By default, all points of the group are translation points.
          * @returns {JXG.Group} returns this group
          */
-        setScalePoints: function(objects) {
+        setScalePoints: function (objects) {
             return this._setActionPoints('scale', objects);
         },
 
@@ -504,7 +509,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        addScalePoint: function(point) {
+        addScalePoint: function (point) {
             return this._addActionPoint('scale', point);
         },
 
@@ -513,7 +518,7 @@ define([
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
-        removeScalePoint: function(point) {
+        removeScalePoint: function (point) {
             return this._removeActionPoint('scale', point);
         },
 
@@ -521,20 +526,20 @@ define([
          * Generic method for {@link JXG.Group@setTranslationPoints} and {@link JXG.Group@setRotationPoints}
          * @private
          */
-        _setActionPoints: function(action, objects) {
+        _setActionPoints: function (action, objects) {
             var objs, i, len;
             if (Type.isArray(objects)) {
                 objs = objects;
             } else {
                 objs = arguments;
             }
-                
+
             len = objs.length;
             this[action + 'Points'] = [];
             for (i = 0; i < len; ++i) {
                 this[action + 'Points'].push(this.board.select(objs[i]));
             }
-            
+
             return this;
         },
 
@@ -542,9 +547,9 @@ define([
          * Generic method for {@link JXG.Group@addTranslationPoint} and {@link JXG.Group@addRotationPoint}
          * @private
          */
-        _addActionPoint: function(action, point) {
+        _addActionPoint: function (action, point) {
             this[action + 'Points'].push(this.board.select(point));
-            
+
             return this;
         },
 
@@ -552,15 +557,15 @@ define([
          * Generic method for {@link JXG.Group@removeTranslationPoint} and {@link JXG.Group@removeRotationPoint}
          * @private
          */
-        _removeActionPoint: function(action, point) {
+        _removeActionPoint: function (action, point) {
             var idx = this[action + 'Points'].indexOf(this.board.select(point));
             if (idx > -1) {
                 this[action + 'Points'].splice(idx, 1);
             }
-            
+
             return this;
         },
-        
+
         /**
          * @deprecated
          * Use setAttribute
@@ -575,7 +580,7 @@ define([
                     this.objects[el].point.setAttribute.apply(this.objects[el].point, arguments);
                 }
             }
-            
+
             return this;
         }
     });
@@ -816,8 +821,7 @@ define([
      * 
      */
     JXG.createGroup = function (board, parents, attributes) {
-        var i, 
-            attr = Type.copyAttributes(attributes, board.options, 'group'),
+        var i, attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';

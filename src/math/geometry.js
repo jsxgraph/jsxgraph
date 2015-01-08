@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -942,10 +942,9 @@ define([
          * on their defining line or circle.
          * @returns {Function} Function returning a {@see JXG.Coords} object that determines the intersection point.
          */
-        intersectionFunction: function(board, el1, el2, i, j, alwaysintersect) {
-            var el1, el2, i, j, func,
-                that = this;
-    
+        intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
+            var func, that = this;
+
             if (el1.elementClass === Const.OBJECT_CLASS_CURVE &&
                     el2.elementClass === Const.OBJECT_CLASS_CURVE) {
                 // curve - curve
@@ -953,7 +952,7 @@ define([
                 func = function () {
                     return that.meetCurveCurve(el1, el2, i, j, el1.board);
                 };
-    
+
             //} else if ((el1.type === Const.OBJECT_TYPE_ARC && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
 //  //                (el2.type === Const.OBJECT_TYPE_ARC && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // arc - line   (arcs are of class curve, but are intersected like circles)
@@ -962,7 +961,7 @@ define([
 //  //            func = function () {
                     //return that..meet(el1.stdform, el2.stdform, i, el1.board);
                 //};
-    
+
             } else if ((el1.elementClass === Const.OBJECT_CLASS_CURVE && el2.elementClass === Const.OBJECT_CLASS_LINE) ||
                     (el2.elementClass === Const.OBJECT_CLASS_CURVE && el1.elementClass === Const.OBJECT_CLASS_LINE)) {
                 // curve - line (this includes intersections between conic sections and lines
@@ -970,7 +969,7 @@ define([
                 func = function () {
                     return that.meetCurveLine(el1, el2, i, el1.board, alwaysintersect);
                 };
-    
+
             } else if (el1.elementClass === Const.OBJECT_CLASS_LINE && el2.elementClass === Const.OBJECT_CLASS_LINE) {
                 // line - line, lines may also be segments.
                 /** @ignore */
@@ -980,7 +979,7 @@ define([
                         first2 = el2.visProp.straightfirst,
                         last1 = el1.visProp.straightlast,
                         last2 = el2.visProp.straightlast;
-    
+
                     /**
                      * If one of the lines is a segment or ray and
                      * the the intersection point shpould disappear if outside
@@ -995,7 +994,7 @@ define([
                             el2.point2.coords.usrCoords,
                             el1.board
                         );
-    
+
                         if ((!first1 && res[1] < 0) || (!last1 && res[1] > 1) ||
                                 (!first2 && res[2] < 0) || (!last2 && res[2] > 1)) {
                             // Non-existent
@@ -1003,10 +1002,10 @@ define([
                         } else {
                             c = res[0];
                         }
-    
+
                         return (new Coords(Const.COORDS_BY_USER, c, el1.board));
                     }
-    
+
                     return that.meet(el1.stdform, el2.stdform, i, el1.board);
                 };
             } else {
@@ -1016,7 +1015,7 @@ define([
                     return that.meet(el1.stdform, el2.stdform, i, el1.board);
                 };
             }
-            
+
             return func;
         },
 
@@ -2279,18 +2278,21 @@ define([
          * @param {JXG.Polygon} pol Polygon element
          * @returns {Array} The coordinates of the closest projection of the given point to the border of the polygon.
          */
-        projectCoordsToPolygon: function(p, pol) {
-            var i, 
+        projectCoordsToPolygon: function (p, pol) {
+            var i,
                 len = pol.vertices.length,
-                d_best = Infinity, 
-                d, projection, bestprojection; 
- 
+                d_best = Infinity,
+                d,
+                projection,
+                bestprojection;
+
             for (i = 0; i < len; i++) {
                 projection = JXG.Math.Geometry.projectCoordsToSegment(
-                                p,
-                                pol.vertices[i].coords.usrCoords,
-                                pol.vertices[(i + 1) % len].coords.usrCoords);
-            
+                    p,
+                    pol.vertices[i].coords.usrCoords,
+                    pol.vertices[(i + 1) % len].coords.usrCoords
+                );
+
                 d = JXG.Math.Geometry.distance(projection[0], p, 3);
                 if (0 <= projection[1] && projection[1] <= 1 && d < d_best) {
                     bestprojection = projection[0].slice(0);

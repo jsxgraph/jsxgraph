@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -132,13 +132,13 @@ define([
 
         // Three points?
         if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-            parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-            (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-            (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
-            (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
-            
+                parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                (Type.isArray(parents[3]) || Type.isNumber(parents[3])) &&
+                (Type.isNumber(parents[4]) || Type.isFunction(parents[4]))) {
+
             type = '2lines';
-            
+
         } else {
             points = Type.providePoints(board, parents, attributes, 'sector', attrPoints);
             if (points === false) {
@@ -209,10 +209,10 @@ define([
             }
 
             el.updateDataArray = function () {
-                var r, l1, l2, 
-                    A = [0, 0, 0], 
-                    B = [0, 0, 0], 
-                    C = [0, 0, 0], 
+                var r, l1, l2,
+                    A = [0, 0, 0],
+                    B = [0, 0, 0],
+                    C = [0, 0, 0],
                     ar;
 
                 l1 = this.line1;
@@ -337,7 +337,7 @@ define([
 
                 phi = Geometry.rad(A, B, C);
                 if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                    (this.visProp.selection === 'major' && phi < Math.PI)) {
+                        (this.visProp.selection === 'major' && phi < Math.PI)) {
                     sgn = -1;
                 }
 
@@ -424,7 +424,8 @@ define([
                 checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.point1.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                alpha, beta,
+                alpha,
+                beta,
                 has = (dist < r);
 
             if (has) {
@@ -478,7 +479,7 @@ define([
             //}
 
             if ((this.visProp.selection === 'minor' && angle > Math.PI) ||
-                (this.visProp.selection === 'major' && angle < Math.PI)) {
+                    (this.visProp.selection === 'major' && angle < Math.PI)) {
                 angle = -(2 * Math.PI - angle);
             }
 
@@ -530,13 +531,13 @@ define([
                     oldc = new Coords(method, oldcoords, this.board);
 
                 if (!el.point1.draggable() || !el.point2.draggable() || !el.point3.draggable()) {
-                        return this;
+                    return this;
                 }
 
                 dc = Statistics.subtract(c.usrCoords, oldc.usrCoords);
                 t = this.board.create('transform', dc.slice(1), {type: 'translate'});
                 t.applyOnce([el.point1, el.point2, el.point3]);
-    
+
                 return this;
             };
         }
@@ -582,13 +583,13 @@ define([
      */
     JXG.createCircumcircleSector = function (board, parents, attributes) {
         var el, mp, attr, points, i;
-        
+
         points = Type.providePoints(board, parents, attributes, 'point');
         if (points === false) {
             throw new Error("JSXGraph: Can't create circumcircle sector with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'.");
         }
-            
+
         mp = board.create('circumcenter', points.slice(0, 3), attr);
         mp.dump = false;
 
@@ -770,10 +771,10 @@ define([
 
         // Two lines or three points?
         if (parents[0].elementClass === Const.OBJECT_CLASS_LINE &&
-            parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
-            (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
-            (Type.isArray(parents[3]) || Type.isNumber(parents[3]))) {
-         
+                parents[1].elementClass === Const.OBJECT_CLASS_LINE &&
+                (Type.isArray(parents[2]) || Type.isNumber(parents[2])) &&
+                (Type.isArray(parents[3]) || Type.isNumber(parents[3]))) {
+
             type = '2lines';
         } else {
             points = Type.providePoints(board, parents, attributes, 'point');
@@ -838,11 +839,12 @@ define([
                     r = this.Radius(),
                     d = B.Dist(A),
                     ar,
-                    phi, sgn = 1;
+                    phi,
+                    sgn = 1;
 
                 phi = Geometry.rad(A, B, C);
                 if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                    (this.visProp.selection === 'major' && phi < Math.PI)) {
+                        (this.visProp.selection === 'major' && phi < Math.PI)) {
                     sgn = -1;
                 }
 
@@ -859,7 +861,7 @@ define([
                 this.dataY = ar[1];
                 this.bezierDegree = 3;
             };
-            
+
             /**
             * Set an angle to a prescribed value given in radians. This is only possible if the third point of the angle, i.e.
             * the anglepoint is a free point.
@@ -963,7 +965,7 @@ define([
                 deg = Geometry.trueAngle(this.point2, this.point1, this.point3);
 
             if ((this.visProp.selection === 'minor' && deg > 180.0) ||
-                (this.visProp.selection === 'major' && deg < 180.0)) {
+                    (this.visProp.selection === 'major' && deg < 180.0)) {
                 deg = 360.0 - deg;
             }
 
@@ -1013,11 +1015,11 @@ define([
             a2 = Geometry.rad(el.point2, el.point1, el.point3);
 
             if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
-                (el.visProp.selection === 'major' && a2 < Math.PI)) {
+                    (el.visProp.selection === 'major' && a2 < Math.PI)) {
                 a2 = -(2 * Math.PI - a2);
             }
             a2 *= 0.5;
-            
+
             co = Math.cos(a2);
             si = Math.sin(a2);
 
@@ -1048,7 +1050,7 @@ define([
         el.getLabelAnchor = function () {
             var vec, dx = 12, dy = 12,
                 A, B, r, d, a2, co, si, mat;
-            
+
             // If this is uncommented, the angle label can not be dragged
             //if (Type.exists(this.label)) {
             //    this.label.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
@@ -1067,7 +1069,7 @@ define([
             d = Geometry.distance(A, B, 3);
             a2 = Geometry.rad(el.point2, el.point1, el.point3);
             if ((el.visProp.selection === 'minor' && a2 > Math.PI) ||
-                (el.visProp.selection === 'major' && a2 < Math.PI)) {
+                    (el.visProp.selection === 'major' && a2 < Math.PI)) {
                 a2 = -(2 * Math.PI - a2);
             }
             a2 *= 0.5;
@@ -1101,7 +1103,7 @@ define([
             setAngle: 'setAngle',
             free: 'free'
         });
-        
+
         return el;
     };
 

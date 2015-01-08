@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -842,7 +842,7 @@ define([
                     el.points = Numerics.RamerDouglasPeucker(el.points, 0.5);
                 }
                 */
-                
+
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
 

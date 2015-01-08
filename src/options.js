@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -92,7 +92,7 @@ define([
             showClearTraces: false,
 
             keepAspectRatio: false,
-            
+
             /**
              * If set true and 
              * hasPoint() is true for both an element and it's label, 
@@ -478,7 +478,7 @@ define([
              */
             drawLabels: false,
             label: {
-                },
+            },
 
             /**
              * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
@@ -1085,7 +1085,7 @@ define([
 
             /**#@-*/
         },
-        
+
         group: {
             needsRegularUpdate: true
         },
@@ -1156,7 +1156,7 @@ define([
              * @default 1
              */
             snapSizeY: 1,
-            
+
             /**
              * List of attractor elements. If the distance of the image is less than
              * attractorDistance the image is made to glider of this element.
@@ -1165,7 +1165,7 @@ define([
              * @default empty
              */
             attractors: []
-            
+
             /**#@-*/
         },
 
@@ -2259,7 +2259,7 @@ define([
              * @default 1
              */
             snapSizeY: 1,
-            
+
             /**
              * List of attractor elements. If the distance of the text is less than
              * attractorDistance the text is made to glider of this element.

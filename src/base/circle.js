@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -371,8 +371,9 @@ define([
             if (!isFinite(this.stdform[4])) {
                 this.stdform[0] = Type.exists(this.point2) ? -(
                     this.stdform[1] * this.point2.coords.usrCoords[1] +
-                    this.stdform[2] * this.point2.coords.usrCoords[2]) : 0;
-            }            
+                    this.stdform[2] * this.point2.coords.usrCoords[2]
+                ) : 0;
+            }
             this.normalize();
         },
 
@@ -452,11 +453,11 @@ define([
 
             if (this.method === 'twoPoints') {
                 if (Type.cmpArrays(this.point2.coords.usrCoords, [0, 0, 0]) ||
-                    Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])) {
-                    
+                        Type.cmpArrays(this.center.coords.usrCoords, [0, 0, 0])) {
+
                     return NaN;
                 }
-                
+
                 return this.center.Dist(this.point2);
             }
 

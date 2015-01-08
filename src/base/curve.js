@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -453,7 +453,7 @@ define([
                     this.updateTransform(this.points[i]);
                 }
             }
-            
+
             if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
 //console.log("B", this.numberPoints);     
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
@@ -711,11 +711,11 @@ define([
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 off = 20;
-                
-            newReal = newReal && 
+
+            newReal = newReal &&
                         (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
                          pnt.scrCoords[1] < cw + off && pnt.scrCoords[2] < ch + off);
-                        
+
             /*
              * Prevents two consecutive NaNs or points wich are too close
              */
@@ -849,13 +849,13 @@ define([
          */
         _isUndefined: function (a, ta, b, tb) {
             var t, i, pnt;
-            
+
             if (!isNaN(a[1] + a[2]) || !isNaN(b[1] + b[2])) {
                 return false;
             }
-            
+
             pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-            
+
             for (i = 0; i < 20; ++i) {
                 t = ta + Math.random() * (tb - ta);
                 pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
@@ -863,20 +863,20 @@ define([
                     return false;
                 }
             }
-            
+
             return true;
         },
-            
+
         _isOutside: function (a, ta, b, tb) {
             var off = 10,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight;
 
             if ((a[1] < -off && b[1] < -off) ||
-                (a[2] < -off && b[2] < -off) ||
-                (a[1] > cw + off && b[1] > cw + off) ||
-                (a[2] > ch + off && b[2] > ch + off)) {
-                    
+                    (a[2] < -off && b[2] < -off) ||
+                    (a[1] > cw + off && b[1] > cw + off) ||
+                    (a[2] > ch + off && b[2] > ch + off)) {
+
                 return true;
             } else {
                 return false;
@@ -915,7 +915,7 @@ define([
             if (depth < this.nanLevel && this._isOutside(a, ta, b, tb)) {
                 return this;
             }
-            
+
             tc = 0.5 * (ta  + tb);
             pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(tc, true), this.Y(tc, true)], false);
             c = pnt.scrCoords;
@@ -975,7 +975,7 @@ define([
             } else {
                 depth = 17;
                 delta = 0.9;
-                
+
                 delta = 2;
                 this.smoothLevel = depth - 7; // 9
                 this.jumpLevel = 3;
@@ -1190,11 +1190,11 @@ define([
          * @param {String} contentStr String containing dependencies for the given object.
          */
         notifyParents: function (contentStr) {
-            var fstr, dep, 
+            var fstr, dep,
                 isJessieCode = false;
-            
+
             // Read dependencies found by the JessieCode parser
-            for (fstr in {'xterm':1, 'yterm':1}) {
+            for (fstr in {'xterm': 1, 'yterm': 1}) {
                 if (this.hasOwnProperty(fstr) && this[fstr].origin) {
                     isJessieCode = true;
                     for (dep in this[fstr].origin.deps) {
@@ -1204,7 +1204,7 @@ define([
                     }
                 }
             }
-            
+
             if (!isJessieCode) {
                 GeonextParser.findDependencies(this, contentStr, this.board);
             }

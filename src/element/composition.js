@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -431,7 +431,7 @@ define([
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
         } else if (Type.isPointType(parents[1], board) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[0];
-            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];;
+            p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
         } else {
             throw new Error("JSXGraph: Can't create perpendicular with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -624,7 +624,7 @@ define([
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
-        if (parents.length === 3 && 
+        if (parents.length === 3 &&
                 Type.isPointType(parents[0], board) &&
                 Type.isPointType(parents[1], board) &&
                 Type.isPointType(parents[2], board)) {

@@ -70,7 +70,7 @@ define([
      */
     JXG.CoordsElement = function (coordinates, isLabel) {
         var i;
-        
+
         if (!Type.exists(coordinates)) {
             coordinates = [1, 0, 0];
         }
@@ -78,7 +78,7 @@ define([
         for (i = 0; i < coordinates.length; ++i) {
             coordinates[i] = parseFloat(coordinates[i]);
         }
-        
+
         /**
          * Coordinates of the element.
          * @type JXG.Coords
@@ -129,15 +129,15 @@ define([
          * @type {Boolean}
          */
         this.needsUpdateFromParent = true;
-        
+
         /**
          * Dummy function for unconstrained points or gliders.
          * @private
          */
-        this.updateConstraint = function() {
+        this.updateConstraint = function () {
             return this;
         };
-        
+
         /*
          * Do we need this?
          */
@@ -179,7 +179,7 @@ define([
             this.addAnchor(coordinates, isLabel);
         }
         this.isDraggable = true;
-        
+
     };
 
     JXG.extend(JXG.CoordsElement.prototype, /** @lends JXG.CoordsElement.prototype */ {
@@ -219,7 +219,7 @@ define([
 
             return this;
         },
-         
+
 
         /**
          * Update of glider in case of dragging the glider or setting the postion of the glider.
@@ -411,11 +411,11 @@ define([
                         if ((angle < alpha && angle > alpha * 0.5) || (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             newPos = alpha;
                         }
-                        
+
                         this.needsUpdateFromParent = true;
                         this.updateGliderFromParent();
                     }
-                    
+
                     delta = beta - alpha;
                     if (Math.abs(delta) > Mat.eps) {
                         newPos /= delta;
@@ -537,7 +537,7 @@ define([
 
                     delta = beta - alpha;
                     angle = this.position * delta;
-                    
+
                     // Correct the position if we are outside of the sector/arc
                     if (angle < alpha || angle > beta) {
                         angle = beta;
@@ -546,7 +546,7 @@ define([
                                 (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             angle = alpha;
                         }
-                        
+
                         this.position = angle;
                         if (Math.abs(delta) > Mat.eps) {
                             this.position /= delta;
@@ -572,7 +572,7 @@ define([
             this.coords.setCoordinates(Const.COORDS_BY_USER, c, false);
         },
 
-        updateRendererGeneric: function(rendererMethod) {
+        updateRendererGeneric: function (rendererMethod) {
             var wasReal;
 
             if (!this.needsUpdate) {
@@ -613,10 +613,10 @@ define([
             }
 
             this.needsUpdate = false;
-            
-            return this
+
+            return this;
         },
-        
+
         /**
          * Getter method for x, this is used by for CAS-points to access point coordinates.
          * @returns {Number} User coordinate of point in x direction.
@@ -827,22 +827,20 @@ define([
          * @returns {JXG.Point} this element
          */
         setPositionDirectly: function (method, coords, lastPosition) {
-            var i, 
-                offset,
-                c, dc,
+            var i, offset, c, dc,
                 oldCoords = this.coords,
                 newCoords;
 
             // Correct offset for large objects like images and texts to prevent that the 
             // corner of the object jumps to the mouse pointer.
-            if (Type.exists(lastPosition) && 
-                !this.visProp.snaptogrid &&
-                !this.visProp.snaptopoints &&
-                this.visProp.attractors.length == 0) {
+            if (Type.exists(lastPosition) &&
+                    !this.visProp.snaptogrid &&
+                    !this.visProp.snaptopoints &&
+                    this.visProp.attractors.length === 0) {
                 offset = Statistics.subtract(this.coords.scrCoords.slice(1), lastPosition);
                 coords = Statistics.add(coords, offset);
             }
-            
+
             if (this.relativeCoords) {
                 c = new Coords(method, coords, this.board);
                 if (this.visProp.islabel) {
@@ -854,9 +852,9 @@ define([
                     this.relativeCoords.usrCoords[1] += dc[1];
                     this.relativeCoords.usrCoords[2] += dc[2];
                 }
-                
+
                 return this;
-            } 
+            }
 
             this.coords.setCoordinates(method, coords);
             this.handleSnapToGrid();
@@ -906,7 +904,7 @@ define([
             tv = new Coords(method, tv, this.board);
             t = this.board.create('transform', tv.usrCoords.slice(1), {type: 'translate'});
 
-            if (this.transformations.length > 0 && 
+            if (this.transformations.length > 0 &&
                     this.transformations[this.transformations.length - 1].isNumericMatrix) {
                 this.transformations[this.transformations.length - 1].melt(t);
             } else {
@@ -983,7 +981,7 @@ define([
 
             return this;
         },
-        
+
         /**
          * Remove the last slideObject. If there are more than one elements the point is bound to,
          * the second last element is the new active slideObject.
@@ -1008,7 +1006,7 @@ define([
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
                         this.elType = 'image';
                     }
-                        
+
                     this.slideObject = null;
                 } else {
                     this.slideObject = this.slideObjects[this.slideObjects.length - 1];
@@ -1126,7 +1124,7 @@ define([
             if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                 this.type = Const.OBJECT_TYPE_CAS;
             }
-            
+
             this.isDraggable = false;
 
             for (i = 0; i < terms.length; i++) {
@@ -1212,7 +1210,7 @@ define([
          * @param{Boolean} isLabel Yes/no
          * @private
          */
-        addAnchor: function(coordinates, isLabel) {
+        addAnchor: function (coordinates, isLabel) {
             if (isLabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
             } else {
@@ -1227,7 +1225,7 @@ define([
                 if (this.visProp.islabel) {
                     sx =  parseFloat(this.visProp.offset[0]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, 
+                    coords = new Coords(Const.COORDS_BY_SCREEN,
                         [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
 
                     return coords.usrCoords[1];
@@ -1243,7 +1241,7 @@ define([
                 if (this.visProp.islabel) {
                     sy = -parseFloat(this.visProp.offset[1]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, 
+                    coords = new Coords(Const.COORDS_BY_SCREEN,
                         [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
 
                     return coords.usrCoords[2];
@@ -1261,7 +1259,7 @@ define([
 
             this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         },
-        
+
         /**
          * Applies the transformations of the element.
          * This method applies to text and images. Point transformations are handled differently.
@@ -1642,14 +1640,14 @@ define([
 
             return p;
         },
-        
+
     });
-    
+
     /**
      * Generic method to create point, text or image.
      * Determines the type of the construction, i.e. free, or constrained by function,
      * transformation or of glider type.
-     * @param{Object} callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+     * @param{Object} Callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
      * @param{Object} board Link to the board object
      * @param{Array} coords Array with coordinates. This may be: array of numbers, function 
      * returning an array of numbers, array of functions returning a number, object and transformation.
@@ -1661,7 +1659,7 @@ define([
      * the image.
      * @returns{Object} returns the created object or false.
      */
-    JXG.CoordsElement.create = function(callback, board, coords, attr, arg1, arg2) {
+    JXG.CoordsElement.create = function (Callback, board, coords, attr, arg1, arg2) {
         var el, isConstrained = false, i;
 
         for (i = 0; i < coords.length; i++) {
@@ -1672,7 +1670,7 @@ define([
 
         if (!isConstrained) {
             if ((Type.isNumber(coords[0])) && (Type.isNumber(coords[1]))) {
-                el = new callback(board, coords, attr, arg1, arg2);
+                el = new Callback(board, coords, attr, arg1, arg2);
 
                 if (Type.exists(attr.slideobject)) {
                     el.makeGlider(attr.slideobject);
@@ -1683,7 +1681,7 @@ define([
                 el.isDraggable = true;
             } else if ((typeof coords[0] === 'object') && (typeof coords[1] === 'object')) {
                 // Transformation
-                el = new callback(board, [0, 0], attr, arg1, arg2);
+                el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
 
@@ -1692,7 +1690,7 @@ define([
                 return false;
             }
         } else {
-            el = new callback(board, [0, 0], attr, arg1, arg2);
+            el = new Callback(board, [0, 0], attr, arg1, arg2);
             el.addConstraint(coords);
         }
 

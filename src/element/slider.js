@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -55,7 +55,7 @@
  */
 
 define([
-    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group', 
+    'jxg', 'math/math', 'base/constants', 'utils/type', 'base/point', 'base/group',
     'base/element', 'base/line', 'base/ticks', 'base/text'
 ], function (JXG, Mat, Const, Type, Point, Group, GeometryElement, Line, Ticks, Text) {
 
@@ -309,10 +309,10 @@ define([
         // Save the visibility attribute of the sub-elements
         for (el in p3.subs) {
             p3.subs[el].status = {
-                    visible: p3.subs[el].visProp.visible
-                }
+                visible: p3.subs[el].visProp.visible
+            };
         }
-        
+
         p3.hideElement = function () {
             var el;
             GeometryElement.prototype.hideElement.call(this);

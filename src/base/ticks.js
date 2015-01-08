@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -122,7 +122,7 @@ define([
                 if (this.visProp.insertticks) {
                     b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
                     dist = b.upper - b.lower;
-                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10 ));
+                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
                     if (dist <= 6 * delta) {
                         delta *= 0.5;
                     }
@@ -408,11 +408,11 @@ define([
             if (JXG.exists(type) || type === 'tickdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
-                Geometry.calcStraight(this.line, point1, point2);   
+                Geometry.calcStraight(this.line, point1, point2);
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
-                Geometry.calcLineDelimitingPoints(this.line, point1, point2); 
+                Geometry.calcLineDelimitingPoints(this.line, point1, point2);
             }
 
             // Calculate distance from Zero to P1 and to P2
@@ -460,8 +460,8 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var eps = Mat.eps * Mat.eps;
-            var distance = zero.distance(Const.COORDS_BY_USER, point);
+            var eps = Mat.eps * Mat.eps,
+                distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
@@ -491,7 +491,7 @@ define([
          * @private
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
-            var tickPosition, bounds,
+            var tickPosition,
                 // Point 1 of the line
                 p1 = this.line.point1,
                 // Point 2 of the line
@@ -549,14 +549,14 @@ define([
             var nx, ny, bounds,
                 distScr, dist,
                 sgn = 1;
-            
+
             bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
             dist = bounds.upper - bounds.lower;
             while (distScr / (this.visProp.minorticks + 1) < this.minTicksDistance) {
-                if (sgn == 1) { 
+                if (sgn === 1) {
                     ticksDelta *= 2;
                 } else {
                     ticksDelta *= 5;

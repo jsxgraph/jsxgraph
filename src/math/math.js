@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,7 +42,7 @@
  * for namespaces like Math.Numerics, Math.Algebra, Math.Statistics etc.
  */
 
-define(['jxg'], function (JXG) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -553,7 +553,7 @@ define(['jxg'], function (JXG) {
          * @returns {Number} log(x, b) Logarithm of x to base b, that is log(x)/log(b).
          */
         log: function (x, b) {
-            if (!(typeof b === 'undefined') && Type.isNumber(b)) {
+            if (typeof b !== 'undefined' && Type.isNumber(b)) {
                 return Math.log(x) / Math.log(b);
             } else {
                 return Math.log(x);

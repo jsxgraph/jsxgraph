@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -409,8 +409,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             evtTouches = e[JXG.touchProperty];
 
             // touchend events have their position in "changedTouches"
-            if (Type.exists(evtTouches) && evtTouches.length == 0) {
-                evtTouches = e['changedTouches'];
+            if (Type.exists(evtTouches) && evtTouches.length === 0) {
+                evtTouches = e.changedTouches;
             }
 
             if (Type.exists(index) && Type.exists(evtTouches)) {

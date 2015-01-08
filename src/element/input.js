@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -126,16 +126,17 @@ define([
         var t, par,
             attr = Type.copyAttributes(attributes, board.options, 'input');
 
-        if (parents.length !==4) {
+        //if (parents.length !== 4) {
             //throw new Error("JSXGraph: Can't create input with parent types '" +
             //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
             //    "\nPossible parents are: [x, y, value, label]");
-        }
+        //}
 
         par = [parents[0], parents[1],
             '<form style="display:inline">' +
             '<span></span><input type="text" />' +
-            '</form>'];
+            '</form>'
+            ];
 
         t = JXG.createText(board, par, attr);
         t.type = Type.OBJECT_TYPE_INPUT;
@@ -157,7 +158,7 @@ define([
             return this._value;
         };
 
-        t.update = function() {
+        t.update = function () {
             if (this.needsUpdate) {
                 this._value = this.rendNodeInput.value;
             }

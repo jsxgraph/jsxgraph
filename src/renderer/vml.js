@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -179,7 +179,7 @@ define([
             node.style.color = '#356AA0';
             node.style.fontFamily = 'Arial,Helvetica,sans-serif';
             this._setAttr(node, 'opacity', '30%');
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 30, enabled = true)";            
+            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 30, enabled = true)";
 
             t = this.container.ownerDocument.createTextNode(str);
             node.appendChild(t);
@@ -201,21 +201,19 @@ define([
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
             node.appendChild(el.rendNodeText);
             this.appendChildPrim(node, 9);
-            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";;
-            
+            node.style.filter = "progid:DXImageTransform.Microsoft.Matrix(M11='1.0', sizingMethod='auto expand', enabled = false) progid:DXImageTransform.Microsoft.Alpha(opacity = 100, enabled = false)";
+
             return node;
         },
 
         // documented in AbstractRenderer
         updateInternalText: function (el) {
-            var v,
-                content = el.plaintext,
+            var v, content = el.plaintext,
                 m = this.joinTransforms(el, el.transformations),
                 offset = [0, 0],
                 maxX, maxY, minX, minY, i,
                 node = el.rendNode,
                 p = [];
-                
 
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 // Horizontal
@@ -233,23 +231,23 @@ define([
                 } // default (el.visProp.anchory === 'top') offset[1] = 0;
 
                 // Compute maxX, maxY, minX, minY
-                p[0] = Mat.matVecMult(m, [1, 
-                                          el.coords.scrCoords[1] - offset[0] * el.size[0], 
+                p[0] = Mat.matVecMult(m, [1,
+                                          el.coords.scrCoords[1] - offset[0] * el.size[0],
                                           el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
                 p[0][1] /= p[0][0];
                 p[0][2] /= p[0][0];
-                p[1] = Mat.matVecMult(m, [1, 
-                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0], 
+                p[1] = Mat.matVecMult(m, [1,
+                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
                                           el.coords.scrCoords[2] + (1 - offset[1]) * el.size[1] + this.vOffsetText]);
                 p[1][1] /= p[1][0];
                 p[1][2] /= p[1][0];
-                p[2] = Mat.matVecMult(m, [1, 
-                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0], 
+                p[2] = Mat.matVecMult(m, [1,
+                                          el.coords.scrCoords[1] + (1 - offset[0]) * el.size[0],
                                           el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
                 p[2][1] /= p[2][0];
                 p[2][2] /= p[2][0];
-                p[3] = Mat.matVecMult(m, [1, 
-                                          el.coords.scrCoords[1] - offset[0] * el.size[0], 
+                p[3] = Mat.matVecMult(m, [1,
+                                          el.coords.scrCoords[1] - offset[0] * el.size[0],
                                           el.coords.scrCoords[2] - offset[1] * el.size[1] + this.vOffsetText]);
                 p[3][1] /= p[3][0];
                 p[3][2] /= p[3][0];
@@ -617,7 +615,7 @@ define([
                     el.points = Numerics.RamerDouglasPeucker(el.points, 1.0);
                 }
                 */
-                
+
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp
@@ -894,12 +892,12 @@ define([
                         el.rendNode.style.filter += ' alpha(opacity = ' + (oo * 100) + ')';
                     }
                     */
-                    if (node.filters.length>1) { 
+                    if (node.filters.length > 1) {
                         // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
                         // Setting axes:true shows text labels!
                         node.filters.item(1).opacity = Math.round(oo * 100); // Why does setObjectFillColor not use Math.round?
                         node.filters.item(1).enabled = true;
-                    }                    
+                    }
                 }
             }
             el.visPropOld.fillcolor = rgba;
@@ -942,12 +940,12 @@ define([
                         node.style.filter += ' alpha(opacity = ' + oo + ')';
                     }
                     */
-                    if (node.filters.length > 1) { 
+                    if (node.filters.length > 1) {
                         // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
                         // Setting axes:true shows text labels!
-                        node.filters.item(1).opacity = Math.round(oo * 100); 
+                        node.filters.item(1).opacity = Math.round(oo * 100);
                         node.filters.item(1).enabled = true;
-                    }                    
+                    }
 
                     node.style.color = c;
                 } else {

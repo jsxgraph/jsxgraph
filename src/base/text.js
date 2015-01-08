@@ -174,7 +174,7 @@ define([
          */
         _setUpdateText: function (text) {
             var updateText;
-            
+
             this.orgText = text;
             if (typeof text === 'function') {
                 this.updateText = function () {
@@ -458,7 +458,7 @@ define([
             if (!this.needsUpdate) {
                 return this;
             }
-            
+
             this.updateCoords(fromParent);
             this.updateText();
 
@@ -676,18 +676,18 @@ define([
         var t,
             attr = Type.copyAttributes(attributes, board.options, 'text'),
             coords = parents.slice(0, -1),
-            content = parents[parents.length -1];
+            content = parents[parents.length - 1];
 
         // downwards compatibility
         attr.anchor = attr.parent || attr.anchor;
         t = CoordsElement.create(JXG.Text, board, coords, attr, content);
-        
+
         if (!t) {
             throw new Error("JSXGraph: Can't create text with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                     "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
         }
-        
+
         if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
             t.addRotation(Type.evaluate(attr.rotate));
         }

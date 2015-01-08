@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -64,7 +64,7 @@ define([
 
         // docstring in AbstractRenderer
         this.type = 'svg';
-        
+
         this.isIE = navigator.appVersion.indexOf("MSIE") !== -1 || navigator.userAgent.match(/Trident\//);
 
         /**
@@ -133,7 +133,7 @@ define([
         this.filter.setAttributeNS(null, 'width', '300%');
         this.filter.setAttributeNS(null, 'height', '300%');
         this.filter.setAttributeNS(null, 'filterUnits', 'userSpaceOnUse');
-        
+
         this.feOffset = this.container.ownerDocument.createElementNS(this.svgNamespace, 'feOffset');
         this.feOffset.setAttributeNS(null, 'result', 'offOut');
         this.feOffset.setAttributeNS(null, 'in', 'SourceAlpha');
@@ -272,7 +272,7 @@ define([
 
                 node.setAttributeNS(null, 'markerHeight', d);
                 node.setAttributeNS(null, 'markerWidth', d);
-                
+
                 if (this.isIE) {
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
                 }
@@ -649,7 +649,7 @@ define([
                     el.numberPoints = el.points.length;
                 }
                 */
-                
+
                 for (i = 0; i < len; i++) {
                     scr = el.points[i].scrCoords;
                     if (isNaN(scr[1]) || isNaN(scr[2])) {  // PenUp

@@ -523,12 +523,12 @@ define([
          */
         updatePolygon: function (element) {
             var i, len, polIsReal;
-            
+
             // here originally strokecolor wasn't updated but strokewidth was
             // but if there's no strokecolor i don't see why we should update strokewidth.
             this._updateVisual(element, {stroke: true, dash: true});
             this.updatePolygonPrim(element.rendNode, element);
-            
+
             len = element.vertices.length;
             polIsReal = true;
             for (i = 0; i < len; ++i) {
@@ -537,7 +537,7 @@ define([
                     break;
                 }
             }
-            
+
             len = element.borders.length;
             for (i = 0; i < len; ++i) {
                 if (polIsReal && element.borders[i].visProp.visible) {
@@ -546,7 +546,6 @@ define([
                     this.hide(element.borders[i]);
                 }
             }
-            
         },
 
         /* **************************
@@ -850,8 +849,8 @@ define([
                 */
                 len = transformations.length,
                 // Translate to 0,0 in screen coords and then scale
-                m = [[1,        0,       0], 
-                     [-ox / ux, 1 / ux,  0], 
+                m = [[1,        0,       0],
+                     [-ox / ux, 1 / ux,  0],
                      [ oy / uy, 0, -1 / uy]];
 
             for (i = 0; i < len; i++) {
@@ -862,8 +861,8 @@ define([
                 //m = Mat.matMatMult(mpost1, m);
             }
             // Scale back and then translate back
-            m = Mat.matMatMult([[1,   0, 0], 
-                                [ox, ux, 0], 
+            m = Mat.matMatMult([[1,   0, 0],
+                                [ox, ux, 0],
                                 [oy,  0, -uy]], m);
             return m;
         },

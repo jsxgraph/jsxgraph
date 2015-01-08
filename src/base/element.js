@@ -165,7 +165,7 @@ define([
          * @type Object
          */
         this.parents = [];
-        
+
         /**
          * Stores variables for symbolic computations
          * @type Object
@@ -415,7 +415,7 @@ define([
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
          **/
-        addParents: function(parents) {
+        addParents: function (parents) {
             var i, len, par;
 
             if (Type.isArray(parents)) {
@@ -423,7 +423,7 @@ define([
             } else {
                 par = arguments;
             }
-                
+
             len = par.length;
             for (i = 0; i < len; ++i) {
                 if (Type.isId(par[i])) {
@@ -432,10 +432,10 @@ define([
                     this.parents.push(par[i].id);
                 }
             }
-                        
+
             this.parents = Type.uniqueArray(this.parents);
         },
-        
+
         /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
@@ -547,13 +547,12 @@ define([
          * @returns {JXG.GeometryElement} Reference to the element object.
          */
         setPosition: function (method, coords) {
-            var parents = [], el, i, len, 
-                t;
+            var parents = [], el, i, len, t;
 
             if (!JXG.exists(this.parents)) {
                 return this;
             }
-            
+
             len = this.parents.length;
             for (i = 0; i < len; ++i) {
                 el = this.board.select(this.parents[i]);
@@ -565,11 +564,11 @@ define([
                     }
                 }
             }
-                    
+
             if (coords.length === 3) {
                 coords = coords.slice(1);
             }
-            
+
             t = this.board.create('transform', coords, {type: 'translate'});
 
             // We distinguish two cases:
@@ -590,13 +589,13 @@ define([
                     this.addTransform(t);
                 }
             }
-            
+
             /*
              * If - against the default configuration - defining gliders are marked as 
              * draggable, then their position has to be updated now.
              */
             for (i = 0; i < len; ++i) {
-                if (parents[i].type === Const.OBJECT_TYPE_GLIDER)  {
+                if (parents[i].type === Const.OBJECT_TYPE_GLIDER) {
                     parents[i].updateGlider();
                 }
             }

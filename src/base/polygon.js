@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -194,7 +194,7 @@ define([
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
-            
+
             return this;
         },
 
@@ -332,11 +332,10 @@ define([
          * 
          * @returns {Array} Array containing four numbers: [minX, maxY, maxX, minY]
          */
-        boundingBox: function() {
-            var box = [0, 0, 0, 0], 
-                i, v, 
-                le = this.vertices.length - 1; 
-            
+        boundingBox: function () {
+            var box = [0, 0, 0, 0], i, v,
+                le = this.vertices.length - 1;
+
             if (le === 0) {
                 return box;
             }
@@ -344,7 +343,7 @@ define([
             box[2] = box[0];
             box[1] = this.vertices[0].Y();
             box[3] = box[1];
-            
+
             for (i = 1; i < le; ++i) {
                 v = this.vertices[i].X();
                 if (v < box[0]) {
@@ -360,10 +359,10 @@ define([
                     box[3] = v;
                 }
             }
-            
+
             return box;
         },
-        
+
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
@@ -703,7 +702,7 @@ define([
         if (points === false) {
             throw new Error("JSXGraph: Can't create polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");
         }
-        
+
         attr = Type.copyAttributes(attributes, board.options, 'polygon');
         el = new JXG.Polygon(board, points, attr);
         el.isDraggable = true;
@@ -754,7 +753,7 @@ define([
      * </script><pre>
      */
     JXG.createRegularPolygon = function (board, parents, attributes) {
-        var el, i, n, 
+        var el, i, n,
             p = [], rot, c, len, pointsExist, attr;
 
         len = parents.length;
@@ -762,8 +761,8 @@ define([
 
         if (Type.isNumber(n) && (parents.length !== 3 || n < 3)) {
             throw new Error("JSXGraph: A regular polygon needs two point types and a number > 2 as input.");
-        } 
-        
+        }
+
         if (Type.isNumber(board.select(n))) { // Regular polygon given by 2 points and a number
             len--;
             pointsExist = false;
@@ -771,7 +770,7 @@ define([
             n = len;
             pointsExist = true;
         }
-        
+
         p = Type.providePoints(board, parents.slice(0, len), attributes, 'regularpolygon', ['vertices']);
         if (p === false) {
             throw new Error("JSXGraph: Can't create regular polygon with parent types other than 'point' and 'coordinate arrays' or a function returning an array of coordinates");

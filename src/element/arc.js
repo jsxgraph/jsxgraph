@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -164,7 +164,7 @@ define([
 
             phi = Geometry.rad(A, B, C);
             if ((this.visProp.selection === 'minor' && phi > Math.PI) ||
-                (this.visProp.selection === 'major' && phi < Math.PI)) {
+                    (this.visProp.selection === 'major' && phi < Math.PI)) {
                 sgn = -1;
             }
 
@@ -408,7 +408,7 @@ define([
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                 "\nPossible parent types: [point,point]");
         }
-            
+
         attr = Type.copyAttributes(attributes, board.options, 'semicircle', 'midpoint');
         mp = board.create('midpoint', points, attr);
         mp.dump = false;
@@ -474,7 +474,7 @@ define([
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "' and '" + (typeof parents[2]) + "'." +
                 "\nPossible parent types: [point,point,point]");
         }
-        
+
         attr = Type.copyAttributes(attributes, board.options, 'circumcirclearc', 'center');
         mp = board.create('circumcenter', points, attr);
         mp.dump = false;

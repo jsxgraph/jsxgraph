@@ -123,7 +123,7 @@ define([
             }
 
             this.updateCoords(fromParent);
-            
+
             if (this.visProp.trace) {
                 this.cloneToBackground(true);
             }
@@ -181,12 +181,12 @@ define([
          * TODO docu.
          * @param {String|Object} el1, el2, i, j The intersecting objects and the numbers.
          **/
-        makeIntersection: function(el1, el2, i, j) {
+        makeIntersection: function (el1, el2, i, j) {
             var func;
-            
+
             el1 = this.board.select(el1);
             el2 = this.board.select(el2);
-            
+
             func = Geometry.intersectionFunction(this.board, el1, el2, i, j, this.visProp.alwaysintersect);
             this.addConstraint([func]);
 
@@ -195,7 +195,7 @@ define([
                 el2.addChild(this);
             } catch (e) {
                 throw new Error("JSXGraph: Can't create 'intersection' with parent types '" +
-                    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+                    (typeof el1) + "' and '" + (typeof el2) + "'.");
             }
 
             this.type = Const.OBJECT_TYPE_INTERSECTION;
@@ -205,17 +205,17 @@ define([
             this.generatePolynomial = function () {
                 var poly1 = el1.generatePolynomial(this),
                     poly2 = el2.generatePolynomial(this);
-    
+
                 if ((poly1.length === 0) || (poly2.length === 0)) {
                     return [];
                 }
 
                 return [poly1[0], poly2[0]];
             };
-            
+
             this.prepareUpdate().update();
         },
-    
+
         /**
          * Set the style of a point. 
          * Used for GEONExT import and should not be used to set the point's face and size.
@@ -410,7 +410,7 @@ define([
         if (parents.length === 1) {
             coords = [0, 0];
         } else {
-            coords = parents.slice(0, 2)
+            coords = parents.slice(0, 2);
         }
         el = board.create('point', coords, attr);
 
@@ -462,13 +462,13 @@ define([
 
         // make sure we definitely have the indices
         parents.push(0, 0);
-            
+
         el1 = board.select(parents[0]);
         el2 = board.select(parents[1]);
-    
+
         i = parents[2] || 0;
         j = parents[3] || 0;
-    
+
         el = board.create('point', [0, 0, 0], attr);
 
         func = Geometry.intersectionFunction(board, el1, el2, i, j, el.visProp.alwaysintersect);

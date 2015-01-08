@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -51,7 +51,7 @@ define([
 
     var priv = {
             ButtonClickEventHandler: function () {
-                if(this._handler) {
+                if (this._handler) {
                     this._handler();
                 }
                 this.board.update();
@@ -113,11 +113,11 @@ define([
         var t, par,
             attr = Type.copyAttributes(attributes, board.options, 'button');
 
-        if (parents.length < 3) {
+        //if (parents.length < 3) {
             //throw new Error("JSXGraph: Can't create button with parent types '" +
             //    (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
             //    "\nPossible parents are: [x, y, label, handler]");
-        }
+        //}
 
         par = [parents[0], parents[1], '<button type="button"></button>'];
 
@@ -128,11 +128,11 @@ define([
         t.rendNodeButton.id = t.rendNode.id + '_button';
         t.rendNodeButton.innerHTML = parents[2];
 
-        if(parents[3]) {
-            if(typeof parents[3] == 'string') {
+        if (parents[3]) {
+            if (typeof parents[3] === 'string') {
                 t._jc = new JXG.JessieCode();
                 t._jc.use(board);
-                t._handler = function() {
+                t._handler = function () {
                     t._jc.parse(parents[3]);
                 };
             } else {

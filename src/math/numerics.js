@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -2115,7 +2115,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return newPts;
         },
-        
+
         /**
          * Old name for the implementation of the Ramer-Douglas-Peucker algorithm.
          * @deprecated Use {@link JXG.Math.Numerics#RamerDouglasPeucker}

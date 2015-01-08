@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -155,7 +155,7 @@ define([
          */
         isPointType: function (v, board) {
             var val;
-            
+
             v = board.select(v);
             if (this.isArray(v)) {
                 return true;
@@ -164,7 +164,7 @@ define([
                 val = v();
                 if (this.isArray(val) && val.length > 1) {
                     return true;
-                } 
+                }
             }
             return this.isPoint(v);
         },
@@ -303,10 +303,10 @@ define([
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
          * @returns {Array} List of newly created {@link JXG.Point} elements or false if not all returned elements are points.
          */
-        providePoints: function(board, parents, attributes, attrClass, attrArray) {
-            var i, j, 
-                len, 
-                lenAttr = 0, 
+        providePoints: function (board, parents, attributes, attrClass, attrArray) {
+            var i, j,
+                len,
+                lenAttr = 0,
                 points = [], attr, p, val;
 
             if (!this.isArray(parents)) {
@@ -316,10 +316,10 @@ define([
             if (JXG.exists(attrArray)) {
                 lenAttr = attrArray.length;
             }
-            if (lenAttr == 0) {
+            if (lenAttr === 0) {
                 attr = this.copyAttributes(attributes, board.options, attrClass);
             }
-            
+
             for (i = 0; i < len; ++i) {
                 if (lenAttr > 0) {
                     j = Math.min(i, lenAttr - 1);
@@ -335,15 +335,15 @@ define([
                 } else {
                     points.push(board.select(parents[i]));
                 }
-            
+
                 if (!this.isPoint(points[i])) {
                     return false;
                 }
             }
-            
-            return points; 
+
+            return points;
         },
-        
+
         /**
          * Generates a function which calls the function fn in the scope of owner.
          * @param {Function} fn Function to call.
@@ -876,9 +876,9 @@ define([
          * in subObject.
          * @private
          */
-        copyPrototypeMethods: function(subObject, superObject, constructorName) {
+        copyPrototypeMethods: function (subObject, superObject, constructorName) {
             var key;
-            
+
             subObject.prototype[constructorName] = superObject.prototype.constructor;
             for (key in superObject.prototype)  {
                 subObject.prototype[key] = superObject.prototype[key];

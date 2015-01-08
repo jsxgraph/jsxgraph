@@ -233,11 +233,11 @@ define([
          * @type Number
          */
         this.unitY = unitY * this.zoomY;
-        
+
         /**
          * Keep aspect ratio if bounding box is set and the width/height ratio differs from the 
          * width/height ratio of the canvas.
-         */ 
+         */
         this.keepaspectratio = false;
 
         /**
@@ -2070,7 +2070,7 @@ define([
                                 pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
                                 pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
                                 if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight ||
-                                    pos2[0] < 0 || pos2[0] > this.canvasWidth ||  pos2[1] < 0 || pos2[1] > this.canvasHeight) {
+                                        pos2[0] < 0 || pos2[0] > this.canvasWidth ||  pos2[1] < 0 || pos2[1] > this.canvasHeight) {
                                     return;
                                 }
                                 this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
@@ -3156,7 +3156,7 @@ define([
          */
         resizeContainer: function (canvasWidth, canvasHeight, dontset, dontSetBoundingBox) {
             var box;
-            
+
             if (!dontSetBoundingBox) {
                 box = this.getBoundingBox();
             }
@@ -3169,9 +3169,9 @@ define([
             }
 
             this.renderer.resize(this.canvasWidth, this.canvasHeight);
-            
+
             if (!dontSetBoundingBox) {
-                this.setBoundingBox(box, this.keepaspectratio)
+                this.setBoundingBox(box, this.keepaspectratio);
             }
 
             return this;
@@ -3231,25 +3231,25 @@ define([
          */
         prepareUpdate: function () {
             var el, pEl, len = this.objectsList.length;
-            
+
             /*
             if (this.attr.updatetype === 'hierarchical') {
                 return this;
             }
             */
-            
+
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
             }
-            
+
             for (el in this.groups) {
                 if (this.groups.hasOwnProperty(el)) {
                     pEl = this.groups[el];
                     pEl.needsUpdate = pEl.needsRegularUpdate || this.needsFullUpdate;
                 }
             }
-            
+
             return this;
         },
 
@@ -3263,7 +3263,7 @@ define([
             //var childId, i = 0;
 
             drag = this.select(drag);
-            
+
             /*
             if (Type.exists(drag)) {
                 for (el = 0; el < this.objectsList.length; el++) {
@@ -3275,7 +3275,7 @@ define([
                 }
             }
             */
-            
+
             for (el = 0; el < this.objectsList.length; el++) {
                 pEl = this.objectsList[el];
                 // For updates of an element we distinguish if the dragged element is updated or
