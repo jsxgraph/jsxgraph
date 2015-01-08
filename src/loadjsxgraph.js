@@ -165,8 +165,8 @@ var JXG = {},
     JXG.baseFiles = null;
     JXG.serverBase = JXG.requirePath + 'server/';
 
-    // this is a table with functions which check the availability
-    // of certain namespaces, functions and classes. with this structure
+    // This is a table with functions which check the availability
+    // of certain namespaces, functions and classes. With this structure
     // we are able to get a rough check if a specific dependency is available.
     table = {
         'jsxgraph': checkJXG,
