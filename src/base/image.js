@@ -80,7 +80,7 @@ define([
             [this.coords.usrCoords[0], 0, this.H()]
         ];
 
-        this.parent = board.select(attributes.anchor);
+        //this.parent = board.select(attributes.anchor);
         this.id = this.board.setId(this, 'Im');
 
         this.board.renderer.drawImage(this);

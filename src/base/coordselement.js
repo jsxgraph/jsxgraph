@@ -964,6 +964,7 @@ define([
 
             this.slideObject = this.board.select(slide);
             this.slideObjects.push(this.slideObject);
+            this.addParents(slide);
 
             this.type = Const.OBJECT_TYPE_GLIDER;
             this.elType = 'glider';
@@ -1218,6 +1219,7 @@ define([
                 this.relativeCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
             }
             this.element.addChild(this);
+            this.addParents(this.element);
 
             this.XEval = function () {
                 var sx, coords, anchor;
@@ -1685,7 +1687,7 @@ define([
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
 
-                el.parents = [coords[0].id];
+                //el.parents = [coords[0].id];
             } else {
                 return false;
             }
@@ -1694,12 +1696,11 @@ define([
             el.addConstraint(coords);
         }
 
-        //if (!board.isSuspendedUpdate) {
-            el.handleSnapToGrid();
-            el.handleSnapToPoints();
-            el.handleAttractors();
-        //}
+        el.handleSnapToGrid();
+        el.handleSnapToPoints();
+        el.handleAttractors();
 
+        el.addParents(coords);
         return el;
     };
 

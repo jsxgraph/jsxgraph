@@ -84,7 +84,6 @@ define([
         this.orgText = '';
 
         this.needsSizeUpdate = false;
-
         this.hiddenByParent = false;
 
         this.size = [1.0, 1.0];
@@ -100,7 +99,6 @@ define([
         if (typeof this.content === 'string') {
             this.notifyParents(this.content);
         }
-
         this.elType = 'text';
 
         this.methodMap = Type.deepCopy(this.methodMap, {
@@ -688,10 +686,6 @@ define([
             throw new Error("JSXGraph: Can't create text with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
                     "\nPossible parent types: [x,y], [z,x,y], [element,transformation]");
-        }
-        
-        if (typeof parents[parents.length - 1] !== 'function') {
-            t.parents = parents;
         }
         
         if (Type.evaluate(attr.rotate) !== 0 && attr.display === 'internal') {
