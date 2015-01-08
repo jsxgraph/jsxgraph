@@ -1653,6 +1653,8 @@ define([
         return el;
     };
 
-    return JXG.CoordsElement;
+    return {
+        CoordsElement: JXG.CoordsElement
+    };
 
 });
