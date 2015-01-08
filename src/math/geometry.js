@@ -357,7 +357,7 @@ define([
                 change = true;
             }
 
-            return [new Coords(Type.COORDS_BY_USER, c, board), change];
+            return [new Coords(Const.COORDS_BY_USER, c, board), change];
         },
 
         /**
