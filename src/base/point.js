@@ -164,46 +164,9 @@ define([
          * @private
          */
         updateRenderer: function () {
-            var wasReal;
-
-            if (!this.needsUpdate) {
-                return this;
+            if (this.visProp.size > 0) {
+                this.updateRendererGeneric('updatePoint');
             }
-
-            /* Call the renderer only if point is visible. */
-            if (this.visProp.visible && this.visProp.size > 0) {
-                wasReal = this.isReal;
-                this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
-                //Homogeneous coords: ideal point
-                this.isReal = (Math.abs(this.coords.usrCoords[0]) > Mat.eps) ? this.isReal : false;
-
-                if (this.isReal) {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.show(this);
-
-                        if (this.hasLabel && this.label.visProp.visible) {
-                            this.board.renderer.show(this.label);
-                        }
-                    }
-                    this.board.renderer.updatePoint(this);
-                } else {
-                    if (wasReal !== this.isReal) {
-                        this.board.renderer.hide(this);
-
-                        if (this.hasLabel && this.label.visProp.visible) {
-                            this.board.renderer.hide(this.label);
-                        }
-                    }
-                }
-            }
-
-            /* Update the label if visible. */
-            if (this.hasLabel && this.visProp.visible && this.label && this.label.visProp.visible && this.isReal) {
-                this.label.update();
-                this.board.renderer.updateText(this.label);
-            }
-
-            this.needsUpdate = false;
             return this;
         },
 

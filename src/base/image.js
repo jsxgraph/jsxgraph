@@ -160,12 +160,7 @@ define([
          * Send an update request to the renderer.
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
-                this.board.renderer.updateImage(this);
-                this.needsUpdate = false;
-            }
-
-            return this;
+            return this.updateRendererGeneric('updateImage');
         },
 
         /**

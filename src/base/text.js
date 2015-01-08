@@ -506,11 +506,7 @@ define([
          * @private
          */
         updateRenderer: function () {
-            if (this.needsUpdate) {
-                this.board.renderer.updateText(this);
-                this.needsUpdate = false;
-            }
-            return this;
+            return this.updateRendererGeneric('updateText');
         },
 
         /**
