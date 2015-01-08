@@ -1592,18 +1592,25 @@ define([
         },
         
     });
-
-    JXG.CoordsElement.create = function(callback, board, coords, attr) {
-        var el, isConstrained = false, i,
-            // argArray is an array containing the arguments of this function.
-            // Below, we use it in the form
-            //     el = new (callback.bind.apply(callback, argArray))();
-            // This is equivalent to 
-            //     el = new callback(board, coords, attr, ...)
-            // but it allows a varibale number of arguments.
-            // In the above call the first element of argArray, i.e. callback,
-            // is ignored.
-            argArray = Array.prototype.slice.call(arguments);
+    
+    /**
+     * Generic method to create point, text or image.
+     * Determines the type of the construction, i.e. free, or constrained by function,
+     * transformation or of glider type.
+     * @param{Object} callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
+     * @param{Object} board Link to the board object
+     * @param{Array} coords Array with coordinates. This may be: array of numbers, function 
+     * returning an array of numbers, array of functions returning a number, object and transformation.
+     * If the attribute "slideObject" exists, a glider element is constructed.
+     * @param{Object} attr Attributes object
+     * @param{Object} arg1 Optional argument 1: in case of text this is the text content, 
+     * in case of an image this is the url.
+     * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of 
+     * the image.
+     * @returns{Object} returns the created object or false.
+     */
+    JXG.CoordsElement.create = function(callback, board, coords, attr, arg1, arg2) {
+        var el, isConstrained = false, i;
 
         for (i = 0; i < coords.length; i++) {
             if (typeof coords[i] === 'function' || typeof coords[i] === 'string') {
@@ -1613,7 +1620,7 @@ define([
 
         if (!isConstrained) {
             if ((Type.isNumber(coords[0])) && (Type.isNumber(coords[1]))) {
-                el = new (callback.bind.apply(callback, argArray))();
+                el = new callback(board, coords, attr, arg1, arg2);
 
                 if (Type.exists(attr.slideobject)) {
                     el.makeGlider(attr.slideobject);
@@ -1624,8 +1631,7 @@ define([
                 el.isDraggable = true;
             } else if ((typeof coords[0] === 'object') && (typeof coords[1] === 'object')) {
                 // Transformation
-                argArray[2] = [0, 0];
-                el = new (callback.bind.apply(callback, argArray))();
+                el = new callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
 
@@ -1634,8 +1640,7 @@ define([
                 return false;
             }
         } else {
-            argArray[2] = [0, 0];
-            el = new (callback.bind.apply(callback, argArray))();
+            el = new callback(board, [0, 0], attr, arg1, arg2);
             el.addConstraint(coords);
         }
 
