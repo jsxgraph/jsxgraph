@@ -572,6 +572,51 @@ define([
             this.coords.setCoordinates(Const.COORDS_BY_USER, c, false);
         },
 
+        updateRendererGeneric: function(rendererMethod) {
+            var wasReal;
+
+            if (!this.needsUpdate) {
+                return this;
+            }
+
+            /* Call the renderer only if point is visible. */
+            if (this.visProp.visible) {
+                wasReal = this.isReal;
+                this.isReal = (!isNaN(this.coords.usrCoords[1] + this.coords.usrCoords[2]));
+                //Homogeneous coords: ideal point
+                this.isReal = (Math.abs(this.coords.usrCoords[0]) > Mat.eps) ? this.isReal : false;
+
+                if (this.isReal) {
+                    if (wasReal !== this.isReal) {
+                        this.board.renderer.show(this);
+
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.show(this.label);
+                        }
+                    }
+                    this.board.renderer[rendererMethod](this);
+                } else {
+                    if (wasReal !== this.isReal) {
+                        this.board.renderer.hide(this);
+
+                        if (this.hasLabel && this.label.visProp.visible) {
+                            this.board.renderer.hide(this.label);
+                        }
+                    }
+                }
+            }
+
+            /* Update the label if visible. */
+            if (this.hasLabel && this.visProp.visible && this.label && this.label.visProp.visible && this.isReal) {
+                this.label.update();
+                this.board.renderer.updateText(this.label);
+            }
+
+            this.needsUpdate = false;
+            
+            return this
+        },
+        
         /**
          * Getter method for x, this is used by for CAS-points to access point coordinates.
          * @returns {Number} User coordinate of point in x direction.
@@ -788,7 +833,12 @@ define([
                 oldCoords = this.coords,
                 newCoords;
 
-            if (Type.exists(lastPosition)) {
+            // Correct offset for large objects like images and texts to prevent that the 
+            // corner of the object jumps to the mouse pointer.
+            if (Type.exists(lastPosition) && 
+                !this.visProp.snaptogrid &&
+                !this.visProp.snaptopoints &&
+                this.visProp.attractors.length == 0) {
                 offset = Statistics.subtract(this.coords.scrCoords.slice(1), lastPosition);
                 coords = Statistics.add(coords, offset);
             }
