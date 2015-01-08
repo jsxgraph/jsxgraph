@@ -47,8 +47,8 @@
  */
 
 /**
- * @fileoverview The geometry object CoordsElement is defined in this file. 
- * This object proveides the coordinate handling of points, images and texts. 
+ * @fileoverview The geometry object CoordsElement is defined in this file.
+ * This object proveides the coordinate handling of points, images and texts.
  */
 
 define([
@@ -70,7 +70,7 @@ define([
      */
     JXG.CoordsElement = function (coordinates, isLabel) {
         var i;
-        
+
         if (!Type.exists(coordinates)) {
             coordinates = [1, 0, 0];
         }
@@ -78,7 +78,7 @@ define([
         for (i = 0; i < coordinates.length; ++i) {
             coordinates[i] = parseFloat(coordinates[i]);
         }
-        
+
         /**
          * Coordinates of the element.
          * @type JXG.Coords
@@ -103,9 +103,9 @@ define([
         this.onPolygon = false;
 
         /**
-         * When used as a glider this member stores the object, where to glide on. 
+         * When used as a glider this member stores the object, where to glide on.
          * To set the object to glide on use the method
-         * {@link JXG.Point#makeGlider} and DO NOT set this property directly 
+         * {@link JXG.Point#makeGlider} and DO NOT set this property directly
          * as it will break the dependency tree.
          * @type JXG.GeometryElement
          * @name Glider#slideObject
@@ -120,16 +120,16 @@ define([
         this.slideObjects = [];
 
         /**
-         * A {@link JXG.CoordsElement#updateGlider} call is usually followed 
+         * A {@link JXG.CoordsElement#updateGlider} call is usually followed
          * by a general {@link JXG.Board#update} which calls
-         * {@link JXG.CoordsElement#updateGliderFromParent}. 
+         * {@link JXG.CoordsElement#updateGliderFromParent}.
          * To prevent double updates, {@link JXG.CoordsElement#needsUpdateFromParent}
          * is set to false in updateGlider() and reset to true in the following call to
          * {@link JXG.CoordsElement#updateGliderFromParent}
          * @type {Boolean}
          */
         this.needsUpdateFromParent = true;
-        
+
         /**
          * Dummy function for unconstrained points or gliders.
          * @private
@@ -137,7 +137,7 @@ define([
         this.updateConstraint = function() {
             return this;
         };
-        
+
         /*
          * Do we need this?
          */
@@ -179,7 +179,7 @@ define([
             this.addAnchor(coordinates, isLabel);
         }
         this.isDraggable = true;
-        
+
     };
 
     JXG.extend(JXG.CoordsElement.prototype, /** @lends JXG.CoordsElement.prototype */ {
@@ -219,12 +219,12 @@ define([
 
             return this;
         },
-         
+
 
         /**
          * Update of glider in case of dragging the glider or setting the postion of the glider.
          * The relative position of the glider has to be updated.
-         * 
+         *
          * In case of a glider on a line:
          * If the second point is an ideal point, then -1 < this.position < 1,
          * this.position==+/-1 equals point2, this.position==0 equals point1
@@ -244,7 +244,7 @@ define([
             this.needsUpdateFromParent = false;
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                //this.coords.setCoordinates(Const.COORDS_BY_USER, 
+                //this.coords.setCoordinates(Const.COORDS_BY_USER,
                 //    Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
                 newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / (2.0 * Math.PI);
@@ -411,11 +411,11 @@ define([
                         if ((angle < alpha && angle > alpha * 0.5) || (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             newPos = alpha;
                         }
-                        
+
                         this.needsUpdateFromParent = true;
                         this.updateGliderFromParent();
                     }
-                    
+
                     delta = beta - alpha;
                     if (Math.abs(delta) > Mat.eps) {
                         newPos /= delta;
@@ -537,7 +537,7 @@ define([
 
                     delta = beta - alpha;
                     angle = this.position * delta;
-                    
+
                     // Correct the position if we are outside of the sector/arc
                     if (angle < alpha || angle > beta) {
                         angle = beta;
@@ -546,7 +546,7 @@ define([
                                 (angle > beta && angle > beta * 0.5 + Math.PI)) {
                             angle = alpha;
                         }
-                        
+
                         this.position = angle;
                         if (Math.abs(delta) > Mat.eps) {
                             this.position /= delta;
@@ -613,10 +613,10 @@ define([
             }
 
             this.needsUpdate = false;
-            
+
             return this
         },
-        
+
         /**
          * Getter method for x, this is used by for CAS-points to access point coordinates.
          * @returns {Number} User coordinate of point in x direction.
@@ -818,7 +818,7 @@ define([
 
         /**
          * Sets coordinates and calls the point's update() method.
-         * @param {Number} method The type of coordinates used here. 
+         * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
          * @param {Array} lastPosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last position.
@@ -827,22 +827,22 @@ define([
          * @returns {JXG.Point} this element
          */
         setPositionDirectly: function (method, coords, lastPosition) {
-            var i, 
+            var i,
                 offset,
                 c, dc,
                 oldCoords = this.coords,
                 newCoords;
 
-            // Correct offset for large objects like images and texts to prevent that the 
+            // Correct offset for large objects like images and texts to prevent that the
             // corner of the object jumps to the mouse pointer.
-            if (Type.exists(lastPosition) && 
+            if (Type.exists(lastPosition) &&
                 !this.visProp.snaptogrid &&
                 !this.visProp.snaptopoints &&
                 this.visProp.attractors.length == 0) {
                 offset = Statistics.subtract(this.coords.scrCoords.slice(1), lastPosition);
                 coords = Statistics.add(coords, offset);
             }
-            
+
             if (this.relativeCoords) {
                 c = new Coords(method, coords, this.board);
                 if (this.visProp.islabel) {
@@ -854,9 +854,9 @@ define([
                     this.relativeCoords.usrCoords[1] += dc[1];
                     this.relativeCoords.usrCoords[2] += dc[2];
                 }
-                
+
                 return this;
-            } 
+            }
 
             this.coords.setCoordinates(method, coords);
             this.handleSnapToGrid();
@@ -895,7 +895,7 @@ define([
 
         /**
          * Translates the point by <tt>tv = (x, y)</tt>.
-         * @param {Number} method The type of coordinates used here. 
+         * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Number} tv (x, y)
          * @returns {JXG.Point}
@@ -906,7 +906,7 @@ define([
             tv = new Coords(method, tv, this.board);
             t = this.board.create('transform', tv.usrCoords.slice(1), {type: 'translate'});
 
-            if (this.transformations.length > 0 && 
+            if (this.transformations.length > 0 &&
                     this.transformations[this.transformations.length - 1].isNumericMatrix) {
                 this.transformations[this.transformations.length - 1].melt(t);
             } else {
@@ -920,7 +920,7 @@ define([
 
         /**
          * Sets coordinates and calls the point's update() method.
-         * @param {Number} method The type of coordinates used here. 
+         * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} lastPosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last position.
@@ -933,7 +933,7 @@ define([
         },
 
         /**
-         * Sets the position of a glider relative to the defining elements 
+         * Sets the position of a glider relative to the defining elements
          * of the {@link JXG.Point#slideObject}.
          * @param {Number} x
          * @returns {JXG.Point} Reference to the point element.
@@ -983,7 +983,7 @@ define([
 
             return this;
         },
-        
+
         /**
          * Remove the last slideObject. If there are more than one elements the point is bound to,
          * the second last element is the new active slideObject.
@@ -1008,7 +1008,7 @@ define([
                     } else if (this.type === Const.OBJECT_TYPE_IMAGE) {
                         this.elType = 'image';
                     }
-                        
+
                     this.slideObject = null;
                 } else {
                     this.slideObject = this.slideObjects[this.slideObjects.length - 1];
@@ -1017,7 +1017,7 @@ define([
         },
 
         /**
-         * Converts a calculated element into a free element, 
+         * Converts a calculated element into a free element,
          * i.e. it will delete all ancestors and transformations and,
          * if the element is currently a glider, will remove the slideObject reference.
          */
@@ -1126,7 +1126,7 @@ define([
             if (this.elementClass === Const.OBJECT_CLASS_POINT) {
                 this.type = Const.OBJECT_TYPE_CAS;
             }
-            
+
             this.isDraggable = false;
 
             for (i = 0; i < terms.length; i++) {
@@ -1203,11 +1203,11 @@ define([
         },
 
         /**
-         * In case there is an attribute "anchor", the element is bound to 
-         * this anchor element. 
+         * In case there is an attribute "anchor", the element is bound to
+         * this anchor element.
          * This is handled with this.relativeCoords. If the element is a label
          * relativeCoords are given in scrCoords, otherwise in usrCoords.
-         * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords. 
+         * @param{Array} coordinates Offset from th anchor element. These are the values for this.relativeCoords.
          * In case of a label, coordinates are screen coordinates. Otherwise, coordinates are user coordinates.
          * @param{Boolean} isLabel Yes/no
          * @private
@@ -1227,7 +1227,7 @@ define([
                 if (this.visProp.islabel) {
                     sx =  parseFloat(this.visProp.offset[0]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, 
+                    coords = new Coords(Const.COORDS_BY_SCREEN,
                         [sx + this.relativeCoords.scrCoords[1] + anchor.scrCoords[1], 0], this.board);
 
                     return coords.usrCoords[1];
@@ -1243,7 +1243,7 @@ define([
                 if (this.visProp.islabel) {
                     sy = -parseFloat(this.visProp.offset[1]);
                     anchor = this.element.getLabelAnchor();
-                    coords = new Coords(Const.COORDS_BY_SCREEN, 
+                    coords = new Coords(Const.COORDS_BY_SCREEN,
                         [0, sy + this.relativeCoords.scrCoords[2] + anchor.scrCoords[2]], this.board);
 
                     return coords.usrCoords[2];
@@ -1261,7 +1261,7 @@ define([
 
             this.coords = new Coords(Const.COORDS_BY_SCREEN, [0, 0], this.board);
         },
-        
+
         /**
          * Applies the transformations of the element.
          * This method applies to text and images. Point transformations are handled differently.
@@ -1284,7 +1284,7 @@ define([
         /**
          * Add transformations to this point.
          * @param {JXG.GeometryElement} el
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation} 
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
          * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.Point} Reference to this point object.
          */
@@ -1345,15 +1345,15 @@ define([
 
         /**
          * Starts an animation which moves the point along a given path in given time.
-         * @param {Array|function} path The path the point is moved on. 
+         * @param {Array|function} path The path the point is moved on.
          * This can be either an array of arrays containing x and y values of the points of
-         * the path, or  function taking the amount of elapsed time since the animation 
+         * the path, or  function taking the amount of elapsed time since the animation
          * has started and returns an array containing a x and a y value or NaN.
          * In case of NaN the animation stops.
          * @param {Number} time The time in milliseconds in which to finish the animation
          * @param {Object} [options] Optional settings for the animation.
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
-         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong() 
+         * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
          * will interpolate the path
          * using {@link JXG.Math.Numerics#Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.Point} Reference to the point.
@@ -1420,7 +1420,7 @@ define([
         },
 
         /**
-         * Starts an animated point movement towards the given coordinates <tt>where</tt>. 
+         * Starts an animated point movement towards the given coordinates <tt>where</tt>.
          * The animation is done after <tt>time</tt> milliseconds.
          * If the second parameter is not given or is equal to 0, setPosition() is called, see #setPosition.
          * @param {Array} where Array containing the x and y coordinate of the target location.
@@ -1642,22 +1642,22 @@ define([
 
             return p;
         },
-        
+
     });
-    
+
     /**
      * Generic method to create point, text or image.
      * Determines the type of the construction, i.e. free, or constrained by function,
      * transformation or of glider type.
      * @param{Object} callback Object type, e.g. JXG.Point, JXG.Text or JXG.Image
      * @param{Object} board Link to the board object
-     * @param{Array} coords Array with coordinates. This may be: array of numbers, function 
+     * @param{Array} coords Array with coordinates. This may be: array of numbers, function
      * returning an array of numbers, array of functions returning a number, object and transformation.
      * If the attribute "slideObject" exists, a glider element is constructed.
      * @param{Object} attr Attributes object
-     * @param{Object} arg1 Optional argument 1: in case of text this is the text content, 
+     * @param{Object} arg1 Optional argument 1: in case of text this is the text content,
      * in case of an image this is the url.
-     * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of 
+     * @param{Array} arg2 Optional argument 2: in case of image this is an array containing the size of
      * the image.
      * @returns{Object} returns the created object or false.
      */
@@ -1704,8 +1704,6 @@ define([
         return el;
     };
 
-    return {
-        CoordsElement: JXG.CoordsElement
-    };
+    return JXG.CoordsElement;
 
 });
