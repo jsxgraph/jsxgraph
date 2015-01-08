@@ -56,8 +56,8 @@
 
 define([
     'jxg', 'options', 'math/math', 'math/geometry', 'math/numerics', 'base/coords', 'base/constants', 'base/element',
-    'parser/geonext', 'utils/type', 'base/transformation'
-], function (JXG, Options, Mat, Geometry, Numerics, Coords, Const, GeometryElement, GeonextParser, Type, Transform) {
+    'parser/geonext', 'utils/type', 'base/transformation', 'base/coordselement'
+], function (JXG, Options, Mat, Geometry, Numerics, Coords, Const, GeometryElement, GeonextParser, Type, Transform, CoordsElement) {
 
     "use strict";
 
@@ -94,7 +94,7 @@ define([
      * Inherits here from {@link JXG.GeometryElement}.
      */
     JXG.Point.prototype = new GeometryElement();
-    Type.copyPrototypeMethods(JXG.Point, JXG.CoordsElement, 'coordsConstructor');
+    Type.copyPrototypeMethods(JXG.Point, CoordsElement, 'coordsConstructor');
 
     JXG.extend(JXG.Point.prototype, /** @lends JXG.Point.prototype */ {
         /**
@@ -391,7 +391,7 @@ define([
         var el, attr;
 
         attr = Type.copyAttributes(attributes, board.options, 'point');
-        el = JXG.CoordsElement.create(JXG.Point, board, parents, attr);
+        el = CoordsElement.create(JXG.Point, board, parents, attr);
         if (!el) {
             throw new Error("JSXGraph: Can't create point with parent types '" +
                     (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

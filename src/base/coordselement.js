@@ -1653,4 +1653,6 @@ define([
         return el;
     };
 
+    return JXG.CoordsElement;
+
 });
