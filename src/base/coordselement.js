@@ -788,7 +788,12 @@ define([
                 oldCoords = this.coords,
                 newCoords;
 
-            if (Type.exists(lastPosition)) {
+            // Correct offset for large objects like images and texts to prevent that the 
+            // corner of the object jumps to the mouse pointer.
+            if (Type.exists(lastPosition) && 
+                !this.visProp.snaptogrid &&
+                !this.visProp.snaptopoints &&
+                this.visProp.attractors.length == 0) {
                 offset = Statistics.subtract(this.coords.scrCoords.slice(1), lastPosition);
                 coords = Statistics.add(coords, offset);
             }
