@@ -164,6 +164,7 @@ define([
          * @private
          */
         updateRenderer: function () {
+            
             var wasReal;
 
             if (!this.needsUpdate) {
