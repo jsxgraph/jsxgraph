@@ -222,7 +222,7 @@ define([
             } else {
                 this.transformations.push(transform);
             }
-        },
+        }
     });
 
     /**

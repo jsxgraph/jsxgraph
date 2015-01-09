@@ -120,7 +120,7 @@ define([
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
          * If dragarea is set to 'all' (default), tests if the the screen 
-	     * coordinates (x,y) are in within the text boundary.
+        * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
          * @return {Boolean}
@@ -627,7 +627,7 @@ define([
             var c = this.coords.usrCoords;
 
             return this.visProp.islabel ? [0, 0, 0, 0] : [c[1], c[2] + this.size[1], c[1] + this.size[0], c[2]];
-        },
+        }
     });
 
     /**
