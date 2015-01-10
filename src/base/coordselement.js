@@ -220,7 +220,6 @@ define([
             return this;
         },
 
-
         /**
          * Update of glider in case of dragging the glider or setting the postion of the glider.
          * The relative position of the glider has to be updated.
@@ -678,25 +677,10 @@ define([
          * @returns {Number} Distance in user coordinate to the given point
          */
         Dist: function (point2) {
-            var sum, f,
-                r = NaN,
-                c = point2.coords.usrCoords,
-                ucr = this.coords.usrCoords;
-
             if (this.isReal && point2.isReal) {
-                if (c[0] === 0 || ucr[0] === 0) {
-                    r = Number.POSITIVE_INFINITY;
-                } else {
-                    f = ucr[1] - c[1];
-                    sum = f * f;
-                    f = ucr[2] - c[2];
-                    sum += f * f;
-                }
-
-                r = Math.sqrt(sum);
+                return this.coords.distance(Const.COORDS_BY_USER, point2.coords);
             }
-
-            return r;
+            return NaN;
         },
 
         /**
