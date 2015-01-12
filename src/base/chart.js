@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -245,7 +245,6 @@ define([
                     if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
                         strwidth = attributes.labels[i].toString().length;
                         strwidth = 2 * strwidth * fs / board.unitX;
-
                         if (yp >= 0) {
                             // Static offset for label
                             yp += fs * 0.5 / board.unitX;
@@ -254,7 +253,7 @@ define([
                             yp -= fs * strwidth / board.unitX;
                         }
                         xp1 -= fs * 0.2 / board.unitY;
-                        text = board.create('text', [yp, xp1, attributes.labels[i]].toString(), attr);
+                        text = board.create('text', [yp, xp1, attributes.labels[i].toString()], attr);
                     }
                 } else { // vertical bars
                     p[0] = board.create('point', [xp0, 0], hiddenPoint);
@@ -285,7 +284,6 @@ define([
                 }
 
                 pols[i] = board.create('polygon', p, attributes);
-
                 if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
                     pols[i].text = text;
                 }
