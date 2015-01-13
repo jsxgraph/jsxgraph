@@ -235,7 +235,9 @@ define([
          */
         updateGlider: function () {
             var i, p1c, p2c, d, v, poly, cc, pos, sgn,
-                alpha, beta, delta, angle,
+                alpha, beta, 
+                delta = 2.0 * Math.PI, 
+                angle,
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
                 slide = this.slideObject;
@@ -243,10 +245,13 @@ define([
             this.needsUpdateFromParent = false;
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
+                if (this.visProp.isgeonext) {
+                    delta = 1.0;
+                }
                 //this.coords.setCoordinates(Const.COORDS_BY_USER,
                 //    Geometry.projectPointToCircle(this, slide, this.board).usrCoords, false);
                 newCoords = Geometry.projectPointToCircle(this, slide, this.board);
-                newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / (2.0 * Math.PI);
+                newPos = Geometry.rad([slide.center.X() + 1.0, slide.center.Y()], slide.center, this) / delta;
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 /*
                  * onPolygon==true: the point is a slider on a segment and this segment is one of the
@@ -416,6 +421,9 @@ define([
                     }
 
                     delta = beta - alpha;
+                    if (this.visProp.isgeonext) {
+                        delta = 1.0;
+                    }
                     if (Math.abs(delta) > Mat.eps) {
                         newPos /= delta;
                     }
@@ -458,7 +466,9 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                baseangle, alpha, angle, beta, delta, newPos;
+                baseangle, alpha, angle, beta, 
+                delta = 2.0 * Math.PI, 
+                newPos;
 
             if (!this.needsUpdateFromParent) {
                 this.needsUpdateFromParent = true;
@@ -467,9 +477,12 @@ define([
 
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 r = slide.Radius();
+                if (this.visProp.isgeonext) {
+                    delta = 1.0;
+                }
                 c = [
-                    slide.center.X() + r * Math.cos(this.position * 2.0 * Math.PI),
-                    slide.center.Y() + r * Math.sin(this.position * 2.0 * Math.PI)
+                    slide.center.X() + r * Math.cos(this.position * delta),
+                    slide.center.Y() + r * Math.sin(this.position * delta)
                 ];
             } else if (slide.elementClass === Const.OBJECT_CLASS_LINE) {
                 p1c = slide.point1.coords.usrCoords;
@@ -535,6 +548,9 @@ define([
                     }
 
                     delta = beta - alpha;
+                    if (this.visProp.isgeonext) {
+                        delta = 1.0;
+                    }
                     angle = this.position * delta;
 
                     // Correct the position if we are outside of the sector/arc

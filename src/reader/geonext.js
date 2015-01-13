@@ -591,7 +591,8 @@
                 gxtEl = this.transformProperties(gxtEl, 'point');
                 try {
                     gxtEl.parent = this.changeOriginIds(board, gxtEl.parent);
-
+                    gxtEl.isGeonext = true;
+                    
                     p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
                     p.onPolygon = JXG.exists(gxtEl.onpolygon) && JXG.str2Bool(gxtEl.onpolygon);
 
