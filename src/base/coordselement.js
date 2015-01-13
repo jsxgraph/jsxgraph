@@ -1211,7 +1211,6 @@ define([
          * @private
          */
         addAnchor: function (coordinates, isLabel) {
-console.log("ADDANCHOR", this.id, isLabel, coordinates, this.element.getTextAnchor().usrCoords);            
             if (isLabel) {
                 this.relativeCoords = new Coords(Const.COORDS_BY_SCREEN, coordinates.slice(0, 2), this.board);
             } else {
