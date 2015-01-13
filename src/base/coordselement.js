@@ -235,8 +235,8 @@ define([
          */
         updateGlider: function () {
             var i, p1c, p2c, d, v, poly, cc, pos, sgn,
-                alpha, beta, 
-                delta = 2.0 * Math.PI, 
+                alpha, beta,
+                delta = 2.0 * Math.PI,
                 angle,
                 cp, c, invMat, newCoords, newPos,
                 doRound = false,
@@ -466,8 +466,8 @@ define([
         updateGliderFromParent: function () {
             var p1c, p2c, r, lbda, c,
                 slide = this.slideObject,
-                baseangle, alpha, angle, beta, 
-                delta = 2.0 * Math.PI, 
+                baseangle, alpha, angle, beta,
+                delta = 2.0 * Math.PI,
                 newPos;
 
             if (!this.needsUpdateFromParent) {
