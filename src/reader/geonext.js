@@ -103,7 +103,7 @@
          * @returns {Object|Array|String} The gathered data
          */
         gEBTN: function (node, tag, idx, fc) {
-            var tmp;
+            var tmp = [];
 
             if (!JXG.exists(node || !node.getElementsByTagName)) {
                 return node;
@@ -115,7 +115,10 @@
             }
 
             idx = idx || 0;
-            tmp = node.getElementsByTagName(tag);
+
+            if (node.getElementsByTagName) {
+                tmp = node.getElementsByTagName(tag);
+            }
             if (tmp.length > 0) {
                 tmp = tmp[idx];
                 if (fc && tmp.firstChild) {
@@ -1116,7 +1119,9 @@
             xmlNode = this.gEBTN(boardData, 'coordinates', 0, false);
 
             tmp = this.readViewPort(xmlNode);
-            if (tmp.length === 4) {
+            
+// Do not use the viewport of a GEONExT file            
+            if (false && tmp.length === 4) {
                 board.setBoundingBox(tmp, true);
             } else {
                 // zoom level
