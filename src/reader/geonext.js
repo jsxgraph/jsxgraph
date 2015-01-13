@@ -1030,7 +1030,7 @@
                 }
                 gxtEl.parent = this.changeOriginIds(board, gxtEl.parent);
 
-                c = board.create('text', [gxtEl.x, gxtEl.y, gxtEl.mpStr], {
+                c = board.create('text', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.mpStr], {
                     anchor: gxtEl.parent,
                     id: gxtEl.id,
                     name: gxtEl.name,
