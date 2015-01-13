@@ -869,9 +869,9 @@
  			<name>T0</name>
  			<id>g3e26</id>
  			<data>
- 				<content>&beta;</content>
- 				<mp>&beta;</mp>
- 				<mpx>&beta;</mpx>
+ 				<content>&beta;Text</content>
+ 				<mp>&beta;Text1</mp>
+ 				<mpx>&beta;Text2</mpx>
  				<x>0.7999999999999998</x>
  				<y>0.1399999999999999</y>
  				<parent>g3e13</parent>
@@ -1588,9 +1588,9 @@
  			<name>T1</name>
  			<id>g3e49</id>
  			<data>
- 				<content>&beta;</content>
- 				<mp>&beta;</mp>
- 				<mpx>&beta;</mpx>
+ 				<content>&beta;X</content>
+ 				<mp>&beta;X1</mp>
+ 				<mpx>&beta;X2</mpx>
  				<x>-0.6999999999999997</x>
  				<y>0.17999999999999972</y>
  				<parent>g3e28</parent>
@@ -1651,7 +1651,7 @@
 				<x>...</x>
 				<y>...</y>
 			</label>
-			<text>&beta;</text>
+			<text>&beta;&beta;</text>
  		</angle>
  	   <angle>
  			<name>W1</name>
@@ -1682,7 +1682,7 @@
 				<x>...</x>
 				<y>...</y>
 			</label>
-			<text>&beta;</text>
+			<text>&beta;Y</text>
  		</angle>
  	</elements>
  </board>

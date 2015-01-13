@@ -786,11 +786,10 @@ define([
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'angle');
+        
         //  If empty, create a new name
-        text = attr.name;
-        if (!Type.exists(text) || text === '') {
-            text = board.generateName({type: Const.OBJECT_TYPE_ANGLE});
-            attr.name = text;
+        if (!Type.exists(attr.name) || attr.name === '') {
+            attr.name = board.generateName({type: Const.OBJECT_TYPE_ANGLE});
         }
 
         if (Type.exists(attr.radius)) {
@@ -907,6 +906,11 @@ define([
 
         } // end '3points'
 
+        // GEONExT compatible labels.
+        if (JXG.exists(el.visProp.text)) {
+            el.label.setText(el.visProp.text);
+        }
+        
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
         // el.parents = [points[0].id, points[1].id, points[2].id];

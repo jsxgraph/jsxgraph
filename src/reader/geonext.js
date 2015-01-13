@@ -981,6 +981,7 @@
                 gxtEl = this.firstLevelProperties(gxtEl, Data);
                 gxtEl = this.readNodes(gxtEl, Data, 'data');
                 gxtEl = this.transformProperties(gxtEl);
+                gxtEl.radius *= 1.0;
 
                 c = board.create('angle', [gxtEl.first, gxtEl.middle, gxtEl.last], gxtEl);
                 this.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');
@@ -1121,8 +1122,7 @@
 
             tmp = this.readViewPort(xmlNode);
             
-// Do not use the viewport of a GEONExT file            
-            if (false && tmp.length === 4) {
+            if (tmp.length === 4) {
                 board.setBoundingBox(tmp, true);
             } else {
                 // zoom level
