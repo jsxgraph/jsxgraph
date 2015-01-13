@@ -167,6 +167,8 @@
             gxtEl.labelColor = rgbo[0];
             gxtEl.withLabel = rgbo[1] > 0;
             gxtEl.labelOpacity = rgbo[1];
+            //gxtEl.labelColor = this.gEBTN(color, 'label');
+            
             gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, 'draft'))[0];
 
             // backwards compatibility
