@@ -1,3 +1,33 @@
+0.99.3
+====
+
+Important Notes
+---------------
+* The property glider.position for gliders on circular objects like arcs and circles was changed 
+  from radians to relative values between 0 and 1. 
+  This may result in a different behaviour of gliders on arcs. If you need the previous 
+  mode, you have to set isGeonext:true as attribute.
+
+New Features
+------------
+* This release contains the first steps of unifying the handling of elements 
+  defined by one coordinate, namely 
+  points, texts and images. At this point, all these elements allow the same construction methods
+  and allow to be bound to an anchor element.
+* Improved dragging of texts and images
+
+  
+Bug fixes
+---------
+* Fix visibility of texts with coordinates defined by functions, e.g. slider labels.
+* Gliders on arcs and circles now keep their relative position.
+* Allow use of user supplied board id in JXG.boards
+* Fix group element to prevent infinite recursion if containing a dependent element
+* Make ticks for sliders less obtrusive
+* Improved (non-)handling of frozen objects
+* Fix several bugs in GEONExT reader
+
+
 0.99.2
 ====
 
