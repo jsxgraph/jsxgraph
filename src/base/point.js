@@ -68,8 +68,9 @@ define([
      * @class Creates a new point object. Do not use this constructor to create a point. Use {@link JXG.Board#create} with
      * type {@link Point}, {@link Glider}, or {@link Intersection} instead.
      * @augments JXG.GeometryElement
+     * @augments JXG.CoordsElement
      * @param {string|JXG.Board} board The board the new point is drawn on.
-     * @param {Array} coordinates An array with the affine user coordinates of the point.
+     * @param {Array} coordinates An array with the user coordinates of the point.
      * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point} and
      * {@link JXG.Options#elements}, and optional a name and a id.
      * @see JXG.Board#generateName

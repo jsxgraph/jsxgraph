@@ -55,9 +55,22 @@ define([
 
     /**
      * Construct and handle images
-     * @class Image:
-     * It inherits from @see GeometryElement.
-     * @constructor
+     * The coordinates can be relative to the coordinates of an element 
+     * given in {@link JXG.Options#text.anchor}.
+     * 
+     * The image can be supplied as an URL or an base64 encoded inline image
+     * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning 
+     * an URL: function(){ return 'xxx.png; }.
+     *      
+     * @augments JXG.GeometryElement
+     * @augments JXG.CoordsElement
+     * @param {string|JXG.Board} board The board the new text is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the text.
+     * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#text} and
+     * {@link JXG.Options#elements}, and optional a name and a id.
+     * @param {string|function} url An URL string or a function returning an URL string.
+     * @param  {Array} size Array continang width and height of the image in user coordinates.
+     *
      */
     JXG.Image = function (board, coords, attributes, url, size) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_IMAGE, Const.OBJECT_CLASS_OTHER);
@@ -228,8 +241,7 @@ define([
     /**
      * @class Displays an image.
      * @pseudo
-     * @description Shows an image. The image can be supplied as an URL or an base64 encoded inline image
-     * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning an URL: function(){ return 'xxx.png; }.
+     * @description 
      * @constructor
      * @name Image
      * @type JXG.Image
@@ -237,7 +249,7 @@ define([
      * @param {String_Array_Array} url,bottomleft,widthheight url defines the location of the image data. bottomleft and
      * widthheight define the user coordinates of the top left corner and the image's width and height.
      * @example
-     * var im = board.create('image', ['http://geonext.uni-bayreuth.de/fileadmin/geonext/design/images/logo.gif', [-3,1],[5,5]]);
+     * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/jsxgraph/distrib/images/uccellino.jpg', [-3,1],[5,5]]);
      *
      * </pre><div id="9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">

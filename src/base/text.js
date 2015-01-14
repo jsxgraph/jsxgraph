@@ -65,12 +65,19 @@ define([
 
     /**
      * Construct and handle texts.
-     * @class Text: On creation the GEONExT syntax
-     * of <value>-terms
-     * are converted into JavaScript syntax.
-     * The coordinates can be relative to the coordinates of an element "element".
-     * @constructor
-     * @return A new geometry element Text
+     * 
+     * The coordinates can be relative to the coordinates of an element 
+     * given in {@link JXG.Options#text.anchor}.
+     * 
+     * MathJax, HTML and GEONExT syntax can be handled.
+     * @augments JXG.GeometryElement
+     * @augments JXG.CoordsElement
+     * @param {string|JXG.Board} board The board the new text is drawn on.
+     * @param {Array} coordinates An array with the user coordinates of the text.
+     * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#text} and
+     * {@link JXG.Options#elements}, and optional a name and a id.
+     * @param {string|function} content A string or a function returning a string.
+     *
      */
     JXG.Text = function (board, coords, attributes, content) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_TEXT, Const.OBJECT_CLASS_TEXT);
@@ -106,8 +113,6 @@ define([
             // free: 'free',
             move: 'setCoords'
         });
-
-        return this;
     };
 
     JXG.Text.prototype = new GeometryElement();
@@ -635,7 +640,7 @@ define([
      * @pseudo
      * @description
      * @name Text
-     * @augments JXG.GeometryElement
+     * @augments JXG.Text
      * @constructor
      * @type JXG.Text
      *
