@@ -162,7 +162,9 @@ define([
             //borderRadius: '4px'
         },
 
-         /* Generic options used by {@link JXG.GeometryElement} */
+         /**
+          *  Generic options used by {@link JXG.GeometryElement} 
+          */
         elements: {
             // the following tag is a meta tag: http://code.google.com/p/jsdoc-toolkit/wiki/MetaTags
 
@@ -448,6 +450,9 @@ define([
             /**#@-*/
         },
 
+         /**
+          *  Generic options used by {@link JXG.Ticks} 
+          */
         ticks: {
             /**#@+
              * @visprop
@@ -640,6 +645,9 @@ define([
             /**#@-*/
         },
 
+         /**
+          *  Generic options used by {@link JXG.Hatch} 
+          */
         hatch: {
             drawLabels: false,
             drawZero: true,
@@ -650,7 +658,9 @@ define([
             ticksDistance: 0.2
         },
 
-        /* precision options */
+        /**
+         * Precision options 
+         */
         precision: {
             touch: 30,
             touchMax: 100,
@@ -659,7 +669,9 @@ define([
             hasPoint: 4
         },
 
-        /* Default ordering of the layers */
+        /** 
+         * Default ordering of the layers 
+         */
         layer: {
             numlayers: 20, // only important in SVG
             text: 9,
@@ -681,7 +693,7 @@ define([
             trace: 0
         },
 
-        /* element type specific options */
+        /* special angle options */
         angle: {
             /**#@+
              * @visprop
@@ -2194,6 +2206,16 @@ define([
             display: 'html',
 
             /**
+             * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
+             * to this anchor element.
+             * @memberOf Text.prototype
+             * @default null
+             * @name anchor
+             * @type Object
+             */
+            anchor: null,
+
+            /**
              * The horizontal alignment of the text. Possible values include <tt>'left'</tt>, <tt>'middle'</tt>, and
              * <tt>'right'</tt>.
              * @memberOf Text.prototype
@@ -2212,6 +2234,7 @@ define([
              * @type String
              */
             anchorY: 'middle',
+            
             /**
              * The precision of the slider value displayed in the optional text.
              * @memberOf Text.prototype
@@ -2339,8 +2362,8 @@ define([
         /**
          * Abbreviations of properties. Setting the shortcut means setting abbreviated properties
          * to the same value.
-         * It is used in JXG.GeometryElement#setAttribute and in
-         * the constructor JXG.GeometryElement.
+         * It is used in {@link JXG.GeometryElement#setAttribute} and in
+         * the constructor {@link JXG.GeometryElement}.
          * Attention: In Options.js abbreviations are not allowed.
          */
         shortcuts: {

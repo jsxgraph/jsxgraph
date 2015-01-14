@@ -62,14 +62,16 @@ define([
      * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning 
      * an URL: function(){ return 'xxx.png; }.
      *      
+     * @class Creates a new image object. Do not use this constructor to create a image. Use {@link JXG.Board#create} with
+     * type {@link Image} instead.
      * @augments JXG.GeometryElement
      * @augments JXG.CoordsElement
      * @param {string|JXG.Board} board The board the new text is drawn on.
      * @param {Array} coordinates An array with the user coordinates of the text.
      * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#text} and
-     * {@link JXG.Options#elements}, and optional a name and a id.
+     * {@link JXG.Options#elements}, and - optionally - a name and an id.
      * @param {string|function} url An URL string or a function returning an URL string.
-     * @param  {Array} size Array continang width and height of the image in user coordinates.
+     * @param  {Array} size Array containing width and height of the image in user coordinates.
      *
      */
     JXG.Image = function (board, coords, attributes, url, size) {
@@ -242,19 +244,29 @@ define([
      * @class Displays an image.
      * @pseudo
      * @description 
-     * @constructor
      * @name Image
      * @type JXG.Image
+     * @augments JXG.Image
+     * @constructor
+     * @constructor
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {String_Array_Array} url,bottomleft,widthheight url defines the location of the image data. bottomleft and
-     * widthheight define the user coordinates of the top left corner and the image's width and height.
+     * @param {string,function_Array_Array} url,coords,size url defines the location of the image data. The array coords contains the user coordinates 
+     * of the lower left corner of the image.
+     *   It can consist of two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+     *   constraint, or a function which takes no parameter and returns a number. Every element determines one coordinate. If a coordinate is
+     *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
+     *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+     *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+     *   parent elements are given they will be interpreted as homogeneous coordinates.
+     * <p>
+     * The array size defines the image's width and height in user coordinates.
      * @example
-     * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/jsxgraph/distrib/images/uccellino.jpg', [-3,1],[5,5]]);
+     * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/jsxgraph/distrib/images/uccellino.jpg', [-3,-2], [3,3]]);
      *
      * </pre><div id="9850cda0-7ea0-4750-981c-68bacf9cca57" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
-     *   var image_board = JXG.JSXGraph.initBoard('9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false});
-     *   var image_im = image_board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,1],[5,5]]);
+     *   var image_board = JXG.JSXGraph.initBoard('9850cda0-7ea0-4750-981c-68bacf9cca57', {boundingbox: [-4, 4, 4, -4], axis: true, showcopyright: false, shownavigation: false});
+     *   var image_im = image_board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],[3,3]]);
      * </script><pre>
      */
     JXG.createImage = function (board, parents, attributes) {

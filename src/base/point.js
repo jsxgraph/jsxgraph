@@ -72,7 +72,7 @@ define([
      * @param {string|JXG.Board} board The board the new point is drawn on.
      * @param {Array} coordinates An array with the user coordinates of the point.
      * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point} and
-     * {@link JXG.Options#elements}, and optional a name and a id.
+     * {@link JXG.Options#elements}, and optional a name and an id.
      * @see JXG.Board#generateName
      * @see JXG.Board#addPoint
      */
@@ -319,7 +319,7 @@ define([
      * constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
      * given by a number, the number determines the initial position of a free point. If given by a string or a function that coordinate will be constrained
      * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
-     * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine euclidean coordinates, if three such
+     * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
      * parent elements are given they will be interpreted as homogeneous coordinates.
      * @param {JXG.Point_JXG.Transformation} Point,Transformation A point can also be created providing a transformation. The resulting point is a clone of the base
      * point transformed by the given Transformation. {@see JXG.Transformation}.

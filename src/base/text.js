@@ -70,6 +70,8 @@ define([
      * given in {@link JXG.Options#text.anchor}.
      * 
      * MathJax, HTML and GEONExT syntax can be handled.
+     * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
+     * type {@link Text} instead.
      * @augments JXG.GeometryElement
      * @augments JXG.CoordsElement
      * @param {string|JXG.Board} board The board the new text is drawn on.
@@ -644,10 +646,14 @@ define([
      * @constructor
      * @type JXG.Text
      *
-     * @param {number,function_number,function_String,function} x,y,str Parent elements for text elements.
+     * @param {number,function_number,function_number,function_String,function} z_,x,y,str Parent elements for text elements.
      *                     <p>
-     *                     x and y are the coordinates of the lower left corner of the text box. The position of the text is fixed,
-     *                     x and y are numbers. The position is variable if x or y are functions.
+     *   Parent elements can be two or three elements of type number, a string containing a GEONE<sub>x</sub>T
+     *   constraint, or a function which takes no parameter and returns a number. Every parent element determines one coordinate. If a coordinate is
+     *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
+     *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+     *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
+     *   parent elements are given they will be interpreted as homogeneous coordinates.
      *                     <p>
      *                     The text to display may be given as string or as function returning a string.
      *

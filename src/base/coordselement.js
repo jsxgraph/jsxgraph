@@ -61,12 +61,12 @@ define([
     /**
      * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
      * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
-     * all kind of points like free points, gliders, and intersection points.
-     * @class Creates a new  object. Do not use this constructor to create a point. Use {@link JXG.Board#create} with
-     * type {@link Point}, {@link Glider}, or {@link Intersection} instead.
+     * all kind of coordinate elements like points, texts and images.
+     * @class Creates a new coords element object. Do not use this constructor to create an element. 
+     * @private
      * @augments JXG.GeometryElement
      * @param {Array} coordinates An array with the affine user coordinates of the point.
-     * {@link JXG.Options#elements}, and optional a name and a id.
+     * {@link JXG.Options#elements}, and - optionally - a name and an id.
      */
     JXG.CoordsElement = function (coordinates, isLabel) {
         var i;
