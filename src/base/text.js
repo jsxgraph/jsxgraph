@@ -76,8 +76,7 @@ define([
      * @augments JXG.CoordsElement
      * @param {string|JXG.Board} board The board the new text is drawn on.
      * @param {Array} coordinates An array with the user coordinates of the text.
-     * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#text} and
-     * {@link JXG.Options#elements}, and optional a name and a id.
+     * @param {Object} attributes An object containing visual properties and optional a name and a id.
      * @param {string|function} content A string or a function returning a string.
      *
      */
@@ -638,7 +637,12 @@ define([
     });
 
     /**
-     * @class This element is used to provide a constructor for text, which is just a wrapper for element {@link Text}.
+     * @class Construct and handle texts.
+     * 
+     * The coordinates can be relative to the coordinates of an element 
+     * given in {@link JXG.Options#text.anchor}.
+     * 
+     * MathJaX, HTML and GEONExT syntax can be handled.
      * @pseudo
      * @description
      * @name Text

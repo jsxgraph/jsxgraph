@@ -74,7 +74,6 @@ define([
      * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#point} and
      * {@link JXG.Options#elements}, and optional a name and an id.
      * @see JXG.Board#generateName
-     * @see JXG.Board#addPoint
      */
     JXG.Point = function (board, coordinates, attributes) {
         this.constructor(board, attributes, Const.OBJECT_TYPE_POINT, Const.OBJECT_CLASS_POINT);

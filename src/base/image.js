@@ -68,8 +68,7 @@ define([
      * @augments JXG.CoordsElement
      * @param {string|JXG.Board} board The board the new text is drawn on.
      * @param {Array} coordinates An array with the user coordinates of the text.
-     * @param {Object} attributes An object containing visual properties like in {@link JXG.Options#text} and
-     * {@link JXG.Options#elements}, and - optionally - a name and an id.
+     * @param {Object} attributes An object containing visual and - optionally - a name and an id.
      * @param {string|function} url An URL string or a function returning an URL string.
      * @param  {Array} size Array containing width and height of the image in user coordinates.
      *

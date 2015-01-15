@@ -461,24 +461,27 @@ define([
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * 
              * @type function
-             * @name JXG.Ticks#generateLabelText
+             * @name Ticks#generateLabelText
              */
             generateLabelText: null,
 
             /**
              * A function that expects two {@link JXG.Coords}, the first one representing the coordinates of the
              * tick that is to be labeled, the second one the coordinates of the center (the tick with position 0).
+             * 
              * @deprecated Use {@link JGX.Options@generateLabelValue}
              * @type function
-             * @name JXG.Ticks#generateLabelValue
+             * @name Ticks#generateLabelValue
              */
             generateLabelValue: null,
 
             /**
              * Draw labels yes/no
+             * 
              * @type Boolean
-             * @name JXG.Ticks#drawLabels
+             * @name Ticks#drawLabels
              * @default false
              */
             drawLabels: false,
@@ -489,16 +492,18 @@ define([
              * Determine the position of the tick with value 0. 'left' means point1 of the line, 'right' means point2,
              * and 'middle' is equivalent to the midpoint of the defining points. This attribute is ignored if the parent
              * line is of type axis and is parallel to either the x (i.e. y = 0) or the y (i.e. x = 0) axis.
+             * 
              * @type String
-             * @name JXG.Ticks#anchor
+             * @name Ticks#anchor
              * @default 'left'
              */
             anchor: 'left',
 
             /**
              * Draw the zero tick, that lies at line.point1?
+             * 
              * @type Boolean
-             * @name JXG.Ticks#drawZero
+             * @name Ticks#drawZero
              * @default false
              */
             drawZero: false,
@@ -509,10 +514,11 @@ define([
              * This option is ignored if equidistant is false. In the example below the distance between
              * two ticks is given as <tt>1</tt> but because insertTicks is set to true many ticks will
              * be omitted in the rendering process to keep the display clear.
+             * 
              * @type Boolean
-             * @name JXG.Ticks#insertTicks
-             * @see JXG.Ticks#equidistant
-             * @see JXG.Ticks#minTicksDistance
+             * @name Ticks#insertTicks
+             * @see Ticks#equidistant
+             * @see Ticks#minTicksDistance
              * @default false
              * @example
              * // Create an axis providing two coord pairs.
@@ -543,15 +549,19 @@ define([
 
             /**
              * Total height of a minor tick. If negative the full height of the board is taken.
+             * 
              * @type Number
-             * @name JXG.Ticks#minorHeight
+             * @name Ticks#minorHeight
+             * @default 4
              */
             minorHeight: 4,
 
             /**
              * Total height of a major tick. If negative the full height of the board is taken.
+             * 
              * @type Number
-             * @name JXG.Ticks#majorHeight
+             * @name Ticks#majorHeight
+             * @default 10
              */
             majorHeight: 10,
 
@@ -559,15 +569,18 @@ define([
              * Decides in which direction finite ticks are visible. Possible values are 0=false or 1=true.
              * In case of [0,1] the tick is only visible to the right of the line. In case of
              * [1,0] the tick is only visible to the left of the line.
+             * 
              * @type Array
-             * @name JXG.Ticks#tickEndings
+             * @name Ticks#tickEndings
+             * @default [1, 1]
              */
             tickEndings: [1, 1],
 
             /**
              * The number of minor ticks between two major ticks.
              * @type Number
-             * @name JXG.Ticks#minorTicks
+             * @name Ticks#minorTicks
+             * @default 4
              */
             minorTicks: 4,
 
@@ -575,18 +588,19 @@ define([
              * Scale the ticks but not the tick labels.
              * @type Number
              * @default 1
-             * @name JXG.Ticks#scale
-             * @see JXG.Ticks#scaleSymbol
+             * @name Ticks#scale
+             * @see Ticks#scaleSymbol
              */
             scale: 1,
 
             /**
              * A string that is appended to every tick, used to represent the scale
              * factor given in {@link JXG.Ticks#scaleSymbol}.
+             * 
              * @type String
              * @default ''
-             * @name JXG.Ticks#scaleSymbol
-             * @see JXG.Ticks#scale
+             * @name Ticks#scaleSymbol
+             * @see Ticks#scale
              */
             scaleSymbol: '',
 
@@ -594,26 +608,29 @@ define([
              * User defined labels for special ticks. Instead of the i-th tick's position, the i-th string stored in this array
              * is shown. If the number of strings in this array is less than the number of special ticks, the tick's position is
              * shown as a fallback.
+             * 
              * @type Array
-             * @name JXG.Ticks#labels
+             * @name Ticks#labels
              * @default []
              */
             labels: [],
 
             /**
              * The maximum number of characters a tick label can use.
+             * 
              * @type Number
-             * @name JXG.Ticks#maxLabelLength
-             * @see JXG.Ticks#precision
-             * @default 3
+             * @name Ticks#maxLabelLength
+             * @see Ticks#precision
+             * @default 5
              */
             maxLabelLength: 5,
 
             /**
              * If a label exceeds {@link JXG.Ticks#maxLabelLength} this determines the precision used to shorten the tick label.
+             * 
              * @type Number
-             * @name JXG.Ticks#precision
-             * @see JXG.Ticks#maxLabelLength
+             * @name Ticks#precision
+             * @see Ticks#maxLabelLength
              * @default 3
              */
             precision: 3,
@@ -621,10 +638,11 @@ define([
             /**
              * The default distance between two ticks. Please be aware that this value does not have
              * to be used if {@link JXG.Ticks#insertTicks} is set to true.
+             * 
              * @type Number
-             * @name JXG.Ticks#ticksDistance
-             * @see JXG.Ticks#equidistant
-             * @see JXG.Ticks#insertTicks
+             * @name Ticks#ticksDistance
+             * @see Ticks#equidistant
+             * @see Ticks#insertTicks
              * @default 1
              */
             ticksDistance: 1,
@@ -636,9 +654,10 @@ define([
             /**
              * Whether line boundaries should be counted or not in the lower and upper bounds when
              * creating ticks.
+             * 
              * @type Boolean
-             * @name JXG.Ticks#includeBoundaries
-             * @default  false
+             * @name Ticks#includeBoundaries
+             * @default false
              */
             includeBoundaries: false
             // close the meta tag
@@ -703,9 +722,10 @@ define([
 
             /**
              * Radius of the sector, displaying the angle.
+             * 
              * @type Number
-             * @default 0.5
              * @name Angle#radius
+             * @default 0.5
              * @visprop
              */
             radius: 0.5,
@@ -713,8 +733,9 @@ define([
             /**
              * Display type of the angle field. Possible values are
              * 'sector' or 'sectordot' or 'square' or 'none'.
+             * 
              * @type String
-             * @default sector
+             * @default 'sector'
              * @name Angle#type
              * @visprop
              */
@@ -723,6 +744,7 @@ define([
             /**
              * Display type of the angle field in case of a right angle. Possible values are
              * 'sector' or 'sectordot' or 'square' or 'none'.
+             * 
              * @type String
              * @default square
              * @name Angle#orthoType
@@ -735,6 +757,7 @@ define([
              * Sensitivity (in degrees) to declare an angle as right angle.
              * If the angle measure is inside this distance from a rigth angle, the orthoType
              * of the angle is used for display.
+             * 
              * @type Number
              * @default 1.0
              * @name Angle#orthoSensitivity
@@ -742,6 +765,7 @@ define([
              * @visprop
              */
             orthoSensitivity: 1.0,
+            
             fillColor: '#FF7F00',
             highlightFillColor: '#FF7F00',
             strokeColor: '#FF7F00',
@@ -801,6 +825,7 @@ define([
             strokeColor: '#0000ff',
             highlightStrokeColor: '#C3D9FF',
             useDirection: false
+            
             /**#@-*/
         },
 
@@ -882,6 +907,7 @@ define([
             line1: {               //
                 strokeColor: 'black'
             },
+            
             line2: {               //
                 strokeColor: 'black'
             }
@@ -1022,7 +1048,7 @@ define([
 
             /**
              * The data points of the curve are not connected with straight lines but with bezier curves.
-             * @name JXG.Curve#handDrawing
+             * @name Curve#handDrawing
              * @type Boolean
              * @default false
              */
@@ -1038,9 +1064,12 @@ define([
              * <li>'polar'</li>
              * <li>'implicit' (not yet)</li></ul>
              * Only parameter and plot are set directly. Polar is set with {@link JXG.GeometryElement#setAttribute} only.
-             * @name JXG.Curve#curveType
+             * @name Curve#curveType
+             * @type String
+             * @default null
              */
             curveType: null,
+            
             RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
             numberPointsHigh: 1600,  // Number of points on curves after mouseUp
             numberPointsLow: 400,    // Number of points on curves after mousemove
@@ -1142,29 +1171,33 @@ define([
             rotate: 0,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
-             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * Defines together with {@link Image#snapSizeY} the grid the image snaps on to.
+             * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
+             * 
+             * @name Image#snapSizeX
+             * 
              * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeY
+             * @see Image#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeX
              * @default 1
              */
             snapSizeX: 1,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
-             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * Defines together with {@link Image#snapSizeX} the grid the image snaps on to.
+             * The image will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
+             * 
+             * @name Image#snapSizeY
+             * 
              * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeX
+             * @see Image#snapSizeX
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeY
              * @default 1
              */
             snapSizeY: 1,
@@ -1172,8 +1205,10 @@ define([
             /**
              * List of attractor elements. If the distance of the image is less than
              * attractorDistance the image is made to glider of this element.
+             *
+             * @name Image#attractors
+             * 
              * @type array
-             * @name JXG.Image#attractors
              * @default empty
              */
             attractors: []
@@ -1212,6 +1247,7 @@ define([
             /**
              * By default an inequality is less (or equal) than. Set inverse to <tt>true</tt> will consider the inequality
              * greater (or equal) than.
+             * 
              * @type Boolean
              * @default false
              * @name Inequality#inverse
@@ -1286,16 +1322,19 @@ define([
             /**#@+
              * @visprop
              */
+             
             /**
              * Used in {@link JXG.Intersection}.
              * This flag sets the behaviour of intersection points of e.g.
              * two segments. If true, the intersection is treated as intersection of lines. If false
              * the intersection point exists if the segments intersect setwise.
-             * @name JXG.Intersection.alwaysIntersect
+             * 
+             * @name Intersection.alwaysIntersect
              * @type Boolean
              * @default true
              */
             alwaysIntersect: true
+            
             /**#@-*/
         },
 
@@ -1304,6 +1343,7 @@ define([
             /**#@+
              * @visprop
              */
+             
             strokeColor: 'black',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
@@ -1315,6 +1355,7 @@ define([
              * label anchor points are:
              * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
              * This is relevant for non-points: line, circle, curve.
+             * 
              * @type String
              * @default 'urt'
              * @name JXG.GeometryElement#label.position
@@ -1324,6 +1365,7 @@ define([
             /**
              *  Label offset from label anchor
              *  The label anchor is determined by JXG.GeometryElement#label.position
+             * 
              * @type Array
              * @default [10,10]
              * @name JXG.GeometryElement#label.offset
@@ -1394,10 +1436,11 @@ define([
             /**
              * If set to true, the point will snap to a grid defined by
              * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
-             * @see JXG.Point#snapSizeX
-             * @see JXG.Point#snapSizeY
+             * 
+             * @see Point#snapSizeX
+             * @see Point#snapSizeY
              * @type Boolean
-             * @name JXG.Line#snapToGrid
+             * @name Line#snapToGrid
              * @default false
              */
             snapToGrid: false,
@@ -1407,11 +1450,12 @@ define([
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
-             * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeY
+             * 
+             * @see Point#snapToGrid
+             * @see Point#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Line#snapSizeX
+             * @name Line#snapSizeX
              * @default 1
              */
             snapSizeX: 1,
@@ -1421,11 +1465,12 @@ define([
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
-             * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeX
-             * @see JXG.Board#defaultAxes
+             * 
+             * @see Point#snapToGrid
+             * @see Point#snapSizeX
+             * @see Board#defaultAxes
              * @type Number
-             * @name JXG.Line#snapSizeY
+             * @name Line#snapSizeY
              * @default 1
              */
             snapSizeY: 1,
@@ -1433,9 +1478,10 @@ define([
             /**
              * If set to true and {@link JXG.Line#firstArrow} is set to true, the arrow head will just touch
              * the circle line of the start point of the line.
-             * @see JXG.Line#firstArrow
+             * 
+             * @see Line#firstArrow
              * @type Boolean
-             * @name JXG.Line#touchFirstPoint
+             * @name Line#touchFirstPoint
              * @default false
              */
             touchFirstPoint: false,
@@ -1443,9 +1489,9 @@ define([
             /**
              * If set to true and {@link JXG.Line#lastArrow is set to true, the arrow head will just touch
              * the circle line of the start point of the line.
-             * @see JXG.Line#firstArrow
+             * @see Line#firstArrow
              * @type Boolean
-             * @name JXG.Line#touchLastPoint
+             * @name Line#touchLastPoint
              * @default false
              */
             touchLastPoint: false
@@ -1553,12 +1599,14 @@ define([
 
             /**
              * This attribute was used to determined the point layout. It was derived from GEONExT and was
-             * replaced by {@link JXG.Point#face} and {@link JXG.Point#size}.
-             * @see JXG.Point#face
-             * @see JXG.Point#size
+             * replaced by {@link Point#face} and {@link Point#size}.
+             * 
+             * @name Point#style
+             * 
+             * @see Point#face
+             * @see Point#size
              * @type Number
-             * @default JXG.Options.point#style
-             * @name JXG.Point#style
+             * @default 5
              * @deprecated
              */
             style: 5,
@@ -1577,23 +1625,28 @@ define([
              * <tr><td>triangleLeft</td></tr>
              * <tr><td>triangleRight</td></tr>
              * </table>
+             * 
+             * @name Point#face
+             * 
              * @type string
-             * @see JXG.Point#setStyle
+             * @see Point#setStyle
              * @default circle
-             * @name JXG.Point#face
              */
             face: 'o',
 
             /**
              * Size of a point.
              * Means radius resp. half the width of a point (depending on the face).
-             * @see JXG.Point#face
+             * 
+             * @name Point#size
+             * 
+             * @see Point#face
+             * @see Point#setStyle
              * @type number
-             * @see JXG.Point#setStyle
              * @default 3
-             * @name JXG.Point#size
              */
             size: 3,
+            
             fillColor: '#ff0000',
             highlightFillColor: '#EEEEEE',
             strokeWidth: 2,
@@ -1603,7 +1656,9 @@ define([
 
             /**
              * If true, the infobox is shown on mouse over, else not.
-             * @name JXG.Point#showInfobox
+             * 
+             * @name Point#showInfobox
+             * 
              * @type Boolean
              * @default true
              */
@@ -1611,12 +1666,16 @@ define([
 
             /**
              * Truncating rule for the digits in the infobox.
-             * 'auto': done automatically by JXG#autoDigits
-             * 'none': no truncation
-             * number: use String.toFixed();
-             * @name JXG.Point#showInfobox
+             * <ul>
+             * <li>'auto': done automatically by JXG#autoDigits
+             * <li>'none': no truncation
+             * <li>number: use String.toFixed();
+             * </ul>
+             * 
+             * @name Point#infoboxDigits
+             * 
              * @type String, Number
-             * @default true
+             * @default 'auto'
              */
             infoboxDigits: 'auto',
 
@@ -1625,8 +1684,10 @@ define([
             /**
              * List of attractor elements. If the distance of the point is less than
              * attractorDistance the point is made to glider of this element.
+             * 
+             * @name Point#attractors
+             * 
              * @type array
-             * @name JXG.Point#attractors
              * @default empty
              */
             attractors: [],
@@ -1634,12 +1695,14 @@ define([
             /**
              * Unit for attractorDistance and snatchDistance, used for magnetized points and for snapToPoints.
              * Possible values are 'screen' and 'user.
-             * @see JXG.Point#attractorDistance
-             * @see JXG.Point#snatchDistance
-             * @see JXG.Point#snapToPoints
-             * @see JXG.Point#attractors
+             * 
+             * @name Point#attractorUnit
+             * 
+             * @see Point#attractorDistance
+             * @see Point#snatchDistance
+             * @see Point#snapToPoints
+             * @see Point#attractors
              * @type string
-             * @name JXG.Point#attractorDistance
              * @default 'user'
              */
             attractorUnit: 'user',    // 'screen', 'user'
@@ -1649,9 +1712,11 @@ define([
              * than this number the point will be a glider on this
              * attracting element.
              * If set to zero nothing happens.
+             * 
+             * @name Point#attractorDistance
+             * 
              * @type number
-             * @name JXG.Point#attractorDistance
-             * @default 0
+             * @default 0.0
              */
             attractorDistance: 0.0,
 
@@ -1660,57 +1725,67 @@ define([
              * this number the point will be released from being a glider on the
              * attracting element.
              * If set to zero nothing happens.
+             * 
+             * @name Point#snatchDistance
+             * 
              * @type number
-             * @name JXG.Point#snatchDistance
-             * @default 0
+             * @default 0.0
              */
             snatchDistance: 0.0,
 
             /**
              * If set to true, the point will snap to a grid defined by
-             * {@link JXG.Point#snapSizeX} and {@link JXG.Point#snapSizeY}.
+             * {@link Point#snapSizeX} and {@link Point#snapSizeY}.
+             * 
+             * @name Point#snapToGrid
+             * 
              * @see JXG.Point#snapSizeX
              * @see JXG.Point#snapSizeY
              * @type Boolean
-             * @name JXG.Point#snapToGrid
              * @default false
              */
             snapToGrid: false,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
+             * Defines together with {@link Point#snapSizeY} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
-             * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeY
-             * @see JXG.Board#defaultAxes
+             * 
+             * @name Point#snapSizeX
+             * 
+             * @see Point#snapToGrid
+             * @see Point#snapSizeY
+             * @see Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeX
              * @default 1
              */
             snapSizeX: 1,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
+             * Defines together with {@link Point#snapSizeX} the grid the point snaps on to.
              * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
-             * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeX
-             * @see JXG.Board#defaultAxes
+             * 
+             * @name Point#snapSizeY
+             * 
+             * @see Point#snapToGrid
+             * @see Point#snapSizeX
+             * @see Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeY
              * @default 1
              */
             snapSizeY: 1,
 
             /**
              * If set to true, the point will snap to the nearest point in distance of
-             * {@link JXG.Point#attractorDistance}.
-             * @see JXG.Point#attractorDistance
+             * {@link Point#attractorDistance}.
+             * 
+             * @name Point#snapToPoints
+             * 
+             * @see Point#attractorDistance
              * @type Boolean
-             * @name JXG.Point#snapToPoints
              * @default false
              */
             snapToPoints: false
@@ -1726,12 +1801,14 @@ define([
 
             /**
              * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
+             * 
              * @see JXG.GeometryElement#hasPoint
-             * @name JXG.Polygon#hasInnerPoints
+             * @name Polygon#hasInnerPoints
              * @type Boolean
              * @default false
              */
             hasInnerPoints: false,
+            
             fillColor: '#00FF00',
             highlightFillColor: '#00FF00',
             fillOpacity: 0.3,
@@ -1739,13 +1816,12 @@ define([
 
             /**
              * Is the polygon bordered by lines?
+             * 
              * @type Boolean
-             * @name JXG.Polygon#withLines
+             * @name Polygon#withLines
              * @default true
              */
             withLines: true,
-
-            /**#@-*/
 
             borders: {
                 withLabel: false,
@@ -1773,6 +1849,8 @@ define([
             label: {
                 offset: [0, 0]
             }
+
+            /**#@-*/
         },
 
         /* special prescribed angle options */
@@ -1786,6 +1864,7 @@ define([
                 visible: false,
                 withLabel: false
             }
+            
             /**#@-*/
         },
 
@@ -1798,7 +1877,8 @@ define([
             /**
              * If <tt>true</tt>, moving the mouse over inner points triggers hasPoint.
              * @see JXG.GeometryElement#hasPoint
-             * @name JXG.Polygon#hasInnerPoints
+             * 
+             * @name RegularPolygon#hasInnerPoints
              * @type Boolean
              * @default false
              */
@@ -1810,13 +1890,13 @@ define([
 
             /**
              * Is the polygon bordered by lines?
+             * 
              * @type Boolean
-             * @name JXG.Polygon#withLines
+             * @name RegularPolygon#withLines
              * @default true
              */
             withLines: true,
 
-            /**#@-*/
 
             borders: {
                 withLabel: false,
@@ -1843,6 +1923,8 @@ define([
             label: {
                 offset: [0, 0]
             }
+
+            /**#@-*/
         },
 
         /* special options for riemann sums */
@@ -1854,6 +1936,7 @@ define([
             withLabel: false,
             fillOpacity: 0.3,
             fillColor: '#ffff00'
+            
             /**#@-*/
         },
 
@@ -1888,6 +1971,7 @@ define([
             label: {
                 offset: [0, 0]
             }
+            
             /**#@-*/
         },
 
@@ -1914,6 +1998,7 @@ define([
                 fixed: false,
                 name: ''
             }
+            
             /**#@-*/
         },
 
@@ -1926,6 +2011,7 @@ define([
             /**
              * The slider only returns integer multiples of this value, e.g. for discrete values set this property to <tt>1</tt>. For
              * continuous results set this to <tt>-1</tt>.
+             * 
              * @memberOf Slider.prototype
              * @name snapWidth
              * @type Number
@@ -1939,6 +2025,7 @@ define([
              * @type Number
              */
             precision: 2,
+            
             firstArrow: false,
             lastArrow: false,
             withTicks: true,
@@ -2126,18 +2213,20 @@ define([
 
             /**
              * The font size in pixels.
+             * 
+             * @name fontSize
              * @memberOf Text.prototype
              * @default 12
-             * @name fontSize
              * @type Number
              */
             fontSize: 12,
 
             /**
              * Used to round texts given by a number.
+             * 
+             * @name digits
              * @memberOf Text.prototype
              * @default 2
-             * @name digits
              * @type Number
              */
             digits: 2,
@@ -2147,9 +2236,10 @@ define([
              * For labels parse==true results in converting names of the form k_a to subscripts.
              * If the text is given by string and parse==true, the string is parsed as
              * JessieCode expression.
+             * 
+             * @name parse
              * @memberOf Text.prototype
              * @default true
-             * @name parse
              * @type Boolean
              */
             parse: true,
@@ -2157,18 +2247,20 @@ define([
             /**
              * If set to true and caja's sanitizeHTML function can be found it
              * will be used to sanitize text output.
+             * 
+             * @name useCaja
              * @memberOf Text.prototype
              * @default false
-             * @name useCaja
              * @type Boolean
              */
             useCaja: false,
 
             /**
              * If enabled, the text will be handled as label. Intended for internal use.
+             * 
+             * @name isLabel
              * @memberOf Text.prototype
              * @default false
-             * @name isLabel
              * @type Boolean
              */
             isLabel: false,
@@ -2179,18 +2271,20 @@ define([
 
             /**
              * If true the input will be given to ASCIIMathML before rendering.
+             * 
+             * @name useASCIIMathML
              * @memberOf Text.prototype
              * @default false
-             * @name useASCIIMathML
              * @type Boolean
              */
             useASCIIMathML: false,
 
             /**
              * If true MathJax will be used to render the input string.
+             * 
+             * @name useMathJax
              * @memberOf Text.prototype
              * @default false
-             * @name useMathJax
              * @type Boolean
              */
             useMathJax: false,
@@ -2198,9 +2292,10 @@ define([
             /**
              * Determines the rendering method of the text. Possible values
              * include <tt>'html'</tt> and <tt>'internal</tt>.
+             * 
+             * @name display
              * @memberOf Text.prototype
              * @default 'html'
-             * @name display
              * @type String
              */
             display: 'html',
@@ -2208,9 +2303,10 @@ define([
             /**
              * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
              * to this anchor element.
+             * 
+             * @name anchor
              * @memberOf Text.prototype
              * @default null
-             * @name anchor
              * @type Object
              */
             anchor: null,
@@ -2218,9 +2314,10 @@ define([
             /**
              * The horizontal alignment of the text. Possible values include <tt>'left'</tt>, <tt>'middle'</tt>, and
              * <tt>'right'</tt>.
+             * 
+             * @name anchorX
              * @memberOf Text.prototype
              * @default 'left'
-             * @name anchorX
              * @type String
              */
             anchorX: 'left',
@@ -2228,25 +2325,28 @@ define([
             /**
              * The vertical alignment of the text. Possible values include <tt>'top'</tt>, <tt>'middle'</tt>, and
              * <tt>'bottom'</tt>.
+             * 
+             * @name anchorY
              * @memberOf Text.prototype
              * @default 'middle'
-             * @name anchorY
              * @type String
              */
             anchorY: 'middle',
             
             /**
              * The precision of the slider value displayed in the optional text.
-             * @memberOf Text.prototype
+             * 
              * @name cssClass
+             * @memberOf Text.prototype
              * @type String
              */
             cssClass: 'JXGtext',
 
             /**
              * The precision of the slider value displayed in the optional text.
-             * @memberOf Text.prototype
+             * 
              * @name highlightCssClass
+             * @memberOf Text.prototype
              * @type String
              */
             highlightCssClass: 'JXGtext',
@@ -2256,29 +2356,35 @@ define([
             visible: true,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeY} the grid the point snaps on to.
-             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * Defines together with {@link Text#snapSizeY} the grid the text snaps on to.
+             * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default x axes of the board.
+             * 
+             * @name snapSizeX
+             * @memberOf Text.prototype
+             * 
              * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeY
+             * @see Text#snapSizeY
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeX
              * @default 1
              */
             snapSizeX: 1,
 
             /**
-             * Defines together with {@link JXG.Point#snapSizeX} the grid the point snaps on to.
-             * The point will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
+             * Defines together with {@link Text#snapSizeX} the grid the text snaps on to.
+             * The text will only snap on integer multiples to snapSizeX in x and snapSizeY in y direction.
              * If this value is equal to or less than <tt>0</tt>, it will use the grid displayed by the major ticks
              * of the default ticks of the default y axes of the board.
+             * 
+             * @name snapSizeY
+             * @memberOf Text.prototype
+             * 
              * @see JXG.Point#snapToGrid
-             * @see JXG.Point#snapSizeX
+             * @see Text#snapSizeX
              * @see JXG.Board#defaultAxes
              * @type Number
-             * @name JXG.Point#snapSizeY
              * @default 1
              */
             snapSizeY: 1,
@@ -2286,8 +2392,10 @@ define([
             /**
              * List of attractor elements. If the distance of the text is less than
              * attractorDistance the text is made to glider of this element.
+             * 
+             * @name attractors
+             * @memberOf Text.prototype
              * @type array
-             * @name JXG.Text#attractors
              * @default empty
              */
             attractors: []
