@@ -786,7 +786,7 @@ define([
         }
 
         attr = Type.copyAttributes(attributes, board.options, 'angle');
-        
+
         //  If empty, create a new name
         if (!Type.exists(attr.name) || attr.name === '') {
             attr.name = board.generateName({type: Const.OBJECT_TYPE_ANGLE});
@@ -910,7 +910,7 @@ define([
         if (JXG.exists(el.visProp.text)) {
             el.label.setText(el.visProp.text);
         }
-        
+
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
         // el.parents = [points[0].id, points[1].id, points[2].id];

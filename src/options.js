@@ -68,7 +68,7 @@ define([
              */
 
             //updateType: 'hierarchical', // 'all'
-            
+
             /**
              * Bounding box of the visible area in user coordinates.
              * It is an array consisting of four values:
@@ -82,7 +82,7 @@ define([
              * @default [-5, 5, 5, -5]
              */
             boundingBox: [-5, 5, 5, -5],
-            
+
             /**
              * Additional zoom factor multiplied to {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}.
              * 
@@ -120,7 +120,7 @@ define([
              * @default true
              */
             showCopyright: true,
-            
+
             /**
              * Show default axis.
              * If shown, the horizontal axis can be accessed via JXG.Board.defaultAxis.x, the
@@ -209,7 +209,7 @@ define([
              * @default false
              */
             takeFirst: false,
-            
+
             /**
             * If true, when read from a file or string - the size of the div can be changed by the construction text.
             * 
@@ -218,7 +218,7 @@ define([
             * @default false
             */
             takeSizeFromFile: false,
-            
+
             /**
              * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no'.
              * If the rendering engine is not available JSXGraph tries to detect a different engine.
@@ -228,7 +228,7 @@ define([
              * @default 'svg'
              */
             renderer: 'svg',
-            
+
             /**
              * Time (in msec) between two animation steps. Used in 
              * {@link JXG.CoordsElement#moveAlong}, {@link JXG.CoordsElement#moveTo} and {@link JXG.CoordsElement#visit}.
@@ -241,7 +241,7 @@ define([
              * @see JXG.CoordsElement#visit
              */
             animationDelay: 35,
-            
+
             /**
              * Allow user interaction by registering mouse and touch events.
              * 
@@ -250,7 +250,7 @@ define([
              * @default true
              */
             registerEvents: true,
-            
+
             /**
              * Change redraw strategy in SVG rendering engine. 
              *
@@ -269,7 +269,7 @@ define([
              * @default 'svg'
              */
             minimizeReflow: 'svg',
-            
+
             /**
              * A number that will be added to the absolute position of the board used in mouse coordinate
              * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
@@ -280,7 +280,7 @@ define([
              * @default 0
              */
             offsetX: 0,
-            
+
             /**
              * A number that will be added to the absolute position of the board used in mouse coordinate
              * calculations in {@link JXG.Board#getCoordsTopLeftCorner}.
@@ -291,7 +291,7 @@ define([
              * @default 0
              */
             offsetY: 0,
-            
+
             /**
              * Control the possibilities for zoom interaction.
              * 
@@ -317,7 +317,7 @@ define([
                 needshift: false,
                 eps: 0.1
             },
-            
+
             /**
              * Control the possibilities for panning interaction (i.e. moving the origin).
              * 
@@ -1014,7 +1014,7 @@ define([
              * @visprop
              */
             orthoSensitivity: 1.0,
-            
+
             fillColor: '#FF7F00',
             highlightFillColor: '#FF7F00',
             strokeColor: '#FF7F00',
@@ -1074,7 +1074,7 @@ define([
             strokeColor: '#0000ff',
             highlightStrokeColor: '#C3D9FF',
             useDirection: false
-            
+
             /**#@-*/
         },
 
@@ -1144,7 +1144,7 @@ define([
             point2: {                  // Default values for point2 if created by line
                 needsRegularUpdate: false
             },
-            
+
             /**
              * Attributes for the axis label.
              * 
@@ -1178,7 +1178,7 @@ define([
                 withLabel: false,
                 name: ''
             }
-            
+
             /**#@-*/
         },
 
@@ -1197,7 +1197,7 @@ define([
             line1: {               //
                 strokeColor: 'black'
             },
-            
+
             /**
              * Attributes for second line.
              * 
@@ -1207,7 +1207,7 @@ define([
             line2: {               //
                 strokeColor: 'black'
             }
-            
+
             /**#@-*/
         },
 
@@ -1243,7 +1243,7 @@ define([
              * @default false
              */
             hasInnerPoints: false,
-            
+
             fillColor: 'none',
             highlightFillColor: 'none',
             strokeColor: '#0000ff',
@@ -1417,7 +1417,7 @@ define([
              * @default null
              */
             curveType: null,
-            
+
             /**
              * Apply Ramer-Douglas-Peuker smoothing.
              * 
@@ -1426,7 +1426,7 @@ define([
              * @default false
              */
             RDPsmoothing: false,     // Apply the Ramer-Douglas-Peuker algorithm
-            
+
             /**
              * Number of points used for plotting triggered by up events in case {@link Curve#doAdvancedPlot} is false.
              * 
@@ -1456,7 +1456,7 @@ define([
              * @type Boolean
              * @default true
              */
-            doAdvancedPlot: true,    
+            doAdvancedPlot: true,   
 
             /**
              * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.
@@ -1466,7 +1466,7 @@ define([
              * @type Boolean
              * @default false
              */
-            doAdvancedPlotOld: false, 
+            doAdvancedPlotOld: false,
 
             /**
              * Attributes for circle label.
@@ -1564,7 +1564,7 @@ define([
             fillOpacity: 1.0,
             cssClass: 'JXGimage',
             highlightCssClass: 'JXGimageHighlight',
-            
+
             /**
              * Image rotation in degrees. 
              * 
@@ -1699,7 +1699,7 @@ define([
             strokeWidth: 0,
             strokeOpacity: 0,
             fillOpacity: 0.8,
- 
+
             /**
              * Attributes of the (left) starting point of the integral.
              * 
@@ -1712,7 +1712,7 @@ define([
                 withLabel: false,
                 layer: 9
             },
-            
+
             /**
              * Attributes of the (left) base point of the integral.
              * 
@@ -1726,7 +1726,7 @@ define([
                 withLabel: false,
                 name: ''
             },
-            
+
             /**
              * Attributes of the (right) end point of the integral.
              * 
@@ -1771,7 +1771,7 @@ define([
             /**#@+
              * @visprop
              */
-             
+
             /**
              * Used in {@link JXG.Intersection}.
              * This flag sets the behaviour of intersection points of e.g.
@@ -1783,7 +1783,7 @@ define([
              * @default true
              */
             alwaysIntersect: true
-            
+
             /**#@-*/
         },
 
@@ -1792,7 +1792,7 @@ define([
             /**#@+
              * @visprop
              */
-             
+
             strokeColor: 'black',
             strokeOpacity: 1,
             highlightStrokeOpacity: 0.666666,
@@ -1886,7 +1886,7 @@ define([
              * @default true
              */
             straightLast: true,
-            
+
             fillColor: 'none',               // Important for VML on IE
             highlightFillColor: 'none',  // Important for VML on IE
             strokeColor: '#0000ff',
@@ -1918,7 +1918,7 @@ define([
                 fixed: false,
                 name: ''
             },
-            
+
             /**
              * Attributes for ticks of the line.
              * 
@@ -2178,13 +2178,13 @@ define([
              * @default 3
              */
             size: 3,
-            
+
             fillColor: '#ff0000',
             highlightFillColor: '#EEEEEE',
             strokeWidth: 2,
             strokeColor: '#ff0000',
             highlightStrokeColor: '#C3D9FF',
-            
+
             /**
              * If true, the point size changes on zoom events.
              * 
@@ -2349,7 +2349,7 @@ define([
              * @default false
              */
             hasInnerPoints: false,
-            
+
             fillColor: '#00FF00',
             highlightFillColor: '#00FF00',
             fillOpacity: 0.3,
@@ -2426,7 +2426,7 @@ define([
                 visible: false,
                 withLabel: false
             }
-            
+
             /**#@-*/
         },
 
@@ -2512,7 +2512,7 @@ define([
             withLabel: false,
             fillOpacity: 0.3,
             fillColor: '#ffff00'
-            
+
             /**#@-*/
         },
 
@@ -2528,7 +2528,7 @@ define([
             highlightFillOpacity: 0.3,
             highlightOnSector: false,
             highlightStrokeWidth: 0,
-            
+
             /**
              * Attributes for sub-element arc.
              * 
@@ -2561,7 +2561,7 @@ define([
                 visible: false,
                 withLabel: false
             },
-            
+
             /**
              * Attributes for helper point anglepoint.
              * 
@@ -2582,7 +2582,7 @@ define([
             label: {
                 offset: [0, 0]
             }
-            
+
             /**#@-*/
         },
 
@@ -2615,7 +2615,7 @@ define([
                 fixed: false,
                 name: ''
             }
-            
+
             /**#@-*/
         },
 
@@ -2643,7 +2643,7 @@ define([
              * @default 2
              */
             precision: 2,
-            
+
             firstArrow: false,
             lastArrow: false,
 
@@ -3094,7 +3094,7 @@ define([
              * @type String
              */
             anchorY: 'middle',
-            
+
             /**
              * The precision of the slider value displayed in the optional text.
              * 
@@ -3112,7 +3112,7 @@ define([
              * @type String
              */
             highlightCssClass: 'JXGtext',
-            
+
             /** 
              * Sensitive area for dragging the text.
              * Possible values are 'all', or something else.
@@ -3123,9 +3123,9 @@ define([
              * @default 'all'
              */
             dragArea: 'all',
-            
+
             withLabel: false,
-            
+
             /**
              * Text rotation in degrees. 
              * Works for non-zero values only in combination with display=='internal'.
@@ -3135,7 +3135,7 @@ define([
              * @default 0
              */
             rotate: 0,
-            
+
             visible: true,
 
             /**
