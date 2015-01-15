@@ -15,7 +15,7 @@ New Features
   points, texts and images. At this point, all these elements allow the same construction methods
   and allow to be bound to an anchor element.
 * Improved dragging of texts and images
-
+* Much more complete docs. For example, all board attributes are now documented. 
   
 Bug fixes
 ---------
