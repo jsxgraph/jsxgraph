@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -43,8 +43,8 @@ define(['jxg'], function (JXG) {
 
     var major = 0,
         minor = 99,
-        patch = 3,
-        add = false, // 'dev',
+        patch = 4,
+        add = 'dev', //false, // 'dev',
         version = major + '.' + minor + '.' + patch + (add ? '-' + add : ''),
         constants;
 
