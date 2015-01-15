@@ -62,7 +62,7 @@ define([
      * @pseudo
      * @description
      * @name Checkbox
-     * @augments JXG.GeometryElement
+     * @augments Text
      * @constructor
      * @type JXG.Text
      *
