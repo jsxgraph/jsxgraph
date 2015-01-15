@@ -63,6 +63,7 @@ define([
      * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
      * all kind of coordinate elements like points, texts and images.
      * @class Creates a new coords element object. Do not use this constructor to create an element. 
+     * 
      * @private
      * @augments JXG.GeometryElement
      * @param {Array} coordinates An array with the affine user coordinates of the point.

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2014
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -61,7 +61,7 @@ define([
      * @pseudo
      * @description
      * @name Ellipse
-     * @augments JXG.Curve
+     * @augments Conic
      * @constructor
      * @type JXG.Curve
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -276,7 +276,7 @@ define([
      * @pseudo
      * @description
      * @name Hyperbola
-     * @augments JXG.Curve
+     * @augments Conic
      * @constructor
      * @type JXG.Curve
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -461,7 +461,7 @@ define([
      * @pseudo
      * @description
      * @name Parabola
-     * @augments JXG.Curve
+     * @augments Conic
      * @constructor
      * @type JXG.Curve
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
