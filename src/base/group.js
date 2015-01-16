@@ -162,7 +162,7 @@ define([
                 return this;
             }
 
-            drag = this._update_find_type();
+            drag = this._update_find_drag_type();
 
             if (drag.action === 'nothing') {
                 return this;
@@ -221,7 +221,7 @@ define([
             this._update_apply_transformation(drag, t);
 
             this.needsUpdate = false;  // This is needed here to prevent infinite recursion because 
-                                        // of the board.updateElements call below,
+                                       // of the board.updateElements call below,
 
             // Prepare dependent objects for update
             for (el in this.objects) {
@@ -234,6 +234,15 @@ define([
                 }
             }
             this.board.updateElements(drag);
+            
+            // Now, all group elements have their new position and 
+            // we can update the bookkeeping of the coordinates of the group elements.
+            for (el in this.objects) {
+                if (this.objects.hasOwnProperty(el)) {
+                    obj = this.objects[el].point;
+                    this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
+                }
+            }
 
             return this;
         },
@@ -243,7 +252,7 @@ define([
          * Determine what the dragging of a group element should do:
          * rotation, translation, scaling or nothing.
          */
-        _update_find_type: function () {
+        _update_find_drag_type: function () {
             var el, obj,
                 action = 'nothing',
                 changed = [],
@@ -345,8 +354,6 @@ define([
                                 obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
                             }
                         }
-
-                        this.coords[obj.id] = {usrCoords: obj.coords.usrCoords.slice(0)};
                     } else {
                         delete this.objects[el];
                     }
