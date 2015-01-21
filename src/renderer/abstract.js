@@ -632,7 +632,7 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         updateText: function (el) {
-            var content = el.plaintext, v, c;
+            var content = el.plaintext, v, c, parentNode;
 
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
@@ -691,7 +691,17 @@ define([
 
                     // Set the content
                     if (el.htmlStr !== content) {
-                        el.rendNode.innerHTML = content;
+                        try {
+                            el.rendNode.innerHTML = content;
+                        } catch (e) {
+                            // Setting innerHTML sometimes fails in IE8. A workaround is to
+                            // take the node off the DOM, assign innerHTML, then append back.
+                            // Works for text elements as they are absolutely positioned.
+                            parentNode = el.rendNode.parentNode;
+                            el.rendNode.parentNode.removeChild(el.rendNode);
+                            el.rendNode.innerHTML = content;
+                            parentNode.appendChild(el.rendNode);
+                        }
                         el.htmlStr = content;
 
                         if (el.visProp.usemathjax) {
