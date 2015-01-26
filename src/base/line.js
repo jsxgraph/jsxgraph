@@ -1143,7 +1143,7 @@ define([
      * @constructor
      * @type JXG.Line
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Point,array_JXG.Point,array} point1, point2 Parent elements can be two elements either of type {@link JXG.Point}
+     * @param {JXG.Point,array_JXG.Point,array} point1,point2 Parent elements can be two elements either of type {@link JXG.Point}
      * or array of numbers describing the
      * coordinates of a point. In the latter case the point will be constructed automatically as a fixed invisible point.
      * @param {number,function} length (optional) The points are adapted - if possible - such that their distance
