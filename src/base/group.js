@@ -113,7 +113,7 @@ define([
                 }
             }
         }
-
+        
         this.methodMap = {
             ungroup: 'ungroup',
             add: 'addPoint',
@@ -162,6 +162,7 @@ define([
                 return this;
             }
 
+            this.needsSnapToGrid = false;
             drag = this._update_find_drag_type();
 
             if (drag.action === 'nothing') {
@@ -251,6 +252,8 @@ define([
          * @private 
          * Determine what the dragging of a group element should do:
          * rotation, translation, scaling or nothing.
+         * 
+         * Sets also needsSnapToGrid
          */
         _update_find_drag_type: function () {
             var el, obj,
@@ -267,6 +270,10 @@ define([
 
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         changed.push(obj.id);
+                    }
+                    
+                    if (obj.visProp.snaptogrid) {
+                        this.needsSnapToGrid = true;
                     }
                 }
             }
@@ -332,7 +339,7 @@ define([
          * Apply the transformation to all elements of the group
          */
         _update_apply_transformation: function (drag, t) {
-            var el, obj;
+            var el, obj, tmpSnap;
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
@@ -353,6 +360,10 @@ define([
                             if (drag.action === 'rotation' || drag.action === 'scaling') {
                                 obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
                             }
+                        }
+                        
+                        if (this.needsSnapToGrid) {
+                            obj.handleSnapToGrid(true);
                         }
                     } else {
                         delete this.objects[el];

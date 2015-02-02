@@ -822,19 +822,19 @@ define([
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates <tt>([z], x, y)</tt> in screen/user units
-         * @param {Array} lastPosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last position.
+         * @param {Array} lastMousePosition (optional) coordinates <tt>(x, y)</tt> in screen units of the last mouse position.
          * Usually this is the position where the last drag event had occurred. This is needed to prevent jumps
          * to the lower left corner when dragging an image.
          * @returns {JXG.Point} this element
          */
-        setPositionDirectly: function (method, coords, lastPosition) {
+        setPositionDirectly: function (method, coords, lastMousePosition) {
             var i, offset, c, dc,
                 oldCoords = this.coords,
                 newCoords;
 
             // Correct offset for large objects like images and texts to prevent that the
             // corner of the object jumps to the mouse pointer.
-            if (Type.exists(lastPosition) &&
+            if (Type.exists(lastMousePosition) &&
                     !this.visProp.snaptogrid &&
                     !this.visProp.snaptopoints &&
                     this.visProp.attractors.length === 0) {
