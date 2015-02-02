@@ -64,9 +64,10 @@
 
 define([
     'jxg', 'base/constants', 'base/coords', 'options', 'math/numerics', 'math/math', 'math/geometry', 'math/complex',
+    'math/statistics',
     'parser/jessiecode', 'parser/geonext', 'utils/color', 'utils/type', 'utils/event', 'utils/env', 'base/transformation',
     'base/point', 'base/line', 'base/text', 'element/composition', 'base/composition'
-], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, JessieCode, GeonextParser, Color, Type,
+], function (JXG, Const, Coords, Options, Numerics, Mat, Geometry, Complex, Statistics, JessieCode, GeonextParser, Color, Type,
                 EventEmitter, Env, Transform, Point, Line, Text, Composition, EComposition) {
 
     'use strict';
@@ -513,6 +514,14 @@ define([
          */
         this.hasPointerUp = false;
 
+        /**
+         * Offset for large coords elements like images
+         * @type {Array}
+         * @private 
+         * @default [0, 0]
+         */
+        this._drag_offset = [0, 0];
+        
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
@@ -891,7 +900,9 @@ define([
                         haspoint) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
-                            (pEl.visProp.layer === dragEl.visProp.layer && pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime())) {
+                            (pEl.visProp.layer === dragEl.visProp.layer && 
+                             pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime()
+                            )) {
                         // If an element and its label have the focus
                         // simultaneously, the element is taken.
                         // This only works if we assume that every browser runs
@@ -900,7 +911,11 @@ define([
                         if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect[0] = dragEl;
-
+                            
+                            // Save offset for large coords elements.
+                            if (Type.exists(dragEl.coords)) {
+                                this._drag_offset = Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]);
+                            }
                             // we can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
@@ -941,15 +956,19 @@ define([
             /*
              * Save the position.
              */
-            //this.drag_position = newPos.scrCoords.slice(1);
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
+            this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
+            
 
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
+                    /*
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
                         [newPos.scrCoords[1], newPos.scrCoords[2]],
                         [o.targets[0].Xprev, o.targets[0].Yprev]
                         );
+                    */
+                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
                 }
                 // Remember the actual position for the next move event. Then we are able to
                 // compute the difference vector.
@@ -961,7 +980,8 @@ define([
                 oldCoords = drag.coords;  // Used in group mode
 
                 // First the new position of the glider is set to the new mouse position
-                drag.setPositionDirectly(Const.COORDS_BY_USER, newPos.usrCoords.slice(1));
+                // drag.setPositionDirectly(Const.COORDS_BY_USER, newPos.usrCoords.slice(1));
+                drag.setPositionDirectly(Const.COORDS_BY_USER, this.drag_position);
 
                 // Now, we have to adjust the other group elements again.
                 if (drag.group.length !== 0) {
