@@ -835,6 +835,7 @@ define([
         setGradient: function (el) {
             var fillNode = el.rendNode, col, op,
                 node, node2, node3, x1, x2, y1, y2;
+console.log("setGradient");
 
             op = Type.evaluate(el.visProp.fillopacity);
             op = (op > 0) ? op : 0;

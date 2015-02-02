@@ -126,6 +126,8 @@ define([
 
         this.board.renderer.drawPolygon(this);
         this.board.finalizeAdding(this);
+
+        this.createGradient();
         this.elType = 'polygon';
 
         // create label
