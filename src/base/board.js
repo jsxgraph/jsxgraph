@@ -877,7 +877,12 @@ define([
          * @returns {Array} A list of geometric elements.
          */
         initMoveObject: function (x, y, evt, type) {
-            var pEl, el, collect = [], haspoint, len = this.objectsList.length,
+            var pEl,
+                el,
+                collect = [],
+                offset = [],
+                haspoint,
+                len = this.objectsList.length,
                 dragEl = {visProp: {layer: -10000}};
 
             //for (el in this.objects) {
@@ -910,12 +915,15 @@ define([
                         // added before element B turns up here before B does.
                         if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
-                            collect[0] = dragEl;
+                            collect.push(dragEl);
 
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
-                                this._drag_offset = Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]);
+                                offset.push(Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]));
+                            } else {
+                                offset.push([0, 0]);
                             }
+                            
                             // we can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
@@ -929,8 +937,13 @@ define([
                 this.mode = this.BOARD_MODE_DRAG;
             }
 
+            // A one-element array is returned.
             if (this.attr.takefirst) {
                 collect.length = 1;
+                this._drag_offset = offset[0];
+            } else {
+                collect = collect.slice(-1);
+                this._drag_offset = offset[offset.length - 1];
             }
 
             return collect;
