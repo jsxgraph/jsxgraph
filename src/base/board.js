@@ -900,7 +900,7 @@ define([
                         haspoint) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
-                            (pEl.visProp.layer === dragEl.visProp.layer && 
+                            (pEl.visProp.layer === dragEl.visProp.layer &&
                              pEl.lastDragTime.getTime() >= dragEl.lastDragTime.getTime()
                             )) {
                         // If an element and its label have the focus
@@ -959,7 +959,6 @@ define([
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
             
-
             if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     /*
@@ -979,13 +978,12 @@ define([
             } else if (drag.type === Const.OBJECT_TYPE_GLIDER) {
                 oldCoords = drag.coords;  // Used in group mode
 
-                // First the new position of the glider is set to the new mouse position
+                // First, the new position of the glider is set to the new mouse position
                 // drag.setPositionDirectly(Const.COORDS_BY_USER, newPos.usrCoords.slice(1));
-                drag.setPositionDirectly(Const.COORDS_BY_USER, this.drag_position);
-
+                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+                
                 // Now, we have to adjust the other group elements again.
                 if (drag.group.length !== 0) {
-console.log("is group");                    
                     // Then, from this position we compute the projection to the object the glider on which the glider lives.
                     // Do we really need this?
                     if (drag.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
