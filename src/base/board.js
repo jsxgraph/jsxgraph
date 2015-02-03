@@ -971,7 +971,8 @@ define([
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
             drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
-            // drag.prepareUpdate().update(false).updateRenderer();
+            // This may be necessary for some gliders
+            drag.prepareUpdate().update(false).updateRenderer();
 
             drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
 
