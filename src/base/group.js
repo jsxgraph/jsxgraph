@@ -362,8 +362,9 @@ define([
                             }
                         }
                         
-                        if (this.needsSnapToGrid) {
+                        if (this.needsSnapToGrid && !obj.visProp.snaptogrid) {
                             obj.handleSnapToGrid(true);
+                            obj.prepareUpdate().update(false).updateRenderer();
                         }
                     } else {
                         delete this.objects[el];
