@@ -970,7 +970,24 @@ define([
              */
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
-            drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+            
+            //
+            // We have to distinguish between CoordsElements and other elements like lines.
+            // The latter need the difference between two move events.
+            if (Type.exists(drag.coords)) {
+                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+            } else {
+                if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
+                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
+                        [newPos.scrCoords[1], newPos.scrCoords[2]],
+                        [o.targets[0].Xprev, o.targets[0].Yprev]
+                        );
+                }
+                // Remember the actual position for the next move event. Then we are able to
+                // compute the difference vector.
+                o.targets[0].Xprev = newPos.scrCoords[1];
+                o.targets[0].Yprev = newPos.scrCoords[2];
+            }
             // This may be necessary for some gliders
             drag.prepareUpdate().update(false).updateRenderer();
 
