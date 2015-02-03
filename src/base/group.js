@@ -109,7 +109,7 @@ define([
                 this.addPoint(obj);
             }
         }
-        
+
         this.methodMap = {
             ungroup: 'ungroup',
             add: 'addPoint',
@@ -219,7 +219,7 @@ define([
                 }
             }
             this.board.updateElements(drag);
-            
+
             // Now, all group elements have their new position and 
             // we can update the bookkeeping of the coordinates of the group elements.
             for (el in this.objects) {
@@ -255,7 +255,7 @@ define([
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         changed.push(obj.id);
                     }
-                    
+
                     if (obj.visProp.snaptogrid) {
                         this.needsSnapToGrid = true;
                     }
@@ -345,7 +345,7 @@ define([
                                 obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
                             }
                         }
-                        
+
                         if (this.needsSnapToGrid && !obj.visProp.snaptogrid) {
                             obj.handleSnapToGrid(true);
                             obj.prepareUpdate().update(false).updateRenderer();

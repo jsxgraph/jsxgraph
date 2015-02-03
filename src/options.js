@@ -1456,7 +1456,7 @@ define([
              * @type Boolean
              * @default true
              */
-            doAdvancedPlot: true,   
+            doAdvancedPlot: true,
 
             /**
              * If true use the algorithm by Gillam and Hohenwarter, which was default until version 0.98.

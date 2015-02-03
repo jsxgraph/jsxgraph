@@ -521,7 +521,7 @@ define([
          * @default [0, 0]
          */
         this._drag_offset = [0, 0];
-        
+
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
@@ -911,7 +911,7 @@ define([
                         if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect[0] = dragEl;
-                            
+
                             // Save offset for large coords elements.
                             if (Type.exists(dragEl.coords)) {
                                 this._drag_offset = Statistics.subtract(dragEl.coords.scrCoords.slice(1), [x, y]);
@@ -946,8 +946,7 @@ define([
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
-                drag = o.obj,
-                oldCoords;
+                drag = o.obj;
 
             if (!drag) {
                 return;
