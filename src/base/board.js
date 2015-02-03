@@ -985,6 +985,7 @@ define([
 
                 // Now, we have to adjust the other group elements again.
                 if (drag.group.length !== 0) {
+console.log("is group");                    
                     // Then, from this position we compute the projection to the object the glider on which the glider lives.
                     // Do we really need this?
                     if (drag.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
