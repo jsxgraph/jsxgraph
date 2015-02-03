@@ -105,12 +105,8 @@ define([
         for (i = 0; i < objArray.length; i++) {
             obj = this.board.select(objArray[i]);
 
-            if ((!obj.visProp.fixed) && Type.exists(obj.coords) && Type.exists(obj.group)) {
-                if (obj.group.length !== 0) {
-                    this.addGroup(obj.group[obj.group.length - 1]);
-                } else {
-                    this.addPoint(obj);
-                }
+            if ((!obj.visProp.fixed) && Type.exists(obj.coords)) {
+                this.addPoint(obj);
             }
         }
         
@@ -129,23 +125,11 @@ define([
 
     JXG.extend(JXG.Group.prototype, /** @lends JXG.Group.prototype */ {
         /**
-         * Releases the group added to the points in this group, but only if this group is the last group.
-         * @returns {JXG.Group} returns this group
+         * Releases all elements of this group.
+         * @returns {JXG.Group} returns this (empty) group
          */
         ungroup: function () {
-            var el;
-
-            for (el in this.objects) {
-                if (this.objects.hasOwnProperty(el)) {
-                    if (Type.isArray(this.objects[el].point.group) &&
-                            this.objects[el].point.group[this.objects[el].point.group.length - 1] === this) {
-                        this.objects[el].point.group.pop();
-                    }
-
-                    this.removePoint(this.objects[el].point);
-                }
-            }
-
+            this.objects = {};
             return this;
         },
 

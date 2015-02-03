@@ -165,14 +165,6 @@ define([
             onPolygon: 'onPolygon'
         });
 
-        /**
-         * Stores the groups of this element in an array of Group.
-         * @type array
-         * @see JXG.Group
-         * @private
-         */
-        this.group = [];
-
         /*
          * this.element may have been set by the object constructor.
          */
@@ -849,25 +841,20 @@ define([
             this.handleSnapToPoints();
             this.handleAttractors();
 
-            if (this.group.length === 0) {
-                // Here used to be the update of the groups. I'm not sure why we don't need to execute
-                // the else branch if there are groups defined on this point, hence I'll let the if live.
-
-                // Update the initial coordinates. This is needed for free points
-                // that have a transformation bound to it.
-                for (i = this.transformations.length - 1; i >= 0; i--) {
-                    if (method === Const.COORDS_BY_SCREEN) {
-                        newCoords = (new Coords(method, coords, this.board)).usrCoords;
-                    } else {
-                        if (coords.length === 2) {
-                            coords = [1].concat(coords);
-                        }
-                        newCoords = coords;
+            // Update the initial coordinates. This is needed for free points
+            // that have a transformation bound to it.
+            for (i = this.transformations.length - 1; i >= 0; i--) {
+                if (method === Const.COORDS_BY_SCREEN) {
+                    newCoords = (new Coords(method, coords, this.board)).usrCoords;
+                } else {
+                    if (coords.length === 2) {
+                        coords = [1].concat(coords);
                     }
-                    this.initialCoords.setCoordinates(Const.COORDS_BY_USER, Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords));
+                    newCoords = coords;
                 }
-                this.prepareUpdate().update();
+                this.initialCoords.setCoordinates(Const.COORDS_BY_USER, Mat.matVecMult(Mat.inverse(this.transformations[i].matrix), newCoords));
             }
+            this.prepareUpdate().update();
 
             // If the user suspends the board updates we need to recalculate the relative position of
             // the point on the slide object. this is done in updateGlider() which is NOT called during the

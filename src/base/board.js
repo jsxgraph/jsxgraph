@@ -958,50 +958,8 @@ define([
              */
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
-            
-            if (drag.type !== Const.OBJECT_TYPE_GLIDER) {
-                if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
-                    /*
-                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
-                        [newPos.scrCoords[1], newPos.scrCoords[2]],
-                        [o.targets[0].Xprev, o.targets[0].Yprev]
-                        );
-                    */
-                    drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
-                }
-                // Remember the actual position for the next move event. Then we are able to
-                // compute the difference vector.
-                o.targets[0].Xprev = newPos.scrCoords[1];
-                o.targets[0].Yprev = newPos.scrCoords[2];
-                //this.update(drag);
-                drag.prepareUpdate().update(false).updateRenderer();
-            } else if (drag.type === Const.OBJECT_TYPE_GLIDER) {
-                oldCoords = drag.coords;  // Used in group mode
-
-                // First, the new position of the glider is set to the new mouse position
-                // drag.setPositionDirectly(Const.COORDS_BY_USER, newPos.usrCoords.slice(1));
-                drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
-                
-                // Now, we have to adjust the other group elements again.
-                if (drag.group.length !== 0) {
-                    // Then, from this position we compute the projection to the object the glider on which the glider lives.
-                    // Do we really need this?
-                    if (drag.slideObject.elementClass === Const.OBJECT_CLASS_CIRCLE) {
-                        drag.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToCircle(drag, drag.slideObject, this).usrCoords, false);
-                    } else if (drag.slideObject.elementClass === Const.OBJECT_CLASS_LINE) {
-                        drag.coords.setCoordinates(Const.COORDS_BY_USER, Geometry.projectPointToLine(drag, drag.slideObject, this).usrCoords, false);
-                    }
-
-                    drag.group[drag.group.length - 1].dX = drag.coords.scrCoords[1] - oldCoords.scrCoords[1];
-                    drag.group[drag.group.length - 1].dY = drag.coords.scrCoords[2] - oldCoords.scrCoords[2];
-                    drag.group[drag.group.length - 1].update(this);
-                } else {
-                    // This update triggers Point.updateGlider() instead of Point.updateGliderFromParent():
-                    //
-                    //this.update(drag);
-                    drag.prepareUpdate().update(false).updateRenderer();
-                }
-            }
+            drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
+            // drag.prepareUpdate().update(false).updateRenderer();
 
             drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
 
