@@ -159,7 +159,6 @@ define([
                 return this;
             }
 
-            this.needsSnapToGrid = false;
             drag = this._update_find_drag_type();
 
             if (drag.action === 'nothing') {
@@ -249,8 +248,6 @@ define([
          * @private 
          * Determine what the dragging of a group element should do:
          * rotation, translation, scaling or nothing.
-         * 
-         * Sets also needsSnapToGrid
          */
         _update_find_drag_type: function () {
             var el, obj,
@@ -267,10 +264,6 @@ define([
 
                     if (obj.coords.distance(Const.COORDS_BY_USER, this.coords[el]) > Mat.eps) {
                         changed.push(obj.id);
-                    }
-
-                    if (obj.visProp.snaptogrid) {
-                        this.needsSnapToGrid = true;
                     }
                 }
             }
@@ -343,25 +336,26 @@ define([
                     if (Type.exists(this.board.objects[el])) {
                         obj = this.objects[el].point;
 
+                        // Here, it is important that we change the position 
+                        // of elements by using setCoordinates. 
+                        // Thus, we avoid the call of snapToGrid().
+                        // This is done in the subsequent call of board.updateElements()
+                        // in Group.update() above.
                         if (obj.id !== drag.id) {
                             if (drag.action === 'translation') {
                                 if (!Type.isInArray(drag.changed, obj.id)) {
-                                    obj.setPositionDirectly(Const.COORDS_BY_USER,
+                                    obj.coords.setCoordinates(Const.COORDS_BY_USER,
                                         [this.coords[el].usrCoords[1] + t[0],
-                                            this.coords[el].usrCoords[2] + t[1]]);
+                                         this.coords[el].usrCoords[2] + t[1]]);
                                 }
                             } else if (drag.action === 'rotation' || drag.action === 'scaling') {
                                 t.applyOnce([obj]);
                             }
                         } else {
                             if (drag.action === 'rotation' || drag.action === 'scaling') {
-                                obj.setPositionDirectly(Const.COORDS_BY_USER, Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
+                                obj.coords.setCoordinates(Const.COORDS_BY_USER,
+                                    Mat.matVecMult(t.matrix, this.coords[obj.id].usrCoords));
                             }
-                        }
-
-                        if (this.needsSnapToGrid && !obj.visProp.snaptogrid) {
-                            obj.handleSnapToGrid(true);
-                            obj.prepareUpdate().update(false).updateRenderer();
                         }
                     } else {
                         delete this.objects[el];
