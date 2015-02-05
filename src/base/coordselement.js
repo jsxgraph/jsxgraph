@@ -139,6 +139,14 @@ define([
             return this;
         };
 
+        /**
+         * Stores the groups of this element in an array of Group.
+         * @type array
+         * @see JXG.Group
+         * @private
+         */
+        this.groups = [];
+
         /*
          * Do we need this?
          */
