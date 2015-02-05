@@ -141,7 +141,7 @@ define([
                     }
                 }
             }
-            
+
             this.objects = {};
             return this;
         },
@@ -373,7 +373,7 @@ define([
             this.objects[object.id] = {point: this.board.select(object)};
             this.coords[object.id] = {usrCoords: object.coords.usrCoords.slice(0) };
             this.translationPoints.push(object);
-            
+
             object.groups.push(this.id);
             object.groups = Type.uniqueArray(object.groups);
 

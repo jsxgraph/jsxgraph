@@ -923,7 +923,7 @@ define([
                             } else {
                                 offset.push([0, 0]);
                             }
-                            
+
                             // we can't drop out of this loop because of the event handling system
                             //if (this.attr.takefirst) {
                             //    return collect;
@@ -970,7 +970,7 @@ define([
              */
             this.drag_position = [newPos.scrCoords[1], newPos.scrCoords[2]];
             this.drag_position = Statistics.add(this.drag_position, this._drag_offset);
-            
+
             //
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.

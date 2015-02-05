@@ -1536,7 +1536,7 @@ define([
          */
         handleSnapToGrid: function (force) {
             var x, y, ticks,
-                i, len, g, el, p, 
+                i, len, g, el, p,
                 needsSnapToGrid = false,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
@@ -1546,7 +1546,7 @@ define([
             }
 
             needsSnapToGrid = this.visProp.snaptogrid || force === true;
-            
+
             // Test if in any of the groups this element is member of
             // there is an element with snaptogrid == true.
             if (!needsSnapToGrid && Type.exists(this.groups)) {
@@ -1565,7 +1565,7 @@ define([
                     }
                 }
             }
-            
+
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
