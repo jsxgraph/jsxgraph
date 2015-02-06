@@ -541,7 +541,7 @@ define([
         /**
          * Translates the object by <tt>(x, y)</tt>. In case the element is defined by points, the defining points are
          * translated, e.g. a circle constructed by a center point and a point on the circle line.
-         * @param {Number} method The type of coordinates used here. 
+         * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords array of translation vector.
          * @returns {JXG.GeometryElement} Reference to the element object.
@@ -591,7 +591,7 @@ define([
             }
 
             /*
-             * If - against the default configuration - defining gliders are marked as 
+             * If - against the default configuration - defining gliders are marked as
              * draggable, then their position has to be updated now.
              */
             for (i = 0; i < len; ++i) {
@@ -1536,7 +1536,7 @@ define([
          */
         handleSnapToGrid: function (force) {
             var x, y, ticks,
-                i, len, g, el, p,
+                i, len, g, el, p, boardBB,
                 needsSnapToGrid = false,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
@@ -1582,7 +1582,25 @@ define([
 
                 // if no valid snap sizes are available, don't change the coords.
                 if (sX > 0 && sY > 0) {
-                    this.coords.setCoordinates(Const.COORDS_BY_USER, [Math.round(x / sX) * sX, Math.round(y / sY) * sY]);
+                    boardBB = this.board.getBoundingBox();
+                    x = Math.round(x / sX) * sX;
+                    y = Math.round(y / sY) * sY;
+
+                    // checking whether x and y are still within boundingBox,
+                    // if not, adjust them to remain within the board
+                    if (x < boardBB[0]) {
+                        x += sX;
+                    } else if (x > boardBB[2]) {
+                        x -= sX;
+                    }
+
+                    if (y < boardBB[3]) {
+                        y += sY;
+                    } else if (y > boardBB[1]) {
+                        y -= sY;
+                    }
+
+                    this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                 }
             }
             return this;
