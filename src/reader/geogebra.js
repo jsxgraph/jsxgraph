@@ -1737,6 +1737,24 @@
 
             if (!JXG.exists(this.ggbElements[name]) || this.ggbElements[name] === '') {
                 input = this.getElement(name) || this.getElement(name, true);
+                if(!input) {
+                    var i, j, Data;
+                    var exp1 = this.ggbParse(name);
+                    for (i = 0; i < this.tree.getElementsByTagName("construction").length; i++) {
+                        for (j = 0; j < this.tree.getElementsByTagName("construction")[i].getElementsByTagName("expression").length; j++) {
+                            Data = this.tree.getElementsByTagName("construction")[i].getElementsByTagName("expression")[j];
+                            var exp2 = this.ggbParse(Data.getAttribute("exp"));
+                            if(JXG.isArray(exp1) && JXG.isArray(exp2)) {
+                                if(exp1[0] == exp2[0] && exp1[1] == exp2[1]) {
+                                    input = this.getElement(Data.getAttribute("label"));
+                                }
+                            }
+                        }
+                    }
+                    if(!input) {
+                        return new Function('return ' + exp1 + ';');
+                    }
+                }
                 this.ggbElements[name] = this.writeElement(input);
             }
 
