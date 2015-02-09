@@ -1549,6 +1549,7 @@ define([
 
             // Test if in any of the groups this element is member of
             // there is an element with snaptogrid == true.
+            /*
             if (!needsSnapToGrid && Type.exists(this.groups)) {
                 len = this.groups.length;
                 for (i = 0; i < len; ++i) {
@@ -1565,7 +1566,8 @@ define([
                     }
                 }
             }
-
+            */
+            
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
