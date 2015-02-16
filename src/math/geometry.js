@@ -1346,8 +1346,8 @@ define([
 
             // Find t
             t = Numerics.root(func0, [cu.minX(), cu.maxX()]);
-            // Compute "exect" t
-            t = Numerics.root(func1, t);
+            // Compute "exact" t
+            t = Numerics.root(func1, [t - 2 * eps, t + 2 * eps]);
 
             // Is the point on the line?
             if (Math.abs(func1(t)) > eps) {
