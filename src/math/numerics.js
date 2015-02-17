@@ -399,7 +399,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *
          * // use trapez rule with 16 nodes
          * var area3 = JXG.Math.Numerics.NewtonCotes([0, 2], f,
-         *                                   {number_of_nodes: 16, intergration_type: 'trapez'});
+         *                                   {number_of_nodes: 16, integration_type: 'trapez'});
          * @memberof JXG.Math.Numerics
          */
         NewtonCotes: function (interval, f, config) {
