@@ -239,7 +239,7 @@ define([
          * @type Object
          */
         this.methodMap = {
-            setLabel: 'setLabelText',
+            setLabel: 'setLabel',
             label: 'label',
             setName: 'setName',
             getName: 'getName',
@@ -807,6 +807,18 @@ define([
                 }
             }
             return properties;
+        },
+
+        /**
+         * Sets a label and it's text
+         * If label doesn't exist, it creates one
+         * @param {String} str
+         */
+        setLabel: function (str) {
+            if (!this.hasLabel) {
+                this.setAttribute({'withlabel': true});
+            }
+            this.setLabelText(str);
         },
 
         /**
@@ -1567,7 +1579,7 @@ define([
                 }
             }
             */
-            
+
             if (needsSnapToGrid) {
                 x = this.coords.usrCoords[1];
                 y = this.coords.usrCoords[2];
