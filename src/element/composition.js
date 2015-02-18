@@ -1838,7 +1838,6 @@ define([
                 if (p.visProp.axis === 'y') {
                     return 0;
                 }
-
                 return pb_on_curve.X();
             },
             function () {
@@ -1858,22 +1857,40 @@ define([
             t = board.create('text', [
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
-                        this.visProp.offset[0] + this.board.origin.scrCoords[1],
-                        0
-                    ], this.board, false);
+                            this.visProp.offset[0] + this.board.origin.scrCoords[1],
+                            0
+                        ], this.board, false),
+                        bb = this.board.getBoundingBox(),
+                        dx = (bb[2] - bb[0]) * 0.1,
+                        x = pb_on_curve.X();
+                        
+                    if (x < bb[0]) {
+                        x = bb[0] + dx;
+                    } else if (x > bb[2]) {
+                        x = bb[2] - dx;
+                    }
 
-                    return pb_on_curve.X() + off.usrCoords[1];
+                    return x + off.usrCoords[1];
                 },
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
-                        0,
-                        this.visProp.offset[1] + this.board.origin.scrCoords[2]
-                    ], this.board, false);
+                            0,
+                            this.visProp.offset[1] + this.board.origin.scrCoords[2]
+                        ], this.board, false),
+                        bb = this.board.getBoundingBox(),
+                        dy = (bb[1] - bb[3]) * 0.1,
+                        y = pb_on_curve.Y();
+                        
+                    if (y > bb[1]) {
+                        y = bb[1] - dy;
+                    } else if (y < bb[3]) {
+                        y = bb[3] + dy;
+                    }
 
-                    return pb_on_curve.Y() + off.usrCoords[2];
+                    return y + off.usrCoords[2];
                 },
                 function () {
-                    var Int = Numerics.I([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
+                    var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
                     return '&int; = ' + Int.toFixed(4);
                 }
             ], attr);
