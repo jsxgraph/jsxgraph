@@ -1985,8 +1985,11 @@ define([
             this.dataX = x;
             this.dataY = y;
         };
+
         pa_on_curve.addChild(p);
         pb_on_curve.addChild(p);
+        pa_on_axis.addChild(p);
+        pb_on_axis.addChild(p);
 
         /**
          * The point on the axis initially corresponding to the lower value of the interval.
