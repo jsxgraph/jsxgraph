@@ -534,8 +534,6 @@ define([
         getLabelAnchor: function () {
             var x, y,
                 fs = 0,
-                sx = 0,
-                sy = 0,
                 c1 = new Coords(Const.COORDS_BY_USER, this.point1.coords.usrCoords, this.board),
                 c2 = new Coords(Const.COORDS_BY_USER, this.point2.coords.usrCoords, this.board);
 
@@ -578,24 +576,22 @@ define([
                 y = 0.5 * (c1[2] + c2[2]);
             }
 
-            // Correct label offsets if the label seems to be outside of camvas.
+            // Correct coordinates if the label seems to be outside of canvas.
             if (this.visProp.straightfirst || this.visProp.straightlast) {
                 if (Type.exists(this.label)) {  // Does not exist during createLabel
-                    sx = parseFloat(this.label.visProp.offset[0]);
-                    sy = parseFloat(this.label.visProp.offset[1]);
                     fs = this.label.visProp.fontsize;
                 }
 
                 if (Math.abs(x) < Mat.eps) {
-                    x = sx;
+                    x = 0;
                 } else if (this.board.canvasWidth + Mat.eps > x && x > this.board.canvasWidth - fs - Mat.eps) {
-                    x = this.board.canvasWidth - sx - fs;
+                    x = this.board.canvasWidth - fs;
                 }
 
                 if (Mat.eps + fs > y && y > -Mat.eps) {
-                    y = sy + fs;
+                    y = fs;
                 } else if (this.board.canvasHeight + Mat.eps > y && y > this.board.canvasHeight - fs - Mat.eps) {
-                    y = this.board.canvasHeight - sy;
+                    y = this.board.canvasHeight;
                 }
             }
 
