@@ -515,6 +515,134 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return result;
         },
 
+        Romberg2: function (interval, f, config) {
+            var eta = 0.00000001,
+                a = interval[0],
+                b = interval[1],
+                ba =  b - a,
+                t1 = 0.0,
+                gr = 0,
+                sm = 0,
+                n = 2,
+                nn = 3,
+                t2a, t2, ta, tb, c, m, mr, hm, i,
+                w, nt, tab, ddt, t, nt, den, e, d1, v,
+                fail = true,
+                integral, err,
+                dt = [],
+                d = [],
+                odd = true,
+                bu = false, bo,
+                eps;
+            
+            eps = Math.max(config.eps, eta);
+            t2 = 0.5 * (f(a) + f(b));
+            t2a = t2;
+            tb = Math.abs(t2a);
+            c = t2 * ba;
+            dt[0] = c;
+            
+            for (m = 1; m <= 15; ++m) {
+                bo = (m >= 7);
+                hm = ba / n;
+
+                if (odd) {
+                    for (i = 1; i <= n; i += 2) {
+                        w = f(a + i * hm);
+                        t2 += w;
+                        tb += Math.abs(w);
+                    }
+                    
+                    nt = t2;
+                    tab = tb * Math.abs(hm);
+                    d[1] = 16.0 / 9.0;
+                    d[3] = 64.0 / 9.0;
+                    d[5] = 256.0 / 9.0;
+                } else {
+                    for (i = 1; i <= n; i += 6) {
+                        w = i * hm;
+                        t1 += f(a + w) + f(b - w);
+                    }
+                    
+                    nt = t1 + t2a;
+                    t2a = t2;
+                    d[1] = 9.0 / 4.0;
+                    d[3] = 9.0;
+                    d[5] = 36.0;
+                }
+                
+                ddt = dt[0];
+                t = nt * hm;
+                dt[0] = t;
+                nt = t;
+                
+                if (bo) {
+                    mr = 6;
+                    d[6] = 64.0;
+                    w = 144.0;
+                } else {
+                    mr = m;
+                    w = n * n;
+                    d[m] = w;
+                }
+                
+                for (i = 1; i <= mr; ++i) {
+                    d1 = d[i] * ddt;
+                    den = d1 - nt;
+                    e = nt - ddt;
+                    if (den != 0.0) {
+                        e /= den;
+                        v = nt * e;
+                        nt = d1 * e;
+                        t += v;
+                    } else {
+                        v = 0.0;
+                        nt = 0.0;
+                    }
+                }
+                ta = c;
+                integral = t;
+                c = t;
+                if (!bo) {
+                    t -= v;
+                }
+                v = t - ta;
+                t += v;
+                err = Math.abs(v);
+                if (ta < t) {
+                    d1 = ta;
+                    ta = t;
+                    t = d1;
+                }
+                bo = (bo || (ta < gr && t > sm));
+                if (bu && bo && err < eps * tab * w) {
+                    fail = false;
+                    break;
+                }
+                gr = ta;
+                sm = t;
+                odd = !odd;
+                i = n;
+                n = nn;
+                nn = i + i;
+                bu = bo;
+                d[2] = 4.0;
+                d[4] = 16.0;
+            }
+            if (fail) {
+                bo = false;
+            }
+            v = eta * tab;
+            if (err < v) {
+                err = v;
+            }
+            if (fail) {
+                console.log("Romberg2: fail. err=", err);
+            }
+            
+            return integral;
+        },
+        
         GaussLegendre: function (interval, f, config) {
             var a, b, 
                 i, x, m,
