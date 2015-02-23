@@ -478,6 +478,81 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return integral_value;
         },
 
+        Romberg: function (interval, f, config) {
+            var a, b, h, s, n,
+                k, i, q,
+                m = config.m,
+                p = [],
+                result = 0.0;
+            
+            a = interval[0];
+            b = interval[1];
+            h = b - a;
+            n = 1;
+            
+            p[0] = 0.5 * h * (f(a) + f(b));
+            
+            for (k = 0; k < m; ++k) {
+                s = 0;
+                h *= 0.5;
+                n *= 2;
+                q = 1;
+                
+                for (i = 1; i < n; i += 2) {
+                    s += f(a + i * h);
+                }
+
+                p[k + 1] = 0.5 * p[k] + s * h;
+                
+                result = p[k + 1];
+                for (i = k - 1; i >= 0; --i) {
+                    q *= 4;
+                    p[i] = p[i + 1] + (p[i + 1] - p[i]) / (q - 1.0);
+                    result = p[i];
+                }
+            }
+                
+            return result;
+        },
+
+        GaussLegendre: function (interval, f, config) {
+            var a, b, 
+                i, x, m,
+                xp, xm, 
+                result = 0.0,
+                table_xi = [],
+                table_w = [],
+                xi, w;
+                
+            table_xi[6] = [0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016];
+            table_w[6] = [0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961];
+            
+            table_xi[8] = [0.1834346424956498049394761, 0.5255324099163289858177390, 0.7966664774136267395915539, 0.9602898564975362316835609];
+            table_w[8] = [0.3626837833783619829651504, 0.3137066458778872873379622, 0.2223810344533744705443560, 0.1012285362903762591525314];
+
+            table_xi[10] = [0.1488743389816312108848260, 0.4333953941292471907992659, 0.6794095682990244062343274, 0.8650633666889845107320967, 0.9739065285171717200779640];
+            table_w[10] = [0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688];
+
+            a = interval[0];
+            b = interval[1];
+            
+            m = Math.ceil(config.n * 0.5);
+            xi = table_xi[config.n];
+            w = table_w[config.n];
+            
+            xm = 0.5 * (b - a);
+            xp = 0.5 * (b + a);
+            
+            for (i = 0; i < m; ++i) {
+                x = xp + xm * xi[i];
+                result += w[i] * f(x);
+                x = xp - xm * xi[i];
+                result += w[i] * f(x);
+            }
+            
+            return xm * result;
+        }, 
+
         /**
          * Integral of function f over interval.
          * @param {Array} interval The integration interval, e.g. [0, 3].
