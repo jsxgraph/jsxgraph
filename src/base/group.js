@@ -95,6 +95,7 @@ define([
         this.rotationPoints = [];
         this.translationPoints = [];
         this.scalePoints = [];
+        this.scaleDirections = {};
 
         if (Type.isArray(objects)) {
             objArray = objects;
@@ -153,7 +154,7 @@ define([
          * @returns {JXG.Group} returns this group
          */
         update: function (drag) {
-            var el, actionCenter, desc, trans, s, alpha, t, center, obj = null;
+            var el, actionCenter, desc, trans, s, sx, sy, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;
@@ -203,12 +204,14 @@ define([
                         return this;
                     }
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
-
+                    sx = (this.scaleDirections[drag.id].indexOf('x') >= 0) ? s : 1.0;
+                    sy = (this.scaleDirections[drag.id].indexOf('y') >= 0) ? s : 1.0;
+                    
                     // Shift scale center to origin, scale and shift the scale center back.
                     t = this.board.create('transform',
                             [1, 0, 0,
-                             center[0] * (1 -  s), s, 0,
-                             center[1] * (1 -  s), 0, s], {type: 'generic'});
+                             center[0] * (1 -  sx), sx, 0,
+                             center[1] * (1 -  sy), 0, sy], {type: 'generic'});
                     t.update();  // This initializes t.matrix, which is needed if the action element is the first group element.
                 } else {
                     return this;
@@ -509,21 +512,38 @@ define([
         /**
          * Sets the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
          * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
+         * @param {String} direction Restricts the directions to be scaled. Possible values are 'x', 'y', 'xy'. Default value is 'xy'.
          * 
          * By default, all points of the group are translation points.
          * @returns {JXG.Group} returns this group
          */
-        setScalePoints: function (objects) {
+        setScalePoints: function (objects, direction) {
+            var objs, i, len;
+            if (Type.isArray(objects)) {
+                objs = objects;
+            } else {
+                objs = arguments;
+            }
+
+            len = objs.length;
+            for (i = 0; i < len; ++i) {
+                this.scaleDirections[this.board.select(objs[i]).id] = direction || 'xy';
+            }
+
             return this._setActionPoints('scale', objects);
         },
 
         /**
          * Adds a point to the set of the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
          * @param {JXG.Point} point {@link JXG.Point} element.
+         * @param {String} direction Restricts the directions to be scaled. Possible values are 'x', 'y', 'xy'. Default value is 'xy'.
          * @returns {JXG.Group} returns this group
          */
-        addScalePoint: function (point) {
-            return this._addActionPoint('scale', point);
+        addScalePoint: function (point, direction) {
+            this._addActionPoint('scale', point);
+            this.scaleDirections[this.board.select(point).id] = direction || 'xy';
+            
+            return this;
         },
 
         /**
@@ -550,7 +570,7 @@ define([
             len = objs.length;
             this[action + 'Points'] = [];
             for (i = 0; i < len; ++i) {
-                this[action + 'Points'].push(this.board.select(objs[i]));
+                this._addActionPoint(action, objs[i]);
             }
 
             return this;
