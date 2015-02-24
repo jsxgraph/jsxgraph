@@ -478,12 +478,38 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return integral_value;
         },
 
+       /**
+         * Calculates the integral of function f over interval using Romberg iteration.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} [config] The algorithm setup. Accepted properties are max_iterations of type number and precision eps.
+         * @param {Number} [config.max_iterations=20]
+         * @param {Number} [config.eps=0.0000001] 
+         * @returns {Number} Integral value of f over interval
+         * @example
+         * function f(x) {
+         *   return x*x;
+         * }
+         *
+         * // calculates integral of <tt>f</tt> from 0 to 2.
+         * var area1 = JXG.Math.Numerics.Romberg([0, 2], f);
+         *
+         * // the same with an anonymous function
+         * var area2 = JXG.Math.Numerics.Romberg([0, 2], function (x) { return x*x; });
+         *
+         * // use trapez rule with maximum of 16 iterations or stop if the precision 0.0001 has been reached.
+         * var area3 = JXG.Math.Numerics.Romberg([0, 2], f,
+         *                                   {max_iterations: 16, eps: 0.0001});
+         * @memberof JXG.Math.Numerics
+         */
         Romberg: function (interval, f, config) {
             var a, b, h, s, n,
                 k, i, q,
-                m = config.m,
                 p = [],
-                result = 0.0;
+                integral = 0.0, 
+                last = Infinity, 
+                m = config && typeof config.max_iterations === 'number' ? config.max_iterations : 20,
+                eps = config && typeof config.eps === 'number' ? config.eps : config.eps || 0.0000001;
             
             a = interval[0];
             b = interval[1];
@@ -504,15 +530,20 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                 p[k + 1] = 0.5 * p[k] + s * h;
                 
-                result = p[k + 1];
+                integral = p[k + 1];
                 for (i = k - 1; i >= 0; --i) {
                     q *= 4;
                     p[i] = p[i + 1] + (p[i + 1] - p[i]) / (q - 1.0);
-                    result = p[i];
+                    integral = p[i];
                 }
+
+                if (Math.abs(integral - last) < eps * Math.abs(integral)) {
+                    break;
+                }
+                last = integral;
             }
                 
-            return result;
+            return integral;
         },
 
         GaussLegendre: function (interval, f, config) {
@@ -522,7 +553,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 result = 0.0,
                 table_xi = [],
                 table_w = [],
-                xi, w;
+                xi, w,
+                n = config && typeof config.n === 'number' ? config.n : 10;
                 
             table_xi[6] = [0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016];
             table_w[6] = [0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961];
@@ -536,9 +568,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             a = interval[0];
             b = interval[1];
             
-            m = Math.ceil(config.n * 0.5);
-            xi = table_xi[config.n];
-            w = table_w[config.n];
+            m = Math.ceil(n * 0.5);
+            xi = table_xi[n];
+            w = table_w[n];
             
             xm = 0.5 * (b - a);
             xp = 0.5 * (b + a);
@@ -559,10 +591,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @returns {Number} The value of the integral of f over interval
          * @see JXG.Math.Numerics.NewtonCotes
+         * @see JXG.Math.Numerics.Romberg
          * @memberof JXG.Math.Numerics
          */
         I: function (interval, f) {
-            return this.NewtonCotes(interval, f, {number_of_nodes: 16, integration_type: 'milne'});
+            // return this.NewtonCotes(interval, f, {number_of_nodes: 16, integration_type: 'milne'});
+            return this.Romberg(interval, f, {max_iterations: 20, eps: 0.0000001});
         },
 
         /**
