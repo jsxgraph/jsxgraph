@@ -554,8 +554,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 table_xi = [],
                 table_w = [],
                 xi, w,
-                n = config && typeof config.n === 'number' ? config.n : 10;
-                
+                n = config && typeof config.n === 'number' ? config.n : 12;
+               
+            if (n > 18) {
+                n = 18;
+            }
+            
             /* n = 2 */
             table_xi[2] = [0.5773502691896257645091488];
             table_w[2] = [1.0000000000000000000000000];
