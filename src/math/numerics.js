@@ -585,6 +585,171 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return xm * result;
         }, 
 
+        _gaussKronrod:  function(interval, f, n, xgk, wg, wgk, fv1, fv2) {
+            var a = interval[0],
+                b = interval[1],
+                result, abserr, resabs, resasc,
+                
+                center = 0.5 * (a + b),
+                half_length = 0.5 * (b - a),
+                abs_half_length = Math.abs(half_length),
+                f_center = f(center),
+                
+                result_gauss = 0,
+                result_kronrod = f_center * wgk[n - 1],
+
+                result_abs = Math.abs(result_kronrod),
+                result_asc = 0.0,
+                mean = 0, err = 0,
+
+                j, jtw, abscissa, fval1, fval2, fsum,
+                jtwm1;
+
+            if (n % 2 == 0) {
+                result_gauss = f_center * wg[n / 2 - 1];
+            }
+
+            for (j = 0; j < (n - 1) / 2; j++) {
+                jtw = j * 2 + 1;  // in original fortran j=1,2,3 jtw=2,4,6 
+                abscissa = half_length * xgk[jtw];
+                fval1 = f(center - abscissa);
+                fval2 = f(center + abscissa);
+                fsum = fval1 + fval2;
+                fv1[jtw] = fval1;
+                fv2[jtw] = fval2;
+                result_gauss += wg[j] * fsum;
+                result_kronrod += wgk[jtw] * fsum;
+                result_abs += wgk[jtw] * (Math.abs (fval1) + Math.abs (fval2));
+            }
+
+            for (j = 0; j < n / 2; j++) {
+                jtwm1 = j * 2;
+                abscissa = half_length * xgk[jtwm1];
+                fval1 = f(center - abscissa);
+                fval2 = f(center + abscissa);
+                fv1[jtwm1] = fval1;
+                fv2[jtwm1] = fval2;
+                result_kronrod += wgk[jtwm1] * (fval1 + fval2);
+                result_abs += wgk[jtwm1] * (Math.abs (fval1) + Math.abs (fval2));
+            }
+
+            mean = result_kronrod * 0.5;
+
+            result_asc = wgk[n - 1] * Math.abs (f_center - mean);
+
+            for (j = 0; j < n - 1; j++) {
+                result_asc += wgk[j] * (Math.abs (fv1[j] - mean) + Math.abs (fv2[j] - mean));
+            }
+
+            // scale by the width of the integration region 
+
+            err = (result_kronrod - result_gauss) * half_length;
+
+            result_kronrod *= half_length;
+            result_abs *= abs_half_length;
+            result_asc *= abs_half_length;
+
+            result = result_kronrod;
+            resabs = result_abs;
+            resasc = result_asc;
+            // abserr = rescale_error (err, result_abs, result_asc);
+            
+            return result;
+        },
+
+        GaussKronrod15: function(interval, f) {
+            /* Gauss quadrature weights and kronrod quadrature abscissae and
+                weights as evaluated with 80 decimal digit arithmetic by
+                L. W. Fullerton, Bell Labs, Nov. 1981. */
+
+            var xgk =    /* abscissae of the 15-point kronrod rule */
+                    [
+                        0.991455371120812639206854697526329,
+                        0.949107912342758524526189684047851,
+                        0.864864423359769072789712788640926,
+                        0.741531185599394439863864773280788,
+                        0.586087235467691130294144838258730,
+                        0.405845151377397166906606412076961,
+                        0.207784955007898467600689403773245,
+                        0.000000000000000000000000000000000
+                    ],
+
+            /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
+                xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
+
+                wg =     /* weights of the 7-point gauss rule */
+                    [
+                        0.129484966168869693270611432679082,
+                        0.279705391489276667901467771423780,
+                        0.381830050505118944950369775488975,
+                        0.417959183673469387755102040816327
+                    ],
+
+                wgk =    /* weights of the 15-point kronrod rule */
+                    [
+                        0.022935322010529224963732008058970,
+                        0.063092092629978553290700663189204,
+                        0.104790010322250183839876322541518,
+                        0.140653259715525918745189590510238,
+                        0.169004726639267902826583426598550,
+                        0.190350578064785409913256402421014,
+                        0.204432940075298892414161999234649,
+                        0.209482141084727828012999174891714
+                    ],
+                fv1 = [], fv2 = [];
+
+            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk, fv1, fv2);
+        },
+
+        GaussKronrod21: function(interval, f) {
+            /* Gauss quadrature weights and kronrod quadrature abscissae and
+                weights as evaluated with 80 decimal digit arithmetic by
+                L. W. Fullerton, Bell Labs, Nov. 1981. */
+
+            var xgk =   /* abscissae of the 21-point kronrod rule */
+                    [
+                        0.995657163025808080735527280689003,
+                        0.973906528517171720077964012084452,
+                        0.930157491355708226001207180059508,
+                        0.865063366688984510732096688423493,
+                        0.780817726586416897063717578345042,
+                        0.679409568299024406234327365114874,
+                        0.562757134668604683339000099272694,
+                        0.433395394129247190799265943165784,
+                        0.294392862701460198131126603103866,
+                        0.148874338981631210884826001129720,
+                        0.000000000000000000000000000000000
+                    ],
+
+                /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
+                xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
+                wg =     /* weights of the 10-point gauss rule */
+                    [
+                        0.066671344308688137593568809893332,
+                        0.149451349150580593145776339657697,
+                        0.219086362515982043995534934228163,
+                        0.269266719309996355091226921569469,
+                        0.295524224714752870173892994651338
+                    ],
+
+                wgk =   /* weights of the 21-point kronrod rule */
+                    [
+                        0.011694638867371874278064396062192,
+                        0.032558162307964727478818972459390,
+                        0.054755896574351996031381300244580,
+                        0.075039674810919952767043140916190,
+                        0.093125454583697605535065465083366,
+                        0.109387158802297641899210590325805,
+                        0.123491976262065851077958109831074,
+                        0.134709217311473325928054001771707,
+                        0.142775938577060080797094273138717,
+                        0.147739104901338491374841515972068,
+                        0.149445554002916905664936468389821
+                    ],
+                fv1 = [], fv2 = [];
+                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, fv1, fv2);
+        },
+
         /**
          * Integral of function f over interval.
          * @param {Array} interval The integration interval, e.g. [0, 3].
