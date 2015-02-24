@@ -634,7 +634,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             }
 
             mean = result_kronrod * 0.5;
-
             result_asc = wgk[n - 1] * Math.abs (f_center - mean);
 
             for (j = 0; j < n - 1; j++) {
@@ -642,7 +641,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             }
 
             // scale by the width of the integration region 
-
             err = (result_kronrod - result_gauss) * half_length;
 
             result_kronrod *= half_length;
@@ -653,7 +651,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             resabs = result_abs;
             resasc = result_asc;
             // abserr = rescale_error (err, result_abs, result_asc);
-            
             return result;
         },
 
