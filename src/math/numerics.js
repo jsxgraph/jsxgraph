@@ -655,11 +655,36 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return xm * result;
         }, 
 
-        _gaussKronrod:  function(interval, f, n, xgk, wg, wgk) {
+        _rescale_error: function(err, result_abs, result_asc) {
+            var scale, min_err,
+                DBL_MIN = 2.2250738585072014e-308,
+                DBL_EPS = 2.2204460492503131e-16;
+            
+            err = Math.abs(err);
+            if (result_asc != 0 && err != 0) {
+                scale = Math.pow((200 * err / result_asc), 1.5);
+            
+                if (scale < 1.0) {
+                    err = result_asc * scale;
+                } else {
+                    err = result_asc ;
+                }
+            }
+            if (result_abs > DBL_MIN / (50 * DBL_EPS)) {
+                min_err = 50 * DBL_EPS * result_abs ;
+
+                if (min_err > err) {
+                    err = min_err;
+                }
+            }
+  
+            return err;
+        },
+
+        _gaussKronrod:  function(interval, f, n, xgk, wg, wgk, resultObj) {
             var a = interval[0],
                 b = interval[1],
-                up, 
-                result, abserr, resabs, resasc,
+                up, result,
                 
                 center = 0.5 * (a + b),
                 half_length = 0.5 * (b - a),
@@ -722,13 +747,16 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             result_abs *= abs_half_length;
             result_asc *= abs_half_length;
             result = result_kronrod;
-            resabs = result_abs;
-            resasc = result_asc;
-            // abserr = rescale_error (err, result_abs, result_asc);
+
+//console.log(err, result_abs, result_asc);            
+            resultObj.abserr = this._rescale_error(err, result_abs, result_asc);
+            resultObj.resabs = result_abs;
+            resultObj.resasc = result_asc;
+            
             return result;
         },
 
-        GaussKronrod15: function(interval, f) {
+        GaussKronrod15: function(interval, f, err) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -768,10 +796,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.209482141084727828012999174891714
                     ];
 
-            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk);
+            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk, err);
         },
 
-        GaussKronrod21: function(interval, f) {
+        GaussKronrod21: function(interval, f, err) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -817,10 +845,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.149445554002916905664936468389821
                     ];
                     
-                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk);
+                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, err);
         },
 
-        GaussKronrod31: function(interval, f) {
+        GaussKronrod31: function(interval, f,err) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -879,9 +907,326 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.101330007014791549017374792767493
                     ];
 
-                return this._gaussKronrod(interval, f, 16, xgk, wg, wgk);
+                return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, err);
         },
 
+        _ws_initialise: function(interval, n) {
+            return {
+                limit: n,
+                size: 0,
+                nrmax: 0,
+                i: 0,
+                alist: [interval[0]],
+                blist: [interval[1]],
+                rlist: [0.0],
+                elist: [0.0],
+                order: [0],
+                level: [0],
+                
+                qpsrt: function() {
+                    var last = this.size - 1,
+                        limit = this.limit,
+                        errmax, errmin, i, k, top,
+                        i_nrmax = this.nrmax,
+                        i_maxerr = this.order[i_nrmax];
+
+                    /* Check whether the list contains more than two error estimates */
+                    if (last < 2) {
+                        this.order[0] = 0 ;
+                        this.order[1] = 1 ;
+                        this.i = i_maxerr ;
+                        return;
+                    }
+
+                    errmax = this.elist[i_maxerr];
+
+                    /* This part of the routine is only executed if, due to a difficult
+                        integrand, subdivision increased the error estimate. In the normal
+                        case the insert procedure should start after the nrmax-th largest
+                        error estimate. */
+                    while (i_nrmax > 0 && errmax > this.elist[order[i_nrmax - 1]]) {
+                        this.order[i_nrmax] = this.order[i_nrmax - 1] ;
+                        i_nrmax-- ;
+                    } 
+
+                    /* Compute the number of elements in the list to be maintained in
+                        descending order. This number depends on the number of
+                        subdivisions still allowed. */
+                    if(last < (limit/2 + 2)) {
+                        top = last ;
+                    } else {
+                        top = limit - last + 1;
+                    }
+  
+                    /* Insert errmax by traversing the list top-down, starting
+                        comparison from the element elist(order(i_nrmax+1)). */
+                    i = i_nrmax + 1 ;
+  
+                    /* The order of the tests in the following line is important to
+                        prevent a segmentation fault */
+                    while (i < top && errmax < this.elist[this.order[i]]) {
+                        this.order[i-1] = this.order[i];
+                        i++;
+                    }
+  
+                    this.order[i-1] = i_maxerr;
+  
+                    /* Insert errmin by traversing the list bottom-up */
+                    errmin = this.elist[last];
+                    k = top - 1;
+  
+                    while (k > i - 2 && errmin >= this.elist[order[k]]) {
+                        this.order[k+1] = this.order[k];
+                        k--;
+                    }
+  
+                    this.order[k+1] = last;
+
+                    /* Set i_max and e_max */
+                    i_maxerr = this.order[i_nrmax];
+                    this.i = i_maxerr;
+                    this.nrmax = i_nrmax;
+                },
+                
+                set_initial_result: function (result, error) {
+                    this.size = 1;
+                    this.rlist[0] = result;
+                    this.elist[0] = error;
+                },
+                
+                update: function(a1, b1, area1, error1, a2, b2, area2, error2) {
+                    var i_max = this.i,
+                        i_new = this.size,
+                        new_level = this.level[ws.i] + 1;
+
+                    /* append the newly-created intervals to the list */
+  
+                    if (error2 > error1) {
+                        this.alist[i_max] = a2;        /* blist[maxerr] is already == b2 */
+                        this.rlist[i_max] = area2;
+                        this.elist[i_max] = error2;
+                        this.level[i_max] = new_level;
+      
+                        this.alist[i_new] = a1;
+                        this.blist[i_new] = b1;
+                        this.rlist[i_new] = area1;
+                        this.elist[i_new] = error1;
+                        this.level[i_new] = new_level;
+                    } else {
+                        this.blist[i_max] = b1;        /* alist[maxerr] is already == a1 */
+                        this.rlist[i_max] = area1;
+                        this.elist[i_max] = error1;
+                        this.level[i_max] = new_level;
+      
+                        this.alist[i_new] = a2;
+                        this.blist[i_new] = b2;
+                        this.rlist[i_new] = area2;
+                        this.elist[i_new] = error2;
+                        this.level[i_new] = new_level;
+                    }
+  
+                    this.size++;
+
+                    if (new_level > ws.maximum_level) {
+                        this.maximum_level = new_level;
+                    }
+
+                    this.qpsrt();
+                },
+                
+                retrieve: function() {
+                    var i = this.i;
+                    return {
+                        a: this.alist[i],
+                        b: this.blist[i],
+                        r: this.rlist[i],
+                        e: this.elist[i],
+                    }
+                },
+                
+                sum_results: function() {
+                    var n = this.size,
+                        k,
+                        result_sum = 0.0;
+
+                    for (k = 0; k < n; k++) {
+                        result_sum += this.rlist[k];
+                    }
+  
+                    return result_sum;
+                },
+               
+                subinterval_too_small: function(a1, a2,  b2) {
+                    var e = 2.2204460492503131e-16,
+                    u = 2.2250738585072014e-308,
+                    tmp = (1 + 100 * e) * (fabs (a2) + 1000 * u),
+                    status = Math.abs (a1) <= tmp && Math.abs (b2) <= tmp;
+
+                    return status;
+                }
+                
+            };
+        },
+                
+        Qag: function(interval, f, config) {
+            var DBL_EPS = 2.2204460492503131e-16,
+                ws = this._ws_initialise(interval, 1000),
+                limit = config && typeof config.limit === 'number' ? config.limit : 10,
+                epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
+                epsabs = config && typeof config.epsabs === 'number' ? config.epsabs : 0.0000001,
+                q = JXG.Math.Numerics.GaussKronrod15,
+                resultObj = {},
+                area, errsum,
+                result0, abserr0, resabs0, resasc0,
+                result, abserr,
+                tolerance,
+                iteration = 0,
+                roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0,
+                round_off;     
+            
+            if (limit > ws.limit) {
+                console.log("iteration limit exceeds available workspace");
+            }
+            if (epsabs <= 0 && (epsrel < 50 * Mat.eps || epsrel < 0.5e-28)) {
+                console.log("tolerance cannot be acheived with given epsabs and epsrel");
+            }
+
+            result0 = JXG.Math.Numerics.GaussKronrod15(interval, f, resultObj); 
+            abserr0 = resultObj.abserr;
+            resabs0 = resultObj.resabs;
+            resasc0 = resultObj.resasc;
+            
+            ws.set_initial_result(result0, abserr0);
+            tolerance = Math.max(epsabs, epsrel * Math.abs(result0));
+            round_off = 50 * DBL_EPS * resabs0;
+            
+            if (abserr0 <= round_off && abserr0 > tolerance)    {
+                result = result0;
+                abserr = abserr0;
+
+                console.log("cannot reach tolerance because of roundoff error on first attempt");
+                return -Infinity;
+            } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
+                result = result0;
+                abserr = abserr0;
+
+                return result;
+            } else if (limit == 1) {
+                result = result0;
+                abserr = abserr0;
+
+                console.log("a maximum of one iteration was insufficient");
+                return -Infinity;
+            }
+
+            area = result0;
+            errsum = abserr0;
+            iteration = 1;
+
+            do {
+                var a1, b1, a2, b2,
+                    a_i, b_i, r_i, e_i,
+                    area1 = 0, area2 = 0, area12 = 0,
+                    error1 = 0, error2 = 0, error12 = 0,
+                    resasc1, resasc2,
+                    resabs1, resabs2, 
+                    wsObj, resObj,
+                    delta;
+
+                /* Bisect the subinterval with the largest error estimate */
+                wsObj = ws.retrieve();
+                a_i = wsObj.a_i;
+                b_i = wsObj.b_i;
+                r_i = wsObj.r_i;
+                e_i = wsObj.e_i;
+                
+                a1 = a_i; 
+                b1 = 0.5 * (a_i + b_i);
+                a2 = b1;
+                b2 = b_i;
+
+                area1 = q (f, a1, b1, resObj);
+                error1 = resObj.abserr;
+                resabs1 = resObj.resabs; 
+                resasc1 = resObj.resasc;
+                
+                area2 = q (f, a2, b2, resObj);
+                error2 = resObj.abserr;
+                resabs2 = resObj.resabs; 
+                resasc2 = resObj.resasc;
+
+                area12 = area1 + area2;
+                error12 = error1 + error2;
+
+                errsum += (error12 - e_i);
+                area += area12 - r_i;
+
+                if (resasc1 != error1 && resasc2 != error2) {
+                    delta = r_i - area12;
+                    if (Math.abs (delta) <= 1.0e-5 * Math.abs (area12) && error12 >= 0.99 * e_i) {
+                        roundoff_type1++;
+                    }
+                    if (iteration >= 10 && error12 > e_i) {
+                        roundoff_type2++;
+                    }
+                }
+
+                tolerance = Math.max(epsabs, epsrel * fabs (area));
+
+                if (errsum > tolerance) {
+                    if (roundoff_type1 >= 6 || roundoff_type2 >= 20) {
+                        error_type = 2;   /* round off error */
+                    }
+
+                /* set error flag in the case of bad integrand behaviour at
+                    a point of the integration range */
+
+                    if (ws.subinterval_too_small(a1, a2, b2)) {
+                        error_type = 3;
+                    }
+                }
+
+                ws.update(a1, b1, area1, error1, a2, b2, area2, error2);
+                wsObj = ws.retrieve();
+                a_i = wsObj.a_i;
+                b_i = wsObj.b_i;
+                r_i = wsObj.r_i;
+                e_i = wsObj.e_i;
+                
+                iteration++;
+
+            } while (iteration < limit && !error_type && errsum > tolerance);
+
+            result = ws.sum_results();
+            abserr = errsum;
+/*
+  if (errsum <= tolerance)
+    {
+      return GSL_SUCCESS;
+    }
+  else if (error_type == 2)
+    {
+      GSL_ERROR ("roundoff error prevents tolerance from being achieved",
+                 GSL_EROUND);
+    }
+  else if (error_type == 3)
+    {
+      GSL_ERROR ("bad integrand behavior found in the integration interval",
+                 GSL_ESING);
+    }
+  else if (iteration == limit)
+    {
+      GSL_ERROR ("maximum number of subdivisions reached", GSL_EMAXITER);
+    }
+  else
+    {
+      GSL_ERROR ("could not integrate function", GSL_EFAILED);
+    }
+*/            
+            
+            return result;
+        },
+        
         /**
          * Integral of function f over interval.
          * @param {Array} interval The integration interval, e.g. [0, 3].
