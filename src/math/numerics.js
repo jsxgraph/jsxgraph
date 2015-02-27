@@ -975,7 +975,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     errmin = this.elist[last];
                     k = top - 1;
   
-                    while (k > i - 2 && errmin >= this.elist[order[k]]) {
+                    while (k > i - 2 && errmin >= this.elist[this.order[k]]) {
                         this.order[k+1] = this.order[k];
                         k--;
                     }
@@ -997,7 +997,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 update: function(a1, b1, area1, error1, a2, b2, area2, error2) {
                     var i_max = this.i,
                         i_new = this.size,
-                        new_level = this.level[ws.i] + 1;
+                        new_level = this.level[this.i] + 1;
 
                     /* append the newly-created intervals to the list */
   
@@ -1027,7 +1027,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
   
                     this.size++;
 
-                    if (new_level > ws.maximum_level) {
+                    if (new_level > this.maximum_level) {
                         this.maximum_level = new_level;
                     }
 
@@ -1059,8 +1059,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 subinterval_too_small: function(a1, a2,  b2) {
                     var e = 2.2204460492503131e-16,
                     u = 2.2250738585072014e-308,
-                    tmp = (1 + 100 * e) * (fabs (a2) + 1000 * u),
-                    status = Math.abs (a1) <= tmp && Math.abs (b2) <= tmp;
+                    tmp = (1 + 100 * e) * (Math.abs (a2) + 1000 * u),
+                    status = Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
 
                     return status;
                 }
@@ -1071,10 +1071,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         Qag: function(interval, f, config) {
             var DBL_EPS = 2.2204460492503131e-16,
                 ws = this._ws_initialise(interval, 1000),
-                limit = config && typeof config.limit === 'number' ? config.limit : 10,
+                
+                limit = config && typeof config.limit === 'number' ? config.limit : 15,
                 epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
                 epsabs = config && typeof config.epsabs === 'number' ? config.epsabs : 0.0000001,
-                q = JXG.Math.Numerics.GaussKronrod15,
+                q = config && typeof config.q === 'function' ? config.q : this.GaussKronrod15,
+                
                 resultObj = {},
                 area, errsum,
                 result0, abserr0, resabs0, resasc0,
@@ -1091,7 +1093,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 console.log("tolerance cannot be acheived with given epsabs and epsrel");
             }
 
-            result0 = JXG.Math.Numerics.GaussKronrod15(interval, f, resultObj); 
+            result0 = q.apply(this, [interval, f, resultObj]); 
             abserr0 = resultObj.abserr;
             resabs0 = resultObj.resabs;
             resasc0 = resultObj.resasc;
@@ -1135,25 +1137,25 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                 /* Bisect the subinterval with the largest error estimate */
                 wsObj = ws.retrieve();
-                a_i = wsObj.a_i;
-                b_i = wsObj.b_i;
-                r_i = wsObj.r_i;
-                e_i = wsObj.e_i;
+                a_i = wsObj.a;
+                b_i = wsObj.b;
+                r_i = wsObj.r;
+                e_i = wsObj.e;
                 
                 a1 = a_i; 
                 b1 = 0.5 * (a_i + b_i);
                 a2 = b1;
                 b2 = b_i;
 
-                area1 = q (f, a1, b1, resObj);
-                error1 = resObj.abserr;
-                resabs1 = resObj.resabs; 
-                resasc1 = resObj.resasc;
+                area1 = q.apply(this, [[a1, b1], f, resultObj]);
+                error1 = resultObj.abserr;
+                resabs1 = resultObj.resabs; 
+                resasc1 = resultObj.resasc;
                 
-                area2 = q (f, a2, b2, resObj);
-                error2 = resObj.abserr;
-                resabs2 = resObj.resabs; 
-                resasc2 = resObj.resasc;
+                area2 = q.apply(this, [[a2, b2], f, resultObj]);
+                error2 = resultObj.abserr;
+                resabs2 = resultObj.resabs; 
+                resasc2 = resultObj.resasc;
 
                 area12 = area1 + area2;
                 error12 = error1 + error2;
@@ -1171,7 +1173,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     }
                 }
 
-                tolerance = Math.max(epsabs, epsrel * fabs (area));
+                tolerance = Math.max(epsabs, epsrel * Math.abs(area));
 
                 if (errsum > tolerance) {
                     if (roundoff_type1 >= 6 || roundoff_type2 >= 20) {
@@ -1238,7 +1240,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          */
         I: function (interval, f) {
             // return this.NewtonCotes(interval, f, {number_of_nodes: 16, integration_type: 'milne'});
-            return this.Romberg(interval, f, {max_iterations: 20, eps: 0.0000001});
+            // return this.Romberg(interval, f, {max_iterations: 20, eps: 0.0000001});
+            return this.Qag(interval, f, {q: this.GaussKronrod15, limit: 15, epsrel: 0.0000001, epsabs: 0.0000001});
         },
 
         /**
