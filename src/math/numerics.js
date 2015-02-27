@@ -910,7 +910,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, err);
         },
 
-        _ws_initialise: function(interval, n) {
+        _workspace: function(interval, n) {
             return {
                 limit: n,
                 size: 0,
@@ -1070,7 +1070,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 
         Qag: function(interval, f, config) {
             var DBL_EPS = 2.2204460492503131e-16,
-                ws = this._ws_initialise(interval, 1000),
+                ws = this._workspace(interval, 1000),
                 
                 limit = config && typeof config.limit === 'number' ? config.limit : 15,
                 epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
