@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -42,8 +42,6 @@
 
 /**
  * @fileoverview This file contains code for transformations of geometrical objects. 
- * @author graphjs
- * @version 0.1
  */
 
 define([
@@ -53,23 +51,34 @@ define([
     "use strict";
 
     /**
-     * Possible types:
-     * - translate
-     * - scale
-     * - reflect
-     * - rotate
-     * - shear
-     * - generic
+     * A transformation consists of a 3x3 matrix, i.e. it is a projective transformation.
+     * @class Creates a new transformation object. Do not use this constructor to create a transformation. Use {@link JXG.Board#create} with
+     * type {@link Transformation} instead.
+     * @constructor
+     * @param {JXG.Board} board The board the new circle is drawn on.
+     * @param {String} type Can be
+     * <ul><li> translate
+     * <li> scale
+     * <li> reflect
+     * <li> rotate
+     * <li> shear
+     * <li> generic
+     * </ul>
+     * @param {Object} params Depends on the transformation type
      *
      * Rotation matrix:
+     * <pre>
      * ( 1    0           0   )
      * ( 0    cos(a)   -sin(a))
      * ( 0    sin(a)   cos(a) )
-     *
+     * </pre>
+     * 
      * Translation matrix:
+     * <pre>
      * ( 1  0  0)
      * ( a  1  0)
      * ( b  0  1)
+     * </pre>
      */
     JXG.Transformation = function (board, type, params) {
         this.elementClass = Const.OBJECT_CLASS_OTHER;
