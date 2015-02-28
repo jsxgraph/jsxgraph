@@ -51,8 +51,6 @@
  * @fileoverview The geometry object Circle is defined in this file. Circle stores all
  * style and functional properties that are required to draw and move a circle on
  * a board.
- * @author graphjs
- * @version 0.1
  */
 
 define([

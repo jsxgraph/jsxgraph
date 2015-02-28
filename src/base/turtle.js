@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -727,7 +727,14 @@ define([
     });
 
     /**
-     * Creates a new turtle
+     * @class This element is used to provide a constructor for a turtle.
+     * @pseudo
+     * @description  Creates a new turtle
+     * @name Turtle
+     * @augments JXG.Turtle
+     * @constructor
+     * @type JXG.Turtle
+     * 
      * @param {JXG.Board} board The board the turtle is put on.
      * @param {Array} parents
      * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}
