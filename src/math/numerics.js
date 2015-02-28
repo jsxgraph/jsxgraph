@@ -546,6 +546,30 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return integral;
         },
 
+       /**
+         * Calculates the integral of function f over interval using Gauss-Legendre quadrature.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} [config] The algorithm setup. Accepted property is the order n of type number. n is allowed to take
+         * values between 2 and 18, default value is 12. 
+         * @param {Number} [config.n=16]
+         * @returns {Number} Integral value of f over interval
+         * @example
+         * function f(x) {
+         *   return x*x;
+         * }
+         *
+         * // calculates integral of <tt>f</tt> from 0 to 2.
+         * var area1 = JXG.Math.Numerics.GaussLegendre([0, 2], f);
+         *
+         * // the same with an anonymous function
+         * var area2 = JXG.Math.Numerics.GaussLegendre([0, 2], function (x) { return x*x; });
+         *
+         * // use 16 point Gauss-Legendre rule.
+         * var area3 = JXG.Math.Numerics.GaussLegendre([0, 2], f,
+         *                                   {n: 16});
+         * @memberof JXG.Math.Numerics
+         */
         GaussLegendre: function (interval, f, config) {
             var a, b, 
                 i, x, m,
@@ -655,6 +679,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return xm * result;
         }, 
 
+        /**
+         * Scale error in Gauss Kronrod quadrature.
+         * Internal method used in {@link #_gaussKronrod}.
+         * @private 
+         * @memberof JXG.Math.Numerics
+         */
         _rescale_error: function(err, result_abs, result_asc) {
             var scale, min_err,
                 DBL_MIN = 2.2250738585072014e-308,
@@ -681,6 +711,24 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return err;
         },
 
+        /**
+         * Generic Gauss-Kronrod quadrature algorithm.
+         * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
+         * Taken from QUADPACK.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Number} n order
+         * @param {Array} xgk Kronrod quadrature abscissae
+         * @param {Array} wg Weights of the Gauss rule
+         * @param {Array} wgk Weights of the Kronrod rule
+         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
+         *  QUADPACK for an explanation.
+         * 
+         * @returns {Number} Integral value of f over interval
+         * 
+         * @private 
+         * @memberof JXG.Math.Numerics
+         */
         _gaussKronrod:  function(interval, f, n, xgk, wg, wgk, resultObj) {
             var a = interval[0],
                 b = interval[1],
@@ -748,7 +796,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             result_asc *= abs_half_length;
             result = result_kronrod;
 
-//console.log(err, result_abs, result_asc);            
             resultObj.abserr = this._rescale_error(err, result_abs, result_asc);
             resultObj.resabs = result_abs;
             resultObj.resasc = result_asc;
@@ -756,7 +803,18 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             return result;
         },
 
-        GaussKronrod15: function(interval, f, err) {
+        /**
+         * 15 point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
+         *  QUADPACK for an explanation.
+         * 
+         * @returns {Number} Integral value of f over interval
+         * 
+         * @memberof JXG.Math.Numerics
+         */
+        GaussKronrod15: function(interval, f, resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -796,10 +854,21 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.209482141084727828012999174891714
                     ];
 
-            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk, err);
+            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk, resultObj);
         },
 
-        GaussKronrod21: function(interval, f, err) {
+        /**
+         * 21 point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
+         *  QUADPACK for an explanation.
+         * 
+         * @returns {Number} Integral value of f over interval
+         * 
+         * @memberof JXG.Math.Numerics
+         */
+        GaussKronrod21: function(interval, f, resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -845,10 +914,21 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.149445554002916905664936468389821
                     ];
                     
-                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, err);
+                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, resultObj);
         },
 
-        GaussKronrod31: function(interval, f,err) {
+        /**
+         * 31 point Gauss-Kronrod quadrature algorithm, see the library QUADPACK
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
+         *  QUADPACK for an explanation.
+         * 
+         * @returns {Number} Integral value of f over interval
+         * 
+         * @memberof JXG.Math.Numerics
+         */
+        GaussKronrod31: function(interval, f,resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -907,9 +987,18 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.101330007014791549017374792767493
                     ];
 
-                return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, err);
+                return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, resultObj);
         },
 
+        /** 
+         * Generate workspace object for {@link #Qag}.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {Number} n Max. limit
+         * @returns {Object} Workspace object
+         * 
+         * @private
+         * @memberof JXG.Math.Numerics
+         */
         _workspace: function(interval, n) {
             return {
                 limit: n,
@@ -1068,6 +1157,36 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             };
         },
                 
+        /**
+         * Quadrature algorithm qag from QUADPACK.
+         * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
+         * @param {Array} interval The integration interval, e.g. [0, 3].
+         * @param {function} f A function which takes one argument of type number and returns a number.
+         * @param {Object} [config] The algorithm setup. Accepted propert are max. recursion limit of type number,
+         * and epsrel and epsabs, the relative and absolute required precision of type number. Further, 
+         * q the internal quadrature sub-algorithm of type function.
+         * @param {Number} [config.limit=15]
+         * @param {Number} [config.epsrel=0.0000001]
+         * @param {Number} [config.epsabs=0.0000001]
+         * @param {Number} [config.q=JXG.Math.Numerics.GaussKronrod15]
+         * @returns {Number} Integral value of f over interval
+         *
+         * @example
+         * function f(x) {
+         *   return x*x;
+         * }
+         *
+         * // calculates integral of <tt>f</tt> from 0 to 2.
+         * var area1 = JXG.Math.Numerics.Qag([0, 2], f);
+         *
+         * // the same with an anonymous function
+         * var area2 = JXG.Math.Numerics.Qag([0, 2], function (x) { return x*x; });
+         *
+         * // use JXG.Math.Numerics.GaussKronrod31 rule as sub-algorithm.
+         * var area3 = JXG.Math.Numerics.Quag([0, 2], f,
+         *                                   {q: JXG.Math.Numerics.GaussKronrod31});
+         * @memberof JXG.Math.Numerics
+         */
         Qag: function(interval, f, config) {
             var DBL_EPS = 2.2204460492503131e-16,
                 ws = this._workspace(interval, 1000),
@@ -1236,6 +1355,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @returns {Number} The value of the integral of f over interval
          * @see JXG.Math.Numerics.NewtonCotes
          * @see JXG.Math.Numerics.Romberg
+         * @see JXG.Math.Numerics.Qag
          * @memberof JXG.Math.Numerics
          */
         I: function (interval, f) {
