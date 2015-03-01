@@ -369,6 +369,18 @@ define([
         }
     });
 
+    /**
+     * @class This element is used to provide a transformations.
+     * @pseudo
+     * @description  A transformation...
+     * @name Transformation
+     * @augments JXG.Transformation
+     * @constructor
+     * @type JXG.Transformation
+     * @throws {Exception} ...
+     * @param {JXG.Point_number,JXG.Point,JXG.Line,JXG.Circle} center,radius 
+     * @example
+     */
     JXG.createTransform = function (board, parents, attributes) {
         return new JXG.Transformation(board, attributes.type, parents);
     };
