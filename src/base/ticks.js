@@ -511,11 +511,16 @@ define([
             }
             this.ticksDelta = ticksDelta;
 
+            if (ticksDelta < Mat.eps) {
+                return;
+            }
+
             // Position ticks from zero to the positive side while not reaching the upper boundary
             tickPosition = 0;
             if (!this.visProp.drawzero) {
                 tickPosition = ticksDelta;
             }
+
             while (tickPosition <= bounds.upper) {
                 // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
                 if (tickPosition >= bounds.lower) {
