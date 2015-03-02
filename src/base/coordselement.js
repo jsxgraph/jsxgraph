@@ -720,12 +720,33 @@ define([
         handleSnapToPoints: function (force) {
             var i, pEl, pCoords,
                 d = 0,
+                len,
                 dMax = Infinity,
-                c = null;
+                c = null, 
+                len2, j, ignore = false;
 
+            len = this.board.objectsList.length;
+
+            if (this.visProp.ignoredsnaptopoints) {
+                len2 = this.visProp.ignoredsnaptopoints.length;
+            }
+            
             if (this.visProp.snaptopoints || force) {
-                for (i = 0; i < this.board.objectsList.length; i++) {
+                for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
+
+                    if (this.visProp.ignoredsnaptopoints) {
+                        ignore = false;
+                        for (j = 0; j < len2; j++) {
+                            if (pEl == this.visProp.ignoredsnaptopoints[j]) {
+                                ignore = true;
+                                break;
+                            }
+                        }
+                        if (ignore) {
+                            continue;
+                        }
+                    }
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visProp.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);

@@ -2329,7 +2329,16 @@ define([
              * @type Boolean
              * @default false
              */
-            snapToPoints: false
+            snapToPoints: false,
+            
+            /**
+             * List of elements which are ignored by snapToPoints. 
+             * @name Point#ignoredSnapToPoints
+             * 
+             * @type array
+             * @default empty
+             */
+            ignoredSnapToPoints: []
 
             /**#@-*/
         },

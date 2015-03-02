@@ -104,6 +104,9 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'point2');
         p2 = board.create('point', pos1,  attr);
 
+        p1.setAttribute({ignoredSnapToPoints: [p2]});
+        p2.setAttribute({ignoredSnapToPoints: [p1]});
+
         // tape measure line
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
 
