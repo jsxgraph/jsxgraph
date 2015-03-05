@@ -767,6 +767,9 @@ define([
                 }
 
                 labelText = value.toString();
+                if (this.visProp.useunicodeminus) {
+                    labelText = labelText.replace(/-/g, '\u2212'); 
+                }
 
                 // if value is Number
                 if (Type.isNumber(value)) {
