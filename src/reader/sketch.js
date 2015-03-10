@@ -673,6 +673,68 @@
 
                     break;
 
+                case JXG.GENTYPE_VECTOR:
+
+                    k = 0;
+                    j = 0;
+
+                    if (step.args.create_point1) {
+                        pid1 = step.dest_sub_ids[k];
+                        k += 1;
+                        str1 = [];
+                        for (i = 0; i < step.args.p1.length; i++) {
+                            str1[i] = pn(step.args.p1[i]);
+                        }
+
+                        set_str = 'point(' + str1.join(', ') + ') <<id: \'' + pid1 + '\', name: \'\', visible: true, ';
+                        set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
+                        reset_str = 'delete ' + pid1 + '; ';
+                    } else {
+                        pid1 = step.src_ids[j];
+                        j += 1;
+                    }
+
+                    if (step.args.create_point2) {
+                        pid2 = step.dest_sub_ids[k++];
+                        str1 = [];
+                        for (i = 0; i < step.args.p2.length; i++) {
+                            str1[i] = pn(step.args.p2[i]);
+                        }
+
+                        set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: false, ';
+                        set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
+                        reset_str = 'delete ' + pid2 + '; ' + reset_str;
+                    } else {
+                        pid2 = step.src_ids[j];
+                        j += 1;
+                    }
+
+                    str1 = '';
+                    // the line's parents
+                    str2 = pid1 + ', ' + pid2;
+                    str = 'arrow';
+
+                    // this is a corner case, we have to get rid of the ',' at the end
+                    // simple solution: rebuild attrid
+                    if (!options.useSymbols) {
+                        attrid = 'id: \'' + step.dest_id + '\'';
+                    }
+
+                    set_str += assign + str + '(' + str2 + ')';
+
+                    if (str1.length + attrid.length > 0) {
+                        set_str += ' <<' + str1 + attrid + ', name: \'\', strokeColor: \'black\', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                            + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+
+                    } else {
+                        set_str += ' <<name: \'\', strokeColor: \'black\', snaptogrid: ' + JXG.Options.elements.snapToGrid
+                            + ', snaptopoints: ' + JXG.Options.elements.snapToPoints + '>>; ';
+                    }
+
+                    reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
+
+                    break;
+
                 case JXG.GENTYPE_TRIANGLE:
                     for (i = 0; i < step.args.create_point.length; i++) {
                         if (step.args.create_point[i]) {
@@ -1101,6 +1163,32 @@
                     for (j = 0; j < step.src_ids.length; j++) {
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[0] + '); ';
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
+                    }
+                    
+                    if (step.args.migrate !== 0 && step.args.migrate !== -1) {
+                        set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
+                    }
+
+                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+
+                    break;
+
+                case JXG.GENTYPE_VECTORCOPY:
+
+                    xstart = getObject(step.src_ids[0]).coords.usrCoords[1];
+                    ystart = getObject(step.src_ids[0]).coords.usrCoords[2];
+
+                    set_str = 'point(' + pn(xstart - step.args.x) + ', ' + pn(ystart - step.args.y) + ') <<id: \'';
+                    set_str += step.dest_sub_ids[0] + '\', name: \'\', withLabel: false>>; ';
+                    set_str += 'parallelpoint(\'' + step.src_ids[0] + '\',\'' + step.src_ids[1] + '\',\'' + step.dest_sub_ids[0] + '\') <<id: \'' + step.dest_sub_ids[1];
+                    set_str += '\', strokeColor: \'#888888\', visible: false, priv: false, name: \'\', withLabel: false>>; ';
+                    set_str += 'arrow(\'' + step.dest_sub_ids[0] + '\',\'' + step.dest_sub_ids[1]  + '\') <<id: \'' + step.dest_sub_ids[2];
+                    set_str += '\', strokeColor: \'#888888\', visible: true, name: \'\', withLabel: false>>; ';
+
+                    for (j = 0; j < step.src_ids.length; j++) {
+                        set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[0] + '); ';
+                        set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
+                        set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[2] + '); ';
                     }
                     
                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
