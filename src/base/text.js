@@ -205,7 +205,8 @@ define([
                         this.content = "'" + text + "'";
                     } else {
                         // Converts GEONExT syntax into JavaScript string
-                        this.content = this.generateTerm(text);
+                        // Short math is allowed
+                        this.content = this.generateTerm(text, true);
                     }
                 }
                 updateText = this.board.jc.snippet(this.content, true, '', false);
