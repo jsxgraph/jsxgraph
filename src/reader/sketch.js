@@ -1195,13 +1195,13 @@
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
 
-                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; ';
+                    reset_str = 'delete ' + step.dest_sub_ids[1] + '; delete ' + step.dest_sub_ids[0] + '; delete ' + step.dest_sub_ids[2] + ';';
 
                     break;
 
                 case JXG.GENTYPE_MOVEMENT:
 
-                    if (step.args.obj_type === JXG.OBJECT_TYPE_LINE) {
+                    if (step.args.obj_type === JXG.OBJECT_TYPE_LINE || step.args.obj_type === JXG.OBJECT_TYPE_VECTOR) {
                         set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[0]) + ', ';
                         set_str += pn(step.args.coords[0].usrCoords[1]) + ', ' + pn(step.args.coords[0].usrCoords[2]) + ']); ';
                         reset_str = step.src_ids[0] + '.move([' + step.args.zstart[0] + ', ' + step.args.xstart[0] + ', ';
