@@ -1190,7 +1190,7 @@
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[2] + '); ';
                     }
-                    
+
                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
