@@ -515,13 +515,29 @@ define([
         },
 
         /**
+         * Converts shortened math syntax into correct syntax:  3x instead of 3*x or 
+         * (a+b)(3+1) instead of (a+b)*(3+1).
+         * 
+         * @private
+         * @param{String} expr Math term
+         * @returns {string} expanded String
+         */
+        expandShortMath: function(expr) {
+            var re = /([\)0-9\.])\s*([\(a-zA-Z_])/g;
+            return expr.replace(re, '$1*$2');
+        },
+
+        /**
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
+         * 
+         * @param{String} contentStr String to be parsed
+         * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @private
          * @see JXG.GeonextParser.geonext2JS.
          */
-        generateTerm: function (contentStr) {
+        generateTerm: function (contentStr, expand) {
             var res, term, i, j,
                 plaintext = '""';
 
@@ -547,6 +563,9 @@ define([
                 while (i >= 0) {
                     plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);
+                    if (expand === true) {
+                        term = this.expandShortMath(term);
+                    }
                     res = GeonextParser.geonext2JS(term, this.board);
                     res = res.replace(/\\"/g, "'");
                     res = res.replace(/\\'/g, "'");
