@@ -566,7 +566,7 @@ define([
          */
         generateName: function (object) {
             var possibleNames, i, j,
-                maxNameLength = 2,
+                maxNameLength = this.attr.maxnamelength,
                 pre = '',
                 post = '',
                 indices = [],

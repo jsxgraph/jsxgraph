@@ -191,6 +191,18 @@ define([
              * @default true
              */
             ignoreLabels: true,
+            
+            /**
+             * Maximum number of digits in automatic label generation. 
+             * For example, if set to 1 automatic point labels end at "Z".
+             * If set to 2, point labels end at "ZZ".
+             * 
+             * @name JXG.Board#maxNameLength
+             * @see JXG.Board#generateName
+             * @type Number
+             * @default 1
+             */
+            maxNameLength: 1,
 
             /**
              * Supply the document object. Defaults to window.document
