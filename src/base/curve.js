@@ -1290,37 +1290,26 @@ define([
         bounds: function () {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
                 l = this.points.length, i;
-/*            
+            
             if (this.bezierDegree === 3) {
-                var bbox;
-                for (i = 0; i + 3 < l; i += 3) {
-                    bbox = Geometry._bezierBbox([
-                            [this.points[i].usrCoords[1], this.points[i].usrCoords[1]],
-                            [this.points[i + 1].usrCoords[1], this.points[i + 1].usrCoords[2]],
-                            [this.points[i + 2].usrCoords[1], this.points[i + 2].usrCoords[2]],
-                            [this.points[i + 3].usrCoords[1], this.points[i + 3].usrCoords[2]]
-                        ]);
-
-                    if (minX > bbox[0]) {
-                        minX = bbox[0];
-                    }
-
-                    if (maxX < bbox[2]) {
-                        maxX = bbox[2];
-                    }
-
-                    if (minY > bbox[3]) {
-                        minY = bbox[3];
-                    }
-
-                    if (maxY < bbox[1]) {
-                        maxY = bbox[1];
-                    }
+                // Add methods X(), Y()
+                for (i = 0; i < l; i++) {
+                    this.points[i].X = Type.bind(function() { return this.usrCoords[1]; }, this.points[i]);
+                    this.points[i].Y = Type.bind(function() { return this.usrCoords[2]; }, this.points[i]);
                 }
-//console.log(minX, maxY, maxX, minY, l);                
-                //return [minX, maxY, maxX, minY];
+                var bezier = Numerics.bezier(this.points);
+                var up = bezier[3]();
+                minX = Numerics.fminbr(function(t) { return bezier[0](t); }, [0, up]);
+                maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
+                minY = Numerics.fminbr(function(t) { return bezier[1](t); }, [0, up]);
+                maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
+                
+                minX = bezier[0](minX);
+                maxX = bezier[0](maxX);
+                minY = bezier[1](minY);
+                maxY = bezier[1](maxY);
+                return [minX, maxY, maxX, minY];
             }
-*/
 
             // Linear segments
             for (i = 0; i < l; i++) {
