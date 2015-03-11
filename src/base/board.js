@@ -959,11 +959,12 @@ define([
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
-                drag = o.obj;
+                drag;
 
-            if (!drag) {
+            if (!(o && o.obj)) {
                 return;
             }
+            drag = o.obj;
 
             /*
              * Save the position.
