@@ -139,6 +139,7 @@ define([
             A: 'Area',
             Area: 'Area',
             boundingBox: 'boundingBox',
+            bounds: 'bounds',
             addPoints: 'addPoints',
             insertPoints: 'insertPoints',
             removePoints: 'removePoints'
@@ -365,6 +366,11 @@ define([
             return box;
         },
 
+        // already documented in GeometryElement
+        bounds: function () {
+            return this.boundingBox();
+        },
+        
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
