@@ -945,7 +945,11 @@ define([
                 collect = collect.slice(-1);
                 this._drag_offset = offset[offset.length - 1];
             }
-
+            
+            if (!this._drag_offset) {
+                this._drag_offset = [0, 0];
+            }
+           
             return collect;
         },
 
