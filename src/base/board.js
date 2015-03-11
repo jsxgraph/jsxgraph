@@ -3845,14 +3845,11 @@ define([
 
             for (childId in src.childElements) {
                 if (src.childElements.hasOwnProperty(childId)) {
-//console.log(childId);                    
                     child = src.childElements[childId];
                     found = false;
-//console.log(child);
 
                     for (prop in child) {
                         if (child.hasOwnProperty(prop)) {
-//console.log("Found props:", prop, child[prop]);                                
                             if (child[prop] ===  src) {
                                 child[prop] = dest;
                                 found = true;
