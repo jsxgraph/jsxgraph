@@ -1,4 +1,4 @@
-.PHONY: test test-server
+.PHONY: tests test test-server
 
 # build tools
 REQUIREJS=./node_modules/.bin/r.js
@@ -7,6 +7,7 @@ JSDOC2=node ./node_modules/.bin/jsdoc2
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar 
+INTERN=./node_modules/.bin/intern-client
 
 # general tools
 CP=cp
@@ -149,3 +150,6 @@ test-server:
 
 test: core
 	$(JSTESTDRIVER) $(JSTESTSERVER) $(JSTESTFLAGS) --basePath ./ --config test/jsTestDriver.conf
+
+tests:
+	$(INTERN) config=tests/intern
