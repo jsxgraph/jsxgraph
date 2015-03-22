@@ -61,7 +61,8 @@ define({
     // Non-functional test suite(s) to run in each browser
     suites: [
         'tests/unit/jxg',
-        'tests/unit/utils/base64'
+        'tests/unit/utils/base64',
+		'tests/unit/utils/encoding'
     ],
 
     // Functional test suite(s) to run in each browser once non-functional tests are completed
