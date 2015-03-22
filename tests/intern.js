@@ -54,7 +54,7 @@ define({
         baseUrl: 'src/',
         paths: {
             'tests': '../tests/',
-			'node': '../node_modules/'
+            'node': '../node_modules/'
         }
     },
 
@@ -62,7 +62,7 @@ define({
     suites: [
         'tests/unit/jxg',
         'tests/unit/utils/base64',
-		'tests/unit/utils/encoding'
+        'tests/unit/utils/encoding'
     ],
 
     // Functional test suite(s) to run in each browser once non-functional tests are completed
