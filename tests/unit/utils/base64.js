@@ -67,12 +67,21 @@ define([
             assert.strictEqual(actual, expected);
         },
 
+        decode_asciiWithoutPaddingUseUTF8_decodedString: function () {
+            var actual,
+                input = 'SlhH',
+                expected = 'JXG';
+
+            actual = Base64.decode(input, true);
+            assert.strictEqual(actual, expected);
+        },
+
         decode_utf8_decodedString: function () {
             var actual,
                 input = '44GT44KT44Gr44Gh44Gv',
                 expected = '\u3053\u3093\u306B\u3061\u306F';
 
-            actual = Base64.decode(input);
+            actual = Base64.decode(input, true);
             assert.strictEqual(actual, expected);
         },
 
