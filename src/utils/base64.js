@@ -69,13 +69,7 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
      * @private
      */
     function _getIndex(s, i) {
-        var idx = alphabet.indexOf(s.charAt(i));
-
-        if (idx === -1) {
-            throw new Error('JSXGraph/utils/base64: Can\'t decode string (invalid character).');
-        }
-
-        return idx;
+        return alphabet.indexOf(s.charAt(i));
     }
 
     /**
