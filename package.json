@@ -54,7 +54,8 @@
         "jshint": "2.6.x",
         "jslint": "0.8.x",
         "jstestdriver": "1.0.x",
-        "intern": "2.2.x"
+        "intern": "2.2.x",
+        "sinon": "1.14.x"
     },
     "engines": {
         "node": ">= 0.6.0"
