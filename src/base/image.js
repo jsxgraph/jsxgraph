@@ -253,8 +253,8 @@ define([
      * of the lower left corner of the image.
      *   It can consist of two or three elements of type number, a string containing a GEONE<sub>x</sub>T
      *   constraint, or a function which takes no parameter and returns a number. Every element determines one coordinate. If a coordinate is
-     *   given by a number, the number determines the initial position of a free text. If given by a string or a function that coordinate will be constrained
-     *   that means the user won't be able to change the texts's position directly by mouse because it will be calculated automatically depending on the string
+     *   given by a number, the number determines the initial position of a free image. If given by a string or a function that coordinate will be constrained
+     *   that means the user won't be able to change the image's position directly by mouse because it will be calculated automatically depending on the string
      *   or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
      *   parent elements are given they will be interpreted as homogeneous coordinates.
      * <p>
