@@ -982,6 +982,9 @@ define([
             if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
+                this.renderer.hide(this.infobox); // Hide infobox in case the user has touched an intersection point
+                                                  // and drags the underlying line now.
+
                 if (!isNaN(o.targets[0].Xprev + o.targets[0].Yprev)) {
                     drag.setPositionDirectly(Const.COORDS_BY_SCREEN,
                         [newPos.scrCoords[1], newPos.scrCoords[2]],
