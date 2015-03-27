@@ -412,7 +412,7 @@ define([
 
         /** @ignore */
         curve.X = function (phi, suspendUpdate) {
-            var r = this.majorAxis(),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
@@ -426,7 +426,7 @@ define([
 
         /** @ignore */
         curve.Y = function (phi, suspendUpdate) {
-            var r = this.majorAxis(),
+            var r = majorAxis(),
                 c = F[1].Dist(F[0]),
                 b = 0.5 * (c * c - r * r) / (c * Math.cos(phi) + r),
                 beta = Math.atan2(F[1].Y() - F[0].Y(), F[1].X() - F[0].X());
