@@ -952,7 +952,25 @@ define([
          * @param {String|Object} slide The object the point will be bound to.
          */
         makeGlider: function (slide) {
-            var slideobj = this.board.select(slide);
+            var slideobj = this.board.select(slide),
+                onPolygon = false,
+                min,
+                i,
+                dist;
+
+            if (slideobj.type === Const.OBJECT_TYPE_POLYGON){
+                // Search for the closest side of the polygon.
+                min = Number.MAX_VALUE;
+                for (i = 0; i < slideobj.borders.length; i++){
+                    dist = JXG.Math.Geometry.distPointLine(this.coords.usrCoords, slideobj.borders[i].stdform);
+                    if (dist < min){
+                        min = dist;
+                        slide = slideobj.borders[i];
+                    }
+                }
+            	slideobj = this.board.select(slide);
+            	onPolygon = true;
+            }
 
             /* Gliders on Ticks are forbidden */
             if (!Type.exists(slideobj)) {
@@ -970,6 +988,7 @@ define([
             this.visProp.snapwidth = -1;          // By default, deactivate snapWidth
             this.slideObject.addChild(this);
             this.isDraggable = true;
+            this.onPolygon = onPolygon;
 
             this.generatePolynomial = function () {
                 return this.slideObject.generatePolynomial(this);
