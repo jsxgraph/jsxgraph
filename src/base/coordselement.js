@@ -1477,7 +1477,8 @@ define([
                 return this.board.update(this);
             }
 
-            if (Math.abs(dX) < Mat.eps && Math.abs(dY) < Mat.eps) {
+            // In case there is no callback and we are already at the endpoint we can stop here
+            if (!Type.exists(options.callback) && Math.abs(dX) < Mat.eps && Math.abs(dY) < Mat.eps) {
                 return this;
             }
 
