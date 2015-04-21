@@ -100,6 +100,33 @@ define([
      *           return y;
      *       }]);
      * </script><pre>
+     * 
+     * The checkbox can be supplied with custom-made events by using the property rendNodeCheckbox.
+     * @example
+     * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
+     *     p = board.create('point', [1, 1]);
+     *
+     * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
+     *     if (this.Value()) {
+     *         p.moveTo([4, 1]);
+     *     } else {
+     *         p.moveTo([1, 1]);
+     *     }
+     * }, checkbox);
+     * </pre><div id="b2f2345a-057d-44ce-bd7a-6aaff70bc810" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     * var t1_board = JXG.JSXGraph.initBoard('b2f2345a-057d-44ce-bd7a-6aaff70bc810', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
+     *     p = board.create('point', [1, 1]);
+     *
+     * JXG.addEvent(checkbox.rendNodeCheckbox, 'change', function() {
+     *     if (this.Value()) {
+     *         p.moveTo([4, 1]);
+     *     } else {
+     *         p.moveTo([1, 1]);
+     *     }
+     * }, checkbox);
+     * </script><pre>
      */
     JXG.createCheckbox = function (board, parents, attributes) {
         var t, par,
