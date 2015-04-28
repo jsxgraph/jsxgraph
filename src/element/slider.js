@@ -178,7 +178,9 @@ define([
         p3.methodMap = Type.deepCopy(p3.methodMap, {
             Value: 'Value',
             smax: '_smax',
-            smin: '_smin'
+            smin: '_smin',
+            setMax: 'setMax',
+            setMin: 'setMin'
         });
 
         /**
@@ -197,6 +199,30 @@ define([
          */
         p3._smin = smin;
 
+        /**
+         * Sets the maximum value of the slider.
+         * @memberOf Slider.prototype
+         * @name setMax
+         * @param {Number} val New maximum value
+         * @returns {Object} this object
+         */
+        p3.setMax = function(val) {
+            this._smax = val;
+            return this;
+        };
+            
+        /**
+         * Sets the minimum value of the slider.
+         * @memberOf Slider.prototype
+         * @name setMin
+         * @param {Number} val New minimum value
+         * @returns {Object} this object
+         */
+        p3.setMin = function(val) {
+            this._smin = val;
+            return this;
+        };
+            
         if (withText) {
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
             t = board.create('text', [
