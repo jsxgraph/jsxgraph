@@ -2185,7 +2185,7 @@ define([
      * @pseudo
      * @description Display the solution set of a linear inequality (less than or equal to).
      * @param {JXG.Line} l The area drawn will be the area below this line. With the attribute
-     * inverse:true, the inequlity 'greater than or equal to' is shown.
+     * inverse:true, the inequality 'greater than or equal to' is shown.
      * @constructor
      * @name Inequality
      * @type JXG.Curve
