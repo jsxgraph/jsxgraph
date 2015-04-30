@@ -981,8 +981,8 @@
                     set_str += 'baseline: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
-                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true>>, point2: <<id: \'';
-                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true, frozen: true>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true, frozen: true>>, label: <<id: \'';
                     set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 

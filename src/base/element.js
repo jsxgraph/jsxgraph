@@ -535,7 +535,7 @@ define([
          */
         draggable: function () {
             return this.isDraggable && !this.visProp.fixed &&
-                !this.visProp.frozen && this.type !== Const.OBJECT_TYPE_GLIDER;
+                /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER;
         },
 
         /**
