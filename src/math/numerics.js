@@ -2220,74 +2220,76 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             xarr[j] = x;
             yarr[j] = 0.0;
 
-            if (n > 0) {
-                delta = (end - start) / n;
-                // for 'lower' and 'upper'
-                delta1 = delta * 0.01;
+            if (n <= 0) {
+                return [xarr, yarr, sum];
+            }
+                
+            delta = (end - start) / n;
+            // for 'lower' and 'upper'
+            delta1 = delta * 0.01;
 
-                for (i = 0; i < n; i++) {
-                    if (type === 'right') {
-                        y = f(x + delta);
-                    } else if (type === 'middle') {
-                        y = f(x + delta * 0.5);
-                    } else if (type === 'left' || type === 'trapezoidal') {
-                        y = f(x);
-                    } else if (type === 'lower') {
-                        y = f(x);
+            for (i = 0; i < n; i++) {
+                if (type === 'right') {
+                    y = f(x + delta);
+                } else if (type === 'middle') {
+                    y = f(x + delta * 0.5);
+                } else if (type === 'left' || type === 'trapezoidal') {
+                    y = f(x);
+                } else if (type === 'lower') {
+                    y = f(x);
 
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
+                    for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                        y1 = f(x1);
 
-                            if (y1 < y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
                         if (y1 < y) {
                             y = y1;
                         }
-                    } else if (type === 'upper') {
-                        y = f(x);
+                    }
 
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
+                    y1 = f(x + delta);
+                    if (y1 < y) {
+                        y = y1;
+                    }
+                } else if (type === 'upper') {
+                    y = f(x);
 
-                            if (y1 > y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
+                    for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                        y1 = f(x1);
                         if (y1 > y) {
                             y = y1;
                         }
-                    } else if (type === 'random') {
-                        y = f(x + delta * Math.random());
-                    } else if (type === 'simpson') {
-                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
-                    } else {
-                        y = f(x);  // default is lower
                     }
 
-                    j += 1;
-                    xarr[j] = x;
-                    yarr[j] = y;
-                    j += 1;
-                    x += delta;
-
-                    if (type === 'trapezoidal') {
-                        y = f(x);
+                    y1 = f(x + delta);
+                    if (y1 > y) {
+                        y = y1;
                     }
-
-                    xarr[j] = x;
-                    yarr[j] = y;
-                    j += 1;
-                    xarr[j] = x;
-                    yarr[j] = 0.0;
-                    sum += y * delta;
+                } else if (type === 'random') {
+                    y = f(x + delta * Math.random());
+                } else if (type === 'simpson') {
+                    y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
+                } else {
+                    y = f(x);  // default is lower
                 }
+
+                j += 1;
+                xarr[j] = x;
+                yarr[j] = y;
+                j += 1;
+                x += delta;
+
+                if (type === 'trapezoidal') {
+                    y = f(x);
+                }
+
+                xarr[j] = x;
+                yarr[j] = y;
+                j += 1;
+                xarr[j] = x;
+                yarr[j] = 0.0;
+                sum += y * delta;
             }
+
             return [xarr, yarr, sum];
         },
 
