@@ -2271,7 +2271,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         /**
          * Helper function to create curve which displays Riemann sums.
          * Compute coordinates for the rectangles showing the Riemann sum.
-         * @param {Function_Array} f Function or array of two functions. 
+         * @param {Function,Array} f Function or array of two functions. 
          * If f is a function the integral of this function is approximated by the Riemann sum. 
          * If f is an array consisting of two functions the area between the two functions is filled
          * by the Riemann sum bars.

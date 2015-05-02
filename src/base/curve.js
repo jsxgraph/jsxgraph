@@ -1613,17 +1613,18 @@ define([
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
-     * The returned element has the method Value() which returns the sum of the areas of the rectangles.
+     * The returned element has the method Value() which returns the sum of the areas of the bars.
      * @pseudo
      * @description
      * @name Riemannsum
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
-     * @param {function_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a
-     *         function term f(x) describing the function graph which is filled by the Riemann rectangles.
+     * @param {function,array_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a
+     *         Either a function term f(x) describing the function graph which is filled by the Riemann bars, or 
+     *         an array consisting of two functions and the area between is filled by the Riemann bars.
      *         <p>
-     *         n determines the number of rectangles, it is either a fixed number or a function.
+     *         n determines the number of bars, it is either a fixed number or a function.
      *         <p>
      *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezodial'.
      *         Default value is 'left'.
@@ -1650,6 +1651,31 @@ define([
      *   var s = rs1_board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
      *   var r = rs1_board.create('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
      *   var g = rs1_board.create('functiongraph', [f, -2, 5]);
+     *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     * </script><pre>
+     * 
+     * @example
+     *   // Riemann sum between two functions
+     *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+     *   var g = function(x) { return 0.5*x*x-2*x; };
+     *   var f = function(x) { return -x*(x-4); };
+     *   var r = board.create('riemannsum',
+     *               [[g,f], function(){return s.Value();}, 'lower', 0, 4],
+     *               {fillOpacity:0.4}
+     *               );
+     *   var g = board.create('functiongraph',[f, -2, 5]);
+     *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     * </pre><div id="f9a7ba38-b50f-4a32-a873-2f3bf9caee79" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var rs1_board = JXG.JSXGraph.initBoard('f9a7ba38-b50f-4a32-a873-2f3bf9caee79', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+     *   var g = function(x) { return 0.5*x*x-2*x; };
+     *   var f = function(x) { return -x*(x-4); };
+     *   var r = board.create('riemannsum',
+     *               [[g,f], function(){return s.Value();}, 'lower', 0, 4],
+     *               {fillOpacity:0.4}
+     *               );
+     *   var g = board.create('functiongraph',[f, -2, 5]);
      *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
      * </script><pre>
      */
