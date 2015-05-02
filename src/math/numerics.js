@@ -2194,10 +2194,21 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             };
         },
 
+        /**
+         * Evaluate the function term for {@see #riemann}.
+         * @private
+         * @param {Number} x function argument
+         * @param {function} f JavaScript function returning a number
+         * @param {String} type Name of the Riemann sum type, e.g. 'lower', see {@see #riemann}.
+         * @param {Number} delta Width of the bars in user coordinates
+         * @returns {Number} Upper (delta > 0) or lower (delta < 0) value of the bar containing x of the Riemann sum.
+         *
+         * @memberof JXG.Math.Numerics
+         */ 
         _riemannValue: function(x, f, type, delta) {
             var y, y1, x1, delta1;
                 
-            if (delta < 0) {
+            if (delta < 0) { // delta is negative if the lower function term is evaluated
                 if (type !== 'trapezoidal') {
                     x = x + delta;
                 }
@@ -2260,7 +2271,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         /**
          * Helper function to create curve which displays Riemann sums.
          * Compute coordinates for the rectangles showing the Riemann sum.
-         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Function_Array} f Function or array of two functions. 
+         * If f is a function the integral of this function is approximated by the Riemann sum. 
+         * If f is an array consisting of two functions the area between the two functions is filled
+         * by the Riemann sum bars.
          * @param {Number} n number of rectangles.
          * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
          * @param {Number} start Left border of the approximation interval
@@ -2359,7 +2373,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Approximate the integral by Riemann sums.
          * Compute the area described by the riemann sum rectangles.
          * @deprecated Replaced by JXG.Curve.Value(), see {@link JXG.Curve#riemannsum}
-         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Function_Array} f Function or array of two functions. 
+         * If f is a function the integral of this function is approximated by the Riemann sum. 
+         * If f is an array consisting of two functions the area between the two functions is approximated
+         * by the Riemann sum.
          * @param {Number} n number of rectangles.
          * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezoidal'.
          *
