@@ -2277,7 +2277,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 j = 0,
                 x = start, y,
                 sum = 0,
-                f, g;
+                f, g,
+                ylow, yup;
 
             if (Type.isArray(gf)) {
                 g = gf[0];
@@ -2286,10 +2287,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 f = gf;
             }
             
-            n = Math.round(n);
-
-            //xarr[j] = x;
-            //yarr[j] = 1.0;
+            n = Math.floor(n);
 
             if (n <= 0) {
                 return [xarr, yarr, sum];
@@ -2310,7 +2308,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 xarr[j] = x;
                 yarr[j] = y;
 
-                sum += y * delta;
                 j += 1;
             }
 
@@ -2335,6 +2332,20 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 j += 1;
                 xarr[j] = x;
                 yarr[j] = yarr[2 * (n - 1) - 2 * i];
+
+            
+                if (type !== 'trapezoidal') {
+                    ylow = y;
+                    yup = yarr[2 * (n - 1) - 2 * i];
+                } else {
+                    yup = 0.5 * (f(x + delta) + f(x));
+                    if (g) {
+                        ylow = 0.5 * (g(x + delta) + g(x));
+                    } else {
+                        ylow = 0.0;
+                    }
+                }
+                sum += (yup - ylow) * delta;
 
                 j += 1;
             }
@@ -2414,7 +2425,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else {
                         y = f(x);  // default is lower
                     }
-
                     sum += delta * y;
                     x += delta;
                 }
