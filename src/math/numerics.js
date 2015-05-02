@@ -2194,6 +2194,69 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             };
         },
 
+        _riemannValue: function(x, f, type, delta) {
+            var y, y1, x1, delta1;
+                
+            if (delta < 0) {
+                if (type !== 'trapezoidal') {
+                    x = x + delta;
+                }
+                delta *= -1;
+                if (type == 'lower') {
+                    type = 'upper';
+                } else if (type == 'upper') {
+                    type = 'lower';
+                }
+            }
+            
+            delta1 = delta * 0.01; // for 'lower' and 'upper'
+            
+            if (type === 'right') {
+                y = f(x + delta);
+            } else if (type === 'middle') {
+                y = f(x + delta * 0.5);
+            } else if (type === 'left' || type === 'trapezoidal') {
+                y = f(x);
+            } else if (type === 'lower') {
+                y = f(x);
+
+                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                    y1 = f(x1);
+
+                    if (y1 < y) {
+                        y = y1;
+                    }
+                }
+
+                y1 = f(x + delta);
+                if (y1 < y) {
+                    y = y1;
+                }
+            } else if (type === 'upper') {
+                y = f(x);
+
+                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                    y1 = f(x1);
+                    if (y1 > y) {
+                        y = y1;
+                    }
+                }
+
+                y1 = f(x + delta);
+                if (y1 > y) {
+                    y = y1;
+                }
+            } else if (type === 'random') {
+                y = f(x + delta * Math.random());
+            } else if (type === 'simpson') {
+                y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
+            } else {
+                y = f(x);  // default is lower
+            }
+            
+            return y;
+        },
+        
         /**
          * Helper function to create curve which displays Riemann sums.
          * Compute coordinates for the rectangles showing the Riemann sum.
@@ -2207,87 +2270,73 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * rectangles.
          * @memberof JXG.Math.Numerics
          */
-        riemann: function (f, n, type, start, end) {
-            var i, x1, y1, delta1, delta,
+        riemann: function (gf, n, type, start, end) {
+            var i, delta,
                 xarr = [],
                 yarr = [],
                 j = 0,
                 x = start, y,
-                sum = 0;
+                sum = 0,
+                f, g;
 
+            if (Type.isArray(gf)) {
+                g = gf[0];
+                f = gf[1];
+            } else {
+                f = gf;
+            }
+            
             n = Math.round(n);
 
-            xarr[j] = x;
-            yarr[j] = 0.0;
+            //xarr[j] = x;
+            //yarr[j] = 1.0;
 
             if (n <= 0) {
                 return [xarr, yarr, sum];
             }
                 
             delta = (end - start) / n;
-            // for 'lower' and 'upper'
-            delta1 = delta * 0.01;
 
             for (i = 0; i < n; i++) {
-                if (type === 'right') {
-                    y = f(x + delta);
-                } else if (type === 'middle') {
-                    y = f(x + delta * 0.5);
-                } else if (type === 'left' || type === 'trapezoidal') {
-                    y = f(x);
-                } else if (type === 'lower') {
-                    y = f(x);
-
-                    for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                        y1 = f(x1);
-
-                        if (y1 < y) {
-                            y = y1;
-                        }
-                    }
-
-                    y1 = f(x + delta);
-                    if (y1 < y) {
-                        y = y1;
-                    }
-                } else if (type === 'upper') {
-                    y = f(x);
-
-                    for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                        y1 = f(x1);
-                        if (y1 > y) {
-                            y = y1;
-                        }
-                    }
-
-                    y1 = f(x + delta);
-                    if (y1 > y) {
-                        y = y1;
-                    }
-                } else if (type === 'random') {
-                    y = f(x + delta * Math.random());
-                } else if (type === 'simpson') {
-                    y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
-                } else {
-                    y = f(x);  // default is lower
-                }
-
-                j += 1;
+                y = this._riemannValue(x, f, type, delta);
                 xarr[j] = x;
                 yarr[j] = y;
+
                 j += 1;
                 x += delta;
-
                 if (type === 'trapezoidal') {
                     y = f(x);
                 }
-
                 xarr[j] = x;
                 yarr[j] = y;
+
+                sum += y * delta;
+                j += 1;
+            }
+
+            for (i = 0; i < n; i++) {
+                if (g) {
+                    y = this._riemannValue(x, g, type, -delta);
+                } else {
+                    y = 0.0;
+                }
+                xarr[j] = x;
+                yarr[j] = y;
+
+                j += 1;
+                x -= delta;
+                if (type === 'trapezoidal' && g) {
+                    y = g(x);
+                }
+                xarr[j] = x;
+                yarr[j] = y;
+
+                // Draw the vertical lines
                 j += 1;
                 xarr[j] = x;
-                yarr[j] = 0.0;
-                sum += y * delta;
+                yarr[j] = yarr[2 * (n - 1) - 2 * i];
+
+                j += 1;
             }
 
             return [xarr, yarr, sum];
