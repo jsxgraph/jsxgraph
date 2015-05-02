@@ -2295,6 +2295,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 
             delta = (end - start) / n;
 
+            // Upper bar ends
             for (i = 0; i < n; i++) {
                 y = this._riemannValue(x, f, type, delta);
                 xarr[j] = x;
@@ -2311,6 +2312,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 j += 1;
             }
 
+            // Lower bar ends
             for (i = 0; i < n; i++) {
                 if (g) {
                     y = this._riemannValue(x, g, type, -delta);
@@ -2328,12 +2330,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 xarr[j] = x;
                 yarr[j] = y;
 
-                // Draw the vertical lines
-                j += 1;
-                xarr[j] = x;
-                yarr[j] = yarr[2 * (n - 1) - 2 * i];
-
-            
+                // Add the area of the bar to 'sum'
                 if (type !== 'trapezoidal') {
                     ylow = y;
                     yup = yarr[2 * (n - 1) - 2 * i];
@@ -2346,6 +2343,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     }
                 }
                 sum += (yup - ylow) * delta;
+
+                // Draw the vertical lines
+                j += 1;
+                xarr[j] = x;
+                yarr[j] = yarr[2 * (n - 1) - 2 * i];
 
                 j += 1;
             }
@@ -2367,6 +2369,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         riemannsum: function (f, n, type, start, end) {
+            return this.riemann(f, n, type, start, end)[2];
+            /*
             var i, x1, y1, delta1, delta, y,
                 sum = 0.0,
                 x = start;
@@ -2429,8 +2433,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     x += delta;
                 }
             }
-
+            
             return sum;
+            */
         },
 
         /**
