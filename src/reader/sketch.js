@@ -942,7 +942,18 @@
                 case JXG.GENTYPE_NONREFLEXANGLE:
                     set_str = assign + 'nonreflexangle(' + step.src_ids.join(', ') + ') ';
                     set_str += '<<';
-                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
+                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_REFLEXANGLE:
+                    set_str = assign + 'reflexangle(' + step.src_ids.join(', ') + ') ';
+                    set_str += '<<';
+                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
+                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
                     set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
