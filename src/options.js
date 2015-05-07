@@ -1233,6 +1233,26 @@ define([
             /**#@-*/
         },
 
+        /* special button options */
+        button: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             * Control the attribute "disabled" of the HTML button.
+             * 
+             * @name disabled
+             * @memberOf Button.prototype
+             * 
+             * @type Boolean
+             * @default false
+             */
+            disabled: false
+
+            /**#@-*/
+        },
+
         /* special chart options */
         chart: {
             /**#@+
@@ -1247,6 +1267,26 @@ define([
             highlightbysize: false,
             label: {
             }
+            /**#@-*/
+        },
+
+        /* special html slider options */
+        checkbox: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             * Control the attribute "disabled" of the HTML checkbox.
+             * 
+             * @name disabled
+             * @memberOf Checkbox.prototype
+             * 
+             * @type Boolean
+             * @default false
+             */
+            disabled: false
+            
             /**#@-*/
         },
 
@@ -1785,6 +1825,26 @@ define([
             label: {
                 fontSize: 20
             }
+            /**#@-*/
+        },
+
+        /* special input options */
+        input: {
+            /**#@+
+             * @visprop
+             */
+
+            /**
+             * Control the attribute "disabled" of the HTML input field.
+             * 
+             * @name disabled
+             * @memberOf Input.prototype
+             * 
+             * @type Boolean
+             * @default false
+             */
+            disabled: false
+
             /**#@-*/
         },
 
@@ -3258,33 +3318,6 @@ define([
                 withLabel: false,
                 strokeColor: '#ff0000'
             }
-            /**#@-*/
-        },
-
-        /* special html slider options */
-        checkbox: {
-            /**#@+
-             * @visprop
-             */
-
-            /**#@-*/
-        },
-
-        /* special input options */
-        input: {
-            /**#@+
-             * @visprop
-             */
-
-            /**#@-*/
-        },
-
-        /* special button options */
-        button: {
-            /**#@+
-             * @visprop
-             */
-
             /**#@-*/
         },
 
