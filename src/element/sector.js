@@ -1145,8 +1145,15 @@ define([
      * </script><pre>
      */
     JXG.createNonreflexAngle = function (board, parents, attributes) {
+        var el;
+
         attributes.selection = 'minor';
-        return JXG.createAngle(board, parents, attributes);
+        el = JXG.createAngle(board, parents, attributes);
+        el.Value = function () {
+            var v = Geometry.rad(this.point2, this.point1, this.point3);
+            return (v < Math.PI) ? v : 2.0 * Math.PI - v;
+        };
+        return el;
     };
 
     JXG.registerElement('nonreflexangle', JXG.createNonreflexAngle);
@@ -1183,12 +1190,18 @@ define([
      * </script><pre>
      */
     JXG.createReflexAngle = function (board, parents, attributes) {
+        var el;
+
         attributes.selection = 'major';
-        return JXG.createAngle(board, parents, attributes);
+        el = JXG.createAngle(board, parents, attributes);
+        el.Value = function () {
+            var v = Geometry.rad(this.point2, this.point1, this.point3);
+            return (v >= Math.PI) ? v : 2.0 * Math.PI - v;
+        };
+        return v;
     };
 
     JXG.registerElement('reflexangle', JXG.createReflexAngle);
-
 
     return {
         createSector: JXG.createSector,
