@@ -152,6 +152,9 @@ define([
         t.rendNodeInput.id = t.rendNode.id + '_input';
         t.rendNodeInput.value = parents[2];
 
+        t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
+        t.rendNodeTag.disabled = !!attr.disabled; 
+
         t._value = parents[2];
 
         t.Value = function () {

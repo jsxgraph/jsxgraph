@@ -1022,6 +1022,12 @@ define([
                             this.onPolygon = !!value;
                         }
                         break;
+                    case 'disabled':
+                        // button, checkbox, input. Is not available on initial call.
+                        if (JXG.exists(this.rendNodeTag)) {
+                            this.rendNodeTag.disabled = !!value;
+                        }
+                        break;
                     default:
                         if (Type.exists(this.visProp[key]) && (!JXG.Validator[key] || (JXG.Validator[key] &&
                                 JXG.Validator[key](value)) || (JXG.Validator[key] &&
