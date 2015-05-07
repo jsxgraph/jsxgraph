@@ -1198,7 +1198,7 @@ define([
             var v = Geometry.rad(this.point2, this.point1, this.point3);
             return (v >= Math.PI) ? v : 2.0 * Math.PI - v;
         };
-        return v;
+        return el;
     };
 
     JXG.registerElement('reflexangle', JXG.createReflexAngle);
