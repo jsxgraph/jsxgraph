@@ -988,7 +988,7 @@
                     if (step.args.isPolar)
                         set_str += 'curveType: \'polar\', ';
 
-                    set_str += attrid + 'name: \'' + step.args.name + '\', withLabel: true, strokeColor: \'' + step.args.color + '\', doAdvancedPlot: true, doAdvancedPlotOld: false >>; ';
+                    set_str += attrid + 'name: \'\', withLabel: true, strokeColor: \'' + step.args.color + '\', doAdvancedPlot: true, doAdvancedPlotOld: false >>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
