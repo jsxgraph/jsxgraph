@@ -198,7 +198,7 @@ define([
                 w = parseInt(dimensions.width, 10);
                 h = parseInt(dimensions.height, 10);
 
-                if (attr.keepaspectratio) {
+                if (Type.exists(bbox) && attr.keepaspectratio) {
                     /*
                      * If the boundingbox attribute is given and the ratio of height and width of the
                      * sides defined by the bounding box and the ratio of the dimensions of the div tag
