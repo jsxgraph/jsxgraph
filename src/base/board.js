@@ -236,7 +236,7 @@ define([
         this.unitY = unitY * this.zoomY;
 
         /**
-         * Keep aspect ratio if bounding box is set and the width/height ratio differs from the 
+         * Keep aspect ratio if bounding box is set and the width/height ratio differs from the
          * width/height ratio of the canvas.
          */
         this.keepaspectratio = false;
@@ -517,7 +517,7 @@ define([
         /**
          * Offset for large coords elements like images
          * @type {Array}
-         * @private 
+         * @private
          * @default [0, 0]
          */
         this._drag_offset = [0, 0];
@@ -945,11 +945,11 @@ define([
                 collect = collect.slice(-1);
                 this._drag_offset = offset[offset.length - 1];
             }
-            
+
             if (!this._drag_offset) {
                 this._drag_offset = [0, 0];
             }
-           
+
             return collect;
         },
 
@@ -3161,7 +3161,7 @@ define([
          * Change the height and width of the board's container.
          * After doing so, {@link JXG.JSXGraph#setBoundingBox} is called using
          * the actual size of the bounding box and the actual value of keepaspectratio.
-         * If setBoundingbox() should not be called automatically, 
+         * If setBoundingbox() should not be called automatically,
          * call resizeContainer with dontSetBoundingBox == true.
          * @param {Number} canvasWidth New width of the container.
          * @param {Number} canvasHeight New height of the container.
