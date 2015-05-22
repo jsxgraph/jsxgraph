@@ -636,7 +636,7 @@ JXG.TracenpocheReader = function(board, str) {
         });
 
         prefix("for", function () {
-            var n = token, varname;                   // FIXME error message
+            var n = token, varname;
 
             this.first = expression(0);
             advance("to");
@@ -713,11 +713,8 @@ JXG.TracenpocheReader = function(board, str) {
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;
 
-//console.log(s);
         var fun = new Function("that", "tep", s);
-        //console.log(fun.toString());
         fun(this, tep);
-//console.log(tep);
 
         // Set the correct labels and names
         var el;
