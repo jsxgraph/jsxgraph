@@ -4041,12 +4041,10 @@ define([
                 py = x.usrCoords[2];
             }
 
-            if (typeof px === 'number' && typeof py === 'number' &&
-                    bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]) {
-                return true;
-            }
+            return !!(typeof px === 'number' && typeof py === 'number' &&
+            bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]);
 
-            return false;
+
         },
 
         /**

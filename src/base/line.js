@@ -250,10 +250,8 @@ define([
                 return false;
             }
 
-            if (!this.visProp.straightlast && pos > 1) {
-                return false;
-            }
-            return true;
+            return !(!this.visProp.straightlast && pos > 1);
+
         },
 
         // document in base/element

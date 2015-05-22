@@ -1129,7 +1129,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         a: this.alist[i],
                         b: this.blist[i],
                         r: this.rlist[i],
-                        e: this.elist[i],
+                        e: this.elist[i]
                     }
                 },
                 
@@ -1149,9 +1149,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     var e = 2.2204460492503131e-16,
                     u = 2.2250738585072014e-308,
                     tmp = (1 + 100 * e) * (Math.abs (a2) + 1000 * u),
-                    status = Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
-
-                    return status;
+                    return  Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
                 }
                 
             };

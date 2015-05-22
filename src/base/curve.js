@@ -872,15 +872,10 @@ define([
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight;
 
-            if ((a[1] < -off && b[1] < -off) ||
-                    (a[2] < -off && b[2] < -off) ||
-                    (a[1] > cw + off && b[1] > cw + off) ||
-                    (a[2] > ch + off && b[2] > ch + off)) {
-
-                return true;
-            } else {
-                return false;
-            }
+            return !!((a[1] < -off && b[1] < -off) ||
+            (a[2] < -off && b[2] < -off) ||
+            (a[1] > cw + off && b[1] > cw + off) ||
+            (a[2] > ch + off && b[2] > ch + off));
         },
 
         /**
