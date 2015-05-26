@@ -65,10 +65,10 @@ define([
 
     /**
      * Construct and handle texts.
-     * 
-     * The coordinates can be relative to the coordinates of an element 
+     *
+     * The coordinates can be relative to the coordinates of an element
      * given in {@link JXG.Options#text.anchor}.
-     * 
+     *
      * MathJax, HTML and GEONExT syntax can be handled.
      * @class Creates a new text object. Do not use this constructor to create a text. Use {@link JXG.Board#create} with
      * type {@link Text} instead.
@@ -125,7 +125,7 @@ define([
          * Test if the the screen coordinates (x,y) are in a small stripe
          * at the left side or at the right side of the text.
          * Sensitivity is set in this.board.options.precision.hasPoint.
-         * If dragarea is set to 'all' (default), tests if the the screen 
+         * If dragarea is set to 'all' (default), tests if the the screen
         * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
@@ -516,9 +516,9 @@ define([
         },
 
         /**
-         * Converts shortened math syntax into correct syntax:  3x instead of 3*x or 
+         * Converts shortened math syntax into correct syntax:  3x instead of 3*x or
          * (a+b)(3+1) instead of (a+b)*(3+1).
-         * 
+         *
          * @private
          * @param{String} expr Math term
          * @returns {string} expanded String
@@ -532,7 +532,7 @@ define([
          * Converts the GEONExT syntax of the <value> terms into JavaScript.
          * Also, all Objects whose name appears in the term are searched and
          * the text is added as child to these objects.
-         * 
+         *
          * @param{String} contentStr String to be parsed
          * @param{Boolean} [expand] Optional flag if shortened math syntax is allowed (e.g. 3x instead of 3*x).
          * @private
@@ -649,9 +649,20 @@ define([
             return this;
         },
 
+        // documented in element.js
+        getParents: function () {
+            var p = [this.Z(), this.X(), this.Y(), this.orgText];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
+        },
+
         bounds: function () {
             var c = this.coords.usrCoords;
-            
+
             if (this.visProp.islabel || this.board.unitY == 0 || this.board.unitX == 0) {
                 return [0, 0, 0, 0];
             } else {
@@ -662,10 +673,10 @@ define([
 
     /**
      * @class Construct and handle texts.
-     * 
-     * The coordinates can be relative to the coordinates of an element 
+     *
+     * The coordinates can be relative to the coordinates of an element
      * given in {@link JXG.Options#text.anchor}.
-     * 
+     *
      * MathJaX, HTML and GEONExT syntax can be handled.
      * @pseudo
      * @description

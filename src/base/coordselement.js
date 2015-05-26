@@ -1647,6 +1647,7 @@ define([
             return this.coords;
         },
 
+        // documented in element.js
         getParents: function () {
             var p = [this.Z(), this.X(), this.Y()];
 
@@ -1705,8 +1706,6 @@ define([
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
-
-                //el.parents = [coords[0].id];
             } else {
                 return false;
             }
