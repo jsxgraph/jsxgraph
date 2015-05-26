@@ -57,12 +57,14 @@ TestCase("Dump", {
 
     testDumps: function () {
         expectAsserts(3);
-        var s, txt;
+        var s, p, txt;
 
-        s = this.board.create('point', [2, 1]);
+        p = this.board.create('point', [2, 1]);
         s = this.board.create('line', [2, 1, 2]);
         s = this.board.create('text', [3, 2, 'test']);
+        s = this.board.create('circle', [p, 5]);
         txt = JXG.Dump.toJessie(this.board);
+        console.log(txt);
         
         assertTrue('toJessie point', txt.indexOf("s0 = point(2, 1) <<") > -1);
         assertTrue('toJessie point', txt.indexOf("s3 = line(2, 1, 2) <<") > -1);
