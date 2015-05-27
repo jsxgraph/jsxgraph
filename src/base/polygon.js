@@ -326,13 +326,13 @@ define([
         /**
          * Bounding box of a polygon. The bounding box is an array of four numbers: the first two numbers
          * determine the upper left corner, the last two number determine the lower right corner of the bounding box.
-         * 
+         *
          * The width and height of a polygon can then determined like this:
          * @example
          * var box = polygon.boundingBox();
          * var width = box[2] - box[0];
          * var height = box[1] - box[3];
-         * 
+         *
          * @returns {Array} Array containing four numbers: [minX, maxY, maxX, minY]
          */
         boundingBox: function () {
@@ -370,7 +370,7 @@ define([
         bounds: function () {
             return this.boundingBox();
         },
-        
+
         /**
          * This method removes the SVG or VML nodes of the lines and the filled area from the renderer, to remove
          * the object completely you should use {@link JXG.Board#removeObject}.
@@ -572,6 +572,7 @@ define([
             return this;
         },
 
+        // documented in element.js
         getParents: function () {
             var p = [], i;
 
@@ -636,9 +637,9 @@ define([
 
 
     /**
-     * @class A polygon is an area enclosed by a set of border lines which are determined by 
+     * @class A polygon is an area enclosed by a set of border lines which are determined by
      * <ul>
-     *    <li> a list of points or 
+     *    <li> a list of points or
      *    <li> a list of coordinate arrays or
      *    <li> a function returning a list of coordinate arrays.
      * </ul>
@@ -684,20 +685,20 @@ define([
      * </script><pre>
      *
      * @example
-     *   var f1 = function() { return [0.0, 2.0]; }, 
-     *       f2 = function() { return [2.0, 1.0]; }, 
-     *       f3 = function() { return [4.0, 6.0]; }, 
-     *       f4 = function() { return [1.0, 4.0]; }, 
+     *   var f1 = function() { return [0.0, 2.0]; },
+     *       f2 = function() { return [2.0, 1.0]; },
+     *       f3 = function() { return [4.0, 6.0]; },
+     *       f4 = function() { return [1.0, 4.0]; },
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *
      * </pre><div id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('ceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
-     *       f1 = function() { return [0.0, 2.0]; }, 
-     *       f2 = function() { return [2.0, 1.0]; }, 
-     *       f3 = function() { return [4.0, 6.0]; }, 
-     *       f4 = function() { return [1.0, 4.0]; }, 
+     *       f1 = function() { return [0.0, 2.0]; },
+     *       f2 = function() { return [2.0, 1.0]; },
+     *       f3 = function() { return [4.0, 6.0]; },
+     *       f4 = function() { return [1.0, 4.0]; },
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *  })();
      * </script><pre>

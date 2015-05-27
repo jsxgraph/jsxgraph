@@ -128,6 +128,9 @@ define([
         t.rendNodeButton.id = t.rendNode.id + '_button';
         t.rendNodeButton.innerHTML = parents[2];
 
+        t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
+        t.rendNodeTag.disabled = !!attr.disabled; 
+
         if (parents[3]) {
             if (typeof parents[3] === 'string') {
                 t._jc = new JXG.JessieCode();

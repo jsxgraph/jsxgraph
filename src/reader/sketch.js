@@ -939,6 +939,26 @@
                     reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
                     break;
 
+                case JXG.GENTYPE_NONREFLEXANGLE:
+                    set_str = assign + 'nonreflexangle(' + step.src_ids.join(', ') + ') ';
+                    set_str += '<<';
+                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
+                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
+                case JXG.GENTYPE_REFLEXANGLE:
+                    set_str = assign + 'reflexangle(' + step.src_ids.join(', ') + ') ';
+                    set_str += '<<';
+                    set_str += 'dot: <<priv:true, id: \'' + step.dest_sub_ids[0] + '\', ';
+                    set_str += 'name: \'' + step.dest_sub_ids[0] + '\'>>, ';
+                    set_str += attrid + ' fillOpacity: ' + JXG.Options.opacityLevel + '>>; ';
+                    reset_str = 'delete ' + step.dest_id + '; ';
+                    reset_str += 'delete ' + step.dest_sub_ids[0] + '; ';
+                    break;
+
                 case JXG.GENTYPE_SLOPETRIANGLE:
                     // step.src_ids[0] may contain one or two parent elements.
                     set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
@@ -968,7 +988,7 @@
                     if (step.args.isPolar)
                         set_str += 'curveType: \'polar\', ';
 
-                    set_str += attrid + 'name: \'\', strokeColor: \'' + step.args.color + '\', doAdvancedPlot: true, doAdvancedPlotOld: false >>; ';
+                    set_str += attrid + 'name: \'\', withLabel: true, strokeColor: \'' + step.args.color + '\', doAdvancedPlot: true, doAdvancedPlotOld: false >>; ';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
                     break;
@@ -981,8 +1001,8 @@
                     set_str += 'baseline: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
-                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true>>, point2: <<id: \'';
-                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true, frozen: true>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true, frozen: true>>, label: <<id: \'';
                     set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 

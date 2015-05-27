@@ -106,13 +106,7 @@ define([
         el = board.create('curve', [[0], [0]], attr);
 
         el.elType = 'arc';
-
-        el.parents = [];
-        for (i = 0; i < points.length; i++) {
-            if (points[i].id) {
-                el.parents.push(points[i].id);
-            }
-        }
+        el.setParents(points);
 
         /**
          * documented in JXG.GeometryElement
@@ -416,7 +410,7 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'semicircle');
         el = board.create('arc', [mp, points[1], points[0]], attr);
         el.elType = 'semicircle';
-        el.parents = [points[0].id, points[1].id];
+        el.setParents([points[0].id, points[1].id]);
         el.subs = {
             midpoint: mp
         };
@@ -484,7 +478,7 @@ define([
         el = board.create('arc', [mp, points[0], points[2], points[1]], attr);
 
         el.elType = 'circumcirclearc';
-        el.parents = [points[0].id, points[1].id, points[2].id];
+        el.setParents([points[0].id, points[1].id, points[2].id]);
         el.subs = {
             center: mp
         };

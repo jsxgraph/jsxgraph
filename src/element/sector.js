@@ -165,7 +165,7 @@ define([
 
             el.line1.addChild(el);
             el.line2.addChild(el);
-            el.parents = [parents[0].id, parents[1].id];
+            el.setParents(parents);
 
             el.point1 = {visProp: {}};
             el.point2 = {visProp: {}};
@@ -295,7 +295,7 @@ define([
 
             // useDirection is necessary for circumCircleSectors
             el.useDirection = attributes.usedirection;
-            el.parents = [points[0].id, points[1].id, points[2].id];
+            el.setParents(points);
 
             /**
             * Defines the sectors orientation in case of circumCircleSectors.
@@ -597,7 +597,7 @@ define([
         el = board.create('sector', [mp, points[0], points[2], points[1]], attr);
 
         el.elType = 'circumcirclesector';
-        el.parents = [points[0].id, points[1].id, points[2].id];
+        el.setParents(points);
 
         /**
          * Center of the circumcirclesector
@@ -879,7 +879,7 @@ define([
                     t = this.board.create('transform', [val, this.center], {type: 'rotate'});
                     p.addTransform(q, t);
                     p.isDraggable = false;
-                    p.parents = [q];
+                    p.setParents(q);
                 }
                 return this;
             };
@@ -902,7 +902,7 @@ define([
                 return this;
             };
 
-            el.parents = [points[0].id, points[1].id, points[2].id]; // Important: This overwrites the parents order in underlying sector
+            el.setParents(points); // Important: This overwrites the parents order in underlying sector
 
         } // end '3points'
 
@@ -913,7 +913,6 @@ define([
 
         el.elType = 'angle';
         el.type = Const.OBJECT_TYPE_ANGLE;
-        // el.parents = [points[0].id, points[1].id, points[2].id];
         el.subs = {};
 
         el.updateDataArraySquare = function () {
@@ -1114,7 +1113,7 @@ define([
     JXG.registerElement('angle', JXG.createAngle);
 
     /**
-     * @class A non-reflex angle is the acute or obtuse instance of an angle. 
+     * @class A non-reflex angle is the acute or obtuse instance of an angle.
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
@@ -1145,14 +1144,21 @@ define([
      * </script><pre>
      */
     JXG.createNonreflexAngle = function (board, parents, attributes) {
+        var el;
+
         attributes.selection = 'minor';
-        return JXG.createAngle(board, parents, attributes);
+        el = JXG.createAngle(board, parents, attributes);
+        el.Value = function () {
+            var v = Geometry.rad(this.point2, this.point1, this.point3);
+            return (v < Math.PI) ? v : 2.0 * Math.PI - v;
+        };
+        return el;
     };
 
     JXG.registerElement('nonreflexangle', JXG.createNonreflexAngle);
 
     /**
-     * @class A reflex angle is the neither acute nor obtuse instance of an angle. 
+     * @class A reflex angle is the neither acute nor obtuse instance of an angle.
      * It is defined by a center, one point that
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
@@ -1183,12 +1189,18 @@ define([
      * </script><pre>
      */
     JXG.createReflexAngle = function (board, parents, attributes) {
+        var el;
+
         attributes.selection = 'major';
-        return JXG.createAngle(board, parents, attributes);
+        el = JXG.createAngle(board, parents, attributes);
+        el.Value = function () {
+            var v = Geometry.rad(this.point2, this.point1, this.point3);
+            return (v >= Math.PI) ? v : 2.0 * Math.PI - v;
+        };
+        return el;
     };
 
     JXG.registerElement('reflexangle', JXG.createReflexAngle);
-
 
     return {
         createSector: JXG.createSector,

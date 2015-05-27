@@ -458,7 +458,7 @@ define([
 //console.log("B", this.numberPoints);     
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
-//console.log("A", this.numberPoints);                
+//console.log("A", this.numberPoints);
             }
 
             return this;
@@ -731,7 +731,7 @@ define([
         /**
          * Investigate a function term at the bounds of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
-         * 
+         *
          * c is inbetween a and b
          * @private
          * @param {Array} a Screen coordinates of the left interval bound
@@ -815,7 +815,7 @@ define([
          * Compute distances in screen coordinates between the points ab,
          * ac, cb, and cd, where d = (a + b)/2.
          * cd is used for the smoothness test, ab, ac, cb are used to detect jumps, cusps and poles.
-         * 
+         *
          * @private
          * @param {Array} a Screen coordinates of the left interval bound
          * @param {Array} b Screen coordinates of the right interval bound
@@ -840,7 +840,7 @@ define([
          * If the interval borders a and b are undefined, 20 random values
          * are tested if they are undefined, too.
          * Only if all values are undefined, we declare the function to be undefined in this interval.
-         * 
+         *
          * @private
          * @param {Array} a Screen coordinates of the left interval bound
          * @param {Number} ta Parameter which evaluates to a, i.e. [1, X(ta), Y(ta)] = a in screen coordinates
@@ -872,19 +872,14 @@ define([
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight;
 
-            if ((a[1] < -off && b[1] < -off) ||
-                    (a[2] < -off && b[2] < -off) ||
-                    (a[1] > cw + off && b[1] > cw + off) ||
-                    (a[2] > ch + off && b[2] > ch + off)) {
-
-                return true;
-            } else {
-                return false;
-            }
+            return !!((a[1] < -off && b[1] < -off) ||
+            (a[2] < -off && b[2] < -off) ||
+            (a[1] > cw + off && b[1] > cw + off) ||
+            (a[2] > ch + off && b[2] > ch + off));
         },
 
         /**
-         * Recursive interval bisection algorithm for curve plotting. 
+         * Recursive interval bisection algorithm for curve plotting.
          * Used in {@link JXG.Curve.updateParametricCurve}.
          * @private
          * @param {Array} a Screen coordinates of the left interval bound
@@ -1000,7 +995,7 @@ define([
 //console.log("NUmber points", this.points.length, this.board.updateQuality, this.board.BOARD_QUALITY_LOW);
 
             this.numberPoints = this.points.length;
-//var etime = new Date();            
+//var etime = new Date();
 //console.log(this.name, this.numberPoints, etime.getTime() - stime.getTime(), this.board.updateQuality===this.board.BOARD_QUALITY_HIGH);
 
             return this;
@@ -1290,7 +1285,7 @@ define([
         bounds: function () {
             var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity,
                 l = this.points.length, i;
-            
+
             if (this.bezierDegree === 3) {
                 // Add methods X(), Y()
                 for (i = 0; i < l; i++) {
@@ -1303,7 +1298,7 @@ define([
                 maxX = Numerics.fminbr(function(t) { return -bezier[0](t); }, [0, up]);
                 minY = Numerics.fminbr(function(t) { return bezier[1](t); }, [0, up]);
                 maxY = Numerics.fminbr(function(t) { return -bezier[1](t); }, [0, up]);
-                
+
                 minX = bezier[0](minX);
                 maxX = bezier[0](maxX);
                 minY = bezier[1](minY);
@@ -1437,7 +1432,7 @@ define([
      *   var a = c2_board.create('slider',[[0,2],[2,2],[0,1,2]]);
      *   var graph2 = c2_board.create('curve', [function(phi){ return a.Value()*(1-Math.cos(phi));}, [1,0], 0, 2*Math.PI]);
      * </script><pre>
-     * 
+     *
      * @example
      *  // Draggable Bezier curve
      *  var col, p, c;
@@ -1447,7 +1442,7 @@ define([
      *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
      *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
      *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
-     *  
+     *
      *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
      *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
      *  c.addParents(p);
@@ -1462,14 +1457,14 @@ define([
      *  p.push(board.create('point',[1, 2.5 ], {size: 5, strokeColor:col, fillColor:col}));
      *  p.push(board.create('point',[-1, -2.5 ], {size: 5, strokeColor:col, fillColor:col}));
      *  p.push(board.create('point',[2, -2], {size: 5, strokeColor:col, fillColor:col}));
-     *  
+     *
      *  c = board.create('curve', JXG.Math.Numerics.bezier(p),
      *              {strokeColor:'red', name:"curve", strokeWidth:5, fixed: false}); // Draggable curve
      *  c.addParents(p);
      * })();
      * </script><pre>
-     * 
-     * 
+     *
+     *
      */
     JXG.createCurve = function (board, parents, attributes) {
         var attr = Type.copyAttributes(attributes, board.options, 'curve');
@@ -1613,17 +1608,18 @@ define([
 
     /**
      * @class This element is used to provide a constructor for Riemann sums, which is realized as a special curve.
-     * The returned element has the method Value() which returns the sum of the areas of the rectangles.
+     * The returned element has the method Value() which returns the sum of the areas of the bars.
      * @pseudo
      * @description
      * @name Riemannsum
      * @augments JXG.Curve
      * @constructor
      * @type JXG.Curve
-     * @param {function_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a
-     *         function term f(x) describing the function graph which is filled by the Riemann rectangles.
+     * @param {function,array_number,function_string,function_function,number_function,number} f,n,type_,a_,b_ Parent elements of Riemannsum are a
+     *         Either a function term f(x) describing the function graph which is filled by the Riemann bars, or
+     *         an array consisting of two functions and the area between is filled by the Riemann bars.
      *         <p>
-     *         n determines the number of rectangles, it is either a fixed number or a function.
+     *         n determines the number of bars, it is either a fixed number or a function.
      *         <p>
      *         type is a string or function returning one of the values:  'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezodial'.
      *         Default value is 'left'.
@@ -1650,6 +1646,31 @@ define([
      *   var s = rs1_board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
      *   var r = rs1_board.create('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
      *   var g = rs1_board.create('functiongraph', [f, -2, 5]);
+     *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     * </script><pre>
+     *
+     * @example
+     *   // Riemann sum between two functions
+     *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+     *   var g = function(x) { return 0.5*x*x-2*x; };
+     *   var f = function(x) { return -x*(x-4); };
+     *   var r = board.create('riemannsum',
+     *               [[g,f], function(){return s.Value();}, 'lower', 0, 4],
+     *               {fillOpacity:0.4}
+     *               );
+     *   var g = board.create('functiongraph',[f, -2, 5]);
+     *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     * </pre><div id="f9a7ba38-b50f-4a32-a873-2f3bf9caee79" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *   var rs1_board = JXG.JSXGraph.initBoard('f9a7ba38-b50f-4a32-a873-2f3bf9caee79', {boundingbox: [-3, 7, 5, -3], axis: true, showcopyright: false, shownavigation: false});
+     *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
+     *   var g = function(x) { return 0.5*x*x-2*x; };
+     *   var f = function(x) { return -x*(x-4); };
+     *   var r = board.create('riemannsum',
+     *               [[g,f], function(){return s.Value();}, 'lower', 0, 4],
+     *               {fillOpacity:0.4}
+     *               );
+     *   var g = board.create('functiongraph',[f, -2, 5]);
      *   var t = board.create('text',[-1,-1, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
      * </script><pre>
      */
@@ -1843,7 +1864,7 @@ define([
 
     /**
      * @class This element is used to provide a constructor for step function, which is realized as a special curve.
-     * 
+     *
      * In case the data points should be updated after creation time, they can be accessed by curve.xterm and curve.yterm.
      * @pseudo
      * @description

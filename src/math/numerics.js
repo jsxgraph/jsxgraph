@@ -484,7 +484,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} [config] The algorithm setup. Accepted properties are max_iterations of type number and precision eps.
          * @param {Number} [config.max_iterations=20]
-         * @param {Number} [config.eps=0.0000001] 
+         * @param {Number} [config.eps=0.0000001]
          * @returns {Number} Integral value of f over interval
          * @example
          * function f(x) {
@@ -506,30 +506,30 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             var a, b, h, s, n,
                 k, i, q,
                 p = [],
-                integral = 0.0, 
-                last = Infinity, 
+                integral = 0.0,
+                last = Infinity,
                 m = config && typeof config.max_iterations === 'number' ? config.max_iterations : 20,
                 eps = config && typeof config.eps === 'number' ? config.eps : config.eps || 0.0000001;
-            
+
             a = interval[0];
             b = interval[1];
             h = b - a;
             n = 1;
-            
+
             p[0] = 0.5 * h * (f(a) + f(b));
-            
+
             for (k = 0; k < m; ++k) {
                 s = 0;
                 h *= 0.5;
                 n *= 2;
                 q = 1;
-                
+
                 for (i = 1; i < n; i += 2) {
                     s += f(a + i * h);
                 }
 
                 p[k + 1] = 0.5 * p[k] + s * h;
-                
+
                 integral = p[k + 1];
                 for (i = k - 1; i >= 0; --i) {
                     q *= 4;
@@ -542,7 +542,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 }
                 last = integral;
             }
-                
+
             return integral;
         },
 
@@ -551,7 +551,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} [config] The algorithm setup. Accepted property is the order n of type number. n is allowed to take
-         * values between 2 and 18, default value is 12. 
+         * values between 2 and 18, default value is 12.
          * @param {Number} [config.n=16]
          * @returns {Number} Integral value of f over interval
          * @example
@@ -571,19 +571,19 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         GaussLegendre: function (interval, f, config) {
-            var a, b, 
+            var a, b,
                 i, x, m,
-                xp, xm, 
+                xp, xm,
                 result = 0.0,
                 table_xi = [],
                 table_w = [],
                 xi, w,
                 n = config && typeof config.n === 'number' ? config.n : 12;
-               
+
             if (n > 18) {
                 n = 18;
             }
-            
+
             /* n = 2 */
             table_xi[2] = [0.5773502691896257645091488];
             table_w[2] = [1.0000000000000000000000000];
@@ -595,7 +595,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             /* n = 6 */
             table_xi[6] = [0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016];
             table_w[6] = [0.4679139345726910473898703, 0.3607615730481386075698335, 0.1713244923791703450402961];
-            
+
             /* n = 8 */
             table_xi[8] = [0.1834346424956498049394761, 0.5255324099163289858177390, 0.7966664774136267395915539, 0.9602898564975362316835609];
             table_w[8] = [0.3626837833783619829651504, 0.3137066458778872873379622, 0.2223810344533744705443560, 0.1012285362903762591525314];
@@ -654,16 +654,16 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             a = interval[0];
             b = interval[1];
-            
+
             //m = Math.ceil(n * 0.5);
             m = (n + 1) >> 1;
-            
+
             xi = table_xi[n];
             w = table_w[n];
-            
+
             xm = 0.5 * (b - a);
             xp = 0.5 * (b + a);
-            
+
             if (n & 1 === 1) { // n odd
                 result = w[0] * f(xp);
                 for (i = 1; i < m; ++i) {
@@ -677,23 +677,23 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             }
 
             return xm * result;
-        }, 
+        },
 
         /**
          * Scale error in Gauss Kronrod quadrature.
          * Internal method used in {@link #_gaussKronrod}.
-         * @private 
+         * @private
          * @memberof JXG.Math.Numerics
          */
         _rescale_error: function(err, result_abs, result_asc) {
             var scale, min_err,
                 DBL_MIN = 2.2250738585072014e-308,
                 DBL_EPS = 2.2204460492503131e-16;
-            
+
             err = Math.abs(err);
             if (result_asc != 0 && err != 0) {
                 scale = Math.pow((200 * err / result_asc), 1.5);
-            
+
                 if (scale < 1.0) {
                     err = result_asc * scale;
                 } else {
@@ -707,7 +707,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     err = min_err;
                 }
             }
-  
+
             return err;
         },
 
@@ -723,28 +723,28 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {Array} wgk Weights of the Kronrod rule
          * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
          *  QUADPACK for an explanation.
-         * 
+         *
          * @returns {Number} Integral value of f over interval
-         * 
-         * @private 
+         *
+         * @private
          * @memberof JXG.Math.Numerics
          */
         _gaussKronrod:  function(interval, f, n, xgk, wg, wgk, resultObj) {
             var a = interval[0],
                 b = interval[1],
                 up, result,
-                
+
                 center = 0.5 * (a + b),
                 half_length = 0.5 * (b - a),
                 abs_half_length = Math.abs(half_length),
                 f_center = f(center),
-                
+
                 result_gauss = 0.0,
                 result_kronrod = f_center * wgk[n - 1],
 
                 result_abs = Math.abs(result_kronrod),
                 result_asc = 0.0,
-                mean = 0.0, 
+                mean = 0.0,
                 err = 0.0,
 
                 j, jtw, abscissa, fval1, fval2, fsum,
@@ -754,10 +754,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             if (n % 2 == 0) {
                 result_gauss = f_center * wg[n / 2 - 1];
             }
-            
+
             up = Math.floor((n - 1) / 2);
             for (j = 0; j < up; j++) {
-                jtw = j * 2 + 1;  // in original fortran j=1,2,3 jtw=2,4,6 
+                jtw = j * 2 + 1;  // in original fortran j=1,2,3 jtw=2,4,6
                 abscissa = half_length * xgk[jtw];
                 fval1 = f(center - abscissa);
                 fval2 = f(center + abscissa);
@@ -788,7 +788,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 result_asc += wgk[j] * (Math.abs(fv1[j] - mean) + Math.abs(fv2[j] - mean));
             }
 
-            // scale by the width of the integration region 
+            // scale by the width of the integration region
             err = (result_kronrod - result_gauss) * half_length;
 
             result_kronrod *= half_length;
@@ -799,7 +799,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             resultObj.abserr = this._rescale_error(err, result_abs, result_asc);
             resultObj.resabs = result_abs;
             resultObj.resasc = result_asc;
-            
+
             return result;
         },
 
@@ -809,9 +809,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
          *  QUADPACK for an explanation.
-         * 
+         *
          * @returns {Number} Integral value of f over interval
-         * 
+         *
          * @memberof JXG.Math.Numerics
          */
         GaussKronrod15: function(interval, f, resultObj) {
@@ -831,7 +831,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.000000000000000000000000000000000
                     ],
 
-            /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule. 
+            /* xgk[1], xgk[3], ... abscissae of the 7-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 7-point gauss rule */
 
                 wg =     /* weights of the 7-point gauss rule */
@@ -863,9 +863,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
          *  QUADPACK for an explanation.
-         * 
+         *
          * @returns {Number} Integral value of f over interval
-         * 
+         *
          * @memberof JXG.Math.Numerics
          */
         GaussKronrod21: function(interval, f, resultObj) {
@@ -888,7 +888,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.000000000000000000000000000000000
                     ],
 
-                /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
+                /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
                 wg =     /* weights of the 10-point gauss rule */
                     [
@@ -913,7 +913,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.147739104901338491374841515972068,
                         0.149445554002916905664936468389821
                     ];
-                    
+
                 return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, resultObj);
         },
 
@@ -923,9 +923,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
          *  QUADPACK for an explanation.
-         * 
+         *
          * @returns {Number} Integral value of f over interval
-         * 
+         *
          * @memberof JXG.Math.Numerics
          */
         GaussKronrod31: function(interval, f,resultObj) {
@@ -953,7 +953,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.000000000000000000000000000000000
                     ],
 
-                /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule. 
+                /* xgk[1], xgk[3], ... abscissae of the 10-point gauss rule.
                 xgk[0], xgk[2], ... abscissae to optimally extend the 10-point gauss rule */
                 wg =     /* weights of the 10-point gauss rule */
                     [
@@ -990,12 +990,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, resultObj);
         },
 
-        /** 
+        /**
          * Generate workspace object for {@link #Qag}.
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {Number} n Max. limit
          * @returns {Object} Workspace object
-         * 
+         *
          * @private
          * @memberof JXG.Math.Numerics
          */
@@ -1011,7 +1011,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 elist: [0.0],
                 order: [0],
                 level: [0],
-                
+
                 qpsrt: function() {
                     var last = this.size - 1,
                         limit = this.limit,
@@ -1036,7 +1036,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     while (i_nrmax > 0 && errmax > this.elist[order[i_nrmax - 1]]) {
                         this.order[i_nrmax] = this.order[i_nrmax - 1] ;
                         i_nrmax-- ;
-                    } 
+                    }
 
                     /* Compute the number of elements in the list to be maintained in
                         descending order. This number depends on the number of
@@ -1046,29 +1046,29 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else {
                         top = limit - last + 1;
                     }
-  
+
                     /* Insert errmax by traversing the list top-down, starting
                         comparison from the element elist(order(i_nrmax+1)). */
                     i = i_nrmax + 1 ;
-  
+
                     /* The order of the tests in the following line is important to
                         prevent a segmentation fault */
                     while (i < top && errmax < this.elist[this.order[i]]) {
                         this.order[i-1] = this.order[i];
                         i++;
                     }
-  
+
                     this.order[i-1] = i_maxerr;
-  
+
                     /* Insert errmin by traversing the list bottom-up */
                     errmin = this.elist[last];
                     k = top - 1;
-  
+
                     while (k > i - 2 && errmin >= this.elist[this.order[k]]) {
                         this.order[k+1] = this.order[k];
                         k--;
                     }
-  
+
                     this.order[k+1] = last;
 
                     /* Set i_max and e_max */
@@ -1076,26 +1076,26 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     this.i = i_maxerr;
                     this.nrmax = i_nrmax;
                 },
-                
+
                 set_initial_result: function (result, error) {
                     this.size = 1;
                     this.rlist[0] = result;
                     this.elist[0] = error;
                 },
-                
+
                 update: function(a1, b1, area1, error1, a2, b2, area2, error2) {
                     var i_max = this.i,
                         i_new = this.size,
                         new_level = this.level[this.i] + 1;
 
                     /* append the newly-created intervals to the list */
-  
+
                     if (error2 > error1) {
                         this.alist[i_max] = a2;        /* blist[maxerr] is already == b2 */
                         this.rlist[i_max] = area2;
                         this.elist[i_max] = error2;
                         this.level[i_max] = new_level;
-      
+
                         this.alist[i_new] = a1;
                         this.blist[i_new] = b1;
                         this.rlist[i_new] = area1;
@@ -1106,14 +1106,14 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         this.rlist[i_max] = area1;
                         this.elist[i_max] = error1;
                         this.level[i_max] = new_level;
-      
+
                         this.alist[i_new] = a2;
                         this.blist[i_new] = b2;
                         this.rlist[i_new] = area2;
                         this.elist[i_new] = error2;
                         this.level[i_new] = new_level;
                     }
-  
+
                     this.size++;
 
                     if (new_level > this.maximum_level) {
@@ -1122,17 +1122,17 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                     this.qpsrt();
                 },
-                
+
                 retrieve: function() {
                     var i = this.i;
                     return {
                         a: this.alist[i],
                         b: this.blist[i],
                         r: this.rlist[i],
-                        e: this.elist[i],
+                        e: this.elist[i]
                     }
                 },
-                
+
                 sum_results: function() {
                     var n = this.size,
                         k,
@@ -1141,29 +1141,28 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     for (k = 0; k < n; k++) {
                         result_sum += this.rlist[k];
                     }
-  
+
                     return result_sum;
                 },
-               
+
                 subinterval_too_small: function(a1, a2,  b2) {
                     var e = 2.2204460492503131e-16,
-                    u = 2.2250738585072014e-308,
-                    tmp = (1 + 100 * e) * (Math.abs (a2) + 1000 * u),
-                    status = Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
+                        u = 2.2250738585072014e-308,
+                        tmp = (1 + 100 * e) * (Math.abs (a2) + 1000 * u);
 
-                    return status;
+                    return  Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
                 }
-                
+
             };
         },
-                
+
         /**
          * Quadrature algorithm qag from QUADPACK.
          * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} [config] The algorithm setup. Accepted propert are max. recursion limit of type number,
-         * and epsrel and epsabs, the relative and absolute required precision of type number. Further, 
+         * and epsrel and epsabs, the relative and absolute required precision of type number. Further,
          * q the internal quadrature sub-algorithm of type function.
          * @param {Number} [config.limit=15]
          * @param {Number} [config.epsrel=0.0000001]
@@ -1190,12 +1189,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         Qag: function(interval, f, config) {
             var DBL_EPS = 2.2204460492503131e-16,
                 ws = this._workspace(interval, 1000),
-                
+
                 limit = config && typeof config.limit === 'number' ? config.limit : 15,
                 epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
                 epsabs = config && typeof config.epsabs === 'number' ? config.epsabs : 0.0000001,
                 q = config && typeof config.q === 'function' ? config.q : this.GaussKronrod15,
-                
+
                 resultObj = {},
                 area, errsum,
                 result0, abserr0, resabs0, resasc0,
@@ -1203,8 +1202,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 tolerance,
                 iteration = 0,
                 roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0,
-                round_off;     
-            
+                round_off;
+
             if (limit > ws.limit) {
                 console.log("iteration limit exceeds available workspace");
             }
@@ -1212,15 +1211,15 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 console.log("tolerance cannot be acheived with given epsabs and epsrel");
             }
 
-            result0 = q.apply(this, [interval, f, resultObj]); 
+            result0 = q.apply(this, [interval, f, resultObj]);
             abserr0 = resultObj.abserr;
             resabs0 = resultObj.resabs;
             resasc0 = resultObj.resasc;
-            
+
             ws.set_initial_result(result0, abserr0);
             tolerance = Math.max(epsabs, epsrel * Math.abs(result0));
             round_off = 50 * DBL_EPS * resabs0;
-            
+
             if (abserr0 <= round_off && abserr0 > tolerance)    {
                 result = result0;
                 abserr = abserr0;
@@ -1250,7 +1249,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     area1 = 0, area2 = 0, area12 = 0,
                     error1 = 0, error2 = 0, error12 = 0,
                     resasc1, resasc2,
-                    resabs1, resabs2, 
+                    resabs1, resabs2,
                     wsObj, resObj,
                     delta;
 
@@ -1260,20 +1259,20 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 b_i = wsObj.b;
                 r_i = wsObj.r;
                 e_i = wsObj.e;
-                
-                a1 = a_i; 
+
+                a1 = a_i;
                 b1 = 0.5 * (a_i + b_i);
                 a2 = b1;
                 b2 = b_i;
 
                 area1 = q.apply(this, [[a1, b1], f, resultObj]);
                 error1 = resultObj.abserr;
-                resabs1 = resultObj.resabs; 
+                resabs1 = resultObj.resabs;
                 resasc1 = resultObj.resasc;
-                
+
                 area2 = q.apply(this, [[a2, b2], f, resultObj]);
                 error2 = resultObj.abserr;
-                resabs2 = resultObj.resabs; 
+                resabs2 = resultObj.resabs;
                 resasc2 = resultObj.resasc;
 
                 area12 = area1 + area2;
@@ -1313,7 +1312,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 b_i = wsObj.b_i;
                 r_i = wsObj.r_i;
                 e_i = wsObj.e_i;
-                
+
                 iteration++;
 
             } while (iteration < limit && !error_type && errsum > tolerance);
@@ -1343,11 +1342,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
     {
       GSL_ERROR ("could not integrate function", GSL_EFAILED);
     }
-*/            
-            
+*/
+
             return result;
         },
-        
+
         /**
          * Integral of function f over interval.
          * @param {Array} interval The integration interval, e.g. [0, 3].
@@ -2195,9 +2194,86 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         },
 
         /**
+         * Evaluate the function term for {@see #riemann}.
+         * @private
+         * @param {Number} x function argument
+         * @param {function} f JavaScript function returning a number
+         * @param {String} type Name of the Riemann sum type, e.g. 'lower', see {@see #riemann}.
+         * @param {Number} delta Width of the bars in user coordinates
+         * @returns {Number} Upper (delta > 0) or lower (delta < 0) value of the bar containing x of the Riemann sum.
+         *
+         * @memberof JXG.Math.Numerics
+         */
+        _riemannValue: function(x, f, type, delta) {
+            var y, y1, x1, delta1;
+
+            if (delta < 0) { // delta is negative if the lower function term is evaluated
+                if (type !== 'trapezoidal') {
+                    x = x + delta;
+                }
+                delta *= -1;
+                if (type == 'lower') {
+                    type = 'upper';
+                } else if (type == 'upper') {
+                    type = 'lower';
+                }
+            }
+
+            delta1 = delta * 0.01; // for 'lower' and 'upper'
+
+            if (type === 'right') {
+                y = f(x + delta);
+            } else if (type === 'middle') {
+                y = f(x + delta * 0.5);
+            } else if (type === 'left' || type === 'trapezoidal') {
+                y = f(x);
+            } else if (type === 'lower') {
+                y = f(x);
+
+                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                    y1 = f(x1);
+
+                    if (y1 < y) {
+                        y = y1;
+                    }
+                }
+
+                y1 = f(x + delta);
+                if (y1 < y) {
+                    y = y1;
+                }
+            } else if (type === 'upper') {
+                y = f(x);
+
+                for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
+                    y1 = f(x1);
+                    if (y1 > y) {
+                        y = y1;
+                    }
+                }
+
+                y1 = f(x + delta);
+                if (y1 > y) {
+                    y = y1;
+                }
+            } else if (type === 'random') {
+                y = f(x + delta * Math.random());
+            } else if (type === 'simpson') {
+                y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
+            } else {
+                y = f(x);  // default is lower
+            }
+
+            return y;
+        },
+
+        /**
          * Helper function to create curve which displays Riemann sums.
          * Compute coordinates for the rectangles showing the Riemann sum.
-         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Function,Array} f Function or array of two functions.
+         * If f is a function the integral of this function is approximated by the Riemann sum.
+         * If f is an array consisting of two functions the area between the two functions is filled
+         * by the Riemann sum bars.
          * @param {Number} n number of rectangles.
          * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson', or 'trapezoidal'.
          * @param {Number} start Left border of the approximation interval
@@ -2207,87 +2283,88 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * rectangles.
          * @memberof JXG.Math.Numerics
          */
-        riemann: function (f, n, type, start, end) {
-            var i, x1, y1, delta1, delta,
+        riemann: function (gf, n, type, start, end) {
+            var i, delta,
                 xarr = [],
                 yarr = [],
                 j = 0,
                 x = start, y,
-                sum = 0;
+                sum = 0,
+                f, g,
+                ylow, yup;
 
-            n = Math.round(n);
-
-            xarr[j] = x;
-            yarr[j] = 0.0;
-
-            if (n > 0) {
-                delta = (end - start) / n;
-                // for 'lower' and 'upper'
-                delta1 = delta * 0.01;
-
-                for (i = 0; i < n; i++) {
-                    if (type === 'right') {
-                        y = f(x + delta);
-                    } else if (type === 'middle') {
-                        y = f(x + delta * 0.5);
-                    } else if (type === 'left' || type === 'trapezoidal') {
-                        y = f(x);
-                    } else if (type === 'lower') {
-                        y = f(x);
-
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 < y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 < y) {
-                            y = y1;
-                        }
-                    } else if (type === 'upper') {
-                        y = f(x);
-
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 > y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 > y) {
-                            y = y1;
-                        }
-                    } else if (type === 'random') {
-                        y = f(x + delta * Math.random());
-                    } else if (type === 'simpson') {
-                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
-                    } else {
-                        y = f(x);  // default is lower
-                    }
-
-                    j += 1;
-                    xarr[j] = x;
-                    yarr[j] = y;
-                    j += 1;
-                    x += delta;
-
-                    if (type === 'trapezoidal') {
-                        y = f(x);
-                    }
-
-                    xarr[j] = x;
-                    yarr[j] = y;
-                    j += 1;
-                    xarr[j] = x;
-                    yarr[j] = 0.0;
-                    sum += y * delta;
-                }
+            if (Type.isArray(gf)) {
+                g = gf[0];
+                f = gf[1];
+            } else {
+                f = gf;
             }
+
+            n = Math.floor(n);
+
+            if (n <= 0) {
+                return [xarr, yarr, sum];
+            }
+
+            delta = (end - start) / n;
+
+            // Upper bar ends
+            for (i = 0; i < n; i++) {
+                y = this._riemannValue(x, f, type, delta);
+                xarr[j] = x;
+                yarr[j] = y;
+
+                j += 1;
+                x += delta;
+                if (type === 'trapezoidal') {
+                    y = f(x);
+                }
+                xarr[j] = x;
+                yarr[j] = y;
+
+                j += 1;
+            }
+
+            // Lower bar ends
+            for (i = 0; i < n; i++) {
+                if (g) {
+                    y = this._riemannValue(x, g, type, -delta);
+                } else {
+                    y = 0.0;
+                }
+                xarr[j] = x;
+                yarr[j] = y;
+
+                j += 1;
+                x -= delta;
+                if (type === 'trapezoidal' && g) {
+                    y = g(x);
+                }
+                xarr[j] = x;
+                yarr[j] = y;
+
+                // Add the area of the bar to 'sum'
+                if (type !== 'trapezoidal') {
+                    ylow = y;
+                    yup = yarr[2 * (n - 1) - 2 * i];
+                } else {
+                    yup = 0.5 * (f(x + delta) + f(x));
+                    if (g) {
+                        ylow = 0.5 * (g(x + delta) + g(x));
+                    } else {
+                        ylow = 0.0;
+                    }
+                }
+                sum += (yup - ylow) * delta;
+
+                // Draw the vertical lines
+                j += 1;
+                xarr[j] = x;
+                yarr[j] = yarr[2 * (n - 1) - 2 * i];
+
+                j += 1;
+            }
+
             return [xarr, yarr, sum];
         },
 
@@ -2295,7 +2372,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * Approximate the integral by Riemann sums.
          * Compute the area described by the riemann sum rectangles.
          * @deprecated Replaced by JXG.Curve.Value(), see {@link JXG.Curve#riemannsum}
-         * @param {function} f Function, whose integral is approximated by the Riemann sum.
+         * @param {Function_Array} f Function or array of two functions.
+         * If f is a function the integral of this function is approximated by the Riemann sum.
+         * If f is an array consisting of two functions the area between the two functions is approximated
+         * by the Riemann sum.
          * @param {Number} n number of rectangles.
          * @param {String} type Type of approximation. Possible values are: 'left', 'right', 'middle', 'lower', 'upper', 'random', 'simpson' or 'trapezoidal'.
          *
@@ -2305,6 +2385,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         riemannsum: function (f, n, type, start, end) {
+            return this.riemann(f, n, type, start, end)[2];
+            /*
             var i, x1, y1, delta1, delta, y,
                 sum = 0.0,
                 x = start;
@@ -2363,13 +2445,13 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     } else {
                         y = f(x);  // default is lower
                     }
-
                     sum += delta * y;
                     x += delta;
                 }
             }
 
             return sum;
+            */
         },
 
         /**

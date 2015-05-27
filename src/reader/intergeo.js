@@ -599,14 +599,13 @@
             var param = this.readParams(node),
                 a = this.objects[param[0]].coords[0],
                 b = this.objects[param[0]].coords[1],
-                c = this.objects[param[0]].coords[2],
-                el = this.board.create('line', [c, a, b], {
-                    name: param[0],
-                    id: param[0],
-                    withLabel: true
-                });
+                c = this.objects[param[0]].coords[2];
 
-            this.objects[param[0]] = el;
+            this.objects[param[0]] = this.board.create('line', [c, a, b], {
+                name: param[0],
+                id: param[0],
+                withLabel: true
+            });
             this.objects[param[0]].exists = true;
         },
 

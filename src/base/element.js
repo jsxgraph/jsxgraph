@@ -437,6 +437,18 @@ define([
         },
 
         /**
+         * Sets ids of elements to the array this.parents.
+         * First, this.parents is cleared. See {@link Element#addParents}.
+         * @param {Array} parents Array of elements or ids of elements.
+         * Alternatively, one can give a list of objects as parameters.
+         * @returns {JXG.Object} reference to the object itself.
+         **/
+        setParents: function(parents) {
+            this.parents = [];
+            this.addParents(parents);
+        },
+
+        /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
          */
@@ -535,7 +547,7 @@ define([
          */
         draggable: function () {
             return this.isDraggable && !this.visProp.fixed &&
-                !this.visProp.frozen && this.type !== Const.OBJECT_TYPE_GLIDER;
+                /*!this.visProp.frozen &&*/ this.type !== Const.OBJECT_TYPE_GLIDER;
         },
 
         /**
@@ -1020,6 +1032,12 @@ define([
                     case 'onpolygon':
                         if (this.type === Const.OBJECT_TYPE_GLIDER) {
                             this.onPolygon = !!value;
+                        }
+                        break;
+                    case 'disabled':
+                        // button, checkbox, input. Is not available on initial call.
+                        if (JXG.exists(this.rendNodeTag)) {
+                            this.rendNodeTag.disabled = !!value;
                         }
                         break;
                     default:

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013
+    Copyright 2008-2015
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -91,11 +91,6 @@ define([
         pos0 = parents[0];
         pos1 = parents[1];
 
-        attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
-        withTicks = attr.withticks;
-        withText = attr.withlabel;
-        precision = attr.precision;
-
         // start point
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure', 'point1');
         p1 = board.create('point', pos0,  attr);
@@ -109,6 +104,9 @@ define([
 
         // tape measure line
         attr = Type.copyAttributes(attributes, board.options, 'tapemeasure');
+        withTicks = attr.withticks;
+        withText = attr.withlabel;
+        precision = attr.precision;
 
         // Below, we will replace the label by the measurement function.
         if (withText) {
@@ -155,7 +153,7 @@ define([
         p2.dump = false;
 
         li.elType = 'tapemeasure';
-        li.parents = parents;
+        //li.parents = parents;
         li.subs = {
             point1: p1,
             point2: p2

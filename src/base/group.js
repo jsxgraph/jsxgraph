@@ -97,6 +97,8 @@ define([
         this.scalePoints = [];
         this.scaleDirections = {};
 
+        this.parents = [];
+
         if (Type.isArray(objects)) {
             objArray = objects;
         } else {
@@ -145,6 +147,47 @@ define([
 
             this.objects = {};
             return this;
+        },
+
+        /**
+         * Adds ids of elements to the array this.parents. This is a copy
+         * of {@link Element.addParents}.
+         * @param {Array} parents Array of elements or ids of elements.
+         * Alternatively, one can give a list of objects as parameters.
+         * @returns {JXG.Object} reference to the object itself.
+         **/
+        addParents: function (parents) {
+            var i, len, par;
+
+            if (Type.isArray(parents)) {
+                par = parents;
+            } else {
+                par = arguments;
+            }
+
+            len = par.length;
+            for (i = 0; i < len; ++i) {
+                if (Type.isId(par[i])) {
+                    this.parents.push(par[i]);
+                } else if (Type.exists(par[i].id)) {
+                    this.parents.push(par[i].id);
+                }
+            }
+
+            this.parents = Type.uniqueArray(this.parents);
+        },
+
+        /**
+         * Sets ids of elements to the array this.parents. This is a copy
+         * of {@link Element.setParents}
+         * First, this.parents is cleared. See {@link Group#addParents}.
+         * @param {Array} parents Array of elements or ids of elements.
+         * Alternatively, one can give a list of objects as parameters.
+         * @returns {JXG.Object} reference to the object itself.
+         **/
+        setParents: function(parents) {
+            this.parents = [];
+            this.addParents(parents);
         },
 
         /**
@@ -206,7 +249,7 @@ define([
                     s = Geometry.distance(obj.coords.usrCoords.slice(1), center) / s;
                     sx = (this.scaleDirections[drag.id].indexOf('x') >= 0) ? s : 1.0;
                     sy = (this.scaleDirections[drag.id].indexOf('y') >= 0) ? s : 1.0;
-                    
+
                     // Shift scale center to origin, scale and shift the scale center back.
                     t = this.board.create('transform',
                             [1, 0, 0,
@@ -220,7 +263,7 @@ define([
 
             this._update_apply_transformation(drag, t);
 
-            this.needsUpdate = false;  // This is needed here to prevent infinite recursion because 
+            this.needsUpdate = false;  // This is needed here to prevent infinite recursion because
                                        // of the board.updateElements call below,
 
             // Prepare dependent objects for update
@@ -235,7 +278,7 @@ define([
             }
             this.board.updateElements(drag);
 
-            // Now, all group elements have their new position and 
+            // Now, all group elements have their new position and
             // we can update the bookkeeping of the coordinates of the group elements.
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
@@ -248,7 +291,7 @@ define([
         },
 
         /**
-         * @private 
+         * @private
          * Determine what the dragging of a group element should do:
          * rotation, translation, scaling or nothing.
          */
@@ -303,7 +346,7 @@ define([
         },
 
         /**
-         * @private 
+         * @private
          * Determine the Euclidean coordinates of the centroid of the group.
          * @returns {Array} array of length two,
          */
@@ -339,8 +382,8 @@ define([
                     if (Type.exists(this.board.objects[el])) {
                         obj = this.objects[el].point;
 
-                        // Here, it is important that we change the position 
-                        // of elements by using setCoordinates. 
+                        // Here, it is important that we change the position
+                        // of elements by using setCoordinates.
                         // Thus, we avoid the call of snapToGrid().
                         // This is done in the subsequent call of board.updateElements()
                         // in Group.update() above.
@@ -460,7 +503,7 @@ define([
         },
 
         /**
-         * Removes the rotation property from a point of the group. 
+         * Removes the rotation property from a point of the group.
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
@@ -471,7 +514,7 @@ define([
         /**
          * Sets the translation points of the group. Dragging at one of these points results into a translation of the whole group.
          * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
-         * 
+         *
          * By default, all points of the group are translation points.
          * @returns {JXG.Group} returns this group
          */
@@ -489,7 +532,7 @@ define([
         },
 
         /**
-         * Removes the translation property from a point of the group. 
+         * Removes the translation property from a point of the group.
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
@@ -513,7 +556,7 @@ define([
          * Sets the scale points of the group. Dragging at one of these points results into a scaling of the whole group.
          * @param {Array|JXG.Point} objects Array of {@link JXG.Point} or arbitrary number of {@link JXG.Point} elements.
          * @param {String} direction Restricts the directions to be scaled. Possible values are 'x', 'y', 'xy'. Default value is 'xy'.
-         * 
+         *
          * By default, all points of the group are translation points.
          * @returns {JXG.Group} returns this group
          */
@@ -542,12 +585,12 @@ define([
         addScalePoint: function (point, direction) {
             this._addActionPoint('scale', point);
             this.scaleDirections[this.board.select(point).id] = direction || 'xy';
-            
+
             return this;
         },
 
         /**
-         * Removes the scaling property from a point of the group. 
+         * Removes the scaling property from a point of the group.
          * @param {JXG.Point} point {@link JXG.Point} element.
          * @returns {JXG.Group} returns this group
          */
@@ -619,11 +662,11 @@ define([
     });
 
     /**
-     * @class This element combines a given set of {@link JXG.Point} elements to a 
+     * @class This element combines a given set of {@link JXG.Point} elements to a
      *  group. The elements of the group and dependent elements can be translated, rotated and scaled by
      *  dragging one of the group elements.
-     * 
-     * 
+     *
+     *
      * @pseudo
      * @description
      * @name Group
@@ -634,12 +677,12 @@ define([
      * @param {Array} parents Array of points to group.
      * @param {Object} attributes Visual properties (unused).
      * @returns {JXG.Group}
-     * 
+     *
      * @example
      *
      *  // Create some free points. e.g. A, B, C, D
-     *  // Create a group 
-     * 
+     *  // Create a group
+     *
      *  var p, col, g;
      *  col = 'blue';
      *  p = [];
@@ -648,7 +691,7 @@ define([
      *  p.push(board.create('point',[2, 1 ], {size: 5, strokeColor:col, fillColor:col}));
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  g = board.create('group', p);
-     * 
+     *
      * </pre><div id="a2204533-db91-4af9-b720-70394de4d367" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -663,15 +706,15 @@ define([
      *  g = board.create('group', p);
      *  })();
      * </script><pre>
-     * 
-     * 
+     *
+     *
      * @example
      *
      *  // Create some free points. e.g. A, B, C, D
-     *  // Create a group 
-     *  // If the points define a polygon and the polygon has the attribute hasInnerPoints:true, 
+     *  // Create a group
+     *  // If the points define a polygon and the polygon has the attribute hasInnerPoints:true,
      *  // the polygon can be dragged around.
-     * 
+     *
      *  var p, col, pol, g;
      *  col = 'blue';
      *  p = [];
@@ -682,7 +725,7 @@ define([
      *
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p);
-     * 
+     *
      * </pre><div id="781b5564-a671-4327-81c6-de915c8f924e" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -698,12 +741,12 @@ define([
      *  g = board.create('group', p);
      *  })();
      * </script><pre>
-     * 
+     *
      *  @example
-     *  
+     *
      *  // Allow rotations:
      *  // Define a center of rotation and declare points of the group as "rotation points".
-     * 
+     *
      *  var p, col, pol, g;
      *  col = 'blue';
      *  p = [];
@@ -716,7 +759,7 @@ define([
      *  g = board.create('group', p);
      *  g.setRotationCenter(p[0]);
      *  g.setRotationPoints([p[1], p[2]]);
-     * 
+     *
      * </pre><div id="f0491b62-b377-42cb-b55c-4ef5374b39fc" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -736,14 +779,14 @@ define([
      * </script><pre>
      *
      *  @example
-     *  
+     *
      *  // Allow rotations:
-     *  // As rotation center, arbitrary points, coordinate arrays, 
-     *  // or functions returning coordinate arrays can be given. 
+     *  // As rotation center, arbitrary points, coordinate arrays,
+     *  // or functions returning coordinate arrays can be given.
      *  // Another possibility is to use the predefined string 'centroid'.
-     * 
+     *
      *  // The methods to define the rotation points can be chained.
-     * 
+     *
      *  var p, col, pol, g;
      *  col = 'blue';
      *  p = [];
@@ -754,7 +797,7 @@ define([
      *
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
-     * 
+     *
      * </pre><div id="8785b099-a75e-4769-bfd8-47dd4376fe27" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -772,13 +815,13 @@ define([
      * </script><pre>
      *
      *  @example
-     *  
+     *
      *  // Allow scaling:
-     *  // As for rotation one can declare points of the group to trigger a scaling operation. 
-     *  // For this, one has to define a scaleCenter, in analogy to rotations. 
-     * 
+     *  // As for rotation one can declare points of the group to trigger a scaling operation.
+     *  // For this, one has to define a scaleCenter, in analogy to rotations.
+     *
      *  // Here, the yellow  point enables scaling, the red point a rotation.
-     * 
+     *
      *  var p, col, pol, g;
      *  col = 'blue';
      *  p = [];
@@ -790,7 +833,7 @@ define([
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
      *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
-     * 
+     *
      * </pre><div id="c3ca436b-e4fc-4de5-bab4-09790140c675" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -809,14 +852,14 @@ define([
      * </script><pre>
      *
      *  @example
-     *  
+     *
      *  // Allow Translations:
      *  // By default, every point of a group triggers a translation.
      *  // There may be situations, when this is not wanted.
-     * 
-     *  // In this example, E triggers nothing, but itself is rotation center 
+     *
+     *  // In this example, E triggers nothing, but itself is rotation center
      *  // and is translated, if other points are moved around.
-     * 
+     *
      *  var p, q, col, pol, g;
      *  col = 'blue';
      *  p = [];
@@ -830,7 +873,7 @@ define([
      *  g = board.create('group', p.concat(q)).setRotationCenter('centroid').setRotationPoints([p[2]]);
      *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
      *  g.removeTranslationPoint(q);
-     * 
+     *
      * </pre><div id="d19b800a-57a9-4303-b49a-8f5b7a5488f0" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
@@ -851,18 +894,14 @@ define([
      *  })();
      * </script><pre>
      *
-     * 
+     *
      */
     JXG.createGroup = function (board, parents, attributes) {
         var i, attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';
-        g.parents = [];
-
-        for (i = 0; i < parents.length; i++) {
-            g.parents.push(parents[i].id);
-        }
+        g.setParents(parents);
 
         return g;
     };

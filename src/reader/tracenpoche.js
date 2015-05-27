@@ -636,7 +636,7 @@ JXG.TracenpocheReader = function(board, str) {
         });
 
         prefix("for", function () {
-            var n = token, vname;                   // FIXME error message
+            var n = token, varname;
 
             this.first = expression(0);
             advance("to");
@@ -683,9 +683,7 @@ JXG.TracenpocheReader = function(board, str) {
         token_nr = 0;
         new_scope();
         advance();
-        var s = statements().join('\n');
-//console.log(s);
-        return s;
+        return statements().join('\n');
     };
 
     this.parseData = function(board) {
@@ -715,11 +713,8 @@ JXG.TracenpocheReader = function(board, str) {
         board.options.point.strokeWidth = 1;
         board.options.line.strokeWidth = 1;
 
-//console.log(s);
         var fun = new Function("that", "tep", s);
-        //console.log(fun.toString());
         fun(this, tep);
-//console.log(tep);
 
         // Set the correct labels and names
         var el;
@@ -851,7 +846,7 @@ JXG.TracenpocheReader = function(board, str) {
                 return this.board.create('otherintersection', parents, this.handleAtts(attributes));
             }
         }
-    }
+    };
 
     this.projete = function(parents, attributes) {
         var lpar;
@@ -861,7 +856,7 @@ JXG.TracenpocheReader = function(board, str) {
             lpar = this.board.create('parallel', [parents[2], parents[0]], {visible:false, withLabel:false});
             return this.board.create('intersection', [parents[1], lpar, 0], this.handleAtts(attributes));
         }
-    }
+    };
 
     this.barycentre = function(parents, attributes) {
         return this.board.create('point', [
@@ -882,15 +877,15 @@ JXG.TracenpocheReader = function(board, str) {
                 return y/s;
             }
         ], this.handleAtts(attributes));
-    }
+    };
 
     this.image = function(parents, attributes) {
         return this.board.create('point', [parents[1], parents[0]], this.handleAtts(attributes));
-    }
+    };
 
     this.milieu = function(parents, attributes) {
         return this.board.create('midpoint', parents, this.handleAtts(attributes));
-    }
+    };
 
     /*
      * Lines

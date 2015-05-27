@@ -62,8 +62,8 @@ define([
      * An element containing coords is the basic geometric element. Based on points lines and circles can be constructed which can be intersected
      * which in turn are points again which can be used to construct new lines, circles, polygons, etc. This class holds methods for
      * all kind of coordinate elements like points, texts and images.
-     * @class Creates a new coords element object. Do not use this constructor to create an element. 
-     * 
+     * @class Creates a new coords element object. Do not use this constructor to create an element.
+     *
      * @private
      * @augments JXG.GeometryElement
      * @param {Array} coordinates An array with the affine user coordinates of the point.
@@ -722,7 +722,7 @@ define([
                 d = 0,
                 len,
                 dMax = Infinity,
-                c = null, 
+                c = null,
                 len2, j, ignore = false;
 
             len = this.board.objectsList.length;
@@ -730,7 +730,7 @@ define([
             if (this.visProp.ignoredsnaptopoints) {
                 len2 = this.visProp.ignoredsnaptopoints.length;
             }
-            
+
             if (this.visProp.snaptopoints || force) {
                 for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
@@ -1190,7 +1190,7 @@ define([
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
 
-                this.parents = [newfuncs[0].origin, newfuncs[1].origin];
+                this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.XEval(), this.YEval()]);
@@ -1201,7 +1201,7 @@ define([
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
 
-                this.parents = [newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin];
+                this.setParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);
@@ -1477,7 +1477,8 @@ define([
                 return this.board.update(this);
             }
 
-            if (Math.abs(dX) < Mat.eps && Math.abs(dY) < Mat.eps) {
+            // In case there is no callback and we are already at the endpoint we can stop here
+            if (!Type.exists(options.callback) && Math.abs(dX) < Mat.eps && Math.abs(dY) < Mat.eps) {
                 return this;
             }
 
@@ -1646,10 +1647,11 @@ define([
             return this.coords;
         },
 
+        // documented in element.js
         getParents: function () {
             var p = [this.Z(), this.X(), this.Y()];
 
-            if (this.parents) {
+            if (this.parents.length !== 0) {
                 p = this.parents;
             }
 
@@ -1704,8 +1706,6 @@ define([
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);
                 el.isDraggable = false;
-
-                //el.parents = [coords[0].id];
             } else {
                 return false;
             }

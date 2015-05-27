@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -245,7 +245,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * Converts an array of different values into a parameter string that can be used by the code generators.
          * @param {Array} a
          * @param {function} converter A function that is used to transform the elements of <tt>a</tt>. Usually
-         * {@link JXG.toJSON} or {@link JXG.Dump.toJSAN} are used.
+         * {@link JXG.toJSON} or {@link JXG.Dump.toJCAN} are used.
          * @returns {String}
          */
         arrayToParamStr: function (a, converter) {
@@ -260,11 +260,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Converts a JavaScript object into a JSAN (JessieScript Attribute Notation) string.
+         * Converts a JavaScript object into a JCAN (JessieCode Attribute Notation) string.
          * @param {Object} obj A JavaScript object, functions will be ignored.
-         * @returns {String} The given object stored in a JSAN string.
+         * @returns {String} The given object stored in a JCAN string.
          */
-        toJSAN: function (obj) {
+        toJCAN: function (obj) {
             var s, i, list, prop;
 
             switch (typeof obj) {
@@ -274,7 +274,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                     if (Type.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
-                            list.push(this.toJSAN(obj[i]));
+                            list.push(this.toJCAN(obj[i]));
                         }
 
                         return '[' + list.join(',') + ']';
@@ -282,7 +282,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                     for (prop in obj) {
                         if (obj.hasOwnProperty(prop)) {
-                            list.push(prop + ': ' + this.toJSAN(obj[prop]));
+                            list.push(prop + ': ' + this.toJCAN(obj[prop]));
                         }
                     }
 
@@ -300,9 +300,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Saves the construction in <tt>board</tt> to JessieScript.
+         * Saves the construction in <tt>board</tt> to JessieCode.
          * @param {JXG.Board} board
-         * @returns {String} JessieScript
+         * @returns {String} JessieCode
          */
         toJessie: function (board) {
             var i, elements,
@@ -316,17 +316,17 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     script.push('// ' + elements[i].attributes.name);
                 }
 
-                script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJSAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
+                script.push('s' + i + ' = ' + elements[i].type + '(' + elements[i].parents.join(', ') + ') ' + this.toJCAN(elements[i].attributes).replace(/\n/, '\\n') + ';');
                 script.push('');
             }
 
             for (i = 0; i < dump.methods.length; i++) {
-                script.push(dump.methods[i].obj + '.' + dump.methods[i].method + '(' + this.arrayToParamStr(dump.methods[i].params, this.toJSAN) + ');');
+                script.push(dump.methods[i].obj + '.' + dump.methods[i].method + '(' + this.arrayToParamStr(dump.methods[i].params, this.toJCAN) + ');');
                 script.push('');
             }
 
             for (i = 0; i < dump.props.length; i++) {
-                script.push(dump.props[i].obj + '.' + dump.props[i].prop + ' = ' + this.toJSAN(dump.props[i].val) + ';');
+                script.push(dump.props[i].obj + '.' + dump.props[i].prop + ' = ' + this.toJCAN(dump.props[i].val) + ';');
                 script.push('');
             }
 

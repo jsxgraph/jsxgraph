@@ -135,11 +135,9 @@ define(['math/math', 'utils/type'], function (Mat, Type) {
                 return true;
             }
 
-            if (this.southWest.insert(p)) {
-                return true;
-            }
+            return !!this.southWest.insert(p);
 
-            return false;
+
         },
 
         /**
