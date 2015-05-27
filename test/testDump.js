@@ -56,7 +56,7 @@ TestCase("Dump", {
     },
 
     testDumps: function () {
-        expectAsserts(3);
+        expectAsserts(4);
         var s, p, txt;
 
         p = this.board.create('point', [2, 1]);
@@ -66,9 +66,10 @@ TestCase("Dump", {
         txt = JXG.Dump.toJessie(this.board);
         console.log(txt);
         
-        assertTrue('toJessie point', txt.indexOf("s0 = point(2, 1) <<") > -1);
-        assertTrue('toJessie point', txt.indexOf("s3 = line(2, 1, 2) <<") > -1);
-        assertTrue('toJessie point', txt.indexOf("s4 = text(1, 3, 2, 'test') <<") > -1);
+        assertTrue('toJessie point', txt.indexOf("point(2, 1) <<") > -1);
+        assertTrue('toJessie line', txt.indexOf("line(2, 1, 2) <<") > -1);
+        assertTrue('toJessie text', txt.indexOf("text(1, 3, 2, 'test') <<") > -1);
+        assertTrue('toJessie circle', txt.indexOf("circle('jxgBoard1P1') <<") > -1);
     }
 
 });
