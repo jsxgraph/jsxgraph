@@ -62,7 +62,16 @@ define({
     suites: [
         'tests/unit/jxg',
         'tests/unit/utils/base64',
-        'tests/unit/utils/encoding'
+        'tests/unit/utils/color',
+        //'tests/unit/utils/dump',
+        'tests/unit/utils/encoding',
+        //'tests/unit/utils/env',
+        //'tests/unit/utils/event',
+        //'tests/unit/utils/expect',
+        //'tests/unit/utils/type',
+        //'tests/unit/utils/uuid',
+        //'tests/unit/utils/xml',
+        //'tests/unit/utils/zip',
     ],
 
     // Functional test suite(s) to run in each browser once non-functional tests are completed
