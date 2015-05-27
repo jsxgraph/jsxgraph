@@ -260,12 +260,7 @@ define([
         if (Type.isPoint(C)) {
             C.addChild(curve);
         }
-        curve.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            if (parents[i].id) {
-                curve.parents.push(parents[i].id);
-            }
-        }
+        curve.setParents(parents);
 
         return curve;
     };
@@ -446,12 +441,7 @@ define([
         if (Type.isPoint(C)) {
             C.addChild(curve);
         }
-        curve.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            if (parents[i].id) {
-                curve.parents.push(parents[i].id);
-            }
-        }
+        curve.setParents(parents);
 
         return curve;
     };
@@ -615,13 +605,7 @@ define([
         }
 
         l.addChild(curve);
-        curve.parents = [];
-
-        for (i = 0; i < parents.length; i++) {
-            if (parents[i].id) {
-                curve.parents.push(parents[i].id);
-            }
-        }
+        curve.setParents(parents);
 
         return curve;
     };
@@ -904,12 +888,7 @@ define([
                     points[i].addChild(curve);
                 }
             }
-            curve.parents = [];
-            for (i = 0; i < parents.length; i++) {
-                if (parents[i].id) {
-                    curve.parents.push(parents[i].id);
-                }
-            }
+            curve.setParents(parents);
         }
         curve.addChild(curve.midpoint);
 

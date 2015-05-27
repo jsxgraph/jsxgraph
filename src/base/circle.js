@@ -772,19 +772,7 @@ define([
         }
 
         el.isDraggable = isDraggable;
-        el.parents = [];
-
-        // for (i = 0; i < parents.length; i++) {
-        //     if (parents[i].id) {
-        //         el.parents.push(parents[i].id);
-        //     }
-        // }
-        for (i = 0; i < p.length; i++) {
-            if (p[i].id) {
-                el.parents.push(p[i].id);
-            }
-        }
-
+        el.setParents(p);
         el.elType = 'circle';
         return el;
     };

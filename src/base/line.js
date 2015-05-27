@@ -993,9 +993,10 @@ define([
                 el.isDraggable = true;
             }
 
-            if (!el.constrained) {
-                el.parents = [p1.id, p2.id];
-            }
+            //if (!el.constrained) {
+            el.setParents([p1.id, p2.id]);
+            //}
+
          // Line is defined by three homogeneous coordinates.
          // Also in this case points are created.
         } else if (parents.length === 3) {
@@ -1066,10 +1067,8 @@ define([
             el = new JXG.Line(board, p1, p2, attr);
             // Not yet working, because the points are not draggable.
             el.isDraggable = isDraggable;
+            el.setParents([p1, p2]);
 
-            if (isDraggable) {
-                el.parents = [c[0](), c[1](), c[2]()];
-            }
         // The parent array contains a function which returns two points.
         } else if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length === 2) &&
                 (Type.isPoint(parents[0]()[0])) &&
@@ -1079,6 +1078,8 @@ define([
             el = new JXG.Line(board, ps[0], ps[1], attr);
             el.constrained = true;
             el.funps = parents[0];
+            el.setParents(ps);
+
         } else if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length === 3) &&
                 (typeof parents[0]()[0] === 'number') &&
                 (typeof parents[0]()[1] === 'number') &&
@@ -1114,6 +1115,8 @@ define([
 
             el.constrained = true;
             el.funps = parents[0];
+            el.setParents([p1, p2]);
+
         } else {
             throw new Error("JSXGraph: Can't create line with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +

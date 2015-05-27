@@ -1190,7 +1190,7 @@ define([
                 this.XEval = newfuncs[0];
                 this.YEval = newfuncs[1];
 
-                this.parents = [newfuncs[0].origin, newfuncs[1].origin];
+                this.setParents([newfuncs[0].origin, newfuncs[1].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.XEval(), this.YEval()]);
@@ -1201,7 +1201,7 @@ define([
                 this.XEval = newfuncs[1];
                 this.YEval = newfuncs[2];
 
-                this.parents = [newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin];
+                this.setParents([newfuncs[0].origin, newfuncs[1].origin, newfuncs[2].origin]);
 
                 this.updateConstraint = function () {
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [this.ZEval(), this.XEval(), this.YEval()]);

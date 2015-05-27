@@ -217,7 +217,7 @@ define([
         },
 
         /**
-         * Set the style of a point. 
+         * Set the style of a point.
          * Used for GEONExT import and should not be used to set the point's face and size.
          * @param {Number} i Integer to determine the style.
          * @private
@@ -566,7 +566,7 @@ define([
 
         el.type = Const.OBJECT_TYPE_INTERSECTION;
         el.elType = 'otherintersection';
-        el.parents = [el1.id, el2.id, other];
+        el.setParents([el1.id, el2.id, other]);
 
         el1.addChild(el);
         el2.addChild(el);
@@ -696,7 +696,7 @@ define([
             }], attributes);
 
         el.elType = 'polepoint';
-        el.parents = [el1.id, el2.id];
+        el.setParents([el1.id, el2.id]);
 
         el1.addChild(el);
         el2.addChild(el);

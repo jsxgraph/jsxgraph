@@ -140,7 +140,7 @@ define([
         l.addChild(t);
 
         t.elType = 'orthogonalprojection';
-        t.parents = [p.id, t.id];
+        t.setParents([p.id, t.id]);
 
         t.update();
 
@@ -266,7 +266,7 @@ define([
         ], attr);
 
         pd.elType = 'perpendicular';
-        pd.parents = [l.id, p.id];
+        pd.setParents([l.id, p.id]);
 
         return pd;
     };
@@ -327,7 +327,7 @@ define([
         l.addChild(t);
 
         t.elType = 'perpendicularpoint';
-        t.parents = [p.id, l.id];
+        t.setParents([p.id, l.id]);
 
         t.update();
 
@@ -462,7 +462,7 @@ define([
         pd.point = t;
 
         pd.elType = 'perpendicularsegment';
-        pd.parents = [p.id, l.id];
+        pd.setParents([p.id, l.id]);
         pd.subs = {
             point: t
         };
@@ -540,7 +540,7 @@ define([
         b.addChild(t);
 
         t.elType = 'midpoint';
-        t.parents = [a.id, b.id];
+        t.setParents([a.id, b.id]);
 
         t.prepareUpdate().update();
 
@@ -663,7 +663,7 @@ define([
         c.addChild(p);
 
         p.elType = 'parallelpoint';
-        p.parents = [a.id, b.id, c.id];
+        p.setParents([a.id, b.id, c.id]);
 
         // required to set the coordinates because functions are considered as constraints. hence, the coordinates get set first after an update.
         // can be removed if the above issue is resolved.
@@ -802,9 +802,9 @@ define([
         pl = board.create('line', [p, pp], attr);
 
         pl.elType = 'parallel';
-        pl.parents = [parents[0].id, parents[1].id];
+        pl.setParents([parents[0].id, parents[1].id]);
         if (parents.length === 3) {
-            pl.parents.push(parents[2].id);
+            pl.addParents(parents[2].id);
         }
 
         /**
@@ -1102,11 +1102,8 @@ define([
                 "\nPossible parent types: [point,line], [point,circle], [glider]");
         }
 
-        l.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            l.parents.push(parents[i].id);
-        }
         l.elType = 'normal';
+        l.setParents(parents);
 
         return l;
     };
@@ -1176,7 +1173,7 @@ define([
             l.point = p;
 
             l.elType = 'bisector';
-            l.parents = [parents[0].id, parents[1].id, parents[2].id];
+            l.setParents(parents);
             l.subs = {
                 point: p
             };
@@ -1309,7 +1306,7 @@ define([
         g2.dump = false;
 
         ret.elType = 'bisectorlines';
-        ret.parents = [l1.id, l2.id];
+        ret.setParents([l1.id, l2.id]);
         ret.subs = {
             line1: g1,
             line2: g2
@@ -1367,7 +1364,7 @@ define([
             }
 
             p.elType = 'circumcenter';
-            p.parents = [a.id, b.id, c.id];
+            p.setParents(parents);
 
             p.generatePolynomial = function () {
                 /*
@@ -1448,7 +1445,7 @@ define([
             }], attributes);
 
             p.elType = 'incenter';
-            p.parents = [parents[0].id, parents[1].id, parents[2].id];
+            p.setParents(parents);
 
         } else {
             throw new Error("JSXGraph: Can't create incenter with parent types '" +
@@ -1506,7 +1503,7 @@ define([
             c = Circle.createCircle(board, [p, parents[0]], attr);
 
             c.elType = 'circumcircle';
-            c.parents = [parents[0].id, parents[1].id, parents[2].id];
+            c.setPArents(parents);
             c.subs = {
                 center: p
             };
@@ -1575,7 +1572,7 @@ define([
             }], attr);
 
             c.elType = 'incircle';
-            c.parents = [parents[0].id, parents[1].id, parents[2].id];
+            c.setParents(parents);
 
             /**
              * The center of the incircle
@@ -1651,7 +1648,7 @@ define([
         l.addChild(r);
 
         r.elType = 'reflection';
-        r.parents = [parents[0].id, parents[1].id];
+        r.setParents(parents);
 
         r.prepareUpdate().update();
 
@@ -1723,7 +1720,8 @@ define([
             }
 
             p.elType = 'mirrorpoint';
-            p.parents = [parents[0].id, parents[1].id];
+            p.setParents(parents);
+
         } else {
             throw new Error("JSXGraph: Can't create mirror point with parent types '" +
                 (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'." +
@@ -1863,7 +1861,7 @@ define([
                         bb = this.board.getBoundingBox(),
                         dx = (bb[2] - bb[0]) * 0.1,
                         x = pb_on_curve.X();
-                        
+
                     if (x < bb[0]) {
                         x = bb[0] + dx;
                     } else if (x > bb[2]) {
@@ -1880,7 +1878,7 @@ define([
                         bb = this.board.getBoundingBox(),
                         dy = (bb[1] - bb[3]) * 0.1,
                         y = pb_on_curve.Y();
-                        
+
                     if (y > bb[1]) {
                         y = bb[1] - dy;
                     } else if (y < bb[3]) {
@@ -1909,7 +1907,7 @@ define([
         pb_on_axis.dump = false;
 
         p.elType = 'integral';
-        p.parents = [curve.id, interval];
+        p.setParents([curve.id, interval]);
         p.subs = {
             curveLeft: pa_on_curve,
             baseLeft: pa_on_axis,
@@ -2087,7 +2085,6 @@ define([
         c = board.create('curve', [[null], [null]], attr);
 
         c.elType = 'grid';
-        c.parents = [];
         c.type = Const.OBJECT_TYPE_GRID;
 
         c.updateDataArray = function () {
@@ -2209,9 +2206,9 @@ define([
      * </script><pre>
      *
      * @example
-     * // Plot the inequality 
-     * //     y >= 2/3 x + 1 
-     * // or 
+     * // Plot the inequality
+     * //     y >= 2/3 x + 1
+     * // or
      * //     0 >= -3y + 2x +1
      * var l = board.create('line', [1, 2, -3]),
      *     ineq = board.create('inequality', [l], {inverse:true});

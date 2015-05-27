@@ -109,7 +109,7 @@ define([
         c.dontCallServer = false;
 
         c.elType = 'locus';
-        c.parents = [p.id];
+        c.setParents([p.id]);
 
         /**
          * should be documented in JXG.Curve

@@ -437,6 +437,18 @@ define([
         },
 
         /**
+         * Sets ids of elements to the array this.parents.
+         * First, this.parents is cleared. See {@link Element#addParents}.
+         * @param {Array} parents Array of elements or ids of elements.
+         * Alternatively, one can give a list of objects as parameters.
+         * @returns {JXG.Object} reference to the object itself.
+         **/
+        setParents: function(parents) {
+            this.parents = [];
+            this.addParents(parents);
+        },
+
+        /**
          * Remove an element as a child from the current element.
          * @param {JXG.GeometryElement} obj The dependent object.
          */
