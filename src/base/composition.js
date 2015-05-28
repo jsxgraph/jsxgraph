@@ -241,9 +241,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return new JXG.Composition();
         },
 
-        // documented in element.js
         getParents: function () {
-            return Type.isArray(this.parents) ? this.parents : [];
+            return this.parents;
         },
 
         getType: function () {
