@@ -738,7 +738,7 @@ define([
                     if (this.visProp.ignoredsnaptopoints) {
                         ignore = false;
                         for (j = 0; j < len2; j++) {
-                            if (pEl == this.visProp.ignoredsnaptopoints[j]) {
+                            if (pEl == this.board.select(this.visProp.ignoredsnaptopoints[j])) {
                                 ignore = true;
                                 break;
                             }

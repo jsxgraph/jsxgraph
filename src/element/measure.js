@@ -153,7 +153,10 @@ define([
         p2.dump = false;
 
         li.elType = 'tapemeasure';
-        //li.parents = parents;
+        li.getParents = function() {
+            return [[p1.X(), p1.Y()], [p2.X(), p2.Y()]];
+        };
+
         li.subs = {
             point1: p1,
             point2: p2

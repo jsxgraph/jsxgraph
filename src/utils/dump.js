@@ -208,7 +208,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 if (!obj.dumped && obj.dump) {
                     element.type = obj.getType();
                     element.parents = obj.getParents();
-
                     if (element.type === 'point' && element.parents[0] === 1) {
                         element.parents = element.parents.slice(1);
                     }

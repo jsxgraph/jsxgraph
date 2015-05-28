@@ -1534,12 +1534,12 @@ define([
                 cleanThis = ['attractors', 'snatchdistance', 'traceattributes', 'frozen',
                     'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
                     'needsregularupdate', 'zoom', 'layer', 'offset'],
-                i;
+                i, len = cleanThis.length;
 
             attributes.id = this.id;
             attributes.name = this.name;
 
-            for (i = 0; i < cleanThis.length; i++) {
+            for (i = 0; i < len; i++) {
                 delete attributes[cleanThis[i]];
             }
 

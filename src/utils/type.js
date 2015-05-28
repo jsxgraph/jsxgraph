@@ -671,7 +671,6 @@ define([
             /*jslint forin:false*/
             /*jshint forin:false*/
 
-
             return cObj;
         },
 
@@ -733,15 +732,19 @@ define([
             }
 
             // missing hasOwnProperty is on purpose in this function
-            /*jslint forin:true*/
-            /*jshint forin:false*/
-
             if (this.isArray(obj)) {
                 c = [];
                 for (i = 0; i < obj.length; i++) {
                     prop = obj[i];
                     if (typeof prop === 'object') {
-                        c[i] = this.deepCopy(prop);
+                        // We certainly do not want to recurse into a JSXGraph object.
+                        // This would for sure result in an infinite recursion.
+                        // As alternative we copy the id of the object.
+                        if (this.exists(prop.board)) {
+                            c[i] = prop.id;
+                        } else {
+                            c[i] = this.deepCopy(prop);
+                        }
                     } else {
                         c[i] = prop;
                     }
@@ -750,10 +753,13 @@ define([
                 c = {};
                 for (i in obj) {
                     i2 = toLower ? i.toLowerCase() : i;
-
                     prop = obj[i];
-                    if (typeof prop === 'object') {
-                        c[i2] = this.deepCopy(prop);
+                    if (prop !== null && typeof prop === 'object') {
+                        if (this.exists(prop.board)) {
+                            c[i2] = prop.id;
+                        } else {
+                            c[i2] = this.deepCopy(prop);
+                        }
                     } else {
                         c[i2] = prop;
                     }
@@ -774,9 +780,6 @@ define([
                     }
                 }
             }
-
-            /*jslint forin:false*/
-            /*jshint forin:true*/
 
             return c;
         },
