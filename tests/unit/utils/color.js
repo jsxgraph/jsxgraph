@@ -3,6 +3,20 @@ define([
     'intern/chai!assert',
     'utils/color'
 ], function (registerSuite, assert, Color) {
+
+    // rgb2LMS has this weird return value where
+    // the array contents are also available as properties
+    // This function helps to deal with this
+    function storeArrayContentAsProperties(array, names) {
+        var i;
+
+        for (i = 0; i < array.length; ++i) {
+            array[names[i]] = array[i];
+        }
+
+        return array;
+    }
+
     registerSuite({
         rgbParser_undefined_emptyArray: function () {
             var actual = Color.rgbParser(),
@@ -115,10 +129,129 @@ define([
             assert.deepEqual(actual, expected);
         },
 
+        rgbParser_cssRGBNotationNumberTooBig_numberIsClamped: function () {
+            var input = 'rgb(34, 191, 320)',
+                actual = Color.rgbParser(input),
+                expected = [34, 191, 255];
+
+            assert.deepEqual(actual, expected);
+        },
+
         rgbParser_cssRGBANotation_validResult: function () {
             var input = 'rgba(34, 191, 32, 0.5)',
                 actual = Color.rgbParser(input),
                 expected = [34, 191, 32];
+
+            assert.deepEqual(actual, expected);
+        },
+
+        rgb2hex_css6DigitHexColor_resultEqualsInput: function () {
+            var input = '#010203',
+                actual = Color.rgb2hex(input);
+
+            assert.equal(actual, input);
+        },
+
+        rgb2css_cssRGBNotation_resultEqualsInput: function () {
+            var input = 'rgb(34, 191, 25)',
+                actual = Color.rgb2css(input);
+
+            assert.equal(actual, input);
+        },
+
+        hex2rgb_cssRGBNotation_resultEqualsInput: function () {
+            var input = 'rgb(34, 191, 25)',
+                actual = Color.rgb2css(input);
+
+            assert.equal(actual, input);
+        },
+
+        hsv2rgb_validHSV_validCSS6DigitHexString: function () {
+            var actual = Color.hsv2rgb(180, 0.5, 0.5),
+                expected = '#408080';
+
+            assert.equal(actual, expected);
+        },
+
+        hsv2rgb_saturationAndHueAreZero_returnsGrey: function () {
+            var actual = Color.hsv2rgb(0, 0, 0.5),
+                expected = '#808080';
+
+            assert.equal(actual, expected);
+        },
+
+        hsv2rgb_saturationIsZeroAndHueIsNot_returnsWhite: function () {
+            var actual = Color.hsv2rgb(180, 0, 0.5),
+                expected = '#ffffff';
+
+            assert.equal(actual, expected);
+        },
+
+        rgb2hsv_red_returnsHSV: function () {
+            var actual = Color.rgb2hsv('#f00'),
+                expected = [0, 1, 1];
+
+            assert.deepEqual(actual, expected);
+        },
+
+        rgb2hsv_blue_returnsHSV: function () {
+            var actual = Color.rgb2hsv('#00f'),
+                expected = [240, 1, 1];
+
+            assert.deepEqual(actual, expected);
+        },
+
+        rgb2hsv_grey_returnsHSV: function () {
+            var actual = Color.rgb2hsv('#808080'),
+                expected = [0, 0, 0.5];
+
+            assert.equal(actual[0], expected[0]);
+            assert.equal(actual[1], expected[1]);
+            assert.equal(actual[2].toFixed(2), expected[2].toFixed(2));
+        },
+
+        rgb2LMS_red_returnsLMS: function () {
+            var actual = Color.rgb2LMS('#f00'),
+                expected = [0.7081423563792175, 0.2649291211696994, 0.040893539132190786];
+
+            storeArrayContentAsProperties(expected, 'lms');
+            assert.deepEqual(actual, expected);
+        },
+
+        rgb2LMS_green_returnsLMS: function () {
+            var actual = Color.rgb2LMS('#0f0'),
+                expected = [1.2015185493795306, 1.2490928602982028, 0.13655325673517216];
+
+            storeArrayContentAsProperties(expected, 'lms');
+            assert.deepEqual(actual, expected);
+        },
+
+        LMS2rgb_red_returnsRGBArray: function () {
+            var actual = Color.LMS2rgb(0.7081423563792175, 0.2649291211696994, 0.040893539132190786),
+                expected = [254, 0, -0.5];
+
+            storeArrayContentAsProperties(expected, 'rgb');
+            assert.deepEqual(actual, expected);
+        },
+
+        LMS2rgb_green_returnsRGBArrayAlmostDescribingGreen: function () {
+            var actual = Color.LMS2rgb(1.2015185493795306, 1.2490928602982028, 0.13655325673517216),
+                expected = [-0.5, 254.5, 0];
+
+            storeArrayContentAsProperties(expected, 'rgb');
+            assert.deepEqual(actual, expected);
+        },
+
+        rgba2rgbo_lightRed_returnsRedAndCorrectOpacity: function () {
+            var actual = Color.rgba2rgbo('#ff000080'),
+                expected = ['#ff0000', 0.5019607843137255];
+
+            assert.deepEqual(actual, expected);
+        },
+
+        rgba2rgbo_lightRedInShortNotation_returnsInputAndOpacityOf1: function () {
+            var actual = Color.rgba2rgbo('#f008'),
+                expected = ['#f008', 1];
 
             assert.deepEqual(actual, expected);
         }
