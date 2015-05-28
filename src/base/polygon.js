@@ -574,12 +574,8 @@ define([
 
         // documented in element.js
         getParents: function () {
-            var p = [], i;
-
-            for (i = 0; i < this.vertices.length; i++) {
-                p.push(this.vertices[i].id);
-            }
-            return p;
+            this.setParents(this.vertices);
+            return this.parents;
         },
 
         getAttributes: function () {

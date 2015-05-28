@@ -484,7 +484,19 @@ define([
 
         el.type = Const.OBJECT_TYPE_INTERSECTION;
         el.elType = 'intersection';
-        el.parents = [el1.id, el2.id, i, j];
+        el.setParents([el1.id, el2.id]);
+
+        /**
+         * Array of length 2 containing the numbers i and j.
+         * The intersection point is i-th intersection point.
+         * j is unused.
+         * @type Array
+         * @private
+         */
+        el.intersectionNumbers = [i, j];
+        el.getParents = function() {
+            return this.parents.concat(this.intersectionNumbers);
+        }
 
         el.generatePolynomial = function () {
             var poly1 = el1.generatePolynomial(el),

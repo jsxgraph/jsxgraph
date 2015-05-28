@@ -149,7 +149,7 @@ define([
             this.gxtterm = par2;
             // Converts GEONExT syntax into JavaScript syntax and generally ensures that the radius is a function
             this.updateRadius = Type.createFunction(par2, this.board, null, true);
-            // First evaluation of the graph
+            // First evaluation of the radius function
             this.updateRadius();
         } else if (method === 'pointLine') {
             // dann ist p2 die Id eines Objekts vom Typ Line!
@@ -662,6 +662,13 @@ define([
                 r = this.Radius();
 
             return [uc[1] - r, uc[2] + r, uc[1] + r, uc[2] - r];
+        },
+
+        getParents: function() {
+            if (this.parents.length == 1) {  // i.e. this.method === 'pointRadius'
+                return this.parents.concat(this.radius);
+            }
+            return this.parents;
         }
     });
 

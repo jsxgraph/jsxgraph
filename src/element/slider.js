@@ -210,7 +210,7 @@ define([
             this._smax = val;
             return this;
         };
-            
+
         /**
          * Sets the minimum value of the slider.
          * @memberOf Slider.prototype
@@ -222,7 +222,7 @@ define([
             this._smin = val;
             return this;
         };
-            
+
         if (withText) {
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
             t = board.create('text', [

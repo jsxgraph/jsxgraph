@@ -1209,6 +1209,10 @@ define([
                     "\nPossible third parent types: number or function");
             }
 
+            el.getParents = function() {
+                return this.parents.concat(this.fixedLength());
+            };
+
             el.fixedLengthOldCoords = [];
             el.fixedLengthOldCoords[0] = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords.slice(1, 3), board);
             el.fixedLengthOldCoords[1] = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords.slice(1, 3), board);
@@ -1565,10 +1569,7 @@ define([
 
         tangent.elType = 'tangent';
         tangent.type = Const.OBJECT_TYPE_TANGENT;
-        tangent.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            tangent.parents.push(parents[i].id);
-        }
+        tangent.setParents(parents);
 
         return tangent;
     };
@@ -1632,7 +1633,7 @@ define([
         }], attributes);
 
         el.elType = 'radicalaxis';
-        el.parents = [el1.id, el2.id];
+        el.setParents([el1.id, el2.id]);
 
         el1.addChild(el);
         el2.addChild(el);

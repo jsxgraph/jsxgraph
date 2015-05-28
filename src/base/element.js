@@ -426,13 +426,12 @@ define([
 
             len = par.length;
             for (i = 0; i < len; ++i) {
-                if (Type.isId(par[i])) {
+                if (Type.isId(this.board, par[i])) {
                     this.parents.push(par[i]);
                 } else if (Type.exists(par[i].id)) {
                     this.parents.push(par[i].id);
                 }
             }
-
             this.parents = Type.uniqueArray(this.parents);
         },
 
@@ -1535,12 +1534,12 @@ define([
                 cleanThis = ['attractors', 'snatchdistance', 'traceattributes', 'frozen',
                     'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
                     'needsregularupdate', 'zoom', 'layer', 'offset'],
-                i;
+                i, len = cleanThis.length;
 
             attributes.id = this.id;
             attributes.name = this.name;
 
-            for (i = 0; i < cleanThis.length; i++) {
+            for (i = 0; i < len; i++) {
                 delete attributes[cleanThis[i]];
             }
 
