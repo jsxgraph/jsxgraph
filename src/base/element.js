@@ -426,13 +426,12 @@ define([
 
             len = par.length;
             for (i = 0; i < len; ++i) {
-                if (Type.isId(par[i])) {
+                if (Type.isId(this.board, par[i])) {
                     this.parents.push(par[i]);
                 } else if (Type.exists(par[i].id)) {
                     this.parents.push(par[i].id);
                 }
             }
-
             this.parents = Type.uniqueArray(this.parents);
         },
 

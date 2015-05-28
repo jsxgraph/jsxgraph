@@ -1219,7 +1219,6 @@ define([
         }
 
         el.elType = 'segment';
-        el.setParents(parents);
 
         return el;
     };
@@ -1570,10 +1569,7 @@ define([
 
         tangent.elType = 'tangent';
         tangent.type = Const.OBJECT_TYPE_TANGENT;
-        tangent.parents = [];
-        for (i = 0; i < parents.length; i++) {
-            tangent.parents.push(parents[i].id);
-        }
+        tangent.setParents(parents);
 
         return tangent;
     };
@@ -1637,7 +1633,7 @@ define([
         }], attributes);
 
         el.elType = 'radicalaxis';
-        el.parents = [el1.id, el2.id];
+        el.setParents([el1.id, el2.id]);
 
         el1.addChild(el);
         el2.addChild(el);

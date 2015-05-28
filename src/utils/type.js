@@ -58,7 +58,7 @@ define([
          * @returns {Boolean}
          */
         isId: function (board, s) {
-            return typeof s === 'string' && !!board.objects[s];
+            return (typeof s === 'string') && !!board.objects[s];
         },
 
         /**
@@ -285,8 +285,8 @@ define([
 
         /**
          *  Test if the parents array contains existing points. If instead parents contains coordinate arrays or function returning coordinate arrays
-         *  free points with these coordinates are created. 
-         * 
+         *  free points with these coordinates are created.
+         *
          * @param {JXG.Board} board Board object
          * @param {Array} parents Array containing parent elements for a new object. This array may contain
          *    <ul>
@@ -297,7 +297,7 @@ define([
          *      <li> Coordinates of points given as array of functions of length two or three. Each function returns one coordinate, e.g.
          *           [function(){ return 2; }, function(){ return 3; }]
          *      <li> Function returning coordinates, e.g. function() { return [2, 3]; }
-         *    </ul>  
+         *    </ul>
          *  In the last three cases a new point will be created.
          * @param {String} attrClass Main attribute class of newly created points, see {@link JXG@copyAttributes}
          * @param {Array} attrArray List of subtype attributes for the newly created points. The list of subtypes is mapped to the list of new points.
@@ -572,8 +572,8 @@ define([
 
             /*jslint bitwise: true*/
 
-            /* 
-             * The performance gain of this bitwise trick is marginal and the behavior 
+            /*
+             * The performance gain of this bitwise trick is marginal and the behavior
              * is different from toFixed: toFixed rounds, the bitweise operation truncateds
              */
             //if (p === 0) {
@@ -868,11 +868,11 @@ define([
 
         /**
          * Copy all prototype methods from object "superObject" to object
-         * "subObject". The constructor of superObject will be available 
+         * "subObject". The constructor of superObject will be available
          * in subObject as subObject.constructor[constructorName].
          * @param {Object} subObj A JavaScript object which receives new methods.
          * @param {Object} superObj A JavaScript object which lends its prototype methods to subObject
-         * @returns {String} constructorName Under this name the constructor of superObj will be available 
+         * @returns {String} constructorName Under this name the constructor of superObj will be available
          * in subObject.
          * @private
          */
