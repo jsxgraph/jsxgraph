@@ -1209,12 +1209,17 @@ define([
                     "\nPossible third parent types: number or function");
             }
 
+            el.getParents = function() {
+                return this.parents.concat(this.fixedLength());
+            };
+
             el.fixedLengthOldCoords = [];
             el.fixedLengthOldCoords[0] = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords.slice(1, 3), board);
             el.fixedLengthOldCoords[1] = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords.slice(1, 3), board);
         }
 
         el.elType = 'segment';
+        el.setParents(parents);
 
         return el;
     };
