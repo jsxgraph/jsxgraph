@@ -150,10 +150,11 @@ define([
         /**
          * Checks if a given variable is a reference of a JSXGraph Point element or an array of length at least two or
          * a function returning an array of length two or three.
+         * @param {JXG.Board} board
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
-        isPointType: function (v, board) {
+        isPointType: function (board, v) {
             var val;
 
             v = board.select(v);

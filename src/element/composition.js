@@ -116,10 +116,10 @@ define([
         parents[0] = board.select(parents[0]);
         parents[1] = board.select(parents[1]);
 
-        if (Type.isPointType(parents[0], board) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (Type.isPointType(board, parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             l = parents[1];
-        } else if (Type.isPointType(parents[1], board) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        } else if (Type.isPointType(board, parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             l = parents[0];
         } else {
@@ -240,10 +240,10 @@ define([
         parents[0] = board.select(parents[0]);
         parents[1] = board.select(parents[1]);
 
-        if (Type.isPointType(parents[0], board) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (Type.isPointType(board, parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-        } else if (Type.isPointType(parents[1], board) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        } else if (Type.isPointType(board, parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[0];
             p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
         } else {
@@ -305,10 +305,10 @@ define([
 
         parents[0] = board.select(parents[0]);
         parents[1] = board.select(parents[1]);
-        if (Type.isPointType(parents[0], board) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (Type.isPointType(board, parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             l = parents[1];
-        } else if (Type.isPointType(parents[1], board) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        } else if (Type.isPointType(board, parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             l = parents[0];
         } else {
@@ -426,10 +426,10 @@ define([
 
         parents[0] = board.select(parents[0]);
         parents[1] = board.select(parents[1]);
-        if (Type.isPointType(parents[0], board) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
+        if (Type.isPointType(board, parents[0]) && parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[1];
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
-        } else if (Type.isPointType(parents[1], board) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
+        } else if (Type.isPointType(board, parents[1]) && parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             l = parents[0];
             p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
         } else {
@@ -507,7 +507,7 @@ define([
         for (i = 0; i < parents.length; ++i) {
             parents[i] = board.select(parents[i]);
         }
-        if (parents.length === 2 && Type.isPointType(parents[0], board) && Type.isPointType(parents[1], board)) {
+        if (parents.length === 2 && Type.isPointType(board, parents[0]) && Type.isPointType(board, parents[1])) {
             parents = Type.providePoints(board, parents, attributes, 'point');
             a = parents[0];
             b = parents[1];
@@ -625,19 +625,19 @@ define([
             parents[i] = board.select(parents[i]);
         }
         if (parents.length === 3 &&
-                Type.isPointType(parents[0], board) &&
-                Type.isPointType(parents[1], board) &&
-                Type.isPointType(parents[2], board)) {
+                Type.isPointType(board, parents[0]) &&
+                Type.isPointType(board, parents[1]) &&
+                Type.isPointType(board, parents[2])) {
             parents = Type.providePoints(board, parents, attributes, 'point');
             a = parents[0];
             b = parents[1];
             c = parents[2];
-        } else if (Type.isPointType(parents[0], board) &&
+        } else if (Type.isPointType(board, parents[0]) &&
                 parents[1].elementClass === Const.OBJECT_CLASS_LINE) {
             c = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             a = parents[1].point1;
             b = parents[1].point2;
-        } else if (Type.isPointType(parents[1], board) &&
+        } else if (Type.isPointType(board, parents[1]) &&
                 parents[0].elementClass === Const.OBJECT_CLASS_LINE) {
             c = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             a = parents[0].point1;
@@ -769,14 +769,14 @@ define([
             li = function () {
                 return Mat.crossProduct(parents[0].coords.usrCoords, parents[1].coords.usrCoords);
             };
-        } else if (Type.isPointType(parents[0], board)) {
+        } else if (Type.isPointType(board, parents[0])) {
             // Parallel to line parents[1] through point parents[0]
             p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
             /** @ignore */
             li = function () {
                 return parents[1].stdform;
             };
-        } else if (Type.isPointType(parents[1], board)) {
+        } else if (Type.isPointType(board, parents[1])) {
             // Parallel to line parents[0] through point parents[1]
             p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             /** @ignore */
@@ -911,10 +911,10 @@ define([
             c = p.slideObject;
         // Two arguments: (point,line), (point,circle), (line,point) or (circle,point)
         } else if (parents.length === 2) {
-            if (Type.isPointType(parents[0], board)) {
+            if (Type.isPointType(board, parents[0])) {
                 p = Type.providePoints(board, [parents[0]], attributes, 'point')[0];
                 c = parents[1];
-            } else if (Type.isPointType(parents[1], board)) {
+            } else if (Type.isPointType(board, parents[1])) {
                 c = parents[0];
                 p = Type.providePoints(board, [parents[1]], attributes, 'point')[0];
             } else {
