@@ -978,7 +978,7 @@ define([
             //
             // We have to distinguish between CoordsElements and other elements like lines.
             // The latter need the difference between two move events.
-            if (Type.exists(drag.coords) && drag.type !== Const.OBJECT_TYPE_TEXT) {
+            if (Type.exists(drag.coords)) {
                 drag.setPositionDirectly(Const.COORDS_BY_SCREEN, this.drag_position);
             } else {
                 this.renderer.hide(this.infobox); // Hide infobox in case the user has touched an intersection point
