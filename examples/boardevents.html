@@ -8,7 +8,9 @@
 <body>
 
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
-
+<div id="scroll" style="background-color:yellow; width: 100px; height: 100px; overflow: scroll">
+    Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>
+</div>
 <div id="out"></div>
 
 <script type="text/javascript">
@@ -27,6 +29,12 @@
         out.innerHTML += 'up ' + e + '<br/>';
     });
 
+    board.on('down', function (e) {
+        out.innerHTML += 'down ' + e + '<br/>';
+        //e.preventDefault();
+        //e.stopPropagation();
+    });
+
     board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 1: ' + el.name + '<br />';
     });
@@ -43,13 +51,14 @@
     board.on('hit', hithdlr);
 
     board.off('hit', hithdlr);
-
+/*
     board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 4: ' + el.name + '<br />';
     });
-
+*/
 
     // test add/remove native event handlers
+    /*
     JXG.addEvent(board.containerObj, 'mousedown', function (e) {
         out.innerHTML += 'mousedown 1<br />';
     }, this);
@@ -65,6 +74,12 @@
     }, this);
 
     JXG.removeEvent(board.containerObj, 'mousedown', mousedown2, this);
+    */
+
+    JXG.addEvent(document.getElementById('scroll'), 'scroll', function(e) {
+            out.innerHTML += 'scroll<br />';
+        }, this);
+
     /* ]]> */
 </script>
 </body>

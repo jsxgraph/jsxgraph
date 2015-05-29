@@ -1870,9 +1870,10 @@ define([
                 this.hasTouchEnd = true;
             }
 
-            if (this.hasMouseHandlers) {
-                this.removeMouseEventHandlers();
-            }
+            // Do not remove mouseHandlers, since Chrome on win tablets sends mouseevents if used with pen.
+            //if (this.hasMouseHandlers) {
+            //    this.removeMouseEventHandlers();
+            //}
 
             // prevent accidental selection of text
             if (this.document.selection && typeof this.document.selection.empty === 'function') {
