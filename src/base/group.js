@@ -191,6 +191,14 @@ define([
         },
 
         /**
+         * List of the element ids resp. values used as parents in {@link JXG.Board#create}.
+         * @returns {Array}
+         */
+        getParents: function () {
+            return Type.isArray(this.parents) ? this.parents : [];
+        },
+
+        /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners
          * and not by the board.
          * @param{JXG.GeometryElement} drag Element that caused the update.
