@@ -3,9 +3,11 @@
     <title>Board events</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
 
 </head>
 <body>
+<div id="jquery" style="width:200px; height:200px; background-color:yellow"></div>
 
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
 <div id="scroll" style="background-color:yellow; width: 100px; height: 100px; overflow: scroll">
@@ -80,6 +82,15 @@
             out.innerHTML += 'scroll<br />';
         }, this);
 
+    $('#jquery').on('mousedown', function(e) {
+        out.innerHTML += 'jdown ' + e.type + '<br/>';
+    });
+    //$('#jquery').on('mousemove', function(e) {
+    //    out.innerHTML += 'jmove ' + e.type + '<br/>';
+    //});
+    $('#jquery').on('mouseup', function(e) {
+        out.innerHTML += 'jup ' + e.type + '<br/>';
+    });
     /* ]]> */
 </script>
 </body>

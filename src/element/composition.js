@@ -1503,7 +1503,7 @@ define([
             c = Circle.createCircle(board, [p, parents[0]], attr);
 
             c.elType = 'circumcircle';
-            c.setPArents(parents);
+            c.setParents(parents);
             c.subs = {
                 center: p
             };
