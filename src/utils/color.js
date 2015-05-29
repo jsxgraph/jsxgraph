@@ -384,14 +384,11 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     /**
      * Converts a valid HTML/CSS color string from the '#rrggbb' format into the 'rgb(r, g, b)' format.
      * @param {String} hex A valid HTML or CSS styled color value, e.g. '#12ab21', '#abc', or 'black'
+     * @deprecated Use {@link JXG#rgb2css} instead.
      * @returns {String} A 'rgb(r, g, b)' formatted string
      */
     JXG.hex2rgb = function (hex) {
-        var r;
-
-        r = JXG.rgbParser(hex);
-
-        return 'rgb(' + r[0] + ', ' + r[1] + ', ' + r[2] + ')';
+        return rgb2css(hex);
     };
 
     /**
@@ -551,7 +548,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     JXG.rgb2LMS = function (color, ag, ab) {
         var r, g, b, l, m, s, ret,
             // constants
-            matrix = [[0.05059983, 0.08585369, 0.00952420], [0.01893033, 0.08925308, 0.01370054], [0.00292202, 0.00975732, 0.07145979]];
+            matrix = [[0.05059983, 0.08585369, 0.00952420],
+                [0.01893033, 0.08925308, 0.01370054],
+                [0.00292202, 0.00975732, 0.07145979]];
 
         r = JXG.rgbParser(color, ag, ab);
         g = r[1];
@@ -586,7 +585,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     JXG.LMS2rgb = function (l, m, s) {
         var r, g, b, ret,
             // constants
-            matrix = [[30.830854, -29.832659, 1.610474], [-6.481468, 17.715578, -2.532642], [-0.375690, -1.199062, 14.273846]],
+            matrix = [[30.830854, -29.832659, 1.610474],
+                [-6.481468, 17.715578, -2.532642],
+                [-0.375690, -1.199062, 14.273846]],
 
             // re-gamma, inspired by GIMP modules/display-filter-color-blind.c:
             // Copyright (C) 2002-2003 Michael Natterer <mitch@gimp.org>,
