@@ -51,8 +51,8 @@
         "requirejs": "2.1.x",
         "almond": "0.3.x",
         "jsdoc2": "2.4.x",
-        "jshint": "2.6.x",
-        "jslint": "0.8.x",
+        "jshint": "2.7.x",
+        "jslint": "0.9.x",
         "jstestdriver": "1.0.x",
         "intern": "2.2.x"
     },
