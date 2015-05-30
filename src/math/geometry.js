@@ -83,6 +83,7 @@ define([
                 b = [],
                 c = [];
 
+            JXG.deprecated('Geometry.angle()', 'Geometry.rad()');
             if (A.coords) {
                 a[0] = A.coords.usrCoords[1];
                 a[1] = A.coords.usrCoords[2];
@@ -363,7 +364,10 @@ define([
         /**
          * @deprecated Please use {@link JXG.Math.Geometry#circumcenter} instead.
          */
-        circumcenterMidpoint: JXG.shortcut(Mat.Geometry, 'circumcenter'),
+        circumcenterMidpoint: function () {
+            JXG.deprecated('Geometry.circumcenterMidpoint()', 'Geometry.circumcenter()');
+            this.circumcenter.apply(this, arguments);
+        },
 
         /**
          * Calculates the center of the circumcircle of the three given points.
@@ -930,15 +934,15 @@ define([
         /****************************************/
 
         /**
-         * Generate the function which computes the coordinates of the intersection point. 
+         * Generate the function which computes the coordinates of the intersection point.
          * Primarily used in {@link JXG.Point#createIntersectionPoint}.
          * @param {JXG.Board} board object
-         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. 
+         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
          * See further {@see JXG.Point#createIntersectionPoint}.
-         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point 
+         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@see JXG.Coords} object that determines the intersection point.
          */
@@ -1378,6 +1382,7 @@ define([
                 tnew, steps, delta, tstart, tend, cux, cuy,
                 eps = Mat.eps * 10;
 
+            JXG.deprecated('Geometry.meetCurveLineContinuousOld()', 'Geometry.meetCurveLineContinuous()');
             func = function (t) {
 //                return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);

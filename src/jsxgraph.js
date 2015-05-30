@@ -381,15 +381,8 @@ define([
          * @param creator
          */
         registerElement: function (element, creator) {
+            JXG.deprecated('JXG.JSXGraph.registerElement()', 'JXG.registerElement()');
             JXG.registerElement(element, creator);
-        },
-
-        /**
-         * @deprecated
-         * @param element
-         */
-        unregisterElement: function (element) {
-            throw new Error('Unimplemented');
         }
     };
 

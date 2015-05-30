@@ -475,6 +475,7 @@ define([
          * @deprecated
          */
         getRadius: function () {
+            JXG.deprecated('Circle.getRadius()', 'Circle.Radius()');
             return this.Radius();
         },
 

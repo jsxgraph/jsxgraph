@@ -3396,6 +3396,7 @@ define([
          * @deprecated
          */
         addHook: function (hook, m, context) {
+            JXG.deprecated('Board.addHook()', 'Board.on()');
             m = Type.def(m, 'update');
 
             context = Type.def(context, this);
@@ -3418,6 +3419,7 @@ define([
          * @deprecated
          */
         removeHook: function (id) {
+            JXG.deprecated('Board.removeHook()', 'Board.off()');
             if (this.hooks[id]) {
                 this.off(this.hooks[id][0], this.hooks[id][1]);
                 this.hooks[id] = null;
@@ -3438,6 +3440,8 @@ define([
          */
         updateHooks: function (m) {
             var arg = Array.prototype.slice.call(arguments, 0);
+
+            JXG.deprecated('Board.updateHooks()', 'Board.triggerEventHandlers()');
 
             arg[0] = Type.def(arg[0], 'update');
             this.triggerEventHandlers([arg[0]], arguments);
@@ -3617,8 +3621,10 @@ define([
          * Deprecated name for {@link JXG.Board#create}.
          * @deprecated
          */
-        createElement: JXG.shortcut(JXG.Board.prototype, 'create'),
-
+        createElement: function () {
+            JXG.deprecated('Board.createElement()', 'Board.create()');
+            this.create.apply(this, arguments);
+        },
 
         /**
          * Delete the elements drawn as part of a trace of an element.

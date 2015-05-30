@@ -654,7 +654,10 @@ define([
          * @deprecated
          * Use setAttribute
          */
-        setProperty: JXG.shortcut(JXG.Group.prototype, 'setAttribute'),
+        setProperty: function () {
+            JXG.deprecated('Group.setProperty', 'Group.setAttribute()');
+            this.setAttribute.apply(this, arguments);
+        },
 
         setAttribute: function () {
             var el;

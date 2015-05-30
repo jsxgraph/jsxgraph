@@ -170,6 +170,7 @@ define([], function () {
          * @deprecated Use {@link JXG.Board#select}
          */
         getRef: function (board, s) {
+            jxg.deprecated('JXG.getRef()', 'Board.select()');
             return board.select(s);
         },
 
@@ -178,7 +179,38 @@ define([], function () {
          * @deprecated Use {@link JXG.Board#select}.
          */
         getReference: function (board, s) {
+            jxg.deprecated('JXG.getReference()', 'Board.select()');
             return board.select(s);
+        },
+
+        /**
+         * This method issues a warning to the developer that the given function is deprecated
+         * and, if available, offers an alternative to the deprecated function.
+         * @param {String} what Describes the function that is deprecated
+         * @param {String} [replacement] The replacement that should be used instead.
+         */
+        deprecated: function (what, replacement) {
+            var warning = what + ' is deprecated.';
+
+            if (replacement) {
+                warning += ' Please use ' + replacement + 'instead.';
+            }
+
+            jxg.warn(warning);
+        },
+
+        /**
+         * Outputs a warning via console.warn(), if available. If console.warn() is
+         * unavailable this function will look for an HTML element with the id 'warning'
+         * and append the warning to this element's innerHTML.
+         * @param {String} warning The warning text
+         */
+        warn: function (warning) {
+            if (typeof window === 'object' && window.console && console.warn) {
+                console.warn('WARNING:', warning);
+            } else if (typeof document === 'object' && document.getElementById('warning')) {
+                document.getElementById('debug').innerHTML += 'WARNING: ' + warning + '<br />';
+            }
         },
 
         /**

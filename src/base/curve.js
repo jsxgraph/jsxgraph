@@ -455,7 +455,7 @@ define([
             }
 
             if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
-//console.log("B", this.numberPoints);     
+//console.log("B", this.numberPoints);
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
 //console.log("A", this.numberPoints);
@@ -562,6 +562,8 @@ define([
                     d = x0 * x0 + y0 * y0;
                     return Math.sqrt(d);
                 };
+
+            JXG.deprecated('Curve.updateParametricCurveOld()');
 
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 MAX_DEPTH = 15;

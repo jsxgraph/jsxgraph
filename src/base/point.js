@@ -256,6 +256,7 @@ define([
          * @return {*}
          */
         normalizeFace: function (s) {
+            JXG.deprecated('Point.normalizeFace()', 'JXG.normalizePointFace()');
             return Options.normalizePointFace(s);
         },
 
@@ -266,6 +267,7 @@ define([
          * @deprecated Use setAttribute()
          */
         face: function (f) {
+            JXG.deprecated('Point.face()', 'Point.setAttribute()');
             this.setAttribute({face: f});
         },
 
@@ -276,6 +278,7 @@ define([
          * @deprecated Use setAttribute()
          */
         size: function (s) {
+            JXG.deprecated('Point.size()', 'Point.setAttribute()');
             this.setAttribute({size: s});
         },
 

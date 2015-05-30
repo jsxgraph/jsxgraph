@@ -213,6 +213,7 @@ define([
          * @returns {Number}
          */
         el.getRadius = function () {
+            JXG.deprecated('Arc.getRadius()', 'Arc.Radius()');
             return this.Radius();
         };
 

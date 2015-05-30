@@ -2385,73 +2385,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         riemannsum: function (f, n, type, start, end) {
+            JXG.deprecated('Numerics.riemannsum()', 'Numerics.riemann()');
             return this.riemann(f, n, type, start, end)[2];
-            /*
-            var i, x1, y1, delta1, delta, y,
-                sum = 0.0,
-                x = start;
-
-            // this function looks very similar to this.riemann... maybe there is some merge potential?
-
-            n = Math.floor(n);
-
-            if (n > 0) {
-                delta = (end - start) / n;
-                // for 'lower' and 'upper'
-                delta1 = delta * 0.01;
-
-                for (i = 0; i < n; i++) {
-                    if (type === 'right') {
-                        y = f(x + delta);
-                    } else if (type === 'middle') {
-                        y = f(x + delta * 0.5);
-                    } else if (type === 'trapezoidal') {
-                        y = 0.5 * (f(x + delta) + f(x));
-                    } else if (type === 'left') {
-                        y = f(x);
-                    } else if (type === 'lower') {
-                        y = f(x);
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 < y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 < y) {
-                            y = y1;
-                        }
-                    } else if (type === 'upper') {
-                        y = f(x);
-
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 > y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 > y) {
-                            y = y1;
-                        }
-                    } else if (type === 'random') {
-                        y = f(x + delta * Math.random());
-                    } else if (type === 'simpson') {
-                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
-                    } else {
-                        y = f(x);  // default is lower
-                    }
-                    sum += delta * y;
-                    x += delta;
-                }
-            }
-
-            return sum;
-            */
         },
 
         /**
@@ -3078,6 +3013,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         RamerDouglasPeuker: function (pts, eps) {
+            JXG.deprecated('Numerics.RamerDouglasPeuker()', 'Numerics.RamerDouglasPeucker()');
             return this.RamerDouglasPeucker(pts, eps);
         }
     };

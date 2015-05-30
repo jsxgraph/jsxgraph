@@ -510,10 +510,11 @@ define([
         };
 
         /**
-         * deprecated
+         * @deprecated
          * @ignore
          */
         el.getRadius = function () {
+            JXG.deprecated('Sector.getRadius()', 'Sector.Radius()');
             return this.Radius();
         };
 

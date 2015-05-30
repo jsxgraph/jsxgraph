@@ -862,7 +862,10 @@ define([
          * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
          */
-        setProperty: JXG.shortcut(JXG.GeometryElement.prototype, 'setAttribute'),
+        setProperty: function () {
+            JXG.deprecated('setProperty()', 'setAttribute()');
+            this.setAttribute.apply(this, arguments);
+        },
 
         /**
          * Sets an arbitrary number of attributes.
@@ -1067,7 +1070,10 @@ define([
          * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
          */
-        getProperty: JXG.shortcut(JXG.GeometryElement.prototype, 'getAttribute'),
+        getProperty: function () {
+            JXG.deprecated('getProperty()', 'getAttribute()');
+            this.getProperty.apply(this, arguments);
+        },
 
         /**
          * Get the value of the property <tt>key</tt>.
@@ -1395,6 +1401,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         highlightStrokeColor: function (sColor) {
+            JXG.deprecated('highlightStrokeColor()', 'setAttribute()');
             this.setAttribute({highlightStrokeColor: sColor});
             return this;
         },
@@ -1406,6 +1413,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         strokeColor: function (sColor) {
+            JXG.deprecated('strokeColor()', 'setAttribute()');
             this.setAttribute({strokeColor: sColor});
             return this;
         },
@@ -1417,6 +1425,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         strokeWidth: function (width) {
+            JXG.deprecated('strokeWidth()', 'setAttribute()');
             this.setAttribute({strokeWidth: width});
             return this;
         },
@@ -1429,6 +1438,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         fillColor: function (fColor) {
+            JXG.deprecated('fillColor()', 'setAttribute()');
             this.setAttribute({fillColor: fColor});
             return this;
         },
@@ -1440,6 +1450,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         highlightFillColor: function (fColor) {
+            JXG.deprecated('highlightFillColor()', 'setAttribute()');
             this.setAttribute({highlightFillColor: fColor});
             return this;
         },
@@ -1451,6 +1462,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         labelColor: function (lColor) {
+            JXG.deprecated('labelColor()', 'setAttribute()');
             this.setAttribute({labelColor: lColor});
             return this;
         },
@@ -1462,6 +1474,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         dash: function (d) {
+            JXG.deprecated('dash()', 'setAttribute()');
             this.setAttribute({dash: d});
             return this;
         },
@@ -1473,6 +1486,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         visible: function (v) {
+            JXG.deprecated('visible()', 'setAttribute()');
             this.setAttribute({visible: v});
             return this;
         },
@@ -1484,6 +1498,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         shadow: function (s) {
+            JXG.deprecated('shadow()', 'setAttribute()');
             this.setAttribute({shadow: s});
             return this;
         },
