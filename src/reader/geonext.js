@@ -910,14 +910,14 @@
                 // A.W.: Why do we need this?
                 /*
                  if (!gxtEl.visible) {
-                 p.setProperty({
+                 p.setAttribute({
                  fillColor: 'none',
                  highlightFillColor: 'none'
                  });
                  }
                  */
                 for (i = 0; i < p.borders.length; i++) {
-                    p.borders[i].setProperty(gxtEl.border[i]);
+                    p.borders[i].setAttribute(gxtEl.border[i]);
                 }
 
                 this.printDebugMessage('debug', gxtEl, Data.nodeName, 'OK');

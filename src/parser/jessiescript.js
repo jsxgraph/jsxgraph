@@ -104,7 +104,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                         }                    
                         //alert("_"+objName+"_"+propName+"_"+propValue+"_");
                         //alert(JXG.getReference(this,objName).name);
-                        JXG.getReference(this,objName).setProperty(propName+":"+propValue);
+                        JXG.getReference(this,objName).setAttribute(propName+":"+propValue);
                         
                     }
                 }

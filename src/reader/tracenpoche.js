@@ -720,7 +720,7 @@ JXG.TracenpocheReader = function(board, str) {
         var el;
         for (el in tep) {
             if (JXG.exists(tep[el].setProperty)) {
-                tep[el].setProperty({name:el});
+                tep[el].setAttribute({name:el});
                 if (JXG.exists(tep[el].label) && JXG.exists(tep[el].label)) {
                     tep[el].label.setText(el);
                 }

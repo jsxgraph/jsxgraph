@@ -1576,7 +1576,7 @@ define([
          * @returns {Boolean} ...
          */
         pointerDownListener: function (evt, object) {
-            var i, j, k, pos, elements,
+            var i, j, k, pos, elements, sel,
                 eps = this.options.precision.touch,
                 found, target, result;
 
@@ -1601,7 +1601,12 @@ define([
             if (this.document.selection && typeof this.document.selection.empty === 'function') {
                 this.document.selection.empty();
             } else if (window.getSelection) {
-                window.getSelection().removeAllRanges();
+                sel = window.getSelection();
+                if (sel.removeAllRanges) {
+                    try {
+                        sel.removeAllRanges();
+                    } catch (e) {};
+                }
             }
 
             // Touch or pen device

@@ -695,7 +695,7 @@ define([
                     o[o.methodMap[what]] = value;
                 } else {
                     par[what] = value;
-                    o.setProperty(par);
+                    o.setAttribute(par);
                 }
             } else {
                 o[what] = value;

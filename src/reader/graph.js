@@ -193,7 +193,7 @@
                     } else if (adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] !== 0) {
                         if (graph.directed) {
                             s = this.board.create('segment', [nodes[i].name, nodes[j].name]);
-                            s.setProperty({lastArrow: true});
+                            s.setAttribute({lastArrow: true});
 
                             if (graph.weighted) {
                                 t = this.board.create('text', [0, 0, adjMatrix[i][j]], {anchor: s});
@@ -213,7 +213,7 @@
                     if (adjMatrix[i][j] < Number.MAX_VALUE && adjMatrix[i][j] !== 0) {
                         s = this.board.create('segment', [nodes[i].name, nodes[j].name]);
                         if (graph.directed) {
-                            s.setProperty({lastArrow: true});
+                            s.setAttribute({lastArrow: true});
                         }
 
                         if (graph.weighted) {
