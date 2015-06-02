@@ -502,6 +502,7 @@ define([
 
         /**
          * Determine the signed area of a non-intersecting polygon.
+         * Surveyor's Formula
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          * @param {Boolean} [sort=true]
@@ -513,6 +514,10 @@ define([
                 A = 0,
                 ps = Expect.each(p, Expect.coordsArray);
 
+            if (typeof sort === 'undefined') {
+                sort = true;
+            }
+            
             if (!sort) {
                 ps = this.sortVertices(ps);
             } else {

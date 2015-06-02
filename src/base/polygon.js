@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'utils/type', 'base/element', 'base/line', 'base/transformation'
-], function (JXG, Const, Coords, Statistics, Type, GeometryElement, Line, Transform) {
+    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'math/geometry', 'utils/type', 'base/element', 'base/line', 'base/transformation'
+], function (JXG, Const, Coords, Statistics, Geometry, Type, GeometryElement, Line, Transform) {
 
     "use strict";
 
@@ -311,16 +311,7 @@ define([
          * @returns {Number} Area of (not self-intersecting) polygon
          */
         Area: function () {
-            //Surveyor's Formula
-            var i,
-                area = 0;
-
-            for (i = 0; i < this.vertices.length - 1; i++) {
-                area += (this.vertices[i].X() * this.vertices[i + 1].Y() - this.vertices[i + 1].X() * this.vertices[i].Y());
-            }
-            area /= 2.0;
-
-            return Math.abs(area);
+            return Math.abs(Geometry.signedPolygon(this.vertices, true));
         },
 
         /**
