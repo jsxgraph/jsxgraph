@@ -140,7 +140,7 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (typeof v === 'object') {
+            if (v !== null && typeof v === 'object') {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
             }
 
