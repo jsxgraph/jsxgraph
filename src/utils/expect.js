@@ -43,8 +43,8 @@
  */
 
 define([
-    'jxg', 'utils/type', 'base/constants', 'base/coords', 'base/point'
-], function (JXG, Type, Const, Coords, Point) {
+    'jxg', 'utils/type', 'base/constants', 'base/coords'
+], function (JXG, Type, Const, Coords) {
 
     "use strict";
 
@@ -59,11 +59,14 @@ define([
          * @returns {Array}
          */
         each: function (a, format, copy) {
-            var i,
+            var i, len,
                 r = [];
-
-            for (i = 0; i < a.length; i++) {
-                r.push(format.call(this, a[i], copy));
+            
+            if (Type.exists(a.length)) {
+                len = a.length;
+                for (i = 0; i < len; i++) {
+                    r.push(format.call(this, a[i], copy));
+                }
             }
 
             return r;
