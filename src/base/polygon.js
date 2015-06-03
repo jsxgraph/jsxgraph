@@ -83,7 +83,8 @@ define([
             this.vertices[i] = vertex;
         }
 
-        if (this.vertices[this.vertices.length - 1] !== this.vertices[0]) {
+        // Close the polygon
+        if (this.vertices.length > 0 && this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
             this.vertices.push(this.vertices[0]);
         }
 
@@ -205,12 +206,16 @@ define([
          * return TextAnchor
          */
         getTextAnchor: function () {
-            var a = this.vertices[0].X(),
-                b = this.vertices[0].Y(),
-                x = a,
-                y = b,
-                i;
+            var a, b, x, y, i;
 
+            if (this.vertices.length === 0) {
+                return new Coords(Const.COORDS_BY_USER, [1, 0, 0], this.board);
+            }
+
+            a = this.vertices[0].X();
+            b = this.vertices[0].Y();
+            x = a;
+            y = b;
             for (i = 0; i < this.vertices.length; i++) {
                 if (this.vertices[i].X() < a) {
                     a = this.vertices[i].X();
