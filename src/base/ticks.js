@@ -116,22 +116,7 @@ define([
              * Ticks function:
              * determines the distance (in user units) of two major ticks
              */
-            this.ticksFunction = function () {
-                var delta, b, dist;
-
-                if (this.visProp.insertticks) {
-                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
-                    dist = b.upper - b.lower;
-                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
-                    if (dist <= 6 * delta) {
-                        delta *= 0.5;
-                    }
-                    return delta;
-                } else {
-                    // upto 0.99.1
-                    return ticks;
-                }
-            };
+            this.ticksFunction = this.makeTicksFunction(ticks);
 
             this.equidistant = true;
         }
@@ -181,6 +166,35 @@ define([
     JXG.Ticks.prototype = new GeometryElement();
 
     JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
+
+        /**
+         * Ticks function:
+         * determines the distance (in user units) of two major ticks.
+         * See above in constructor and in @see JXG.GeometryElement#setAttribute
+         * 
+         * @private
+         * @param {Number} ticks Distance between two major ticks
+         * @returns {Function} returns method ticksFunction
+         */
+        makeTicksFunction: function (ticks) {
+            return function () {
+                var delta, b, dist;
+
+                if (this.visProp.insertticks) {
+                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
+                    dist = b.upper - b.lower;
+                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
+                    if (dist <= 6 * delta) {
+                        delta *= 0.5;
+                    }
+                    return delta;
+                } else {
+                    // upto 0.99.1
+                    return ticks;
+                }
+            };
+        },
+        
         /**
          * Checks whether (x,y) is near the line.
          * @param {Number} x Coordinate in x direction, screen coordinates.

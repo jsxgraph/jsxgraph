@@ -884,12 +884,7 @@ define([
          */
         setAttribute: function (attributes) {
             var i, key, value, arg, opacity, pair, oldvalue,
-                properties = {},
-                makeTicksFunction = function (v) {
-                    return function (i) {
-                        return v;
-                    };
-                };
+                properties = {};
 
             // normalize the user input
             for (i = 0; i < arguments.length; i++) {
@@ -1023,7 +1018,7 @@ define([
                         break;
                     case 'ticksdistance':
                         if (this.type === Const.OBJECT_TYPE_TICKS && typeof value === 'number') {
-                            this.ticksFunction = makeTicksFunction(value);
+                            this.ticksFunction = this.makeTicksFunction(value);
                         }
                         break;
                     case 'generatelabelvalue':
