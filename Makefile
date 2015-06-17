@@ -4,6 +4,7 @@
 REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=node ./node_modules/.bin/jsdoc2
+#JSDOC2=node ./node_modules/.bin/jsdoc
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar 
@@ -25,13 +26,15 @@ BUILDBIN=$(BUILD)/bin
 BUILDREADERS=$(BUILDBIN)/readers
 JSDOC2PLG=doc/jsdoc-tk/plugins
 JSDOC2TPL=doc/jsdoc-tk/template
+#JSDOC2TPL=./node_modules/ink-docstrap/template
 JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 
 # flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
-#JSDOC2FLAGS=-v -t=$(JSDOC2TPL) -d=$(TMP)/docs
-JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
+JSDOC2FLAGS=-v -p --template=$(JSDOC2TPL) --destination=$(TMP)/docs
+#JSDOC2FLAGS=--verbose -p --template $(JSDOC2TPL) --destination $(TMP)/docs
+
 ZIPFLAGS=-r
 JSTESTPORT=4224
 JSTESTSERVER=localhost:4224
