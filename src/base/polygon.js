@@ -706,7 +706,7 @@ define([
          *   representing the vertices of the intersection polygon.
          *
          * @example
-         * // Static intersection of two polygons pol1 and pol2
+         *  // Static intersection of two polygons pol1 and pol2
          *  var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
          *                name:'pol1', withLabel: true,
          *                fillColor: 'yellow'
@@ -737,7 +737,7 @@ define([
          * </script><pre>
          *
          * @example
-         * // Dynamic intersection of two polygons pol1 and pol2
+         *  // Dynamic intersection of two polygons pol1 and pol2
          *  var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
          *                name:'pol1', withLabel: true,
          *                fillColor: 'yellow'
@@ -749,19 +749,19 @@ define([
          *  // Dynamic version:
          *  // the intersection polygon does  adapt to changes of pol1 or pol2.
          *  // For this a curve element is used.
-         *    var curve = board.create('curve', [[],[]], {fillColor: 'blue', fillOpacity: 0.4});
-         *    curve.updateDataArray = function() {
-         *        var mat = JXG.Math.transpose(pol1.intersect(pol2));
+         *  var curve = board.create('curve', [[],[]], {fillColor: 'blue', fillOpacity: 0.4});
+         *  curve.updateDataArray = function() {
+         *      var mat = JXG.Math.transpose(pol1.intersect(pol2));
          *
-         *        if (mat.length == 3) {
-         *            this.dataX = mat[1];
-         *            this.dataY = mat[2];
-         *        } else {
-         *            this.dataX = [];
-         *            this.dataY = [];
-         *        }
-         *    };
-         *    board.update();
+         *      if (mat.length == 3) {
+         *          this.dataX = mat[1];
+         *          this.dataY = mat[2];
+         *      } else {
+         *          this.dataX = [];
+         *          this.dataY = [];
+         *      }
+         *  };
+         *  board.update();
          * </pre><div id="f870d516-ca1a-4140-8fe3-5d64fb42e5f2" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *   (function() {
