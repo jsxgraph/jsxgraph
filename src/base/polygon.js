@@ -631,11 +631,12 @@ define([
         * See <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">wikipedia entry</a>.
         * Called by {@link JXG.Polygon#intersect}.
         *
+        * @private
+        *
         * @param {JXG.Polygon} polygon Polygon which will be clipped.
         *
         * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
         *   representing the vertices of the intersection polygon.
-        *
         *
         */
         sutherlandHodgman: function(polygon) {

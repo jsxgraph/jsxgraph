@@ -60,7 +60,7 @@ define([
 
     /**
      * @class This element is used to provide a constructor for special texts containing a form button element.
-     * 
+     *
      * @pseudo
      * @description
      * @name Button
@@ -70,7 +70,7 @@ define([
      *
      * @param {number,function_number,function_String_function} x,y,label,handler Parent elements for button elements.
      *                     <p>
-     *                     x and y are the coordinates of the lower left corner of the text box. 
+     *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
@@ -90,7 +90,7 @@ define([
      *  var button2 = board.create('button', [1, 4, 'Change Y with JessieCode',
      *      "$('p1').Y = $('p1').Y() - 0.5;"
      *  ], {});
-     * 
+     *
      * </pre><div id="f19b1bce-dd00-4e35-be97-ff1817d11514" style="width: 500px; height: 300px;"></div>
      * <script type="text/javascript">
      *  var t1_board = JXG.JSXGraph.initBoard('f19b1bce-dd00-4e35-be97-ff1817d11514', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
@@ -105,7 +105,7 @@ define([
      *  var button2 = t1_board.create('button', [1, 4, 'Change Y with JessieCode',
      *      "$('p1').Y = $('p1').Y() - 0.5;"
      *  ], {});
-     * 
+     *
      * </script><pre>
      * [x, y, label, handler]
      */
@@ -129,7 +129,7 @@ define([
         t.rendNodeButton.innerHTML = parents[2];
 
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
-        t.rendNodeTag.disabled = !!attr.disabled; 
+        t.rendNodeTag.disabled = !!attr.disabled;
 
         if (parents[3]) {
             if (typeof parents[3] === 'string') {
