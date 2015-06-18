@@ -357,7 +357,8 @@ define([
             radius: 'Radius',
             center: 'center',
             radiuspoint: 'radiuspoint',
-            anglepoint: 'anglepoint'
+            anglepoint: 'anglepoint',
+            Value: 'Value'
         });
 
         el.prepareUpdate().update();
