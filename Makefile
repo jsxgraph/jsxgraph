@@ -32,7 +32,7 @@ JSDOC2TPLSTAT=$(JSDOC2TPL)/static
 # flags
 MKDIRFLAGS=-p
 RMFLAGS=-rf
-JSDOC2FLAGS=-v -p --template=$(JSDOC2TPL) --destination=$(TMP)/docs
+JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 #JSDOC2FLAGS=--verbose -p --template $(JSDOC2TPL) --destination $(TMP)/docs
 
 ZIPFLAGS=-r
