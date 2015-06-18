@@ -42,7 +42,7 @@
  * algorithms for solving linear equations etc.
  */
 
-define(['utils/type', 'math/math'], function (Type, Mat) {
+define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
     "use strict";
 
@@ -1215,10 +1215,10 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
 
             if (limit > ws.limit) {
-                console.log("iteration limit exceeds available workspace");
+                JXG.warn('iteration limit exceeds available workspace');
             }
             if (epsabs <= 0 && (epsrel < 50 * Mat.eps || epsrel < 0.5e-28)) {
-                console.log("tolerance cannot be acheived with given epsabs and epsrel");
+                JXG.warn('tolerance cannot be acheived with given epsabs and epsrel');
             }
 
             result0 = q.apply(this, [interval, f, resultObj]);
@@ -1234,7 +1234,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 result = result0;
                 abserr = abserr0;
 
-                console.log("cannot reach tolerance because of roundoff error on first attempt");
+                JXG.warn('cannot reach tolerance because of roundoff error on first attempt');
                 return -Infinity;
             }
 
@@ -1249,7 +1249,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 result = result0;
                 abserr = abserr0;
 
-                console.log("a maximum of one iteration was insufficient");
+                JXG.warn('a maximum of one iteration was insufficient');
                 return -Infinity;
             }
 
