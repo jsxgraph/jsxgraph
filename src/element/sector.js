@@ -1098,6 +1098,13 @@ define([
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
 
+        /**
+         * Returns the value of the angle in Radians.
+         * @memberOf Angle.prototype
+         * @name Value
+         * @function
+         * @returns {Number} The angle value in Radians
+         */
         el.Value = function () {
             return Geometry.rad(this.point2, this.point1, this.point3);
         };
