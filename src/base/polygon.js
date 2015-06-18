@@ -626,7 +626,7 @@ define([
         },
 
         /**
-        * Algorithm by Sutherland and Hodgman to compute the intersection of two konvex polygons
+        * Algorithm by Sutherland and Hodgman to compute the intersection of two convex polygons.
         * The polygon itself is the clipping polygon, it expects as parameter a polygon to be clipped.
         * See <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">wikipedia entry</a>.
         * Called by {@link JXG.Polygon#intersect}.
