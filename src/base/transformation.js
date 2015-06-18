@@ -108,8 +108,12 @@ define([
         },
 
         /**
-         * Set the transformation matrix for different
-         * types of standard transforms
+         * Set the transformation matrix for different types of standard transforms.
+         * @param {JXG.Board} board
+         * @param {String} type   Transformation type, possible values are
+         *                        'translate', 'scale', 'reflect', 'rotate',
+         *                        'shear', 'generic'.
+         * @param {Array} params Parameters for the various transformation types.
          */
         setMatrix: function (board, type, params) {
             var i;
@@ -306,6 +310,8 @@ define([
 
         /**
          * Bind a transformation to a GeometryElement
+         * @param  {Array,JXG.Object} p JXG.Object or array of JXG.Object to
+         *                            which the transformation is bound to.
          */
         bindTo: function (p) {
             var i, len;
@@ -328,11 +334,17 @@ define([
             JXG.deprecated('Transformation.setProperty()', 'Transformation.setAttribute()');
         },
 
+        /**
+         * Empty method
+         * @param {Object} term Key-value pairs of the attributes.
+         */
         setAttribute: function (term) { },
 
         /**
-         * Multiplication of a transformation t from the right.
-         * this = t join this
+         * Multiply the transformation with a transformation t from the left.
+         * i.e. this = t join this
+         * @param  {JXG.Transform} t Transformation wich is the left multiplicand
+         * @return {JXG.Transform} the transformation object.
          */
         melt: function (t) {
             var res = [], i, len, len0, k, s, j;

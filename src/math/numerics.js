@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -2523,7 +2522,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return result;
         },
-
 
         /**
          * Maximum number of iterations in {@link JXG.Math.Numerics#fzero}
