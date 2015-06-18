@@ -663,7 +663,7 @@ define([
         bounds: function () {
             var c = this.coords.usrCoords;
 
-            if (this.visProp.islabel || this.board.unitY == 0 || this.board.unitX == 0) {
+            if (this.visProp.islabel || this.board.unitY === 0 || this.board.unitX === 0) {
                 return [0, 0, 0, 0];
             } else {
                 return [c[1], c[2] + this.size[1] / this.board.unitY, c[1] + this.size[0] / this.board.unitX, c[2]];

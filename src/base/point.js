@@ -499,7 +499,7 @@ define([
         el.intersectionNumbers = [i, j];
         el.getParents = function() {
             return this.parents.concat(this.intersectionNumbers);
-        }
+        };
 
         el.generatePolynomial = function () {
             var poly1 = el1.generatePolynomial(el),

@@ -1605,7 +1605,7 @@ define([
                 if (sel.removeAllRanges) {
                     try {
                         sel.removeAllRanges();
-                    } catch (e) {};
+                    } catch (e) {}
                 }
             }
 

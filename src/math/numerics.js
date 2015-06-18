@@ -690,7 +690,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 DBL_EPS = 2.2204460492503131e-16;
 
             err = Math.abs(err);
-            if (result_asc != 0 && err != 0) {
+            if (result_asc !== 0 && err !== 0) {
                 scale = Math.pow((200 * err / result_asc), 1.5);
 
                 if (scale < 1.0) {
@@ -750,7 +750,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 jtwm1,
                 fv1 = [], fv2 = [];
 
-            if (n % 2 == 0) {
+            if (n % 2 === 0) {
                 result_gauss = f_center * wg[n / 2 - 1];
             }
 
@@ -1129,7 +1129,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         b: this.blist[i],
                         r: this.rlist[i],
                         e: this.elist[i]
-                    }
+                    };
                 },
 
                 sum_results: function() {
@@ -1225,7 +1225,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                 console.log("cannot reach tolerance because of roundoff error on first attempt");
                 return -Infinity;
-            } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
+            } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 === 0.0) {
                 result = result0;
                 abserr = abserr0;
 
