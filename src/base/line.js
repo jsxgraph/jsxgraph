@@ -57,8 +57,8 @@
 
 define([
     'jxg', 'math/math', 'math/geometry', 'math/numerics', 'math/statistics', 'base/constants', 'base/coords',
-    'base/element', 'utils/type', 'base/transformation', 'base/point', 'base/ticks'
-], function (JXG, Mat, Geometry, Numerics, Statistics, Const, Coords, GeometryElement, Type, Transform, Point, Ticks) {
+    'base/element', 'utils/type', 'base/point'
+], function (JXG, Mat, Geometry, Numerics, Statistics, Const, Coords, GeometryElement, Type, Point) {
 
     "use strict";
 
@@ -653,7 +653,7 @@ define([
 
         // see GeometryElement.js
         snapToGrid: function (pos) {
-            var c1, c2, dc, t, v, ticks,
+            var c1, c2, dc, t, ticks,
                 x, y, sX, sY;
 
             if (this.visProp.snaptogrid) {
@@ -837,7 +837,7 @@ define([
          * Removes all ticks from a line.
          */
         removeAllTicks: function () {
-            var i, t;
+            var t;
 
             for (t = this.ticks.length; t > 0; t--) {
                 this.removeTicks(this.ticks[t - 1]);
@@ -1186,7 +1186,7 @@ define([
      *
      */
     JXG.createSegment = function (board, parents, attributes) {
-        var el, i, attr;
+        var el, attr;
 
         attributes.straightFirst = false;
         attributes.straightLast = false;
@@ -1368,7 +1368,7 @@ define([
      * </script><pre>
      */
     JXG.createTangent = function (board, parents, attributes) {
-        var p, c, g, f, i, j, el, tangent;
+        var p, c, g, f, j, el, tangent;
 
         // One arguments: glider on line, circle or curve
         if (parents.length === 1) {

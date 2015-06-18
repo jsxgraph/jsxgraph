@@ -105,7 +105,9 @@ define([
         if (Type.isFunction(ticks)) {
             this.ticksFunction = ticks;
             throw new Error("Function arguments are no longer supported.");
-        } else if (Type.isArray(ticks)) {
+        }
+
+        if (Type.isArray(ticks)) {
             this.fixedTicks = ticks;
         } else {
             if (Math.abs(ticks) < Mat.eps || ticks < 0) {
@@ -171,7 +173,7 @@ define([
          * Ticks function:
          * determines the distance (in user units) of two major ticks.
          * See above in constructor and in @see JXG.GeometryElement#setAttribute
-         * 
+         *
          * @private
          * @param {Number} ticks Distance between two major ticks
          * @returns {Function} returns method ticksFunction
@@ -188,13 +190,13 @@ define([
                         delta *= 0.5;
                     }
                     return delta;
-                } else {
-                    // upto 0.99.1
-                    return ticks;
                 }
+
+                // upto 0.99.1:
+                return ticks;
             };
         },
-        
+
         /**
          * Checks whether (x,y) is near the line.
          * @param {Number} x Coordinate in x direction, screen coordinates.
@@ -251,7 +253,7 @@ define([
          * @returns {JXG.Ticks} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var dx, dy, i,
+            var dx, dy,
                 c = new Coords(method, coords, this.board),
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
@@ -397,10 +399,10 @@ define([
          *
          * @param  {JXG.Coords} coordsZero
          * @return {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
-         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically 
+         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically
          *              generate ticks. The second case is for drawing of the ticks.
          * @return {Object}     contains the lower and upper bounds
-         *                     
+         *
          * @private
          */
         getLowerAndUpperBounds: function (coordsZero, type) {
@@ -506,10 +508,6 @@ define([
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
-                // Point 1 of the line
-                p1 = this.line.point1,
-                // Point 2 of the line
-                p2 = this.line.point2,
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
@@ -566,14 +564,13 @@ define([
          */
         adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
             var nx, ny, bounds,
-                distScr, dist,
+                distScr,
                 sgn = 1;
 
             bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
-            dist = bounds.upper - bounds.lower;
             while (distScr / (this.visProp.minorticks + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
@@ -709,14 +706,13 @@ define([
          * @private
          */
         tickEndings: function (coords, major) {
-            var i, c, lineStdForm, intersection,
+            var c, lineStdForm, intersection,
                 dxs, dys,
-                s, style,
+                style,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x = [-1000 * cw, -1000 * ch],
                 y = [-1000 * cw, -1000 * ch],
-                count = 0,
                 isInsideCanvas = false;
 
             c = coords.scrCoords;
@@ -782,7 +778,7 @@ define([
 
                 labelText = value.toString();
                 if (this.visProp.useunicodeminus) {
-                    labelText = labelText.replace(/-/g, '\u2212'); 
+                    labelText = labelText.replace(/-/g, '\u2212');
                 }
 
                 // if value is Number

@@ -54,9 +54,8 @@
  */
 
 define([
-    'jxg', 'base/element', 'base/coords', 'base/constants', 'parser/geonext', 'math/geometry', 'math/statistics',
-    'utils/type', 'base/transformation', 'base/point'
-], function (JXG, GeometryElement, Coords, Const, GeonextParser, Geometry, Statistics, Type, Transform, Point) {
+    'jxg', 'base/element', 'base/coords', 'base/constants', 'parser/geonext', 'utils/type'
+], function (JXG, GeometryElement, Coords, Const, GeonextParser, Type) {
 
     "use strict";
 
@@ -666,7 +665,7 @@ define([
         },
 
         getParents: function() {
-            if (this.parents.length == 1) {  // i.e. this.method === 'pointRadius'
+            if (this.parents.length === 1) {  // i.e. this.method === 'pointRadius'
                 return this.parents.concat(this.radius);
             }
             return this.parents;

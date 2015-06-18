@@ -45,8 +45,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/element', 'math/math', 'math/geometry', 'utils/type'
-], function (JXG, Const, GeometryElement, Mat, Geometry, Type) {
+    'jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -63,7 +63,7 @@ define([
      * @constructor
      */
     JXG.Group = function (board, id, name, objects, attributes) {
-        var number, objArray, i, obj, att;
+        var number, objArray, i, obj;
 
         this.board = board;
         this.objects = {};
@@ -205,7 +205,7 @@ define([
          * @returns {JXG.Group} returns this group
          */
         update: function (drag) {
-            var el, actionCenter, desc, trans, s, sx, sy, alpha, t, center, obj = null;
+            var el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;
@@ -383,7 +383,7 @@ define([
          * Apply the transformation to all elements of the group
          */
         _update_apply_transformation: function (drag, t) {
-            var el, obj, tmpSnap;
+            var el, obj;
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
@@ -908,7 +908,7 @@ define([
      *
      */
     JXG.createGroup = function (board, parents, attributes) {
-        var i, attr = Type.copyAttributes(attributes, board.options, 'group'),
+        var attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';

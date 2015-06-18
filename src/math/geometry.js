@@ -543,11 +543,10 @@ define([
          * @returns {Array}
          */
         GrahamScan: function (points) {
-            var i, ll,
+            var i,
                 M = 1,
                 ps = Expect.each(points, Expect.coordsArray),
                 N = ps.length;
-
 
             ps = this.sortVertices(ps);
             N = ps.length;
@@ -585,7 +584,7 @@ define([
          */
         calcStraight: function (el, point1, point2, margin) {
             var takePoint1, takePoint2, intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, s, i, j, p1, p2;
+                c, p1, p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -733,8 +732,8 @@ define([
          */
         calcLineDelimitingPoints: function (el, point1, point2) {
             var distP1P2, boundingBox, lineSlope,
-                intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, s, i, j, p1, p2,
+                intersect1, intersect2, straightFirst, straightLast,
+                c, p1, p2,
                 takePoint1 = false,
                 takePoint2 = false;
 
@@ -1298,7 +1297,7 @@ define([
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLine: function (el1, el2, nr, board, alwaysIntersect) {
-            var v = [0, NaN, NaN], i, cu, li;
+            var v = [0, NaN, NaN], cu, li;
 
             if (!Type.exists(board)) {
                 board = el1.board;
@@ -1624,8 +1623,7 @@ define([
          * @returns {Array} Array consisting of two coordinate arrays for Bezier curves.
          */
         _bezierSplit: function (curve) {
-            var a = [], b = [],
-                p0, p1, p2, p00, p22, p000;
+            var p0, p1, p2, p00, p22, p000;
 
             p0 = [(curve[0][0] + curve[1][0]) * 0.5, (curve[0][1] + curve[1][1]) * 0.5];
             p1 = [(curve[1][0] + curve[2][0]) * 0.5, (curve[1][1] + curve[2][1]) * 0.5];
@@ -1818,7 +1816,7 @@ define([
          *
          */
         meetBeziersegmentBeziersegment: function (red, blue, testSegment) {
-            var L, n, L2, i;
+            var L, L2, i;
 
             if (red.length === 4 && blue.length === 4) {
                 L = this._bezierMeetSubdivision(red, blue, 0);
@@ -2090,7 +2088,7 @@ define([
          * two endpoints q1 and q2 of the segment.
          */
         projectCoordsToSegment: function (p, q1, q2) {
-            var t, denom, c,
+            var t, denom,
                 s = [q2[1] - q1[1], q2[2] - q1[2]],
                 v = [p[1] - q1[1], p[2] - q1[2]];
 
@@ -2174,8 +2172,8 @@ define([
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
             var newCoords, newCoordsObj, i, j,
-                x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
-                p1, p2, q1, q2, res,
+                mindist, dist, lbda, v, coords, d,
+                p1, p2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
                 infty = Number.POSITIVE_INFINITY;
 

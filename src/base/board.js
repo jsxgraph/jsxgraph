@@ -565,7 +565,7 @@ define([
          * @returns {String} Unique name for the object.
          */
         generateName: function (object) {
-            var possibleNames, i, j,
+            var possibleNames, i,
                 maxNameLength = this.attr.maxnamelength,
                 pre = '',
                 post = '',
@@ -1712,8 +1712,7 @@ define([
          * @return {Boolean}
          */
         pointerMoveListener: function (evt) {
-            var i, j, pos, time,
-                evtTouches = evt[JXG.touchProperty];
+            var i, j, pos;
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.dehighlightAll();
@@ -1795,9 +1794,7 @@ define([
          * @return {Boolean}
          */
         pointerUpListener: function (evt) {
-            var i, j, k, found, foundNumber,
-                tmpTouches = [],
-                eps = this.options.precision.touch;
+            var i, j, found;
 
             this.triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
             this.renderer.hide(this.infobox);
