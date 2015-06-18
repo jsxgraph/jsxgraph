@@ -58,7 +58,7 @@ define([
 
     /**
      * @class This element is used to provide a constructor for special texts containing a form input element.
-     * 
+     *
      * @pseudo
      * @description
      * @name Input
@@ -153,7 +153,7 @@ define([
         t.rendNodeInput.value = parents[2];
 
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
-        t.rendNodeTag.disabled = !!attr.disabled; 
+        t.rendNodeTag.disabled = !!attr.disabled;
 
         t._value = parents[2];
 

@@ -61,7 +61,7 @@ define([
         each: function (a, format, copy) {
             var i, len,
                 r = [];
-            
+
             if (Type.exists(a.length)) {
                 len = a.length;
                 for (i = 0; i < len; i++) {

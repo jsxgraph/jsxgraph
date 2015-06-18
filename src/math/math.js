@@ -555,9 +555,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         log: function (x, b) {
             if (typeof b !== 'undefined' && Type.isNumber(b)) {
                 return Math.log(x) / Math.log(b);
-            } else {
-                return Math.log(x);
             }
+
+            return Math.log(x);
         },
 
         /**

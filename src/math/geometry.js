@@ -517,7 +517,7 @@ define([
             if (typeof sort === 'undefined') {
                 sort = true;
             }
-            
+
             if (!sort) {
                 ps = this.sortVertices(ps);
             } else {

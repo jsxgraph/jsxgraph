@@ -39,7 +39,7 @@
  utils/type
  */
 
-define(['jxg', 'base/constants', 'math/math', 'utils/type'], function (JXG, Const, Mat, Type) {
+define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
     "use strict";
 

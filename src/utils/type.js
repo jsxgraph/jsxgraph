@@ -228,7 +228,7 @@ define([
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [], i, str;
+            var f = [], i;
 
             for (i = 0; i < n; i++) {
                 f[i] = JXG.createFunction(param[i], board, '', true);
@@ -308,7 +308,7 @@ define([
             var i, j,
                 len,
                 lenAttr = 0,
-                points = [], attr, p, val;
+                points = [], attr, val;
 
             if (!this.isArray(parents)) {
                 parents = [parents];
@@ -724,7 +724,7 @@ define([
          * @returns {Object} copy of obj or merge of obj and obj2.
          */
         deepCopy: function (obj, obj2, toLower) {
-            var c, i, prop, j, i2;
+            var c, i, prop, i2;
 
             toLower = toLower || false;
 
