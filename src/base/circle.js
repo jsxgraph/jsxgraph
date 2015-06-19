@@ -651,12 +651,20 @@ define([
             return 1.0;
         },
 
+        /**
+         * Circle area
+         * @return {Number} area of the circle.
+         */
         Area: function () {
             var r = this.Radius();
 
             return r * r * Math.PI;
         },
 
+        /**
+         * Get bounding box of the circle.
+         * @return {Array} [x1, y1, x2, y2]
+         */
         bounds: function () {
             var uc = this.center.coords.usrCoords,
                 r = this.Radius();
@@ -664,6 +672,11 @@ define([
             return [uc[1] - r, uc[2] + r, uc[1] + r, uc[2] - r];
         },
 
+        /**
+         * Get data to construct this element. Data consists of the parent elements
+         * and static data like radius.
+         * @return {Array} data necessary to construct this element
+         */
         getParents: function() {
             if (this.parents.length === 1) {  // i.e. this.method === 'pointRadius'
                 return this.parents.concat(this.radius);
