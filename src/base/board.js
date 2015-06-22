@@ -1482,34 +1482,38 @@ define([
 
         /**
          * Handler for click on left arrow in the navigation bar
+         * @returns {JXG.Board} Reference to the board
          */
         clickLeftArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1] + this.canvasWidth * 0.1, this.origin.scrCoords[2]);
-            return false;
+            return this;
         },
 
         /**
          * Handler for click on right arrow in the navigation bar
+         * @returns {JXG.Board} Reference to the board
          */
         clickRightArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1] - this.canvasWidth * 0.1, this.origin.scrCoords[2]);
-            return false;
+            return this;
         },
 
         /**
          * Handler for click on up arrow in the navigation bar
+         * @returns {JXG.Board} Reference to the board
          */
         clickUpArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] - this.canvasHeight * 0.1);
-            return false;
+            return this;
         },
 
         /**
          * Handler for click on down arrow in the navigation bar
+         * @returns {JXG.Board} Reference to the board
          */
         clickDownArrow: function () {
             this.moveOrigin(this.origin.scrCoords[1], this.origin.scrCoords[2] + this.canvasHeight * 0.1);
-            return false;
+            return this;
         },
 
         /**
@@ -2839,9 +2843,7 @@ define([
             this.setBoundingBox([bb[0] + dX * lr, bb[1] - dY * tr, bb[2] - dX * (1 - lr), bb[3] + dY * (1 - tr)], false);
             this.zoomX *= zX;
             this.zoomY *= zY;
-            this.applyZoom();
-
-            return false;
+            return this.applyZoom();
         },
 
         /**
@@ -2860,7 +2862,7 @@ define([
                 tr = 0.5;
 
             if (this.zoomX < this.attr.zoom.eps || this.zoomY < this.attr.zoom.eps) {
-                return false;
+                return this;
             }
 
             if (typeof x === 'number' && typeof y === 'number') {
@@ -2872,8 +2874,7 @@ define([
             this.zoomX /= zX;
             this.zoomY /= zY;
 
-            this.applyZoom();
-            return false;
+            return this.applyZoom();
         },
 
         /**
@@ -2888,8 +2889,7 @@ define([
             this.setBoundingBox([bb[0] + dX, bb[1] - dY, bb[2] - dX, bb[3] + dY], false);
             this.zoomX = 1.0;
             this.zoomY = 1.0;
-            this.applyZoom();
-            return false;
+            return this.applyZoom();
         },
 
         /**
@@ -2930,9 +2930,7 @@ define([
 
             this.setBoundingBox([minX - borderX, maxY + borderY, maxX + borderX, minY - borderY], true);
 
-            this.applyZoom();
-
-            return this;
+            return this.applyZoom();
         },
 
         /**
@@ -2983,7 +2981,7 @@ define([
          * Sets the zoom level to <tt>fX</tt> resp <tt>fY</tt>.
          * @param {Number} fX
          * @param {Number} fY
-         * @returns {JXG.Board}
+         * @returns {JXG.Board} Reference to the board.
          */
         setZoom: function (fX, fY) {
             var oX = this.attr.zoom.factorx,

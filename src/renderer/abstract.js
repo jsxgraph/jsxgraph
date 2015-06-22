@@ -1285,7 +1285,7 @@ define([
                         this.style.backgroundColor = board.options.navbar.fillColor;
                     }, button);
 
-                    Env.addEvent(button, 'click', handler, board);
+                    Env.addEvent(button, 'click', function(e) { (Type.bind(handler, board))(); return false; }, board);
                     // prevent the click from bubbling down to the board
                     Env.addEvent(button, 'mouseup', cancelbubble, board);
                     Env.addEvent(button, 'mousedown', cancelbubble, board);
