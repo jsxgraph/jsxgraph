@@ -410,10 +410,45 @@ define([
         },
 
         /**
-         * Adds ids of elements to the array this.parents.
+         * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
+         * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
+         * which referes to coordinates of a point, calling addParents() is necessary.
+         *
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
+         *
+         * @example
+         * // Movable function graph
+         * var A = board.create('point', [1, 0], {name:'A'}),
+         *     B = board.create('point', [3, 1], {name:'B'}),
+         *     f = board.create('functiongraph', function(x) {
+         *          var ax = A.X(),
+         *              ay = A.Y(),
+         *              bx = B.X(),
+         *              by = B.Y(),
+         *              a = (by - ay) / ( (bx - ax) * (bx - ax) );
+         *           return a * (x - ax) * (x - ax) + ay;
+         *      }, {fixed: false});
+         * f.addParents([A, B]);
+         * </pre><div id="7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
+         * <script type="text/javascript">
+         * (function() {
+         *   var board = JXG.JSXGraph.initBoard('7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var A = board.create('point', [1, 0], {name:'A'}),
+         *       B = board.create('point', [3, 1], {name:'B'}),
+         *       f = board.create('functiongraph', function(x) {
+         *            var ax = A.X(),
+         *                ay = A.Y(),
+         *                bx = B.X(),
+         *                by = B.Y(),
+         *                a = (by - ay) / ( (bx - ax) * (bx - ax) );
+         *             return a * (x - ax) * (x - ax) + ay;
+         *        }, {fixed: false});
+         *   f.addParents([A, B]); 
+         * })();
+         * </script><pre>
+         *
          **/
         addParents: function (parents) {
             var i, len, par;
