@@ -522,6 +522,28 @@ define([
          */
         this._drag_offset = [0, 0];
 
+        /**
+         * A flag which tells us if the board is in the selecting mode
+         * @type {Boolean}
+         * @default false
+         */
+        this.selectingMode = false;
+
+        /**
+         * A flag which tells us if the user is selecting
+         * @type {Boolean}
+         * @default false
+         */
+        this.isSelecting = false;
+	
+        /**
+         * A bounding box for the selection
+         * @type {Array}
+         * @default [ [0,0], [0,0] ]
+         */
+        this.selectingBox = [ [0,0], [0,0] ];
+
+	
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
@@ -2308,6 +2330,13 @@ define([
                 }
             }
 
+    	    // selection
+	    if(this.selectingMode) {
+		this.isSelecting = true;
+                this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
+		this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
+	    }
+
             if (this.mode === this.BOARD_MODE_NONE) {
                 result = this.mouseOriginMoveStart(evt);
             }
@@ -2322,7 +2351,7 @@ define([
          * @param {Event} evt
          */
         mouseUpListener: function (evt) {
-            var i;
+            var i, pos;
 
             this.triggerEventHandlers(['mouseup', 'up'], [evt]);
 
@@ -2339,6 +2368,14 @@ define([
             this.dehighlightAll();
             this.update();
 
+	    // selection
+	    if(this.selectingMode) {
+                pos = this.getMousePosition(evt);
+		this.isSelecting = false;
+                this.selectingBox[1] = [pos[0], pos[1]];
+		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+	    }
+	    
             for (i = 0; i < this.downObjects.length; i++) {
                 this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
             }
@@ -2383,6 +2420,12 @@ define([
                     this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
+
+	    // selection
+	    if(this.selectingMode) {
+		this.isSelecting = false;
+                this.selectingBox[1] = [pos[0], pos[1]];
+	    }
 
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
@@ -4090,6 +4133,16 @@ define([
             this.cssTransMat = Mat.inverse(this.cssTransMat);
 
             return this;
+        },
+
+        startSelectionMode: function () {
+          this.selectingMode = true;
+	  this.selectingBox = [ [0,0], [0,0] ];
+        },
+
+        stopSelectionMode: function () {
+          this.selectingMode = false;
+	  return this.selectingBox;
         },
 
 
