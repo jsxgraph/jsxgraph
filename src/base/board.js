@@ -2422,8 +2422,7 @@ define([
             }
 
 	    // selection
-	    if(this.selectingMode) {
-		this.isSelecting = false;
+	    if(this.selectingMode && this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
 	    }
 
