@@ -564,6 +564,7 @@ define([
                 while (i >= 0) {
                     plaintext += ' + "' + this.replaceSub(this.replaceSup(contentStr.slice(0, i))) + '"';
                     term = contentStr.slice(i + 7, j);
+                    term = term.replace(/\s+/g, ''); // Remove all whitespace
                     if (expand === true) {
                         term = this.expandShortMath(term);
                     }
