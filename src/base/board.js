@@ -2334,6 +2334,7 @@ define([
 	    if(this.selectingMode) {
 		this.isSelecting = true;
                 this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
+		this._setSelectionPolygonFromBox()
 		this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
 	    }
 
@@ -2373,6 +2374,7 @@ define([
                 pos = this.getMousePosition(evt);
 		this.isSelecting = false;
                 this.selectingBox[1] = [pos[0], pos[1]];
+		this._setSelectionPolygonFromBox()
 		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
 	    }
 	    
@@ -2424,12 +2426,23 @@ define([
 	    // selection
 	    if(this.selectingMode && this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
+		this._setSelectionPolygonFromBox()
+		this.selection.prepareUpdate().update().updateRenderer()
 	    }
 
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
             this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
         },
+
+	_setSelectionPolygonFromBox() {
+	    var A = this.selectingBox[0];
+	    var B = this.selectingBox[1];
+	    this.selection.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], A[1]]);
+	    this.selection.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], B[1]]);
+	    this.selection.vertices[2].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], B[1]]);
+	    this.selection.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], A[1]]);
+	},
 
         /**
          * Handler for mouse wheel events. Used to zoom in and out of the board.
@@ -4136,11 +4149,15 @@ define([
 
         startSelectionMode: function () {
           this.selectingMode = true;
+	  this.selection.setAttribute({visible: true});
 	  this.selectingBox = [ [0,0], [0,0] ];
+	  this._setSelectionPolygonFromBox()
+          this.selection.prepareUpdate().update().updateRenderer()
         },
 
         stopSelectionMode: function () {
           this.selectingMode = false;
+  	  this.selection.setAttribute({visible: false});
 	  return this.selectingBox;
         },
 
