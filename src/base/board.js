@@ -2293,6 +2293,16 @@ define([
             }
 
             pos = this.getMousePosition(evt);
+
+    	    // selection
+	    if(this.selectingMode) {
+		this.isSelecting = true;
+                this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
+		this._setSelectionPolygonFromBox()
+		this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
+		return; // don't continue as a normal click
+	    }
+	    
             elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
 
             // if no draggable object can be found, get out here immediately
@@ -2330,14 +2340,6 @@ define([
                 }
             }
 
-    	    // selection
-	    if(this.selectingMode) {
-		this.isSelecting = true;
-                this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
-		this._setSelectionPolygonFromBox()
-		this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
-	    }
-
             if (this.mode === this.BOARD_MODE_NONE) {
                 result = this.mouseOriginMoveStart(evt);
             }
@@ -2354,8 +2356,10 @@ define([
         mouseUpListener: function (evt) {
             var i, pos;
 
-            this.triggerEventHandlers(['mouseup', 'up'], [evt]);
-
+	    if(this.selectingMode == false) {
+		this.triggerEventHandlers(['mouseup', 'up'], [evt]);
+	    }
+		
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
@@ -2376,11 +2380,11 @@ define([
                 this.selectingBox[1] = [pos[0], pos[1]];
 		this._setSelectionPolygonFromBox()
 		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+	    } else {
+		for (i = 0; i < this.downObjects.length; i++) {
+		    this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
+		}
 	    }
-	    
-            for (i = 0; i < this.downObjects.length; i++) {
-                this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
-            }
 
             this.downObjects.length = 0;
 
@@ -2409,30 +2413,34 @@ define([
                 this.renderer.hide(this.infobox);
             }
 
-            // we have to check for three cases:
+            // we have to check for four cases:
             //   * user moves origin
             //   * user drags an object
             //   * user just moves the mouse, here highlight all elements at
             //     the current mouse position
+	    //   * the user is selecting
 
-            if (!this.mouseOriginMove(evt)) {
-                if (this.mode === this.BOARD_MODE_DRAG) {
-                    this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
-                } else { // BOARD_MODE_NONE
-                    this.highlightElements(pos[0], pos[1], evt, -1);
-                }
-            }
-
-	    // selection
-	    if(this.selectingMode && this.isSelecting) {
-                this.selectingBox[1] = [pos[0], pos[1]];
-		this._setSelectionPolygonFromBox()
-		this.selection.prepareUpdate().update().updateRenderer()
+    	    // selection
+	    if(this.selectingMode) {
+		if(this.isSelecting) {
+                  this.selectingBox[1] = [pos[0], pos[1]];
+  		  this._setSelectionPolygonFromBox()
+		  this.selection.prepareUpdate().update().updateRenderer()
+		}
+	    } else {
+	    
+              if (!this.mouseOriginMove(evt)) {
+                  if (this.mode === this.BOARD_MODE_DRAG) {
+                      this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
+                  } else { // BOARD_MODE_NONE
+                      this.highlightElements(pos[0], pos[1], evt, -1);
+                  }
+              }
+	      
+              this.updateQuality = this.BOARD_QUALITY_HIGH;
+	      
+              this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
 	    }
-
-            this.updateQuality = this.BOARD_QUALITY_HIGH;
-
-            this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
         },
 
 	_setSelectionPolygonFromBox() {
