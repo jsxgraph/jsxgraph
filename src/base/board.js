@@ -1350,6 +1350,9 @@ define([
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
                 }
+                Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
                 this.hasPointerHandlers = true;
             }
         },
@@ -1414,6 +1417,9 @@ define([
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
                 }
+
+                Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
+                Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 if (this.hasPointerUp) {
                     if (window.navigator.pointerEnabled) {  // IE11+
