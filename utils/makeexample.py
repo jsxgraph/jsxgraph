@@ -5,9 +5,7 @@
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
-        Bianca Valentin,
-        Alfred Wassermann,
-        Peter Wilfahrt
+        Alfred Wassermann
 
     This file is part of JSXGraph.
 
