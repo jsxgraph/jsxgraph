@@ -1039,6 +1039,8 @@ define([
 
         el = board.create('ticks', [parents[0], pos], attr);
         el.elType = 'hatch';
+
+        return el;
     };
 
     JXG.registerElement('ticks', JXG.createTicks);
