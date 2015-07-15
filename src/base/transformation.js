@@ -152,7 +152,7 @@ define([
          *                be a line, a pair of points or four number (or functions) p_x, p_y, q_x, q_y,
          *                determining a line through points (p_x, p_y) and (q_x, q_y).
          * @param {Array} angle,x,y In case of 'rotate' the parameters are an angle or angle function,
-         *                returning the angle in Radians and - optionally - a coordinate pair defining the
+         *                returning the angle in Radians and - optionally - a coordinate pair or a point defining the
          *                reotation center. If the rotation center is not given, the transformation rotates around (0,0).
          * @param {Array} shear_x,shear_y Shear vector (number or function) in case of 'shear'.
          * @param {Array} a,b,c,d,e,f,g,h,i Nine matrix entries (numbers or functions) for a generic
