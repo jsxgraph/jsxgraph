@@ -619,7 +619,7 @@ define([
      * @example
      * // One time application of a transform to points A, B
      * var p1 = board.create('point', [1, 1]),
-     *     p2 = board.create('point', [1, 1]),
+     *     p2 = board.create('point', [-1, -2]),
      *     t = board.create('transform', [3, 2], {type: 'shear'});
      * t.applyOnce([p1, p2]);
      *
