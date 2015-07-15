@@ -723,7 +723,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('angle', [p1, p2, p3]),
-     *     t = board.create('text', [4, 4, function() { return a.Value(),toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * </pre><div id="a34151f9-bb26-480a-8d6e-9b8cbf789ae5" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -733,7 +733,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('angle', [p1, p2, p3]),
-     *     t = board.create('text', [4, 4, function() { return a.Value(),toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * })();
      * </script><pre>
      *
