@@ -777,6 +777,8 @@ define([
                     element.needsSizeUpdate = true;
                 }
                 this.setObjectStrokeColor(element, sc, so);
+            } else if (display === 'embeddedhtml') {
+                this.updateEmbeddedTextStyle(element, sc, so);
             } else {
                 this.updateInternalTextStyle(element, sc, so);
             }

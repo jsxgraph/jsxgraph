@@ -283,36 +283,27 @@ define([
          * for aligning text.
          */
         updateSize: function () {
-            var tmp, s, that;
+            var tmp, s, that, node;
 
             if (!Env.isBrowser || this.board.renderer.type === 'no') {
                 return this;
             }
 
+            if (this.visProp.display === 'embeddedhtml') {
+                node = this.rendNodeHTML;
+            } else {
+                node = this.rendNode;
+            }
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
-            if (this.visProp.display === 'html' || this.board.renderer.type === 'vml') {
-                if (JXG.exists(this.rendNode.offsetWidth)) {
-                    s = [this.rendNode.offsetWidth, this.rendNode.offsetHeight];
+            if (this.visProp.display === 'html' || this.visProp.display === 'embeddedhtml' || this.board.renderer.type === 'vml') {
+                if (JXG.exists(node.offsetWidth)) {
+                    s = [node.offsetWidth, node.offsetHeight];
                     if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
                         that = this;
                         window.setTimeout(function () {
-                            that.size = [that.rendNode.offsetWidth, that.rendNode.offsetHeight];
-                        }, 0);
-                    } else {
-                        this.size = s;
-                    }
-                } else {
-                    this.size = this.crudeSizeEstimate();
-                }
-            } else if (this.visProp.display === 'embeddedhtml') {
-                if (JXG.exists(this.rendNodeHTML.offsetWidth)) {
-                    s = [this.rendNodeHTML.offsetWidth, this.rendNodeHTML.offsetHeight];
-                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
-                        that = this;
-                        window.setTimeout(function () {
-                            that.size = [that.rendNodeHTML.offsetWidth, that.rendNodeHTML.offsetHeight];
+                            that.size = [node.offsetWidth, node.offsetHeight];
                         }, 0);
                     } else {
                         this.size = s;
@@ -323,7 +314,7 @@ define([
             } else if (this.visProp.display === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     try {
-                        tmp = this.rendNode.getBBox();
+                        tmp = node.getBBox();
                         this.size = [tmp.width, tmp.height];
                     } catch (e) {}
                 } else if (this.board.renderer.type === 'canvas') {

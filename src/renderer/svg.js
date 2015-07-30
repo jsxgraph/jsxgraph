@@ -519,6 +519,10 @@ define([
             }
         },
 
+        updateEmbeddedTextStyle: function (element, strokeColor, strokeOpacity) {
+            this.setObjectFillColor(element, strokeColor, strokeOpacity, element.rendNodeHTML);
+        },
+
         /* **************************
          *    Image related stuff
          * **************************/
@@ -1025,7 +1029,7 @@ define([
         },
 
         // documented in JXG.AbstractRenderer
-        setObjectFillColor: function (el, color, opacity) {
+        setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity);
@@ -1045,7 +1049,11 @@ define([
                     oo = o * rgbo[1];
                 }
 
-                node = el.rendNode;
+                if (rendNode === undefined) {
+                    node = el.rendNode;
+                } else {
+                    node = rendNode;
+                }
 
                 if (c !== 'none') {               // problem in firefox 17
                     node.setAttributeNS(null, 'fill', c);
