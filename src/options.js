@@ -3144,7 +3144,7 @@ define([
 
             /**
              * Determines the rendering method of the text. Possible values
-             * include <tt>'html'</tt> and <tt>'internal</tt>.
+             * include <tt>'html'</tt>, <tt>'embeddedhtml'</tt> and <tt>'internal</tt>.
              * 
              * @name display
              * @memberOf Text.prototype

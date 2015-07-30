@@ -289,11 +289,8 @@ define([
                 return this;
             }
 
-            if (this.visProp.display === 'embeddedhtml') {
-                node = this.rendNodeHTML;
-            } else {
-                node = this.rendNode;
-            }
+            node = this.rendNode;
+
             /**
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */

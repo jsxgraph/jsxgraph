@@ -596,24 +596,33 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         drawText: function (element) {
-            var node, z;
+            var node, z, level;
 
-            if (element.visProp.display === 'html' && Env.isBrowser) {
+            if ((element.visProp.display === 'html' || element.visProp.display === 'embeddedhtml') && Env.isBrowser) {
                 node = this.container.ownerDocument.createElement('div');
                 node.style.position = 'absolute';
 
                 node.className = element.visProp.cssclass;
-                if (this.container.style.zIndex === '') {
-                    z = 0;
-                } else {
-                    z = parseInt(this.container.style.zIndex, 10);
-                }
+                
+                if (element.visProp.display === 'html') {
+                    if (this.container.style.zIndex === '') {
+                        z = 0;
+                    } else {
+                        z = parseInt(this.container.style.zIndex, 10);
+                    }
 
-                node.style.zIndex = z + element.board.options.layer.text;
-                this.container.appendChild(node);
+                    node.style.zIndex = z + element.board.options.layer.text;
+                    this.container.appendChild(node);
+                } else {
+                    level = element.visProp.layer;
+                    if (!Type.exists(level)) { // trace nodes have level not set
+                        level = 0;
+                    } else if (level >= Options.layer.numlayers) {
+                        level = Options.layer.numlayers - 1;
+                    }
+                    this.foreignObjLayer[level].appendChild(node);
+                }
                 node.setAttribute('id', this.container.id + '_' + element.id);
-            } else if (element.visProp.display === 'embeddedhtml') {
-                node = this.drawEmbeddedText(element);
             } else {
                 node = this.drawInternalText(element);
             }
@@ -639,7 +648,7 @@ define([
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
 
-                if (el.visProp.display === 'html') {
+                if (el.visProp.display === 'html' || el.visProp.display === 'embeddedhtml') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
@@ -718,8 +727,6 @@ define([
                         }
                     }
                     this.transformImage(el, el.transformations);
-                } else if (el.visProp.display === 'embeddedhtml') {
-                    this.updateEmbeddedText(el);
                 } else {
                     this.updateInternalText(el);
                 }
@@ -755,7 +762,7 @@ define([
             }
 
             // This part is executed for all text elements except internal texts in canvas.
-            if (display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
+            if (display === 'html' || display === 'embeddedhtml' || (this.type !== 'canvas' && this.type !== 'no')) {
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     element.needsSizeUpdate = true;
@@ -770,15 +777,13 @@ define([
 
             }
 
-            if (display === 'html') {
+            if (display === 'html' || display === 'embeddedhtml') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
                     element.needsSizeUpdate = true;
                 }
                 this.setObjectStrokeColor(element, sc, so);
-            } else if (display === 'embeddedhtml') {
-                this.updateEmbeddedTextStyle(element, sc, so);
             } else {
                 this.updateInternalTextStyle(element, sc, so);
             }
