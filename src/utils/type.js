@@ -535,7 +535,12 @@ define([
             }
 
             for (i = 0; i < a1.length; i++) {
-                if (a1[i] !== a2[i]) {
+                if (JXG.isArray(a1[i]) && JXG.isArray(a2[i])) {
+                    if (!cmpArrays(a1[i], a2[i])) {
+                        return false;
+                    }
+                }
+                else if (a1[i] !== a2[i]) {
                     return false;
                 }
             }
