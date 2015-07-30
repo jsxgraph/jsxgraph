@@ -612,6 +612,8 @@ define([
                 node.style.zIndex = z + element.board.options.layer.text;
                 this.container.appendChild(node);
                 node.setAttribute('id', this.container.id + '_' + element.id);
+            } else if (element.visProp.display === 'embeddedhtml') {
+                node = this.drawEmbeddedText(element);
             } else {
                 node = this.drawInternalText(element);
             }
@@ -716,6 +718,8 @@ define([
                         }
                     }
                     this.transformImage(el, el.transformations);
+                } else if (el.visProp.display === 'embeddedhtml') {
+                    this.updateEmbeddedText(el);
                 } else {
                     this.updateInternalText(el);
                 }

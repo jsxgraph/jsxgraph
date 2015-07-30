@@ -410,6 +410,115 @@ define([
             this.setObjectFillColor(element, strokeColor, strokeOpacity);
         },
 
+        drawEmbeddedText: function (el) {
+            var node = this.createPrim('foreignObject', el.id),
+                html;
+
+            //node.setAttributeNS(null, "class", el.visProp.cssclass);
+            // Preserve spaces
+            //node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
+
+            html = this.container.ownerDocument.createElement('div');
+            html.style.position = 'absolute';
+            node.appendChild(html);
+
+            node.setAttribute("x",0);
+            node.setAttribute("y",0);
+            node.setAttribute("width","100%");
+            node.setAttribute("height","100%");
+
+            this.appendChildPrim(node,  el.visProp.layer);
+            el.rendNodeHTML = html;
+
+            return node;
+        },
+
+        updateEmbeddedText: function (el) {
+            var content = el.plaintext, v, c, parentNode;
+
+            if (el.visProp.visible) {
+                ////this.updateTextStyle(el, false);
+
+                // Set the position
+                if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
+
+                    // Horizontal
+                    c = el.coords.scrCoords[1];
+                    // webkit seems to fail for extremely large values for c.
+                    c = Math.abs(c) < 1000000 ? c : 1000000;
+                    if (el.visProp.anchorx === 'right') {
+                        v = Math.floor(el.board.canvasWidth - c);
+                    } else if (el.visProp.anchorx === 'middle') {
+                        v = Math.floor(c - 0.5 * el.size[0]);
+                    } else { // 'left'
+                        v = Math.floor(c);
+                    }
+
+                    if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
+                        if (el.visProp.anchorx === 'right') {
+                            el.rendNodeHTML.style.right = v + 'px';
+                            el.rendNodeHTML.style.left = 'auto';
+                        } else {
+                            el.rendNodeHTML.style.left = v + 'px';
+                            el.rendNodeHTML.style.right = 'auto';
+                        }
+                        el.visPropOld.left = el.visProp.anchorx + v;
+                    }
+
+                    // Vertical
+                    c = el.coords.scrCoords[2] + this.vOffsetText;
+                    c = Math.abs(c) < 1000000 ? c : 1000000;
+
+                    if (el.visProp.anchory === 'bottom') {
+                        v = Math.floor(el.board.canvasHeight - c);
+                    } else if (el.visProp.anchory === 'middle') {
+                        v = Math.floor(c - 0.5 * el.size[1]);
+                    } else { // top
+                        v = Math.floor(c);
+                    }
+
+                    if (el.visPropOld.top !== (el.visProp.anchory + v)) {
+                        if (el.visProp.anchory === 'bottom') {
+                            el.rendNodeHTML.style.top = 'auto';
+                            el.rendNodeHTML.style.bottom = v + 'px';
+                        } else {
+                            el.rendNodeHTML.style.bottom = 'auto';
+                            el.rendNodeHTML.style.top = v + 'px';
+                        }
+                        el.visPropOld.top = el.visProp.anchory + v;
+                    }
+                }
+
+                // Set the content
+                if (el.htmlStr !== content) {
+                    try {
+                        el.rendNodeHTML.innerHTML = content;
+                    } catch (e) {
+                        // Setting innerHTML sometimes fails in IE8. A workaround is to
+                        // take the node off the DOM, assign innerHTML, then append back.
+                        // Works for text elements as they are absolutely positioned.
+                        parentNode = el.rendNodeHTML.parentNode;
+                        el.rendNodeHTML.parentNode.removeChild(el.rendNodeHTML);
+                        el.rendNodeHTML.innerHTML = content;
+                        parentNode.appendChild(el.rendNodeHTML);
+                    }
+                    el.htmlStr = content;
+
+                    if (el.visProp.usemathjax) {
+                        // typesetting directly might not work because mathjax was not loaded completely
+                        // see http://www.mathjax.org/docs/1.1/typeset.html
+                        MathJax.Hub.Queue(['Typeset', MathJax.Hub, el.rendNodeHTML]);
+                    } else if (el.visProp.useasciimathml) {
+                        // This is not a constructor.
+                        // See http://www1.chapman.edu/~jipsen/mathml/asciimath.html for more information
+                        // about AsciiMathML and the project's source code.
+                        AMprocessNode(el.rendNodeHTML, false);
+                    }
+                }
+                this.transformImage(el, el.transformations);
+            }
+        },
+
         /* **************************
          *    Image related stuff
          * **************************/

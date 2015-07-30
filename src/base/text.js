@@ -306,6 +306,20 @@ define([
                 } else {
                     this.size = this.crudeSizeEstimate();
                 }
+            } else if (this.visProp.display === 'embeddedhtml') {
+                if (JXG.exists(this.rendNodeHTML.offsetWidth)) {
+                    s = [this.rendNodeHTML.offsetWidth, this.rendNodeHTML.offsetHeight];
+                    if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
+                        that = this;
+                        window.setTimeout(function () {
+                            that.size = [that.rendNodeHTML.offsetWidth, that.rendNodeHTML.offsetHeight];
+                        }, 0);
+                    } else {
+                        this.size = s;
+                    }
+                } else {
+                    this.size = this.crudeSizeEstimate();
+                }
             } else if (this.visProp.display === 'internal') {
                 if (this.board.renderer.type === 'svg') {
                     try {
