@@ -212,6 +212,24 @@ define([
         };
 
         /**
+         * Sets the value of the slider. This call must be followed
+         * by a board update call.
+         * @memberOf Slider.prototype
+         * @name setValue
+         * @param {Number} val New value
+         * @returns {Object} this object
+         */
+        p3.setValue = function(val) {
+            var sdiff = this._smax - this._smin;
+            if (Math.abs(sdiff) > Mat.eps) {
+                this.position = val / sdiff + this._smin;
+            } else {
+                this.position = this._smin;
+            }
+            return this;
+        };
+        
+        /**
          * Sets the minimum value of the slider.
          * @memberOf Slider.prototype
          * @name setMin
