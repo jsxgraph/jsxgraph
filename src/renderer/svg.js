@@ -162,18 +162,24 @@ define([
          * @type Array
          */
         this.layer = [];
-        this.foreignObjLayer = [];
         for (i = 0; i < Options.layer.numlayers; i++) {
             this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
-            this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
-            
-            this.foreignObjLayer[i].setAttribute("x",0);
-            this.foreignObjLayer[i].setAttribute("y",0);
-            this.foreignObjLayer[i].setAttribute("width","100%");
-            this.foreignObjLayer[i].setAttribute("height","100%");
-            this.layer[i].appendChild(this.foreignObjLayer[i]);
-            
             this.svgRoot.appendChild(this.layer[i]);
+        }
+
+        // already documented in JXG.AbstractRenderer
+        this.supportsForeignObject = document.implementation.hasFeature("www.http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
+        if (this.supportsForeignObject) {
+            this.foreignObjLayer = [];
+            for (i = 0; i < Options.layer.numlayers; i++) {
+                this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+
+                this.foreignObjLayer[i].setAttribute("x",0);
+                this.foreignObjLayer[i].setAttribute("y",0);
+                this.foreignObjLayer[i].setAttribute("width","100%");
+                this.foreignObjLayer[i].setAttribute("height","100%");
+                this.layer[i].appendChild(this.foreignObjLayer[i]);
+            }
         }
 
         /**
@@ -997,7 +1003,7 @@ define([
                 node = el.rendNode;
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
-                    if (el.visProp.display === 'html' || el.visProp.display === 'embeddedhtml') {
+                    if (el.visProp.display === 'html') {
                         node.style.color = c;
                         node.style.opacity = oo;
                     } else {
