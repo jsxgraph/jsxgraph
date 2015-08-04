@@ -1427,7 +1427,15 @@ define([
          * @param {Number} i Number of the crosshair to show
          * @param {Array} pos New positon in screen coordinates
          */
-        updateTouchpoint: function (i, pos) {}
+        updateTouchpoint: function (i, pos) {},
+
+        /**
+         * Convert SVG construction to canvas.
+         * Only available on SVGRenderer.
+         * 
+         * @see JXG.SVGRenderer#dumpToCanvas
+         */
+        dumpToCanvas: function(canvasId) {}
     });
 
     return JXG.AbstractRenderer;
