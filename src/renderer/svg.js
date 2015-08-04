@@ -44,8 +44,8 @@
 */
 
 define([
-    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'math/numerics'
-], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Numerics) {
+    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'utils/base64', 'math/numerics'
+], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Base64, Numerics) {
 
     "use strict";
 
@@ -1165,7 +1165,52 @@ define([
                     'L ' + x + ' ' + (y + d));
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
+        },
+
+        /**
+         * Convert the SVG construction into an HTML canvas image.
+         * This works for all SVG supporting browsers.
+         * For IE it works from version 9.
+         * But HTML texts are ignored on IE. The drawing is done with a delay of
+         * 200 ms. Otherwise there are problems with IE.
+         *
+         * @param  {String} canvasId Id of an HTML canvas element
+         * @return {Object}          the svg renderer object.
+         *
+         * @example
+         * 	board.renderer.dumpToCanvas('canvas');
+         */
+        dumpToCanvas: function(canvasId) {
+            var svgRoot = this.svgRoot,
+                btoa = window.btoa || Base64.encode,
+                svg, tmpImg, cv, ctx;
+
+            svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgRoot.setAttribute("width", board.canvasWidth);
+            svgRoot.setAttribute("height", board.canvasHeight);
+            svg = new XMLSerializer().serializeToString(svgRoot);
+
+            // In IE we have to remove the namespace again.
+            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/, '');
+            }
+
+            cv = document.getElementById(canvasId);
+            ctx = cv.getContext("2d");
+
+            tmpImg = new Image();
+            tmpImg.onload = function () {
+                // IE needs a pause...
+                setTimeout(function(){
+                    cv.width = cv.width;
+                    ctx.drawImage(tmpImg, 0, 0);
+                }, 200);
+            };
+            tmpImg.src = 'data:image/svg+xml;base64,' + btoa(svg);
+
+            return this;
         }
+
     });
 
     return JXG.SVGRenderer;
