@@ -961,7 +961,7 @@
 
                 case JXG.GENTYPE_SLOPETRIANGLE:
                     // step.src_ids[0] may contain one or two parent elements.
-                    set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
+                    set_str = assign + 'slopetriangle(' + step.src_ids.join(', ') + ') <<';
                     set_str += attrid + ' name: \'\',';
                     set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
                     set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\'>>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\'>>,';
