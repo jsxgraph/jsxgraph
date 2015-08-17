@@ -97,6 +97,7 @@ define([
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
+            g,
             withText, withTicks, snapWidth, attr, precision, el;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
@@ -112,7 +113,7 @@ define([
         // end point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point2');
         p2 = board.create('point', parents[1],  attr);
-        board.create('group', [p1, p2]);
+        g = board.create('group', [p1, p2]);
 
         // slide line
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'baseline');
@@ -177,6 +178,8 @@ define([
 
         p3.methodMap = Type.deepCopy(p3.methodMap, {
             Value: 'Value',
+            setValue: 'setValue',
+            setLength: 'setLength',
             smax: '_smax',
             smin: '_smin',
             setMax: 'setMax',
@@ -241,6 +244,22 @@ define([
             return this;
         };
 
+        p3.setLength = function(val) {
+            var d, delta, x, y;
+            
+            d = this.point2.coords.distance(Const.COORDS_BY_SCREEN, this.point1.coords);
+            delta = val / d;
+            
+            g.removeTranslationPoint(this.point2);
+            x = delta * (this.point2.coords.scrCoords[1] - this.point1.coords.scrCoords[1]) + this.point1.coords.scrCoords[1];
+            y = delta * (this.point2.coords.scrCoords[2] - this.point1.coords.scrCoords[2]) + this.point1.coords.scrCoords[2];
+            this.point2.coords.setCoordinates(Const.COORDS_BY_SCREEN, [x, y]);
+            this.board.update();
+            g.addTranslationPoint(this.point2);
+            
+            return this;
+        };
+
         if (withText) {
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'label');
             t = board.create('text', [
@@ -283,6 +302,7 @@ define([
          * @type JXG.Point
          */
         p3.point1 = p1;
+        
         /**
          * End point of the base line.
          * @memberOf Slider.prototype
@@ -298,6 +318,7 @@ define([
          * @type JXG.Line
          */
         p3.baseline = l1;
+        
         /**
          * A line on top of the baseline, indicating the slider's progress.
          * @memberOf Slider.prototype
