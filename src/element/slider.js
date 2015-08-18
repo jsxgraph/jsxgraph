@@ -179,7 +179,6 @@ define([
         p3.methodMap = Type.deepCopy(p3.methodMap, {
             Value: 'Value',
             setValue: 'setValue',
-            setLength: 'setLength',
             smax: '_smax',
             smin: '_smin',
             setMax: 'setMax',
@@ -231,7 +230,7 @@ define([
             }
             return this;
         };
-        
+
         /**
          * Sets the minimum value of the slider.
          * @memberOf Slider.prototype
@@ -241,22 +240,6 @@ define([
          */
         p3.setMin = function(val) {
             this._smin = val;
-            return this;
-        };
-
-        p3.setLength = function(val) {
-            var d, delta, x, y;
-            
-            d = this.point2.coords.distance(Const.COORDS_BY_SCREEN, this.point1.coords);
-            delta = val / d;
-            
-            g.removeTranslationPoint(this.point2);
-            x = delta * (this.point2.coords.scrCoords[1] - this.point1.coords.scrCoords[1]) + this.point1.coords.scrCoords[1];
-            y = delta * (this.point2.coords.scrCoords[2] - this.point1.coords.scrCoords[2]) + this.point1.coords.scrCoords[2];
-            this.point2.coords.setCoordinates(Const.COORDS_BY_SCREEN, [x, y]);
-            this.board.update();
-            g.addTranslationPoint(this.point2);
-            
             return this;
         };
 
@@ -302,7 +285,7 @@ define([
          * @type JXG.Point
          */
         p3.point1 = p1;
-        
+
         /**
          * End point of the base line.
          * @memberOf Slider.prototype
@@ -318,7 +301,7 @@ define([
          * @type JXG.Line
          */
         p3.baseline = l1;
-        
+
         /**
          * A line on top of the baseline, indicating the slider's progress.
          * @memberOf Slider.prototype
