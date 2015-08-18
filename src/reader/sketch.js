@@ -72,7 +72,7 @@
             } else {
                 t = meta.unredo;
             }
-            
+
             for (i = 0; i <= t; i++) {
                 if (constr[i].type !== 0) {
                     try {
@@ -226,7 +226,7 @@
                     set_str += '<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true';
                     set_str += ', label: <<offset: [-4, -16], parse: false, display: "internal">>';
                     set_str += ', drawZero: false>>>>; ';
-                    
+
                     // y-axis
                     set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
@@ -424,7 +424,7 @@
                         set_str += ', snapToGrid: false, snapToPoints: false';
                         set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
-                    } 
+                    }
                     set_str += step.dest_id + '.onPolygon = ' + !!step.args.onPolygon + ';';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
@@ -919,7 +919,7 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-                    
+
                     break;
 
                 case JXG.GENTYPE_SECTOR:
@@ -1001,8 +1001,8 @@
                     set_str += 'baseline: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
-                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true, frozen: true>>, point2: <<id: \'';
-                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true, frozen: true>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: false, frozen: true>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: false, frozen: true>>, label: <<id: \'';
                     set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 
@@ -1057,7 +1057,7 @@
                         } else {
                             arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
                         }
-                        
+
                         if (arr.length >= 3 && JXG.trim(arr[2]) !== '') {
                             set_str = arr[2] + set_str;
                         }
@@ -1180,12 +1180,12 @@
                     }
 
                     set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ';
-                    
+
                     for (j = 0; j < step.src_ids.length; j++) {
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[0] + '); ';
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
                     }
-                    
+
                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
@@ -1261,9 +1261,9 @@
                         if (JXG.exists(step.args.coords[0])) {
                             set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-    
+
                             reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
-                        } 
+                        }
                     }
 
                     break;

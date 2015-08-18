@@ -113,7 +113,7 @@ define([
         // end point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point2');
         p2 = board.create('point', parents[1],  attr);
-        g = board.create('group', [p1, p2]);
+        //g = board.create('group', [p1, p2]);
 
         // slide line
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'baseline');

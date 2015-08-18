@@ -901,7 +901,7 @@ define([
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
-                        (!pEl.visProp.fixed) && (!pEl.visProp.frozen) &&
+                        (!pEl.visProp.fixed) && /*(!pEl.visProp.frozen) &&*/
                         haspoint) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||

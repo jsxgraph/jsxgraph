@@ -9,7 +9,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     lastSliderStart: -10,
     lastSliderEnd: 10,
     lastSliderIni: 1,
-    
+
     board: {
         minimizeReflow: 'all' // 'svg', 'all', 'none'
     },
@@ -18,7 +18,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: '#ddd',
         strokeColor: '#000',
         strokeWidth: 1,
-        radius: 1.0, 
+        radius: 1.0,
         orthotype: 'sectordot'
     },
 
@@ -37,7 +37,7 @@ JXG.Options = JXG.merge(JXG.Options, {
             display: 'internal'
         }
     },
-    
+
     circle: {
         strokeColor: '#36f',
         strokeOpacity: 0.9,
@@ -48,7 +48,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeWidth: 3,
         strokeOpacity: 0.9
     },
-    
+
     glider : {
         strokeColor: 'orange',
         fillColor: 'orange',
@@ -67,7 +67,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeOpacity: 0.9,
         strokeWidth: 3
     },
-    
+
     midpoint: {
         strokeColor: '#808080',
         fillColor: '#808080',
@@ -95,7 +95,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         fillColor: '#ffff00',
         highlightFillColor: '#ffff00',
         hasInnerPoints: true,
-        
+
         borders: {
             strokeColor: '#444444',
             strokeOpacity: 0.9,
@@ -106,7 +106,7 @@ JXG.Options = JXG.merge(JXG.Options, {
     precision: {
         touchMax: Infinity
     },
-    
+
     sector: {
         strokeWidth: 0,
         highlightStrokeWidth: 0,
@@ -115,7 +115,7 @@ JXG.Options = JXG.merge(JXG.Options, {
             fillColor: 'none'
         }
     },
-        
+
     segment: {
         label: {
             position: 'bot',
@@ -127,7 +127,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         highlightFillColor: '#ffffff',
         strokeOpacity: 0.5,
         strokeColor: '#444444',
-        
+
         face: '[]',
         ticks: { tickEndings: [0, 1],
             minTicksDistance: 15,
@@ -155,14 +155,28 @@ JXG.Options = JXG.merge(JXG.Options, {
             needsRegularUpdate: true
         },
         point1: {
-            fixed: false, 
-            needsRegularUpdate: true, 
-            snapToGrid: true
-        }, 
-        point2: {
-            fixed: false, 
+            fixed: false,
             needsRegularUpdate: true,
-            snapToGrid: true
+            snapToGrid: true,
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            fillColor: '#444444',
+            highlightFillColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            size: 3
+        },
+        point2: {
+            fixed: false,
+            needsRegularUpdate: true,
+            snapToGrid: true,
+            strokeColor: '#444444',
+            highlightStrokeColor: '#444444',
+            fillColor: '#444444',
+            highlightFillColor: '#444444',
+            strokeOpacity: 0.5,
+            highlightStrokeOpacity: 0.5,
+            size: 3
         }
     },
 
@@ -171,7 +185,7 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeWidth: 2,
         highlightStrokeColor: '#000000',
         strokeOpacity: 0.7,
-        
+
         point1: {
             strokeOpacity: 0.7,
             snapToPoints: true,
