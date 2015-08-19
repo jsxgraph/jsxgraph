@@ -132,7 +132,7 @@ define([
         } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
             tglide = parents[0];
             attr = Type.copyAttributes(attributes, board.options, 'tangent');
-            attr.visivle = false;
+            attr.visible = false;
             tangent = board.create('tangent', [tglide], attr);
             isPrivateTangent = true;
         } else if (parents.length === 2 &&
