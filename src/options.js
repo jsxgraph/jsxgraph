@@ -2917,6 +2917,20 @@ define([
             },
 
             /**
+             * Attributes for the tangent.
+             * The tangent is constructed by slop triangle if the construction
+             * is based on a glider, solely.
+             *
+             * @type Line
+             * @name Slopetriangle#tangent
+             */
+            tangent: {
+                visible: false,
+                withLabel: false,
+                name: ''
+            },
+
+            /**
              * Attributes for the top point.
              *
              * @type Point

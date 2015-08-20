@@ -59,7 +59,7 @@ define([
 
                 this.board.removeObject(this.label);
 
-                if (this.isPrivateTangent) {
+                if (this._isPrivateTangent) {
                     this.board.removeObject(this.tangent);
                 }
             },
@@ -131,8 +131,7 @@ define([
             tglide = tangent.glider;
         } else if (parents.length === 1 && parents[0].type === Const.OBJECT_TYPE_GLIDER) {
             tglide = parents[0];
-            attr = Type.copyAttributes(attributes, board.options, 'tangent');
-            attr.visible = false;
+            attr = Type.copyAttributes(attributes, board.options,  'slopetriangle', 'tangent');
             tangent = board.create('tangent', [tglide], attr);
             isPrivateTangent = true;
         } else if (parents.length === 2 &&
