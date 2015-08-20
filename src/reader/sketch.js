@@ -978,9 +978,9 @@
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (isNaN(step.args.a) || step.args.a == null)
+                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined)
                         step.args.a = "-infinity";
-                    if (isNaN(step.args.b) || step.args.b == null)
+                    if (isNaN(step.args.b) || step.args.b ===  null || step.args.b === undefined)
                         step.args.b = "infinity";
 
                     if (step.args.a != step.args.b)
