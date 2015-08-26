@@ -349,9 +349,7 @@ define([
                 minlen = 10,
                 margin = null;
 
-            if (element.visProp.firstarrow || element.visProp.lastarrow) {
-                margin = -4;
-            }
+            margin = element.visProp.margin;
             Geometry.calcStraight(element, c1, c2, margin);
 
             d1x = d1y = d2x = d2y = 0.0;
@@ -1432,7 +1430,7 @@ define([
         /**
          * Convert SVG construction to canvas.
          * Only available on SVGRenderer.
-         * 
+         *
          * @see JXG.SVGRenderer#dumpToCanvas
          */
         dumpToCanvas: function(canvasId) {}

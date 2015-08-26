@@ -1116,6 +1116,7 @@ define([
             straightFirst: true,
             straightLast: true,
             lastArrow: true,
+            margin: -4,
             withLabel: false,
             scalable: false,
 
@@ -1946,6 +1947,15 @@ define([
              * @default false
              */
             lastArrow: false,
+
+            /**
+             * This number cotrols where infinite lines not end at the canvas border. If zero, the line
+             * end exactly at the border, if negative there is a margin to the inside, if positive the line
+             * ends outside of the canvas (which is invisible).
+             * @type {Number}
+             * @default 0
+             */
+            margin: 0,
 
             /**
              * If true, line stretches infinitely in direction of its first point.
