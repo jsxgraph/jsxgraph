@@ -1949,8 +1949,8 @@ define([
             lastArrow: false,
 
             /**
-             * This number cotrols where infinite lines not end at the canvas border. If zero, the line
-             * end exactly at the border, if negative there is a margin to the inside, if positive the line
+             * This number (pixel value) controls where infinite lines end at the canvas border. If zero, the line
+             * ends exactly at the border, if negative there is a margin to the inside, if positive the line
              * ends outside of the canvas (which is invisible).
              * @type {Number}
              * @default 0

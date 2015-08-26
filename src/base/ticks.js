@@ -424,7 +424,7 @@ define([
             if (JXG.exists(type) || type === 'tickdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
-                Geometry.calcStraight(this.line, point1, point2);
+                Geometry.calcStraight(this.line, point1, point2, this.line.visProp.margin);
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
