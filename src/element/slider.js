@@ -223,11 +223,13 @@ define([
          */
         p3.setValue = function(val) {
             var sdiff = this._smax - this._smin;
+
             if (Math.abs(sdiff) > Mat.eps) {
-                this.position = val / sdiff + this._smin;
+                this.position = (val - this._smin) / sdiff;
             } else {
-                this.position = this._smin;
+                this.position = 0.0; //this._smin;
             }
+            this.position = Math.max(0.0, Math.min(1.0, this.position));
             return this;
         };
 
