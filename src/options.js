@@ -964,7 +964,7 @@ define([
          */
         layer: {
             numlayers: 20, // only important in SVG
-            text: 9,
+            text: 19,      // Otherise, interactive elements will not work
             point: 9,
             glider: 9,
             arc: 8,
@@ -1249,7 +1249,15 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false
+            disabled: false,
+
+            /**
+             * If used in SVG, buttons have to be in top layer.
+             * Otherwise the click is captured by other
+             * foreignObject elements.
+             * @type {Number}
+             */
+            layer: 19
 
             /**#@-*/
         },
@@ -1286,7 +1294,15 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false
+            disabled: false,
+
+            /**
+             * If used in SVG, checkboxes have to be in top layer.
+             * Otherwise the click is captured by other
+             * foreignObject elements.
+             * @type {Number}
+             */
+             layer: 19
 
             /**#@-*/
         },
@@ -1844,7 +1860,15 @@ define([
              * @type Boolean
              * @default false
              */
-            disabled: false
+            disabled: false,
+
+            /**
+             * If used in SVG, input elements have to be in top layer.
+             * Otherwise the click is captured by other
+             * foreignObject elements.
+             * @type {Number}
+             */
+            layer: 19
 
             /**#@-*/
         },
