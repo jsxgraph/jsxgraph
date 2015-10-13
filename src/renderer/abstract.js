@@ -605,7 +605,7 @@ define([
             var node, z, level;
 
             if (element.visProp.display === 'html' && Env.isBrowser) {
-                node = this.container.ownerDocument.createElement('div');
+                node = this.container.ownerDocument.createElement('div'); //createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
 
                 node.className = element.visProp.cssclass;
