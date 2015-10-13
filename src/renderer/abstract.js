@@ -758,7 +758,7 @@ define([
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateTextStyle: function (element, doHighlight) {
-            var fs, so, sc, css,
+            var fs, so, sc, css, node, list,
                 ev = element.visProp,
                 display = Env.isBrowser ? ev.display : 'internal';
 
@@ -777,11 +777,20 @@ define([
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     element.needsSizeUpdate = true;
+                    list = ['rendNode', 'rendNodeTag', 'rendNodeLabel'];
                     try {
-                        element.rendNode.style.fontSize = fs + 'px';
+                        for (node in list) {
+                            if (JXG.exists(element[list[node]])) {
+                                element[list[node]].style.fontSize = fs + 'px';
+                            }
+                        }
                     } catch (e) {
                         // IE needs special treatment.
-                        element.rendNode.style.fontSize = fs;
+                        for (node in list) {
+                            if (JXG.exists(element[list[node]])) {
+                                element[list[node]].style.fontSize = fs;
+                            }
+                        }
                     }
                     element.visPropOld.fontsize = fs;
                 }

@@ -155,6 +155,10 @@ define([
         t.rendNodeTag = t.rendNodeInput; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
+        // This sets the font-size of the input HTML element
+        t.visPropOld.fontsize = "0px";
+        board.renderer.updateTextStyle(t, false);
+
         t._value = parents[2];
 
         t.Value = function () {

@@ -160,6 +160,10 @@ define([
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.innerHTML = parents[2];
 
+        // This sets the font-size of the checkbox itself
+        t.visPropOld.fontsize = "0px";
+        board.renderer.updateTextStyle(t, false);
+
         t._value = false;
 
         t.Value = function () {
