@@ -964,7 +964,7 @@ define([
          */
         layer: {
             numlayers: 20, // only important in SVG
-            text: 19,      // Otherise, interactive elements will not work
+            text: 9,
             point: 9,
             glider: 9,
             arc: 8,
@@ -1252,12 +1252,15 @@ define([
             disabled: false,
 
             /**
-             * If used in SVG, buttons have to be in top layer.
-             * Otherwise the click is captured by other
-             * foreignObject elements.
-             * @type {Number}
+             * If true, the element is not placed into a foreignObject element.
+             * Instead, the element is placed into a separate HTML div element "above"
+             * the JSXGraph construction.
+             * This is necessary to enable interaction.
+             * The drawback is that a SVG export will not display this element.
+             *
+             * @type {Boolean}
              */
-            layer: 19
+            externalHTML: true
 
             /**#@-*/
         },
@@ -1297,12 +1300,15 @@ define([
             disabled: false,
 
             /**
-             * If used in SVG, checkboxes have to be in top layer.
-             * Otherwise the click is captured by other
-             * foreignObject elements.
-             * @type {Number}
+             * If true, the element is not placed into a foreignObject element.
+             * Instead, the element is placed into a separate HTML div element "above"
+             * the JSXGraph construction.
+             * This is necessary to enable interaction.
+             * The drawback is that a SVG export will not display this element.
+             *
+             * @type {Boolean}
              */
-             layer: 19
+            externalHTML: true
 
             /**#@-*/
         },
@@ -1863,12 +1869,15 @@ define([
             disabled: false,
 
             /**
-             * If used in SVG, input elements have to be in top layer.
-             * Otherwise the click is captured by other
-             * foreignObject elements.
-             * @type {Number}
+             * If true, the element is not placed into a foreignObject element.
+             * Instead, the element is placed into a separate HTML div element "above"
+             * the JSXGraph construction.
+             * This is necessary to enable interaction.
+             * The drawback is that a SVG export will not display this element.
+             *
+             * @type {Boolean}
              */
-            layer: 19
+            externalHTML: true
 
             /**#@-*/
         },
@@ -3200,6 +3209,17 @@ define([
              * @type String
              */
             display: 'html',
+
+            /**
+             * If true, the element is not placed into a foreignObject element.
+             * Instead, the element is placed into a separate HTML div element "above"
+             * the JSXGraph construction.
+             * This is necessary to enable interaction.
+             * The drawback is that a SVG export will not display this element.
+             *
+             * @type {Boolean}
+             */
+            externalHTML: true,
 
             /**
              * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative

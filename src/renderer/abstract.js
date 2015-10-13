@@ -614,7 +614,7 @@ define([
                    is used to host the HTML. Then, conversion to canvas works also
                    for HTML text.
                  */
-                if (this.supportsForeignObject) {
+                if (!element.visProp.externalhtml && this.supportsForeignObject) {
                     level = element.visProp.layer;
                     if (!Type.exists(level)) { // trace nodes have level not set
                         level = 0;
