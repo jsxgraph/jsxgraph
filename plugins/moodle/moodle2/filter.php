@@ -84,7 +84,13 @@ class filter_jsxgraph extends moodle_text_filter {
             $out->appendChild($a);            
 
             $a = $dom->createAttribute('style');
-            $a->value = "width:" . $w . "px; height:" . $h . "px; ";
+            if (is_numeric($w)) {
+                $w .= "px";
+            }
+            if (is_numeric($h)) {
+                $h .= "px";
+            }
+            $a->value = "width:" . $w . "; height:" . $h . "; ";
             $out->appendChild($a);            
             
             $t = $dom->createTextNode(""); 
