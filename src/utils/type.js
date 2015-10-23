@@ -535,7 +535,12 @@ define([
             }
 
             for (i = 0; i < a1.length; i++) {
-                if (a1[i] !== a2[i]) {
+                if (this.isArray(a1[i]) && this.isArray(a2[i])) {
+                    if (!this.cmpArrays(a1[i], a2[i])) {
+                        return false;
+                    }
+                }
+                else if (a1[i] !== a2[i]) {
                     return false;
                 }
             }
