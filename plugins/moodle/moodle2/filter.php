@@ -118,6 +118,9 @@ class filter_jsxgraph extends moodle_text_filter {
                 }
             }
             
+            /* Ensure that the div exists */
+            $code = "if (document.getElementById('" . $b . "') != null) {" . $code . "};";
+            
             // Place JavaScript code at the end of the page.
             $PAGE->requires->js_init_call($code);
             
