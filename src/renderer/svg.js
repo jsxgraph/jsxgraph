@@ -106,6 +106,8 @@ define([
         this.svgRoot.style.width = dim.width + 'px';
         this.svgRoot.style.height = dim.height + 'px';
 
+        //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
+
         this.container.appendChild(this.svgRoot);
 
         /**

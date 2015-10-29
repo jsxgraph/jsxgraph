@@ -250,10 +250,10 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Work around a bug in Safari
             if (display !== 'none' && display !== null) {
-                if (element.offsetWidth > 0 && element.offsetHeight > 0) {
-                    return {width: element.offsetWidth, height: element.offsetHeight};
+                if (element.clientWidth > 0 && element.clientHeight > 0) {
+                    return {width: element.clientWidth, height: element.clientHeight};
                 }
-                
+
                 // a parent might be set to display:none; try reading them from styles
                 style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
                 return {
