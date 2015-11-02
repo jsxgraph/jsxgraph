@@ -702,7 +702,7 @@
                         }
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: true, ';
-                        set_str += 'layer: ' + JXG.Options.layer.line + ', size: 2, opacity: 0.2, ';
+                        set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
                         reset_str = 'delete ' + pid2 + '; ' + reset_str;
                     } else {
@@ -1206,7 +1206,7 @@
                     set_str += step.dest_sub_ids[0] + '\', name: \'\', withLabel: false>>; ';
                     set_str += 'parallelpoint(\'' + step.src_ids[0] + '\',\'' + step.src_ids[1] + '\',\'' + step.dest_sub_ids[0] + '\') <<id: \'' + step.dest_sub_ids[1];
                     set_str += '\', strokeColor: \'#888888\', visible: true, priv: false, name: \'\', ';
-                    set_str += 'layer: ' + JXG.Options.layer.line + ', size: 2, opacity: 0.2, withLabel: false>>; ';
+                    set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, withLabel: false>>; ';
                     set_str += 'arrow(\'' + step.dest_sub_ids[0] + '\',\'' + step.dest_sub_ids[1]  + '\') <<id: \'' + step.dest_sub_ids[2];
                     set_str += '\', strokeColor: \'#888888\', visible: true, name: \'\', withLabel: false>>; ';
 
