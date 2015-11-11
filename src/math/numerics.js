@@ -2734,7 +2734,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             return b;
         },
 
-
         /**
          *
          * Find minimum of an univariate function f.
