@@ -711,7 +711,6 @@ define([
             }
         },
 
-
         /**
          * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2.
          *
@@ -1060,7 +1059,7 @@ define([
 
         /**
          * Intersection of the line with the board
-         * @param  {Array}     line   stdform of the line
+         * @param  {Array}     line   stdform of the line in screen coordinates
          * @param  {JXG.Board} board  reference to a board.
          * @param  {Number}    margin optional margin, to avoid the display of the small sides of lines.
          * @return {Array}            [intersection coords 1, intersection coords 2]

@@ -745,68 +745,83 @@ define([
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-        _borderCase: function (a, b, c, ta, tb, tc, depth) {
-            var t, pnt, p, p_good = null,
-                i, j, maxit = 5,
-                maxdepth = 70,
-                is_undef = false;
+         _borderCase: function (a, b, c, ta, tb, tc, depth) {
+             var t, pnt, p,
+                 p_good = null,
+                 j,
+                 max_it = 30,
+                 is_undef = false,
+                 t_nan, t_real, t_real2,
+                 sgn, v, dv, box;
 
-            if (depth < this.smoothLevel) {
+
+             if (depth <= 1) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-
-                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2])) {
-                    // a is outside of the definition interval, c and b are inside
-
-                    for (i = 0; i < maxdepth; ++i) {
-                        j = 0;
-
-                        // Bisect a and c until the new point is inside of the definition interval
-                        do {
-                            t = 0.5 * (ta + tc);
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                            p = pnt.scrCoords;
-                            is_undef = isNaN(p[1] + p[2]);
-
-                            if (is_undef) {
-                                ta = t;
-                            }
-                            ++j;
-                        } while (is_undef && j < maxit);
-
-                        // If bisection was successful, remember this point
-                        if (j < maxit) {
-                            tc = t;
-                            p_good = p.slice();
-                        } else {
-                            break;
-                        }
+                j = 0;
+                // Bisect a, b and c until the new point t_real is inside of the definition interval
+                do {
+                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = ta;
+                        t_real = tc;
+                        t_real2 = tb;
+                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = tb;
+                        t_real = tc;
+                        t_real2 = ta;
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                        t_nan = tc;
+                        t_real = tb;
+                        t_real2 = tb + (tb - tc);
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                        t_nan = tc;
+                        t_real = ta;
+                        t_real2 = ta - (tc - ta);
+                    } else {
+                        return false;
                     }
-                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2])) {
-                    // b is outside of the definition interval, a and c are inside
-                    for (i = 0; i < maxdepth; ++i) {
-                        j = 0;
-                        do {
-                            t = 0.5 * (tc + tb);
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                            p = pnt.scrCoords;
-                            is_undef = isNaN(p[1] + p[2]);
+                    t = 0.5 * (t_nan + t_real);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                    p = pnt.usrCoords;
 
-                            if (is_undef) {
-                                tb = t;
-                            }
-                            ++j;
-                        } while (is_undef && j < maxit);
-                        if (j < maxit) {
-                            tc = t;
-                            p_good = p.slice();
-                        } else {
-                            break;
-                        }
+                    is_undef = isNaN(p[1] + p[2]);
+                    if (is_undef) {
+                        t_nan = t;
+                    } else {
+                        t_real2 = t_real;
+                        t_real = t;
+                    }
+                    ++j;
+                } while (is_undef && j < max_it);
+
+                // If bisection was successful, take this point.
+                // Usefule only for general curves, for function graph
+                // the code below overwrite p_good from here.
+                if (j < max_it) {
+                    p_good = p.slice();
+                    c = p.slice();
+                    t_real = t;
+                }
+
+                // OK, bisection has been done now.
+                // t_real contains the closest inner point to the border of the interval we could find.
+                // t_real2 is the second nearest point to this boundary.
+                // Now we approximate the derivative by computing the slope of the line through these two points
+                // and test if it is "infinite", i.e larger than 400 in absolute values.
+                //
+                if (t_real === this.X(t_real)) {
+                    v = this.Y(t_real, true);
+                    dv = (v - this.Y(t_real2, true)) / (t_real - t_real2);
+                    if (Math.abs(dv) > 400.0) {
+                        sgn = Mat.sign(v);
+                        v = sgn * Infinity;
+                        box = this.board.getBoundingBox();
+                        v = Math.min(Math.max(v, box[3]), box[1]);
+                        p_good = [1, t_real, v];
                     }
                 }
 
                 if (p_good !== null) {
-                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, p_good.slice(1), this.board, false));
+                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
                     return true;
                 }
             }
@@ -940,6 +955,7 @@ define([
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt);
+                //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._insertPoint(pnt);
