@@ -561,6 +561,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * The sign() function returns the sign of a number, indicating whether the number is positive, negative or zero.
+         * @param  {Number} x A Number
+         * @return {[type]}  This function has 5 kinds of return values,
+         *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"
+         *    and NaN respectively.
+         */
+        sign: Math.sign || function(x) {
+            x = +x; // convert to a number
+            if (x === 0 || isNaN(x)) {
+                return x;
+            }
+            return x > 0 ? 1 : -1;
+        },
+
+        /**
          * A square & multiply algorithm to compute base to the power of exponent.
          * Implementated by Wolfgang Riedl.
          * @param {Number} base
