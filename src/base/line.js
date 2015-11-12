@@ -953,7 +953,7 @@ define([
             } else if ((typeof parents[0] === 'function') && ( Type.isPoint(parents[0]()) )) {
                 p1 = parents[0]();
                 constrained = true;
-            } else if ((typeof parents[0] === 'function') && (parents[0]().length && parents[0]().length === 2)) {
+            } else if ((typeof parents[0] === 'function') && (parents[0]().length && parents[0]().length >= 2)) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
                 p1 = Point.createPoint(board, parents[0](), attr);
                 constrained = true;
@@ -972,7 +972,7 @@ define([
             } else if ((typeof parents[1] === 'function') && ( Type.isPoint(parents[1]()) )) {
                 p2 = parents[1]();
                 constrained = true;
-            } else if ((typeof parents[1] === 'function') && (parents[1]().length && parents[1]().length === 2)) {
+            } else if ((typeof parents[1] === 'function') && (parents[1]().length && parents[1]().length >= 2)) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = Point.createPoint(board, parents[1](), attr);
                 constrained = true;

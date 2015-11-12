@@ -157,7 +157,6 @@ define([
         isPointType: function (board, v) {
             var val;
 
-            v = board.select(v);
             if (this.isArray(v)) {
                 return true;
             }
@@ -167,6 +166,7 @@ define([
                     return true;
                 }
             }
+            v = board.select(v);
             return this.isPoint(v);
         },
 
