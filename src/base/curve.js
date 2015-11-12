@@ -731,6 +731,81 @@ define([
         },
 
         /**
+         * Find the intersection of the asymptote for e.g. a log function
+         * with the canvas.
+         * @private
+         * @param  {Array} asymptote Asymptote line in standard form
+         * @param  {Array} box       Bounding box of the canavs
+         * @param  {Number} direction horizontal direction of the asymptote. If < 0 the asymptote
+         *  goes to the left, otherwise to the right.
+         * @return {Array}           Homogeneous coordinate array of the intersection point.
+         */
+        _intersectWithBorder: function(asymptote, box, direction) {
+            var border, intersection, x, y;
+
+            if (direction <= 0) { // Intersect with left border
+                border = [-box[0], 1, 0];
+                intersection = Mat.crossProduct(border, asymptote);
+                if (intersection[0] !== 0.0) {
+                    x = intersection[1] / intersection[0];
+                    y = intersection[2] / intersection[0];
+                } else {
+                    y = Infinity;
+                }
+
+                if (y < box[3]) { // Intersect with bottom border
+                    border = [-box[3], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                } else if (y > box[1]) { // Intersect with top border
+                    border = [-box[1], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                }
+            } else { // Intersect with right border
+                border = [-box[2], 1, 0];
+                intersection = Mat.crossProduct(border, asymptote);
+                if (intersection[0] !== 0.0) {
+                    x = intersection[1] / intersection[0];
+                    y = intersection[2] / intersection[0];
+                } else {
+                    y = Infinity;
+                }
+
+                if (y < box[3]) { // Intersect with bottom border
+                    border = [-box[3], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                } else if (y > box[1]) { // Intersect with top border
+                    border = [-box[1], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                }
+            }
+            return [1, x, y];
+        },
+
+        /**
          * Investigate a function term at the bounds of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
          *
@@ -752,7 +827,10 @@ define([
                  max_it = 30,
                  is_undef = false,
                  t_nan, t_real, t_real2,
-                 sgn, v, dv, box;
+                 box,
+                 vx, vy, vx2, vy2, dx, dy,
+                 x, y,
+                 asymptote, border, intersection;
 
 
              if (depth <= 1) {
@@ -808,17 +886,24 @@ define([
                 // Now we approximate the derivative by computing the slope of the line through these two points
                 // and test if it is "infinite", i.e larger than 400 in absolute values.
                 //
-                if (t_real === this.X(t_real)) {
-                    v = this.Y(t_real, true);
-                    dv = (v - this.Y(t_real2, true)) / (t_real - t_real2);
-                    if (Math.abs(dv) > 400.0) {
-                        sgn = Mat.sign(v);
-                        v = sgn * Infinity;
-                        box = this.board.getBoundingBox();
-                        v = Math.min(Math.max(v, box[3]), box[1]);
-                        p_good = [1, t_real, v];
+                vx = this.X(t_real, true) ;
+                vx2 = this.X(t_real2, true) ;
+                dx = (vx - vx2) / (t_real - t_real2);
+                vy = this.Y(t_real, true) ;
+                vy2 = this.Y(t_real2, true) ;
+                dy = (vy - vy2) / (t_real - t_real2);
+
+                // If the derivatives are large enough we draw the asymptote.
+                box = this.board.getBoundingBox();
+                if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
+
+                            // The asymptote is a line of the form
+                            //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                            //  Now we have to find the intersection with the correct canvas border.
+                            asymptote = [dx * vy - dy * vx, dy, -dx];
+
+                        p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
                     }
-                }
 
                 if (p_good !== null) {
                     this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
