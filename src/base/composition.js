@@ -176,8 +176,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * using a reserved name and providing an invalid element.
          */
         add: function (what, element) {
-            var self = this;
-
             if (!Type.exists(this[what]) && Type.exists(element)) {
                 if (Type.exists(element.id)) {
                     this.elements[element.id] = element;

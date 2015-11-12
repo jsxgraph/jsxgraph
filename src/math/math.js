@@ -402,7 +402,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var i,
                 s = 0;
 
-            if ((n === undef) || (typeof n !== 'number')) {
+            if ((n === undef) || ( n !== 'number')) {
                 n = a.length;
             }
 
@@ -553,7 +553,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number} log(x, b) Logarithm of x to base b, that is log(x)/log(b).
          */
         log: function (x, b) {
-            if (typeof b !== 'undefined' && Type.isNumber(b)) {
+            if (b !== undefined && Type.isNumber(b)) {
                 return Math.log(x) / Math.log(b);
             }
 

@@ -514,7 +514,7 @@ define([
                 A = 0,
                 ps = Expect.each(p, Expect.coordsArray);
 
-            if (typeof sort === 'undefined') {
+            if (sort === undefined) {
                 sort = true;
             }
 
