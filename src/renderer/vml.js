@@ -143,7 +143,7 @@ define([
                 x = c[0];
                 y = c[1];
 
-                if (Type.isNumber(x[0] === 'number' && typeof x[1])) {
+                if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
                     tickArr.push(' m ' + Math.round(r * x[0]) + ', ' + Math.round(r * y[0]) +
                         ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' ');
                 }

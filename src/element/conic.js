@@ -326,7 +326,7 @@ define([
         // length of major axis
         if (Type.isNumber(parents[2])) {
             majorAxis = Type.createFunction(parents[2], board);
-        } else if ((Type.isFunction(parents[2])) && (Type.isNumber(parents[2]()))) {
+        } else if (Type.isFunction(parents[2]) && Type.isNumber(parents[2]())) {
             majorAxis = parents[2];
         } else {
             // point on ellipse

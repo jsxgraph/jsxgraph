@@ -402,7 +402,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var i,
                 s = 0;
 
-            if ((n === undef) || ( n !== 'number')) {
+            if (n === undef || !Type.isNumber(n)) {
                 n = a.length;
             }
 

@@ -969,10 +969,10 @@ define([
                 p2 = board.create('point', parents[1], attr);
             } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
                 p2 =  board.select(parents[1]);
-            } else if ((Type.isFunction(parents[1])) && ( Type.isPoint(parents[1]()) )) {
+            } else if (Type.isFunction(parents[1]) &&  Type.isPoint(parents[1]()) ) {
                 p2 = parents[1]();
                 constrained = true;
-            } else if ((Type.isFunction(parents[1])) && (parents[1]().length && parents[1]().length >= 2)) {
+            } else if (Type.isFunction(parents[1]) && parents[1]().length && parents[1]().length >= 2) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = Point.createPoint(board, parents[1](), attr);
                 constrained = true;
