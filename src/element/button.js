@@ -131,12 +131,12 @@ define([
         t.rendNodeTag = t.rendNodeButton; // Needed for unified treatment in setAttribute
         t.rendNodeTag.disabled = !!attr.disabled;
 
-        // This sets the font-size of the button text 
+        // This sets the font-size of the button text
         t.visPropOld.fontsize = "0px";
         board.renderer.updateTextStyle(t, false);
 
         if (parents[3]) {
-            if (typeof parents[3] === 'string') {
+            if (Type.isString(parents[3])) {
                 t._jc = new JXG.JessieCode();
                 t._jc.use(board);
                 t._handler = function () {

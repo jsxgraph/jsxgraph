@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -193,7 +193,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 result = [];
 
             // get column index if column is given as column header title
-            if (typeof col === 'string') {
+            if (Type.isString(col)) {
                 for (i = 0; i < this.columnHeaders.length; i++) {
                     if (col === this.columnHeaders[i]) {
                         col = i;
@@ -216,7 +216,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var result, i;
 
             // get column index if column is given as column header title
-            if (typeof row === 'string') {
+            if (Type.isString(row)) {
                 for (i = 0; i < this.rowHeaders.length; i++) {
                     if (row === this.rowHeaders[i]) {
                         row = i;

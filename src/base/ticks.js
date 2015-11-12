@@ -979,10 +979,10 @@ define([
         }
 
         // deprecated
-        if (typeof attr.generatelabelvalue === 'function') {
+        if (Type.isFunction(attr.generatelabelvalue)) {
             el.generateLabelText = attr.generatelabelvalue;
         }
-        if (typeof attr.generatelabeltext === 'function') {
+        if (Type.isFunction(attr.generatelabeltext)) {
             el.generateLabelText = attr.generatelabeltext;
         }
 

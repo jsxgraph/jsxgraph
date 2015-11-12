@@ -404,7 +404,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         NewtonCotes: function (interval, f, config) {
             var evaluation_point, i, number_of_intervals,
                 integral_value = 0.0,
-                number_of_nodes = config && typeof config.number_of_nodes === 'number' ? config.number_of_nodes : 28,
+                number_of_nodes = config && Type.isNumber(config.number_of_nodes) ? config.number_of_nodes : 28,
                 available_types = {trapez: true, simpson: true, milne: true},
                 integration_type = config && config.integration_type && available_types.hasOwnProperty(config.integration_type) && available_types[config.integration_type] ? config.integration_type : 'milne',
                 step_size = (interval[1] - interval[0]) / number_of_nodes;
@@ -507,8 +507,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 p = [],
                 integral = 0.0,
                 last = Infinity,
-                m = config && typeof config.max_iterations === 'number' ? config.max_iterations : 20,
-                eps = config && typeof config.eps === 'number' ? config.eps : config.eps || 0.0000001;
+                m = config && Type.isNumber(config.max_iterations) ? config.max_iterations : 20,
+                eps = config && Type.isNumber(config.eps) ? config.eps : config.eps || 0.0000001;
 
             a = interval[0];
             b = interval[1];
@@ -577,7 +577,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 table_xi = [],
                 table_w = [],
                 xi, w,
-                n = config && typeof config.n === 'number' ? config.n : 12;
+                n = config && Type.isNumber(config.n) ? config.n : 12;
 
             if (n > 18) {
                 n = 18;
@@ -1190,10 +1190,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var DBL_EPS = 2.2204460492503131e-16,
                 ws = this._workspace(interval, 1000),
 
-                limit = config && typeof config.limit === 'number' ? config.limit : 15,
-                epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
-                epsabs = config && typeof config.epsabs === 'number' ? config.epsabs : 0.0000001,
-                q = config && typeof config.q === 'function' ? config.q : this.GaussKronrod15,
+                limit = config && Type.isNumber(config.limit) ? config.limit : 15,
+                epsrel = config && Type.isNumber(config.epsrel) ? config.epsrel : 0.0000001,
+                epsabs = config && Type.isNumber(config.epsabs) ? config.epsabs : 0.0000001,
+                q = config && Type.isFunction(config.q) ? config.q : this.GaussKronrod15,
 
                 resultObj = {},
                 area, errsum,
@@ -1904,7 +1904,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 term = '';
 
             // Slider
-            if (Type.isPoint(degree) && typeof degree.Value === 'function') {
+            if (Type.isPoint(degree) && Type.isFunction(degree.Value)) {
                 /** @ignore */
                 deg = function () {
                     return degree.Value();

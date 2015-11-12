@@ -263,14 +263,14 @@ define([
             }
 
             if (this.constrained) {
-                if (typeof this.funps === 'function') {
+                if (Type.isFunction(this.funps)) {
                     funps = this.funps();
                     if (funps && funps.length && funps.length === 2) {
                         this.point1 = funps[0];
                         this.point2 = funps[1];
                     }
                 } else {
-                    if (typeof this.funp1 === 'function') {
+                    if (Type.isFunction(this.funp1)) {
                         funps = this.funp1();
                         if (Type.isPoint(funps)) {
                             this.point1 = funps;
@@ -279,7 +279,7 @@ define([
                         }
                     }
 
-                    if (typeof this.funp2 === 'function') {
+                    if (Type.isFunction(this.funp2)) {
                         funps = this.funp2();
                         if (Type.isPoint(funps)) {
                             this.point2 = funps;
@@ -950,10 +950,10 @@ define([
                 p1 = board.create('point', parents[0], attr);
             } else if (Type.isString(parents[0]) || Type.isPoint(parents[0])) {
                 p1 =  board.select(parents[0]);
-            } else if ((typeof parents[0] === 'function') && ( Type.isPoint(parents[0]()) )) {
+            } else if (Type.isFunction(parents[0]) && Type.isPoint(parents[0]())) {
                 p1 = parents[0]();
                 constrained = true;
-            } else if ((typeof parents[0] === 'function') && (parents[0]().length && parents[0]().length >= 2)) {
+            } else if (Type.isFunction(parents[0]) && parents[0]().length && parents[0]().length >= 2) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');
                 p1 = Point.createPoint(board, parents[0](), attr);
                 constrained = true;
@@ -969,10 +969,10 @@ define([
                 p2 = board.create('point', parents[1], attr);
             } else if (Type.isString(parents[1]) || Type.isPoint(parents[1])) {
                 p2 =  board.select(parents[1]);
-            } else if ((typeof parents[1] === 'function') && ( Type.isPoint(parents[1]()) )) {
+            } else if ((Type.isFunction(parents[1])) && ( Type.isPoint(parents[1]()) )) {
                 p2 = parents[1]();
                 constrained = true;
-            } else if ((typeof parents[1] === 'function') && (parents[1]().length && parents[1]().length >= 2)) {
+            } else if ((Type.isFunction(parents[1])) && (parents[1]().length && parents[1]().length >= 2)) {
                 attr = Type.copyAttributes(attributes, board.options, 'line', 'point2');
                 p2 = Point.createPoint(board, parents[1](), attr);
                 constrained = true;
@@ -1003,11 +1003,11 @@ define([
             // free line
             isDraggable = true;
             for (i = 0; i < 3; i++) {
-                if (typeof parents[i] === 'number') {
+                if (Type.isNumber(parents[i])) {
                     // createFunction will just wrap a function around our constant number
                     // that does nothing else but to return that number.
                     c[i] = Type.createFunction(parents[i]);
-                } else if (typeof parents[i] === 'function') {
+                } else if (Type.isFunction(parents[i])) {
                     c[i] = parents[i];
                     isDraggable = false;
                 } else {
@@ -1070,9 +1070,9 @@ define([
             el.setParents([p1, p2]);
 
         // The parent array contains a function which returns two points.
-        } else if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length === 2) &&
-                (Type.isPoint(parents[0]()[0])) &&
-                (Type.isPoint(parents[0]()[1]))) {
+        } else if (parents.length === 1 && Type.isFunction(parents[0]) && parents[0]().length === 2 &&
+                Type.isPoint(parents[0]()[0]) &&
+                Type.isPoint(parents[0]()[1])) {
             ps = parents[0]();
             attr = Type.copyAttributes(attributes, board.options, 'line');
             el = new JXG.Line(board, ps[0], ps[1], attr);
@@ -1080,10 +1080,10 @@ define([
             el.funps = parents[0];
             el.setParents(ps);
 
-        } else if ((parents.length === 1) && (typeof parents[0] === 'function') && (parents[0]().length === 3) &&
-                (typeof parents[0]()[0] === 'number') &&
-                (typeof parents[0]()[1] === 'number') &&
-                (typeof parents[0]()[2] === 'number')) {
+        } else if (parents.length === 1 && Type.isFunction(parents[0]) && parents[0]().length === 3 &&
+                Type.isNumber(parents[0]()[0]) &&
+                Type.isNumber(parents[0]()[1]) &&
+                Type.isNumber(parents[0]()[2])) {
             ps = parents[0];
 
             attr = Type.copyAttributes(attributes, board.options, 'line', 'point1');

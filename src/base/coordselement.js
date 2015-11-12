@@ -1150,7 +1150,7 @@ define([
             for (i = 0; i < terms.length; i++) {
                 v = terms[i];
 
-                if (typeof v === 'string') {
+                if (Type.isString(v)) {
                     // Convert GEONExT syntax into JavaScript syntax
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
@@ -1160,12 +1160,12 @@ define([
                     if (terms.length === 2) {
                         this[what[i] + 'jc'] = terms[i];
                     }
-                } else if (typeof v === 'function') {
+                } else if (Type.isFunction(v)) {
                     newfuncs[i] = v;
-                } else if (typeof v === 'number') {
+                } else if (Type.isNumber(v)) {
                     newfuncs[i] = makeConstFunction(v);
                 // Slider
-                } else if (typeof v === 'object' && typeof v.Value === 'function') {
+            } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
                     newfuncs[i] = makeSliderFunction(v);
                 }
 
@@ -1531,7 +1531,7 @@ define([
                 };
 
             // support legacy interface where the third parameter was the number of repeats
-            if (typeof options === 'number') {
+            if (Type.isNumber(options)) {
                 options = {repeat: options};
             } else {
                 options = options || {};
@@ -1685,13 +1685,13 @@ define([
         var el, isConstrained = false, i;
 
         for (i = 0; i < coords.length; i++) {
-            if (typeof coords[i] === 'function' || typeof coords[i] === 'string') {
+            if (Type.isFunction(coords[i]) || Type.isString(coords[i])) {
                 isConstrained = true;
             }
         }
 
         if (!isConstrained) {
-            if ((Type.isNumber(coords[0])) && (Type.isNumber(coords[1]))) {
+            if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
                 el = new Callback(board, coords, attr, arg1, arg2);
 
                 if (Type.exists(attr.slideobject)) {
@@ -1701,7 +1701,7 @@ define([
                     el.baseElement = el;
                 }
                 el.isDraggable = true;
-            } else if ((typeof coords[0] === 'object') && (typeof coords[1] === 'object')) {
+            } else if (Type.isObject(coords[0]) && Type.isObject(coords[1])) {
                 // Transformation
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);

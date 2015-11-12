@@ -151,7 +151,7 @@ define([
         // this.document = attributes.document || document;
         if (Type.exists(attributes.document) && attributes.document !== false) {
             this.document = attributes.document;
-        } else if (typeof document === 'object') {
+        } else if (Type.isObject(document)) {
             this.document = document;
         }
 
@@ -725,7 +725,7 @@ define([
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             if (container.getBoundingClientRect) {
-                if (typeof window.pageXOffset === 'number') {
+                if (Type.isNumber(window.pageXOffset)) {
                     scrollLeft = window.pageXOffset;
                 } else {
                     if (docElement.ScrollLeft === 'number') {
@@ -735,7 +735,7 @@ define([
                     }
                 }
 
-                if (typeof window.pageYOffset === 'number') {
+                if (Type.isNumber(window.pageYOffset)) {
                     scrollTop = window.pageYOffset;
                 } else {
                     if (docElement.ScrollTop === 'number') {
@@ -1608,7 +1608,7 @@ define([
             }
 
             // prevent accidental selection of text
-            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+            if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
                 this.document.selection.empty();
             } else if (window.getSelection) {
                 sel = window.getSelection();
@@ -1887,7 +1887,7 @@ define([
             //}
 
             // prevent accidental selection of text
-            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+            if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
                 this.document.selection.empty();
             } else if (window.getSelection) {
                 window.getSelection().removeAllRanges();
@@ -2261,7 +2261,7 @@ define([
             var pos, elements, result;
 
             // prevent accidental selection of text
-            if (this.document.selection && typeof this.document.selection.empty === 'function') {
+            if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
                 this.document.selection.empty();
             } else if (window.getSelection) {
                 window.getSelection().removeAllRanges();
@@ -2842,7 +2842,7 @@ define([
                 lr = 0.5,
                 tr = 0.5;
 
-            if (typeof x === 'number' && typeof y === 'number') {
+            if (Type.isNumber(x) && Type.isNumber(y)) {
                 lr = (x - bb[0]) / (bb[2] - bb[0]);
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
@@ -2872,7 +2872,7 @@ define([
                 return this;
             }
 
-            if (typeof x === 'number' && typeof y === 'number') {
+            if (Type.isNumber(x) && Type.isNumber(y)) {
                 lr = (x - bb[0]) / (bb[2] - bb[0]);
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
             }
@@ -3601,12 +3601,12 @@ define([
             }
 
             for (i = 0; i < parents.length; i++) {
-                if (typeof parents[i] === 'string' && (elementType !== 'text' || i !== 2)) {
+                if (Type.isString(parents[i]) && (elementType !== 'text' || i !== 2)) {
                     parents[i] = this.select(parents[i]);
                 }
             }
 
-            if (typeof JXG.elements[elementType] === 'function') {
+            if (Type.isFunction(JXG.elements[elementType])) {
                 el = JXG.elements[elementType](this, parents, attributes);
             } else {
                 throw new Error("JSXGraph: create: Unknown element type given: " + elementType);
@@ -4007,7 +4007,7 @@ define([
             }
 
             // it's a string, most likely an id or a name.
-            if (typeof s === 'string' && s !== '') {
+            if (Type.isString(s) && s !== '') {
                 // Search by ID
                 if (Type.exists(this.objects[s])) {
                     s = this.objects[s];
@@ -4019,7 +4019,7 @@ define([
                     s = this.groups[s];
                 }
             // it's a function or an object, but not an element
-            } else if (typeof s === 'function' || (typeof s === 'object' && !JXG.isArray(s) && typeof s.setAttribute !== 'function')) {
+        } else if (Type.isFunction(s) || (Type.isObject(s) && !Type.isFunction(s.setAttribute))) {
 
                 flist = Type.filterElements(this.objectsList, s);
 
@@ -4030,7 +4030,7 @@ define([
                 }
                 s = new EComposition(olist);
             // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
-            } else if (typeof s === 'object' && JXG.exists(s.id) && !JXG.exists(this.objects[s.id])) {
+            } else if (Type.isObject(s) && JXG.exists(s.id) && !JXG.exists(this.objects[s.id])) {
                 s = null;
             }
 
@@ -4053,8 +4053,8 @@ define([
                 py = x.usrCoords[2];
             }
 
-            return !!(typeof px === 'number' && typeof py === 'number' &&
-            bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]);
+            return !!(Type.isNumber(px) && Type.isNumber(py) &&
+                bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]);
 
 
         },

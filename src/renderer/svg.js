@@ -320,7 +320,7 @@ define([
                 x = c[0];
                 y = c[1];
 
-                if (typeof x[0] === 'number' && typeof x[1] === 'number') {
+                if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
                     tickStr += "M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
                 }
             }

@@ -167,7 +167,7 @@
             gxtEl.labelColor = rgbo[0];
             gxtEl.withLabel = rgbo[1] > 0;
             gxtEl.labelOpacity = rgbo[1];
-            
+
             gxtEl.colorDraft = JXG.rgba2rgbo(this.gEBTN(color, 'draft'))[0];
 
             // backwards compatibility
@@ -593,7 +593,7 @@
                 try {
                     gxtEl.parent = this.changeOriginIds(board, gxtEl.parent);
                     gxtEl.isGeonext = true;
-                    
+
                     p = board.create('glider', [parseFloat(gxtEl.x), parseFloat(gxtEl.y), gxtEl.parent], gxtEl);
                     p.onPolygon = JXG.exists(gxtEl.onpolygon) && JXG.str2Bool(gxtEl.onpolygon);
 
@@ -1122,7 +1122,7 @@
             xmlNode = this.gEBTN(boardData, 'coordinates', 0, false);
 
             tmp = this.readViewPort(xmlNode);
-            
+
             if (tmp.length === 4) {
                 board.setBoundingBox(tmp, true);
             } else {

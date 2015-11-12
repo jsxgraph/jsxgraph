@@ -118,10 +118,10 @@ define([
         this.elType = 'curve';
         this.createLabel();
 
-        if (typeof this.xterm === 'string') {
+        if (Type.isString(this.xterm)) {
             this.notifyParents(this.xterm);
         }
-        if (typeof this.yterm === 'string') {
+        if (Type.isString(this.yterm)) {
             this.notifyParents(this.yterm);
         }
 
@@ -847,7 +847,7 @@ define([
                     // R   | R   | inf
                     // inf | inf | R
                     // R   | inf | inf
-                    // 
+                    //
                     if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
                         t_nan = ta;
                         t_real = tc;
@@ -1671,13 +1671,13 @@ define([
                     // given as [x[], y[]]
                     if (parents.length === 2 && Type.isArray(parents[0]) && Type.isArray(parents[1]) && parents[0].length === parents[1].length) {
                         for (i = 0; i < parents[0].length; i++) {
-                            if (typeof parents[0][i] === 'function') {
+                            if (Type.isFunction(parents[0][i])) {
                                 x.push(parents[0][i]());
                             } else {
                                 x.push(parents[0][i]);
                             }
 
-                            if (typeof parents[1][i] === 'function') {
+                            if (Type.isFunction(parents[1][i])) {
                                 y.push(parents[1][i]());
                             } else {
                                 y.push(parents[1][i]);
@@ -1691,13 +1691,13 @@ define([
                             // given as [[x1,y1], [x2, y2], ...]
                             } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
                                 for (j = 0; j < parents.length; j++) {
-                                    if (typeof parents[j][0] === 'function') {
+                                    if (Type.isFunction(parents[j][0])) {
                                         x.push(parents[j][0]());
                                     } else {
                                         x.push(parents[j][0]);
                                     }
 
-                                    if (typeof parents[j][1] === 'function') {
+                                    if (Type.isFunction(parents[j][1])) {
                                         y.push(parents[j][1]());
                                     } else {
                                         y.push(parents[j][1]);
