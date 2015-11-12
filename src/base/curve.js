@@ -836,8 +836,18 @@ define([
              if (depth <= 1) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
                 j = 0;
-                // Bisect a, b and c until the new point t_real is inside of the definition interval
+                // Bisect a, b and c until the point t_real is inside of the definition interval
+                // and as close as possible at the boundary.
+                // t_real2 is the second closest point.
                 do {
+                    // There are four cases:
+                    //  a  |  c  |  b
+                    // ---------------
+                    // inf | R   | R
+                    // R   | R   | inf
+                    // inf | inf | R
+                    // R   | inf | inf
+                    // 
                     if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
                         t_nan = ta;
                         t_real = tc;
