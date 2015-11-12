@@ -712,7 +712,7 @@ define([
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
-                off = 20;
+                off = 500;
 
             newReal = newReal &&
                         (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
@@ -897,13 +897,13 @@ define([
                 box = this.board.getBoundingBox();
                 if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
 
-                            // The asymptote is a line of the form
-                            //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
-                            //  Now we have to find the intersection with the correct canvas border.
-                            asymptote = [dx * vy - dy * vx, dy, -dx];
+                    // The asymptote is a line of the form
+                    //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                    //  Now we have to find the intersection with the correct canvas border.
+                    asymptote = [dx * vy - dy * vx, dy, -dx];
 
-                        p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
-                    }
+                    p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
+                }
 
                 if (p_good !== null) {
                     this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
@@ -969,15 +969,23 @@ define([
             return true;
         },
 
+        /**
+         * Decide if a path segment is too far from the canvas that we do not need to draw it.
+         * @param  {Array}  a  Screen coordinates of the start point of the segment
+         * @param  {Array}  ta Curve parameter of a.
+         * @param  {Array}  b  Screen coordinates of the end point of the segment
+         * @param  {Array}  tb Curve parameter of b.
+         * @return {Boolean}   True if the segment is too far away from the canvas, false otherwise.
+         */
         _isOutside: function (a, ta, b, tb) {
-            var off = 10,
+            var off = 500,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight;
 
             return !!((a[1] < -off && b[1] < -off) ||
-            (a[2] < -off && b[2] < -off) ||
-            (a[1] > cw + off && b[1] > cw + off) ||
-            (a[2] > ch + off && b[2] > ch + off));
+                (a[2] < -off && b[2] < -off) ||
+                (a[1] > cw + off && b[1] > cw + off) ||
+                (a[2] > ch + off && b[2] > ch + off));
         },
 
         /**
