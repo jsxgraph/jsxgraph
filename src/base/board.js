@@ -4220,6 +4220,15 @@ define([
 
         /**
          * @event
+         * @description Whenever the user starts to click on the board with a
+         * device sending pointer events.
+         * @name JXG.Board#pointerdown
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerdown: function (e) { },
+
+        /**
+         * @event
          * @description Whenever the user starts to touch the board.
          * @name JXG.Board#touchstart
          * @param {Event} e The browser's event object.
@@ -4241,6 +4250,15 @@ define([
          * @param {Event} e The browser's event object.
          */
         __evt__mouseup: function (e) { },
+
+        /**
+         * @event
+         * @description Whenever the user releases the mousebutton over the board with a
+         * device sending pointer events.
+         * @name JXG.Board#pointerup
+         * @param {Event} e The browser's event object.
+         */
+        __evt__pointerup: function (e) { },
 
         /**
          * @event
@@ -4269,6 +4287,17 @@ define([
          * @see {JXG.Board#mode}
          */
         __evt__mousemove: function (e, mode) { },
+
+        /**
+         * @event
+         * @description This event is fired whenever the user is moving the mouse over the board  with a
+         * device sending pointer events.
+         * @name JXG.Board#pointermove
+         * @param {Event} e The browser's event object.
+         * @param {Number} mode The mode the board currently is in
+         * @see {JXG.Board#mode}
+         */
+        __evt__pointermove: function (e, mode) { },
 
         /**
          * @event
@@ -4313,6 +4342,103 @@ define([
          * @name JXG.Board#boundingbox
          */
         __evt__boundingbox: function () { },
+
+        /**
+         * @event
+         * @description Select a region is started during a down event or by calling
+         * {@link JXG.Board#startSelectionMode}
+         * @name JXG.Board#startselecting
+         */
+         __evt__startselecting: function() { },
+
+         /**
+         * @event
+         * @description Select a region is started during a down event
+         * from a device sending mouse events or by calling
+         * {@link JXG.Board#startSelectionMode}.
+         * @name JXG.Board#mousestartselecting
+         */
+         __evt__mousestartselecting: function() { },
+
+         /**
+         * @event
+         * @description Select a region is started during a down event
+         * from a device sending pointer events or by calling
+         * {@link JXG.Board#startSelectionMode}.
+         * @name JXG.Board#pointerstartselecting
+         */
+         __evt__pointerstartselecting: function() { },
+
+         /**
+         * @event
+         * @description Select a region is started during a down event
+         * from a device sending touch events or by calling
+         * {@link JXG.Board#startSelectionMode}.
+         * @name JXG.Board#touchstartselecting
+         */
+         __evt__touchstartselecting: function() { },
+
+         /**
+          * @event
+          * @description Selection of a region is stopped during an up event.
+          * @name JXG.Board#stopselecting
+          */
+         __evt__stopselecting: function() { },
+
+         /**
+         * @event
+         * @description Selection of a region is stopped during an up event
+         * from a device sending mouse events.
+         * @name JXG.Board#mousestopselecting
+         */
+         __evt__mousestopselecting: function() { },
+
+         /**
+         * @event
+         * @description Selection of a region is stopped during an up event
+         * from a device sending pointer events.
+         * @name JXG.Board#pointerstopselecting
+         */
+         __evt__pointerstopselecting: function() { },
+
+         /**
+         * @event
+         * @description Selection of a region is stopped during an up event
+         * from a device sending touch events.
+         * @name JXG.Board#touchstopselecting
+         */
+         __evt__touchstopselecting: function() { },
+
+         /**
+         * @event
+         * @description A move event while selecting of a region is active.
+         * @name JXG.Board#moveselecting
+         */
+         __evt__moveselecting: function() { },
+
+         /**
+         * @event
+         * @description A move event while selecting of a region is active
+         * from a device sending mouse events.
+         * @name JXG.Board#mousemoveselecting
+         */
+         __evt__mousemoveselecting: function() { },
+
+         /**
+         * @event
+         * @description Select a region is started during a down event
+         * from a device sending mouse events.
+         * @name JXG.Board#pointermoveselecting
+         */
+         __evt__pointermoveselecting: function() { },
+
+         /**
+         * @event
+         * @description Select a region is started during a down event
+         * from a device sending touch events.
+         * @name JXG.Board#touchmoveselecting
+         */
+         __evt__touchmoveselecting: function() { },
 
         /**
          * @ignore
