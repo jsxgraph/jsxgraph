@@ -1656,6 +1656,14 @@ define([
 
             pos = this.getMousePosition(evt);
 
+            // selection
+            this._testForSelection(evt);
+            if (this.selectingMode) {
+                this._startSelecting(pos);
+                this.triggerEventHandlers(['touchstartselecting', 'pointerstartselecting', 'startselecting'], [evt]);
+                return;     // don't continue as a normal click
+            }
+
             if (object) {
                 elements = [ object ];
                 this.mode = this.BOARD_MODE_DRAG;
@@ -1762,49 +1770,55 @@ define([
             }
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
-            // try with mouseOriginMove because the evt objects are quite similar
-            if (!this.mouseOriginMove(evt)) {
-                if (this.mode === this.BOARD_MODE_DRAG) {
-                    // Runs through all elements which are touched by at least one finger.
-                    for (i = 0; i < this.touches.length; i++) {
-                        for (j = 0; j < this.touches[i].targets.length; j++) {
-                            if (this.touches[i].targets[j].num === evt.pointerId) {
-                                // Touch by one finger:  this is possible for all elements that can be dragged
-                                if (this.touches[i].targets.length === 1) {
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
-                                    pos = this.getMousePosition(evt);
-                                    this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
-                                // Touch by two fingers: moving lines
-                                } else if (this.touches[i].targets.length === 2 &&
-                                        this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+            // selection
+            if (this.selectingMode) {
+                this._moveSelecting(pos);
+                this.triggerEventHandlers(['touchmoveselecting', 'moveselecting', 'pointermoveselecting'], [evt, this.mode]);
+            } else {
+                // try with mouseOriginMove because the evt objects are quite similar
+                if (!this.mouseOriginMove(evt)) {
+                    if (this.mode === this.BOARD_MODE_DRAG) {
+                        // Runs through all elements which are touched by at least one finger.
+                        for (i = 0; i < this.touches.length; i++) {
+                            for (j = 0; j < this.touches[i].targets.length; j++) {
+                                if (this.touches[i].targets[j].num === evt.pointerId) {
+                                    // Touch by one finger:  this is possible for all elements that can be dragged
+                                    if (this.touches[i].targets.length === 1) {
+                                        this.touches[i].targets[j].X = evt.pageX;
+                                        this.touches[i].targets[j].Y = evt.pageY;
+                                        pos = this.getMousePosition(evt);
+                                        this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
+                                        // Touch by two fingers: moving lines
+                                    } else if (this.touches[i].targets.length === 2 &&
+                                            this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
 
-                                    this.touches[i].targets[j].X = evt.pageX;
-                                    this.touches[i].targets[j].Y = evt.pageY;
+                                        this.touches[i].targets[j].X = evt.pageX;
+                                        this.touches[i].targets[j].Y = evt.pageY;
 
-                                    this.twoFingerMove(
-                                        this.getMousePosition({
-                                            pageX: this.touches[i].targets[0].X,
-                                            pageY: this.touches[i].targets[0].Y
-                                        }),
-                                        this.getMousePosition({
-                                            pageX: this.touches[i].targets[1].X,
-                                            pageY: this.touches[i].targets[1].Y
-                                        }),
-                                        this.touches[i],
-                                        evt
-                                    );
+                                        this.twoFingerMove(
+                                            this.getMousePosition({
+                                                pageX: this.touches[i].targets[0].X,
+                                                pageY: this.touches[i].targets[0].Y
+                                            }),
+                                            this.getMousePosition({
+                                                pageX: this.touches[i].targets[1].X,
+                                                pageY: this.touches[i].targets[1].Y
+                                            }),
+                                            this.touches[i],
+                                            evt
+                                        );
+                                    }
+
+                                    // there is only one pointer in the evt object, there's no point in looking further
+                                    break;
                                 }
-
-                                // there is only one pointer in the evt object, there's no point in looking further
-                                break;
                             }
-                        }
 
+                        }
+                    } else {
+                        pos = this.getMousePosition(evt);
+                        this.highlightElements(pos[0], pos[1], evt, -1);
                     }
-                } else {
-                    pos = this.getMousePosition(evt);
-                    this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
 
@@ -1847,18 +1861,24 @@ define([
                 }
             }
 
-            for (i = this.downObjects.length - 1; i > -1; i--) {
-                found = false;
-                for (j = 0; j < this.touches.length; j++) {
-                    if (this.touches[j].obj.id === this.downObjects[i].id) {
-                        found = true;
+            // selection
+            if (this.selectingMode) {
+                this._stopSelecting(evt);
+        		this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
+            } else {
+                for (i = this.downObjects.length - 1; i > -1; i--) {
+                    found = false;
+                    for (j = 0; j < this.touches.length; j++) {
+                        if (this.touches[j].obj.id === this.downObjects[i].id) {
+                            found = true;
+                        }
                     }
-                }
-                if (!found) {
-                    this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
-                    this.downObjects[i].snapToGrid();
-                    this.downObjects[i].snapToPoints();
-                    this.downObjects.splice(i, 1);
+                    if (!found) {
+                        this.downObjects[i].triggerEventHandlers(['touchend', 'up', 'pointerup', 'MSPointerUp'], [evt]);
+                        this.downObjects[i].snapToGrid();
+                        this.downObjects[i].snapToPoints();
+                        this.downObjects.splice(i, 1);
+                    }
                 }
             }
 
@@ -1980,6 +2000,14 @@ define([
             for (i = 0; i < evtTouches.length; i++) {
                 if (!evtTouches[i].jxg_isused) {
                     pos = this.getMousePosition(evt, i);
+                    // selection
+                    // this._testForSelection(evt); // we do not have shuft or ctrl keys yet.
+                    if (this.selectingMode) {
+                        this._startSelecting(pos);
+                        this.triggerEventHandlers(['touchstartselecting', 'startselecting'], [evt]);
+                        return;     // don't continue as a normal click
+                    }
+
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
 
                     if (elements.length !== 0) {
@@ -2098,36 +2126,42 @@ define([
             this.options.precision.hasPoint = this.options.precision.touch;
             this.updateQuality = this.BOARD_QUALITY_LOW;
 
-            if (!this.touchOriginMove(evt)) {
-                if (this.mode === this.BOARD_MODE_DRAG) {
-                    // Runs over through all elements which are touched
-                    // by at least one finger.
-                    for (i = 0; i < this.touches.length; i++) {
-                        // Touch by one finger:  this is possible for all elements that can be dragged
-                        if (this.touches[i].targets.length === 1) {
-                            if (evtTouches[this.touches[i].targets[0].num]) {
-                                pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                                if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight) {
-                                    return;
+            // selection
+            if (this.selectingMode) {
+                this._moveSelecting(pos);
+                this.triggerEventHandlers(['touchmoves', 'moveselecting'], [evt, this.mode]);
+            } else {
+                if (!this.touchOriginMove(evt)) {
+                    if (this.mode === this.BOARD_MODE_DRAG) {
+                        // Runs over through all elements which are touched
+                        // by at least one finger.
+                        for (i = 0; i < this.touches.length; i++) {
+                            // Touch by one finger:  this is possible for all elements that can be dragged
+                            if (this.touches[i].targets.length === 1) {
+                                if (evtTouches[this.touches[i].targets[0].num]) {
+                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                    if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight) {
+                                        return;
+                                    }
+                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                                    this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
                                 }
-                                this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                                this.moveObject(pos1[0], pos1[1], this.touches[i], evt, 'touch');
-                            }
-                            // Touch by two fingers: moving lines
-                        } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
-                            if (evtTouches[this.touches[i].targets[0].num] && evtTouches[this.touches[i].targets[1].num]) {
-                                pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
-                                pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
-                                if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight ||
-                                        pos2[0] < 0 || pos2[0] > this.canvasWidth ||  pos2[1] < 0 || pos2[1] > this.canvasHeight) {
-                                    return;
+                                // Touch by two fingers: moving lines
+                            } else if (this.touches[i].targets.length === 2 && this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+                                if (evtTouches[this.touches[i].targets[0].num] && evtTouches[this.touches[i].targets[1].num]) {
+                                    pos1 = this.getMousePosition(evt, this.touches[i].targets[0].num);
+                                    pos2 = this.getMousePosition(evt, this.touches[i].targets[1].num);
+                                    if (pos1[0] < 0 || pos1[0] > this.canvasWidth ||  pos1[1] < 0 || pos1[1] > this.canvasHeight ||
+                                            pos2[0] < 0 || pos2[0] > this.canvasWidth ||  pos2[1] < 0 || pos2[1] > this.canvasHeight) {
+                                        return;
+                                    }
+                                    this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
+                                    this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
+                                    this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
+                                    this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
+                                    this.twoFingerMove(pos1, pos2, this.touches[i], evt);
                                 }
-                                this.touches[i].targets[0].X = evtTouches[this.touches[i].targets[0].num].screenX;
-                                this.touches[i].targets[0].Y = evtTouches[this.touches[i].targets[0].num].screenY;
-                                this.touches[i].targets[1].X = evtTouches[this.touches[i].targets[1].num].screenX;
-                                this.touches[i].targets[1].Y = evtTouches[this.touches[i].targets[1].num].screenY;
-                                this.twoFingerMove(pos1, pos2, this.touches[i], evt);
                             }
                         }
                     }
