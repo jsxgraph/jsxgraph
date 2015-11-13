@@ -350,6 +350,18 @@ define([
                 needShift: true,
                 needTwoFingers: true,
                 enabled: true
+            },
+
+            selection: {
+                enabled: true,
+                needShift: false,
+                needCtrl: true,
+                withLines: false,
+                vertices: {
+                    visible: false
+                },
+                fillColor: '#ffff00',
+                visible: false
             }
             /**#@-*/
         },

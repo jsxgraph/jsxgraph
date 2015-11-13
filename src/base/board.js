@@ -535,7 +535,7 @@ define([
          * @default false
          */
         this.isSelecting = false;
-	
+
         /**
          * A bounding box for the selection
          * @type {Array}
@@ -543,7 +543,7 @@ define([
          */
         this.selectingBox = [ [0,0], [0,0] ];
 
-	
+
         if (this.attr.registerevents) {
             this.addEventHandlers();
         }
@@ -2302,14 +2302,13 @@ define([
             pos = this.getMousePosition(evt);
 
     	    // selection
-	    if(this.selectingMode) {
-		this.isSelecting = true;
-                this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
-		this._setSelectionPolygonFromBox()
-		this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
-		return; // don't continue as a normal click
-	    }
-	    
+            this._testForSelection(evt);
+            if (this.selectingMode) {
+                this._startSelecting(pos);
+                this.triggerEventHandlers(['mousestartselecting', 'startselecting'], [evt]);
+                return;     // don't continue as a normal click
+            }
+
             elements = this.initMoveObject(pos[0], pos[1], evt, 'mouse');
 
             // if no draggable object can be found, get out here immediately
@@ -2361,12 +2360,12 @@ define([
          * @param {Event} evt
          */
         mouseUpListener: function (evt) {
-            var i, pos;
+            var i;
 
-	    if(this.selectingMode == false) {
-		this.triggerEventHandlers(['mouseup', 'up'], [evt]);
-	    }
-		
+            if (this.selectingMode === false) {
+                this.triggerEventHandlers(['mouseup', 'up'], [evt]);
+            }
+
             // redraw with high precision
             this.updateQuality = this.BOARD_QUALITY_HIGH;
 
@@ -2380,18 +2379,15 @@ define([
             this.dehighlightAll();
             this.update();
 
-	    // selection
-	    if(this.selectingMode) {
-                pos = this.getMousePosition(evt);
-		this.isSelecting = false;
-                this.selectingBox[1] = [pos[0], pos[1]];
-		this._setSelectionPolygonFromBox()
-		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
-	    } else {
-		for (i = 0; i < this.downObjects.length; i++) {
-		    this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
-		}
-	    }
+            // selection
+            if (this.selectingMode) {
+                this._stopSelecting(evt);
+        		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+            } else {
+                for (i = 0; i < this.downObjects.length; i++) {
+                    this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
+                }
+	        }
 
             this.downObjects.length = 0;
 
@@ -2425,39 +2421,23 @@ define([
             //   * user drags an object
             //   * user just moves the mouse, here highlight all elements at
             //     the current mouse position
-	    //   * the user is selecting
+	        //   * the user is selecting
 
     	    // selection
-	    if(this.selectingMode) {
-		if(this.isSelecting) {
-                  this.selectingBox[1] = [pos[0], pos[1]];
-  		  this._setSelectionPolygonFromBox()
-		  this.selection.prepareUpdate().update().updateRenderer()
-		}
-	    } else {
-	    
-              if (!this.mouseOriginMove(evt)) {
-                  if (this.mode === this.BOARD_MODE_DRAG) {
-                      this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
-                  } else { // BOARD_MODE_NONE
-                      this.highlightElements(pos[0], pos[1], evt, -1);
-                  }
-              }
-	      
-              this.updateQuality = this.BOARD_QUALITY_HIGH;
-	      
-              this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
-	    }
+            if (this.selectingMode) {
+                this._moveSelecting(pos);
+            } else {
+                if (!this.mouseOriginMove(evt)) {
+                    if (this.mode === this.BOARD_MODE_DRAG) {
+                        this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
+                    } else { // BOARD_MODE_NONE
+                        this.highlightElements(pos[0], pos[1], evt, -1);
+                    }
+                }
+                this.updateQuality = this.BOARD_QUALITY_HIGH;
+                this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
+            }
         },
-
-	_setSelectionPolygonFromBox() {
-	    var A = this.selectingBox[0];
-	    var B = this.selectingBox[1];
-	    this.selection.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], A[1]]);
-	    this.selection.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], B[1]]);
-	    this.selection.vertices[2].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], B[1]]);
-	    this.selection.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], A[1]]);
-	},
 
         /**
          * Handler for mouse wheel events. Used to zoom in and out of the board.
@@ -4162,19 +4142,58 @@ define([
         },
 
         startSelectionMode: function () {
-          this.selectingMode = true;
-	  this.selection.setAttribute({visible: true});
-	  this.selectingBox = [ [0,0], [0,0] ];
-	  this._setSelectionPolygonFromBox()
-          this.selection.prepareUpdate().update().updateRenderer()
+            this.selectingMode = true;
+            this.selectionPolygon.setAttribute({visible: true});
+            this.selectingBox = [ [0,0], [0,0] ];
+            this._setSelectionPolygonFromBox();
+            this.selectionPolygon.prepareUpdate().update().updateRenderer();
         },
 
         stopSelectionMode: function () {
-          this.selectingMode = false;
-  	  this.selection.setAttribute({visible: false});
-	  return this.selectingBox;
+            this.selectingMode = false;
+            this.selectionPolygon.setAttribute({visible: false});
+            return [this.selectionPolygon.vertices[0].coords, this.selectionPolygon.vertices[2].coords];
         },
 
+        _startSelecting: function(pos) {
+            this.isSelecting = true;
+            this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
+            this._setSelectionPolygonFromBox();
+        },
+
+        _moveSelecting: function(pos) {
+            if (this.isSelecting) {
+                this.selectingBox[1] = [pos[0], pos[1]];
+                this._setSelectionPolygonFromBox();
+                this.selectionPolygon.prepareUpdate().update().updateRenderer();
+            }
+        },
+
+        _stopSelecting:  function(evt) {
+            var pos = this.getMousePosition(evt);
+
+            this.isSelecting = false;
+            this.selectingBox[1] = [pos[0], pos[1]];
+            this._setSelectionPolygonFromBox();
+        },
+
+        _setSelectionPolygonFromBox: function() {
+               var A = this.selectingBox[0],
+                   B = this.selectingBox[1];
+
+               this.selectionPolygon.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], A[1]]);
+               this.selectionPolygon.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], B[1]]);
+               this.selectionPolygon.vertices[2].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], B[1]]);
+               this.selectionPolygon.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], A[1]]);
+        },
+
+        _testForSelection: function(evt) {
+            if (this.attr.selection.enabled &&
+                (!this.attr.selection.needshift || evt.shiftKey) &&
+                (!this.attr.selection.needctrl || evt.ctrlKey)) {
+                    this.startSelectionMode();
+                }
+        },
 
         /* **************************
          *     EVENT DEFINITION
