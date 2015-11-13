@@ -245,6 +245,9 @@ define([
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
 
+    	    var selectionattr = { withLines: false, vertices: { visible: false }, visible: false };
+	    board.selection = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+
             board.renderer.drawZoomBar(board);
             board.unsuspendUpdate();
 
