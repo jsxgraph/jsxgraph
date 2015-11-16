@@ -610,6 +610,33 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
+         * Greatest common divisor (gcd) of two numbers.
+         * @param  {Number} a First number
+         * @param  {Number} b Second number
+         * @return {Number}   gcd(a, b) if a and b are numbers, NaN else.
+         */
+        gcd: function (a,b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+
+            if (!(Type.isNumber(a) && Type.isNumber(b))) {
+                return NaN;
+            }
+            if (b > a) {
+                var temp = a;
+                a = b;
+                b = temp;
+            }
+
+            while (true) {
+                a %= b;
+                if (a === 0) { return b; }
+                b %= a;
+                if (b === 0) { return a; }
+            }
+        },
+
+        /**
          * Normalize the standard form [c, b0, b1, a, k, r, q0, q1].
          * @private
          * @param {Array} stdform The standard form to be normalized.
