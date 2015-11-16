@@ -177,6 +177,7 @@ define([
                 renderer,
                 w, h, dimensions,
                 bbox, attr, axattr,
+                selectionattr,
                 board;
 
             attributes = attributes || {};
@@ -185,6 +186,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
 
@@ -245,6 +247,9 @@ define([
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
 
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+
             board.renderer.drawZoomBar(board);
             board.unsuspendUpdate();
 
@@ -266,7 +271,8 @@ define([
          * @see JXG.CinderellaReader
          */
         loadBoardFromFile: function (box, file, format, attributes, callback) {
-            var attr, renderer, board, dimensions;
+            var attr, renderer, board, dimensions,
+                selectionattr;
 
             attributes = attributes || {};
 
@@ -274,6 +280,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -284,6 +291,9 @@ define([
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
             FileReader.parseFileContent(file, board, format, true, callback);
+
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
@@ -306,7 +316,8 @@ define([
          * @see JXG.CinderellaReader
          */
         loadBoardFromString: function (box, string, format, attributes, callback) {
-            var attr, renderer, dimensions, board;
+            var attr, renderer, dimensions, board,
+                selectionattr;
 
             attributes = attributes || {};
 
@@ -314,6 +325,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -324,6 +336,9 @@ define([
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
             FileReader.parseString(string, board, format, true, callback);
+
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
