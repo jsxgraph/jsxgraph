@@ -541,7 +541,7 @@ define([
          * @type {Array}
          * @default [ [0,0], [0,0] ]
          */
-        this.selectingBox = [ [0,0], [0,0] ];
+        this.selectingBox = [[0, 0], [0, 0]];
 
 
         if (this.attr.registerevents) {
@@ -1176,7 +1176,7 @@ define([
                     t4 = this.create('transform', [d, d], {type: 'scale'});
                     t1.melt(t4);
                 }
-                t5 = this.create('transform', [ np1[1], np1[2]], {type: 'translate'});
+                t5 = this.create('transform', [np1[1], np1[2]], {type: 'translate'});
                 t1.melt(t5);
 
                 t1.applyOnce([drag.center]);
@@ -1250,7 +1250,7 @@ define([
                 xy.push(obj.point2.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 xy.push(obj.center.coords.usrCoords);
-                if (obj.method === "twoPoints") {
+                if (obj.method === 'twoPoints') {
                     xy.push(obj.point2.coords.usrCoords);
                 }
             } else if (obj.type === Const.OBJECT_TYPE_POLYGON) {
@@ -1772,53 +1772,50 @@ define([
 
             // selection
             if (this.selectingMode) {
+                pos = this.getMousePosition(evt);
                 this._moveSelecting(pos);
                 this.triggerEventHandlers(['touchmoveselecting', 'moveselecting', 'pointermoveselecting'], [evt, this.mode]);
-            } else {
-                // try with mouseOriginMove because the evt objects are quite similar
-                if (!this.mouseOriginMove(evt)) {
-                    if (this.mode === this.BOARD_MODE_DRAG) {
-                        // Runs through all elements which are touched by at least one finger.
-                        for (i = 0; i < this.touches.length; i++) {
-                            for (j = 0; j < this.touches[i].targets.length; j++) {
-                                if (this.touches[i].targets[j].num === evt.pointerId) {
-                                    // Touch by one finger:  this is possible for all elements that can be dragged
-                                    if (this.touches[i].targets.length === 1) {
-                                        this.touches[i].targets[j].X = evt.pageX;
-                                        this.touches[i].targets[j].Y = evt.pageY;
-                                        pos = this.getMousePosition(evt);
-                                        this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
-                                        // Touch by two fingers: moving lines
-                                    } else if (this.touches[i].targets.length === 2 &&
-                                            this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
+            } else if (!this.mouseOriginMove(evt)) {
+                if (this.mode === this.BOARD_MODE_DRAG) {
+                    // Runs through all elements which are touched by at least one finger.
+                    for (i = 0; i < this.touches.length; i++) {
+                        for (j = 0; j < this.touches[i].targets.length; j++) {
+                            if (this.touches[i].targets[j].num === evt.pointerId) {
+                                // Touch by one finger:  this is possible for all elements that can be dragged
+                                if (this.touches[i].targets.length === 1) {
+                                    this.touches[i].targets[j].X = evt.pageX;
+                                    this.touches[i].targets[j].Y = evt.pageY;
+                                    pos = this.getMousePosition(evt);
+                                    this.moveObject(pos[0], pos[1], this.touches[i], evt, 'touch');
+                                // Touch by two fingers: moving lines
+                                } else if (this.touches[i].targets.length === 2 &&
+                                    this.touches[i].targets[0].num > -1 && this.touches[i].targets[1].num > -1) {
 
-                                        this.touches[i].targets[j].X = evt.pageX;
-                                        this.touches[i].targets[j].Y = evt.pageY;
+                                    this.touches[i].targets[j].X = evt.pageX;
+                                    this.touches[i].targets[j].Y = evt.pageY;
 
-                                        this.twoFingerMove(
-                                            this.getMousePosition({
-                                                pageX: this.touches[i].targets[0].X,
-                                                pageY: this.touches[i].targets[0].Y
-                                            }),
-                                            this.getMousePosition({
-                                                pageX: this.touches[i].targets[1].X,
-                                                pageY: this.touches[i].targets[1].Y
-                                            }),
-                                            this.touches[i],
-                                            evt
-                                        );
-                                    }
-
-                                    // there is only one pointer in the evt object, there's no point in looking further
-                                    break;
+                                    this.twoFingerMove(
+                                        this.getMousePosition({
+                                            pageX: this.touches[i].targets[0].X,
+                                            pageY: this.touches[i].targets[0].Y
+                                        }),
+                                        this.getMousePosition({
+                                            pageX: this.touches[i].targets[1].X,
+                                            pageY: this.touches[i].targets[1].Y
+                                        }),
+                                        this.touches[i],
+                                        evt
+                                    );
                                 }
-                            }
 
+                                // there is only one pointer in the evt object, there's no point in looking further
+                                break;
+                            }
                         }
-                    } else {
-                        pos = this.getMousePosition(evt);
-                        this.highlightElements(pos[0], pos[1], evt, -1);
                     }
+                } else {
+                    pos = this.getMousePosition(evt);
+                    this.highlightElements(pos[0], pos[1], evt, -1);
                 }
             }
 
@@ -1864,7 +1861,7 @@ define([
             // selection
             if (this.selectingMode) {
                 this._stopSelecting(evt);
-        		this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
+                this.triggerEventHandlers(['touchstopselecting', 'pointerstopselecting', 'stopselecting'], [evt]);
             } else {
                 for (i = this.downObjects.length - 1; i > -1; i--) {
                     found = false;
@@ -2335,7 +2332,7 @@ define([
 
             pos = this.getMousePosition(evt);
 
-    	    // selection
+            // selection
             this._testForSelection(evt);
             if (this.selectingMode) {
                 this._startSelecting(pos);
@@ -2416,12 +2413,12 @@ define([
             // selection
             if (this.selectingMode) {
                 this._stopSelecting(evt);
-        		this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
+                this.triggerEventHandlers(['mousestopselecting', 'stopselecting'], [evt]);
             } else {
                 for (i = 0; i < this.downObjects.length; i++) {
                     this.downObjects[i].triggerEventHandlers(['mouseup', 'up'], [evt]);
                 }
-	        }
+            }
 
             this.downObjects.length = 0;
 
@@ -2455,9 +2452,9 @@ define([
             //   * user drags an object
             //   * user just moves the mouse, here highlight all elements at
             //     the current mouse position
-	        //   * the user is selecting
+            //   * the user is selecting
 
-    	    // selection
+            // selection
             if (this.selectingMode) {
                 this._moveSelecting(pos);
             } else {
@@ -2800,7 +2797,7 @@ define([
                 el = this.elementsByName[Type.unescapeHTML(name)];
 
                 property = left.slice(m + 1).replace(/\s+/g, '').toLowerCase(); // remove whitespace in property
-                right = Type.createFunction(right, this, '', true);
+                right = Type.createfunction (right, this, '', true);
 
                 // Debug
                 if (!Type.exists(this.elementsByName[name])) {
@@ -3410,7 +3407,7 @@ define([
 
             /*
             objs = this.objectsList.slice(0);
-            objs.sort(function(a, b) {
+            objs.sort(function (a, b) {
                 if (a.visProp.layer < b.visProp.layer) {
                     return -1;
                 } else if (a.visProp.layer === b.visProp.layer) {
@@ -4178,7 +4175,7 @@ define([
         startSelectionMode: function () {
             this.selectingMode = true;
             this.selectionPolygon.setAttribute({visible: true});
-            this.selectingBox = [ [0,0], [0,0] ];
+            this.selectingBox = [[0, 0], [0, 0]];
             this._setSelectionPolygonFromBox();
             this.selectionPolygon.prepareUpdate().update().updateRenderer();
         },
@@ -4189,13 +4186,13 @@ define([
             return [this.selectionPolygon.vertices[0].coords, this.selectionPolygon.vertices[2].coords];
         },
 
-        _startSelecting: function(pos) {
+        _startSelecting: function (pos) {
             this.isSelecting = true;
             this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
             this._setSelectionPolygonFromBox();
         },
 
-        _moveSelecting: function(pos) {
+        _moveSelecting: function (pos) {
             if (this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
                 this._setSelectionPolygonFromBox();
@@ -4203,7 +4200,7 @@ define([
             }
         },
 
-        _stopSelecting:  function(evt) {
+        _stopSelecting:  function (evt) {
             var pos = this.getMousePosition(evt);
 
             this.isSelecting = false;
@@ -4211,9 +4208,9 @@ define([
             this._setSelectionPolygonFromBox();
         },
 
-        _setSelectionPolygonFromBox: function() {
+        _setSelectionPolygonFromBox: function () {
                var A = this.selectingBox[0],
-                   B = this.selectingBox[1];
+                B = this.selectingBox[1];
 
                this.selectionPolygon.vertices[0].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], A[1]]);
                this.selectionPolygon.vertices[1].setPositionDirectly(JXG.COORDS_BY_SCREEN, [A[0], B[1]]);
@@ -4221,7 +4218,7 @@ define([
                this.selectionPolygon.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], A[1]]);
         },
 
-        _testForSelection: function(evt) {
+        _testForSelection: function (evt) {
             if (this.attr.selection.enabled &&
                 (!this.attr.selection.needshift || evt.shiftKey) &&
                 (!this.attr.selection.needctrl || evt.ctrlKey)) {
@@ -4383,7 +4380,7 @@ define([
          * {@link JXG.Board#startSelectionMode}
          * @name JXG.Board#startselecting
          */
-         __evt__startselecting: function() { },
+         __evt__startselecting: function () { },
 
          /**
          * @event
@@ -4392,7 +4389,7 @@ define([
          * {@link JXG.Board#startSelectionMode}.
          * @name JXG.Board#mousestartselecting
          */
-         __evt__mousestartselecting: function() { },
+         __evt__mousestartselecting: function () { },
 
          /**
          * @event
@@ -4401,7 +4398,7 @@ define([
          * {@link JXG.Board#startSelectionMode}.
          * @name JXG.Board#pointerstartselecting
          */
-         __evt__pointerstartselecting: function() { },
+         __evt__pointerstartselecting: function () { },
 
          /**
          * @event
@@ -4410,14 +4407,14 @@ define([
          * {@link JXG.Board#startSelectionMode}.
          * @name JXG.Board#touchstartselecting
          */
-         __evt__touchstartselecting: function() { },
+         __evt__touchstartselecting: function () { },
 
          /**
           * @event
           * @description Selection of a region is stopped during an up event.
           * @name JXG.Board#stopselecting
           */
-         __evt__stopselecting: function() { },
+         __evt__stopselecting: function () { },
 
          /**
          * @event
@@ -4425,7 +4422,7 @@ define([
          * from a device sending mouse events.
          * @name JXG.Board#mousestopselecting
          */
-         __evt__mousestopselecting: function() { },
+         __evt__mousestopselecting: function () { },
 
          /**
          * @event
@@ -4433,7 +4430,7 @@ define([
          * from a device sending pointer events.
          * @name JXG.Board#pointerstopselecting
          */
-         __evt__pointerstopselecting: function() { },
+         __evt__pointerstopselecting: function () { },
 
          /**
          * @event
@@ -4441,14 +4438,14 @@ define([
          * from a device sending touch events.
          * @name JXG.Board#touchstopselecting
          */
-         __evt__touchstopselecting: function() { },
+         __evt__touchstopselecting: function () { },
 
          /**
          * @event
          * @description A move event while selecting of a region is active.
          * @name JXG.Board#moveselecting
          */
-         __evt__moveselecting: function() { },
+         __evt__moveselecting: function () { },
 
          /**
          * @event
@@ -4456,7 +4453,7 @@ define([
          * from a device sending mouse events.
          * @name JXG.Board#mousemoveselecting
          */
-         __evt__mousemoveselecting: function() { },
+         __evt__mousemoveselecting: function () { },
 
          /**
          * @event
@@ -4464,7 +4461,7 @@ define([
          * from a device sending mouse events.
          * @name JXG.Board#pointermoveselecting
          */
-         __evt__pointermoveselecting: function() { },
+         __evt__pointermoveselecting: function () { },
 
          /**
          * @event
@@ -4472,7 +4469,7 @@ define([
          * from a device sending touch events.
          * @name JXG.Board#touchmoveselecting
          */
-         __evt__touchmoveselecting: function() { },
+         __evt__touchmoveselecting: function () { },
 
         /**
          * @ignore
