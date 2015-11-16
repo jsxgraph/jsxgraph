@@ -1996,13 +1996,17 @@ define([
             // we just re-mapped the targettouches to our existing touches list. now we have to initialize some touches from additional targettouches
             for (i = 0; i < evtTouches.length; i++) {
                 if (!evtTouches[i].jxg_isused) {
+
                     pos = this.getMousePosition(evt, i);
                     // selection
                     // this._testForSelection(evt); // we do not have shuft or ctrl keys yet.
                     if (this.selectingMode) {
                         this._startSelecting(pos);
                         this.triggerEventHandlers(['touchstartselecting', 'startselecting'], [evt]);
-                        return;     // don't continue as a normal click
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        this.options.precision.hasPoint = this.options.precision.mouse;
+                        return this.touches.length > 0; // don't continue as a normal click
                     }
 
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
@@ -2125,8 +2129,14 @@ define([
 
             // selection
             if (this.selectingMode) {
-                this._moveSelecting(pos);
-                this.triggerEventHandlers(['touchmoves', 'moveselecting'], [evt, this.mode]);
+                for (i = 0; i < evtTouches.length; i++) {
+                    if (!evtTouches[i].jxg_isused) {
+                        pos1 = this.getMousePosition(evt, i);
+                        this._moveSelecting(pos1);
+                        this.triggerEventHandlers(['touchmoves', 'moveselecting'], [evt, this.mode]);
+                        break;
+                    }
+                }
             } else {
                 if (!this.touchOriginMove(evt)) {
                     if (this.mode === this.BOARD_MODE_DRAG) {
@@ -2192,7 +2202,11 @@ define([
             this.triggerEventHandlers(['touchend', 'up'], [evt]);
             this.renderer.hide(this.infobox);
 
-            if (evtTouches && evtTouches.length > 0) {
+            // selection
+            if (this.selectingMode) {
+                this._stopSelecting(evt);
+                this.triggerEventHandlers(['touchstopselecting', 'stopselecting'], [evt]);
+            } else if (evtTouches && evtTouches.length > 0) {
                 for (i = 0; i < this.touches.length; i++) {
                     tmpTouches[i] = this.touches[i];
                 }
@@ -2457,17 +2471,16 @@ define([
             // selection
             if (this.selectingMode) {
                 this._moveSelecting(pos);
-            } else {
-                if (!this.mouseOriginMove(evt)) {
-                    if (this.mode === this.BOARD_MODE_DRAG) {
-                        this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
-                    } else { // BOARD_MODE_NONE
-                        this.highlightElements(pos[0], pos[1], evt, -1);
-                    }
+                this.triggerEventHandlers(['mousemoveselecting', 'moveselecting'], [evt, this.mode]);
+            } else if (!this.mouseOriginMove(evt)) {
+                if (this.mode === this.BOARD_MODE_DRAG) {
+                    this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
+                } else { // BOARD_MODE_NONE
+                    this.highlightElements(pos[0], pos[1], evt, -1);
                 }
-                this.updateQuality = this.BOARD_QUALITY_HIGH;
                 this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
             }
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
         },
 
         /**
