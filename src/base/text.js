@@ -136,10 +136,8 @@ define([
                 r = this.board.options.precision.hasPoint;
 
             if (this.transformations.length > 0) {
-                /**
-                 * Transform the mouse/touch coordinates
-                 * back to the original position of the text.
-                 */
+                //Transform the mouse/touch coordinates
+                // back to the original position of the text.
                 lft = Mat.matVecMult(Mat.inverse(this.board.renderer.joinTransforms(this, this.transformations)), [1, x, y]);
                 x = lft[1];
                 y = lft[2];

@@ -4192,16 +4192,27 @@ define([
          *
          * Starting from out side can be realized for example with a button like this:
          * <pre>
-         * 	<button onclick="board.startSelectionMode()">Start</button>
+         * 	&lt;button onclick="board.startSelectionMode()"&gt;Start&lt;/button&gt;
          * </pre>
          * @example
          * //
          * // Set a new bounding box from the selection rectangle
          * //
          * var board = JXG.JSXGraph.initBoard('jxgbox', {
-         *         boundingbox:[-3,2,3,-2],
-         *         keepaspectratio: false,
-         *         axis:true});
+         *         boundingBox:[-3,2,3,-2],
+         *         keepAspectRatio: false,
+         *         axis:true,
+         *         selection: {
+         *             enabled: true,
+         *             needShift: false,
+         *             needCtrl: true,
+         *             withLines: false,
+         *             vertices: {
+         *                 visible: false
+         *             },
+         *             fillColor: '#ffff00',
+         *         }
+         *      });
          *
          * var f = function f(x) { return Math.cos(x); },
          *     curve = board.create('functiongraph', [f]);
@@ -4228,9 +4239,20 @@ define([
          *     // Set a new bounding box from the selection rectangle
          *     //
          *     var board = JXG.JSXGraph.initBoard('11eff3a6-8c50-11e5-b01d-901b0e1b8723', {
-         *             boundingbox:[-3,2,3,-2],
-         *             keepaspectratio: false,
-         *             axis:true});
+         *             boundingBox:[-3,2,3,-2],
+         *             keepAspectRatio: false,
+         *             axis:true,
+         *             selection: {
+         *                 enabled: true,
+         *                 needShift: false,
+         *                 needCtrl: true,
+         *                 withLines: false,
+         *                 vertices: {
+         *                     visible: false
+         *                 },
+         *                 fillColor: '#ffff00',
+         *             }
+         *        });
          *
          *     var f = function f(x) { return Math.cos(x); },
          *         curve = board.create('functiongraph', [f]);

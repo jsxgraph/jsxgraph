@@ -43,7 +43,7 @@
  * arithmetic functions.
  */
 
-define(['jxg', 'math/math', 'utils/type'], function (JXG, Type) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
