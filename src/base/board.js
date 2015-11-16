@@ -4185,6 +4185,72 @@ define([
             return this;
         },
 
+        /**
+         * Start selection mode. This function can either be triggered from outside or by
+         * a down event together with correct key pressing. The default keys are
+         * shift+ctrl. But this can be changed in the options.
+         *
+         * Starting from out side can be realized for example with a button like this:
+         * <pre>
+         * 	<button onclick="board.startSelectionMode()">Start</button>
+         * </pre>
+         * @example
+         * //
+         * // Set a new bounding box from the selection rectangle
+         * //
+         * var board = JXG.JSXGraph.initBoard('jxgbox', {
+         *         boundingbox:[-3,2,3,-2],
+         *         keepaspectratio: false,
+         *         axis:true});
+         *
+         * var f = function f(x) { return Math.cos(x); },
+         *     curve = board.create('functiongraph', [f]);
+         *
+         * board.on('stopselecting', function(){
+         *     var box = board.stopSelectionMode(),
+         *
+         *         // bbox has the coordinates of the selectionr rectangle.
+         *         // Attention: box[i].usrCoords have the form [1, x, y], i.e.
+         *         // are homogeneous coordinates.
+         *         bbox = box[0].usrCoords.slice(1).concat(box[1].usrCoords.slice(1));
+         *
+         *         // Set a new bounding box
+         *         board.setBoundingBox(bbox, false);
+         *  });
+         *
+         *
+         * </pre><div id="11eff3a6-8c50-11e5-b01d-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('11eff3a6-8c50-11e5-b01d-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     //
+         *     // Set a new bounding box from the selection rectangle
+         *     //
+         *     var board = JXG.JSXGraph.initBoard('11eff3a6-8c50-11e5-b01d-901b0e1b8723', {
+         *             boundingbox:[-3,2,3,-2],
+         *             keepaspectratio: false,
+         *             axis:true});
+         *
+         *     var f = function f(x) { return Math.cos(x); },
+         *         curve = board.create('functiongraph', [f]);
+         *
+         *     board.on('stopselecting', function(){
+         *         var box = board.stopSelectionMode(),
+         *
+         *             // bbox has the coordinates of the selectionr rectangle.
+         *             // Attention: box[i].usrCoords have the form [1, x, y], i.e.
+         *             // are homogeneous coordinates.
+         *             bbox = box[0].usrCoords.slice(1).concat(box[1].usrCoords.slice(1));
+         *
+         *             // Set a new bounding box
+         *             board.setBoundingBox(bbox, false);
+         *      });
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
         startSelectionMode: function () {
             this.selectingMode = true;
             this.selectionPolygon.setAttribute({visible: true});
@@ -4193,18 +4259,36 @@ define([
             this.selectionPolygon.prepareUpdate().update().updateRenderer();
         },
 
+        /**
+         * Finalize the selection: disable selection mode and return the coordinates
+         * of the selection rectangle.
+         * @return {Array} Coordinates of the selection rectangle. The array
+         * contains two {@link JXG.Coords} objects. One the upper left corner and
+         * the second for the lower right corner.
+         */
         stopSelectionMode: function () {
             this.selectingMode = false;
             this.selectionPolygon.setAttribute({visible: false});
             return [this.selectionPolygon.vertices[0].coords, this.selectionPolygon.vertices[2].coords];
         },
 
+        /**
+         * Start the selection of a region.
+         * @private
+         * @param  {Array} pos Screen coordiates of the upper left corner of the
+         * selection rectangle.
+         */
         _startSelecting: function (pos) {
             this.isSelecting = true;
             this.selectingBox = [ [pos[0], pos[1]], [pos[0], pos[1]] ];
             this._setSelectionPolygonFromBox();
         },
 
+        /**
+         * Update the selection rectangle during a move event.
+         * @private
+         * @param  {Array} pos Screen coordiates of the move event
+         */
         _moveSelecting: function (pos) {
             if (this.isSelecting) {
                 this.selectingBox[1] = [pos[0], pos[1]];
@@ -4213,6 +4297,11 @@ define([
             }
         },
 
+        /**
+         * Update the selection rectangle during an up event. Stop selection.
+         * @private
+         * @param  {Object} evt Event object
+         */
         _stopSelecting:  function (evt) {
             var pos = this.getMousePosition(evt);
 
@@ -4221,6 +4310,10 @@ define([
             this._setSelectionPolygonFromBox();
         },
 
+        /**
+         * Update the Selection rectangle.
+         * @private
+         */
         _setSelectionPolygonFromBox: function () {
                var A = this.selectingBox[0],
                 B = this.selectingBox[1];
@@ -4231,12 +4324,17 @@ define([
                this.selectionPolygon.vertices[3].setPositionDirectly(JXG.COORDS_BY_SCREEN, [B[0], A[1]]);
         },
 
+        /**
+         * Test if a down event should start a selection. Test if the
+         * required keys are pressed. If yes, {@link JXG.Board#startSelectionMode} is called.
+         * @param  {Object} evt Event object
+         */
         _testForSelection: function (evt) {
             if (this.attr.selection.enabled &&
                 (!this.attr.selection.needshift || evt.shiftKey) &&
                 (!this.attr.selection.needctrl || evt.ctrlKey)) {
                     this.startSelectionMode();
-                }
+            }
         },
 
         /* **************************
