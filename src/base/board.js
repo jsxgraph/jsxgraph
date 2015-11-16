@@ -2401,6 +2401,44 @@ define([
         },
 
         /**
+         * This method is called by the browser when the mouse is moved.
+         * @param {Event} evt The browsers event object.
+         */
+        mouseMoveListener: function (evt) {
+            var pos;
+
+            pos = this.getMousePosition(evt);
+
+            this.updateQuality = this.BOARD_QUALITY_LOW;
+
+            if (this.mode !== this.BOARD_MODE_DRAG) {
+                this.dehighlightAll();
+                this.renderer.hide(this.infobox);
+            }
+
+            // we have to check for four cases:
+            //   * user moves origin
+            //   * user drags an object
+            //   * user just moves the mouse, here highlight all elements at
+            //     the current mouse position
+            //   * the user is selecting
+
+            // selection
+            if (this.selectingMode) {
+                this._moveSelecting(pos);
+                this.triggerEventHandlers(['mousemoveselecting', 'moveselecting'], [evt, this.mode]);
+            } else if (!this.mouseOriginMove(evt)) {
+                if (this.mode === this.BOARD_MODE_DRAG) {
+                    this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
+                } else { // BOARD_MODE_NONE
+                    this.highlightElements(pos[0], pos[1], evt, -1);
+                }
+                this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
+            }
+            this.updateQuality = this.BOARD_QUALITY_HIGH;
+        },
+
+        /**
          * This method is called by the browser when the mouse button is released.
          * @param {Event} evt
          */
@@ -2443,44 +2481,6 @@ define([
 
             // release dragged mouse object
             this.mouse = null;
-        },
-
-        /**
-         * This method is called by the browser when the mouse is moved.
-         * @param {Event} evt The browsers event object.
-         */
-        mouseMoveListener: function (evt) {
-            var pos;
-
-            pos = this.getMousePosition(evt);
-
-            this.updateQuality = this.BOARD_QUALITY_LOW;
-
-            if (this.mode !== this.BOARD_MODE_DRAG) {
-                this.dehighlightAll();
-                this.renderer.hide(this.infobox);
-            }
-
-            // we have to check for four cases:
-            //   * user moves origin
-            //   * user drags an object
-            //   * user just moves the mouse, here highlight all elements at
-            //     the current mouse position
-            //   * the user is selecting
-
-            // selection
-            if (this.selectingMode) {
-                this._moveSelecting(pos);
-                this.triggerEventHandlers(['mousemoveselecting', 'moveselecting'], [evt, this.mode]);
-            } else if (!this.mouseOriginMove(evt)) {
-                if (this.mode === this.BOARD_MODE_DRAG) {
-                    this.moveObject(pos[0], pos[1], this.mouse, evt, 'mouse');
-                } else { // BOARD_MODE_NONE
-                    this.highlightElements(pos[0], pos[1], evt, -1);
-                }
-                this.triggerEventHandlers(['mousemove', 'move'], [evt, this.mode]);
-            }
-            this.updateQuality = this.BOARD_QUALITY_HIGH;
         },
 
         /**
