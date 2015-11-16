@@ -1333,9 +1333,10 @@ define([
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
             var t, func0, func1, func0a, v, x, y, z,
-                eps = Mat.eps * 10,
-                epsLow = Mat.eps * 1000,
-                steps, delta, tnew, i;
+                eps = Mat.eps,
+                epsLow = Mat.eps,
+                steps, delta, tnew, i,
+                tmin, fmin;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1358,18 +1359,23 @@ define([
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
 
+            fmin = eps;
+            tmin = NaN;
             for (i = 0; i < steps; i++) {
                 t = Numerics.root(func0, [tnew, tnew + delta]);
 
-                if (Math.abs(func0(t)) <= epsLow) {
-                    break;
+                if (Math.abs(func0(t)) <= fmin  ) {
+                    fmin = Math.abs(func0(t));
+                    tmin = t;
+                    //break;
                 }
 
                 tnew += delta;
             }
+            t = tmin;
 
             // Compute "exact" t
-            t = Numerics.root(func1, [t - 2 * eps, t + 2 * eps]);
+            t = Numerics.root(func1, [t - delta, t + delta]);
 
             // Is the point on the line?
             if (Math.abs(func1(t)) > epsLow) {
