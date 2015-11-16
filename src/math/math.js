@@ -611,6 +611,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Greatest common divisor (gcd) of two numbers.
+         * @see http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+         * 
          * @param  {Number} a First number
          * @param  {Number} b Second number
          * @return {Number}   gcd(a, b) if a and b are numbers, NaN else.
