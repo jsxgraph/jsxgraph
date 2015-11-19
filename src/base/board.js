@@ -3716,7 +3716,7 @@ define([
          */
         createElement: function () {
             JXG.deprecated('Board.createElement()', 'Board.create()');
-            this.create.apply(this, arguments);
+            return this.create.apply(this, arguments);
         },
 
         /**
