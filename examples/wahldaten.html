@@ -1,5 +1,6 @@
 <html>
-<head>
+<head> 
+   <meta charset="UTF-8"> 
    <title>JSXGraph example</title>
    <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
    <script type="text/javascript" src="../distrib/prototype.js"></script>
@@ -97,70 +98,70 @@
         if(i==0) { // CDU/CSU
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getCSUcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getCSUcolor(j));
                 }
             }
         }    
         else if(i==1) { // SPD
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getSPDcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getSPDcolor(j));
                 }
             }
         }
         else if(i==2) { // FDP
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getFDPcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getFDPcolor(j));
                 }
             }
         }   
         else if(i==3) { // GRUEN
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getGRUENcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getGRUENcolor(j));
                 }
             }
         }  
         else if(i==4) { // LINKS
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getLINKScolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getLINKScolor(j));
                 }
             }
         } 
         else if(i==5) { // NPD
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getNPDcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getNPDcolor(j));
                 }
             }
         } 
         else if(i==6) { // REP
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getREPcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getREPcolor(j));
                 }
             }
         }
         else if(i==7) { // DVU
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getDVUcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getDVUcolor(j));
                 }
             }
         }   
         else if(i==8) { // Piraten
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getPIRATENcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getPIRATENcolor(j));
                 }
             }
         }  
        else if(i==9) { // Wahlbeteiligung
             for(var j=1;j<300;j++) {
                 for(var k=0; k< wkCurves[j].length; k++) {
-                    wkCurves[j][k].setProperty('fillColor:'+getBETEILIGUNGcolor(j));
+                    wkCurves[j][k].setAttribute('fillColor:'+getBETEILIGUNGcolor(j));
                 }
             }
         }          
@@ -275,13 +276,13 @@
                 a = xy[i].split(' ');
                 c.push(new JXG.Coords(JXG.COORDS_BY_USER, [1*a[0], 1*a[1]], brd));
             }
-            c = JXG.Math.Numerics.RamerDouglasPeuker(c,1.2);
+            c = JXG.Math.Numerics.RamerDouglasPeucker(c,1.2);
             len = c.length;
             for (i=0;i<len;i++) {
                 x.push(c[i].usrCoords[1]);
                 y.push(c[i].usrCoords[2]);
             }
-            graph = brd.createElement('curve', [x,y], 
+            graph = brd.create('curve', [x,y], 
                         {fillColor:getCSUcolor(area[2]),
                          highlightFillColor:'yellow',
                          strokeWidth:1,strokeColor:'black',highlightStrokeColor:'black'});
