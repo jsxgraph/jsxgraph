@@ -784,7 +784,7 @@ define([
          * A point can change its type from free point to glider
          * and vice versa. If it is given an array of attractor elements
          * (attribute attractors) and the attribute attractorDistance
-         * then the pint will be made a glider if it less than attractorDistance
+         * then the point will be made a glider if it less than attractorDistance
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
