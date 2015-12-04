@@ -1355,15 +1355,14 @@ define([
             };
 
             // Find t
-            steps = 40;
+            steps = 100;
             delta = (cu.maxX() - cu.minX()) / steps;
             tnew = cu.minX();
 
-            fmin = eps;
+            fmin = 0.0001; //eps;
             tmin = NaN;
             for (i = 0; i < steps; i++) {
                 t = Numerics.root(func0, [tnew, tnew + delta]);
-
                 if (Math.abs(func0(t)) <= fmin  ) {
                     fmin = Math.abs(func0(t));
                     tmin = t;
@@ -1373,7 +1372,6 @@ define([
                 tnew += delta;
             }
             t = tmin;
-
             // Compute "exact" t
             t = Numerics.root(func1, [t - delta, t + delta]);
 
@@ -1408,7 +1406,6 @@ define([
 
             JXG.deprecated('Geometry.meetCurveLineContinuousOld()', 'Geometry.meetCurveLineContinuous()');
             func = function (t) {
-//                return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 return v * v;
             };
