@@ -476,14 +476,16 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var eps = Mat.eps * Mat.eps,
+            var eps = Mat.eps,
                 distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                if (zero.usrCoords[1] - point.usrCoords[1] > eps ||
-                        (Math.abs(zero.usrCoords[1] - point.usrCoords[1]) < eps &&
+                if ((Mat.relDif(zero.usrCoords[1], point.usrCoords[1]) > eps &&
+                        zero.usrCoords[1] - point.usrCoords[1] > eps) ||
+                    (Mat.relDif(zero.usrCoords[2], point.usrCoords[2]) > eps &&
                         zero.usrCoords[2] - point.usrCoords[2] > eps)) {
+
                     distance *= -1;
                 }
             } else if (this.visProp.anchor === 'right') {

@@ -93,6 +93,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         eps: 0.000001,
 
         /**
+         * Determine the relative difference between two numbers.
+         * @param  {Number} a First number
+         * @param  {Number} b Second number
+         * @return {Number}  Relative difference between a and b: |a-b| / max(|a|, |b|)
+         */
+        relDif: function(a, b) {
+            var c = Math.abs(a),
+                d = Math.abs(b);
+
+            d = Math.max(c, d);
+
+            return (d === 0.0) ? 0.0 : Math.abs(a - b) / d;
+        },
+
+        /**
          * The JavaScript implementation of the % operator returns the symmetric modulo.
          * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
          * @param {Number} a
@@ -612,7 +627,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         /**
          * Greatest common divisor (gcd) of two numbers.
          * @see http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
-         * 
+         *
          * @param  {Number} a First number
          * @param  {Number} b Second number
          * @return {Number}   gcd(a, b) if a and b are numbers, NaN else.
