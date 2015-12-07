@@ -314,9 +314,12 @@ define([
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
              *   wheel: false,   // allow zooming by mouse wheel
              *   needshift: false, // mouse wheel zooming needs pressing of the shift key
-             *   eps: 0.1        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}
+             *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
+             *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
              * }
              * </pre>
+             *
+             * Deprecated: zoom.eps which is superseded by zoom.min
              *
              * @name JXG.Board#zoom
              * @type Object
@@ -327,7 +330,8 @@ define([
                 factorY: 1.25,
                 wheel: false,
                 needshift: false,
-                eps: 0.1
+                min: 0.001,
+                max: 1000.0
             },
 
             /**

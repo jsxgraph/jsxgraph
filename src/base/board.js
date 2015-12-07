@@ -2930,6 +2930,10 @@ define([
                 lr = 0.5,
                 tr = 0.5;
 
+            if (this.zoomX > this.attr.zoom.max || this.zoomY > this.attr.zoom.max) {
+                return this;
+            }
+
             if (Type.isNumber(x) && Type.isNumber(y)) {
                 lr = (x - bb[0]) / (bb[2] - bb[0]);
                 tr = (bb[1] - y) / (bb[1] - bb[3]);
@@ -2956,10 +2960,11 @@ define([
                 dX = (bb[2] - bb[0]) * (1.0 - zX),
                 dY = (bb[1] - bb[3]) * (1.0 - zY),
                 lr = 0.5,
-                tr = 0.5;
+                tr = 0.5,
+                mi = this.attr.zoom.eps || this.attr.zoom.min || 0.001;  // this.attr.zoom.eps is deprecated
 
-            if (this.zoomX < this.attr.zoom.eps || this.zoomY < this.attr.zoom.eps) {
-                //return this;
+            if (this.zoomX < mi || this.zoomY < mi) {
+                return this;
             }
 
             if (Type.isNumber(x) && Type.isNumber(y)) {
