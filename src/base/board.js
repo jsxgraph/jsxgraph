@@ -2916,6 +2916,7 @@ define([
 
         /**
          * Zooms into the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
+         * The zoom operation is centered at x, y.
          * @param {Number} [x]
          * @param {Number} [y]
          * @returns {JXG.Board} Reference to the board
@@ -2942,6 +2943,8 @@ define([
 
         /**
          * Zooms out of the board by the factors board.attr.zoom.factorX and board.attr.zoom.factorY and applies the zoom.
+         * The zoom operation is centered at x, y.
+         * 
          * @param {Number} [x]
          * @param {Number} [y]
          * @returns {JXG.Board} Reference to the board
