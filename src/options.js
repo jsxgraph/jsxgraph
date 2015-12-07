@@ -330,8 +330,8 @@ define([
                 factorY: 1.25,
                 wheel: false,
                 needshift: false,
-                min: 0.001,
-                max: 1000.0
+                min: 0.0001,
+                max: 10000.0
             },
 
             /**
