@@ -107,8 +107,7 @@ define([
          * @private
          */
         normalizeUsrCoords: function () {
-            var eps = Mat.eps;
-            if (Math.abs(this.usrCoords[0]) > eps) {
+            if (Math.abs(this.usrCoords[0]) > Mat.eps) {
                 this.usrCoords[1] /= this.usrCoords[0];
                 this.usrCoords[2] /= this.usrCoords[0];
                 this.usrCoords[0] = 1.0;
@@ -168,7 +167,7 @@ define([
                 f = ucr[0] - c[0];
                 sum = f * f;
 
-                if (sum > Mat.eps) {
+                if (sum < Mat.eps * Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
                 f = ucr[1] - c[1];
