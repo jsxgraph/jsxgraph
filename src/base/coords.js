@@ -167,7 +167,7 @@ define([
                 f = ucr[0] - c[0];
                 sum = f * f;
 
-                if (sum < Mat.eps * Mat.eps) {
+                if (sum > Mat.eps * Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
                 f = ucr[1] - c[1];
