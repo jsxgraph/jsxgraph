@@ -244,7 +244,6 @@ define([
                 slide = this.slideObject;
 
             this.needsUpdateFromParent = false;
-
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 if (this.visProp.isgeonext) {
                     delta = 1.0;
@@ -489,8 +488,12 @@ define([
                 p1c = slide.point1.coords.usrCoords;
                 p2c = slide.point2.coords.usrCoords;
 
+                // If one of the defining points of the line does not exist,
+                // the glider should disappear
+                if ((p1c[0] === 0 && p1c[0] === 0 && p1c[0] === 0) || (p2c[0] === 0 && p2c[0] === 0 && p2c[0] === 0)) {
+                    c = [0, 0, 0];
                 // The second point is an ideal point
-                if (Math.abs(p2c[0]) < Mat.eps) {
+                } else if (Math.abs(p2c[0]) < Mat.eps) {
                     lbda = Math.min(Math.abs(this.position), 1 - Mat.eps);
                     lbda /= (1.0 - lbda);
 
