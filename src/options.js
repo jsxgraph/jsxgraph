@@ -1146,7 +1146,8 @@ define([
                 label: {
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
-                    needsRegularUpdate: false
+                    needsRegularUpdate: false,
+                    layer: 9
                 },
                 needsRegularUpdate: false,
                 strokeWidth: 1,
@@ -1276,7 +1277,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: true
+            externalHTML: false
 
             /**#@-*/
         },
@@ -1324,7 +1325,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: true
+            externalHTML: false
 
             /**#@-*/
         },
@@ -1893,7 +1894,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: true
+            externalHTML: false
 
             /**#@-*/
         },
@@ -3235,7 +3236,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: true,
+            externalHTML: false,
 
             /**
              * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
