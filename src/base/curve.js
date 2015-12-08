@@ -1082,11 +1082,11 @@ define([
                 depth, delta;
 //var stime = new Date();
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = 12;
-                delta = 3;
+                depth = 13;
+                delta = 1.2;
 
                 delta = 2;
-                this.smoothLevel = depth - 5;
+                this.smoothLevel = depth - 7;
                 this.jumpLevel = 5;
             } else {
                 depth = 17;
