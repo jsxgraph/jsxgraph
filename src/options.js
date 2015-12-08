@@ -1894,7 +1894,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: false
+            externalHTML: true
 
             /**#@-*/
         },
