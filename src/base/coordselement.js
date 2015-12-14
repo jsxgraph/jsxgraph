@@ -490,7 +490,8 @@ define([
 
                 // If one of the defining points of the line does not exist,
                 // the glider should disappear
-                if ((p1c[0] === 0 && p1c[0] === 0 && p1c[0] === 0) || (p2c[0] === 0 && p2c[0] === 0 && p2c[0] === 0)) {
+                if ((p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
+                    (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)) {
                     c = [0, 0, 0];
                 // The second point is an ideal point
                 } else if (Math.abs(p2c[0]) < Mat.eps) {
