@@ -181,8 +181,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Generate a save-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and {@link JXG.Dump#toJavaScript}
-         * to generate the script.
+         * Generate a save-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and 
+         * {@link JXG.Dump#toJavaScript} to generate the script.
          * @param {JXG.Board} board
          * @returns {Array} An array with all metadata necessary to save the construction.
          */
