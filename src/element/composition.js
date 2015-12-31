@@ -2129,19 +2129,40 @@ define([
 
             board.options.grid.hasGrid = true;
 
-            topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.floor(topLeft.usrCoords[1] / gridX) * gridX, Math.ceil(topLeft.usrCoords[2] / gridY) * gridY]);
-            bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(bottomRight.usrCoords[1] / gridX) * gridX, Math.floor(bottomRight.usrCoords[2] / gridY) * gridY]);
+			// fix_grid: adding integer function to calculation of start and end values, and adding to calculation of start and end values below
+			// To allow this:
+			// (axes on the outside, min value of grid = 0.25)
+            //
+            //      |    |         |          |
+            // 1.5 -+----+---------+----------+-----
+            //      |    |         |          |
+            //      |    |         |          |
+            //      |    |         |          |
+            //   1 -+----+---------+----------+-----
+            //      |    |         |          |
+            //      |    |         |          |
+            //      |    |         |          |
+            // 0.5 -+----+---------+----------+-----
+            //      |    |         |          |
+            //      +----+---------+----------+-----
+            //           |         |          |
+            //          0.5        1         1.5
+            //
+            // fix_grid: these lines disabled:
+            // topLeft.setCoordinates(Const.COORDS_BY_USER, [Math.ceil(topLeft.usrCoords[1] / gridX) * gridX, Math.floor(topLeft.usrCoords[2] / gridY) * gridY]);
+            // bottomRight.setCoordinates(Const.COORDS_BY_USER, [Math.floor(bottomRight.usrCoords[1] / gridX) * gridX, Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY]);
 
             c.dataX = [];
             c.dataY = [];
 
             // Sometimes the bounding box is used to invert the axis. We have to take this into account here.
-            start = topLeft.usrCoords[2];
-            end = bottomRight.usrCoords[2];
+            // fix_grid: adding integer function to calculation of start and end values
+            start = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
+            end = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY;
 
             if (topLeft.usrCoords[2] < bottomRight.usrCoords[2]) {
-                start = bottomRight.usrCoords[2];
-                end = topLeft.usrCoords[2];
+                start = Math.ceil(bottomRight.usrCoords[2] / gridY) * gridY; // bottomRight.usrCoords[2];
+                end = Math.floor(topLeft.usrCoords[2] / gridY) * gridY;
             }
 
             // start with the horizontal grid:
@@ -2150,12 +2171,13 @@ define([
                 c.dataY.push(i, i, NaN);
             }
 
-            start = topLeft.usrCoords[1];
-            end = bottomRight.usrCoords[1];
+            // fix_grid: adding integer function to calculation of start and end values
+            start = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
+            end = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
 
             if (topLeft.usrCoords[1] > bottomRight.usrCoords[1]) {
-                start = bottomRight.usrCoords[1];
-                end = topLeft.usrCoords[1];
+				start = Math.floor(bottomRight.usrCoords[1] / gridX) * gridX;
+				end = Math.ceil(topLeft.usrCoords[1] / gridX) * gridX;
             }
 
             // build vertical grid
