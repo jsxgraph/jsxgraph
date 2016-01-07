@@ -3132,6 +3132,13 @@ define([
                     }
                 }
 
+                // Remove all children in elements like turtle
+                for (el in object.objects) {
+                    if (object.objects.hasOwnProperty(el)) {
+                        object.objects[el].board.removeObject(object.objects[el]);
+                    }
+                }
+
                 for (el in this.objects) {
                     if (this.objects.hasOwnProperty(el) && Type.exists(this.objects[el].childElements)) {
                         delete this.objects[el].childElements[object.id];
@@ -3145,11 +3152,13 @@ define([
                     for (el = object._pos; el < this.objectsList.length; el++) {
                         this.objectsList[el]._pos--;
                     }
-                } else {
+                } else if (object.type !== Const.OBJECT_TYPE_TURTLE) {
                     JXG.debug('Board.removeObject: object ' + object.id + ' not found in list.');
                 }
+
                 delete this.objects[object.id];
                 delete this.elementsByName[object.name];
+
 
                 if (object.visProp && object.visProp.trace) {
                     object.clearTrace();
