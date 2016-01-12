@@ -123,8 +123,8 @@ define([
 
             /**
              * Show default axis.
-             * If shown, the horizontal axis can be accessed via JXG.Board.defaultAxis.x, the
-             * vertical axis can be accessed via JXG.Board.defaultAxis.y. Both axes have a sub-element "defaultTicks".
+             * If shown, the horizontal axis can be accessed via JXG.Board.defaultAxes.x, the
+             * vertical axis can be accessed via JXG.Board.defaultAxes.y. Both axes have a sub-element "defaultTicks".
              *
              * @name JXG.Board#axis
              * @type Boolean
