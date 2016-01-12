@@ -228,13 +228,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     }
 
                     for (s = 0; s < element.parents.length; s++) {
-                        if (typeof element.parents[s] === 'string' &&
+                        if (Type.isString(element.parents[s]) &&
                                 element.parents[s][0] !== "'" &&
                                 element.parents[s][0] !== '"') {
 
                             element.parents[s] = '"' + element.parents[s] + '"';
+                        } else if (Type.isArray( element.parents[s]) ) {
+                            element.parents[s] = '[' + element.parents[s].toString() + ']';
                         }
                     }
+
                     element.attributes = this.prepareAttributes(board, obj);
                     if (element.type === 'glider' && obj.onPolygon) {
                         props.push({
