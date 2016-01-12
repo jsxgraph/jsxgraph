@@ -184,6 +184,24 @@ define([], function () {
         },
 
         /**
+         * s may be the string containing the id of an HTML tag that hosts a JSXGraph board.
+         * This function returns the reference to the board.
+         * @param  {String} s String of an HTML tag that hosts a JSXGraph board
+         * @return {Object} Reference to the board or null.
+         */
+        getBoardByContainerId: function(s) {
+            var b;
+            for (b in JXG.boards) {
+                if (JXG.boards.hasOwnProperty(b) &&
+                    JXG.boards[b].container === s) {
+                        return JXG.boards[b];
+                }
+            }
+
+            return null;
+        },
+
+        /**
          * This method issues a warning to the developer that the given function is deprecated
          * and, if available, offers an alternative to the deprecated function.
          * @param {String} what Describes the function that is deprecated
