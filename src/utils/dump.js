@@ -205,6 +205,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             this.addMarkers(board, 'dumped', false);
 
+            // This has been moved to toJavaScript and toJessie
             /*
             methods.push({
                 obj: '$board',
@@ -219,8 +220,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                 if (!obj.dumped && obj.dump) {
                     element.type = obj.getType();
-                    element.parents = obj.getParents();
+                    element.parents = obj.getParents().slice();
 
+                    // Extract coordinates of a point
                     if (element.type === 'point' && element.parents[0] === 1) {
                         element.parents = element.parents.slice(1);
                     }
@@ -233,7 +235,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                             element.parents[s] = '"' + element.parents[s] + '"';
                         }
                     }
-
                     element.attributes = this.prepareAttributes(board, obj);
                     if (element.type === 'glider' && obj.onPolygon) {
                         props.push({

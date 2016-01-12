@@ -593,7 +593,8 @@ define([
          * @returns {JXG.GeometryElement} Reference to the element object.
          */
         setPosition: function (method, coords) {
-            var parents = [], el, i, len, t;
+            var parents = [],
+                el, i, len, t;
 
             if (!JXG.exists(this.parents)) {
                 return this;
