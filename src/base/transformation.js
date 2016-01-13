@@ -438,7 +438,20 @@ define([
                 }
             };
             return this;
+        },
+
+        // documented in element.js
+        // Not yet, since transformations are not listed in board.objects.
+        getParents: function () {
+            var p = [[].concat.apply([], this.matrix)];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
         }
+
     });
 
     /**
