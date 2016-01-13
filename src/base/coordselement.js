@@ -1661,7 +1661,6 @@ define([
 
             if (this.type === Const.OBJECT_TYPE_GLIDER) {
                 p = [this.X(), this.Y(), this.slideObject.id];
-
             }
 
             return p;

@@ -1447,7 +1447,19 @@ define([
             }
 
             return [minX, maxY, maxX, minY];
+        },
+
+        // documented in element.js
+        getParents: function () {
+            var p = [this.xterm, this.yterm, this.minX(), this.maxX()];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
         }
+
     });
 
 

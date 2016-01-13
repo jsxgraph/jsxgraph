@@ -236,7 +236,19 @@ define([
             } else {
                 this.transformations.push(transform);
             }
+        },
+
+        // documented in element.js
+        getParents: function () {
+            var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
         }
+
     });
 
     /**
