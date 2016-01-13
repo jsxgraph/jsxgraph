@@ -323,8 +323,9 @@ define([
      * that means the user won't be able to change the point's position directly by mouse because it will be calculated automatically depending on the string
      * or the function's return value. If two parent elements are given the coordinates will be interpreted as 2D affine Euclidean coordinates, if three such
      * parent elements are given they will be interpreted as homogeneous coordinates.
-     * @param {JXG.Point_JXG.Transformation} Point,Transformation A point can also be created providing a transformation. The resulting point is a clone of the base
-     * point transformed by the given Transformation. {@see JXG.Transformation}.
+     * @param {JXG.Point_JXG.Transformation_Array} Point,Transformation A point can also be created providing a transformation or an array of transformations.
+     * The resulting point is a clone of the base point transformed by the given Transformation. {@see JXG.Transformation}.
+     * 
      * @example
      * // Create a free point using affine euclidean coordinates
      * var p1 = board.create('point', [3.5, 2.0]);
