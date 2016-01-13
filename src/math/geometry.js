@@ -2270,7 +2270,7 @@ define([
                 for (i = 0; i < steps; i++) {
                     fnew = minfunc(tnew);
 
-                    if (fnew < fold) {
+                    if (fnew < fold || isNaN(fold)) {
                         t = tnew;
                         fold = fnew;
                     }
