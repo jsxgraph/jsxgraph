@@ -1074,7 +1074,8 @@ define([
             var np1, np2, op1, op2,
                 nmid, omid, nd, od,
                 d,
-                S, alpha, t1, t2, t3, t4, t5;
+                S, alpha, t1, t2, t3, t4, t5,
+                ar, i, len;
 
             if (Type.exists(o.targets[0]) &&
                     Type.exists(o.targets[1]) &&
@@ -1125,10 +1126,25 @@ define([
                     t1.melt(t3).melt(t4).melt(t5);
                 }
 
+
                 if (drag.elementClass === Const.OBJECT_CLASS_LINE) {
-                    t1.applyOnce([drag.point1, drag.point2]);
+                    ar = [];
+                    if (drag.point1.draggable()) {
+                        ar.push(drag.point1);
+                    }
+                    if (drag.point2.draggable()) {
+                        ar.push(drag.point2);
+                    }
+                    t1.applyOnce(ar);
                 } else if (drag.type === Const.OBJECT_TYPE_POLYGON) {
-                    t1.applyOnce(drag.vertices.slice(0, -1));
+                    ar = [];
+                    len = drag.vertices.length - 1;
+                    for (i = 0; i < len; ++i) {
+                        if (drag.vertices[i].draggable()) {
+                            ar.push(drag.vertices[i]);
+                        }
+                    }
+                    t1.applyOnce(ar);
                 }
 
                 this.update();
@@ -1179,10 +1195,14 @@ define([
                 t5 = this.create('transform', [np1[1], np1[2]], {type: 'translate'});
                 t1.melt(t5);
 
-                t1.applyOnce([drag.center]);
+                if (drag.center.draggable()) {
+                    t1.applyOnce([drag.center]);
+                }
 
                 if (drag.method === 'twoPoints') {
-                    t1.applyOnce([drag.point2]);
+                    if (drag.point2.draggable()) {
+                        t1.applyOnce([drag.point2]);
+                    }
                 } else if (drag.method === 'pointRadius') {
                     if (Type.isNumber(drag.updateRadius.origin)) {
                         drag.setRadius(drag.radius * d);
