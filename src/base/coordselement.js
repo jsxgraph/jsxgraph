@@ -1368,8 +1368,8 @@ define([
         /**
          * Starts an animation which moves the point along a given path in given time.
          * @param {Array|function} path The path the point is moved on.
-         * This can be either an array of arrays containing x and y values of the points of
-         * the path, or  function taking the amount of elapsed time since the animation
+         * This can be either an array of arrays or containing x and y values of the points of
+         * the path, or an array of points, or a function taking the amount of elapsed time since the animation
          * has started and returns an array containing a x and a y value or NaN.
          * In case of NaN the animation stops.
          * @param {Number} time The time in milliseconds in which to finish the animation
@@ -1388,6 +1388,7 @@ define([
                 p = [],
                 delay = this.board.attr.animationdelay,
                 steps = time / delay,
+                len, pos, part,
 
                 makeFakeFunction = function (i, j) {
                     return function () {
@@ -1396,7 +1397,8 @@ define([
                 };
 
             if (Type.isArray(path)) {
-                for (i = 0; i < path.length; i++) {
+                len = path.length;
+                for (i = 0; i < len; i++) {
                     if (Type.isPoint(path[i])) {
                         p[i] = path[i];
                     } else {
@@ -1422,11 +1424,24 @@ define([
                         interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
                     }
                 } else {
+                    len = path.length - 1;
+                    for (i = 0; i < steps; ++i) {
+                        pos = Math.floor(i / steps * len);
+                        part = i / steps * len - pos;
+
+                        interpath[i] = [];
+                        interpath[i][0] = (1.0 - part) * p[pos].X() + part * p[pos + 1].X();
+                        interpath[i][1] = (1.0 - part) * p[pos].Y() + part * p[pos + 1].Y();
+                    }
+                    interpath.push([p[len].X(), p[len].Y()]);
+                    interpath.reverse();
+                    /*
                     for (i = 0; i < steps; i++) {
                         interpath[i] = [];
                         interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
                         interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
                     }
+                    */
                 }
 
                 this.animationPath = interpath;
