@@ -604,7 +604,7 @@ define([
         drawText: function (element) {
             var node, z, level;
 
-            if (element.visProp.display === 'html' && Env.isBrowser) {
+            if (element.visProp.display === 'html' && Env.isBrowser && this.type !== 'no') {
                 node = this.container.ownerDocument.createElement('div'); //createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
 
@@ -662,7 +662,7 @@ define([
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
 
-                if (el.visProp.display === 'html') {
+                if (el.visProp.display === 'html' && this.type !== 'no') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
@@ -800,7 +800,7 @@ define([
 
             }
 
-            if (display === 'html') {
+            if (display === 'html' && this.type !== 'no') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;

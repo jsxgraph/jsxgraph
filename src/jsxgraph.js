@@ -121,7 +121,7 @@ define([
             return Options.renderer;
         }()),
 
-        initRenderer: function (box, dim, doc) {
+        initRenderer: function (box, dim, doc, attrRenderer) {
             var boxid, renderer;
 
             // Former version:
@@ -142,11 +142,11 @@ define([
             }
 
             // create the renderer
-            if (Options.renderer === 'svg') {
+            if (attrRenderer === 'svg') {
                 renderer = new SVGRenderer(boxid, dim);
-            } else if (Options.renderer === 'vml') {
+            } else if (attrRenderer === 'vml') {
                 renderer = new VMLRenderer(boxid);
-            } else if (Options.renderer === 'canvas') {
+            } else if (attrRenderer === 'canvas') {
                 renderer = new CanvasRenderer(boxid, dim);
             } else {
                 renderer = new NoRenderer();
@@ -222,7 +222,7 @@ define([
                 originY = unitY * bbox[1];
             }
 
-            renderer = this.initRenderer(box, dimensions, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
 
             // create the board
             board = new Board(box, renderer, attr.id, [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
