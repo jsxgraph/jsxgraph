@@ -1327,7 +1327,7 @@ define([
                     Env.addEvent(button, 'touchstart', cancelbubble, board);
                 };
 
-            if (Env.isBrowser) {
+            if (Env.isBrowser && this.type !== 'no') {
                 doc = board.containerObj.ownerDocument;
                 node = doc.createElement('div');
 

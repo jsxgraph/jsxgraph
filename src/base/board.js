@@ -167,7 +167,7 @@ define([
          */
         this.containerObj = (Env.isBrowser ? this.document.getElementById(this.container) : null);
 
-        if (Env.isBrowser && this.containerObj === null) {
+        if (Env.isBrowser && renderer.type !== 'no' && this.containerObj === null) {
             throw new Error("\nJSXGraph: HTML container element '" + container + "' not found.");
         }
 
@@ -1417,13 +1417,15 @@ define([
 
                 // This one works on IE, Firefox and Chromium with default configurations. On some Safari
                 // or Opera versions the user must explicitly allow the deactivation of the context menu.
-                this.containerObj.oncontextmenu = function (e) {
-                    if (Type.exists(e)) {
-                        e.preventDefault();
-                    }
+                if (this.containerObj !== null) {
+                    this.containerObj.oncontextmenu = function (e) {
+                        if (Type.exists(e)) {
+                            e.preventDefault();
+                        }
 
-                    return false;
-                };
+                        return false;
+                    };
+                }
             }
         },
 
