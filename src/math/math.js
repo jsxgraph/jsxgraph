@@ -703,7 +703,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         toGL: function (m) {
             var v, i, j;
 
-            if (Type.isFunction(Float32Array)) {
+            if (typeof Float32Array === 'function') {
                 v = new Float32Array(16);
             } else {
                 v = new Array(16);
