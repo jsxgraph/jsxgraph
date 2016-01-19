@@ -254,7 +254,7 @@ define([
 
         },
 
-        // document in base/element
+        // documented in base/element
         update: function () {
             var funps;
 
