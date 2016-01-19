@@ -90,7 +90,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             if (this.isNode()) {
                 try {
                     c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-                    hasCanvas = true;
+                    hasCanvas = !!c;
                 } catch (err) { }
             }
 
