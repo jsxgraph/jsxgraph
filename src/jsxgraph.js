@@ -71,10 +71,10 @@ define([
          * @type String
          */
         rendererType: (function () {
-            Options.renderer = 'no';
+            Options.board.renderer = 'no';
 
             if (Env.supportsVML()) {
-                Options.renderer = 'vml';
+                Options.board.renderer = 'vml';
                 // Ok, this is some real magic going on here. IE/VML always was so
                 // terribly slow, except in one place: Examples placed in a moodle course
                 // was almost as fast as in other browsers. So i grabbed all the css and
@@ -101,16 +101,16 @@ define([
             }
 
             if (Env.supportsCanvas()) {
-                Options.renderer = 'canvas';
+                Options.board.renderer = 'canvas';
             }
 
             if (Env.supportsSVG()) {
-                Options.renderer = 'svg';
+                Options.board.renderer = 'svg';
             }
 
             // we are inside node
             if (Env.isNode() && Env.supportsCanvas()) {
-                Options.renderer = 'canvas';
+                Options.board.renderer = 'canvas';
             }
 
             if (Env.isNode() || Options.renderer === 'no') {
@@ -118,7 +118,7 @@ define([
                 Options.infobox.display = 'internal';
             }
 
-            return Options.renderer;
+            return Options.board.renderer;
         }()),
 
         initRenderer: function (box, dim, doc, attrRenderer) {
