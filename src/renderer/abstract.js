@@ -679,6 +679,10 @@ define([
                             v = Math.floor(c);
                         }
 
+                        if (typeof window.devicePixelRatio !== 'undefined') {
+                            v *= window.devicePixelRatio;
+                        }
+
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                             if (el.visProp.anchorx === 'right') {
                                 el.rendNode.style.right = v + 'px';
@@ -700,6 +704,10 @@ define([
                             v = Math.floor(c - 0.5 * el.size[1]);
                         } else { // top
                             v = Math.floor(c);
+                        }
+
+                        if (typeof window.devicePixelRatio !== 'undefined') {
+                            v *= window.devicePixelRatio;
                         }
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
