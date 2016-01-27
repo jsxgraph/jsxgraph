@@ -1378,6 +1378,9 @@ define([
                 this.addMouseEventHandlers();
                 this.addTouchEventHandlers();
             }
+            if (Env.isBrowser) {
+                //Env.addEvent(window, 'resize', this.update, this);
+            }
         },
 
         /**
