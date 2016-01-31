@@ -54,7 +54,7 @@
         "jshint": "2.7.x",
         "jslint": "0.9.x",
         "jstestdriver": "1.0.x",
-        "intern": "2.2.x",
+        "intern": "3.0.x",
         "sinon": "1.14.x"
     },
     "engines": {
