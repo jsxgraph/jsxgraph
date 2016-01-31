@@ -29,7 +29,6 @@
     and <http://opensource.org/licenses/MIT/>.
  */
 
-
 /*global JXG: true, define: true*/
 /*jslint nomen: true, plusplus: true*/
 
@@ -43,7 +42,7 @@
  * algorithms for solving linear equations etc.
  */
 
-define(['utils/type', 'math/math'], function (Type, Mat) {
+define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
     "use strict";
 
@@ -81,8 +80,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
     /**
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
-     * @namespace
      * @name JXG.Math.Numerics
+     * @namespace
      */
     Mat.Numerics = {
 
@@ -405,7 +404,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
         NewtonCotes: function (interval, f, config) {
             var evaluation_point, i, number_of_intervals,
                 integral_value = 0.0,
-                number_of_nodes = config && typeof config.number_of_nodes === 'number' ? config.number_of_nodes : 28,
+                number_of_nodes = config && Type.isNumber(config.number_of_nodes) ? config.number_of_nodes : 28,
                 available_types = {trapez: true, simpson: true, milne: true},
                 integration_type = config && config.integration_type && available_types.hasOwnProperty(config.integration_type) && available_types[config.integration_type] ? config.integration_type : 'milne',
                 step_size = (interval[1] - interval[0]) / number_of_nodes;
@@ -508,8 +507,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 p = [],
                 integral = 0.0,
                 last = Infinity,
-                m = config && typeof config.max_iterations === 'number' ? config.max_iterations : 20,
-                eps = config && typeof config.eps === 'number' ? config.eps : config.eps || 0.0000001;
+                m = config && Type.isNumber(config.max_iterations) ? config.max_iterations : 20,
+                eps = config && Type.isNumber(config.eps) ? config.eps : config.eps || 0.0000001;
 
             a = interval[0];
             b = interval[1];
@@ -572,13 +571,13 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          */
         GaussLegendre: function (interval, f, config) {
             var a, b,
-                i, x, m,
+                i, m,
                 xp, xm,
                 result = 0.0,
                 table_xi = [],
                 table_w = [],
                 xi, w,
-                n = config && typeof config.n === 'number' ? config.n : 12;
+                n = config && Type.isNumber(config.n) ? config.n : 12;
 
             if (n > 18) {
                 n = 18;
@@ -589,8 +588,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             table_w[2] = [1.0000000000000000000000000];
 
             /* n = 4 */
-            table_xi[4] = [0.3399810435848562648026658,0.8611363115940525752239465];
-            table_w[4] = [0.6521451548625461426269361,0.3478548451374538573730639];
+            table_xi[4] = [0.3399810435848562648026658, 0.8611363115940525752239465];
+            table_w[4] = [0.6521451548625461426269361, 0.3478548451374538573730639];
 
             /* n = 6 */
             table_xi[6] = [0.2386191860831969086305017, 0.6612093864662645136613996, 0.9324695142031520278123016];
@@ -605,52 +604,52 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             table_w[10] = [0.2955242247147528701738930, 0.2692667193099963550912269, 0.2190863625159820439955349, 0.1494513491505805931457763, 0.0666713443086881375935688];
 
             /* n = 12 */
-            table_xi[12] = [0.1252334085114689154724414,0.3678314989981801937526915,0.5873179542866174472967024,0.7699026741943046870368938,0.9041172563704748566784659,0.9815606342467192506905491];
-            table_w[12] = [0.2491470458134027850005624,0.2334925365383548087608499,0.2031674267230659217490645,0.1600783285433462263346525,0.1069393259953184309602547,0.0471753363865118271946160];
+            table_xi[12] = [0.1252334085114689154724414, 0.3678314989981801937526915, 0.5873179542866174472967024, 0.7699026741943046870368938, 0.9041172563704748566784659, 0.9815606342467192506905491];
+            table_w[12] = [0.2491470458134027850005624, 0.2334925365383548087608499, 0.2031674267230659217490645, 0.1600783285433462263346525, 0.1069393259953184309602547, 0.0471753363865118271946160];
 
             /* n = 14 */
-            table_xi[14] = [0.1080549487073436620662447,0.3191123689278897604356718,0.5152486363581540919652907,0.6872929048116854701480198,0.8272013150697649931897947,0.9284348836635735173363911,0.9862838086968123388415973];
-            table_w[14] = [0.2152638534631577901958764,0.2051984637212956039659241,0.1855383974779378137417166,0.1572031671581935345696019,0.1215185706879031846894148,0.0801580871597602098056333,0.0351194603317518630318329];
+            table_xi[14] = [0.1080549487073436620662447, 0.3191123689278897604356718, 0.5152486363581540919652907, 0.6872929048116854701480198, 0.8272013150697649931897947, 0.9284348836635735173363911, 0.9862838086968123388415973];
+            table_w[14] = [0.2152638534631577901958764, 0.2051984637212956039659241, 0.1855383974779378137417166, 0.1572031671581935345696019, 0.1215185706879031846894148, 0.0801580871597602098056333, 0.0351194603317518630318329];
 
             /* n = 16 */
-            table_xi[16] = [0.0950125098376374401853193,0.2816035507792589132304605,0.4580167776572273863424194,0.6178762444026437484466718,0.7554044083550030338951012,0.8656312023878317438804679,0.9445750230732325760779884,0.9894009349916499325961542];
-            table_w[16] = [0.1894506104550684962853967,0.1826034150449235888667637,0.1691565193950025381893121,0.1495959888165767320815017,0.1246289712555338720524763,0.0951585116824927848099251,0.0622535239386478928628438,0.0271524594117540948517806];
+            table_xi[16] = [0.0950125098376374401853193, 0.2816035507792589132304605, 0.4580167776572273863424194, 0.6178762444026437484466718, 0.7554044083550030338951012, 0.8656312023878317438804679, 0.9445750230732325760779884, 0.9894009349916499325961542];
+            table_w[16] = [0.1894506104550684962853967, 0.1826034150449235888667637, 0.1691565193950025381893121, 0.1495959888165767320815017, 0.1246289712555338720524763, 0.0951585116824927848099251, 0.0622535239386478928628438, 0.0271524594117540948517806];
 
             /* n = 18 */
-            table_xi[18] = [0.0847750130417353012422619,0.2518862256915055095889729,0.4117511614628426460359318,0.5597708310739475346078715,0.6916870430603532078748911,0.8037049589725231156824175,0.8926024664975557392060606,0.9558239495713977551811959,0.9915651684209309467300160];
-            table_w[18] = [0.1691423829631435918406565,0.1642764837458327229860538,0.1546846751262652449254180,0.1406429146706506512047313,0.1225552067114784601845191,0.1009420441062871655628140,0.0764257302548890565291297,0.0497145488949697964533349,0.0216160135264833103133427];
+            table_xi[18] = [0.0847750130417353012422619, 0.2518862256915055095889729, 0.4117511614628426460359318, 0.5597708310739475346078715, 0.6916870430603532078748911, 0.8037049589725231156824175, 0.8926024664975557392060606, 0.9558239495713977551811959, 0.9915651684209309467300160];
+            table_w[18] = [0.1691423829631435918406565, 0.1642764837458327229860538, 0.1546846751262652449254180, 0.1406429146706506512047313, 0.1225552067114784601845191, 0.1009420441062871655628140, 0.0764257302548890565291297, 0.0497145488949697964533349, 0.0216160135264833103133427];
 
             /* n = 3 */
-            table_xi[3] = [0.0000000000000000000000000,0.7745966692414833770358531];
-            table_w[3] = [0.8888888888888888888888889,0.5555555555555555555555556];
+            table_xi[3] = [0.0000000000000000000000000, 0.7745966692414833770358531];
+            table_w[3] = [0.8888888888888888888888889, 0.5555555555555555555555556];
 
             /* n = 5 */
-            table_xi[5] = [0.0000000000000000000000000,0.5384693101056830910363144,0.9061798459386639927976269];
-            table_w[5] = [0.5688888888888888888888889,0.4786286704993664680412915,0.2369268850561890875142640];
+            table_xi[5] = [0.0000000000000000000000000, 0.5384693101056830910363144, 0.9061798459386639927976269];
+            table_w[5] = [0.5688888888888888888888889, 0.4786286704993664680412915, 0.2369268850561890875142640];
 
             /* n = 7 */
-            table_xi[7] = [0.0000000000000000000000000,0.4058451513773971669066064,0.7415311855993944398638648,0.9491079123427585245261897];
-            table_w[7] = [0.4179591836734693877551020,0.3818300505051189449503698,0.2797053914892766679014678,0.1294849661688696932706114];
+            table_xi[7] = [0.0000000000000000000000000, 0.4058451513773971669066064, 0.7415311855993944398638648, 0.9491079123427585245261897];
+            table_w[7] = [0.4179591836734693877551020, 0.3818300505051189449503698, 0.2797053914892766679014678, 0.1294849661688696932706114];
 
             /* n = 9 */
-            table_xi[9] = [0.0000000000000000000000000,0.3242534234038089290385380,0.6133714327005903973087020,0.8360311073266357942994298,0.9681602395076260898355762];
-            table_w[9] = [0.3302393550012597631645251,0.3123470770400028400686304,0.2606106964029354623187429,0.1806481606948574040584720,0.0812743883615744119718922];
+            table_xi[9] = [0.0000000000000000000000000, 0.3242534234038089290385380, 0.6133714327005903973087020, 0.8360311073266357942994298, 0.9681602395076260898355762];
+            table_w[9] = [0.3302393550012597631645251, 0.3123470770400028400686304, 0.2606106964029354623187429, 0.1806481606948574040584720, 0.0812743883615744119718922];
 
             /* n = 11 */
-            table_xi[11] = [0.0000000000000000000000000,0.2695431559523449723315320,0.5190961292068118159257257,0.7301520055740493240934163,0.8870625997680952990751578,0.9782286581460569928039380];
-            table_w[11] = [0.2729250867779006307144835,0.2628045445102466621806889,0.2331937645919904799185237,0.1862902109277342514260976,0.1255803694649046246346943,0.0556685671161736664827537];
+            table_xi[11] = [0.0000000000000000000000000, 0.2695431559523449723315320, 0.5190961292068118159257257, 0.7301520055740493240934163, 0.8870625997680952990751578, 0.9782286581460569928039380];
+            table_w[11] = [0.2729250867779006307144835, 0.2628045445102466621806889, 0.2331937645919904799185237, 0.1862902109277342514260976, 0.1255803694649046246346943, 0.0556685671161736664827537];
 
             /* n = 13 */
-            table_xi[13] = [0.0000000000000000000000000,0.2304583159551347940655281,0.4484927510364468528779129,0.6423493394403402206439846,0.8015780907333099127942065,0.9175983992229779652065478,0.9841830547185881494728294];
-            table_w[13] = [0.2325515532308739101945895,0.2262831802628972384120902,0.2078160475368885023125232,0.1781459807619457382800467,0.1388735102197872384636018,0.0921214998377284479144218,0.0404840047653158795200216];
+            table_xi[13] = [0.0000000000000000000000000, 0.2304583159551347940655281, 0.4484927510364468528779129, 0.6423493394403402206439846, 0.8015780907333099127942065, 0.9175983992229779652065478, 0.9841830547185881494728294];
+            table_w[13] = [0.2325515532308739101945895, 0.2262831802628972384120902, 0.2078160475368885023125232, 0.1781459807619457382800467, 0.1388735102197872384636018, 0.0921214998377284479144218, 0.0404840047653158795200216];
 
             /* n = 15 */
-            table_xi[15] = [0.0000000000000000000000000,0.2011940939974345223006283,0.3941513470775633698972074,0.5709721726085388475372267,0.7244177313601700474161861,0.8482065834104272162006483,0.9372733924007059043077589,0.9879925180204854284895657];
-            table_w[15] = [0.2025782419255612728806202,0.1984314853271115764561183,0.1861610000155622110268006,0.1662692058169939335532009,0.1395706779261543144478048,0.1071592204671719350118695,0.0703660474881081247092674,0.0307532419961172683546284];
+            table_xi[15] = [0.0000000000000000000000000, 0.2011940939974345223006283, 0.3941513470775633698972074, 0.5709721726085388475372267, 0.7244177313601700474161861, 0.8482065834104272162006483, 0.9372733924007059043077589, 0.9879925180204854284895657];
+            table_w[15] = [0.2025782419255612728806202, 0.1984314853271115764561183, 0.1861610000155622110268006, 0.1662692058169939335532009, 0.1395706779261543144478048, 0.1071592204671719350118695, 0.0703660474881081247092674, 0.0307532419961172683546284];
 
             /* n = 17 */
-            table_xi[17] = [0.0000000000000000000000000,0.1784841814958478558506775,0.3512317634538763152971855,0.5126905370864769678862466,0.6576711592166907658503022,0.7815140038968014069252301,0.8802391537269859021229557,0.9506755217687677612227170,0.9905754753144173356754340];
-            table_w[17] = [0.1794464703562065254582656,0.1765627053669926463252710,0.1680041021564500445099707,0.1540457610768102880814316,0.1351363684685254732863200,0.1118838471934039710947884,0.0850361483171791808835354,0.0554595293739872011294402,0.0241483028685479319601100];
+            table_xi[17] = [0.0000000000000000000000000, 0.1784841814958478558506775, 0.3512317634538763152971855, 0.5126905370864769678862466, 0.6576711592166907658503022, 0.7815140038968014069252301, 0.8802391537269859021229557, 0.9506755217687677612227170, 0.9905754753144173356754340];
+            table_w[17] = [0.1794464703562065254582656, 0.1765627053669926463252710, 0.1680041021564500445099707, 0.1540457610768102880814316, 0.1351363684685254732863200, 0.1118838471934039710947884, 0.0850361483171791808835354, 0.0554595293739872011294402, 0.0241483028685479319601100];
 
             a = interval[0];
             b = interval[1];
@@ -685,23 +684,23 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @private
          * @memberof JXG.Math.Numerics
          */
-        _rescale_error: function(err, result_abs, result_asc) {
+        _rescale_error: function (err, result_abs, result_asc) {
             var scale, min_err,
                 DBL_MIN = 2.2250738585072014e-308,
                 DBL_EPS = 2.2204460492503131e-16;
 
             err = Math.abs(err);
-            if (result_asc != 0 && err != 0) {
+            if (result_asc !== 0 && err !== 0) {
                 scale = Math.pow((200 * err / result_asc), 1.5);
 
                 if (scale < 1.0) {
                     err = result_asc * scale;
                 } else {
-                    err = result_asc ;
+                    err = result_asc;
                 }
             }
             if (result_abs > DBL_MIN / (50 * DBL_EPS)) {
-                min_err = 50 * DBL_EPS * result_abs ;
+                min_err = 50 * DBL_EPS * result_abs;
 
                 if (min_err > err) {
                     err = min_err;
@@ -729,10 +728,11 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @private
          * @memberof JXG.Math.Numerics
          */
-        _gaussKronrod:  function(interval, f, n, xgk, wg, wgk, resultObj) {
+        _gaussKronrod: function (interval, f, n, xgk, wg, wgk, resultObj) {
             var a = interval[0],
                 b = interval[1],
-                up, result,
+                up,
+                result,
 
                 center = 0.5 * (a + b),
                 half_length = 0.5 * (b - a),
@@ -751,7 +751,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 jtwm1,
                 fv1 = [], fv2 = [];
 
-            if (n % 2 == 0) {
+            if (n % 2 === 0) {
                 result_gauss = f_center * wg[n / 2 - 1];
             }
 
@@ -782,7 +782,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             }
 
             mean = result_kronrod * 0.5;
-            result_asc = wgk[n - 1] * Math.abs (f_center - mean);
+            result_asc = wgk[n - 1] * Math.abs(f_center - mean);
 
             for (j = 0; j < n - 1; j++) {
                 result_asc += wgk[j] * (Math.abs(fv1[j] - mean) + Math.abs(fv2[j] - mean));
@@ -814,7 +814,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *
          * @memberof JXG.Math.Numerics
          */
-        GaussKronrod15: function(interval, f, resultObj) {
+        GaussKronrod15: function (interval, f, resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -854,7 +854,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.209482141084727828012999174891714
                     ];
 
-            return this._gaussKronrod (interval, f, 8, xgk, wg, wgk, resultObj);
+            return this._gaussKronrod(interval, f, 8, xgk, wg, wgk, resultObj);
         },
 
         /**
@@ -868,7 +868,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *
          * @memberof JXG.Math.Numerics
          */
-        GaussKronrod21: function(interval, f, resultObj) {
+        GaussKronrod21: function (interval, f, resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -914,7 +914,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.149445554002916905664936468389821
                     ];
 
-                return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, resultObj);
+            return this._gaussKronrod(interval, f, 11, xgk, wg, wgk, resultObj);
         },
 
         /**
@@ -928,7 +928,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *
          * @memberof JXG.Math.Numerics
          */
-        GaussKronrod31: function(interval, f,resultObj) {
+        GaussKronrod31: function (interval, f, resultObj) {
             /* Gauss quadrature weights and kronrod quadrature abscissae and
                 weights as evaluated with 80 decimal digit arithmetic by
                 L. W. Fullerton, Bell Labs, Nov. 1981. */
@@ -987,7 +987,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         0.101330007014791549017374792767493
                     ];
 
-                return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, resultObj);
+            return this._gaussKronrod(interval, f, 16, xgk, wg, wgk, resultObj);
         },
 
         /**
@@ -999,7 +999,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @private
          * @memberof JXG.Math.Numerics
          */
-        _workspace: function(interval, n) {
+        _workspace: function (interval, n) {
             return {
                 limit: n,
                 size: 0,
@@ -1012,7 +1012,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 order: [0],
                 level: [0],
 
-                qpsrt: function() {
+                qpsrt: function () {
                     var last = this.size - 1,
                         limit = this.limit,
                         errmax, errmin, i, k, top,
@@ -1021,9 +1021,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
                     /* Check whether the list contains more than two error estimates */
                     if (last < 2) {
-                        this.order[0] = 0 ;
-                        this.order[1] = 1 ;
-                        this.i = i_maxerr ;
+                        this.order[0] = 0;
+                        this.order[1] = 1;
+                        this.i = i_maxerr;
                         return;
                     }
 
@@ -1033,43 +1033,43 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         integrand, subdivision increased the error estimate. In the normal
                         case the insert procedure should start after the nrmax-th largest
                         error estimate. */
-                    while (i_nrmax > 0 && errmax > this.elist[order[i_nrmax - 1]]) {
-                        this.order[i_nrmax] = this.order[i_nrmax - 1] ;
-                        i_nrmax-- ;
+                    while (i_nrmax > 0 && errmax > this.elist[this.order[i_nrmax - 1]]) {
+                        this.order[i_nrmax] = this.order[i_nrmax - 1];
+                        i_nrmax--;
                     }
 
                     /* Compute the number of elements in the list to be maintained in
                         descending order. This number depends on the number of
                         subdivisions still allowed. */
-                    if(last < (limit/2 + 2)) {
-                        top = last ;
+                    if (last < (limit / 2 + 2)) {
+                        top = last;
                     } else {
                         top = limit - last + 1;
                     }
 
                     /* Insert errmax by traversing the list top-down, starting
                         comparison from the element elist(order(i_nrmax+1)). */
-                    i = i_nrmax + 1 ;
+                    i = i_nrmax + 1;
 
                     /* The order of the tests in the following line is important to
                         prevent a segmentation fault */
                     while (i < top && errmax < this.elist[this.order[i]]) {
-                        this.order[i-1] = this.order[i];
+                        this.order[i - 1] = this.order[i];
                         i++;
                     }
 
-                    this.order[i-1] = i_maxerr;
+                    this.order[i - 1] = i_maxerr;
 
                     /* Insert errmin by traversing the list bottom-up */
                     errmin = this.elist[last];
                     k = top - 1;
 
                     while (k > i - 2 && errmin >= this.elist[this.order[k]]) {
-                        this.order[k+1] = this.order[k];
+                        this.order[k + 1] = this.order[k];
                         k--;
                     }
 
-                    this.order[k+1] = last;
+                    this.order[k + 1] = last;
 
                     /* Set i_max and e_max */
                     i_maxerr = this.order[i_nrmax];
@@ -1083,7 +1083,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     this.elist[0] = error;
                 },
 
-                update: function(a1, b1, area1, error1, a2, b2, area2, error2) {
+                update: function (a1, b1, area1, error1, a2, b2, area2, error2) {
                     var i_max = this.i,
                         i_new = this.size,
                         new_level = this.level[this.i] + 1;
@@ -1130,27 +1130,27 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                         b: this.blist[i],
                         r: this.rlist[i],
                         e: this.elist[i]
-                    }
+                    };
                 },
 
-                sum_results: function() {
-                    var n = this.size,
+                sum_results: function () {
+                    var nn = this.size,
                         k,
                         result_sum = 0.0;
 
-                    for (k = 0; k < n; k++) {
+                    for (k = 0; k < nn; k++) {
                         result_sum += this.rlist[k];
                     }
 
                     return result_sum;
                 },
 
-                subinterval_too_small: function(a1, a2,  b2) {
+                subinterval_too_small: function (a1, a2,  b2) {
                     var e = 2.2204460492503131e-16,
                         u = 2.2250738585072014e-308,
-                        tmp = (1 + 100 * e) * (Math.abs (a2) + 1000 * u);
+                        tmp = (1 + 100 * e) * (Math.abs(a2) + 1000 * u);
 
-                    return  Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
+                    return Math.abs(a1) <= tmp && Math.abs(b2) <= tmp;
                 }
 
             };
@@ -1186,14 +1186,14 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *                                   {q: JXG.Math.Numerics.GaussKronrod31});
          * @memberof JXG.Math.Numerics
          */
-        Qag: function(interval, f, config) {
+        Qag: function (interval, f, config) {
             var DBL_EPS = 2.2204460492503131e-16,
                 ws = this._workspace(interval, 1000),
 
-                limit = config && typeof config.limit === 'number' ? config.limit : 15,
-                epsrel = config && typeof config.epsrel === 'number' ? config.epsrel : 0.0000001,
-                epsabs = config && typeof config.epsabs === 'number' ? config.epsabs : 0.0000001,
-                q = config && typeof config.q === 'function' ? config.q : this.GaussKronrod15,
+                limit = config && Type.isNumber(config.limit) ? config.limit : 15,
+                epsrel = config && Type.isNumber(config.epsrel) ? config.epsrel : 0.0000001,
+                epsabs = config && Type.isNumber(config.epsabs) ? config.epsabs : 0.0000001,
+                q = config && Type.isFunction(config.q) ? config.q : this.GaussKronrod15,
 
                 resultObj = {},
                 area, errsum,
@@ -1202,13 +1202,23 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 tolerance,
                 iteration = 0,
                 roundoff_type1 = 0, roundoff_type2 = 0, error_type = 0,
-                round_off;
+                round_off,
+
+                a1, b1, a2, b2,
+                a_i, b_i, r_i, e_i,
+                area1 = 0, area2 = 0, area12 = 0,
+                error1 = 0, error2 = 0, error12 = 0,
+                resasc1, resasc2,
+                resabs1, resabs2,
+                wsObj, resObj,
+                delta;
+
 
             if (limit > ws.limit) {
-                console.log("iteration limit exceeds available workspace");
+                JXG.warn('iteration limit exceeds available workspace');
             }
             if (epsabs <= 0 && (epsrel < 50 * Mat.eps || epsrel < 0.5e-28)) {
-                console.log("tolerance cannot be acheived with given epsabs and epsrel");
+                JXG.warn('tolerance cannot be acheived with given epsabs and epsrel');
             }
 
             result0 = q.apply(this, [interval, f, resultObj]);
@@ -1220,22 +1230,26 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             tolerance = Math.max(epsabs, epsrel * Math.abs(result0));
             round_off = 50 * DBL_EPS * resabs0;
 
-            if (abserr0 <= round_off && abserr0 > tolerance)    {
+            if (abserr0 <= round_off && abserr0 > tolerance) {
                 result = result0;
                 abserr = abserr0;
 
-                console.log("cannot reach tolerance because of roundoff error on first attempt");
+                JXG.warn('cannot reach tolerance because of roundoff error on first attempt');
                 return -Infinity;
-            } else if ((abserr0 <= tolerance && abserr0 != resasc0) || abserr0 == 0.0) {
+            }
+
+            if ((abserr0 <= tolerance && abserr0 !== resasc0) || abserr0 === 0.0) {
                 result = result0;
                 abserr = abserr0;
 
                 return result;
-            } else if (limit == 1) {
+            }
+
+            if (limit === 1) {
                 result = result0;
                 abserr = abserr0;
 
-                console.log("a maximum of one iteration was insufficient");
+                JXG.warn('a maximum of one iteration was insufficient');
                 return -Infinity;
             }
 
@@ -1244,14 +1258,12 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
             iteration = 1;
 
             do {
-                var a1, b1, a2, b2,
-                    a_i, b_i, r_i, e_i,
-                    area1 = 0, area2 = 0, area12 = 0,
-                    error1 = 0, error2 = 0, error12 = 0,
-                    resasc1, resasc2,
-                    resabs1, resabs2,
-                    wsObj, resObj,
-                    delta;
+                area1 = 0;
+                area2 = 0;
+                area12 = 0;
+                error1 = 0;
+                error2 = 0;
+                error12 = 0;
 
                 /* Bisect the subinterval with the largest error estimate */
                 wsObj = ws.retrieve();
@@ -1281,9 +1293,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 errsum += (error12 - e_i);
                 area += area12 - r_i;
 
-                if (resasc1 != error1 && resasc2 != error2) {
+                if (resasc1 !== error1 && resasc2 !== error2) {
                     delta = r_i - area12;
-                    if (Math.abs (delta) <= 1.0e-5 * Math.abs (area12) && error12 >= 0.99 * e_i) {
+                    if (Math.abs(delta) <= 1.0e-5 * Math.abs(area12) && error12 >= 0.99 * e_i) {
                         roundoff_type1++;
                     }
                     if (iteration >= 10 && error12 > e_i) {
@@ -1892,7 +1904,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                 term = '';
 
             // Slider
-            if (Type.isPoint(degree) && typeof degree.Value === 'function') {
+            if (Type.isPoint(degree) && Type.isFunction(degree.Value)) {
                 /** @ignore */
                 deg = function () {
                     return degree.Value();
@@ -2204,7 +2216,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          *
          * @memberof JXG.Math.Numerics
          */
-        _riemannValue: function(x, f, type, delta) {
+        _riemannValue: function (x, f, type, delta) {
             var y, y1, x1, delta1;
 
             if (delta < 0) { // delta is negative if the lower function term is evaluated
@@ -2212,9 +2224,9 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
                     x = x + delta;
                 }
                 delta *= -1;
-                if (type == 'lower') {
+                if (type === 'lower') {
                     type = 'upper';
-                } else if (type == 'upper') {
+                } else if (type === 'upper') {
                     type = 'lower';
                 }
             }
@@ -2385,73 +2397,8 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         riemannsum: function (f, n, type, start, end) {
+            JXG.deprecated('Numerics.riemannsum()', 'Numerics.riemann()');
             return this.riemann(f, n, type, start, end)[2];
-            /*
-            var i, x1, y1, delta1, delta, y,
-                sum = 0.0,
-                x = start;
-
-            // this function looks very similar to this.riemann... maybe there is some merge potential?
-
-            n = Math.floor(n);
-
-            if (n > 0) {
-                delta = (end - start) / n;
-                // for 'lower' and 'upper'
-                delta1 = delta * 0.01;
-
-                for (i = 0; i < n; i++) {
-                    if (type === 'right') {
-                        y = f(x + delta);
-                    } else if (type === 'middle') {
-                        y = f(x + delta * 0.5);
-                    } else if (type === 'trapezoidal') {
-                        y = 0.5 * (f(x + delta) + f(x));
-                    } else if (type === 'left') {
-                        y = f(x);
-                    } else if (type === 'lower') {
-                        y = f(x);
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 < y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 < y) {
-                            y = y1;
-                        }
-                    } else if (type === 'upper') {
-                        y = f(x);
-
-                        for (x1 = x + delta1; x1 <= x + delta; x1 += delta1) {
-                            y1 = f(x1);
-
-                            if (y1 > y) {
-                                y = y1;
-                            }
-                        }
-
-                        y1 = f(x + delta);
-                        if (y1 > y) {
-                            y = y1;
-                        }
-                    } else if (type === 'random') {
-                        y = f(x + delta * Math.random());
-                    } else if (type === 'simpson') {
-                        y = (f(x) + 4 * f(x + delta * 0.5) + f(x + delta)) / 6.0;
-                    } else {
-                        y = f(x);  // default is lower
-                    }
-                    sum += delta * y;
-                    x += delta;
-                }
-            }
-
-            return sum;
-            */
         },
 
         /**
@@ -2588,7 +2535,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return result;
         },
-
 
         /**
          * Maximum number of iterations in {@link JXG.Math.Numerics#fzero}
@@ -2787,7 +2733,6 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
 
             return b;
         },
-
 
         /**
          *
@@ -3078,6 +3023,7 @@ define(['utils/type', 'math/math'], function (Type, Mat) {
          * @memberof JXG.Math.Numerics
          */
         RamerDouglasPeuker: function (pts, eps) {
+            JXG.deprecated('Numerics.RamerDouglasPeuker()', 'Numerics.RamerDouglasPeucker()');
             return this.RamerDouglasPeucker(pts, eps);
         }
     };

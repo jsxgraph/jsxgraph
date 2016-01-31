@@ -410,10 +410,45 @@ define([
         },
 
         /**
-         * Adds ids of elements to the array this.parents.
+         * Adds ids of elements to the array this.parents. This method needs to be called if some dependencies
+         * can not be detected automatically by JSXGraph. For example if a function graph is given by a function
+         * which referes to coordinates of a point, calling addParents() is necessary.
+         *
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
+         *
+         * @example
+         * // Movable function graph
+         * var A = board.create('point', [1, 0], {name:'A'}),
+         *     B = board.create('point', [3, 1], {name:'B'}),
+         *     f = board.create('functiongraph', function(x) {
+         *          var ax = A.X(),
+         *              ay = A.Y(),
+         *              bx = B.X(),
+         *              by = B.Y(),
+         *              a = (by - ay) / ( (bx - ax) * (bx - ax) );
+         *           return a * (x - ax) * (x - ax) + ay;
+         *      }, {fixed: false});
+         * f.addParents([A, B]);
+         * </pre><div id="7c91d4d2-986c-4378-8135-24505027f251" style="width: 400px; height: 400px;"></div>
+         * <script type="text/javascript">
+         * (function() {
+         *   var board = JXG.JSXGraph.initBoard('7c91d4d2-986c-4378-8135-24505027f251', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+         *   var A = board.create('point', [1, 0], {name:'A'}),
+         *       B = board.create('point', [3, 1], {name:'B'}),
+         *       f = board.create('functiongraph', function(x) {
+         *            var ax = A.X(),
+         *                ay = A.Y(),
+         *                bx = B.X(),
+         *                by = B.Y(),
+         *                a = (by - ay) / ( (bx - ax) * (bx - ax) );
+         *             return a * (x - ax) * (x - ax) + ay;
+         *        }, {fixed: false});
+         *   f.addParents([A, B]);
+         * })();
+         * </script><pre>
+         *
          **/
         addParents: function (parents) {
             var i, len, par;
@@ -558,7 +593,8 @@ define([
          * @returns {JXG.GeometryElement} Reference to the element object.
          */
         setPosition: function (method, coords) {
-            var parents = [], el, i, len, t;
+            var parents = [],
+                el, i, len, t;
 
             if (!JXG.exists(this.parents)) {
                 return this;
@@ -862,7 +898,10 @@ define([
          * Deprecated alias for {@link JXG.GeometryElement#setAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#setAttribute}.
          */
-        setProperty: JXG.shortcut(JXG.GeometryElement.prototype, 'setAttribute'),
+        setProperty: function () {
+            JXG.deprecated('setProperty()', 'setAttribute()');
+            this.setAttribute.apply(this, arguments);
+        },
 
         /**
          * Sets an arbitrary number of attributes.
@@ -881,12 +920,7 @@ define([
          */
         setAttribute: function (attributes) {
             var i, key, value, arg, opacity, pair, oldvalue,
-                properties = {},
-                makeTicksFunction = function (v) {
-                    return function (i) {
-                        return v;
-                    };
-                };
+                properties = {};
 
             // normalize the user input
             for (i = 0; i < arguments.length; i++) {
@@ -944,7 +978,7 @@ define([
                         }
                         break;
                     case 'infoboxtext':
-                        if (typeof value === 'string') {
+                        if (Type.isString(value)) {
                             this.infoboxText = value;
                         } else {
                             this.infoboxText = false;
@@ -1019,12 +1053,12 @@ define([
                         }
                         break;
                     case 'ticksdistance':
-                        if (this.type === Const.OBJECT_TYPE_TICKS && typeof value === 'number') {
-                            this.ticksFunction = makeTicksFunction(value);
+                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.isNumber(value)) {
+                            this.ticksFunction = this.makeTicksFunction(value);
                         }
                         break;
                     case 'generatelabelvalue':
-                        if (this.type === Const.OBJECT_TYPE_TICKS && typeof value === 'function') {
+                        if (this.type === Const.OBJECT_TYPE_TICKS && Type.isFunction(value)) {
                             this.generateLabelValue = value;
                         }
                         break;
@@ -1067,7 +1101,10 @@ define([
          * Deprecated alias for {@link JXG.GeometryElement#getAttribute}.
          * @deprecated Use {@link JXG.GeometryElement#getAttribute}.
          */
-        getProperty: JXG.shortcut(JXG.GeometryElement.prototype, 'getAttribute'),
+        getProperty: function () {
+            JXG.deprecated('getProperty()', 'getAttribute()');
+            this.getProperty.apply(this, arguments);
+        },
 
         /**
          * Get the value of the property <tt>key</tt>.
@@ -1196,7 +1233,7 @@ define([
 
                 if (this.visProp.withlabel) {
                     this.label = JXG.elements.text(this.board, [0, 0, function () {
-                        if (typeof that.name === 'function') {
+                        if (Type.isFunction(that.name)) {
                             return that.name();
                         }
                         return that.name;
@@ -1395,6 +1432,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         highlightStrokeColor: function (sColor) {
+            JXG.deprecated('highlightStrokeColor()', 'setAttribute()');
             this.setAttribute({highlightStrokeColor: sColor});
             return this;
         },
@@ -1406,6 +1444,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         strokeColor: function (sColor) {
+            JXG.deprecated('strokeColor()', 'setAttribute()');
             this.setAttribute({strokeColor: sColor});
             return this;
         },
@@ -1417,6 +1456,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         strokeWidth: function (width) {
+            JXG.deprecated('strokeWidth()', 'setAttribute()');
             this.setAttribute({strokeWidth: width});
             return this;
         },
@@ -1429,6 +1469,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         fillColor: function (fColor) {
+            JXG.deprecated('fillColor()', 'setAttribute()');
             this.setAttribute({fillColor: fColor});
             return this;
         },
@@ -1440,6 +1481,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         highlightFillColor: function (fColor) {
+            JXG.deprecated('highlightFillColor()', 'setAttribute()');
             this.setAttribute({highlightFillColor: fColor});
             return this;
         },
@@ -1451,6 +1493,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         labelColor: function (lColor) {
+            JXG.deprecated('labelColor()', 'setAttribute()');
             this.setAttribute({labelColor: lColor});
             return this;
         },
@@ -1462,6 +1505,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         dash: function (d) {
+            JXG.deprecated('dash()', 'setAttribute()');
             this.setAttribute({dash: d});
             return this;
         },
@@ -1473,6 +1517,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         visible: function (v) {
+            JXG.deprecated('visible()', 'setAttribute()');
             this.setAttribute({visible: v});
             return this;
         },
@@ -1484,6 +1529,7 @@ define([
          * @deprecated Use {@link #setAttribute}
          */
         shadow: function (s) {
+            JXG.deprecated('shadow()', 'setAttribute()');
             this.setAttribute({shadow: s});
             return this;
         },

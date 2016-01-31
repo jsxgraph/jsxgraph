@@ -93,6 +93,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         eps: 0.000001,
 
         /**
+         * Determine the relative difference between two numbers.
+         * @param  {Number} a First number
+         * @param  {Number} b Second number
+         * @return {Number}  Relative difference between a and b: |a-b| / max(|a|, |b|)
+         */
+        relDif: function(a, b) {
+            var c = Math.abs(a),
+                d = Math.abs(b);
+
+            d = Math.max(c, d);
+
+            return (d === 0.0) ? 0.0 : Math.abs(a - b) / d;
+        },
+
+        /**
          * The JavaScript implementation of the % operator returns the symmetric modulo.
          * They are both identical if a >= 0 and m >= 0 but the results differ if a or m < 0.
          * @param {Number} a
@@ -402,7 +417,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var i,
                 s = 0;
 
-            if ((n === undef) || (typeof n !== 'number')) {
+            if (n === undef || !Type.isNumber(n)) {
                 n = a.length;
             }
 
@@ -553,11 +568,26 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Number} log(x, b) Logarithm of x to base b, that is log(x)/log(b).
          */
         log: function (x, b) {
-            if (typeof b !== 'undefined' && Type.isNumber(b)) {
+            if (b !== undefined && Type.isNumber(b)) {
                 return Math.log(x) / Math.log(b);
-            } else {
-                return Math.log(x);
             }
+
+            return Math.log(x);
+        },
+
+        /**
+         * The sign() function returns the sign of a number, indicating whether the number is positive, negative or zero.
+         * @param  {Number} x A Number
+         * @return {[type]}  This function has 5 kinds of return values,
+         *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"
+         *    and NaN respectively.
+         */
+        sign: Math.sign || function(x) {
+            x = +x; // convert to a number
+            if (x === 0 || isNaN(x)) {
+                return x;
+            }
+            return x > 0 ? 1 : -1;
         },
 
         /**
@@ -592,6 +622,35 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             }
 
             return this.pow(base, exponent);
+        },
+
+        /**
+         * Greatest common divisor (gcd) of two numbers.
+         * @see http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+         *
+         * @param  {Number} a First number
+         * @param  {Number} b Second number
+         * @return {Number}   gcd(a, b) if a and b are numbers, NaN else.
+         */
+        gcd: function (a,b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+
+            if (!(Type.isNumber(a) && Type.isNumber(b))) {
+                return NaN;
+            }
+            if (b > a) {
+                var temp = a;
+                a = b;
+                b = temp;
+            }
+
+            while (true) {
+                a %= b;
+                if (a === 0) { return b; }
+                b %= a;
+                if (b === 0) { return a; }
+            }
         },
 
         /**

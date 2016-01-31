@@ -773,7 +773,7 @@ define([
             originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len,
             table = Env.isBrowser ? board.document.getElementById(parents[0]) : null;
 
-        if ((parents.length === 1) && (typeof parents[0] === 'string')) {
+        if ((parents.length === 1) && (Type.isString(parents[0]))) {
             if (Type.exists(table)) {
                 // extract the data
                 attr = Type.copyAttributes(attributes, board.options, 'chart');

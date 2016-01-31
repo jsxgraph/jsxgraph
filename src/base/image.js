@@ -55,13 +55,13 @@ define([
 
     /**
      * Construct and handle images
-     * The coordinates can be relative to the coordinates of an element 
+     * The coordinates can be relative to the coordinates of an element
      * given in {@link JXG.Options#text.anchor}.
-     * 
+     *
      * The image can be supplied as an URL or an base64 encoded inline image
-     * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning 
+     * like "data:image/png;base64, /9j/4AAQSkZJRgA..." or a function returning
      * an URL: function(){ return 'xxx.png; }.
-     *      
+     *
      * @class Creates a new image object. Do not use this constructor to create a image. Use {@link JXG.Board#create} with
      * type {@link Image} instead.
      * @augments JXG.GeometryElement
@@ -236,20 +236,32 @@ define([
             } else {
                 this.transformations.push(transform);
             }
+        },
+
+        // documented in element.js
+        getParents: function () {
+            var p = [this.url, [this.Z(), this.X(), this.Y()], this.usrSize];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
         }
+
     });
 
     /**
      * @class Displays an image.
      * @pseudo
-     * @description 
+     * @description
      * @name Image
      * @type JXG.Image
      * @augments JXG.Image
      * @constructor
      * @constructor
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {string,function_Array_Array} url,coords,size url defines the location of the image data. The array coords contains the user coordinates 
+     * @param {string,function_Array_Array} url,coords,size url defines the location of the image data. The array coords contains the user coordinates
      * of the lower left corner of the image.
      *   It can consist of two or three elements of type number, a string containing a GEONE<sub>x</sub>T
      *   constraint, or a function which takes no parameter and returns a number. Every element determines one coordinate. If a coordinate is

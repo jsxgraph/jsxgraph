@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -43,7 +43,7 @@
  * arithmetic functions.
  */
 
-define(['jxg', 'math/math'], function (JXG) {
+define(['jxg', 'utils/type'], function (JXG, Type) {
 
     "use strict";
 
@@ -113,7 +113,7 @@ define(['jxg', 'math/math'], function (JXG) {
          * @returns {JXG.Complex} Reference to this complex number
          */
         add: function (c) {
-            if (typeof c === 'number') {
+            if (Type.isNumber(c)) {
                 this.real += c;
             } else {
                 this.real += c.real;
@@ -129,7 +129,7 @@ define(['jxg', 'math/math'], function (JXG) {
          * @returns {JXG.Complex} Reference to this complex number
          */
         sub: function (c) {
-            if (typeof c === 'number') {
+            if (Type.isNumber(c)) {
                 this.real -= c;
             } else {
                 this.real -= c.real;
@@ -148,7 +148,7 @@ define(['jxg', 'math/math'], function (JXG) {
         mult: function (c) {
             var re, im;
 
-            if (typeof c === 'number') {
+            if (Type.isNumber(c)) {
                 this.real *= c;
                 this.imaginary *= c;
             } else {
@@ -172,7 +172,7 @@ define(['jxg', 'math/math'], function (JXG) {
         div: function (c) {
             var denom, im, re;
 
-            if (typeof c === 'number') {
+            if (Type.isNumber(c)) {
                 if (Math.abs(c) < Math.eps) {
                     this.real = Infinity;
                     this.imaginary = Infinity;

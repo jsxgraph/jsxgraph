@@ -58,7 +58,7 @@ define([
 
     /**
      * @class This element is used to provide a constructor for special texts containing a form checkbox element.
-     * 
+     *
      * @pseudo
      * @description
      * @name Checkbox
@@ -68,7 +68,7 @@ define([
      *
      * @param {number,function_number,function_String_String} x,y,label Parent elements for checkbox elements.
      *                     <p>
-     *                     x and y are the coordinates of the lower left corner of the text box. 
+     *                     x and y are the coordinates of the lower left corner of the text box.
      *                      The position of the text is fixed,
      *                     x and y are numbers. The position is variable if x or y are functions.
      *                     <p>
@@ -100,7 +100,7 @@ define([
      *           return y;
      *       }]);
      * </script><pre>
-     * 
+     *
      * The checkbox can be supplied with custom-made events by using the property rendNodeCheckbox.
      * @example
      * var checkbox = board.create('checkbox', [0, 4, 'Click me']),
@@ -154,11 +154,15 @@ define([
         t.rendNodeCheckbox.id = t.rendNode.id + '_checkbox';
 
         t.rendNodeTag = t.rendNodeCheckbox; // Needed for unified treatment in setAttribute
-        t.rendNodeTag.disabled = !!attr.disabled; 
+        t.rendNodeTag.disabled = !!attr.disabled;
 
         t.rendNodeLabel = t.rendNodeForm.childNodes[1];
         t.rendNodeLabel.id = t.rendNode.id + '_label';
         t.rendNodeLabel.innerHTML = parents[2];
+
+        // This sets the font-size of the checkbox itself
+        t.visPropOld.fontsize = "0px";
+        board.renderer.updateTextStyle(t, false);
 
         t._value = false;
 

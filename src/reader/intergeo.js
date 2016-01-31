@@ -412,7 +412,7 @@
         },
 
         setAttributes: function (o) {
-            o.setProperty({strokecolor: this.board.options.point.strokeColor, fillColor: this.board.options.point.fillColor});
+            o.setAttribute({strokecolor: this.board.options.point.strokeColor, fillColor: this.board.options.point.fillColor});
         },
 
         readParams: function (node) {
@@ -432,7 +432,7 @@
             if (!p.exists) {
                 p.exists = true;
                 p = this.board.create('point', p.coords, {name: p.id});
-                p.setProperty({strokecolor: 'red', fillColor: 'red'});
+                p.setAttribute({strokecolor: 'red', fillColor: 'red'});
             }
 
             return p;
@@ -900,7 +900,7 @@
             var param = this.readParams(node),
                 el = this.board.select(param[1]);
 
-            el.setProperty({trace: true});
+            el.setAttribute({trace: true});
             this.objects[param[1]] = el;
             this.setAttributes(el);
         },
@@ -909,7 +909,7 @@
             var param = this.readParams(node),
                 el = this.board.select(param[1]);
 
-            el.setProperty({trace: true});
+            el.setAttribute({trace: true});
             this.objects[param[1]] = el;
             this.setAttributes(el);
         },
@@ -918,7 +918,7 @@
             var param = this.readParams(node),
                 el = this.board.select(param[1]);
 
-            el.setProperty({trace: true});
+            el.setAttribute({trace: true});
             this.objects[param[1]] = el;
             this.setAttributes(el);
         },
@@ -927,7 +927,7 @@
             var param = this.readParams(node),
                 el = this.board.select(param[1]);
 
-            el.setProperty({trace: true});
+            el.setAttribute({trace: true});
             this.objects[param[1]] = el;
             this.setAttributes(el);
         },
@@ -1027,7 +1027,7 @@
                         prop[key] = val;
                     }
                 }
-                el.setProperty(prop);
+                el.setAttribute(prop);
             } else {
                 JXG.debug('Display: not implemented' + node.nodeName);
             }

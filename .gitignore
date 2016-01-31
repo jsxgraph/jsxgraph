@@ -8,3 +8,4 @@ doc/jsdoc-tk/template/static/jquery.min.js
 doc/jsdoc-tk/template/static/jsxgraphcore.js
 doc/jsdoc-tk/template/static/jsxgraph.css
 *.sublime-*
+.idea/

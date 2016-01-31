@@ -46,8 +46,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'utils/type', 'base/element', 'base/line', 'base/transformation'
-], function (JXG, Const, Coords, Statistics, Type, GeometryElement, Line, Transform) {
+    'jxg', 'base/constants', 'base/coords', 'math/statistics', 'math/geometry', 'utils/type', 'base/element', 'base/line', 'base/transformation'
+], function (JXG, Const, Coords, Statistics, Geometry, Type, GeometryElement, Line, Transform) {
 
     "use strict";
 
@@ -83,7 +83,8 @@ define([
             this.vertices[i] = vertex;
         }
 
-        if (this.vertices[this.vertices.length - 1] !== this.vertices[0]) {
+        // Close the polygon
+        if (this.vertices.length > 0 && this.vertices[this.vertices.length - 1].id !== this.vertices[0].id) {
             this.vertices.push(this.vertices[0]);
         }
 
@@ -205,12 +206,16 @@ define([
          * return TextAnchor
          */
         getTextAnchor: function () {
-            var a = this.vertices[0].X(),
-                b = this.vertices[0].Y(),
-                x = a,
-                y = b,
-                i;
+            var a, b, x, y, i;
 
+            if (this.vertices.length === 0) {
+                return new Coords(Const.COORDS_BY_USER, [1, 0, 0], this.board);
+            }
+
+            a = this.vertices[0].X();
+            b = this.vertices[0].Y();
+            x = a;
+            y = b;
             for (i = 0; i < this.vertices.length; i++) {
                 if (this.vertices[i].X() < a) {
                     a = this.vertices[i].X();
@@ -311,16 +316,7 @@ define([
          * @returns {Number} Area of (not self-intersecting) polygon
          */
         Area: function () {
-            //Surveyor's Formula
-            var i,
-                area = 0;
-
-            for (i = 0; i < this.vertices.length - 1; i++) {
-                area += (this.vertices[i].X() * this.vertices[i + 1].Y() - this.vertices[i + 1].X() * this.vertices[i].Y());
-            }
-            area /= 2.0;
-
-            return Math.abs(area);
+            return Math.abs(Geometry.signedPolygon(this.vertices, true));
         },
 
         /**
@@ -627,7 +623,182 @@ define([
             t.applyOnce(this.vertices.slice(0, -1));
 
             return this;
+        },
+
+        /**
+        * Algorithm by Sutherland and Hodgman to compute the intersection of two convex polygons.
+        * The polygon itself is the clipping polygon, it expects as parameter a polygon to be clipped.
+        * See <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">wikipedia entry</a>.
+        * Called by {@link JXG.Polygon#intersect}.
+        *
+        * @private
+        *
+        * @param {JXG.Polygon} polygon Polygon which will be clipped.
+        *
+        * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
+        *   representing the vertices of the intersection polygon.
+        *
+        */
+        sutherlandHodgman: function(polygon) {
+            // First the two polygons are sorted counter clockwise
+            var clip = JXG.Math.Geometry.sortVertices(this.vertices),   // "this" is the clipping polygon
+                subject = JXG.Math.Geometry.sortVertices(polygon.vertices), // "polygon" is the subject polygon
+
+                lenClip = clip.length - 1,
+                lenSubject = subject.length - 1,
+                lenIn,
+
+                outputList = [],
+                inputList, i, j, S, E, cross,
+
+
+                // Determines if the point c3 is right of the line through c1 and c2.
+                // Since the polygons are sorted counter clockwise, "right of" and therefore >= is needed here
+                isInside = function(c1, c2, c3) {
+                    return ((c2[1] - c1[1]) * (c3[2] - c1[2]) - (c2[2] - c1[2]) * (c3[1] - c1[1])) >= 0;
+                };
+
+            for (i = 0; i < lenSubject; i++) {
+                outputList.push(subject[i]);
+            }
+
+            for (i = 0; i < lenClip; i++) {
+                inputList = outputList.slice(0);
+                lenIn = inputList.length;
+                outputList = [];
+
+                S = inputList[lenIn - 1];
+
+                for (j = 0; j < lenIn; j++) {
+                    E = inputList[j];
+                    if (isInside(clip[i], clip[i + 1], E)) {
+                        if (!isInside(clip[i], clip[i + 1], S)) {
+                            cross = JXG.Math.Geometry.meetSegmentSegment(S, E, clip[i], clip[i + 1]);
+                            cross[0][1] /= cross[0][0];
+                            cross[0][2] /= cross[0][0];
+                            cross[0][0] = 1;
+                            outputList.push(cross[0]);
+                        }
+                        outputList.push(E);
+                    } else if (isInside(clip[i], clip[i + 1], S)) {
+                        cross = JXG.Math.Geometry.meetSegmentSegment(S, E, clip[i], clip[i + 1]);
+                        cross[0][1] /= cross[0][0];
+                        cross[0][2] /= cross[0][0];
+                        cross[0][0] = 1;
+                        outputList.push(cross[0]);
+                    }
+                    S = E;
+                }
+            }
+
+            return outputList;
+        },
+
+        /**
+         * Generic method for the intersection of this polygon with another polygon.
+         * The parent object is the clipping polygon, it expects as parameter a polygon to be clipped.
+         * Both polygons have to be convex.
+         * Calls {@link JXG.Polygon#sutherlandHodgman}.
+         *
+         * @param {JXG.Polygon} polygon Polygon which will be clipped.
+         *
+         * @returns {Array} of (normalized homogeneous user) coordinates (i.e. [z, x, y], where z==1 in most cases,
+         *   representing the vertices of the intersection polygon.
+         *
+         * @example
+         *  // Static intersection of two polygons pol1 and pol2
+         *  var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
+         *                name:'pol1', withLabel: true,
+         *                fillColor: 'yellow'
+         *             });
+         *  var pol2 = board.create('polygon', [[-2, -3], [-4, 1], [0, 4], [5, 1]], {
+         *                name:'pol2', withLabel: true
+         *             });
+         *
+         *  // Static version:
+         *  // the intersection polygon does not adapt to changes of pol1 or pol2.
+         *  var pol3 = board.create('polygon', pol1.intersect(pol2), {fillColor: 'blue'});
+         * </pre><div id="d1fe5ea9-309f-494a-af07-ee3d033acb7c" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *   (function() {
+         *       var board = JXG.JSXGraph.initBoard('d1fe5ea9-309f-494a-af07-ee3d033acb7c', {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *       // Intersect two polygons pol1 and pol2
+         *       var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
+         *                name:'pol1', withLabel: true,
+         *                fillColor: 'yellow'
+         *             });
+         *       var pol2 = board.create('polygon', [[-2, -3], [-4, 1], [0, 4], [5, 1]], {
+         *                name:'pol2', withLabel: true
+         *             });
+         *
+         *       // Static version: the intersection polygon does not adapt to changes of pol1 or pol2.
+         *       var pol3 = board.create('polygon', pol1.intersect(pol2), {fillColor: 'blue'});
+         *   })();
+         * </script><pre>
+         *
+         * @example
+         *  // Dynamic intersection of two polygons pol1 and pol2
+         *  var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
+         *                name:'pol1', withLabel: true,
+         *                fillColor: 'yellow'
+         *             });
+         *  var pol2 = board.create('polygon', [[-2, -3], [-4, 1], [0, 4], [5, 1]], {
+         *                name:'pol2', withLabel: true
+         *             });
+         *
+         *  // Dynamic version:
+         *  // the intersection polygon does  adapt to changes of pol1 or pol2.
+         *  // For this a curve element is used.
+         *  var curve = board.create('curve', [[],[]], {fillColor: 'blue', fillOpacity: 0.4});
+         *  curve.updateDataArray = function() {
+         *      var mat = JXG.Math.transpose(pol1.intersect(pol2));
+         *
+         *      if (mat.length == 3) {
+         *          this.dataX = mat[1];
+         *          this.dataY = mat[2];
+         *      } else {
+         *          this.dataX = [];
+         *          this.dataY = [];
+         *      }
+         *  };
+         *  board.update();
+         * </pre><div id="f870d516-ca1a-4140-8fe3-5d64fb42e5f2" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *   (function() {
+         *       var board = JXG.JSXGraph.initBoard('f870d516-ca1a-4140-8fe3-5d64fb42e5f2', {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *       // Intersect two polygons pol1 and pol2
+         *       var pol1 = board.create('polygon', [[-2, 3], [-4, -3], [2, 0], [4, 4]], {
+         *                name:'pol1', withLabel: true,
+         *                fillColor: 'yellow'
+         *             });
+         *       var pol2 = board.create('polygon', [[-2, -3], [-4, 1], [0, 4], [5, 1]], {
+         *                name:'pol2', withLabel: true
+         *             });
+         *
+         *  // Dynamic version:
+         *  // the intersection polygon does  adapt to changes of pol1 or pol2.
+         *  // For this a curve element is used.
+         *    var curve = board.create('curve', [[],[]], {fillColor: 'blue', fillOpacity: 0.4});
+         *    curve.updateDataArray = function() {
+         *        var mat = JXG.Math.transpose(pol1.intersect(pol2));
+         *
+         *        if (mat.length == 3) {
+         *            this.dataX = mat[1];
+         *            this.dataY = mat[2];
+         *        } else {
+         *            this.dataX = [];
+         *            this.dataY = [];
+         *        }
+         *    };
+         *    board.update();
+         *   })();
+         * </script><pre>
+         *
+         */
+        intersect: function(polygon) {
+            return this.sutherlandHodgman(polygon);
         }
+
 
     });
 

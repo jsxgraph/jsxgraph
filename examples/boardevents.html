@@ -3,12 +3,16 @@
     <title>Board events</title>
     <link rel="stylesheet" type="text/css" href="../distrib/jsxgraph.css" />
     <script type="text/javascript" src="../src/loadjsxgraph.js"></script>
+    <script src="//code.jquery.com/jquery-1.7.1.min.js"></script>
 
 </head>
 <body>
+<div id="jquery" style="width:200px; height:200px; background-color:yellow"></div>
 
 <div id="jxgbox" class="jxgbox" style="width:800px; height:800px; float:left"></div>
-
+<div id="scroll" style="background-color:yellow; width: 100px; height: 100px; overflow: scroll">
+    Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>Test<br>
+</div>
 <div id="out"></div>
 
 <script type="text/javascript">
@@ -27,6 +31,12 @@
         out.innerHTML += 'up ' + e + '<br/>';
     });
 
+    board.on('down', function (e) {
+        out.innerHTML += 'down ' + e + '<br/>';
+        //e.preventDefault();
+        //e.stopPropagation();
+    });
+
     board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 1: ' + el.name + '<br />';
     });
@@ -43,13 +53,14 @@
     board.on('hit', hithdlr);
 
     board.off('hit', hithdlr);
-
+/*
     board.on('hit', function (e, el, i) {
         out.innerHTML += 'hit 4: ' + el.name + '<br />';
     });
-
+*/
 
     // test add/remove native event handlers
+    /*
     JXG.addEvent(board.containerObj, 'mousedown', function (e) {
         out.innerHTML += 'mousedown 1<br />';
     }, this);
@@ -65,6 +76,21 @@
     }, this);
 
     JXG.removeEvent(board.containerObj, 'mousedown', mousedown2, this);
+    */
+
+    JXG.addEvent(document.getElementById('scroll'), 'scroll', function(e) {
+            out.innerHTML += 'scroll<br />';
+        }, this);
+
+    $('#jquery').on('mousedown', function(e) {
+        out.innerHTML += 'jdown ' + e.type + '<br/>';
+    });
+    //$('#jquery').on('mousemove', function(e) {
+    //    out.innerHTML += 'jmove ' + e.type + '<br/>';
+    //});
+    $('#jquery').on('mouseup', function(e) {
+        out.innerHTML += 'jup ' + e.type + '<br/>';
+    });
     /* ]]> */
 </script>
 </body>

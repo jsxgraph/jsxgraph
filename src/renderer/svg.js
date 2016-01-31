@@ -44,8 +44,8 @@
 */
 
 define([
-    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'math/numerics'
-], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Numerics) {
+    'jxg', 'options', 'renderer/abstract', 'base/constants', 'utils/type', 'utils/env', 'utils/color', 'utils/base64', 'math/numerics'
+], function (JXG, Options, AbstractRenderer, Const, Type, Env, Color, Base64, Numerics) {
 
     "use strict";
 
@@ -106,6 +106,8 @@ define([
         this.svgRoot.style.width = dim.width + 'px';
         this.svgRoot.style.height = dim.height + 'px';
 
+        //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
+
         this.container.appendChild(this.svgRoot);
 
         /**
@@ -165,6 +167,23 @@ define([
         for (i = 0; i < Options.layer.numlayers; i++) {
             this.layer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'g');
             this.svgRoot.appendChild(this.layer[i]);
+        }
+
+        // already documented in JXG.AbstractRenderer
+        this.supportsForeignObject = document.implementation.hasFeature("www.http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
+        if (this.supportsForeignObject) {
+            this.foreignObjLayer = [];
+            for (i = 0; i < Options.layer.numlayers; i++) {
+                if (i === Options.layer.text || i === 0) {    // 0 is for traces
+                    this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+
+                    this.foreignObjLayer[i].setAttribute("x",0);
+                    this.foreignObjLayer[i].setAttribute("y",0);
+                    this.foreignObjLayer[i].setAttribute("width","100%");
+                    this.foreignObjLayer[i].setAttribute("height","100%");
+                    this.layer[i].appendChild(this.foreignObjLayer[i]);
+                }
+            }
         }
 
         /**
@@ -303,7 +322,7 @@ define([
                 x = c[0];
                 y = c[1];
 
-                if (typeof x[0] === 'number' && typeof x[1] === 'number') {
+                if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
                     tickStr += "M " + (x[0]) + " " + (y[0]) + " L " + (x[1]) + " " + (y[1]) + " ";
                 }
             }
@@ -345,7 +364,7 @@ define([
             node.setAttributeNS(null, "class", el.visProp.cssclass);
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
 
-            // Preserve spaces 
+            // Preserve spaces
             node.setAttributeNS("http://www.w3.org/XML/1998/namespace", "space", "preserve");
 
             el.rendNodeText = this.container.ownerDocument.createTextNode('');
@@ -916,7 +935,7 @@ define([
         },
 
         // documented in JXG.AbstractRenderer
-        setObjectFillColor: function (el, color, opacity) {
+        setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity);
@@ -936,7 +955,11 @@ define([
                     oo = o * rgbo[1];
                 }
 
-                node = el.rendNode;
+                if (rendNode === undefined) {
+                    node = el.rendNode;
+                } else {
+                    node = rendNode;
+                }
 
                 if (c !== 'none') {               // problem in firefox 17
                     node.setAttributeNS(null, 'fill', c);
@@ -1146,7 +1169,52 @@ define([
                     'L ' + x + ' ' + (y + d));
                 this.updateEllipsePrim(this.touchpoints[2 * i + 1], pos[0], pos[1], 25, 25);
             }
+        },
+
+        /**
+         * Convert the SVG construction into an HTML canvas image.
+         * This works for all SVG supporting browsers.
+         * For IE it works from version 9.
+         * But HTML texts are ignored on IE. The drawing is done with a delay of
+         * 200 ms. Otherwise there are problems with IE.
+         *
+         * @param  {String} canvasId Id of an HTML canvas element
+         * @return {Object}          the svg renderer object.
+         *
+         * @example
+         * 	board.renderer.dumpToCanvas('canvas');
+         */
+        dumpToCanvas: function(canvasId) {
+            var svgRoot = this.svgRoot,
+                btoa = window.btoa || Base64.encode,
+                svg, tmpImg, cv, ctx;
+
+            svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgRoot.setAttribute("width", board.canvasWidth);
+            svgRoot.setAttribute("height", board.canvasHeight);
+            svg = new XMLSerializer().serializeToString(svgRoot);
+
+            // In IE we have to remove the namespace again.
+            if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
+                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/, '');
+            }
+
+            cv = document.getElementById(canvasId);
+            ctx = cv.getContext("2d");
+
+            tmpImg = new Image();
+            tmpImg.onload = function () {
+                // IE needs a pause...
+                setTimeout(function(){
+                    cv.width = cv.width;
+                    ctx.drawImage(tmpImg, 0, 0);
+                }, 200);
+            };
+            tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+
+            return this;
         }
+
     });
 
     return JXG.SVGRenderer;

@@ -156,6 +156,14 @@ define([
          * @type String
          */
         this.type = '';
+
+        /**
+         * True if the browsers' SVG engine supports foreignObject.
+         * Not supporting browsers are IE 9 - 11.
+         * @type Boolean
+         * @private
+         */
+        this.supportsForeignObject = false;
     };
 
     JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
@@ -341,9 +349,7 @@ define([
                 minlen = 10,
                 margin = null;
 
-            if (element.visProp.firstarrow || element.visProp.lastarrow) {
-                margin = -4;
-            }
+            margin = element.visProp.margin;
             Geometry.calcStraight(element, c1, c2, margin);
 
             d1x = d1y = d2x = d2y = 0.0;
@@ -596,21 +602,40 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         drawText: function (element) {
-            var node, z;
+            var node, z, level;
 
-            if (element.visProp.display === 'html' && Env.isBrowser) {
-                node = this.container.ownerDocument.createElement('div');
+            if (element.visProp.display === 'html' && Env.isBrowser && this.type !== 'no') {
+                node = this.container.ownerDocument.createElement('div'); //createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
 
                 node.className = element.visProp.cssclass;
-                if (this.container.style.zIndex === '') {
-                    z = 0;
+
+                /* SVG renderer - beside IE 9-11 - support foreignObject. This
+                   is used to host the HTML. Then, conversion to canvas works also
+                   for HTML text.
+
+                   But to allow interaction with the HTML elements (e.g. buttons) all such texts
+                   have to be in a single foreign object. The reason is foreign object habe to cover the
+                   whole board and would block event bubbling.
+                 */
+                level = element.visProp.layer;
+                if (!Type.exists(level)) { // trace nodes have level not set
+                    level = 0;
+                }
+                if (!element.visProp.externalhtml && this.supportsForeignObject &&
+                    Type.exists(this.foreignObjLayer[level])) {
+                    this.foreignObjLayer[level].appendChild(node);
                 } else {
-                    z = parseInt(this.container.style.zIndex, 10);
+                    if (this.container.style.zIndex === '') {
+                        z = 0;
+                    } else {
+                        z = parseInt(this.container.style.zIndex, 10);
+                    }
+
+                    node.style.zIndex = z + level;
+                    this.container.appendChild(node);
                 }
 
-                node.style.zIndex = z + element.board.options.layer.text;
-                this.container.appendChild(node);
                 node.setAttribute('id', this.container.id + '_' + element.id);
             } else {
                 node = this.drawInternalText(element);
@@ -637,7 +662,7 @@ define([
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
 
-                if (el.visProp.display === 'html') {
+                if (el.visProp.display === 'html' && this.type !== 'no') {
                     // Set the position
                     if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
@@ -652,6 +677,10 @@ define([
                             v = Math.floor(c - 0.5 * el.size[0]);
                         } else { // 'left'
                             v = Math.floor(c);
+                        }
+
+                        if (typeof window.devicePixelRatio !== 'undefined') {
+                            v *= window.devicePixelRatio;
                         }
 
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
@@ -675,6 +704,10 @@ define([
                             v = Math.floor(c - 0.5 * el.size[1]);
                         } else { // top
                             v = Math.floor(c);
+                        }
+
+                        if (typeof window.devicePixelRatio !== 'undefined') {
+                            v *= window.devicePixelRatio;
                         }
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
@@ -736,7 +769,7 @@ define([
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateTextStyle: function (element, doHighlight) {
-            var fs, so, sc, css,
+            var fs, so, sc, css, node, list,
                 ev = element.visProp,
                 display = Env.isBrowser ? ev.display : 'internal';
 
@@ -755,18 +788,27 @@ define([
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     element.needsSizeUpdate = true;
+                    list = ['rendNode', 'rendNodeTag', 'rendNodeLabel'];
                     try {
-                        element.rendNode.style.fontSize = fs + 'px';
+                        for (node in list) {
+                            if (JXG.exists(element[list[node]])) {
+                                element[list[node]].style.fontSize = fs + 'px';
+                            }
+                        }
                     } catch (e) {
                         // IE needs special treatment.
-                        element.rendNode.style.fontSize = fs;
+                        for (node in list) {
+                            if (JXG.exists(element[list[node]])) {
+                                element[list[node]].style.fontSize = fs;
+                            }
+                        }
                     }
                     element.visPropOld.fontsize = fs;
                 }
 
             }
 
-            if (display === 'html') {
+            if (display === 'html' && this.type !== 'no') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
@@ -1285,7 +1327,7 @@ define([
                         this.style.backgroundColor = board.options.navbar.fillColor;
                     }, button);
 
-                    Env.addEvent(button, 'click', handler, board);
+                    Env.addEvent(button, 'click', function(e) { (Type.bind(handler, board))(); return false; }, board);
                     // prevent the click from bubbling down to the board
                     Env.addEvent(button, 'mouseup', cancelbubble, board);
                     Env.addEvent(button, 'mousedown', cancelbubble, board);
@@ -1293,7 +1335,7 @@ define([
                     Env.addEvent(button, 'touchstart', cancelbubble, board);
                 };
 
-            if (Env.isBrowser) {
+            if (Env.isBrowser && this.type !== 'no') {
                 doc = board.containerObj.ownerDocument;
                 node = doc.createElement('div');
 
@@ -1403,7 +1445,15 @@ define([
          * @param {Number} i Number of the crosshair to show
          * @param {Array} pos New positon in screen coordinates
          */
-        updateTouchpoint: function (i, pos) {}
+        updateTouchpoint: function (i, pos) {},
+
+        /**
+         * Convert SVG construction to canvas.
+         * Only available on SVGRenderer.
+         *
+         * @see JXG.SVGRenderer#dumpToCanvas
+         */
+        dumpToCanvas: function(canvasId) {}
     });
 
     return JXG.AbstractRenderer;

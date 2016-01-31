@@ -143,7 +143,7 @@ define([
                 x = c[0];
                 y = c[1];
 
-                if (typeof x[0] === 'number' && typeof x[1] === 'number') {
+                if (Type.isNumber(x[0]) && Type.isNumber(x[1])) {
                     tickArr.push(' m ' + Math.round(r * x[0]) + ', ' + Math.round(r * y[0]) +
                         ' l ' + Math.round(r * x[1]) + ', ' + Math.round(r * y[1]) + ' ');
                 }
@@ -893,7 +893,7 @@ define([
                     }
                     */
                     if (node.filters.length > 1) {
-                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
+                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]?
                         // Setting axes:true shows text labels!
                         node.filters.item(1).opacity = Math.round(oo * 100); // Why does setObjectFillColor not use Math.round?
                         node.filters.item(1).enabled = true;
@@ -934,14 +934,14 @@ define([
                     /*
                     t = node.style.filter.toString();
                     if (t.match(/alpha/)) {
-                        node.style.filter = 
+                        node.style.filter =
                         t.replace(/alpha\(opacity *= *[0-9\.]+\)/, 'alpha(opacity = ' + oo + ')');
                     } else {
                         node.style.filter += ' alpha(opacity = ' + oo + ')';
                     }
                     */
                     if (node.filters.length > 1) {
-                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]? 
+                        // Why am I sometimes seeing node.filters.length==0 here when I move the pointer around near [0,0]?
                         // Setting axes:true shows text labels!
                         node.filters.item(1).opacity = Math.round(oo * 100);
                         node.filters.item(1).enabled = true;

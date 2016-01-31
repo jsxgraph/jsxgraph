@@ -476,7 +476,7 @@
                     });
 
                     for (j = 0; j < poly.borders.length; j++) {
-                        poly.borders[j].setProperty({strokeColor: erg[0][0], strokeWidth: erg[0][2]});
+                        poly.borders[j].setAttribute({strokeColor: erg[0][0], strokeWidth: erg[0][2]});
                     }
 
                 // Arc
@@ -604,15 +604,15 @@
                     });
 
                     if (objName === '') {
-                        lines.line2.setProperty({visible: false});
-                        lines.line1.setProperty({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
+                        lines.line2.setAttribute({visible: false});
+                        lines.line1.setAttribute({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
                     } else {
                         if (objName2 === '') {
-                            lines.line1.setProperty({visible: false});
-                            lines.line2.setProperty({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
+                            lines.line1.setAttribute({visible: false});
+                            lines.line2.setAttribute({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
                         } else {
-                            lines.line1.setProperty({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
-                            lines.line2.setProperty({strokeColor: erg2[0][0], strokeWidth: erg2[0][2], dash: erg2[1]});
+                            lines.line1.setAttribute({strokeColor: erg[0][0], strokeWidth: erg[0][2], dash: erg[1]});
+                            lines.line2.setAttribute({strokeColor: erg2[0][0], strokeWidth: erg2[0][2], dash: erg2[1]});
                         }
                     }
 

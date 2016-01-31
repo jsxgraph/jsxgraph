@@ -85,13 +85,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean} True, if the browser supports HTML canvas.
          */
         supportsCanvas: function () {
-            var c,
-                hasCanvas = false;
+            var c, hasCanvas = false;
 
             if (this.isNode()) {
                 try {
                     c = (typeof module === 'object' ? module.require('canvas') : require('canvas'));
-                    hasCanvas = true;
+                    hasCanvas = !!c;
                 } catch (err) { }
             }
 
@@ -251,15 +250,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             // Work around a bug in Safari
             if (display !== 'none' && display !== null) {
-                if (element.offsetWidth > 0 && element.offsetHeight > 0) {
-                    return {width: element.offsetWidth, height: element.offsetHeight};
-                } else { // a parent might be set to display:none; try reading them from styles
-                    style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
-                    return {
-                        width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
-                        height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
-                    };
+                if (element.clientWidth > 0 && element.clientHeight > 0) {
+                    return {width: element.clientWidth, height: element.clientHeight};
                 }
+
+                // a parent might be set to display:none; try reading them from styles
+                style = window.getComputedStyle ? window.getComputedStyle(element) : element.style;
+                return {
+                    width: pixelDimRegExp.test(style.width) ? parseFloat(style.width) : 0,
+                    height: pixelDimRegExp.test(style.height) ? parseFloat(style.height) : 0
+                };
             }
 
             // All *Width and *Height properties give 0 on elements with display set to none,

@@ -244,7 +244,6 @@ define([
                 slide = this.slideObject;
 
             this.needsUpdateFromParent = false;
-
             if (slide.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                 if (this.visProp.isgeonext) {
                     delta = 1.0;
@@ -489,8 +488,13 @@ define([
                 p1c = slide.point1.coords.usrCoords;
                 p2c = slide.point2.coords.usrCoords;
 
+                // If one of the defining points of the line does not exist,
+                // the glider should disappear
+                if ((p1c[0] === 0 && p1c[1] === 0 && p1c[2] === 0) ||
+                    (p2c[0] === 0 && p2c[1] === 0 && p2c[2] === 0)) {
+                    c = [0, 0, 0];
                 // The second point is an ideal point
-                if (Math.abs(p2c[0]) < Mat.eps) {
+                } else if (Math.abs(p2c[0]) < Mat.eps) {
                     lbda = Math.min(Math.abs(this.position), 1 - Mat.eps);
                     lbda /= (1.0 - lbda);
 
@@ -784,7 +788,7 @@ define([
          * A point can change its type from free point to glider
          * and vice versa. If it is given an array of attractor elements
          * (attribute attractors) and the attribute attractorDistance
-         * then the pint will be made a glider if it less than attractorDistance
+         * then the point will be made a glider if it less than attractorDistance
          * apart from one of its attractor elements.
          * If attractorDistance is equal to zero, the point stays in its
          * current form.
@@ -1150,7 +1154,7 @@ define([
             for (i = 0; i < terms.length; i++) {
                 v = terms[i];
 
-                if (typeof v === 'string') {
+                if (Type.isString(v)) {
                     // Convert GEONExT syntax into JavaScript syntax
                     //t  = JXG.GeonextParser.geonext2JS(v, this.board);
                     //newfuncs[i] = new Function('','return ' + t + ';');
@@ -1160,12 +1164,12 @@ define([
                     if (terms.length === 2) {
                         this[what[i] + 'jc'] = terms[i];
                     }
-                } else if (typeof v === 'function') {
+                } else if (Type.isFunction(v)) {
                     newfuncs[i] = v;
-                } else if (typeof v === 'number') {
+                } else if (Type.isNumber(v)) {
                     newfuncs[i] = makeConstFunction(v);
                 // Slider
-                } else if (typeof v === 'object' && typeof v.Value === 'function') {
+            } else if (Type.isObject(v) && Type.isFunction(v.Value)) {
                     newfuncs[i] = makeSliderFunction(v);
                 }
 
@@ -1364,8 +1368,8 @@ define([
         /**
          * Starts an animation which moves the point along a given path in given time.
          * @param {Array|function} path The path the point is moved on.
-         * This can be either an array of arrays containing x and y values of the points of
-         * the path, or  function taking the amount of elapsed time since the animation
+         * This can be either an array of arrays or containing x and y values of the points of
+         * the path, or an array of points, or a function taking the amount of elapsed time since the animation
          * has started and returns an array containing a x and a y value or NaN.
          * In case of NaN the animation stops.
          * @param {Number} time The time in milliseconds in which to finish the animation
@@ -1384,6 +1388,7 @@ define([
                 p = [],
                 delay = this.board.attr.animationdelay,
                 steps = time / delay,
+                len, pos, part,
 
                 makeFakeFunction = function (i, j) {
                     return function () {
@@ -1392,7 +1397,8 @@ define([
                 };
 
             if (Type.isArray(path)) {
-                for (i = 0; i < path.length; i++) {
+                len = path.length;
+                for (i = 0; i < len; i++) {
                     if (Type.isPoint(path[i])) {
                         p[i] = path[i];
                     } else {
@@ -1418,11 +1424,24 @@ define([
                         interpath[i][1] = neville[1]((steps - i) / steps * neville[3]());
                     }
                 } else {
+                    len = path.length - 1;
+                    for (i = 0; i < steps; ++i) {
+                        pos = Math.floor(i / steps * len);
+                        part = i / steps * len - pos;
+
+                        interpath[i] = [];
+                        interpath[i][0] = (1.0 - part) * p[pos].X() + part * p[pos + 1].X();
+                        interpath[i][1] = (1.0 - part) * p[pos].Y() + part * p[pos + 1].Y();
+                    }
+                    interpath.push([p[len].X(), p[len].Y()]);
+                    interpath.reverse();
+                    /*
                     for (i = 0; i < steps; i++) {
                         interpath[i] = [];
                         interpath[i][0] = path[Math.floor((steps - i) / steps * (path.length - 1))][0];
                         interpath[i][1] = path[Math.floor((steps - i) / steps * (path.length - 1))][1];
                     }
+                    */
                 }
 
                 this.animationPath = interpath;
@@ -1531,7 +1550,7 @@ define([
                 };
 
             // support legacy interface where the third parameter was the number of repeats
-            if (typeof options === 'number') {
+            if (Type.isNumber(options)) {
                 options = {repeat: options};
             } else {
                 options = options || {};
@@ -1657,7 +1676,6 @@ define([
 
             if (this.type === Const.OBJECT_TYPE_GLIDER) {
                 p = [this.X(), this.Y(), this.slideObject.id];
-
             }
 
             return p;
@@ -1685,13 +1703,13 @@ define([
         var el, isConstrained = false, i;
 
         for (i = 0; i < coords.length; i++) {
-            if (typeof coords[i] === 'function' || typeof coords[i] === 'string') {
+            if (Type.isFunction(coords[i]) || Type.isString(coords[i])) {
                 isConstrained = true;
             }
         }
 
         if (!isConstrained) {
-            if ((Type.isNumber(coords[0])) && (Type.isNumber(coords[1]))) {
+            if (Type.isNumber(coords[0]) && Type.isNumber(coords[1])) {
                 el = new Callback(board, coords, attr, arg1, arg2);
 
                 if (Type.exists(attr.slideobject)) {
@@ -1701,7 +1719,11 @@ define([
                     el.baseElement = el;
                 }
                 el.isDraggable = true;
-            } else if ((typeof coords[0] === 'object') && (typeof coords[1] === 'object')) {
+            } else if (Type.isObject(coords[0]) &&
+                (Type.isObject(coords[1]) || // Transformation
+                 (Type.isArray(coords[1]) && coords[1].length > 0 && Type.isObject(coords[1][0]))
+                )) { // Array of transformations
+
                 // Transformation
                 el = new Callback(board, [0, 0], attr, arg1, arg2);
                 el.addTransform(coords[0], coords[1]);

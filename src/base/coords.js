@@ -107,8 +107,7 @@ define([
          * @private
          */
         normalizeUsrCoords: function () {
-            var eps = Mat.eps;
-            if (Math.abs(this.usrCoords[0]) > eps) {
+            if (Math.abs(this.usrCoords[0]) > Mat.eps) {
                 this.usrCoords[1] /= this.usrCoords[0];
                 this.usrCoords[2] /= this.usrCoords[0];
                 this.usrCoords[0] = 1.0;
@@ -125,14 +124,14 @@ define([
                 uc = this.usrCoords,
                 oc = b.origin.scrCoords;
 
-            if (doRound === false) {
-                this.scrCoords[0] = uc[0];
-                this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
-                this.scrCoords[2] = uc[0] * oc[2] - uc[2] * b.unitY;
-            } else {
+            if (doRound === true) {
                 this.scrCoords[0] = mround(uc[0]);
                 this.scrCoords[1] = mround(uc[0] * oc[1] + uc[1] * b.unitX);
                 this.scrCoords[2] = mround(uc[0] * oc[2] - uc[2] * b.unitY);
+            } else {
+                this.scrCoords[0] = uc[0];
+                this.scrCoords[1] = uc[0] * oc[1] + uc[1] * b.unitX;
+                this.scrCoords[2] = uc[0] * oc[2] - uc[2] * b.unitY;
             }
         },
 
@@ -168,7 +167,7 @@ define([
                 f = ucr[0] - c[0];
                 sum = f * f;
 
-                if (sum > Mat.eps) {
+                if (sum > Mat.eps * Mat.eps) {
                     return Number.POSITIVE_INFINITY;
                 }
                 f = ucr[1] - c[1];
@@ -233,7 +232,7 @@ define([
         * Uses slice() in case of standard arrays and set() in case of
         * typed arrays.
         * @private
-        * @param {String) obj Either 'srcCoords' or 'usrCoords'
+        * @param {String} obj Either 'srcCoords' or 'usrCoords'
         * @param {Number} offset Offset, defaults to 0 if not given
         * @returns {Array} Returns copy of the coords array either as standard array or as
         *   typed array.

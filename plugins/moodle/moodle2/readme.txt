@@ -11,7 +11,7 @@ Installation: (by Moodle Admin)
 Usage:
 1. In a Moodle course: -> Add a resource -> Compose a website
 2. Write content. At the position the construction should appear, create a construction by:
-	* switching to the code input
+	* switching to the code input, i.e. to "HTML source editor"
 	* inserting a <jsxgraph>-tag with all required parameters
     * Example: 
         <jsxgraph width="600" height="500">

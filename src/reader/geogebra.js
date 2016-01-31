@@ -2124,7 +2124,7 @@
                         if (borderatts[i].withLabel) {
                             p.borders[i].createLabel();
                         }
-                        p.borders[i].setProperty(borderatts[i]);
+                        p.borders[i].setAttribute(borderatts[i]);
                     }
                     return p;
                 } catch (exc5) {
@@ -2871,9 +2871,9 @@
                     }());
                     poly = this.board.create('polygon', [p1, p2, i], attr);
 
-                    poly.borders[2].setProperty({visible: false});
-                    poly.borders[0].setProperty({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash: attr.dash});
-                    poly.borders[1].setProperty({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash: attr.dash});
+                    poly.borders[2].setAttribute({visible: false});
+                    poly.borders[0].setAttribute({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash: attr.dash});
+                    poly.borders[1].setAttribute({strokeColor: attr.fillColor, strokeWidth: attr.strokeWidth, highlightStrokeColor: attr.fillColor, dash: attr.dash});
                     return t;
                 } catch (exc31) {
                     JXG.debug("* Err: Slope " + attr.name);

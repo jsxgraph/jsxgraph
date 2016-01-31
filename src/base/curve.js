@@ -118,10 +118,10 @@ define([
         this.elType = 'curve';
         this.createLabel();
 
-        if (typeof this.xterm === 'string') {
+        if (Type.isString(this.xterm)) {
             this.notifyParents(this.xterm);
         }
-        if (typeof this.yterm === 'string') {
+        if (Type.isString(this.yterm)) {
             this.notifyParents(this.yterm);
         }
 
@@ -455,7 +455,7 @@ define([
             }
 
             if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
-//console.log("B", this.numberPoints);     
+//console.log("B", this.numberPoints);
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
 //console.log("A", this.numberPoints);
@@ -562,6 +562,8 @@ define([
                     d = x0 * x0 + y0 * y0;
                     return Math.sqrt(d);
                 };
+
+            JXG.deprecated('Curve.updateParametricCurveOld()');
 
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 MAX_DEPTH = 15;
@@ -710,7 +712,7 @@ define([
                 newReal = !isNaN(pnt.scrCoords[1] + pnt.scrCoords[2]),        // New point is real point
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
-                off = 20;
+                off = 500;
 
             newReal = newReal &&
                         (pnt.scrCoords[1] > -off && pnt.scrCoords[2] > -off &&
@@ -729,6 +731,81 @@ define([
         },
 
         /**
+         * Find the intersection of the asymptote for e.g. a log function
+         * with the canvas.
+         * @private
+         * @param  {Array} asymptote Asymptote line in standard form
+         * @param  {Array} box       Bounding box of the canavs
+         * @param  {Number} direction horizontal direction of the asymptote. If < 0 the asymptote
+         *  goes to the left, otherwise to the right.
+         * @return {Array}           Homogeneous coordinate array of the intersection point.
+         */
+        _intersectWithBorder: function(asymptote, box, direction) {
+            var border, intersection, x, y;
+
+            if (direction <= 0) { // Intersect with left border
+                border = [-box[0], 1, 0];
+                intersection = Mat.crossProduct(border, asymptote);
+                if (intersection[0] !== 0.0) {
+                    x = intersection[1] / intersection[0];
+                    y = intersection[2] / intersection[0];
+                } else {
+                    y = Infinity;
+                }
+
+                if (y < box[3]) { // Intersect with bottom border
+                    border = [-box[3], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                } else if (y > box[1]) { // Intersect with top border
+                    border = [-box[1], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                }
+            } else { // Intersect with right border
+                border = [-box[2], 1, 0];
+                intersection = Mat.crossProduct(border, asymptote);
+                if (intersection[0] !== 0.0) {
+                    x = intersection[1] / intersection[0];
+                    y = intersection[2] / intersection[0];
+                } else {
+                    y = Infinity;
+                }
+
+                if (y < box[3]) { // Intersect with bottom border
+                    border = [-box[3], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                } else if (y > box[1]) { // Intersect with top border
+                    border = [-box[1], 0, 1];
+                    intersection = Mat.crossProduct(border, asymptote);
+                    if (intersection[0] !== 0.0) {
+                        x = intersection[1] / intersection[0];
+                        y = intersection[2] / intersection[0];
+                    } else {
+                        x = Infinity;
+                    }
+                }
+            }
+            return [1, x, y];
+        },
+
+        /**
          * Investigate a function term at the bounds of intervals where
          * the function is not defined, e.g. log(x) at x = 0.
          *
@@ -743,68 +820,103 @@ define([
          * @param {Number} depth Actual recursion depth. The recursion stops if depth is equal to 0.
          * @returns {JXG.Boolean} true if the point is inserted and the recursion should stop, false otherwise.
          */
-        _borderCase: function (a, b, c, ta, tb, tc, depth) {
-            var t, pnt, p, p_good = null,
-                i, j, maxit = 5,
-                maxdepth = 70,
-                is_undef = false;
+         _borderCase: function (a, b, c, ta, tb, tc, depth) {
+             var t, pnt, p,
+                 p_good = null,
+                 j,
+                 max_it = 30,
+                 is_undef = false,
+                 t_nan, t_real, t_real2,
+                 box,
+                 vx, vy, vx2, vy2, dx, dy,
+                 x, y,
+                 asymptote, border, intersection;
 
-            if (depth < this.smoothLevel) {
+
+             if (depth <= 1) {
                 pnt = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false);
-
-                if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2] + b[1] + b[2])) {
-                    // a is outside of the definition interval, c and b are inside
-
-                    for (i = 0; i < maxdepth; ++i) {
-                        j = 0;
-
-                        // Bisect a and c until the new point is inside of the definition interval
-                        do {
-                            t = 0.5 * (ta + tc);
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                            p = pnt.scrCoords;
-                            is_undef = isNaN(p[1] + p[2]);
-
-                            if (is_undef) {
-                                ta = t;
-                            }
-                            ++j;
-                        } while (is_undef && j < maxit);
-
-                        // If bisection was successful, remember this point
-                        if (j < maxit) {
-                            tc = t;
-                            p_good = p.slice();
-                        } else {
-                            break;
-                        }
+                j = 0;
+                // Bisect a, b and c until the point t_real is inside of the definition interval
+                // and as close as possible at the boundary.
+                // t_real2 is the second closest point.
+                do {
+                    // There are four cases:
+                    //  a  |  c  |  b
+                    // ---------------
+                    // inf | R   | R
+                    // R   | R   | inf
+                    // inf | inf | R
+                    // R   | inf | inf
+                    //
+                    if (isNaN(a[1] + a[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = ta;
+                        t_real = tc;
+                        t_real2 = tb;
+                    } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2])) {
+                        t_nan = tb;
+                        t_real = tc;
+                        t_real2 = ta;
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(b[1] + b[2])) {
+                        t_nan = tc;
+                        t_real = tb;
+                        t_real2 = tb + (tb - tc);
+                    } else if (isNaN(c[1] + c[2]) && !isNaN(a[1] + a[2])) {
+                        t_nan = tc;
+                        t_real = ta;
+                        t_real2 = ta - (tc - ta);
+                    } else {
+                        return false;
                     }
-                } else if (isNaN(b[1] + b[2]) && !isNaN(c[1] + c[2] + a[1] + a[2])) {
-                    // b is outside of the definition interval, a and c are inside
-                    for (i = 0; i < maxdepth; ++i) {
-                        j = 0;
-                        do {
-                            t = 0.5 * (tc + tb);
-                            pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
-                            p = pnt.scrCoords;
-                            is_undef = isNaN(p[1] + p[2]);
+                    t = 0.5 * (t_nan + t_real);
+                    pnt.setCoordinates(Const.COORDS_BY_USER, [this.X(t, true), this.Y(t, true)], false);
+                    p = pnt.usrCoords;
 
-                            if (is_undef) {
-                                tb = t;
-                            }
-                            ++j;
-                        } while (is_undef && j < maxit);
-                        if (j < maxit) {
-                            tc = t;
-                            p_good = p.slice();
-                        } else {
-                            break;
-                        }
+                    is_undef = isNaN(p[1] + p[2]);
+                    if (is_undef) {
+                        t_nan = t;
+                    } else {
+                        t_real2 = t_real;
+                        t_real = t;
                     }
+                    ++j;
+                } while (is_undef && j < max_it);
+
+                // If bisection was successful, take this point.
+                // Usefule only for general curves, for function graph
+                // the code below overwrite p_good from here.
+                if (j < max_it) {
+                    p_good = p.slice();
+                    c = p.slice();
+                    t_real = t;
+                }
+
+                // OK, bisection has been done now.
+                // t_real contains the closest inner point to the border of the interval we could find.
+                // t_real2 is the second nearest point to this boundary.
+                // Now we approximate the derivative by computing the slope of the line through these two points
+                // and test if it is "infinite", i.e larger than 400 in absolute values.
+                //
+                vx = this.X(t_real, true) ;
+                vx2 = this.X(t_real2, true) ;
+                dx = (vx - vx2) / (t_real - t_real2);
+                vy = this.Y(t_real, true) ;
+                vy2 = this.Y(t_real2, true) ;
+                dy = (vy - vy2) / (t_real - t_real2);
+
+                // If the derivatives are large enough we draw the asymptote.
+                box = this.board.getBoundingBox();
+                if (Math.sqrt(dx * dx + dy * dy) > 500.0) {
+
+                    // The asymptote is a line of the form
+                    //  [c, a, b] = [dx * vy - dy * vx, dy, -dx]
+                    //  Now we have to find the intersection with the correct canvas border.
+                    asymptote = [dx * vy - dy * vx, dy, -dx];
+
+                    p_good = this._intersectWithBorder(asymptote, box, vx - vx2);
                 }
 
                 if (p_good !== null) {
-                    this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, p_good.slice(1), this.board, false));
+                    this._insertPoint(new Coords(Const.COORDS_BY_USER, p_good, this.board, false));
                     return true;
                 }
             }
@@ -867,15 +979,23 @@ define([
             return true;
         },
 
+        /**
+         * Decide if a path segment is too far from the canvas that we do not need to draw it.
+         * @param  {Array}  a  Screen coordinates of the start point of the segment
+         * @param  {Array}  ta Curve parameter of a.
+         * @param  {Array}  b  Screen coordinates of the end point of the segment
+         * @param  {Array}  tb Curve parameter of b.
+         * @return {Boolean}   True if the segment is too far away from the canvas, false otherwise.
+         */
         _isOutside: function (a, ta, b, tb) {
-            var off = 10,
+            var off = 500,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight;
 
             return !!((a[1] < -off && b[1] < -off) ||
-            (a[2] < -off && b[2] < -off) ||
-            (a[1] > cw + off && b[1] > cw + off) ||
-            (a[2] > ch + off && b[2] > ch + off));
+                (a[2] < -off && b[2] < -off) ||
+                (a[1] > cw + off && b[1] > cw + off) ||
+                (a[2] > ch + off && b[2] > ch + off));
         },
 
         /**
@@ -938,6 +1058,7 @@ define([
                 this._insertPoint(new Coords(Const.COORDS_BY_SCREEN, [NaN, NaN], this.board, false));
             } else if (depth <= mindepth || isSmooth) {
                 this._insertPoint(pnt);
+                //if (this._borderCase(a, b, c, ta, tb, tc, depth)) {}
             } else {
                 this._plotRecursive(a, ta, c, tc, depth, delta);
                 this._insertPoint(pnt);
@@ -961,11 +1082,11 @@ define([
                 depth, delta;
 //var stime = new Date();
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
-                depth = 12;
-                delta = 3;
+                depth = 13;
+                delta = 1.2;
 
                 delta = 2;
-                this.smoothLevel = depth - 5;
+                this.smoothLevel = depth - 7;
                 this.jumpLevel = 5;
             } else {
                 depth = 17;
@@ -1326,6 +1447,17 @@ define([
             }
 
             return [minX, maxY, maxX, minY];
+        },
+
+        // documented in element.js
+        getParents: function () {
+            var p = [this.xterm, this.yterm, this.minX(), this.maxX()];
+
+            if (this.parents.length !== 0) {
+                p = this.parents;
+            }
+
+            return p;
         }
     });
 
@@ -1550,13 +1682,13 @@ define([
                     // given as [x[], y[]]
                     if (parents.length === 2 && Type.isArray(parents[0]) && Type.isArray(parents[1]) && parents[0].length === parents[1].length) {
                         for (i = 0; i < parents[0].length; i++) {
-                            if (typeof parents[0][i] === 'function') {
+                            if (Type.isFunction(parents[0][i])) {
                                 x.push(parents[0][i]());
                             } else {
                                 x.push(parents[0][i]);
                             }
 
-                            if (typeof parents[1][i] === 'function') {
+                            if (Type.isFunction(parents[1][i])) {
                                 y.push(parents[1][i]());
                             } else {
                                 y.push(parents[1][i]);
@@ -1570,13 +1702,13 @@ define([
                             // given as [[x1,y1], [x2, y2], ...]
                             } else if (Type.isArray(parents[i]) && parents[i].length === 2) {
                                 for (j = 0; j < parents.length; j++) {
-                                    if (typeof parents[j][0] === 'function') {
+                                    if (Type.isFunction(parents[j][0])) {
                                         x.push(parents[j][0]());
                                     } else {
                                         x.push(parents[j][0]);
                                     }
 
-                                    if (typeof parents[j][1] === 'function') {
+                                    if (Type.isFunction(parents[j][1])) {
                                         y.push(parents[j][1]());
                                     } else {
                                         y.push(parents[j][1]);

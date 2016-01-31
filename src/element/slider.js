@@ -97,6 +97,7 @@ define([
     JXG.createSlider = function (board, parents, attributes) {
         var pos0, pos1, smin, start, smax, sdiff,
             p1, p2, l1, ticks, ti, startx, starty, p3, l2, t,
+            g,
             withText, withTicks, snapWidth, attr, precision, el;
 
         attr = Type.copyAttributes(attributes, board.options, 'slider');
@@ -112,7 +113,7 @@ define([
         // end point
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'point2');
         p2 = board.create('point', parents[1],  attr);
-        board.create('group', [p1, p2]);
+        //g = board.create('group', [p1, p2]);
 
         // slide line
         attr = Type.copyAttributes(attributes, board.options, 'slider', 'baseline');
@@ -177,6 +178,7 @@ define([
 
         p3.methodMap = Type.deepCopy(p3.methodMap, {
             Value: 'Value',
+            setValue: 'setValue',
             smax: '_smax',
             smin: '_smin',
             setMax: 'setMax',
@@ -208,6 +210,26 @@ define([
          */
         p3.setMax = function(val) {
             this._smax = val;
+            return this;
+        };
+
+        /**
+         * Sets the value of the slider. This call must be followed
+         * by a board update call.
+         * @memberOf Slider.prototype
+         * @name setValue
+         * @param {Number} val New value
+         * @returns {Object} this object
+         */
+        p3.setValue = function(val) {
+            var sdiff = this._smax - this._smin;
+
+            if (Math.abs(sdiff) > Mat.eps) {
+                this.position = (val - this._smin) / sdiff;
+            } else {
+                this.position = 0.0; //this._smin;
+            }
+            this.position = Math.max(0.0, Math.min(1.0, this.position));
             return this;
         };
 
@@ -265,6 +287,7 @@ define([
          * @type JXG.Point
          */
         p3.point1 = p1;
+
         /**
          * End point of the base line.
          * @memberOf Slider.prototype
@@ -280,6 +303,7 @@ define([
          * @type JXG.Line
          */
         p3.baseline = l1;
+
         /**
          * A line on top of the baseline, indicating the slider's progress.
          * @memberOf Slider.prototype

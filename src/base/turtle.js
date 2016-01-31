@@ -734,7 +734,7 @@ define([
      * @augments JXG.Turtle
      * @constructor
      * @type JXG.Turtle
-     * 
+     *
      * @param {JXG.Board} board The board the turtle is put on.
      * @param {Array} parents
      * @param {Object} attributes Object containing properties for the element such as stroke-color and visibility. See {@link JXG.GeometryElement#setAttribute}

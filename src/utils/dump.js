@@ -115,7 +115,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          */
         str: function (s) {
             if (typeof s === 'string' && s.substr(0, 7) !== 'function') {
-                s = '\'' + s + '\'';
+                s = '"' + s + '"';
             }
 
             return s;
@@ -180,9 +180,19 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             return a;
         },
 
+        setBoundingBox: function(methods, board, boardVarName) {
+            methods.push({
+                obj: boardVarName,
+                method: 'setBoundingBox',
+                params: [board.getBoundingBox(), true]
+            });
+
+            return methods;
+        },
+
         /**
-         * Generate a save-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and {@link JXG.Dump#toJavaScript}
-         * to generate the script.
+         * Generate a save-able structure with all elements. This is used by {@link JXG.Dump#toJessie} and
+         * {@link JXG.Dump#toJavaScript} to generate the script.
          * @param {JXG.Board} board
          * @returns {Array} An array with all metadata necessary to save the construction.
          */
@@ -195,11 +205,14 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             this.addMarkers(board, 'dumped', false);
 
+            // This has been moved to toJavaScript and toJessie
+            /*
             methods.push({
                 obj: '$board',
                 method: 'setBoundingBox',
                 params: [board.getBoundingBox(), true]
             });
+            */
 
             for (e = 0; e < len; e++) {
                 obj = board.objectsList[e];
@@ -207,14 +220,21 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
                 if (!obj.dumped && obj.dump) {
                     element.type = obj.getType();
-                    element.parents = obj.getParents();
+                    element.parents = obj.getParents().slice();
+
+                    // Extract coordinates of a point
                     if (element.type === 'point' && element.parents[0] === 1) {
                         element.parents = element.parents.slice(1);
                     }
 
                     for (s = 0; s < element.parents.length; s++) {
-                        if (typeof element.parents[s] === 'string') {
-                            element.parents[s] = '\'' + element.parents[s] + '\'';
+                        if (Type.isString(element.parents[s]) &&
+                                element.parents[s][0] !== "'" &&
+                                element.parents[s][0] !== '"') {
+
+                            element.parents[s] = '"' + element.parents[s] + '"';
+                        } else if (Type.isArray( element.parents[s]) ) {
+                            element.parents[s] = '[' + element.parents[s].toString() + ']';
                         }
                     }
 
@@ -308,6 +328,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 dump = this.dump(board),
                 script = [];
 
+            dump.methods = this.setBoundingBox(dump.methods, board, '$board');
+
             elements = dump.elements;
 
             for (i = 0; i < elements.length; i++) {
@@ -341,6 +363,8 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
             var i, elements,
                 dump = this.dump(board),
                 script = [];
+
+            dump.methods = this.setBoundingBox(dump.methods, board, 'board');
 
             elements = dump.elements;
 

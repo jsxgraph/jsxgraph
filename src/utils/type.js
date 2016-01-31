@@ -140,7 +140,7 @@ define([
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
         isPoint: function (v) {
-            if (typeof v === 'object') {
+            if (v !== null && typeof v === 'object') {
                 return (v.elementClass === Const.OBJECT_CLASS_POINT);
             }
 
@@ -150,13 +150,13 @@ define([
         /**
          * Checks if a given variable is a reference of a JSXGraph Point element or an array of length at least two or
          * a function returning an array of length two or three.
+         * @param {JXG.Board} board
          * @param v A variable of any type.
          * @returns {Boolean} True, if v is of type JXG.Point.
          */
-        isPointType: function (v, board) {
+        isPointType: function (board, v) {
             var val;
 
-            v = board.select(v);
             if (this.isArray(v)) {
                 return true;
             }
@@ -166,6 +166,7 @@ define([
                     return true;
                 }
             }
+            v = board.select(v);
             return this.isPoint(v);
         },
 
@@ -227,7 +228,7 @@ define([
          * to evaluate.
          */
         createEvalFunction: function (board, param, n) {
-            var f = [], i, str;
+            var f = [], i;
 
             for (i = 0; i < n; i++) {
                 f[i] = JXG.createFunction(param[i], board, '', true);
@@ -307,7 +308,7 @@ define([
             var i, j,
                 len,
                 lenAttr = 0,
-                points = [], attr, p, val;
+                points = [], attr, val;
 
             if (!this.isArray(parents)) {
                 parents = [parents];
@@ -534,7 +535,12 @@ define([
             }
 
             for (i = 0; i < a1.length; i++) {
-                if (a1[i] !== a2[i]) {
+                if (this.isArray(a1[i]) && this.isArray(a2[i])) {
+                    if (!this.cmpArrays(a1[i], a2[i])) {
+                        return false;
+                    }
+                }
+                else if (a1[i] !== a2[i]) {
                     return false;
                 }
             }
@@ -723,7 +729,7 @@ define([
          * @returns {Object} copy of obj or merge of obj and obj2.
          */
         deepCopy: function (obj, obj2, toLower) {
-            var c, i, prop, j, i2;
+            var c, i, prop, i2;
 
             toLower = toLower || false;
 

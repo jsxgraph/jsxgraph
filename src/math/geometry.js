@@ -83,6 +83,7 @@ define([
                 b = [],
                 c = [];
 
+            JXG.deprecated('Geometry.angle()', 'Geometry.rad()');
             if (A.coords) {
                 a[0] = A.coords.usrCoords[1];
                 a[1] = A.coords.usrCoords[2];
@@ -363,7 +364,10 @@ define([
         /**
          * @deprecated Please use {@link JXG.Math.Geometry#circumcenter} instead.
          */
-        circumcenterMidpoint: JXG.shortcut(Mat.Geometry, 'circumcenter'),
+        circumcenterMidpoint: function () {
+            JXG.deprecated('Geometry.circumcenterMidpoint()', 'Geometry.circumcenter()');
+            this.circumcenter.apply(this, arguments);
+        },
 
         /**
          * Calculates the center of the circumcircle of the three given points.
@@ -498,6 +502,7 @@ define([
 
         /**
          * Determine the signed area of a non-intersecting polygon.
+         * Surveyor's Formula
          *
          * @param {Array} p An array containing {@link JXG.Point}, {@link JXG.Coords}, and/or arrays.
          * @param {Boolean} [sort=true]
@@ -508,6 +513,10 @@ define([
             var i, N,
                 A = 0,
                 ps = Expect.each(p, Expect.coordsArray);
+
+            if (sort === undefined) {
+                sort = true;
+            }
 
             if (!sort) {
                 ps = this.sortVertices(ps);
@@ -534,11 +543,10 @@ define([
          * @returns {Array}
          */
         GrahamScan: function (points) {
-            var i, ll,
+            var i,
                 M = 1,
                 ps = Expect.each(points, Expect.coordsArray),
                 N = ps.length;
-
 
             ps = this.sortVertices(ps);
             N = ps.length;
@@ -576,7 +584,7 @@ define([
          */
         calcStraight: function (el, point1, point2, margin) {
             var takePoint1, takePoint2, intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, s, i, j, p1, p2;
+                c, p1, p2;
 
             if (!Type.exists(margin)) {
                 // Enlarge the drawable region slightly. This hides the small sides
@@ -703,7 +711,6 @@ define([
             }
         },
 
-
         /**
          * A line can be a segment, a straight, or a ray. so it is not always delimited by point1 and point2.
          *
@@ -724,8 +731,8 @@ define([
          */
         calcLineDelimitingPoints: function (el, point1, point2) {
             var distP1P2, boundingBox, lineSlope,
-                intersection, intersect1, intersect2, straightFirst, straightLast,
-                c, s, i, j, p1, p2,
+                intersect1, intersect2, straightFirst, straightLast,
+                c, p1, p2,
                 takePoint1 = false,
                 takePoint2 = false;
 
@@ -930,15 +937,15 @@ define([
         /****************************************/
 
         /**
-         * Generate the function which computes the coordinates of the intersection point. 
+         * Generate the function which computes the coordinates of the intersection point.
          * Primarily used in {@link JXG.Point#createIntersectionPoint}.
          * @param {JXG.Board} board object
-         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2. 
+         * @param {JXG.Line,JXG.Circle_JXG.Line,JXG.Circle_Number} el1,el2,i The result will be a intersection point on el1 and el2.
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
          * See further {@see JXG.Point#createIntersectionPoint}.
-         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point 
+         * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point
          * on their defining line or circle.
          * @returns {Function} Function returning a {@see JXG.Coords} object that determines the intersection point.
          */
@@ -1052,7 +1059,7 @@ define([
 
         /**
          * Intersection of the line with the board
-         * @param  {Array}     line   stdform of the line
+         * @param  {Array}     line   stdform of the line in screen coordinates
          * @param  {JXG.Board} board  reference to a board.
          * @param  {Number}    margin optional margin, to avoid the display of the small sides of lines.
          * @return {Array}            [intersection coords 1, intersection coords 2]
@@ -1289,7 +1296,7 @@ define([
          * the ideal point [0,1,0] is returned.
          */
         meetCurveLine: function (el1, el2, nr, board, alwaysIntersect) {
-            var v = [0, NaN, NaN], i, cu, li;
+            var v = [0, NaN, NaN], cu, li;
 
             if (!Type.exists(board)) {
                 board = el1.board;
@@ -1325,8 +1332,11 @@ define([
          *
          */
         meetCurveLineContinuous: function (cu, li, nr, board, testSegment) {
-            var t, func0, func1, v, x, y, z,
-                eps = Mat.eps * 10;
+            var t, func0, func1, func0a, v, x, y, z,
+                eps = Mat.eps,
+                epsLow = Mat.eps,
+                steps, delta, tnew, i,
+                tmin, fmin;
 
             v = this.meetCurveLineDiscrete(cu, li, nr, board, testSegment);
             x = v.usrCoords[1];
@@ -1336,7 +1346,7 @@ define([
                 var c1 = x - cu.X(t),
                     c2 = y - cu.Y(t);
 
-                return Math.sqrt(c1 * c1 + c2 * c2);
+                return c1 * c1 + c2 * c2;
             };
 
             func1 = function (t) {
@@ -1345,12 +1355,28 @@ define([
             };
 
             // Find t
-            t = Numerics.root(func0, [cu.minX(), cu.maxX()]);
+            steps = 100;
+            delta = (cu.maxX() - cu.minX()) / steps;
+            tnew = cu.minX();
+
+            fmin = 0.0001; //eps;
+            tmin = NaN;
+            for (i = 0; i < steps; i++) {
+                t = Numerics.root(func0, [tnew, tnew + delta]);
+                if (Math.abs(func0(t)) <= fmin  ) {
+                    fmin = Math.abs(func0(t));
+                    tmin = t;
+                    //break;
+                }
+
+                tnew += delta;
+            }
+            t = tmin;
             // Compute "exact" t
-            t = Numerics.root(func1, [t - 2 * eps, t + 2 * eps]);
+            t = Numerics.root(func1, [t - delta, t + delta]);
 
             // Is the point on the line?
-            if (Math.abs(func1(t)) > eps) {
+            if (Math.abs(func1(t)) > epsLow) {
                 z = NaN;
             } else {
                 z = 1.0;
@@ -1378,8 +1404,8 @@ define([
                 tnew, steps, delta, tstart, tend, cux, cuy,
                 eps = Mat.eps * 10;
 
+            JXG.deprecated('Geometry.meetCurveLineContinuousOld()', 'Geometry.meetCurveLineContinuous()');
             func = function (t) {
-//                return li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 var v = li.stdform[0] + li.stdform[1] * cu.X(t) + li.stdform[2] * cu.Y(t);
                 return v * v;
             };
@@ -1614,8 +1640,7 @@ define([
          * @returns {Array} Array consisting of two coordinate arrays for Bezier curves.
          */
         _bezierSplit: function (curve) {
-            var a = [], b = [],
-                p0, p1, p2, p00, p22, p000;
+            var p0, p1, p2, p00, p22, p000;
 
             p0 = [(curve[0][0] + curve[1][0]) * 0.5, (curve[0][1] + curve[1][1]) * 0.5];
             p1 = [(curve[1][0] + curve[2][0]) * 0.5, (curve[1][1] + curve[2][1]) * 0.5];
@@ -1808,7 +1833,7 @@ define([
          *
          */
         meetBeziersegmentBeziersegment: function (red, blue, testSegment) {
-            var L, n, L2, i;
+            var L, L2, i;
 
             if (red.length === 4 && blue.length === 4) {
                 L = this._bezierMeetSubdivision(red, blue, 0);
@@ -2080,7 +2105,7 @@ define([
          * two endpoints q1 and q2 of the segment.
          */
         projectCoordsToSegment: function (p, q1, q2) {
-            var t, denom, c,
+            var t, denom,
                 s = [q2[1] - q1[1], q2[2] - q1[2]],
                 v = [p[1] - q1[1], p[2] - q1[2]];
 
@@ -2164,8 +2189,8 @@ define([
          */
         projectCoordsToCurve: function (x, y, t, curve, board) {
             var newCoords, newCoordsObj, i, j,
-                x0, y0, x1, y1, mindist, dist, lbda, li, v, coords, d,
-                p1, p2, q1, q2, res,
+                mindist, dist, lbda, v, coords, d,
+                p1, p2, res,
                 minfunc, tnew, fnew, fold, delta, steps,
                 infty = Number.POSITIVE_INFINITY;
 
@@ -2245,7 +2270,7 @@ define([
                 for (i = 0; i < steps; i++) {
                     fnew = minfunc(tnew);
 
-                    if (fnew < fold) {
+                    if (fnew < fold || isNaN(fold)) {
                         t = tnew;
                         fold = fnew;
                     }

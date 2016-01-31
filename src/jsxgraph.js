@@ -71,10 +71,10 @@ define([
          * @type String
          */
         rendererType: (function () {
-            Options.renderer = 'no';
+            Options.board.renderer = 'no';
 
             if (Env.supportsVML()) {
-                Options.renderer = 'vml';
+                Options.board.renderer = 'vml';
                 // Ok, this is some real magic going on here. IE/VML always was so
                 // terribly slow, except in one place: Examples placed in a moodle course
                 // was almost as fast as in other browsers. So i grabbed all the css and
@@ -101,16 +101,16 @@ define([
             }
 
             if (Env.supportsCanvas()) {
-                Options.renderer = 'canvas';
+                Options.board.renderer = 'canvas';
             }
 
             if (Env.supportsSVG()) {
-                Options.renderer = 'svg';
+                Options.board.renderer = 'svg';
             }
 
             // we are inside node
             if (Env.isNode() && Env.supportsCanvas()) {
-                Options.renderer = 'canvas';
+                Options.board.renderer = 'canvas';
             }
 
             if (Env.isNode() || Options.renderer === 'no') {
@@ -118,10 +118,10 @@ define([
                 Options.infobox.display = 'internal';
             }
 
-            return Options.renderer;
+            return Options.board.renderer;
         }()),
 
-        initRenderer: function (box, dim, doc) {
+        initRenderer: function (box, dim, doc, attrRenderer) {
             var boxid, renderer;
 
             // Former version:
@@ -142,11 +142,11 @@ define([
             }
 
             // create the renderer
-            if (Options.renderer === 'svg') {
+            if (attrRenderer === 'svg') {
                 renderer = new SVGRenderer(boxid, dim);
-            } else if (Options.renderer === 'vml') {
+            } else if (attrRenderer === 'vml') {
                 renderer = new VMLRenderer(boxid);
-            } else if (Options.renderer === 'canvas') {
+            } else if (attrRenderer === 'canvas') {
                 renderer = new CanvasRenderer(boxid, dim);
             } else {
                 renderer = new NoRenderer();
@@ -177,6 +177,7 @@ define([
                 renderer,
                 w, h, dimensions,
                 bbox, attr, axattr,
+                selectionattr,
                 board;
 
             attributes = attributes || {};
@@ -185,6 +186,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
 
@@ -220,7 +222,7 @@ define([
                 originY = unitY * bbox[1];
             }
 
-            renderer = this.initRenderer(box, dimensions, attr.document);
+            renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
 
             // create the board
             board = new Board(box, renderer, attr.id, [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
@@ -245,6 +247,9 @@ define([
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
 
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+
             board.renderer.drawZoomBar(board);
             board.unsuspendUpdate();
 
@@ -266,7 +271,8 @@ define([
          * @see JXG.CinderellaReader
          */
         loadBoardFromFile: function (box, file, format, attributes, callback) {
-            var attr, renderer, board, dimensions;
+            var attr, renderer, board, dimensions,
+                selectionattr;
 
             attributes = attributes || {};
 
@@ -274,6 +280,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -284,6 +291,9 @@ define([
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
             FileReader.parseFileContent(file, board, format, true, callback);
+
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
@@ -306,7 +316,8 @@ define([
          * @see JXG.CinderellaReader
          */
         loadBoardFromString: function (box, string, format, attributes, callback) {
-            var attr, renderer, dimensions, board;
+            var attr, renderer, dimensions, board,
+                selectionattr;
 
             attributes = attributes || {};
 
@@ -314,6 +325,7 @@ define([
             attr = Type.copyAttributes(attributes, Options, 'board');
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
+            attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -324,6 +336,9 @@ define([
             board.resizeContainer(dimensions.width, dimensions.height, true, true);
 
             FileReader.parseString(string, board, format, true, callback);
+
+            selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
             board.renderer.drawZoomBar(board);
             JXG.boards[board.id] = board;
@@ -381,15 +396,8 @@ define([
          * @param creator
          */
         registerElement: function (element, creator) {
+            JXG.deprecated('JXG.JSXGraph.registerElement()', 'JXG.registerElement()');
             JXG.registerElement(element, creator);
-        },
-
-        /**
-         * @deprecated
-         * @param element
-         */
-        unregisterElement: function (element) {
-            throw new Error('Unimplemented');
         }
     };
 

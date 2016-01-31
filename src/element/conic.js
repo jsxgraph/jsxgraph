@@ -102,7 +102,7 @@ define([
             } else if (Type.isPoint(parents[i])) {
                 F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
+            } else if (Type.isFunction(parents[i]) && Type.isPoint(parents[i]()) ) {
                 F[i] = parents[i]();
             // focus i given by point name
             } else if (Type.isString(parents[i])) {
@@ -117,7 +117,7 @@ define([
         // length of major axis
         if (Type.isNumber(parents[2])) {
             majorAxis = Type.createFunction(parents[2], board);
-        } else if ((typeof parents[2] === 'function') && (Type.isNumber(parents[2]()))) {
+        } else if (Type.isFunction(parents[2]) && Type.isNumber(parents[2]())) {
             majorAxis = parents[2];
         } else {
             // point on ellipse
@@ -127,7 +127,7 @@ define([
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (Type.isPoint(parents[2]()) )) {
+            } else if (Type.isFunction(parents[2]) && Type.isPoint(parents[2]()) ) {
                 C = parents[2]();
             // focus i given by point name
             } else if (Type.isString(parents[2])) {
@@ -311,7 +311,7 @@ define([
             } else if (Type.isPoint(parents[i])) {
                 F[i] = board.select(parents[i]);
             // given by function
-            } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
+            } else if (Type.isFunction(parents[i]) && Type.isPoint(parents[i]()) ) {
                 F[i] = parents[i]();
             // focus i given by point name
             } else if (Type.isString(parents[i])) {
@@ -326,7 +326,7 @@ define([
         // length of major axis
         if (Type.isNumber(parents[2])) {
             majorAxis = Type.createFunction(parents[2], board);
-        } else if ((typeof parents[2] === 'function') && (Type.isNumber(parents[2]()))) {
+        } else if (Type.isFunction(parents[2]) && Type.isNumber(parents[2]())) {
             majorAxis = parents[2];
         } else {
             // point on ellipse
@@ -336,7 +336,7 @@ define([
             } else if (parents[2].length > 1) {
                 C = board.create('point', parents[2], attr_foci);
             // given by function
-            } else if ((typeof parents[2] === 'function') && (Type.isPoint(parents[2]()))) {
+            } else if (Type.isFunction(parents[2]) && Type.isPoint(parents[2]())) {
                 C = parents[2]();
             // focus i given by point name
             } else if (Type.isString(parents[2])) {
@@ -490,7 +490,7 @@ define([
         } else if (Type.isPoint(parents[0])) {
             F1 = board.select(parents[0]);
         // given by function
-        } else if ((typeof parents[0] === 'function') && (Type.isPoint(parents[0]()) )) {
+        } else if (Type.isFunction(parents[0]) && Type.isPoint(parents[0]()) ) {
             F1 = parents[0]();
         // focus i given by point name
         } else if (Type.isString(parents[0])) {
@@ -677,7 +677,7 @@ define([
                 } else if (Type.isPoint(parents[i])) {
                     points[i] = board.select(parents[i]);
                 // given by function
-                } else if ((typeof parents[i] === 'function') && (Type.isPoint(parents[i]()) )) {
+                } else if (Type.isFunction(parents[i]) && Type.isPoint(parents[i]()) ) {
                     points[i] = parents[i]();
                 // point i given by point name
                 } else if (Type.isString(parents[i])) {

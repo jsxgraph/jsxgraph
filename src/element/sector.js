@@ -510,10 +510,11 @@ define([
         };
 
         /**
-         * deprecated
+         * @deprecated
          * @ignore
          */
         el.getRadius = function () {
+            JXG.deprecated('Sector.getRadius()', 'Sector.Radius()');
             return this.Radius();
         };
 
@@ -721,7 +722,8 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('angle', [p1, p2, p3]);
+     *     a = board.create('angle', [p1, p2, p3]),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * </pre><div id="a34151f9-bb26-480a-8d6e-9b8cbf789ae5" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -730,7 +732,8 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('angle', [p1, p2, p3]);
+     *     a = board.create('angle', [p1, p2, p3]),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * })();
      * </script><pre>
      *
@@ -746,6 +749,7 @@ define([
      *
      *  a1 = board.create('angle', [li1, li2, [5.5, 0], [4, 3]], { radius:1 }),
      *  a2 = board.create('angle', [li1, li2, 1, -1], { radius:2 });
+     *
      *
      * </pre><div id="3a667ddd-63dc-4594-b5f1-afac969b371f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
@@ -1097,6 +1101,13 @@ define([
             return new Coords(Const.COORDS_BY_USER, vec, this.board);
         };
 
+        /**
+         * Returns the value of the angle in Radians.
+         * @memberOf Angle.prototype
+         * @name Value
+         * @function
+         * @returns {Number} The angle value in Radians
+         */
         el.Value = function () {
             return Geometry.rad(this.point2, this.point1, this.point3);
         };
@@ -1118,7 +1129,7 @@ define([
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
      * @name NonReflexAngle
-     * @augments Sector
+     * @augments Angle
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -1130,7 +1141,8 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * </pre><div id="d0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1139,7 +1151,8 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2});
+     *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * })();
      * </script><pre>
      */
@@ -1148,6 +1161,7 @@ define([
 
         attributes.selection = 'minor';
         el = JXG.createAngle(board, parents, attributes);
+
         el.Value = function () {
             var v = Geometry.rad(this.point2, this.point1, this.point3);
             return (v < Math.PI) ? v : 2.0 * Math.PI - v;
@@ -1163,7 +1177,7 @@ define([
      * defines the radius, and a third point that defines the angle of the sector.
      * @pseudo
      * @name ReflexAngle
-     * @augments Sector
+     * @augments Angle
      * @constructor
      * @type Sector
      * @throws {Error} If the element cannot be constructed with the given parent objects an exception is thrown.
@@ -1175,16 +1189,18 @@ define([
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * </pre><div id="f2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
-     *   var board = JXG.JSXGraph.initBoard('f2a577f2-553d-4f9f-a895-2d6d4b8c60e8', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
+     * var board = JXG.JSXGraph.initBoard('f2a577f2-553d-4f9f-a895-2d6d4b8c60e8', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false}),
      *     p1 = board.create('point', [5.0, 3.0]),
      *     p2 = board.create('point', [1.0, 0.5]),
      *     p3 = board.create('point', [1.5, 5.0]),
      *
-     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2});
+     *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
+     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
      * })();
      * </script><pre>
      */
@@ -1193,6 +1209,7 @@ define([
 
         attributes.selection = 'major';
         el = JXG.createAngle(board, parents, attributes);
+
         el.Value = function () {
             var v = Geometry.rad(this.point2, this.point1, this.point3);
             return (v >= Math.PI) ? v : 2.0 * Math.PI - v;

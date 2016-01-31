@@ -389,7 +389,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
      * @returns {String} A 'rgb(r, g, b)' formatted string
      */
     JXG.hex2rgb = function (hex) {
-        return rgb2css(hex);
+        JXG.deprecated('JXG.hex2rgb()', 'JXG.rgb2css()');
+        return JXG.rgb2css(hex);
     };
 
     /**

@@ -601,7 +601,7 @@ define([
             // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
             if (this._setColor(el, 'stroke', 'fill') && !isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
                 if (el.visProp.fontsize) {
-                    if (typeof el.visProp.fontsize === 'function') {
+                    if (Type.isFunction(el.visProp.fontsize)) {
                         fs = el.visProp.fontsize();
                         context.font = (fs > 0 ? fs : 0) + 'px Arial';
                     } else {

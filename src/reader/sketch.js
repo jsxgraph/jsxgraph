@@ -72,7 +72,7 @@
             } else {
                 t = meta.unredo;
             }
-            
+
             for (i = 0; i <= t; i++) {
                 if (constr[i].type !== 0) {
                     try {
@@ -226,7 +226,7 @@
                     set_str += '<<minorHeight:0, majorHeight:10, insertTicks: true, ticksDistance: 1, drawLabels: true';
                     set_str += ', label: <<offset: [-4, -16], parse: false, display: "internal">>';
                     set_str += ', drawZero: false>>>>; ';
-                    
+
                     // y-axis
                     set_str += step.args.name[4] + ' = axis(' + step.args.name[0] + ', ' + step.args.name[2] + ') ';
                     set_str += '<<id: \'' + step.dest_sub_ids[4] + '\', name: \'' + step.args.name[4] + '\', ticks: ';
@@ -424,7 +424,7 @@
                         set_str += ', snapToGrid: false, snapToPoints: false';
                         set_str += '>>; ' + step.dest_id;
                         set_str += '.glide(' + step.src_ids[0] + '); ';
-                    } 
+                    }
                     set_str += step.dest_id + '.onPolygon = ' + !!step.args.onPolygon + ';';
 
                     if (!(step.args && step.args.undoIsEmpty)) {
@@ -702,7 +702,7 @@
                         }
 
                         set_str += 'point(' + str1.join(', ') + ') <<id: \'' + pid2 + '\', name: \'\', visible: true, ';
-                        set_str += 'layer: ' + JXG.Options.layer.line + ', size: 2, opacity: 0.2, ';
+                        set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, ';
                         set_str += 'snaptogrid: false, snaptopoints: false, priv: false>>; ';
                         reset_str = 'delete ' + pid2 + '; ' + reset_str;
                     } else {
@@ -919,7 +919,7 @@
                     set_str += ', hasInnerPoints: ' + JXG.Options.polygon.hasInnerPoints;
                     set_str += ', name: \'\'>>; ';
                     reset_str = 'delete ' + step.dest_id + '; ' + reset_str;
-                    
+
                     break;
 
                 case JXG.GENTYPE_SECTOR:
@@ -961,11 +961,14 @@
 
                 case JXG.GENTYPE_SLOPETRIANGLE:
                     // step.src_ids[0] may contain one or two parent elements.
-                    set_str = assign + 'slopetriangle(' + step.src_ids[0] + ') <<';
+                    set_str = assign + 'slopetriangle(' + step.src_ids.join(', ') + ') <<';
                     set_str += attrid + ' name: \'\',';
                     set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
-                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\'>>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\'>>,';
-                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\'>>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\'>>';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true >>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
+                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\', priv: true >>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\', priv: true >>';
+                    if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
+                        set_str += ', tangent: <<id: \'' + step.dest_sub_ids[2] + '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
+                    }
                     set_str += '>>;';
                     reset_str = 'delete ' + step.dest_id + '; ';
 
@@ -975,9 +978,9 @@
 
                     set_str = assign + step.args.plot_type + '(' + step.args.func;
 
-                    if (isNaN(step.args.a) || step.args.a == null)
+                    if (isNaN(step.args.a) || step.args.a === null || step.args.a === undefined)
                         step.args.a = "-infinity";
-                    if (isNaN(step.args.b) || step.args.b == null)
+                    if (isNaN(step.args.b) || step.args.b ===  null || step.args.b === undefined)
                         step.args.b = "infinity";
 
                     if (step.args.a != step.args.b)
@@ -1001,8 +1004,8 @@
                     set_str += 'baseline: <<id: \'';
                     set_str += step.dest_sub_ids[0] + '\', name: \'' + step.dest_sub_ids[0] + '\', priv: true>>, highline: <<id: \'';
                     set_str += step.dest_sub_ids[1] + '\', name: \'' + step.dest_sub_ids[1] + '\', priv: true>>, point1: <<id: \'';
-                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: true, frozen: true>>, point2: <<id: \'';
-                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: true, frozen: true>>, label: <<id: \'';
+                    set_str += step.dest_sub_ids[2] + '\', name: \'' + step.dest_sub_ids[2] + '\', priv: false, frozen: true>>, point2: <<id: \'';
+                    set_str += step.dest_sub_ids[3] + '\', name: \'' + step.dest_sub_ids[3] + '\', priv: false, frozen: true>>, label: <<id: \'';
                     set_str += step.dest_sub_ids[4] + '\', name: \'' + step.dest_sub_ids[4] + '\', priv: true>>';
                     set_str += ', name: \'' + step.args.name + '\'>>; ';
 
@@ -1057,7 +1060,7 @@
                         } else {
                             arr = this.generateJCode(step_log[step.args.steps[i]], board, step_log);
                         }
-                        
+
                         if (arr.length >= 3 && JXG.trim(arr[2]) !== '') {
                             set_str = arr[2] + set_str;
                         }
@@ -1180,12 +1183,12 @@
                     }
 
                     set_str += step.dest_sub_ids[1] + '.setRadius(function() { return ' + step.args.func + '; }); ';
-                    
+
                     for (j = 0; j < step.src_ids.length; j++) {
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[0] + '); ';
                         set_str += step.src_ids[j] + '.addChild(' + step.dest_sub_ids[1] + '); ';
                     }
-                    
+
                     if (step.args.migrate !== 0 && step.args.migrate !== -1) {
                         set_str += '$board.migratePoint(' + step.dest_sub_ids[0] + ', ' + step.args.migrate + '); ';
                     }
@@ -1203,7 +1206,7 @@
                     set_str += step.dest_sub_ids[0] + '\', name: \'\', withLabel: false>>; ';
                     set_str += 'parallelpoint(\'' + step.src_ids[0] + '\',\'' + step.src_ids[1] + '\',\'' + step.dest_sub_ids[0] + '\') <<id: \'' + step.dest_sub_ids[1];
                     set_str += '\', strokeColor: \'#888888\', visible: true, priv: false, name: \'\', ';
-                    set_str += 'layer: ' + JXG.Options.layer.line + ', size: 2, opacity: 0.2, withLabel: false>>; ';
+                    set_str += 'layer: ' + JXG.Options.layer.line + ', opacity: 0.2, withLabel: false>>; ';
                     set_str += 'arrow(\'' + step.dest_sub_ids[0] + '\',\'' + step.dest_sub_ids[1]  + '\') <<id: \'' + step.dest_sub_ids[2];
                     set_str += '\', strokeColor: \'#888888\', visible: true, name: \'\', withLabel: false>>; ';
 
@@ -1261,9 +1264,9 @@
                         if (JXG.exists(step.args.coords[0])) {
                             set_str = step.src_ids[0] + '.move([' + pn(step.args.coords[0].usrCoords[1]) + ', ';
                             set_str += pn(step.args.coords[0].usrCoords[2]) + ']); ';
-    
+
                             reset_str = step.src_ids[0] + '.move([' + step.args.xstart + ', ' + step.args.ystart + ']); ';
-                        } 
+                        }
                     }
 
                     break;

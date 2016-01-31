@@ -54,9 +54,8 @@
  */
 
 define([
-    'jxg', 'base/element', 'base/coords', 'base/constants', 'parser/geonext', 'math/geometry', 'math/statistics',
-    'utils/type', 'base/transformation', 'base/point'
-], function (JXG, GeometryElement, Coords, Const, GeonextParser, Geometry, Statistics, Type, Transform, Point) {
+    'jxg', 'base/element', 'base/coords', 'base/constants', 'parser/geonext', 'utils/type'
+], function (JXG, GeometryElement, Coords, Const, GeonextParser, Type) {
 
     "use strict";
 
@@ -298,7 +297,7 @@ define([
 
                 rsq = '((' + p1 + ')-(' + m1 + '))^2 + ((' + p2 + ')-(' + m2 + '))^2';
             } else if (this.method === "pointRadius") {
-                if (typeof this.radius === 'number') {
+                if (Type.isNumber(this.radius)) {
                     rsq = (this.radius * this.radius).toString();
                 }
             } else if (this.method === "pointLine") {
@@ -421,7 +420,7 @@ define([
          * @private
          */
         notifyParents: function (contentStr) {
-            if (typeof contentStr === 'string') {
+            if (Type.isString(contentStr)) {
                 GeonextParser.findDependencies(this, contentStr, this.board);
             }
         },
@@ -475,6 +474,7 @@ define([
          * @deprecated
          */
         getRadius: function () {
+            JXG.deprecated('Circle.getRadius()', 'Circle.Radius()');
             return this.Radius();
         },
 
@@ -651,12 +651,20 @@ define([
             return 1.0;
         },
 
+        /**
+         * Circle area
+         * @return {Number} area of the circle.
+         */
         Area: function () {
             var r = this.Radius();
 
             return r * r * Math.PI;
         },
 
+        /**
+         * Get bounding box of the circle.
+         * @return {Array} [x1, y1, x2, y2]
+         */
         bounds: function () {
             var uc = this.center.coords.usrCoords,
                 r = this.Radius();
@@ -664,8 +672,13 @@ define([
             return [uc[1] - r, uc[2] + r, uc[1] + r, uc[2] - r];
         },
 
+        /**
+         * Get data to construct this element. Data consists of the parent elements
+         * and static data like radius.
+         * @return {Array} data necessary to construct this element
+         */
         getParents: function() {
-            if (this.parents.length == 1) {  // i.e. this.method === 'pointRadius'
+            if (this.parents.length === 1) {  // i.e. this.method === 'pointRadius'
                 return this.parents.concat(this.radius);
             }
             return this.parents;
@@ -731,7 +744,7 @@ define([
 
         p = [];
         for (i = 0; i < parents.length; i++) {
-            if (Type.isPointType(parents[i], board)) {
+            if (Type.isPointType(board, parents[i])) {
                 p = p.concat(Type.providePoints(board, [parents[i]], attributes, 'circle', ['center']));
                 if (p[p.length - 1] === false) {
                     throw new Error('JSXGraph: Can\'t create circle from this type. Please provide a point type.');

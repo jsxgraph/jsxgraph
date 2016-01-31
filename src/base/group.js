@@ -45,8 +45,8 @@
  */
 
 define([
-    'jxg', 'base/constants', 'base/element', 'math/math', 'math/geometry', 'utils/type'
-], function (JXG, Const, GeometryElement, Mat, Geometry, Type) {
+    'jxg', 'base/constants', 'math/math', 'math/geometry', 'utils/type'
+], function (JXG, Const, Mat, Geometry, Type) {
 
     "use strict";
 
@@ -63,7 +63,7 @@ define([
      * @constructor
      */
     JXG.Group = function (board, id, name, objects, attributes) {
-        var number, objArray, i, obj, att;
+        var number, objArray, i, obj;
 
         this.board = board;
         this.objects = {};
@@ -167,7 +167,7 @@ define([
 
             len = par.length;
             for (i = 0; i < len; ++i) {
-                if (Type.isId(par[i])) {
+                if (Type.isId(this.board, par[i])) {
                     this.parents.push(par[i]);
                 } else if (Type.exists(par[i].id)) {
                     this.parents.push(par[i].id);
@@ -191,13 +191,21 @@ define([
         },
 
         /**
+         * List of the element ids resp. values used as parents in {@link JXG.Board#create}.
+         * @returns {Array}
+         */
+        getParents: function () {
+            return Type.isArray(this.parents) ? this.parents : [];
+        },
+
+        /**
          * Sends an update to all group members. This method is called from the points' coords object event listeners
          * and not by the board.
          * @param{JXG.GeometryElement} drag Element that caused the update.
          * @returns {JXG.Group} returns this group
          */
         update: function (drag) {
-            var el, actionCenter, desc, trans, s, sx, sy, alpha, t, center, obj = null;
+            var el, actionCenter, desc, s, sx, sy, alpha, t, center, obj = null;
 
             if (!this.needsUpdate) {
                 return this;
@@ -375,7 +383,7 @@ define([
          * Apply the transformation to all elements of the group
          */
         _update_apply_transformation: function (drag, t) {
-            var el, obj, tmpSnap;
+            var el, obj;
 
             for (el in this.objects) {
                 if (this.objects.hasOwnProperty(el)) {
@@ -646,7 +654,10 @@ define([
          * @deprecated
          * Use setAttribute
          */
-        setProperty: JXG.shortcut(JXG.Group.prototype, 'setAttribute'),
+        setProperty: function () {
+            JXG.deprecated('Group.setProperty', 'Group.setAttribute()');
+            this.setAttribute.apply(this, arguments);
+        },
 
         setAttribute: function () {
             var el;
@@ -897,7 +908,7 @@ define([
      *
      */
     JXG.createGroup = function (board, parents, attributes) {
-        var i, attr = Type.copyAttributes(attributes, board.options, 'group'),
+        var attr = Type.copyAttributes(attributes, board.options, 'group'),
             g = new JXG.Group(board, attr.id, attr.name, parents, attr);
 
         g.elType = 'group';

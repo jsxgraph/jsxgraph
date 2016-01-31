@@ -105,7 +105,9 @@ define([
         if (Type.isFunction(ticks)) {
             this.ticksFunction = ticks;
             throw new Error("Function arguments are no longer supported.");
-        } else if (Type.isArray(ticks)) {
+        }
+
+        if (Type.isArray(ticks)) {
             this.fixedTicks = ticks;
         } else {
             if (Math.abs(ticks) < Mat.eps || ticks < 0) {
@@ -116,22 +118,7 @@ define([
              * Ticks function:
              * determines the distance (in user units) of two major ticks
              */
-            this.ticksFunction = function () {
-                var delta, b, dist;
-
-                if (this.visProp.insertticks) {
-                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
-                    dist = b.upper - b.lower;
-                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
-                    if (dist <= 6 * delta) {
-                        delta *= 0.5;
-                    }
-                    return delta;
-                } else {
-                    // upto 0.99.1
-                    return ticks;
-                }
-            };
+            this.ticksFunction = this.makeTicksFunction(ticks);
 
             this.equidistant = true;
         }
@@ -181,6 +168,35 @@ define([
     JXG.Ticks.prototype = new GeometryElement();
 
     JXG.extend(JXG.Ticks.prototype, /** @lends JXG.Ticks.prototype */ {
+
+        /**
+         * Ticks function:
+         * determines the distance (in user units) of two major ticks.
+         * See above in constructor and in @see JXG.GeometryElement#setAttribute
+         *
+         * @private
+         * @param {Number} ticks Distance between two major ticks
+         * @returns {Function} returns method ticksFunction
+         */
+        makeTicksFunction: function (ticks) {
+            return function () {
+                var delta, b, dist;
+
+                if (this.visProp.insertticks) {
+                    b = this.getLowerAndUpperBounds(this.getZeroCoordinates(), 'ticksdistance');
+                    dist = b.upper - b.lower;
+                    delta = Math.pow(10, Math.floor(Math.log(0.6 * dist) / Math.LN10));
+                    if (dist <= 6 * delta) {
+                        delta *= 0.5;
+                    }
+                    return delta;
+                }
+
+                // upto 0.99.1:
+                return ticks;
+            };
+        },
+
         /**
          * Checks whether (x,y) is near the line.
          * @param {Number} x Coordinate in x direction, screen coordinates.
@@ -237,7 +253,7 @@ define([
          * @returns {JXG.Ticks} this element
          */
         setPositionDirectly: function (method, coords, oldcoords) {
-            var dx, dy, i,
+            var dx, dy,
                 c = new Coords(method, coords, this.board),
                 oldc = new Coords(method, oldcoords, this.board),
                 bb = this.board.getBoundingBox();
@@ -383,10 +399,10 @@ define([
          *
          * @param  {JXG.Coords} coordsZero
          * @return {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
-         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically 
+         *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically
          *              generate ticks. The second case is for drawing of the ticks.
          * @return {Object}     contains the lower and upper bounds
-         *                     
+         *
          * @private
          */
         getLowerAndUpperBounds: function (coordsZero, type) {
@@ -408,7 +424,7 @@ define([
             if (JXG.exists(type) || type === 'tickdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
-                Geometry.calcStraight(this.line, point1, point2);
+                Geometry.calcStraight(this.line, point1, point2, this.line.visProp.margin);
             } else {
                 // This function projects the corners of the board to the line.
                 // This is important for diagonal lines with infinite tick lines.
@@ -460,14 +476,16 @@ define([
          * @private
          */
         getDistanceFromZero: function (zero, point) {
-            var eps = Mat.eps * Mat.eps,
+            var eps = Mat.eps,
                 distance = zero.distance(Const.COORDS_BY_USER, point);
 
             // Establish sign
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
-                if (zero.usrCoords[1] - point.usrCoords[1] > eps ||
-                        (Math.abs(zero.usrCoords[1] - point.usrCoords[1]) < eps &&
+                if ((Mat.relDif(zero.usrCoords[1], point.usrCoords[1]) > eps &&
+                        zero.usrCoords[1] - point.usrCoords[1] > eps) ||
+                    (Mat.relDif(zero.usrCoords[2], point.usrCoords[2]) > eps &&
                         zero.usrCoords[2] - point.usrCoords[2] > eps)) {
+
                     distance *= -1;
                 }
             } else if (this.visProp.anchor === 'right') {
@@ -492,10 +510,6 @@ define([
          */
         generateEquidistantTicks: function (coordsZero, bounds) {
             var tickPosition,
-                // Point 1 of the line
-                p1 = this.line.point1,
-                // Point 2 of the line
-                p2 = this.line.point2,
                 // Calculate X and Y distance between two major ticks
                 deltas = this.getXandYdeltas(),
                 // Distance between two major ticks in user coordinates
@@ -552,14 +566,13 @@ define([
          */
         adjustTickDistance: function (ticksDelta, coordsZero, deltas) {
             var nx, ny, bounds,
-                distScr, dist,
+                distScr,
                 sgn = 1;
 
             bounds = this.getLowerAndUpperBounds(coordsZero, 'ticksdistance');
             nx = coordsZero.usrCoords[1] + deltas.x * ticksDelta;
             ny = coordsZero.usrCoords[2] + deltas.y * ticksDelta;
             distScr = coordsZero.distance(Const.COORDS_BY_SCREEN, new Coords(Const.COORDS_BY_USER, [nx, ny], this.board));
-            dist = bounds.upper - bounds.lower;
             while (distScr / (this.visProp.minorticks + 1) < this.minTicksDistance) {
                 if (sgn === 1) {
                     ticksDelta *= 2;
@@ -695,14 +708,13 @@ define([
          * @private
          */
         tickEndings: function (coords, major) {
-            var i, c, lineStdForm, intersection,
+            var c, lineStdForm, intersection,
                 dxs, dys,
-                s, style,
+                style,
                 cw = this.board.canvasWidth,
                 ch = this.board.canvasHeight,
                 x = [-1000 * cw, -1000 * ch],
                 y = [-1000 * cw, -1000 * ch],
-                count = 0,
                 isInsideCanvas = false;
 
             c = coords.scrCoords;
@@ -768,7 +780,7 @@ define([
 
                 labelText = value.toString();
                 if (this.visProp.useunicodeminus) {
-                    labelText = labelText.replace(/-/g, '\u2212'); 
+                    labelText = labelText.replace(/-/g, '\u2212');
                 }
 
                 // if value is Number
@@ -969,10 +981,10 @@ define([
         }
 
         // deprecated
-        if (typeof attr.generatelabelvalue === 'function') {
+        if (Type.isFunction(attr.generatelabelvalue)) {
             el.generateLabelText = attr.generatelabelvalue;
         }
-        if (typeof attr.generatelabeltext === 'function') {
+        if (Type.isFunction(attr.generatelabeltext)) {
             el.generateLabelText = attr.generatelabeltext;
         }
 
@@ -1029,6 +1041,8 @@ define([
 
         el = board.create('ticks', [parents[0], pos], attr);
         el.elType = 'hatch';
+
+        return el;
     };
 
     JXG.registerElement('ticks', JXG.createTicks);
