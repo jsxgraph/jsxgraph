@@ -100,8 +100,8 @@ docs: core core-min
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
 	# run node-jsdoc2
-	# $(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
-	$(JSDOCNEW) build src/loadjsxgraph.js src/$(FILELIST).js $(JSDOCNEWFLAGS)
+	$(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
+	#$(JSDOCNEW) build src/loadjsxgraph.js src/$(FILELIST).js $(JSDOCNEWFLAGS)
 
 	# zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/
