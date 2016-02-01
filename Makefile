@@ -5,6 +5,8 @@ REQUIREJS=./node_modules/.bin/r.js
 UGLIFYJS=./node_modules/.bin/uglifyjs
 JSDOC2=nodejs ./node_modules/.bin/jsdoc2
 #JSDOC2=nodejs ./node_modules/.bin/jsdoc
+JSDOCNEW=documentation
+
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
 JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar 
@@ -34,6 +36,8 @@ MKDIRFLAGS=-p
 RMFLAGS=-rf
 JSDOC2FLAGS=-v -p -t=$(JSDOC2TPL) -d=$(TMP)/docs
 #JSDOC2FLAGS=--verbose -p --template $(JSDOC2TPL) --destination $(TMP)/docs
+
+JSDOCNEWFLAGS=-f html -o tmp/docs/
 
 ZIPFLAGS=-r
 JSTESTPORT=4224
@@ -96,7 +100,8 @@ docs: core core-min
 	$(CP) $(JSDOC2PLG)/*.js ./node_modules/jsdoc2/app/plugins/
 
 	# run node-jsdoc2
-	$(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
+	# $(JSDOC2) $(JSDOC2FLAGS) src/loadjsxgraph.js src/$(FILELIST).js
+	$(JSDOCNEW) build src/loadjsxgraph.js src/$(FILELIST).js $(JSDOCNEWFLAGS)
 
 	# zip -r tmp/docs.zip tmp/docs/
 	$(CD) $(TMP) && $(ZIP) $(ZIPFLAGS) docs.zip docs/

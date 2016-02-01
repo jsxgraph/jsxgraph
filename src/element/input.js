@@ -50,7 +50,7 @@ define([
     "use strict";
 
     var priv = {
-            InputInputEventHandler: function () {
+            InputInputEventHandler: function (evt) {
                 this._value = this.rendNodeInput.value;
                 this.board.update();
             }
@@ -80,7 +80,7 @@ define([
      *  var input = board.create('input', [0, 1, 'sin(x)*x', 'f(x)='], {});
      *  var f = board.jc.snippet(input.Value(), true, 'x', false);
      *  var graph = board.create('functiongraph',[f,
-     *          function() {
+     *          function() {text:dsddfghj
      *            var c = new JXG.Coords(JXG.COORDS_BY_SCREEN,[0,0],board);
      *            return c.usrCoords[1];
      *          },
@@ -173,6 +173,8 @@ define([
         };
 
         Env.addEvent(t.rendNodeInput, 'input', priv.InputInputEventHandler, t);
+
+        //Env.addEvent(t.rendNodeInput, 'mousedown', function(evt) { evt.stopPropagation(); }, t);
 
         return t;
     };
