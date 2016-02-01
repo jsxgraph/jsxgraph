@@ -605,7 +605,8 @@ define([
             var node, z, level;
 
             if (element.visProp.display === 'html' && Env.isBrowser && this.type !== 'no') {
-                node = this.container.ownerDocument.createElement('div'); //createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
+                node = this.container.ownerDocument.createElement('div');
+                //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
 
                 node.className = element.visProp.cssclass;
@@ -615,7 +616,7 @@ define([
                    for HTML text.
 
                    But to allow interaction with the HTML elements (e.g. buttons) all such texts
-                   have to be in a single foreign object. The reason is foreign object habe to cover the
+                   have to be in a single foreign object. The reason is our foreign objects have to cover the
                    whole board and would block event bubbling.
                  */
                 level = element.visProp.layer;
@@ -679,9 +680,9 @@ define([
                             v = Math.floor(c);
                         }
 
-                        if (typeof window.devicePixelRatio !== 'undefined') {
-                            v *= window.devicePixelRatio;
-                        }
+                        //if (typeof window.devicePixelRatio !== 'undefined') {
+                            //v *= window.devicePixelRatio;
+                        //}
 
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                             if (el.visProp.anchorx === 'right') {
@@ -706,9 +707,9 @@ define([
                             v = Math.floor(c);
                         }
 
-                        if (typeof window.devicePixelRatio !== 'undefined') {
-                            v *= window.devicePixelRatio;
-                        }
+                        //if (typeof window.devicePixelRatio !== 'undefined') {
+                            //v *= window.devicePixelRatio;
+                        //}
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
                             if (el.visProp.anchory === 'bottom') {

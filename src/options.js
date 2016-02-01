@@ -3236,7 +3236,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: false,
+            externalHTML: true,
 
             /**
              * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative
