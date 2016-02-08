@@ -16,7 +16,7 @@ New Features
 * New attribute ignoredSnapToPoints   
 * New attribute for ticks: useUnicodeMinus (default true)
 * New board attribute "maxNameLength": Controls the maximum number of digits of automatic labels. 
-    Default reduced to 1 from 2
+    Default value reduced to 1 from 2
 * Allow shortened math syntax in Text.generateTerm() and in texts with &lt;value&rt;-tag
 * Better support for method bounds() for curves, texts and polygons
 * Allow gliders on polygons
