@@ -62,7 +62,7 @@ define({
         //'tests/unit/utils/event',
         //'tests/unit/utils/expect',
         'tests/unit/utils/type',
-        //'tests/unit/utils/uuid',
+        'tests/unit/utils/uuid',
         //'tests/unit/utils/xml',
         //'tests/unit/utils/zip',
     ],
