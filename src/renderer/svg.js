@@ -103,8 +103,6 @@ define([
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        //this.svgRoot.style.width = dim.width + 'px';
-        //this.svgRoot.style.height = dim.height + 'px';
         this.resize(dim.width, dim.height);
 
         //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
@@ -1193,8 +1191,6 @@ define([
                 svg, tmpImg, cv, ctx;
 
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            //svgRoot.setAttribute("width", board.canvasWidth);
-            //svgRoot.setAttribute("height", board.canvasHeight);
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             // In IE we have to remove the namespace again.
