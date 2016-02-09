@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2015
+    Copyright 2008-2016
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -4262,7 +4262,7 @@ define([
          * board.on('stopselecting', function(){
          *     var box = board.stopSelectionMode(),
          *
-         *         // bbox has the coordinates of the selectionr rectangle.
+         *         // bbox has the coordinates of the selection rectangle.
          *         // Attention: box[i].usrCoords have the form [1, x, y], i.e.
          *         // are homogeneous coordinates.
          *         bbox = box[0].usrCoords.slice(1).concat(box[1].usrCoords.slice(1));
@@ -4302,7 +4302,7 @@ define([
          *     board.on('stopselecting', function(){
          *         var box = board.stopSelectionMode(),
          *
-         *             // bbox has the coordinates of the selectionr rectangle.
+         *             // bbox has the coordinates of the selection rectangle.
          *             // Attention: box[i].usrCoords have the form [1, x, y], i.e.
          *             // are homogeneous coordinates.
          *             bbox = box[0].usrCoords.slice(1).concat(box[1].usrCoords.slice(1));

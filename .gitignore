@@ -9,3 +9,4 @@ doc/jsdoc-tk/template/static/jsxgraphcore.js
 doc/jsdoc-tk/template/static/jsxgraph.css
 *.sublime-*
 .idea/
+html-report/

@@ -257,7 +257,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         var color_string, channels, re, processor, bits, i,
             r, g, b,
             values = color,
-            testFloat = false;
+            testFloat;
 
         if (!Type.exists(color)) {
             return [];
@@ -269,6 +269,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         color_string = values;
 
+        testFloat = false;
         if (Type.isArray(color_string)) {
             for (i = 0; i < 3; i++) {
                 testFloat = testFloat || /\./.test(values[i].toString());

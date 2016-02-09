@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2015
+    Copyright 2008-2016
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -103,8 +103,7 @@ define([
         this.svgRoot = this.container.ownerDocument.createElementNS(this.svgNamespace, "svg");
         this.svgRoot.style.overflow = 'hidden';
 
-        this.svgRoot.style.width = dim.width + 'px';
-        this.svgRoot.style.height = dim.height + 'px';
+        this.resize(dim.width, dim.height);
 
         //this.svgRoot.setAttributeNS(null, 'shape-rendering', 'crispEdge'); //'optimizeQuality'); //geometricPrecision');
 
@@ -1102,6 +1101,8 @@ define([
         resize: function (w, h) {
             this.svgRoot.style.width = parseFloat(w) + 'px';
             this.svgRoot.style.height = parseFloat(h) + 'px';
+            this.svgRoot.setAttribute("width", parseFloat(w));
+            this.svgRoot.setAttribute("height", parseFloat(h));
         },
 
         // documented in JXG.AbstractRenderer
@@ -1190,8 +1191,6 @@ define([
                 svg, tmpImg, cv, ctx;
 
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            svgRoot.setAttribute("width", board.canvasWidth);
-            svgRoot.setAttribute("height", board.canvasHeight);
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             // In IE we have to remove the namespace again.
