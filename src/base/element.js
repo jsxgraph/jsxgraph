@@ -487,7 +487,7 @@ define([
          * @param {JXG.GeometryElement} obj The dependent object.
          */
         removeChild: function (obj) {
-            var el, el2;
+            //var el, el2;
 
             delete this.childElements[obj.id];
             this.removeDescendants(obj);
@@ -1611,7 +1611,8 @@ define([
          */
         handleSnapToGrid: function (force) {
             var x, y, ticks,
-                i, len, g, el, p, boardBB,
+                //i, len, g, el, p, 
+                boardBB,
                 needsSnapToGrid = false,
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;

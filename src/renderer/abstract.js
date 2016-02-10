@@ -183,8 +183,6 @@ define([
          * @private
          */
         _updateVisual: function (element, not, enhanced) {
-            var rgbo;
-
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
@@ -679,9 +677,10 @@ define([
                             v = Math.floor(c);
                         }
 
-                        if (typeof window.devicePixelRatio !== 'undefined') {
-                            v *= window.devicePixelRatio;
-                        }
+                        // This may be useful for foreignObj.
+                        //if (window.devicePixelRatio !== undefined) {
+                        //v *= window.devicePixelRatio;
+                        //}
 
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
                             if (el.visProp.anchorx === 'right') {
@@ -706,9 +705,10 @@ define([
                             v = Math.floor(c);
                         }
 
-                        if (typeof window.devicePixelRatio !== 'undefined') {
-                            v *= window.devicePixelRatio;
-                        }
+                        // This may be useful for foreignObj.
+                        //if (window.devicePixelRatio !== undefined) {
+                        //v *= window.devicePixelRatio;
+                        //}
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
                             if (el.visProp.anchory === 'bottom') {
