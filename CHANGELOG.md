@@ -1,3 +1,86 @@
+0.99.4
+====
+
+Important Notes
+---------------
+
+New Features
+------------
+* Allow gradients for polygons
+* Improved dragging of images and texts
+* More numerical routines for integration:
+    - Romberg
+    - QUADPACK routines
+    - Gauss-Legendre
+* Docs for transformations
+* New attribute ignoredSnapToPoints   
+* New attribute for ticks: useUnicodeMinus (default true)
+* New board attribute "maxNameLength": Controls the maximum number of digits of automatic labels. 
+    Default value reduced to 1 from 2
+* Allow shortened math syntax in Text.generateTerm() and in texts with &lt;value&rt;-tag
+* Better support for method bounds() for curves, texts and polygons
+* Allow gliders on polygons
+* New methods setMax() and setMin() for sliders.
+* Extend riemannsum to two function graphs
+* Introduce Boolean attribute "disabled" for button, checkbox and input
+* Improved dump methods:  toJessie() and toJavaScript()
+* New method: intersection of two convex polygons. Algorithm by Sutherland-Hodgman
+* Board selection mode: Allow a graph to be in a selectionMode by calling the function board.startSelectionMode(). 
+  Once in this mode, the mouse allow to draw a rectangle selection on the board. 
+  Ideally, other mouse action, such as moving a point should be disabled. 
+  To stop selectingMode, the function board.stopSelectionMode() must be called. 
+  At any time, board.selectingBox gives mouse coordinates of the selection. 
+* First implementation of texts as foreignObjects in SVG with attribute externalHTML:false
+* New method "dumpToCanvas()" for the SVG renderer
+* New construction variant for slope triangle based on just one glider.
+* Introduce property margin for lines. Controls where infinite lines end.
+* Allow arbitrary size units in moodle plugin.
+* New function JXG.Math.sign()
+* New function JXG.Math.gcd()
+* Improved function plotting. Logarithmic curves should reach to the boundary of the canvas now, i.e.
+  improved plotting of asymptotes.
+* Update JessieCode parser
+* New function JXG.Math.relDif() computes the relative difference between two numbers
+* New board attributes: zoom.min and zoom.max. This attributes allow to limit the zoom factors. 
+  zoom.min limits zoomOut (click on -) and zoom.max limits zoomIn (click on +). 
+  zoom.min supersedes zoom.eps whis is deprecated. zoom.min defaults to 0.0001 and zooom.max to 10000.0.
+* Improve plot quality of low-quality-mode function plotting.
+* Use linear interpolation for animation. If interpolation is set to false in moveAlong() linear interpolation is used.
+
+Bug fixes
+---------
+* IE bug with innerhtml
+* Intersection of curve with line
+* GGB reader
+* SnapToGrid
+* Bug fix: setLabel, label for integral
+* Ticks
+* Bug fix: X() and Y() of hyperbola
+* Bug fix: animation callback is not executed
+* Handling of frozen elements: allow frozen elements to be draggable
+* Bug fix: Value() method for reflexangle and nonreflexangle
+* Bug fix: deepCopy
+* Make pointer events more stable
+* Bug fix: signedPolygon
+* Improved isPoint()
+* Enable polygons with no vertices
+* Add mouse wheel support to devices which support pointer events.
+* Fix hatch marks
+* Bug fix: dragging curves on touch devices.
+* Bug fix font-size of input and button elements.
+* Bug fix: slider.setValue()
+* Bug fix: exclude the border-width when the reading the dimension of the canvas.
+* Increase precision in root finding.
+* fixed return value of deprecated function Board.createElement
+* Bug fix: glider on undefined line. If one of the defining points is undefined the glider will disappear now.
+* Fixed grid so that fractional upper and lower bounds of the grid (fractions of gridX and gridY) arent rounded to the nearest multiple of gridX and gridY.
+* Bug fix: removeObject(turtle)
+* Bug fix projectCoordToCurve
+* Bug fixes for renderer='no'
+
+Improved docs, unit tests
+
+
 0.99.3
 ====
 

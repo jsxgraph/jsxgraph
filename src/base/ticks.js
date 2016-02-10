@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2015
+    Copyright 2008-2016
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -779,9 +779,6 @@ define([
                 }
 
                 labelText = value.toString();
-                if (this.visProp.useunicodeminus) {
-                    labelText = labelText.replace(/-/g, '\u2212');
-                }
 
                 // if value is Number
                 if (Type.isNumber(value)) {
@@ -805,6 +802,11 @@ define([
                         labelText = labelText + this.visProp.scalesymbol;
                     }
                 }
+
+                if (this.visProp.useunicodeminus) {
+                    labelText = labelText.replace(/-/g, '\u2212');
+                }
+                
             }
 
             return labelText;

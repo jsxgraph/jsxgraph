@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2015
+    Copyright 2008-2016
         Matthias Ehmann,
         Michael Gerhaeuser,
         Carsten Miller,
@@ -183,8 +183,6 @@ define([
          * @private
          */
         _updateVisual: function (element, not, enhanced) {
-            var rgbo;
-
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
@@ -680,8 +678,14 @@ define([
                             v = Math.floor(c);
                         }
 
+<<<<<<< HEAD
                         //if (typeof window.devicePixelRatio !== 'undefined') {
                             //v *= window.devicePixelRatio;
+=======
+                        // This may be useful for foreignObj.
+                        //if (window.devicePixelRatio !== undefined) {
+                        //v *= window.devicePixelRatio;
+>>>>>>> tests
                         //}
 
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
@@ -707,8 +711,14 @@ define([
                             v = Math.floor(c);
                         }
 
+<<<<<<< HEAD
                         //if (typeof window.devicePixelRatio !== 'undefined') {
                             //v *= window.devicePixelRatio;
+=======
+                        // This may be useful for foreignObj.
+                        //if (window.devicePixelRatio !== undefined) {
+                        //v *= window.devicePixelRatio;
+>>>>>>> tests
                         //}
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {

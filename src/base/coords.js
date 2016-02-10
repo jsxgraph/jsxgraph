@@ -238,7 +238,7 @@ define([
         *   typed array.
         */
         copy: function (obj, offset) {
-            if (typeof offset === 'undefined') {
+            if (offset === undefined) {
                 offset = 0;
             }
 
