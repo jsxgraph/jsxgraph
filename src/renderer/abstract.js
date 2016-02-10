@@ -678,14 +678,9 @@ define([
                             v = Math.floor(c);
                         }
 
-<<<<<<< HEAD
-                        //if (typeof window.devicePixelRatio !== 'undefined') {
-                            //v *= window.devicePixelRatio;
-=======
                         // This may be useful for foreignObj.
                         //if (window.devicePixelRatio !== undefined) {
                         //v *= window.devicePixelRatio;
->>>>>>> tests
                         //}
 
                         if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
@@ -711,14 +706,9 @@ define([
                             v = Math.floor(c);
                         }
 
-<<<<<<< HEAD
-                        //if (typeof window.devicePixelRatio !== 'undefined') {
-                            //v *= window.devicePixelRatio;
-=======
                         // This may be useful for foreignObj.
                         //if (window.devicePixelRatio !== undefined) {
                         //v *= window.devicePixelRatio;
->>>>>>> tests
                         //}
 
                         if (el.visPropOld.top !== (el.visProp.anchory + v)) {
