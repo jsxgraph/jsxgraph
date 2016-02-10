@@ -729,7 +729,7 @@ define([
      * </pre><div id="54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function() {
-     * var cex1_board = JXG.JSXGraph.initBoard('54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
+     * var board = JXG.JSXGraph.initBoard('54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
      * var p1 = board.create('point', [2.0, 2.0]);
      * var c1 = board.create('circle', [p1, 3]);
      *
