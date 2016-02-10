@@ -1147,6 +1147,7 @@ define([
                     offset: [4, -12 + 3],     // This seems to be a good offset for 12 point fonts
                     parse: false,
                     needsRegularUpdate: false,
+                    display: 'internal',
                     layer: 9
                 },
                 needsRegularUpdate: false,
