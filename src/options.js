@@ -1277,7 +1277,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: false
+            externalHTML: true
 
             /**#@-*/
         },
@@ -1325,7 +1325,7 @@ define([
              *
              * @type {Boolean}
              */
-            externalHTML: false
+            externalHTML: true
 
             /**#@-*/
         },
