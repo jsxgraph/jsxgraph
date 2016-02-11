@@ -918,7 +918,7 @@ define([
      * // The second point will be fixed and invisible.
      * var p1 = board.create('point', [4.5, 2.0]);
      * var l1 = board.create('line', [p1, [1.0, 1.0]]);
-     * </pre><div id="c0ae3461-10c4-4d39-b9be-81d74759d122" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="c0ae3461-10c4-4d39-b9be-81d74759d122" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var glex1_board = JXG.JSXGraph.initBoard('c0ae3461-10c4-4d39-b9be-81d74759d122', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var glex1_p1 = glex1_board.create('point', [4.5, 2.0]);
@@ -927,7 +927,7 @@ define([
      * @example
      * // Create a line using three coordinates
      * var l1 = board.create('line', [1.0, -2.0, 3.0]);
-     * </pre><div id="cf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="cf45e462-f964-4ba4-be3a-c9db94e2593f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var glex2_board = JXG.JSXGraph.initBoard('cf45e462-f964-4ba4-be3a-c9db94e2593f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var glex2_l1 = glex2_board.create('line', [1.0, -2.0, 3.0]);
@@ -1151,7 +1151,7 @@ define([
      *   var p1 = board.create('point', [4.5, 2.0]);
      *   var p2 = board.create('point', [1.0, 1.0]);
      *   var l1 = board.create('segment', [p1, p2]);
-     * </pre><div id="d70e6aac-7c93-4525-a94c-a1820fa38e2f" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="d70e6aac-7c93-4525-a94c-a1820fa38e2f" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var slex1_board = JXG.JSXGraph.initBoard('d70e6aac-7c93-4525-a94c-a1820fa38e2f', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var slex1_p1 = slex1_board.create('point', [4.5, 2.0]);
@@ -1170,7 +1170,7 @@ define([
      *   var p5 = board.create('point', [4.0, 3.0]);
      *   var p6 = board.create('point', [1.0, 4.0]);
      *   var l3 = board.create('segment', [p5, p6, function(){ return l1.L();} ]);
-     * </pre><div id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="617336ba-0705-4b2b-a236-c87c28ef25be" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var slex2_board = JXG.JSXGraph.initBoard('617336ba-0705-4b2b-a236-c87c28ef25be', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var slex2_p1 = slex2_board.create('point', [4.0, 1.0]);
@@ -1245,7 +1245,7 @@ define([
      *   var p1 = board.create('point', [4.5, 2.0]);
      *   var p2 = board.create('point', [1.0, 1.0]);
      *   var l1 = board.create('arrow', [p1, p2]);
-     * </pre><div id="1d26bd22-7d6d-4018-b164-4c8bc8d22ccf" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="1d26bd22-7d6d-4018-b164-4c8bc8d22ccf" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var alex1_board = JXG.JSXGraph.initBoard('1d26bd22-7d6d-4018-b164-4c8bc8d22ccf', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var alex1_p1 = alex1_board.create('point', [4.5, 2.0]);
@@ -1285,7 +1285,7 @@ define([
      * @example
      * // Create an axis providing two coord pairs.
      *   var l1 = board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
-     * </pre><div id="4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="4f414733-624c-42e4-855c-11f5530383ae" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var axex1_board = JXG.JSXGraph.initBoard('4f414733-624c-42e4-855c-11f5530383ae', {boundingbox: [-1, 7, 7, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var axex1_l1 = axex1_board.create('axis', [[0.0, 1.0], [1.0, 1.3]]);
@@ -1359,7 +1359,7 @@ define([
      *   var c1 = board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
      *   var g1 = board.create('glider', [0.6, 1.2, c1]);
      *   var t1 = board.create('tangent', [g1]);
-     * </pre><div id="7b7233a0-f363-47dd-9df5-4018d0d17a98" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox"id="7b7233a0-f363-47dd-9df5-4018d0d17a98" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *   var tlex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-4018d0d17a98', {boundingbox: [-6, 6, 6, -6], axis: true, showcopyright: false, shownavigation: false});
      *   var tlex1_c1 = tlex1_board.create('curve', [function(t){return t},function(t){return t*t*t;}]);
@@ -1598,7 +1598,7 @@ define([
      *   var p4 = board.create('point', [8, 6]);
      *   var c2 = board.create('circle', [p3, p4]);
      *   var r1 = board.create('radicalaxis', [c1, c2]);
-     * </pre><div id='7b7233a0-f363-47dd-9df5-5018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * </pre><div class="jxgbox"id='7b7233a0-f363-47dd-9df5-5018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
      * <script type='text/javascript'>
      *   var rlex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-5018d0d17a98', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
      *   var rlex1_p1 = rlex1_board.create('point', [2, 3]);
@@ -1665,7 +1665,7 @@ define([
      * var c1 = board.create('conic',[p1,p2,p3,p4,p5]);
      * var p6 = board.create('point', [-1, 1]);
      * var l1 = board.create('polarline', [c1, p6]);
-     * </pre><div id='7b7233a0-f363-47dd-9df5-6018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * </pre><div class="jxgbox"id='7b7233a0-f363-47dd-9df5-6018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
      * <script type='text/javascript'>
      * var plex1_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-6018d0d17a98', {boundingbox: [-3, 5, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      * var plex1_p1 = plex1_board.create('point', [-1, 2]);
@@ -1684,7 +1684,7 @@ define([
      * var c1 = board.create('circle',[p1,p2]);
      * var p3 = board.create('point', [ 6, 6]);
      * var l1 = board.create('polarline', [c1, p3]);
-     * </pre><div id='7b7233a0-f363-47dd-9df5-7018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
+     * </pre><div class="jxgbox"id='7b7233a0-f363-47dd-9df5-7018d0d17a98' class='jxgbox' style='width:400px; height:400px;'></div>
      * <script type='text/javascript'>
      * var plex2_board = JXG.JSXGraph.initBoard('7b7233a0-f363-47dd-9df5-7018d0d17a98', {boundingbox: [-3, 7, 7, -3], axis: true, showcopyright: false, shownavigation: false});
      * var plex2_p1 = plex2_board.create('point', [ 1, 1]);

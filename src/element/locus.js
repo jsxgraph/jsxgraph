@@ -81,7 +81,7 @@ define([
      *  g2 = board.create('intersection', [c2,c3,0]);
      *  m1 = board.create('midpoint', [g1,g2]);
      *  loc = board.create('locus', [m1], {strokeColor: 'red'});
-     * </pre><div id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox"id="d45d7188-6624-4d6e-bebb-1efa2a305c8a" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  lcex_board = JXG.JSXGraph.initBoard('d45d7188-6624-4d6e-bebb-1efa2a305c8a', {boundingbox:[-4, 6, 10, -6], axis: true, grid: false, keepaspectratio: true});
      *  lcex_p1 = lcex_board.create('point', [0, 0]);

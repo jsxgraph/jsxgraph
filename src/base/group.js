@@ -703,7 +703,7 @@ define([
      *  p.push(board.create('point',[-2, 1], {size: 5, strokeColor:col, fillColor:col}));
      *  g = board.create('group', p);
      *
-     * </pre><div id="a2204533-db91-4af9-b720-70394de4d367" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="a2204533-db91-4af9-b720-70394de4d367" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, g;
@@ -737,7 +737,7 @@ define([
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p);
      *
-     * </pre><div id="781b5564-a671-4327-81c6-de915c8f924e" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="781b5564-a671-4327-81c6-de915c8f924e" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
@@ -771,7 +771,7 @@ define([
      *  g.setRotationCenter(p[0]);
      *  g.setRotationPoints([p[1], p[2]]);
      *
-     * </pre><div id="f0491b62-b377-42cb-b55c-4ef5374b39fc" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="f0491b62-b377-42cb-b55c-4ef5374b39fc" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
@@ -809,7 +809,7 @@ define([
      *  pol = board.create('polygon', p, {hasInnerPoints: true});
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[1], p[2]]);
      *
-     * </pre><div id="8785b099-a75e-4769-bfd8-47dd4376fe27" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="8785b099-a75e-4769-bfd8-47dd4376fe27" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
@@ -845,7 +845,7 @@ define([
      *  g = board.create('group', p).setRotationCenter('centroid').setRotationPoints([p[2]]);
      *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
      *
-     * </pre><div id="c3ca436b-e4fc-4de5-bab4-09790140c675" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="c3ca436b-e4fc-4de5-bab4-09790140c675" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, col, pol, g;
@@ -885,7 +885,7 @@ define([
      *  g.setScaleCenter(p[0]).setScalePoints(p[1]);
      *  g.removeTranslationPoint(q);
      *
-     * </pre><div id="d19b800a-57a9-4303-b49a-8f5b7a5488f0" style="width: 400px; height: 300px;"></div>
+     * </pre><div class="jxgbox"id="d19b800a-57a9-4303-b49a-8f5b7a5488f0" style="width: 400px; height: 300px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *  var board, p, q, col, pol, g;
