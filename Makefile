@@ -8,7 +8,7 @@ JSDOC2=nodejs ./node_modules/.bin/jsdoc2
 
 LINT=./node_modules/.bin/jslint
 HINT=./node_modules/.bin/jshint
-JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar 
+JSTESTDRIVER=java -jar ./node_modules/jstestdriver/lib/jstestdriver.jar
 INTERN=./node_modules/.bin/intern-client
 
 # general tools
@@ -69,7 +69,6 @@ core-amd:
 	$(REQUIREJS) -o $(BUILD)/core-amd.build.json
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-amd.js; } > $(BUILDBIN)/jsxgraphcore.amd.js
 
-
 release: core-min docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
@@ -105,14 +104,14 @@ docs: core core-min
 	$(CP) $(TMP)/docs.zip $(OUTPUT)/docs.zip
 
 	$(RM) $(RMFLAGS) tmp
-	
+
 	# Test
 	$(CD) $(OUTPUT) && $(UNZIP) -o docs.zip
 
-moodle: core core-min $(READERSOUT) 
+moodle: core core-min $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)/jsxgraph
-	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js	
+	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(TMP)/jsxgraph/jsxgraphcore.js
 	$(CP) distrib/jsxgraph.css $(TMP)/jsxgraph/jsxgraph.css
 	$(CP) plugins/moodle/moodle2/*.php $(TMP)/jsxgraph/
 	$(CP) plugins/moodle/moodle2/styles.css $(TMP)/jsxgraph/
@@ -126,7 +125,7 @@ moodle: core core-min $(READERSOUT)
 
 	$(RM) $(RMFLAGS) tmp
 
-readers: $(READERSOUT) 
+readers: $(READERSOUT)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
 	$(CP) $(BUILDREADERS)/* $(OUTPUT)
 

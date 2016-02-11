@@ -1,9 +1,6 @@
 0.99.4
 ====
 
-Important Notes
----------------
-
 New Features
 ------------
 * Allow gradients for polygons
@@ -13,36 +10,29 @@ New Features
     - QUADPACK routines
     - Gauss-Legendre
 * Docs for transformations
-* New attribute ignoredSnapToPoints   
-* New attribute for ticks: useUnicodeMinus (default true)
-* New board attribute "maxNameLength": Controls the maximum number of digits of automatic labels. 
-    Default value reduced to 1 from 2
-* Allow shortened math syntax in Text.generateTerm() and in texts with &lt;value&rt;-tag
-* Better support for method bounds() for curves, texts and polygons
+* New attribute `ignoredSnapToPoints`   
+* New attribute for ticks: `useUnicodeMinus` (default true)
+* New board attribute `maxNameLength`: Controls the maximum number of digits of automatic labels. The default value has been reduced from 2 to 1
+* Allow shortened math syntax in `Text.generateTerm()` and in texts with &lt;value&rt;-tag
+* Better support for the method `bounds()` for curves, texts and polygons
 * Allow gliders on polygons
-* New methods setMax() and setMin() for sliders.
-* Extend riemannsum to two function graphs
-* Introduce Boolean attribute "disabled" for button, checkbox and input
-* Improved dump methods:  toJessie() and toJavaScript()
-* New method: intersection of two convex polygons. Algorithm by Sutherland-Hodgman
-* Board selection mode: Allow a graph to be in a selectionMode by calling the function board.startSelectionMode(). 
-  Once in this mode, the mouse allow to draw a rectangle selection on the board. 
-  Ideally, other mouse action, such as moving a point should be disabled. 
-  To stop selectingMode, the function board.stopSelectionMode() must be called. 
-  At any time, board.selectingBox gives mouse coordinates of the selection. 
-* First implementation of texts as foreignObjects in SVG with attribute externalHTML:false
-* New method "dumpToCanvas()" for the SVG renderer
+* New methods `setMax()` and `setMin()` for sliders.
+* Extend `riemannsum` to two function graphs
+* Introduce Boolean attribute `disabled` for button, checkbox and input
+* Improved dump methods: `toJessie()` and `toJavaScript()`
+* New method: intersection of two convex polygons with the algorithm by Sutherland-Hodgman
+* Board selection mode: Allow a graph to be in a `selectionMode` by calling the function `board.startSelectionMode()`. Once in this mode, the mouse allow to draw a rectangle selection on the board. To stop selectingMode, the function board.stopSelectionMode() must be called.
+* First implementation of texts as `foreignObjects` in SVG with attribute `externalHTML:false`
+* New method `dumpToCanvas()` for the SVG renderer
 * New construction variant for slope triangle based on just one glider.
 * Introduce property margin for lines. Controls where infinite lines end.
 * Allow arbitrary size units in moodle plugin.
-* New function JXG.Math.sign()
-* New function JXG.Math.gcd()
-* Improved function plotting. Logarithmic curves should reach to the boundary of the canvas now, i.e.
-  improved plotting of asymptotes.
-* Update JessieCode parser
+* New functions JXG.Math.sign(), JXG.Math.gcd()
 * New function JXG.Math.relDif() computes the relative difference between two numbers
-* New board attributes: zoom.min and zoom.max. This attributes allow to limit the zoom factors. 
-  zoom.min limits zoomOut (click on -) and zoom.max limits zoomIn (click on +). 
+* Improved function plotting. Logarithmic curves should reach to the boundary of the canvas now, i.e. improved plotting of asymptotes.
+* Update JessieCode parser
+* New board attributes: zoom.min and zoom.max. This attributes allow to limit the zoom factors.
+  zoom.min limits zoomOut (click on -) and zoom.max limits zoomIn (click on +).
   zoom.min supersedes zoom.eps whis is deprecated. zoom.min defaults to 0.0001 and zooom.max to 10000.0.
 * Improve plot quality of low-quality-mode function plotting.
 * Use linear interpolation for animation. If interpolation is set to false in moveAlong() linear interpolation is used.
@@ -54,7 +44,7 @@ Bug fixes
 * GGB reader
 * SnapToGrid
 * Bug fix: setLabel, label for integral
-* Ticks
+* Improved ticks
 * Bug fix: X() and Y() of hyperbola
 * Bug fix: animation callback is not executed
 * Handling of frozen elements: allow frozen elements to be draggable
@@ -86,20 +76,20 @@ Improved docs, unit tests
 
 Important Notes
 ---------------
-* The property glider.position for gliders on circular objects like arcs and circles was changed 
-  from radians to relative values between 0 and 1. 
-  This may result in a different behaviour of gliders on arcs. If you need the previous 
+* The property glider.position for gliders on circular objects like arcs and circles was changed
+  from radians to relative values between 0 and 1.
+  This may result in a different behaviour of gliders on arcs. If you need the previous
   mode, you have to set isGeonext:true as attribute.
 
 New Features
 ------------
-* This release contains the first steps of unifying the handling of elements 
-  defined by one coordinate, namely 
+* This release contains the first steps of unifying the handling of elements
+  defined by one coordinate, namely
   points, texts and images. At this point, all these elements allow the same construction methods
   and allow to be bound to an anchor element.
 * Improved dragging of texts and images
-* Much more complete docs. For example, all board attributes are now documented. 
-  
+* Much more complete docs. For example, all board attributes are now documented.
+
 Bug fixes
 ---------
 * Fix visibility of texts with coordinates defined by functions, e.g. slider labels.
@@ -130,16 +120,16 @@ New Features
  * New function log(x, b) in JessieCode (acc263dd)
  * New method for points: makeIntersection() (93f25574)
  * New method boundingBox() for polygons (23ee2d67)
- * Every element which accepts a point as parent element, now also accepts 
-   a coordinate array or a function returning a coordinate array as parent element. 
+ * Every element which accepts a point as parent element, now also accepts
+   a coordinate array or a function returning a coordinate array as parent element.
    An invisible point having these coordiantes will be constructed. (aa9e4738)
  * Major speed up function graphs (a150405e, 13c3086c)
  * Improved automatic ticks positioning for axes and lines (4a44a516)
  * Enable dragging of sectors defined by three points (d00aec2b)
  * Groups: Allow manipulations of group by translation, rotation and scaling.
- 
+
    New group methods setRotationCenter(), setScaleCenter(), setRotationPoints(), addRotationPoint(),
-   removeRotationPoint(), setScalePoints(), addScalePoint(), removeScalePoint(), 
+   removeRotationPoint(), setScalePoints(), addScalePoint(), removeScalePoint(),
    setTranslationPoints(), addTranslationPoint(), removeTranslationPoint() (d21cb9b6)
  * Add arc as a subobject to sectors (82a7002a)
  * Improved docs (e9eaeed7)
@@ -148,8 +138,8 @@ New Features
  * Introduce new elementClass OBJECT_CLASS_TEXT (49638421)
  * New generic method addParents() for GeometryElement (152ee279)
  * Enable dragging of curves (152ee279)
- 
- 
+
+
 Bug fixes
 ---------
  * Rotation of parabola based on a line defined by an ideal point (f6840b0)
@@ -180,7 +170,7 @@ Bug fixes
  * Ignore touch move events triggered outside the board (8a7e22e8)
  * Intersections involving circles with NaN radius (31d2900c)
  * Circumcircle of colinear points has wrong intersections (0998a284)
- 
+
 0.99.1
 ====
 
@@ -194,7 +184,7 @@ Bug fixes
 
 Important Notes
 ---------------
- * This release contains a completely new plotting algorithm for function graphs and curves. 
+ * This release contains a completely new plotting algorithm for function graphs and curves.
    If one wants to use the plotting algorithm of version 0.98, the attribute doAdvancedPlotOld:true
    can be supplied.
 
@@ -213,8 +203,8 @@ New Features
  * New method for GeometryElement: setName() (9c6009c07)
  * Speed improvements for text elements
  * Improved positioning of text elements (39c6be44)
- 
- 
+
+
 Bug fixes
 ---------
  * Fix and update documentation (9ec97a5)
@@ -248,10 +238,10 @@ Bug fixes
  * Bug fixes IE8 (eeeb0395d29)
  * Fix UTF8.decode() (5bb5dd66)
  * Fix text content parsing (ce157f194)
- 
- 
- 
- 
+
+
+
+
 0.98
 ====
 
