@@ -1,9 +1,47 @@
 /* default.css */
+
+/*
 body
 {
 	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
-	width: 800px;
 }
+*/
+
+/* ----------------------- */
+.jxgbox {
+    border-color: #DDDDDD;
+    background-color: #f5f5f5;
+}
+
+body {
+  font-family: 'Lora', 'Times New Roman', serif;
+  color: #404040;
+  position: relative;
+  background: #FFF;
+  width: 800px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 800;
+}
+
+p {
+  line-height: 1.5;
+  margin: 30px 0;
+}
+
+/* ----------------------- */
+
+#header h1 {
+    font-size: 2.5em; 
+    background-image:url(static/logo.png); 
+    background-repeat:no-repeat;
+    height: 72px;
+    padding-left: 84px;
+}
+
+
 
 .header
 {
@@ -15,7 +53,7 @@ body
 h1
 {
 	font-size: 150%;
-	font-weight: bold;
+	/*font-weight: bold;*/
 	padding: 0;
 	margin: 1em 0 0 .3em;
 }
@@ -47,8 +85,8 @@ pre.code
 
 #content
 {
-	margin-left: 250px;
-	width: 600px;
+	margin-left: 260px;
+	width: 800px;
 }
 
 .classList
@@ -107,7 +145,7 @@ div.sectionTitle { margin-bottom: 8px; }
 
 td.attributes, .fixedFont
 {
-	line-height: 15px;
+	line-height: 1.5;
 	color: #002EBE;
 	font-family: "Courier New",Courier,monospace;
 	font-size: 13px;
@@ -117,12 +155,12 @@ td.attributes, .fixedFont
 {
 	text-align: left;
 	font-size: 13px;
-	line-height: 15px;
+	line-height: 1.5;
 }
 
 .summaryTable td.nameDescription, .description
 {
-	line-height: 15px;
+	line-height: 1.5;
 	padding: 4px;
 	padding-left: 4px;
 }
@@ -138,7 +176,7 @@ ul.inheritsList
 
 .detailList {
 	margin-left: 20px; 
-	line-height: 15px;
+	line-height: 1.5;
 }
 .detailList dt { margin-left: 20px; }
 
