@@ -2,7 +2,7 @@
     "name": "JSXGraph",
     "description": "Interactive geometry, plotting, visualization",
     "homepage": "http://jsxgraph.org",
-    "version": "0.98.0",
+    "version": "0.99.4",
 
     "maintainers": [{
         "name": "Alfred Wassermann",
