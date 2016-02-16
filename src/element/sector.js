@@ -402,6 +402,12 @@ define([
                 alpha = 0;
                 beta = Geometry.rad(this.point2, this.center, this.point3);
 
+                if ((this.visProp.selection === 'minor' && beta > Math.PI) ||
+                        (this.visProp.selection === 'major' && beta < Math.PI)) {
+                    alpha = beta;
+                    beta = 2 * Math.PI;
+                }
+
                 if (angle < alpha || angle > beta) {
                     has = false;
                 }
