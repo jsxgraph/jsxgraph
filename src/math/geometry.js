@@ -1559,8 +1559,8 @@ define([
                 red1, red2, blue1, blue2, m,
                 minX, maxX,
                 iFound = 0,
-                lenBlue = blue.points.length,
-                lenRed = red.points.length;
+                lenBlue = blue.numberPoints, //points.length,
+                lenRed = red.numberPoints; //points.length;
 
             if (lenBlue <= 1 || lenRed <= 1) {
                 return [0, NaN, NaN];
@@ -1866,8 +1866,8 @@ define([
             var p, i, j,
                 redArr, blueArr,
                 bbr, bbb,
-                lenBlue = blue.points.length,
-                lenRed = red.points.length,
+                lenBlue = blue.numberPoints, //points.length,
+                lenRed = red.numberPoints, // points.length,
                 L = [];
 
             if (lenBlue < 4 || lenRed < 4) {
