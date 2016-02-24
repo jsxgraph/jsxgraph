@@ -1333,7 +1333,7 @@ define([
 
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
-                twoFingersCondition = (touches.length === 2 && Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 80),
+                twoFingersCondition = (touches.length === 2 && Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 120),
                 r = this.attr.pan.enabled && (!this.attr.pan.needtwofingers || twoFingersCondition),
                 pos;
 
@@ -1577,7 +1577,8 @@ define([
         gestureChangeListener: function (evt) {
             var c,
                 zx = this.attr.zoom.factorx,
-                zy = this.attr.zoom.factory;
+                zy = this.attr.zoom.factory,
+                dist;
 
             if (!this.attr.zoom.wheel) {
                 return true;
@@ -1586,8 +1587,16 @@ define([
             evt.preventDefault();
 
             if (this.mode === this.BOARD_MODE_ZOOM) {
-                c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt), this);
+                c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
 
+                if (evt.scale === undefined) {
+                    // Android pinch to zoom
+                    dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                                    [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+
+                    // evt.scale is undefined in Android
+                    evt.scale = dist / this.prevDist;
+                }
                 this.attr.zoom.factorx = evt.scale / this.prevScale;
                 this.attr.zoom.factory = evt.scale / this.prevScale;
 
@@ -1615,10 +1624,15 @@ define([
             evt.preventDefault();
             this.prevScale = 1;
 
+            // Android pinch to zoom
+            if (evt.scale === undefined) {
+                this.prevDist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                                [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+            }
+
             if (this.mode === this.BOARD_MODE_NONE) {
                 this.mode = this.BOARD_MODE_ZOOM;
             }
-
             return false;
         },
 
@@ -2024,7 +2038,7 @@ define([
 
                     pos = this.getMousePosition(evt, i);
                     // selection
-                    // this._testForSelection(evt); // we do not have shuft or ctrl keys yet.
+                    // this._testForSelection(evt); // we do not have shift or ctrl keys yet.
                     if (this.selectingMode) {
                         this._startSelecting(pos);
                         this.triggerEventHandlers(['touchstartselecting', 'startselecting'], [evt]);
@@ -2058,7 +2072,7 @@ define([
                                 obj.type === Const.OBJECT_TYPE_POLYGON) {
                             found = false;
 
-                            // first check if this geometric object is already capture in this.touches
+                            // first check if this geometric object is already captured in this.touches
                             for (j = 0; j < this.touches.length; j++) {
                                 if (obj.id === this.touches[j].obj.id) {
                                     found = true;
@@ -2102,6 +2116,11 @@ define([
             if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
                 this.triggerEventHandlers(['touchstart', 'down'], [evt]);
                 return false;
+            }
+
+            if (this.mode === this.BOARD_MODE_NONE && evtTouches.length == 2) {
+                this.gestureStartListener(evt);
+                this.hasGestureHandlers = true;
             }
 
             if (Env.isWebkitAndroid()) {
@@ -2195,6 +2214,10 @@ define([
                                     this.twoFingerMove(pos1, pos2, this.touches[i], evt);
                                 }
                             }
+                        }
+                    } else {
+                        if (evtTouches.length == 2) {
+                            this.gestureChangeListener(evt);
                         }
                     }
                 }
