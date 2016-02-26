@@ -325,7 +325,7 @@ define([
      * parent elements are given they will be interpreted as homogeneous coordinates.
      * @param {JXG.Point_JXG.Transformation_Array} Point,Transformation A point can also be created providing a transformation or an array of transformations.
      * The resulting point is a clone of the base point transformed by the given Transformation. {@see JXG.Transformation}.
-     * 
+     *
      * @example
      * // Create a free point using affine euclidean coordinates
      * var p1 = board.create('point', [3.5, 2.0]);
