@@ -247,8 +247,13 @@ define([
                 board.create('grid', [], (typeof attr.grid === 'object' ? attr.grid : {}));
             }
 
+            board._createSelectionPolygon(attr);
+            /*
             selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
-	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+            if (selectionattr.enabled === true) {
+                board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+            }
+            */
 
             board.renderer.drawZoomBar(board);
             board.unsuspendUpdate();

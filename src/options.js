@@ -358,6 +358,7 @@ define([
 
             selection: {
                 enabled: true,
+                name: 'selectionPolygon',
                 needShift: false,
                 needCtrl: true,
                 withLines: false,

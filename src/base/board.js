@@ -4420,10 +4420,33 @@ define([
             if (this.attr.selection.enabled &&
                 (!this.attr.selection.needshift || evt.shiftKey) &&
                 (!this.attr.selection.needctrl || evt.ctrlKey)) {
+
+                    if (!Type.exists(this.selectionPolygon)) {
+                        this._createSelectionPolygon(this.attr);
+                    }
+
                     this.startSelectionMode();
             }
         },
 
+        /**
+         * Create the internal selection polygon, which will be available as board.selectionPolygon.
+         * @private
+         * @param  {Object} attr board attributes, e.g. the subobject board.attr.
+         * @return {Object} pointer to the board to enable chaining.
+         */
+        _createSelectionPolygon: function(attr) {
+            var selectionattr;
+
+            if (!Type.exists(this.selectionPolygon)) {
+                selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
+                if (selectionattr.enabled === true) {
+                    this.selectionPolygon = this.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
+                }
+            }
+
+            return this;
+        },
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes
