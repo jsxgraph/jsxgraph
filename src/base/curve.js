@@ -1659,12 +1659,45 @@ define([
     JXG.registerElement('plot', JXG.createFunctiongraph);
 
     /**
-     * TODO
+     * @class This element is used to provide a constructor for (natural) cubic spline curves.
      * Create a dynamic spline interpolated curve given by sample points p_1 to p_n.
+     * @pseudo
+     * @description
+     * @name Spline
+     * @augments JXG.Curve
+     * @constructor
+     * @type JXG.Curve
      * @param {JXG.Board} board Reference to the board the spline is drawn on.
      * @param {Array} parents Array of points the spline interpolates
      * @param {Object} attributes Define color, width, ... of the spline
      * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
+     * @see JXG.Curve
+     * @example
+     *
+     * var p = [];
+     * p[0] = board.create('point', [-2,2], {size: 4, face: 'o'});
+     * p[1] = board.create('point', [0,-1], {size: 4, face: 'o'});
+     * p[2] = board.create('point', [2,0], {size: 4, face: 'o'});
+     * p[3] = board.create('point', [4,1], {size: 4, face: 'o'});
+     *
+     * var c = board.create('spline', p, {strokeWidth:3});
+     * </pre><div id="6c197afc-e482-11e5-b1bf-901b0e1b8723" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('6c197afc-e482-11e5-b1bf-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *
+     *     var p = [];
+     *     p[0] = board.create('point', [-2,2], {size: 4, face: 'o'});
+     *     p[1] = board.create('point', [0,-1], {size: 4, face: 'o'});
+     *     p[2] = board.create('point', [2,0], {size: 4, face: 'o'});
+     *     p[3] = board.create('point', [4,1], {size: 4, face: 'o'});
+     *
+     *     var c = board.create('spline', p, {strokeWidth:3});
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createSpline = function (board, parents, attributes) {
         var el, f;
@@ -1735,7 +1768,7 @@ define([
         el = new JXG.Curve(board, ['x', 'x', f()], attributes);
         el.setParents(parents);
         el.elType = 'spline';
-        
+
         return el;
     };
 
@@ -1875,13 +1908,13 @@ define([
      * @see JXG.Curve
      * @example
      * // Create trace curve.
-     var c1 = board.create('circle',[[0, 0], [2, 0]]),
-     p1 = board.create('point',[-3, 1]),
-     g1 = board.create('glider',[2, 1, c1]),
-     s1 = board.create('segment',[g1, p1]),
-     p2 = board.create('midpoint',[s1]),
-     curve = board.create('tracecurve', [g1, p2]);
-
+     * var c1 = board.create('circle',[[0, 0], [2, 0]]),
+     * p1 = board.create('point',[-3, 1]),
+     * g1 = board.create('glider',[2, 1, c1]),
+     * s1 = board.create('segment',[g1, p1]),
+     * p2 = board.create('midpoint',[s1]),
+     * curve = board.create('tracecurve', [g1, p2]);
+     *
      * </pre><div class="jxgbox"id="5749fb7d-04fc-44d2-973e-45c1951e29ad" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var tc1_board = JXG.JSXGraph.initBoard('5749fb7d-04fc-44d2-973e-45c1951e29ad', {boundingbox: [-4, 4, 4, -4], axis: false, showcopyright: false, shownavigation: false});
