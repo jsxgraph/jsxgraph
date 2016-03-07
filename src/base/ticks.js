@@ -162,6 +162,7 @@ define([
         this.labelCounter = 0;
 
         this.id = this.line.addTicks(this);
+        this.elType = 'ticks';        
         this.board.setId(this, 'Ti');
     };
 
@@ -806,7 +807,7 @@ define([
                 if (this.visProp.useunicodeminus) {
                     labelText = labelText.replace(/-/g, '\u2212');
                 }
-                
+
             }
 
             return labelText;
