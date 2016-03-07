@@ -162,7 +162,7 @@ define([
         this.labelCounter = 0;
 
         this.id = this.line.addTicks(this);
-        this.elType = 'ticks';        
+        this.elType = 'ticks';
         this.board.setId(this, 'Ti');
     };
 
@@ -991,6 +991,7 @@ define([
             el.generateLabelText = attr.generatelabeltext;
         }
 
+        el.setParents(parents[0]);
         el.isDraggable = true;
 
         return el;
