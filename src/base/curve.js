@@ -1667,7 +1667,9 @@ define([
      * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
      */
     JXG.createSpline = function (board, parents, attributes) {
-        var f = function () {
+        var el, f;
+
+        f = function () {
             var D, x = [], y = [];
 
             return function (t, suspended) {
@@ -1727,11 +1729,14 @@ define([
                 return Numerics.splineEval(t, x, y, D);
             };
         };
-        //return board.create('curve', ['x', f()], attributes);
 
         attributes = Type.copyAttributes(attributes, board.options, 'curve');
         attributes.curvetype = 'functiongraph';
-        return new JXG.Curve(board, ['x', 'x', f()], attributes);
+        el = new JXG.Curve(board, ['x', 'x', f()], attributes);
+        el.setParents(parents);
+        el.elType = 'spline';
+        
+        return el;
     };
 
     /**
