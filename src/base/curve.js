@@ -1668,7 +1668,14 @@ define([
      * @constructor
      * @type JXG.Curve
      * @param {JXG.Board} board Reference to the board the spline is drawn on.
-     * @param {Array} parents Array of points the spline interpolates
+     * @param {Array} parents Array of points the spline interpolates. This can be
+     *   <ul>
+     *   <li> an array of JXGGraph points</li>
+     *   <li> an array of coordinate pairs</li>
+     *   <li> an array of functions returning coordinate pairs</li>
+     *   <li> an array consisting of an array with x-coordinates and an array of y-coordinates</li>
+     *   </ul>
+     *   All individual entries of coordinates arrays may be numbers or functions returing numbers.
      * @param {Object} attributes Define color, width, ... of the spline
      * @returns {JXG.Curve} Returns reference to an object of type JXG.Curve.
      * @see JXG.Curve
