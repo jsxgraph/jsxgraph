@@ -156,7 +156,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Prepare the attributes object for an element.
+         * Prepare the attributes object for an element to be dumped as JavaScript or JessieCode code.
          * @param {JXG.Board} board
          * @param {JXG.GeometryElement} obj Geometry element which attributes object is generated
          * @returns {Object} An attributes object.
@@ -168,7 +168,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
             for (s in obj.subs) {
                 if (obj.subs.hasOwnProperty(s)) {
-                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(), JXG.Options[obj.elType][s], JXG.Options[obj.subs[s].elType]);
+                    a[s] = this.minimizeObject(obj.subs[s].getAttributes(),
+                                                JXG.Options[obj.elType][s],
+                                                JXG.Options[obj.subs[s].elType]);
                     a[s].id = obj.subs[s].id;
                     a[s].name = obj.subs[s].name;
                 }
