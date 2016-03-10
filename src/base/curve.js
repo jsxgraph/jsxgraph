@@ -83,7 +83,19 @@ define([
 
         this.bezierDegree = 1;
 
+        /**
+         * Array holding the x-coordinates of a data plot.
+         * This array can be updated during run time by overwriting
+         * the method {@link JXG.Curve#updateDataArray}.
+         * @type {array}
+         */
         this.dataX = null;
+        /**
+         * Array holding the y-coordinates of a data plot.
+         * This array can be updated during run time by overwriting
+         * the method {@link JXG.Curve#updateDataArray}.
+         * @type {array}
+         */
         this.dataY = null;
 
         /**
@@ -365,6 +377,243 @@ define([
          * for the arrays {@link JXG.Curve#dataX} and {@link JXG.Curve#dataY}. It
          * is used in {@link JXG.Curve#updateCurve}. Default is an empty method, can
          * be overwritten by the user.
+         *
+         *
+         * @example
+         * // This example overwrites the updateDataArray method.
+         * // There, new values for the arrays JXG.Curve.dataX and JXG.Curve.dataY
+         * // are computed from the value of the slider N
+         *
+         * var N = board.create('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
+         * var circ = board.create('circle',[[4,-1.5],1],{strokeWidth:1, strokecolor:'black', strokeWidth:2,
+         * 		fillColor:'#0055ff13'});
+         *
+         * var c = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:2});
+         * c.updateDataArray = function() {
+         *         var r = 1, n = Math.floor(N.Value()),
+         *             x = [0], y = [0],
+         *             phi = Math.PI/n,
+         *             h = r*Math.cos(phi),
+         *             s = r*Math.sin(phi),
+         *             i, j,
+         *             px = 0, py = 0, sgn = 1,
+         *             d = 16,
+         *             dt = phi/d,
+         *             pt;
+         *
+         *         for (i = 0; i < n; i++) {
+         *             for (j = -d; j <= d; j++) {
+         *                 pt = dt*j;
+         *                 x.push(px + r*Math.sin(pt));
+         *                 y.push(sgn*r*Math.cos(pt) - (sgn-1)*h*0.5);
+         *             }
+         *             px += s;
+         *             sgn *= (-1);
+         *         }
+         *         x.push((n - 1)*s);
+         *         y.push(h + (sgn - 1)*h*0.5);
+         *         this.dataX = x;
+         *         this.dataY = y;
+         *     }
+         *
+         * var c2 = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:1});
+         * c2.updateDataArray = function() {
+         *         var r = 1, n = Math.floor(N.Value()),
+         *             px = circ.midpoint.X(), py = circ.midpoint.Y(),
+         *             x = [px], y = [py],
+         *             phi = Math.PI/n,
+         *             s = r*Math.sin(phi),
+         *             i, j,
+         *             d = 16,
+         *             dt = phi/d,
+         *             pt = Math.PI*0.5+phi;
+         *
+         *         for (i = 0; i < n; i++) {
+         *             for (j= -d; j <= d; j++) {
+         *                 x.push(px + r*Math.cos(pt));
+         *                 y.push(py + r*Math.sin(pt));
+         *                 pt -= dt;
+         *             }
+         *             x.push(px);
+         *             y.push(py);
+         *             pt += dt;
+         *         }
+         *         this.dataX = x;
+         *         this.dataY = y;
+         *     }
+         *     board.update();
+         *
+         * </pre><div id="20bc7802-e69e-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 600px; height: 400px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('20bc7802-e69e-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-1.5,2,8,-3], keepaspectratio: true, axis: true, showcopyright: false, shownavigation: false});
+         *             var N = board.create('slider', [[0,1.5],[3,1.5],[1,3,40]], {name:'n',snapWidth:1});
+         *             var circ = board.create('circle',[[4,-1.5],1],{strokeWidth:1, strokecolor:'black',
+         *             strokeWidth:2, fillColor:'#0055ff13'});
+         *
+         *             var c = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:2});
+         *             c.updateDataArray = function() {
+         *                     var r = 1, n = Math.floor(N.Value()),
+         *                         x = [0], y = [0],
+         *                         phi = Math.PI/n,
+         *                         h = r*Math.cos(phi),
+         *                         s = r*Math.sin(phi),
+         *                         i, j,
+         *                         px = 0, py = 0, sgn = 1,
+         *                         d = 16,
+         *                         dt = phi/d,
+         *                         pt;
+         *
+         *                     for (i=0;i<n;i++) {
+         *                         for (j=-d;j<=d;j++) {
+         *                             pt = dt*j;
+         *                             x.push(px+r*Math.sin(pt));
+         *                             y.push(sgn*r*Math.cos(pt)-(sgn-1)*h*0.5);
+         *                         }
+         *                         px += s;
+         *                         sgn *= (-1);
+         *                     }
+         *                     x.push((n-1)*s);
+         *                     y.push(h+(sgn-1)*h*0.5);
+         *                     this.dataX = x;
+         *                     this.dataY = y;
+         *                 }
+         *
+         *             var c2 = board.create('curve', [[0],[0]],{strokecolor:'red', strokeWidth:1});
+         *             c2.updateDataArray = function() {
+         *                     var r = 1, n = Math.floor(N.Value()),
+         *                         px = circ.midpoint.X(), py = circ.midpoint.Y(),
+         *                         x = [px], y = [py],
+         *                         phi = Math.PI/n,
+         *                         s = r*Math.sin(phi),
+         *                         i, j,
+         *                         d = 16,
+         *                         dt = phi/d,
+         *                         pt = Math.PI*0.5+phi;
+         *
+         *                     for (i=0;i<n;i++) {
+         *                         for (j=-d;j<=d;j++) {
+         *                             x.push(px+r*Math.cos(pt));
+         *                             y.push(py+r*Math.sin(pt));
+         *                             pt -= dt;
+         *                         }
+         *                         x.push(px);
+         *                         y.push(py);
+         *                         pt += dt;
+         *                     }
+         *                     this.dataX = x;
+         *                     this.dataY = y;
+         *                 }
+         *                 board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * // This is an example which overwrites updateDataArray and produces
+         * // a Bezier curve of degree three.
+         * var A = board.create('point', [-3,3]);
+         * var B = board.create('point', [3,-2]);
+         * var line = board.create('segment', [A,B]);
+         *
+         * var height = 0.5; // height of the curly brace
+         *
+         * // Curly brace
+         * var crl = board.create('curve', [[0],[0]], {strokeWidth:1, strokeColor:'black'});
+         * crl.bezierDegree = 3;
+         * crl.updateDataArray = function() {
+         *     var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *         dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *         mid = [(A.X()+B.X())*0.5, (A.Y()+B.Y())*0.5];
+         *
+         *     d[0] *= height/dl;
+         *     d[1] *= height/dl;
+         *
+         *     this.dataX = [ A.X(), A.X()-d[1], mid[0], mid[0]-d[1], mid[0], B.X()-d[1], B.X() ];
+         *     this.dataY = [ A.Y(), A.Y()+d[0], mid[1], mid[1]+d[0], mid[1], B.Y()+d[0], B.Y() ];
+         * };
+         *
+         * // Text
+         * var txt = board.create('text', [
+         *                     function() {
+         *                         var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *                             dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *                             mid = (A.X()+B.X())*0.5;
+         *
+         *                         d[1] *= height/dl;
+         *                         return mid-d[1]+0.1;
+         *                     },
+         *                     function() {
+         *                         var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *                             dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *                             mid = (A.Y()+B.Y())*0.5;
+         *
+         *                         d[0] *= height/dl;
+         *                         return mid+d[0]+0.1;
+         *                     },
+         *                     function() { return "length="+B.Dist(A).toFixed(2); }
+         *                 ]);
+         *
+         *
+         * board.update(); // This update is necessary to call updateDataArray the first time.
+         *
+         * </pre><div id="a61a4d66-e69f-11e5-b1bf-901b0e1b8723"  class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *      var board = JXG.JSXGraph.initBoard('a61a4d66-e69f-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-4, 4, 4,-4], axis: true, showcopyright: false, shownavigation: false});
+         *     var A = board.create('point', [-3,3]);
+         *     var B = board.create('point', [3,-2]);
+         *     var line = board.create('segment', [A,B]);
+         *
+         *     var height = 0.5; // height of the curly brace
+         *
+         *     // Curly brace
+         *     var crl = board.create('curve', [[0],[0]], {strokeWidth:1, strokeColor:'black'});
+         *     crl.bezierDegree = 3;
+         *     crl.updateDataArray = function() {
+         *         var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *             dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *             mid = [(A.X()+B.X())*0.5, (A.Y()+B.Y())*0.5];
+         *
+         *         d[0] *= height/dl;
+         *         d[1] *= height/dl;
+         *
+         *         this.dataX = [ A.X(), A.X()-d[1], mid[0], mid[0]-d[1], mid[0], B.X()-d[1], B.X() ];
+         *         this.dataY = [ A.Y(), A.Y()+d[0], mid[1], mid[1]+d[0], mid[1], B.Y()+d[0], B.Y() ];
+         *     };
+         *
+         *     // Text
+         *     var txt = board.create('text', [
+         *                         function() {
+         *                             var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *                                 dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *                                 mid = (A.X()+B.X())*0.5;
+         *
+         *                             d[1] *= height/dl;
+         *                             return mid-d[1]+0.1;
+         *                         },
+         *                         function() {
+         *                             var d = [B.X()-A.X(), B.Y()-A.Y()],
+         *                                 dl = Math.sqrt(d[0]*d[0]+d[1]*d[1]),
+         *                                 mid = (A.Y()+B.Y())*0.5;
+         *
+         *                             d[0] *= height/dl;
+         *                             return mid+d[0]+0.1;
+         *                         },
+         *                         function() { return "length="+B.Dist(A).toFixed(2); }
+         *                     ]);
+         *
+         *
+         *     board.update(); // This update is necessary to call updateDataArray the first time.
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         *
          */
         updateDataArray: function () {
             // this used to return this, but we shouldn't rely on the user to implement it.

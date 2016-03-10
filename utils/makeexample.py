@@ -39,7 +39,7 @@ if __name__ == '__main__':
     
     uid = uuid.uuid1()
     ''' Print live code '''
-    print "%s%s%s%s" % (space, "</pre><div id=\"", uid, "\" style=\"width: 300px; height: 300px;\"></div>")
+    print "%s%s%s%s" % (space, "</pre><div id=\"", uid, "\" class=\"jxgbox\" style=\"width: 300px; height: 300px;\"></div>")
     print "%s%s"     % (space, "<script type=\"text/javascript\">")
     print "%s%s%s"   % (space, tab, "(function() {")
     print "%s%s%s%s%s"   % (space, tab+tab, "var board = JXG.JSXGraph.initBoard('", uid, "',")

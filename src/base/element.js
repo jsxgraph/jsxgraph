@@ -1611,7 +1611,7 @@ define([
          */
         handleSnapToGrid: function (force) {
             var x, y, ticks,
-                //i, len, g, el, p, 
+                //i, len, g, el, p,
                 boardBB,
                 needsSnapToGrid = false,
                 sX = this.visProp.snapsizex,

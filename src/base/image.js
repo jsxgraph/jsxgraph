@@ -79,9 +79,21 @@ define([
         this.coordsConstructor(coords);
 
         this.W = Type.createFunction(size[0], this.board, '');
+
         this.H = Type.createFunction(size[1], this.board, '');
+
         this.usrSize = [this.W(), this.H()];
+
+        /**
+         * Array of length two containing [width, height] of the image in pixel.
+         * @type {array}
+         */
         this.size = [Math.abs(this.usrSize[0] * board.unitX), Math.abs(this.usrSize[1] * board.unitY)];
+
+        /**
+         * 'href' of the image. This might be an URL, but also a data-uri is allowed.
+         * @type {string}
+         */
         this.url = url;
 
         this.elType = 'image';
@@ -247,7 +259,19 @@ define([
             }
 
             return p;
-        }
+        },
+
+        /**
+         * Returns the width of the image in user coordinates.
+         * @return {number} width of the image in user coordinates
+         */
+        W: function() {},  // Needed for docs, defined in constructor
+
+        /**
+         * Returns the height of the image in user coordinates.
+         * @return {number} height of the image in user coordinates
+         */
+        H: function() {}  // Needed for docs, defined in constructor
 
     });
 
