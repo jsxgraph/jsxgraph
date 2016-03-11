@@ -409,7 +409,7 @@ define([
          * touchStart because Android's Webkit browser fires too much of them.
          * @type Number
          */
-        this.touchMoveLast = 0;
+        // this.touchMoveLast = 0;
 
         /**
          * Contains the last time (epoch, msec) since the last getCoordsTopLeftCorner call which was not thrown away.
@@ -2123,10 +2123,10 @@ define([
                 this.hasGestureHandlers = true;
             }
 
-            if (Env.isWebkitAndroid()) {
-                time = new Date();
-                this.touchMoveLast = time.getTime() - 200;
-            }
+            // if (Env.isWebkitAndroid()) {
+            //     time = new Date();
+            //     this.touchMoveLast = time.getTime() - 200;
+            // }
 
             this.options.precision.hasPoint = this.options.precision.mouse;
 
@@ -2150,19 +2150,19 @@ define([
             }
 
             // Reduce update frequency for Android devices
-            if (Env.isWebkitAndroid()) {
-                time = new Date();
-                time = time.getTime();
-
-                if (time - this.touchMoveLast < 80) {
-                    this.updateQuality = this.BOARD_QUALITY_HIGH;
-                    this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
-
-                    return false;
-                }
-
-                this.touchMoveLast = time;
-            }
+            // if (false && Env.isWebkitAndroid()) {
+            //     time = new Date();
+            //     time = time.getTime();
+            //
+            //     if (time - this.touchMoveLast < 80) {
+            //         this.updateQuality = this.BOARD_QUALITY_HIGH;
+            //         this.triggerEventHandlers(['touchmove', 'move'], [evt, this.mode]);
+            //
+            //         return false;
+            //     }
+            //
+            //     this.touchMoveLast = time;
+            // }
 
             if (this.mode !== this.BOARD_MODE_DRAG) {
                 this.renderer.hide(this.infobox);
