@@ -734,18 +734,18 @@ define([
 
             /**
              * During drags and origin moves the container element is usually not changed.
-             * Check the position of the upper left corner at most every 500 msecs
+             * Check the position of the upper left corner at most every 1000 msecs
              */
             if (this.cPos.length > 0 &&
                     (this.mode === this.BOARD_MODE_DRAG || this.mode === this.BOARD_MODE_MOVE_ORIGIN ||
                     (new Date()).getTime() - this.positionAccessLast < 1000)) {
                 return this.cPos;
             }
-
             this.positionAccessLast = (new Date()).getTime();
 
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
+            // Supported by all browsers but IE 6, 7.
             if (container.getBoundingClientRect) {
                 if (Type.isNumber(window.pageXOffset)) {
                     scrollLeft = window.pageXOffset;
@@ -785,6 +785,10 @@ define([
                 return this.cPos;
             }
 
+            //
+            //  OLD CODE
+            //  IE 6-7 only:
+            //
             cPos = Env.getOffset(container);
             doc = this.document.documentElement.ownerDocument;
 
@@ -832,7 +836,7 @@ define([
             cPos[1] += this.attr.offsety;
 
             this.cPos = cPos.slice();
-            return this.Pos;
+            return this.cPos;
         },
 
         /**
@@ -847,13 +851,6 @@ define([
             var cPos = this.getCoordsTopLeftCorner(),
                 absPos,
                 v;
-
-            // This fixes the object-drag bug on zoomed webpages on Android powered devices with the default WebKit browser
-            // Seems to be obsolete now
-            //if (Env.isWebkitAndroid()) {
-            //    cPos[0] -= document.body.scrollLeft;
-            //    cPos[1] -= document.body.scrollTop;
-            //}
 
             // position of mouse cursor relative to containers position of container
             absPos = Env.getPosition(e, i, this.document);

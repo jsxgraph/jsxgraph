@@ -501,12 +501,11 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns The value of the CSS property and <tt>undefined</tt> if it is not set.
          */
         getStyle: function (obj, stylename) {
-            var r, doc;
-
-            doc = obj.ownerDocument;
+            var r,
+                doc = obj.ownerDocument;
 
             // Non-IE
-            if (window.getComputedStyle) {
+            if (doc.defaultView.getComputedStyle) {
                 r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
             // IE
             } else if (obj.currentStyle && JXG.ieVersion >= 9) {
@@ -593,22 +592,35 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Scaling CSS transformations applied to the div element containing the JSXGraph constructions
-         * are determined. Not implemented are 'rotate', 'skew', 'skewX', 'skewY'.
-         * @returns {Array} 3x3 transformation matrix. See {@link JXG.Board#updateCSSTransforms}.
+         * are determined. In IE prior to 9, 'rotate', 'skew', 'skewX', 'skewY' are not supported.
+         * @returns {Array} 3x3 transformation matrix without translation part. See {@link JXG.Board#updateCSSTransforms}.
          */
         getCSSTransformMatrix: function (obj) {
             var i, j, str, arrstr, start, len, len2, arr,
+                st, tr,
+                doc = obj.ownerDocument,
                 t = ['transform', 'webkitTransform', 'MozTransform', 'msTransform', 'oTransform'],
                 mat = [[1, 0, 0],
                     [0, 1, 0],
                     [0, 0, 1]];
 
-            // Take the first transformation matrix
-            len = t.length;
-            for (i = 0, str = ''; i < len; i++) {
-                if (Type.exists(obj.style[t[i]])) {
-                    str = obj.style[t[i]];
-                    break;
+            // This should work on all browsers except IE 6-8
+            if (doc.defaultView.getComputedStyle) {
+                st = doc.defaultView.getComputedStyle(obj, null);
+                str = st.getPropertyValue("-webkit-transform") ||
+                     st.getPropertyValue("-moz-transform") ||
+                     st.getPropertyValue("-ms-transform") ||
+                     st.getPropertyValue("-o-transform") ||
+                     st.getPropertyValue("transform");
+                console.log(str);
+            } else {
+                // Take the first transformation matrix
+                len = t.length;
+                for (i = 0, str = ''; i < len; i++) {
+                    if (Type.exists(obj.style[t[i]])) {
+                        str = obj.style[t[i]];
+                        break;
+                    }
                 }
             }
 
@@ -628,7 +640,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                         mat = [[1, 0, 0],
                             [0, arr[0], arr[1]],
                             [0, arr[2], arr[3]]];
-                        // Missing are rotate, skew, skewX, skewY
                     } else if (str.indexOf('scaleX') === 0) {
                         mat[1][1] = arr[0];
                     } else if (str.indexOf('scaleY') === 0) {
