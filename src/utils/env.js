@@ -612,7 +612,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                      st.getPropertyValue("-ms-transform") ||
                      st.getPropertyValue("-o-transform") ||
                      st.getPropertyValue("transform");
-                console.log(str);
             } else {
                 // Take the first transformation matrix
                 len = t.length;
