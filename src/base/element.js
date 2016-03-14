@@ -1577,9 +1577,12 @@ define([
          */
         getAttributes: function () {
             var attributes = Type.deepCopy(this.visProp),
+                /*
                 cleanThis = ['attractors', 'snatchdistance', 'traceattributes', 'frozen',
                     'shadow', 'gradientangle', 'gradientsecondopacity', 'gradientpositionx', 'gradientpositiony',
                     'needsregularupdate', 'zoom', 'layer', 'offset'],
+                */
+                cleanThis = [],
                 i, len = cleanThis.length;
 
             attributes.id = this.id;
