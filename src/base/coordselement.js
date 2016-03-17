@@ -797,7 +797,7 @@ define([
         handleAttractors: function () {
             var i, el, projCoords,
                 d = 0.0,
-                result,
+                projection,
                 len = this.visProp.attractors.length;
 
             if (this.visProp.attractordistance === 0.0) {
@@ -811,16 +811,16 @@ define([
                     if (Type.isPoint(el)) {
                         projCoords = Geometry.projectPointToPoint(this, el, this.board);
                     } else if (el.elementClass === Const.OBJECT_CLASS_LINE) {
-                        result = Geometry.projectCoordsToSegment(
+                        projection = Geometry.projectCoordsToSegment(
                                     this.coords.usrCoords,
                                     el.point1.coords.usrCoords,
                                     el.point2.coords.usrCoords);
-                        if (!el.visProp.straightfirst && result[1] < 0.0) {
+                        if (!el.visProp.straightfirst && projection[1] < 0.0) {
                             projCoords = el.point1.coords;
-                        } else if (!el.visProp.straightlast && result[1] > 1.0) {
+                        } else if (!el.visProp.straightlast && projection[1] > 1.0) {
                             projCoords = el.point2.coords;
                         } else {
-                            projCoords = new Coords(Const.COORDS_BY_USER, result[0], board)
+                            projCoords = new Coords(Const.COORDS_BY_USER, projection[0], board);
                         }
                     } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         projCoords = Geometry.projectPointToCircle(this, el, this.board);
