@@ -820,7 +820,7 @@ define([
                         } else if (!el.visProp.straightlast && projection[1] > 1.0) {
                             projCoords = el.point2.coords;
                         } else {
-                            projCoords = new Coords(Const.COORDS_BY_USER, projection[0], board);
+                            projCoords = new Coords(Const.COORDS_BY_USER, projection[0], this.board);
                         }
                     } else if (el.elementClass === Const.OBJECT_CLASS_CIRCLE) {
                         projCoords = Geometry.projectPointToCircle(this, el, this.board);
