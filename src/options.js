@@ -1658,7 +1658,7 @@ define([
             /**#@-*/
         },
 
-        /* special grid options */
+        /* special image options */
         image: {
             /**#@+
              * @visprop
@@ -1666,7 +1666,35 @@ define([
 
             imageString: null,
             fillOpacity: 1.0,
+            highlightFillOpacity: 0.6,
+
+
+            /**
+             * Defines the CSS class used by the image. CSS attributes defined in
+             * this class will overwrite the corresponding JSXGraph attributes, e.g.
+             * opacity.
+             * The default CSS class is defined in jsxgraph.css.
+             *
+             * @name Image#cssClass
+             *
+             * @see Image#highlightCssClass
+             * @type String
+             * @default 'JXGimage'
+             */
             cssClass: 'JXGimage',
+
+            /**
+             * Defines the CSS class used by the image when highlighted.
+             * CSS attributes defined in this class will overwrite the
+             * corresponding JSXGraph attributes, e.g. highlightFillOpacity.
+             * The default CSS class is defined in jsxgraph.css.
+             *
+             * @name Image#highlightCssClass
+             *
+             * @see Image#cssClass
+             * @type String
+             * @default 'JXGimageHighlight'
+             */
             highlightCssClass: 'JXGimageHighlight',
 
             /**

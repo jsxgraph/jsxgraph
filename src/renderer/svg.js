@@ -944,6 +944,7 @@ define([
             if (el.visPropOld.fillcolor === rgba && el.visPropOld.fillopacity === o) {
                 return;
             }
+
             if (Type.exists(rgba) && rgba !== false) {
                 if (rgba.length !== 9) {          // RGB, not RGBA
                     c = rgba;
@@ -960,11 +961,15 @@ define([
                     node = rendNode;
                 }
 
-                if (c !== 'none') {               // problem in firefox 17
+                if (c !== 'none') {
                     node.setAttributeNS(null, 'fill', c);
-                } else {
+                }
+                /*
+                // This must be commented out for highlighting of images
+                else {
                     oo = 0;
                 }
+                */
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
                     node.setAttributeNS(null, 'opacity', oo);

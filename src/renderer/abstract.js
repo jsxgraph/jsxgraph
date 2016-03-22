@@ -1230,6 +1230,7 @@ define([
                         this.updateTextStyle(element, true);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, true);
+                        this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                     } else {
                         this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
                         this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
@@ -1264,6 +1265,7 @@ define([
                         this.updateTextStyle(element, false);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, false);
+                        this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
                     } else {
                         this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
                         this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);

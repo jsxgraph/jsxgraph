@@ -56,11 +56,12 @@
     border-color: black;
 }
 
+/* CSS attributes will (permantely) overwrite attributes set in JSXGraph */
 .JXGimage {
-    opacity: 1.0;
+    /* opacity: 1.0; */
 }
 
 .JXGimageHighlight {
-    opacity: 0.6;
+    /* opacity: 0.6; */
 }
 
