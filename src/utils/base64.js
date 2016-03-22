@@ -190,7 +190,7 @@ define(['jxg', 'utils/encoding'], function (JXG, Encoding) {
         /**
          * Decode the base64 input data as an array
          * @param {string} input
-         * @return {Array}
+         * @returns {Array}
          */
         decodeAsArray: function (input) {
             var i,

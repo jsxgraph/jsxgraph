@@ -37,7 +37,7 @@
  * @param {Array} paraIn Parameters, only used in macro mode
  * @param {String} macroName Name of the macro, only used in macro mode
  * @type object
- * @return An object consisting of several arrays (lines, circles, points, angles, ...) where the created elements are stored.
+ * @returns An object consisting of several arrays (lines, circles, points, angles, ...) where the created elements are stored.
  */
 JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName) {
     var splitted, i, j, output = {}, objName, defElements, obj, type, possibleNames, tmp, noMacro, k,l, pattern, createdNames, found,

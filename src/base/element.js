@@ -541,7 +541,7 @@ define([
         /**
          * Counts the direct children of an object without counting labels.
          * @private
-         * @return {number} Number of children
+         * @returns {number} Number of children
          */
         countChildren: function () {
             var prop, d,
@@ -577,7 +577,7 @@ define([
          * Decides whether an element can be dragged. This is used in {@link JXG.GeometryElement#setPositionDirectly} methods
          * where all parent elements are checked if they may be dragged, too.
          * @private
-         * @return {boolean}
+         * @returns {boolean}
          */
         draggable: function () {
             return this.isDraggable && !this.visProp.fixed &&
@@ -1346,7 +1346,7 @@ define([
          * @type string
          * @private
          * @ignore
-         * @return JSON string containing element's properties.
+         * @returns JSON string containing element's properties.
          */
         toJSON: function () {
             var vis, key,

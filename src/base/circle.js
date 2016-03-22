@@ -629,7 +629,7 @@ define([
         /**
          * Treat the circle as parametric curve and calculates its Z coordinate.
          * @param {Number} t ignored
-         * @return {Number} 1.0
+         * @returns {Number} 1.0
          */
         Z: function (t) {
             return 1.0;
@@ -653,7 +653,7 @@ define([
 
         /**
          * Circle area
-         * @return {Number} area of the circle.
+         * @returns {Number} area of the circle.
          */
         Area: function () {
             var r = this.Radius();
@@ -663,7 +663,7 @@ define([
 
         /**
          * Get bounding box of the circle.
-         * @return {Array} [x1, y1, x2, y2]
+         * @returns {Array} [x1, y1, x2, y2]
          */
         bounds: function () {
             var uc = this.center.coords.usrCoords,
@@ -675,7 +675,7 @@ define([
         /**
          * Get data to construct this element. Data consists of the parent elements
          * and static data like radius.
-         * @return {Array} data necessary to construct this element
+         * @returns {Array} data necessary to construct this element
          */
         getParents: function() {
             if (this.parents.length === 1) {  // i.e. this.method === 'pointRadius'

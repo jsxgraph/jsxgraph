@@ -162,7 +162,7 @@ define([
          * Checks whether (x,y) is near the line.
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @return {Boolean} True if (x,y) is near the line, False otherwise.
+         * @returns {Boolean} True if (x,y) is near the line, False otherwise.
          */
         hasPoint: function (x, y) {
             // Compute the stdform of the line in screen coordinates.
@@ -434,7 +434,7 @@ define([
          * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to {@link #point1}
          * and {@link #point2}.
          * @param {JXG.Point} p The point for that the polynomial is generated.
-         * @return {Array} An array containing the generated polynomial.
+         * @returns {Array} An array containing the generated polynomial.
          * @private
          */
         generatePolynomial: function (p) {

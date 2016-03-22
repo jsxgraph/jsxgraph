@@ -131,7 +131,7 @@ define([
     JXG.extend(JXG.Transformation.prototype, /** @lends JXG.Transformation.prototype */ {
         /**
          * @private
-         * @return {JXG.Transform} returns pointer to itself
+         * @returns {JXG.Transform} returns pointer to itself
          */
         update: function () {
             return this;
@@ -402,7 +402,7 @@ define([
          * Multiplies the transformation with a transformation t from the left.
          * i.e. (this) = (t) join (this)
          * @param  {JXG.Transform} t Transformation which is the left multiplicand
-         * @return {JXG.Transform} the transformation object.
+         * @returns {JXG.Transform} the transformation object.
          */
         melt: function (t) {
             var res = [], i, len, len0, k, s, j;

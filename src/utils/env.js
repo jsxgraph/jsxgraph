@@ -123,7 +123,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Checks if the environments supports the W3C Pointer Events API {@link http://www.w3.org/Submission/pointer-events/}
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         supportsPointerEvents: function () {
             return JXG.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled);
@@ -171,7 +171,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Returns true if the run inside a Windows 8 "Metro" App.
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         isMetroApp: function () {
             return typeof window === 'object' && window.clientInformation && window.clientInformation.appVersion && window.clientInformation.appVersion.indexOf('MSAppHost') > -1;

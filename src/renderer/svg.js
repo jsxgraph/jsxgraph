@@ -1180,7 +1180,7 @@ define([
          * 200 ms. Otherwise there are problems with IE.
          *
          * @param  {String} canvasId Id of an HTML canvas element
-         * @return {Object}          the svg renderer object.
+         * @returns {Object}          the svg renderer object.
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas');

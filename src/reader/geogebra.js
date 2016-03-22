@@ -105,7 +105,7 @@
          * @param {String} type the type of expression
          * @param {String} m first input value
          * @param {String} n second input value
-         * @return {String|Array|Number} return the object, string or calculated value
+         * @returns {String|Array|Number} return the object, string or calculated value
          */
         ggbAct: function (type, m, n) {
             var s1, s2, a,
@@ -1458,7 +1458,7 @@
          * Set stroke, fill, lighting, label and draft color attributes.
          * @param {Object} Data gxtEl element of which attributes are to set
          * @param {Object} attr object carrying all necessary attribute values
-         * @return {Object} returning the updated attr-attributes object
+         * @returns {Object} returning the updated attr-attributes object
          */
         colorProperties: function (Data, attr) {
             var a, r, g, b,

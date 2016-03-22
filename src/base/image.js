@@ -126,7 +126,7 @@ define([
          * Checks whether (x,y) is over or near the image;
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @return {Boolean} True if (x,y) is over the image, False otherwise.
+         * @returns {Boolean} True if (x,y) is over the image, False otherwise.
          */
         hasPoint: function (x, y) {
             var dx, dy, r,
@@ -341,13 +341,13 @@ define([
 
         /**
          * Returns the width of the image in user coordinates.
-         * @return {number} width of the image in user coordinates
+         * @returns {number} width of the image in user coordinates
          */
         W: function() {},  // Needed for docs, defined in constructor
 
         /**
          * Returns the height of the image in user coordinates.
-         * @return {number} height of the image in user coordinates
+         * @returns {number} height of the image in user coordinates
          */
         H: function() {}  // Needed for docs, defined in constructor
 

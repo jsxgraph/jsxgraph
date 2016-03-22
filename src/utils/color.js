@@ -401,7 +401,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
      * @param {Number} H value between 0 and 360
      * @param {Number} S value between 0.0 (shade of gray) to 1.0 (pure color)
      * @param {Number} V value between 0.0 (black) to 1.0 (white)
-     * @return {String} RGB color string
+     * @returns {String} RGB color string
      */
     JXG.hsv2rgb = function (H, S, V) {
         var R, G, B, f, i, hTemp, p, q, t;

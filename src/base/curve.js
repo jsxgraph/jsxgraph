@@ -182,7 +182,7 @@ define([
         /**
          * Treat the curve as curve with homogeneous coordinates.
          * @param {Number} t A number between 0.0 and 1.0.
-         * @return {Number} Always 1.0
+         * @returns {Number} Always 1.0
          */
         Z: function (t) {
             return 1;
@@ -193,7 +193,7 @@ define([
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
          * @param {Number} start Optional start index for search on data plots.
-         * @return {Boolean} True if (x,y) is near the curve, False otherwise.
+         * @returns {Boolean} True if (x,y) is near the curve, False otherwise.
          */
         hasPoint: function (x, y, start) {
             var t, checkPoint, len, invMat, c,
@@ -987,7 +987,7 @@ define([
          * @param  {Array} box       Bounding box of the canavs
          * @param  {Number} direction horizontal direction of the asymptote. If < 0 the asymptote
          *  goes to the left, otherwise to the right.
-         * @return {Array}           Homogeneous coordinate array of the intersection point.
+         * @returns {Array}           Homogeneous coordinate array of the intersection point.
          */
         _intersectWithBorder: function(asymptote, box, direction) {
             var border, intersection, x, y;
@@ -1234,7 +1234,7 @@ define([
          * @param  {Array}  ta Curve parameter of a.
          * @param  {Array}  b  Screen coordinates of the end point of the segment
          * @param  {Array}  tb Curve parameter of b.
-         * @return {Boolean}   True if the segment is too far away from the canvas, false otherwise.
+         * @returns {Boolean}   True if the segment is too far away from the canvas, false otherwise.
          */
         _isOutside: function (a, ta, b, tb) {
             var off = 500,

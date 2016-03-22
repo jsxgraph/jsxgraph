@@ -202,7 +202,7 @@ define([
          * Checks whether (x,y) is near the line.
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @return {Boolean} True if (x,y) is near the line, False otherwise.
+         * @returns {Boolean} True if (x,y) is near the line, False otherwise.
          */
         hasPoint: function (x, y) {
             var i, t,
@@ -368,7 +368,7 @@ define([
          *
          * Otherwise, the coordinates of the point that acts as zero are established depending on the value of {@link JXG.Ticks#anchor}
          *
-         * @return {JXG.Coords} Coords object for the Zero point on the line
+         * @returns {JXG.Coords} Coords object for the Zero point on the line
          * @private
          */
         getZeroCoordinates: function () {
@@ -399,10 +399,10 @@ define([
          * If {@link JXG.Ticks#includeBoundaries} is false, the boundaries will exclude point1 and point2
          *
          * @param  {JXG.Coords} coordsZero
-         * @return {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
+         * @returns {String} type  (Optional) If type=='ticksdistance' the bounds are the intersection of the line with the bounding box of the board.
          *              Otherwise it is the projection of the corners of the bounding box to the line. The first case i s needed to automatically
          *              generate ticks. The second case is for drawing of the ticks.
-         * @return {Object}     contains the lower and upper bounds
+         * @returns {Object}     contains the lower and upper bounds
          *
          * @private
          */
@@ -473,7 +473,7 @@ define([
          *
          * @param  {JXG.Coords} zero  coordinates of the point considered zero
          * @param  {JXG.Coords} point coordinates of the point to find out the distance
-         * @return {Number}           distance between zero and point, including its sign
+         * @returns {Number}           distance between zero and point, including its sign
          * @private
          */
         getDistanceFromZero: function (zero, point) {
@@ -666,7 +666,7 @@ define([
         /**
          * Calculates the x and y distance in pixel between two units in user space.
          *
-         * @return {Object}
+         * @returns {Object}
          * @private
          */
         getXandYdeltas: function () {
@@ -703,7 +703,7 @@ define([
         /**
          * @param {JXG.Coords} coords Coordinates of the tick on the line.
          * @param {Boolean} major True if tick is major tick.
-         * @return {Array} Array of length 3 containing start and end coordinates in screen coordinates
+         * @returns {Array} Array of length 3 containing start and end coordinates in screen coordinates
          *                 of the tick (arrays of length 2). 3rd entry is true if major tick otherwise false.
          *                 If the tick is outside of the canvas, the return array is empty.
          * @private
@@ -764,7 +764,7 @@ define([
          * @param  {JXG.Coords}    tick  The Coords-object of the tick to create a label for
          * @param  {JXG.Coords}    zero  The Coords-object of line's zero
          * @param  {Number|String} value A predefined value for this tick
-         * @return {String}
+         * @returns {String}
          * @private
          */
         generateLabelText: function (tick, zero, value) {
@@ -818,7 +818,7 @@ define([
          * @param  {String}     labelText
          * @param  {JXG.Coords} tick
          * @param  {Number}     tickNumber
-         * @return {JXG.Text}
+         * @returns {JXG.Text}
          * @private
          */
         generateLabel: function (labelText, tick, tickNumber) {

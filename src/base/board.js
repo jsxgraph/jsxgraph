@@ -1569,7 +1569,7 @@ define([
         /**
          * Triggered on iOS/Safari while the user inputs a gesture (e.g. pinch) and is used to zoom into the board. Only works on iOS/Safari.
          * @param {Event} evt Browser event object
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         gestureChangeListener: function (evt) {
             var c,
@@ -1610,7 +1610,7 @@ define([
         /**
          * Called by iOS/Safari as soon as the user starts a gesture (only works on iOS/Safari).
          * @param {Event} evt
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         gestureStartListener: function (evt) {
 
@@ -1785,7 +1785,7 @@ define([
         /**
          * Called periodically by the browser while the user moves a pointing device across the screen.
          * @param {Event} evt
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         pointerMoveListener: function (evt) {
             var i, j, pos;
@@ -1870,7 +1870,7 @@ define([
         /**
          * Triggered as soon as the user stops touching the device with at least one finger.
          * @param {Event} evt
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         pointerUpListener: function (evt) {
             var i, j, found;
@@ -2135,7 +2135,7 @@ define([
         /**
          * Called periodically by the browser while the user moves his fingers across the device.
          * @param {Event} evt
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         touchMoveListener: function (evt) {
             var i, pos1, pos2, time,
@@ -2236,7 +2236,7 @@ define([
         /**
          * Triggered as soon as the user stops touching the device with at least one finger.
          * @param {Event} evt
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         touchEndListener: function (evt) {
             var i, j, k,
@@ -4346,7 +4346,7 @@ define([
         /**
          * Finalize the selection: disable selection mode and return the coordinates
          * of the selection rectangle.
-         * @return {Array} Coordinates of the selection rectangle. The array
+         * @returns {Array} Coordinates of the selection rectangle. The array
          * contains two {@link JXG.Coords} objects. One the upper left corner and
          * the second for the lower right corner.
          */
@@ -4430,7 +4430,7 @@ define([
          * Create the internal selection polygon, which will be available as board.selectionPolygon.
          * @private
          * @param  {Object} attr board attributes, e.g. the subobject board.attr.
-         * @return {Object} pointer to the board to enable chaining.
+         * @returns {Object} pointer to the board to enable chaining.
          */
         _createSelectionPolygon: function(attr) {
             var selectionattr;

@@ -44,7 +44,7 @@ define(['jxg'], function (JXG) {
         /**
          * Encode a string to utf-8.
          * @param {String} string
-         * @return {String} utf8 encoded string
+         * @returns {String} utf8 encoded string
          */
         encode : function (string) {
             var n, c,
@@ -82,7 +82,7 @@ define(['jxg'], function (JXG) {
         /**
          * Decode a string from utf-8.
          * @param {String} utftext to decode
-         * @return {String} utf8 decoded string
+         * @returns {String} utf8 decoded string
          */
         decode : function (utftext) {
             /*
@@ -142,7 +142,7 @@ define(['jxg'], function (JXG) {
          * a character at a given position in a UTF8 encoded string.
          * @param {String} str
          * @param {Number} i position of the character
-         * @return {Number}
+         * @returns {Number}
          */
         asciiCharCodeAt: function (str, i) {
             var c = str.charCodeAt(i);

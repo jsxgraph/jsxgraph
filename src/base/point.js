@@ -253,7 +253,7 @@ define([
         /**
          * @deprecated Use JXG#normalizePointFace instead
          * @param s
-         * @return {*}
+         * @returns {*}
          */
         normalizeFace: function (s) {
             JXG.deprecated('Point.normalizeFace()', 'JXG.normalizePointFace()');

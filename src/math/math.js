@@ -96,7 +96,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * Determine the relative difference between two numbers.
          * @param  {Number} a First number
          * @param  {Number} b Second number
-         * @return {Number}  Relative difference between a and b: |a-b| / max(|a|, |b|)
+         * @returns {Number}  Relative difference between a and b: |a-b| / max(|a|, |b|)
          */
         relDif: function(a, b) {
             var c = Math.abs(a),
@@ -578,7 +578,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         /**
          * The sign() function returns the sign of a number, indicating whether the number is positive, negative or zero.
          * @param  {Number} x A Number
-         * @return {[type]}  This function has 5 kinds of return values,
+         * @returns {[type]}  This function has 5 kinds of return values,
          *    1, -1, 0, -0, NaN, which represent "positive number", "negative number", "positive zero", "negative zero"
          *    and NaN respectively.
          */
@@ -630,7 +630,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          *
          * @param  {Number} a First number
          * @param  {Number} b Second number
-         * @return {Number}   gcd(a, b) if a and b are numbers, NaN else.
+         * @returns {Number}   gcd(a, b) if a and b are numbers, NaN else.
          */
         gcd: function (a,b) {
             a = Math.abs(a);

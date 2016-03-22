@@ -154,7 +154,7 @@ define([
          * Checks whether (x,y) is near the polygon.
          * @param {Number} x Coordinate in x direction, screen coordinates.
          * @param {Number} y Coordinate in y direction, screen coordinates.
-         * @return {Boolean} Returns true, if (x,y) is inside or at the boundary the polygon, otherwise false.
+         * @returns {Boolean} Returns true, if (x,y) is inside or at the boundary the polygon, otherwise false.
          */
         hasPoint: function (x, y) {
 

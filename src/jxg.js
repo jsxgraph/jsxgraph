@@ -187,7 +187,7 @@ define([], function () {
          * s may be the string containing the id of an HTML tag that hosts a JSXGraph board.
          * This function returns the reference to the board.
          * @param  {String} s String of an HTML tag that hosts a JSXGraph board
-         * @return {Object} Reference to the board or null.
+         * @returns {Object} Reference to the board or null.
          */
         getBoardByContainerId: function(s) {
             var b;

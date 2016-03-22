@@ -237,7 +237,7 @@
          * Transforms the Geonext properties to jsxgraph properties
          * @param {Object} gxtEl
          * @param {String} [type]
-         * @return {Object} gxtEl
+         * @returns {Object} gxtEl
          */
         transformProperties: function (gxtEl, type) {
             var i,

@@ -129,7 +129,7 @@ define([
         * coordinates (x,y) are in within the text boundary.
          * @param {Number} x
          * @param {Number} y
-         * @return {Boolean}
+         * @returns {Boolean}
          */
         hasPoint: function (x, y) {
             var lft, rt, top, bot,
@@ -218,7 +218,7 @@ define([
          * Defines new content. This is used by {@link JXG.Text#setTextJessieCode} and {@link JXG.Text#setText}. This is required because
          * JessieCode needs to filter all Texts inserted into the DOM and thus has to replace setText by setTextJessieCode.
          * @param {String|Function|Number} text
-         * @return {JXG.Text}
+         * @returns {JXG.Text}
          * @private
          */
         _setText: function (text) {
@@ -264,7 +264,7 @@ define([
         /**
          * Defines new content.
          * @param {String|function} text
-         * @return {JXG.Text} Reference to the text object.
+         * @returns {JXG.Text} Reference to the text object.
          */
         setText: function (text) {
             return this._setText(text);
@@ -322,7 +322,7 @@ define([
 
         /**
          * A very crude estimation of the dimensions of the textbox in case nothing else is available.
-         * @return {Array}
+         * @returns {Array}
          */
         crudeSizeEstimate: function () {
             return [parseFloat(this.visProp.fontsize) * this.plaintext.length * 0.45, parseFloat(this.visProp.fontsize) * 0.9];
@@ -411,7 +411,7 @@ define([
 
         /**
          * Return the width of the text element.
-         * @return {Array} [width, height] in pixel
+         * @returns {Array} [width, height] in pixel
          */
         getSize: function () {
             return this.size;
@@ -421,7 +421,7 @@ define([
          * Move the text to new coordinates.
          * @param {number} x
          * @param {number} y
-         * @return {object} reference to the text object.
+         * @returns {object} reference to the text object.
          */
         setCoords: function (x, y) {
             var coordsAnchor, dx, dy;

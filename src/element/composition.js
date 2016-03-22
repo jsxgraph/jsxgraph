@@ -212,7 +212,7 @@ define([
      * @constructor
      * @type JXG.Line
      * @augments Segment
-     * @return A {@link JXG.Line} object through the given point that is orthogonal to the given line.
+     * @returns A {@link JXG.Line} object through the given point that is orthogonal to the given line.
      * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
      * @param {JXG.Line_JXG.Point} l,p The perpendicular line will be orthogonal to l and
      * will contain p.
@@ -397,7 +397,7 @@ define([
      * @constructor
      * @type JXG.Line
      * @augments Segment
-     * @return An array containing two elements: A {@link JXG.Line} object in the first component and a
+     * @returns An array containing two elements: A {@link JXG.Line} object in the first component and a
      * {@link JXG.Point} element in the second component. The line segment is orthogonal to the given line and meets it
      * in the returned point.
      * @throws {Error} If the elements cannot be constructed with the given parent objects an exception is thrown.
