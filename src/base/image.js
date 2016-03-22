@@ -79,7 +79,6 @@ define([
         this.coordsConstructor(coords);
 
         this.W = Type.createFunction(size[0], this.board, '');
-
         this.H = Type.createFunction(size[1], this.board, '');
 
         this.usrSize = [this.W(), this.H()];
@@ -166,7 +165,9 @@ define([
         },
 
         /**
-         * Recalculate the coordinates of lower left corner and the width amd the height.
+         * Recalculate the coordinates of lower left corner and the width and height.
+         *
+         * @returns {JXG.GeometryElement} A reference to the element
          * @private
          */
         update: function (fromParent) {
@@ -183,13 +184,16 @@ define([
 
         /**
          * Send an update request to the renderer.
+         * @private
          */
         updateRenderer: function () {
             return this.updateRendererGeneric('updateImage');
         },
 
         /**
-         * Updates the size of the image.
+         * Updates the internal arrays containing size of the image.
+         * @returns {JXG.GeometryElement} A reference to the element
+         * @private
          */
         updateSize: function () {
             this.usrSize = [this.W(), this.H()];
@@ -201,6 +205,9 @@ define([
         /**
          * Update the anchor point of the image, i.e. the lower left corner
          * and the two vectors which span the rectangle.
+         * @returns {JXG.GeometryElement} A reference to the element
+         * @private
+         *
          */
         updateSpan: function () {
             var i, j, len = this.transformations.length, v = [];
@@ -263,6 +270,73 @@ define([
             }
 
             return p;
+        },
+
+        /**
+         * Set the width and height of the image. After setting a new size,
+         * board.update() or image.prepareUpdate().update().updateRenderer()
+         * has to be called to make the change visible.
+         * @param  {number, function, string} width  Number, function or string
+         *                            that determines the new width of the image
+         * @param  {number, function, string} height Number, function or string
+         *                            that determines the new height of the image
+         * @returns {JXG.GeometryElement} A reference to the element
+         *
+         * @example
+         * var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                                [-3,-2], [3,3]]);
+         * im.setSize(4, 4);
+         * board.update();
+         *
+         * </pre><div id="8411e60c-f009-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('8411e60c-f009-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg', [-3,-2],    [3,3]]);
+         *     //im.setSize(4, 4);
+         *     //board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         * @example
+         * var p0 = board.create('point', [-3, -2]),
+         *     im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                     [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+         *                     [3,3]]),
+         *     p1 = board.create('point', [1, 2]);
+         *
+         * im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+         * board.update();
+         *
+         * </pre><div id="4ce706c0-f00a-11e5-b1bf-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('4ce706c0-f00a-11e5-b1bf-901b0e1b8723',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *     var p0 = board.create('point', [-3, -2]),
+         *         im = board.create('image', ['http://jsxgraph.uni-bayreuth.de/distrib/images/uccellino.jpg',
+         *                         [function(){ return p0.X(); }, function(){ return p0.Y(); }],
+         *                         [3,3]]),
+         *         p1 = board.create('point', [1, 2]);
+         *
+         *     im.setSize(function(){ return p1.X() - p0.X(); }, function(){ return p1.Y() - p0.Y(); });
+         *     board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
+         */
+        setSize: function(width, height) {
+            this.W = Type.createFunction(width, this.board, '');
+            this.H = Type.createFunction(height, this.board, '');
+
+            // this.prepareUpdate().update().updateRenderer();
+
+            return this;
         },
 
         /**
