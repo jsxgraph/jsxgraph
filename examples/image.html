@@ -22,7 +22,7 @@
   <div id="debug" style="display:block;"></div>
    <script type="text/javascript">
     /* <![CDATA[ */
-    (function(){
+    //(function(){
         var p0, p1, picStr, board;
         
         picStr = "http://easyimup.de/uploads/garfield-1069_e254457.gif";
@@ -32,12 +32,16 @@
         board = JXG.JSXGraph.initBoard('jxgbox', {originX: 250, originY: 250, unitX: 40, unitY: 40, axis:true, grid:true});
 
         var p0 = board.create('point', [-1,0], {style:5, name:'opacity'}); 
-        
+
         /*
         var p1 = board.create('point', [3,0], {style:5, name:'rot+scale'}); 
         var li = board.create('line', [p0,p1]); 
         */
-        var im = board.create('image',[picStr, [1,1], [3,2]],
+        var p1 = board.create('point', [1,1]); 
+        var p2 = board.create('point', [4,3]); 
+        var im = board.create('image',[picStr, 
+                                [function(){return p1.X()}, function(){return p1.Y(); }],
+                                [function(){return p2.X() - p1.X()}, function(){return p2.Y() - p1.Y(); }]],
             {id:'imx', opacity: function(){ return Math.exp(-Math.abs(p0.X())*0.4);}, rotate:0, frozen:false }); 
 
         /*
@@ -61,7 +65,7 @@
         tOffInv.bindTo(im); tScale.bindTo(im); tOff.bindTo(im);
         //board.update();
         */
-    })();
+    //})();
   /* ]]> */
   </script>
 </body>

@@ -193,7 +193,10 @@ define([
          * Updates the size of the image.
          */
         updateSize: function () {
-            this.coords.setCoordinates(Const.COORDS_BY_USER, [this.W(), this.H()]);
+            this.usrSize = [this.W(), this.H()];
+            this.size = [Math.abs(this.usrSize[0] * this.board.unitX), Math.abs(this.usrSize[1] * this.board.unitY)];
+
+            return this;
         },
 
         /**
@@ -248,6 +251,8 @@ define([
             } else {
                 this.transformations.push(transform);
             }
+
+            return this;
         },
 
         // documented in element.js
