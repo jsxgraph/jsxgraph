@@ -964,17 +964,15 @@ define([
                 if (c !== 'none') {
                     node.setAttributeNS(null, 'fill', c);
                 }
-                /*
-                // This must be commented out for highlighting of images
-                else {
-                    oo = 0;
-                }
-                */
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
                     node.setAttributeNS(null, 'opacity', oo);
-                    //node.style['opacity'] = oo;  // This would overwrite values set y CSS class.
+                    //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
+                    if (c === 'none') {  // This is don only for non-images
+                                         // because images have no fill color.
+                        oo = 0;
+                    }
                     node.setAttributeNS(null, 'fill-opacity', oo);
                 }
 
