@@ -914,7 +914,7 @@ define([
          * Translates the point by <tt>tv = (x, y)</tt>.
          * @param {Number} method The type of coordinates used here.
          * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
-         * @param {Number} tv (x, y)
+         * @param {Array} tv (x, y)
          * @returns {JXG.Point}
          */
         setPositionByTransform: function (method, tv) {

@@ -215,8 +215,13 @@ define([
                 }
                 this.usr2screen(doRound);
             } else {
-                sc[1] = coordinates[0];
-                sc[2] = coordinates[1];
+                if (coordinates.length === 2) { // Euclidean coordinates
+                    sc[1] = coordinates[0];
+                    sc[2] = coordinates[1];
+                } else { // Homogeneous coordinates (normalized)
+                    sc[1] = coordinates[1];
+                    sc[2] = coordinates[2];
+                }
                 this.screen2usr();
             }
 
