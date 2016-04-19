@@ -1252,7 +1252,9 @@ define([
                 this.relativeCoords = new Coords(Const.COORDS_BY_USER, coordinates, this.board);
             }
             this.element.addChild(this);
-            this.addParents(this.element);
+            if (isLabel) {
+                this.addParents(this.element);
+            }
 
             this.XEval = function () {
                 var sx, coords, anchor;

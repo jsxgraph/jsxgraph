@@ -652,7 +652,12 @@ define([
 
         // documented in element.js
         getParents: function () {
-            var p = [this.Z(), this.X(), this.Y(), this.orgText];
+            var p;
+            if (this.relativeCoords !== undefined) { // Texts with anchor elements, excluding labels
+                p = [this.relativeCoords.usrCoords[1], this.relativeCoords.usrCoords[2], this.orgText];
+            } else {                                 // Other texts
+                p = [this.Z(), this.X(), this.Y(), this.orgText];
+            }
 
             if (this.parents.length !== 0) {
                 p = this.parents;
