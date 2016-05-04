@@ -1348,7 +1348,6 @@ define([
             this.nanLevel = depth - 4;
 
             this.points = [];
-            this._lastCrds = [0, NaN, NaN];   // Used in _insertPoint
 
             ta = mi;
             pa.setCoordinates(Const.COORDS_BY_USER, [this.X(ta, suspendUpdate), this.Y(ta, suspendUpdate)], false);
@@ -1360,6 +1359,7 @@ define([
             b = pb.copy('scrCoords');
 
             this.points.push(pa);
+            this._lastCrds = pa.copy('scrCoords');   //Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(pb);
 //console.log("NUmber points", this.points.length, this.board.updateQuality, this.board.BOARD_QUALITY_LOW);
