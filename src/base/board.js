@@ -730,7 +730,8 @@ define([
             var cPos, doc, crect, scrollLeft, scrollTop,
                 docElement = this.document.documentElement || this.document.body.parentNode,
                 docBody = this.document.body,
-                container = this.containerObj;
+                container = this.containerObj,
+                viewport, content;
 
             /**
              * During drags and origin moves the container element is usually not changed.
@@ -764,6 +765,25 @@ define([
                         scrollTop = docElement.ScrollTop;
                     } else {
                         scrollTop = this.document.body.scrollTop;
+                    }
+                }
+
+                /*
+                  Chrome on Android distinguishes two types of scrolling:
+                  a) If <meta name="viewport" content="user-scalable=yes"> scrolling means the visual viewport
+                     is changed. The values of scrollLeft and scrollTop contain the scroll distance, but
+                     getBoundingClientRect() is unchanged. To get the correct position, the scrolling has to be ignored.
+                  b) In case <meta name="viewport" content="user-scalable=no"> scrolling is like scrolling on
+                     a desktop computer. No changes are necessary.
+                 */
+                if (Env.isAndroid()) {
+                    viewport = document.querySelector('meta[name=viewport]');
+                    if (viewport !== null) {
+                        content = viewport.getAttribute('content').replace(/ /g, '');
+                        if (content.match(/user-scalable=[y1]+/i) !== null) {
+                            scrollLeft = 0;
+                            scrollTop = 0;
+                        }
                     }
                 }
 
