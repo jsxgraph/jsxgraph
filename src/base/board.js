@@ -776,6 +776,7 @@ define([
                   b) In case <meta name="viewport" content="user-scalable=no"> scrolling is like scrolling on
                      a desktop computer. No changes are necessary.
                  */
+                /*
                 if (Env.isAndroid()) {
                     viewport = document.querySelector('meta[name=viewport]');
                     if (viewport !== null) {
@@ -786,6 +787,10 @@ define([
                         }
                     }
                 }
+                */
+
+                scrollLeft = 0;
+                scrollTop = 0;
 
                 crect = container.getBoundingClientRect();
                 cPos = [crect.left + scrollLeft, crect.top + scrollTop];
