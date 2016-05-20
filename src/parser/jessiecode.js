@@ -1,7 +1,7 @@
 /*
  JessieCode Interpreter and Compiler
 
-    Copyright 2011-2013
+    Copyright 2011-2016
         Michael Gerhaeuser,
         Alfred Wassermann
 
@@ -45,7 +45,8 @@
  * with JSXGraph. It is similar to JavaScript, but prevents access to the DOM. Hence, it can be used in community driven
  * Math portals which want to use JSXGraph to display interactive math graphics.
  */
- define([
+
+define([
     'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/uuid', 'utils/env'
 ], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, UUID, Env) {
 
@@ -66,7 +67,6 @@
             return new F();
         };
     }
-
 
     var priv = {
             modules: {
