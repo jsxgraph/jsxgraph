@@ -727,7 +727,7 @@ define([
          * @returns {Array} Array of coordinates relative the boards container top left corner.
          */
         getCoordsTopLeftCorner: function () {
-            var cPos, doc, crect, scrollLeft, scrollTop,
+            var cPos, doc, crect,
                 docElement = this.document.documentElement || this.document.body.parentNode,
                 docBody = this.document.body,
                 container = this.containerObj,
@@ -748,52 +748,8 @@ define([
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
             if (container.getBoundingClientRect) {
-                if (Type.isNumber(window.pageXOffset)) {
-                    scrollLeft = window.pageXOffset;
-                } else {
-                    if (docElement.ScrollLeft === 'number') {
-                        scrollLeft = docElement.ScrollLeft;
-                    } else {
-                        scrollLeft = this.document.body.scrollLeft;
-                    }
-                }
-
-                if (Type.isNumber(window.pageYOffset)) {
-                    scrollTop = window.pageYOffset;
-                } else {
-                    if (docElement.ScrollTop === 'number') {
-                        scrollTop = docElement.ScrollTop;
-                    } else {
-                        scrollTop = this.document.body.scrollTop;
-                    }
-                }
-
-                /*
-                  Chrome on Android distinguishes two types of scrolling:
-                  a) If <meta name="viewport" content="user-scalable=yes"> scrolling means the visual viewport
-                     is changed. The values of scrollLeft and scrollTop contain the scroll distance, but
-                     getBoundingClientRect() is unchanged. To get the correct position, the scrolling has to be ignored.
-                  b) In case <meta name="viewport" content="user-scalable=no"> scrolling is like scrolling on
-                     a desktop computer. No changes are necessary.
-                 */
-                /*
-                if (Env.isAndroid()) {
-                    viewport = document.querySelector('meta[name=viewport]');
-                    if (viewport !== null) {
-                        content = viewport.getAttribute('content').replace(/ /g, '');
-                        if (content.match(/user-scalable=[y1]+/i) !== null) {
-                            scrollLeft = 0;
-                            scrollTop = 0;
-                        }
-                    }
-                }
-                */
-
-                scrollLeft = 0;
-                scrollTop = 0;
-
                 crect = container.getBoundingClientRect();
-                cPos = [crect.left + scrollLeft, crect.top + scrollTop];
+                cPos = [crect.left, crect.top];
 
                 // add border width
                 cPos[0] += Env.getProp(container, 'border-left-width');
