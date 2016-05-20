@@ -45,12 +45,28 @@
  * with JSXGraph. It is similar to JavaScript, but prevents access to the DOM. Hence, it can be used in community driven
  * Math portals which want to use JSXGraph to display interactive math graphics.
  */
-
-define([
+ define([
     'jxg', 'base/constants', 'base/text', 'math/math', 'math/geometry', 'math/statistics', 'utils/type', 'utils/uuid', 'utils/env'
 ], function (JXG, Const, Text, Mat, Geometry, Statistics, Type, UUID, Env) {
 
     ;
+
+    // IE 6-8 compatibility
+    if (!Object.create) {
+        Object.create = function(o, properties) {
+            if (typeof o !== 'object' && typeof o !== 'function') throw new TypeError('Object prototype may only be an Object: ' + o);
+            else if (o === null) throw new Error("This browser's implementation of Object.create is a shim and doesn't support 'null' as the first argument.");
+
+            if (typeof properties != 'undefined') throw new Error("This browser's implementation of Object.create is a shim and doesn't support a second argument.");
+
+            function F() {}
+
+            F.prototype = o;
+
+            return new F();
+        };
+    }
+
 
     var priv = {
             modules: {
@@ -727,7 +743,7 @@ define([
                 code = cleaned.join('\n');
                 ast = parser.parse(code);
                 result = this.execute(ast);
-            } catch (e) {
+            } catch (e) {  // catch is mandatory in old IEs
             } finally {
                 // make sure the original text method is back in place
                 if (Text) {

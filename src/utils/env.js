@@ -514,7 +514,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 doc = obj.ownerDocument;
 
             // Non-IE
-            if (doc.defaultView.getComputedStyle) {
+            if (doc.defaultView && doc.defaultView.getComputedStyle) {
                 r = doc.defaultView.getComputedStyle(obj, null).getPropertyValue(stylename);
             // IE
             } else if (obj.currentStyle && JXG.ieVersion >= 9) {
@@ -614,7 +614,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     [0, 0, 1]];
 
             // This should work on all browsers except IE 6-8
-            if (doc.defaultView.getComputedStyle) {
+            if (doc.defaultView && doc.defaultView.getComputedStyle) {
                 st = doc.defaultView.getComputedStyle(obj, null);
                 str = st.getPropertyValue("-webkit-transform") ||
                      st.getPropertyValue("-moz-transform") ||
