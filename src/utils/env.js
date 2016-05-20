@@ -429,16 +429,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 }
             }
 
-            /*
-            if (e.pageX) {
-                posx = e.pageX;
-                posy = e.pageY;
-            } else if (e.clientX) {
-                posx = e.clientX + doc.body.scrollLeft + doc.documentElement.scrollLeft;
-                posy = e.clientY + doc.body.scrollTop + doc.documentElement.scrollTop;
-            }
-            */
-
             // Scrolling is ignored.
             // e.clientX is supported since IE6
             if (e.clientX) {
