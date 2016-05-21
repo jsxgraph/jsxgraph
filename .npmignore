@@ -1,0 +1,8 @@
+examples/
+doc/
+extensions/
+helpers/
+JSXCompressor/
+plugins/
+utils/
+update_cdnjs/
