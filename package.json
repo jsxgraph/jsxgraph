@@ -20,6 +20,13 @@
         "Peter Wilfahrt"
     ],
 
+    "keywords": [
+        "geometry",
+        "dynamic geometry",
+        "function plotting",
+        "mathematics education"
+    ],
+
     "bugs": {
         "url": "http://github.com/jsxgraph/jsxgraph/issues"
     },
