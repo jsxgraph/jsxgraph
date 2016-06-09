@@ -1610,9 +1610,12 @@ define([
          * The function uses the coords object of the element as
          * its actual position. If there is no coords object, nothing is done.
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
+         * @param {Boolean} fromParent True if the drag comes from a child element. This is the case if a line
+         *    through two points is dragged. In this case we do not try to force the points to stay inside of
+         *    the visible board, but the distance between the two points stays constant.
          * @returns {JXG.GeometryElement} Reference to this element
          */
-        handleSnapToGrid: function (force) {
+        handleSnapToGrid: function (force, fromParent) {
             var x, y, ticks,
                 //i, len, g, el, p,
                 boardBB,
@@ -1669,18 +1672,19 @@ define([
 
                     // checking whether x and y are still within boundingBox,
                     // if not, adjust them to remain within the board
-                    if (x < boardBB[0]) {
-                        x += sX;
-                    } else if (x > boardBB[2]) {
-                        x -= sX;
-                    }
+                    if (!fromParent) {
+                        if (x < boardBB[0]) {
+                            x += sX;
+                        } else if (x > boardBB[2]) {
+                            x -= sX;
+                        }
 
-                    if (y < boardBB[3]) {
-                        y += sY;
-                    } else if (y > boardBB[1]) {
-                        y -= sY;
+                        if (y < boardBB[3]) {
+                            y += sY;
+                        } else if (y > boardBB[1]) {
+                            y -= sY;
+                        }
                     }
-
                     this.coords.setCoordinates(Const.COORDS_BY_USER, [x, y]);
                 }
             }

@@ -658,8 +658,8 @@ define([
 
             if (this.visProp.snaptogrid) {
                 if (this.parents.length < 3) {    // Line through two points
-                    this.point1.handleSnapToGrid(true);
-                    this.point2.handleSnapToGrid(true);
+                    this.point1.handleSnapToGrid(true, true);
+                    this.point2.handleSnapToGrid(true, true);
                 /*
                 if (this.point1.visProp.snaptogrid || this.point2.visProp.snaptogrid) {
                     this.point1.snapToGrid();
@@ -699,8 +699,8 @@ define([
                     }
                 }
             } else {
-                this.point1.snapToGrid();
-                this.point2.snapToGrid();
+                this.point1.handleSnapToGrid(false, true);
+                this.point2.handleSnapToGrid(false, true);
             }
 
             return this;
