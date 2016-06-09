@@ -2529,6 +2529,8 @@ define([
                 this.zoomOut(pos.usrCoords[1], pos.usrCoords[2]);
             }
 
+            this.triggerEventHandlers(['mousewheel'], [evt]);
+
             evt.preventDefault();
             return false;
         },
