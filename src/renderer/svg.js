@@ -232,7 +232,7 @@ define([
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
             /*
-            * Changes here are also necessary in _setArrowAtts()
+            * Changes here are also necessary in _setArrowWidth()
             */
             s = parseInt(element.visProp.strokewidth, 10);
             //node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
@@ -264,21 +264,38 @@ define([
         },
 
         /**
-         * Updates an arrow DOM node.
+         * Updates color of an arrow DOM node.
          * @param {Node} node The arrow node.
          * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
          * @param {Number} opacity
-         * @param {Number} width
          */
-        _setArrowAtts: function (node, color, opacity, width, parentNode) {
+        _setArrowColor: function (node, color, opacity, parentNode) {
             var s, d;
 
             if (node) {
-                node.setAttributeNS(null, 'stroke', color);
+                if (Type.isString(color)) {
+                    node.setAttributeNS(null, 'stroke', color);
+                    node.setAttributeNS(null, 'fill', color);
+                }
                 node.setAttributeNS(null, 'stroke-opacity', opacity);
-                node.setAttributeNS(null, 'fill', color);
                 node.setAttributeNS(null, 'fill-opacity', opacity);
 
+                if (this.isIE) {
+                    parentNode.parentNode.insertBefore(parentNode, parentNode);
+                }
+            }
+
+        },
+
+        /**
+         * Updates width of an arrow DOM node.
+         * @param {Node} node The arrow node.
+         * @param {Number} width
+         */
+        _setArrowWidth: function (node, width, parentNode) {
+            var s, d;
+
+            if (node) {
                 // This is the stroke-width of the arrow head.
                 // Should be zero to make the positioning easy
                 node.setAttributeNS(null, 'stroke-width', 0);
@@ -1022,14 +1039,15 @@ define([
                 }
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowAtts(el.rendNodeTriangle, c, oo, el.visProp.strokewidth, el.rendNode);
-                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
+                    this._setArrowColor(el.rendNodeTriangle, c, oo, el.rendNode);
+                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
+                            el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleStart, c, oo, el.visProp.strokewidth, el.rendNode);
+                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleEnd, c, oo, el.visProp.strokewidth, el.rendNode);
+                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el.rendNode);
                     }
                 }
             }
@@ -1041,7 +1059,8 @@ define([
         // documented in JXG.AbstractRenderer
         setObjectStrokeWidth: function (el, width) {
             var node,
-                w = Type.evaluate(width);
+                w = Type.evaluate(width),
+                rgba, c, rgbo, o, oo;
 
             if (isNaN(w) || el.visPropOld.strokewidth === w) {
                 return;
@@ -1053,17 +1072,18 @@ define([
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowAtts(el.rendNodeTriangle, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
-                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE || el.elementClass === Const.OBJECT_CLASS_LINE) {
+                    this._setArrowWidth(el.rendNodeTriangle, w, el.rendNode);
+                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
+                            el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleStart, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
+                        this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
-                        this._setArrowAtts(el.rendNodeTriangleEnd, el.visProp.strokecolor, el.visProp.strokeopacity, w, el.rendNode);
+                        this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                     }
                 }
-            }
+             }
             el.visPropOld.strokewidth = w;
         },
 

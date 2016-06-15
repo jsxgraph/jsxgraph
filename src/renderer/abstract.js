@@ -1222,7 +1222,8 @@ define([
                 if (element.type === Const.OBJECT_TYPE_POLYGON) {
                     this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
                     for (i = 0; i < element.borders.length; i++) {
-                        this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.highlightstrokecolor,
+                        this.setObjectStrokeColor(element.borders[i],
+                            element.borders[i].visProp.highlightstrokecolor,
                             element.borders[i].visProp.highlightstrokeopacity);
                     }
                 } else {
