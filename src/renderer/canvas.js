@@ -1073,7 +1073,7 @@ define([
             this.context.save();
             this.context.clearRect(0, 0, this.canvasRoot.width, this.canvasRoot.height);
 
-            if (board && board.showCopyright) {
+            if (board && board.attr.showcopyright) {
                 this.displayCopyright(JXG.licenseText, 12);
             }
         },
