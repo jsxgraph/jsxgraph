@@ -312,7 +312,8 @@ define([
              * zoom: {
              *   factorX: 1.25,  // horizontal zoom factor (multiplied to {@link JXG.Board#zoomX})
              *   factorY: 1.25,  // vertical zoom factor (multiplied to {@link JXG.Board#zoomY})
-             *   wheel: false,   // allow zooming by mouse wheel
+             *   wheel: false,     // allow zooming by mouse wheel or
+             *   				   // by pinch-to-toom gesture on touch devices
              *   needshift: false, // mouse wheel zooming needs pressing of the shift key
              *   min: 0.001        // minimal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomOut
              *   max: 1000.0       // maximal values of {@link JXG.Board#zoomX} and {@link JXG.Board#zoomY}, limits zoomIn
@@ -341,7 +342,7 @@ define([
              * <pre>
              * pan: {
              *   enabled: true   // Allow panning
-             *   needTwoFingers: true, // panningis done with two fingers on touch devices
+             *   needTwoFingers: true, // panning is done with two fingers on touch devices
              *   needshift: true, // mouse panning needs pressing of the shift key
              * }
              * </pre>

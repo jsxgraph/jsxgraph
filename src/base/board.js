@@ -1548,7 +1548,8 @@ define([
         },
 
         /**
-         * Triggered on iOS/Safari while the user inputs a gesture (e.g. pinch) and is used to zoom into the board. Only works on iOS/Safari.
+         * Triggered on iOS/Safari while the user inputs a gesture (e.g. pinch) and is used to zoom into the board.
+         * Works on iOS/Safari and Android.
          * @param {Event} evt Browser event object
          * @returns {Boolean}
          */
