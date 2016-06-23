@@ -576,7 +576,9 @@ define([
         updateEllipsePrim: function (node, x, y, rx, ry) {
             var huge = 1000000;
 
+            huge = 200000; // IE
             // webkit does not like huge values if the object is dashed
+            // iE doesn't like huge values above 216000
             x = Math.abs(x) < huge ? x : huge * x / Math.abs(x);
             y = Math.abs(y) < huge ? y : huge * y / Math.abs(y);
             rx = Math.abs(rx) < huge ? rx : huge * rx / Math.abs(rx);
@@ -592,8 +594,10 @@ define([
         updateLinePrim: function (node, p1x, p1y, p2x, p2y) {
             var huge = 1000000;
 
+            huge = 200000; //IE
             if (!isNaN(p1x + p1y + p2x + p2y)) {
                 // webkit does not like huge values if the object is dashed
+                // IE doesn't like huge values above 216000
                 p1x = Math.abs(p1x) < huge ? p1x : huge * p1x / Math.abs(p1x);
                 p1y = Math.abs(p1y) < huge ? p1y : huge * p1y / Math.abs(p1y);
                 p2x = Math.abs(p2x) < huge ? p2x : huge * p2x / Math.abs(p2x);

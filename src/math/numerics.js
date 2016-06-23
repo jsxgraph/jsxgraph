@@ -2396,7 +2396,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         /**
          * Approximate the integral by Riemann sums.
          * Compute the area described by the riemann sum rectangles.
-         * @deprecated Replaced by JXG.Curve.Value(), see {@link JXG.Curve#riemannsum}
+         * @deprecated Replaced by JXG.Curve.Value(), see @link JXG.Curve#riemannsum
          * @param {Function_Array} f Function or array of two functions.
          * If f is a function the integral of this function is approximated by the Riemann sum.
          * If f is an array consisting of two functions the area between the two functions is approximated
