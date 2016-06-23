@@ -889,7 +889,7 @@ define([
             *
             * c1 = board.create('circle',[p1, p2]);
             *
-            * a = board.create('angle',[p2, p1, p3]);
+            * a = board.create('angle',[p2, p1, p3], {radius:3});
             * s = board.create('slider',[[-2,1], [2,1], [0, Math.PI*0.5, 2*Math.PI]]);
             *
             * a.setAngle(function() {
@@ -910,7 +910,7 @@ define([
             *
             *     c1 = board.create('circle',[p1, p2]);
             *
-            *     a = board.create('angle',[p2, p1, p3]);
+            *     a = board.create('angle',[p2, p1, p3], {radius: 3});
             *     s = board.create('slider',[[-2,1], [2,1], [0, Math.PI*0.5, 2*Math.PI]]);
             *
             *     a.setAngle(function() {
