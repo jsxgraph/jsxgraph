@@ -879,6 +879,49 @@ define([
             * @param {Number|Function} val Number or Function which returns the size of the angle in Radians
             * @returns {Object} Pointer to the angle element..
             * @memberOf Angle.prototype
+            *
+            * @example
+            * var p1, p2, p3, c, a, s;
+            *
+            * p1 = board.create('point',[0,0]);
+            * p2 = board.create('point',[5,0]);
+            * p3 = board.create('point',[0,5]);
+            *
+            * c1 = board.create('circle',[p1, p2]);
+            *
+            * a = board.create('angle',[p2, p1, p3]);
+            * s = board.create('slider',[[-2,1], [2,1], [0, Math.PI*0.5, 2*Math.PI]]);
+            *
+            * a.setAngle(function() {
+            *     return s.Value();
+            * });
+            *
+            *
+            * </pre><div id="99957b1c-394f-11e6-af4a-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+            * <script type="text/javascript">
+            *     (function() {
+            *         var board = JXG.JSXGraph.initBoard('99957b1c-394f-11e6-af4a-901b0e1b8723',
+            *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+            *     var p1, p2, p3, c, a, s;
+            *
+            *     p1 = board.create('point',[0,0]);
+            *     p2 = board.create('point',[5,0]);
+            *     p3 = board.create('point',[0,5]);
+            *
+            *     c1 = board.create('circle',[p1, p2]);
+            *
+            *     a = board.create('angle',[p2, p1, p3]);
+            *     s = board.create('slider',[[-2,1], [2,1], [0, Math.PI*0.5, 2*Math.PI]]);
+            *
+            *     a.setAngle(function() {
+            *         return s.Value();
+            *     });
+            *
+            *
+            *     })();
+            *
+            * </script><pre>
+            *
             */
             el.setAngle = function (val) {
                 var t,
