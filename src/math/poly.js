@@ -51,6 +51,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     /**
      * The JXG.Math.Poly namespace holds algorithms to create and manipulate polynomials.
      * @name JXG.Math.Poly
+     * @exports Mat.Poly as JXG.Math.Poly
      * @namespace
      */
     Mat.Poly = {};
@@ -123,7 +124,10 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * Creates a deep copy of the monomial.
+         *
          * @returns {JXG.Math.Poly.Monomial}
+         *
+         * @memberof JXG.Math.Poly.Monomial
          */
         copy: function () {
             return new Mat.Poly.Monomial(this.ring, this.coefficient, this.exponents);
@@ -132,6 +136,8 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /**
          * Print the monomial.
          * @returns {String} String representation of the monomial
+
+         * @memberof JXG.Math.Poly.Monomial
          */
         print: function () {
             var s = [],
@@ -188,6 +194,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * @param {Array} sig An array of numbers
          * @returns {Number} The index of the first monomial with the given signature, or -1
          * if no monomial could be found.
+         * @memberof JXG.Math.Poly.Polynomial
          */
         findSignature: function (sig) {
             var i;
@@ -206,6 +213,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * monomial's signature and just adds the coefficient if one is found.
          * @param {JXG.Math.Poly.Monomial} m
          * @param {Number} factor Either <tt>1</tt> or <tt>-1</tt>.
+         * @memberof JXG.Math.Poly.Polynomial
          */
         addSubMonomial: function (m, factor) {
             var i;
@@ -223,6 +231,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Adds another polynomial or monomial to this one and merges them by checking for the
          * signature of each new monomial in the existing monomials.
          * @param {JXG.Math.Poly.Polynomial|JXG.Math.Poly.Monomial} mp
+         * @memberof JXG.Math.Poly.Polynomial
          */
         add: function (mp) {
             var i;
@@ -246,6 +255,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
          * Subtracts another polynomial or monomial from this one and merges them by checking for the
          * signature of each new monomial in the existing monomials.
          * @param {JXG.Math.Poly.Polynomial|JXG.Math.Poly.Monomial} mp
+         * @memberof JXG.Math.Poly.Polynomial
          */
         sub: function (mp) {
             var i;
@@ -268,6 +278,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /**
          * Creates a deep copy of the polynomial.
          * @returns {JXG.Math.Poly.Polynomial}
+         * @memberof JXG.Math.Poly.Polynomial
          */
         copy: function () {
             var i, p;
@@ -283,6 +294,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         /**
          * Prints the polynomial.
          * @returns {String} A string representation of the polynomial.
+         * @memberof JXG.Math.Poly.Polynomial
          */
         print: function () {
             var s = [],

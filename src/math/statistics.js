@@ -46,6 +46,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
     /**
      * Functions for mathematical statistics. Most functions are like in the statistics package R.
      * @name JXG.Math.Statistics
+     * @exports Mat.Statistics as JXG.Math.Statistics
      * @namespace
      */
     Mat.Statistics = {

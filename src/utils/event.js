@@ -47,27 +47,24 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
     "use strict";
 
     /**
+     * Event namespace
      * @namespace
      */
     JXG.EventEmitter = {
         /**
          * Holds the registered event handlers.
-         * @name JXG.EventEmitter#eventHandlers
          * @type Object
          */
         eventHandlers: {},
 
         /**
          * Events can be suspended to prevent endless loops.
-         * @name JXG.EventEmitter#suspended
          * @type Object
          */
         suspended: {},
 
         /**
          * Triggers all event handlers of this element for a given event.
-         * @name JXG.EventEmitter#triggerEventHandlers
-         * @function
          * @param {Array} event
          * @param {Array} args The arguments passed onto the event handler
          * @returns Reference to the object.
@@ -99,10 +96,9 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * Register a new event handler. For a list of possible events see documentation of the elements and objects implementing
+         * Register a new event handler. For a list of possible events see documentation
+         * of the elements and objects implementing
          * the {@link EventEmitter} interface.
-         * @name JXG.EventEmitter#on
-         * @function
          * @param {String} event
          * @param {Function} handler
          * @param {Object} [context] The context the handler will be called in, default is the element itself.
@@ -125,8 +121,6 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
 
         /**
          * Unregister an event handler.
-         * @name JXG.EventEmitter#off
-         * @function
          * @param {String} event
          * @param {Function} [handler]
          * @returns Reference to the object.
@@ -155,11 +149,12 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
         },
 
         /**
-         * @description Implements the functionality from this interface in the given object. All objects getting their event handling
-         * capabilities from this method should document it by adding the <tt>on, off, triggerEventHandlers</tt> via the
-         * borrows tag as methods to their documentation: <pre>@borrows JXG.EventEmitter#on as this.on</pre>
-         * @name JXG.EventEmitter#eventify
-         * @function
+         * @description Implements the functionality from this interface in the given object.
+         * All objects getting their event handling
+         * capabilities from this method should document it by adding
+         * the <tt>on, off, triggerEventHandlers</tt> via the
+         * borrows tag as methods to their documentation:
+         * <pre>@borrows JXG.EventEmitter#on as this.on</pre>
          * @param {Object} o
          */
         eventify: function (o) {

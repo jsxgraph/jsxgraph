@@ -81,6 +81,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
     /**
      * The JXG.Math.Numerics namespace holds numerical algorithms, constants, and variables.
      * @name JXG.Math.Numerics
+     * @exports Mat.Numerics as JXG.Math.Numerics
      * @namespace
      */
     Mat.Numerics = {
@@ -682,7 +683,6 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * Scale error in Gauss Kronrod quadrature.
          * Internal method used in {@link #_gaussKronrod}.
          * @private
-         * @memberof JXG.Math.Numerics
          */
         _rescale_error: function (err, result_abs, result_asc) {
             var scale, min_err,
@@ -714,19 +714,19 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * Generic Gauss-Kronrod quadrature algorithm.
          * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
          * Taken from QUADPACK.
+         *
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Number} n order
          * @param {Array} xgk Kronrod quadrature abscissae
          * @param {Array} wg Weights of the Gauss rule
          * @param {Array} wgk Weights of the Kronrod rule
-         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc. See the library
-         *  QUADPACK for an explanation.
+         * @param {Object} resultObj Object returning resultObj.abserr, resultObj.resabs, resultObj.resasc.
+         * See the library QUADPACK for an explanation.
          *
          * @returns {Number} Integral value of f over interval
          *
          * @private
-         * @memberof JXG.Math.Numerics
          */
         _gaussKronrod: function (interval, f, n, xgk, wg, wgk, resultObj) {
             var a = interval[0],
@@ -2396,7 +2396,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         /**
          * Approximate the integral by Riemann sums.
          * Compute the area described by the riemann sum rectangles.
-         * @deprecated Replaced by JXG.Curve.Value(), see @link JXG.Curve#riemannsum
+         *
+         * If there is an element of type {@link Riemannsum}, then it is more efficient
+         * to use the method JXG.Curve.Value() of this element instead.
+         *
          * @param {Function_Array} f Function or array of two functions.
          * If f is a function the integral of this function is approximated by the Riemann sum.
          * If f is an array consisting of two functions the area between the two functions is approximated
