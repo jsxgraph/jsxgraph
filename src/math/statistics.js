@@ -159,7 +159,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
         },
 
         /**
-         * Weighted mean value is basically the same as {@link JXG.Math.Statistics#mean} but here the values
+         * Weighted mean value is basically the same as {@link JXG.Math.Statistics.mean} but here the values
          * are weighted, i.e. multiplied with another value called <em>weight</em>. The weight values are given
          * as a second array with the same length as the value array..
          * @throws {Error} If the dimensions of the arrays don't match.
@@ -318,7 +318,7 @@ define(['jxg', 'math/math', 'utils/type'], function (JXG, Mat, Type) {
 
         /**
          * @function
-         * @deprecated Use {@link JXG.Math.Statistics#div} instead.
+         * @deprecated Use {@link JXG.Math.Statistics.div} instead.
          * @memberof JXG.Math.Statistics
          */
         divide: function () {

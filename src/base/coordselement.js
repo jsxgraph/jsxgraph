@@ -663,7 +663,9 @@ define([
 
         /**
          * New evaluation of the function term.
-         * This is required for CAS-points: Their XTerm() method is overwritten in {@link #addConstraint}
+         * This is required for CAS-points: Their XTerm() method is
+         * overwritten in {@link JXG.CoordsElement#addConstraint}.
+         *
          * @returns {Number} User coordinate of point in x direction.
          * @private
          */
@@ -673,7 +675,9 @@ define([
 
         /**
          * New evaluation of the function term.
-         * This is required for CAS-points: Their YTerm() method is overwritten in {@link #addConstraint}
+         * This is required for CAS-points: Their YTerm() method is overwritten
+         * in {@link JXG.CoordsElement#addConstraint}.
+         *
          * @returns {Number} User coordinate of point in y direction.
          * @private
          */
@@ -683,7 +687,9 @@ define([
 
         /**
          * New evaluation of the function term.
-         * This is required for CAS-points: Their ZTerm() method is overwritten in {@link #addConstraint}
+         * This is required for CAS-points: Their ZTerm() method is overwritten in
+         * {@link JXG.CoordsElement#addConstraint}.
+         *
          * @returns {Number} User coordinate of point in z direction.
          * @private
          */
@@ -776,7 +782,8 @@ define([
         },
 
         /**
-         * Alias for {@link #handleSnapToPoints}.
+         * Alias for {@link JXG.CoordsElement#handleSnapToPoints}.
+         *
          * @param {Boolean} force force snapping independent from what the snaptogrid attribute says
          * @returns {JXG.Point} Reference to this element
          */
@@ -1390,7 +1397,7 @@ define([
          * @param {function} [options.callback] A function that is called as soon as the animation is finished.
          * @param {Boolean} [options.interpolate=true] If <tt>path</tt> is an array moveAlong()
          * will interpolate the path
-         * using {@link JXG.Math.Numerics#Neville}. Set this flag to false if you don't want to use interpolation.
+         * using {@link JXG.Math.Numerics.Neville}. Set this flag to false if you don't want to use interpolation.
          * @returns {JXG.Point} Reference to the point.
          */
         moveAlong: function (path, time, options) {

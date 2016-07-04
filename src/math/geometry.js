@@ -72,7 +72,7 @@ define([
          * @param {JXG.Point,Array} A A point  or [x,y] array.
          * @param {JXG.Point,Array} B Another point or [x,y] array.
          * @param {JXG.Point,Array} C A circle - no, of course the third point or [x,y] array.
-         * @deprecated Use {@link JXG.Math.Geometry#rad} instead.
+         * @deprecated Use {@link JXG.Math.Geometry.rad} instead.
          * @see #rad
          * @see #trueAngle
          * @returns {Number} The angle in radian measure.
@@ -362,7 +362,7 @@ define([
         },
 
         /**
-         * @deprecated Please use {@link JXG.Math.Geometry#circumcenter} instead.
+         * @deprecated Please use {@link JXG.Math.Geometry.circumcenter} instead.
          */
         circumcenterMidpoint: function () {
             JXG.deprecated('Geometry.circumcenterMidpoint()', 'Geometry.circumcenter()');
@@ -944,10 +944,11 @@ define([
          * i determines the intersection point if two points are available: <ul>
          *   <li>i==0: use the positive square root,</li>
          *   <li>i==1: use the negative square root.</li></ul>
-         * See further {@see JXG.Point#createIntersectionPoint}.
+         * See further {@link JXG.Point#createIntersectionPoint}.
          * @param {Boolean} alwaysintersect. Flag that determines if segements and arc can have an outer intersection point
          * on their defining line or circle.
-         * @returns {Function} Function returning a {@see JXG.Coords} object that determines the intersection point.
+         * @returns {Function} Function returning a {@link JXG.Coords} object that determines
+         * the intersection point.
          */
         intersectionFunction: function (board, el1, el2, i, j, alwaysintersect) {
             var func, that = this;
@@ -1322,8 +1323,9 @@ define([
         /**
          * Intersection of line and curve, continuous case.
          * Finds the nr-the intersection point
-         * Uses {@link JXG.Math.Geometry#meetCurveLineDiscrete} as a first approximation.
-         * A more exact solution is then found with {@link JXG.Math.Numerics#meetCurveLineDiscrete}.
+         * Uses {@link JXG.Math.Geometry.meetCurveLineDiscrete} as a first approximation.
+         * A more exact solution is then found with
+         * {@link JXG.Math.Geometry.meetCurveLineDiscrete}.
          *
          * @param {JXG.Curve} cu Curve
          * @param {JXG.Line} li Line
@@ -1727,7 +1729,7 @@ define([
          * @param {Array} blue Array of four coordinate arrays of length 2 defining the second
          * Bezier curve segment, i.e. [[x0,y0], [x1,y1], [x2,y2], [x3,y3]].
          * @param {Number} level Recursion level
-         * @returns {Array} List of intersection points (up to nine). Each intersction point is an
+         * @returns {Array} List of intersection points (up to nine). Each intersection point is an
          * array of length three (homogeneous coordinates) plus preimages.
          */
         _bezierMeetSubdivision: function (red, blue, level) {
@@ -2152,7 +2154,8 @@ define([
 
         /**
          * Calculates the coordinates of the projection of a given point on a given curve.
-         * Uses {@link #projectCoordsToCurve}.
+         * Uses {@link JXG.Math.Geometry.projectCoordsToCurve}.
+         *
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Curve} curve Curve on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
@@ -2329,7 +2332,7 @@ define([
 
         /**
          * Calculates the coordinates of the projection of a given point on a given turtle. A turtle consists of
-         * one or more curves of curveType 'plot'. Uses {@link #projectPointToCurve}.
+         * one or more curves of curveType 'plot'. Uses {@link JXG.Math.Geometry.projectPointToCurve}.
          * @param {JXG.Point} point Point to project.
          * @param {JXG.Turtle} turtle on that the point is projected.
          * @param {JXG.Board} [board=point.board] Reference to a board.
@@ -2448,10 +2451,12 @@ define([
         /**
          * Helper function to create curve which displays a Reuleaux polygons.
          * @param {Array} points Array of points which should be the vertices of the Reuleaux polygon. Typically,
-         * these point list is the array vrtices of a regular polygon.
+         * these point list is the array vertices of a regular polygon.
          * @param {Number} nr Number of vertices
          * @returns {Array} An array containing the two functions defining the Reuleaux polygon and the two values
-         * for the start and the end of the paramtric curve. array may be used as parent array of a {@link JXG.Curve}.
+         * for the start and the end of the paramtric curve. array may be used as parent array of a
+         * {@link JXG.Curve}.
+         *
          * @example
          * var A = brd.create('point',[-2,-2]);
          * var B = brd.create('point',[0,1]);

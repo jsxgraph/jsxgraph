@@ -65,7 +65,8 @@ define([
     /**
      * The Line class is a basic class for all kind of line objects, e.g. line, arrow, and axis. It is usually defined by two points and can
      * be intersected with some other geometry elements.
-     * @class Creates a new basic line object. Do not use this constructor to create a line. Use {@link JXG.Board#create} with
+     * @class Creates a new basic line object. Do not use this constructor to create a line.
+     * Use {@link JXG.Board#create} with
      * type {@link Line}, {@link Arrow}, or {@link Axis} instead.
      * @constructor
      * @augments JXG.GeometryElement
@@ -91,7 +92,7 @@ define([
         this.point1 = this.board.select(p1);
 
         /**
-         * Endpoint of the line. Just like {@link #point1} you shouldn't write this field directly.
+         * Endpoint of the line. Just like {@link JXG.Line.point1} you shouldn't write this field directly.
          * @type JXG.Point
          */
         this.point2 = this.board.select(p2);
@@ -431,8 +432,9 @@ define([
         },
 
         /**
-         * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to {@link #point1}
-         * and {@link #point2}.
+         * Used to generate a polynomial for a point p that lies on this line, i.e. p is collinear to
+         * {@link JXG.Line#point1} and {@link JXG.Line#point2}.
+         *
          * @param {JXG.Point} p The point for that the polynomial is generated.
          * @returns {Array} An array containing the generated polynomial.
          * @private
@@ -498,9 +500,12 @@ define([
         },
 
         /**
-         * Determines whether the line is drawn beyond {@link #point1} and {@link #point2} and updates the line.
-         * @param {Boolean} straightFirst True if the Line shall be drawn beyond {@link #point1}, false otherwise.
-         * @param {Boolean} straightLast True if the Line shall be drawn beyond {@link #point2}, false otherwise.
+         * Determines whether the line is drawn beyond {@link JXG.Line#point1} and
+         * {@link JXG.Line#point2} and updates the line.
+         * @param {Boolean} straightFirst True if the Line shall be drawn beyond
+         * {@link JXG.Line#point1}, false otherwise.
+         * @param {Boolean} straightLast True if the Line shall be drawn beyond
+         * {@link JXG.Line#point2}, false otherwise.
          * @see #straightFirst
          * @see #straightLast
          * @private
@@ -746,7 +751,8 @@ define([
         },
 
         /**
-         * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+         * Treat the line as parametric curve in homogeneous coordinates.
+         * See {@link JXG.Line#X} for a detailed description.
          * @param {Number} t Parameter running from 0 to 1.
          * @returns {Number} Y(t) y-coordinate of the line treated as parametric curve.
          */
@@ -764,7 +770,9 @@ define([
         },
 
         /**
-         * Treat the line as parametric curve in homogeneous coordinates. See {@link #X} for a detailed description.
+         * Treat the line as parametric curve in homogeneous coordinates.
+         * See {@link JXG.Line#X} for a detailed description.
+         *
          * @param {Number} t Parameter running from 0 to 1.
          * @returns {Number} Z(t) z-coordinate of the line treated as parametric curve.
          */

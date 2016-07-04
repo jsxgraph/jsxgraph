@@ -681,7 +681,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          * Scale error in Gauss Kronrod quadrature.
-         * Internal method used in {@link #_gaussKronrod}.
+         * Internal method used in {@link JXG.Math.Numerics._gaussKronrod}.
          * @private
          */
         _rescale_error: function (err, result_abs, result_asc) {
@@ -712,7 +712,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          * Generic Gauss-Kronrod quadrature algorithm.
-         * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
+         * Internal method used in {@link JXG.Math.Numerics.GaussKronrod15},
+         * {@link JXG.Math.Numerics.GaussKronrod21},
+         * {@link JXG.Math.Numerics.GaussKronrod31}.
          * Taken from QUADPACK.
          *
          * @param {Array} interval The integration interval, e.g. [0, 3].
@@ -991,7 +993,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         },
 
         /**
-         * Generate workspace object for {@link #Qag}.
+         * Generate workspace object for {@link JXG.Math.Numerics.Qag}.
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {Number} n Max. limit
          * @returns {Object} Workspace object
@@ -1158,7 +1160,10 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          * Quadrature algorithm qag from QUADPACK.
-         * Internal method used in {@link #GaussKronrod15}, {@link #GaussKronrod21}, {@link #GaussKronrod31}.
+         * Internal method used in {@link JXG.Math.Numerics.GaussKronrod15},
+         * {@link JXG.Math.Numerics.GaussKronrod21},
+         * {@link JXG.Math.Numerics.GaussKronrod31}.
+         *
          * @param {Array} interval The integration interval, e.g. [0, 3].
          * @param {function} f A function which takes one argument of type number and returns a number.
          * @param {Object} [config] The algorithm setup. Accepted propert are max. recursion limit of type number,
@@ -1639,7 +1644,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Number,Array} x0 A single float value or an array of values to evaluate
          * @param {Array} x x values of knots
          * @param {Array} y y values of knots
-         * @param {Array} F Second derivatives at knots, calculated by {@link #splineDef}
+         * @param {Array} F Second derivatives at knots, calculated by {@link JXG.Math.Numerics.splineDef}
          * @see #splineDef
          * @returns {Number,Array} A single value or an array, depending on what is given as x0.
          * @memberof JXG.Math.Numerics
@@ -1893,7 +1898,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Number,function,Slider} degree number, function or slider.
          * Either
          * @param {Array} dataX Array containing either the x-coordinates of the data set or both coordinates in
-         * an array of {@link JXG.Point}s or {@link JXG.Coords}. In the latter case, the <tt>dataY</tt> parameter will be ignored.
+         * an array of {@link JXG.Point}s or {@link JXG.Coords}.
+         * In the latter case, the <tt>dataY</tt> parameter will be ignored.
          * @param {Array} dataY Array containing the y-coordinates of the data set,
          * @returns {function} A function of one parameter which returns the value of the regression polynomial of the given degree.
          * It possesses the method getTerm() which returns the string containing the function term of the polynomial.
@@ -2182,7 +2188,8 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         },
 
         /**
-         * Numerical (symmetric) approximation of derivative. suspendUpdate is piped through, see {@link JXG.Curve#updateCurve}
+         * Numerical (symmetric) approximation of derivative. suspendUpdate is piped through,
+         * see {@link JXG.Curve#updateCurve}
          * and {@link JXG.Curve#hasPoint}.
          * @param {function} f Function in one variable to be differentiated.
          * @param {object} [obj] Optional object that is treated as "this" in the function body. This is useful, if the function is a
@@ -2553,7 +2560,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         },
 
         /**
-         * Maximum number of iterations in {@link JXG.Math.Numerics#fzero}
+         * Maximum number of iterations in {@link JXG.Math.Numerics.fzero}
          * @type Number
          * @default 80
          * @memberof JXG.Math.Numerics
@@ -2561,7 +2568,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         maxIterationsRoot: 80,
 
         /**
-         * Maximum number of iterations in {@link JXG.Math.Numerics#fminbr}
+         * Maximum number of iterations in {@link JXG.Math.Numerics.fminbr}
          * @type Number
          * @default 500
          * @memberof JXG.Math.Numerics
@@ -2906,7 +2913,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             var newPts = [], i, k, len,
 
                 /**
-                 * findSplit() is a subroutine of {@link JXG.Math.Numerics#RamerDouglasPeucker}.
+                 * findSplit() is a subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
                  * It searches for the point between index i and j which
                  * has the largest distance from the line between the points i and j.
                  * @param {Array} pts Array of {@link JXG.Coords}
@@ -2974,7 +2981,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 },
 
                 /**
-                 * RDP() is a private subroutine of {@link JXG.Math.Numerics#RamerDouglasPeucker}.
+                 * RDP() is a private subroutine of {@link JXG.Math.Numerics.RamerDouglasPeucker}.
                  * It runs recursively through the point set and searches the
                  * point which has the largest distance from the line between the first point and
                  * the last point. If the distance from the line is greater than eps, this point is
@@ -3035,7 +3042,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
         /**
          * Old name for the implementation of the Ramer-Douglas-Peucker algorithm.
-         * @deprecated Use {@link JXG.Math.Numerics#RamerDouglasPeucker}
+         * @deprecated Use {@link JXG.Math.Numerics.RamerDouglasPeucker}
          * @memberof JXG.Math.Numerics
          */
         RamerDouglasPeuker: function (pts, eps) {

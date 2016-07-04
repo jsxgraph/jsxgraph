@@ -118,7 +118,6 @@ define([
 
         /**
          * Keeps track of all objects drawn as part of the trace of the element.
-         * @see JXG.GeometryElement#traced
          * @see JXG.GeometryElement#clearTrace
          * @see JXG.GeometryElement#numTraces
          * @type Object
@@ -127,7 +126,6 @@ define([
 
         /**
          * Counts the number of objects drawn as part of the trace of the element.
-         * @see JXG.GeometryElement#traced
          * @see JXG.GeometryElement#clearTrace
          * @see JXG.GeometryElement#traces
          * @type Number
@@ -472,7 +470,7 @@ define([
 
         /**
          * Sets ids of elements to the array this.parents.
-         * First, this.parents is cleared. See {@link Element#addParents}.
+         * First, this.parents is cleared. See {@link JXG.GeometryElement#addParents}.
          * @param {Array} parents Array of elements or ids of elements.
          * Alternatively, one can give a list of objects as parameters.
          * @returns {JXG.Object} reference to the object itself.
@@ -566,7 +564,8 @@ define([
 
         /**
          * Add transformations to this element.
-         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation} or an array of {@link JXG.Transformation}s.
+         * @param {JXG.Transformation|Array} transform Either one {@link JXG.Transformation}
+         * or an array of {@link JXG.Transformation}s.
          * @returns {JXG.GeometryElement} Reference to the element.
          */
         addTransform: function (transform) {
@@ -574,7 +573,8 @@ define([
         },
 
         /**
-         * Decides whether an element can be dragged. This is used in {@link JXG.GeometryElement#setPositionDirectly} methods
+         * Decides whether an element can be dragged. This is used in
+         * {@link JXG.GeometryElement#setPositionDirectly} methods
          * where all parent elements are checked if they may be dragged, too.
          * @private
          * @returns {boolean}
@@ -652,7 +652,8 @@ define([
 
         /**
          * Moves an by the difference of two coordinates.
-         * @param {Number} method The type of coordinates used here. Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
+         * @param {Number} method The type of coordinates used here.
+         * Possible values are {@link JXG.COORDS_BY_USER} and {@link JXG.COORDS_BY_SCREEN}.
          * @param {Array} coords coordinates in screen/user units
          * @param {Array} oldcoords previous coordinates in screen/user units
          * @returns {JXG.GeometryElement} this element
@@ -1137,8 +1138,10 @@ define([
         },
 
         /**
-         * Set the dash style of an object. See {@link #dash} for a list of available dash styles.
-         * You should use {@link #setAttribute} instead of this method.
+         * Set the dash style of an object. See {@link JXG.GeometryElement#dash}
+         * for a list of available dash styles.
+         * You should use {@link JXG.GeometryElement#setAttribute} instead of this method.
+         *
          * @param {number} dash Indicates the new dash style
          * @private
          */
@@ -1326,7 +1329,8 @@ define([
 
         /**
          * Dimensions of the smallest rectangle enclosing the element.
-         * @returns {Array} The coordinates of the enclosing rectangle in a format like the bounding box in {@link JXG.Board#setBoundingBox}.
+         * @returns {Array} The coordinates of the enclosing rectangle in a format
+         * like the bounding box in {@link JXG.Board#setBoundingBox}.
          */
         bounds: function () {
             return [0, 0, 0, 0];
@@ -1429,7 +1433,7 @@ define([
          * Set the highlightStrokeColor of an element
          * @param {String} sColor String which determines the stroke color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightStrokeColor
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         highlightStrokeColor: function (sColor) {
             JXG.deprecated('highlightStrokeColor()', 'setAttribute()');
@@ -1441,7 +1445,7 @@ define([
          * Set the strokeColor of an element
          * @param {String} sColor String which determines the stroke color of an object.
          * @see JXG.GeometryElement#strokeColor
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         strokeColor: function (sColor) {
             JXG.deprecated('strokeColor()', 'setAttribute()');
@@ -1453,7 +1457,7 @@ define([
          * Set the strokeWidth of an element
          * @param {Number} width Integer which determines the stroke width of an outline.
          * @see JXG.GeometryElement#strokeWidth
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         strokeWidth: function (width) {
             JXG.deprecated('strokeWidth()', 'setAttribute()');
@@ -1466,7 +1470,7 @@ define([
          * Set the fillColor of an element
          * @param {String} fColor String which determines the fill color of an object.
          * @see JXG.GeometryElement#fillColor
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         fillColor: function (fColor) {
             JXG.deprecated('fillColor()', 'setAttribute()');
@@ -1478,7 +1482,7 @@ define([
          * Set the highlightFillColor of an element
          * @param {String} fColor String which determines the fill color of an object when its highlighted.
          * @see JXG.GeometryElement#highlightFillColor
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         highlightFillColor: function (fColor) {
             JXG.deprecated('highlightFillColor()', 'setAttribute()');
@@ -1490,7 +1494,7 @@ define([
          * Set the labelColor of an element
          * @param {String} lColor String which determines the text color of an object's label.
          * @see JXG.GeometryElement#labelColor
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         labelColor: function (lColor) {
             JXG.deprecated('labelColor()', 'setAttribute()');
@@ -1502,7 +1506,7 @@ define([
          * Set the dash type of an element
          * @param {Number} d Integer which determines the way of dashing an element's outline.
          * @see JXG.GeometryElement#dash
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         dash: function (d) {
             JXG.deprecated('dash()', 'setAttribute()');
@@ -1514,7 +1518,7 @@ define([
          * Set the visibility of an element
          * @param {Boolean} v Boolean which determines whether the element is drawn.
          * @see JXG.GeometryElement#visible
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         visible: function (v) {
             JXG.deprecated('visible()', 'setAttribute()');
@@ -1526,7 +1530,7 @@ define([
          * Set the shadow of an element
          * @param {Boolean} s Boolean which determines whether the element has a shadow or not.
          * @see JXG.GeometryElement#shadow
-         * @deprecated Use {@link #setAttribute}
+         * @deprecated Use {@link JXG.GeometryElement#setAttribute}
          */
         shadow: function (s) {
             JXG.deprecated('shadow()', 'setAttribute()');
@@ -1692,12 +1696,20 @@ define([
         },
 
         /**
-         * Alias of {@link JXG.GeometryElement#on}.
+         * Alias of {@link JXG.EventEmitter.on}.
+         *
+         * @name addEvent
+         * @memberof JXG.GeometryElement
+         * @function
          */
         addEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'on'),
 
         /**
-         * Alias of {@link JXG.GeometryElement#off}.
+         * Alias of {@link JXG.EventEmitter.off}.
+         *
+         * @name removeEvent
+         * @memberof JXG.GeometryElement
+         * @function
          */
         removeEvent: JXG.shortcut(JXG.GeometryElement.prototype, 'off'),
 

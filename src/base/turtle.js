@@ -573,52 +573,53 @@ define([
         },
 
         /**
-         * Alias for {@link #forward}
+         * Alias for {@link JXG.Turtle#forward}
          */
         fd: function (len) { return this.forward(len); },
         /**
-         * Alias for {@link #back}
+         * Alias for {@link JXG.Turtle#back}
          */
         bk: function (len) { return this.back(len); },
         /**
-         * Alias for {@link #left}
+         * Alias for {@link JXG.Turtle#left}
          */
         lt: function (angle) { return this.left(angle); },
         /**
-         * Alias for {@link #right}
+         * Alias for {@link JXG.Turtle#right}
          */
         rt: function (angle) { return this.right(angle); },
         /**
-         * Alias for {@link #penUp}
+         * Alias for {@link JXG.Turtle#penUp}
          */
         pu: function () { return this.penUp(); },
         /**
-         * Alias for {@link #penDown}
+         * Alias for {@link JXG.Turtle#penDown}
          */
         pd: function () { return this.penDown(); },
         /**
-         * Alias for {@link #hideTurtle}
+         * Alias for {@link JXG.Turtle#hideTurtle}
          */
         ht: function () { return this.hideTurtle(); },
         /**
-         * Alias for {@link #showTurtle}
+         * Alias for {@link JXG.Turtle#showTurtle}
          */
         st: function () { return this.showTurtle(); },
         /**
-         * Alias for {@link #clearScreen}
+         * Alias for {@link JXG.Turtle#clearScreen}
          */
         cs: function () { return this.clearScreen(); },
         /**
-         * Alias for {@link #pushTurtle}
+         * Alias for {@link JXG.Turtle#pushTurtle}
          */
         push: function () { return this.pushTurtle(); },
         /**
-         * Alias for {@link #popTurtle}
+         * Alias for {@link JXG.Turtle#popTurtle}
          */
         pop: function () { return this.popTurtle(); },
 
         /**
-         * the "co"-coordinate of the turtle curve at position t is returned.
+         * The "co"-coordinate of the turtle curve at position t is returned.
+         *
          * @param {Number} t parameter
          * @param {String} co. Either 'X' or 'Y'.
          * @returns {Number} x-coordinate of the turtle position or x-coordinate of turtle at position t
