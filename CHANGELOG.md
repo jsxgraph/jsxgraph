@@ -1,3 +1,38 @@
+0.99.5
+====
+
+New Features
+------------
+* Make JSXGraph available as Nodejs package
+* New method `JXG.Image.setSize()`
+
+Improvements
+------------
+* Handling of touch and mouse events should work now in all browsers, even if 
+user-scalable viewport is allowed.
+* Improved pinch to zoom and pan
+* Much improved documentation: more examples, fixed links
+* Better support for reveal.js
+* Attracting of points
+* Allow homogeneous screen coordinates in `setCoordinates()` and `setPositionDirectly()`
+* Trigger JSXGraph mousewheel events on mousewheel
+
+Bug fixes
+---------
+* `hasPoint()` on major sector
+* Intersection of Bezier curves
+* Dump construction to JessieCode or JavaScript
+* `Image.updateSize()`
+* Highlighting of images
+* SVG: handling of opacity
+* Make JessieCode compatible to IE 6-8
+* Nodejs compatibility for make
+* Dragging of very long lines
+* Color of arrow heads in SVG
+* Display copyright in canvas renderer
+* Bug fix for IE (SVG) with huge lines.
+
+
 0.99.4
 ====
 
