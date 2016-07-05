@@ -180,8 +180,33 @@ define([
         },
 
         /**
+         * The parametric function which defines the x-coordinate of the curve.
+         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
+         * @param {Boolean} suspendUpdate A boolean flag which is false for the
+         * first call of the function during a fresh plot of the curve and true
+         * for all other calss of the function. This may be used to speed up the
+         * plotting of the curve, if the e.g. the curve depends on some input elements.
+         * @returns {Number} x-coordinate of the curve at t.
+         */
+        X: function (t) {
+            return NaN;
+        },
+        /**
+        * The parametric function which defines the y-coordinate of the curve.
+        * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
+        * @param {Boolean} suspendUpdate A boolean flag which is false for the
+        * first call of the function during a fresh plot of the curve and true
+        * for all other calss of the function. This may be used to speed up the
+        * plotting of the curve, if the e.g. the curve depends on some input elements.
+        * @returns {Number} y-coordinate of the curve at t.
+         */
+        Y: function (t) {
+            return NaN;
+        },
+
+        /**
          * Treat the curve as curve with homogeneous coordinates.
-         * @param {Number} t A number between 0.0 and 1.0.
+         * @param {Number} t A number between {@link JXG.Curve#minX} and {@link JXG.Curve#maxX}.
          * @returns {Number} Always 1.0
          */
         Z: function (t) {
@@ -1855,7 +1880,8 @@ define([
     JXG.registerElement('curve', JXG.createCurve);
 
     /**
-     * @class This element is used to provide a constructor for functiongraph, which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X()}
+     * @class This element is used to provide a constructor for functiongraph,
+     * which is just a wrapper for element {@link Curve} with {@link JXG.Curve#X}()
      * set to x. The graph is drawn for x in the interval [a,b].
      * @pseudo
      * @description
