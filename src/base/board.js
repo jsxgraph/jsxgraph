@@ -3907,7 +3907,6 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         pauseAllAnimation: function (){
-            var temp = ""
             for(var i in board.animationObjects){
                 this.tempAnimationObjects.push(board.animationObjects[i])
             }
