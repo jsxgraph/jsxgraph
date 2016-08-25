@@ -544,7 +544,7 @@ define([
         this.selectingBox = [[0, 0], [0, 0]];
 
         /**
-         * use for pause and continue.
+         * A Cached use for pause and continue.
          * @type Array
          */
         this.tempAnimationObjects = [];
@@ -3910,7 +3910,9 @@ define([
             for(var i in board.animationObjects){
                 this.tempAnimationObjects.push(board.animationObjects[i])
             }
-            this.stopAllAnimation();    
+            this.stopAllAnimation(); 
+
+            return this;   
         },
 
         /**
@@ -3926,6 +3928,8 @@ define([
             arr.push='255';
             arr.push='0';
             this.create("text",[1,1,"abcdafdfasd"],{color:'rgb(255, 0, 0)'});
+
+            return this; 
         },
 
         /**
