@@ -3911,7 +3911,7 @@ define([
             for(var i in board.animationObjects){
                 this.tempAnimationObjects.push(board.animationObjects[i])
             }
-            this.stopAllAnimation();    //面板暂停点的移动
+            this.stopAllAnimation();    
         },
 
         /**
