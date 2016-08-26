@@ -543,6 +543,12 @@ define([
          */
         this.selectingBox = [[0, 0], [0, 0]];
 
+        /**
+         * A Cached use for pause and continue.
+         * @type Array
+         */
+        this.tempAnimationObjects = [];
+
 
         if (this.attr.registerevents) {
             this.addEventHandlers();
@@ -3894,6 +3900,36 @@ define([
             delete this.animationIntervalCode;
 
             return this;
+        },
+
+        /**
+         * Pause all running animations.
+         * @returns {JXG.Board} Reference to the board
+         */
+        pauseAllAnimation: function (){
+            for(var i in board.animationObjects){
+                this.tempAnimationObjects.push(board.animationObjects[i])
+            }
+            this.stopAllAnimation(); 
+
+            return this;   
+        },
+
+        /**
+         * Continue all running animations.
+         * @returns {JXG.Board} Reference to the board
+         */
+        continueAllAnimation: function (){
+            for(var i in this.tempAnimationObjects){
+                this.addAnimation(this.tempAnimationObjects[i]);
+            }
+            var arr = [];
+            arr.push='255';
+            arr.push='255';
+            arr.push='0';
+            this.create("text",[1,1,"abcdafdfasd"],{color:'rgb(255, 0, 0)'});
+
+            return this; 
         },
 
         /**
