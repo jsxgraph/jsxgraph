@@ -593,6 +593,60 @@ define([
         },
 
         /**
+    	 * Decimal adjustment of a number.
+    	 * From https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+    	 *
+    	 * @param	{String}	type	The type of adjustment.
+    	 * @param	{Number}	value	The number.
+    	 * @param	{Integer}	exp		The exponent (the 10 logarithm of the adjustment base).
+    	 * @returns	{Number}			The adjusted value.
+    	 */
+    	_decimalAdjust: function(type, value, exp) {
+    		// If the exp is undefined or zero...
+    		if (typeof exp === 'undefined' || +exp === 0) {
+    			return Math[type](value);
+    		}
+
+    		value = +value;
+    		exp = +exp;
+    		// If the value is not a number or the exp is not an integer...
+    		if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+    			return NaN;
+    		}
+
+            // Shift
+    		value = value.toString().split('e');
+    		value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+
+    		// Shift back
+    		value = value.toString().split('e');
+    		return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+    	},
+
+    	_round10: function(value, exp) {
+    		return this._decimalAdjust('round', value, exp);
+		},
+
+    	// Decimal floor
+        _floor10: function(value, exp) {
+    		return this._decimalAdjust('floor', value, exp);
+    	},
+
+    	// Decimal ceil
+        _ceil10: function(value, exp) {
+    		return this._decimalAdjust('ceil', value, exp);
+    	},
+
+        _toFixed10: function(num, precision) {
+            return this._round10(num, -precision).toFixed(precision);
+        },
+
+        toFixed: function(num, precision) {
+            return this._toFixed10(num, precision);
+            // return (+(Math.round(+(num + 'e' + precision)) + 'e' + -precision)).toFixed(precision);
+        },
+
+        /**
          * Truncate a number <tt>val</tt> automatically.
          * @param val
          * @returns {Number}
