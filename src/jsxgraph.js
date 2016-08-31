@@ -187,6 +187,7 @@ define([
             attr.zoom = Type.copyAttributes(attr, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attr, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
+            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
 
             dimensions = Env.getDimensions(box, attr.document);
 
@@ -255,7 +256,7 @@ define([
             }
             */
 
-            board.renderer.drawZoomBar(board);
+            board.renderer.drawZoomBar(board, attr.navbar);
             board.unsuspendUpdate();
 
             return board;
@@ -286,6 +287,7 @@ define([
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
+            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -300,7 +302,7 @@ define([
             selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
 	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
-            board.renderer.drawZoomBar(board);
+            board.renderer.drawZoomBar(board, attr.navbar);
             JXG.boards[board.id] = board;
 
             return board;
@@ -331,6 +333,7 @@ define([
             attr.zoom = Type.copyAttributes(attributes, Options, 'board', 'zoom');
             attr.pan = Type.copyAttributes(attributes, Options, 'board', 'pan');
             attr.selection = Type.copyAttributes(attr, Options, 'board', 'selection');
+            attr.navbar = Type.copyAttributes(attr.navbar, Options, 'navbar');
 
             dimensions = Env.getDimensions(box, attr.document);
             renderer = this.initRenderer(box, dimensions, attr.document);
@@ -345,7 +348,7 @@ define([
             selectionattr = Type.copyAttributes(attr, Options, 'board', 'selection');
 	        board.selectionPolygon = board.create('polygon', [[0, 0], [0, 0], [0, 0], [0, 0]], selectionattr);
 
-            board.renderer.drawZoomBar(board);
+            board.renderer.drawZoomBar(board, attr.navbar);
             JXG.boards[board.id] = board;
 
             return board;

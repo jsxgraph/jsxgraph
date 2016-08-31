@@ -1299,8 +1299,10 @@ define([
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
          * @param {JXG.Board} board Reference to a JSXGraph board.
+         * @param {Object} Attributes of the navigation bar
+         *
          */
-        drawZoomBar: function (board) {
+        drawZoomBar: function (board, attr) {
             var doc,
                 node,
                 cancelbubble = function (e) {
@@ -1322,13 +1324,13 @@ define([
                     node.appendChild(button);
                     button.appendChild(doc.createTextNode(label));
                     Env.addEvent(button, 'mouseover', function () {
-                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                        this.style.backgroundColor = attr.highlightfillcolor;
                     }, button);
                     Env.addEvent(button, 'mouseover', function () {
-                        this.style.backgroundColor = board.options.navbar.highlightFillColor;
+                        this.style.backgroundColor = attr.highlightfillcolor;
                     }, button);
                     Env.addEvent(button, 'mouseout', function () {
-                        this.style.backgroundColor = board.options.navbar.fillColor;
+                        this.style.backgroundColor = attr.fillcolor;
                     }, button);
 
                     Env.addEvent(button, 'click', function(e) { (Type.bind(handler, board))(); return false; }, board);
@@ -1345,16 +1347,16 @@ define([
 
                 node.setAttribute('id', board.containerObj.id + '_navigationbar');
 
-                node.style.color = board.options.navbar.strokeColor;
-                node.style.backgroundColor = board.options.navbar.fillColor;
-                node.style.padding = board.options.navbar.padding;
-                node.style.position = board.options.navbar.position;
-                node.style.fontSize = board.options.navbar.fontSize;
-                node.style.cursor = board.options.navbar.cursor;
-                node.style.zIndex = board.options.navbar.zIndex;
+                node.style.color = attr.strokecolor;
+                node.style.backgroundColor = attr.fillcolor;
+                node.style.padding = attr.padding;
+                node.style.position = attr.position;
+                node.style.fontSize = attr.fontsize;
+                node.style.cursor = attr.cursor;
+                node.style.zIndex = attr.zindex;
                 board.containerObj.appendChild(node);
-                node.style.right = board.options.navbar.right;
-                node.style.bottom = board.options.navbar.bottom;
+                node.style.right = attr.right;
+                node.style.bottom = attr.bottom;
 
                 // For XHTML we need unicode instead of HTML entities
 
