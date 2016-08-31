@@ -1889,7 +1889,7 @@ define([
                 },
                 function () {
                     var Int = Numerics.NewtonCotes([pa_on_axis.X(), pb_on_axis.X()], curve.Y);
-                    return '&int; = ' + Int.toFixed(4);
+                    return '&int; = ' + Type.toFixed(Int, 4);
                 }
             ], attr);
 

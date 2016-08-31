@@ -2564,8 +2564,8 @@ define([
                         x = Type.autoDigits(xc);
                         y = Type.autoDigits(yc);
                     } else if (Type.isNumber(el.visProp.infoboxdigits)) {
-                        x = xc.toFixed(el.visProp.infoboxdigits);
-                        y = yc.toFixed(el.visProp.infoboxdigits);
+                        x = Type.toFixed(xc, el.visProp.infoboxdigits);
+                        y = Type.toFixed(yc, el.visProp.infoboxdigits);
                     } else {
                         x = xc;
                         y = yc;

@@ -194,7 +194,7 @@ define([
                 };
             } else {
                 if (Type.isNumber(text)) {
-                    this.content = text.toFixed(this.visProp.digits);
+                    this.content = Type.toFixed(text, this.visProp.digits);
                 } else {
                     if (this.visProp.useasciimathml) {
                         // Convert via ASCIIMathML
@@ -718,14 +718,14 @@ define([
      *   var s = board.create('slider',[[0,4],[3,4],[-2,0,2]]);
      *   var graph = board.create('text',
      *                        [function(x){ return s.Value();}, 1,
-     *                         function(){return "The value of s is"+s.Value().toFixed(2);}
+     *                         function(){return "The value of s is"+JXG.toFixed(s.Value(), 2);}
      *                        ]
      *                     );
      * </pre><div class="jxgbox"id="5441da79-a48d-48e8-9e53-75594c384a1c" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var t2_board = JXG.JSXGraph.initBoard('5441da79-a48d-48e8-9e53-75594c384a1c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      *   var s = t2_board.create('slider',[[0,4],[3,4],[-2,0,2]]);
-     *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+s.Value().toFixed(2);}]);
+     *   var t2 = t2_board.create('text',[function(x){ return s.Value();}, 1, function(){return "The value of s is "+JXG.toFixed(s.Value(), 2);}]);
      * </script><pre>
      * @example
      * // Create a text bound to the point A

@@ -121,7 +121,7 @@ define([
                 n = '';
             }
             li.label.setText(function () {
-                return n + p1.Dist(p2).toFixed(precision);
+                return n + Type.toFixed(p1.Dist(p2), precision);
             });
         }
 

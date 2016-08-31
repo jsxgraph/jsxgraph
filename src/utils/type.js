@@ -576,20 +576,7 @@ define([
         trunc: function (n, p) {
             p = JXG.def(p, 0);
 
-            /*jslint bitwise: true*/
-
-            /*
-             * The performance gain of this bitwise trick is marginal and the behavior
-             * is different from toFixed: toFixed rounds, the bitweise operation truncateds
-             */
-            //if (p === 0) {
-            //    n = ~n;
-            //    n = ~n;
-            //} else {
-            n = n.toFixed(p);
-            //}
-
-            return n;
+            return this.toFixed(n, p);
         },
 
         /**
@@ -687,18 +674,19 @@ define([
          * @returns {Number}
          */
         autoDigits: function (val) {
-            var x = Math.abs(val);
+            var x = Math.abs(val),
+                str;
 
             if (x > 0.1) {
-                x = val.toFixed(2);
+                str = this.toFixed(val, 2);
             } else if (x >= 0.01) {
-                x = val.toFixed(4);
+                str = this.toFixed(val, 4);
             } else if (x >= 0.0001) {
-                x = val.toFixed(6);
+                str = this.toFixed(val, 6);
             } else {
-                x = val;
+                str = val;
             }
-            return x;
+            return str;
         },
 
         /**

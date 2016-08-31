@@ -2383,7 +2383,7 @@ define([
              * <ul>
              * <li>'auto': done automatically by JXG#autoDigits
              * <li>'none': no truncation
-             * <li>number: use String.toFixed();
+             * <li>number: use JXG.toFixed();
              * </ul>
              *
              * @name Point#infoboxDigits

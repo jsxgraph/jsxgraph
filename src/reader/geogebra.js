@@ -2194,7 +2194,12 @@
                         },
                         function () {
                             return "<span style='text-decoration: overline'>" + input[0].name + input[1].name + "</span> = " +
-                                JXG.trimNumber(that.board.select(input[0].id).Dist(that.board.select(input[1].id)).toFixed(that.decimals));
+                                JXG.trimNumber(
+                                    JXG.toFixed(
+                                        that.board.select(input[0].id).Dist(that.board.select(input[1].id)),
+                                        that.decimals
+                                    )
+                                );
                         }
                     ], attr);
 
@@ -2849,7 +2854,9 @@
                             return m.Y();
                         },
                         function () {
-                            return "&nbsp;&nbsp;" + (slopeWidth > 1 ? slopeWidth.toString() : '') + ' ' + this.name + ' = ' + JXG.trimNumber((slopeWidth * input[0].getSlope()).toFixed(that.decimals));
+                            return "&nbsp;&nbsp;" + (slopeWidth > 1 ? slopeWidth.toString() : '') + ' ' + this.name + ' = ' + JXG.trimNumber(
+                                JXG.toFixed(slopeWidth * input[0].getSlope(), that.decimals)
+                            );
                         }
                     ], attr);
                     attr.name = '';
@@ -2902,7 +2909,7 @@
                             if (typeof re2 === 'string') {
                                 res = res + RegExp.$1 + re2;
                             } else {
-                                res = res + RegExp.$1 + '" + JXG.trimNumber((' + re2 + ').toFixed(' + this.decimals + ')) + "';
+                                res = res + RegExp.$1 + '" + JXG.trimNumber(JXG.toFixed(' + re2 + ', ' + this.decimals + ')) + "';
                             }
                             t = RegExp.$3;
 
@@ -2912,7 +2919,7 @@
                         // we have to look, if the string's ending with a string-part or a formula part:
                         rx = t.match(/(.*?)" \+ (.+)/);
                         if (rx) {
-                            res = res + RegExp.$1 + '" + JXG.trimNumber((' + this.ggbParse(RegExp.$2) + ').toFixed(' + this.decimals + '))';
+                            res = res + RegExp.$1 + '" + JXG.trimNumber(JXG.toFixed(' + this.ggbParse(RegExp.$2) + ', ' + this.decimals + '))';
                         } else {
                             res = res + t;
                         }
@@ -2932,7 +2939,7 @@
                         if (JXG.isArray(t)) {
                             // input string is verified by ggbParse
                             /*jslint evil:true*/
-                            p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(parseFloat(' + t[1] + ').toFixed(' + this.decimals + '));') ], attr);
+                            p = this.board.create('text', [gxtEl.x, gxtEl.y, new Function('return ' + t[0] + ' + " " + JXG.trimNumber(JXG.toFixed(parseFloat(' + t[1] + ', ' + this.decimals + '));') ], attr);
                             /*jslint evil:false*/
                         } else {
                             p = this.board.create('text', [gxtEl.x, gxtEl.y, t], attr);

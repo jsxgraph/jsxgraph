@@ -578,7 +578,7 @@ define([
          *                         d[0] *= height/dl;
          *                         return mid+d[0]+0.1;
          *                     },
-         *                     function() { return "length="+B.Dist(A).toFixed(2); }
+         *                     function() { return "length=" + JXG.toFixed(B.Dist(A), 2); }
          *                 ]);
          *
          *
@@ -628,7 +628,7 @@ define([
          *                             d[0] *= height/dl;
          *                             return mid+d[0]+0.1;
          *                         },
-         *                         function() { return "length="+B.Dist(A).toFixed(2); }
+         *                         function() { return "length="+JXG.toFixed(B.Dist(A), 2); }
          *                     ]);
          *
          *
@@ -2092,7 +2092,7 @@ define([
      *               {fillOpacity:0.4}
      *               );
      *   var g = board.create('functiongraph',[f, -2, 5]);
-     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + JXG.toFixed(r.Value(), 4); }]);
      * </pre><div class="jxgbox"id="940f40cc-2015-420d-9191-c5d83de988cf" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function(){
@@ -2101,7 +2101,7 @@ define([
      *   var s = board.create('slider',[[0,4],[3,4],[0,4,10]],{snapWidth:1});
      *   var r = board.create('riemannsum', [f, function(){return s.Value();}, 'upper', -2, 5], {fillOpacity:0.4});
      *   var g = board.create('functiongraph', [f, -2, 5]);
-     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + JXG.toFixed(r.Value(), 4); }]);
      * })();
      * </script><pre>
      *
@@ -2116,7 +2116,7 @@ define([
      *               );
      *   var f = board.create('functiongraph',[f, -2, 5]);
      *   var g = board.create('functiongraph',[g, -2, 5]);
-     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + JXG.toFixed(r.Value(), 4); }]);
      * </pre><div class="jxgbox"id="f9a7ba38-b50f-4a32-a873-2f3bf9caee79" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function(){
@@ -2130,7 +2130,7 @@ define([
      *               );
      *   var f = board.create('functiongraph',[f, -2, 5]);
      *   var g = board.create('functiongraph',[g, -2, 5]);
-     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + r.Value().toFixed(4); }]);
+     *   var t = board.create('text',[-2,-2, function(){ return 'Sum=' + JXG.toFixed(r.Value(), 4); }]);
      * })();
      * </script><pre>
      */

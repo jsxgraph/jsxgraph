@@ -729,7 +729,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('angle', [p1, p2, p3]),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * </pre><div class="jxgbox"id="a34151f9-bb26-480a-8d6e-9b8cbf789ae5" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -739,7 +739,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('angle', [p1, p2, p3]),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * })();
      * </script><pre>
      *
@@ -1231,7 +1231,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * </pre><div class="jxgbox"id="d0ab6d6b-63a7-48b2-8749-b02bb5e744f9" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1241,7 +1241,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('nonreflexangle', [p1, p2, p3], {radius: 2}),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * })();
      * </script><pre>
      */
@@ -1279,7 +1279,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * </pre><div class="jxgbox"id="f2a577f2-553d-4f9f-a895-2d6d4b8c60e8" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * (function () {
@@ -1289,7 +1289,7 @@ define([
      *     p3 = board.create('point', [1.5, 5.0]),
      *
      *     a = board.create('reflexangle', [p1, p2, p3], {radius: 2}),
-     *     t = board.create('text', [4, 4, function() { return a.Value().toFixed(2); }]);
+     *     t = board.create('text', [4, 4, function() { return JXG.toFixed(a.Value(), 2); }]);
      * })();
      * </script><pre>
      */

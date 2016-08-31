@@ -263,7 +263,7 @@ define([
                         n = '';
                     }
 
-                    return n + (p3.Value()).toFixed(precision);
+                    return n + Type.toFixed(p3.Value(), precision);
                 }
             ], attr);
 
