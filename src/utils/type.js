@@ -598,8 +598,10 @@ define([
     	 *
     	 * @param	{String}	type	The type of adjustment.
     	 * @param	{Number}	value	The number.
-    	 * @param	{Integer}	exp		The exponent (the 10 logarithm of the adjustment base).
+    	 * @param	{Number}	exp		The exponent (the 10 logarithm of the adjustment base).
     	 * @returns	{Number}			The adjusted value.
+    	 *
+    	 * @private
     	 */
     	_decimalAdjust: function(type, value, exp) {
     		// If the exp is undefined or zero...
@@ -623,27 +625,60 @@ define([
     		return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
     	},
 
+        /**
+         * Round a number to given number of decimal digits.
+         *
+         * Example: JXG._toFixed(3.14159, -2) gives 3.14
+         * @param  {Number} value Number to be rounded
+         * @param  {Number} exp   Number of decimal digits given as negative exponent
+         * @return {Number}       Rounded number.
+         *
+         * @private
+         */
     	_round10: function(value, exp) {
     		return this._decimalAdjust('round', value, exp);
 		},
 
-    	// Decimal floor
+        /**
+         * "Floor" a number to given number of decimal digits.
+         *
+         * Example: JXG._toFixed(3.14159, -2) gives 3.14
+         * @param  {Number} value Number to be floored
+         * @param  {Number} exp   Number of decimal digits given as negative exponent
+         * @return {Number}       "Floored" number.
+         *
+         * @private
+         */
         _floor10: function(value, exp) {
     		return this._decimalAdjust('floor', value, exp);
     	},
 
-    	// Decimal ceil
+        /**
+         * "Ceil" a number to given number of decimal digits.
+         *
+         * Example: JXG._toFixed(3.14159, -2) gives 3.15
+         * @param  {Number} value Number to be ceiled
+         * @param  {Number} exp   Number of decimal digits given as negative exponent
+         * @return {Number}       "Ceiled" number.
+         *
+         * @private
+         */
         _ceil10: function(value, exp) {
     		return this._decimalAdjust('ceil', value, exp);
     	},
 
-        _toFixed10: function(num, precision) {
-            return this._round10(num, -precision).toFixed(precision);
-        },
-
+        /**
+         * Replacement of the default toFixed() method.
+         * It does a correct rounding (independent of the browser) and
+         * returns "0.00" for toFixed(-0.000001, 2) instead of "-0.00" which
+         * is returned by JavaScript's toFixed()
+         *
+         * @param  {Number} num       Number tp be rounded
+         * @param  {Number} precision Decimal digits
+         * @return {String}           Rounded number is returned as string
+         */
         toFixed: function(num, precision) {
-            return this._toFixed10(num, precision);
-            // return (+(Math.round(+(num + 'e' + precision)) + 'e' + -precision)).toFixed(precision);
+            return this._round10(num, -precision).toFixed(precision);
         },
 
         /**

@@ -1299,7 +1299,7 @@ define([
         /**
          * The tiny zoom bar shown on the bottom of a board (if showNavigation on board creation is true).
          * @param {JXG.Board} board Reference to a JSXGraph board.
-         * @param {Object} Attributes of the navigation bar
+         * @param {Object} attr Attributes of the navigation bar
          *
          */
         drawZoomBar: function (board, attr) {
