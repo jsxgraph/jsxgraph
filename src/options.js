@@ -142,6 +142,16 @@ define([
             showNavigation: true,
 
             /**
+             * Display of zoom buttons. To show zoom buttons, additionally
+             * showNavigation has to be set to true.
+             *
+             * @name JXG.Board#showZoom
+             * @type Boolean
+             * @default true
+             */
+            showZoom: true,
+
+            /**
              * Show a button to force reload of a construction.
              * Works only with the JessieCode tag
              *
