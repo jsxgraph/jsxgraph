@@ -759,7 +759,7 @@ define([
 
         /**
          * Recursively merges obj2 into obj1. Contrary to {@link JXG#deepCopy} this won't create a new object
-         * but instead will
+         * but instead will overwrite obj1.
          * @param {Object} obj1
          * @param {Object} obj2
          * @returns {Object}

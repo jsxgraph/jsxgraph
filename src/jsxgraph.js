@@ -176,7 +176,7 @@ define([
             var originX, originY, unitX, unitY,
                 renderer,
                 w, h, dimensions,
-                bbox, attr, axattr,
+                bbox, attr, axattr, axattr_x, axattr_y,
                 selectionattr,
                 board;
 
@@ -239,9 +239,13 @@ define([
 
             if (attr.axis) {
                 axattr = typeof attr.axis === 'object' ? attr.axis : {ticks: {drawZero: true}};
+
+                axattr_x = Type.deepCopy(axattr, Options.board.defaultAxes.x);
+                axattr_y = Type.deepCopy(axattr, Options.board.defaultAxes.y);
+
                 board.defaultAxes = {};
-                board.defaultAxes.x = board.create('axis', [[0, 0], [1, 0]], axattr);
-                board.defaultAxes.y = board.create('axis', [[0, 0], [0, 1]], axattr);
+                board.defaultAxes.x = board.create('axis', [[0, 0], [1, 0]], axattr_x);
+                board.defaultAxes.y = board.create('axis', [[0, 0], [0, 1]], axattr_y);
             }
 
             if (attr.grid) {

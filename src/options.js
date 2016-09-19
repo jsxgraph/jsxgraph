@@ -132,6 +132,15 @@ define([
              */
             axis: false,
 
+            defaultAxes: {
+                x: {
+                    name: 'x'
+                },
+                y: {
+                    name: 'y'
+                },
+            },
+
             /**
              * Display of navigation arrows and zoom buttons
              *
