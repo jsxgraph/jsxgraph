@@ -124,7 +124,10 @@ define([
             /**
              * Show default axis.
              * If shown, the horizontal axis can be accessed via JXG.Board.defaultAxes.x, the
-             * vertical axis can be accessed via JXG.Board.defaultAxes.y. Both axes have a sub-element "defaultTicks".
+             * vertical axis can be accessed via JXG.Board.defaultAxes.y.
+             * Both axes have a sub-element "defaultTicks".
+             *
+             * Value can be Boolean or an object containing axis attributes.
              *
              * @name JXG.Board#axis
              * @type Boolean
@@ -132,13 +135,22 @@ define([
              */
             axis: false,
 
+            /**
+             * Attributes for the default axes in case of the attribute
+             * axis:true in {@link JXG.JSXGraph#iniBoard}.
+             *
+             * @name JXG.Board#defaultAxes
+             * @type {Object}
+             * @default {x: {name:'x'}, y: {name: 'y'}}
+             *
+             */
             defaultAxes: {
                 x: {
-                    name: 'x'
+                    name: 'x',
                 },
                 y: {
                     name: 'y'
-                },
+                }
             },
 
             /**

@@ -177,6 +177,7 @@ define([
                 renderer,
                 w, h, dimensions,
                 bbox, attr, axattr, axattr_x, axattr_y,
+                defaultaxesattr,
                 selectionattr,
                 board;
 
@@ -226,7 +227,12 @@ define([
             renderer = this.initRenderer(box, dimensions, attr.document, attr.renderer);
 
             // create the board
-            board = new Board(box, renderer, attr.id, [originX, originY], attr.zoomfactor * attr.zoomx, attr.zoomfactor * attr.zoomy, unitX, unitY, dimensions.width, dimensions.height, attr);
+            board = new Board(box, renderer, attr.id, [originX, originY],
+                        attr.zoomfactor * attr.zoomx,
+                        attr.zoomfactor * attr.zoomy,
+                        unitX, unitY,
+                        dimensions.width, dimensions.height,
+                        attr);
 
             JXG.boards[board.id] = board;
 
@@ -240,8 +246,13 @@ define([
             if (attr.axis) {
                 axattr = typeof attr.axis === 'object' ? attr.axis : {ticks: {drawZero: true}};
 
-                axattr_x = Type.deepCopy(axattr, Options.board.defaultAxes.x);
-                axattr_y = Type.deepCopy(axattr, Options.board.defaultAxes.y);
+                // It is unclear why copyAttributes does not work here:
+                // It would override the values in attr.defaultaxes
+                //defaultaxesattr = Type.copyAttributes(attr.defaultaxes, Options, 'board', 'defaultAxes');
+                defaultaxesattr = Type.deepCopy(attr.defaultaxes, Options.board.defaultaxes);
+
+                axattr_x = Type.deepCopy(axattr, defaultaxesattr.x);
+                axattr_y = Type.deepCopy(axattr, defaultaxesattr.y);
 
                 board.defaultAxes = {};
                 board.defaultAxes.x = board.create('axis', [[0, 0], [1, 0]], axattr_x);
