@@ -41,9 +41,11 @@
  */
 
 /**
- * @fileoverview JessieCode is a scripting language designed to provide a simple scripting language to build constructions
- * with JSXGraph. It is similar to JavaScript, but prevents access to the DOM. Hence, it can be used in community driven
- * Math portals which want to use JSXGraph to display interactive math graphics.
+ * @fileoverview JessieCode is a scripting language designed to provide a
+ * simple scripting language to build constructions
+ * with JSXGraph. It is similar to JavaScript, but prevents access to the DOM.
+ * Hence, it can be used in community driven math portals which want to use
+ * JSXGraph to display interactive math graphics.
  */
 
 define([
@@ -187,6 +189,10 @@ define([
         this.line = 1;
         this.col = 1;
 
+        if (JXG.CA) {
+            this.CA = new JXG.CA(this.node, this.createNode, this);
+        }
+
         this.code = '';
 
         if (typeof code === 'string') {
@@ -224,6 +230,10 @@ define([
 
             for (i = 2; i < arguments.length; i++) {
                 n.children.push(arguments[i]);
+            }
+
+            if (n.type == 'node_const' && Type.isNumber(n.value)) {
+                n.isMath = true;
             }
 
             n.line = this.parCurLine;
@@ -709,7 +719,10 @@ define([
         },
 
         /**
-         * Parses JessieCode
+         * Parses JessieCode.
+         * This consists of generating an AST with parser.parse, apply simplifying rules
+         * from CA and executing the ast by calling this.execute(ast).
+         *
          * @param {String} code
          * @param {Boolean} [geonext=false] Geonext compatibility mode.
          * @param {Boolean} dontstore
@@ -742,8 +755,70 @@ define([
 
                 code = cleaned.join('\n');
                 ast = parser.parse(code);
+                if (this.CA) {
+                    ast = this.CA.expandDerivatives(ast, null, ast);
+                    ast = this.CA.removeTrivialNodes(ast);
+                }
                 result = this.execute(ast);
             } catch (e) {  // catch is mandatory in old IEs
+                console.log(e);
+            } finally {
+                // make sure the original text method is back in place
+                if (Text) {
+                    Text.Text.prototype.setText = setTextBackup;
+                }
+            }
+
+            return result;
+        },
+
+        /**
+         * Manipulate JessieCode.
+         * This consists of generating an AST with parser.parse, apply simlifying rules from CA
+         * and compile the ast back to JessieCode.
+         *
+         * @param {String} code
+         * @param {Boolean} [geonext=false] Geonext compatibility mode.
+         * @param {Boolean} dontstore
+         * @return {String}  Simplified code
+         */
+        manipulate: function (code, geonext, dontstore) {
+            var i, setTextBackup, ast, result,
+                ccode = code.replace(/\r\n/g, '\n').split('\n'),
+                cleaned = [];
+
+            if (!dontstore) {
+                this.code += code + '\n';
+            }
+
+            if (Text) {
+                setTextBackup = Text.Text.prototype.setText;
+                Text.Text.prototype.setText = Text.Text.prototype.setTextJessieCode;
+            }
+
+            try {
+                if (!Type.exists(geonext)) {
+                    geonext = false;
+                }
+
+                for (i = 0; i < ccode.length; i++) {
+                    if (geonext) {
+                        ccode[i] = JXG.GeonextParser.geonext2JS(ccode[i], this.board);
+                    }
+                    cleaned.push(ccode[i]);
+                }
+
+                code = cleaned.join('\n');
+                ast = parser.parse(code);
+
+                if (this.CA) {
+                    ast = this.CA.expandDerivatives(ast, null, ast);
+                    //console.log(this.compile(ast));
+                    ast = this.CA.removeTrivialNodes(ast);
+                }
+                return this.compile(ast);
+            } catch (e) {  // catch is mandatory in old IEs
+                console.log(e);
             } finally {
                 // make sure the original text method is back in place
                 if (Text) {
@@ -1023,7 +1098,6 @@ define([
                     break;
                 case 'op_assign':
                     v = this.getLHS(node.children[0]);
-
                     this.lhs[this.scope.id] = v[1];
 
                     if (v.o.type && v.o.elementClass && v.o.methodMap && v.what === 'label') {
@@ -1038,7 +1112,6 @@ define([
                         // this is just a local variable inside JessieCode
                         this.letvar(v.what, ret);
                     }
-
                     this.lhs[this.scope.id] = 0;
                     break;
                 case 'op_if':
@@ -1123,8 +1196,8 @@ define([
                     }
                     break;
                 case 'op_map':
-                    if (!node.children[1].isMath) {
-                        this._error('In a map only function calls and mathematical expressions are allowed.');
+                    if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
+                        this._error('execute: In a map only function calls and mathematical expressions are allowed.');
                     }
 
                     fun = this.defineFunction(node);
@@ -1297,7 +1370,7 @@ define([
                     ret = this.pow(this.execute(node.children[0]),  this.execute(node.children[1]));
                     break;
                 case 'op_neg':
-                    ret = this.execute(node.children[0]) * -1;
+                    ret = Type.evalSlider(this.execute(node.children[0])) * (-1);
                     break;
                 }
                 break;
@@ -1328,7 +1401,7 @@ define([
         /**
          * Compiles a parse tree back to JessieCode.
          * @param {Object} node
-         * @param {Boolean} [js=false] Currently ignored. Compile either to JavaScript or back to JessieCode (required for the UI).
+         * @param {Boolean} [js=false] Compile either to JavaScript or back to JessieCode (required for the UI).
          * @returns Something
          * @private
          */
@@ -1371,7 +1444,6 @@ define([
                         e = this.compile(node.children[0]);
                         ret = e + ' = ' + this.compile(node.children[1], js) + ';\n';
                     }
-
                     break;
                 case 'op_if':
                     ret = ' if (' + this.compile(node.children[0], js) + ') ' + this.compile(node.children[1], js);
@@ -1425,8 +1497,8 @@ define([
                     ret = ' return ' + this.compile(node.children[0], js) + ';\n';
                     break;
                 case 'op_map':
-                    if (!node.children[1].isMath) {
-                        this._error('In a map only function calls and mathematical expressions are allowed.');
+                    if (!node.children[1].isMath && node.children[1].type !== 'node_var') {
+                        this._error('compile: In a map only function calls and mathematical expressions are allowed.');
                     }
 
                     list = node.children[0];
@@ -1435,6 +1507,7 @@ define([
                     } else {
                         ret = 'map (' + list.join(', ') + ') -> ' + this.compile(node.children[1], js);
                     }
+
                     break;
                 case 'op_function':
                     list = node.children[0];
@@ -1823,6 +1896,10 @@ define([
             return Math.pow(a, b);
         },
 
+        DDD: function(f) {
+            console.log('Dummy derivative function. This should never appear!');
+        },
+
         /**
          * Implementation of the ?: operator
          * @param {Boolean} cond Condition
@@ -1951,7 +2028,8 @@ define([
                     'remove': that.del,
                     '$': that.getElementById,
                     '$board': that.board,
-                    '$log': that.log
+                    '$log': that.log,
+                    D: that.DDD
                 };
 
             // special scopes for factorial, deg, and rad
@@ -2040,7 +2118,7 @@ define([
 
     });
 
-/* parser generated by jison 0.4.15 */
+/* parser generated by jison 0.4.17 */
 /*
   Returns a Parser object of the following structure:
 
@@ -2316,7 +2394,13 @@ parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
-        throw new Error(str);
+        function _parseError (msg, hash) {
+            this.message = msg;
+            this.hash = hash;
+        }
+        _parseError.prototype = Error;
+
+        throw new _parseError(str, hash);
     }
 },
 parse: function parse(input) {
@@ -2349,14 +2433,14 @@ parse: function parse(input) {
         lstack.length = lstack.length - n;
     }
     _token_stack:
-        function lex() {
+        var lex = function () {
             var token;
             token = lexer.lex() || EOF;
             if (typeof token !== 'number') {
                 token = self.symbols_[token] || token;
             }
             return token;
-        }
+        };
     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
     while (true) {
         state = stack[stack.length - 1];

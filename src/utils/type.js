@@ -1225,7 +1225,7 @@ define([
          */
         evalSlider: function (s) {
             if (s && s.type === Const.OBJECT_TYPE_GLIDER && typeof s.Value === 'function') {
-                s = s.Value();
+                return s.Value();
             }
 
             return s;
