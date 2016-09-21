@@ -23,7 +23,7 @@
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JessieCode. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
- */
+*/
 
 /*global JXG: true, define: true, window: true, console: true, self: true, document: true, parser: true*/
 /*jslint nomen: true, plusplus: true*/
@@ -1370,7 +1370,7 @@ define([
                     ret = this.pow(this.execute(node.children[0]),  this.execute(node.children[1]));
                     break;
                 case 'op_neg':
-                    ret = Type.evalSlider(this.execute(node.children[0])) * (-1);
+                    ret = this.neg(this.execute(node.children[0]));
                     break;
                 }
                 break;
@@ -1648,7 +1648,11 @@ define([
                     }
                     break;
                 case 'op_neg':
-                    ret = '(-' + this.compile(node.children[0], js) + ')';
+                    if (js) {
+                        ret = '$jc$.neg(' + this.compile(node.children[0], js) + ')';
+                    } else {
+                        ret = '(-' + this.compile(node.children[0], js) + ')';
+                    }
                     break;
                 }
                 break;
@@ -1762,7 +1766,7 @@ define([
         },
 
         /**
-         * + operator implementation
+         * - operator implementation
          * @param {Number|Array|JXG.Point} a
          * @param {Number|Array|JXG.Point} b
          * @returns {Number|Array}
@@ -1788,6 +1792,33 @@ define([
 
             return res;
         },
+
+        /**
+         * unary - operator implementation
+         * @param {Number|Array|JXG.Point} a
+         * @returns {Number|Array}
+         */
+        neg: function (a) {
+            var i, len, res;
+
+            a = Type.evalSlider(a);
+
+            if (Type.isArray(a)) {
+                len = a.length;
+                res = [];
+
+                for (i = 0; i < len; i++) {
+                    res[i] = -a[i];
+                }
+            } else if (Type.isNumber(a)) {
+                res = -a;
+            } else {
+                this._error('Unary operation - not defined on operand ' + typeof a);
+            }
+
+            return res;
+        },
+
 
         /**
          * Multiplication of vectors and numbers
