@@ -592,11 +592,18 @@ define([
         },
 
         snapToGrid: function () {
-            var i;
+            var i, force;
+
+            if (this.visProp.snaptogrid) {
+                force = true;
+            } else {
+                force = false;
+            }
 
             for (i = 0; i < this.vertices.length; i++) {
-                this.vertices[i].snapToGrid();
+                this.vertices[i].handleSnapToGrid(force, true);
             }
+
         },
 
         /**

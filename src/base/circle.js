@@ -588,9 +588,9 @@ define([
         snapToGrid: function () {
             var forceIt = this.visProp.snaptogrid;
 
-            this.center.snapToGrid(forceIt);
+            this.center.handleSnapToGrid(forceIt, true);
             if (this.method === 'twoPoints') {
-                this.point2.snapToGrid(forceIt);
+                this.point2.handleSnapToGrid(forceIt, true);
             }
 
             return this;
