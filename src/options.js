@@ -389,7 +389,7 @@ define([
             },
 
             selection: {
-                enabled: true,
+                enabled: false,
                 name: 'selectionPolygon',
                 needShift: false,
                 needCtrl: true,
