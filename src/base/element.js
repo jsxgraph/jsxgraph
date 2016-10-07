@@ -171,7 +171,33 @@ define([
         this.symbolic = {};
 
         /**
-         * Stores the rendering node for the element.
+         * Stores the SVG (or VML) rendering node for the element. This enables low-level
+         * access to SVG nodes. The properties of such an SVG node can then be changed
+         * by calling setAttribute(). Note that there are a few elements which consist
+         * of more than one SVG nodes:
+         * <ul>
+         * <li> Elements with arrow tail or head: rendNodeTriangleStart, rendNodeTriangleEnd
+         * <li> SVG (or VML) texts: rendNodeText
+         * <li> Button: rendNodeForm, rendNodeButton, rendNodeTag
+         * <li> Checkbox: rendNodeForm, rendNodeCheckbox, rendNodeLabel, rendNodeTag
+         * <li> Input: rendNodeForm, rendNodeInput, rendNodeLabel, rendNodeTag
+         * </ul>
+         *
+         * Here is are two examples: The first example shows how to access the SVG node,
+         * the second example demonstrates how to change SVG attributes.
+         * @example
+         *     var p1 = board.create('point', [0, 0]);
+         *     console.log(p1.rendNode);
+         *     // returns the full SVG node details of the point p1, something like:
+         *     // &lt;ellipse id='box_jxgBoard1P6' stroke='#ff0000' stroke-opacity='1' stroke-width='2px'
+         *     //   fill='#ff0000' fill-opacity='1' cx='250' cy='250' rx='4' ry='4'
+         *     //   style='position: absolute;'&gt;
+         *     // &lt;/ellipse&gt;
+         *
+         * @example
+         *     var s = board.create('segment', [p1, p2], {strokeWidth: 60});
+         *     s.rendNode.setAttribute('stroke-linecap', 'round');
+         *
          * @type Object
          */
         this.rendNode = null;
