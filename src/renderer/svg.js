@@ -377,7 +377,7 @@ define([
         drawInternalText: function (el) {
             var node = this.createPrim('text', el.id);
 
-            node.setAttributeNS(null, "class", el.visProp.cssclass);
+            //node.setAttributeNS(null, "class", el.visProp.cssclass);
             //node.setAttributeNS(null, "style", "alignment-baseline:middle"); // Not yet supported by Firefox
 
             // Preserve spaces
@@ -394,7 +394,10 @@ define([
         updateInternalText: function (el) {
             var content = el.plaintext, v;
 
-            // el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
+            if (el.rendNode.getAttributeNS(null, "class") !== el.visProp.cssclass) {
+                el.rendNode.setAttributeNS(null, "class", el.visProp.cssclass);
+                el.needsSizeUpdate = true;
+            }
             if (!isNaN(el.coords.scrCoords[1] + el.coords.scrCoords[2])) {
 
                 // Horizontal
