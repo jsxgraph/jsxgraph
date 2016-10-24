@@ -372,6 +372,8 @@ define([
          * @private
          */
         getZeroCoordinates: function () {
+            var c1x, c1y, c1z, c2x, c2y, c2z;
+
             if (this.line.type === Const.OBJECT_TYPE_AXIS) {
                 return Geometry.projectPointToLine({
                     coords: {
@@ -380,14 +382,26 @@ define([
                 }, this.line, this.board);
             }
 
+            c1z = this.line.point1.coords.usrCoords[0];
+            c1x = this.line.point1.coords.usrCoords[1];
+            c1y = this.line.point1.coords.usrCoords[2];
+            c2z = this.line.point2.coords.usrCoords[0];
+            c2x = this.line.point2.coords.usrCoords[1];
+            c2y = this.line.point2.coords.usrCoords[2];
+
             if (this.visProp.anchor === 'right') {
                 return this.line.point2.coords;
-            }
-
-            if (this.visProp.anchor === 'middle') {
+            } else if (this.visProp.anchor === 'middle') {
                 return new Coords(Const.COORDS_BY_USER, [
-                    (this.line.point1.coords.usrCoords[1] + this.line.point2.coords.usrCoords[1]) / 2,
-                    (this.line.point1.coords.usrCoords[2] + this.line.point2.coords.usrCoords[2]) / 2
+                    (c1z + c2z) * 0.5,
+                    (c1x + c2x) * 0.5,
+                    (c1y + c2y) * 0.5
+                ], this.board);
+            } else if (Type.isNumber(this.visProp.anchor)) {
+                return new Coords(Const.COORDS_BY_USER, [
+                    c1z + (c2z - c1z) * this.visProp.anchor,
+                    c1x + (c2x - c1x) * this.visProp.anchor,
+                    c1y + (c2y - c1y) * this.visProp.anchor
                 ], this.board);
             }
 
@@ -648,7 +662,8 @@ define([
                 // Compute the start position and the end position of a tick.
                 // If tick is out of the canvas, ti is empty.
                 ti = this.tickEndings(tickCoords, true);
-                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower && this.fixedTicks[i] <= bounds.upper) {
+                if (ti.length === 3 && this.fixedTicks[i] >= bounds.lower &&
+                    this.fixedTicks[i] <= bounds.upper) {
                     this.ticks.push(ti);
 
                     if (this.visProp.drawlabels && (hasLabelOverrides || Type.exists(this.visProp.labels[i]))) {
@@ -947,9 +962,14 @@ define([
      * @constructor
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line,Number,Function} line,_distance,_generateLabelFunc The parents consist of the line the ticks are going to be attached to and the
-     * distance between two major ticks.
-     * The third parameter (optional) is a function which determines the tick label. It has as parameter a coords object containing the coordinates of the new tick.
+     * @param {JXG.Line} line The parents consist of the line the ticks are going to be attached to.
+     * @param {Number} distance Number defining the distance between two major ticks or an
+     * array defining static ticks. Alternatively, the distance can be specified with the attribute
+     * "ticksDistance". For arbitrary lines (and not axes) a "zero coordinate" is determined
+     * which defines where the first tick is positioned. This zero coordinate
+     * can be altered with the attribute "anchor". Possible values are "left", "middle", "right" or a number.
+     * The default value is "middle".
+     *
      * @example
      * // Create an axis providing two coord pairs.
      *   var p1 = board.create('point', [0, 3]);
@@ -1006,8 +1026,8 @@ define([
      * @constructor
      * @type JXG.Ticks
      * @throws {Exception} If the element cannot be constructed with the given parent objects an exception is thrown.
-     * @param {JXG.Line,Number} line,numberofhashes The parents consist of the line the hatch marks are going to be attached to and the
-     * number of dashes.
+     * @param {JXG.Line} line The line the hatch marks are going to be attached to.
+     * @param {Number} numberofhashes Number of dashes.
      * @example
      * // Create an axis providing two coord pairs.
      *   var p1 = board.create('point', [0, 3]);
@@ -1031,13 +1051,13 @@ define([
             attr = Type.copyAttributes(attributes, board.options, 'hatch');
 
         if (parents[0].elementClass !== Const.OBJECT_CLASS_LINE || typeof parents[1] !== 'number') {
-            throw new Error("JSXGraph: Can't create Hatch mark with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + "'.");
+            throw new Error("JSXGraph: Can't create Hatch mark with parent types '" + (typeof parents[0]) + "' and '" + (typeof parents[1]) + " and ''" + (typeof parents[2]) + "'.");
         }
 
         num = parents[1];
         width = attr.ticksdistance;
         totalwidth = (num - 1) * width;
-        base = -totalwidth / 2;
+        base = -totalwidth * 0.5;
 
         for (i = 0; i < num; i++) {
             pos[i] = base + i * width;
