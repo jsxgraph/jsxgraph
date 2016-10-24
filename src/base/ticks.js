@@ -1044,6 +1044,32 @@ define([
      *   var t = board.create('hatch', [l1, 3]);
      * })();
      * </script><pre>
+     *
+     * @example
+     * // Alter the position of the hatch
+     * var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
+     *
+     * var p = board.create('point', [-5, 0]);
+     * var q = board.create('point', [5, 0]);
+     * var li = board.create('line', [p, q]);
+     * var h = board.create('hatch', [li, 2], {anchor: 0.2});
+     *
+     * </pre><div id="05d720ee-99c9-11e6-a9c7-901b0e1b8723" class="jxgbox" style="width: 300px; height: 300px;"></div>
+     * <script type="text/javascript">
+     *     (function() {
+     *         var board = JXG.JSXGraph.initBoard('05d720ee-99c9-11e6-a9c7-901b0e1b8723',
+     *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+     *     var board = JXG.JSXGraph.initBoard('jxgbox', {boundingbox: [-10, 10, 10, -5], keepaspectratio:true});
+     *
+     *     var p = board.create('point', [-5, 0]);
+     *     var q = board.create('point', [5, 0]);
+     *     var li = board.create('line', [p, q]);
+     *     var h = board.create('hatch', [li, 2], {anchor: 0.2});
+     *
+     *     })();
+     *
+     * </script><pre>
+     *
      */
     JXG.createHatchmark = function (board, parents, attributes) {
         var num, i, base, width, totalwidth, el,
