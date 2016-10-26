@@ -147,9 +147,25 @@ define([
             defaultAxes: {
                 x: {
                     name: 'x',
+                    ticks: {
+                        label: {
+                            anchorX: 'middle',
+                            anchorY: 'top',
+                            offset: [0, -3]
+                        },
+                        drawZero: false,
+                    }
                 },
                 y: {
-                    name: 'y'
+                    name: 'y',
+                    ticks: {
+                        label: {
+                            anchorX: 'left',
+                            anchorY: 'middle',
+                            offset: [6, 0]
+                        },
+                        drawZero: true,
+                    }
                 }
             },
 
