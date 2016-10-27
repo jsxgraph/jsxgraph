@@ -1792,37 +1792,39 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
          * tau=1/2 give Catmull-Rom splines.
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
-         * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
-         * returning the length of the points array minus three.
+         * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value,
+         * and a function simply returning the length of the points array
+         * minus three.
          * @memberof JXG.Math.Numerics
         */
-        CardinalSpline: function (points, tau) {
+        CardinalSpline: function (points, tau_param) {
             var p,
                 coeffs = [],
                 // control point at the beginning and at the end
                 first = {},
                 last = {},
                 makeFct,
-                _tau;
+                tau, _tau;
 
-            if (Type.isFunction(tau)) {
-                _tau = tau;
+            if (Type.isFunction(tau_param)) {
+                _tau = tau_param;
             } else {
-                _tau = function () { return tau; };
+                _tau = function () { return tau_param; };
             }
 
             /** @ignore */
             makeFct = function (which) {
                 return function (t, suspendedUpdate) {
                     var s, c,
-                        len = points.length,
-                        tau = _tau();
+                        len = points.length;
 
                     if (len < 2) {
                         return NaN;
                     }
 
                     if (!suspendedUpdate) {
+                        tau = _tau();
+
                         first[which] = function () {
                             return 2 * points[0][which]() - points[1][which]();
                         };
@@ -1837,9 +1839,11 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         for (s = 0; s < len - 1; s++) {
                             coeffs[which][s] = [
                                 1 / tau * p[s + 1][which](),
-                                -p[s][which]() +   p[s + 2][which](),
-                                2 * p[s][which]() + (-3 / tau + 1) * p[s + 1][which]() + (3 / tau - 2) * p[s + 2][which]() - p[s + 3][which](),
-                                -p[s][which]() + (2 / tau - 1) * p[s + 1][which]() + (-2 / tau + 1) * p[s + 2][which]() + p[s + 3][which]()
+                                -p[s][which]() + p[s + 2][which](),
+                                2 * p[s][which]() + (-3 / tau + 1) * p[s + 1][which]() +
+                                (3 / tau - 2) * p[s + 2][which]() - p[s + 3][which](),
+                                -p[s][which]() + (2 / tau - 1) * p[s + 1][which]() +
+                                (-2 / tau + 1) * p[s + 2][which]() + p[s + 3][which]()
                             ];
                         }
                     }
