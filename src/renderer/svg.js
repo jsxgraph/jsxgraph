@@ -962,7 +962,7 @@ define([
             var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity),
-                duration = 500,
+                duration = 2000,
                 transitionStr;
 
             o = (o > 0) ? o : 0;
@@ -988,15 +988,15 @@ define([
                 }
 
                 if (c !== 'none') {
-                    /*
-                    transitionStr = 'fill ' + duration + 'ms, ';// +
-                                    //'fill-opacity ' + duration + 'ms';
-                    node.setAttributeNS(null, 'transition', transitionStr);
-                    */
+                    transitionStr = 'fill ' + duration + 'ms, ' +
+                                    'fill-opacity ' + duration + 'ms';
+                    node.style.transition = transitionStr;
                     node.setAttributeNS(null, 'fill', c);
                 }
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
+                    transitionStr = 'fill-opacity ' + duration + 'ms';
+                    node.style.transition = transitionStr;
                     node.setAttributeNS(null, 'opacity', oo);
                     //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
@@ -1020,7 +1020,7 @@ define([
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
                 node,
-                duration = 500,
+                duration = 2000,
                 transitionStr;
 
             o = (o > 0) ? o : 0;
@@ -1046,20 +1046,17 @@ define([
                         node.style.color = c;
                         node.style.opacity = oo;
                     } else {
-                        /*
-                        transitionStr = 'fill-opacity ' + duration + 'ms, ' +
-                                        'fill ' + duration + 'ms';
-                        node.setAttributeNS(null, 'transition', transitionStr);
-                        */
+
+                        transitionStr = 'fill ' + duration + 'ms, ' +
+                                        'fill-opacity ' + duration + 'ms';
+                        node.style.transition = transitionStr;
                         node.setAttributeNS(null, "style", "fill:" + c);
                         node.setAttributeNS(null, "style", "fill-opacity:" + oo);
                     }
                 } else {
-                    /*
-                    transitionStr = 'stroke-opacity ' + duration + 'ms, ' +
-                                    'stroke ' + duration + 'ms';
-                    node.setAttributeNS(null, 'transition', transitionStr);
-                    */
+                    transitionStr = 'stroke ' + duration + 'ms, ' +
+                                    'stroke-opacity ' + duration + 'ms';
+                    node.style.transition = transitionStr;
                     node.setAttributeNS(null, 'stroke', c);
                     node.setAttributeNS(null, 'stroke-opacity', oo);
                 }

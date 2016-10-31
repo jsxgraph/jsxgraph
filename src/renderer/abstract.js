@@ -188,7 +188,8 @@ define([
 
                 if (!element.visProp.draft) {
                     if (!not.stroke) {
-                        this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
+                        this.setObjectStrokeColor(element,
+                            element.visProp.strokecolor, element.visProp.strokeopacity);
                         this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     }
 
@@ -270,16 +271,20 @@ define([
                 face = Options.normalizePointFace(element.visProp.face);
 
             if (!isNaN(element.coords.scrCoords[2] + element.coords.scrCoords[1])) {
-                this._updateVisual(element, {dash: false, shadow: false});
-                size *= ((!element.board || !element.board.options.point.zoom) ? 1.0 : Math.sqrt(element.board.zoomX * element.board.zoomY));
+                size *= ((!element.board || !element.board.options.point.zoom) ?
+                    1.0 : Math.sqrt(element.board.zoomX * element.board.zoomY));
 
                 if (face === 'o') { // circle
-                    this.updateEllipsePrim(element.rendNode, element.coords.scrCoords[1], element.coords.scrCoords[2], size + 1, size + 1);
+                    this.updateEllipsePrim(element.rendNode, element.coords.scrCoords[1],
+                         element.coords.scrCoords[2], size + 1, size + 1);
                 } else if (face === '[]') { // rectangle
-                    this.updateRectPrim(element.rendNode, element.coords.scrCoords[1] - size, element.coords.scrCoords[2] - size, size * 2, size * 2);
+                    this.updateRectPrim(element.rendNode, element.coords.scrCoords[1] - size,
+                         element.coords.scrCoords[2] - size, size * 2, size * 2);
                 } else { // x, +, <>, ^, v, <, >
-                    this.updatePathPrim(element.rendNode, this.updatePathStringPoint(element, size, face), element.board);
+                    this.updatePathPrim(element.rendNode,
+                        this.updatePathStringPoint(element, size, face), element.board);
                 }
+                this._updateVisual(element, {dash: false, shadow: false});
                 this.setShadow(element);
             }
         },
@@ -496,7 +501,9 @@ define([
                     !isNaN(radius + element.center.coords.scrCoords[1] + element.center.coords.scrCoords[2]) &&
                     radius * element.board.unitX < 2000000) {
                 this.updateEllipsePrim(element.rendNode, element.center.coords.scrCoords[1],
-                    element.center.coords.scrCoords[2], (radius * element.board.unitX), (radius * element.board.unitY));
+                    element.center.coords.scrCoords[2],
+                    (radius * element.board.unitX),
+                    (radius * element.board.unitY));
             }
         },
 
