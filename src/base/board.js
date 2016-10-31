@@ -963,12 +963,18 @@ define([
          */
         moveObject: function (x, y, o, evt, type) {
             var newPos = new Coords(Const.COORDS_BY_SCREEN, this.getScrCoordsOfMouse(x, y), this),
-                drag;
+                drag,
+                dragScrCoords, newDragScrCoords;
 
             if (!(o && o.obj)) {
                 return;
             }
             drag = o.obj;
+
+            // Save updates for very small movements of coordsElements, see below
+            if (drag.coords) {
+                dragScrCoords = drag.coords.scrCoords.slice();
+            }
 
             /*
              * Save the position.
@@ -1001,7 +1007,16 @@ define([
             drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
 
             this.updateInfobox(drag);
-            this.update();
+            drag.prepareUpdate().update(true).updateRenderer();
+            if (drag.coords) {
+                newDragScrCoords = drag.coords.scrCoords;
+            }
+
+            // Save updates for very small movements of coordsElements
+            if (!drag.coords ||
+                dragScrCoords[1] !== newDragScrCoords[1] || dragScrCoords[2] !== newDragScrCoords[2]) {
+                this.update();
+            }
             drag.highlight(true);
 
             drag.lastDragTime = new Date();
