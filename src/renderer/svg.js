@@ -962,7 +962,7 @@ define([
             var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity),
-                duration = 2000,
+                duration = 0,
                 transitionStr;
 
             o = (o > 0) ? o : 0;
@@ -1020,7 +1020,7 @@ define([
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
                 node,
-                duration = 2000,
+                duration = 0,
                 transitionStr;
 
             o = (o > 0) ? o : 0;
