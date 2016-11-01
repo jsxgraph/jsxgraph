@@ -58,7 +58,7 @@ define([
          * @returns {String} Converted expression.
          */
         replacePow: function (te) {
-            var count, pos, c,
+            var count, pos, c, previousIndex,
                 leftop, rightop, pre, p, left, i, right, expr;
 
             // delete all whitespace immediately before and after all ^ operators
@@ -66,7 +66,14 @@ define([
 
             //  Loop over all ^ operators
             i = te.indexOf('^');
-            while (i >= 0) {
+            previousIndex = -1;
+
+            while (i >= 0 && i < te.length - 1) {
+                if (previousIndex === i) {
+                    throw new Error("JSXGraph: Error while parsing expression '" + te + "'");
+                }
+                previousIndex = i;
+
                 // left and right are the substrings before, resp. after the ^ character
                 left = te.slice(0, i);
                 right = te.slice(i + 1);
