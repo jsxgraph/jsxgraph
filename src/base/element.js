@@ -996,12 +996,14 @@ define([
                         }
                         if (Type.exists(this.label) && this.hasLabel) {
                             this.label.visProp.strokecolor = value;
-                            this.board.renderer.setObjectStrokeColor(this.label, value, opacity);
+                            this.board.renderer.setObjectStrokeColor(this.label,
+                                value, opacity);
                         }
                         if (this.elementClass === Const.OBJECT_CLASS_TEXT) {
                             this.visProp.strokecolor = value;
                             this.visProp.strokeopacity = opacity;
-                            this.board.renderer.setObjectStrokeColor(this, this.visProp.strokecolor, this.visProp.strokeopacity);
+                            this.board.renderer.setObjectStrokeColor(this,
+                                value, opacity);
                         }
                         break;
                     case 'infoboxtext':

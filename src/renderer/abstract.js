@@ -186,15 +186,19 @@ define([
             if (enhanced || this.enhancedRendering) {
                 not = not || {};
 
+                this.setObjectTransition(element);
                 if (!element.visProp.draft) {
                     if (!not.stroke) {
                         this.setObjectStrokeColor(element,
-                            element.visProp.strokecolor, element.visProp.strokeopacity);
+                            element.visProp.strokecolor,
+                            element.visProp.strokeopacity);
                         this.setObjectStrokeWidth(element, element.visProp.strokewidth);
                     }
 
                     if (!not.fill) {
-                        this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
+                        this.setObjectFillColor(element,
+                            element.visProp.fillcolor,
+                            element.visProp.fillopacity);
                     }
 
                     if (!not.dash) {
@@ -816,6 +820,7 @@ define([
 
             }
 
+            this.setObjectTransition(element);
             if (display === 'html' && this.type !== 'no') {
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
@@ -1142,6 +1147,7 @@ define([
             var draftColor = element.board.options.elements.draft.color,
                 draftOpacity = element.board.options.elements.draft.opacity;
 
+            this.setObjectTransition(element);
             if (element.type === Const.OBJECT_TYPE_POLYGON) {
                 this.setObjectFillColor(element, draftColor, draftOpacity);
             } else {
@@ -1160,11 +1166,16 @@ define([
          * @param {JXG.GeometryElement} element Reference of the object that no longer is in draft mode.
          */
         removeDraft: function (element) {
+            this.setObjectTransition(element);
             if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
+                this.setObjectFillColor(element,
+                    element.visProp.fillcolor,
+                    element.visProp.fillopacity);
             } else {
                 if (element.type === Const.OBJECT_CLASS_POINT) {
-                    this.setObjectFillColor(element, element.visProp.fillcolor, element.visProp.fillopacity);
+                    this.setObjectFillColor(element,
+                        element.visProp.fillcolor,
+                        element.visProp.fillopacity);
                 }
                 this.setObjectStrokeColor(element, element.visProp.strokecolor, element.visProp.strokeopacity);
                 this.setObjectStrokeWidth(element, element.visProp.strokewidth);
@@ -1182,6 +1193,16 @@ define([
          * @param {JXG.GeometryElement} element An JSXGraph element with an area that can be filled.
          */
         updateGradient: function (element) { /* stub */ },
+
+        /**
+         * Sets the transition duration (in milliseconds) for fill color and stroke
+         * color and opacity.
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new transition duration.
+         * @param {Number} duration (Optional) duration in milliseconds. If not given,
+         *        element.visProp.transitionDuration is taken. This is the default.
+         */
+        setObjectTransition: function (element, duration) { /* stub */ },
 
         /**
          * Sets an objects fill color.
@@ -1225,9 +1246,12 @@ define([
         highlight: function (element) {
             var i, ev = element.visProp;
 
+            this.setObjectTransition(element);
             if (!ev.draft) {
                 if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
+                    this.setObjectFillColor(element,
+                        ev.highlightfillcolor,
+                        ev.highlightfillopacity);
                     for (i = 0; i < element.borders.length; i++) {
                         this.setObjectStrokeColor(element.borders[i],
                             element.borders[i].visProp.highlightstrokecolor,
@@ -1238,10 +1262,14 @@ define([
                         this.updateTextStyle(element, true);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, true);
-                        this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
+                        this.setObjectFillColor(element,
+                            ev.highlightfillcolor,
+                            ev.highlightfillopacity);
                     } else {
                         this.setObjectStrokeColor(element, ev.highlightstrokecolor, ev.highlightstrokeopacity);
-                        this.setObjectFillColor(element, ev.highlightfillcolor, ev.highlightfillopacity);
+                        this.setObjectFillColor(element,
+                            ev.highlightfillcolor,
+                            ev.highlightfillopacity);
                     }
                 }
                 if (ev.highlightstrokewidth) {
@@ -1261,11 +1289,15 @@ define([
         noHighlight: function (element) {
             var i, ev = element.visProp;
 
+            this.setObjectTransition(element);
             if (!element.visProp.draft) {
                 if (element.type === Const.OBJECT_TYPE_POLYGON) {
-                    this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
+                    this.setObjectFillColor(element,
+                        ev.fillcolor,
+                        ev.fillopacity);
                     for (i = 0; i < element.borders.length; i++) {
-                        this.setObjectStrokeColor(element.borders[i], element.borders[i].visProp.strokecolor,
+                        this.setObjectStrokeColor(element.borders[i],
+                            element.borders[i].visProp.strokecolor,
                             element.borders[i].visProp.strokeopacity);
                     }
                 } else {
@@ -1273,10 +1305,16 @@ define([
                         this.updateTextStyle(element, false);
                     } else if (element.type === Const.OBJECT_TYPE_IMAGE) {
                         this.updateImageStyle(element, false);
-                        this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
+                        this.setObjectFillColor(element,
+                            ev.fillcolor,
+                            ev.fillopacity);
                     } else {
-                        this.setObjectStrokeColor(element, ev.strokecolor, ev.strokeopacity);
-                        this.setObjectFillColor(element, ev.fillcolor, ev.fillopacity);
+                        this.setObjectStrokeColor(element,
+                            ev.strokecolor,
+                            ev.strokeopacity);
+                        this.setObjectFillColor(element,
+                            ev.fillcolor,
+                            ev.fillopacity);
                     }
                 }
                 this.setObjectStrokeWidth(element, ev.strokewidth);

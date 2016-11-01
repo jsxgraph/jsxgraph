@@ -274,11 +274,16 @@ define([
 
             if (node) {
                 if (Type.isString(color)) {
-                    node.setAttributeNS(null, 'stroke', color);
-                    node.setAttributeNS(null, 'fill', color);
+                    setTimeout(function() {
+                        node.setAttributeNS(null, 'stroke', color);
+                        node.setAttributeNS(null, 'fill', color);
+                    }, 1);
                 }
-                node.setAttributeNS(null, 'stroke-opacity', opacity);
-                node.setAttributeNS(null, 'fill-opacity', opacity);
+
+                setTimeout(function() {
+                    node.setAttributeNS(null, 'stroke-opacity', opacity);
+                    node.setAttributeNS(null, 'fill-opacity', opacity);
+                }, 1);
 
                 if (this.isIE) {
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
@@ -444,7 +449,7 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
-        updateInternalTextStyle: function (element, strokeColor, strokeOpacity) {
+        updateInternalTextStyle: function (element, strokeColor, strokeOpacity, duration) {
             this.setObjectFillColor(element, strokeColor, strokeOpacity);
         },
 
@@ -958,12 +963,41 @@ define([
         },
 
         // documented in JXG.AbstractRenderer
+        setObjectTransition: function (el, duration) {
+            var node, transitionStr,
+                i, len,
+                nodes = ['rendNode',
+                         'rendNodeTriangle',
+                         'rendNodeTriangleStart',
+                         'rendNodeTriangleEnd'];
+
+            if (duration === undefined) {
+                duration = el.visProp.transitionduration;
+            }
+
+            if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
+                el.visProp.display === 'html') {
+                    transitionStr = ' color ' + duration + 'ms,' +
+                                    ' opacity ' + duration + 'ms';
+            } else {
+                transitionStr = ' fill ' + duration + 'ms,' +
+                            ' fill-opacity ' + duration + 'ms,' +
+                            ' stroke ' + duration + 'ms,' +
+                            ' stroke-opacity ' + duration + 'ms';
+            }
+
+            len = nodes.length;
+            for (i = 0; i < len; ++i) if (el[nodes[i]]) {
+                node = el[nodes[i]];
+                node.style.transition = transitionStr;
+            }
+        },
+
+        // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
             var node, c, rgbo, oo,
                 rgba = Type.evaluate(color),
-                o = Type.evaluate(opacity),
-                duration = 0,
-                transitionStr;
+                o = Type.evaluate(opacity);
 
             o = (o > 0) ? o : 0;
 
@@ -988,23 +1022,24 @@ define([
                 }
 
                 if (c !== 'none') {
-                    transitionStr = 'fill ' + duration + 'ms, ' +
-                                    'fill-opacity ' + duration + 'ms';
-                    node.style.transition = transitionStr;
-                    node.setAttributeNS(null, 'fill', c);
+                    setTimeout(function() {
+                        node.setAttributeNS(null, 'fill', c);
+                    }, 1);
                 }
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
-                    transitionStr = 'fill-opacity ' + duration + 'ms';
-                    node.style.transition = transitionStr;
-                    node.setAttributeNS(null, 'opacity', oo);
+                    setTimeout(function() {
+                        node.setAttributeNS(null, 'opacity', oo);
+                    }, 1);
                     //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
                     if (c === 'none') {  // This is don only for non-images
                                          // because images have no fill color.
                         oo = 0;
                     }
-                    node.setAttributeNS(null, 'fill-opacity', oo);
+                    setTimeout(function() {
+                        node.setAttributeNS(null, 'fill-opacity', oo);
+                    }, 1);
                 }
 
                 if (Type.exists(el.visProp.gradient)) {
@@ -1019,9 +1054,7 @@ define([
         setObjectStrokeColor: function (el, color, opacity) {
             var rgba = Type.evaluate(color), c, rgbo,
                 o = Type.evaluate(opacity), oo,
-                node,
-                duration = 0,
-                transitionStr;
+                node;
 
             o = (o > 0) ? o : 0;
 
@@ -1043,22 +1076,21 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (el.visProp.display === 'html') {
-                        node.style.color = c;
-                        node.style.opacity = oo;
+                        setTimeout(function() {
+                            node.style.color = c;
+                            node.style.opacity = oo;
+                        }, 1);
                     } else {
-
-                        transitionStr = 'fill ' + duration + 'ms, ' +
-                                        'fill-opacity ' + duration + 'ms';
-                        node.style.transition = transitionStr;
-                        node.setAttributeNS(null, "style", "fill:" + c);
-                        node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                        setTimeout(function() {
+                            node.setAttributeNS(null, "style", "fill:" + c);
+                            node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                        }, 1);
                     }
                 } else {
-                    transitionStr = 'stroke ' + duration + 'ms, ' +
-                                    'stroke-opacity ' + duration + 'ms';
-                    node.style.transition = transitionStr;
-                    node.setAttributeNS(null, 'stroke', c);
-                    node.setAttributeNS(null, 'stroke-opacity', oo);
+                    setTimeout(function() {
+                        node.setAttributeNS(null, 'stroke', c);
+                        node.setAttributeNS(null, 'stroke-opacity', oo);
+                    }, 1);
                 }
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {

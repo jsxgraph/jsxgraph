@@ -540,6 +540,16 @@ define(['jxg', 'renderer/abstract'], function (JXG, AbstractRenderer) {
         updateGradient: function (element) { /* stub */ },
 
         /**
+         * Sets the transition duration (in milliseconds) for fill color and stroke
+         * color and opacity.
+         * @param {JXG.GeometryElement} element Reference of the object that wants a
+         *         new transition duration.
+         * @param {Number} duration (Optional) duration in milliseconds. If not given,
+         *        element.visProp.transitionDuration is taken. This is the default.
+         */
+        setObjectTransition: function (element, duration) { /* stub */ },
+
+        /**
          * Sets an objects fill color.
          * @param {JXG.GeometryElement} element Reference of the object that wants a new fill color.
          * @param {String} color Color in a HTML/CSS compatible format. If you don't want any fill color at all, choose 'none'.

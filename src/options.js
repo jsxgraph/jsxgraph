@@ -556,6 +556,23 @@ define([
             highlightFillOpacity: 1,
 
             /**
+             * Transition duration (in milliseconds) for color and opacity
+             * changes. Works in SVG renderer, only.
+             * @type Number
+             * @name JXG.GeometryElement#transitionDuration
+             * @see JXG.GeometryElement#strokeColor
+             * @see JXG.GeometryElement#highlightStrokeColor
+             * @see JXG.GeometryElement#strokeOpacity
+             * @see JXG.GeometryElement#highlightStrokeOpacity
+             * @see JXG.GeometryElement#fillColor
+             * @see JXG.GeometryElement#highlightFillColor
+             * @see JXG.GeometryElement#fillOpacity
+             * @see JXG.GeometryElement#highlightFillOpacity
+             * @default {@link JXG.Options.elements#transitionDuration}
+             */
+            transitionDuration: 200,
+
+            /**
              * Width of the element's stroke.
              * @type number
              * @name JXG.GeometryElement#strokeWidth
@@ -579,7 +596,6 @@ define([
              * @default {@link JXG.Options.elements#strokeWidth}
              */
             highlightStrokeWidth: 2,
-
 
             /**
              * If true the element is fixed and can not be dragged around. The element
