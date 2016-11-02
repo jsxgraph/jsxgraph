@@ -1824,13 +1824,9 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         CardinalSpline: function (points, tau_param, type) {
             var p,
                 coeffs = [],
-                // control point at the beginning and at the end
-                first,
-                last,
                 makeFct,
                 tau, _tau,
-                that = this,
-                len;
+                that = this;
 
             if (Type.isFunction(tau_param)) {
                 _tau = tau_param;
@@ -1842,43 +1838,45 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 type = 'uniform';
             }
 
-            first = {
-                X: function () { return 2 * points[0].X() - points[1].X(); },
-                Y: function () { return 2 * points[0].Y() - points[1].Y(); },
-                Dist: function(p) {
-                    var dx = this.X() - p.X(),
-                        dy = this.Y() - p.Y();
-                    return Math.sqrt(dx * dx + dy * dy);
-                }
-            };
-
-            len = points.length;
-            last = {
-                X: function () { return 2 * points[len - 1].X() - points[len - 2].X(); },
-                Y: function () { return 2 * points[len - 1].Y() - points[len - 2].Y(); },
-                Dist: function(p) {
-                    var dx = this.X() - p.X(),
-                        dy = this.Y() - p.Y();
-                    return Math.sqrt(dx * dx + dy * dy);
-                }
-            };
-
-            p = [first].concat(points, [last]);
-
             /** @ignore */
             makeFct = function (which) {
                 return function (t, suspendedUpdate) {
                     var s, c,
+                        // control point at the beginning and at the end
+                        first, last,
                         t1, t2, dt0, dt1, dt2,
                         dx, dy,
-                        len = p.length;
+                        len;
 
-                    if (len < 4) {
+                    if (points.length < 2) {
                         return NaN;
                     }
 
                     if (!suspendedUpdate) {
                         tau = _tau();
+
+                        first = {
+                            X: function () { return 2 * points[0].X() - points[1].X(); },
+                            Y: function () { return 2 * points[0].Y() - points[1].Y(); },
+                            Dist: function(p) {
+                                var dx = this.X() - p.X(),
+                                    dy = this.Y() - p.Y();
+                                return Math.sqrt(dx * dx + dy * dy);
+                            }
+                        };
+
+                        last = {
+                            X: function () { return 2 * points[points.length - 1].X() - points[points.length - 2].X(); },
+                            Y: function () { return 2 * points[points.length - 1].Y() - points[points.length - 2].Y(); },
+                            Dist: function(p) {
+                                var dx = this.X() - p.X(),
+                                    dy = this.Y() - p.Y();
+                                return Math.sqrt(dx * dx + dy * dy);
+                            }
+                        };
+
+                        p = [first].concat(points, [last]);
+                        len = p.length;
 
                         coeffs[which] = [];
 
