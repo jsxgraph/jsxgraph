@@ -1784,27 +1784,43 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             return fct;
         },
 
+        _initCubicPoly: function(x1, x2, t1, t2) {
+            return [
+                x1,
+                t1,
+                -3 * x1 + 3 * x2 - 2 * t1 - t2,
+                2 * x1 -  2 * x2 + t1 + t2
+            ];
+        },
+
         /**
          * Computes the cubic cardinal spline curve through a given set of points. The curve
          * is uniformly parametrized.
          * Two artificial control points at the beginning and the end are added.
+         *
+         * The implementation (especially  the centripetal parametrization) is from
+         * http://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections .
          * @param {Array} points Array consisting of JXG.Points.
          * @param {Number|Function} tau The tension parameter, either a constant number or a function returning a number. This number is between 0 and 1.
          * tau=1/2 give Catmull-Rom splines.
+         * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
+         * "centripetal" parameterization. Thus the two possible values are "uniform" or "centripetal".
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value,
          * and a function simply returning the length of the points array
          * minus three.
          * @memberof JXG.Math.Numerics
         */
-        CardinalSpline: function (points, tau_param) {
+        CardinalSpline: function (points, tau_param, type) {
             var p,
                 coeffs = [],
                 // control point at the beginning and at the end
-                first = {},
-                last = {},
+                first,
+                last,
                 makeFct,
-                tau, _tau;
+                tau, _tau,
+                that = this,
+                len;
 
             if (Type.isFunction(tau_param)) {
                 _tau = tau_param;
@@ -1812,43 +1828,94 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                 _tau = function () { return tau_param; };
             }
 
+            if (type === undefined) {
+                type = 'uniform';
+            }
+
+            first = {
+                X: function () { return 2 * points[0].X() - points[1].X(); },
+                Y: function () { return 2 * points[0].Y() - points[1].Y(); },
+                Dist: function(p) {
+                    var dx = this.X() - p.X(),
+                        dy = this.Y() - p.Y();
+                    return Math.sqrt(dx * dx + dy * dy);
+                }
+            };
+
+            len = points.length;
+            last = {
+                X: function () { return 2 * points[len - 1].X() - points[len - 2].X(); },
+                Y: function () { return 2 * points[len - 1].Y() - points[len - 2].Y(); },
+                Dist: function(p) {
+                    var dx = this.X() - p.X(),
+                        dy = this.Y() - p.Y();
+                    return Math.sqrt(dx * dx + dy * dy);
+                }
+            };
+
+            p = [first].concat(points, [last]);
+
             /** @ignore */
             makeFct = function (which) {
                 return function (t, suspendedUpdate) {
                     var s, c,
-                        len = points.length;
+                        t1, t2, dt0, dt1, dt2,
+                        dx, dy,
+                        len = p.length;
 
-                    if (len < 2) {
+                    if (len < 4) {
                         return NaN;
                     }
 
                     if (!suspendedUpdate) {
                         tau = _tau();
 
-                        first[which] = function () {
-                            return 2 * points[0][which]() - points[1][which]();
-                        };
-
-                        last[which] = function () {
-                            return 2 * points[len - 1][which]() - points[len - 2][which]();
-                        };
-
-                        p = [first].concat(points, [last]);
                         coeffs[which] = [];
 
-                        for (s = 0; s < len - 1; s++) {
-                            coeffs[which][s] = [
-                                1 / tau * p[s + 1][which](),
-                                -p[s][which]() + p[s + 2][which](),
-                                2 * p[s][which]() + (-3 / tau + 1) * p[s + 1][which]() +
-                                (3 / tau - 2) * p[s + 2][which]() - p[s + 3][which](),
-                                -p[s][which]() + (2 / tau - 1) * p[s + 1][which]() +
-                                (-2 / tau + 1) * p[s + 2][which]() + p[s + 3][which]()
-                            ];
+                        for (s = 0; s < len - 3; s++) {
+                            if (type === 'centripetal') {
+                                // The order is importeant, since p[0].coords === undefined
+                                dt0 = p[s].Dist(p[s + 1]);
+                                dt1 = p[s + 2].Dist(p[s + 1]);
+                                dt2 = p[s + 3].Dist(p[s + 2]);
+
+                                dt0 = Math.sqrt(dt0);
+                                dt1 = Math.sqrt(dt1);
+                                dt2 = Math.sqrt(dt2);
+
+                                if (dt1 < Mat.eps) dt1 = 1.0;
+                                if (dt0 < Mat.eps) dt0 = dt1;
+                                if (dt2 < Mat.eps) dt2 = dt1;
+
+                                t1 = (p[s + 1][which]() - p[s][which]()) / dt0 -
+                                     (p[s + 2][which]() - p[s][which]()) / (dt1 + dt0) +
+                                     (p[s + 2][which]() - p[s + 1][which]()) / dt1;
+
+                                t2 = (p[s + 2][which]() - p[s + 1][which]()) / dt1 -
+                                     (p[s + 3][which]() - p[s + 1][which]()) / (dt2 + dt1) +
+                                     (p[s + 3][which]() - p[s + 2][which]()) / dt2;
+
+                                t1 *= dt1;
+                                t2 *= dt1;
+
+                                coeffs[which][s] = that._initCubicPoly(
+                                     p[s + 1][which](),
+                                     p[s + 2][which](),
+                                     tau * t1,
+                                     tau * t2
+                                );
+                            } else {
+                                coeffs[which][s] = that._initCubicPoly(
+                                    p[s + 1][which](),
+                                    p[s + 2][which](),
+                                    tau * (p[s + 2][which]() - p[s][which]()),
+                                    tau * (p[s + 3][which]() - p[s + 1][which]())
+                                );
+                            }
                         }
                     }
 
-                    len += 2;  // add the two control points
+                    //len += 2;  // add the two control points
 
                     if (isNaN(t)) {
                         return NaN;
@@ -1872,7 +1939,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     t -= s;
                     c = coeffs[which][s];
 
-                    return tau * (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
+                    return (((c[3] * t + c[2]) * t + c[1]) * t + c[0]);
                 };
             };
 
