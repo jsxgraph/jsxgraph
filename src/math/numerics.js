@@ -1964,13 +1964,15 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          * is uniformly parametrized. The curve is the cardinal spline curve for tau=0.5.
          * Two artificial control points at the beginning and the end are added.
          * @param {Array} points Array consisting of JXG.Points.
+         * @param {String} type (Optional) parameter which allows to choose between "uniform" (default) and
+         * "centripetal" parameterization. Thus the two possible values are "uniform" or "centripetal".
          * @returns {Array} An Array consisting of four components: Two functions each of one parameter t
          * which return the x resp. y coordinates of the Catmull-Rom-spline curve in t, a zero value, and a function simply
          * returning the length of the points array minus three.
          * @memberof JXG.Math.Numerics
         */
-        CatmullRomSpline: function (points) {
-            return this.CardinalSpline(points, 0.5);
+        CatmullRomSpline: function (points, type) {
+            return this.CardinalSpline(points, 0.5, type);
         },
 
         /**
