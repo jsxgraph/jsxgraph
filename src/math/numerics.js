@@ -1784,6 +1784,16 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             return fct;
         },
 
+        /**
+         * Determine the coefficients of a cardinal spline polynom, See
+         * http://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections
+         * @param  {Number} x1 point 1
+         * @param  {Number} x2 point 2
+         * @param  {Number} t1 tangent slope 1
+         * @param  {Number} t2 tangent slope 2
+         * @return {Array}    coefficents array c for the polynomial t maps to
+         * c[0] + c[1]*t + c[2]*t*t + c[3]*t*t*t
+         */
         _initCubicPoly: function(x1, x2, t1, t2) {
             return [
                 x1,
