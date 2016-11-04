@@ -1326,7 +1326,8 @@ define([
 
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
-                twoFingersCondition = (touches.length === 2 && Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 120),
+                twoFingersCondition = (touches.length === 2 &&
+                    Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 120),
                 r = this.attr.pan.enabled && (!this.attr.pan.needtwofingers || twoFingersCondition),
                 pos;
 
@@ -1605,7 +1606,8 @@ define([
         },
 
         /**
-         * Called by iOS/Safari as soon as the user starts a gesture (only works on iOS/Safari).
+         * Called by iOS/Safari as soon as the user starts a gesture. Works natively on iOS/Safari,
+         * on Android we emulate it.
          * @param {Event} evt
          * @returns {Boolean}
          */
@@ -2112,18 +2114,12 @@ define([
                 return false;
             }
 
+            // Handle pinch to zoom
             if (this.mode === this.BOARD_MODE_NONE && evtTouches.length == 2) {
                 this.gestureStartListener(evt);
                 this.hasGestureHandlers = true;
             }
-
-            // if (Env.isWebkitAndroid()) {
-            //     time = new Date();
-            //     this.touchMoveLast = time.getTime() - 200;
-            // }
-
             this.options.precision.hasPoint = this.options.precision.mouse;
-
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
             return this.touches.length > 0;
