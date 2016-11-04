@@ -254,7 +254,6 @@ define([
             // adjust visual propertys
             this._updateVisual(element, {dash: true, shadow: true}, true);
 
-
             // By now we only created the xml nodes and set some styles, in updatePoint
             // the attributes are filled with data.
             this.updatePoint(element);

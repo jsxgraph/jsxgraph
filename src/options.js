@@ -570,7 +570,7 @@ define([
              * @see JXG.GeometryElement#highlightFillOpacity
              * @default {@link JXG.Options.elements#transitionDuration}
              */
-            transitionDuration: 100,
+            transitionDuration: 20,
 
             /**
              * Width of the element's stroke.
