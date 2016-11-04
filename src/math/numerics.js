@@ -1923,23 +1923,19 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                         }
                     }
 
-                    //len += 2;  // add the two control points
-
                     if (isNaN(t)) {
                         return NaN;
                     }
 
+                    len = points.length;
                     // This is necessary for our advanced plotting algorithm:
                     if (t <= 0.0) {
-                        return p[1][which]();
-                    }
-
-                    if (t >= len - 3) {
-                        return p[len - 2][which]();
+                        return points[0][which]();
+                    } else if (t >= len) {
+                        return points[len - 1][which]();
                     }
 
                     s = Math.floor(t);
-
                     if (s === t) {
                         return p[s][which]();
                     }
