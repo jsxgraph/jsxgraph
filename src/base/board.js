@@ -1328,7 +1328,10 @@ define([
             var touches = evt[JXG.touchProperty],
                 twoFingersCondition = (touches.length === 2 &&
                     Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 120),
-                r = this.attr.pan.enabled && (!this.attr.pan.needtwofingers || twoFingersCondition),
+
+                r = this.attr.pan.enabled &&
+                    ((!this.attr.pan.needtwofingers && !twoFingersCondition) ||
+                     (this.attr.pan.needtwofingers && twoFingersCondition)),
                 pos;
 
             if (r) {
@@ -2115,7 +2118,11 @@ define([
             }
 
             // Handle pinch to zoom
-            if (this.mode === this.BOARD_MODE_NONE && evtTouches.length == 2) {
+            if ((this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
+                    evtTouches.length == 2) {
+                if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                    this.originMoveEnd();
+                }
                 this.gestureStartListener(evt);
                 this.hasGestureHandlers = true;
             }
