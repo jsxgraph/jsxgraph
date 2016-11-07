@@ -242,15 +242,18 @@ define([
             board.initInfobox();
 
             if (attr.axis) {
-                axattr = typeof attr.axis === 'object' ? attr.axis : {ticks: {drawZero: true}};
+                axattr = typeof attr.axis === 'object' ? attr.axis : {};
 
-                // It is unclear why copyAttributes does not work here:
-                // It would override the values in attr.defaultaxes
-                //defaultaxesattr = Type.copyAttributes(attr.defaultaxes, Options, 'board', 'defaultAxes');
-                defaultaxesattr = Type.deepCopy(attr.defaultaxes, Options.board.defaultaxes);
-
-                axattr_x = Type.deepCopy(axattr, defaultaxesattr.x);
-                axattr_y = Type.deepCopy(axattr, defaultaxesattr.y);
+                // The defaultAxes attributes are overwritten by user supplied axis object.
+                axattr_x = Type.deepCopy(Options.board.defaultAxes.x, axattr);
+                axattr_y = Type.deepCopy(Options.board.defaultAxes.y, axattr);
+                // The user supplied defaultAxes attributes are merged in.
+                if (attr.defaultaxes.x) {
+                    axattr_x = Type.deepCopy(axattr_x, attr.defaultaxes.x);
+                }
+                if (attr.defaultaxes.y) {
+                    axattr_y = Type.deepCopy(axattr_y, attr.defaultaxes.y);
+                }
 
                 board.defaultAxes = {};
                 board.defaultAxes.x = board.create('axis', [[0, 0], [1, 0]], axattr_x);
