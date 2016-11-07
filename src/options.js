@@ -160,11 +160,11 @@ define([
                     name: 'y',
                     ticks: {
                         label: {
-                            anchorX: 'left',
+                            anchorX: 'right',
                             anchorY: 'middle',
-                            offset: [6, 0]
+                            offset: [-6, 0]
                         },
-                        drawZero: true,
+                        drawZero: false,
                     }
                 }
             },
