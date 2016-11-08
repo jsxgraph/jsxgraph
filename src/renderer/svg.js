@@ -995,7 +995,7 @@ define([
 
         // documented in JXG.AbstractRenderer
         setObjectFillColor: function (el, color, opacity, rendNode) {
-            var node, c, rgbo, oo,
+            var node, c, rgbo, oo, t,
                 rgba = Type.evaluate(color),
                 o = Type.evaluate(opacity);
 
@@ -1022,9 +1022,14 @@ define([
                 }
 
                 if (c !== 'none') {
-                    setTimeout(function() {
+                    // First time we ignore transitions, because the filling appears black
+                    if (el.visPropOld.fillcolor === '') {
                         node.setAttributeNS(null, 'fill', c);
-                    }, 1);
+                    } else {
+                        setTimeout(function() {
+                            node.setAttributeNS(null, 'fill', c);
+                        }, 1);
+                    }
                 }
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
@@ -1037,9 +1042,13 @@ define([
                                          // because images have no fill color.
                         oo = 0;
                     }
-                    setTimeout(function() {
+                    if (el.visPropOld.fillopacity === '') {
                         node.setAttributeNS(null, 'fill-opacity', oo);
-                    }, 1);
+                    } else {
+                        setTimeout(function() {
+                            node.setAttributeNS(null, 'fill-opacity', oo);
+                        }, 1);
+                    }
                 }
 
                 if (Type.exists(el.visProp.gradient)) {
