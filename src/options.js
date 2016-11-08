@@ -2455,7 +2455,7 @@ define([
              * <ul>
              * <li>'auto': done automatically by JXG#autoDigits
              * <li>'none': no truncation
-             * <li>number: use JXG.toFixed();
+             * <li>number: truncate after "number digits" with JXG.toFixed();
              * </ul>
              *
              * @name Point#infoboxDigits
