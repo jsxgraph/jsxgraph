@@ -1896,7 +1896,10 @@ define([
             withLabel: true,    // Show integral value as text
             strokeWidth: 0,
             strokeOpacity: 0,
-            fillOpacity: 0.8,
+            fillColor: 'red',
+            fillOpacity: 0.4,
+            highlightFillColor: 'red',
+            highlightFillOpacity: 0.2,
 
             /**
              * Attributes of the (left) starting point of the integral.
@@ -1908,6 +1911,8 @@ define([
             curveLeft: {    // Start point
                 visible: true,
                 withLabel: false,
+                color: 'red',
+                fillOpacity: 0.8,
                 layer: 9
             },
 
@@ -1935,6 +1940,8 @@ define([
             curveRight: {      // End point
                 visible: true,
                 withLabel: false,
+                color: 'red',
+                fillOpacity: 0.8,
                 layer: 9
             },
 
