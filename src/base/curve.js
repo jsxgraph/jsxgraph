@@ -729,10 +729,8 @@ define([
             }
 
             if (this.visProp.curvetype !== 'plot' && this.visProp.rdpsmoothing) {
-//console.log("B", this.numberPoints);
                 this.points = Numerics.RamerDouglasPeucker(this.points, 0.2);
                 this.numberPoints = this.points.length;
-//console.log("A", this.numberPoints);
             }
 
             return this;
@@ -1354,18 +1352,13 @@ define([
                 pa = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 pb = new Coords(Const.COORDS_BY_USER, [0, 0], this.board, false),
                 depth, delta;
-//var stime = new Date();
             if (this.board.updateQuality === this.board.BOARD_QUALITY_LOW) {
                 depth = 13;
-                delta = 1.2;
-
                 delta = 2;
                 this.smoothLevel = depth - 7;
                 this.jumpLevel = 5;
             } else {
                 depth = 17;
-                delta = 0.9;
-
                 delta = 2;
                 this.smoothLevel = depth - 7; // 9
                 this.jumpLevel = 3;
@@ -1387,11 +1380,8 @@ define([
             this._lastCrds = pa.copy('scrCoords');   //Used in _insertPoint
             this._plotRecursive(a, ta, b, tb, depth, delta);
             this.points.push(pb);
-//console.log("NUmber points", this.points.length, this.board.updateQuality, this.board.BOARD_QUALITY_LOW);
 
             this.numberPoints = this.points.length;
-//var etime = new Date();
-//console.log(this.name, this.numberPoints, etime.getTime() - stime.getTime(), this.board.updateQuality===this.board.BOARD_QUALITY_HIGH);
 
             return this;
         },

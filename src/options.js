@@ -151,6 +151,7 @@ define([
                         label: {
                             anchorX: 'middle',
                             anchorY: 'top',
+                            fontSize: 12,
                             offset: [0, -3]
                         },
                         drawZero: false,
@@ -162,6 +163,7 @@ define([
                         label: {
                             anchorX: 'right',
                             anchorY: 'middle',
+                            fontSize: 12,
                             offset: [-6, 0]
                         },
                         drawZero: false,

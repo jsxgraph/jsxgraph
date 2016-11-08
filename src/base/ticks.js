@@ -280,7 +280,7 @@ define([
             return this;
         },
 
-         /**
+        /**
          * (Re-)calculates the ticks coordinates.
          * @private
          */
@@ -549,7 +549,6 @@ define([
             if (!this.visProp.drawzero) {
                 tickPosition = ticksDelta;
             }
-
             while (tickPosition <= bounds.upper) {
                 // Only draw ticks when we are within bounds, ignore case where  tickPosition < lower < upper
                 if (tickPosition >= bounds.lower) {
@@ -615,6 +614,7 @@ define([
          */
         processTickPosition: function (coordsZero, tickPosition, ticksDelta, deltas) {
             var x, y, tickCoords, ti, labelText;
+
             // Calculates tick coordinates
             x = coordsZero.usrCoords[1] + tickPosition * deltas.x;
             y = coordsZero.usrCoords[2] + tickPosition * deltas.y;
@@ -716,6 +716,24 @@ define([
         },
 
         /**
+         * Check if (parts of) the tick is inside the canvas. The tick intersects the boundary
+         * at two positions: [x[0], y[0]] and [x[1], y[1]] in screen coordinates.
+         * @param  {Array}  x Array of length two
+         * @param  {Array}  y Array of length two
+         * @return {Boolean}   true if parts of the tick are inside of the canvas or on the boundary.
+         */
+        _isInsideCanvas: function(x, y, m) {
+            var cw = this.board.canvasWidth,
+                ch = this.board.canvasHeight;
+
+            if (m === undefined) {
+                m = 0;
+            }
+            return (x[0] >= m && x[0] <= cw - m && y[0] >= m && y[0] <= ch - m) ||
+                    (x[1] >= m && x[1] <= cw - m && y[1] >= m && y[1] <= ch - m);
+        },
+
+        /**
          * @param {JXG.Coords} coords Coordinates of the tick on the line.
          * @param {Boolean} major True if tick is major tick.
          * @returns {Array} Array of length 3 containing start and end coordinates in screen coordinates
@@ -727,11 +745,8 @@ define([
             var c, lineStdForm, intersection,
                 dxs, dys,
                 style,
-                cw = this.board.canvasWidth,
-                ch = this.board.canvasHeight,
-                x = [-1000 * cw, -1000 * ch],
-                y = [-1000 * cw, -1000 * ch],
-                isInsideCanvas = false;
+                x = [-2000000, -2000000],
+                y = [-2000000, -2000000];
 
             c = coords.scrCoords;
             if (major) {
@@ -748,7 +763,6 @@ define([
             // For all ticks regardless if of finite or infinite
             // tick length the intersection with the canvas border is
             // computed.
-
             if (style === 'infinite') {
                 intersection = Geometry.meetLineBoard(lineStdForm, this.board);
                 x[0] = intersection[0].scrCoords[1];
@@ -762,11 +776,8 @@ define([
                 y[1] = c[2] + dys * this.visProp.tickendings[1];
             }
 
-            // check if (parts of) the tick is inside the canvas.
-            isInsideCanvas = (x[0] >= 0 && x[0] <= cw && y[0] >= 0 && y[0] <= ch) ||
-                (x[1] >= 0 && x[1] <= cw && y[1] >= 0 && y[1] <= ch);
-
-            if (isInsideCanvas) {
+            // Check if (parts of) the tick is inside the canvas.
+            if (this._isInsideCanvas(x, y)) {
                 return [x, y, major];
             }
 
@@ -838,6 +849,7 @@ define([
          */
         generateLabel: function (labelText, tick, tickNumber) {
             var label,
+                xa, ya, m,
                 attr = {
                     isLabel: true,
                     layer: this.board.options.layer.line,
@@ -849,6 +861,17 @@ define([
                 };
 
             attr = Type.deepCopy(attr, this.visProp.label);
+
+            // Test if large portions of the label are inside of the canvas
+            // This is the last chance to abandon the creation of the label if it is mostly
+            // outside of the canvas.
+            xa = [tick.scrCoords[1], tick.scrCoords[1]];
+            ya = [tick.scrCoords[2], tick.scrCoords[2]];
+            m = (attr.fontSize === undefined) ? 12 : attr.fontSize;
+            m *= 1.5;
+            if (!this._isInsideCanvas(xa, ya, m)) {
+                return null;
+            }
 
             if (this.labelsRepo.length > 0) {
                 label = this.labelsRepo.pop();
