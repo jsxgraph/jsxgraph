@@ -429,7 +429,7 @@ define([
                         el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-after-edge');
                     } else if (el.visProp.anchory === 'top') {
                         el.rendNode.setAttributeNS(null, 'dy', '1.6ex');
-                        //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge');
+                        //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'text-before-edge'); // Not supported by IE, edge
                     } else if (el.visProp.anchory === 'middle') {
                         //el.rendNode.setAttributeNS(null, 'dominant-baseline', 'middle');
                         el.rendNode.setAttributeNS(null, 'dy', '0.6ex');
