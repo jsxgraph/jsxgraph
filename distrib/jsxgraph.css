@@ -40,7 +40,7 @@
     border-radius: 10px;
     -webkit-border-radius: 10px;
     -ms-touch-action: none;
-    touch-action: none;
+    /* touch-action: none; */ /* Set with JavaScript */
 }
 
 .JXGtext {
