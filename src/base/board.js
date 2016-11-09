@@ -1380,6 +1380,20 @@ define([
             //if (Env.isBrowser) {
             //Env.addEvent(window, 'resize', this.update, this);
             //}
+
+            // This one produces errors on IE
+            //Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
+            // This one works on IE, Firefox and Chromium with default configurations. On some Safari
+            // or Opera versions the user must explicitly allow the deactivation of the context menu.
+            if (this.containerObj !== null) {
+                this.containerObj.oncontextmenu = function (e) {
+                    if (Type.exists(e)) {
+                        e.preventDefault();
+                    }
+                    return false;
+                };
+            }
+
         },
 
         /**
@@ -1397,9 +1411,12 @@ define([
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
-                // This is needed for capturing touch events.
-                // It is also in jsxgraph.css, but one never knows...
-                this.containerObj.style.touchAction = 'none';
+                if (this.containerObj !== null) {
+                    // This is needed for capturing touch events.
+                    // It is also in jsxgraph.css, but one never knows...
+                    this.containerObj.style.touchAction = 'none';
+                }
+
                 this.hasPointerHandlers = true;
             }
         },
@@ -1416,21 +1433,6 @@ define([
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
                 this.hasMouseHandlers = true;
-
-                // This one produces errors on IE
-                //   Env.addEvent(this.containerObj, 'contextmenu', function (e) { e.preventDefault(); return false;}, this);
-
-                // This one works on IE, Firefox and Chromium with default configurations. On some Safari
-                // or Opera versions the user must explicitly allow the deactivation of the context menu.
-                if (this.containerObj !== null) {
-                    this.containerObj.oncontextmenu = function (e) {
-                        if (Type.exists(e)) {
-                            e.preventDefault();
-                        }
-
-                        return false;
-                    };
-                }
             }
         },
 
