@@ -1301,7 +1301,8 @@ define([
         },
 
         mouseOriginMoveStart: function (evt) {
-            var r = this.attr.pan.enabled && (!this.attr.pan.needshift || evt.shiftKey),
+            var r = this.attr.pan.enabled &&
+                    (!this.attr.pan.needshift || evt.shiftKey),
                 pos;
 
             if (r) {
@@ -1327,7 +1328,8 @@ define([
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
                 twoFingersCondition = (touches.length === 2 &&
-                    Geometry.distance([touches[0].screenX, touches[0].screenY], [touches[1].screenX, touches[1].screenY]) < 120),
+                    Geometry.distance([touches[0].screenX, touches[0].screenY],
+                                      [touches[1].screenX, touches[1].screenY]) < 120),
 
                 r = this.attr.pan.enabled &&
                     ((!this.attr.pan.needtwofingers && !twoFingersCondition) ||
@@ -1395,6 +1397,9 @@ define([
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
 
+                // This is needed for capturing touch events.
+                // It is also in jsxgraph.css, but one never knows...
+                this.containerObj.style.touchAction = 'none';
                 this.hasPointerHandlers = true;
             }
         },
@@ -1680,7 +1685,10 @@ define([
             }
 
             // Touch or pen device
-            if (JXG.isBrowser && (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) {
+            if (JXG.isBrowser &&
+                    (evt.pointerType === 'touch' || // New
+                    (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
+                ) {
                 this.options.precision.hasPoint = eps;
             }
 
@@ -1781,7 +1789,8 @@ define([
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
-            return result;
+            //return result;
+            return false;
         },
 
         /**
@@ -2766,7 +2775,6 @@ define([
             }
 
             this.updateCoords().clearTraces().fullUpdate();
-
             this.triggerEventHandlers(['boundingbox']);
 
             return this;
