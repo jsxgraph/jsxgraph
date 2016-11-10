@@ -1003,18 +1003,17 @@ define([
             }
             // This may be necessary for some gliders
             drag.prepareUpdate().update(false).updateRenderer();
-
-            drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
-
             this.updateInfobox(drag);
             drag.prepareUpdate().update(true).updateRenderer();
             if (drag.coords) {
                 newDragScrCoords = drag.coords.scrCoords;
             }
 
-            // Save updates for very small movements of coordsElements
+            // No updates for very small movements of coordsElements
             if (!drag.coords ||
                 dragScrCoords[1] !== newDragScrCoords[1] || dragScrCoords[2] !== newDragScrCoords[2]) {
+
+                drag.triggerEventHandlers([type + 'drag', 'drag'], [evt]);
                 this.update();
             }
             drag.highlight(true);
@@ -2137,6 +2136,7 @@ define([
                 this.gestureStartListener(evt);
                 this.hasGestureHandlers = true;
             }
+
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 

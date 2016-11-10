@@ -1869,7 +1869,7 @@ define([
 
         /**
          * @event
-         * @description Notify everytime an attribute is changed.
+         * @description Notify every time an attribute is changed.
          * @name JXG.GeometryElement#attribute
          * @param {Object} o A list of changed attributes and their new value.
          * @param {Object} el Reference to the element

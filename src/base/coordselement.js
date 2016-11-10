@@ -908,7 +908,7 @@ define([
             this.prepareUpdate().update();
 
             // If the user suspends the board updates we need to recalculate the relative position of
-            // the point on the slide object. this is done in updateGlider() which is NOT called during the
+            // the point on the slide object. This is done in updateGlider() which is NOT called during the
             // update process triggered by unsuspendUpdate.
             if (this.board.isSuspendedUpdate && this.type === Const.OBJECT_TYPE_GLIDER) {
                 this.updateGlider();
