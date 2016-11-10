@@ -1071,6 +1071,7 @@ define([
             if (Type.exists(o.targets[0]) &&
                     Type.exists(o.targets[1]) &&
                     !isNaN(o.targets[0].Xprev + o.targets[0].Yprev + o.targets[1].Xprev + o.targets[1].Yprev)) {
+
                 np1 = np1c.usrCoords;
                 np2 = np2c.usrCoords;
                 // Previous finger position
@@ -1736,7 +1737,6 @@ define([
                 // check touches structure
                 target = elements[elements.length - 1];
                 found = false;
-
                 for (i = 0; i < this.touches.length; i++) {
                     // the target is already in our touches array, try to add the pointer to the existing touch
                     if (this.touches[i].obj === target) {
@@ -1858,12 +1858,12 @@ define([
 
                                     this.twoFingerMove(
                                         this.getMousePosition({
-                                            pageX: this.touches[i].targets[0].X,
-                                            pageY: this.touches[i].targets[0].Y
+                                            clientX: this.touches[i].targets[0].X,
+                                            clientY: this.touches[i].targets[0].Y
                                         }),
                                         this.getMousePosition({
-                                            pageX: this.touches[i].targets[1].X,
-                                            pageY: this.touches[i].targets[1].Y
+                                            clientX: this.touches[i].targets[1].X,
+                                            clientY: this.touches[i].targets[1].Y
                                         }),
                                         this.touches[i],
                                         evt
@@ -1997,7 +1997,7 @@ define([
             // multitouch
             this.options.precision.hasPoint = this.options.precision.touch;
 
-            // this is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
+            // This is the most critical part. first we should run through the existing touches and collect all targettouches that don't belong to our
             // previous touches. once this is done we run through the existing touches again and watch out for free touches that can be attached to our existing
             // touches, e.g. we translate (parallel translation) a line with one finger, now a second finger is over this line. this should change the operation to
             // a rotational translation. or one finger moves a circle, a second finger can be attached to the circle: this now changes the operation from translation to
@@ -2072,7 +2072,6 @@ define([
                     }
 
                     elements = this.initMoveObject(pos[0], pos[1], evt, 'touch');
-
                     if (elements.length !== 0) {
                         obj = elements[elements.length - 1];
 
