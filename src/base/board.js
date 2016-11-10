@@ -1030,7 +1030,6 @@ define([
          */
         twoFingerMove: function (p1, p2, o, evt) {
             var np1c, np2c, drag;
-
             if (Type.exists(o) && Type.exists(o.obj)) {
                 drag = o.obj;
             } else {
@@ -1300,10 +1299,9 @@ define([
         },
 
         mouseOriginMoveStart: function (evt) {
-            var r = this.attr.pan.enabled &&
-                    (!this.attr.pan.needshift || evt.shiftKey),
-                pos;
+            var r, pos;
 
+            r = this._isCorrectKeyPressed(evt, 'pan');
             if (r) {
                 pos = this.getMousePosition(evt);
                 this.initMoveOrigin(pos[0], pos[1]);
@@ -1641,6 +1639,21 @@ define([
             return false;
         },
 
+        _isCorrectKeyPressed: function (evt, action) {
+            var obj = this.attr[action];
+            if (!obj.enabled) {
+                return false;
+            }
+
+            if (((obj.needshift && evt.shiftKey) || (!obj.needshift && !evt.shiftKey)) &&
+                ((obj.needctrl && evt.ctrlKey) || (!obj.needctrl && !evt.ctrlKey))
+            )  {
+                return true;
+            }
+
+            return false;
+        },
+
         /**
          * pointer-Events
          */
@@ -1781,15 +1794,13 @@ define([
                 evt.stopPropagation();
             }
 
-            // move origin - but only if we're not in drag mode
-            if (this.mode === this.BOARD_MODE_NONE && this.mouseOriginMoveStart(evt)) {
-                this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
-                return false;
-            }
-
             this.options.precision.hasPoint = this.options.precision.mouse;
-            this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
 
+            // move origin - but only if we're not in drag mode
+            if (this.mode === this.BOARD_MODE_NONE) {
+                this.mouseOriginMoveStart(evt);
+            }
+            this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
             //return result;
             return false;
         },
@@ -1813,7 +1824,10 @@ define([
             }
 
             // Touch or pen device
-            if (JXG.isBrowser && (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) {
+            if (JXG.isBrowser &&
+                    (evt.pointerType === 'touch' || // New
+                    (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
+                ) {
                 this.options.precision.hasPoint = this.options.precision.touch;
             }
             this.updateQuality = this.BOARD_QUALITY_LOW;
@@ -2545,7 +2559,7 @@ define([
          * @returns {Boolean}
          */
         mouseWheelListener: function (evt) {
-            if (!this.attr.zoom.wheel || (this.attr.zoom.needshift && !evt.shiftKey)) {
+            if (!this.attr.zoom.wheel || !this._isCorrectKeyPressed(evt, 'zoom')) {
                 return true;
             }
 
@@ -4426,15 +4440,11 @@ define([
          * @param  {Object} evt Event object
          */
         _testForSelection: function (evt) {
-            if (this.attr.selection.enabled &&
-                (!this.attr.selection.needshift || evt.shiftKey) &&
-                (!this.attr.selection.needctrl || evt.ctrlKey)) {
-
-                    if (!Type.exists(this.selectionPolygon)) {
-                        this._createSelectionPolygon(this.attr);
-                    }
-
-                    this.startSelectionMode();
+            if (this._isCorrectKeyPressed(evt, 'selection')) {
+                if (!Type.exists(this.selectionPolygon)) {
+                    this._createSelectionPolygon(this.attr);
+                }
+                this.startSelectionMode();
             }
         },
 
