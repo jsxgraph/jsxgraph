@@ -1333,11 +1333,6 @@ define([
             var touches = evt[JXG.touchProperty],
                 r, pos;
 
-            /*
-            twoFingersCondition = (touches.length === 2 &&
-                Geometry.distance([touches[0].screenX, touches[0].screenY],
-                                      [touches[1].screenX, touches[1].screenY]) < 120);
-            */
             r = this.attr.pan.enabled &&
                 !this.attr.pan.needtwofingers &&
                 touches.length == 1;
@@ -1629,23 +1624,27 @@ define([
             }
 
             factor = evt.scale / this.prevScale;
+            this.prevScale = evt.scale;
+
             // pan detected
             if (this.attr.pan.enabled &&
                 this.attr.pan.needtwofingers &&
                 dist < 300 &&
-                Math.abs(factor - 1) < 0.005) {
+                Math.abs(factor - 1) < 0.01 &&
+                this._num_pan >= 0.3 * this._num_zoom) {
 
+                this._num_pan++;
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
-            } else if (this.attr.zoom.enabled/* && Math.abs(factor - 1.0) < 0.5*/) {
+            } else if (this.attr.zoom.enabled &&
+                Math.abs(factor - 1.0) < 0.5) {
+
+                this._num_zoom++;
                 this.attr.zoom.factorx = factor;
                 this.attr.zoom.factory = factor;
                 this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
                 this.attr.zoom.factorx = zx;
                 this.attr.zoom.factory = zy;
             }
-
-            this.prevScale = evt.scale;
-            this.prevDist = dist;
 
             return false;
         },
@@ -1657,6 +1656,8 @@ define([
          * @returns {Boolean}
          */
         gestureStartListener: function (evt) {
+            var pos;
+
             /*
             if (!this.attr.zoom.wheel) {
                 return true;
@@ -1668,10 +1669,25 @@ define([
             this.prevDist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
                             [evt.touches[1].clientX, evt.touches[1].clientY], 2);
 
+            // If pinch-to-zoom is interpreted as panning
+            // we have to prepare move origin
+            pos = this.getMousePosition(evt, 0);
+            this.initMoveOrigin(pos[0], pos[1]);
+
+            this._num_zoom = this._num_pan = 0;
             this.mode = this.BOARD_MODE_ZOOM;
             return false;
         },
 
+        /**
+         * Test if the correct key combination is pressed for wheel zoom, move origin and
+         * selection
+         * @private
+         * @param  {Object}  evt    Mouse or pen event
+         * @param  {String}  action String containing the action: 'zoom', 'pan', 'selection'.
+         * Corresponds to the attribute subobject.
+         * @return {Boolean}        true or false.
+         */
         _isCorrectKeyPressed: function (evt, action) {
             var obj = this.attr[action];
             if (!obj.enabled) {
