@@ -1446,7 +1446,8 @@ define([
 
                 if (!Type.exists(appleGestures) || appleGestures) {
                     Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                    Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                    // GestureChangeListener is called in touchMove.
+                    //Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
                     this.hasGestureHandlers = true;
                 }
 
@@ -1798,7 +1799,11 @@ define([
 
             // move origin - but only if we're not in drag mode
             if (this.mode === this.BOARD_MODE_NONE) {
-                this.mouseOriginMoveStart(evt);
+                if (JXG.isBrowser && evt.pointerType !== 'touch') {
+                    this.mouseOriginMoveStart(evt);
+                } else {
+                    this.touchOriginMoveStart(evt);
+                }
             }
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
             //return result;
@@ -1983,9 +1988,7 @@ define([
             }
 
             // Do not remove mouseHandlers, since Chrome on win tablets sends mouseevents if used with pen.
-            //if (this.hasMouseHandlers) {
-            //    this.removeMouseEventHandlers();
-            //}
+            //if (this.hasMouseHandlers) { this.removeMouseEventHandlers(); }
 
             // prevent accidental selection of text
             if (this.document.selection && Type.isFunction(this.document.selection.empty)) {
@@ -2134,15 +2137,17 @@ define([
                 evt.stopPropagation();
             }
 
-            // move origin - but only if we're not in drag mode
-            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-                this.triggerEventHandlers(['touchstart', 'down'], [evt]);
-                return false;
-            }
-
-            // Handle pinch to zoom
-            if ((this.mode === this.BOARD_MODE_NONE || this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
-                    evtTouches.length == 2) {
+            // Touch events on empty areas of the board are handled here:
+            // 1. case: one finger. If allowed, this triggers pan with one finger
+            if (this.mode === this.BOARD_MODE_NONE) {
+                this.touchOriginMoveStart(evt);
+                //return false;
+            } else if ((this.mode === this.BOARD_MODE_NONE ||
+                        this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
+                       evtTouches.length == 2) {
+                // 2. case: two fingers: pinch to zoom or pan with two fingers needed.
+                // This happens when the second finger hits the device. First, the
+                // "one finger pan mode" has to be cancelled.
                 if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
                     this.originMoveEnd();
                 }
