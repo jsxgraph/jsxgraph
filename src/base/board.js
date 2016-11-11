@@ -508,19 +508,14 @@ define([
         this.hasTouchEnd = false;
 
         /**
-         * A flag which tells us if the board has a pointerUp event registered at the moment.
-         * @type {Boolean}
-         * @default false
-         */
-        this.hasPointerUp = false;
-
-        /**
          * Offset for large coords elements like images
          * @type {Array}
          * @private
          * @default [0, 0]
          */
         this._drag_offset = [0, 0];
+
+        this._board_touches = [];
 
         /**
          * A flag which tells us if the board is in the selecting mode
@@ -542,7 +537,6 @@ define([
          * @default [ [0,0], [0,0] ]
          */
         this.selectingBox = [[0, 0], [0, 0]];
-
 
         if (this.attr.registerevents) {
             this.addEventHandlers();
@@ -1416,9 +1410,11 @@ define([
                 if (window.navigator.pointerEnabled) {  // IE11+
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.addEvent(this.containerObj, 'pointerup', this.pointerUpListener, this);
                 } else {
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.addEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1479,22 +1475,15 @@ define([
                 if (window.navigator.pointerEnabled) {  // IE11+
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
+                    Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                 } else {
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
+                    Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
-
-                if (this.hasPointerUp) {
-                    if (window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    } else {
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-                    }
-                    this.hasPointerUp = false;
-                }
 
                 this.hasPointerHandlers = false;
             }
@@ -1602,11 +1591,6 @@ define([
                 zy = this.attr.zoom.factory,
                 factor,
                 dist;
-            /*
-            if (!this.attr.zoom.wheel) {
-                return true;
-            }
-            */
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
@@ -1629,9 +1613,8 @@ define([
             // pan detected
             if (this.attr.pan.enabled &&
                 this.attr.pan.needtwofingers &&
-                dist < 300 &&
-                Math.abs(factor - 1) < 0.01 &&
-                this._num_pan >= 0.3 * this._num_zoom) {
+                Math.abs(evt.scale - 1.0) < 0.4 &&
+                this._num_pan >= 0.8 * this._num_zoom) {
 
                 this._num_pan++;
                 this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
@@ -1658,11 +1641,6 @@ define([
         gestureStartListener: function (evt) {
             var pos;
 
-            /*
-            if (!this.attr.zoom.wheel) {
-                return true;
-            }
-            */
             evt.preventDefault();
             this.prevScale = 1.0;
             // Android pinch to zoom
@@ -1707,6 +1685,41 @@ define([
          * pointer-Events
          */
 
+        _pointerAddBoardTouches: function (evt) {
+            var i, found;
+
+            for (i = 0, found = false; i < this._board_touches.length; i++) {
+                if (this._board_touches[i].pointerId === evt.pointerId) {
+                    this._board_touches[i].clientX = evt.clientX;
+                    this._board_touches[i].clientY = evt.clientY;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                this._board_touches.push({
+                    pointerId: evt.pointerId,
+                    clientX: evt.clientX,
+                    clientY: evt.clientY
+                });
+            }
+
+            return this;
+        },
+
+        _pointerRemoveBoardTouches: function (evt) {
+            var i;
+
+            for (i = 0; i < this._board_touches.length; i++) {
+                if (this._board_touches[i].pointerId === evt.pointerId) {
+                    this._board_touches.splice(i, 1);
+                    break;
+                }
+            }
+
+            return this;
+        },
+
         /**
          * This method is called by the browser when a pointing device is pressed on the screen.
          * @param {Event} evt The browsers event object.
@@ -1717,15 +1730,6 @@ define([
             var i, j, k, pos, elements, sel,
                 eps = this.options.precision.touch,
                 found, target, result;
-
-            if (!this.hasPointerUp) {
-                if (window.navigator.pointerEnabled) {  // IE11+
-                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                } else {
-                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-                }
-                this.hasPointerUp = true;
-            }
 
             if (this.hasMouseHandlers) {
                 this.removeMouseEventHandlers();
@@ -1844,15 +1848,29 @@ define([
 
             this.options.precision.hasPoint = this.options.precision.mouse;
 
-            // move origin - but only if we're not in drag mode
-            if (this.mode === this.BOARD_MODE_NONE) {
-                if (JXG.isBrowser && evt.pointerType !== 'touch') {
+            if (JXG.isBrowser && evt.pointerType !== 'touch') {
+                if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
-                } else {
-                    this.touchOriginMoveStart(evt);
+                }
+            } else {
+                this._pointerAddBoardTouches(evt);
+                evt.touches = this._board_touches;
+
+                // See touchStartListener
+                if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+                } else if ((this.mode === this.BOARD_MODE_NONE ||
+                            this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
+                           evt.touches.length == 2) {
+                    if (this.mode === this.BOARD_MODE_MOVE_ORIGIN) {
+                        this.originMoveEnd();
+                    }
+                    this.gestureStartListener(evt);
+                    this.hasGestureHandlers = true;
                 }
             }
+
             this.triggerEventHandlers(['touchstart', 'down', 'pointerdown', 'MSPointerDown'], [evt]);
+
             //return result;
             return false;
         },
@@ -1928,12 +1946,20 @@ define([
                         }
                     }
                 } else {
-                    pos = this.getMousePosition(evt);
-                    this.highlightElements(pos[0], pos[1], evt, -1);
+                    if (evt.pointerType == 'touch') {
+                        this._pointerAddBoardTouches(evt);
+                        if (this._board_touches.length == 2) {
+                            evt.touches = this._board_touches;
+                            this.gestureChangeListener(evt);
+                        }
+                    } else {
+                        pos = this.getMousePosition(evt);
+                        this.highlightElements(pos[0], pos[1], evt, -1);
+                    }
                 }
             }
 
-            // Hiding the infobox is commentet out, since it prevents showing the infobox
+            // Hiding the infobox is commented out, since it prevents showing the infobox
             // on IE 11+ on 'over'
             //if (this.mode !== this.BOARD_MODE_DRAG) {
                 //this.renderer.hide(this.infobox);
@@ -1994,21 +2020,14 @@ define([
             }
 
             if (this.touches.length === 0) {
-                if (this.hasPointerUp) {
-                    if (window.navigator.pointerEnabled) {  // IE11+
-                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
-                    } else {
-                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
-                    }
-                    this.hasPointerUp = false;
-                }
-
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
 
                 this.originMoveEnd();
                 this.update();
             }
+
+            this._pointerRemoveBoardTouches(evt);
 
             return true;
         },
@@ -2187,8 +2206,6 @@ define([
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
             if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
-                //this.touchOriginMoveStart(evt);
-                //return false;
             } else if ((this.mode === this.BOARD_MODE_NONE ||
                         this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
                        evtTouches.length == 2) {
