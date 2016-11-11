@@ -1323,16 +1323,24 @@ define([
             return r;
         },
 
+        /**
+         * Start moving the origin with one finger.
+         * @private
+         * @param  {Object} evt Event from touchStartListener
+         * @return {Boolean}   returns if the origin is moved.
+         */
         touchOriginMoveStart: function (evt) {
             var touches = evt[JXG.touchProperty],
-                twoFingersCondition = (touches.length === 2 &&
-                    Geometry.distance([touches[0].screenX, touches[0].screenY],
-                                      [touches[1].screenX, touches[1].screenY]) < 120),
+                r, pos;
 
-                r = this.attr.pan.enabled &&
-                    ((!this.attr.pan.needtwofingers && !twoFingersCondition) ||
-                     (this.attr.pan.needtwofingers && twoFingersCondition)),
-                pos;
+            /*
+            twoFingersCondition = (touches.length === 2 &&
+                Geometry.distance([touches[0].screenX, touches[0].screenY],
+                                      [touches[1].screenX, touches[1].screenY]) < 120);
+            */
+            r = this.attr.pan.enabled &&
+                !this.attr.pan.needtwofingers &&
+                touches.length == 1;
 
             if (r) {
                 pos = this.getMousePosition(evt, 0);
@@ -1342,6 +1350,12 @@ define([
             return r;
         },
 
+        /**
+         * Move the origin with one finger
+         * @private
+         * @param  {Object} evt Event from touchMoveListener
+         * @return {Boolean}     returns if the origin is moved.
+         */
         touchOriginMove: function (evt) {
             var r = (this.mode === this.BOARD_MODE_MOVE_ORIGIN),
                 pos;
@@ -1354,6 +1368,11 @@ define([
             return r;
         },
 
+        /**
+         * Stop moving the origin with one finger
+         * @return {null} null
+         * @private
+         */
         originMoveEnd: function () {
             this.updateQuality = this.BOARD_QUALITY_HIGH;
             this.mode = this.BOARD_MODE_NONE;
@@ -1444,12 +1463,14 @@ define([
                 Env.addEvent(this.containerObj, 'touchstart', this.touchStartListener, this);
                 Env.addEvent(this.containerObj, 'touchmove', this.touchMoveListener, this);
 
+                /*
                 if (!Type.exists(appleGestures) || appleGestures) {
-                    Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                    // GestureChangeListener is called in touchMove.
+                    // Gesture listener are called in touchStart and touchMove.
+                    //Env.addEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
                     //Env.addEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
                     this.hasGestureHandlers = true;
                 }
+                */
 
                 this.hasTouchHandlers = true;
             }
@@ -1517,11 +1538,13 @@ define([
                     this.hasTouchEnd = false;
                 }
 
+                /*
                 if (this.hasGestureHandlers) {
-                    Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
-                    Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
+                    //Env.removeEvent(this.containerObj, 'gesturestart', this.gestureStartListener, this);
+                    //Env.removeEvent(this.containerObj, 'gesturechange', this.gestureChangeListener, this);
                     this.hasGestureHandlers = false;
                 }
+                */
 
                 this.hasTouchHandlers = false;
             }
@@ -1582,34 +1605,47 @@ define([
             var c,
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
+                factor,
                 dist;
-
+            /*
             if (!this.attr.zoom.wheel) {
                 return true;
             }
+            */
 
+            if (this.mode !== this.BOARD_MODE_ZOOM) {
+                return true;
+            }
             evt.preventDefault();
 
-            if (this.mode === this.BOARD_MODE_ZOOM) {
-                c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
+            c = new Coords(Const.COORDS_BY_SCREEN, this.getMousePosition(evt, 0), this);
+            dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                            [evt.touches[1].clientX, evt.touches[1].clientY], 2);
 
-                if (evt.scale === undefined) {
-                    // Android pinch to zoom
-                    dist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
-                                    [evt.touches[1].clientX, evt.touches[1].clientY], 2);
+            // Android pinch to zoom
+            if (evt.scale === undefined) {
+                // evt.scale is undefined in Android
+                evt.scale = dist / this.prevDist;
+            }
 
-                    // evt.scale is undefined in Android
-                    evt.scale = dist / this.prevDist;
-                }
-                this.attr.zoom.factorx = evt.scale / this.prevScale;
-                this.attr.zoom.factory = evt.scale / this.prevScale;
+            factor = evt.scale / this.prevScale;
+            // pan detected
+            if (this.attr.pan.enabled &&
+                this.attr.pan.needtwofingers &&
+                dist < 300 &&
+                Math.abs(factor - 1) < 0.005) {
 
+                this.moveOrigin(c.scrCoords[1], c.scrCoords[2], true);
+            } else if (this.attr.zoom.enabled/* && Math.abs(factor - 1.0) < 0.5*/) {
+                this.attr.zoom.factorx = factor;
+                this.attr.zoom.factory = factor;
                 this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
-                this.prevScale = evt.scale;
-
                 this.attr.zoom.factorx = zx;
                 this.attr.zoom.factory = zy;
             }
+
+            this.prevScale = evt.scale;
+            this.prevDist = dist;
 
             return false;
         },
@@ -1621,23 +1657,18 @@ define([
          * @returns {Boolean}
          */
         gestureStartListener: function (evt) {
-
+            /*
             if (!this.attr.zoom.wheel) {
                 return true;
             }
-
+            */
             evt.preventDefault();
-            this.prevScale = 1;
-
+            this.prevScale = 1.0;
             // Android pinch to zoom
-            if (evt.scale === undefined) {
-                this.prevDist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
-                                [evt.touches[1].clientX, evt.touches[1].clientY], 2);
-            }
+            this.prevDist = Geometry.distance([evt.touches[0].clientX, evt.touches[0].clientY],
+                            [evt.touches[1].clientX, evt.touches[1].clientY], 2);
 
-            if (this.mode === this.BOARD_MODE_NONE) {
-                this.mode = this.BOARD_MODE_ZOOM;
-            }
+            this.mode = this.BOARD_MODE_ZOOM;
             return false;
         },
 
@@ -2139,8 +2170,8 @@ define([
 
             // Touch events on empty areas of the board are handled here:
             // 1. case: one finger. If allowed, this triggers pan with one finger
-            if (this.mode === this.BOARD_MODE_NONE) {
-                this.touchOriginMoveStart(evt);
+            if (this.mode === this.BOARD_MODE_NONE && this.touchOriginMoveStart(evt)) {
+                //this.touchOriginMoveStart(evt);
                 //return false;
             } else if ((this.mode === this.BOARD_MODE_NONE ||
                         this.mode === this.BOARD_MODE_MOVE_ORIGIN) &&
@@ -2158,7 +2189,8 @@ define([
             this.options.precision.hasPoint = this.options.precision.mouse;
             this.triggerEventHandlers(['touchstart', 'down'], [evt]);
 
-            return this.touches.length > 0;
+            return false;
+            //return this.touches.length > 0;
         },
 
         /**
