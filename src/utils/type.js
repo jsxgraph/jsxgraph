@@ -452,6 +452,10 @@ define([
             for (i = 0; i < arr.length; i++) {
                 isArray = JXG.isArray(arr[i]);
 
+                if (!this.exists(arr[i])) {
+                    arr[i] = '';
+                    continue;
+                }
                 for (j = i + 1; j < arr.length; j++) {
                     if (isArray && JXG.cmpArrays(arr[i], arr[j])) {
                         arr[i] = [];
@@ -468,10 +472,10 @@ define([
 
                 if (!isArray && arr[i] !== '') {
                     ret[j] = arr[i];
-                    j += 1;
+                    j++;
                 } else if (isArray && arr[i].length !== 0) {
                     ret[j] = (arr[i].slice(0));
-                    j += 1;
+                    j++;
                 }
             }
 

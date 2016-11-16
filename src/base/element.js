@@ -485,6 +485,9 @@ define([
 
             len = par.length;
             for (i = 0; i < len; ++i) {
+                if (!Type.exists(par[i])) {
+                    continue;
+                }
                 if (Type.isId(this.board, par[i])) {
                     this.parents.push(par[i]);
                 } else if (Type.exists(par[i].id)) {
