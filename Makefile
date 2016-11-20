@@ -65,14 +65,6 @@ core-min:
 	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-min.js; } > $(BUILDBIN)/jsxgraphcore.min.js
 	$(CP) $(BUILDBIN)/jsxgraphcore.min.js $(OUTPUT)/jsxgraphcore.js
 
-core-amd:
-	$(REQUIREJS) -o $(BUILD)/core-amd.build.json
-	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-amd.js; } > $(BUILDBIN)/jsxgraphcore.amd.js
-
-core-amd-min:
-	$(REQUIREJS) -o $(BUILD)/core-amd.build.json optimize=uglify2 out=$(BUILDBIN)/jsxgraphcore-amd-min.js;
-	{ $(CAT) COPYRIGHT; $(CAT) $(BUILDBIN)/jsxgraphcore-amd-min.js; } > $(BUILDBIN)/jsxgraphcore.amd.min.js
-
 release: core-min docs
 	$(MKDIR) $(MKDIRFLAGS) $(TMP)
 	$(MKDIR) $(MKDIRFLAGS) $(OUTPUT)
