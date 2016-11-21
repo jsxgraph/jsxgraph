@@ -139,6 +139,9 @@ define([
             vertices: 'vertices',
             A: 'Area',
             Area: 'Area',
+            Perimeter: 'Perimeter',
+            L: 'Perimeter',
+            Length: 'Perimeter',
             boundingBox: 'boundingBox',
             bounds: 'bounds',
             addPoints: 'addPoints',
@@ -317,6 +320,22 @@ define([
          */
         Area: function () {
             return Math.abs(Geometry.signedPolygon(this.vertices, true));
+        },
+
+        /**
+         * Perimeter of polygon.
+         * @returns {Number} Perimeter of polygon in user units.
+         */
+        Perimeter: function() {
+            var i,
+                len = this.vertices.length,
+                val = 0.0;
+
+            for (i = 1; i < len; ++i) {
+                val += this.vertices[i].Dist(this.vertices[i - 1]);
+            }
+
+            return val;
         },
 
         /**
