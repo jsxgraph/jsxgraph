@@ -1590,7 +1590,8 @@ define([
                 zx = this.attr.zoom.factorx,
                 zy = this.attr.zoom.factory,
                 factor,
-                dist;
+                dist,
+                dx, dy, theta, cx, cy, bound;
 
             if (this.mode !== this.BOARD_MODE_ZOOM) {
                 return true;
@@ -1622,9 +1623,31 @@ define([
                 Math.abs(factor - 1.0) < 0.5) {
 
                 this._num_zoom++;
-                this.attr.zoom.factorx = factor;
-                this.attr.zoom.factory = factor;
-                this.zoomIn(c.usrCoords[1], c.usrCoords[2]);
+
+                if (this.attr.zoom.pinchhorizontal || this.attr.zoom.pinchvertical) {
+                    dx = Math.abs(evt.touches[0].clientX - evt.touches[1].clientX);
+                    dy = Math.abs(evt.touches[0].clientY - evt.touches[1].clientY);
+                    theta = Math.abs(Math.atan2(dy, dx));
+                    bound = Math.PI * this.attr.zoom.pinchsensitivity / 90.0;
+                }
+
+                if (this.attr.zoom.pinchhorizontal && theta < bound) {
+                    this.attr.zoom.factorx = factor;
+                    this.attr.zoom.factory = 1.0;
+                    cx = 0;
+                    cy = 0;
+                } else if (this.attr.zoom.pinchvertical && Math.abs(theta - Math.PI * 0.5) < bound) {
+                    this.attr.zoom.factorx = 1.0;
+                    this.attr.zoom.factory = factor;
+                    cx = 0;
+                    cy = 0;
+                } else {
+                    this.attr.zoom.factorx = factor;
+                    this.attr.zoom.factory = factor;
+                    cx = c.usrCoords[1];
+                    cy = c.usrCoords[2];
+                }
+                this.zoomIn(cx, cy);
                 this.attr.zoom.factorx = zx;
                 this.attr.zoom.factory = zy;
             }
