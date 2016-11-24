@@ -860,7 +860,7 @@ define([
              *      },
              *      drawLabels: true
              *  });
-             * </pre><div class="jxgbox"id="2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
+             * </pre><div class="jxgbox" id="2f6fb842-40bd-4223-aa28-3e9369d2097f" style="width: 300px; height: 300px;"></div>
              * <script type="text/javascript">
              * (function () {
              *   var board = JXG.JSXGraph.initBoard('2f6fb842-40bd-4223-aa28-3e9369d2097f', {boundingbox: [-100, 70, 70, -100], showcopyright: false, shownavigation: false});

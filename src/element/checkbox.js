@@ -86,7 +86,7 @@ define([
      *           }
      *           return y;
      *       }]);
-     * </pre><div class="jxgbox"id="0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="0e835e0b-ed0c-4b85-b682-78158c0e6f5c" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      *   var t1_board = JXG.JSXGraph.initBoard('0e835e0b-ed0c-4b85-b682-78158c0e6f5c', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      *   var checkbox = t1_board.create('checkbox', [0, 3, 'Change Y'], {});
@@ -113,7 +113,7 @@ define([
      *         p.moveTo([1, 1]);
      *     }
      * }, checkbox);
-     * </pre><div class="jxgbox"id="b2f2345a-057d-44ce-bd7a-6aaff70bc810" style="width: 300px; height: 300px;"></div>
+     * </pre><div class="jxgbox" id="b2f2345a-057d-44ce-bd7a-6aaff70bc810" style="width: 300px; height: 300px;"></div>
      * <script type="text/javascript">
      * var t1_board = JXG.JSXGraph.initBoard('b2f2345a-057d-44ce-bd7a-6aaff70bc810', {boundingbox: [-3, 6, 5, -3], axis: true, showcopyright: false, shownavigation: false});
      * var checkbox = board.create('checkbox', [0, 4, 'Click me']),

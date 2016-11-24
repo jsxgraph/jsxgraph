@@ -2541,7 +2541,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          *     dataY[i] = data[i][0];
          * }
          * var g = board.create('curve', [dataX, dataY], {strokeWidth:'2px'});
-         * </pre><div class="jxgbox"id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="d2432d04-4ef7-4159-a90b-a2eb8d38c4f6" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          * var board = JXG.JSXGraph.initBoard('d2432d04-4ef7-4159-a90b-a2eb8d38c4f6', {boundingbox: [-1, 5, 5, -1], axis: true, showcopyright: false, shownavigation: false});
          * function f(t, x) {

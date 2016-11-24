@@ -708,7 +708,7 @@ define([
      * // Create another circle using the above circle
      * var p3 = board.create('point', [3.0, 2.0]),
      *     c2 = board.create('circle', [p3, c1]);
-     * </pre><div class="jxgbox"id="5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function() {
      *   var cex1_board = JXG.JSXGraph.initBoard('5f304d31-ef20-4a8e-9c0e-ea1a2b6c79e0', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});
@@ -726,7 +726,7 @@ define([
      *
      * // Create another circle using the above circle
      * var c2 = board.create('circle', [function() { return [p1.X(), p1.Y() + 1];}, function() { return c1.Radius(); }]);
-     * </pre><div class="jxgbox"id="54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="54165f60-93b9-441d-8979-ac5d0f193020" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function() {
      * var board = JXG.JSXGraph.initBoard('54165f60-93b9-441d-8979-ac5d0f193020', {boundingbox: [-1, 9, 9, -1], axis: true, showcopyright: false, shownavigation: false});

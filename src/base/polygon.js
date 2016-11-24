@@ -325,6 +325,22 @@ define([
         /**
          * Perimeter of polygon.
          * @returns {Number} Perimeter of polygon in user units.
+         *
+         * @example
+         * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [1.0, 3.0]];
+         *
+         * var pol = board.create('polygon', p, {hasInnerPoints: true});
+         * var t = board.create('text', [5, 5, function() { return pol.Perimeter(); }]);
+         * </pre><div class="jxgbox" id="b10b734d-89fc-4b9d-b4a7-e3f0c1c6bf77" style="width: 400px; height: 400px;"></div>
+         * <script type="text/javascript">
+         *  (function () {
+         *   var board = JXG.JSXGraph.initBoard('b10b734d-89fc-4b9d-b4a7-e3f0c1c6bf77', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
+         *       p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [1.0, 4.0]],
+         *       cc1 = board.create('polygon', p, {hasInnerPoints: true}),
+         *       t = board.create('text', [5, 5, function() { return cc1.Perimeter(); }]);
+         *  })();
+         * </script><pre>
+         *
          */
         Perimeter: function() {
             var i,
@@ -744,7 +760,7 @@ define([
          *  // Static version:
          *  // the intersection polygon does not adapt to changes of pol1 or pol2.
          *  var pol3 = board.create('polygon', pol1.intersect(pol2), {fillColor: 'blue'});
-         * </pre><div class="jxgbox"id="d1fe5ea9-309f-494a-af07-ee3d033acb7c" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="d1fe5ea9-309f-494a-af07-ee3d033acb7c" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *   (function() {
          *       var board = JXG.JSXGraph.initBoard('d1fe5ea9-309f-494a-af07-ee3d033acb7c', {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
@@ -788,7 +804,7 @@ define([
          *      }
          *  };
          *  board.update();
-         * </pre><div class="jxgbox"id="f870d516-ca1a-4140-8fe3-5d64fb42e5f2" style="width: 300px; height: 300px;"></div>
+         * </pre><div class="jxgbox" id="f870d516-ca1a-4140-8fe3-5d64fb42e5f2" style="width: 300px; height: 300px;"></div>
          * <script type="text/javascript">
          *   (function() {
          *       var board = JXG.JSXGraph.initBoard('f870d516-ca1a-4140-8fe3-5d64fb42e5f2', {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
@@ -852,7 +868,7 @@ define([
      * var p4 = board.create('point', [1.0, 4.0]);
      *
      * var pol = board.create('polygon', [p1, p2, p3, p4]);
-     * </pre><div class="jxgbox"id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
@@ -865,14 +881,14 @@ define([
      * </script><pre>
      *
      * @example
-     * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 3.0]];
+     * var p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [1.0, 3.0]];
      *
      * var pol = board.create('polygon', p, {hasInnerPoints: true});
-     * </pre><div class="jxgbox"id="9f9a5946-112a-4768-99ca-f30792bcdefb" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="9f9a5946-112a-4768-99ca-f30792bcdefb" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('9f9a5946-112a-4768-99ca-f30792bcdefb', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
-     *       p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [4.0, 6.0], [4.0, 6.0], [1.0, 4.0]],
+     *       p = [[0.0, 2.0], [2.0, 1.0], [4.0, 6.0], [1.0, 4.0]],
      *       cc1 = board.create('polygon', p, {hasInnerPoints: true});
      *  })();
      * </script><pre>
@@ -884,7 +900,7 @@ define([
      *       f4 = function() { return [1.0, 4.0]; },
      *       cc1 = board.create('polygon', [f1, f2, f3, f4]);
      *
-     * </pre><div class="jxgbox"id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="ceb09915-b783-44db-adff-7877ae3534c8" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('ceb09915-b783-44db-adff-7877ae3534c8', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
@@ -928,7 +944,7 @@ define([
      * var p2 = board.create('point', [2.0, 1.0]);
      *
      * var pol = board.create('regularpolygon', [p1, p2, 5]);
-     * </pre><div class="jxgbox"id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="682069e9-9e2c-4f63-9b73-e26f8a2b2bb1" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      *  (function () {
      *   var board = JXG.JSXGraph.initBoard('682069e9-9e2c-4f63-9b73-e26f8a2b2bb1', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
@@ -943,7 +959,7 @@ define([
      * var p3 = board.create('point', [2.0,0.0]);
      *
      * var pol = board.create('regularpolygon', [p1, p2, p3]);
-     * </pre><div class="jxgbox"id="096a78b3-bd50-4bac-b958-3be5e7df17ed" style="width: 400px; height: 400px;"></div>
+     * </pre><div class="jxgbox" id="096a78b3-bd50-4bac-b958-3be5e7df17ed" style="width: 400px; height: 400px;"></div>
      * <script type="text/javascript">
      * (function () {
      *   var board = JXG.JSXGraph.initBoard('096a78b3-bd50-4bac-b958-3be5e7df17ed', {boundingbox: [-1, 9, 9, -1], axis: false, showcopyright: false, shownavigation: false}),
