@@ -376,6 +376,7 @@ define([
              * @default
              */
             zoom: {
+                enabled: true,
                 factorX: 1.25,
                 factorY: 1.25,
                 wheel: false,
@@ -402,7 +403,7 @@ define([
              */
             pan: {
                 needShift: true,
-                needTwoFingers: true,
+                needTwoFingers: false,
                 enabled: true
             },
 
