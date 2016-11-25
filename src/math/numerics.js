@@ -3128,6 +3128,19 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
             return this.RamerDouglasPeucker(pts, eps);
         },
 
+        /**
+         * Implements the Visvalingam-Whyatt algorithm.
+         * See M. Visvalingam, J. D. Whyatt:
+         * "Line generalisation by repeated elimination of the smallest area", C.I.S.R.G Discussion paper 10, July 1992
+         *
+         * The algorithm discards points which are not necessary from the polygonal line defined by the point array
+         * pts (consisting of type JXG.Coords).
+         * @param {Array} pts Array of {@link JXG.Coords}
+         * @param {Number} numPoints Number of remaining intermediate points. The first and the last point of the original points will
+         *    be taken in any case.
+         * @returns {Array} An array containing points which approximates the curve defined by pts.
+         * @memberof JXG.Math.Numerics
+         */
         Visvalingam: function(pts, numPoints) {
             var i, len, vol, lastVol,
                 linkedList = [],
