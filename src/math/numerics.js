@@ -3126,7 +3126,124 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
         RamerDouglasPeuker: function (pts, eps) {
             JXG.deprecated('Numerics.RamerDouglasPeuker()', 'Numerics.RamerDouglasPeucker()');
             return this.RamerDouglasPeucker(pts, eps);
+        },
+
+        Visvalingam: function(pts, numPoints) {
+            var i, len, vol, lastVol,
+                linkedList = [],
+                heap = [],
+                points = [],
+                lft, rt, lft2, rt2;
+
+            len = pts.length;
+
+            // At least one intermediate point is needed
+            if (len <= 2) {
+                return pts;
+            }
+
+            // Fill the linked list
+            // Add first point to the linked list
+            linkedList[0] = {
+                    used: true,
+                    lft: null
+                };
+
+            // Add all intermediate points to the linked list,
+            // whose triangle area is nonzero.
+            lft = 0;
+            for (i = 1; i < len - 1; i++) {
+                vol = Math.abs(JXG.Math.Numerics.det([pts[i - 1].usrCoords,
+                                              pts[i].usrCoords,
+                                              pts[i + 1].usrCoords]));
+                if (!isNaN(vol)) {
+                    heap.push({
+                        v: vol, // The volume is stored twice
+                        idx: i,
+                    });
+                    linkedList[i] = {
+                            used: true,
+                            v: vol,
+                            lft: lft,
+                        };
+                    linkedList[lft].rt = i;
+                    lft = i;
+                }
+            }
+
+            // Add last point to the linked list
+            linkedList[len - 1] = {
+                    used: true,
+                    rt: null,
+                    lft: lft
+                };
+            linkedList[lft].rt = len - 1;
+
+            // Remove points until only numPoints intermediate points remain
+            lastVol = -Infinity;
+            while (heap.length > numPoints) {
+                // Update the volume values of the heap
+                for (i = 0; i < heap.length; i++) {
+                    heap[i].v = linkedList[heap[i].idx].v;
+                }
+
+                // Sort the heap with the updated volume values
+                heap.sort(function(a, b) {
+                    // descending sort
+                    return b.v - a.v;
+                });
+
+                // Remove the point with the smallest triangle
+                i = heap.pop().idx;
+                linkedList[i].used = false;
+                lastVol = linkedList[i].v;
+
+                // Update the pointers of the linked list
+                lft = linkedList[i].lft;
+                rt = linkedList[i].rt;
+                linkedList[lft].rt = rt;
+                linkedList[rt].lft = lft;
+
+                // Update the values for the volumes in the linked list
+                lft2 = linkedList[lft].lft;
+                if (lft2 != null) {
+                    vol = Math.abs(JXG.Math.Numerics.det(
+                                [pts[lft2].usrCoords,
+                                 pts[lft].usrCoords,
+                                 pts[rt].usrCoords]));
+
+                    if (vol < lastVol) {
+                        vol = lastVol;
+                    }
+
+                    linkedList[lft].v = vol;
+                }
+                rt2 = linkedList[rt].rt;
+                if (rt2 != null) {
+                    vol = Math.abs(JXG.Math.Numerics.det(
+                                [pts[lft].usrCoords,
+                                 pts[rt].usrCoords,
+                                 pts[rt2].usrCoords]));
+
+                    if (vol < lastVol) {
+                        vol = lastVol;
+                    }
+
+                    linkedList[rt].v = vol;
+                }
+            }
+
+            // Return an array with the remaining points
+            i = 0;
+            points = [pts[i]];
+            do {
+                i = linkedList[i].rt;
+                points.push(pts[i]);
+            } while (linkedList[i].rt != null);
+
+            return points;
         }
+
     };
 
     return Mat.Numerics;
