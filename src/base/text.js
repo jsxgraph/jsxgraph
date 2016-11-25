@@ -771,6 +771,19 @@ define([
     JXG.registerElement('text', JXG.createText);
 
     /**
+     * @class Labels are text objects tied to other elements like points, lines and curves.
+     * Labels are handled internally by JSXGraph, only. There is NO constructor "board.create('label', ...)".
+     *
+     * @pseudo
+     * @description
+     * @name Label
+     * @augments JXG.Text
+     * @constructor
+     * @type JXG.Text
+     */
+    //  See element.js#createLabel
+
+    /**
      * [[x,y], [w px, h px], [range]
      */
     JXG.createHTMLSlider = function (board, parents, attributes) {

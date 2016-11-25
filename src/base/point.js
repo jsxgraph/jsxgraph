@@ -304,7 +304,6 @@ define([
 
     });
 
-
     /**
      * @class This element is used to provide a constructor for a general point. A free point is created if the given parent elements are all numbers
      * and the property fixed is not set or set to false. If one or more parent elements is not a number but a string containing a GEONE<sub>x</sub>T

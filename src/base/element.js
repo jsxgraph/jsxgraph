@@ -1246,7 +1246,7 @@ define([
             }
         },
 
-        /**
+         /**
          * Creates a label element for this geometry element.
          * @see #addLabelToElement
          */

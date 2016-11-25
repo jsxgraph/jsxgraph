@@ -2043,15 +2043,28 @@ define([
             highlightStrokeColor: 'black',
 
             fixed: true,
+
             /**
              * Possible string values for the position of a label for
              * label anchor points are:
-             * 'lft'|'rt'|'top'|'bot'|'ulft'|'urt'|'llft'|'lrt'
+             * <ul>
+             * <li> 'lft'
+             * <li> 'rt'
+             * <li> 'top'
+             * <li> 'bot'
+             * <li> 'ulft'
+             * <li> 'urt'
+             * <li> 'llft'
+             * <li> 'lrt'
+             * </ul>
              * This is relevant for non-points: line, circle, curve.
              *
+             * The names have been borrowed from <a href="https://www.tug.org/metapost.html">MetaPost</a>.
+             *
+             * @name Label#position
+             * @see Label#offset
              * @type String
              * @default 'urt'
-             * @name JXG.GeometryElement#label.position
              */
             position: 'urt',
 
@@ -2059,9 +2072,10 @@ define([
              *  Label offset from label anchor
              *  The label anchor is determined by JXG.GeometryElement#label.position
              *
+             * @name Label#offset
+             * @see Label#position
              * @type Array
              * @default [10,10]
-             * @name JXG.GeometryElement#label.offset
              **/
             offset: [10, 10]
 
