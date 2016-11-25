@@ -1855,6 +1855,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                     if (!suspendedUpdate) {
                         tau = _tau();
 
+                        // New point list p: [first, points ..., last]
                         first = {
                             X: function () { return 2 * points[0].X() - points[1].X(); },
                             Y: function () { return 2 * points[0].Y() - points[1].Y(); },
@@ -1937,7 +1938,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
 
                     s = Math.floor(t);
                     if (s === t) {
-                        return p[s][which]();
+                        return points[s][which]();
                     }
 
                     t -= s;
