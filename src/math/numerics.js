@@ -3140,6 +3140,70 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
          *    be taken in any case.
          * @returns {Array} An array containing points which approximates the curve defined by pts.
          * @memberof JXG.Math.Numerics
+         *
+         * @example
+         *     var i, p = [];
+         *     for (i = 0; i < 5; ++i) {
+         *         p.push(board.create('point', [Math.random() * 12 - 6, Math.random() * 12 - 6]));
+         *     }
+         *
+         *     // Plot a cardinal spline curve
+         *     var splineArr = JXG.Math.Numerics.CardinalSpline(p, 0.5);
+         *     var cu1 = board.create('curve', splineArr, {strokeColor: 'green'});
+         *
+         *     var c = board.create('curve', [[0],[0]], {strokeWidth: 2, strokeColor: 'black'});
+         *     c.updateDataArray = function() {
+         *         var i, len, points;
+         *
+         *         // Reduce number of intermediate points with Visvakingam-Whyatt to 6
+         *         points = JXG.Math.Numerics.Visvalingam(cu1.points, 6);
+         *         // Plot the remaining points
+         *         len = points.length;
+         *         this.dataX = [];
+         *         this.dataY = [];
+         *         for (i = 0; i < len; i++) {
+         *             this.dataX.push(points[i].usrCoords[1]);
+         *             this.dataY.push(points[i].usrCoords[2]);
+         *         }
+         *     };
+         *     board.update();
+         *
+         * </pre><div id="ce0cc55c-b592-11e6-8270-104a7d3be7eb" class="jxgbox" style="width: 300px; height: 300px;"></div>
+         * <script type="text/javascript">
+         *     (function() {
+         *         var board = JXG.JSXGraph.initBoard('ce0cc55c-b592-11e6-8270-104a7d3be7eb',
+         *             {boundingbox: [-8, 8, 8,-8], axis: true, showcopyright: false, shownavigation: false});
+         *
+         *         var i, p = [];
+         *         for (i = 0; i < 5; ++i) {
+         *             p.push(board.create('point', [Math.random() * 12 - 6, Math.random() * 12 - 6]));
+         *         }
+         *
+         *         // Plot a cardinal spline curve
+         *         var splineArr = JXG.Math.Numerics.CardinalSpline(p, 0.5);
+         *         var cu1 = board.create('curve', splineArr, {strokeColor: 'green'});
+         *
+         *         var c = board.create('curve', [[0],[0]], {strokeWidth: 2, strokeColor: 'black'});
+         *         c.updateDataArray = function() {
+         *             var i, len, points;
+         *
+         *             // Reduce number of intermediate points with Visvakingam-Whyatt to 6
+         *             points = JXG.Math.Numerics.Visvalingam(cu1.points, 6);
+         *             // Plot the remaining points
+         *             len = points.length;
+         *             this.dataX = [];
+         *             this.dataY = [];
+         *             for (i = 0; i < len; i++) {
+         *                 this.dataX.push(points[i].usrCoords[1]);
+         *                 this.dataY.push(points[i].usrCoords[2]);
+         *             }
+         *         };
+         *         board.update();
+         *
+         *     })();
+         *
+         * </script><pre>
+         *
          */
         Visvalingam: function(pts, numPoints) {
             var i, len, vol, lastVol,
