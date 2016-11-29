@@ -325,7 +325,7 @@ define([
              * Using 'svg' or 'all' speeds up the update process considerably. The risk
              * is that if there is an exception, only a white div or window is left.
              *
-             * @name JXG.Board#name
+             * @name JXG.Board#minimizeReflow
              * @type String
              * @default 'svg'
              */
@@ -414,6 +414,51 @@ define([
                 enabled: true
             },
 
+            /**
+             * Control the possibilities for a selection rectangle.
+             * Starting a selection event triggers the "startselecting" event.
+             * When the mouse pointer is released, the "stopselecting" event is fired.
+             * The "stopselecting" event must be supplied by the user.
+             * <p>
+             * Possible sub-attributes with default values are:
+             * <pre>
+             * selection: {
+             *   enabled: false,
+             *   name: 'selectionPolygon',
+             *   needShift: false,  // mouse selection needs pressing of the shift key
+             *   needCtrl: true,    // mouse selection needs pressing of the shift key
+             *   withLines: false,  // Selection polygon has border lines
+             *   vertices: {
+             *       visible: false
+             *   },
+             *   fillColor: '#ffff00',
+             *   visible: false      // Initial visibility. Should be set to false always
+             * }
+             * </pre>
+             *
+             * @example
+             * board.on('stopselecting', function(){
+             *     var box = board.stopSelectionMode(),
+             *     // bbox has the coordinates of the selectionr rectangle.
+             *     // Attention: box[i].usrCoords have the form [1, x, y], i.e.
+             *     // are homogeneous coordinates.
+             *     bbox = box[0].usrCoords.slice(1).concat(box[1].usrCoords.slice(1));
+             *     // Set a new bounding box
+             *     board.setBoundingBox(bbox, false);
+             * });
+             *
+             * @name JXG.Board#selection
+             * @see JXG.Board#startselecting
+             * @see JXG.Board#stopselecting
+             * @see JXG.Board#mousestartselecting
+             * @see JXG.Board#pointerstartselecting
+             * @see JXG.Board#touchstartselecting
+             * @see JXG.Board#mousestopselecting
+             * @see JXG.Board#pointerstopselecting
+             * @see JXG.Board#touchstopselecting
+             * @type Object
+             * @default
+             */
             selection: {
                 enabled: false,
                 name: 'selectionPolygon',
