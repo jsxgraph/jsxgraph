@@ -3237,7 +3237,7 @@ define(['jxg', 'utils/type', 'math/math'], function (JXG, Type, Mat) {
                                               pts[i + 1].usrCoords]));
                 if (!isNaN(vol)) {
                     obj = {
-                        v: vol, // The volume is stored twice
+                        v: vol,
                         idx: i
                     };
                     heap.push(obj);
