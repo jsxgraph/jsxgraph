@@ -12,6 +12,19 @@ JXG.Options = JXG.merge(JXG.Options, {
 
     board: {
         minimizeReflow: 'all', // 'svg', 'all', 'none'
+        zoom: {
+            enabled: true,
+            wheel: true,
+            needShift: true,
+            pinchHorizontal: false,
+            pinchVertical: false,
+        },
+        pan: {
+            needShift: true,
+            needTwoFingers: true,
+            enabled: true
+        },
+
         selection: {
             enabled: false
         }
