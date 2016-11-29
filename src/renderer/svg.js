@@ -221,9 +221,9 @@ define([
             }
             node2 = this.createPrim('marker', id);
 
-            node2.setAttributeNS(null, 'stroke', Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'stroke', 'red'); //Type.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'stroke-opacity', Type.evaluate(element.visProp.strokeopacity));
-            node2.setAttributeNS(null, 'fill', Type.evaluate(element.visProp.strokecolor));
+            node2.setAttributeNS(null, 'fill', 'red'); //Type.evaluate(element.visProp.strokecolor));
             node2.setAttributeNS(null, 'fill-opacity', Type.evaluate(element.visProp.strokeopacity));
             node2.setAttributeNS(null, 'stroke-width', 0);  // this is the stroke-width of the arrow head.
                                                             // Should be zero to make the positioning easy
@@ -232,31 +232,23 @@ define([
             node2.setAttributeNS(null, 'markerUnits', 'strokeWidth'); // 'strokeWidth' 'userSpaceOnUse');
 
             /*
-            * Changes here are also necessary in _setArrowWidth()
-            */
-            s = parseInt(element.visProp.strokewidth, 10);
-            //node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 12 + ' ' + s * 12);
-            node2.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
+               The arrow head is an isosceles triangle with base length 10 and height 10.
+               This 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels, see
+               this._setArrowWidth().
 
-            /*
-               The arrow head is an equilateral triangle with base length 10 and height 10.
-               This 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
                See also abstractRenderer.updateLine() where the line path is shortened accordingly.
+
+               Changes here are also necessary in setArrowWidth().
             */
-            d = Math.max(s * 3, 10);
-            node2.setAttributeNS(null, 'markerHeight', d);
-            node2.setAttributeNS(null, 'markerWidth', d);
-
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
-
             if (idAppendix === 'End') {     // First arrow
                 node2.setAttributeNS(null, 'refY', 5);
                 node2.setAttributeNS(null, 'refX', 10);
-                node3.setAttributeNS(null, 'd', 'M 10 0 L 0 5 L 10 10 z');
+                node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
             } else {                        // Last arrow
                 node2.setAttributeNS(null, 'refY', 5);
                 node2.setAttributeNS(null, 'refX', 0);
-                node3.setAttributeNS(null, 'd', 'M 0 0 L 10 5 L 0 10 z');
+                node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
             }
 
             node2.appendChild(node3);
@@ -301,15 +293,10 @@ define([
             var s, d;
 
             if (node) {
-                // This is the stroke-width of the arrow head.
-                // Should be zero to make the positioning easy
-                node.setAttributeNS(null, 'stroke-width', 0);
-
-                // The next lines are important if the strokeWidth of the line is changed.
                 s = width;
-                node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + s * 10 + ' ' + s * 10);
                 d = Math.max(s * 3, 10);
-
+                //node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + (s * 10) + ' ' + (s * 10));
+                node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
                 node.setAttributeNS(null, 'markerHeight', d);
                 node.setAttributeNS(null, 'markerWidth', d);
 
@@ -317,7 +304,6 @@ define([
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
                 }
             }
-
         },
 
         /* ******************************** *

@@ -443,7 +443,7 @@ define([
             /*
                Handle arrow heads.
 
-               The arrow head is an equilateral triangle with base length 10 and height 10.
+               The arrow head is an isosceles triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
             */
             s = Math.max(parseInt(el.visProp.strokewidth, 10) * 3, 10);
