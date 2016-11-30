@@ -668,7 +668,7 @@ define([
 
         /**
          * Composes an id for an element. If the ID is empty ('' or null) a new ID is generated, depending on the
-         * object type. Additionally, the id of the label is set. As a side effect {@link JXG.Board#numObjects}
+         * object type. As a side effect {@link JXG.Board#numObjects}
          * is updated.
          * @param {Object} obj Reference of an geometry object that needs an id.
          * @param {Number} type Type of the object.
@@ -680,9 +680,13 @@ define([
 
             this.numObjects += 1;
 
-            // Falls Id nicht vorgegeben, eine Neue generieren:
+            // If no id is provided or id is empty string, a new one is chosen
             if (elId === '' || !Type.exists(elId)) {
                 elId = this.id + type + num;
+                while (Type.exists(this.objects[elId])) {
+                    randomNumber = Math.round(Math.random() * 65535);
+                    elId = this.id + type + num + '-' + randomNumber;
+                }
             }
 
             obj.id = elId;
