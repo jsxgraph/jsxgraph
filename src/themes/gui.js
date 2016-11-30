@@ -65,6 +65,10 @@ JXG.Options = JXG.merge(JXG.Options, {
         strokeOpacity: 0.9
     },
 
+    elements: {
+        transitionDuration: 170
+    },
+
     glider : {
         strokeColor: 'orange',
         fillColor: 'orange',
