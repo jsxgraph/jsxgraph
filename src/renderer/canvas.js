@@ -84,8 +84,10 @@ define([
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, '" width="', dim.width, 'px" height="',
-                dim.height, 'px"><', '/canvas>'].join('');
+            this.container.innerHTML = ['<canvas id="', this.canvasId, 
+                '" width="', dim.width, 
+                'px" height="', dim.height, 
+                'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
         } else if (Env.isNode()) {
@@ -1094,12 +1096,14 @@ define([
                 this.canvasRoot.style.width = parseFloat(w) + 'px';
                 this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-                this.canvasRoot.setAttribute('width', parseFloat(w) + 'px');
-                this.canvasRoot.setAttribute('height', parseFloat(h) + 'px');
+                this.canvasRoot.setAttribute('width', 2 * parseFloat(w) + 'px');
+                this.canvasRoot.setAttribute('height',2 * parseFloat(h) + 'px');
             } else {
                 this.canvasRoot.width = parseFloat(w);
                 this.canvasRoot.height = parseFloat(h);
             }
+            this.context = this.canvasRoot.getContext('2d');
+            this.context.scale(2, 2);
         },
 
         removeToInsertLater: function () {
