@@ -405,7 +405,20 @@ define([
 
             this.makeArrows(element);
             this._updateVisual(element);
+            this.setLineCap(element);
         },
+
+        /**
+         * Set the line endings (linecap) of a straight line. Possible values
+         * for the attribute 'linecap' are: 'butt', 'round', 'square'.
+         * The default value is 'butt'. Not available for VML renderer.
+         *
+         * @param {JXG.Line} element A arbitrary line. 
+         * @see Line
+         * @see JXG.Line
+         * @see JXG.AbstractRenderer#updateLine
+         */
+        setLinecap: function() { /* stub */ },
 
         /**
          * Creates a rendering node for ticks added to a line.

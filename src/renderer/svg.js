@@ -1140,6 +1140,20 @@ define([
         },
 
         // documented in JXG.AbstractRenderer
+        setLineCap: function (el) {
+            var capStyle = el.visProp.linecap;
+
+            if (capStyle === undefined || capStyle === '' || el.visPropOld.linecap === capStyle ||
+                !Type.exists(el.rendNode)) {
+                return;
+            }
+
+            this.setPropertyPrim(el.rendNode, 'stroke-linecap', capStyle);
+            el.visPropOld.linecap = capStyle;
+
+        },
+
+        // documented in JXG.AbstractRenderer
         setShadow: function (el) {
             if (el.visPropOld.shadow === el.visProp.shadow) {
                 return;

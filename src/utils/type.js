@@ -1051,6 +1051,7 @@ define([
                 strokewidth: '',
                 fillcolor: '',
                 fillopacity: '',
+                linecap: '',
                 shadow: false,
                 firstarrow: false,
                 lastarrow: false,

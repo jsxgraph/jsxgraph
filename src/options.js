@@ -2323,7 +2323,24 @@ define([
              * @name Line#touchLastPoint
              * @default false
              */
-            touchLastPoint: false
+            touchLastPoint: false,
+
+            /**
+             * Line endings (linecap) of a straight line.
+             * Possible values are:
+             * <ul>
+             * <li> 'butt',
+             * <li> 'round',
+             * <li> 'square'.
+             * </ul>
+             * Not available for VML renderer.
+             * [lineCap description]
+             * @name Line#lineCap
+             * @type {String}
+             * @default 'butt'
+             */
+            lineCap: 'butt'
+
 
             /**#@-*/
         },

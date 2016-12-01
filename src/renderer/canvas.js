@@ -234,6 +234,7 @@ define([
             } else {
                 hasColor = false;
             }
+
             if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth))) {
                 if (parseFloat(ev.strokewidth) === 0) {
                     this.context.globalAlpha = 0;
@@ -241,9 +242,13 @@ define([
                     this.context.lineWidth = parseFloat(ev.strokewidth);
                 }
             }
+            
+            if (type === 'stroke' && ev.linecap !== undefined && ev.linecap !== '') {
+                this.context.lineCap = ev.linecap;
+            }
+
             return hasColor;
         },
-
 
         /**
          * Sets color and opacity for drawing paths and lines and draws the paths and lines.
