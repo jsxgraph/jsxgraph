@@ -84,9 +84,9 @@ define([
                 this.container.style.position = 'relative';
             }
 
-            this.container.innerHTML = ['<canvas id="', this.canvasId, 
-                '" width="', dim.width, 
-                'px" height="', dim.height, 
+            this.container.innerHTML = ['<canvas id="', this.canvasId,
+                '" width="', dim.width,
+                'px" height="', dim.height,
                 'px"><', '/canvas>'].join('');
             this.canvasRoot = this.container.ownerDocument.getElementById(this.canvasId);
             this.context =  this.canvasRoot.getContext('2d');
@@ -244,7 +244,7 @@ define([
                     this.context.lineWidth = parseFloat(ev.strokewidth);
                 }
             }
-            
+
             if (type === 'stroke' && ev.linecap !== undefined && ev.linecap !== '') {
                 this.context.lineCap = ev.linecap;
             }
@@ -1096,13 +1096,16 @@ define([
                 this.canvasRoot.style.width = parseFloat(w) + 'px';
                 this.canvasRoot.style.height = parseFloat(h) + 'px';
 
-                this.canvasRoot.setAttribute('width', 2 * parseFloat(w) + 'px');
-                this.canvasRoot.setAttribute('height',2 * parseFloat(h) + 'px');
+                this.canvasRoot.setAttribute('width', (2 * parseFloat(w)) + 'px');
+                this.canvasRoot.setAttribute('height',(2 * parseFloat(h)) + 'px');
             } else {
-                this.canvasRoot.width = parseFloat(w);
-                this.canvasRoot.height = parseFloat(h);
+                this.canvasRoot.width = 2 * parseFloat(w);
+                this.canvasRoot.height = 2 * parseFloat(h);
             }
             this.context = this.canvasRoot.getContext('2d');
+            // The width and height of the canvas is set to twice the CSS values,
+            // followed by an appropiate scaling.
+            // See http://stackoverflow.com/questions/22416462/canvas-element-with-blurred-lines
             this.context.scale(2, 2);
         },
 
