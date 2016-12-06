@@ -167,6 +167,7 @@ define([
                 // All points of the polygon trigger hasPoint: inner and boundary points
                 len = this.vertices.length;
                 // See http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html for a reference
+                // Jordan method
                 for (i = 0, j = len - 2; i < len - 1; j = i++) {
                     if (((this.vertices[i].coords.scrCoords[2] > y) !== (this.vertices[j].coords.scrCoords[2] > y)) &&
                             (x < (this.vertices[j].coords.scrCoords[1] - this.vertices[i].coords.scrCoords[1]) * (y - this.vertices[i].coords.scrCoords[2]) /
@@ -174,14 +175,20 @@ define([
                         c = !c;
                     }
                 }
-            } else {
-                // Only boundary points trigger hasPoint
-                len = this.borders.length;
-                for (i = 0; i < len; i++) {
-                    if (this.borders[i].hasPoint(x, y)) {
-                        c = true;
-                        break;
-                    }
+                if (c) {
+                    return true;
+                }
+            }
+
+            // Only boundary points trigger hasPoint
+            // We additionally test the boundary also in case hasInnerPoints.
+            // Since even if the above test has failed, the strokewidth may be large and (x, y) may
+            // be inside of hasPoint() of a vertices.
+            len = this.borders.length;
+            for (i = 0; i < len; i++) {
+                if (this.borders[i].hasPoint(x, y)) {
+                    c = true;
+                    break;
                 }
             }
 

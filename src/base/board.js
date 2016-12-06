@@ -4326,8 +4326,6 @@ define([
 
             return !!(Type.isNumber(px) && Type.isNumber(py) &&
                 bbox[0] < px && px < bbox[2] && bbox[1] > py && py > bbox[3]);
-
-
         },
 
         /**

@@ -225,13 +225,17 @@ define([
                 i, j, tX, tY, res, points, qdt,
                 steps = this.visProp.numberpointslow,
                 d = (this.maxX() - this.minX()) / steps,
-                prec = this.board.options.precision.hasPoint / this.board.unitX,
+                prec = this.board.options.precision.hasPoint,
                 dist = Infinity,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
+
+            // We use usrCoords
+            prec += this.visProp.strokewidth * 0.5;
+            prec /= Math.sqrt(this.board.unitX * this.board.unitY);
 
             if (this.transformations.length > 0) {
                 /**

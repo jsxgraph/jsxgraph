@@ -205,11 +205,19 @@ define([
          * @private
          */
         hasPoint: function (x, y) {
-            var prec = this.board.options.precision.hasPoint / (this.board.unitX),
+            var prec = this.board.options.precision.hasPoint,
                 mp = this.center.coords.usrCoords,
                 p = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
-                dist = Math.sqrt((mp[1] - p.usrCoords[1]) * (mp[1] - p.usrCoords[1]) + (mp[2] - p.usrCoords[2]) * (mp[2] - p.usrCoords[2]));
+                dx, dy, dist;
+
+                dx = mp[1] - p.usrCoords[1];
+                dy = mp[2] - p.usrCoords[2];
+                dist = Math.sqrt(dx * dx + dy * dy);
+
+                // We have to use usrCoords, since Radius is available in usrCoords only.
+                prec += this.visProp.strokewidth * 0.5;
+                prec /= Math.sqrt(this.board.unitX * this.board.unitY);
 
             if (this.visProp.hasinnerpoints) {
                 return (dist < r + prec);

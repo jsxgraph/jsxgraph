@@ -207,7 +207,7 @@ define([
         hasPoint: function (x, y) {
             var i, t,
                 len = (this.ticks && this.ticks.length) || 0,
-                r = this.board.options.precision.hasPoint;
+                r = this.board.options.precision.hasPoint + this.visProp.strokewidth * 0.5;
 
             if (!this.line.visProp.scalable) {
                 return false;

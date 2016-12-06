@@ -170,7 +170,10 @@ define([
             var c = [], s,
                 v = [1, x, y],
                 vnew,
-                p1c, p2c, d, pos, i;
+                p1c, p2c, d, pos, i,
+                prec;
+
+            prec = this.board.options.precision.hasPoint + this.visProp.strokewidth * 0.5;
 
             c[0] = this.stdform[0] -
                 this.stdform[1] * this.board.origin.scrCoords[1] / this.board.unitX +
@@ -179,7 +182,7 @@ define([
             c[2] = this.stdform[2] / (-this.board.unitY);
 
             s = Geometry.distPointLine(v, c);
-            if (isNaN(s) || s > this.board.options.precision.hasPoint) {
+            if (isNaN(s) || s > prec) {
                 return false;
             }
 
