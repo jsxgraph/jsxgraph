@@ -1021,7 +1021,7 @@ define([
             }
         }
 
-        attr = Type.copyAttributes(attributes, board.options, 'polygon');
+        attr = Type.copyAttributes(attributes, board.options, 'regularpolygon');
         el = board.create('polygon', p, attr);
         el.elType = 'regularpolygon';
 
