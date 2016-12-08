@@ -508,6 +508,13 @@ define([
         this.hasTouchEnd = false;
 
         /**
+         * A flag which tells us if the board has a pointerUp event registered at the moment.
+         * @type {Boolean}
+         * @default false
+         */
+        this.hasPointerUp = false;
+
+        /**
          * Offset for large coords elements like images
          * @type {Array}
          * @private
@@ -1414,11 +1421,9 @@ define([
                 if (window.navigator.pointerEnabled) {  // IE11+
                     Env.addEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    Env.addEvent(this.containerObj, 'pointerup', this.pointerUpListener, this);
                 } else {
                     Env.addEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.addEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
-                    Env.addEvent(this.containerObj, 'MSPointerUp', this.pointerUpListener, this);
                 }
                 Env.addEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.addEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
@@ -1479,15 +1484,22 @@ define([
                 if (window.navigator.pointerEnabled) {  // IE11+
                     Env.removeEvent(this.containerObj, 'pointerdown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'pointermove', this.pointerMoveListener, this);
-                    Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
                 } else {
                     Env.removeEvent(this.containerObj, 'MSPointerDown', this.pointerDownListener, this);
                     Env.removeEvent(this.containerObj, 'MSPointerMove', this.pointerMoveListener, this);
-                    Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
                 }
 
                 Env.removeEvent(this.containerObj, 'mousewheel', this.mouseWheelListener, this);
                 Env.removeEvent(this.containerObj, 'DOMMouseScroll', this.mouseWheelListener, this);
+
+                if (this.hasPointerUp) {
+                    if (window.navigator.pointerEnabled) {  // IE11+
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    }
+                    this.hasPointerUp = false;
+                }
 
                 this.hasPointerHandlers = false;
             }
@@ -1757,6 +1769,15 @@ define([
             var i, j, k, pos, elements, sel,
                 eps = this.options.precision.touch,
                 found, target, result;
+
+            if (!this.hasPointerUp) {
+                if (window.navigator.pointerEnabled) {  // IE11+
+                    Env.addEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                } else {
+                    Env.addEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                }
+                this.hasPointerUp = true;
+            }
 
             if (this.hasMouseHandlers) {
                 this.removeMouseEventHandlers();
@@ -2047,6 +2068,15 @@ define([
             }
 
             if (this.touches.length === 0) {
+                if (this.hasPointerUp) {
+                    if (window.navigator.pointerEnabled) {  // IE11+
+                        Env.removeEvent(this.document, 'pointerup', this.pointerUpListener, this);
+                    } else {
+                        Env.removeEvent(this.document, 'MSPointerUp', this.pointerUpListener, this);
+                    }
+                    this.hasPointerUp = false;
+                }
+
                 this.dehighlightAll();
                 this.updateQuality = this.BOARD_QUALITY_HIGH;
 
