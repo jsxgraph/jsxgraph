@@ -413,7 +413,7 @@ define([
          * for the attribute 'linecap' are: 'butt', 'round', 'square'.
          * The default value is 'butt'. Not available for VML renderer.
          *
-         * @param {JXG.Line} element A arbitrary line. 
+         * @param {JXG.Line} element A arbitrary line.
          * @see Line
          * @see JXG.Line
          * @see JXG.AbstractRenderer#updateLine

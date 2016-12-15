@@ -283,7 +283,7 @@ define([
             /**
              * Default rendering engine. Possible values are 'svg', 'canvas', 'vml', 'no'.
              * If the rendering engine is not available JSXGraph tries to detect a different engine.
-             * 
+             *
              * <p>
              * In case of 'canvas' it is advisable to call 'board.update()' after all elements have been
              * constructed. This ensures that all elements are drawn with their intended visual appearance.

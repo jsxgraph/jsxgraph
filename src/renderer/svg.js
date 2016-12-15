@@ -1073,10 +1073,16 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (el.visProp.display === 'html') {
-                        setTimeout(function() {
+                    
+                        if (el.visPropOld.strokecolor === '') {
                             node.style.color = c;
                             node.style.opacity = oo;
-                        }, 1);
+                        } else {
+                            setTimeout(function() {
+                                node.style.color = c;
+                                node.style.opacity = oo;
+                            }, 1);
+                        }
                     } else {
                         setTimeout(function() {
                             node.setAttributeNS(null, "style", "fill:" + c);
