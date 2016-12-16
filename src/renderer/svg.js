@@ -260,25 +260,23 @@ define([
          * @param {Node} node The arrow node.
          * @param {String} color Color value in a HTML compatible format, e.g. <tt>#00ff00</tt> or <tt>green</tt> for green.
          * @param {Number} opacity
+         * @param {JXG.GeometryElement} element The element the arrows are to be attached to
          */
-        _setArrowColor: function (node, color, opacity, parentNode) {
+        _setArrowColor: function (node, color, opacity, element) {
             var s, d;
 
             if (node) {
                 if (Type.isString(color)) {
-                    setTimeout(function() {
+                    this._setAttribute(function() {
                         node.setAttributeNS(null, 'stroke', color);
                         node.setAttributeNS(null, 'fill', color);
-                    }, 1);
+                        node.setAttributeNS(null, 'stroke-opacity', opacity);
+                        node.setAttributeNS(null, 'fill-opacity', opacity);
+                    }, element.visPropOld.fillcolor);
                 }
 
-                setTimeout(function() {
-                    node.setAttributeNS(null, 'stroke-opacity', opacity);
-                    node.setAttributeNS(null, 'fill-opacity', opacity);
-                }, 1);
-
                 if (this.isIE) {
-                    parentNode.parentNode.insertBefore(parentNode, parentNode);
+                    element.rendNode.parentNode.insertBefore(element.rendNode, element.rendNode);
                 }
             }
 
@@ -965,8 +963,8 @@ define([
 
             if (el.elementClass === Const.OBJECT_CLASS_TEXT &&
                 el.visProp.display === 'html') {
-                    transitionStr = ' color ' + duration + 'ms,' +
-                                    ' opacity ' + duration + 'ms';
+                transitionStr = ' color ' + duration + 'ms,' +
+                            ' opacity ' + duration + 'ms';
             } else {
                 transitionStr = ' fill ' + duration + 'ms,' +
                             ' fill-opacity ' + duration + 'ms,' +
@@ -978,6 +976,33 @@ define([
             for (i = 0; i < len; ++i) if (el[nodes[i]]) {
                 node = el[nodes[i]];
                 node.style.transition = transitionStr;
+            }
+        },
+
+        /**
+         * Call user-defined function to set visual attributes.
+         * If "testAttribute" is the empty string, the function
+         * is called immediately, otherwise it is called in a timeOut.
+         *
+         * This is necessary to realize smooth transitions buit avoid transistions
+         * when first creating the objects.
+         *
+         * Usually, the string in testAttribute is the visPropOld attribute
+         * of the values which are set.
+         *
+         * @param {Function} setFunc       Some function which usually sets some attributes
+         * @param {String} testAttribute If this string is the empty string  the function is called immediately,
+         *                               otherwise it is called in a setImeout.
+         * @see JXG.SVGRenderer#setObjectFillColor
+         * @see JXG.SVGRenderer#setObjectStrokeColor
+         * @see JXG.SVGRenderer#_setArrowColor
+         * @private
+         */
+        _setAttribute: function(setFunc, testAttribute) {
+            if (testAttribute === '') {
+                setFunc();
+            } else {
+                setTimeout(setFunc, 1);
             }
         },
 
@@ -1010,33 +1035,24 @@ define([
                 }
 
                 if (c !== 'none') {
-                    // First time we ignore transitions, because the filling appears black
-                    if (el.visPropOld.fillcolor === '') {
-                        node.setAttributeNS(null, 'fill', c);
-                    } else {
-                        setTimeout(function() {
+                    this._setAttribute(function() {
                             node.setAttributeNS(null, 'fill', c);
-                        }, 1);
-                    }
+                        }, el.visPropOld.fillcolor);
                 }
 
                 if (el.type === JXG.OBJECT_TYPE_IMAGE) {
-                    setTimeout(function() {
-                        node.setAttributeNS(null, 'opacity', oo);
-                    }, 1);
+                    this._setAttribute(function() {
+                            node.setAttributeNS(null, 'opacity', oo);
+                        }, el.visPropOld.fillopacity);
                     //node.style['opacity'] = oo;  // This would overwrite values set by CSS class.
                 } else {
-                    if (c === 'none') {  // This is don only for non-images
+                    if (c === 'none') {  // This is done only for non-images
                                          // because images have no fill color.
                         oo = 0;
                     }
-                    if (el.visPropOld.fillopacity === '') {
-                        node.setAttributeNS(null, 'fill-opacity', oo);
-                    } else {
-                        setTimeout(function() {
+                    this._setAttribute(function() {
                             node.setAttributeNS(null, 'fill-opacity', oo);
-                        }, 1);
-                    }
+                        }, el.visPropOld.fillopacity);
                 }
 
                 if (Type.exists(el.visProp.gradient)) {
@@ -1073,39 +1089,34 @@ define([
 
                 if (el.elementClass === Const.OBJECT_CLASS_TEXT) {
                     if (el.visProp.display === 'html') {
-                    
-                        if (el.visPropOld.strokecolor === '') {
-                            node.style.color = c;
-                            node.style.opacity = oo;
-                        } else {
-                            setTimeout(function() {
+                        this._setAttribute(function() {
                                 node.style.color = c;
                                 node.style.opacity = oo;
-                            }, 1);
-                        }
+                            }, el.visPropOld.strokecolor);
+
                     } else {
-                        setTimeout(function() {
-                            node.setAttributeNS(null, "style", "fill:" + c);
-                            node.setAttributeNS(null, "style", "fill-opacity:" + oo);
-                        }, 1);
+                        this._setAttribute(function() {
+                                node.setAttributeNS(null, "style", "fill:" + c);
+                                node.setAttributeNS(null, "style", "fill-opacity:" + oo);
+                            }, el.visPropOld.strokecolor);
                     }
                 } else {
-                    setTimeout(function() {
-                        node.setAttributeNS(null, 'stroke', c);
-                        node.setAttributeNS(null, 'stroke-opacity', oo);
-                    }, 1);
+                    this._setAttribute(function() {
+                            node.setAttributeNS(null, 'stroke', c);
+                            node.setAttributeNS(null, 'stroke-opacity', oo);
+                        }, el.visPropOld.strokecolor);
                 }
 
                 if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowColor(el.rendNodeTriangle, c, oo, el.rendNode);
+                    this._setArrowColor(el.rendNodeTriangle, c, oo, el);
                 } else if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                             el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
-                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el.rendNode);
+                        this._setArrowColor(el.rendNodeTriangleStart, c, oo, el);
                     }
 
                     if (el.visProp.lastarrow) {
-                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el.rendNode);
+                        this._setArrowColor(el.rendNodeTriangleEnd, c, oo, el);
                     }
                 }
             }
