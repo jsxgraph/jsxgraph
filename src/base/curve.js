@@ -227,15 +227,19 @@ define([
                 d = (this.maxX() - this.minX()) / steps,
                 prec = this.board.options.precision.hasPoint,
                 dist = Infinity,
+                ux2, uy2,
                 suspendUpdate = true;
 
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board, false);
             x = checkPoint.usrCoords[1];
             y = checkPoint.usrCoords[2];
 
-            // We use usrCoords
+            // We use usrCoords. Only in the final distance calculation
+            // screen coords are used
             prec += this.visProp.strokewidth * 0.5;
-            prec /= Math.sqrt(this.board.unitX * this.board.unitY);
+            prec *= prec; // We do not want to take sqrt
+            ux2 = this.board.unitX * this.board.unitX;
+            uy2 = this.board.unitY * this.board.unitY;
 
             if (this.transformations.length > 0) {
                 /**
@@ -259,9 +263,9 @@ define([
                     tX = this.X(t, suspendUpdate);
                     tY = this.Y(t, suspendUpdate);
 
-                    dist = (x - tX) * (x - tX) + (y - tY) * (y - tY);
+                    dist = (x - tX) * (x - tX) * ux2 + (y - tY) * (y - tY) * uy2;
 
-                    if (dist < prec) {
+                    if (dist <= prec) {
                         return true;
                     }
 
@@ -316,12 +320,14 @@ define([
                         }
                     }
 
-                    for (j = 0; j < res.length; j++) {
-                        if (res[j][1] >= 0 && res[j][1] <= 1 &&
-                                Geometry.distance([1, x, y], res[j][0], 3) <= prec) {
-                            return true;
-                        }
+                    //for (j = 0; j < res.length; j++) {
+                    j = 0; //res.length - 1;
+                    if (res[j][1] >= 0 && res[j][1] <= 1 &&
+                        (x - res[j][0][1]) * (x - res[j][0][1]) * ux2 +
+                        (y - res[j][0][2]) * (y - res[j][0][2]) * uy2 <= prec) {
+                        return true;
                     }
+                    //}
                 }
                 return false;
             }
