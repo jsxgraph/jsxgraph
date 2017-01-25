@@ -288,46 +288,42 @@ define([
                 }
 
                 for (i = start; i < len; i++) {
-                    res = [];
                     if (this.bezierDegree === 3) {
                         res.push(Geometry.projectCoordsToBeziersegment([1, x, y], this, i));
                     } else {
                         if (qdt) {
                             if (points[i].prev) {
-                                res.push(Geometry.projectCoordsToSegment(
+                                res = Geometry.projectCoordsToSegment(
                                     [1, x, y],
                                     points[i].prev.usrCoords,
                                     points[i].usrCoords
-                                ));
+                                );
                             }
 
                             // If the next point in the array is the same as the current points
                             // next neighbor we don't have to project it onto that segment because
                             // that will already be done in the next iteration of this loop.
                             if (points[i].next && points[i + 1] !== points[i].next) {
-                                res.push(Geometry.projectCoordsToSegment(
+                                res = Geometry.projectCoordsToSegment(
                                     [1, x, y],
                                     points[i].usrCoords,
                                     points[i].next.usrCoords
-                                ));
+                                );
                             }
                         } else {
-                            res.push(Geometry.projectCoordsToSegment(
+                            res = Geometry.projectCoordsToSegment(
                                 [1, x, y],
                                 points[i].usrCoords,
                                 points[i + 1].usrCoords
-                            ));
+                            );
                         }
                     }
 
-                    //for (j = 0; j < res.length; j++) {
-                    j = 0; //res.length - 1;
-                    if (res[j][1] >= 0 && res[j][1] <= 1 &&
-                        (x - res[j][0][1]) * (x - res[j][0][1]) * ux2 +
-                        (y - res[j][0][2]) * (y - res[j][0][2]) * uy2 <= prec) {
+                    if (res[1] >= 0 && res[1] <= 1 &&
+                        (x - res[0][1]) * (x - res[0][1]) * ux2 +
+                        (y - res[0][2]) * (y - res[0][2]) * uy2 <= prec) {
                         return true;
                     }
-                    //}
                 }
                 return false;
             }
