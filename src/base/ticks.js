@@ -805,8 +805,6 @@ define([
                     value = distance / this.visProp.scale;
                 }
 
-                labelText = value.toString();
-
                 // if value is Number
                 if (Type.isNumber(value)) {
                     if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {

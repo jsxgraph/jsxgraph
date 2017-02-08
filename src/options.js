@@ -3463,7 +3463,7 @@ define([
             anchorY: 'middle',
 
             /**
-             * The precision of the slider value displayed in the optional text.
+             * CSS class of the text in non-highlighted view.
              *
              * @name cssClass
              * @memberOf Text.prototype
@@ -3472,7 +3472,7 @@ define([
             cssClass: 'JXGtext',
 
             /**
-             * The precision of the slider value displayed in the optional text.
+             * CSS class of the text in highlighted view.
              *
              * @name highlightCssClass
              * @memberOf Text.prototype
