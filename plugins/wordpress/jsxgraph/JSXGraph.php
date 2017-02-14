@@ -32,7 +32,7 @@
 
 /*
 Plugin Name: JSXGraph
-Plugin URI: http://jsxgraph.org
+Plugin URI: https://jsxgraph.org
 Description: Embedding jsxgraph constructions
 Author: Peter Wilfahrt
 Version: 0.82
@@ -45,15 +45,15 @@ Author URI: http://www.webconsul.de/
 
 function jsxgraph_head() {
   // Stylesheet
-  $css_url = 'http://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css';
+  $css_url = 'https://jsxgraph.uni-bayreuth.de/distrib/jsxgraph.css';
   if(file_exists('wp-content/plugins/jsxgraph/jsxgraph.css')) $css_url = get_bloginfo('wpurl') . '/wp-content/plugins/jsxgraph/jsxgraph.css';
   if(file_exists(get_bloginfo("template_url") . '/jsxgraph.css')) $css_url = get_bloginfo('template_url') . '/jsxgraph.css';
 
   // jsxgraph core
-  $core_url = "http://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
+  $core_url = "https://jsxgraph.uni-bayreuth.de/distrib/jsxgraphcore.js";
   if(file_exists("wp-content/plugins/jsxgraph/jsxgraphcore.js")) $core_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/jsxgraphcore.js";
 
-  $gxtreader_url = "http://jsxgraph.uni-bayreuth.de/distrib/GeonextReader.js";
+  $gxtreader_url = "https://jsxgraph.uni-bayreuth.de/distrib/GeonextReader.js";
   if(file_exists("wp-content/plugins/jsxgraph/GeonextReader.js")) $gxtreader_url = get_bloginfo("wpurl") ."/wp-content/plugins/jsxgraph/GeonextReader.js";
 
   // Header-Output

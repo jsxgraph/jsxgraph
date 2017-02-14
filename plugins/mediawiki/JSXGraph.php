@@ -66,8 +66,8 @@
 $jsxgraph_version = '0.3.1';
 
 // CHANGE this to load local files:
-$outputURI        = 'http://jsxgraph.uni-bayreuth.de/distrib';
-$outputURICDN     = 'http://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94';
+$outputURI        = 'https://jsxgraph.uni-bayreuth.de/distrib';
+$outputURICDN     = 'https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/0.94';
 
 if(!defined('MEDIAWIKI')) {
   echo("This is an extension to the MediaWiki package and cannot be run standalone.\n");
@@ -86,8 +86,8 @@ if ( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
 $wgExtensionCredits['parserhook'][] = array(
   'name'        => 'JSXGraph MediaWiki Plugin',
   'author'      => 'Alfred Wassermann, Peter Wilfahrt',
-  'url'         => 'http://www.jsxgraph.org/',
-  'description' => 'Add [http://www.jsxgraph.org JSXGraph] to MediaWiki pages.',
+  'url'         => 'https://www.jsxgraph.org/',
+  'description' => 'Add [https://www.jsxgraph.org JSXGraph] to MediaWiki pages.',
   'version'     => $jsxgraph_version
 );
  
