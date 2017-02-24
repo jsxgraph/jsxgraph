@@ -791,6 +791,16 @@ define([
              */
             scalable: true,
 
+            /**
+             * If the element is dragged it will be moved on mousedown or touchstart to the
+             * top of its layer. Works only for SVG renderer and for ssimple elements 
+             * consisting of one SVG node. 
+             * @type Boolean
+             * @default false
+             * @name JXG.GeometryElement#scalable
+             */
+            dragToTopOfLayer: false,
+
             /*draft options */
             draft: {
                 /**
