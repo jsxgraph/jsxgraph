@@ -23,10 +23,11 @@
   <div id="debug" style="display:block;"></div>
   <script type="text/javascript">
     /* <![CDATA[ */
-        var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 450, unitX: 50, unitY: 20});
+        var board = JXG.JSXGraph.initBoard('jxgbox', {originX: 350, originY: 450, unitX: 50, unitY: 20, axis:true});
 
-        var dataArr = [4,1.2,3,2,5,7,1.54,function () { return 2; }];
+        var dataArr = [4, 1.2, 3, NaN, 5, 4, 1.54, function () { return 2; }];
         
+board.create('curve', [[0,1,2,3,4, 5, 6, 7], dataArr]);
         // Line chart
         function lineChart() {
             JXG.JSXGraph.freeBoard(board);
