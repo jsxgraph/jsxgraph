@@ -249,6 +249,7 @@ define([
                 node2.setAttributeNS(null, 'refY', 5);
                 node2.setAttributeNS(null, 'refX', 0);
                 node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
+                //node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10  L 5,5 z');
             }
 
             node2.appendChild(node3);

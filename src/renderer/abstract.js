@@ -366,7 +366,6 @@ define([
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
             if (element.visProp.lastarrow || element.visProp.firstarrow) {
-
                 s1 = element.point1.visProp.size;
                 s2 = element.point2.visProp.size;
                 s = s1 + s2;
