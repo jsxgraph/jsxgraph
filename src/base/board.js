@@ -956,9 +956,9 @@ define([
             }
 
             // Move drag element to the top of the layer
-            if (renderer.type === 'svg' &&
-                collect[0].visProp.dragtotopoflayer && 
-                collect.length === 1 && 
+            if (this.renderer.type === 'svg' &&
+                collect[0].visProp.dragtotopoflayer &&
+                collect.length === 1 &&
                 Type.exists(collect[0].rendNode)) {
 
                 collect[0].rendNode.parentNode.appendChild(collect[0].rendNode);
