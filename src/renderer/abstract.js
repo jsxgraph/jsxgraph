@@ -405,20 +405,20 @@ define([
                     if (d >= minlen) {
                         d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                         d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                        this._setArrowWidth(element.rendNodeTriangleEnd, s, element.rendNode);
                     } else {
-                        this._setArrowWidth(element.rendNodeTriangleEnd, 0, element.rendNode);
+                        s = 0.0;
                     }
+                    this._setArrowWidth(element.rendNodeTriangleEnd, 0, element.rendNode);
                 }
                 if (element.visProp.firstarrow &&
                     element.board.renderer.type !== 'vml') {
                     if (d >= minlen) {
                         d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
                         d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                        this._setArrowWidth(element.rendNodeTriangleStart, s, element.rendNode);
                     } else {
-                        this._setArrowWidth(element.rendNodeTriangleStart, 0, element.rendNode);
+                        s = 0;
                     }
+                    this._setArrowWidth(element.rendNodeTriangleStart, 0, element.rendNode);
                 }
             }
 
