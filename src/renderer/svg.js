@@ -94,6 +94,7 @@ define([
 
         // prepare the div container and the svg root node for use with JSXGraph
         this.container.style.MozUserSelect = 'none';
+        this.container.style.userSelect = 'none';
 
         this.container.style.overflow = 'hidden';
         if (this.container.style.position === '') {

@@ -78,6 +78,7 @@ define([
         if (Env.isBrowser) {
             this.container = container;
             this.container.style.MozUserSelect = 'none';
+            this.container.style.userSelect = 'none';
 
             this.container.style.overflow = 'hidden';
             if (this.container.style.position === '') {
