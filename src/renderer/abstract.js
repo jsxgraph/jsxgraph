@@ -408,7 +408,7 @@ define([
                     } else {
                         s = 0.0;
                     }
-                    this._setArrowWidth(element.rendNodeTriangleEnd, 0, element.rendNode);
+                    this._setArrowWidth(element.rendNodeTriangleEnd, s, element.rendNode);
                 }
                 if (element.visProp.firstarrow &&
                     element.board.renderer.type !== 'vml') {
@@ -418,7 +418,7 @@ define([
                     } else {
                         s = 0;
                     }
-                    this._setArrowWidth(element.rendNodeTriangleStart, 0, element.rendNode);
+                    this._setArrowWidth(element.rendNodeTriangleStart, s, element.rendNode);
                 }
             }
 
