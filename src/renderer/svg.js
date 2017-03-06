@@ -1141,10 +1141,8 @@ define([
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
-                if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowWidth(el.rendNodeTriangle, w, el.rendNode);
-                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
-                            el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
+                    el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
                         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                     }
