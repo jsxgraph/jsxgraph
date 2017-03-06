@@ -352,7 +352,7 @@ define([
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
-                minlen = 10,
+                minlen = 0,
                 margin = null;
 
             margin = element.visProp.margin;
@@ -362,13 +362,15 @@ define([
             /*
                Handle arrow heads.
 
-               The arrow head is an equilateral triangle with base length 10 and height 10.
+               The arrow head is an isosceles triangle with base length 10 and height 10.
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
             if (element.visProp.lastarrow || element.visProp.firstarrow) {
-                s1 = element.point1.visProp.size;
-                s2 = element.point2.visProp.size;
+                s1 = Type.evaluate(element.point1.visProp.size);
+                s2 = Type.evaluate(element.point2.visProp.size);
                 s = s1 + s2;
+
+                // Handle touchlastpoint /touchfirstpoint
                 if (element.visProp.lastarrow && element.visProp.touchlastpoint) {
                     d = c1.distance(Const.COORDS_BY_SCREEN, c2);
                     if (d > s) {
@@ -386,15 +388,37 @@ define([
                     }
                 }
 
-                s = Math.max(parseInt(element.visProp.strokewidth, 10) * 3, minlen);
+                // Correct the position of the arrow heads
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                if (element.visProp.lastarrow && element.board.renderer.type !== 'vml' && d >= minlen) {
-                    d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                //s = Math.max(parseInt(Type.evaluate(element.visProp.strokewidth), 10) * 3, minlen);
+                s = Type.evaluate(element.visProp.strokewidth) * 3;
+                if (element.visProp.lastarrow) {
+                    minlen += s;
                 }
-                if (element.visProp.firstarrow && element.board.renderer.type !== 'vml' && d >= minlen) {
-                    d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                    d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                if (element.visProp.firstarrow) {
+                    minlen += s;
+                }
+
+                if (element.visProp.lastarrow &&
+                    element.board.renderer.type !== 'vml') {
+
+                    if (d >= minlen) {
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                        this._setArrowWidth(element.rendNodeTriangleEnd, s, element.rendNode);
+                    } else {
+                        this._setArrowWidth(element.rendNodeTriangleEnd, 0, element.rendNode);
+                    }
+                }
+                if (element.visProp.firstarrow &&
+                    element.board.renderer.type !== 'vml') {
+                    if (d >= minlen) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                        this._setArrowWidth(element.rendNodeTriangleStart, s, element.rendNode);
+                    } else {
+                        this._setArrowWidth(element.rendNodeTriangleStart, 0, element.rendNode);
+                    }
                 }
             }
 

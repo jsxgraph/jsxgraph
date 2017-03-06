@@ -292,12 +292,18 @@ define([
             var s, d;
 
             if (node) {
-                s = width;
-                d = Math.max(s * 3, 10);
-                //node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + (s * 10) + ' ' + (s * 10));
-                node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
-                node.setAttributeNS(null, 'markerHeight', d);
-                node.setAttributeNS(null, 'markerWidth', d);
+                if (width === 0) {
+                    node.setAttributeNS(null, 'display', 'none');
+                } else {
+                    s = width;
+                    //d = Math.max(s * 3, 10);
+                    d = s * 3;
+                    //node.setAttributeNS(null, 'viewBox', (-s) + ' ' + (-s) + ' ' + (s * 10) + ' ' + (s * 10));
+                    node.setAttributeNS(null, 'viewBox', (0) + ' ' + (0) + ' ' + (s * 10) + ' ' + (s * 10));
+                    node.setAttributeNS(null, 'markerHeight', d);
+                    node.setAttributeNS(null, 'markerWidth', d);
+                    node.setAttributeNS(null, 'display', 'inherit');
+                }
 
                 if (this.isIE) {
                     parentNode.parentNode.insertBefore(parentNode, parentNode);
@@ -1144,10 +1150,13 @@ define([
                 if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
                     el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
+                        //d = el.point1.coords.distance(Const.COORDS_BY_SCREEN, el.point2.coords);
                         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
+                        //d = el.point1.coords.distance(Const.COORDS_BY_SCREEN, el.point2.coords);
+//console.log(d, Math.min(w*3,d));
                         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                     }
                 }
