@@ -433,10 +433,9 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var //s, d, d1x, d1y, d2x, d2y,
-                obj,
-                scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
-                scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
+            var obj,
+                c1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
+                c2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null;
 
             if (!el.visProp.visible) {
@@ -446,18 +445,18 @@ define([
             if (el.visProp.firstarrow || el.visProp.lastarrow) {
                 margin = -4;
             }
-            Geometry.calcStraight(el, scr1, scr2, margin);
+            Geometry.calcStraight(el, c1, c2, margin);
 
-            obj = this.getPositionArrowHead(el, scr1, scr2);
+            obj = this.getPositionArrowHead(el, c1, c2);
 
             this.context.beginPath();
-            this.context.moveTo(scr1.scrCoords[1] + obj.d1x, scr1.scrCoords[2] + obj.d1y);
-            this.context.lineTo(scr2.scrCoords[1] - obj.d2x, scr2.scrCoords[2] - obj.d2y);
+            this.context.moveTo(obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y);
+            this.context.lineTo(obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
             if ((el.visProp.firstarrow && obj.sFirst > 0) ||
                 (el.visProp.lastarrow && obj.sLast > 0)) {
-                this.makeArrows(el, scr1, scr2);
+                this.makeArrows(el, obj.c1, obj.c2);
             }
         },
 
@@ -754,22 +753,6 @@ define([
         // documented in AbstractRenderer
         makeArrows: function (el, scr1, scr2) {
             // not done yet for curves and arcs.
-            /*
-            var x1, y1, x2, y2, ang,
-                w = Math.min(el.visProp.strokewidth / 2, 3),
-                arrowHead = [
-                    [ 2, 0],
-                    [ -10, -4 * w],
-                    [ -10, 4 * w],
-                    [ 2, 0 ]
-                ],
-                arrowTail = [
-                    [ -2, 0],
-                    [ 10, -4 * w],
-                    [ 10, 4 * w]
-                ],
-                context = this.context;
-            */
             var x1, y1, x2, y2, ang,
                 w = Type.evaluate(el.visProp.strokewidth) * 3,
                 arrowHead = [
@@ -806,7 +789,7 @@ define([
                                 [ w,      -w * 0.5],
                                 [ 0.0,         0.0],
                                 [ w,       w * 0.5],
-                                [ w * 0.4,     0.0],
+                                [ w * 0.5,     0.0],
                             ];
                     } else if (type === 3) {
                         arrowTail = [
@@ -827,7 +810,7 @@ define([
                             [ -w, -w * 0.5],
                             [ 0.0,     0.0],
                             [ -w,  w * 0.5],
-                            [ -w * 0.6, 0.0]
+                            [ -w * 0.5, 0.0]
                         ];
                     } else if (type === 3) {
                         arrowHead = [
@@ -837,8 +820,6 @@ define([
                                 [-w / 3.0,    w * 0.5]
                             ];
                     }
-
-
                 }
 
                 context.save();

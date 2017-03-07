@@ -359,8 +359,8 @@ define([
             obj = this.getPositionArrowHead(element, c1, c2);
 
             this.updateLinePrim(element.rendNode,
-                c1.scrCoords[1] + obj.d1x, c1.scrCoords[2] + obj.d1y,
-                c2.scrCoords[1] - obj.d2x, c2.scrCoords[2] - obj.d2y, element.board);
+                obj.c1.scrCoords[1] + obj.d1x, obj.c1.scrCoords[2] + obj.d1y,
+                obj.c2.scrCoords[1] - obj.d2x, obj.c2.scrCoords[2] - obj.d2y, element.board);
 
             this.makeArrows(element);
             this._updateVisual(element);
@@ -376,6 +376,20 @@ define([
             this.setLineCap(element);
         },
 
+        /**
+         * Shorten the line length such that the arrow head touches
+         * the start or end point and such that the arrow head ends exactly
+         * at the start / end position of the line.
+         *
+         * @param  {JXG.Line} element Reference to the line object that gets arrow heads.
+         * @param  {JXG.Coords} c1   Coords of the first point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @param  {JXG.Coords} c2  Coords of the second point of the line (after {@link JXG.Geometry#calcStraight}).
+         * @return {object}        Object containing how much the line has to be shortened.
+         * Data structure: {d1x, d1y, d2x, d2y, sFirst, sLast}. sFirst and sLast is the length by which
+         * firstArrow and lastArrow have to shifted such that there is no gab between arrow head and line.
+         * Additionally, if one of these values is zero, the arrow is not displayed. This is the case, if the
+         * line length is very short.
+         */
         getPositionArrowHead: function(element, c1, c2) {
             var s, s1, s2, d, d1x, d1y, d2x, d2y,
                 minlen = Mat.eps,
@@ -392,8 +406,8 @@ define([
                These 10 units are scaled to strokeWidth*3 pixels or minlen pixels.
             */
             if (element.visProp.lastarrow || element.visProp.firstarrow) {
-                s1 = Type.evaluate(element.point1.visProp.size);
-                s2 = Type.evaluate(element.point2.visProp.size);
+                s1 = Type.evaluate(element.point1.visProp.size) + Type.evaluate(element.point1.visProp.strokewidth);
+                s2 = Type.evaluate(element.point2.visProp.size) + Type.evaluate(element.point2.visProp.strokewidth);
                 s = s1 + s2;
 
                 // Handle touchlastpoint /touchfirstpoint
@@ -428,7 +442,7 @@ define([
                 sFirst = sLast = sw * 3;
                 if (element.visProp.firstarrow) {
                     if (typeFirst === 2) {
-                        sFirst *= 0.4;
+                        sFirst *= 0.5;
                         minlen += sw*3;
                     } else if (typeFirst === 3) {
                         sFirst = sw;
@@ -439,7 +453,7 @@ define([
                 }
                 if (element.visProp.lastarrow) {
                     if (typeLast === 2) {
-                        sLast *= 0.4;
+                        sLast *= 0.5;
                         minlen += sw*3;
                     } else if (typeLast === 3) {
                         sLast = sw;
@@ -472,6 +486,8 @@ define([
             }
 
             return {
+                c1: c1,
+                c2: c2,
                 d1x: d1x,
                 d1y: d1y,
                 d2x: d2x,
