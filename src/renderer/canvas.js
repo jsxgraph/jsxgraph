@@ -195,7 +195,7 @@ define([
          */
         _setColor: function (element, type, targetType) {
             var hasColor = true, isTrace = false,
-                ev = element.visProp, hl,
+                ev = element.visProp, hl, sw,
                 rgba, rgbo, c, o, oo;
 
             type = type || 'stroke';
@@ -237,11 +237,12 @@ define([
                 hasColor = false;
             }
 
-            if (type === 'stroke' && !isNaN(parseFloat(ev.strokewidth))) {
-                if (parseFloat(ev.strokewidth) === 0) {
+            sw = parseFloat(Type.evaluate(ev.strokewidth));
+            if (type === 'stroke' && !isNaN(sw)) {
+                if (sw === 0) {
                     this.context.globalAlpha = 0;
                 } else {
-                    this.context.lineWidth = parseFloat(ev.strokewidth);
+                    this.context.lineWidth = sw;
                 }
             }
 
@@ -310,7 +311,7 @@ define([
                 scr = el.coords.scrCoords,
                 sqrt32 = size * Math.sqrt(3) * 0.5,
                 s05 = size * 0.5,
-                stroke05 = parseFloat(el.visProp.strokewidth) / 2.0,
+                stroke05 = parseFloat(Type.evaluate(el.visProp.strokewidth)) / 2.0,
                 context = this.context;
 
             if (!el.visProp.visible) {
@@ -432,7 +433,8 @@ define([
 
         // documented in AbstractRenderer
         drawLine: function (el) {
-            var s, d, d1x, d1y, d2x, d2y,
+            var //s, d, d1x, d1y, d2x, d2y,
+                obj,
                 scr1 = new Coords(Const.COORDS_BY_USER, el.point1.coords.usrCoords, el.board),
                 scr2 = new Coords(Const.COORDS_BY_USER, el.point2.coords.usrCoords, el.board),
                 margin = null;
@@ -446,35 +448,17 @@ define([
             }
             Geometry.calcStraight(el, scr1, scr2, margin);
 
-            d1x = d1y = d2x = d2y = 0.0;
-            /*
-               Handle arrow heads.
-
-               The arrow head is an isosceles triangle with base length 10 and height 10.
-               These 10 units are scaled to strokeWidth*3 pixels or minimum 10 pixels.
-            */
-            s = Math.max(parseInt(el.visProp.strokewidth, 10) * 3, 10);
-            if (el.visProp.lastarrow) {
-                d = scr1.distance(Const.COORDS_BY_SCREEN, scr2);
-                if (d > Mat.eps) {
-                    d2x = (scr2.scrCoords[1] - scr1.scrCoords[1]) * s / d;
-                    d2y = (scr2.scrCoords[2] - scr1.scrCoords[2]) * s / d;
-                }
-            }
-            if (el.visProp.firstarrow) {
-                d = scr1.distance(Const.COORDS_BY_SCREEN, scr2);
-                if (d > Mat.eps) {
-                    d1x = (scr2.scrCoords[1] - scr1.scrCoords[1]) * s / d;
-                    d1y = (scr2.scrCoords[2] - scr1.scrCoords[2]) * s / d;
-                }
-            }
+            obj = this.getPositionArrowHead(el, scr1, scr2);
 
             this.context.beginPath();
-            this.context.moveTo(scr1.scrCoords[1] + d1x, scr1.scrCoords[2] + d1y);
-            this.context.lineTo(scr2.scrCoords[1] - d2x, scr2.scrCoords[2] - d2y);
+            this.context.moveTo(scr1.scrCoords[1] + obj.d1x, scr1.scrCoords[2] + obj.d1y);
+            this.context.lineTo(scr2.scrCoords[1] - obj.d2x, scr2.scrCoords[2] - obj.d2y);
             this._stroke(el);
 
-            this.makeArrows(el, scr1, scr2);
+            if ((el.visProp.firstarrow && obj.sFirst > 0) ||
+                (el.visProp.lastarrow && obj.sLast > 0)) {
+                this.makeArrows(el, scr1, scr2);
+            }
         },
 
         // documented in AbstractRenderer
@@ -787,7 +771,7 @@ define([
                 context = this.context;
             */
             var x1, y1, x2, y2, ang,
-                w = Math.max(el.visProp.strokewidth * 3, 10),
+                w = Type.evaluate(el.visProp.strokewidth) * 3,
                 arrowHead = [
                     [ -w, -w * 0.5],
                     [ 0.0,     0.0],
@@ -798,9 +782,12 @@ define([
                     [ 0.0,      0.0],
                     [ w,    w * 0.5]
                 ],
-                context = this.context;
+                context = this.context,
+                type;
 
-            if (el.visProp.strokecolor !== 'none' && (el.visProp.lastarrow || el.visProp.firstarrow)) {
+            if (el.visProp.strokecolor !== 'none' &&
+                (el.visProp.lastarrow || el.visProp.firstarrow)
+               ) {
                 if (el.elementClass === Const.OBJECT_CLASS_LINE) {
                     x1 = scr1.scrCoords[1];
                     y1 = scr1.scrCoords[2];
@@ -808,6 +795,50 @@ define([
                     y2 = scr2.scrCoords[2];
                 } else {
                     return;
+                }
+
+                if (el.visProp.firstarrow &&
+                    JXG.exists(el.visProp.firstarrow.type)) {
+
+                    type = el.visProp.firstarrow.type;
+                    if (type === 2) {
+                        arrowTail = [
+                                [ w,      -w * 0.5],
+                                [ 0.0,         0.0],
+                                [ w,       w * 0.5],
+                                [ w * 0.4,     0.0],
+                            ];
+                    } else if (type === 3) {
+                        arrowTail = [
+                                [ w / 3.0,   -w * 0.5],
+                                [ 0.0,       -w * 0.5],
+                                [ 0.0,        w * 0.5],
+                                [ w / 3.0,    w * 0.5]
+                            ];
+                    }
+
+                }
+                if (el.visProp.lastarrow &&
+                    JXG.exists(el.visProp.lastarrow.type)) {
+
+                    type = el.visProp.lastarrow.type;
+                    if (type === 2) {
+                        arrowHead = [
+                            [ -w, -w * 0.5],
+                            [ 0.0,     0.0],
+                            [ -w,  w * 0.5],
+                            [ -w * 0.6, 0.0]
+                        ];
+                    } else if (type === 3) {
+                        arrowHead = [
+                                [-w / 3.0,   -w * 0.5],
+                                [ 0.0,       -w * 0.5],
+                                [ 0.0,        w * 0.5],
+                                [-w / 3.0,    w * 0.5]
+                            ];
+                    }
+
+
                 }
 
                 context.save();
@@ -910,7 +941,7 @@ define([
                 symbl = 'C',
                 nextSymb = symbm,
                 maxSize = 5000.0,
-                f = el.visProp.strokewidth,
+                f = Type.evaluate(el.visProp.strokewidth),
                 isNoPlot = (el.visProp.curvetype !== 'plot'),
                 context = this.context;
 

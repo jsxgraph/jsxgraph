@@ -214,7 +214,8 @@ define([
         _createArrowHead: function (element, idAppendix) {
             var node2, node3,
                 id = element.id + 'Triangle',
-                s, d;
+                type = null,
+                w, s;
 
             if (Type.exists(idAppendix)) {
                 id += idAppendix;
@@ -241,15 +242,40 @@ define([
                Changes here are also necessary in setArrowWidth().
             */
             node3 = this.container.ownerDocument.createElementNS(this.svgNamespace, 'path');
-            if (idAppendix === 'End') {     // First arrow
+            if (idAppendix === 'End') {
+                // First arrow
+                if (JXG.exists(element.visProp.firstarrow.type)) {
+                    type = element.visProp.firstarrow.type;
+                }
+
                 node2.setAttributeNS(null, 'refY', 5);
-                node2.setAttributeNS(null, 'refX', 10);
-                node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
-            } else {                        // Last arrow
+                if (type === 2) {
+                    node2.setAttributeNS(null, 'refX', 3.9);
+                    node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 L 4,5 z');
+                } else if (type === 3) {
+                        node2.setAttributeNS(null, 'refX', 3.33);
+                        node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
+                } else {
+                    node2.setAttributeNS(null, 'refX', 9.9);
+                    node3.setAttributeNS(null, 'd', 'M 10,0 L 0,5 L 10,10 z');
+                }
+            } else {
+                // Last arrow
+                if (JXG.exists(element.visProp.lastarrow.type)) {
+                    type = element.visProp.lastarrow.type;
+                }
+
                 node2.setAttributeNS(null, 'refY', 5);
-                node2.setAttributeNS(null, 'refX', 0);
-                node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
-                //node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10  L 5,5 z');
+                if (type === 2) {
+                    node2.setAttributeNS(null, 'refX', 6.1);
+                    node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 L 6,5 z');
+                } else if (type === 3) {
+                    node2.setAttributeNS(null, 'refX', 0.1);
+                    node3.setAttributeNS(null, 'd', 'M 0,0 L 3.33,0 L 3.33,10 L 0,10 z');
+                } else {
+                    node2.setAttributeNS(null, 'refX', 0.1);
+                    node3.setAttributeNS(null, 'd', 'M 0,0 L 10,5 L 0,10 z');
+                }
             }
 
             node2.appendChild(node3);
@@ -1147,16 +1173,13 @@ define([
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
-                if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
-                    el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE /*||
+                el.elementClass === Const.OBJECT_CLASS_LINE*/) {
                     if (el.visProp.firstarrow) {
-                        //d = el.point1.coords.distance(Const.COORDS_BY_SCREEN, el.point2.coords);
                         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
                     }
 
                     if (el.visProp.lastarrow) {
-                        //d = el.point1.coords.distance(Const.COORDS_BY_SCREEN, el.point2.coords);
-//console.log(d, Math.min(w*3,d));
                         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
                     }
                 }

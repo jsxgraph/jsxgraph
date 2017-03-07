@@ -957,6 +957,7 @@ define([
 
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
+                JXG.exists(collect[0]) &&
                 collect[0].visProp.dragtotopoflayer &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)) {

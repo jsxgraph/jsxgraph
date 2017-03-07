@@ -349,14 +349,40 @@ define([
          * @see JXG.AbstractRenderer#drawLine
          */
         updateLine: function (element) {
-            var s, s1, s2, d, d1x, d1y, d2x, d2y,
-                c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
+            var c1 = new Coords(Const.COORDS_BY_USER, element.point1.coords.usrCoords, element.board),
                 c2 = new Coords(Const.COORDS_BY_USER, element.point2.coords.usrCoords, element.board),
-                minlen = 0,
-                margin = null;
+                obj, margin = null;
 
             margin = element.visProp.margin;
             Geometry.calcStraight(element, c1, c2, margin);
+
+            obj = this.getPositionArrowHead(element, c1, c2);
+
+            this.updateLinePrim(element.rendNode,
+                c1.scrCoords[1] + obj.d1x, c1.scrCoords[2] + obj.d1y,
+                c2.scrCoords[1] - obj.d2x, c2.scrCoords[2] - obj.d2y, element.board);
+
+            this.makeArrows(element);
+            this._updateVisual(element);
+
+            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml') {
+                this._setArrowWidth(element.rendNodeTriangleStart, obj.sFirst, element.rendNode);
+            }
+            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml') {
+                this._setArrowWidth(element.rendNodeTriangleEnd, obj.sLast, element.rendNode);
+            }
+
+
+            this.setLineCap(element);
+        },
+
+        getPositionArrowHead: function(element, c1, c2) {
+            var s, s1, s2, d, d1x, d1y, d2x, d2y,
+                minlen = Mat.eps,
+                typeFirst, typeLast,
+                sFirst = 0,
+                sLast = 0,
+                sw;
 
             d1x = d1y = d2x = d2y = 0.0;
             /*
@@ -390,45 +416,69 @@ define([
 
                 // Correct the position of the arrow heads
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
-                //s = Math.max(parseInt(Type.evaluate(element.visProp.strokewidth), 10) * 3, minlen);
-                s = Type.evaluate(element.visProp.strokewidth) * 3;
-                if (element.visProp.lastarrow) {
-                    minlen += s;
+
+                if (JXG.exists(element.visProp.firstarrow.type)) {
+                    typeFirst = element.visProp.firstarrow.type;
                 }
+                if (JXG.exists(element.visProp.lastarrow.type)) {
+                    typeLast = element.visProp.lastarrow.type;
+                }
+
+                sw = Type.evaluate(element.visProp.strokewidth);
+                sFirst = sLast = sw * 3;
                 if (element.visProp.firstarrow) {
-                    minlen += s;
+                    if (typeFirst === 2) {
+                        sFirst *= 0.4;
+                        minlen += sw*3;
+                    } else if (typeFirst === 3) {
+                        sFirst = sw;
+                        minlen += sw;
+                    } else {
+                        minlen += sw*3;
+                    }
+                }
+                if (element.visProp.lastarrow) {
+                    if (typeLast === 2) {
+                        sLast *= 0.4;
+                        minlen += sw*3;
+                    } else if (typeLast === 3) {
+                        sLast = sw;
+                        minlen += sw;
+                    } else {
+                        minlen += sw*3;
+                    }
+                }
+
+                if (element.visProp.firstarrow &&
+                    element.board.renderer.type !== 'vml') {
+                    if (d >= minlen) {
+                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * sFirst / d;
+                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * sFirst / d;
+                    } else {
+                        sFirst = 0;
+                    }
                 }
 
                 if (element.visProp.lastarrow &&
                     element.board.renderer.type !== 'vml') {
 
                     if (d >= minlen) {
-                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
+                        d2x = (c2.scrCoords[1] - c1.scrCoords[1]) * sLast / d;
+                        d2y = (c2.scrCoords[2] - c1.scrCoords[2]) * sLast / d;
                     } else {
-                        s = 0.0;
+                        sLast = 0.0;
                     }
-                    this._setArrowWidth(element.rendNodeTriangleEnd, s, element.rendNode);
-                }
-                if (element.visProp.firstarrow &&
-                    element.board.renderer.type !== 'vml') {
-                    if (d >= minlen) {
-                        d1x = (c2.scrCoords[1] - c1.scrCoords[1]) * s / d;
-                        d1y = (c2.scrCoords[2] - c1.scrCoords[2]) * s / d;
-                    } else {
-                        s = 0;
-                    }
-                    this._setArrowWidth(element.rendNodeTriangleStart, s, element.rendNode);
                 }
             }
 
-            this.updateLinePrim(element.rendNode,
-                c1.scrCoords[1] + d1x, c1.scrCoords[2] + d1y,
-                c2.scrCoords[1] - d2x, c2.scrCoords[2] - d2y, element.board);
-
-            this.makeArrows(element);
-            this._updateVisual(element);
-            this.setLineCap(element);
+            return {
+                d1x: d1x,
+                d1y: d1y,
+                d2x: d2x,
+                d2y: d2y,
+                sFirst: sFirst,
+                sLast: sLast
+            };
         },
 
         /**
