@@ -429,6 +429,7 @@ define([
                 }
 
                 // Correct the position of the arrow heads
+                d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
                 if (JXG.exists(element.visProp.firstarrow.type)) {
