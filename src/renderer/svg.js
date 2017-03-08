@@ -984,7 +984,6 @@ define([
             var node, transitionStr,
                 i, len,
                 nodes = ['rendNode',
-                         'rendNodeTriangle',
                          'rendNodeTriangleStart',
                          'rendNodeTriangleEnd'];
 
@@ -1138,10 +1137,8 @@ define([
                         }, el.visPropOld.strokecolor);
                 }
 
-                if (el.type === Const.OBJECT_TYPE_ARROW) {
-                    this._setArrowColor(el.rendNodeTriangle, c, oo, el);
-                } else if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
-                            el.elementClass === Const.OBJECT_CLASS_LINE) {
+                if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
+                    el.elementClass === Const.OBJECT_CLASS_LINE) {
                     if (el.visProp.firstarrow) {
                         this._setArrowColor(el.rendNodeTriangleStart, c, oo, el);
                     }
@@ -1171,16 +1168,16 @@ define([
             if (Type.exists(w)) {
                 this.setPropertyPrim(node, 'stroke-width', w + 'px');
 
-                if (el.elementClass === Const.OBJECT_CLASS_CURVE /*||
-                el.elementClass === Const.OBJECT_CLASS_LINE*/) {
-                    if (el.visProp.firstarrow) {
-                        this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
-                    }
-
-                    if (el.visProp.lastarrow) {
-                        this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
-                    }
-                }
+                // if (el.elementClass === Const.OBJECT_CLASS_CURVE ||
+                // el.elementClass === Const.OBJECT_CLASS_LINE) {
+                //     if (el.visProp.firstarrow) {
+                //         this._setArrowWidth(el.rendNodeTriangleStart, w, el.rendNode);
+                //     }
+                //
+                //     if (el.visProp.lastarrow) {
+                //         this._setArrowWidth(el.rendNodeTriangleEnd, w, el.rendNode);
+                //     }
+                // }
              }
             el.visPropOld.strokewidth = w;
         },

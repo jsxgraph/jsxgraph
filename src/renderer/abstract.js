@@ -365,10 +365,10 @@ define([
             this.makeArrows(element);
             this._updateVisual(element);
 
-            if (element.visProp.firstarrow && element.board.renderer.type !== 'vml') {
+            if (element.visProp.firstarrow) {
                 this._setArrowWidth(element.rendNodeTriangleStart, obj.sFirst, element.rendNode);
             }
-            if (element.visProp.lastarrow && element.board.renderer.type !== 'vml') {
+            if (element.visProp.lastarrow) {
                 this._setArrowWidth(element.rendNodeTriangleEnd, obj.sLast, element.rendNode);
             }
 
@@ -549,6 +549,9 @@ define([
         drawCurve: function (element) {
             element.rendNode = this.appendChildPrim(this.createPrim('path', element.id), element.visProp.layer);
             this.appendNodesToElement(element, 'path');
+            if (element.numberPoints > 1) {
+                this.makeArrows(element);
+            }
             this._updateVisual(element, {shadow: true}, true);
             this.updateCurve(element);
         },
@@ -561,15 +564,25 @@ define([
          * @see JXG.AbstractRenderer#drawCurve
          */
         updateCurve: function (element) {
-            this._updateVisual(element);
+            var w = Type.evaluate(element.visProp.strokewidth);
+
             if (element.visProp.handdrawing) {
                 this.updatePathPrim(element.rendNode, this.updatePathStringBezierPrim(element), element.board);
             } else {
                 this.updatePathPrim(element.rendNode, this.updatePathStringPrim(element), element.board);
             }
+
             if (element.numberPoints > 1) {
                 this.makeArrows(element);
+                if (element.visProp.firstarrow) {
+                    this._setArrowWidth(element.rendNodeTriangleStart, w, element.rendNode);
+                }
+                if (element.visProp.lastarrow) {
+                    this._setArrowWidth(element.rendNodeTriangleEnd, w, element.rendNode);
+                }
             }
+            this._updateVisual(element);
+
         },
 
         /* **************************
@@ -1114,7 +1127,7 @@ define([
         makeArrows: function (element) { /* stub */ },
 
         /**
-         * Updates width of an arrow DOM node. Used in 
+         * Updates width of an arrow DOM node. Used in
          * @param {Node} node The arrow node.
          * @param {Number} width
          * @param {Node} parentNode Used in IE only
