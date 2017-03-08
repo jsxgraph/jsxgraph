@@ -372,7 +372,6 @@ define([
                 this._setArrowWidth(element.rendNodeTriangleEnd, obj.sLast, element.rendNode);
             }
 
-
             this.setLineCap(element);
         },
 
@@ -1113,6 +1112,14 @@ define([
          * @param {JXG.GeometryElement} element The element the arrows are to be attached to.
          */
         makeArrows: function (element) { /* stub */ },
+
+        /**
+         * Updates width of an arrow DOM node. Used in 
+         * @param {Node} node The arrow node.
+         * @param {Number} width
+         * @param {Node} parentNode Used in IE only
+         */
+        _setArrowWidth: function(node, width, parentNode) { /* stub */},
 
         /**
          * Updates an ellipse node primitive. This is an abstract method which has to be implemented in all renderers

@@ -309,11 +309,7 @@ define([
 
         },
 
-        /**
-         * Updates width of an arrow DOM node.
-         * @param {Node} node The arrow node.
-         * @param {Number} width
-         */
+        // already documented in JXG.AbstractRenderer
         _setArrowWidth: function (node, width, parentNode) {
             var s, d;
 
@@ -556,8 +552,10 @@ define([
         makeArrows: function (el) {
             var node2;
 
-            if (el.visPropOld.firstarrow === el.visProp.firstarrow && el.visPropOld.lastarrow === el.visProp.lastarrow) {
-                if (this.isIE && el.visProp.visible && (el.visProp.firstarrow || el.visProp.lastarrow)) {
+            if (el.visPropOld.firstarrow === el.visProp.firstarrow &&
+                el.visPropOld.lastarrow === el.visProp.lastarrow) {
+                if (this.isIE && el.visProp.visible &&
+                    (el.visProp.firstarrow || el.visProp.lastarrow)) {
                     el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 }
                 return;
