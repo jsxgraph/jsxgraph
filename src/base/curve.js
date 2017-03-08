@@ -236,7 +236,7 @@ define([
 
             // We use usrCoords. Only in the final distance calculation
             // screen coords are used
-            prec += this.visProp.strokewidth * 0.5;
+            prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
             prec *= prec; // We do not want to take sqrt
             ux2 = this.board.unitX * this.board.unitX;
             uy2 = this.board.unitY * this.board.unitY;
