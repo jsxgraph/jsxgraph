@@ -511,6 +511,9 @@ define([
             } else {
                 this.updatePathStringPrim(el);
             }
+            if (el.numberPoints > 1) {
+                this.makeArrows(el);
+            }
         },
 
         // documented in AbstractRenderer
@@ -777,6 +780,10 @@ define([
                     x2 = scr2.scrCoords[1];
                     y2 = scr2.scrCoords[2];
                 } else {
+                    x1 = el.points[0].scrCoords[1];
+                    y1 = el.points[0].scrCoords[2];
+                    x2 = el.points[el.points.length - 1].scrCoords[1];
+                    y2 = el.points[el.points.length - 1].scrCoords[2];
                     return;
                 }
 
