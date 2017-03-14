@@ -164,6 +164,7 @@ define([
          * @private
          */
         this.supportsForeignObject = false;
+
     };
 
     JXG.extend(JXG.AbstractRenderer.prototype, /** @lends JXG.AbstractRenderer.prototype */ {
@@ -746,10 +747,10 @@ define([
                 if (!Type.exists(level)) { // trace nodes have level not set
                     level = 0;
                 }
-                if (!element.visProp.externalhtml && this.supportsForeignObject &&
-                    Type.exists(this.foreignObjLayer[level])) {
-                    this.foreignObjLayer[level].appendChild(node);
-                } else {
+                // if (false && !element.visProp.externalhtml && this.supportsForeignObject &&
+                //     Type.exists(this.foreignObjLayer[level])) {
+                //     this.foreignObjLayer[level].appendChild(node);
+                // } else {
                     if (this.container.style.zIndex === '') {
                         z = 0;
                     } else {
@@ -758,7 +759,7 @@ define([
 
                     node.style.zIndex = z + level;
                     this.container.appendChild(node);
-                }
+                // }
 
                 node.setAttribute('id', this.container.id + '_' + element.id);
             } else {

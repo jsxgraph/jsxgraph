@@ -170,19 +170,29 @@ define([
 
         // already documented in JXG.AbstractRenderer
         this.supportsForeignObject = document.implementation.hasFeature("www.http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
-        if (this.supportsForeignObject) {
-            this.foreignObjLayer = [];
-            for (i = 0; i < Options.layer.numlayers; i++) {
-                if (i === Options.layer.text || i === 0) {    // 0 is for traces
-                    this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
 
-                    this.foreignObjLayer[i].setAttribute("x",0);
-                    this.foreignObjLayer[i].setAttribute("y",0);
-                    this.foreignObjLayer[i].setAttribute("width","100%");
-                    this.foreignObjLayer[i].setAttribute("height","100%");
-                    this.layer[i].appendChild(this.foreignObjLayer[i]);
-                }
-            }
+        if (this.supportsForeignObject) {
+
+            // this.foreignObjLayer = [];
+            // for (i = 0; i < Options.layer.numlayers; i++) {
+            //     if (i === Options.layer.text || i === 0) {    // 0 is for traces
+            //         this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+            //
+            //         this.foreignObjLayer[i].setAttribute("x",0);
+            //         this.foreignObjLayer[i].setAttribute("y",0);
+            //         this.foreignObjLayer[i].setAttribute("width","100%");
+            //         this.foreignObjLayer[i].setAttribute("height","100%");
+            //         this.layer[i].appendChild(this.foreignObjLayer[i]);
+            //     }
+            // }
+            this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
+            this.foreignObjLayer.setAttribute("x",0);
+            this.foreignObjLayer.setAttribute("y",0);
+            this.foreignObjLayer.setAttribute("width","100%");
+            this.foreignObjLayer.setAttribute("height","100%");
+            this.foreignObjLayer.setAttribute('id', this.container.id + '_foreignObj');
+            this.svgRoot.appendChild(this.foreignObjLayer);
+
         }
 
         /**
@@ -1311,18 +1321,30 @@ define([
          * But HTML texts are ignored on IE. The drawing is done with a delay of
          * 200 ms. Otherwise there are problems with IE.
          *
-         * @param  {String} canvasId Id of an HTML canvas element
+         * @param {String} canvasId Id of an HTML canvas element
+         * @param {Number} w Width in pixel of the dumped image, i.e. of the canvas tag.
+         * @param {Number} h Height in pixel of the dumped image, i.e. of the canvas tag.
          * @returns {Object}          the svg renderer object.
          *
          * @example
          * 	board.renderer.dumpToCanvas('canvas');
          */
-        dumpToCanvas: function(canvasId) {
+        dumpToCanvas: function(canvasId, w, h) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx;
 
+            //var i, children, len;
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+            // Move all HTML tags (beside the SVG root) of the container
+            // to the foreignObject element inside of the svgRoot node
+            if (this.container.hasChildNodes()) {
+                while (svgRoot.nextSibling) {
+                    this.foreignObjLayer.appendChild(svgRoot.nextSibling);
+                }
+            }
+
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             // In IE we have to remove the namespace again.
@@ -1331,17 +1353,35 @@ define([
             }
 
             cv = document.getElementById(canvasId);
+            // Clear the canvas
+            cv.width = cv.width;
+
             ctx = cv.getContext("2d");
+            if (w !== undefined && h !== undefined) {
+                // Scale twice the CSS size to make the image crisp
+                cv.style.width = parseFloat(w) + 'px';
+                cv.style.height = parseFloat(h) + 'px';
+                cv.setAttribute('width', (2 * parseFloat(w)) + 'px');
+                cv.setAttribute('height',(2 * parseFloat(h)) + 'px');
+                ctx.scale(2, 2);
+            }
 
             tmpImg = new Image();
             tmpImg.onload = function () {
                 // IE needs a pause...
                 setTimeout(function(){
-                    cv.width = cv.width;
                     ctx.drawImage(tmpImg, 0, 0);
                 }, 200);
             };
             tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+
+            // Move all HTML tags back from
+            // the foreignObject element to the container
+            if (this.foreignObjLayer.hasChildNodes()) {
+                while (this.foreignObjLayer.firstChild) {
+                    this.container.appendChild(this.foreignObjLayer.firstChild);
+                }
+            }
 
             return this;
         }
