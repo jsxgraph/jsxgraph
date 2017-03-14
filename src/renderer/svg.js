@@ -172,19 +172,6 @@ define([
         this.supportsForeignObject = document.implementation.hasFeature("www.http://w3.org/TR/SVG11/feature#Extensibility", "1.1");
 
         if (this.supportsForeignObject) {
-
-            // this.foreignObjLayer = [];
-            // for (i = 0; i < Options.layer.numlayers; i++) {
-            //     if (i === Options.layer.text || i === 0) {    // 0 is for traces
-            //         this.foreignObjLayer[i] = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
-            //
-            //         this.foreignObjLayer[i].setAttribute("x",0);
-            //         this.foreignObjLayer[i].setAttribute("y",0);
-            //         this.foreignObjLayer[i].setAttribute("width","100%");
-            //         this.foreignObjLayer[i].setAttribute("height","100%");
-            //         this.layer[i].appendChild(this.foreignObjLayer[i]);
-            //     }
-            // }
             this.foreignObjLayer = this.container.ownerDocument.createElementNS(this.svgNamespace, 'foreignObject');
             this.foreignObjLayer.setAttribute("x",0);
             this.foreignObjLayer.setAttribute("y",0);
@@ -192,7 +179,6 @@ define([
             this.foreignObjLayer.setAttribute("height","100%");
             this.foreignObjLayer.setAttribute('id', this.container.id + '_foreignObj');
             this.svgRoot.appendChild(this.foreignObjLayer);
-
         }
 
         /**

@@ -793,8 +793,8 @@ define([
 
             /**
              * If the element is dragged it will be moved on mousedown or touchstart to the
-             * top of its layer. Works only for SVG renderer and for ssimple elements 
-             * consisting of one SVG node. 
+             * top of its layer. Works only for SVG renderer and for ssimple elements
+             * consisting of one SVG node.
              * @type Boolean
              * @default false
              * @name JXG.GeometryElement#scalable
@@ -1403,17 +1403,6 @@ define([
              */
             disabled: false,
 
-            /**
-             * If true, the element is not placed into a foreignObject element.
-             * Instead, the element is placed into a separate HTML div element "above"
-             * the JSXGraph construction.
-             * This is necessary to enable interaction.
-             * The drawback is that a SVG export will not display this element.
-             *
-             * @type {Boolean}
-             */
-            externalHTML: true
-
             /**#@-*/
         },
 
@@ -1450,17 +1439,6 @@ define([
              * @default false
              */
             disabled: false,
-
-            /**
-             * If true, the element is not placed into a foreignObject element.
-             * Instead, the element is placed into a separate HTML div element "above"
-             * the JSXGraph construction.
-             * This is necessary to enable interaction.
-             * The drawback is that a SVG export will not display this element.
-             *
-             * @type {Boolean}
-             */
-            externalHTML: true
 
             /**#@-*/
         },
@@ -2054,17 +2032,6 @@ define([
              * @default false
              */
             disabled: false,
-
-            /**
-             * If true, the element is not placed into a foreignObject element.
-             * Instead, the element is placed into a separate HTML div element "above"
-             * the JSXGraph construction.
-             * This is necessary to enable interaction.
-             * The drawback is that a SVG export will not display this element.
-             *
-             * @type {Boolean}
-             */
-            externalHTML: true
 
             /**#@-*/
         },
@@ -3427,17 +3394,6 @@ define([
              * @type String
              */
             display: 'html',
-
-            /**
-             * If true, the element is not placed into a foreignObject element.
-             * Instead, the element is placed into a separate HTML div element "above"
-             * the JSXGraph construction.
-             * This is necessary to enable interaction.
-             * The drawback is that a SVG export will not display this element.
-             *
-             * @type {Boolean}
-             */
-            externalHTML: true,
 
             /**
              * Anchor element {@link Point}, {@link Text} or {@link Image} of the text. If it exists, the coordinates of the text are relative

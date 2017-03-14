@@ -732,34 +732,21 @@ define([
                 node = this.container.ownerDocument.createElement('div');
                 //node = this.container.ownerDocument.createElementNS('http://www.w3.org/1999/xhtml', 'div'); //
                 node.style.position = 'absolute';
-
                 node.className = element.visProp.cssclass;
 
-                /* SVG renderer - beside IE 9-11 - support foreignObject. This
-                   is used to host the HTML. Then, conversion to canvas works also
-                   for HTML text.
-
-                   But to allow interaction with the HTML elements (e.g. buttons) all such texts
-                   have to be in a single foreign object. The reason is our foreign objects have to cover the
-                   whole board and would block event bubbling.
-                 */
                 level = element.visProp.layer;
                 if (!Type.exists(level)) { // trace nodes have level not set
                     level = 0;
                 }
-                // if (false && !element.visProp.externalhtml && this.supportsForeignObject &&
-                //     Type.exists(this.foreignObjLayer[level])) {
-                //     this.foreignObjLayer[level].appendChild(node);
-                // } else {
-                    if (this.container.style.zIndex === '') {
-                        z = 0;
-                    } else {
-                        z = parseInt(this.container.style.zIndex, 10);
-                    }
 
-                    node.style.zIndex = z + level;
-                    this.container.appendChild(node);
-                // }
+                if (this.container.style.zIndex === '') {
+                    z = 0;
+                } else {
+                    z = parseInt(this.container.style.zIndex, 10);
+                }
+
+                node.style.zIndex = z + level;
+                this.container.appendChild(node);
 
                 node.setAttribute('id', this.container.id + '_' + element.id);
             } else {
