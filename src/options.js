@@ -3067,7 +3067,11 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
-                strokeColor: '#000000'
+                strokeColor: '#000000',
+                label: {
+                    display: 'internal'
+                }
+
             },
 
             /**

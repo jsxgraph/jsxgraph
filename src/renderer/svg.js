@@ -1320,8 +1320,6 @@ define([
                 btoa = window.btoa || Base64.encode,
                 svg, tmpImg, cv, ctx;
 
-            //var i, children, len;
-            svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
             // Move all HTML tags (beside the SVG root) of the container
             // to the foreignObject element inside of the svgRoot node
@@ -1331,11 +1329,12 @@ define([
                 }
             }
 
+            svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             // In IE we have to remove the namespace again.
             if ((svg.match(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g) || []).length > 1) {
-                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/, '');
+                svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
             }
 
             cv = document.getElementById(canvasId);
@@ -1353,13 +1352,30 @@ define([
             }
 
             tmpImg = new Image();
+
+            tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
             tmpImg.onload = function () {
                 // IE needs a pause...
                 setTimeout(function(){
                     ctx.drawImage(tmpImg, 0, 0);
                 }, 200);
             };
-            tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+
+            /*
+            // Alternative version
+            var DOMURL = window.URL || window.webkitURL || window;
+            var svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+            var url = DOMURL.createObjectURL(svgBlob);
+            tmpImg.src = url;
+
+            tmpImg.onload = function () {
+                // IE needs a pause...
+                setTimeout(function(){
+                    ctx.drawImage(tmpImg, 0, 0);
+                }, 200);
+                DOMURL.revokeObjectURL(url);
+            };
+            */
 
             // Move all HTML tags back from
             // the foreignObject element to the container

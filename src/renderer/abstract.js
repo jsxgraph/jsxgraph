@@ -1478,6 +1478,9 @@ define([
                     button = doc.createElement('span');
                     node.appendChild(button);
                     button.appendChild(doc.createTextNode(label));
+                    button.style.paddingLeft = '7px';
+                    button.style.paddingRight = '7px';
+
                     Env.addEvent(button, 'mouseover', function () {
                         this.style.backgroundColor = attr.highlightfillcolor;
                     }, button);
@@ -1519,28 +1522,28 @@ define([
                     // full reload circle: \u27F2
                     // the board.reload() method does not exist during the creation
                     // of this button. That's why this anonymous function wrapper is required.
-                    createButton('\u00A0\u21BB\u00A0', function () {
+                    createButton('\u21BB', function () {
                         board.reload();
                     });
                 }
 
                 if (board.attr.showcleartraces) {
                     // clear traces symbol (otimes): \u27F2
-                    createButton('\u00A0\u2297\u00A0', function () {
+                    createButton('\u2297', function () {
                         board.clearTraces();
                     });
                 }
 
                 if (board.attr.shownavigation) {
                     if (board.attr.showzoom) {
-                        createButton('\u00A0\u2013\u00A0', board.zoomOut);
-                        createButton('\u00A0o\u00A0', board.zoom100);
-                        createButton('\u00A0+\u00A0', board.zoomIn);
+                        createButton('\u2013', board.zoomOut);
+                        createButton('o', board.zoom100);
+                        createButton('+', board.zoomIn);
                     }
-                    createButton('\u00A0\u2190\u00A0', board.clickLeftArrow);
-                    createButton('\u00A0\u2193\u00A0', board.clickUpArrow);
-                    createButton('\u00A0\u2191\u00A0', board.clickDownArrow);
-                    createButton('\u00A0\u2192\u00A0', board.clickRightArrow);
+                    createButton('\u2190', board.clickLeftArrow);
+                    createButton('\u2193', board.clickUpArrow);
+                    createButton('\u2191', board.clickDownArrow);
+                    createButton('\u2192', board.clickRightArrow);
                 }
             }
         },
