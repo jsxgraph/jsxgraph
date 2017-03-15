@@ -1353,29 +1353,29 @@ define([
 
             tmpImg = new Image();
 
-            tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
-            tmpImg.onload = function () {
-                // IE needs a pause...
-                setTimeout(function(){
-                    ctx.drawImage(tmpImg, 0, 0);
-                }, 200);
-            };
+            if (true) {
+                tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+                tmpImg.onload = function () {
+                    // IE needs a pause...
+                    setTimeout(function(){
+                        ctx.drawImage(tmpImg, 0, 0);
+                    }, 200);
+                };
+            } else {
+                // Alternative version
+                var DOMURL = window.URL || window.webkitURL || window;
+                var svgBlob = new Blob([svg], {type: 'image/svg+xml'});
+                var url = DOMURL.createObjectURL(svgBlob);
+                tmpImg.src = url;
 
-            /*
-            // Alternative version
-            var DOMURL = window.URL || window.webkitURL || window;
-            var svgBlob = new Blob([svg], {type: 'image/svg+xml'});
-            var url = DOMURL.createObjectURL(svgBlob);
-            tmpImg.src = url;
-
-            tmpImg.onload = function () {
-                // IE needs a pause...
-                setTimeout(function(){
-                    ctx.drawImage(tmpImg, 0, 0);
-                }, 200);
-                DOMURL.revokeObjectURL(url);
-            };
-            */
+                tmpImg.onload = function () {
+                    // IE needs a pause...
+                    setTimeout(function(){
+                        ctx.drawImage(tmpImg, 0, 0);
+                    }, 200);
+                    DOMURL.revokeObjectURL(url);
+                };
+            }
 
             // Move all HTML tags back from
             // the foreignObject element to the container
