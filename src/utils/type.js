@@ -1046,18 +1046,19 @@ define([
          */
         clearVisPropOld: function (el) {
             el.visPropOld = {
+                cssclass: '',
+                cssstyle: '',
+                fillcolor: '',
+                fillopacity: '',
+                firstarrow: false,
+                fontsize: -1,
+                lastarrow: false,
+                left: -100000,
+                linecap: '',
+                shadow: false,
                 strokecolor: '',
                 strokeopacity: '',
                 strokewidth: '',
-                fillcolor: '',
-                fillopacity: '',
-                linecap: '',
-                shadow: false,
-                firstarrow: false,
-                lastarrow: false,
-                cssclass: '',
-                fontsize: -1,
-                left: -100000,
                 top: -100000
             };
 

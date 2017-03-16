@@ -869,6 +869,23 @@ define([
             }
         },
 
+        _css2js: function(cssString) {
+            var pairs = [],
+                i, len, key, val, s,
+                list = cssString.replace(/ /g, '').replace(/;$/, '').split(";");
+
+            len = list.length;
+            for (i = 0; i < len; ++i) {
+                s = list[i].split(':');
+                key = s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+                val = s[1];
+                pairs.push({'key': key, 'val': val});
+                //console.log(key, val);
+            }
+            return pairs;
+
+        },
+
         /**
          * Updates font-size, color and opacity propertiey and CSS style properties of a {@link JXG.Text} node.
          * This function is also called by highlight() and nohighlight().
@@ -883,40 +900,60 @@ define([
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateTextStyle: function (element, doHighlight) {
-            var fs, so, sc, css, node, list,
+            var fs, so, sc, css, cssStyle, node, prop, cssList,
                 ev = element.visProp,
-                display = Env.isBrowser ? ev.display : 'internal';
+                display = Env.isBrowser ? ev.display : 'internal',
+                nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'];
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
                 so = ev.highlightstrokeopacity;
                 css = ev.highlightcssclass;
+                cssStyle = ev.cssstyle;
             } else {
                 sc = ev.strokecolor;
                 so = ev.strokeopacity;
                 css = ev.cssclass;
+                cssStyle = ev.cssstyle;
             }
 
             // This part is executed for all text elements except internal texts in canvas.
             // HTML-texts or internal texts in SVG or VML.
+            //            HTML    internal
+            //  SVG        +         +
+            //  VML        +         +
+            //  canvas     +         -
+            //  no         -         -
             if ((this.type !== 'no') &&
                 (display === 'html' || this.type !== 'canvas')) {
-                    
-                fs = Type.evaluate(element.visProp.fontsize);
+
+                if (element.visPropOld.cssstyle !== cssStyle) {
+                    cssList = this._css2js(ev.cssstyle);
+                    for (node in nodeList) {
+                        if (JXG.exists(element[nodeList[node]])) {
+                            for (prop in cssList) {
+                                //console.log(cssList[prop].key, cssList[prop].val);
+                                element[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                            }
+                        }
+                    }
+                    element.visPropOld.cssstyle = cssStyle;
+                }
+
+                fs = Type.evaluate(ev.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     element.needsSizeUpdate = true;
-                    list = ['rendNode', 'rendNodeTag', 'rendNodeLabel'];
                     try {
-                        for (node in list) {
-                            if (JXG.exists(element[list[node]])) {
-                                element[list[node]].style.fontSize = fs + 'px';
+                        for (node in nodeList) {
+                            if (JXG.exists(element[nodeList[node]])) {
+                                element[nodeList[node]].style.fontSize = fs + 'px';
                             }
                         }
                     } catch (e) {
                         // IE needs special treatment.
-                        for (node in list) {
-                            if (JXG.exists(element[list[node]])) {
-                                element[list[node]].style.fontSize = fs;
+                        for (node in nodeList) {
+                            if (JXG.exists(element[nodeList[node]])) {
+                                element[nodeList[node]].style.fontSize = fs;
                             }
                         }
                     }

@@ -3368,8 +3368,9 @@ define([
             highlightStrokeColor: 'black',
             highlightStrokeOpacity: 0.666666,
 
-            cssStyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;',
-            
+            cssStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
+            highlightCssStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif; color: blue',
+
             /**
              * If true the input will be given to ASCIIMathML before rendering.
              *
