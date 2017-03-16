@@ -898,7 +898,10 @@ define([
             }
 
             // This part is executed for all text elements except internal texts in canvas.
-            if (display === 'html' || (this.type !== 'canvas' && this.type !== 'no')) {
+            // HTML-texts or internal texts in SVG or VML.
+            if ((this.type !== 'no') &&
+                (display === 'html' || this.type !== 'canvas')) {
+                    
                 fs = Type.evaluate(element.visProp.fontsize);
                 if (element.visPropOld.fontsize !== fs) {
                     element.needsSizeUpdate = true;
@@ -919,11 +922,11 @@ define([
                     }
                     element.visPropOld.fontsize = fs;
                 }
-
             }
 
             this.setObjectTransition(element);
             if (display === 'html' && this.type !== 'no') {
+                // Set new CSS class
                 if (element.visPropOld.cssclass !== css) {
                     element.rendNode.className = css;
                     element.visPropOld.cssclass = css;
@@ -933,6 +936,7 @@ define([
             } else {
                 this.updateInternalTextStyle(element, sc, so);
             }
+
             return this;
         },
 
