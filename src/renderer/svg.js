@@ -1337,6 +1337,9 @@ define([
                 svg = svg.replace(/xmlns=\"http:\/\/www.w3.org\/2000\/svg\"/g, '');
             }
 
+            // Safari fails if the svg string contains a "&nbsp;"
+            svg = svg.replace(/&nbsp;/g, ' ');
+
             cv = document.getElementById(canvasId);
             // Clear the canvas
             cv.width = cv.width;
