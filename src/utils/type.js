@@ -1047,6 +1047,7 @@ define([
         clearVisPropOld: function (el) {
             el.visPropOld = {
                 cssclass: '',
+                cssdefaultstyle: '',
                 cssstyle: '',
                 fillcolor: '',
                 fillopacity: '',

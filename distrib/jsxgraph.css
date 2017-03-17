@@ -44,9 +44,17 @@
 }
 
 .JXGtext {
-    /* May produce artefacts in IE. Solution: setting a color explicitly. */
+    font-family: Courier, monospace; 
+    /** 
+     * The default font family is now set in 
+     * JXG.Options.text.cssdefaultstyle = 'font-family: Arial, Helvetica, Geneva, sans-serif;'
+     */
+    /* 
+        font-family: Arial, Helvetica, Geneva, sans-serif; 
+    */
+    
+    /* "background-color: transparent;" may produce artefacts in IE. Solution: setting a color explicitly. */
     background-color: transparent;
-    /*font-family: Arial, Helvetica, Geneva, sans-serif;*/
     padding: 0;
     margin: 0;
 }

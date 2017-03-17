@@ -869,18 +869,30 @@ define([
             }
         },
 
+        /**
+         * Converts string containing CSS properties into
+         * array with key-value pair objects.
+         *
+         * @example
+         * "color:blue; background-color:yellow" is converted to
+         * [{'color': 'blue'}, {'backgroundColor': 'yellow'}]
+         *
+         * @param  {String} cssString String containing CSS properties
+         * @return {Array}           Array of CSS key-value pairs
+         */
         _css2js: function(cssString) {
             var pairs = [],
                 i, len, key, val, s,
-                list = cssString.replace(/ /g, '').replace(/;$/, '').split(";");
+                list = cssString.trim().replace(/;$/, '').split(";");
 
             len = list.length;
             for (i = 0; i < len; ++i) {
-                s = list[i].split(':');
-                key = s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-                val = s[1];
-                pairs.push({'key': key, 'val': val});
-                //console.log(key, val);
+                if (list[i].trim() !== '') {
+                    s = list[i].split(':');
+                    key = s[0].replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); }).trim();
+                    val = s[1].trim();
+                    pairs.push({'key': key, 'val': val});
+                }
             }
             return pairs;
 
@@ -900,21 +912,21 @@ define([
          * @see JXG.AbstractRenderer#updateInternalTextStyle
          */
         updateTextStyle: function (element, doHighlight) {
-            var fs, so, sc, css, cssStyle, node, prop, cssList,
+            var fs, so, sc, css, node,
                 ev = element.visProp,
                 display = Env.isBrowser ? ev.display : 'internal',
-                nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'];
+                nodeList = ['rendNode', 'rendNodeTag', 'rendNodeLabel'],
+                cssList, prop, style, cssString,
+                styleList = ['cssdefaultstyle', 'cssstyle'];
 
             if (doHighlight) {
                 sc = ev.highlightstrokecolor;
                 so = ev.highlightstrokeopacity;
                 css = ev.highlightcssclass;
-                cssStyle = ev.cssstyle;
             } else {
                 sc = ev.strokecolor;
                 so = ev.strokeopacity;
                 css = ev.cssclass;
-                cssStyle = ev.cssstyle;
             }
 
             // This part is executed for all text elements except internal texts in canvas.
@@ -926,18 +938,23 @@ define([
             //  no         -         -
             if ((this.type !== 'no') &&
                 (display === 'html' || this.type !== 'canvas')) {
-
-                if (element.visPropOld.cssstyle !== cssStyle) {
-                    cssList = this._css2js(ev.cssstyle);
-                    for (node in nodeList) {
-                        if (JXG.exists(element[nodeList[node]])) {
-                            for (prop in cssList) {
-                                //console.log(cssList[prop].key, cssList[prop].val);
-                                element[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                for (style in styleList) {
+                    // First set cssString to
+                    // ev.cssdefaultstyle of ev.highlightcssdefaultstyle,
+                    // then to
+                    // ev.cssstyle of ev.highlightcssstyle
+                    cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
+                    if (element.visPropOld[styleList[style]] !== cssString) {
+                        cssList = this._css2js(cssString);
+                        for (node in nodeList) {
+                            if (JXG.exists(element[nodeList[node]])) {
+                                for (prop in cssList) {
+                                    element[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
+                                }
                             }
                         }
+                        element.visPropOld[styleList[style]] = cssString;
                     }
-                    element.visPropOld.cssstyle = cssStyle;
                 }
 
                 fs = Type.evaluate(ev.fontsize);

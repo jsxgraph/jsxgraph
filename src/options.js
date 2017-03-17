@@ -3368,8 +3368,95 @@ define([
             highlightStrokeColor: 'black',
             highlightStrokeOpacity: 0.666666,
 
-            cssStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
-            highlightCssStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif; color: blue',
+            /**
+             * Default CSS properties of the HTML text element.
+             * <p>
+             * The CSS properties which are set here, are haded over to the style property
+             * of the HTML text element. That means, they have higher property than any
+             * CSS class.
+             * <p>
+             * If a property which is set here should be overruled by a CSS class
+             * then this property should be removed here.
+             * <p>
+             * The reason, why this attribute should be kept to its default value at all,
+             * is that screen dumps of SVG boards with <tt>board.renderer.dumpToCanvas()</tt>
+             * will ignore the font-family if it is set in a CSS class.
+             * It has to be set explicitly as style attribute.
+             * <p>
+             * In summary, the order of priorities from high to low is
+             * <ol>
+             *  <li> JXG.Options.text.cssStyle
+             *  <li> JXG.Options.text.cssDefaultStyle
+             *  <li> JXG.Options.text.cssClass
+             * </ol>
+             * @example
+             * If all texts should get its font-family from the default CSS class
+             * before initializing the board
+             * <pre>
+             *   JXG.Options.text.cssDefaultStyle = '';
+             * </pre>
+             * should be called.
+             *
+             * @name cssDefaultStyle
+             * @memberOf Text.prototype
+             * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
+             * @type String
+             * @see JXG.Text#highlightCssDefaultStyle
+             * @see JXG.Text#cssStyle
+             * @see JXG.Text#highlightCssStyle
+             */
+            cssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
+
+            /**
+             * Default CSS properties of the HTML text element in case of highlighting.
+             * <p>
+             * The CSS properties which are set here, are haded over to the style property
+             * of the HTML text element. That means, they have higher property than any
+             * CSS class.
+             *
+             * @name cssDefaultStyle
+             * @memberOf Text.prototype
+             * @default  'font-family: Arial, Helvetica, Geneva, sans-serif;'
+             * @type String
+             * @see JXG.Text#cssDefaultStyle
+             * @see JXG.Text#cssStyle
+             * @see JXG.Text#highlightCssStyle
+            */
+            highlightCssDefaultStyle: 'font-family: Arial, Helvetica, Geneva, sans-serif;',
+
+            /**
+             * CSS properties of the HTML text element.
+             * <p>
+             * The CSS properties which are set here, are haded over to the style property
+             * of the HTML text element. That means, they have higher property than any
+             * CSS class.
+             *
+             * @name cssStyle
+             * @memberOf Text.prototype
+             * @default  ''
+             * @type String
+             * @see JXG.Text#cssDefaultStyle
+             * @see JXG.Text#highlightCssDefaultStyle
+             * @see JXG.Text#highlightCssStyle
+            */
+            cssStyle: '',
+
+            /**
+             * CSS properties of the HTML text element in case of highlighting.
+             * <p>
+             * The CSS properties which are set here, are haded over to the style property
+             * of the HTML text element. That means, they have higher property than any
+             * CSS class.
+             *
+             * @name cssDefaultStyle
+             * @memberOf Text.prototype
+             * @default  ''
+             * @type String
+             * @see JXG.Text#cssDefaultStyle
+             * @see JXG.Text#highlightCssDefaultStyle
+             * @see JXG.Text#cssStyle
+            */
+            highlightCssStyle: '',
 
             /**
              * If true the input will be given to ASCIIMathML before rendering.
