@@ -944,7 +944,7 @@ define([
                     // then to
                     // ev.cssstyle of ev.highlightcssstyle
                     cssString = Type.evaluate(ev[((doHighlight) ? 'highlight' : '') + styleList[style]]);
-                    if (element.visPropOld[styleList[style]] !== cssString) {
+                    if (cssString !== '' && element.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node in nodeList) {
                             if (JXG.exists(element[nodeList[node]])) {
