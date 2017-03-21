@@ -4600,6 +4600,7 @@ define([
 
             return this;
         },
+
         /* **************************
          *     EVENT DEFINITION
          * for documentation purposes

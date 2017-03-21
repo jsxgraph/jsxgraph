@@ -1576,6 +1576,14 @@ define([
 
                 // For XHTML we need unicode instead of HTML entities
 
+                if (board.attr.showscreenshot) {
+                    createButton(board.attr.screenshot.symbol, function () {
+                        setTimeout(function() {
+                            board.renderer.screenshot(board);
+                        }, 200);
+                    });
+                }
+
                 if (board.attr.showreload) {
                     // full reload circle: \u27F2
                     // the board.reload() method does not exist during the creation
@@ -1677,7 +1685,10 @@ define([
          *
          * @see JXG.SVGRenderer#dumpToCanvas
          */
-        dumpToCanvas: function(canvasId) {}
+        dumpToCanvas: function(canvasId) {},
+
+        screenshot: function(board) {}
+
     });
 
     return JXG.AbstractRenderer;

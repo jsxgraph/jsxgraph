@@ -200,6 +200,15 @@ define([
              */
             showReload: false,
 
+            showScreenshot: false,
+
+            screenshot: {
+                scale: 1.5,
+                type: 'png',
+                symbol: '\u2318', //'\u22b9', //'\u26f6',
+                css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center'
+            },
+
             /**
              * Show a button which allows to clear all traces of a board.
              *
@@ -296,7 +305,8 @@ define([
 
             /**
              * Time (in msec) between two animation steps. Used in
-             * {@link JXG.CoordsElement#moveAlong}, {@link JXG.CoordsElement#moveTo} and {@link JXG.CoordsElement#visit}.
+             * {@link JXG.CoordsElement#moveAlong}, {@link JXG.CoordsElement#moveTo} and
+             * {@link JXG.CoordsElement#visit}.
              *
              * @name JXG.Board#animationDelay
              * @type Number

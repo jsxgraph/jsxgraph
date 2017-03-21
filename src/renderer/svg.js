@@ -1318,7 +1318,8 @@ define([
         dumpToCanvas: function(canvasId, w, h) {
             var svgRoot = this.svgRoot,
                 btoa = window.btoa || Base64.encode,
-                svg, tmpImg, cv, ctx;
+                svg, tmpImg, cv, ctx,
+                wOrg, hOrg;
 
 
             // Move all HTML tags (beside the SVG root) of the container
@@ -1330,6 +1331,9 @@ define([
             }
 
             svgRoot.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            wOrg = svgRoot.getAttribute('width');
+            hOrg = svgRoot.getAttribute('height');
+
             svg = new XMLSerializer().serializeToString(svgRoot);
 
             // In IE we have to remove the namespace again.
@@ -1345,13 +1349,21 @@ define([
             cv.width = cv.width;
 
             ctx = cv.getContext("2d");
+            // if (w !== undefined && h !== undefined) {
+            //     // Scale twice the CSS size to make the image crisp
+            //     cv.style.width = parseFloat(w) + 'px';
+            //     cv.style.height = parseFloat(h) + 'px';
+            //     cv.setAttribute('width', (2 * parseFloat(w)) + 'px');
+            //     cv.setAttribute('height',(2 * parseFloat(h)) + 'px');
+            //     ctx.scale(2, 2);
+            // }
             if (w !== undefined && h !== undefined) {
                 // Scale twice the CSS size to make the image crisp
                 cv.style.width = parseFloat(w) + 'px';
                 cv.style.height = parseFloat(h) + 'px';
-                cv.setAttribute('width', (2 * parseFloat(w)) + 'px');
-                cv.setAttribute('height',(2 * parseFloat(h)) + 'px');
-                ctx.scale(2, 2);
+                cv.setAttribute('width', (2 * parseFloat(wOrg)) + 'px');
+                cv.setAttribute('height',(2 * parseFloat(hOrg)) + 'px');
+                ctx.scale(2 * wOrg / w, 2 * hOrg / h);
             }
 
             tmpImg = new Image();
@@ -1361,7 +1373,7 @@ define([
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     setTimeout(function(){
-                        ctx.drawImage(tmpImg, 0, 0);
+                        ctx.drawImage(tmpImg, 0, 0, w, h);
                     }, 200);
                 };
             } else {
@@ -1374,7 +1386,7 @@ define([
                 tmpImg.onload = function () {
                     // IE needs a pause...
                     setTimeout(function(){
-                        ctx.drawImage(tmpImg, 0, 0);
+                        ctx.drawImage(tmpImg, 0, 0, w, h);
                     }, 200);
                     DOMURL.revokeObjectURL(url);
                 };
@@ -1389,6 +1401,75 @@ define([
             }
 
             return this;
+        },
+
+        screenshot: function(board) {
+            var node, doc, cPos,
+                canvas, id,
+                button, buttonText,
+                w, h,
+                bas = board.attr.screenshot,
+                zbar, zbarDisplay;
+
+            if (this.type === 'no') {
+                return;
+            }
+
+            w = bas.scale * parseFloat(board.containerObj.style.width);
+            h = bas.scale * parseFloat(board.containerObj.style.height);
+
+            // Create div which contains canvas element and close button
+            doc = board.containerObj.ownerDocument;
+            node = doc.createElement('div');
+            node.style.cssText = bas.css;
+            node.style.width = (w) + 'px';
+            node.style.height = (h) + 'px';
+            node.style.zIndex = board.containerObj.style.zIndex + 120;
+
+            // Position the div exactly over the JSXGraph board
+            cPos = board.getCoordsTopLeftCorner();
+            node.style.position= 'absolute';
+            node.style.left = (cPos[0]) + 'px';
+            node.style.top = (cPos[1]) + 'px';
+
+            // Create canvas element
+            canvas = doc.createElement('canvas');
+            id = Math.random().toString(36).substr(2, 5);
+            canvas.setAttribute('id', id);
+            canvas.setAttribute('width', w);
+            canvas.setAttribute('height', h);
+            canvas.style.width = w + 'px';
+            canvas.style.height = w + 'px';
+
+            // Create close button
+            button = doc.createElement('button');
+            buttonText = doc.createTextNode('\u2716');
+            button.style.position = 'relative';
+            button.style.top = '-6ex';
+            button.appendChild(buttonText);
+            button.onclick = function() {
+                node.remove();
+            };
+
+            // Add all nodes
+            node.appendChild(canvas);
+            node.appendChild(button);
+            board.containerObj.parentNode.appendChild(node);
+
+            // Hide navigation bar in board
+            zbar = document.getElementById(board.containerObj.id + '_navigationbar');
+            if (Type.exists(zbar)) {
+                zbarDisplay = zbar.style.display;
+                zbar.style.display = 'none';
+            }
+
+            // Create screenshot in canvas
+            this.dumpToCanvas(id, w, h);
+
+            // Show navigation bar in board
+            if (Type.exists(zbar)) {
+                zbar.style.display = zbarDisplay;
+            }
         }
 
     });
