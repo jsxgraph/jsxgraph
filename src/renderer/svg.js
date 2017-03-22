@@ -1349,14 +1349,6 @@ define([
             cv.width = cv.width;
 
             ctx = cv.getContext("2d");
-            // if (w !== undefined && h !== undefined) {
-            //     // Scale twice the CSS size to make the image crisp
-            //     cv.style.width = parseFloat(w) + 'px';
-            //     cv.style.height = parseFloat(h) + 'px';
-            //     cv.setAttribute('width', (2 * parseFloat(w)) + 'px');
-            //     cv.setAttribute('height',(2 * parseFloat(h)) + 'px');
-            //     ctx.scale(2, 2);
-            // }
             if (w !== undefined && h !== undefined) {
                 // Scale twice the CSS size to make the image crisp
                 cv.style.width = parseFloat(w) + 'px';
@@ -1367,6 +1359,7 @@ define([
             }
 
             tmpImg = new Image();
+            //tmpImg.crossOrigin = 'anonymous';
 
             if (true) {
                 tmpImg.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
@@ -1406,6 +1399,7 @@ define([
         screenshot: function(board) {
             var node, doc, cPos,
                 canvas, id,
+                img,
                 button, buttonText,
                 w, h,
                 bas = board.attr.screenshot,
@@ -1440,6 +1434,12 @@ define([
             canvas.setAttribute('height', h);
             canvas.style.width = w + 'px';
             canvas.style.height = w + 'px';
+            canvas.style.display = 'none';
+
+            img = new Image(); //doc.createElement('img');
+            img.style.width = w + 'px';
+            img.style.height = h + 'px';
+            //img.crossOrigin = 'anonymous';
 
             // Create close button
             button = doc.createElement('button');
@@ -1453,6 +1453,7 @@ define([
 
             // Add all nodes
             node.appendChild(canvas);
+            node.appendChild(img);
             node.appendChild(button);
             board.containerObj.parentNode.appendChild(node);
 
@@ -1465,6 +1466,9 @@ define([
 
             // Create screenshot in canvas
             this.dumpToCanvas(id, w, h);
+            setTimeout(function() {
+                img.src = canvas.toDataURL('image/png');
+            }, 400);
 
             // Show navigation bar in board
             if (Type.exists(zbar)) {

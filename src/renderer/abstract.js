@@ -1580,7 +1580,7 @@ define([
                     createButton(board.attr.screenshot.symbol, function () {
                         setTimeout(function() {
                             board.renderer.screenshot(board);
-                        }, 200);
+                        }, 330);
                     });
                 }
 

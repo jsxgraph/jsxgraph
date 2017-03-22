@@ -203,7 +203,7 @@ define([
             showScreenshot: false,
 
             screenshot: {
-                scale: 1.5,
+                scale: 1.0,
                 type: 'png',
                 symbol: '\u2318', //'\u22b9', //'\u26f6',
                 css: 'background-color:#eeeeee; opacity:1.0; border:2px solid black; border-radius:10px; text-align:center'
