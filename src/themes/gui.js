@@ -209,6 +209,35 @@ JXG.Options = JXG.merge(JXG.Options, {
         }
     },
 
+    slopetriangle: {
+        glider: {
+            strokeColor: '#808080',
+            fillColor: '#808080',
+            opacity: 1,
+            visible: true
+        },
+
+        /*
+        baseline: {
+            visible: false
+        },
+
+        basepoint: {
+            visible: true
+        },
+
+        tangent: {
+            visible: false
+        },
+        */
+        toppoint: {
+            strokeColor: '#808080',
+            fillColor: '#808080',
+            opacity: 1,
+            visible: true
+        },
+    },
+
     tapemeasure: {
         strokeColor: '#000000',
         strokeWidth: 2,

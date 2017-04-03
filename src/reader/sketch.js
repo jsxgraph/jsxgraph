@@ -957,8 +957,8 @@
                     set_str = assign + 'slopetriangle(' + step.src_ids.join(', ') + ') <<';
                     set_str += attrid + ' name: \'\',';
                     set_str += 'borders: <<ids: [\'' + step.dest_sub_ids[4] + '\', \'' + step.dest_sub_ids[5] + '\', \'' + step.dest_sub_ids[6] + '\']>>,';
-                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: true >>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
-                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\', priv: true >>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\', priv: true >>';
+                    set_str += 'basepoint: <<id: \'' + step.dest_sub_ids[0] + '\', priv: false >>, baseline: <<id: \'' + step.dest_sub_ids[1] + '\', priv: true >>,';
+                    set_str += 'glider: <<id: \'' + step.dest_sub_ids[2] + '\', priv: false >>, toppoint: <<id: \'' + step.dest_sub_ids[3] + '\', priv: false >>';
                     if (step.dest_sub_ids.length === 8) {  // The test is needed for backwards compatibility
                         set_str += ', tangent: <<id: \'' + step.dest_sub_ids[2] + '\', priv: true, point1: <<priv: true >>, point2: <<priv: true >> >>';
                     }
