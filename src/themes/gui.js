@@ -94,6 +94,15 @@ JXG.Options = JXG.merge(JXG.Options, {
         opacity: 1
     },
 
+    perpendicularsegment: {
+        point: {
+            visible: true,
+            strokeColor: '#808080',
+            fillColor: '#808080',
+            opacity: 1
+        }
+    },
+
     point: {
         size: 4,
         fillColor:   '#cc0000',
