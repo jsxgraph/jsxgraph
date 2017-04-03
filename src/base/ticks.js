@@ -784,6 +784,12 @@ define([
             return [];
         },
 
+        /**
+         * Format label texts. Show the desired number of digits
+         * and use utf-8 minus sign.
+         * @param  {Number} value Number to be displayed
+         * @return {String}       The value converted into a string.
+         */
         formatLabelText: function(value) {
             var labelText = value.toString();
 
