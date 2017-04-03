@@ -784,6 +784,38 @@ define([
             return [];
         },
 
+        formatLabelText: function(value) {
+            var labelText = value.toString();
+
+            // if value is Number
+            if (Type.isNumber(value)) {
+                if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {
+                    labelText = value.toPrecision(this.visProp.precision).toString();
+                }
+                if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
+                    // trim trailing zeros
+                    labelText = labelText.replace(/0+$/, '');
+                    // trim trailing .
+                    labelText = labelText.replace(/\.$/, '');
+                }
+            }
+
+            if (this.visProp.scalesymbol.length > 0) {
+                if (labelText === '1') {
+                    labelText = this.visProp.scalesymbol;
+                } else if (labelText === '-1') {
+                    labelText = '-' + this.visProp.scalesymbol;
+                } else if (labelText !== '0') {
+                    labelText = labelText + this.visProp.scalesymbol;
+                }
+            }
+
+            if (this.visProp.useunicodeminus) {
+                labelText = labelText.replace(/-/g, '\u2212');
+            }
+            return labelText;
+        },
+
         /**
          * Creates the label text for a given tick. A value for the text can be provided as a number or string
          *
@@ -805,35 +837,7 @@ define([
                     value = distance / this.visProp.scale;
                 }
 
-                labelText = value.toString();
-
-                // if value is Number
-                if (Type.isNumber(value)) {
-                    if (labelText.length > this.visProp.maxlabellength || labelText.indexOf('e') !== -1) {
-                        labelText = value.toPrecision(this.visProp.precision).toString();
-                    }
-                    if (labelText.indexOf('.') > -1 && labelText.indexOf('e') === -1) {
-                        // trim trailing zeros
-                        labelText = labelText.replace(/0+$/, '');
-                        // trim trailing .
-                        labelText = labelText.replace(/\.$/, '');
-                    }
-                }
-
-                if (this.visProp.scalesymbol.length > 0) {
-                    if (labelText === '1') {
-                        labelText = this.visProp.scalesymbol;
-                    } else if (labelText === '-1') {
-                        labelText = '-' + this.visProp.scalesymbol;
-                    } else if (labelText !== '0') {
-                        labelText = labelText + this.visProp.scalesymbol;
-                    }
-                }
-
-                if (this.visProp.useunicodeminus) {
-                    labelText = labelText.replace(/-/g, '\u2212');
-                }
-
+                labelText = this.formatLabelText(value);
             }
 
             return labelText;

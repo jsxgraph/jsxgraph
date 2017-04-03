@@ -129,26 +129,6 @@ define([
         smax = parents[2][2];
         sdiff = smax - smin;
 
-        if (withTicks) {
-            attr = Type.copyAttributes(attributes, board.options, 'slider', 'ticks');
-            ticks  = 2;
-            ti = board.create('ticks', [
-                l1,
-                p2.Dist(p1) / ticks,
-
-                function (tick) {
-                    var dFull = p1.Dist(p2),
-                        d = p1.coords.distance(Const.COORDS_BY_USER, tick);
-
-                    if (dFull < Mat.eps) {
-                        return 0;
-                    }
-
-                    return d / dFull * sdiff + smin;
-                }
-            ], attr);
-        }
-
         startx = pos0[0] + (pos1[0] - pos0[0]) * (start - smin) / (smax - smin);
         starty = pos0[1] + (pos1[1] - pos0[1]) * (start - smin) / (smax - smin);
 
@@ -313,6 +293,42 @@ define([
         p3.highline = l2;
 
         if (withTicks) {
+            // Function to generate correct label texts
+
+            attr = Type.copyAttributes(attributes, board.options, 'slider', 'ticks');
+            if (!Type.exists(attr.generatelabeltext)) {
+                console.log("SSSS");
+                attr.generateLabelText = function(tick, zero, value) {
+                    var labelText,
+                        dFull = p3.point1.Dist(p3.point2),
+                        smin = p3._smin, smax = p3._smax,
+                        val = this.getDistanceFromZero(zero, tick) * (smax - smin) / dFull  + smin;
+
+                        if (dFull < Mat.eps || Math.abs(val) < Mat.eps) { // Point is zero
+                            labelText = '0';
+                        } else {
+                            labelText = this.formatLabelText(val);
+                        }
+                        return labelText;
+                };
+            }
+            ticks  = 2;
+            ti = board.create('ticks', [
+                p3.baseline,
+                p3.point1.Dist(p1) / ticks,
+
+                function (tick) {
+                    var dFull = p3.point1.Dist(p3.point2),
+                        d = p1p3.point1.coords.distance(Const.COORDS_BY_USER, tick);
+
+                    if (dFull < Mat.eps) {
+                        return 0;
+                    }
+
+                    return d / dFull * sdiff + smin;
+                }
+            ], attr);
+
             /**
              * Ticks give a rough indication about the slider's current value.
              * @memberOf Slider.prototype
