@@ -180,7 +180,7 @@ define([
         },
 
         drawBar: function (board, x, y, attributes) {
-            var i, strwidth, fs, text, w, xp0, xp1, xp2, yp, colors,
+            var i, strwidth, text, w, xp0, xp1, xp2, yp, colors,
                 pols = [],
                 p = [],
                 attr, attrSub,
@@ -217,19 +217,21 @@ define([
             }
 
             attrSub = Type.copyAttributes(attributes, board.options, 'chart', 'label');
-            fs = parseFloat(attrSub.fontsize);
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
                     xp0 = makeXpFun(i, -0.5);
-
                     xp1 = makeXpFun(i, 0);
-
                     xp2 = makeXpFun(i, 0.5);
                 } else {
                     xp0 = x[i] - w * 0.5;
                     xp1 = x[i];
                     xp2 = x[i] + w * 0.5;
+                }
+                if (Type.isFunction(y[i])) {
+                    yp = y[i]();
+                } else {
+                    yp = y[i];
                 }
                 yp = y[i];
                 if (attr.dir === 'horizontal') {  // horizontal bars
@@ -239,17 +241,17 @@ define([
                     p[3] = board.create('point', [0, xp2], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        strwidth = attr.labels[i].toString().length;
-                        strwidth = 2 * strwidth * fs / board.unitX;
+                        attrSub.anchorY = 'middle';
                         if (yp >= 0) {
-                            // Static offset for label
-                            yp += fs * 0.5 / board.unitX;
+                            attrSub.anchorX = 'left';
                         } else {
-                            // Static offset for label
-                            yp -= fs * strwidth / board.unitX;
+                            attrSub.anchorX = 'right';
                         }
-                        xp1 -= fs * 0.2 / board.unitY;
-                        text = board.create('text', [yp, xp1, attr.labels[i].toString()], attr);
+
+                        text = board.create('text', [
+                            yp,
+                            xp1,
+                            attr.labels[i]], attrSub);
                     }
                 } else { // vertical bars
                     p[0] = board.create('point', [xp0, 0], hiddenPoint);
@@ -258,20 +260,17 @@ define([
                     p[3] = board.create('point', [xp2, 0], hiddenPoint);
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
-                        strwidth = attr.labels[i].toString().length;
-                        strwidth = 0.6 * strwidth * fs / board.unitX;
-
+                        attrSub.anchorX = 'middle';
                         if (yp >= 0) {
-                            // Static offset for label
-                            yp += fs * 0.5 / board.unitY;
+                            attrSub.anchorY = 'bottom';
                         } else {
-                            // Static offset for label
-                            yp -= fs / board.unitY;
+                            attrSub.anchorY = 'top';
                         }
+
                         text = board.create('text', [
-                            xp1 - strwidth * 0.5,
+                            xp1,
                             yp,
-                            attr.labels[i].toString()], attrSub);
+                            attr.labels[i]], attrSub);
                     }
                 }
 

@@ -769,7 +769,9 @@ define([
          * @see JXG.AbstractRenderer#updateTextStyle
          */
         updateText: function (el) {
-            var content = el.plaintext, v, c, parentNode;
+            var content = el.plaintext, v, c,
+                parentNode,
+                ax, ay;
 
             if (el.visProp.visible) {
                 this.updateTextStyle(el, false);
@@ -782,10 +784,11 @@ define([
                         c = el.coords.scrCoords[1];
                         // webkit seems to fail for extremely large values for c.
                         c = Math.abs(c) < 1000000 ? c : 1000000;
+                        ax = Type.evaluate(el.visProp.anchorx);
 
-                        if (el.visProp.anchorx === 'right') {
+                        if (ax === 'right') {
                             v = Math.floor(el.board.canvasWidth - c);
-                        } else if (el.visProp.anchorx === 'middle') {
+                        } else if (ax === 'middle') {
                             v = Math.floor(c - 0.5 * el.size[0]);
                         } else { // 'left'
                             v = Math.floor(c);
@@ -796,24 +799,25 @@ define([
                         //v *= window.devicePixelRatio;
                         //}
 
-                        if (el.visPropOld.left !== (el.visProp.anchorx + v)) {
-                            if (el.visProp.anchorx === 'right') {
+                        if (el.visPropOld.left !== (ax + v)) {
+                            if (ax === 'right') {
                                 el.rendNode.style.right = v + 'px';
                                 el.rendNode.style.left = 'auto';
                             } else {
                                 el.rendNode.style.left = v + 'px';
                                 el.rendNode.style.right = 'auto';
                             }
-                            el.visPropOld.left = el.visProp.anchorx + v;
+                            el.visPropOld.left = ax + v;
                         }
 
                         // Vertical
                         c = el.coords.scrCoords[2] + this.vOffsetText;
                         c = Math.abs(c) < 1000000 ? c : 1000000;
+                        ay = Type.evaluate(el.visProp.anchory);
 
-                        if (el.visProp.anchory === 'bottom') {
+                        if (ay === 'bottom') {
                             v = Math.floor(el.board.canvasHeight - c);
-                        } else if (el.visProp.anchory === 'middle') {
+                        } else if (ay === 'middle') {
                             v = Math.floor(c - 0.5 * el.size[1]);
                         } else { // top
                             v = Math.floor(c);
@@ -824,15 +828,15 @@ define([
                         //v *= window.devicePixelRatio;
                         //}
 
-                        if (el.visPropOld.top !== (el.visProp.anchory + v)) {
-                            if (el.visProp.anchory === 'bottom') {
+                        if (el.visPropOld.top !== (ay + v)) {
+                            if (ay === 'bottom') {
                                 el.rendNode.style.top = 'auto';
                                 el.rendNode.style.bottom = v + 'px';
                             } else {
                                 el.rendNode.style.bottom = 'auto';
                                 el.rendNode.style.top = v + 'px';
                             }
-                            el.visPropOld.top = el.visProp.anchory + v;
+                            el.visPropOld.top = ay + v;
                         }
                     }
 

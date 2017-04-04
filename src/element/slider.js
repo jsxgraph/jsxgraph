@@ -297,7 +297,6 @@ define([
 
             attr = Type.copyAttributes(attributes, board.options, 'slider', 'ticks');
             if (!Type.exists(attr.generatelabeltext)) {
-                console.log("SSSS");
                 attr.generateLabelText = function(tick, zero, value) {
                     var labelText,
                         dFull = p3.point1.Dist(p3.point2),

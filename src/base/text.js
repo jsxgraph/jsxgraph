@@ -132,7 +132,7 @@ define([
          * @returns {Boolean}
          */
         hasPoint: function (x, y) {
-            var lft, rt, top, bot,
+            var lft, rt, top, bot, ax, ay,
                 r = this.board.options.precision.hasPoint;
 
             if (this.transformations.length > 0) {
@@ -143,25 +143,27 @@ define([
                 y = lft[2];
             }
 
-            if (this.visProp.anchorx === 'right') {
+            ax = Type.evaluate(this.visProp.anchorx);
+            if (ax === 'right') {
                 lft = this.coords.scrCoords[1] - this.size[0];
-            } else if (this.visProp.anchorx === 'middle') {
+            } else if (ax === 'middle') {
                 lft = this.coords.scrCoords[1] - 0.5 * this.size[0];
             } else {
                 lft = this.coords.scrCoords[1];
             }
             rt = lft + this.size[0];
 
-            if (this.visProp.anchory === 'top') {
+            ay = Type.evaluate(this.visProp.anchory);
+            if (ay === 'top') {
                 bot = this.coords.scrCoords[2] + this.size[1];
-            } else if (this.visProp.anchory === 'middle') {
+            } else if (ay === 'middle') {
                 bot = this.coords.scrCoords[2] + 0.5 * this.size[1];
             } else {
                 bot = this.coords.scrCoords[2];
             }
             top = bot - this.size[1];
 
-            if (this.visProp.dragarea === 'all') {
+            if (Type.evaluate(this.visProp.dragarea) === 'all') {
                 return x >= lft - r && x < rt + r && y >= top - r  && y <= bot + r;
             }
 
