@@ -234,6 +234,7 @@ define([
                     yp = y[i];
                 }
                 yp = y[i];
+
                 if (attr.dir === 'horizontal') {  // horizontal bars
                     p[0] = board.create('point', [0, xp0], hiddenPoint);
                     p[1] = board.create('point', [yp, xp0], hiddenPoint);
@@ -242,16 +243,14 @@ define([
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                         attrSub.anchorY = 'middle';
-                        if (yp >= 0) {
-                            attrSub.anchorX = 'left';
-                        } else {
-                            attrSub.anchorX = 'right';
-                        }
-
                         text = board.create('text', [
                             yp,
                             xp1,
                             attr.labels[i]], attrSub);
+                        text.visProp.anchorx = (function(txt) { return function() {
+                            return (txt.X() >= 0) ? 'left' : 'right';
+                        }; })(text);
+
                     }
                 } else { // vertical bars
                     p[0] = board.create('point', [xp0, 0], hiddenPoint);
@@ -261,16 +260,16 @@ define([
 
                     if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                         attrSub.anchorX = 'middle';
-                        if (yp >= 0) {
-                            attrSub.anchorY = 'bottom';
-                        } else {
-                            attrSub.anchorY = 'top';
-                        }
 
                         text = board.create('text', [
                             xp1,
                             yp,
                             attr.labels[i]], attrSub);
+
+                        text.visProp.anchory = (function(txt) { return function() {
+                            return (txt.Y() >= 0) ? 'bottom' : 'top';
+                        }; })(text);
+
                     }
                 }
 
