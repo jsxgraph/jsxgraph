@@ -391,12 +391,14 @@ define([
         // Default hasPoint method. Documented in geometry element
         el.hasPointCurve = function (x, y) {
             var angle, alpha, beta,
-                prec = this.board.options.precision.hasPoint / (this.board.unitX),
+                prec,
                 checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board),
                 r = this.Radius(),
                 dist = this.center.coords.distance(Const.COORDS_BY_USER, checkPoint),
-                has = (Math.abs(dist - r) < prec);
+                has;
 
+            prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
+            has = (Math.abs(dist - r) < prec);
             if (has) {
                 angle = Geometry.rad(this.point2, this.center, checkPoint.usrCoords.slice(1));
                 alpha = 0;

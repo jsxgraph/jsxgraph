@@ -233,9 +233,10 @@ define([
             var dist, checkPoint,
                 has, angle, alpha, beta,
                 invMat, c,
-                prec = this.board.options.precision.hasPoint / this.board.unitX,
+                prec,
                 r = this.Radius();
 
+            prec = this.board.options.precision.hasPoint / Math.min(this.board.unitX, this.board.unitY);
             checkPoint = new Coords(Const.COORDS_BY_SCREEN, [x, y], this.board);
 
             if (this.transformations.length > 0) {
