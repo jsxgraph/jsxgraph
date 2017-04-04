@@ -180,10 +180,10 @@ define([
         },
 
         drawBar: function (board, x, y, attributes) {
-            var i, strwidth, fill, fs, text, w, xp0, xp1, xp2, yp, colors,
+            var i, strwidth, fs, text, w, xp0, xp1, xp2, yp, colors,
                 pols = [],
                 p = [],
-                attr,
+                attr, attrSub,
 
                 makeXpFun = function (i, f) {
                     return function () {
@@ -198,13 +198,11 @@ define([
                     name: ''
                 };
 
-            if (!Type.exists(attributes.fillopacity)) {
-                attributes.fillopacity = 0.6;
-            }
+            attr = Type.copyAttributes(attributes, board.options, 'chart');
 
             // Determine the width of the bars
-            if (attributes && attributes.width) {  // width given
-                w = attributes.width;
+            if (attr && attr.width) {  // width given
+                w = attr.width;
             } else {
                 if (x.length <= 1) {
                     w = 1;
@@ -218,10 +216,8 @@ define([
                 w *= 0.8;
             }
 
-            fill = attributes.fillcolor;
-
-            attr = Type.copyAttributes(attributes, board.options, 'chart', 'label');
-            fs = parseFloat(attr.fontsize);
+            attrSub = Type.copyAttributes(attributes, board.options, 'chart', 'label');
+            fs = parseFloat(attrSub.fontsize);
 
             for (i = 0; i < x.length; i++) {
                 if (Type.isFunction(x[i])) {
@@ -236,14 +232,14 @@ define([
                     xp2 = x[i] + w * 0.5;
                 }
                 yp = y[i];
-                if (attributes.dir === 'horizontal') {  // horizontal bars
+                if (attr.dir === 'horizontal') {  // horizontal bars
                     p[0] = board.create('point', [0, xp0], hiddenPoint);
                     p[1] = board.create('point', [yp, xp0], hiddenPoint);
                     p[2] = board.create('point', [yp, xp2], hiddenPoint);
                     p[3] = board.create('point', [0, xp2], hiddenPoint);
 
-                    if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
-                        strwidth = attributes.labels[i].toString().length;
+                    if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
+                        strwidth = attr.labels[i].toString().length;
                         strwidth = 2 * strwidth * fs / board.unitX;
                         if (yp >= 0) {
                             // Static offset for label
@@ -253,7 +249,7 @@ define([
                             yp -= fs * strwidth / board.unitX;
                         }
                         xp1 -= fs * 0.2 / board.unitY;
-                        text = board.create('text', [yp, xp1, attributes.labels[i].toString()], attr);
+                        text = board.create('text', [yp, xp1, attr.labels[i].toString()], attr);
                     }
                 } else { // vertical bars
                     p[0] = board.create('point', [xp0, 0], hiddenPoint);
@@ -261,8 +257,8 @@ define([
                     p[2] = board.create('point', [xp2, yp], hiddenPoint);
                     p[3] = board.create('point', [xp2, 0], hiddenPoint);
 
-                    if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
-                        strwidth = attributes.labels[i].toString().length;
+                    if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
+                        strwidth = attr.labels[i].toString().length;
                         strwidth = 0.6 * strwidth * fs / board.unitX;
 
                         if (yp >= 0) {
@@ -272,19 +268,20 @@ define([
                             // Static offset for label
                             yp -= fs / board.unitY;
                         }
-                        text = board.create('text', [xp1 - strwidth * 0.5, yp, attributes.labels[i].toString()], attr);
+                        text = board.create('text', [
+                            xp1 - strwidth * 0.5,
+                            yp,
+                            attr.labels[i].toString()], attrSub);
                     }
                 }
 
-                attributes.withlines = false;
-
-                if (Type.isArray(attributes.colors)) {
-                    colors = attributes.colors;
-                    attributes.fillcolor = colors[i % colors.length];
+                if (Type.isArray(attr.colors)) {
+                    colors = attr.colors;
+                    attr.fillcolor = colors[i % colors.length];
                 }
 
-                pols[i] = board.create('polygon', p, attributes);
-                if (Type.exists(attributes.labels) && Type.exists(attributes.labels[i])) {
+                pols[i] = board.create('polygon', p, attr);
+                if (Type.exists(attr.labels) && Type.exists(attr.labels[i])) {
                     pols[i].text = text;
                 }
             }
@@ -769,8 +766,11 @@ define([
     });
 
     JXG.createChart = function (board, parents, attributes) {
-        var data, row, i, j, col, charts = [], w, x, showRows, attr,
-            originalWidth, name, strokeColor, fillColor, hStrokeColor, hFillColor, len,
+        var data, row, i, j, col,
+            charts = [],
+            w, x, showRows, attr,
+            originalWidth, name, strokeColor, fillColor,
+            hStrokeColor, hFillColor, len,
             table = Env.isBrowser ? board.document.getElementById(parents[0]) : null;
 
         if ((parents.length === 1) && (Type.isString(parents[0]))) {
@@ -908,6 +908,7 @@ define([
             throw new Error('JSXGraph: Unknown legend style: ' + this.style);
         }
     };
+
     JXG.Legend.prototype = new GeometryElement();
 
     JXG.Legend.prototype.drawVerticalLegend = function (board, attributes) {
@@ -952,6 +953,7 @@ define([
 
         return new JXG.Legend(board, start_from, attributes);
     };
+
     JXG.registerElement('legend', JXG.createLegend);
 
     return {

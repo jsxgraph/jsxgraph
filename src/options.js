@@ -1428,6 +1428,10 @@ define([
             fillcolor: null,
             highlightonsector: false,
             highlightbysize: false,
+
+            fillOpacity: 0.6,
+            withLines:  false,
+            
             label: {
             }
             /**#@-*/
