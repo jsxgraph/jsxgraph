@@ -173,18 +173,18 @@ define([
         },
 
         /**
-         * This sets the updateText function of this element that depending on the type of text content passed.
+         * This sets the updateText function of this element depending on the type of text content passed.
          * Used by {@link JXG.Text#_setText} and {@link JXG.Text} constructor.
          * @param {String|Function|Number} text
          * @private
          */
         _setUpdateText: function (text) {
-            var updateText;
+            var updateText, resolvedText;
 
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
-                    var resolvedText = text().toString();
+                    resolvedText = text().toString();
                     if (this.visProp.parse && !this.visProp.usemathjax) {
                         this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
