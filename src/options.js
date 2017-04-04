@@ -3067,8 +3067,17 @@ define([
             ticks: {
                 needsRegularUpdate: false,
                 fixed: true,
+
+                // Label drawing
                 drawLabels: false,
+                precision: 2,
+                includeBoundaries: 1,
                 drawZero: true,
+                label: {
+                    offset: [-4, -14],
+                    display: 'internal'
+                },
+
                 insertTicks: true,
                 minorHeight: 4,         // if <0: full width and height
                 majorHeight: 5,        // if <0: full width and height
@@ -3077,10 +3086,7 @@ define([
                 strokeOpacity: 1,
                 strokeWidth: 1,
                 tickEndings: [0, 1],
-                strokeColor: '#000000',
-                label: {
-                    display: 'internal'
-                }
+                strokeColor: '#000000'
 
             },
 
