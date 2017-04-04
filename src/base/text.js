@@ -182,10 +182,11 @@ define([
             this.orgText = text;
             if (Type.isFunction(text)) {
                 this.updateText = function () {
+                    var resolvedText = text().toString();
                     if (this.visProp.parse && !this.visProp.usemathjax) {
-                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(text())));
+                        this.plaintext = this.replaceSub(this.replaceSup(this.convertGeonext2CSS(resolvedText)));
                     } else {
-                        this.plaintext = text();
+                        this.plaintext = resolvedText;
                     }
                 };
             } else if (Type.isString(text) && !this.visProp.parse) {
