@@ -165,6 +165,9 @@ define([
         el.tangent = tangent;
         el._isPrivateTangent = isPrivateTangent;
 
+        el.borders[0].setArrow(false, true);
+        el.borders[1].setArrow(false, true);
+
         attr = Type.copyAttributes(attributes, board.options, 'slopetriangle', 'label');
         label = board.create('text', [
             function () { return glider.X() + 0.1; },

@@ -1431,7 +1431,7 @@ define([
 
             fillOpacity: 0.6,
             withLines:  false,
-            
+
             label: {
             }
             /**#@-*/
@@ -1933,11 +1933,14 @@ define([
             fontSize: 12,
             isLabel: false,
             strokeColor: '#bbbbbb',
-            display: 'html',                    // 'html' or 'internal'
-            anchorX: 'left',                     //  'left', 'middle', or 'right': horizontal alignment of the text.
-            anchorY: 'middle',                   //  'top', 'middle', or 'bottom': vertical alignment of the text.
+            display: 'html',             // 'html' or 'internal'
+            anchorX: 'left',             //  'left', 'middle', or 'right': horizontal alignment
+                                         //  of the text.
+            anchorY: 'middle',           //  'top', 'middle', or 'bottom': vertical alignment
+                                         //  of the text.
             cssClass: 'JXGinfobox',
-            rotate: 0,                           // works for non-zero values only in combination with display=='internal'
+            rotate: 0,                   // works for non-zero values only in combination
+                                         // with display=='internal'
             visible: true,
             parse: false,
             needsRegularUpdate: false

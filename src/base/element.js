@@ -1225,12 +1225,19 @@ define([
 
         /**
          * Determines whether the element has arrows at start or end of the arc.
+         * If it is set to be a "typical" vector, ie lastArrow == true,
+         * then the element.type is set to VECTOR.
          * @param {Boolean} firstArrow True if there is an arrow at the start of the arc, false otherwise.
          * @param {Boolean} lastArrow True if there is an arrow at the end of the arc, false otherwise.
          */
         setArrow: function (firstArrow, lastArrow) {
             this.visProp.firstarrow = firstArrow;
             this.visProp.lastarrow = lastArrow;
+            if (lastArrow) {
+                this.type = Const.OBJECT_TYPE_VECTOR;
+                this.elType = 'arrow';
+            }
+
             this.prepareUpdate().update();
             return this;
         },
