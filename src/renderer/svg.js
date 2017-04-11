@@ -1404,7 +1404,8 @@ define([
                 button, buttonText,
                 w, h,
                 bas = board.attr.screenshot,
-                zbar, zbarDisplay;
+                zbar, zbarDisplay,
+                cssTxt;
 
             if (this.type === 'no') {
                 return;
@@ -1443,10 +1444,9 @@ define([
             //img.crossOrigin = 'anonymous';
 
             // Create close button
-            button = doc.createElement('button');
+            button = doc.createElement('span');
             buttonText = doc.createTextNode('\u2716');
-            button.style.position = 'relative';
-            button.style.top = '-6ex';
+            button.style.cssText = bas.cssButton;
             button.appendChild(buttonText);
             button.onclick = function() {
                 node.remove();
