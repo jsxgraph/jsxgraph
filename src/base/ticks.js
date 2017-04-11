@@ -436,7 +436,7 @@ define([
                 dZeroPoint1, dZeroPoint2;
 
             // Adjust line limit points to be within the board
-            if (JXG.exists(type) || type === 'tickdistance') {
+            if (Type.exists(type) || type === 'tickdistance') {
                 // The good old calcStraight is needed for determining the distance between major ticks.
                 // Here, only the visual area is of importance
                 Geometry.calcStraight(this.line, point1, point2, this.line.visProp.margin);

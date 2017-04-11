@@ -972,7 +972,7 @@ define([
 
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
-                JXG.exists(collect[0]) &&
+                Type.exists(collect[0]) &&
                 collect[0].visProp.dragtotopoflayer &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)) {
@@ -1307,7 +1307,7 @@ define([
             } else if (Type.isPoint(obj) || obj.type === Const.OBJECT_TYPE_GLIDER) {
                 xy.push(obj.coords.usrCoords);
             } else if (obj.elementClass === Const.OBJECT_CLASS_CURVE) {
-                if (JXG.exists(obj.parents)) {
+                if (Type.exists(obj.parents)) {
                     len = obj.parents.length;
                     for (i = 0; i < len; i++) {
                         xy.push(this.select(obj.parents[i]).coords.usrCoords);
@@ -1825,7 +1825,7 @@ define([
             }
 
             // Touch or pen device
-            if (JXG.isBrowser &&
+            if (Env.isBrowser &&
                     (evt.pointerType === 'touch' || // New
                     (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
                 ) {
@@ -1921,7 +1921,7 @@ define([
 
             this.options.precision.hasPoint = this.options.precision.mouse;
 
-            if (JXG.isBrowser && evt.pointerType !== 'touch') {
+            if (Env.isBrowser && evt.pointerType !== 'touch') {
                 if (this.mode === this.BOARD_MODE_NONE) {
                     this.mouseOriginMoveStart(evt);
                 }
@@ -1967,7 +1967,7 @@ define([
             }
 
             // Touch or pen device
-            if (JXG.isBrowser &&
+            if (Env.isBrowser &&
                     (evt.pointerType === 'touch' || // New
                     (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 1)) // Old
                 ) {
@@ -4183,7 +4183,7 @@ define([
             src = this.select(src);
             dest = this.select(dest);
 
-            if (JXG.exists(src.label)) {
+            if (Type.exists(src.label)) {
                 srcLabelId = src.label.id;
                 srcHasLabel = true;
                 this.removeObject(src.label);
@@ -4356,7 +4356,7 @@ define([
                 }
                 s = new EComposition(olist);
             // it's an element which has been deleted (and still hangs around, e.g. in an attractor list
-            } else if (Type.isObject(s) && JXG.exists(s.id) && !JXG.exists(this.objects[s.id])) {
+            } else if (Type.isObject(s) && Type.exists(s.id) && !Type.exists(this.objects[s.id])) {
                 s = null;
             }
 
@@ -4374,7 +4374,7 @@ define([
                 py = y,
                 bbox = this.getBoundingBox();
 
-            if (JXG.exists(x) && JXG.isArray(x.usrCoords)) {
+            if (Type.exists(x) && Type.isArray(x.usrCoords)) {
                 px = x.usrCoords[1];
                 py = x.usrCoords[2];
             }

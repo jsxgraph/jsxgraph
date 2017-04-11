@@ -10,20 +10,20 @@
     This file is part of JSXGraph.
 
     JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-    
+
     You can redistribute it and/or modify it under the terms of the
-    
+
       * GNU Lesser General Public License as published by
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version
       OR
       * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-    
+
     JSXGraph is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Lesser General Public License for more details.
-    
+
     You should have received a copy of the GNU Lesser General Public License and
     the MIT License along with JSXGraph. If not, see <http://www.gnu.org/licenses/>
     and <http://opensource.org/licenses/MIT/>.
@@ -89,7 +89,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                     propValue = propValue.replace (/^\s+/, '').replace (/\s+$/, '');
                     if(objName[0].search(/\./) != -1) {
                         prop = true;
-                    
+
                         objName = objName[0].split('.');
                         propName = objName[objName.length-1];
                         propName = propName.replace (/^\s+/, '').replace (/\s+$/, '');
@@ -101,11 +101,11 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                     objName = paraIn[j];
                                 }
                             }
-                        }                    
+                        }
                         //alert("_"+objName+"_"+propName+"_"+propValue+"_");
                         //alert(JXG.getReference(this,objName).name);
                         JXG.getReference(this,objName).setAttribute(propName+":"+propValue);
-                        
+
                     }
                 }
                 if(!prop) { // nicht nur eine Eigenschaft setzen, sondern neues Element konstruieren
@@ -264,7 +264,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                                                }}
                                                   )(defElements[j], this);
                                     }
-                                    
+
                                 }
                                 else if(defElements[j].search(/[0-9\.\s]+/) != -1){ // Radius als Zahl
                                     defElements[j] = 1.0*defElements[j];
@@ -398,7 +398,7 @@ JXG.Board.prototype.construct = function(string, mode, params, paraIn, macroName
                                         }
                                         createdNames.push(objName);
                                     }
-                                }                          
+                                }
                                 obj = this.create('intersection',[defElements[0],defElements[1],0],attributes);
                                 output.intersections.push(obj);
                                 if(objName != '') {

@@ -674,7 +674,7 @@ define([
                     this.point1.snapToGrid();
                     this.point2.snapToGrid();
                 */
-                } else if (JXG.exists(pos)) {       // Free line
+            } else if (Type.exists(pos)) {       // Free line
                     sX = this.visProp.snapsizex;
                     sY = this.visProp.snapsizey;
 

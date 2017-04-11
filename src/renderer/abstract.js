@@ -432,10 +432,10 @@ define([
                 d1x = d1y = d2x = d2y = 0.0;
                 d = c1.distance(Const.COORDS_BY_SCREEN, c2);
 
-                if (JXG.exists(element.visProp.firstarrow.type)) {
+                if (Type.exists(element.visProp.firstarrow.type)) {
                     typeFirst = element.visProp.firstarrow.type;
                 }
-                if (JXG.exists(element.visProp.lastarrow.type)) {
+                if (Type.exists(element.visProp.lastarrow.type)) {
                     typeLast = element.visProp.lastarrow.type;
                 }
 
@@ -951,7 +951,7 @@ define([
                     if (cssString !== '' && element.visPropOld[styleList[style]] !== cssString) {
                         cssList = this._css2js(cssString);
                         for (node in nodeList) {
-                            if (JXG.exists(element[nodeList[node]])) {
+                            if (Type.exists(element[nodeList[node]])) {
                                 for (prop in cssList) {
                                     element[nodeList[node]].style[cssList[prop].key] = cssList[prop].val;
                                 }
@@ -966,14 +966,14 @@ define([
                     element.needsSizeUpdate = true;
                     try {
                         for (node in nodeList) {
-                            if (JXG.exists(element[nodeList[node]])) {
+                            if (Type.exists(element[nodeList[node]])) {
                                 element[nodeList[node]].style.fontSize = fs + 'px';
                             }
                         }
                     } catch (e) {
                         // IE needs special treatment.
                         for (node in nodeList) {
-                            if (JXG.exists(element[nodeList[node]])) {
+                            if (Type.exists(element[nodeList[node]])) {
                                 element[nodeList[node]].style.fontSize = fs;
                             }
                         }

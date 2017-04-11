@@ -126,7 +126,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
          * @returns {Boolean}
          */
         supportsPointerEvents: function () {
-            return JXG.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled);
+            return this.isBrowser && window.navigator && (window.navigator.msPointerEnabled || window.navigator.pointerEnabled);
         },
 
         /**
@@ -232,7 +232,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 originalDisplay, originalWidth, originalHeight, style,
                 pixelDimRegExp = /\d+(\.\d*)?px/;
 
-            if (!JXG.isBrowser || elementId === null) {
+            if (!this.isBrowser || elementId === null) {
                 return {
                     width: 500,
                     height: 500

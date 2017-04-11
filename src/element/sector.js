@@ -1002,7 +1002,7 @@ define([
         } // end '3points'
 
         // GEONExT compatible labels.
-        if (JXG.exists(el.visProp.text)) {
+        if (Type.exists(el.visProp.text)) {
             el.label.setText(el.visProp.text);
         }
 

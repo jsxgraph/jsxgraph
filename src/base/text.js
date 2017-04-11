@@ -296,7 +296,7 @@ define([
              * offsetWidth and offsetHeight seem to be supported for internal vml elements by IE10+ in IE8 mode.
              */
             if (this.visProp.display === 'html' || this.board.renderer.type === 'vml') {
-                if (JXG.exists(node.offsetWidth)) {
+                if (Type.exists(node.offsetWidth)) {
                     s = [node.offsetWidth, node.offsetHeight];
                     if (s[0] === 0 && s[1] === 0) { // Some browsers need some time to set offsetWidth and offsetHeight
                         that = this;

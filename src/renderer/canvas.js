@@ -789,7 +789,7 @@ define([
                 }
 
                 if (el.visProp.firstarrow &&
-                    JXG.exists(el.visProp.firstarrow.type)) {
+                    Type.exists(el.visProp.firstarrow.type)) {
 
                     type = el.visProp.firstarrow.type;
                     if (type === 2) {
@@ -810,7 +810,7 @@ define([
 
                 }
                 if (el.visProp.lastarrow &&
-                    JXG.exists(el.visProp.lastarrow.type)) {
+                    Type.exists(el.visProp.lastarrow.type)) {
 
                     type = el.visProp.lastarrow.type;
                     if (type === 2) {

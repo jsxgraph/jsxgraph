@@ -625,7 +625,7 @@ define([
             var parents = [],
                 el, i, len, t;
 
-            if (!JXG.exists(this.parents)) {
+            if (!Type.exists(this.parents)) {
                 return this;
             }
 
@@ -1101,7 +1101,7 @@ define([
                         break;
                     case 'disabled':
                         // button, checkbox, input. Is not available on initial call.
-                        if (JXG.exists(this.rendNodeTag)) {
+                        if (Type.exists(this.rendNodeTag)) {
                             this.rendNodeTag.disabled = !!value;
                         }
                         break;
@@ -1665,7 +1665,7 @@ define([
                 sX = this.visProp.snapsizex,
                 sY = this.visProp.snapsizey;
 
-            if (!JXG.exists(this.coords)) {
+            if (!Type.exists(this.coords)) {
                 return this;
             }
 

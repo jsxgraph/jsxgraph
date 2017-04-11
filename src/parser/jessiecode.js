@@ -1951,7 +1951,9 @@ define([
          * @param {JXG.GeometryElement} element
          */
         del: function (element) {
-            if (typeof element === 'object' && JXG.exists(element.type) && JXG.exists(element.elementClass)) {
+            if (typeof element === 'object' &&
+                Type.exists(element.type) &&
+                Type.exists(element.elementClass)) {
                 this.board.removeObject(element);
             }
         },

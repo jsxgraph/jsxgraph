@@ -845,7 +845,7 @@ define([
                 v = Mat.matVecMult(rotationMatrix, [Math.sin(phi) / c, Math.cos(phi) / a, 1 / b]);
             }
 
-            if (JXG.exists(v)) {
+            if (Type.exists(v)) {
                 // Normalize
                 v[1] /= v[0];
                 v[2] /= v[0];

@@ -189,7 +189,7 @@ define([
          * @returns <tt>d</tt>, if <tt>v</tt> is undefined or null.
          */
         def: function (v, d) {
-            if (JXG.exists(v)) {
+            if (this.exists(v)) {
                 return v;
             }
 
@@ -202,7 +202,7 @@ define([
          * @returns {Boolean} String typed boolean value converted to boolean.
          */
         str2Bool: function (s) {
-            if (!JXG.exists(s)) {
+            if (!this.exists(s)) {
                 return true;
             }
 
@@ -254,7 +254,7 @@ define([
         createFunction: function (term, board, variableName, evalGeonext) {
             var f = null;
 
-            if ((!JXG.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
+            if ((!this.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
                 // Convert GEONExT syntax into  JavaScript syntax
                 //newTerm = JXG.GeonextParser.geonext2JS(term, board);
                 //return new Function(variableName,'return ' + newTerm + ';');
@@ -314,7 +314,7 @@ define([
                 parents = [parents];
             }
             len = parents.length;
-            if (JXG.exists(attrArray)) {
+            if (this.exists(attrArray)) {
                 lenAttr = attrArray.length;
             }
             if (lenAttr === 0) {
@@ -380,7 +380,7 @@ define([
          * <tt>-1</tt> if the value was not found.
          */
         indexOf: function (array, value, sub) {
-            var i, s = JXG.exists(sub);
+            var i, s = this.exists(sub);
 
             if (Array.indexOf && !s) {
                 return array.indexOf(value);
@@ -857,7 +857,7 @@ define([
 
                     prop = obj2[i];
                     if (typeof prop === 'object') {
-                        if (JXG.isArray(prop) || !JXG.exists(c[i2])) {
+                        if (JXG.isArray(prop) || !this.exists(c[i2])) {
                             c[i2] = this.deepCopy(prop);
                         } else {
                             c[i2] = this.deepCopy(c[i2], prop, toLower);
@@ -911,7 +911,7 @@ define([
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
+                if (this.exists(o[arguments[i]])) {
                     o = o[arguments[i]];
                 } else {
                     isAvail = false;
@@ -926,7 +926,7 @@ define([
             o = attributes;
             isAvail = true;
             for (i = 3; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
+                if (this.exists(o[arguments[i]])) {
                     o = o[arguments[i]];
                 } else {
                     isAvail = false;
@@ -941,14 +941,14 @@ define([
             o = options;
             isAvail = true;
             for (i = 2; i < len; i++) {
-                if (JXG.exists(o[arguments[i]])) {
+                if (this.exists(o[arguments[i]])) {
                     o = o[arguments[i]];
                 } else {
                     isAvail = false;
                     break;
                 }
             }
-            if (isAvail && JXG.exists(o.label)) {
+            if (isAvail && this.exists(o.label)) {
                 a.label =  JXG.deepCopy(o.label, a.label);
             }
             a.label = JXG.deepCopy(options.label, a.label);
