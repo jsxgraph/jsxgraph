@@ -131,7 +131,7 @@ define([
          * @param v
          */
         isObject: function (v) {
-            return typeof v === 'object' && !JXG.isArray(v);
+            return typeof v === 'object' && !this.isArray(v);
         },
 
         /**
@@ -210,7 +210,7 @@ define([
                 return s;
             }
 
-            if (JXG.isString(s)) {
+            if (this.isString(s)) {
                 return (s.toLowerCase() === 'true');
             }
 
@@ -254,7 +254,7 @@ define([
         createFunction: function (term, board, variableName, evalGeonext) {
             var f = null;
 
-            if ((!this.exists(evalGeonext) || evalGeonext) && JXG.isString(term)) {
+            if ((!this.exists(evalGeonext) || evalGeonext) && this.isString(term)) {
                 // Convert GEONExT syntax into  JavaScript syntax
                 //newTerm = JXG.GeonextParser.geonext2JS(term, board);
                 //return new Function(variableName,'return ' + newTerm + ';');
@@ -262,14 +262,14 @@ define([
                 //term = JXG.GeonextParser.replaceNameById(term, board);
                 //term = JXG.GeonextParser.geonext2JS(term, board);
                 f = board.jc.snippet(term, true, variableName, true);
-            } else if (JXG.isFunction(term)) {
+            } else if (this.isFunction(term)) {
                 f = term;
-            } else if (JXG.isNumber(term)) {
+            } else if (this.isNumber(term)) {
                 /** @ignore */
                 f = function () {
                     return term;
                 };
-            } else if (JXG.isString(term)) {
+            } else if (this.isString(term)) {
                 // In case of string function like fontsize
                 /** @ignore */
                 f = function () {
@@ -364,7 +364,7 @@ define([
          * @returns If <tt>val</tt> is a function, it is evaluated and the result is returned. Otherwise <tt>val</tt> is returned.
          */
         evaluate: function (val) {
-            if (JXG.isFunction(val)) {
+            if (this.isFunction(val)) {
                 return val();
             }
 
@@ -450,7 +450,7 @@ define([
             }
 
             for (i = 0; i < arr.length; i++) {
-                isArray = JXG.isArray(arr[i]);
+                isArray = this.isArray(arr[i]);
 
                 if (!this.exists(arr[i])) {
                     arr[i] = '';
@@ -468,7 +468,7 @@ define([
             j = 0;
 
             for (i = 0; i < arr.length; i++) {
-                isArray = JXG.isArray(arr[i]);
+                isArray = this.isArray(arr[i]);
 
                 if (!isArray && arr[i] !== '') {
                     ret[j] = arr[i];
@@ -857,7 +857,7 @@ define([
 
                     prop = obj2[i];
                     if (typeof prop === 'object') {
-                        if (JXG.isArray(prop) || !this.exists(c[i2])) {
+                        if (this.isArray(prop) || !this.exists(c[i2])) {
                             c[i2] = this.deepCopy(prop);
                         } else {
                             c[i2] = this.deepCopy(c[i2], prop, toLower);
@@ -1002,7 +1002,7 @@ define([
                 if (obj) {
                     list = [];
 
-                    if (JXG.isArray(obj)) {
+                    if (this.isArray(obj)) {
                         for (i = 0; i < obj.length; i++) {
                             list.push(JXG.toJSON(obj[i], noquote));
                         }
