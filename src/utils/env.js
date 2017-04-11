@@ -490,6 +490,7 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                 }
                 o = o.offsetParent;
             }
+
             return [l, t];
         },
 
@@ -586,6 +587,16 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     }
                 }
             }
+
+            // Zoom is used by reveal.js
+            if (Type.exists(obj.style.zoom)) {
+                str = obj.style.zoom;
+                if (str !== '') {
+                    cPos[0] *= parseFloat(str);
+                    cPos[1] *= parseFloat(str);
+                }
+            }
+
             return cPos;
         },
 
@@ -648,6 +659,19 @@ define(['jxg', 'utils/type'], function (JXG, Type) {
                     }
                 }
             }
+
+            // CSS style zoom is used by reveal.js
+            // Recursively search for zoom style entries.
+            // This is necessary for reveal.js on webkit.
+            // It fails if the user does zooming
+            if (Type.exists(obj.style.zoom)) {
+                str = obj.style.zoom;
+                if (str !== '') {
+                    mat[1][1] *= parseFloat(str);
+                    mat[2][2] *= parseFloat(str);
+                }
+            }
+
             return mat;
         },
 

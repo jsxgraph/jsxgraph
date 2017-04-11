@@ -736,7 +736,8 @@ define([
                 docElement = this.document.documentElement || this.document.body.parentNode,
                 docBody = this.document.body,
                 container = this.containerObj,
-                viewport, content;
+                viewport, content,
+                zoom, o;
 
             /**
              * During drags and origin moves the container element is usually not changed.
@@ -752,9 +753,23 @@ define([
             // Check if getBoundingClientRect exists. If so, use this as this covers *everything*
             // even CSS3D transformations etc.
             // Supported by all browsers but IE 6, 7.
+
             if (container.getBoundingClientRect) {
                 crect = container.getBoundingClientRect();
-                cPos = [crect.left, crect.top];
+
+
+                zoom = 1.0;
+                // Recursively search for zoom style entries.
+                // This is necessary for reveal.js on webkit.
+                // It fails if the user does zooming
+                o = container;
+                while (o && Type.exists(o.parentNode)) {
+                    if (Type.exists(o.style) && Type.exists(o.style.zoom) && o.style.zoom !== '') {
+                        zoom *= parseFloat(o.style.zoom);
+                    }
+                    o = o.parentNode;
+                }
+                cPos = [crect.left * zoom, crect.top * zoom];
 
                 // add border width
                 cPos[0] += Env.getProp(container, 'border-left-width');
