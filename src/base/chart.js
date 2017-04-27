@@ -340,7 +340,7 @@ define([
                         dy = -this.point1.coords.usrCoords[2] + this.point2.coords.usrCoords[2];
 
                     if (Type.exists(this.label)) {
-                        this.label.rendNode.style.fontSize = (s * this.label.visProp.fontsize) + 'px';
+                        this.label.rendNode.style.fontSize = (s * Type.evaluate(this.label.visProp.fontsize)) + 'px';
                         this.label.prepareUpdate().update().updateRenderer();
                     }
 
@@ -448,7 +448,7 @@ define([
 
                 get_anchor = function () {
                     var x1, x2, y1, y2,
-                        relCoords = this.visProp.label.offset.slice(0);
+                        relCoords = Type.evaluate(this.visProp.label.offset).slice(0);
 
                     x1 = this.point1.X();
                     x2 = this.point2.X();
