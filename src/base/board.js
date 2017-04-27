@@ -710,13 +710,15 @@ define([
          * @param {Object} obj The object to add.
          */
         finalizeAdding: function (obj) {
-            if (!obj.visProp.visible) {
+            if (!Type.evaluate(obj.visProp.visible)) {
                 this.renderer.hide(obj);
             }
         },
 
         finalizeLabel: function (obj) {
-            if (obj.hasLabel && !obj.label.visProp.islabel && !obj.label.visProp.visible) {
+            if (obj.hasLabel &&
+                !Type.evaluate(obj.label.visProp.islabel) &&
+                !Type.evaluate(obj.label.visProp.visible)) {
                 this.renderer.hide(obj.label);
             }
         },
@@ -921,7 +923,7 @@ define([
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
                         pEl.visProp.visible &&
-                        (!pEl.visProp.fixed) && /*(!pEl.visProp.frozen) &&*/
+                        (!Type.evaluate(pEl.visProp.fixed)) && /*(!pEl.visProp.frozen) &&*/
                         haspoint) {
                     // Elements in the highest layer get priority.
                     if (pEl.visProp.layer > dragEl.visProp.layer ||
@@ -933,7 +935,8 @@ define([
                         // This only works if we assume that every browser runs
                         // through this.objects in the right order, i.e. an element A
                         // added before element B turns up here before B does.
-                        if (!this.attr.ignorelabels || (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
+                        if (!this.attr.ignorelabels ||
+                            (!Type.exists(dragEl.label) || pEl !== dragEl.label)) {
                             dragEl = pEl;
                             collect.push(dragEl);
 
@@ -973,7 +976,7 @@ define([
             // Move drag element to the top of the layer
             if (this.renderer.type === 'svg' &&
                 Type.exists(collect[0]) &&
-                collect[0].visProp.dragtotopoflayer &&
+                Type.evaluate(collect[0].visProp.dragtotopoflayer) &&
                 collect.length === 1 &&
                 Type.exists(collect[0].rendNode)) {
 
@@ -1139,7 +1142,7 @@ define([
                 //omid = Mat.matVecMult(t2.matrix, omid);
 
                 t1.melt(t2);
-                if (drag.visProp.scalable) {
+                if (Type.evaluate(drag.visProp.scalable)) {
                     // Scale
                     d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t3 = this.create('transform', [-nmid[1], -nmid[2]], {type: 'translate'});
@@ -1209,7 +1212,7 @@ define([
                 t3 = this.create('transform', [alpha], {type: 'rotate'});
                 t1.melt(t2).melt(t3);
 
-                if (drag.visProp.scalable) {
+                if (Type.evaluate(drag.visProp.scalable)) {
                     d = Geometry.distance(np1, np2) / Geometry.distance(op1, op2);
                     t4 = this.create('transform', [d, d], {type: 'scale'});
                     t1.melt(t4);
@@ -2742,24 +2745,26 @@ define([
          * @returns {JXG.Board} Reference to the board
          */
         updateInfobox: function (el) {
-            var x, y, xc, yc;
+            var x, y, xc, yc,
+            vpinfoboxdigits;
 
-            if (!el.visProp.showinfobox) {
+            if (!Type.evaluate(el.visProp.showinfobox)) {
                 return this;
             }
             if (Type.isPoint(el)) {
                 xc = el.coords.usrCoords[1];
                 yc = el.coords.usrCoords[2];
 
+                vpinfoboxdigits = Type.evaluate(el.visProp.infoboxdigits);
                 this.infobox.setCoords(xc + this.infobox.distanceX / this.unitX, yc + this.infobox.distanceY / this.unitY);
 
                 if (typeof el.infoboxText !== 'string') {
-                    if (el.visProp.infoboxdigits === 'auto') {
+                    if (vpinfoboxdigits === 'auto') {
                         x = Type.autoDigits(xc);
                         y = Type.autoDigits(yc);
-                    } else if (Type.isNumber(el.visProp.infoboxdigits)) {
-                        x = Type.toFixed(xc, el.visProp.infoboxdigits);
-                        y = Type.toFixed(yc, el.visProp.infoboxdigits);
+                    } else if (Type.isNumber(vpinfoboxdigits)) {
+                        x = Type.toFixed(xc, vpinfoboxdigits);
+                        y = Type.toFixed(yc, vpinfoboxdigits);
                     } else {
                         x = xc;
                         y = yc;
@@ -2913,7 +2918,7 @@ define([
                 el = this.objectsList[ob];
 
                 if (Type.exists(el.coords)) {
-                    if (el.visProp.frozen) {
+                    if (Type.evaluate(el.visProp.frozen)) {
                         el.coords.screen2usr();
                     } else {
                         el.coords.usr2screen();
@@ -3382,7 +3387,7 @@ define([
                 delete this.elementsByName[object.name];
 
 
-                if (object.visProp && object.visProp.trace) {
+                if (object.visProp && Type.evaluate(object.visProp.trace)) {
                     object.clearTrace();
                 }
 
@@ -4281,10 +4286,10 @@ define([
                             };
                         }
                         o.setAttribute({
-                            strokecolor: Color.rgb2cb(o.visPropOriginal.strokecolor, deficiency),
-                            fillcolor: Color.rgb2cb(o.visPropOriginal.fillcolor, deficiency),
-                            highlightstrokecolor: Color.rgb2cb(o.visPropOriginal.highlightstrokecolor, deficiency),
-                            highlightfillcolor: Color.rgb2cb(o.visPropOriginal.highlightfillcolor, deficiency)
+                            strokecolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.strokecolor), deficiency),
+                            fillcolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.fillcolor), deficiency),
+                            highlightstrokecolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.highlightstrokecolor), deficiency),
+                            highlightfillcolor: Color.rgb2cb(Type.evaluate(o.visPropOriginal.highlightfillcolor), deficiency)
                         });
                     } else if (Type.exists(o.visPropOriginal)) {
                         JXG.extend(o.visProp, o.visPropOriginal);

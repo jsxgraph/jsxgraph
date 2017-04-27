@@ -733,6 +733,7 @@ define([
                 len,
                 dMax = Infinity,
                 c = null,
+                vp_au, vp_ad,
                 len2, j, ignore = false;
 
             len = this.board.objectsList.length;
@@ -742,6 +743,8 @@ define([
             }
 
             if (this.visProp.snaptopoints || force) {
+                vp_au = Type.evaluate(this.visProp.attractorunit);
+                vp_ad = Type.evaluate(this.visProp.attractordistance);
                 for (i = 0; i < len; i++) {
                     pEl = this.board.objectsList[i];
 
@@ -760,13 +763,13 @@ define([
 
                     if (Type.isPoint(pEl) && pEl !== this && pEl.visProp.visible) {
                         pCoords = Geometry.projectPointToPoint(this, pEl, this.board);
-                        if (this.visProp.attractorunit === 'screen') {
+                        if (vp_au === 'screen') {
                             d = pCoords.distance(Const.COORDS_BY_SCREEN, this.coords);
                         } else {
                             d = pCoords.distance(Const.COORDS_BY_USER, this.coords);
                         }
 
-                        if (d < this.visProp.attractordistance && d < dMax) {
+                        if (d < vp_ad && d < dMax) {
                             dMax = d;
                             c = pCoords;
                         }
