@@ -216,10 +216,10 @@ define([
                 dist = Math.sqrt(dx * dx + dy * dy);
 
                 // We have to use usrCoords, since Radius is available in usrCoords only.
-                prec += this.visProp.strokewidth * 0.5;
+                prec += Type.evaluate(this.visProp.strokewidth) * 0.5;
                 prec /= Math.sqrt(this.board.unitX * this.board.unitY);
 
-            if (this.visProp.hasinnerpoints) {
+            if (Type.evaluate(this.visProp.hasinnerpoints)) {
                 return (dist < r + prec);
             }
 
@@ -328,7 +328,7 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
-                if (this.visProp.trace) {
+                if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }
 
@@ -497,7 +497,7 @@ define([
                 r = this.Radius(),
                 c = this.center.coords.usrCoords;
 
-            switch (this.visProp.label.position) {
+            switch (Type.evaluate(this.visProp.label.position)) {
             case 'lft':
                 x = c[1] - r;
                 y = c[2];
@@ -594,7 +594,7 @@ define([
 
         // see element.js
         snapToGrid: function () {
-            var forceIt = this.visProp.snaptogrid;
+            var forceIt = Type.evaluate(this.visProp.snaptogrid);
 
             this.center.handleSnapToGrid(forceIt, true);
             if (this.method === 'twoPoints') {
@@ -606,7 +606,7 @@ define([
 
         // see element.js
         snapToPoints: function () {
-            var forceIt = this.visProp.snaptopoints;
+            var forceIt = Type.evaluate(this.visProp.snaptopoints);
 
             this.center.handleSnapToPoints(forceIt);
             if (this.method === 'twoPoints') {
