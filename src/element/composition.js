@@ -953,7 +953,7 @@ define([
         } else if (c.elementClass === Const.OBJECT_CLASS_CIRCLE) {
             l = board.create('line', [c.midpoint, p], attr);
         } else if (c.elementClass === Const.OBJECT_CLASS_CURVE) {
-            if (c.visProp.curvetype !== 'plot') {
+            if (Type.evaluate(c.visProp.curvetype) !== 'plot') {
                 g = c.X;
                 f = c.Y;
                 l = board.create('line', [
@@ -1809,14 +1809,14 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseLeft');
         pa_on_axis = board.create('point', [
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return 0;
                 }
 
                 return pa_on_curve.X();
             },
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return pa_on_curve.Y();
                 }
 
@@ -1833,13 +1833,13 @@ define([
         attr = Type.copyAttributes(attributes, board.options, 'integral', 'baseRight');
         pb_on_axis = board.create('point', [
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return 0;
                 }
                 return pb_on_curve.X();
             },
             function () {
-                if (p.visProp.axis === 'y') {
+                if (Type.evaluate(p.visProp.axis) === 'y') {
                     return pb_on_curve.Y();
                 }
 
@@ -1855,7 +1855,7 @@ define([
             t = board.create('text', [
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
-                            this.visProp.offset[0] + this.board.origin.scrCoords[1],
+                            Type.evaluate(this.visProp.offset[0]) + this.board.origin.scrCoords[1],
                             0
                         ], this.board, false),
                         bb = this.board.getBoundingBox(),
@@ -1873,7 +1873,7 @@ define([
                 function () {
                     var off = new Coords(Const.COORDS_BY_SCREEN, [
                             0,
-                            this.visProp.offset[1] + this.board.origin.scrCoords[2]
+                            Type.evaluate(this.visProp.offset[1]) + this.board.origin.scrCoords[2]
                         ], this.board, false),
                         bb = this.board.getBoundingBox(),
                         dy = (bb[1] - bb[3]) * 0.1,
@@ -1934,7 +1934,7 @@ define([
                 lowx, upx,
                 lowy, upy;
 
-            if (this.visProp.axis === 'y') {
+            if (Type.evaluate(this.visProp.axis) === 'y') {
                 if (pa_on_curve.Y() < pb_on_curve.Y()) {
                     lowx = pa_on_curve.X();
                     lowy = pa_on_curve.Y();
@@ -2089,17 +2089,19 @@ define([
 
         c.updateDataArray = function () {
             var start, end, i, topLeft, bottomRight,
-                gridX = this.visProp.gridx,
-                gridY = this.visProp.gridy;
+                gridX = Type.evaluate(this.visProp.gridx),
+                gridY = Type.evaluate(this.visProp.gridy);
 
             if (Type.isArray(this.visProp.topleft)) {
-                topLeft = new Coords(this.visProp.tltype || Const.COORDS_BY_USER, this.visProp.topleft, board);
+                topLeft = new Coords(Type.evaluate(this.visProp.tltype) || Const.COORDS_BY_USER,
+                                    this.visProp.topleft, board);
             } else {
                 topLeft = new Coords(Const.COORDS_BY_SCREEN, [0, 0], board);
             }
 
             if (Type.isArray(this.visProp.bottomright)) {
-                bottomRight = new Coords(this.visProp.brtype || Const.COORDS_BY_USER, this.visProp.bottomright, board);
+                bottomRight = new Coords(Type.evaluate(this.visProp.brtype) || Const.COORDS_BY_USER,
+                                    this.visProp.bottomright, board);
             } else {
                 bottomRight = new Coords(Const.COORDS_BY_SCREEN, [board.canvasWidth, board.canvasHeight], board);
             }

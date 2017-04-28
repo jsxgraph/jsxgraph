@@ -152,8 +152,12 @@ define([
          * @returns {Number}
          */
         p3.Value = function () {
-            var sdiff = this._smax - this._smin;
-            return p3.visProp.snapwidth === -1 ? this.position * sdiff + this._smin : Math.round((this.position * sdiff + this._smin) / this.visProp.snapwidth) * this.visProp.snapwidth;
+            var sdiff = this._smax - this._smin,
+                vp_sw = Type.evaluate(this.visProp.snapwidth);
+
+            return vp_sw === -1 ?
+                        this.position * sdiff + this._smin :
+                        Math.round((this.position * sdiff + this._smin) / vp_sw) * vp_sw;
         };
 
         p3.methodMap = Type.deepCopy(p3.methodMap, {
