@@ -963,7 +963,9 @@ define([
             majorHeight: 10,
 
             /**
-             * Decides in which direction finite ticks are visible. Possible values are 0=false or 1=true.
+             * Decides in which direction finite ticks are visible. Possible values are either the constants
+             * 0=false or 1=true or a function returning 0 or 1.
+             *
              * In case of [0,1] the tick is only visible to the right of the line. In case of
              * [1,0] the tick is only visible to the left of the line.
              *
