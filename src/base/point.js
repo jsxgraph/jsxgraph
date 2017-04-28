@@ -123,6 +123,7 @@ define([
                 return this;
             }
 
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             this.updateCoords(fromParent);
 
             if (Type.evaluate(this.visProp.trace)) {

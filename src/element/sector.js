@@ -1086,12 +1086,12 @@ define([
                 this.updateDataArraySector();
             } else if (type === 'sectordot') {
                 this.updateDataArraySector();
-                if (!this.dot.visProp.visible) {
+                if (!this.dot.visPropCalc.visible) {
                     this.dot.setAttribute({visible: true});
                 }
             }
 
-            if (!this.visProp.visible || (type !== 'sectordot' && this.dot.visProp.visible)) {
+            if (!this.visPropCalc.visible || (type !== 'sectordot' && this.dot.visPropCalc.visible)) {
                 this.dot.setAttribute({visible: false});
             }
         };

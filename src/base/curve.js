@@ -354,6 +354,7 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
                 if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }
@@ -370,7 +371,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
 
                 this.checkReal();
@@ -382,21 +383,21 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
                 }
 
                 // Update the label if visible.
-                if (this.hasLabel && Type.exists(this.label.visProp) && this.label.visProp.visible) {
+                if (this.hasLabel && Type.exists(this.label.visPropCalc) && this.label.visPropCalc.visible) {
                     this.label.update();
                     this.board.renderer.updateText(this.label);
                 }

@@ -556,7 +556,7 @@ define([
 
             if (el.visPropOld.firstarrow === ev_fa &&
                 el.visPropOld.lastarrow === ev_la) {
-                if (this.isIE && el.visProp.visible &&
+                if (this.isIE && el.visPropCalc.visible &&
                     (ev_fa || ev_la)) {
                     el.rendNode.parentNode.insertBefore(el.rendNode, el.rendNode);
                 }

@@ -316,7 +316,7 @@ define([
             this.drawPoint(el);
             Type.clearVisPropOld(el);
 
-            if (!el.visProp.visible) {
+            if (!el.visPropCalc.visible) {
                 this.hide(el);
             }
 
@@ -675,7 +675,7 @@ define([
 
             len = el.borders.length;
             for (i = 0; i < len; ++i) {
-                if (polIsReal && el.borders[i].visProp.visible) {
+                if (polIsReal && el.borders[i].visPropCalc.visible) {
                     this.show(el.borders[i]);
                 } else {
                     this.hide(el.borders[i]);
@@ -778,7 +778,7 @@ define([
                 parentNode,
                 ax, ay;
 
-            if (el.visProp.visible) {
+            if (el.visPropCalc.visible) {
                 this.updateTextStyle(el, false);
 
                 if (Type.evaluate(el.visProp.display) === 'html' && this.type !== 'no') {

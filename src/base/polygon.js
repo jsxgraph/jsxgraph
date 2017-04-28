@@ -199,12 +199,12 @@ define([
          * Uses the boards renderer to update the polygon.
          */
         updateRenderer: function () {
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 this.board.renderer.updatePolygon(this);
                 this.needsUpdate = false;
             }
 
-            if (this.hasLabel && this.label.visProp.visible) {
+            if (this.hasLabel && this.label.visPropCalc.visible) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
@@ -278,7 +278,7 @@ define([
         hideElement: function (borderless) {
             var i;
 
-            this.visProp.visible = false;
+            this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
 
             if (!borderless) {
@@ -289,7 +289,7 @@ define([
 
             if (this.hasLabel && Type.exists(this.label)) {
                 this.label.hiddenByParent = true;
-                if (this.label.visProp.visible) {
+                if (this.label.visPropCalc.visible) {
                     this.label.hideElement();
                 }
             }
@@ -303,7 +303,7 @@ define([
         showElement: function (borderless) {
             var i;
 
-            this.visProp.visible = true;
+            this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 
             if (!borderless) {
@@ -315,7 +315,7 @@ define([
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (!this.label.visProp.visible) {
+                if (!this.label.visPropCalc.visible) {
                     this.label.showElement().updateRenderer();
                 }
             }

@@ -912,7 +912,7 @@ define([
                 pEl = this.objectsList[el];
                 haspoint = pEl.hasPoint && pEl.hasPoint(x, y);
 
-                if (pEl.visProp.visible && haspoint) {
+                if (pEl.visPropCalc.visible && haspoint) {
                     pEl.triggerEventHandlers([type + 'down', 'down'], [evt]);
                     this.downObjects.push(pEl);
                 }
@@ -922,7 +922,7 @@ define([
                           pEl.elementClass === Const.OBJECT_CLASS_TEXT)) ||
                         !this.geonextCompatibilityMode) &&
                         pEl.isDraggable &&
-                        pEl.visProp.visible &&
+                        pEl.visPropCalc.visible &&
                         (!Type.evaluate(pEl.visProp.fixed)) && /*(!pEl.visProp.frozen) &&*/
                         haspoint) {
                     // Elements in the highest layer get priority.
@@ -1247,7 +1247,7 @@ define([
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
                 pId = pEl.id;
-                if (Type.exists(pEl.hasPoint) && pEl.visProp.visible && pEl.hasPoint(x, y)) {
+                if (Type.exists(pEl.hasPoint) && pEl.visPropCalc.visible && pEl.hasPoint(x, y)) {
                     // this is required in any case because otherwise the box won't be shown until the point is dragged
                     this.updateInfobox(pEl);
 
@@ -2823,7 +2823,7 @@ define([
                     // In highlightedObjects should only be objects which fulfill all these conditions
                     // And in case of complex elements, like a turtle based fractal, it should be faster to
                     // just de-highlight the element instead of checking hasPoint...
-                    // if ((!Type.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visProp.visible)
+                    // if ((!Type.exists(pEl.hasPoint)) || !pEl.hasPoint(x, y) || !pEl.visPropCalc.visible)
                 }
             }
 
@@ -2898,7 +2898,7 @@ define([
 
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
-                if (pEl.visProp.visible && pEl.hasPoint && pEl.hasPoint(dx, dy)) {
+                if (pEl.visPropCalc.visible && pEl.hasPoint && pEl.hasPoint(dx, dy)) {
                     elList[elList.length] = pEl;
                 }
             }
@@ -3236,7 +3236,7 @@ define([
             for (el = 0; el < len; el++) {
                 pEl = this.objectsList[el];
 
-                if (Type.isPoint(pEl) && pEl.visProp.visible) {
+                if (Type.isPoint(pEl) && pEl.visPropCalc.visible) {
                     if (pEl.coords.usrCoords[1] < minX) {
                         minX = pEl.coords.usrCoords[1];
                     } else if (pEl.coords.usrCoords[1] > maxX) {

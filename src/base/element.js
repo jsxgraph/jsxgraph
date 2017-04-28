@@ -291,6 +291,21 @@ define([
          */
         this.visProp = {};
 
+        /**
+         * An associative array containing visual properties which are calculated from
+         * the attribute values (i.e. visProp) and from other constraints.
+         * An example: if an intersection point does not have real coordinates,
+         * visPropCalc.visible is set to false.
+         * Additionally, the user can control visibility with the attribute "visible",
+         * even by supplying a functions as value.
+         *
+         * @type Object
+         * @default empty object
+         */
+        this.visPropCalc = {
+            visible: false
+        };
+
         EventEmitter.eventify(this);
 
         /**
@@ -795,6 +810,8 @@ define([
          * Can be used sometimes to commit changes to the object.
          */
         update: function () {
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+
             if (Type.evaluate(this.visProp.trace)) {
                 this.cloneToBackground();
             }
@@ -813,12 +830,12 @@ define([
          * Hide the element. It will still exist but not visible on the board.
          */
         hideElement: function () {
-            this.visProp.visible = false;
+            this.visPropCalc.visible = false;
             this.board.renderer.hide(this);
 
             if (Type.exists(this.label) && this.hasLabel) {
                 this.label.hiddenByParent = true;
-                if (this.label.visProp.visible) {
+                if (this.label.visPropCalc.visible) {
                     this.label.hideElement();
                 }
             }
@@ -829,12 +846,12 @@ define([
          * Make the element visible.
          */
         showElement: function () {
-            this.visProp.visible = true;
+            this.visPropCalc.visible = true;
             this.board.renderer.show(this);
 
             if (Type.exists(this.label) && this.hasLabel && this.label.hiddenByParent) {
                 this.label.hiddenByParent = false;
-                if (!this.label.visProp.visible) {
+                if (!this.label.visPropCalc.visible) {
                     this.label.showElement().updateRenderer();
                 }
             }
@@ -1017,12 +1034,18 @@ define([
                         }
                         break;
                     case 'visible':
-                        if (value === 'false' || value === false) {
+                        if (value === 'false') {
                             this.visProp.visible = false;
-                            this.hideElement();
-                        } else if (value === 'true' || value === true) {
+                        } else if (value === 'true') {
                             this.visProp.visible = true;
+                        } else {
+                            this.visProp.visible = value;
+                        }
+                        this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+                        if (this.visPropCalc.visible) {
                             this.showElement();
+                        } else {
+                            this.hideElement();
                         }
                         break;
                     case 'face':
@@ -1055,18 +1078,18 @@ define([
                         break;
                     case 'withlabel':
                         this.visProp.withlabel = value;
-                        if (!value) {
+                        if (!Type.evaluate(value)) {
                             if (this.label && this.hasLabel) {
                                 this.label.hideElement();
                             }
                         } else {
                             if (this.label) {
-                                if (this.visProp.visible) {
+                                if (Type.evaluate(this.visProp.visible)) {
                                     this.label.showElement();
                                 }
                             } else {
                                 this.createLabel();
-                                if (!this.visProp.visible) {
+                                if (!Type.evaluate(this.visProp.visible)) {
                                     this.label.hideElement();
                                 }
                             }
@@ -1286,7 +1309,7 @@ define([
 
                     this.label.dump = false;
 
-                    if (!this.visProp.visible) {
+                    if (!Type.evaluate(this.visProp.visible)) {
                         this.label.hiddenByParent = true;
                         this.label.visProp.visible = false;
                     }

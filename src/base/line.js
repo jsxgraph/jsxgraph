@@ -268,6 +268,7 @@ define([
                 return this;
             }
 
+            this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
             if (this.constrained) {
                 if (Type.isFunction(this.funps)) {
                     funps = this.funps();
@@ -405,7 +406,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
                 this.isReal = (!isNaN(this.point1.coords.usrCoords[1] + this.point1.coords.usrCoords[2] +
                         this.point2.coords.usrCoords[1] + this.point2.coords.usrCoords[2]) &&
@@ -414,7 +415,7 @@ define([
                 if (this.isReal) {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
@@ -422,7 +423,7 @@ define([
                 } else {
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
@@ -432,7 +433,7 @@ define([
             }
 
             /* Update the label if visible. */
-            if (this.hasLabel && this.label.visProp.visible && this.isReal) {
+            if (this.hasLabel && this.label.visPropCalc.visible && this.isReal) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }

@@ -316,7 +316,7 @@ define([
                 stroke05 = parseFloat(Type.evaluate(el.visProp.strokewidth)) / 2.0,
                 context = this.context;
 
-            if (!el.visProp.visible) {
+            if (!el.visPropCalc.visible) {
                 return;
             }
 
@@ -442,7 +442,7 @@ define([
                 ev_fa = Type.evaluate(el.visProp.firstarrow),
                 ev_la = Type.evaluate(el.visProp.lastarrow);
 
-            if (!el.visProp.visible) {
+            if (!el.visPropCalc.visible) {
                 return;
             }
 
@@ -496,7 +496,7 @@ define([
                 if (ticks.ticks[i].major &&
                         (ticks.board.needsFullUpdate || ticks.needsRegularUpdate) &&
                         ticks.labels[i] &&
-                        ticks.labels[i].visProp.visible) {
+                        ticks.labels[i].visPropCalc.visible) {
                     this.updateText(ticks.labels[i]);
                 }
             }
@@ -996,7 +996,7 @@ define([
                 context = this.context,
                 isReal = true;
 
-            if (len <= 0 || !el.visProp.visible) {
+            if (len <= 0 || !el.visPropCalc.visible) {
                 return;
             }
 

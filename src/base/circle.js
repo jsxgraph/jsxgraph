@@ -328,6 +328,8 @@ define([
          */
         update: function () {
             if (this.needsUpdate) {
+                this.visPropCalc.visible = Type.evaluate(this.visProp.visible);
+
                 if (Type.evaluate(this.visProp.trace)) {
                     this.cloneToBackground(true);
                 }
@@ -389,7 +391,7 @@ define([
         updateRenderer: function () {
             var wasReal;
 
-            if (this.needsUpdate && this.visProp.visible) {
+            if (this.needsUpdate && this.visPropCalc.visible) {
                 wasReal = this.isReal;
                 this.isReal = (!isNaN(this.center.coords.usrCoords[1] + this.center.coords.usrCoords[2] + this.Radius())) && this.center.isReal;
 
@@ -397,7 +399,7 @@ define([
                     if (wasReal !== this.isReal) {
                         this.board.renderer.show(this);
 
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.show(this.label);
                         }
                     }
@@ -406,7 +408,7 @@ define([
                     if (wasReal !== this.isReal) {
                         this.board.renderer.hide(this);
 
-                        if (this.hasLabel && this.label.visProp.visible) {
+                        if (this.hasLabel && this.label.visPropCalc.visible) {
                             this.board.renderer.hide(this.label);
                         }
                     }
@@ -415,7 +417,7 @@ define([
             }
 
             // Update the label if visible.
-            if (this.hasLabel && this.label.visProp.visible && this.isReal) {
+            if (this.hasLabel && this.label.visPropCalc.visible && this.isReal) {
                 this.label.update();
                 this.board.renderer.updateText(this.label);
             }
